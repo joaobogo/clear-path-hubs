@@ -437,7 +437,7 @@ export const getClientPreview = createServerFn({ method: "GET" })
     const { data: m } = await s
       .from("candidate_matches")
       .select(
-        "id,stage,delivered_at,current_score_run_id,approved_score_run_id,candidate_profiles(full_name,location,skills,experience),positions(id,title,organizations(name)),score_runs!candidate_matches_current_score_run_id_fkey(score,fit_label,explanation,strengths,concerns,must_have_coverage,preferred_coverage,evidence)",
+        "id,stage,delivered_at,current_score_run_id,approved_score_run_id,candidate_profiles(full_name,location,skills,experience),positions(id,title,organizations(name)),score_runs!candidate_matches_current_score_run_id_fkey(score,fit_label,explanation,result,must_have_coverage,preferred_coverage,evidence)",
       )
       .eq("id", data.match_id)
       .maybeSingle();
@@ -464,8 +464,8 @@ export const getClientPreview = createServerFn({ method: "GET" })
       score: run?.score ?? null,
       fit_label: run?.fit_label ?? null,
       explanation: run?.explanation ?? null,
-      strengths: run?.strengths ?? [],
-      concerns: run?.concerns ?? [],
+      strengths: run?.result?.strengths ?? run?.strengths ?? [],
+      concerns: run?.result?.concerns ?? run?.concerns ?? [],
       must_have_coverage: run?.must_have_coverage ?? null,
       preferred_coverage: run?.preferred_coverage ?? null,
       evidence: run?.evidence ?? [],

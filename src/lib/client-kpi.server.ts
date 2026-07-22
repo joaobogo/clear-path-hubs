@@ -153,8 +153,10 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
     return av.status ?? av.value ?? null;
   })();
 
-  const strengths: string[] = Array.isArray(run?.strengths)
-    ? run.strengths.slice(0, 5).map(String)
+  const runStrengths = run?.strengths ?? run?.result?.strengths;
+  const runConcerns = run?.concerns ?? run?.result?.concerns;
+  const strengths: string[] = Array.isArray(runStrengths)
+    ? runStrengths.slice(0, 5).map(String)
     : Array.isArray(coverage?.matched)
       ? coverage.matched.slice(0, 5).map(String)
       : [];
@@ -165,8 +167,8 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
     (Array.isArray(coverage?.missing) && coverage.missing.length > 0
       ? String(coverage.missing[0])
       : null) ??
-    (Array.isArray(run?.concerns) && run.concerns.length > 0
-      ? String(run.concerns[0])
+    (Array.isArray(runConcerns) && runConcerns.length > 0
+      ? String(runConcerns[0])
       : null);
 
   const evidence: Array<{ label: string; snippet: string }> = Array.isArray(
