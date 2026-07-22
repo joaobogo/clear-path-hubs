@@ -7,12 +7,8 @@
 
 import { extractCvText } from "./cv-extractor.server";
 import { hydrateProfileFromCv } from "./cv-hydration.server";
-import {
-  ENGINE_VERSION,
-  scoreCandidate,
-  type RequirementInput,
-  type ScreeningAnswer,
-} from "./scoring-engine.server";
+import { ENGINE_VERSION, type ScreeningAnswer } from "./scoring-engine.server";
+import { executeScoring } from "./scoring-service.server";
 import type { Json } from "@/integrations/supabase/types";
 
 type State =
