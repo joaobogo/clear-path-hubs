@@ -6,8 +6,20 @@ import {
 } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
+import { useEffect, useState } from "react";
 import { getMyContext } from "@/lib/candidate.functions";
+import { supabase } from "@/integrations/supabase/client";
+import { NotificationBell, NOTIFICATIONS_QUERY_KEY } from "@/components/notification-bell";
+import { useDashboardRealtime } from "@/hooks/use-realtime-refresh";
 import { FileText, User, MessageSquare, Shield } from "lucide-react";
+
+const CANDIDATE_REFRESH_KEYS = [
+  ["me-context"],
+  ["me", "applications"],
+  ["me", "messages"],
+  ["me", "profile"],
+  NOTIFICATIONS_QUERY_KEY,
+] as const;
 
 export const Route = createFileRoute("/_authenticated/me")({
   head: () => ({

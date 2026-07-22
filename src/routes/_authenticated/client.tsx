@@ -154,3 +154,21 @@ function ClientLayout() {
     </div>
   );
 }
+
+const CLIENT_REFRESH_KEYS = [
+  ["client-context", null],
+  ["client", "kpis"],
+  ["client", "positions"],
+  ["client", "candidates"],
+  ["client", "messages"],
+  NOTIFICATIONS_QUERY_KEY,
+] as const;
+
+function ClientCoordinator() {
+  const [userId, setUserId] = useState<string | null>(null);
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => setUserId(data.user?.id ?? null));
+  }, []);
+  useDashboardRealtime({ userId, audience: "client", invalidateKeys: CLIENT_REFRESH_KEYS });
+  return null;
+}
