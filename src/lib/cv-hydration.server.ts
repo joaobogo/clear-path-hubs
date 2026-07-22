@@ -177,9 +177,11 @@ export async function hydrateProfileFromCv(opts: {
       extracted_at: new Date().toISOString(),
       trace_id: opts.trace_id,
       source_surface: opts.source_surface ?? "pipeline",
+      parser_version: HYDRATION_PARSER_VERSION,
       snippet: snippet ?? null,
     };
   };
+
 
   const isBlank = (v: unknown): boolean =>
     v == null || (typeof v === "string" && v.trim() === "") ||
