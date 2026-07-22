@@ -839,6 +839,37 @@ function IntakePage() {
                   </ul>
                 )}
               </Field>
+              <Field label="Current hiring challenges" className="sm:col-span-2">
+                <Textarea
+                  rows={2}
+                  value={state.hiringChallenges}
+                  onChange={(e) => set("hiringChallenges", e.target.value)}
+                  placeholder="What has made this role hard to fill?"
+                />
+              </Field>
+              <Field label="Interview process" hint="Number of rounds, format, panel." className="sm:col-span-2">
+                <Textarea
+                  rows={2}
+                  value={state.interviewProcess}
+                  onChange={(e) => set("interviewProcess", e.target.value)}
+                  placeholder="Screen → Technical → Panel → Offer"
+                />
+              </Field>
+              <Field label="Decision makers" hint="Who signs off on the hire?" className="sm:col-span-2">
+                <Input
+                  value={state.decisionMakers}
+                  onChange={(e) => set("decisionMakers", e.target.value)}
+                  placeholder="Hiring manager, VP Eng, CEO…"
+                />
+              </Field>
+              <Field label="Additional context" className="sm:col-span-2">
+                <Textarea
+                  rows={3}
+                  value={state.additionalContext}
+                  onChange={(e) => set("additionalContext", e.target.value)}
+                  placeholder="Anything else we should know?"
+                />
+              </Field>
             </div>
           )}
 
