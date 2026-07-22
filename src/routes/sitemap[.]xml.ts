@@ -6,7 +6,9 @@ const BASE_URL = "https://clear-path-hubs.lovable.app";
 
 const STATIC_PATHS = [
   "/",
+  "/solutions",
   "/how-it-works",
+  "/journey",
   "/pricing",
   "/about",
   "/enterprise",
