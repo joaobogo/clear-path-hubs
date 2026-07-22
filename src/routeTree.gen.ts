@@ -16,12 +16,18 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as JobsIdRouteImport } from './routes/jobs.$id'
 import { Route as IntakeConfirmationRouteImport } from './routes/intake.confirmation'
+import { Route as AuthenticatedMeRouteImport } from './routes/_authenticated/me'
 import { Route as AuthenticatedClientRouteImport } from './routes/_authenticated/client'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as AuthenticatedMeIndexRouteImport } from './routes/_authenticated/me.index'
 import { Route as AuthenticatedClientIndexRouteImport } from './routes/_authenticated/client.index'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as JobsIdApplyRouteImport } from './routes/jobs.$id.apply'
 import { Route as ApplyReceivedApplicationIdRouteImport } from './routes/apply.received.$applicationId'
+import { Route as AuthenticatedMeSettingsRouteImport } from './routes/_authenticated/me.settings'
+import { Route as AuthenticatedMeProfileRouteImport } from './routes/_authenticated/me.profile'
+import { Route as AuthenticatedMeMessagesRouteImport } from './routes/_authenticated/me.messages'
+import { Route as AuthenticatedMeApplicationsRouteImport } from './routes/_authenticated/me.applications'
 import { Route as AuthenticatedClientTeamRouteImport } from './routes/_authenticated/client.team'
 import { Route as AuthenticatedClientSettingsRouteImport } from './routes/_authenticated/client.settings'
 import { Route as AuthenticatedClientPositionsRouteImport } from './routes/_authenticated/client.positions'
@@ -32,6 +38,7 @@ import { Route as AuthenticatedAdminPublishRouteImport } from './routes/_authent
 import { Route as AuthenticatedAdminHealthRouteImport } from './routes/_authenticated/admin.health'
 import { Route as AuthenticatedAdminClientsRouteImport } from './routes/_authenticated/admin.clients'
 import { Route as AuthenticatedAdminCandidatesRouteImport } from './routes/_authenticated/admin.candidates'
+import { Route as AuthenticatedMeApplicationsIdRouteImport } from './routes/_authenticated/me.applications.$id'
 import { Route as AuthenticatedClientPositionsIdRouteImport } from './routes/_authenticated/client.positions.$id'
 import { Route as AuthenticatedClientCandidatesIdRouteImport } from './routes/_authenticated/client.candidates.$id'
 import { Route as AuthenticatedAdminPositionsIdRouteImport } from './routes/_authenticated/admin.positions.$id'
@@ -72,6 +79,11 @@ const IntakeConfirmationRoute = IntakeConfirmationRouteImport.update({
   path: '/confirmation',
   getParentRoute: () => IntakeRoute,
 } as any)
+const AuthenticatedMeRoute = AuthenticatedMeRouteImport.update({
+  id: '/me',
+  path: '/me',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedClientRoute = AuthenticatedClientRouteImport.update({
   id: '/client',
   path: '/client',
@@ -81,6 +93,11 @@ const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   id: '/admin',
   path: '/admin',
   getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedMeIndexRoute = AuthenticatedMeIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthenticatedMeRoute,
 } as any)
 const AuthenticatedClientIndexRoute =
   AuthenticatedClientIndexRouteImport.update({
@@ -103,6 +120,27 @@ const ApplyReceivedApplicationIdRoute =
     id: '/apply/received/$applicationId',
     path: '/apply/received/$applicationId',
     getParentRoute: () => rootRouteImport,
+  } as any)
+const AuthenticatedMeSettingsRoute = AuthenticatedMeSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AuthenticatedMeRoute,
+} as any)
+const AuthenticatedMeProfileRoute = AuthenticatedMeProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => AuthenticatedMeRoute,
+} as any)
+const AuthenticatedMeMessagesRoute = AuthenticatedMeMessagesRouteImport.update({
+  id: '/messages',
+  path: '/messages',
+  getParentRoute: () => AuthenticatedMeRoute,
+} as any)
+const AuthenticatedMeApplicationsRoute =
+  AuthenticatedMeApplicationsRouteImport.update({
+    id: '/applications',
+    path: '/applications',
+    getParentRoute: () => AuthenticatedMeRoute,
   } as any)
 const AuthenticatedClientTeamRoute = AuthenticatedClientTeamRouteImport.update({
   id: '/team',
@@ -163,6 +201,12 @@ const AuthenticatedAdminCandidatesRoute =
     path: '/candidates',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedMeApplicationsIdRoute =
+  AuthenticatedMeApplicationsIdRouteImport.update({
+    id: '/$id',
+    path: '/$id',
+    getParentRoute: () => AuthenticatedMeApplicationsRoute,
+  } as any)
 const AuthenticatedClientPositionsIdRoute =
   AuthenticatedClientPositionsIdRouteImport.update({
     id: '/$id',
@@ -201,6 +245,7 @@ export interface FileRoutesByFullPath {
   '/jobs': typeof JobsRouteWithChildren
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/client': typeof AuthenticatedClientRouteWithChildren
+  '/me': typeof AuthenticatedMeRouteWithChildren
   '/intake/confirmation': typeof IntakeConfirmationRoute
   '/jobs/$id': typeof JobsIdRouteWithChildren
   '/admin/candidates': typeof AuthenticatedAdminCandidatesRouteWithChildren
@@ -213,15 +258,21 @@ export interface FileRoutesByFullPath {
   '/client/positions': typeof AuthenticatedClientPositionsRouteWithChildren
   '/client/settings': typeof AuthenticatedClientSettingsRoute
   '/client/team': typeof AuthenticatedClientTeamRoute
+  '/me/applications': typeof AuthenticatedMeApplicationsRouteWithChildren
+  '/me/messages': typeof AuthenticatedMeMessagesRoute
+  '/me/profile': typeof AuthenticatedMeProfileRoute
+  '/me/settings': typeof AuthenticatedMeSettingsRoute
   '/apply/received/$applicationId': typeof ApplyReceivedApplicationIdRoute
   '/jobs/$id/apply': typeof JobsIdApplyRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/client/': typeof AuthenticatedClientIndexRoute
+  '/me/': typeof AuthenticatedMeIndexRoute
   '/admin/candidates/$id': typeof AuthenticatedAdminCandidatesIdRoute
   '/admin/clients/$id': typeof AuthenticatedAdminClientsIdRoute
   '/admin/positions/$id': typeof AuthenticatedAdminPositionsIdRoute
   '/client/candidates/$id': typeof AuthenticatedClientCandidatesIdRoute
   '/client/positions/$id': typeof AuthenticatedClientPositionsIdRoute
+  '/me/applications/$id': typeof AuthenticatedMeApplicationsIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -240,15 +291,21 @@ export interface FileRoutesByTo {
   '/client/positions': typeof AuthenticatedClientPositionsRouteWithChildren
   '/client/settings': typeof AuthenticatedClientSettingsRoute
   '/client/team': typeof AuthenticatedClientTeamRoute
+  '/me/applications': typeof AuthenticatedMeApplicationsRouteWithChildren
+  '/me/messages': typeof AuthenticatedMeMessagesRoute
+  '/me/profile': typeof AuthenticatedMeProfileRoute
+  '/me/settings': typeof AuthenticatedMeSettingsRoute
   '/apply/received/$applicationId': typeof ApplyReceivedApplicationIdRoute
   '/jobs/$id/apply': typeof JobsIdApplyRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/client': typeof AuthenticatedClientIndexRoute
+  '/me': typeof AuthenticatedMeIndexRoute
   '/admin/candidates/$id': typeof AuthenticatedAdminCandidatesIdRoute
   '/admin/clients/$id': typeof AuthenticatedAdminClientsIdRoute
   '/admin/positions/$id': typeof AuthenticatedAdminPositionsIdRoute
   '/client/candidates/$id': typeof AuthenticatedClientCandidatesIdRoute
   '/client/positions/$id': typeof AuthenticatedClientPositionsIdRoute
+  '/me/applications/$id': typeof AuthenticatedMeApplicationsIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -259,6 +316,7 @@ export interface FileRoutesById {
   '/jobs': typeof JobsRouteWithChildren
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/client': typeof AuthenticatedClientRouteWithChildren
+  '/_authenticated/me': typeof AuthenticatedMeRouteWithChildren
   '/intake/confirmation': typeof IntakeConfirmationRoute
   '/jobs/$id': typeof JobsIdRouteWithChildren
   '/_authenticated/admin/candidates': typeof AuthenticatedAdminCandidatesRouteWithChildren
@@ -271,15 +329,21 @@ export interface FileRoutesById {
   '/_authenticated/client/positions': typeof AuthenticatedClientPositionsRouteWithChildren
   '/_authenticated/client/settings': typeof AuthenticatedClientSettingsRoute
   '/_authenticated/client/team': typeof AuthenticatedClientTeamRoute
+  '/_authenticated/me/applications': typeof AuthenticatedMeApplicationsRouteWithChildren
+  '/_authenticated/me/messages': typeof AuthenticatedMeMessagesRoute
+  '/_authenticated/me/profile': typeof AuthenticatedMeProfileRoute
+  '/_authenticated/me/settings': typeof AuthenticatedMeSettingsRoute
   '/apply/received/$applicationId': typeof ApplyReceivedApplicationIdRoute
   '/jobs/$id/apply': typeof JobsIdApplyRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/client/': typeof AuthenticatedClientIndexRoute
+  '/_authenticated/me/': typeof AuthenticatedMeIndexRoute
   '/_authenticated/admin/candidates/$id': typeof AuthenticatedAdminCandidatesIdRoute
   '/_authenticated/admin/clients/$id': typeof AuthenticatedAdminClientsIdRoute
   '/_authenticated/admin/positions/$id': typeof AuthenticatedAdminPositionsIdRoute
   '/_authenticated/client/candidates/$id': typeof AuthenticatedClientCandidatesIdRoute
   '/_authenticated/client/positions/$id': typeof AuthenticatedClientPositionsIdRoute
+  '/_authenticated/me/applications/$id': typeof AuthenticatedMeApplicationsIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -290,6 +354,7 @@ export interface FileRouteTypes {
     | '/jobs'
     | '/admin'
     | '/client'
+    | '/me'
     | '/intake/confirmation'
     | '/jobs/$id'
     | '/admin/candidates'
@@ -302,15 +367,21 @@ export interface FileRouteTypes {
     | '/client/positions'
     | '/client/settings'
     | '/client/team'
+    | '/me/applications'
+    | '/me/messages'
+    | '/me/profile'
+    | '/me/settings'
     | '/apply/received/$applicationId'
     | '/jobs/$id/apply'
     | '/admin/'
     | '/client/'
+    | '/me/'
     | '/admin/candidates/$id'
     | '/admin/clients/$id'
     | '/admin/positions/$id'
     | '/client/candidates/$id'
     | '/client/positions/$id'
+    | '/me/applications/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -329,15 +400,21 @@ export interface FileRouteTypes {
     | '/client/positions'
     | '/client/settings'
     | '/client/team'
+    | '/me/applications'
+    | '/me/messages'
+    | '/me/profile'
+    | '/me/settings'
     | '/apply/received/$applicationId'
     | '/jobs/$id/apply'
     | '/admin'
     | '/client'
+    | '/me'
     | '/admin/candidates/$id'
     | '/admin/clients/$id'
     | '/admin/positions/$id'
     | '/client/candidates/$id'
     | '/client/positions/$id'
+    | '/me/applications/$id'
   id:
     | '__root__'
     | '/'
@@ -347,6 +424,7 @@ export interface FileRouteTypes {
     | '/jobs'
     | '/_authenticated/admin'
     | '/_authenticated/client'
+    | '/_authenticated/me'
     | '/intake/confirmation'
     | '/jobs/$id'
     | '/_authenticated/admin/candidates'
@@ -359,15 +437,21 @@ export interface FileRouteTypes {
     | '/_authenticated/client/positions'
     | '/_authenticated/client/settings'
     | '/_authenticated/client/team'
+    | '/_authenticated/me/applications'
+    | '/_authenticated/me/messages'
+    | '/_authenticated/me/profile'
+    | '/_authenticated/me/settings'
     | '/apply/received/$applicationId'
     | '/jobs/$id/apply'
     | '/_authenticated/admin/'
     | '/_authenticated/client/'
+    | '/_authenticated/me/'
     | '/_authenticated/admin/candidates/$id'
     | '/_authenticated/admin/clients/$id'
     | '/_authenticated/admin/positions/$id'
     | '/_authenticated/client/candidates/$id'
     | '/_authenticated/client/positions/$id'
+    | '/_authenticated/me/applications/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -430,6 +514,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IntakeConfirmationRouteImport
       parentRoute: typeof IntakeRoute
     }
+    '/_authenticated/me': {
+      id: '/_authenticated/me'
+      path: '/me'
+      fullPath: '/me'
+      preLoaderRoute: typeof AuthenticatedMeRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/client': {
       id: '/_authenticated/client'
       path: '/client'
@@ -443,6 +534,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin'
       preLoaderRoute: typeof AuthenticatedAdminRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/me/': {
+      id: '/_authenticated/me/'
+      path: '/'
+      fullPath: '/me/'
+      preLoaderRoute: typeof AuthenticatedMeIndexRouteImport
+      parentRoute: typeof AuthenticatedMeRoute
     }
     '/_authenticated/client/': {
       id: '/_authenticated/client/'
@@ -471,6 +569,34 @@ declare module '@tanstack/react-router' {
       fullPath: '/apply/received/$applicationId'
       preLoaderRoute: typeof ApplyReceivedApplicationIdRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/me/settings': {
+      id: '/_authenticated/me/settings'
+      path: '/settings'
+      fullPath: '/me/settings'
+      preLoaderRoute: typeof AuthenticatedMeSettingsRouteImport
+      parentRoute: typeof AuthenticatedMeRoute
+    }
+    '/_authenticated/me/profile': {
+      id: '/_authenticated/me/profile'
+      path: '/profile'
+      fullPath: '/me/profile'
+      preLoaderRoute: typeof AuthenticatedMeProfileRouteImport
+      parentRoute: typeof AuthenticatedMeRoute
+    }
+    '/_authenticated/me/messages': {
+      id: '/_authenticated/me/messages'
+      path: '/messages'
+      fullPath: '/me/messages'
+      preLoaderRoute: typeof AuthenticatedMeMessagesRouteImport
+      parentRoute: typeof AuthenticatedMeRoute
+    }
+    '/_authenticated/me/applications': {
+      id: '/_authenticated/me/applications'
+      path: '/applications'
+      fullPath: '/me/applications'
+      preLoaderRoute: typeof AuthenticatedMeApplicationsRouteImport
+      parentRoute: typeof AuthenticatedMeRoute
     }
     '/_authenticated/client/team': {
       id: '/_authenticated/client/team'
@@ -541,6 +667,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/candidates'
       preLoaderRoute: typeof AuthenticatedAdminCandidatesRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/me/applications/$id': {
+      id: '/_authenticated/me/applications/$id'
+      path: '/$id'
+      fullPath: '/me/applications/$id'
+      preLoaderRoute: typeof AuthenticatedMeApplicationsIdRouteImport
+      parentRoute: typeof AuthenticatedMeApplicationsRoute
     }
     '/_authenticated/client/positions/$id': {
       id: '/_authenticated/client/positions/$id'
@@ -683,14 +816,51 @@ const AuthenticatedClientRouteChildren: AuthenticatedClientRouteChildren = {
 const AuthenticatedClientRouteWithChildren =
   AuthenticatedClientRoute._addFileChildren(AuthenticatedClientRouteChildren)
 
+interface AuthenticatedMeApplicationsRouteChildren {
+  AuthenticatedMeApplicationsIdRoute: typeof AuthenticatedMeApplicationsIdRoute
+}
+
+const AuthenticatedMeApplicationsRouteChildren: AuthenticatedMeApplicationsRouteChildren =
+  {
+    AuthenticatedMeApplicationsIdRoute: AuthenticatedMeApplicationsIdRoute,
+  }
+
+const AuthenticatedMeApplicationsRouteWithChildren =
+  AuthenticatedMeApplicationsRoute._addFileChildren(
+    AuthenticatedMeApplicationsRouteChildren,
+  )
+
+interface AuthenticatedMeRouteChildren {
+  AuthenticatedMeApplicationsRoute: typeof AuthenticatedMeApplicationsRouteWithChildren
+  AuthenticatedMeMessagesRoute: typeof AuthenticatedMeMessagesRoute
+  AuthenticatedMeProfileRoute: typeof AuthenticatedMeProfileRoute
+  AuthenticatedMeSettingsRoute: typeof AuthenticatedMeSettingsRoute
+  AuthenticatedMeIndexRoute: typeof AuthenticatedMeIndexRoute
+}
+
+const AuthenticatedMeRouteChildren: AuthenticatedMeRouteChildren = {
+  AuthenticatedMeApplicationsRoute:
+    AuthenticatedMeApplicationsRouteWithChildren,
+  AuthenticatedMeMessagesRoute: AuthenticatedMeMessagesRoute,
+  AuthenticatedMeProfileRoute: AuthenticatedMeProfileRoute,
+  AuthenticatedMeSettingsRoute: AuthenticatedMeSettingsRoute,
+  AuthenticatedMeIndexRoute: AuthenticatedMeIndexRoute,
+}
+
+const AuthenticatedMeRouteWithChildren = AuthenticatedMeRoute._addFileChildren(
+  AuthenticatedMeRouteChildren,
+)
+
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRouteWithChildren
   AuthenticatedClientRoute: typeof AuthenticatedClientRouteWithChildren
+  AuthenticatedMeRoute: typeof AuthenticatedMeRouteWithChildren
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRouteWithChildren,
   AuthenticatedClientRoute: AuthenticatedClientRouteWithChildren,
+  AuthenticatedMeRoute: AuthenticatedMeRouteWithChildren,
 }
 
 const AuthenticatedRouteRouteWithChildren =
