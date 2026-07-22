@@ -39,9 +39,10 @@ function PositionsPage() {
   const safeTab = TABS.some((t) => t.key === tab) ? (tab as typeof TABS[number]["key"]) : "active";
   const ctxFn = useServerFn(getClientContext);
   const listFn = useServerFn(getClientPositions);
+  const orgSearch = useClientOrgSearch();
   const { data: ctx } = useQuery({
-    queryKey: ["client-context", null],
-    queryFn: () => ctxFn({ data: {} }),
+    queryKey: ["client-context", orgSearch ?? null],
+    queryFn: () => ctxFn({ data: orgSearch ? { orgId: orgSearch } : {} }),
   });
   const orgId = ctx?.active?.organization_id;
   const { data: rows = [], refetch, isFetching } = useQuery({
