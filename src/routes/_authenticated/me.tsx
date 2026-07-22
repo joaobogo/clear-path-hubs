@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 import { getMyContext } from "@/lib/candidate.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { NotificationBell, NOTIFICATIONS_QUERY_KEY } from "@/components/notification-bell";
+import { SignOutButton } from "@/components/sign-out-button";
 import { useDashboardRealtime } from "@/hooks/use-realtime-refresh";
 import { FileText, User, MessageSquare, Shield } from "lucide-react";
 
@@ -88,7 +89,7 @@ function MeLayout() {
 
   return (
     <div className="min-h-screen flex w-full bg-background">
-      <aside className="w-60 shrink-0 border-r bg-card">
+      <aside className="w-60 shrink-0 border-r bg-card flex flex-col">
         <div className="px-4 py-4 border-b flex items-start justify-between gap-2">
           <div className="min-w-0">
             <div className="text-xs uppercase tracking-wide text-muted-foreground">
@@ -120,6 +121,9 @@ function MeLayout() {
             );
           })}
         </nav>
+        <div className="mt-auto p-3 border-t">
+          <SignOutButton className="w-full inline-flex items-center gap-1.5 rounded px-2 py-1.5 text-xs text-muted-foreground hover:bg-muted hover:text-foreground" />
+        </div>
       </aside>
       <div className="flex-1 min-w-0">
         <Outlet />

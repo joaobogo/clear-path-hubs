@@ -7,10 +7,12 @@ import {
   Activity,
   Settings,
   Inbox,
+  UserCog,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
 import { NotificationBell } from "@/components/notification-bell";
+import { SignOutButton } from "@/components/sign-out-button";
 import { useDashboardRealtime } from "@/hooks/use-realtime-refresh";
 import { NOTIFICATIONS_QUERY_KEY } from "@/components/notification-bell";
 
@@ -34,6 +36,7 @@ const SECTIONS: Array<{
   { to: "/admin/clients", label: "Clients & Positions", icon: Building2 },
   { to: "/admin/candidates", label: "Candidates", icon: Users },
   { to: "/admin/publish", label: "Publish Desk", icon: Send },
+  { to: "/admin/team", label: "Team & Access", icon: UserCog },
   { to: "/admin/health", label: "Pipeline Health", icon: Activity },
   { to: "/admin/notifications", label: "Delivery health", icon: Inbox },
   { to: "/admin/settings", label: "Settings", icon: Settings },
@@ -59,7 +62,7 @@ function AdminLayout() {
 
   return (
     <div className="min-h-screen flex w-full bg-background">
-      <aside className="w-56 shrink-0 border-r bg-card">
+      <aside className="w-56 shrink-0 border-r bg-card flex flex-col">
         <div className="px-4 py-4 border-b flex items-center justify-between gap-2">
           <Link to="/" className="font-semibold text-sm">TaaSFlow admin</Link>
           <NotificationBell />
@@ -83,6 +86,9 @@ function AdminLayout() {
             );
           })}
         </nav>
+        <div className="mt-auto p-3 border-t">
+          <SignOutButton className="w-full inline-flex items-center gap-1.5 rounded px-2 py-1.5 text-xs text-muted-foreground hover:bg-muted hover:text-foreground" />
+        </div>
       </aside>
       <div className="flex-1 min-w-0">
         <Outlet />
