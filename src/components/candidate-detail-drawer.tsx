@@ -221,16 +221,16 @@ export function CandidateDetailDrawer({
               <Badge variant="outline">vis: {match.client_visibility}</Badge>
             </div>
           )}
-          {siblingSubmissions && siblingSubmissions.length > 1 && (
+          {siblings && siblings.length > 1 && (
             <div className="mt-2">
               <Label className="text-xs">Role context</Label>
               <Select
                 value={submissionId ?? undefined}
                 onValueChange={(id) => onSubmissionChange?.(id)}
               >
-                <SelectTrigger className="h-8"><SelectValue /></SelectTrigger>
+                <SelectTrigger className="h-8" data-qa-action="drawer-role-switch"><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  {siblingSubmissions.map((s) => (
+                  {siblings.map((s) => (
                     <SelectItem key={s.id} value={s.id}>{s.position_title}</SelectItem>
                   ))}
                 </SelectContent>
