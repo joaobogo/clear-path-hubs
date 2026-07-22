@@ -3211,6 +3211,7 @@ export type Database = {
         | "request_information"
         | "not_moving_forward"
         | "hire"
+        | "offer"
       client_visibility: "hidden" | "visible" | "archived"
       delivery_channel: "in_app" | "email" | "sms"
       delivery_status:
@@ -3453,6 +3454,7 @@ export const Constants = {
         "request_information",
         "not_moving_forward",
         "hire",
+        "offer",
       ],
       client_visibility: ["hidden", "visible", "archived"],
       delivery_channel: ["in_app", "email", "sms"],
