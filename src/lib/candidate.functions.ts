@@ -8,6 +8,16 @@ import { z } from "zod";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
 
+// PostgREST returns embedded relations as an object (not array) when the
+// foreign key is UNIQUE. candidate_matches.application_id is UNIQUE, so
+// `applications → candidate_matches` comes back as an object or null.
+// Normalize to an array so downstream code can use array methods.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function asArray<T = any>(v: T | T[] | null | undefined): T[] {
+  if (v == null) return [];
+  return Array.isArray(v) ? v : [v];
+}
+
 const traceId = () =>
   `cd_${Math.random().toString(36).slice(2, 10)}${Date.now().toString(36)}`;
 
