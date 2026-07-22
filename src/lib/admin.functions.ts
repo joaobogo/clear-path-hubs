@@ -427,7 +427,9 @@ export const getPublishQueue = createServerFn({ method: "GET" })
     return (data ?? []) as AnyRow[];
   });
 
-// Sanitized client preview — exactly what a client viewer would see.
+// Sanitized client preview — returns the SAME DTO the real Client view uses,
+// so Admin Preview ≡ Client View by construction. Selects the same columns
+// `getClientCandidate` selects, then passes through `toClientCandidateDTO`.
 export const getClientPreview = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .inputValidator((i: unknown) => z.object({ match_id: z.string().uuid() }).parse(i))
@@ -437,41 +439,21 @@ export const getClientPreview = createServerFn({ method: "GET" })
     const { data: m } = await s
       .from("candidate_matches")
       .select(
-        "id,stage,delivered_at,current_score_run_id,approved_score_run_id,candidate_profiles(full_name,location,skills,experience),positions(id,title,organizations(name)),score_runs!candidate_matches_current_score_run_id_fkey(score,fit_label,explanation,result,must_have_coverage,preferred_coverage,evidence)",
+        "id,stage,delivered_at,current_score_run_id,approved_score_run_id," +
+        "candidate_profiles(full_name,location,headline,availability,skills,experience)," +
+        "positions(id,title,organizations(name))," +
+        "score_runs!candidate_matches_current_score_run_id_fkey(" +
+          "score,fit_label,explanation,result,must_have_coverage,preferred_coverage," +
+          "evidence,requirement_coverage,strengths,concerns" +
+        ")",
       )
       .eq("id", data.match_id)
       .maybeSingle();
     if (!m) return null;
-    const run = m.score_runs as AnyRow;
-    const cp = m.candidate_profiles as AnyRow;
-    const pos = m.positions as AnyRow;
-    // Sanitize: drop email/phone/full_name last part, keep first name only.
-    const firstName = (cp?.full_name ?? "").split(" ")[0] ?? "Candidate";
-    return {
-      match_id: m.id,
-      candidate: {
-        display_name: firstName,
-        location: cp?.location ?? null,
-        skills: cp?.skills ?? [],
-        experience_years:
-          (cp?.experience as AnyRow)?.total_years ?? null,
-      },
-      position: {
-        id: pos?.id,
-        title: pos?.title,
-        client_name: pos?.organizations?.name,
-      },
-      score: run?.score ?? null,
-      fit_label: run?.fit_label ?? null,
-      explanation: run?.explanation ?? null,
-      strengths: run?.result?.strengths ?? run?.strengths ?? [],
-      concerns: run?.result?.concerns ?? run?.concerns ?? [],
-      must_have_coverage: run?.must_have_coverage ?? null,
-      preferred_coverage: run?.preferred_coverage ?? null,
-      evidence: run?.evidence ?? [],
-      // Withheld from clients: raw CV, email, phone, contradiction_status, trace ids, admin notes.
-    };
+    const { toClientCandidateDTO } = await import("@/lib/client-kpi.server");
+    return toClientCandidateDTO(m as AnyRow);
   });
+
 
 // ─── Pipeline Health ─────────────────────────────────────────────────────────
 
