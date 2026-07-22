@@ -49,9 +49,10 @@ const KPI_META: Record<KpiKey, { label: string; sub: string; filter: string }> =
 function OverviewPage() {
   const ctxFn = useServerFn(getClientContext);
   const overviewFn = useServerFn(getClientOverview);
+  const orgSearch = useClientOrgSearch();
   const { data: ctx } = useQuery({
-    queryKey: ["client-context", null],
-    queryFn: () => ctxFn({ data: {} }),
+    queryKey: ["client-context", orgSearch ?? null],
+    queryFn: () => ctxFn({ data: orgSearch ? { orgId: orgSearch } : {} }),
   });
   const orgId = ctx?.active?.organization_id;
   const { data, refetch, isFetching } = useQuery({
