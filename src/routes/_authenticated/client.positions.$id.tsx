@@ -9,6 +9,9 @@ import {
   moveMatchStage,
   type MatchStage,
 } from "@/lib/client.functions";
+import { useClientOrgSearch } from "@/lib/use-client-org";
+import { useSupportView } from "@/lib/support-view";
+import { ActionGuard } from "@/components/action-guard";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -17,6 +20,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+
 
 export const Route = createFileRoute("/_authenticated/client/positions/$id")({
   head: () => ({
