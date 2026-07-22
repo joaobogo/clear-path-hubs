@@ -2022,6 +2022,7 @@ export type Database = {
           created_by_audit: boolean | null
           expires_at: string | null
           id: string
+          is_master_admin: boolean
           is_test_record: boolean | null
           legacy_source_id: string | null
           legacy_source_system: string | null
@@ -2043,6 +2044,7 @@ export type Database = {
           created_by_audit?: boolean | null
           expires_at?: string | null
           id?: string
+          is_master_admin?: boolean
           is_test_record?: boolean | null
           legacy_source_id?: string | null
           legacy_source_system?: string | null
@@ -2064,6 +2066,7 @@ export type Database = {
           created_by_audit?: boolean | null
           expires_at?: string | null
           id?: string
+          is_master_admin?: boolean
           is_test_record?: boolean | null
           legacy_source_id?: string | null
           legacy_source_system?: string | null
