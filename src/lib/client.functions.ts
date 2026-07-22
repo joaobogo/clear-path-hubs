@@ -355,8 +355,9 @@ export const getClientCandidate = createServerFn({ method: "GET" })
 // Backend validation: no matter where the transition originates (button, kanban
 // drag, keyboard), it flows through this function and cannot bypass the graph.
 
+// Canonical transition matrix — mirrored by client kanban STAGE_GRAPH.
 const STAGE_GRAPH: Record<MatchStage, MatchStage[]> = {
-  delivered: ["shortlisted", "not_moving_forward"],
+  delivered: ["shortlisted", "interview_process", "not_moving_forward"],
   shortlisted: ["interview_process", "not_moving_forward"],
   interview_process: ["offer", "shortlisted", "not_moving_forward"],
   offer: ["hired", "not_moving_forward"],
@@ -532,6 +533,7 @@ export const moveMatchStage = createServerFn({ method: "POST" })
 const ACTION_TO_STAGE: Partial<Record<string, MatchStage>> = {
   shortlist: "shortlisted",
   request_interview: "interview_process",
+  offer: "offer",
   not_moving_forward: "not_moving_forward",
   hire: "hired",
 };
@@ -548,6 +550,7 @@ export const clientAction = createServerFn({ method: "POST" })
         | "request_more_information"
         | "not_moving_forward"
         | "submit_feedback"
+        | "offer"
         | "hire";
       feedback?: string;
     }) =>
@@ -561,6 +564,7 @@ export const clientAction = createServerFn({ method: "POST" })
             "request_more_information",
             "not_moving_forward",
             "submit_feedback",
+            "offer",
             "hire",
           ]),
           feedback: z.string().max(4000).optional(),
@@ -601,6 +605,7 @@ export const clientAction = createServerFn({ method: "POST" })
       request_interview: "request_interview",
       request_more_information: "request_information",
       not_moving_forward: "not_moving_forward",
+      offer: "offer",
       hire: "hire",
     } as const;
     const decision = (decisionMap as Record<string, string>)[data.action] ?? null;
