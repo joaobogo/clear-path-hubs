@@ -48,7 +48,8 @@ function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [mode, setMode] = useState<"signin" | "forgot">("signin");
+  const [mode, setMode] = useState<"signin" | "forgot" | "signup">("signin");
+  const [fullName, setFullName] = useState("");
   const [pickerFor, setPickerFor] = useState<SessionMembership[] | null>(null);
 
   // Already signed in? Redirect immediately.
@@ -129,6 +130,39 @@ function LoginPage() {
     }
   };
 
+  const onSignUp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/login`,
+          data: { full_name: fullName },
+        },
+      });
+      if (error) throw error;
+      // Try immediate sign-in in case email confirmation is disabled.
+      const { error: signInErr } = await supabase.auth.signInWithPassword({ email, password });
+      if (signInErr) {
+        toast.success("Account created. Check your email to confirm, then sign in.");
+        setMode("signin");
+        return;
+      }
+      try {
+        const ctx = await runSession();
+        routeToDest(ctx.memberships, ctx.primary_role);
+      } catch {
+        navigate({ to: "/access-denied" });
+      }
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Sign up failed");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const onPersona = async (key: "platform_admin" | "operations" | "client_admin" | "client_editor" | "client_viewer") => {
     setLoading(true);
     try {
@@ -146,7 +180,7 @@ function LoginPage() {
         <Card className="p-6 space-y-4">
           <div>
             <h1 className="text-xl font-semibold">
-              {mode === "signin" ? "Sign in" : "Reset your password"}
+              {mode === "signin" ? "Sign in" : mode === "signup" ? "Create your account" : "Reset your password"}
             </h1>
             <p className="text-sm text-muted-foreground">TaaSFlow admin & client portal</p>
           </div>
@@ -198,12 +232,46 @@ function LoginPage() {
               <Button type="submit" className="w-full" disabled={loading}>
                 {loading ? "Signing in…" : "Sign in"}
               </Button>
+              <div className="flex items-center justify-between">
+                <button
+                  type="button"
+                  className="text-xs text-muted-foreground hover:underline"
+                  onClick={() => setMode("forgot")}
+                >
+                  Forgot password?
+                </button>
+                <button
+                  type="button"
+                  className="text-xs text-muted-foreground hover:underline"
+                  onClick={() => setMode("signup")}
+                >
+                  Create account
+                </button>
+              </div>
+            </form>
+          ) : mode === "signup" ? (
+            <form onSubmit={onSignUp} className="space-y-3">
+              <div className="space-y-1.5">
+                <Label htmlFor="sname">Full name</Label>
+                <Input id="sname" type="text" autoComplete="name" required value={fullName} onChange={(e) => setFullName(e.target.value)} />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="semail">Email</Label>
+                <Input id="semail" type="email" autoComplete="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="spassword">Password</Label>
+                <Input id="spassword" type="password" autoComplete="new-password" required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} />
+              </div>
+              <Button type="submit" className="w-full" disabled={loading}>
+                {loading ? "Creating account…" : "Create account"}
+              </Button>
               <button
                 type="button"
                 className="text-xs text-muted-foreground hover:underline"
-                onClick={() => setMode("forgot")}
+                onClick={() => setMode("signin")}
               >
-                Forgot password?
+                ← Already have an account? Sign in
               </button>
             </form>
           ) : (
