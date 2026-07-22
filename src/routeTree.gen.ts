@@ -9,21 +9,22 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as JobsRouteImport } from './routes/jobs'
 import { Route as IntakeRouteImport } from './routes/intake'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as JobsIdRouteImport } from './routes/jobs.$id'
+import { Route as JobsIndexRouteImport } from './routes/jobs.index'
 import { Route as IntakeConfirmationRouteImport } from './routes/intake.confirmation'
 import { Route as AuthenticatedMeRouteImport } from './routes/_authenticated/me'
 import { Route as AuthenticatedClientRouteImport } from './routes/_authenticated/client'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as JobsIdIndexRouteImport } from './routes/jobs.$id.index'
 import { Route as AuthenticatedMeIndexRouteImport } from './routes/_authenticated/me.index'
 import { Route as AuthenticatedClientIndexRouteImport } from './routes/_authenticated/client.index'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as JobsIdApplyRouteImport } from './routes/jobs.$id.apply'
 import { Route as ApplyReceivedApplicationIdRouteImport } from './routes/apply.received.$applicationId'
+import { Route as ApiPublicQaSeedRouteImport } from './routes/api/public/qa-seed'
 import { Route as AuthenticatedMeSettingsRouteImport } from './routes/_authenticated/me.settings'
 import { Route as AuthenticatedMeProfileRouteImport } from './routes/_authenticated/me.profile'
 import { Route as AuthenticatedMeMessagesRouteImport } from './routes/_authenticated/me.messages'
@@ -46,11 +47,6 @@ import { Route as AuthenticatedAdminPositionsIdRouteImport } from './routes/_aut
 import { Route as AuthenticatedAdminClientsIdRouteImport } from './routes/_authenticated/admin.clients.$id'
 import { Route as AuthenticatedAdminCandidatesIdRouteImport } from './routes/_authenticated/admin.candidates.$id'
 
-const JobsRoute = JobsRouteImport.update({
-  id: '/jobs',
-  path: '/jobs',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const IntakeRoute = IntakeRouteImport.update({
   id: '/intake',
   path: '/intake',
@@ -70,10 +66,10 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const JobsIdRoute = JobsIdRouteImport.update({
-  id: '/$id',
-  path: '/$id',
-  getParentRoute: () => JobsRoute,
+const JobsIndexRoute = JobsIndexRouteImport.update({
+  id: '/jobs/',
+  path: '/jobs/',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const IntakeConfirmationRoute = IntakeConfirmationRouteImport.update({
   id: '/confirmation',
@@ -95,6 +91,11 @@ const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const JobsIdIndexRoute = JobsIdIndexRouteImport.update({
+  id: '/jobs/$id/',
+  path: '/jobs/$id/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedMeIndexRoute = AuthenticatedMeIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -112,9 +113,9 @@ const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   getParentRoute: () => AuthenticatedAdminRoute,
 } as any)
 const JobsIdApplyRoute = JobsIdApplyRouteImport.update({
-  id: '/apply',
-  path: '/apply',
-  getParentRoute: () => JobsIdRoute,
+  id: '/jobs/$id/apply',
+  path: '/jobs/$id/apply',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const ApplyReceivedApplicationIdRoute =
   ApplyReceivedApplicationIdRouteImport.update({
@@ -122,6 +123,11 @@ const ApplyReceivedApplicationIdRoute =
     path: '/apply/received/$applicationId',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicQaSeedRoute = ApiPublicQaSeedRouteImport.update({
+  id: '/api/public/qa-seed',
+  path: '/api/public/qa-seed',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedMeSettingsRoute = AuthenticatedMeSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
@@ -249,12 +255,11 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/intake': typeof IntakeRouteWithChildren
-  '/jobs': typeof JobsRouteWithChildren
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/client': typeof AuthenticatedClientRouteWithChildren
   '/me': typeof AuthenticatedMeRouteWithChildren
   '/intake/confirmation': typeof IntakeConfirmationRoute
-  '/jobs/$id': typeof JobsIdRouteWithChildren
+  '/jobs/': typeof JobsIndexRoute
   '/admin/candidates': typeof AuthenticatedAdminCandidatesRouteWithChildren
   '/admin/clients': typeof AuthenticatedAdminClientsRouteWithChildren
   '/admin/health': typeof AuthenticatedAdminHealthRoute
@@ -270,11 +275,13 @@ export interface FileRoutesByFullPath {
   '/me/messages': typeof AuthenticatedMeMessagesRoute
   '/me/profile': typeof AuthenticatedMeProfileRoute
   '/me/settings': typeof AuthenticatedMeSettingsRoute
+  '/api/public/qa-seed': typeof ApiPublicQaSeedRoute
   '/apply/received/$applicationId': typeof ApplyReceivedApplicationIdRoute
   '/jobs/$id/apply': typeof JobsIdApplyRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/client/': typeof AuthenticatedClientIndexRoute
   '/me/': typeof AuthenticatedMeIndexRoute
+  '/jobs/$id/': typeof JobsIdIndexRoute
   '/admin/candidates/$id': typeof AuthenticatedAdminCandidatesIdRoute
   '/admin/clients/$id': typeof AuthenticatedAdminClientsIdRoute
   '/admin/positions/$id': typeof AuthenticatedAdminPositionsIdRoute
@@ -286,9 +293,8 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/intake': typeof IntakeRouteWithChildren
-  '/jobs': typeof JobsRouteWithChildren
   '/intake/confirmation': typeof IntakeConfirmationRoute
-  '/jobs/$id': typeof JobsIdRouteWithChildren
+  '/jobs': typeof JobsIndexRoute
   '/admin/candidates': typeof AuthenticatedAdminCandidatesRouteWithChildren
   '/admin/clients': typeof AuthenticatedAdminClientsRouteWithChildren
   '/admin/health': typeof AuthenticatedAdminHealthRoute
@@ -304,11 +310,13 @@ export interface FileRoutesByTo {
   '/me/messages': typeof AuthenticatedMeMessagesRoute
   '/me/profile': typeof AuthenticatedMeProfileRoute
   '/me/settings': typeof AuthenticatedMeSettingsRoute
+  '/api/public/qa-seed': typeof ApiPublicQaSeedRoute
   '/apply/received/$applicationId': typeof ApplyReceivedApplicationIdRoute
   '/jobs/$id/apply': typeof JobsIdApplyRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/client': typeof AuthenticatedClientIndexRoute
   '/me': typeof AuthenticatedMeIndexRoute
+  '/jobs/$id': typeof JobsIdIndexRoute
   '/admin/candidates/$id': typeof AuthenticatedAdminCandidatesIdRoute
   '/admin/clients/$id': typeof AuthenticatedAdminClientsIdRoute
   '/admin/positions/$id': typeof AuthenticatedAdminPositionsIdRoute
@@ -322,12 +330,11 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/intake': typeof IntakeRouteWithChildren
-  '/jobs': typeof JobsRouteWithChildren
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/client': typeof AuthenticatedClientRouteWithChildren
   '/_authenticated/me': typeof AuthenticatedMeRouteWithChildren
   '/intake/confirmation': typeof IntakeConfirmationRoute
-  '/jobs/$id': typeof JobsIdRouteWithChildren
+  '/jobs/': typeof JobsIndexRoute
   '/_authenticated/admin/candidates': typeof AuthenticatedAdminCandidatesRouteWithChildren
   '/_authenticated/admin/clients': typeof AuthenticatedAdminClientsRouteWithChildren
   '/_authenticated/admin/health': typeof AuthenticatedAdminHealthRoute
@@ -343,11 +350,13 @@ export interface FileRoutesById {
   '/_authenticated/me/messages': typeof AuthenticatedMeMessagesRoute
   '/_authenticated/me/profile': typeof AuthenticatedMeProfileRoute
   '/_authenticated/me/settings': typeof AuthenticatedMeSettingsRoute
+  '/api/public/qa-seed': typeof ApiPublicQaSeedRoute
   '/apply/received/$applicationId': typeof ApplyReceivedApplicationIdRoute
   '/jobs/$id/apply': typeof JobsIdApplyRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/client/': typeof AuthenticatedClientIndexRoute
   '/_authenticated/me/': typeof AuthenticatedMeIndexRoute
+  '/jobs/$id/': typeof JobsIdIndexRoute
   '/_authenticated/admin/candidates/$id': typeof AuthenticatedAdminCandidatesIdRoute
   '/_authenticated/admin/clients/$id': typeof AuthenticatedAdminClientsIdRoute
   '/_authenticated/admin/positions/$id': typeof AuthenticatedAdminPositionsIdRoute
@@ -361,12 +370,11 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/intake'
-    | '/jobs'
     | '/admin'
     | '/client'
     | '/me'
     | '/intake/confirmation'
-    | '/jobs/$id'
+    | '/jobs/'
     | '/admin/candidates'
     | '/admin/clients'
     | '/admin/health'
@@ -382,11 +390,13 @@ export interface FileRouteTypes {
     | '/me/messages'
     | '/me/profile'
     | '/me/settings'
+    | '/api/public/qa-seed'
     | '/apply/received/$applicationId'
     | '/jobs/$id/apply'
     | '/admin/'
     | '/client/'
     | '/me/'
+    | '/jobs/$id/'
     | '/admin/candidates/$id'
     | '/admin/clients/$id'
     | '/admin/positions/$id'
@@ -398,9 +408,8 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/intake'
-    | '/jobs'
     | '/intake/confirmation'
-    | '/jobs/$id'
+    | '/jobs'
     | '/admin/candidates'
     | '/admin/clients'
     | '/admin/health'
@@ -416,11 +425,13 @@ export interface FileRouteTypes {
     | '/me/messages'
     | '/me/profile'
     | '/me/settings'
+    | '/api/public/qa-seed'
     | '/apply/received/$applicationId'
     | '/jobs/$id/apply'
     | '/admin'
     | '/client'
     | '/me'
+    | '/jobs/$id'
     | '/admin/candidates/$id'
     | '/admin/clients/$id'
     | '/admin/positions/$id'
@@ -433,12 +444,11 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/auth'
     | '/intake'
-    | '/jobs'
     | '/_authenticated/admin'
     | '/_authenticated/client'
     | '/_authenticated/me'
     | '/intake/confirmation'
-    | '/jobs/$id'
+    | '/jobs/'
     | '/_authenticated/admin/candidates'
     | '/_authenticated/admin/clients'
     | '/_authenticated/admin/health'
@@ -454,11 +464,13 @@ export interface FileRouteTypes {
     | '/_authenticated/me/messages'
     | '/_authenticated/me/profile'
     | '/_authenticated/me/settings'
+    | '/api/public/qa-seed'
     | '/apply/received/$applicationId'
     | '/jobs/$id/apply'
     | '/_authenticated/admin/'
     | '/_authenticated/client/'
     | '/_authenticated/me/'
+    | '/jobs/$id/'
     | '/_authenticated/admin/candidates/$id'
     | '/_authenticated/admin/clients/$id'
     | '/_authenticated/admin/positions/$id'
@@ -472,19 +484,15 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   IntakeRoute: typeof IntakeRouteWithChildren
-  JobsRoute: typeof JobsRouteWithChildren
+  JobsIndexRoute: typeof JobsIndexRoute
+  ApiPublicQaSeedRoute: typeof ApiPublicQaSeedRoute
   ApplyReceivedApplicationIdRoute: typeof ApplyReceivedApplicationIdRoute
+  JobsIdApplyRoute: typeof JobsIdApplyRoute
+  JobsIdIndexRoute: typeof JobsIdIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/jobs': {
-      id: '/jobs'
-      path: '/jobs'
-      fullPath: '/jobs'
-      preLoaderRoute: typeof JobsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/intake': {
       id: '/intake'
       path: '/intake'
@@ -513,12 +521,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/jobs/$id': {
-      id: '/jobs/$id'
-      path: '/$id'
-      fullPath: '/jobs/$id'
-      preLoaderRoute: typeof JobsIdRouteImport
-      parentRoute: typeof JobsRoute
+    '/jobs/': {
+      id: '/jobs/'
+      path: '/jobs'
+      fullPath: '/jobs/'
+      preLoaderRoute: typeof JobsIndexRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/intake/confirmation': {
       id: '/intake/confirmation'
@@ -548,6 +556,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/jobs/$id/': {
+      id: '/jobs/$id/'
+      path: '/jobs/$id'
+      fullPath: '/jobs/$id/'
+      preLoaderRoute: typeof JobsIdIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/me/': {
       id: '/_authenticated/me/'
       path: '/'
@@ -571,16 +586,23 @@ declare module '@tanstack/react-router' {
     }
     '/jobs/$id/apply': {
       id: '/jobs/$id/apply'
-      path: '/apply'
+      path: '/jobs/$id/apply'
       fullPath: '/jobs/$id/apply'
       preLoaderRoute: typeof JobsIdApplyRouteImport
-      parentRoute: typeof JobsIdRoute
+      parentRoute: typeof rootRouteImport
     }
     '/apply/received/$applicationId': {
       id: '/apply/received/$applicationId'
       path: '/apply/received/$applicationId'
       fullPath: '/apply/received/$applicationId'
       preLoaderRoute: typeof ApplyReceivedApplicationIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/qa-seed': {
+      id: '/api/public/qa-seed'
+      path: '/api/public/qa-seed'
+      fullPath: '/api/public/qa-seed'
+      preLoaderRoute: typeof ApiPublicQaSeedRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/me/settings': {
@@ -899,34 +921,16 @@ const IntakeRouteChildren: IntakeRouteChildren = {
 const IntakeRouteWithChildren =
   IntakeRoute._addFileChildren(IntakeRouteChildren)
 
-interface JobsIdRouteChildren {
-  JobsIdApplyRoute: typeof JobsIdApplyRoute
-}
-
-const JobsIdRouteChildren: JobsIdRouteChildren = {
-  JobsIdApplyRoute: JobsIdApplyRoute,
-}
-
-const JobsIdRouteWithChildren =
-  JobsIdRoute._addFileChildren(JobsIdRouteChildren)
-
-interface JobsRouteChildren {
-  JobsIdRoute: typeof JobsIdRouteWithChildren
-}
-
-const JobsRouteChildren: JobsRouteChildren = {
-  JobsIdRoute: JobsIdRouteWithChildren,
-}
-
-const JobsRouteWithChildren = JobsRoute._addFileChildren(JobsRouteChildren)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   IntakeRoute: IntakeRouteWithChildren,
-  JobsRoute: JobsRouteWithChildren,
+  JobsIndexRoute: JobsIndexRoute,
+  ApiPublicQaSeedRoute: ApiPublicQaSeedRoute,
   ApplyReceivedApplicationIdRoute: ApplyReceivedApplicationIdRoute,
+  JobsIdApplyRoute: JobsIdApplyRoute,
+  JobsIdIndexRoute: JobsIdIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
