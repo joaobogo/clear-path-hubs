@@ -755,6 +755,252 @@ export const INDUSTRY_ENTRIES: IndustryEntry[] = [
         "Submit the role — one workspace, one rubric, one reviewed shortlist.",
     },
   },
+  {
+    slug: "sales",
+    eyebrow: "Sales",
+    name: "Sales",
+    meta: {
+      title: "Sales hiring — TaaSFlow",
+      description:
+        "Structured sourcing for revenue teams. Ranked shortlists with evidence of quota, motion, segment and product-type experience — not job titles.",
+    },
+    hero: {
+      title: "Sales hiring, calibrated per motion and segment.",
+      subtitle:
+        "TaaSFlow gives revenue leaders a workspace for every sales hire — AE, AM, SDR, SE, sales leadership — with rubrics tuned to motion, deal size, segment and product type.",
+    },
+    challenges: [
+      {
+        title: "Motion and deal-size fit",
+        body: "Transactional, mid-market and enterprise motions reward different skills. Our rubric captures the actual cycle length, average deal size and buying committees the candidate has worked with.",
+      },
+      {
+        title: "Quota and attainment evidence",
+        body: "We extract quota, attainment and pipeline evidence from the CV instead of trusting a headline number. When it's not on the CV, the shortlist says so.",
+      },
+      {
+        title: "Segment and product fit",
+        body: "Selling SaaS to SMB is not selling infra to enterprise. Segment, ICP and product type are captured in intake as first-class filters.",
+      },
+    ],
+    roles: [
+      "SDRs and BDRs",
+      "Account executives (SMB, mid-market, enterprise)",
+      "Account managers and CSMs",
+      "Sales engineers and solutions consultants",
+      "Sales managers and directors",
+      "VPs of sales and CROs",
+      "Partnerships and channel leads",
+      "Revenue operations specialists",
+    ],
+    signals: [
+      "Motion, deal size and cycle captured",
+      "Quota and attainment evidence from the CV",
+      "ICP and segment as first-class filters",
+    ],
+    cta: {
+      title: "Building the revenue team?",
+      description:
+        "Submit the role — one workspace per requisition, ranked and reviewed.",
+    },
+  },
+  {
+    slug: "marketing",
+    eyebrow: "Marketing",
+    name: "Marketing",
+    meta: {
+      title: "Marketing hiring — TaaSFlow",
+      description:
+        "Structured sourcing for marketing teams. Ranked shortlists with evidence of channel, funnel-stage and audience experience — not tool checklists.",
+    },
+    hero: {
+      title: "Marketing hiring, tuned per channel and funnel stage.",
+      subtitle:
+        "TaaSFlow gives marketing leaders a workspace for every hire — demand, product, content, brand, lifecycle — with rubrics tuned per channel, funnel stage and audience.",
+    },
+    challenges: [
+      {
+        title: "Channel and stack fit",
+        body: "Paid, SEO, content, lifecycle and events reward different signal. Our rubric captures the channels actually owned and results measured, not the list of tools mentioned.",
+      },
+      {
+        title: "Funnel-stage ownership",
+        body: "Top-of-funnel demand, product marketing and lifecycle marketers own different work. We capture funnel-stage ownership so shortlists match the seat you're hiring for.",
+      },
+      {
+        title: "Audience and motion",
+        body: "B2B enterprise, B2B SMB, B2C and community-led motions all need distinct evidence. Audience is captured as a filter, not a keyword.",
+      },
+    ],
+    roles: [
+      "Demand generation managers",
+      "Product marketing managers",
+      "Content and editorial leads",
+      "Brand and creative directors",
+      "Lifecycle and CRM marketers",
+      "SEO and organic growth leads",
+      "Performance marketing managers",
+      "Marketing operations and analytics",
+      "Heads of marketing and CMOs",
+    ],
+    signals: [
+      "Channel ownership captured per role",
+      "Funnel-stage rubric per requisition",
+      "Audience and motion as first-class filters",
+    ],
+    cta: {
+      title: "Hiring across marketing?",
+      description:
+        "Submit the role — one workspace per requisition, ranked and reviewed.",
+    },
+  },
+  {
+    slug: "human-resources",
+    eyebrow: "Human Resources",
+    name: "Human Resources",
+    meta: {
+      title: "Human resources hiring — TaaSFlow",
+      description:
+        "Structured sourcing for people teams. Ranked shortlists with evidence of function, employee-lifecycle and organisation-size experience.",
+    },
+    hero: {
+      title: "People-team hiring, calibrated per function and stage.",
+      subtitle:
+        "TaaSFlow gives CPOs and HR leaders a workspace for every people hire — talent, HRBP, comp & ben, L&D, people ops — with rubrics tuned per function and organisation stage.",
+    },
+    challenges: [
+      {
+        title: "Function-specific evidence",
+        body: "Recruiting, HRBP, comp & ben, DEI, L&D and people ops each need distinct signal. Our rubric captures the specific function and scope the candidate actually owned.",
+      },
+      {
+        title: "Organisation stage and size",
+        body: "Early-stage, scaleup and mature-enterprise people work look nothing alike. Stage and headcount context are captured in intake and used as filters.",
+      },
+      {
+        title: "Systems and operating model",
+        body: "HRIS, ATS, payroll and comp systems are captured as structured signals so shortlists reflect the stack the hire will actually operate.",
+      },
+    ],
+    roles: [
+      "Recruiters and talent leads",
+      "HR business partners",
+      "People operations specialists",
+      "Compensation and benefits specialists",
+      "Learning and development leads",
+      "DEI and culture specialists",
+      "HR generalists",
+      "Heads of people and CPOs",
+    ],
+    signals: [
+      "Function and scope rubric per role",
+      "Stage and headcount captured in intake",
+      "Systems and operating model as filters",
+    ],
+    cta: {
+      title: "Hiring for the people team?",
+      description:
+        "Submit the role — one workspace, one rubric, one reviewed shortlist.",
+    },
+  },
+  {
+    slug: "ecommerce",
+    eyebrow: "E-commerce",
+    name: "E-commerce",
+    meta: {
+      title: "E-commerce hiring — TaaSFlow",
+      description:
+        "Structured sourcing for online retailers and DTC brands. Ranked shortlists with evidence of channel, category and lifecycle experience.",
+    },
+    hero: {
+      title: "E-commerce hiring, tuned per channel and category.",
+      subtitle:
+        "TaaSFlow gives e-commerce leaders a workspace for every hire — merchandising, growth, ops, retention — with rubrics tuned per channel, category and brand stage.",
+    },
+    challenges: [
+      {
+        title: "Channel and marketplace fit",
+        body: "DTC store, marketplaces, wholesale and retail media each require distinct evidence. Our rubric captures the channels actually owned and the results measured.",
+      },
+      {
+        title: "Category and margin context",
+        body: "Apparel, beauty, home, consumables and hardgoods have different unit economics. We capture category and margin context so shortlists match your operating reality.",
+      },
+      {
+        title: "Full-funnel ownership",
+        body: "Growth, merchandising, retention and CX often overlap. Rubrics per seat surface the specific stage of the funnel the candidate actually owned.",
+      },
+    ],
+    roles: [
+      "E-commerce managers and directors",
+      "Merchandising and buying leads",
+      "Growth and performance marketers",
+      "Retention and lifecycle marketers",
+      "Marketplace and channel managers",
+      "E-commerce operations and fulfilment",
+      "Site merchandising and CRO specialists",
+      "Customer experience and support leads",
+    ],
+    signals: [
+      "Channel and marketplace rubric per role",
+      "Category and margin context captured",
+      "Funnel-stage ownership from the CV",
+    ],
+    cta: {
+      title: "Hiring in e-commerce?",
+      description:
+        "Submit the role — one workspace per requisition, ranked and reviewed.",
+    },
+  },
+  {
+    slug: "media",
+    eyebrow: "Media",
+    name: "Media",
+    meta: {
+      title: "Media hiring — TaaSFlow",
+      description:
+        "Structured sourcing for publishers, studios, agencies and creator businesses. Ranked shortlists with evidence of format, audience and revenue-model experience.",
+    },
+    hero: {
+      title: "Media hiring, calibrated per format and revenue model.",
+      subtitle:
+        "TaaSFlow gives media leaders a workspace for every hire — editorial, production, distribution, monetisation — with rubrics tuned per format, audience and revenue model.",
+    },
+    challenges: [
+      {
+        title: "Format and craft fit",
+        body: "Editorial, video, audio, social and live formats each require distinct craft evidence. Our rubric captures the formats actually produced and the audiences reached.",
+      },
+      {
+        title: "Revenue-model context",
+        body: "Advertising, subscriptions, licensing and creator commerce reward different signal. We capture the revenue model in intake so shortlists reflect it.",
+      },
+      {
+        title: "Audience and distribution",
+        body: "Owned platforms, third-party platforms and syndication all shape the role differently. Distribution surface is captured as a filter, not a keyword search.",
+      },
+    ],
+    roles: [
+      "Editors and editorial leads",
+      "Producers and executive producers",
+      "Video and audio production leads",
+      "Social and community leads",
+      "Distribution and platform managers",
+      "Ad sales and monetisation leads",
+      "Subscription and audience-growth managers",
+      "Creator and talent partnerships",
+    ],
+    signals: [
+      "Format and craft rubric per role",
+      "Revenue model captured in intake",
+      "Distribution surface as a first-class filter",
+    ],
+    cta: {
+      title: "Hiring in media?",
+      description:
+        "Submit the role — one workspace, one rubric, one reviewed shortlist.",
+    },
+  },
 ];
 
 export function getIndustryEntry(slug: string): IndustryEntry | undefined {
