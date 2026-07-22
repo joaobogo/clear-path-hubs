@@ -528,7 +528,7 @@ export function CandidateDetailDrawer({
                         <Button variant="secondary" size="sm">Preview CV</Button>
                       </a>
                     )}
-                    <DownloadCvButton matchId={matchId} />
+                    {submissionId && <DownloadCvButton matchId={submissionId} />}
                   </div>
                 </>
               )}
