@@ -267,7 +267,7 @@ export const getClientCandidates = createServerFn({ method: "GET" })
         `id, stage, delivered_at, position_id,
          candidate_profiles(id, full_name, headline, location, availability),
          positions(id, title),
-         score_runs:approved_score_run_id (score, fit_label, explanation, strengths, concerns, requirement_coverage)`,
+         score_runs:approved_score_run_id (score, fit_label, explanation, result, requirement_coverage, evidence)`,
       )
       .eq("organization_id", data.orgId)
       .eq("client_visibility", "visible");
@@ -322,7 +322,7 @@ export const getClientCandidate = createServerFn({ method: "GET" })
         `id, stage, delivered_at, position_id,
          candidate_profiles(id, full_name, headline, location, availability),
          positions(id, title, location, work_model),
-         score_runs:approved_score_run_id (score, fit_label, explanation, strengths, concerns, evidence, requirement_coverage)`,
+         score_runs:approved_score_run_id (score, fit_label, explanation, result, evidence, requirement_coverage)`,
       )
       .eq("organization_id", data.orgId)
       .eq("id", data.matchId)
