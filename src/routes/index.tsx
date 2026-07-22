@@ -52,12 +52,12 @@ function Home() {
           hand you the final decisions.
         </p>
         <div className="flex flex-wrap items-center justify-center gap-3">
-          <Link to="/intake">
-            <Button size="lg">Submit an intake</Button>
-          </Link>
-          <Link to="/jobs">
-            <Button size="lg" variant="outline">Browse open roles</Button>
-          </Link>
+          <Button asChild size="lg">
+            <Link to="/intake">Submit an intake</Link>
+          </Button>
+          <Button asChild size="lg" variant="outline">
+            <Link to="/jobs">Browse open roles</Link>
+          </Button>
         </div>
         <p className="text-xs text-muted-foreground">
           No payment. No pricing selection. Your draft is saved automatically.
