@@ -37,9 +37,9 @@ function Home() {
             <Link to="/auth" className="text-muted-foreground hover:text-foreground">
               Sign in
             </Link>
-            <Link to="/intake">
-              <Button size="sm">Start hiring</Button>
-            </Link>
+            <Button asChild size="sm">
+              <Link to="/intake">Start hiring</Link>
+            </Button>
           </nav>
         </div>
       </header>
