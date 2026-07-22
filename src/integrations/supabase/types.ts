@@ -2132,6 +2132,9 @@ export type Database = {
           ended_at: string | null
           expires_at: string
           id: string
+          mode: string
+          organization_id: string | null
+          permission_preview: string
           reason: string
           scope: string
           started_at: string
@@ -2147,7 +2150,10 @@ export type Database = {
           ended_at?: string | null
           expires_at: string
           id?: string
-          reason: string
+          mode?: string
+          organization_id?: string | null
+          permission_preview?: string
+          reason?: string
           scope?: string
           started_at?: string
           target_role_snapshot?: string | null
@@ -2162,6 +2168,9 @@ export type Database = {
           ended_at?: string | null
           expires_at?: string
           id?: string
+          mode?: string
+          organization_id?: string | null
+          permission_preview?: string
           reason?: string
           scope?: string
           started_at?: string
@@ -2170,7 +2179,22 @@ export type Database = {
           ticket_ref?: string | null
           trace_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "support_sessions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "admin_clients_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "support_sessions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       trace_index: {
         Row: {
