@@ -504,7 +504,46 @@ export const getPipelineHealth = createServerFn({ method: "GET" })
     };
   });
 
-// ─── Candidate search (server-side) ──────────────────────────────────────────
+// ─── Match visibility (admin) ────────────────────────────────────────────────
+
+const matchVisInput = z.object({
+  match_id: z.string().uuid(),
+  visibility: z.enum(["hidden", "visible"]),
+});
+
+export const setMatchClientVisibility = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: unknown) => matchVisInput.parse(i))
+  .handler(async ({ data, context }) => {
+    await requireStaff(context.userId);
+    const trace_id = traceId();
+    const s = await getAdmin();
+    const { data: before } = await s
+      .from("candidate_matches")
+      .select("id,organization_id,client_visibility")
+      .eq("id", data.match_id)
+      .maybeSingle();
+    if (!before) throw new Error("match_not_found");
+    const { data: after, error } = await s
+      .from("candidate_matches")
+      .update({ client_visibility: data.visibility })
+      .eq("id", data.match_id)
+      .select("id,client_visibility")
+      .maybeSingle();
+    if (error) throw new Error(error.message);
+    await writeAudit({
+      actor: context.userId,
+      action: `match.visibility.${data.visibility}`,
+      entity_type: "candidate_match",
+      entity_id: data.match_id,
+      organization_id: before.organization_id,
+      before: { visibility: before.client_visibility },
+      after,
+      trace_id,
+    });
+    return { ok: true as const, trace_id, match: after, action: data.visibility };
+  });
+
 
 const candidateFilter = z.object({
   q: z.string().optional(),
