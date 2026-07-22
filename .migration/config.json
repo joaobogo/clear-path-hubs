@@ -1,0 +1,23 @@
+{
+  "MIGRATION_SOURCE_READ_ONLY": true,
+  "MIGRATION_DESTINATION": {
+    "lovable_project_id": "1dc5ee7e-1294-441c-8288-850e79e443f6",
+    "lovable_project_name": "Clear Path Hubs",
+    "supabase_project_ref": "nfwetiyrxsrejdodvale",
+    "published_url": "https://clear-path-hubs.lovable.app"
+  },
+  "MIGRATION_SOURCE": {
+    "lovable_project_id": "079e56b8-9e44-4daa-bd34-e20508902988",
+    "lovable_project_name": "Talent Streamline",
+    "supabase_project_ref": "qldhdrxdnrnwbkaxozno",
+    "published_url": "https://sourcing-suite-ai.lovable.app",
+    "custom_domain": "taasflow.com",
+    "github_repository": "joaobogo/sourcing-suite-ai"
+  },
+  "MIGRATION_RUN_ID": "MIG-2026-07-22-001",
+  "MIGRATION_DRY_RUN": true,
+  "MIGRATION_ALLOW_DELETE": false,
+  "MIGRATION_ALLOW_OVERWRITE": false,
+  "locked_at_utc": "2026-07-22",
+  "notes": "Secrets are stored via secrets--add_secret and referenced through process.env only; never hardcode legacy DB credentials in code, docs, or logs."
+}
