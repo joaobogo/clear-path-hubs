@@ -1,0 +1,52 @@
+{
+  "trace_id": "BRAND-EXTRACT-2026-07-22",
+  "source_of_truth": {
+    "code": "src/config/brand.ts",
+    "css":  "src/styles/brand-tokens.css"
+  },
+  "imported_from_stylesheet": "src/styles.css (line 4)",
+  "font_loading": {
+    "location": "src/routes/__root.tsx head.links",
+    "families": ["Inter 400/500/600/700", "Fraunces opsz 9..144 400/600"],
+    "provider": "fonts.googleapis.com",
+    "preconnect": true
+  },
+  "color_tokens": {
+    "brand-navy":        "oklch(0.29 0.055 262)",
+    "brand-navy-light":  "oklch(0.45 0.055 262)",
+    "brand-navy-dark":   "oklch(0.22 0.055 262)",
+    "brand-ocean":       "oklch(0.60 0.19 258)",
+    "brand-ocean-light": "oklch(0.68 0.16 258)",
+    "brand-sky":         "oklch(0.92 0.017 245)",
+    "brand-sky-dark":    "oklch(0.87 0.020 245)",
+    "brand-ink":         "oklch(0.18 0.03 262)",
+    "brand-paper":       "oklch(0.985 0.003 245)",
+    "brand-success":     "oklch(0.62 0.14 155)",
+    "brand-warning":     "oklch(0.75 0.16 75)",
+    "brand-danger":      "oklch(0.58 0.22 27)",
+    "brand-info":        "oklch(0.60 0.19 258)"
+  },
+  "radii":   ["xs 4","sm 6","md 8","lg 12","xl 16","2xl 24","pill 999"],
+  "shadows": ["xs","sm","md","lg","xl","glow"],
+  "spacing_scale_px": [4,8,12,16,20,24,32,40,48,64,80,96],
+  "section_spacing_px": { "sm": 48, "md": 72, "lg": 96, "xl": 128 },
+  "content_widths_px": { "public": 1200, "workspace": 1440, "prose": 720, "gutter": 20 },
+  "typography_scale": {
+    "display": { "px": 52, "line": 1.04, "font": "Fraunces" },
+    "h1":      { "px": 40, "line": 1.08, "font": "Fraunces" },
+    "h2":      { "px": 30, "line": 1.15, "font": "Fraunces" },
+    "h3":      { "px": 22, "line": 1.25, "font": "Inter 600" },
+    "h4":      { "px": 18, "line": 1.30, "font": "Inter 600" },
+    "body-lg": { "px": 18, "line": 1.60, "font": "Inter 400" },
+    "body":    { "px": 16, "line": 1.60, "font": "Inter 400" },
+    "body-sm": { "px": 14, "line": 1.55, "font": "Inter 400" },
+    "meta":    { "px": 12, "line": 1.50, "font": "Inter 500" },
+    "eyebrow": { "px": 11, "line": 1.20, "font": "Inter 600 uppercase 0.12em" }
+  },
+  "buttons":  ["primary","secondary","tertiary","link","danger"],
+  "icons":    { "library": "lucide-react", "stroke_width": 1.75, "sizes_px": [12,14,16,18,20,24,28,32] },
+  "focus":    { "ring": "0 0 0 3px oklch(0.60 0.19 258 / 0.35)", "min_target_px": 44 },
+  "status_colors": ["success","warning","danger","info","inactive"],
+  "dashboard_isolation": "Marketing tokens are prefixed --brand-*. shadcn tokens in src/styles.css (--primary, --background, --foreground, --card, --border, etc.) are unchanged. Dashboards do not consume --brand-* tokens unless explicitly opted in.",
+  "totals": { "tokens_defined": 45, "fonts_loaded": 2, "utilities_added": 9 }
+}
