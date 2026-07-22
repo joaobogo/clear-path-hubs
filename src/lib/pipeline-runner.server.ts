@@ -7,12 +7,8 @@
 
 import { extractCvText } from "./cv-extractor.server";
 import { hydrateProfileFromCv } from "./cv-hydration.server";
-import {
-  ENGINE_VERSION,
-  scoreCandidate,
-  type RequirementInput,
-  type ScreeningAnswer,
-} from "./scoring-engine.server";
+import { ENGINE_VERSION, type ScreeningAnswer } from "./scoring-engine.server";
+import { executeScoring } from "./scoring-service.server";
 import type { Json } from "@/integrations/supabase/types";
 
 type State =
@@ -64,13 +60,12 @@ async function recordJob(
   });
 }
 
-function buildRequirements(pos: Any): RequirementInput[] {
-  const req = Array.isArray(pos?.requirements) ? (pos.requirements as string[]) : [];
-  const pref = Array.isArray(pos?.preferred_requirements) ? (pos.preferred_requirements as string[]) : [];
-  return [
-    ...req.map((t, i) => ({ id: `req-${i}`, text: String(t), required: true, keywords: [] })),
-    ...pref.map((t, i) => ({ id: `pref-${i}`, text: String(t), required: false, keywords: [] })),
-  ];
+// Requirements are built inside the canonical scoring service now.
+// This helper only remains to detect "no structured requirements" for the enrich gate.
+function hasStructuredRequirements(pos: Any): boolean {
+  const req = Array.isArray(pos?.requirements) ? pos.requirements : [];
+  const pref = Array.isArray(pos?.preferred_requirements) ? pos.preferred_requirements : [];
+  return req.length + pref.length > 0;
 }
 
 function buildScreening(rows: Any[]): ScreeningAnswer[] {
@@ -238,8 +233,7 @@ export async function runPipelineForMatch(matchId: string, opts: { force?: boole
       });
       return { match_id: matchId, trace_id, final_state: "manual_review_required", steps };
     }
-    const reqs = buildRequirements(pos);
-    if (reqs.length === 0) {
+    if (!hasStructuredRequirements(pos)) {
       await setState(s, matchId, "manual_review_required", {
         trace_id, code: "requirements_missing",
         message: "Position has no structured requirements to score against.",
@@ -249,69 +243,20 @@ export async function runPipelineForMatch(matchId: string, opts: { force?: boole
     await setState(s, matchId, "ready_to_score", { trace_id });
     steps.push({ step: "enrich", ok: true });
 
-    // ─── SCORE ────────────────────────────────────────────────────────────────
-    await setState(s, matchId, "scoring", { trace_id });
-    let result;
-    try {
-      result = scoreCandidate({ cv_text: cvText, requirements: reqs, screening });
-    } catch (e) {
-      const msg = (e as Error).message;
-      await setState(s, matchId, "failed", { trace_id, code: "engine_error", message: msg });
-      await recordJob(s, matchId, "score", "failed", trace_id, { code: "engine_error", message: msg });
-      return { match_id: matchId, trace_id, final_state: "failed", steps: [...steps, { step: "score", ok: false, note: msg }] };
+    // ─── SCORE (delegated to canonical service) ──────────────────────────────
+    const scoring = await executeScoring(matchId, {
+      trace_id, reason: "auto_pipeline",
+    });
+    if (!scoring.ok) {
+      // service already recorded processing_jobs + state; just surface here.
+      return {
+        match_id: matchId, trace_id,
+        final_state: scoring.final_state,
+        steps: [...steps, { step: "score", ok: false, note: scoring.code }],
+      };
     }
-
-    const { data: dup } = await s.from("score_runs")
-      .select("id").eq("candidate_match_id", matchId)
-      .eq("input_hash", result.input_hash).eq("status", "completed")
-      .limit(1).maybeSingle();
-
-    let runId: string;
-    if (dup?.id) runId = dup.id;
-    else {
-      const { data: run, error: runErr } = await s.from("score_runs").insert({
-        candidate_match_id: matchId,
-        position_id: ctx.match.position_id,
-        engine_version: ENGINE_VERSION,
-        score: result.score,
-        confidence: result.overall_confidence,
-        status: "completed",
-        explanation: [
-          `${result.fit_label.replace(/_/g, " ")} • must-have coverage ${(result.must_have_coverage * 100).toFixed(0)}%`,
-          result.strengths[0] ?? null, result.concerns[0] ?? null,
-        ].filter(Boolean).join(" — "),
-        evidence: result.evidence as unknown as Json,
-        requirement_coverage: {
-          must_have: result.category_breakdown.must_have,
-          preferred: result.category_breakdown.preferred,
-          screening_alignment: result.category_breakdown.screening_alignment,
-        } as unknown as Json,
-        started_at: new Date().toISOString(),
-        completed_at: new Date().toISOString(),
-        trace_id,
-        result: result as unknown as Json,
-        fit_label: result.fit_label,
-        must_have_coverage: result.must_have_coverage,
-        preferred_coverage: result.preferred_coverage,
-        contradiction_status: result.contradiction_status,
-        input_hash: result.input_hash,
-      }).select("id").single();
-      if (runErr || !run) {
-        const msg = runErr?.message ?? "insert_failed";
-        await setState(s, matchId, "failed", { trace_id, code: "engine_error", message: msg });
-        await recordJob(s, matchId, "score", "failed", trace_id, { code: "engine_error", message: msg });
-        return { match_id: matchId, trace_id, final_state: "failed", steps: [...steps, { step: "score", ok: false, note: msg }] };
-      }
-      runId = run.id;
-    }
-
-    await s.from("candidate_matches").update({ current_score_run_id: runId }).eq("id", matchId);
-    finalState =
-      result.contradiction_status === "disqualifying_answer" || result.overall_confidence < 0.35
-        ? "manual_review_required" : "scored";
-    await setState(s, matchId, finalState, { trace_id });
-    await recordJob(s, matchId, "score", "completed", trace_id);
-    steps.push({ step: "score", ok: true, note: `${result.score.toFixed(1)}` });
+    finalState = scoring.final_state;
+    steps.push({ step: "score", ok: true, note: scoring.reused ? "reused" : `${scoring.score.toFixed(1)}` });
 
     return { match_id: matchId, trace_id, final_state: finalState, steps };
   } catch (err) {

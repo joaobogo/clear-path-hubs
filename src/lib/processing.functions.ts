@@ -16,11 +16,10 @@ import { z } from "zod";
 import type { Json } from "@/integrations/supabase/types";
 import {
   ENGINE_VERSION,
-  scoreCandidate,
   type RequirementInput,
   type ScreeningAnswer,
-  type ScoringResult,
 } from "@/lib/scoring-engine.server";
+import { executeScoring, assertPublishGate } from "@/lib/scoring-service.server";
 
 type State =
   | "queued"
@@ -297,94 +296,9 @@ async function stepEnrich(matchId: string, trace_id: string): Promise<State> {
 }
 
 async function stepScore(matchId: string, trace_id: string): Promise<State> {
-  const supabase = (await getAdmin()) as AnyRow;
-  const ctx = await loadMatchContext(matchId);
-  await setState(matchId, "scoring", { trace_id });
-
-  const cvText: string = ctx.file?.extracted_text ?? "";
-  const requirements = buildRequirements(ctx.position ?? { requirements: [], preferred_requirements: [] });
-  const screening = buildScreening(ctx.answers);
-
-  let result: ScoringResult;
-  try {
-    result = scoreCandidate({ cv_text: cvText, requirements, screening });
-  } catch (err) {
-    const msg = (err as Error).message;
-    await setState(matchId, "failed", { trace_id, code: "engine_error", message: msg });
-    await recordJob(matchId, "score", "failed", trace_id, { code: "engine_error", message: msg });
-    return "failed";
-  }
-
-  // Dedupe: reuse an existing completed run with the same input hash for this match.
-  const { data: existing } = await supabase
-    .from("score_runs")
-    .select("id,input_hash,status")
-    .eq("candidate_match_id", matchId)
-    .eq("input_hash", result.input_hash)
-    .eq("status", "completed")
-    .limit(1)
-    .maybeSingle();
-
-  let runId: string;
-  if (existing?.id) {
-    runId = existing.id;
-  } else {
-    const { data: run, error: runErr } = await supabase
-      .from("score_runs")
-      .insert({
-        candidate_match_id: matchId,
-        position_id: ctx.match.position_id,
-        engine_version: ENGINE_VERSION,
-        score: result.score,
-        confidence: result.overall_confidence,
-        status: "completed",
-        explanation: [
-          `${result.fit_label.replace(/_/g, " ")} • must-have coverage ${(result.must_have_coverage * 100).toFixed(0)}%`,
-          result.strengths[0] ?? null,
-          result.concerns[0] ?? null,
-        ]
-          .filter(Boolean)
-          .join(" — "),
-        evidence: result.evidence as unknown as Json,
-        requirement_coverage: {
-          must_have: result.category_breakdown.must_have,
-          preferred: result.category_breakdown.preferred,
-          screening_alignment: result.category_breakdown.screening_alignment,
-        } as unknown as Json,
-        started_at: new Date().toISOString(),
-        completed_at: new Date().toISOString(),
-        trace_id,
-        result: result as unknown as Json,
-        fit_label: result.fit_label,
-        must_have_coverage: result.must_have_coverage,
-        preferred_coverage: result.preferred_coverage,
-        contradiction_status: result.contradiction_status,
-        input_hash: result.input_hash,
-      })
-      .select("id")
-      .single();
-    if (runErr || !run) {
-      const msg = runErr?.message ?? "insert_failed";
-      await setState(matchId, "failed", { trace_id, code: "engine_error", message: msg });
-      await recordJob(matchId, "score", "failed", trace_id, { code: "engine_error", message: msg });
-      return "failed";
-    }
-    runId = run.id;
-  }
-
-  await supabase
-    .from("candidate_matches")
-    .update({ current_score_run_id: runId })
-    .eq("id", matchId);
-
-  const nextState: State =
-    result.contradiction_status === "disqualifying_answer" || result.overall_confidence < 0.35
-      ? "manual_review_required"
-      : "scored";
-
-  await setState(matchId, nextState, { trace_id });
-  await recordJob(matchId, "score", "completed", trace_id);
-  return nextState;
+  // Delegates to the canonical scoring service — do NOT insert score_runs here.
+  const outcome = await executeScoring(matchId, { trace_id, reason: "manual_step" });
+  return outcome.final_state;
 }
 
 async function isStaff(userId: string): Promise<boolean> {
@@ -495,14 +409,10 @@ export const applyReviewDecision = createServerFn({ method: "POST" })
     }
 
     if (data.action === "approve_for_client") {
-      const { data: run } = await supabase
-        .from("score_runs")
-        .select("id,evidence,status,contradiction_status")
-        .eq("id", runIdForDecision)
-        .maybeSingle();
-      const evidenceArr = (run?.evidence as unknown as unknown[]) ?? [];
-      if (!run || run.status !== "completed" || evidenceArr.length === 0) {
-        throw new Error("publish_requires_evidence");
+      // Canonical publish gate: identity + status + evidence + contradiction.
+      const gate = await assertPublishGate(data.match_id, runIdForDecision);
+      if (!gate.ok) {
+        throw new Error(`publish_blocked:${gate.reason}`);
       }
       await supabase.from("score_decisions").insert({
         candidate_match_id: data.match_id,
