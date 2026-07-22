@@ -29,17 +29,10 @@ export type ClientRole =
   | "platform_admin"
   | "operations";
 
-export type MatchStage =
-  | "delivered"
-  | "shortlisted"
-  | "interview_process"
-  | "offer"
-  | "hired"
-  | "not_moving_forward";
-
-// Top-fit bands (see scoring engine). Anything approved with these labels counts
-// as a Top Match on the client KPI.
-export const TOP_FIT_LABELS = ["excellent", "strong"] as const;
+// MatchStage and TOP_FIT_LABELS are re-exported from the canonical KPI service
+// so existing imports from this module continue to work.
+export { TOP_FIT_LABELS };
+export type { MatchStage };
 
 // ─── Context resolution ─────────────────────────────────────────────────────
 
