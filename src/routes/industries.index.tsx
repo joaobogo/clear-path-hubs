@@ -19,7 +19,9 @@ export const Route = createFileRoute("/industries/")({
 });
 
 function IndustriesIndex() {
-  const slugs = listIndustrySlugs();
+  const legacySlugs = listIndustrySlugs();
+  const v2Map = new Map(INDUSTRY_ENTRIES.map((e) => [e.slug, e]));
+  const merged = Array.from(new Set([...v2Map.keys(), ...legacySlugs])).sort();
   return (
     <SiteShell>
       <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
@@ -38,10 +40,12 @@ function IndustriesIndex() {
         </header>
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {slugs.map((slug) => {
+          {merged.map((slug) => {
+            const v2 = v2Map.get(slug);
             const i = industries[slug];
             const title =
-              i?.meta.h1 || i?.meta.title?.split("|")[0].trim() || slug;
+              v2?.name || i?.meta.h1 || i?.meta.title?.split("|")[0].trim() || slug;
+            const description = v2?.meta.description || i?.meta.description;
             return (
               <Link
                 key={slug}
@@ -52,15 +56,16 @@ function IndustriesIndex() {
                 <h2 className="text-lg font-semibold text-foreground group-hover:text-primary">
                   {title}
                 </h2>
-                {i?.meta.description ? (
+                {description ? (
                   <p className="mt-2 line-clamp-3 text-sm text-muted-foreground">
-                    {i.meta.description}
+                    {description}
                   </p>
                 ) : null}
               </Link>
             );
           })}
         </div>
+
 
         {entry ? (
           <div className="mt-16 border-t border-border/60 pt-10">
