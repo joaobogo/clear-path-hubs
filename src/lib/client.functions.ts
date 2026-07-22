@@ -398,8 +398,8 @@ export const getClientCandidate = createServerFn({ method: "GET" })
     const { data: match, error } = await context.supabase
       .from("candidate_matches")
       .select(
-        `id, stage, delivered_at, position_id,
-         candidate_profiles(id, full_name, headline, location, availability),
+        `id, stage, delivered_at, position_id, application_id,
+         candidate_profiles(id, full_name, headline, location, availability, years_experience, summary, experience, skills, education, languages, work_authorization),
          positions(id, title, location, work_model),
          score_runs:approved_score_run_id (score, fit_label, explanation, result, evidence, requirement_coverage)`,
       )
@@ -410,24 +410,41 @@ export const getClientCandidate = createServerFn({ method: "GET" })
     if (error) throw new Error(error.message);
     if (!match) return null;
 
-    const { data: interviews } = await context.supabase
-      .from("interviews")
-      .select("id, status, requested_at, scheduled_at, completed_at, notes")
-      .eq("candidate_match_id", data.matchId)
-      .order("created_at", { ascending: false });
+    const applicationId = (match as AnyRow).application_id;
+    const [{ data: interviews }, { data: decisions }, answersRes] = await Promise.all([
+      context.supabase
+        .from("interviews")
+        .select("id, status, requested_at, scheduled_at, completed_at, notes")
+        .eq("candidate_match_id", data.matchId)
+        .order("created_at", { ascending: false }),
+      context.supabase
+        .from("client_decisions")
+        .select("id, decision, feedback, created_at")
+        .eq("candidate_match_id", data.matchId)
+        .order("created_at", { ascending: false }),
+      applicationId
+        ? context.supabase
+            .from("application_answers")
+            .select("id, answer, screening_questions(question, display_order)")
+            .eq("application_id", applicationId)
+        : Promise.resolve({ data: [] as AnyRow[] }),
+    ]);
 
-    const { data: decisions } = await context.supabase
-      .from("client_decisions")
-      .select("id, decision, feedback, created_at")
-      .eq("candidate_match_id", data.matchId)
-      .order("created_at", { ascending: false });
+    const answers = ((answersRes as AnyRow).data as AnyRow[]) ?? [];
+    answers.sort(
+      (a, b) =>
+        (a.screening_questions?.display_order ?? 0) -
+        (b.screening_questions?.display_order ?? 0),
+    );
+    const matchWithAnswers = { ...(match as AnyRow), application_answers: answers };
 
     return {
-      candidate: toClientCandidateDTO(match as AnyRow),
+      candidate: toClientCandidateDTO(matchWithAnswers),
       interviews: (interviews as AnyRow[]) ?? [],
       decisions: (decisions as AnyRow[]) ?? [],
     };
   });
+
 
 // ─── Stage transitions ──────────────────────────────────────────────────────
 //
