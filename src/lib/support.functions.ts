@@ -76,21 +76,37 @@ export const startSupportSession = createServerFn({ method: "POST" })
       .maybeSingle();
     const targetAuthUserId = (targetMember?.user_id as string | null) ?? context.userId;
 
-    const expiresAt = new Date(Date.now() + 60 * 60 * 1000).toISOString();
+    // DB constraint: actor_user_id <> target_user_id. If no distinct client
+    // member exists to impersonate, skip logging (nothing to audit).
+    if (targetAuthUserId === context.userId) {
+      return {
+        session_id: null as string | null,
+        organization_id: data.organization_id,
+        organization_name: org.name as string,
+        mode: data.mode,
+        expires_at: null as string | null,
+      };
+    }
+
+    // DB constraint: expires_at <= started_at + 30 minutes.
+    const expiresAt = new Date(Date.now() + 30 * 60 * 1000).toISOString();
     const trace = `sv_${Math.random().toString(36).slice(2, 10)}${Date.now().toString(36)}`;
-    const reason = data.reason?.trim() || "Support view session";
+    // DB constraint: length(reason) >= 10.
+    const rawReason = data.reason?.trim() || "";
+    const reason = rawReason.length >= 10 ? rawReason : "Support view session (read-only)";
 
     const { data: session, error } = await supabaseAdmin
       .from("support_sessions")
       .insert({
         actor_user_id: context.userId,
         actor_role: actorRole,
-        target_user_id: targetAuthUserId ?? context.userId,
+        target_user_id: targetAuthUserId,
         organization_id: data.organization_id,
         mode: data.mode,
         permission_preview: data.permission_preview,
         reason,
-        scope: `org:${data.organization_id}`,
+        // DB constraint: scope IN ('read_only','elevated').
+        scope: data.mode === "interactive" ? "elevated" : "read_only",
         expires_at: expiresAt,
         trace_id: trace,
       })
