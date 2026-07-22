@@ -110,75 +110,9 @@ export const getClientContext = createServerFn({ method: "GET" })
   });
 
 // ─── Canonical KPI service ──────────────────────────────────────────────────
-//
-// Every KPI is defined as a predicate over rows returned by the base query
-// (candidate_matches joined with the approved score run). This is the ONE
-// place these definitions live; every drill-through UI filters the same rows
-// with the same predicates.
+// Definitions live in `@/lib/client-kpi.server` (loadKpiRows, computeKpis,
+// isTopMatch, isInInterview). Everything below composes those primitives.
 
-type KpiRow = {
-  id: string;
-  candidate_profile_id: string;
-  position_id: string;
-  stage: MatchStage;
-  approved_score_run_id: string | null;
-  delivered_at: string | null;
-  // Denormalised for filtering:
-  approved_score: number | null;
-  approved_fit_label: string | null;
-  // Interview status resolved from interviews table (highest-priority active state).
-  interview_active: boolean;
-};
-
-async function loadKpiRows(supabase: AnyRow, orgId: string): Promise<KpiRow[]> {
-  // Only visible matches — RLS also enforces this for viewers, but we filter
-  // explicitly so counts match what the client sees.
-  const { data: matches, error } = await supabase
-    .from("candidate_matches")
-    .select(
-      `id, candidate_profile_id, position_id, stage, approved_score_run_id, delivered_at,
-       score_runs:approved_score_run_id (score, fit_label)`,
-    )
-    .eq("organization_id", orgId)
-    .eq("client_visibility", "visible");
-  if (error) throw new Error(error.message);
-
-  const matchIds = (matches as AnyRow[]).map((m) => m.id);
-  const activeInterviews = new Set<string>();
-  if (matchIds.length > 0) {
-    const { data: ivs } = await supabase
-      .from("interviews")
-      .select("candidate_match_id, status")
-      .in("candidate_match_id", matchIds)
-      .in("status", ["requested", "scheduling", "scheduled", "completed"]);
-    for (const iv of (ivs as AnyRow[]) ?? []) activeInterviews.add(iv.candidate_match_id);
-  }
-
-  return (matches as AnyRow[]).map((m) => ({
-    id: m.id,
-    candidate_profile_id: m.candidate_profile_id,
-    position_id: m.position_id,
-    stage: m.stage,
-    approved_score_run_id: m.approved_score_run_id,
-    delivered_at: m.delivered_at,
-    approved_score: m.score_runs?.score ?? null,
-    approved_fit_label: m.score_runs?.fit_label ?? null,
-    interview_active: activeInterviews.has(m.id),
-  }));
-}
-
-function isTopMatch(r: KpiRow) {
-  return (
-    r.approved_score_run_id != null &&
-    r.approved_fit_label != null &&
-    (TOP_FIT_LABELS as readonly string[]).includes(r.approved_fit_label)
-  );
-}
-function isInInterview(r: KpiRow) {
-  return r.stage === "interview_process" || r.stage === "offer" || r.interview_active;
-}
-
-function computeKpis(rows: KpiRow[]) {
   const delivered = new Set(rows.map((r) => r.candidate_profile_id)).size;
   const top = rows.filter(isTopMatch).length;
   const shortlisted = rows.filter((r) => r.stage === "shortlisted").length;
