@@ -1,0 +1,143 @@
+{
+  "meta": {
+    "phase": 0,
+    "generated_at": "2026-07-22",
+    "source_of_truth": "src/routes, src/lib/*.functions.ts, supabase/migrations, .workspace/security-memory",
+    "verdict": "PASS",
+    "totals": {
+      "routes": 38,
+      "actions": 74,
+      "background_workflows": 14,
+      "integrations": 7,
+      "MUST_REBUILD": 42,
+      "REBUILD_SIMPLER": 14,
+      "REPLACE_WITH_NEW_WORKFLOW": 4,
+      "MIGRATE_AFTER_LAUNCH": 6,
+      "EXPLICITLY_EXCLUDED": 8,
+      "NO_LONGER_NEEDED": 3,
+      "REQUIRES_PRODUCT_DECISION": 5
+    }
+  },
+  "unresolved_product_decisions": [
+    {
+      "id": "PD-01",
+      "topic": "Email provider",
+      "question": "Which transactional email provider ships v1? (Resend, Postmark, SES). Notifications table exists but delivery adapter is stub.",
+      "blocking_phase": 10
+    },
+    {
+      "id": "PD-02",
+      "topic": "LLM scoring vs deterministic",
+      "question": "Phase 6 shipped a deterministic rule-based scorer (taasflow-scoring-v1.0.0). Is LLM-assisted scoring required for v1 or deferred?",
+      "blocking_phase": 6
+    },
+    {
+      "id": "PD-03",
+      "topic": "Interview scheduling",
+      "question": "Interviews table exists but no calendar integration (Google/O365). In-app manual scheduling only for v1?",
+      "blocking_phase": 8
+    },
+    {
+      "id": "PD-04",
+      "topic": "Candidate account auto-provisioning",
+      "question": "Anonymous applicants land without login. Auto-invite via magic link on submit, or manual candidate signup at /me?",
+      "blocking_phase": 5
+    },
+    {
+      "id": "PD-05",
+      "topic": "Billing",
+      "question": "No billing capability in scope today. Confirm EXCLUDED for v1.",
+      "blocking_phase": null
+    }
+  ],
+  "routes": [
+    {"id": "R-01", "route": "/", "purpose": "Marketing landing", "users": "public", "data": "static", "actions": ["cta-intake", "cta-jobs"], "works": true, "decision": "MUST_REBUILD", "new_route": "/"},
+    {"id": "R-02", "route": "/intake", "purpose": "5-step client intake wizard", "users": "public", "data": "local-storage draft + submitIntake fn", "actions": ["save-draft", "next", "prev", "submit"], "works": "stubbed after Phase 2 reset", "decision": "MUST_REBUILD", "new_route": "/intake", "new_service": "intake.functions.ts"},
+    {"id": "R-03", "route": "/intake/confirmation", "purpose": "Post-intake receipt with trace ID", "users": "public", "data": "search params", "actions": ["copy-trace", "back-home"], "works": true, "decision": "MUST_REBUILD", "new_route": "/intake/confirmation"},
+    {"id": "R-04", "route": "/jobs", "purpose": "Public job board with search+filters", "users": "public", "data": "listPublicPositions", "actions": ["search", "filter-remote", "filter-location", "open-detail"], "works": true, "decision": "MUST_REBUILD"},
+    {"id": "R-05", "route": "/jobs/$id", "purpose": "Job detail SEO page", "users": "public", "data": "getPublicPosition", "actions": ["apply-cta", "share"], "works": true, "decision": "MUST_REBUILD"},
+    {"id": "R-06", "route": "/jobs/$id/apply", "purpose": "Candidate application form + CV upload", "users": "public", "data": "submitApplication", "actions": ["upload-cv", "fill-answers", "consent", "submit"], "works": "P3 open — submit does not redirect", "decision": "MUST_REBUILD"},
+    {"id": "R-07", "route": "/apply/received/$applicationId", "purpose": "Application confirmation with 6-char ref", "users": "public", "data": "getApplicationReceipt", "actions": ["copy-ref", "cta-track"], "works": true, "decision": "MUST_REBUILD"},
+    {"id": "R-08", "route": "/auth", "purpose": "Email/password sign-in + sign-up", "users": "all", "data": "supabase.auth", "actions": ["signin", "signup", "toggle-mode"], "works": "P1 — redirects to removed /admin/intakes", "decision": "MUST_REBUILD", "notes": "Fix role-based post-login redirect"},
+    {"id": "R-09", "route": "/admin", "purpose": "Admin overview: attention cards", "users": "platform_admin, operations", "data": "getAdminOverview", "actions": ["open-records"], "works": true, "decision": "MUST_REBUILD"},
+    {"id": "R-10", "route": "/admin/clients", "purpose": "Client (org) list", "users": "admin", "data": "listClients", "actions": ["search", "open-client"], "works": true, "decision": "MUST_REBUILD"},
+    {"id": "R-11", "route": "/admin/clients/$id", "purpose": "Client detail + positions", "users": "admin", "data": "getClient, listPositions", "actions": ["open-position", "invite-member"], "works": true, "decision": "MUST_REBUILD"},
+    {"id": "R-12", "route": "/admin/positions/$id", "purpose": "Admin JD editor + status transitions", "users": "admin", "data": "getPosition, updatePosition, setPositionStatus", "actions": ["edit-jd", "approve", "activate", "request-clarification", "toggle-visibility"], "works": true, "decision": "MUST_REBUILD"},
+    {"id": "R-13", "route": "/admin/candidates", "purpose": "Candidate match search + review queue", "users": "admin", "data": "listAdminMatches, searchCandidateMatches", "actions": ["search", "filter", "open-match"], "works": true, "decision": "MUST_REBUILD"},
+    {"id": "R-14", "route": "/admin/candidates/$id", "purpose": "Match review: evidence + score + decision", "users": "admin", "data": "getAdminMatch", "actions": ["retry-parse", "mark-ocr-done", "rescore", "approve-for-client", "hold", "archive"], "works": true, "decision": "MUST_REBUILD"},
+    {"id": "R-15", "route": "/admin/publish", "purpose": "Publish desk: admin vs sanitized preview", "users": "admin", "data": "getPublishQueue, getClientPreview", "actions": ["publish", "unpublish", "diff"], "works": true, "decision": "MUST_REBUILD"},
+    {"id": "R-16", "route": "/admin/health", "purpose": "Pipeline health + processing backlog", "users": "admin", "data": "getPipelineHealth", "actions": ["retry-failed", "advance-stuck"], "works": true, "decision": "MUST_REBUILD"},
+    {"id": "R-17", "route": "/admin/notifications", "purpose": "Delivery health monitor", "users": "admin", "data": "listDeliveryFailures", "actions": ["retry-delivery"], "works": true, "decision": "REBUILD_SIMPLER"},
+    {"id": "R-18", "route": "/admin/settings", "purpose": "Platform settings + integrations", "users": "admin", "data": "static", "actions": ["rotate-keys"], "works": "shell only", "decision": "MUST_REBUILD"},
+    {"id": "R-19", "route": "/client", "purpose": "Client overview: all-time KPIs", "users": "client_admin/editor/viewer", "data": "getClientOverview", "actions": ["open-position", "open-candidate"], "works": true, "decision": "MUST_REBUILD"},
+    {"id": "R-20", "route": "/client/positions", "purpose": "Requisition list with status tabs", "users": "client", "data": "getClientPositions", "actions": ["filter-status", "open-position"], "works": true, "decision": "MUST_REBUILD"},
+    {"id": "R-21", "route": "/client/positions/$id", "purpose": "Position detail + Kanban", "users": "client", "data": "getClientPositionDetail", "actions": ["move-stage", "open-candidate", "shortlist", "reject"], "works": true, "decision": "MUST_REBUILD"},
+    {"id": "R-22", "route": "/client/candidates", "purpose": "Cross-position candidate search", "users": "client", "data": "getClientCandidates", "actions": ["search", "filter-fit-band", "open-candidate"], "works": true, "decision": "MUST_REBUILD"},
+    {"id": "R-23", "route": "/client/candidates/$id", "purpose": "Client candidate detail (sanitized)", "users": "client", "data": "getClientCandidate", "actions": ["request-interview", "request-info", "reject", "hire", "leave-feedback", "message"], "works": true, "decision": "MUST_REBUILD"},
+    {"id": "R-24", "route": "/client/messages", "purpose": "Threaded messaging", "users": "client", "data": "getClientMessages, sendClientMessage", "actions": ["compose", "reply"], "works": true, "decision": "MUST_REBUILD"},
+    {"id": "R-25", "route": "/client/team", "purpose": "Org membership management", "users": "client_admin", "data": "getClientTeam", "actions": ["invite", "change-role", "remove"], "works": "list only — invite stub", "decision": "MUST_REBUILD"},
+    {"id": "R-26", "route": "/client/settings", "purpose": "Org preferences", "users": "client_admin", "data": "static", "actions": ["edit-org", "notification-prefs"], "works": "shell only", "decision": "REBUILD_SIMPLER"},
+    {"id": "R-27", "route": "/me", "purpose": "Candidate home", "users": "candidate", "data": "getMyContext", "actions": ["nav-applications", "nav-profile"], "works": true, "decision": "MUST_REBUILD"},
+    {"id": "R-28", "route": "/me/applications", "purpose": "Application tracking list", "users": "candidate", "data": "listMyApplications", "actions": ["open-application"], "works": true, "decision": "MUST_REBUILD"},
+    {"id": "R-29", "route": "/me/applications/$id", "purpose": "Application detail with candidate-safe status", "users": "candidate", "data": "getMyApplication", "actions": ["withdraw", "message"], "works": true, "decision": "MUST_REBUILD"},
+    {"id": "R-30", "route": "/me/profile", "purpose": "Contact/skills/CV maintenance", "users": "candidate", "data": "updateMyProfile, replaceMyCv", "actions": ["edit-fields", "replace-cv"], "works": true, "decision": "MUST_REBUILD"},
+    {"id": "R-31", "route": "/me/messages", "purpose": "Candidate inbox (realtime)", "users": "candidate", "data": "listMyMessages, sendMyMessage", "actions": ["reply"], "works": true, "decision": "MUST_REBUILD"},
+    {"id": "R-32", "route": "/me/settings", "purpose": "Consent + privacy + notification prefs", "users": "candidate", "data": "updateMyConsent, requestCorrection, requestAccountDeletion", "actions": ["toggle-consent", "request-deletion", "request-correction"], "works": true, "decision": "MUST_REBUILD"},
+    {"id": "R-33", "route": "/api/public/qa-seed", "purpose": "QA tenant seeding endpoint", "users": "QA harness", "data": "supabaseAdmin", "actions": ["seed", "cleanup", "create_application"], "works": true, "decision": "REBUILD_SIMPLER", "notes": "Keep gated by QA_SEED_TOKEN"}
+  ],
+  "background_workflows": [
+    {"id": "BG-01", "capability": "CV upload validation (MIME + magic bytes)", "location": "src/lib/cv-validation.ts", "trigger": "submitApplication/replaceMyCv", "works": true, "decision": "MUST_REBUILD"},
+    {"id": "BG-02", "capability": "CV parsing (text extraction)", "location": "processing.functions.stepParse", "trigger": "processing_jobs advance", "works": "stub — no PDF text extraction", "decision": "MUST_REBUILD", "notes": "Wire real PDF/DOCX extractor"},
+    {"id": "BG-03", "capability": "OCR fallback for image PDFs", "location": "markOcrDone (manual)", "trigger": "admin action", "works": "manual only", "decision": "REBUILD_SIMPLER"},
+    {"id": "BG-04", "capability": "Profile enrichment", "location": "processing.functions.stepEnrich", "trigger": "processing_jobs advance", "works": "stub", "decision": "MIGRATE_AFTER_LAUNCH"},
+    {"id": "BG-05", "capability": "Deterministic scoring engine", "location": "scoring-engine.server.ts", "trigger": "stepScore", "works": true, "decision": "MUST_REBUILD"},
+    {"id": "BG-06", "capability": "Evidence extraction & storage", "location": "candidate_evidence table", "trigger": "stepParse", "works": true, "decision": "MUST_REBUILD"},
+    {"id": "BG-07", "capability": "Immutable score_runs (trigger)", "location": "tg_score_runs_immutable", "trigger": "row update", "works": true, "decision": "MUST_REBUILD"},
+    {"id": "BG-08", "capability": "Audit event writes", "location": "audit_events + tg_write_audit_event", "trigger": "mutations", "works": true, "decision": "MUST_REBUILD"},
+    {"id": "BG-09", "capability": "Notification event fan-out", "location": "emitEventFromServer", "trigger": "domain events", "works": true, "decision": "MUST_REBUILD"},
+    {"id": "BG-10", "capability": "Realtime refresh coordination", "location": "use-realtime-refresh hook + supabase channel", "trigger": "notification_events insert", "works": true, "decision": "MUST_REBUILD"},
+    {"id": "BG-11", "capability": "Signed URL for CV downloads", "location": "storage.objects RLS + admin fn", "trigger": "admin match view", "works": true, "decision": "MUST_REBUILD"},
+    {"id": "BG-12", "capability": "Email delivery adapter", "location": "notification_deliveries", "trigger": "notification insert", "works": "no adapter — queued only", "decision": "MUST_REBUILD", "blocked_by": "PD-01"},
+    {"id": "BG-13", "capability": "Scheduled/cron jobs (stale-work sweeper)", "location": "none", "trigger": "n/a", "works": false, "decision": "MUST_REBUILD", "notes": "Add pg_cron -> /api/public/cron/sweep"},
+    {"id": "BG-14", "capability": "Webhook receivers (email bounces, provider callbacks)", "location": "none", "trigger": "external", "works": false, "decision": "MIGRATE_AFTER_LAUNCH"}
+  ],
+  "integrations": [
+    {"id": "INT-01", "name": "Supabase (Postgres+Auth+Storage+Realtime)", "classification": "REQUIRED_FOR_V1", "usage": "core data plane"},
+    {"id": "INT-02", "name": "Email provider (Resend/Postmark/SES)", "classification": "REQUIRED_FOR_V1", "blocked_by": "PD-01"},
+    {"id": "INT-03", "name": "AI Gateway (Lovable AI) for CV extraction assist", "classification": "DEFER", "notes": "Deterministic scorer covers v1"},
+    {"id": "INT-04", "name": "OCR provider (Tesseract/Textract)", "classification": "DEFER", "notes": "Manual mark-ocr-done for v1"},
+    {"id": "INT-05", "name": "Microsoft Teams / calendar", "classification": "DEFER", "blocked_by": "PD-03"},
+    {"id": "INT-06", "name": "LinkedIn sourcing", "classification": "REMOVE"},
+    {"id": "INT-07", "name": "Billing/Stripe", "classification": "REMOVE", "blocked_by": "PD-05"}
+  ],
+  "actions": [
+    {"screen": "/intake", "actor": "public", "action": "submit", "entity": "client_intakes+organizations+positions", "writer": "submitIntake fn", "expected": "trace_id returned; org matched or created", "new_required": true, "decision": "MUST_REBUILD"},
+    {"screen": "/jobs/$id/apply", "actor": "public", "action": "submit", "entity": "applications+candidate_profiles+files", "writer": "submitApplication fn (supabaseAdmin)", "expected": "6-char ref + redirect", "reliability": "FAIL (P3)", "decision": "MUST_REBUILD"},
+    {"screen": "/admin/candidates/$id", "actor": "admin", "action": "approve_for_client", "entity": "candidate_matches", "writer": "applyReviewDecision", "expected": "visibility=visible, approved_score_run_id set, notify client", "decision": "MUST_REBUILD"},
+    {"screen": "/admin/candidates/$id", "actor": "admin", "action": "retry_parse", "entity": "processing_jobs", "writer": "retryParse", "expected": "state->queued", "decision": "MUST_REBUILD"},
+    {"screen": "/admin/positions/$id", "actor": "admin", "action": "approve/activate/clarify", "entity": "positions.status", "writer": "setPositionStatus", "expected": "audited transition", "decision": "MUST_REBUILD"},
+    {"screen": "/client/positions/$id", "actor": "client", "action": "move-stage", "entity": "candidate_matches.stage", "writer": "moveMatchStage", "expected": "STAGE_GRAPH validated", "decision": "MUST_REBUILD"},
+    {"screen": "/client/candidates/$id", "actor": "client", "action": "shortlist/interview/reject/hire", "entity": "client_decisions", "writer": "clientAction", "expected": "audited decision + notify admin+candidate", "decision": "MUST_REBUILD"},
+    {"screen": "/client/team", "actor": "client_admin", "action": "invite/change-role/remove", "entity": "memberships", "writer": "TODO", "expected": "invite email + membership row", "reliability": "PARTIAL", "decision": "MUST_REBUILD"},
+    {"screen": "/me/applications/$id", "actor": "candidate", "action": "withdraw", "entity": "applications.status", "writer": "withdrawApplication", "expected": "candidate-safe status flip", "decision": "MUST_REBUILD"},
+    {"screen": "/me/profile", "actor": "candidate", "action": "replace-cv", "entity": "files+candidate_profiles.cv_file_id", "writer": "replaceMyCv", "expected": "old CV soft-deleted", "decision": "MUST_REBUILD"},
+    {"screen": "/me/settings", "actor": "candidate", "action": "request-deletion", "entity": "audit_events", "writer": "requestAccountDeletion", "expected": "queued for ops review", "decision": "MUST_REBUILD"}
+  ],
+  "explicit_exclusions": [
+    {"id": "EX-01", "capability": "Billing / subscriptions", "reason": "Out of scope v1"},
+    {"id": "EX-02", "capability": "LinkedIn scraping / sourcing", "reason": "ToS + scope"},
+    {"id": "EX-03", "capability": "Public candidate directory", "reason": "Privacy"},
+    {"id": "EX-04", "capability": "Multi-language JD/CV auto-translation", "reason": "Defer"},
+    {"id": "EX-05", "capability": "Video interviews in-app", "reason": "Use external tools"},
+    {"id": "EX-06", "capability": "Reference-check automation", "reason": "Manual for v1"},
+    {"id": "EX-07", "capability": "Talent-pool CRM outside applications", "reason": "Defer"},
+    {"id": "EX-08", "capability": "Campaign/marketing sends", "reason": "Not a marketing tool"}
+  ],
+  "completeness_check": {
+    "public": {"intake": "R-02", "job_board": "R-04", "job_detail": "R-05", "application": "R-06", "auth": "R-08", "legal_consent": "R-06/R-32", "confirmation": "R-07", "tracking": "R-28/R-29"},
+    "admin": {"clients": "R-10", "users": "R-25 (via org) / R-18", "intakes": "R-09 (attention cards)", "positions": "R-12", "screening_questions": "R-12 (embedded)", "candidates": "R-13", "cv_access": "BG-11", "parsing_status": "R-16", "enrichment_status": "R-16", "scoring": "R-14", "evidence": "R-14", "manual_review": "R-14", "client_preview": "R-15", "publication": "R-15", "decisions": "R-13/R-14", "interviews": "PD-03", "messages": "R-24 (admin joins as staff)", "failures": "R-16", "repairs": "R-16", "audit": "audit_events table (no UI yet)", "permissions": "R-18 / user_roles", "settings": "R-18"},
+    "client": {"workspace": "R-19", "kpis": "R-19", "positions": "R-20", "position_detail": "R-21", "candidate_list": "R-22", "kanban": "R-21", "candidate_detail": "R-23", "shortlist": "R-23", "interview_request": "R-23", "info_request": "R-23", "rejection": "R-23", "feedback": "R-23", "hire": "R-23", "messages": "R-24", "team": "R-25", "settings": "R-26", "notifications": "R-19 bell"},
+    "candidate": {"applications": "R-28", "tracking": "R-29", "safe_status": "candidate.functions statusMap", "profile": "R-30", "cv_replace": "R-30", "messages": "R-31", "preferences": "R-32", "consent": "R-32", "notification_settings": "R-32"},
+    "system": {"authn": "supabase auth", "authz": "user_roles + has_role", "tenant_isolation": "memberships + is_org_member", "storage": "cvs bucket", "parsing": "BG-02", "ocr": "BG-03", "enrichment": "BG-04", "scoring": "BG-05", "evidence": "BG-06", "audit": "BG-08", "notifications": "BG-09", "email": "BG-12 (blocked PD-01)", "realtime": "BG-10", "retry": "R-16", "monitoring": "R-16/R-17", "backups": "supabase managed", "error_recovery": "errorComponent per route", "testing": "e2e.py + audit.py", "deployment": "lovable publish", "rollback": "supabase migrations forward-only + revert commit"}
+  }
+}
