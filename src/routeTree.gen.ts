@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as TalentNetworkRouteImport } from './routes/talent-network'
+import { Route as SolutionsRouteImport } from './routes/solutions'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ResourcesRouteImport } from './routes/resources'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
@@ -19,6 +20,7 @@ import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as PilotRouteImport } from './routes/pilot'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as KnowledgeBaseRouteImport } from './routes/knowledge-base'
+import { Route as JourneyRouteImport } from './routes/journey'
 import { Route as IntakeRouteImport } from './routes/intake'
 import { Route as HowItWorksRouteImport } from './routes/how-it-works'
 import { Route as GlobalTalentRouteImport } from './routes/global-talent'
@@ -98,6 +100,11 @@ const TalentNetworkRoute = TalentNetworkRouteImport.update({
   path: '/talent-network',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SolutionsRoute = SolutionsRouteImport.update({
+  id: '/solutions',
+  path: '/solutions',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
@@ -136,6 +143,11 @@ const LoginRoute = LoginRouteImport.update({
 const KnowledgeBaseRoute = KnowledgeBaseRouteImport.update({
   id: '/knowledge-base',
   path: '/knowledge-base',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const JourneyRoute = JourneyRouteImport.update({
+  id: '/journey',
+  path: '/journey',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IntakeRoute = IntakeRouteImport.update({
@@ -520,6 +532,7 @@ export interface FileRoutesByFullPath {
   '/global-talent': typeof GlobalTalentRoute
   '/how-it-works': typeof HowItWorksRoute
   '/intake': typeof IntakeRoute
+  '/journey': typeof JourneyRoute
   '/knowledge-base': typeof KnowledgeBaseRoute
   '/login': typeof LoginRoute
   '/pilot': typeof PilotRoute
@@ -528,6 +541,7 @@ export interface FileRoutesByFullPath {
   '/reset-password': typeof ResetPasswordRoute
   '/resources': typeof ResourcesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/solutions': typeof SolutionsRoute
   '/talent-network': typeof TalentNetworkRoute
   '/terms': typeof TermsRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
@@ -599,6 +613,7 @@ export interface FileRoutesByTo {
   '/global-talent': typeof GlobalTalentRoute
   '/how-it-works': typeof HowItWorksRoute
   '/intake': typeof IntakeRoute
+  '/journey': typeof JourneyRoute
   '/knowledge-base': typeof KnowledgeBaseRoute
   '/login': typeof LoginRoute
   '/pilot': typeof PilotRoute
@@ -607,6 +622,7 @@ export interface FileRoutesByTo {
   '/reset-password': typeof ResetPasswordRoute
   '/resources': typeof ResourcesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/solutions': typeof SolutionsRoute
   '/talent-network': typeof TalentNetworkRoute
   '/terms': typeof TermsRoute
   '/blog/$slug': typeof BlogSlugRoute
@@ -671,6 +687,7 @@ export interface FileRoutesById {
   '/global-talent': typeof GlobalTalentRoute
   '/how-it-works': typeof HowItWorksRoute
   '/intake': typeof IntakeRoute
+  '/journey': typeof JourneyRoute
   '/knowledge-base': typeof KnowledgeBaseRoute
   '/login': typeof LoginRoute
   '/pilot': typeof PilotRoute
@@ -679,6 +696,7 @@ export interface FileRoutesById {
   '/reset-password': typeof ResetPasswordRoute
   '/resources': typeof ResourcesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/solutions': typeof SolutionsRoute
   '/talent-network': typeof TalentNetworkRoute
   '/terms': typeof TermsRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
@@ -752,6 +770,7 @@ export interface FileRouteTypes {
     | '/global-talent'
     | '/how-it-works'
     | '/intake'
+    | '/journey'
     | '/knowledge-base'
     | '/login'
     | '/pilot'
@@ -760,6 +779,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/resources'
     | '/sitemap.xml'
+    | '/solutions'
     | '/talent-network'
     | '/terms'
     | '/admin'
@@ -831,6 +851,7 @@ export interface FileRouteTypes {
     | '/global-talent'
     | '/how-it-works'
     | '/intake'
+    | '/journey'
     | '/knowledge-base'
     | '/login'
     | '/pilot'
@@ -839,6 +860,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/resources'
     | '/sitemap.xml'
+    | '/solutions'
     | '/talent-network'
     | '/terms'
     | '/blog/$slug'
@@ -902,6 +924,7 @@ export interface FileRouteTypes {
     | '/global-talent'
     | '/how-it-works'
     | '/intake'
+    | '/journey'
     | '/knowledge-base'
     | '/login'
     | '/pilot'
@@ -910,6 +933,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/resources'
     | '/sitemap.xml'
+    | '/solutions'
     | '/talent-network'
     | '/terms'
     | '/_authenticated/admin'
@@ -983,6 +1007,7 @@ export interface RootRouteChildren {
   GlobalTalentRoute: typeof GlobalTalentRoute
   HowItWorksRoute: typeof HowItWorksRoute
   IntakeRoute: typeof IntakeRoute
+  JourneyRoute: typeof JourneyRoute
   KnowledgeBaseRoute: typeof KnowledgeBaseRoute
   LoginRoute: typeof LoginRoute
   PilotRoute: typeof PilotRoute
@@ -991,6 +1016,7 @@ export interface RootRouteChildren {
   ResetPasswordRoute: typeof ResetPasswordRoute
   ResourcesRoute: typeof ResourcesRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  SolutionsRoute: typeof SolutionsRoute
   TalentNetworkRoute: typeof TalentNetworkRoute
   TermsRoute: typeof TermsRoute
   BlogSlugRoute: typeof BlogSlugRoute
@@ -1025,6 +1051,13 @@ declare module '@tanstack/react-router' {
       path: '/talent-network'
       fullPath: '/talent-network'
       preLoaderRoute: typeof TalentNetworkRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/solutions': {
+      id: '/solutions'
+      path: '/solutions'
+      fullPath: '/solutions'
+      preLoaderRoute: typeof SolutionsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sitemap.xml': {
@@ -1081,6 +1114,13 @@ declare module '@tanstack/react-router' {
       path: '/knowledge-base'
       fullPath: '/knowledge-base'
       preLoaderRoute: typeof KnowledgeBaseRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/journey': {
+      id: '/journey'
+      path: '/journey'
+      fullPath: '/journey'
+      preLoaderRoute: typeof JourneyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/intake': {
@@ -1773,6 +1813,7 @@ const rootRouteChildren: RootRouteChildren = {
   GlobalTalentRoute: GlobalTalentRoute,
   HowItWorksRoute: HowItWorksRoute,
   IntakeRoute: IntakeRoute,
+  JourneyRoute: JourneyRoute,
   KnowledgeBaseRoute: KnowledgeBaseRoute,
   LoginRoute: LoginRoute,
   PilotRoute: PilotRoute,
@@ -1781,6 +1822,7 @@ const rootRouteChildren: RootRouteChildren = {
   ResetPasswordRoute: ResetPasswordRoute,
   ResourcesRoute: ResourcesRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  SolutionsRoute: SolutionsRoute,
   TalentNetworkRoute: TalentNetworkRoute,
   TermsRoute: TermsRoute,
   BlogSlugRoute: BlogSlugRoute,

@@ -1,28 +1,45 @@
 import { Link } from "@tanstack/react-router";
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
+import { Menu, X } from "lucide-react";
 
-const NAV = [
+const PRIMARY_NAV = [
+  { to: "/solutions", label: "Solutions" },
   { to: "/how-it-works", label: "How it works" },
-  { to: "/pricing", label: "Pricing" },
   { to: "/industries", label: "Industries" },
   { to: "/enterprise", label: "Enterprise" },
-  { to: "/case-studies", label: "Case studies" },
+  { to: "/pricing", label: "Pricing" },
+  { to: "/journey", label: "Journey" },
   { to: "/blog", label: "Blog" },
-  { to: "/about", label: "About" },
 ] as const;
 
-function Header() {
+const SECONDARY_NAV = [
+  { to: "/jobs", label: "Browse roles" },
+  { to: "/about", label: "About" },
+  { to: "/contact", label: "Contact" },
+] as const;
+
+function Brand({ className = "" }: { className?: string }) {
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-border/60 bg-background/80 backdrop-blur">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-6 px-4 sm:px-6 lg:px-8">
-        <Link to="/" className="flex items-center gap-2 font-semibold tracking-tight">
-          <span className="inline-flex h-8 w-8 items-center justify-center rounded-md bg-primary text-primary-foreground">
-            T
-          </span>
-          <span className="text-lg">TaaSFlow</span>
-        </Link>
-        <nav className="hidden items-center gap-6 lg:flex">
-          {NAV.map((n) => (
+    <Link to="/" className={`flex items-center gap-2 font-semibold tracking-tight ${className}`}>
+      <span
+        aria-hidden
+        className="inline-flex h-8 w-8 items-center justify-center rounded-md bg-gradient-to-br from-primary to-primary/70 text-primary-foreground shadow-sm"
+      >
+        T
+      </span>
+      <span className="text-lg">TaaSFlow</span>
+    </Link>
+  );
+}
+
+function Header() {
+  const [open, setOpen] = useState(false);
+  return (
+    <header className="sticky top-0 z-40 w-full border-b border-border/60 bg-background/85 backdrop-blur">
+      <div className="mx-auto flex h-16 max-w-7xl items-center gap-4 px-4 sm:px-6 lg:px-8">
+        <Brand className="shrink-0" />
+        <nav className="hidden flex-1 items-center gap-5 lg:flex">
+          {PRIMARY_NAV.map((n) => (
             <Link
               key={n.to}
               to={n.to}
@@ -33,12 +50,12 @@ function Header() {
             </Link>
           ))}
         </nav>
-        <div className="flex items-center gap-2">
+        <div className="ml-auto hidden items-center gap-2 lg:flex">
           <Link
             to="/jobs"
-            className="hidden text-sm text-muted-foreground hover:text-foreground sm:inline"
+            className="text-sm text-muted-foreground hover:text-foreground"
           >
-            Jobs
+            Browse roles
           </Link>
           <Link
             to="/auth"
@@ -48,12 +65,54 @@ function Header() {
           </Link>
           <Link
             to="/intake"
-            className="rounded-md bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground shadow-sm transition-colors hover:bg-primary/90"
+            className="rounded-md bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground shadow-sm hover:bg-primary/90"
           >
-            Start hiring
+            Start a pilot
           </Link>
         </div>
+        <button
+          type="button"
+          aria-label={open ? "Close menu" : "Open menu"}
+          aria-expanded={open}
+          onClick={() => setOpen((v) => !v)}
+          className="ml-auto inline-flex h-10 w-10 items-center justify-center rounded-md border border-input lg:hidden"
+        >
+          {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+        </button>
       </div>
+      {open ? (
+        <div className="border-t border-border/60 bg-background lg:hidden">
+          <div className="mx-auto flex max-w-7xl flex-col gap-1 px-4 py-4 sm:px-6">
+            {[...PRIMARY_NAV, ...SECONDARY_NAV].map((n) => (
+              <Link
+                key={n.to}
+                to={n.to}
+                onClick={() => setOpen(false)}
+                className="rounded-md px-3 py-2 text-sm text-foreground hover:bg-accent"
+                activeProps={{ className: "bg-accent font-medium" }}
+              >
+                {n.label}
+              </Link>
+            ))}
+            <div className="mt-3 grid grid-cols-2 gap-2">
+              <Link
+                to="/auth"
+                onClick={() => setOpen(false)}
+                className="rounded-md border border-input px-3 py-2 text-center text-sm font-medium"
+              >
+                Sign in
+              </Link>
+              <Link
+                to="/intake"
+                onClick={() => setOpen(false)}
+                className="rounded-md bg-primary px-3 py-2 text-center text-sm font-medium text-primary-foreground"
+              >
+                Start a pilot
+              </Link>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </header>
   );
 }
@@ -61,26 +120,45 @@ function Header() {
 function Footer() {
   return (
     <footer className="border-t border-border/60 bg-muted/30">
-      <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-4 lg:px-8">
-        <div>
-          <div className="flex items-center gap-2 font-semibold">
-            <span className="inline-flex h-8 w-8 items-center justify-center rounded-md bg-primary text-primary-foreground">
-              T
-            </span>
-            <span>TaaSFlow</span>
-          </div>
-          <p className="mt-3 text-sm text-muted-foreground">
-            Subscription recruiting. Ranked, enriched candidates in 14 days. No placement fees.
+      <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-5 lg:px-8">
+        <div className="md:col-span-2">
+          <Brand />
+          <p className="mt-3 max-w-sm text-sm text-muted-foreground">
+            Subscription recruiting with a live workspace. Ranked, evidence-backed
+            shortlists in 14 days — no placement fees.
           </p>
+          <div className="mt-4 flex flex-wrap gap-2">
+            <Link
+              to="/intake"
+              className="rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:bg-primary/90"
+            >
+              Start a pilot
+            </Link>
+            <Link
+              to="/contact"
+              className="rounded-md border border-input px-3 py-1.5 text-xs font-medium hover:bg-accent"
+            >
+              Book a consultation
+            </Link>
+          </div>
         </div>
         <FooterCol
           title="Product"
           links={[
+            { to: "/solutions", label: "Solutions" },
             { to: "/how-it-works", label: "How it works" },
-            { to: "/pricing", label: "Pricing" },
-            { to: "/pilot", label: "$399 pilot" },
             { to: "/enterprise", label: "Enterprise" },
-            { to: "/jobs", label: "Job board" },
+            { to: "/pricing", label: "Pricing" },
+            { to: "/pilot", label: "Pilot" },
+          ]}
+        />
+        <FooterCol
+          title="For candidates"
+          links={[
+            { to: "/jobs", label: "Browse roles" },
+            { to: "/journey", label: "Candidate journey" },
+            { to: "/talent-network", label: "Talent network" },
+            { to: "/auth", label: "Candidate login" },
           ]}
         />
         <FooterCol
@@ -88,16 +166,9 @@ function Footer() {
           links={[
             { to: "/about", label: "About" },
             { to: "/case-studies", label: "Case studies" },
-            { to: "/contact", label: "Contact" },
-            { to: "/partnerships/staffing", label: "Partnerships" },
-          ]}
-        />
-        <FooterCol
-          title="Resources"
-          links={[
             { to: "/blog", label: "Blog" },
             { to: "/resources", label: "Resources" },
-            { to: "/knowledge-base", label: "Knowledge base" },
+            { to: "/contact", label: "Contact" },
             { to: "/faq", label: "FAQ" },
             { to: "/privacy", label: "Privacy" },
             { to: "/terms", label: "Terms" },
