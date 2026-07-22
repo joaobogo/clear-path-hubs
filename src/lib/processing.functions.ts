@@ -16,11 +16,10 @@ import { z } from "zod";
 import type { Json } from "@/integrations/supabase/types";
 import {
   ENGINE_VERSION,
-  scoreCandidate,
   type RequirementInput,
   type ScreeningAnswer,
-  type ScoringResult,
 } from "@/lib/scoring-engine.server";
+import { executeScoring, assertPublishGate } from "@/lib/scoring-service.server";
 
 type State =
   | "queued"
