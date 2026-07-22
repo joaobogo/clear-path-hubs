@@ -278,7 +278,7 @@ function MatchDetail() {
             <h2 className="text-lg font-semibold">Score history</h2>
             <ul className="mt-2 text-sm space-y-1">
               {runs.length === 0 && <li className="text-muted-foreground">No runs.</li>}
-              {runs.map((r) => (
+              {runs.map((r: any) => (
                 <li key={r.id} className="flex justify-between border-b py-1">
                   <span>
                     {(r.completed_at && new Date(r.completed_at).toLocaleString()) || "—"} ·{" "}
@@ -297,7 +297,7 @@ function MatchDetail() {
             <h2 className="text-lg font-semibold">Processing history</h2>
             <ul className="mt-2 text-xs space-y-1 font-mono">
               {jobs.length === 0 && <li className="text-muted-foreground">No jobs recorded.</li>}
-              {jobs.map((j) => (
+              {jobs.map((j: any) => (
                 <li key={j.id} className={j.status === "failed" ? "text-destructive" : ""}>
                   {new Date(j.created_at ?? "").toLocaleString()} · {j.job_type} → {j.status}
                   {j.error_code ? ` (${j.error_code}: ${j.error_message})` : ""} · {j.trace_id}
@@ -490,7 +490,7 @@ function MatchDetail() {
             <section className="rounded-lg border p-4">
               <h2 className="text-lg font-semibold">Decision history</h2>
               <ul className="mt-2 text-xs space-y-1">
-                {decisions.map((d) => (
+                {decisions.map((d: any) => (
                   <li key={d.id}>
                     {new Date(d.created_at).toLocaleString()} · <strong>{d.decision_type}</strong>
                     {d.approved_score != null ? ` @ ${d.approved_score}` : ""} — {d.reason ?? "—"}

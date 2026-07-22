@@ -58,7 +58,7 @@ function MatchesPage() {
             </tr>
           </thead>
           <tbody>
-            {rows.map((m) => (
+            {rows.map((m: any) => (
               <tr key={m.id} className="border-t">
                 <td className="px-3 py-2">
                   <div className="font-medium">{m.candidate_name}</div>
