@@ -4,7 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useEffect } from "react";
 import { getClientContext, getClientOverview } from "@/lib/client.functions";
 import { useClientOrgSearch } from "@/lib/use-client-org";
-
+import { CandidateCard } from "@/components/client/candidate-card";
 
 export const Route = createFileRoute("/_authenticated/client/")({
   head: () => ({
@@ -16,35 +16,68 @@ export const Route = createFileRoute("/_authenticated/client/")({
   component: OverviewPage,
 });
 
-type KpiKey = "delivered" | "top" | "shortlisted" | "interviewing" | "hires";
+type KpiKey =
+  | "delivered"
+  | "top"
+  | "shortlisted"
+  | "interviewing"
+  | "interview_scheduled"
+  | "hires"
+  | "active_positions";
 
-const KPI_META: Record<KpiKey, { label: string; sub: string; filter: string }> = {
+const KPI_META: Record<KpiKey, { label: string; sub: string; href: string; filter?: string }> = {
+  active_positions: {
+    label: "Active positions",
+    sub: "Roles TaaSFlow is currently working on",
+    href: "/client/positions",
+  },
   delivered: {
     label: "Candidates delivered",
     sub: "Unique profiles visible to your team",
+    href: "/client/candidates",
     filter: "all",
   },
   top: {
     label: "Top matches",
     sub: "Approved excellent or strong fit",
+    href: "/client/candidates",
     filter: "top",
   },
   shortlisted: {
     label: "Shortlisted",
     sub: "Currently in your shortlist",
+    href: "/client/candidates",
     filter: "shortlisted",
   },
   interviewing: {
     label: "In interview process",
     sub: "Requested, scheduled or completed",
+    href: "/client/candidates",
+    filter: "interview",
+  },
+  interview_scheduled: {
+    label: "Interviews scheduled",
+    sub: "Confirmed upcoming interviews",
+    href: "/client/candidates",
     filter: "interview",
   },
   hires: {
     label: "Hires",
     sub: "Confirmed hires to date",
+    href: "/client/candidates",
     filter: "hired",
   },
 };
+
+const KPI_ORDER: KpiKey[] = [
+  "active_positions",
+  "delivered",
+  "top",
+  "shortlisted",
+  "interviewing",
+  "interview_scheduled",
+  "hires",
+];
 
 function OverviewPage() {
   const ctxFn = useServerFn(getClientContext);
@@ -67,26 +100,38 @@ function OverviewPage() {
   }, [refetch]);
 
   const kpis = data?.kpis;
+  const actions = data?.action_required ?? [];
+  const latest = data?.latest_candidates ?? [];
+  const messages = data?.recent_messages ?? [];
+  const activity = data?.recent_activity ?? [];
 
   return (
-    <main className="mx-auto max-w-6xl px-6 py-8">
-      <header className="mb-6">
+    <main className="mx-auto max-w-6xl px-6 py-8 space-y-8">
+      <header>
         <h1 className="text-2xl font-semibold">Overview</h1>
         <p className="text-sm text-muted-foreground">
-          What TaaSFlow has delivered — and what to review next.
+          What TaaSFlow has delivered — and what needs your attention.
         </p>
+        {data?.last_updated && (
+          <p className="mt-1 text-xs text-muted-foreground">
+            Last updated {new Date(data.last_updated).toLocaleString()}
+          </p>
+        )}
       </header>
 
-      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 mb-8">
-        {(Object.keys(KPI_META) as KpiKey[]).map((k) => {
+      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        {KPI_ORDER.map((k) => {
           const meta = KPI_META[k];
           const value = kpis ? (kpis as Record<KpiKey, number>)[k] : null;
-          if (k === "hires" && (value ?? 0) === 0) return null;
           return (
             <Link
               key={k}
-              to="/client/candidates"
-              search={(prev: Record<string, unknown>) => ({ ...prev, filter: meta.filter })}
+              to={meta.href}
+              search={
+                meta.filter
+                  ? (prev: Record<string, unknown>) => ({ ...prev, filter: meta.filter })
+                  : undefined
+              }
               className="group block rounded-lg border bg-card p-4 hover:border-primary transition"
             >
               <div className="text-xs uppercase tracking-wide text-muted-foreground">
@@ -96,51 +141,89 @@ function OverviewPage() {
                 {value ?? (isFetching ? "…" : 0)}
               </div>
               <div className="mt-1 text-xs text-muted-foreground">{meta.sub}</div>
-              <div className="mt-2 text-xs text-primary opacity-0 group-hover:opacity-100">
-                Open →
-              </div>
             </Link>
           );
         })}
       </section>
 
-      <section className="rounded-lg border bg-card p-4">
-        <div className="flex items-center justify-between mb-2">
-          <h2 className="font-medium">Where to focus</h2>
-          <div className="text-xs text-muted-foreground">
-            {data?.active_positions ?? 0} active positions
-          </div>
+      {actions.length > 0 && (
+        <section className="rounded-lg border bg-card p-4">
+          <h2 className="font-medium mb-3">Client action required</h2>
+          <ul className="space-y-2">
+            {actions.map((a, i) => (
+              <li key={i} className="flex items-center justify-between gap-3 rounded border p-3">
+                <span className="text-sm">{a.label}</span>
+                <Link to={a.href} className="text-sm text-primary hover:underline shrink-0">
+                  Open →
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      <section>
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="font-medium">Latest delivered candidates</h2>
+          <Link to="/client/candidates" className="text-sm text-primary hover:underline">
+            View all →
+          </Link>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-          <Link
-            to="/client/candidates"
-            search={(prev: Record<string, unknown>) => ({ ...prev, filter: "new" })}
-            className="rounded border p-3 hover:border-primary transition"
-          >
-            <div className="text-sm font-medium">New to review</div>
-            <div className="text-xs text-muted-foreground mt-1">
-              Candidates delivered but not yet shortlisted.
-            </div>
-          </Link>
-          <Link
-            to="/client/candidates"
-            search={(prev: Record<string, unknown>) => ({ ...prev, filter: "interview" })}
-            className="rounded border p-3 hover:border-primary transition"
-          >
-            <div className="text-sm font-medium">Interview outcomes</div>
-            <div className="text-xs text-muted-foreground mt-1">
-              Candidates currently in your interview process.
-            </div>
-          </Link>
-          <Link
-            to="/client/messages"
-            className="rounded border p-3 hover:border-primary transition"
-          >
-            <div className="text-sm font-medium">Message TaaSFlow</div>
-            <div className="text-xs text-muted-foreground mt-1">
-              Ask a question or share feedback on any role.
-            </div>
-          </Link>
+        {latest.length === 0 ? (
+          <div className="rounded border bg-card p-8 text-center text-sm text-muted-foreground">
+            No candidates yet — TaaSFlow will notify you when the first ones are ready.
+          </div>
+        ) : (
+          <div className="grid gap-3">
+            {latest.map((c) => (
+              <CandidateCard key={c.match_id} candidate={c} />
+            ))}
+          </div>
+        )}
+      </section>
+
+      <section className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div className="rounded-lg border bg-card p-4">
+          <div className="flex items-center justify-between mb-2">
+            <h2 className="font-medium">Recent messages</h2>
+            <Link to="/client/messages" className="text-sm text-primary hover:underline">
+              Open messages →
+            </Link>
+          </div>
+          {messages.length === 0 ? (
+            <p className="text-sm text-muted-foreground">No messages yet.</p>
+          ) : (
+            <ul className="space-y-2 text-sm">
+              {messages.map((m) => (
+                <li key={m.id} className="border-b pb-2 last:border-b-0">
+                  <div className="text-xs text-muted-foreground">
+                    {new Date(m.created_at).toLocaleString()}
+                  </div>
+                  <div className="line-clamp-2">{m.body}</div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+
+        <div className="rounded-lg border bg-card p-4">
+          <h2 className="font-medium mb-2">Recent activity</h2>
+          {activity.length === 0 ? (
+            <p className="text-sm text-muted-foreground">No recent activity.</p>
+          ) : (
+            <ul className="space-y-1.5 text-sm">
+              {activity.map((e) => (
+                <li key={e.id} className="flex items-center justify-between gap-3">
+                  <span className="capitalize">
+                    {String(e.action).replace(/_/g, " ")} · {String(e.entity_type).replace(/_/g, " ")}
+                  </span>
+                  <span className="text-xs text-muted-foreground">
+                    {new Date(e.created_at).toLocaleString()}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
       </section>
     </main>

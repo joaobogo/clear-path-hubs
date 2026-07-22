@@ -120,15 +120,92 @@ export const getClientOverview = createServerFn({ method: "GET" })
   .inputValidator((input: { orgId: string }) => z.object({ orgId: z.string().uuid() }).parse(input))
   .handler(async ({ context, data }) => {
     const rows = await loadKpiRows(context.supabase, data.orgId);
-    const kpis = computeKpis(rows);
-    // Active positions with any visible match
+
     const { data: positions } = await context.supabase
       .from("positions")
-      .select("id, title, status")
+      .select("id, title, status, updated_at")
       .eq("organization_id", data.orgId)
-      .in("status", ["active", "paused", "approved"]);
-    return { kpis, active_positions: (positions as AnyRow[])?.length ?? 0 };
+      .in("status", ["active", "paused", "approved"])
+      .order("updated_at", { ascending: false });
+    const activePositions = (positions as AnyRow[])?.length ?? 0;
+    const kpis = computeKpis(rows, activePositions);
+
+    // Action-required list — items requiring the client's attention.
+    const positionsById = new Map<string, AnyRow>(
+      (positions as AnyRow[] | undefined ?? []).map((p) => [p.id, p]),
+    );
+    const positionCounts = new Map<string, number>();
+    for (const r of rows) {
+      if (r.stage === "delivered") {
+        positionCounts.set(r.position_id, (positionCounts.get(r.position_id) ?? 0) + 1);
+      }
+    }
+    const action_required: Array<{ type: string; label: string; href: string; count?: number }> = [];
+    for (const [pid, count] of positionCounts) {
+      const p = positionsById.get(pid);
+      action_required.push({
+        type: "new_delivered",
+        label: `${count} new candidate${count === 1 ? "" : "s"} to review for ${p?.title ?? "position"}`,
+        href: `/client/positions/${pid}`,
+        count,
+      });
+    }
+    const offerCount = rows.filter((r) => r.stage === "offer").length;
+    if (offerCount > 0) {
+      action_required.push({
+        type: "offer_pending",
+        label: `${offerCount} offer${offerCount === 1 ? "" : "s"} awaiting response`,
+        href: `/client/candidates?filter=interview`,
+        count: offerCount,
+      });
+    }
+
+    // Latest delivered candidates (top 5).
+    const { data: latestMatches } = await context.supabase
+      .from("candidate_matches")
+      .select(
+        `id, stage, delivered_at, position_id,
+         candidate_profiles(id, full_name, headline, location, availability, years_experience, summary),
+         positions(id, title),
+         score_runs:approved_score_run_id (score, fit_label, explanation, result, requirement_coverage, evidence)`,
+      )
+      .eq("organization_id", data.orgId)
+      .eq("client_visibility", "visible")
+      .order("delivered_at", { ascending: false })
+      .limit(5);
+    const latest_candidates = ((latestMatches as AnyRow[]) ?? []).map(toClientCandidateDTO);
+
+    // Recent messages (last 3).
+    const { data: recentMessages } = await context.supabase
+      .from("messages")
+      .select("id, body, created_at, sender_user_id, thread_id")
+      .eq("thread_id", data.orgId)
+      .order("created_at", { ascending: false })
+      .limit(3);
+
+    // Recent activity from audit events.
+    const { data: events } = await context.supabase
+      .from("audit_events")
+      .select("id, action, entity_type, created_at")
+      .eq("organization_id", data.orgId)
+      .order("created_at", { ascending: false })
+      .limit(6);
+
+    const lastEvent = (events as AnyRow[] | undefined)?.[0];
+    const last_updated: string | null =
+      lastEvent?.created_at ?? (positions as AnyRow[] | undefined)?.[0]?.updated_at ?? null;
+
+    return {
+      kpis,
+      active_positions: activePositions,
+      action_required,
+      latest_candidates,
+      recent_messages: (recentMessages as AnyRow[]) ?? [],
+      recent_activity: (events as AnyRow[]) ?? [],
+      last_updated,
+    };
   });
+
 
 // ─── Positions ──────────────────────────────────────────────────────────────
 
@@ -166,9 +243,10 @@ export const getClientPositions = createServerFn({ method: "GET" })
     }
     return (positions as AnyRow[]).map((p) => {
       const posRows = byPosition.get(p.id) ?? [];
-      const kpi = computeKpis(posRows);
+      const kpi = computeKpis(posRows, 0);
       return {
         ...p,
+
         kpis: kpi,
         next_milestone: nextMilestoneFor(posRows, p.status),
         action_required: actionRequiredFor(posRows, p.status),
@@ -264,13 +342,14 @@ export const getClientCandidates = createServerFn({ method: "GET" })
     let q = context.supabase
       .from("candidate_matches")
       .select(
-        `id, stage, delivered_at, position_id,
-         candidate_profiles(id, full_name, headline, location, availability),
+        `id, stage, delivered_at, position_id, application_id,
+         candidate_profiles(id, full_name, headline, location, availability, years_experience, summary, experience, skills, education, languages, work_authorization),
          positions(id, title),
          score_runs:approved_score_run_id (score, fit_label, explanation, result, requirement_coverage, evidence)`,
       )
       .eq("organization_id", data.orgId)
       .eq("client_visibility", "visible");
+
 
     if (data.positionId) q = q.eq("position_id", data.positionId);
 
@@ -319,8 +398,8 @@ export const getClientCandidate = createServerFn({ method: "GET" })
     const { data: match, error } = await context.supabase
       .from("candidate_matches")
       .select(
-        `id, stage, delivered_at, position_id,
-         candidate_profiles(id, full_name, headline, location, availability),
+        `id, stage, delivered_at, position_id, application_id,
+         candidate_profiles(id, full_name, headline, location, availability, years_experience, summary, experience, skills, education, languages, work_authorization),
          positions(id, title, location, work_model),
          score_runs:approved_score_run_id (score, fit_label, explanation, result, evidence, requirement_coverage)`,
       )
@@ -331,24 +410,41 @@ export const getClientCandidate = createServerFn({ method: "GET" })
     if (error) throw new Error(error.message);
     if (!match) return null;
 
-    const { data: interviews } = await context.supabase
-      .from("interviews")
-      .select("id, status, requested_at, scheduled_at, completed_at, notes")
-      .eq("candidate_match_id", data.matchId)
-      .order("created_at", { ascending: false });
+    const applicationId = (match as AnyRow).application_id;
+    const [{ data: interviews }, { data: decisions }, answersRes] = await Promise.all([
+      context.supabase
+        .from("interviews")
+        .select("id, status, requested_at, scheduled_at, completed_at, notes")
+        .eq("candidate_match_id", data.matchId)
+        .order("created_at", { ascending: false }),
+      context.supabase
+        .from("client_decisions")
+        .select("id, decision, feedback, created_at")
+        .eq("candidate_match_id", data.matchId)
+        .order("created_at", { ascending: false }),
+      applicationId
+        ? context.supabase
+            .from("application_answers")
+            .select("id, answer, screening_questions(question, display_order)")
+            .eq("application_id", applicationId)
+        : Promise.resolve({ data: [] as AnyRow[] }),
+    ]);
 
-    const { data: decisions } = await context.supabase
-      .from("client_decisions")
-      .select("id, decision, feedback, created_at")
-      .eq("candidate_match_id", data.matchId)
-      .order("created_at", { ascending: false });
+    const answers = ((answersRes as AnyRow).data as AnyRow[]) ?? [];
+    answers.sort(
+      (a, b) =>
+        (a.screening_questions?.display_order ?? 0) -
+        (b.screening_questions?.display_order ?? 0),
+    );
+    const matchWithAnswers = { ...(match as AnyRow), application_answers: answers };
 
     return {
-      candidate: toClientCandidateDTO(match as AnyRow),
+      candidate: toClientCandidateDTO(matchWithAnswers),
       interviews: (interviews as AnyRow[]) ?? [],
       decisions: (decisions as AnyRow[]) ?? [],
     };
   });
+
 
 // ─── Stage transitions ──────────────────────────────────────────────────────
 //
