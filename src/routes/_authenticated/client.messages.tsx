@@ -42,9 +42,11 @@ function MessagesPage() {
     supabase.auth.getUser().then(({ data }) => setSelfId(data.user?.id ?? null));
   }, []);
 
+  const orgSearch = useClientOrgSearch();
+  const support = useSupportView();
   const { data: ctx } = useQuery({
-    queryKey: ["client-context", null],
-    queryFn: () => ctxFn({ data: {} }),
+    queryKey: ["client-context", orgSearch ?? null],
+    queryFn: () => ctxFn({ data: orgSearch ? { orgId: orgSearch } : {} }),
   });
   const orgId = ctx?.active?.organization_id;
 
