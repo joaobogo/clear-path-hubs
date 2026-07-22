@@ -655,11 +655,44 @@ function IntakePage() {
                 />
               </Field>
               <Field label="Hiring urgency">
-                <Input
+                <Select
                   value={state.hiringUrgency}
-                  onChange={(e) => set("hiringUrgency", e.target.value)}
-                  placeholder="ASAP, 30 days, 60 days…"
+                  onValueChange={(v) => set("hiringUrgency", v)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select…" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="asap">ASAP</SelectItem>
+                    <SelectItem value="30_days">Within 30 days</SelectItem>
+                    <SelectItem value="60_days">Within 60 days</SelectItem>
+                    <SelectItem value="90_days">Within 90 days</SelectItem>
+                    <SelectItem value="exploratory">Exploratory</SelectItem>
+                  </SelectContent>
+                </Select>
+              </Field>
+              <Field label="Hiring timeline" hint="Target start date or key milestones.">
+                <Input
+                  value={state.hiringTimeline}
+                  onChange={(e) => set("hiringTimeline", e.target.value)}
+                  placeholder="Start by Q3, onboarding by Sept…"
                 />
+              </Field>
+              <Field label="Reason for hiring" className="sm:col-span-2">
+                <Select
+                  value={state.reasonForHiring}
+                  onValueChange={(v) => set("reasonForHiring", v as FormState["reasonForHiring"])}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select…" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="growth">Growth — new headcount</SelectItem>
+                    <SelectItem value="replacement">Replacement</SelectItem>
+                    <SelectItem value="backfill">Backfill</SelectItem>
+                    <SelectItem value="new_team">New team / function</SelectItem>
+                  </SelectContent>
+                </Select>
               </Field>
               <Field label="Work authorization">
                 <Input
