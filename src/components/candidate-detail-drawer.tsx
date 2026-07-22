@@ -33,6 +33,7 @@ import { Link } from "@tanstack/react-router";
 import { getAdminMatch, retryParse, rescore, advanceProcessing, applyReviewDecision, markOcrDone, retryHydration, retryEnrichment, markManualReview, replaceCv } from "@/lib/processing.functions";
 import { updateCandidateAsAdmin, repairCandidateIdentity } from "@/lib/admin-candidate-edit.functions";
 import { setMatchClientVisibility } from "@/lib/admin.functions";
+import { DownloadCvButton } from "@/components/download-cv-button";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
