@@ -366,9 +366,9 @@ export async function runEnrichmentOnly(
   try {
     const ctx = await loadCtx(s, matchId);
     if (!ctx.file) {
-      await setState(s, matchId, "failed", { trace_id, code: "cv_unreadable", message: "No CV on file." });
-      await recordJob(s, matchId, "enrich", "failed", trace_id, { code: "cv_unreadable", message: "no_cv" });
-      return { match_id: matchId, trace_id, final_state: "failed", steps: [...steps, { step: "enrich", ok: false, note: "no_cv" }] };
+      await setState(s, matchId, "manual_review_required", { trace_id, code: "missing_usable_cv", message: "No CV on file — manual review required." });
+      await recordJob(s, matchId, "enrich", "failed", trace_id, { code: "missing_usable_cv", message: "no_cv" });
+      return { match_id: matchId, trace_id, final_state: "manual_review_required", steps: [...steps, { step: "enrich", ok: false, note: "no_cv" }] };
     }
     const cvText = ctx.file.extracted_text ?? "";
     if (!cvText) {
