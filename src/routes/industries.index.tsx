@@ -6,7 +6,7 @@ import { marketingHead } from "@/lib/marketing/head";
 
 const entry = getIndustry("industries");
 
-export const Route = createFileRoute("/industries")({
+export const Route = createFileRoute("/industries/")({
   head: () =>
     marketingHead(entry, "/industries", {
       title: "Industries we serve — TaaSFlow",

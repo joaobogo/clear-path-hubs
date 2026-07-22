@@ -9,16 +9,36 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TermsRouteImport } from './routes/terms'
+import { Route as TalentNetworkRouteImport } from './routes/talent-network'
+import { Route as ResourcesRouteImport } from './routes/resources'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as PricingRouteImport } from './routes/pricing'
+import { Route as PilotRouteImport } from './routes/pilot'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as KnowledgeBaseRouteImport } from './routes/knowledge-base'
 import { Route as IntakeRouteImport } from './routes/intake'
+import { Route as HowItWorksRouteImport } from './routes/how-it-works'
+import { Route as GlobalTalentRouteImport } from './routes/global-talent'
+import { Route as FaqRouteImport } from './routes/faq'
+import { Route as EnterpriseRouteImport } from './routes/enterprise'
+import { Route as EmployerOnboardingRouteImport } from './routes/employer-onboarding'
+import { Route as ContactRouteImport } from './routes/contact'
+import { Route as CaseStudiesRouteImport } from './routes/case-studies'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AccessDeniedRouteImport } from './routes/access-denied'
+import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as JobsIndexRouteImport } from './routes/jobs.index'
+import { Route as IndustriesIndexRouteImport } from './routes/industries.index'
+import { Route as BlogIndexRouteImport } from './routes/blog.index'
+import { Route as PartnershipsStaffingRouteImport } from './routes/partnerships.staffing'
 import { Route as IntakeConfirmationRouteImport } from './routes/intake_.confirmation'
+import { Route as IndustriesSlugRouteImport } from './routes/industries.$slug'
 import { Route as DevCatalogueRouteImport } from './routes/dev.catalogue'
+import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as AuthenticatedMeRouteImport } from './routes/_authenticated/me'
 import { Route as AuthenticatedClientRouteImport } from './routes/_authenticated/client'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
@@ -64,9 +84,39 @@ import { Route as AuthenticatedAdminPositionsIdRouteImport } from './routes/_aut
 import { Route as AuthenticatedAdminClientsIdRouteImport } from './routes/_authenticated/admin.clients.$id'
 import { Route as AuthenticatedAdminCandidatesIdRouteImport } from './routes/_authenticated/admin.candidates.$id'
 
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TalentNetworkRoute = TalentNetworkRouteImport.update({
+  id: '/talent-network',
+  path: '/talent-network',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResourcesRoute = ResourcesRouteImport.update({
+  id: '/resources',
+  path: '/resources',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
   path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PricingRoute = PricingRouteImport.update({
+  id: '/pricing',
+  path: '/pricing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PilotRoute = PilotRouteImport.update({
+  id: '/pilot',
+  path: '/pilot',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -74,9 +124,49 @@ const LoginRoute = LoginRouteImport.update({
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const KnowledgeBaseRoute = KnowledgeBaseRouteImport.update({
+  id: '/knowledge-base',
+  path: '/knowledge-base',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IntakeRoute = IntakeRouteImport.update({
   id: '/intake',
   path: '/intake',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HowItWorksRoute = HowItWorksRouteImport.update({
+  id: '/how-it-works',
+  path: '/how-it-works',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GlobalTalentRoute = GlobalTalentRouteImport.update({
+  id: '/global-talent',
+  path: '/global-talent',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FaqRoute = FaqRouteImport.update({
+  id: '/faq',
+  path: '/faq',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EnterpriseRoute = EnterpriseRouteImport.update({
+  id: '/enterprise',
+  path: '/enterprise',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EmployerOnboardingRoute = EmployerOnboardingRouteImport.update({
+  id: '/employer-onboarding',
+  path: '/employer-onboarding',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CaseStudiesRoute = CaseStudiesRouteImport.update({
+  id: '/case-studies',
+  path: '/case-studies',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -87,6 +177,11 @@ const AuthRoute = AuthRouteImport.update({
 const AccessDeniedRoute = AccessDeniedRouteImport.update({
   id: '/access-denied',
   path: '/access-denied',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
@@ -103,14 +198,39 @@ const JobsIndexRoute = JobsIndexRouteImport.update({
   path: '/jobs/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const IndustriesIndexRoute = IndustriesIndexRouteImport.update({
+  id: '/industries/',
+  path: '/industries/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BlogIndexRoute = BlogIndexRouteImport.update({
+  id: '/blog/',
+  path: '/blog/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PartnershipsStaffingRoute = PartnershipsStaffingRouteImport.update({
+  id: '/partnerships/staffing',
+  path: '/partnerships/staffing',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IntakeConfirmationRoute = IntakeConfirmationRouteImport.update({
   id: '/intake_/confirmation',
   path: '/intake/confirmation',
   getParentRoute: () => rootRouteImport,
 } as any)
+const IndustriesSlugRoute = IndustriesSlugRouteImport.update({
+  id: '/industries/$slug',
+  path: '/industries/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DevCatalogueRoute = DevCatalogueRouteImport.update({
   id: '/dev/catalogue',
   path: '/dev/catalogue',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BlogSlugRoute = BlogSlugRouteImport.update({
+  id: '/blog/$slug',
+  path: '/blog/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedMeRoute = AuthenticatedMeRouteImport.update({
@@ -363,16 +483,36 @@ const AuthenticatedAdminCandidatesIdRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
   '/access-denied': typeof AccessDeniedRoute
   '/auth': typeof AuthRoute
+  '/case-studies': typeof CaseStudiesRoute
+  '/contact': typeof ContactRoute
+  '/employer-onboarding': typeof EmployerOnboardingRoute
+  '/enterprise': typeof EnterpriseRoute
+  '/faq': typeof FaqRoute
+  '/global-talent': typeof GlobalTalentRoute
+  '/how-it-works': typeof HowItWorksRoute
   '/intake': typeof IntakeRoute
+  '/knowledge-base': typeof KnowledgeBaseRoute
   '/login': typeof LoginRoute
+  '/pilot': typeof PilotRoute
+  '/pricing': typeof PricingRoute
+  '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/resources': typeof ResourcesRoute
+  '/talent-network': typeof TalentNetworkRoute
+  '/terms': typeof TermsRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/client': typeof AuthenticatedClientRouteWithChildren
   '/me': typeof AuthenticatedMeRouteWithChildren
+  '/blog/$slug': typeof BlogSlugRoute
   '/dev/catalogue': typeof DevCatalogueRoute
+  '/industries/$slug': typeof IndustriesSlugRoute
   '/intake/confirmation': typeof IntakeConfirmationRoute
+  '/partnerships/staffing': typeof PartnershipsStaffingRoute
+  '/blog/': typeof BlogIndexRoute
+  '/industries/': typeof IndustriesIndexRoute
   '/jobs/': typeof JobsIndexRoute
   '/admin/candidates': typeof AuthenticatedAdminCandidatesRouteWithChildren
   '/admin/clients': typeof AuthenticatedAdminClientsRouteWithChildren
@@ -418,13 +558,33 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
   '/access-denied': typeof AccessDeniedRoute
   '/auth': typeof AuthRoute
+  '/case-studies': typeof CaseStudiesRoute
+  '/contact': typeof ContactRoute
+  '/employer-onboarding': typeof EmployerOnboardingRoute
+  '/enterprise': typeof EnterpriseRoute
+  '/faq': typeof FaqRoute
+  '/global-talent': typeof GlobalTalentRoute
+  '/how-it-works': typeof HowItWorksRoute
   '/intake': typeof IntakeRoute
+  '/knowledge-base': typeof KnowledgeBaseRoute
   '/login': typeof LoginRoute
+  '/pilot': typeof PilotRoute
+  '/pricing': typeof PricingRoute
+  '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/resources': typeof ResourcesRoute
+  '/talent-network': typeof TalentNetworkRoute
+  '/terms': typeof TermsRoute
+  '/blog/$slug': typeof BlogSlugRoute
   '/dev/catalogue': typeof DevCatalogueRoute
+  '/industries/$slug': typeof IndustriesSlugRoute
   '/intake/confirmation': typeof IntakeConfirmationRoute
+  '/partnerships/staffing': typeof PartnershipsStaffingRoute
+  '/blog': typeof BlogIndexRoute
+  '/industries': typeof IndustriesIndexRoute
   '/jobs': typeof JobsIndexRoute
   '/admin/clients_new': typeof AuthenticatedAdminClients_newRoute
   '/admin/health': typeof AuthenticatedAdminHealthRoute
@@ -466,16 +626,36 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/about': typeof AboutRoute
   '/access-denied': typeof AccessDeniedRoute
   '/auth': typeof AuthRoute
+  '/case-studies': typeof CaseStudiesRoute
+  '/contact': typeof ContactRoute
+  '/employer-onboarding': typeof EmployerOnboardingRoute
+  '/enterprise': typeof EnterpriseRoute
+  '/faq': typeof FaqRoute
+  '/global-talent': typeof GlobalTalentRoute
+  '/how-it-works': typeof HowItWorksRoute
   '/intake': typeof IntakeRoute
+  '/knowledge-base': typeof KnowledgeBaseRoute
   '/login': typeof LoginRoute
+  '/pilot': typeof PilotRoute
+  '/pricing': typeof PricingRoute
+  '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/resources': typeof ResourcesRoute
+  '/talent-network': typeof TalentNetworkRoute
+  '/terms': typeof TermsRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/client': typeof AuthenticatedClientRouteWithChildren
   '/_authenticated/me': typeof AuthenticatedMeRouteWithChildren
+  '/blog/$slug': typeof BlogSlugRoute
   '/dev/catalogue': typeof DevCatalogueRoute
+  '/industries/$slug': typeof IndustriesSlugRoute
   '/intake_/confirmation': typeof IntakeConfirmationRoute
+  '/partnerships/staffing': typeof PartnershipsStaffingRoute
+  '/blog/': typeof BlogIndexRoute
+  '/industries/': typeof IndustriesIndexRoute
   '/jobs/': typeof JobsIndexRoute
   '/_authenticated/admin/candidates': typeof AuthenticatedAdminCandidatesRouteWithChildren
   '/_authenticated/admin/clients': typeof AuthenticatedAdminClientsRouteWithChildren
@@ -523,16 +703,36 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/about'
     | '/access-denied'
     | '/auth'
+    | '/case-studies'
+    | '/contact'
+    | '/employer-onboarding'
+    | '/enterprise'
+    | '/faq'
+    | '/global-talent'
+    | '/how-it-works'
     | '/intake'
+    | '/knowledge-base'
     | '/login'
+    | '/pilot'
+    | '/pricing'
+    | '/privacy'
     | '/reset-password'
+    | '/resources'
+    | '/talent-network'
+    | '/terms'
     | '/admin'
     | '/client'
     | '/me'
+    | '/blog/$slug'
     | '/dev/catalogue'
+    | '/industries/$slug'
     | '/intake/confirmation'
+    | '/partnerships/staffing'
+    | '/blog/'
+    | '/industries/'
     | '/jobs/'
     | '/admin/candidates'
     | '/admin/clients'
@@ -578,13 +778,33 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/about'
     | '/access-denied'
     | '/auth'
+    | '/case-studies'
+    | '/contact'
+    | '/employer-onboarding'
+    | '/enterprise'
+    | '/faq'
+    | '/global-talent'
+    | '/how-it-works'
     | '/intake'
+    | '/knowledge-base'
     | '/login'
+    | '/pilot'
+    | '/pricing'
+    | '/privacy'
     | '/reset-password'
+    | '/resources'
+    | '/talent-network'
+    | '/terms'
+    | '/blog/$slug'
     | '/dev/catalogue'
+    | '/industries/$slug'
     | '/intake/confirmation'
+    | '/partnerships/staffing'
+    | '/blog'
+    | '/industries'
     | '/jobs'
     | '/admin/clients_new'
     | '/admin/health'
@@ -625,16 +845,36 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_authenticated'
+    | '/about'
     | '/access-denied'
     | '/auth'
+    | '/case-studies'
+    | '/contact'
+    | '/employer-onboarding'
+    | '/enterprise'
+    | '/faq'
+    | '/global-talent'
+    | '/how-it-works'
     | '/intake'
+    | '/knowledge-base'
     | '/login'
+    | '/pilot'
+    | '/pricing'
+    | '/privacy'
     | '/reset-password'
+    | '/resources'
+    | '/talent-network'
+    | '/terms'
     | '/_authenticated/admin'
     | '/_authenticated/client'
     | '/_authenticated/me'
+    | '/blog/$slug'
     | '/dev/catalogue'
+    | '/industries/$slug'
     | '/intake_/confirmation'
+    | '/partnerships/staffing'
+    | '/blog/'
+    | '/industries/'
     | '/jobs/'
     | '/_authenticated/admin/candidates'
     | '/_authenticated/admin/clients'
@@ -682,13 +922,33 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AboutRoute: typeof AboutRoute
   AccessDeniedRoute: typeof AccessDeniedRoute
   AuthRoute: typeof AuthRoute
+  CaseStudiesRoute: typeof CaseStudiesRoute
+  ContactRoute: typeof ContactRoute
+  EmployerOnboardingRoute: typeof EmployerOnboardingRoute
+  EnterpriseRoute: typeof EnterpriseRoute
+  FaqRoute: typeof FaqRoute
+  GlobalTalentRoute: typeof GlobalTalentRoute
+  HowItWorksRoute: typeof HowItWorksRoute
   IntakeRoute: typeof IntakeRoute
+  KnowledgeBaseRoute: typeof KnowledgeBaseRoute
   LoginRoute: typeof LoginRoute
+  PilotRoute: typeof PilotRoute
+  PricingRoute: typeof PricingRoute
+  PrivacyRoute: typeof PrivacyRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
+  ResourcesRoute: typeof ResourcesRoute
+  TalentNetworkRoute: typeof TalentNetworkRoute
+  TermsRoute: typeof TermsRoute
+  BlogSlugRoute: typeof BlogSlugRoute
   DevCatalogueRoute: typeof DevCatalogueRoute
+  IndustriesSlugRoute: typeof IndustriesSlugRoute
   IntakeConfirmationRoute: typeof IntakeConfirmationRoute
+  PartnershipsStaffingRoute: typeof PartnershipsStaffingRoute
+  BlogIndexRoute: typeof BlogIndexRoute
+  IndustriesIndexRoute: typeof IndustriesIndexRoute
   JobsIndexRoute: typeof JobsIndexRoute
   ApiPublicBootstrapAdminRoute: typeof ApiPublicBootstrapAdminRoute
   ApiPublicIntakeRoute: typeof ApiPublicIntakeRoute
@@ -702,11 +962,53 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/talent-network': {
+      id: '/talent-network'
+      path: '/talent-network'
+      fullPath: '/talent-network'
+      preLoaderRoute: typeof TalentNetworkRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/resources': {
+      id: '/resources'
+      path: '/resources'
+      fullPath: '/resources'
+      preLoaderRoute: typeof ResourcesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/reset-password': {
       id: '/reset-password'
       path: '/reset-password'
       fullPath: '/reset-password'
       preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pricing': {
+      id: '/pricing'
+      path: '/pricing'
+      fullPath: '/pricing'
+      preLoaderRoute: typeof PricingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pilot': {
+      id: '/pilot'
+      path: '/pilot'
+      fullPath: '/pilot'
+      preLoaderRoute: typeof PilotRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -716,11 +1018,67 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/knowledge-base': {
+      id: '/knowledge-base'
+      path: '/knowledge-base'
+      fullPath: '/knowledge-base'
+      preLoaderRoute: typeof KnowledgeBaseRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/intake': {
       id: '/intake'
       path: '/intake'
       fullPath: '/intake'
       preLoaderRoute: typeof IntakeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/how-it-works': {
+      id: '/how-it-works'
+      path: '/how-it-works'
+      fullPath: '/how-it-works'
+      preLoaderRoute: typeof HowItWorksRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/global-talent': {
+      id: '/global-talent'
+      path: '/global-talent'
+      fullPath: '/global-talent'
+      preLoaderRoute: typeof GlobalTalentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/faq': {
+      id: '/faq'
+      path: '/faq'
+      fullPath: '/faq'
+      preLoaderRoute: typeof FaqRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/enterprise': {
+      id: '/enterprise'
+      path: '/enterprise'
+      fullPath: '/enterprise'
+      preLoaderRoute: typeof EnterpriseRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/employer-onboarding': {
+      id: '/employer-onboarding'
+      path: '/employer-onboarding'
+      fullPath: '/employer-onboarding'
+      preLoaderRoute: typeof EmployerOnboardingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/case-studies': {
+      id: '/case-studies'
+      path: '/case-studies'
+      fullPath: '/case-studies'
+      preLoaderRoute: typeof CaseStudiesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -735,6 +1093,13 @@ declare module '@tanstack/react-router' {
       path: '/access-denied'
       fullPath: '/access-denied'
       preLoaderRoute: typeof AccessDeniedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated': {
@@ -758,6 +1123,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof JobsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/industries/': {
+      id: '/industries/'
+      path: '/industries'
+      fullPath: '/industries/'
+      preLoaderRoute: typeof IndustriesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/blog/': {
+      id: '/blog/'
+      path: '/blog'
+      fullPath: '/blog/'
+      preLoaderRoute: typeof BlogIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/partnerships/staffing': {
+      id: '/partnerships/staffing'
+      path: '/partnerships/staffing'
+      fullPath: '/partnerships/staffing'
+      preLoaderRoute: typeof PartnershipsStaffingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/intake_/confirmation': {
       id: '/intake_/confirmation'
       path: '/intake/confirmation'
@@ -765,11 +1151,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IntakeConfirmationRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/industries/$slug': {
+      id: '/industries/$slug'
+      path: '/industries/$slug'
+      fullPath: '/industries/$slug'
+      preLoaderRoute: typeof IndustriesSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dev/catalogue': {
       id: '/dev/catalogue'
       path: '/dev/catalogue'
       fullPath: '/dev/catalogue'
       preLoaderRoute: typeof DevCatalogueRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/blog/$slug': {
+      id: '/blog/$slug'
+      path: '/blog/$slug'
+      fullPath: '/blog/$slug'
+      preLoaderRoute: typeof BlogSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/me': {
@@ -1277,13 +1677,33 @@ const AuthenticatedRouteRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AboutRoute: AboutRoute,
   AccessDeniedRoute: AccessDeniedRoute,
   AuthRoute: AuthRoute,
+  CaseStudiesRoute: CaseStudiesRoute,
+  ContactRoute: ContactRoute,
+  EmployerOnboardingRoute: EmployerOnboardingRoute,
+  EnterpriseRoute: EnterpriseRoute,
+  FaqRoute: FaqRoute,
+  GlobalTalentRoute: GlobalTalentRoute,
+  HowItWorksRoute: HowItWorksRoute,
   IntakeRoute: IntakeRoute,
+  KnowledgeBaseRoute: KnowledgeBaseRoute,
   LoginRoute: LoginRoute,
+  PilotRoute: PilotRoute,
+  PricingRoute: PricingRoute,
+  PrivacyRoute: PrivacyRoute,
   ResetPasswordRoute: ResetPasswordRoute,
+  ResourcesRoute: ResourcesRoute,
+  TalentNetworkRoute: TalentNetworkRoute,
+  TermsRoute: TermsRoute,
+  BlogSlugRoute: BlogSlugRoute,
   DevCatalogueRoute: DevCatalogueRoute,
+  IndustriesSlugRoute: IndustriesSlugRoute,
   IntakeConfirmationRoute: IntakeConfirmationRoute,
+  PartnershipsStaffingRoute: PartnershipsStaffingRoute,
+  BlogIndexRoute: BlogIndexRoute,
+  IndustriesIndexRoute: IndustriesIndexRoute,
   JobsIndexRoute: JobsIndexRoute,
   ApiPublicBootstrapAdminRoute: ApiPublicBootstrapAdminRoute,
   ApiPublicIntakeRoute: ApiPublicIntakeRoute,
