@@ -638,8 +638,7 @@ function ApplyPage() {
             Cancel and return to role
           </Link>
         </div>
-      </main>
-    </div>
+    </FormShell>
   );
 }
 
