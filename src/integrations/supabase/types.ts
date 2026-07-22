@@ -20,6 +20,15 @@ export type Database = {
           application_id: string
           created_at: string
           id: string
+          legacy_source_id: string | null
+          legacy_source_system: string | null
+          legacy_source_table: string | null
+          migrated_at: string | null
+          migration_run_id: string | null
+          migration_status:
+            | Database["public"]["Enums"]["migration_row_status"]
+            | null
+          migration_version: string | null
           question_id: string
           updated_at: string
         }
@@ -28,6 +37,15 @@ export type Database = {
           application_id: string
           created_at?: string
           id?: string
+          legacy_source_id?: string | null
+          legacy_source_system?: string | null
+          legacy_source_table?: string | null
+          migrated_at?: string | null
+          migration_run_id?: string | null
+          migration_status?:
+            | Database["public"]["Enums"]["migration_row_status"]
+            | null
+          migration_version?: string | null
           question_id: string
           updated_at?: string
         }
@@ -36,6 +54,15 @@ export type Database = {
           application_id?: string
           created_at?: string
           id?: string
+          legacy_source_id?: string | null
+          legacy_source_system?: string | null
+          legacy_source_table?: string | null
+          migrated_at?: string | null
+          migration_run_id?: string | null
+          migration_status?:
+            | Database["public"]["Enums"]["migration_row_status"]
+            | null
+          migration_version?: string | null
           question_id?: string
           updated_at?: string
         }
@@ -72,6 +99,15 @@ export type Database = {
           expires_at: string | null
           id: string
           is_test_record: boolean | null
+          legacy_source_id: string | null
+          legacy_source_system: string | null
+          legacy_source_table: string | null
+          migrated_at: string | null
+          migration_run_id: string | null
+          migration_status:
+            | Database["public"]["Enums"]["migration_row_status"]
+            | null
+          migration_version: string | null
           position_id: string
           source: string | null
           status: Database["public"]["Enums"]["application_status"]
@@ -87,6 +123,15 @@ export type Database = {
           expires_at?: string | null
           id?: string
           is_test_record?: boolean | null
+          legacy_source_id?: string | null
+          legacy_source_system?: string | null
+          legacy_source_table?: string | null
+          migrated_at?: string | null
+          migration_run_id?: string | null
+          migration_status?:
+            | Database["public"]["Enums"]["migration_row_status"]
+            | null
+          migration_version?: string | null
           position_id: string
           source?: string | null
           status?: Database["public"]["Enums"]["application_status"]
@@ -102,6 +147,15 @@ export type Database = {
           expires_at?: string | null
           id?: string
           is_test_record?: boolean | null
+          legacy_source_id?: string | null
+          legacy_source_system?: string | null
+          legacy_source_table?: string | null
+          migrated_at?: string | null
+          migration_run_id?: string | null
+          migration_status?:
+            | Database["public"]["Enums"]["migration_row_status"]
+            | null
+          migration_version?: string | null
           position_id?: string
           source?: string | null
           status?: Database["public"]["Enums"]["application_status"]
@@ -171,6 +225,15 @@ export type Database = {
           entity_id: string | null
           entity_type: string
           id: string
+          legacy_source_id: string | null
+          legacy_source_system: string | null
+          legacy_source_table: string | null
+          migrated_at: string | null
+          migration_run_id: string | null
+          migration_status:
+            | Database["public"]["Enums"]["migration_row_status"]
+            | null
+          migration_version: string | null
           organization_id: string | null
           trace_id: string | null
         }
@@ -183,6 +246,15 @@ export type Database = {
           entity_id?: string | null
           entity_type: string
           id?: string
+          legacy_source_id?: string | null
+          legacy_source_system?: string | null
+          legacy_source_table?: string | null
+          migrated_at?: string | null
+          migration_run_id?: string | null
+          migration_status?:
+            | Database["public"]["Enums"]["migration_row_status"]
+            | null
+          migration_version?: string | null
           organization_id?: string | null
           trace_id?: string | null
         }
@@ -195,6 +267,15 @@ export type Database = {
           entity_id?: string | null
           entity_type?: string
           id?: string
+          legacy_source_id?: string | null
+          legacy_source_system?: string | null
+          legacy_source_table?: string | null
+          migrated_at?: string | null
+          migration_run_id?: string | null
+          migration_status?:
+            | Database["public"]["Enums"]["migration_row_status"]
+            | null
+          migration_version?: string | null
           organization_id?: string | null
           trace_id?: string | null
         }
@@ -224,6 +305,15 @@ export type Database = {
           engine_version: string
           extracted: Json
           id: string
+          legacy_source_id: string | null
+          legacy_source_system: string | null
+          legacy_source_table: string | null
+          migrated_at: string | null
+          migration_run_id: string | null
+          migration_status:
+            | Database["public"]["Enums"]["migration_row_status"]
+            | null
+          migration_version: string | null
           raw_text_sample: string | null
           screening_normalized: Json
         }
@@ -235,6 +325,15 @@ export type Database = {
           engine_version: string
           extracted?: Json
           id?: string
+          legacy_source_id?: string | null
+          legacy_source_system?: string | null
+          legacy_source_table?: string | null
+          migrated_at?: string | null
+          migration_run_id?: string | null
+          migration_status?:
+            | Database["public"]["Enums"]["migration_row_status"]
+            | null
+          migration_version?: string | null
           raw_text_sample?: string | null
           screening_normalized?: Json
         }
@@ -246,6 +345,15 @@ export type Database = {
           engine_version?: string
           extracted?: Json
           id?: string
+          legacy_source_id?: string | null
+          legacy_source_system?: string | null
+          legacy_source_table?: string | null
+          migrated_at?: string | null
+          migration_run_id?: string | null
+          migration_status?:
+            | Database["public"]["Enums"]["migration_row_status"]
+            | null
+          migration_version?: string | null
           raw_text_sample?: string | null
           screening_normalized?: Json
         }
@@ -323,6 +431,15 @@ export type Database = {
           id: string
           is_test_record: boolean | null
           last_processing_trace_id: string | null
+          legacy_source_id: string | null
+          legacy_source_system: string | null
+          legacy_source_table: string | null
+          migrated_at: string | null
+          migration_run_id: string | null
+          migration_status:
+            | Database["public"]["Enums"]["migration_row_status"]
+            | null
+          migration_version: string | null
           organization_id: string
           position_id: string
           processing_error_code: string | null
@@ -347,6 +464,15 @@ export type Database = {
           id?: string
           is_test_record?: boolean | null
           last_processing_trace_id?: string | null
+          legacy_source_id?: string | null
+          legacy_source_system?: string | null
+          legacy_source_table?: string | null
+          migrated_at?: string | null
+          migration_run_id?: string | null
+          migration_status?:
+            | Database["public"]["Enums"]["migration_row_status"]
+            | null
+          migration_version?: string | null
           organization_id: string
           position_id: string
           processing_error_code?: string | null
@@ -371,6 +497,15 @@ export type Database = {
           id?: string
           is_test_record?: boolean | null
           last_processing_trace_id?: string | null
+          legacy_source_id?: string | null
+          legacy_source_system?: string | null
+          legacy_source_table?: string | null
+          migrated_at?: string | null
+          migration_run_id?: string | null
+          migration_status?:
+            | Database["public"]["Enums"]["migration_row_status"]
+            | null
+          migration_version?: string | null
           organization_id?: string
           position_id?: string
           processing_error_code?: string | null
@@ -492,8 +627,17 @@ export type Database = {
           id: string
           is_test_record: boolean | null
           languages: Json
+          legacy_source_id: string | null
+          legacy_source_system: string | null
+          legacy_source_table: string | null
           linkedin_url: string | null
           location: string | null
+          migrated_at: string | null
+          migration_run_id: string | null
+          migration_status:
+            | Database["public"]["Enums"]["migration_row_status"]
+            | null
+          migration_version: string | null
           phone: string | null
           skills: Json
           summary: string | null
@@ -520,8 +664,17 @@ export type Database = {
           id?: string
           is_test_record?: boolean | null
           languages?: Json
+          legacy_source_id?: string | null
+          legacy_source_system?: string | null
+          legacy_source_table?: string | null
           linkedin_url?: string | null
           location?: string | null
+          migrated_at?: string | null
+          migration_run_id?: string | null
+          migration_status?:
+            | Database["public"]["Enums"]["migration_row_status"]
+            | null
+          migration_version?: string | null
           phone?: string | null
           skills?: Json
           summary?: string | null
@@ -548,8 +701,17 @@ export type Database = {
           id?: string
           is_test_record?: boolean | null
           languages?: Json
+          legacy_source_id?: string | null
+          legacy_source_system?: string | null
+          legacy_source_table?: string | null
           linkedin_url?: string | null
           location?: string | null
+          migrated_at?: string | null
+          migration_run_id?: string | null
+          migration_status?:
+            | Database["public"]["Enums"]["migration_row_status"]
+            | null
+          migration_version?: string | null
           phone?: string | null
           skills?: Json
           summary?: string | null
@@ -578,6 +740,15 @@ export type Database = {
           decision: Database["public"]["Enums"]["client_decision_type"]
           feedback: string | null
           id: string
+          legacy_source_id: string | null
+          legacy_source_system: string | null
+          legacy_source_table: string | null
+          migrated_at: string | null
+          migration_run_id: string | null
+          migration_status:
+            | Database["public"]["Enums"]["migration_row_status"]
+            | null
+          migration_version: string | null
           organization_id: string
           updated_at: string
         }
@@ -588,6 +759,15 @@ export type Database = {
           decision: Database["public"]["Enums"]["client_decision_type"]
           feedback?: string | null
           id?: string
+          legacy_source_id?: string | null
+          legacy_source_system?: string | null
+          legacy_source_table?: string | null
+          migrated_at?: string | null
+          migration_run_id?: string | null
+          migration_status?:
+            | Database["public"]["Enums"]["migration_row_status"]
+            | null
+          migration_version?: string | null
           organization_id: string
           updated_at?: string
         }
@@ -598,6 +778,15 @@ export type Database = {
           decision?: Database["public"]["Enums"]["client_decision_type"]
           feedback?: string | null
           id?: string
+          legacy_source_id?: string | null
+          legacy_source_system?: string | null
+          legacy_source_table?: string | null
+          migrated_at?: string | null
+          migration_run_id?: string | null
+          migration_status?:
+            | Database["public"]["Enums"]["migration_row_status"]
+            | null
+          migration_version?: string | null
           organization_id?: string
           updated_at?: string
         }
@@ -663,6 +852,15 @@ export type Database = {
           granted_at: string
           id: string
           ip_address: unknown
+          legacy_source_id: string | null
+          legacy_source_system: string | null
+          legacy_source_table: string | null
+          migrated_at: string | null
+          migration_run_id: string | null
+          migration_status:
+            | Database["public"]["Enums"]["migration_row_status"]
+            | null
+          migration_version: string | null
           policy_version: string
           source: string
           subject_email: string | null
@@ -678,6 +876,15 @@ export type Database = {
           granted_at?: string
           id?: string
           ip_address?: unknown
+          legacy_source_id?: string | null
+          legacy_source_system?: string | null
+          legacy_source_table?: string | null
+          migrated_at?: string | null
+          migration_run_id?: string | null
+          migration_status?:
+            | Database["public"]["Enums"]["migration_row_status"]
+            | null
+          migration_version?: string | null
           policy_version: string
           source: string
           subject_email?: string | null
@@ -693,6 +900,15 @@ export type Database = {
           granted_at?: string
           id?: string
           ip_address?: unknown
+          legacy_source_id?: string | null
+          legacy_source_system?: string | null
+          legacy_source_table?: string | null
+          migrated_at?: string | null
+          migration_run_id?: string | null
+          migration_status?:
+            | Database["public"]["Enums"]["migration_row_status"]
+            | null
+          migration_version?: string | null
           policy_version?: string
           source?: string
           subject_email?: string | null
@@ -909,6 +1125,15 @@ export type Database = {
           filename: string
           id: string
           is_test_record: boolean | null
+          legacy_source_id: string | null
+          legacy_source_system: string | null
+          legacy_source_table: string | null
+          migrated_at: string | null
+          migration_run_id: string | null
+          migration_status:
+            | Database["public"]["Enums"]["migration_row_status"]
+            | null
+          migration_version: string | null
           mime_type: string | null
           ocr_used: boolean
           owner_user_id: string | null
@@ -930,6 +1155,15 @@ export type Database = {
           filename: string
           id?: string
           is_test_record?: boolean | null
+          legacy_source_id?: string | null
+          legacy_source_system?: string | null
+          legacy_source_table?: string | null
+          migrated_at?: string | null
+          migration_run_id?: string | null
+          migration_status?:
+            | Database["public"]["Enums"]["migration_row_status"]
+            | null
+          migration_version?: string | null
           mime_type?: string | null
           ocr_used?: boolean
           owner_user_id?: string | null
@@ -951,6 +1185,15 @@ export type Database = {
           filename?: string
           id?: string
           is_test_record?: boolean | null
+          legacy_source_id?: string | null
+          legacy_source_system?: string | null
+          legacy_source_table?: string | null
+          migrated_at?: string | null
+          migration_run_id?: string | null
+          migration_status?:
+            | Database["public"]["Enums"]["migration_row_status"]
+            | null
+          migration_version?: string | null
           mime_type?: string | null
           ocr_used?: boolean
           owner_user_id?: string | null
@@ -982,6 +1225,15 @@ export type Database = {
           created_at: string
           id: string
           idempotency_key: string
+          legacy_source_id: string | null
+          legacy_source_system: string | null
+          legacy_source_table: string | null
+          migrated_at: string | null
+          migration_run_id: string | null
+          migration_status:
+            | Database["public"]["Enums"]["migration_row_status"]
+            | null
+          migration_version: string | null
           organization_id: string | null
           payload: Json
           position_id: string | null
@@ -1000,6 +1252,15 @@ export type Database = {
           created_at?: string
           id?: string
           idempotency_key: string
+          legacy_source_id?: string | null
+          legacy_source_system?: string | null
+          legacy_source_table?: string | null
+          migrated_at?: string | null
+          migration_run_id?: string | null
+          migration_status?:
+            | Database["public"]["Enums"]["migration_row_status"]
+            | null
+          migration_version?: string | null
           organization_id?: string | null
           payload?: Json
           position_id?: string | null
@@ -1018,6 +1279,15 @@ export type Database = {
           created_at?: string
           id?: string
           idempotency_key?: string
+          legacy_source_id?: string | null
+          legacy_source_system?: string | null
+          legacy_source_table?: string | null
+          migrated_at?: string | null
+          migration_run_id?: string | null
+          migration_status?:
+            | Database["public"]["Enums"]["migration_row_status"]
+            | null
+          migration_version?: string | null
           organization_id?: string | null
           payload?: Json
           position_id?: string | null
@@ -1090,6 +1360,15 @@ export type Database = {
           completed_at: string | null
           created_at: string
           id: string
+          legacy_source_id: string | null
+          legacy_source_system: string | null
+          legacy_source_table: string | null
+          migrated_at: string | null
+          migration_run_id: string | null
+          migration_status:
+            | Database["public"]["Enums"]["migration_row_status"]
+            | null
+          migration_version: string | null
           notes: string | null
           organization_id: string
           requested_at: string
@@ -1103,6 +1382,15 @@ export type Database = {
           completed_at?: string | null
           created_at?: string
           id?: string
+          legacy_source_id?: string | null
+          legacy_source_system?: string | null
+          legacy_source_table?: string | null
+          migrated_at?: string | null
+          migration_run_id?: string | null
+          migration_status?:
+            | Database["public"]["Enums"]["migration_row_status"]
+            | null
+          migration_version?: string | null
           notes?: string | null
           organization_id: string
           requested_at?: string
@@ -1116,6 +1404,15 @@ export type Database = {
           completed_at?: string | null
           created_at?: string
           id?: string
+          legacy_source_id?: string | null
+          legacy_source_system?: string | null
+          legacy_source_table?: string | null
+          migrated_at?: string | null
+          migration_run_id?: string | null
+          migration_status?:
+            | Database["public"]["Enums"]["migration_row_status"]
+            | null
+          migration_version?: string | null
           notes?: string | null
           organization_id?: string
           requested_at?: string
@@ -1175,6 +1472,550 @@ export type Database = {
           },
         ]
       }
+      legacy_application_map: {
+        Row: {
+          checksum: string | null
+          created_at: string
+          destination_id: string | null
+          destination_table: string
+          error_code: string | null
+          error_detail: string | null
+          id: string
+          matched_by: string | null
+          migrated_at: string | null
+          migration_run_id: string
+          migration_status: Database["public"]["Enums"]["migration_row_status"]
+          payload: Json | null
+          source_id: string
+          source_system: string
+          source_table: string
+          updated_at: string
+          validation_status: Database["public"]["Enums"]["migration_validation_status"]
+        }
+        Insert: {
+          checksum?: string | null
+          created_at?: string
+          destination_id?: string | null
+          destination_table: string
+          error_code?: string | null
+          error_detail?: string | null
+          id?: string
+          matched_by?: string | null
+          migrated_at?: string | null
+          migration_run_id: string
+          migration_status?: Database["public"]["Enums"]["migration_row_status"]
+          payload?: Json | null
+          source_id: string
+          source_system?: string
+          source_table: string
+          updated_at?: string
+          validation_status?: Database["public"]["Enums"]["migration_validation_status"]
+        }
+        Update: {
+          checksum?: string | null
+          created_at?: string
+          destination_id?: string | null
+          destination_table?: string
+          error_code?: string | null
+          error_detail?: string | null
+          id?: string
+          matched_by?: string | null
+          migrated_at?: string | null
+          migration_run_id?: string
+          migration_status?: Database["public"]["Enums"]["migration_row_status"]
+          payload?: Json | null
+          source_id?: string
+          source_system?: string
+          source_table?: string
+          updated_at?: string
+          validation_status?: Database["public"]["Enums"]["migration_validation_status"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "legacy_application_map_migration_run_id_fkey"
+            columns: ["migration_run_id"]
+            isOneToOne: false
+            referencedRelation: "migration_runs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      legacy_candidate_map: {
+        Row: {
+          checksum: string | null
+          created_at: string
+          destination_id: string | null
+          destination_table: string
+          error_code: string | null
+          error_detail: string | null
+          id: string
+          matched_by: string | null
+          migrated_at: string | null
+          migration_run_id: string
+          migration_status: Database["public"]["Enums"]["migration_row_status"]
+          payload: Json | null
+          source_id: string
+          source_system: string
+          source_table: string
+          updated_at: string
+          validation_status: Database["public"]["Enums"]["migration_validation_status"]
+        }
+        Insert: {
+          checksum?: string | null
+          created_at?: string
+          destination_id?: string | null
+          destination_table: string
+          error_code?: string | null
+          error_detail?: string | null
+          id?: string
+          matched_by?: string | null
+          migrated_at?: string | null
+          migration_run_id: string
+          migration_status?: Database["public"]["Enums"]["migration_row_status"]
+          payload?: Json | null
+          source_id: string
+          source_system?: string
+          source_table: string
+          updated_at?: string
+          validation_status?: Database["public"]["Enums"]["migration_validation_status"]
+        }
+        Update: {
+          checksum?: string | null
+          created_at?: string
+          destination_id?: string | null
+          destination_table?: string
+          error_code?: string | null
+          error_detail?: string | null
+          id?: string
+          matched_by?: string | null
+          migrated_at?: string | null
+          migration_run_id?: string
+          migration_status?: Database["public"]["Enums"]["migration_row_status"]
+          payload?: Json | null
+          source_id?: string
+          source_system?: string
+          source_table?: string
+          updated_at?: string
+          validation_status?: Database["public"]["Enums"]["migration_validation_status"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "legacy_candidate_map_migration_run_id_fkey"
+            columns: ["migration_run_id"]
+            isOneToOne: false
+            referencedRelation: "migration_runs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      legacy_file_map: {
+        Row: {
+          checksum: string | null
+          created_at: string
+          destination_id: string | null
+          destination_table: string
+          error_code: string | null
+          error_detail: string | null
+          id: string
+          matched_by: string | null
+          migrated_at: string | null
+          migration_run_id: string
+          migration_status: Database["public"]["Enums"]["migration_row_status"]
+          payload: Json | null
+          source_id: string
+          source_system: string
+          source_table: string
+          updated_at: string
+          validation_status: Database["public"]["Enums"]["migration_validation_status"]
+        }
+        Insert: {
+          checksum?: string | null
+          created_at?: string
+          destination_id?: string | null
+          destination_table: string
+          error_code?: string | null
+          error_detail?: string | null
+          id?: string
+          matched_by?: string | null
+          migrated_at?: string | null
+          migration_run_id: string
+          migration_status?: Database["public"]["Enums"]["migration_row_status"]
+          payload?: Json | null
+          source_id: string
+          source_system?: string
+          source_table: string
+          updated_at?: string
+          validation_status?: Database["public"]["Enums"]["migration_validation_status"]
+        }
+        Update: {
+          checksum?: string | null
+          created_at?: string
+          destination_id?: string | null
+          destination_table?: string
+          error_code?: string | null
+          error_detail?: string | null
+          id?: string
+          matched_by?: string | null
+          migrated_at?: string | null
+          migration_run_id?: string
+          migration_status?: Database["public"]["Enums"]["migration_row_status"]
+          payload?: Json | null
+          source_id?: string
+          source_system?: string
+          source_table?: string
+          updated_at?: string
+          validation_status?: Database["public"]["Enums"]["migration_validation_status"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "legacy_file_map_migration_run_id_fkey"
+            columns: ["migration_run_id"]
+            isOneToOne: false
+            referencedRelation: "migration_runs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      legacy_identity_map: {
+        Row: {
+          checksum: string | null
+          created_at: string
+          destination_id: string | null
+          destination_table: string
+          error_code: string | null
+          error_detail: string | null
+          id: string
+          matched_by: string | null
+          migrated_at: string | null
+          migration_run_id: string
+          migration_status: Database["public"]["Enums"]["migration_row_status"]
+          payload: Json | null
+          source_id: string
+          source_system: string
+          source_table: string
+          updated_at: string
+          validation_status: Database["public"]["Enums"]["migration_validation_status"]
+        }
+        Insert: {
+          checksum?: string | null
+          created_at?: string
+          destination_id?: string | null
+          destination_table: string
+          error_code?: string | null
+          error_detail?: string | null
+          id?: string
+          matched_by?: string | null
+          migrated_at?: string | null
+          migration_run_id: string
+          migration_status?: Database["public"]["Enums"]["migration_row_status"]
+          payload?: Json | null
+          source_id: string
+          source_system?: string
+          source_table: string
+          updated_at?: string
+          validation_status?: Database["public"]["Enums"]["migration_validation_status"]
+        }
+        Update: {
+          checksum?: string | null
+          created_at?: string
+          destination_id?: string | null
+          destination_table?: string
+          error_code?: string | null
+          error_detail?: string | null
+          id?: string
+          matched_by?: string | null
+          migrated_at?: string | null
+          migration_run_id?: string
+          migration_status?: Database["public"]["Enums"]["migration_row_status"]
+          payload?: Json | null
+          source_id?: string
+          source_system?: string
+          source_table?: string
+          updated_at?: string
+          validation_status?: Database["public"]["Enums"]["migration_validation_status"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "legacy_identity_map_migration_run_id_fkey"
+            columns: ["migration_run_id"]
+            isOneToOne: false
+            referencedRelation: "migration_runs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      legacy_organization_map: {
+        Row: {
+          checksum: string | null
+          created_at: string
+          destination_id: string | null
+          destination_table: string
+          error_code: string | null
+          error_detail: string | null
+          id: string
+          matched_by: string | null
+          migrated_at: string | null
+          migration_run_id: string
+          migration_status: Database["public"]["Enums"]["migration_row_status"]
+          payload: Json | null
+          source_id: string
+          source_system: string
+          source_table: string
+          updated_at: string
+          validation_status: Database["public"]["Enums"]["migration_validation_status"]
+        }
+        Insert: {
+          checksum?: string | null
+          created_at?: string
+          destination_id?: string | null
+          destination_table: string
+          error_code?: string | null
+          error_detail?: string | null
+          id?: string
+          matched_by?: string | null
+          migrated_at?: string | null
+          migration_run_id: string
+          migration_status?: Database["public"]["Enums"]["migration_row_status"]
+          payload?: Json | null
+          source_id: string
+          source_system?: string
+          source_table: string
+          updated_at?: string
+          validation_status?: Database["public"]["Enums"]["migration_validation_status"]
+        }
+        Update: {
+          checksum?: string | null
+          created_at?: string
+          destination_id?: string | null
+          destination_table?: string
+          error_code?: string | null
+          error_detail?: string | null
+          id?: string
+          matched_by?: string | null
+          migrated_at?: string | null
+          migration_run_id?: string
+          migration_status?: Database["public"]["Enums"]["migration_row_status"]
+          payload?: Json | null
+          source_id?: string
+          source_system?: string
+          source_table?: string
+          updated_at?: string
+          validation_status?: Database["public"]["Enums"]["migration_validation_status"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "legacy_organization_map_migration_run_id_fkey"
+            columns: ["migration_run_id"]
+            isOneToOne: false
+            referencedRelation: "migration_runs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      legacy_position_map: {
+        Row: {
+          checksum: string | null
+          created_at: string
+          destination_id: string | null
+          destination_table: string
+          error_code: string | null
+          error_detail: string | null
+          id: string
+          matched_by: string | null
+          migrated_at: string | null
+          migration_run_id: string
+          migration_status: Database["public"]["Enums"]["migration_row_status"]
+          payload: Json | null
+          source_id: string
+          source_system: string
+          source_table: string
+          updated_at: string
+          validation_status: Database["public"]["Enums"]["migration_validation_status"]
+        }
+        Insert: {
+          checksum?: string | null
+          created_at?: string
+          destination_id?: string | null
+          destination_table: string
+          error_code?: string | null
+          error_detail?: string | null
+          id?: string
+          matched_by?: string | null
+          migrated_at?: string | null
+          migration_run_id: string
+          migration_status?: Database["public"]["Enums"]["migration_row_status"]
+          payload?: Json | null
+          source_id: string
+          source_system?: string
+          source_table: string
+          updated_at?: string
+          validation_status?: Database["public"]["Enums"]["migration_validation_status"]
+        }
+        Update: {
+          checksum?: string | null
+          created_at?: string
+          destination_id?: string | null
+          destination_table?: string
+          error_code?: string | null
+          error_detail?: string | null
+          id?: string
+          matched_by?: string | null
+          migrated_at?: string | null
+          migration_run_id?: string
+          migration_status?: Database["public"]["Enums"]["migration_row_status"]
+          payload?: Json | null
+          source_id?: string
+          source_system?: string
+          source_table?: string
+          updated_at?: string
+          validation_status?: Database["public"]["Enums"]["migration_validation_status"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "legacy_position_map_migration_run_id_fkey"
+            columns: ["migration_run_id"]
+            isOneToOne: false
+            referencedRelation: "migration_runs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      legacy_score_map: {
+        Row: {
+          checksum: string | null
+          created_at: string
+          destination_id: string | null
+          destination_table: string
+          error_code: string | null
+          error_detail: string | null
+          id: string
+          matched_by: string | null
+          migrated_at: string | null
+          migration_run_id: string
+          migration_status: Database["public"]["Enums"]["migration_row_status"]
+          payload: Json | null
+          source_id: string
+          source_system: string
+          source_table: string
+          updated_at: string
+          validation_status: Database["public"]["Enums"]["migration_validation_status"]
+        }
+        Insert: {
+          checksum?: string | null
+          created_at?: string
+          destination_id?: string | null
+          destination_table: string
+          error_code?: string | null
+          error_detail?: string | null
+          id?: string
+          matched_by?: string | null
+          migrated_at?: string | null
+          migration_run_id: string
+          migration_status?: Database["public"]["Enums"]["migration_row_status"]
+          payload?: Json | null
+          source_id: string
+          source_system?: string
+          source_table: string
+          updated_at?: string
+          validation_status?: Database["public"]["Enums"]["migration_validation_status"]
+        }
+        Update: {
+          checksum?: string | null
+          created_at?: string
+          destination_id?: string | null
+          destination_table?: string
+          error_code?: string | null
+          error_detail?: string | null
+          id?: string
+          matched_by?: string | null
+          migrated_at?: string | null
+          migration_run_id?: string
+          migration_status?: Database["public"]["Enums"]["migration_row_status"]
+          payload?: Json | null
+          source_id?: string
+          source_system?: string
+          source_table?: string
+          updated_at?: string
+          validation_status?: Database["public"]["Enums"]["migration_validation_status"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "legacy_score_map_migration_run_id_fkey"
+            columns: ["migration_run_id"]
+            isOneToOne: false
+            referencedRelation: "migration_runs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      legacy_submission_map: {
+        Row: {
+          checksum: string | null
+          created_at: string
+          destination_id: string | null
+          destination_table: string
+          error_code: string | null
+          error_detail: string | null
+          id: string
+          matched_by: string | null
+          migrated_at: string | null
+          migration_run_id: string
+          migration_status: Database["public"]["Enums"]["migration_row_status"]
+          payload: Json | null
+          source_id: string
+          source_system: string
+          source_table: string
+          updated_at: string
+          validation_status: Database["public"]["Enums"]["migration_validation_status"]
+        }
+        Insert: {
+          checksum?: string | null
+          created_at?: string
+          destination_id?: string | null
+          destination_table: string
+          error_code?: string | null
+          error_detail?: string | null
+          id?: string
+          matched_by?: string | null
+          migrated_at?: string | null
+          migration_run_id: string
+          migration_status?: Database["public"]["Enums"]["migration_row_status"]
+          payload?: Json | null
+          source_id: string
+          source_system?: string
+          source_table: string
+          updated_at?: string
+          validation_status?: Database["public"]["Enums"]["migration_validation_status"]
+        }
+        Update: {
+          checksum?: string | null
+          created_at?: string
+          destination_id?: string | null
+          destination_table?: string
+          error_code?: string | null
+          error_detail?: string | null
+          id?: string
+          matched_by?: string | null
+          migrated_at?: string | null
+          migration_run_id?: string
+          migration_status?: Database["public"]["Enums"]["migration_row_status"]
+          payload?: Json | null
+          source_id?: string
+          source_system?: string
+          source_table?: string
+          updated_at?: string
+          validation_status?: Database["public"]["Enums"]["migration_validation_status"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "legacy_submission_map_migration_run_id_fkey"
+            columns: ["migration_run_id"]
+            isOneToOne: false
+            referencedRelation: "migration_runs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       memberships: {
         Row: {
           created_at: string
@@ -1182,6 +2023,15 @@ export type Database = {
           expires_at: string | null
           id: string
           is_test_record: boolean | null
+          legacy_source_id: string | null
+          legacy_source_system: string | null
+          legacy_source_table: string | null
+          migrated_at: string | null
+          migration_run_id: string | null
+          migration_status:
+            | Database["public"]["Enums"]["migration_row_status"]
+            | null
+          migration_version: string | null
           organization_id: string
           role: Database["public"]["Enums"]["membership_role"]
           status: Database["public"]["Enums"]["membership_status"]
@@ -1194,6 +2044,15 @@ export type Database = {
           expires_at?: string | null
           id?: string
           is_test_record?: boolean | null
+          legacy_source_id?: string | null
+          legacy_source_system?: string | null
+          legacy_source_table?: string | null
+          migrated_at?: string | null
+          migration_run_id?: string | null
+          migration_status?:
+            | Database["public"]["Enums"]["migration_row_status"]
+            | null
+          migration_version?: string | null
           organization_id: string
           role: Database["public"]["Enums"]["membership_role"]
           status?: Database["public"]["Enums"]["membership_status"]
@@ -1206,6 +2065,15 @@ export type Database = {
           expires_at?: string | null
           id?: string
           is_test_record?: boolean | null
+          legacy_source_id?: string | null
+          legacy_source_system?: string | null
+          legacy_source_table?: string | null
+          migrated_at?: string | null
+          migration_run_id?: string | null
+          migration_status?:
+            | Database["public"]["Enums"]["migration_row_status"]
+            | null
+          migration_version?: string | null
           organization_id?: string
           role?: Database["public"]["Enums"]["membership_role"]
           status?: Database["public"]["Enums"]["membership_status"]
@@ -1234,6 +2102,15 @@ export type Database = {
           body: string
           created_at: string
           id: string
+          legacy_source_id: string | null
+          legacy_source_system: string | null
+          legacy_source_table: string | null
+          migrated_at: string | null
+          migration_run_id: string | null
+          migration_status:
+            | Database["public"]["Enums"]["migration_row_status"]
+            | null
+          migration_version: string | null
           read_at: string | null
           recipient_context: Json
           sender_user_id: string | null
@@ -1243,6 +2120,15 @@ export type Database = {
           body: string
           created_at?: string
           id?: string
+          legacy_source_id?: string | null
+          legacy_source_system?: string | null
+          legacy_source_table?: string | null
+          migrated_at?: string | null
+          migration_run_id?: string | null
+          migration_status?:
+            | Database["public"]["Enums"]["migration_row_status"]
+            | null
+          migration_version?: string | null
           read_at?: string | null
           recipient_context?: Json
           sender_user_id?: string | null
@@ -1252,10 +2138,206 @@ export type Database = {
           body?: string
           created_at?: string
           id?: string
+          legacy_source_id?: string | null
+          legacy_source_system?: string | null
+          legacy_source_table?: string | null
+          migrated_at?: string | null
+          migration_run_id?: string | null
+          migration_status?:
+            | Database["public"]["Enums"]["migration_row_status"]
+            | null
+          migration_version?: string | null
           read_at?: string | null
           recipient_context?: Json
           sender_user_id?: string | null
           thread_id?: string
+        }
+        Relationships: []
+      }
+      migration_entity_results: {
+        Row: {
+          created_at: string
+          destination_table: string
+          duration_ms: number | null
+          entity: string
+          finished_at: string | null
+          id: string
+          imported_count: number
+          migration_run_id: string
+          planned_count: number
+          rejected_count: number
+          skipped_count: number
+          source_table: string
+          started_at: string | null
+          updated_at: string
+          validation_status: Database["public"]["Enums"]["migration_validation_status"]
+          verified_count: number
+        }
+        Insert: {
+          created_at?: string
+          destination_table: string
+          duration_ms?: number | null
+          entity: string
+          finished_at?: string | null
+          id?: string
+          imported_count?: number
+          migration_run_id: string
+          planned_count?: number
+          rejected_count?: number
+          skipped_count?: number
+          source_table: string
+          started_at?: string | null
+          updated_at?: string
+          validation_status?: Database["public"]["Enums"]["migration_validation_status"]
+          verified_count?: number
+        }
+        Update: {
+          created_at?: string
+          destination_table?: string
+          duration_ms?: number | null
+          entity?: string
+          finished_at?: string | null
+          id?: string
+          imported_count?: number
+          migration_run_id?: string
+          planned_count?: number
+          rejected_count?: number
+          skipped_count?: number
+          source_table?: string
+          started_at?: string | null
+          updated_at?: string
+          validation_status?: Database["public"]["Enums"]["migration_validation_status"]
+          verified_count?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "migration_entity_results_migration_run_id_fkey"
+            columns: ["migration_run_id"]
+            isOneToOne: false
+            referencedRelation: "migration_runs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      migration_rejections: {
+        Row: {
+          checksum: string | null
+          created_at: string
+          destination_table: string | null
+          entity: string
+          error_code: string
+          error_detail: string | null
+          id: string
+          migration_run_id: string
+          payload: Json | null
+          resolution_note: string | null
+          resolved: boolean
+          resolved_at: string | null
+          source_id: string
+          source_system: string
+          source_table: string
+        }
+        Insert: {
+          checksum?: string | null
+          created_at?: string
+          destination_table?: string | null
+          entity: string
+          error_code: string
+          error_detail?: string | null
+          id?: string
+          migration_run_id: string
+          payload?: Json | null
+          resolution_note?: string | null
+          resolved?: boolean
+          resolved_at?: string | null
+          source_id: string
+          source_system?: string
+          source_table: string
+        }
+        Update: {
+          checksum?: string | null
+          created_at?: string
+          destination_table?: string | null
+          entity?: string
+          error_code?: string
+          error_detail?: string | null
+          id?: string
+          migration_run_id?: string
+          payload?: Json | null
+          resolution_note?: string | null
+          resolved?: boolean
+          resolved_at?: string | null
+          source_id?: string
+          source_system?: string
+          source_table?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "migration_rejections_migration_run_id_fkey"
+            columns: ["migration_run_id"]
+            isOneToOne: false
+            referencedRelation: "migration_runs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      migration_runs: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          dry_run: boolean
+          finished_at: string | null
+          id: string
+          imported_count: number
+          migration_version: string
+          notes: string | null
+          planned_count: number
+          rejected_count: number
+          run_key: string
+          skipped_count: number
+          source_project_ref: string | null
+          source_system: string
+          started_at: string | null
+          status: Database["public"]["Enums"]["migration_run_status"]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          dry_run?: boolean
+          finished_at?: string | null
+          id?: string
+          imported_count?: number
+          migration_version: string
+          notes?: string | null
+          planned_count?: number
+          rejected_count?: number
+          run_key: string
+          skipped_count?: number
+          source_project_ref?: string | null
+          source_system?: string
+          started_at?: string | null
+          status?: Database["public"]["Enums"]["migration_run_status"]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          dry_run?: boolean
+          finished_at?: string | null
+          id?: string
+          imported_count?: number
+          migration_version?: string
+          notes?: string | null
+          planned_count?: number
+          rejected_count?: number
+          run_key?: string
+          skipped_count?: number
+          source_project_ref?: string | null
+          source_system?: string
+          started_at?: string | null
+          status?: Database["public"]["Enums"]["migration_run_status"]
+          updated_at?: string
         }
         Relationships: []
       }
@@ -1466,7 +2548,16 @@ export type Database = {
           event_id: string | null
           event_type: Database["public"]["Enums"]["event_type"]
           id: string
+          legacy_source_id: string | null
+          legacy_source_system: string | null
+          legacy_source_table: string | null
           link_path: string | null
+          migrated_at: string | null
+          migration_run_id: string | null
+          migration_status:
+            | Database["public"]["Enums"]["migration_row_status"]
+            | null
+          migration_version: string | null
           organization_id: string | null
           read_at: string | null
           recipient_user_id: string
@@ -1479,7 +2570,16 @@ export type Database = {
           event_id?: string | null
           event_type: Database["public"]["Enums"]["event_type"]
           id?: string
+          legacy_source_id?: string | null
+          legacy_source_system?: string | null
+          legacy_source_table?: string | null
           link_path?: string | null
+          migrated_at?: string | null
+          migration_run_id?: string | null
+          migration_status?:
+            | Database["public"]["Enums"]["migration_row_status"]
+            | null
+          migration_version?: string | null
           organization_id?: string | null
           read_at?: string | null
           recipient_user_id: string
@@ -1492,7 +2592,16 @@ export type Database = {
           event_id?: string | null
           event_type?: Database["public"]["Enums"]["event_type"]
           id?: string
+          legacy_source_id?: string | null
+          legacy_source_system?: string | null
+          legacy_source_table?: string | null
           link_path?: string | null
+          migrated_at?: string | null
+          migration_run_id?: string | null
+          migration_status?:
+            | Database["public"]["Enums"]["migration_row_status"]
+            | null
+          migration_version?: string | null
           organization_id?: string | null
           read_at?: string | null
           recipient_user_id?: string
@@ -1535,7 +2644,16 @@ export type Database = {
           industry: string | null
           internal_notes: string | null
           is_test_record: boolean | null
+          legacy_source_id: string | null
+          legacy_source_system: string | null
+          legacy_source_table: string | null
           locations: string | null
+          migrated_at: string | null
+          migration_run_id: string | null
+          migration_status:
+            | Database["public"]["Enums"]["migration_row_status"]
+            | null
+          migration_version: string | null
           name: string
           name_normalized: string | null
           onboarding_status: string
@@ -1559,7 +2677,16 @@ export type Database = {
           industry?: string | null
           internal_notes?: string | null
           is_test_record?: boolean | null
+          legacy_source_id?: string | null
+          legacy_source_system?: string | null
+          legacy_source_table?: string | null
           locations?: string | null
+          migrated_at?: string | null
+          migration_run_id?: string | null
+          migration_status?:
+            | Database["public"]["Enums"]["migration_row_status"]
+            | null
+          migration_version?: string | null
           name: string
           name_normalized?: string | null
           onboarding_status?: string
@@ -1583,7 +2710,16 @@ export type Database = {
           industry?: string | null
           internal_notes?: string | null
           is_test_record?: boolean | null
+          legacy_source_id?: string | null
+          legacy_source_system?: string | null
+          legacy_source_table?: string | null
           locations?: string | null
+          migrated_at?: string | null
+          migration_run_id?: string | null
+          migration_status?:
+            | Database["public"]["Enums"]["migration_row_status"]
+            | null
+          migration_version?: string | null
           name?: string
           name_normalized?: string | null
           onboarding_status?: string
@@ -1612,7 +2748,16 @@ export type Database = {
           expires_at: string | null
           id: string
           is_test_record: boolean | null
+          legacy_source_id: string | null
+          legacy_source_system: string | null
+          legacy_source_table: string | null
           location: string | null
+          migrated_at: string | null
+          migration_run_id: string | null
+          migration_status:
+            | Database["public"]["Enums"]["migration_row_status"]
+            | null
+          migration_version: string | null
           organization_id: string
           preferred_requirements: Json
           published_at: string | null
@@ -1643,7 +2788,16 @@ export type Database = {
           expires_at?: string | null
           id?: string
           is_test_record?: boolean | null
+          legacy_source_id?: string | null
+          legacy_source_system?: string | null
+          legacy_source_table?: string | null
           location?: string | null
+          migrated_at?: string | null
+          migration_run_id?: string | null
+          migration_status?:
+            | Database["public"]["Enums"]["migration_row_status"]
+            | null
+          migration_version?: string | null
           organization_id: string
           preferred_requirements?: Json
           published_at?: string | null
@@ -1674,7 +2828,16 @@ export type Database = {
           expires_at?: string | null
           id?: string
           is_test_record?: boolean | null
+          legacy_source_id?: string | null
+          legacy_source_system?: string | null
+          legacy_source_table?: string | null
           location?: string | null
+          migrated_at?: string | null
+          migration_run_id?: string | null
+          migration_status?:
+            | Database["public"]["Enums"]["migration_row_status"]
+            | null
+          migration_version?: string | null
           organization_id?: string
           preferred_requirements?: Json
           published_at?: string | null
@@ -1761,7 +2924,16 @@ export type Database = {
           full_name: string | null
           id: string
           is_test_record: boolean | null
+          legacy_source_id: string | null
+          legacy_source_system: string | null
+          legacy_source_table: string | null
           locale: string | null
+          migrated_at: string | null
+          migration_run_id: string | null
+          migration_status:
+            | Database["public"]["Enums"]["migration_row_status"]
+            | null
+          migration_version: string | null
           phone: string | null
           status: Database["public"]["Enums"]["profile_status"]
           test_run_id: string | null
@@ -1777,7 +2949,16 @@ export type Database = {
           full_name?: string | null
           id?: string
           is_test_record?: boolean | null
+          legacy_source_id?: string | null
+          legacy_source_system?: string | null
+          legacy_source_table?: string | null
           locale?: string | null
+          migrated_at?: string | null
+          migration_run_id?: string | null
+          migration_status?:
+            | Database["public"]["Enums"]["migration_row_status"]
+            | null
+          migration_version?: string | null
           phone?: string | null
           status?: Database["public"]["Enums"]["profile_status"]
           test_run_id?: string | null
@@ -1793,7 +2974,16 @@ export type Database = {
           full_name?: string | null
           id?: string
           is_test_record?: boolean | null
+          legacy_source_id?: string | null
+          legacy_source_system?: string | null
+          legacy_source_table?: string | null
           locale?: string | null
+          migrated_at?: string | null
+          migration_run_id?: string | null
+          migration_status?:
+            | Database["public"]["Enums"]["migration_row_status"]
+            | null
+          migration_version?: string | null
           phone?: string | null
           status?: Database["public"]["Enums"]["profile_status"]
           test_run_id?: string | null
@@ -2091,6 +3281,15 @@ export type Database = {
           id: string
           input_hash: string | null
           is_test_record: boolean
+          legacy_source_id: string | null
+          legacy_source_system: string | null
+          legacy_source_table: string | null
+          migrated_at: string | null
+          migration_run_id: string | null
+          migration_status:
+            | Database["public"]["Enums"]["migration_row_status"]
+            | null
+          migration_version: string | null
           must_have_coverage: number | null
           position_id: string
           preferred_coverage: number | null
@@ -2117,6 +3316,15 @@ export type Database = {
           id?: string
           input_hash?: string | null
           is_test_record?: boolean
+          legacy_source_id?: string | null
+          legacy_source_system?: string | null
+          legacy_source_table?: string | null
+          migrated_at?: string | null
+          migration_run_id?: string | null
+          migration_status?:
+            | Database["public"]["Enums"]["migration_row_status"]
+            | null
+          migration_version?: string | null
           must_have_coverage?: number | null
           position_id: string
           preferred_coverage?: number | null
@@ -2143,6 +3351,15 @@ export type Database = {
           id?: string
           input_hash?: string | null
           is_test_record?: boolean
+          legacy_source_id?: string | null
+          legacy_source_system?: string | null
+          legacy_source_table?: string | null
+          migrated_at?: string | null
+          migration_run_id?: string | null
+          migration_status?:
+            | Database["public"]["Enums"]["migration_row_status"]
+            | null
+          migration_version?: string | null
           must_have_coverage?: number | null
           position_id?: string
           preferred_coverage?: number | null
@@ -2234,6 +3451,15 @@ export type Database = {
           dealbreaker: boolean
           display_order: number
           id: string
+          legacy_source_id: string | null
+          legacy_source_system: string | null
+          legacy_source_table: string | null
+          migrated_at: string | null
+          migration_run_id: string | null
+          migration_status:
+            | Database["public"]["Enums"]["migration_row_status"]
+            | null
+          migration_version: string | null
           options: Json | null
           position_id: string
           preferred_answer: Json | null
@@ -2248,6 +3474,15 @@ export type Database = {
           dealbreaker?: boolean
           display_order?: number
           id?: string
+          legacy_source_id?: string | null
+          legacy_source_system?: string | null
+          legacy_source_table?: string | null
+          migrated_at?: string | null
+          migration_run_id?: string | null
+          migration_status?:
+            | Database["public"]["Enums"]["migration_row_status"]
+            | null
+          migration_version?: string | null
           options?: Json | null
           position_id: string
           preferred_answer?: Json | null
@@ -2262,6 +3497,15 @@ export type Database = {
           dealbreaker?: boolean
           display_order?: number
           id?: string
+          legacy_source_id?: string | null
+          legacy_source_system?: string | null
+          legacy_source_table?: string | null
+          migrated_at?: string | null
+          migration_run_id?: string | null
+          migration_status?:
+            | Database["public"]["Enums"]["migration_row_status"]
+            | null
+          migration_version?: string | null
           options?: Json | null
           position_id?: string
           preferred_answer?: Json | null
@@ -3270,6 +4514,20 @@ export type Database = {
         | "client_viewer"
         | "candidate"
       membership_status: "active" | "invited" | "suspended" | "removed"
+      migration_row_status:
+        | "pending"
+        | "imported"
+        | "verified"
+        | "superseded"
+        | "rejected"
+        | "skipped"
+      migration_run_status:
+        | "planned"
+        | "running"
+        | "completed"
+        | "failed"
+        | "aborted"
+      migration_validation_status: "not_run" | "passed" | "warned" | "failed"
       notification_audience: "admin" | "client" | "candidate"
       org_status: "prospect" | "active" | "paused" | "archived"
       position_status:
@@ -3520,6 +4778,22 @@ export const Constants = {
         "candidate",
       ],
       membership_status: ["active", "invited", "suspended", "removed"],
+      migration_row_status: [
+        "pending",
+        "imported",
+        "verified",
+        "superseded",
+        "rejected",
+        "skipped",
+      ],
+      migration_run_status: [
+        "planned",
+        "running",
+        "completed",
+        "failed",
+        "aborted",
+      ],
+      migration_validation_status: ["not_run", "passed", "warned", "failed"],
       notification_audience: ["admin", "client", "candidate"],
       org_status: ["prospect", "active", "paused", "archived"],
       position_status: [
