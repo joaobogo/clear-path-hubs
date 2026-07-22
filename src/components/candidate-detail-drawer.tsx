@@ -30,7 +30,7 @@ import {
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { getAdminMatch, retryParse, rescore, advanceProcessing, applyReviewDecision, markOcrDone } from "@/lib/processing.functions";
+import { getAdminMatch, retryParse, rescore, advanceProcessing, applyReviewDecision, markOcrDone, retryHydration, retryEnrichment, markManualReview, replaceCv } from "@/lib/processing.functions";
 import { updateCandidateAsAdmin, repairCandidateIdentity } from "@/lib/admin-candidate-edit.functions";
 import { setMatchClientVisibility } from "@/lib/admin.functions";
 
@@ -90,6 +90,11 @@ export function CandidateDetailDrawer({
   const repairFn = useServerFn(repairCandidateIdentity);
   const setVis = useServerFn(setMatchClientVisibility);
   const retryParseFn = useServerFn(retryParse);
+  const retryHydrationFn = useServerFn(retryHydration);
+  const retryEnrichmentFn = useServerFn(retryEnrichment);
+  const markManualReviewFn = useServerFn(markManualReview);
+  const replaceCvFn = useServerFn(replaceCv);
+
   const rescoreFn = useServerFn(rescore);
   const advanceFn = useServerFn(advanceProcessing);
   const decisionFn = useServerFn(applyReviewDecision);
@@ -579,32 +584,74 @@ export function CandidateDetailDrawer({
               </ul>
             </TabsContent>
 
-            <TabsContent value="admin" className="mt-4 space-y-2">
+            <TabsContent value="admin" className="mt-4 space-y-3">
               {submissionId && (
-                <div className="grid grid-cols-2 gap-2">
-                  <Button variant="secondary" disabled={!!busy} onClick={() => runAction("advance", () => advanceFn({ data: { match_id: submissionId } }))}>Advance pipeline</Button>
-                  <Button variant="secondary" disabled={!!busy} onClick={() => runAction("retry parse", () => retryParseFn({ data: { match_id: submissionId } }))}>Retry parse</Button>
-                  <Button variant="secondary" disabled={!!busy} onClick={() => runAction("rescore", () => rescoreFn({ data: { match_id: submissionId } }))}>Rescore</Button>
-                  <Button variant="secondary" disabled={!!busy || match?.processing_state !== "scored"} onClick={() => runAction("approve for client", () => decisionFn({ data: { match_id: submissionId, action: "approve_for_client" } }))}>Approve & Publish</Button>
-                  <Button variant="secondary" disabled={!!busy} onClick={() => runAction("hide", () => setVis({ data: { match_id: submissionId, visibility: "hidden" } }))}>Hide from Client</Button>
-                  <Button variant="secondary" disabled={!!busy} onClick={() => runAction("hold", () => decisionFn({ data: { match_id: submissionId, action: "hold" } }))}>Hold</Button>
-                  <Button variant="destructive" disabled={!!busy} onClick={() => runAction("archive", () => decisionFn({ data: { match_id: submissionId, action: "archive" } }))}>Archive</Button>
-                </div>
+                <>
+                  <div>
+                    <p className="text-xs font-medium text-muted-foreground mb-1">Pipeline</p>
+                    <div className="grid grid-cols-2 gap-2">
+                      <Button variant="secondary" data-qa-action="advance-pipeline" disabled={!!busy} onClick={() => runAction("advance", () => advanceFn({ data: { match_id: submissionId } }))}>Advance pipeline</Button>
+                      <Button variant="secondary" data-qa-action="retry-parse" disabled={!!busy} onClick={() => runAction("retry parse", () => retryParseFn({ data: { match_id: submissionId } }))}>Retry parse</Button>
+                      <Button variant="secondary" data-qa-action="retry-hydration" disabled={!!busy} onClick={() => runAction("retry hydration", () => retryHydrationFn({ data: { match_id: submissionId } }))}>Retry hydration</Button>
+                      <Button variant="secondary" data-qa-action="retry-enrichment" disabled={!!busy} onClick={() => runAction("retry enrichment", () => retryEnrichmentFn({ data: { match_id: submissionId } }))}>Retry enrichment</Button>
+                      <Button variant="secondary" data-qa-action="rescore" disabled={!!busy} onClick={() => runAction("rescore", () => rescoreFn({ data: { match_id: submissionId } }))}>Rescore</Button>
+                      <Button variant="secondary" data-qa-action="mark-manual-review" disabled={!!busy} onClick={() => {
+                        const reason = window.prompt("Reason for manual review (required)");
+                        if (!reason || reason.trim().length < 3) return;
+                        runAction("mark manual review", () => markManualReviewFn({ data: { match_id: submissionId, reason: reason.trim() } }));
+                      }}>Mark Manual Review</Button>
+                    </div>
+                  </div>
+                  <div>
+                    <p className="text-xs font-medium text-muted-foreground mb-1">Decisions</p>
+                    <div className="grid grid-cols-2 gap-2">
+                      <Button variant="secondary" data-qa-action="approve-publish" disabled={!!busy || match?.processing_state !== "scored"} onClick={() => runAction("approve for client", () => decisionFn({ data: { match_id: submissionId, action: "approve_for_client" } }))}>Approve & Publish</Button>
+                      <Button variant="secondary" data-qa-action="hide-client" disabled={!!busy} onClick={() => runAction("hide", () => setVis({ data: { match_id: submissionId, visibility: "hidden" } }))}>Hide from Client</Button>
+                      <Button variant="secondary" data-qa-action="hold" disabled={!!busy} onClick={() => runAction("hold", () => decisionFn({ data: { match_id: submissionId, action: "hold" } }))}>Hold</Button>
+                      <Button variant="destructive" data-qa-action="archive" disabled={!!busy} onClick={() => runAction("archive", () => decisionFn({ data: { match_id: submissionId, action: "archive" } }))}>Archive</Button>
+                    </div>
+                  </div>
+                  <div>
+                    <p className="text-xs font-medium text-muted-foreground mb-1">CV file</p>
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="file"
+                        accept=".pdf,.docx,.txt,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain"
+                        data-qa-action="replace-cv-input"
+                        disabled={!!busy}
+                        onChange={async (e) => {
+                          const f = e.target.files?.[0];
+                          if (!f) return;
+                          if (f.size > 15 * 1024 * 1024) { setError("CV must be under 15 MB"); return; }
+                          const buf = new Uint8Array(await f.arrayBuffer());
+                          let bin = "";
+                          for (let i = 0; i < buf.length; i++) bin += String.fromCharCode(buf[i]);
+                          const b64 = btoa(bin);
+                          await runAction("replace CV", () => replaceCvFn({ data: { match_id: submissionId, cv: { filename: f.name, mime: f.type || "application/octet-stream", base64: b64 } } }));
+                          e.target.value = "";
+                        }}
+                      />
+                    </div>
+                    <p className="text-[11px] text-muted-foreground mt-1">Replacing the CV re-queues parsing, hydration and scoring for this submission.</p>
+                  </div>
+                </>
               )}
               {match?.processing_state === "ocr_required" && submissionId && (
                 <div className="pt-3">
-                  <Label>OCR text (min 60 chars)</Label>
+                  <Label>Run OCR — paste extracted text (min 60 chars)</Label>
                   <Textarea rows={3} value={ocrText} onChange={(e) => setOcrText(e.target.value)} />
                   <Button
                     className="mt-2"
                     size="sm"
+                    data-qa-action="run-ocr"
                     disabled={!!busy || ocrText.length < 60}
-                    onClick={() => runAction("attach OCR", () => ocrFn({ data: { match_id: submissionId, ocr_text: ocrText } }))}
+                    onClick={() => runAction("run OCR", () => ocrFn({ data: { match_id: submissionId, ocr_text: ocrText } }))}
                   >
                     Attach OCR & continue
                   </Button>
                 </div>
               )}
+
             </TabsContent>
 
             <TabsContent value="audit" className="mt-4 space-y-2 text-xs">
