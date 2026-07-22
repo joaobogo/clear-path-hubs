@@ -57,6 +57,13 @@ function MeLayout() {
     initialData: ctx,
   });
 
+  const [userId, setUserId] = useState<string | null>(null);
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => setUserId(data.user?.id ?? null));
+  }, []);
+  useDashboardRealtime({ userId, audience: "candidate", invalidateKeys: CANDIDATE_REFRESH_KEYS });
+
+
   if (!data?.profile) {
     return (
       <main className="mx-auto max-w-2xl px-6 py-16">
@@ -82,14 +89,17 @@ function MeLayout() {
   return (
     <div className="min-h-screen flex w-full bg-background">
       <aside className="w-60 shrink-0 border-r bg-card">
-        <div className="px-4 py-4 border-b">
-          <div className="text-xs uppercase tracking-wide text-muted-foreground">
-            Signed in as
+        <div className="px-4 py-4 border-b flex items-start justify-between gap-2">
+          <div className="min-w-0">
+            <div className="text-xs uppercase tracking-wide text-muted-foreground">
+              Signed in as
+            </div>
+            <div className="font-semibold truncate">{data.profile.full_name}</div>
+            <div className="text-xs text-muted-foreground truncate">
+              {data.profile.email}
+            </div>
           </div>
-          <div className="font-semibold truncate">{data.profile.full_name}</div>
-          <div className="text-xs text-muted-foreground truncate">
-            {data.profile.email}
-          </div>
+          <NotificationBell />
         </div>
         <nav className="p-2 space-y-1">
           {TABS.map((t) => {
