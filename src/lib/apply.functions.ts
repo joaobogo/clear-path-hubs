@@ -329,7 +329,6 @@ export const submitApplication = createServerFn({ method: "POST" })
 // Public confirmation lookup — no PII beyond what the candidate just submitted.
 export const getApplicationReceipt = createServerFn({ method: "GET" })
   .inputValidator((input: unknown) => {
-    const { z } = require("zod") as typeof import("zod");
     return z.object({ id: z.string().uuid() }).parse(input);
   })
   .handler(async ({ data }) => {
