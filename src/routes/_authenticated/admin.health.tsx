@@ -1,0 +1,177 @@
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useSuspenseQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
+import { useState } from "react";
+import { getPipelineHealth } from "@/lib/admin.functions";
+import { advanceProcessing, retryParse } from "@/lib/processing.functions";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+
+export const Route = createFileRoute("/_authenticated/admin/health")({
+  loader: ({ context }) =>
+    context.queryClient.ensureQueryData({
+      queryKey: ["pipeline-health"],
+      queryFn: () => getPipelineHealth(),
+    }),
+  head: () => ({ meta: [{ title: "Pipeline Health · TaaSFlow admin" }] }),
+  errorComponent: ({ error }) => (
+    <div className="p-8 text-destructive">{error.message}</div>
+  ),
+  component: HealthPage,
+});
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type AnyRow = any;
+
+const STATE_ORDER = [
+  "queued",
+  "parsing",
+  "ocr_required",
+  "parsed",
+  "enriching",
+  "ready_to_score",
+  "scoring",
+  "scored",
+  "manual_review_required",
+  "provider_blocked",
+  "failed",
+];
+
+function HealthPage() {
+  const qc = useQueryClient();
+  const { data } = useSuspenseQuery({
+    queryKey: ["pipeline-health"],
+    queryFn: () => getPipelineHealth(),
+  });
+  const [feedback, setFeedback] = useState<string | null>(null);
+  const advanceFn = useServerFn(advanceProcessing);
+  const retryFn = useServerFn(retryParse);
+
+  const repair = useMutation({
+    mutationFn: async ({ id, kind }: { id: string; kind: "advance" | "retry" }) => {
+      return kind === "retry"
+        ? await retryFn({ data: { match_id: id } })
+        : await advanceFn({ data: { match_id: id } });
+    },
+    onSuccess: async (r) => {
+      setFeedback(`Repair → ${r.state} · trace ${r.trace_id}`);
+      await qc.invalidateQueries({ queryKey: ["pipeline-health"] });
+    },
+    onError: (e: Error) => setFeedback(`Failed: ${e.message}`),
+  });
+
+  return (
+    <main className="mx-auto max-w-6xl px-6 py-8 space-y-6">
+      <header>
+        <h1 className="text-2xl font-semibold">Pipeline Health</h1>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Backlog, blockers, and repair actions. No separate page per error type — repair
+          from here.
+        </p>
+      </header>
+
+      {feedback && <Alert><AlertDescription>{feedback}</AlertDescription></Alert>}
+
+      <section>
+        <h2 className="font-semibold mb-2">Backlog by state</h2>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          {STATE_ORDER.map((st) => {
+            const n = data.states[st] ?? 0;
+            const bad = ["failed", "provider_blocked", "ocr_required", "manual_review_required"].includes(st);
+            return (
+              <div key={st} className="rounded-lg border p-4">
+                <div className="text-xs text-muted-foreground">{st.replace(/_/g, " ")}</div>
+                <div
+                  className={`text-2xl font-semibold tabular-nums ${
+                    bad && n > 0 ? "text-destructive" : ""
+                  }`}
+                >
+                  {n}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="rounded-lg border p-4">
+          <h3 className="font-semibold">Stale (in-flight &gt; 24h)</h3>
+          <div className="mt-1 text-2xl font-semibold tabular-nums">{data.stale}</div>
+        </div>
+        <div className="rounded-lg border p-4">
+          <h3 className="font-semibold">Provider incidents (7d)</h3>
+          <div className="mt-1 text-2xl font-semibold tabular-nums">
+            {data.provider_incidents}
+          </div>
+        </div>
+      </div>
+
+      <section>
+        <h2 className="font-semibold mb-2">
+          Recent failed jobs ({data.failed_jobs.length})
+        </h2>
+        <div className="rounded-lg border overflow-hidden">
+          <table className="w-full text-sm">
+            <thead className="bg-muted/50 text-left">
+              <tr>
+                <th className="px-3 py-2 font-medium">When</th>
+                <th className="px-3 py-2 font-medium">Job</th>
+                <th className="px-3 py-2 font-medium">Error</th>
+                <th className="px-3 py-2 font-medium">Trace</th>
+                <th className="px-3 py-2 font-medium">Repair</th>
+              </tr>
+            </thead>
+            <tbody>
+              {(data.failed_jobs as AnyRow[]).map((j) => (
+                <tr key={j.id} className="border-t">
+                  <td className="px-3 py-2 text-xs text-muted-foreground">
+                    {new Date(j.created_at).toLocaleString()}
+                  </td>
+                  <td className="px-3 py-2">{j.job_type}</td>
+                  <td className="px-3 py-2">
+                    <Badge variant="destructive">{j.error_code ?? "error"}</Badge>{" "}
+                    <span className="text-xs text-muted-foreground">{j.error_message}</span>
+                  </td>
+                  <td className="px-3 py-2 text-xs font-mono text-muted-foreground">
+                    {j.trace_id}
+                  </td>
+                  <td className="px-3 py-2 space-x-1">
+                    <Button
+                      size="sm"
+                      variant="secondary"
+                      disabled={repair.isPending}
+                      onClick={() =>
+                        repair.mutate({
+                          id: j.entity_id,
+                          kind: j.job_type === "parse" ? "retry" : "advance",
+                        })
+                      }
+                    >
+                      Retry
+                    </Button>
+                    <Link
+                      to="/admin/candidates/$id"
+                      params={{ id: j.entity_id }}
+                      className="text-xs text-primary hover:underline"
+                    >
+                      open
+                    </Link>
+                  </td>
+                </tr>
+              ))}
+              {data.failed_jobs.length === 0 && (
+                <tr>
+                  <td colSpan={5} className="px-3 py-8 text-center text-muted-foreground">
+                    No failures.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  );
+}

@@ -16,10 +16,10 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-export const Route = createFileRoute("/_authenticated/admin/matches/$id")({
+export const Route = createFileRoute("/_authenticated/admin/candidates/$id")({
   loader: async ({ context, params }) => {
     const data = await context.queryClient.ensureQueryData({
-      queryKey: ["admin-match", params.id],
+      queryKey: ["admin-candidate", params.id],
       queryFn: () => getAdminMatch({ data: { id: params.id } }),
     });
     if (!data) throw notFound();
@@ -67,7 +67,7 @@ function MatchDetail() {
   const { id } = Route.useParams();
   const router = useRouter();
   const { data } = useSuspenseQuery({
-    queryKey: ["admin-match", id],
+    queryKey: ["admin-candidate", id],
     queryFn: () => getAdminMatch({ data: { id } }),
   });
   if (!data) return null;
@@ -107,7 +107,7 @@ function MatchDetail() {
   return (
     <main className="mx-auto max-w-6xl px-4 py-8 space-y-6">
       <div>
-        <Link to="/admin/matches" className="text-sm text-muted-foreground hover:underline">
+        <Link to="/admin/candidates" className="text-sm text-muted-foreground hover:underline">
           ← Queue
         </Link>
         <h1 className="mt-2 text-2xl font-semibold">
