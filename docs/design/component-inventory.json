@@ -1,0 +1,47 @@
+{
+  "layout": [
+    { "id": "SiteShell", "path": "src/components/marketing/SiteShell.tsx", "status": "present", "surfaces": ["public"], "notes": "Sticky top bar + footer; 6 nav items max." },
+    { "id": "WorkspaceShell", "path": "src/routes/_authenticated/route.tsx", "status": "present", "surfaces": ["admin","client","candidate"], "notes": "Grid: sidebar + header + main." },
+    { "id": "Sidebar", "path": "src/components/ui/sidebar.tsx", "status": "present", "surfaces": ["workspaces"], "notes": "collapsible=\"icon\"; role-scoped items." },
+    { "id": "MobileNavSheet", "path": "src/components/ui/sheet.tsx", "status": "present", "surfaces": ["workspaces"], "notes": "Hamburger opens sidebar as Sheet on <lg." },
+    { "id": "PageHeader", "path": "src/components/ds/page-header.tsx", "status": "present", "surfaces": ["workspaces","public detail pages"], "notes": "Breadcrumb + h1 + one primary + ≤3 secondary + overflow." },
+    { "id": "Breadcrumb", "path": "src/components/ui/breadcrumb.tsx", "status": "present", "surfaces": ["workspaces"], "notes": "Ellipsis dropdown when > 4 levels." },
+    { "id": "GlobalSearch", "path": "src/components/ds/global-search.tsx", "status": "to_create", "surfaces": ["workspaces"], "notes": "⌘K palette; role-scoped." },
+    { "id": "NotificationBell", "path": "src/components/ds/notification-bell.tsx", "status": "to_create", "surfaces": ["workspaces"], "notes": "Popover of last 20 notification_events." },
+    { "id": "AccountMenu", "path": "src/components/ds/account-menu.tsx", "status": "to_create", "surfaces": ["workspaces"], "notes": "Avatar dropdown; Support-mode toggle for master admin." },
+    { "id": "OrgSwitcher", "path": "src/components/ds/org-switcher.tsx", "status": "to_create", "surfaces": ["client","admin"], "notes": "Shown when memberships ≥ 2." }
+  ],
+  "workspace_patterns": [
+    { "id": "KpiCard", "path": "src/components/ds/kpi-card.tsx", "status": "present" },
+    { "id": "ActionRequiredCard", "path": "src/components/ds/action-required-card.tsx", "status": "to_create" },
+    { "id": "DataTable", "path": "src/components/ds/data-table.tsx", "status": "to_create", "notes": "Wrap TanStack Table; sort/paginate/filter." },
+    { "id": "ListView", "path": "src/components/ds/list-view.tsx", "status": "to_create" },
+    { "id": "RecordDetail", "path": "src/components/ds/record-detail.tsx", "status": "to_create" },
+    { "id": "SplitView", "path": "src/components/ds/split-view.tsx", "status": "to_create" },
+    { "id": "Drawer", "path": "src/components/candidate-detail-drawer.tsx", "status": "present", "notes": "Generalize as ds/Drawer; keep 12-tab candidate specialization on top." },
+    { "id": "Tabs", "path": "src/components/ui/tabs.tsx", "status": "present" },
+    { "id": "Pipeline", "path": "src/components/ds/pipeline.tsx", "status": "to_create" },
+    { "id": "KanbanBoard", "path": "src/components/ds/kanban-board.tsx", "status": "to_create", "notes": "Extract from client.positions.$id.tsx; enforce STAGE_GRAPH." },
+    { "id": "FilterBar", "path": "src/components/ds/filter-bar.tsx", "status": "to_create" },
+    { "id": "SearchInput", "path": "src/components/ds/search-input.tsx", "status": "to_create" },
+    { "id": "StatusBadge", "path": "src/components/ds/status-badge.tsx", "status": "present" },
+    { "id": "ActivityTimeline", "path": "src/components/ds/activity-timeline.tsx", "status": "to_create" },
+    { "id": "NoteEditor", "path": "src/components/ds/note-editor.tsx", "status": "to_create" },
+    { "id": "MessageThread", "path": "src/components/ds/message-thread.tsx", "status": "to_create", "notes": "Generalize from candidate/client chat." },
+    { "id": "FilePreview", "path": "src/components/ds/file-preview.tsx", "status": "to_create", "notes": "PDF/image/text + Download CV button." },
+    { "id": "Form", "path": "src/components/ui/form.tsx", "status": "present" },
+    { "id": "Modal", "path": "src/components/ui/dialog.tsx", "status": "present", "notes": "Wrap as ds/Modal with title/description/footerActions slots." },
+    { "id": "EmptyState", "path": "src/components/ds/empty-state.tsx", "status": "present" },
+    { "id": "LoadingSkeleton", "path": "src/components/ds/loading-skeleton.tsx", "status": "present" },
+    { "id": "ErrorState", "path": "src/components/ds/error-state.tsx", "status": "present" }
+  ],
+  "replacements_required": [
+    { "from": "inline KPI divs in admin/client/candidate index routes", "to": "ds/KpiCard" },
+    { "from": "hand-rolled tables in admin routes", "to": "ds/DataTable" },
+    { "from": "bespoke pulse skeletons", "to": "ds/LoadingSkeleton" },
+    { "from": "ad-hoc empty divs", "to": "ds/EmptyState" },
+    { "from": "inline stage pills in client.positions.$id.tsx", "to": "ds/StatusBadge" },
+    { "from": "chat markup duplicated in candidate + client message routes", "to": "ds/MessageThread" },
+    { "from": "Kanban markup in client.positions.$id.tsx", "to": "ds/KanbanBoard" }
+  ]
+}
