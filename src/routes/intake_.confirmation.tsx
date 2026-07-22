@@ -21,7 +21,7 @@ type Status = {
   trace_id: string | null;
 };
 
-export const Route = createFileRoute("/intake/confirmation")({
+export const Route = createFileRoute("/intake_/confirmation")({
   validateSearch: (s) => searchSchema.parse(s),
   head: () => ({
     meta: [
