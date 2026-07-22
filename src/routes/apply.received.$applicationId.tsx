@@ -23,7 +23,7 @@ export const Route = createFileRoute("/apply/received/$applicationId")({
     <div className="p-16 text-center">
       <h1 className="text-2xl font-semibold">Application not found</h1>
       <div className="mt-6">
-        <Link to="/jobs"><Button>Back to job board</Button></Link>
+        <Button asChild><Link to="/jobs">Back to job board</Link></Button>
       </div>
     </div>
   ),
