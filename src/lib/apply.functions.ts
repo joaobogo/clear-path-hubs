@@ -2,6 +2,7 @@
 // Fully server-side; uses supabaseAdmin (loaded inside handler) to bypass RLS
 // because applicants are unauthenticated at this point.
 import { createServerFn } from "@tanstack/react-start";
+import { z } from "zod";
 import { applySchema, type ApplyInput } from "./apply-schema";
 
 export type SubmitApplicationResult =
