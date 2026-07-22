@@ -30,7 +30,7 @@ import {
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { getAdminMatch, retryParse, rescore, advanceProcessing, applyReviewDecision, markOcrDone } from "@/lib/processing.functions";
+import { getAdminMatch, retryParse, rescore, advanceProcessing, applyReviewDecision, markOcrDone, retryHydration, retryEnrichment, markManualReview, replaceCv } from "@/lib/processing.functions";
 import { updateCandidateAsAdmin, repairCandidateIdentity } from "@/lib/admin-candidate-edit.functions";
 import { setMatchClientVisibility } from "@/lib/admin.functions";
 
