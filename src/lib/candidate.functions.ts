@@ -8,6 +8,16 @@ import { z } from "zod";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
 
+// PostgREST returns embedded relations as an object (not array) when the
+// foreign key is UNIQUE. candidate_matches.application_id is UNIQUE, so
+// `applications → candidate_matches` comes back as an object or null.
+// Normalize to an array so downstream code can use array methods.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function asArray<T = any>(v: T | T[] | null | undefined): T[] {
+  if (v == null) return [];
+  return Array.isArray(v) ? v : [v];
+}
+
 const traceId = () =>
   `cd_${Math.random().toString(36).slice(2, 10)}${Date.now().toString(36)}`;
 
@@ -148,11 +158,11 @@ export const listMyApplications = createServerFn({ method: "GET" })
     const shaped = (apps ?? []).map((a: AnyRow) => {
       const pos = a.positions ?? {};
       const org = pos.organizations ?? {};
-      const visibleMatch = (a.candidate_matches ?? []).find(
+      const visibleMatch = (asArray(a.candidate_matches)).find(
         (m: AnyRow) => m.client_visibility === "visible",
       );
-      const infoRequested = (a.candidate_matches ?? []).some((m: AnyRow) =>
-        (m.client_decisions ?? []).some(
+      const infoRequested = (asArray(a.candidate_matches)).some((m: AnyRow) =>
+        (asArray(m.client_decisions)).some(
           (d: AnyRow) => d.decision === "request_information",
         ),
       );
@@ -239,11 +249,11 @@ export const getMyApplication = createServerFn({ method: "GET" })
 
     const pos = a.positions ?? {};
     const org = pos.organizations ?? {};
-    const visibleMatch = (a.candidate_matches ?? []).find(
+    const visibleMatch = (asArray(a.candidate_matches)).find(
       (m: AnyRow) => m.client_visibility === "visible",
     );
-    const infoRequested = (a.candidate_matches ?? []).some((m: AnyRow) =>
-      (m.client_decisions ?? []).some(
+    const infoRequested = (asArray(a.candidate_matches)).some((m: AnyRow) =>
+      (asArray(m.client_decisions)).some(
         (d: AnyRow) => d.decision === "request_information",
       ),
     );
@@ -256,8 +266,8 @@ export const getMyApplication = createServerFn({ method: "GET" })
     const events: { at: string; label: string }[] = [
       { at: a.applied_at, label: "Application received" },
     ];
-    for (const m of a.candidate_matches ?? []) {
-      for (const d of m.client_decisions ?? []) {
+    for (const m of asArray(a.candidate_matches)) {
+      for (const d of asArray(m.client_decisions)) {
         const label = decisionLabel(d.decision);
         if (label) events.push({ at: d.created_at, label });
       }
