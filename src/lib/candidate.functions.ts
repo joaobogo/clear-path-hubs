@@ -91,12 +91,12 @@ export const getMyContext = createServerFn({ method: "GET" })
     const userId = context.userId;
     const email = (context.claims?.email as string | undefined)?.toLowerCase();
 
-    // Try existing profile linked to this user first.
+    const PROFILE_COLS =
+      "id,user_id,full_name,email,phone,location,headline,summary,years_experience,timezone,linkedin_url,portfolio_url,certifications,experience,skills,education,languages,work_authorization,availability,compensation_preferences,current_cv_file_id,consent,created_at,updated_at";
+
     let { data: cp } = await supabase
       .from("candidate_profiles")
-      .select(
-        "id,user_id,full_name,email,phone,location,headline,experience,skills,education,languages,work_authorization,availability,compensation_preferences,current_cv_file_id,consent,created_at,updated_at",
-      )
+      .select(PROFILE_COLS)
       .eq("user_id", userId)
       .maybeSingle();
 
@@ -114,13 +114,12 @@ export const getMyContext = createServerFn({ method: "GET" })
           .update({ user_id: userId })
           .eq("id", claimable.id)
           .is("user_id", null)
-          .select(
-            "id,user_id,full_name,email,phone,location,headline,experience,skills,education,languages,work_authorization,availability,compensation_preferences,current_cv_file_id,consent,created_at,updated_at",
-          )
+          .select(PROFILE_COLS)
           .maybeSingle();
         cp = claimed ?? cp;
       }
     }
+
 
     return {
       user_id: userId,
