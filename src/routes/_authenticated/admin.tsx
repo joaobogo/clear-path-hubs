@@ -1,4 +1,4 @@
-import { createFileRoute, Link, Outlet, useRouterState } from "@tanstack/react-router";
+import { createFileRoute, Link, Outlet, redirect, useRouterState } from "@tanstack/react-router";
 import {
   LayoutDashboard,
   Building2,
@@ -15,8 +15,25 @@ import { NotificationBell } from "@/components/notification-bell";
 import { SignOutButton } from "@/components/sign-out-button";
 import { useDashboardRealtime } from "@/hooks/use-realtime-refresh";
 import { NOTIFICATIONS_QUERY_KEY } from "@/components/notification-bell";
+import { getSessionContext } from "@/lib/auth.functions";
 
 export const Route = createFileRoute("/_authenticated/admin")({
+  // Route gate: only platform_admin / operations may enter the admin subtree.
+  // Runs client-side because the _authenticated layout is ssr:false.
+  beforeLoad: async () => {
+    try {
+      const ctx = await getSessionContext();
+      const staff = ctx.memberships.some(
+        (m) => m.status === "active" && (m.role === "platform_admin" || m.role === "operations"),
+      );
+      if (!staff) throw redirect({ to: "/access-denied" });
+    } catch (e) {
+      // Rethrow redirects; fail-closed on any other error.
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      if (e && typeof e === "object" && (e as any).isRedirect) throw e;
+      throw redirect({ to: "/access-denied" });
+    }
+  },
   head: () => ({
     meta: [
       { title: "Admin · TaaSFlow" },

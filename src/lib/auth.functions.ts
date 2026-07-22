@@ -16,10 +16,11 @@ export const getSessionContext = createServerFn({ method: "GET" })
       .select("id, full_name, email, status, auth_user_id")
       .eq("auth_user_id", userId)
       .maybeSingle();
+    // memberships.user_id references auth.users.id — pass the auth uid, not profile.id.
     const { data: mems } = await supabase
       .from("memberships")
       .select("id, organization_id, role, status, organizations(name)")
-      .eq("user_id", profile?.id ?? "00000000-0000-0000-0000-000000000000");
+      .eq("user_id", userId);
     const memberships: SessionMembership[] = (mems ?? []).map((m) => ({
       membership_id: m.id as string,
       organization_id: (m.organization_id as string | null) ?? null,
@@ -99,11 +100,12 @@ async function assertPlatformAdmin(supabase: any, userId: string): Promise<void>
     .select("id, status")
     .eq("auth_user_id", userId)
     .maybeSingle();
-  if (!profile || profile.status !== "active") throw new Error("Forbidden");
+  if (profile && profile.status !== "active") throw new Error("Forbidden");
+  // memberships.user_id = auth.users.id — query by the auth uid, not profile.id.
   const { data: rows } = await supabase
     .from("memberships")
     .select("role, status")
-    .eq("user_id", profile.id)
+    .eq("user_id", userId)
     .eq("status", "active")
     .eq("role", "platform_admin");
   if (!rows || rows.length === 0) throw new Error("Forbidden: platform_admin required");
@@ -179,13 +181,14 @@ export const createUserByAdmin = createServerFn({ method: "POST" })
     }
 
     // Insert membership (idempotent per unique(user_id, organization_id, role)).
+    // memberships.user_id references auth.users.id, NOT profiles.id.
     const membershipRow: {
       user_id: string;
       role: string;
       status: string;
       organization_id: string | null;
     } = {
-      user_id: profileId,
+      user_id: authUserId,
       role: data.role,
       status: "active",
       organization_id: data.organization_id ?? null,
@@ -243,7 +246,7 @@ export const createClientWorkspace = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
     const normalized = data.company_name.trim().toLowerCase().replace(/\s+/g, " ");
-    // Find-or-create organization.
+    // Find-or-create organization. name_normalized is a generated column — do not set it.
     const { data: existingOrg } = await supabaseAdmin
       .from("organizations")
       .select("id, name, status")
@@ -255,7 +258,6 @@ export const createClientWorkspace = createServerFn({ method: "POST" })
         .from("organizations")
         .insert({
           name: data.company_name.trim(),
-          name_normalized: normalized,
           website: data.website ?? null,
           industry: data.industry ?? null,
           headquarters: data.headquarters ?? null,
@@ -324,7 +326,7 @@ export const createClientWorkspace = createServerFn({ method: "POST" })
     await (supabaseAdmin as any)
       .from("memberships")
       .upsert(
-        { user_id: profileId, organization_id: orgId, role: "client_admin", status: "active" },
+        { user_id: authUserId, organization_id: orgId, role: "client_admin", status: "active" },
         { onConflict: "user_id,organization_id,role" },
       );
 
@@ -363,26 +365,37 @@ export const listOrganizationTeam = createServerFn({ method: "GET" })
     const { supabase, userId } = context;
     await assertPlatformAdmin(supabase, userId);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data: rows, error } = await supabaseAdmin
+    const { data: mems, error } = await supabaseAdmin
       .from("memberships")
-      .select(
-        "id, role, status, created_at, user_id, profiles!inner(id, full_name, email, status, auth_user_id)",
-      )
+      .select("id, role, status, created_at, user_id")
       .eq("organization_id", data.organization_id)
       .order("created_at", { ascending: true });
     if (error) throw error;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return (rows ?? []).map((r: any) => ({
-      membership_id: r.id,
-      role: r.role,
-      status: r.status,
-      created_at: r.created_at,
-      user_id: r.user_id,
-      full_name: r.profiles?.full_name ?? null,
-      email: r.profiles?.email ?? null,
-      user_status: r.profiles?.status ?? null,
-      auth_user_id: r.profiles?.auth_user_id ?? null,
-    }));
+    const authIds = Array.from(new Set((mems ?? []).map((m) => m.user_id as string)));
+    // memberships.user_id references auth.users.id, so join to profiles via
+    // auth_user_id rather than PostgREST's implicit FK (which doesn't exist).
+    const profileMap = new Map<string, { full_name: string | null; email: string | null; status: string | null; auth_user_id: string }>();
+    if (authIds.length > 0) {
+      const { data: profs } = await supabaseAdmin
+        .from("profiles")
+        .select("full_name, email, status, auth_user_id")
+        .in("auth_user_id", authIds);
+      for (const p of profs ?? []) profileMap.set(p.auth_user_id as string, p as never);
+    }
+    return (mems ?? []).map((r) => {
+      const p = profileMap.get(r.user_id as string);
+      return {
+        membership_id: r.id,
+        role: r.role,
+        status: r.status,
+        created_at: r.created_at,
+        user_id: r.user_id,
+        full_name: p?.full_name ?? null,
+        email: p?.email ?? null,
+        user_status: p?.status ?? null,
+        auth_user_id: p?.auth_user_id ?? (r.user_id as string),
+      };
+    });
   });
 
 const membershipMutInput = z.object({
