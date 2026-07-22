@@ -28,7 +28,9 @@ export type KpiRow = {
   approved_score: number | null;
   approved_fit_label: string | null;
   interview_active: boolean;
+  interview_scheduled: boolean;
 };
+
 
 export type ClientKpis = {
   delivered: number;
