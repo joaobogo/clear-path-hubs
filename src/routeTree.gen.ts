@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as IntakeRouteImport } from './routes/intake'
 import { Route as AuthRouteImport } from './routes/auth'
@@ -49,6 +50,11 @@ import { Route as AuthenticatedAdminPositionsIdRouteImport } from './routes/_aut
 import { Route as AuthenticatedAdminClientsIdRouteImport } from './routes/_authenticated/admin.clients.$id'
 import { Route as AuthenticatedAdminCandidatesIdRouteImport } from './routes/_authenticated/admin.candidates.$id'
 
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
@@ -268,6 +274,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/intake': typeof IntakeRouteWithChildren
   '/login': typeof LoginRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/client': typeof AuthenticatedClientRouteWithChildren
   '/me': typeof AuthenticatedMeRouteWithChildren
@@ -308,6 +315,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/intake': typeof IntakeRouteWithChildren
   '/login': typeof LoginRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/dev/catalogue': typeof DevCatalogueRoute
   '/intake/confirmation': typeof IntakeConfirmationRoute
   '/jobs': typeof JobsIndexRoute
@@ -347,6 +355,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/intake': typeof IntakeRouteWithChildren
   '/login': typeof LoginRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/client': typeof AuthenticatedClientRouteWithChildren
   '/_authenticated/me': typeof AuthenticatedMeRouteWithChildren
@@ -389,6 +398,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/intake'
     | '/login'
+    | '/reset-password'
     | '/admin'
     | '/client'
     | '/me'
@@ -429,6 +439,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/intake'
     | '/login'
+    | '/reset-password'
     | '/dev/catalogue'
     | '/intake/confirmation'
     | '/jobs'
@@ -467,6 +478,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/intake'
     | '/login'
+    | '/reset-password'
     | '/_authenticated/admin'
     | '/_authenticated/client'
     | '/_authenticated/me'
@@ -509,6 +521,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   IntakeRoute: typeof IntakeRouteWithChildren
   LoginRoute: typeof LoginRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
   DevCatalogueRoute: typeof DevCatalogueRoute
   JobsIndexRoute: typeof JobsIndexRoute
   ApiPublicQaSeedRoute: typeof ApiPublicQaSeedRoute
@@ -519,6 +532,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/login': {
       id: '/login'
       path: '/login'
@@ -967,6 +987,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   IntakeRoute: IntakeRouteWithChildren,
   LoginRoute: LoginRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
   DevCatalogueRoute: DevCatalogueRoute,
   JobsIndexRoute: JobsIndexRoute,
   ApiPublicQaSeedRoute: ApiPublicQaSeedRoute,
