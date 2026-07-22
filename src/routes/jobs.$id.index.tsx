@@ -100,9 +100,9 @@ function JobDetail() {
         </div>
 
         <div className="mt-6">
-          <Link to="/jobs/$id/apply" params={{ id: pos.id }}>
-            <Button size="lg">Apply for this role</Button>
-          </Link>
+          <Button asChild size="lg">
+            <Link to="/jobs/$id/apply" params={{ id: pos.id }}>Apply for this role</Link>
+          </Button>
         </div>
 
         <section className="mt-10">
