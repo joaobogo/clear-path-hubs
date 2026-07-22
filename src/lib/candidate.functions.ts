@@ -369,6 +369,12 @@ const profileSchema = z.object({
   phone: z.string().trim().max(50).optional().nullable(),
   location: z.string().trim().max(200).optional().nullable(),
   headline: z.string().trim().max(300).optional().nullable(),
+  summary: z.string().trim().max(4000).optional().nullable(),
+  years_experience: z.coerce.number().int().min(0).max(80).optional().nullable(),
+  timezone: z.string().trim().max(80).optional().nullable(),
+  linkedin_url: z.string().trim().max(300).optional().nullable(),
+  portfolio_url: z.string().trim().max(300).optional().nullable(),
+  certifications: z.array(z.any()).max(50).default([]),
   experience: z.array(z.any()).max(50).default([]),
   skills: z.array(z.string().trim().min(1).max(60)).max(100).default([]),
   education: z.array(z.any()).max(30).default([]),
@@ -377,6 +383,7 @@ const profileSchema = z.object({
   availability: z.any().optional().nullable(),
   compensation_preferences: z.any().optional().nullable(),
 });
+
 
 export type ProfilePatch = z.infer<typeof profileSchema>;
 
