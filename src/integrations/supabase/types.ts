@@ -68,10 +68,14 @@ export type Database = {
           applied_at: string
           candidate_profile_id: string
           created_at: string
+          created_by_audit: boolean | null
+          expires_at: string | null
           id: string
+          is_test_record: boolean | null
           position_id: string
           source: string | null
           status: Database["public"]["Enums"]["application_status"]
+          test_run_id: string | null
           updated_at: string
           withdrawn_at: string | null
         }
@@ -79,10 +83,14 @@ export type Database = {
           applied_at?: string
           candidate_profile_id: string
           created_at?: string
+          created_by_audit?: boolean | null
+          expires_at?: string | null
           id?: string
+          is_test_record?: boolean | null
           position_id: string
           source?: string | null
           status?: Database["public"]["Enums"]["application_status"]
+          test_run_id?: string | null
           updated_at?: string
           withdrawn_at?: string | null
         }
@@ -90,10 +98,14 @@ export type Database = {
           applied_at?: string
           candidate_profile_id?: string
           created_at?: string
+          created_by_audit?: boolean | null
+          expires_at?: string | null
           id?: string
+          is_test_record?: boolean | null
           position_id?: string
           source?: string | null
           status?: Database["public"]["Enums"]["application_status"]
+          test_run_id?: string | null
           updated_at?: string
           withdrawn_at?: string | null
         }
@@ -304,9 +316,12 @@ export type Database = {
           candidate_profile_id: string
           client_visibility: Database["public"]["Enums"]["client_visibility"]
           created_at: string
+          created_by_audit: boolean | null
           current_score_run_id: string | null
           delivered_at: string | null
+          expires_at: string | null
           id: string
+          is_test_record: boolean | null
           last_processing_trace_id: string | null
           organization_id: string
           position_id: string
@@ -315,6 +330,7 @@ export type Database = {
           processing_state: Database["public"]["Enums"]["processing_state"]
           processing_updated_at: string
           stage: Database["public"]["Enums"]["match_stage"]
+          test_run_id: string | null
           updated_at: string
         }
         Insert: {
@@ -324,9 +340,12 @@ export type Database = {
           candidate_profile_id: string
           client_visibility?: Database["public"]["Enums"]["client_visibility"]
           created_at?: string
+          created_by_audit?: boolean | null
           current_score_run_id?: string | null
           delivered_at?: string | null
+          expires_at?: string | null
           id?: string
+          is_test_record?: boolean | null
           last_processing_trace_id?: string | null
           organization_id: string
           position_id: string
@@ -335,6 +354,7 @@ export type Database = {
           processing_state?: Database["public"]["Enums"]["processing_state"]
           processing_updated_at?: string
           stage?: Database["public"]["Enums"]["match_stage"]
+          test_run_id?: string | null
           updated_at?: string
         }
         Update: {
@@ -344,9 +364,12 @@ export type Database = {
           candidate_profile_id?: string
           client_visibility?: Database["public"]["Enums"]["client_visibility"]
           created_at?: string
+          created_by_audit?: boolean | null
           current_score_run_id?: string | null
           delivered_at?: string | null
+          expires_at?: string | null
           id?: string
+          is_test_record?: boolean | null
           last_processing_trace_id?: string | null
           organization_id?: string
           position_id?: string
@@ -355,6 +378,7 @@ export type Database = {
           processing_state?: Database["public"]["Enums"]["processing_state"]
           processing_updated_at?: string
           stage?: Database["public"]["Enums"]["match_stage"]
+          test_run_id?: string | null
           updated_at?: string
         }
         Relationships: [
@@ -457,17 +481,21 @@ export type Database = {
           compensation_preferences: Json
           consent: Json
           created_at: string
+          created_by_audit: boolean | null
           current_cv_file_id: string | null
           education: Json
           email: string
           experience: Json
+          expires_at: string | null
           full_name: string
           headline: string | null
           id: string
+          is_test_record: boolean | null
           languages: Json
           location: string | null
           phone: string | null
           skills: Json
+          test_run_id: string | null
           updated_at: string
           user_id: string | null
           work_authorization: Json
@@ -477,17 +505,21 @@ export type Database = {
           compensation_preferences?: Json
           consent?: Json
           created_at?: string
+          created_by_audit?: boolean | null
           current_cv_file_id?: string | null
           education?: Json
           email: string
           experience?: Json
+          expires_at?: string | null
           full_name: string
           headline?: string | null
           id?: string
+          is_test_record?: boolean | null
           languages?: Json
           location?: string | null
           phone?: string | null
           skills?: Json
+          test_run_id?: string | null
           updated_at?: string
           user_id?: string | null
           work_authorization?: Json
@@ -497,17 +529,21 @@ export type Database = {
           compensation_preferences?: Json
           consent?: Json
           created_at?: string
+          created_by_audit?: boolean | null
           current_cv_file_id?: string | null
           education?: Json
           email?: string
           experience?: Json
+          expires_at?: string | null
           full_name?: string
           headline?: string | null
           id?: string
+          is_test_record?: boolean | null
           languages?: Json
           location?: string | null
           phone?: string | null
           skills?: Json
+          test_run_id?: string | null
           updated_at?: string
           user_id?: string | null
           work_authorization?: Json
@@ -852,52 +888,64 @@ export type Database = {
           candidate_profile_id: string | null
           checksum: string | null
           created_at: string
+          created_by_audit: boolean | null
+          expires_at: string | null
           extracted_text: string | null
           extraction_attempts: number
           extraction_completed_at: string | null
           file_status: Database["public"]["Enums"]["file_status"]
           filename: string
           id: string
+          is_test_record: boolean | null
           mime_type: string | null
           ocr_used: boolean
           owner_user_id: string | null
           size: number | null
           storage_bucket: string
           storage_path: string
+          test_run_id: string | null
         }
         Insert: {
           candidate_profile_id?: string | null
           checksum?: string | null
           created_at?: string
+          created_by_audit?: boolean | null
+          expires_at?: string | null
           extracted_text?: string | null
           extraction_attempts?: number
           extraction_completed_at?: string | null
           file_status?: Database["public"]["Enums"]["file_status"]
           filename: string
           id?: string
+          is_test_record?: boolean | null
           mime_type?: string | null
           ocr_used?: boolean
           owner_user_id?: string | null
           size?: number | null
           storage_bucket: string
           storage_path: string
+          test_run_id?: string | null
         }
         Update: {
           candidate_profile_id?: string | null
           checksum?: string | null
           created_at?: string
+          created_by_audit?: boolean | null
+          expires_at?: string | null
           extracted_text?: string | null
           extraction_attempts?: number
           extraction_completed_at?: string | null
           file_status?: Database["public"]["Enums"]["file_status"]
           filename?: string
           id?: string
+          is_test_record?: boolean | null
           mime_type?: string | null
           ocr_used?: boolean
           owner_user_id?: string | null
           size?: number | null
           storage_bucket?: string
           storage_path?: string
+          test_run_id?: string | null
         }
         Relationships: [
           {
@@ -1118,26 +1166,38 @@ export type Database = {
       memberships: {
         Row: {
           created_at: string
+          created_by_audit: boolean | null
+          expires_at: string | null
           id: string
+          is_test_record: boolean | null
           organization_id: string
           role: Database["public"]["Enums"]["membership_role"]
           status: Database["public"]["Enums"]["membership_status"]
+          test_run_id: string | null
           user_id: string
         }
         Insert: {
           created_at?: string
+          created_by_audit?: boolean | null
+          expires_at?: string | null
           id?: string
+          is_test_record?: boolean | null
           organization_id: string
           role: Database["public"]["Enums"]["membership_role"]
           status?: Database["public"]["Enums"]["membership_status"]
+          test_run_id?: string | null
           user_id: string
         }
         Update: {
           created_at?: string
+          created_by_audit?: boolean | null
+          expires_at?: string | null
           id?: string
+          is_test_record?: boolean | null
           organization_id?: string
           role?: Database["public"]["Enums"]["membership_role"]
           status?: Database["public"]["Enums"]["membership_status"]
+          test_run_id?: string | null
           user_id?: string
         }
         Relationships: [
@@ -1453,37 +1513,49 @@ export type Database = {
       organizations: {
         Row: {
           created_at: string
+          created_by_audit: boolean | null
           domain: string | null
+          expires_at: string | null
           headquarters: string | null
           id: string
           industry: string | null
+          is_test_record: boolean | null
           name: string
           name_normalized: string | null
           status: Database["public"]["Enums"]["org_status"]
+          test_run_id: string | null
           updated_at: string
           website: string | null
         }
         Insert: {
           created_at?: string
+          created_by_audit?: boolean | null
           domain?: string | null
+          expires_at?: string | null
           headquarters?: string | null
           id?: string
           industry?: string | null
+          is_test_record?: boolean | null
           name: string
           name_normalized?: string | null
           status?: Database["public"]["Enums"]["org_status"]
+          test_run_id?: string | null
           updated_at?: string
           website?: string | null
         }
         Update: {
           created_at?: string
+          created_by_audit?: boolean | null
           domain?: string | null
+          expires_at?: string | null
           headquarters?: string | null
           id?: string
           industry?: string | null
+          is_test_record?: boolean | null
           name?: string
           name_normalized?: string | null
           status?: Database["public"]["Enums"]["org_status"]
+          test_run_id?: string | null
           updated_at?: string
           website?: string | null
         }
@@ -1496,11 +1568,14 @@ export type Database = {
           compensation: Json
           created_at: string
           created_by: string | null
+          created_by_audit: boolean | null
           dealbreakers: Json
           department: string | null
           description: string | null
           employment_type: Database["public"]["Enums"]["employment_type"] | null
+          expires_at: string | null
           id: string
+          is_test_record: boolean | null
           location: string | null
           organization_id: string
           preferred_requirements: Json
@@ -1509,6 +1584,7 @@ export type Database = {
           seniority: string | null
           status: Database["public"]["Enums"]["position_status"]
           submitted_at: string | null
+          test_run_id: string | null
           title: string
           updated_at: string
           visibility: Database["public"]["Enums"]["position_visibility"]
@@ -1521,13 +1597,16 @@ export type Database = {
           compensation?: Json
           created_at?: string
           created_by?: string | null
+          created_by_audit?: boolean | null
           dealbreakers?: Json
           department?: string | null
           description?: string | null
           employment_type?:
             | Database["public"]["Enums"]["employment_type"]
             | null
+          expires_at?: string | null
           id?: string
+          is_test_record?: boolean | null
           location?: string | null
           organization_id: string
           preferred_requirements?: Json
@@ -1536,6 +1615,7 @@ export type Database = {
           seniority?: string | null
           status?: Database["public"]["Enums"]["position_status"]
           submitted_at?: string | null
+          test_run_id?: string | null
           title: string
           updated_at?: string
           visibility?: Database["public"]["Enums"]["position_visibility"]
@@ -1548,13 +1628,16 @@ export type Database = {
           compensation?: Json
           created_at?: string
           created_by?: string | null
+          created_by_audit?: boolean | null
           dealbreakers?: Json
           department?: string | null
           description?: string | null
           employment_type?:
             | Database["public"]["Enums"]["employment_type"]
             | null
+          expires_at?: string | null
           id?: string
+          is_test_record?: boolean | null
           location?: string | null
           organization_id?: string
           preferred_requirements?: Json
@@ -1563,6 +1646,7 @@ export type Database = {
           seniority?: string | null
           status?: Database["public"]["Enums"]["position_status"]
           submitted_at?: string | null
+          test_run_id?: string | null
           title?: string
           updated_at?: string
           visibility?: Database["public"]["Enums"]["position_visibility"]
@@ -1635,36 +1719,48 @@ export type Database = {
         Row: {
           auth_user_id: string
           created_at: string
+          created_by_audit: boolean | null
           email: string
+          expires_at: string | null
           full_name: string | null
           id: string
+          is_test_record: boolean | null
           locale: string | null
           phone: string | null
           status: Database["public"]["Enums"]["profile_status"]
+          test_run_id: string | null
           timezone: string | null
           updated_at: string
         }
         Insert: {
           auth_user_id: string
           created_at?: string
+          created_by_audit?: boolean | null
           email: string
+          expires_at?: string | null
           full_name?: string | null
           id?: string
+          is_test_record?: boolean | null
           locale?: string | null
           phone?: string | null
           status?: Database["public"]["Enums"]["profile_status"]
+          test_run_id?: string | null
           timezone?: string | null
           updated_at?: string
         }
         Update: {
           auth_user_id?: string
           created_at?: string
+          created_by_audit?: boolean | null
           email?: string
+          expires_at?: string | null
           full_name?: string | null
           id?: string
+          is_test_record?: boolean | null
           locale?: string | null
           phone?: string | null
           status?: Database["public"]["Enums"]["profile_status"]
+          test_run_id?: string | null
           timezone?: string | null
           updated_at?: string
         }
@@ -1949,13 +2045,16 @@ export type Database = {
           completed_at: string | null
           confidence: number | null
           contradiction_status: string | null
+          created_by_audit: boolean
           engine_version: string
           error_code: string | null
           evidence: Json
+          expires_at: string | null
           explanation: string | null
           fit_label: string | null
           id: string
           input_hash: string | null
+          is_test_record: boolean
           must_have_coverage: number | null
           position_id: string
           preferred_coverage: number | null
@@ -1964,6 +2063,7 @@ export type Database = {
           score: number | null
           started_at: string | null
           status: Database["public"]["Enums"]["score_status"]
+          test_run_id: string | null
           trace_id: string | null
         }
         Insert: {
@@ -1971,13 +2071,16 @@ export type Database = {
           completed_at?: string | null
           confidence?: number | null
           contradiction_status?: string | null
+          created_by_audit?: boolean
           engine_version: string
           error_code?: string | null
           evidence?: Json
+          expires_at?: string | null
           explanation?: string | null
           fit_label?: string | null
           id?: string
           input_hash?: string | null
+          is_test_record?: boolean
           must_have_coverage?: number | null
           position_id: string
           preferred_coverage?: number | null
@@ -1986,6 +2089,7 @@ export type Database = {
           score?: number | null
           started_at?: string | null
           status?: Database["public"]["Enums"]["score_status"]
+          test_run_id?: string | null
           trace_id?: string | null
         }
         Update: {
@@ -1993,13 +2097,16 @@ export type Database = {
           completed_at?: string | null
           confidence?: number | null
           contradiction_status?: string | null
+          created_by_audit?: boolean
           engine_version?: string
           error_code?: string | null
           evidence?: Json
+          expires_at?: string | null
           explanation?: string | null
           fit_label?: string | null
           id?: string
           input_hash?: string | null
+          is_test_record?: boolean
           must_have_coverage?: number | null
           position_id?: string
           preferred_coverage?: number | null
@@ -2008,6 +2115,7 @@ export type Database = {
           score?: number | null
           started_at?: string | null
           status?: Database["public"]["Enums"]["score_status"]
+          test_run_id?: string | null
           trace_id?: string | null
         }
         Relationships: [

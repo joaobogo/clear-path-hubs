@@ -1,0 +1,47 @@
+{
+  "platform-admin": {
+    "status": "OK",
+    "url": "http://localhost:8080/admin",
+    "email": "qa+platform-admin.qa20260722@qa.taasflow.test"
+  },
+  "operations": {
+    "status": "OK",
+    "url": "http://localhost:8080/admin",
+    "email": "qa+operations.qa20260722@qa.taasflow.test"
+  },
+  "alpha-admin": {
+    "status": "OK",
+    "url": "http://localhost:8080/client?org=7d4d968f-05ae-4465-9376-4a63f460cb6a",
+    "email": "qa+alpha-admin.qa20260722@qa.taasflow.test"
+  },
+  "alpha-editor": {
+    "status": "OK",
+    "url": "http://localhost:8080/client?org=7d4d968f-05ae-4465-9376-4a63f460cb6a",
+    "email": "qa+alpha-editor.qa20260722@qa.taasflow.test"
+  },
+  "alpha-viewer": {
+    "status": "OK",
+    "url": "http://localhost:8080/client?org=7d4d968f-05ae-4465-9376-4a63f460cb6a",
+    "email": "qa+alpha-viewer.qa20260722@qa.taasflow.test"
+  },
+  "beta-admin": {
+    "status": "OK",
+    "url": "http://localhost:8080/client?org=a399f35b-37b2-4fee-b67d-3231a9576e28",
+    "email": "qa+beta-admin.qa20260722@qa.taasflow.test"
+  },
+  "wrong-tenant": {
+    "status": "OK",
+    "url": "http://localhost:8080/client?org=933a2d07-28ad-4f25-ab88-a587ee77d5e5",
+    "email": "qa+wrong-tenant.qa20260722@qa.taasflow.test"
+  },
+  "cand-single": {
+    "status": "OK",
+    "url": "http://localhost:8080/me",
+    "email": "qa+cand-single.qa20260722@qa.taasflow.test"
+  },
+  "cand-multi": {
+    "status": "OK",
+    "url": "http://localhost:8080/me",
+    "email": "qa+cand-multi.qa20260722@qa.taasflow.test"
+  }
+}
