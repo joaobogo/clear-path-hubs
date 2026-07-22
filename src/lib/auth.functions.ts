@@ -181,13 +181,14 @@ export const createUserByAdmin = createServerFn({ method: "POST" })
     }
 
     // Insert membership (idempotent per unique(user_id, organization_id, role)).
+    // memberships.user_id references auth.users.id, NOT profiles.id.
     const membershipRow: {
       user_id: string;
       role: string;
       status: string;
       organization_id: string | null;
     } = {
-      user_id: profileId,
+      user_id: authUserId,
       role: data.role,
       status: "active",
       organization_id: data.organization_id ?? null,
@@ -245,7 +246,7 @@ export const createClientWorkspace = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
     const normalized = data.company_name.trim().toLowerCase().replace(/\s+/g, " ");
-    // Find-or-create organization.
+    // Find-or-create organization. name_normalized is a generated column — do not set it.
     const { data: existingOrg } = await supabaseAdmin
       .from("organizations")
       .select("id, name, status")
@@ -257,7 +258,6 @@ export const createClientWorkspace = createServerFn({ method: "POST" })
         .from("organizations")
         .insert({
           name: data.company_name.trim(),
-          name_normalized: normalized,
           website: data.website ?? null,
           industry: data.industry ?? null,
           headquarters: data.headquarters ?? null,
@@ -326,7 +326,7 @@ export const createClientWorkspace = createServerFn({ method: "POST" })
     await (supabaseAdmin as any)
       .from("memberships")
       .upsert(
-        { user_id: profileId, organization_id: orgId, role: "client_admin", status: "active" },
+        { user_id: authUserId, organization_id: orgId, role: "client_admin", status: "active" },
         { onConflict: "user_id,organization_id,role" },
       );
 
