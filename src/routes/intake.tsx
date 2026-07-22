@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import { FormShell } from "@/components/marketing/form-shell";
 
 export const Route = createFileRoute("/intake")({
   head: () => ({
@@ -338,14 +339,15 @@ function IntakePage() {
   const progress = useMemo(() => Math.round(((step - 1) / (STEPS.length - 1)) * 100), [step]);
 
   return (
-    <main className="mx-auto max-w-3xl px-4 py-10 sm:px-6 sm:py-16">
-      <header className="mb-6">
-        <h1 className="text-3xl font-semibold tracking-tight">Start a hiring engagement</h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Tell us who you need to hire. TaaSFlow returns evidence-scored shortlists — usually within
-          48 hours. No account required.
-        </p>
-      </header>
+    <FormShell
+      exitTo="/"
+      exitLabel="Exit"
+      progress={{ step, total: STEPS.length, label: `Step ${step} of ${STEPS.length}` }}
+      width="lg"
+      eyebrow="Employer intake"
+      title="Start a hiring engagement"
+      description="Tell us who you need to hire. TaaSFlow returns evidence-scored shortlists — usually within 48 hours. No account required. Your progress is saved as you go."
+    >
 
       <div className="mb-6" aria-label="Progress">
         <Progress value={progress} />
