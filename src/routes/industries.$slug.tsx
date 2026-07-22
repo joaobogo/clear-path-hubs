@@ -18,6 +18,7 @@ export const Route = createFileRoute("/industries/$slug")({
       // Wrap the v2 data in the shape marketingHead expects.
       return marketingHead(
         {
+          url: `/industries/${params.slug}`,
           markdown: "",
           meta: {
             title: v2.meta.title,
