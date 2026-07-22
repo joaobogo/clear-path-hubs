@@ -2,7 +2,9 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { SiteShell } from "@/components/marketing/site-shell";
 import { Markdown } from "@/components/marketing/markdown";
 import { getIndustry, industries, listIndustrySlugs } from "@/lib/marketing/content";
+import { INDUSTRY_ENTRIES } from "@/content/industries-v2";
 import { marketingHead } from "@/lib/marketing/head";
+
 
 const entry = getIndustry("industries");
 
