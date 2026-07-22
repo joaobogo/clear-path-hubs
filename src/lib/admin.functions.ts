@@ -504,7 +504,46 @@ export const getPipelineHealth = createServerFn({ method: "GET" })
     };
   });
 
-// ─── Candidate search (server-side) ──────────────────────────────────────────
+// ─── Match visibility (admin) ────────────────────────────────────────────────
+
+const matchVisInput = z.object({
+  match_id: z.string().uuid(),
+  visibility: z.enum(["hidden", "visible"]),
+});
+
+export const setMatchClientVisibility = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: unknown) => matchVisInput.parse(i))
+  .handler(async ({ data, context }) => {
+    await requireStaff(context.userId);
+    const trace_id = traceId();
+    const s = await getAdmin();
+    const { data: before } = await s
+      .from("candidate_matches")
+      .select("id,organization_id,client_visibility")
+      .eq("id", data.match_id)
+      .maybeSingle();
+    if (!before) throw new Error("match_not_found");
+    const { data: after, error } = await s
+      .from("candidate_matches")
+      .update({ client_visibility: data.visibility })
+      .eq("id", data.match_id)
+      .select("id,client_visibility")
+      .maybeSingle();
+    if (error) throw new Error(error.message);
+    await writeAudit({
+      actor: context.userId,
+      action: `match.visibility.${data.visibility}`,
+      entity_type: "candidate_match",
+      entity_id: data.match_id,
+      organization_id: before.organization_id,
+      before: { visibility: before.client_visibility },
+      after,
+      trace_id,
+    });
+    return { ok: true as const, trace_id, match: after, action: data.visibility };
+  });
+
 
 const candidateFilter = z.object({
   q: z.string().optional(),
@@ -513,7 +552,14 @@ const candidateFilter = z.object({
   stage: z.string().optional(),
   admin_status: z.string().optional(),
   processing_state: z.string().optional(),
+  client_visibility: z.string().optional(),
   min_score: z.number().min(0).max(100).optional(),
+  max_score: z.number().min(0).max(100).optional(),
+  date_from: z.string().optional(),
+  date_to: z.string().optional(),
+  sort: z.enum(["updated_desc", "updated_asc", "score_desc", "score_asc", "created_desc"]).optional(),
+  limit: z.number().int().min(1).max(200).optional(),
+  offset: z.number().int().min(0).optional(),
 });
 
 export const searchCandidateMatches = createServerFn({ method: "POST" })
@@ -522,19 +568,33 @@ export const searchCandidateMatches = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     await requireStaff(context.userId);
     const s = await getAdmin();
+    const limit = data.limit ?? 50;
+    const offset = data.offset ?? 0;
+    const sort = data.sort ?? "updated_desc";
+
     let q = s
       .from("candidate_matches")
       .select(
-        "id,stage,admin_status,client_visibility,processing_state,updated_at,candidate_profile_id,candidate_profiles(full_name,email),positions(id,title,organization_id,organizations(name)),score_runs!candidate_matches_current_score_run_id_fkey(score,fit_label,contradiction_status)",
-      )
-      .order("updated_at", { ascending: false })
-      .limit(200);
+        "id,application_id,stage,admin_status,client_visibility,processing_state,updated_at,created_at,organization_id,position_id,candidate_profile_id,candidate_profiles(full_name,email),positions(id,title,organization_id,organizations(id,name)),score_runs!candidate_matches_current_score_run_id_fkey(score,fit_label,contradiction_status)",
+        { count: "exact" },
+      );
+
+    if (sort === "updated_desc") q = q.order("updated_at", { ascending: false });
+    else if (sort === "updated_asc") q = q.order("updated_at", { ascending: true });
+    else if (sort === "created_desc") q = q.order("created_at", { ascending: false });
+
+    q = q.range(offset, offset + limit - 1);
+
     if (data.organization_id) q = q.eq("organization_id", data.organization_id);
     if (data.position_id) q = q.eq("position_id", data.position_id);
     if (data.stage) q = q.eq("stage", data.stage);
     if (data.admin_status) q = q.eq("admin_status", data.admin_status);
     if (data.processing_state) q = q.eq("processing_state", data.processing_state);
-    const { data: rows } = await q;
+    if (data.client_visibility) q = q.eq("client_visibility", data.client_visibility);
+    if (data.date_from) q = q.gte("updated_at", data.date_from);
+    if (data.date_to) q = q.lte("updated_at", data.date_to);
+
+    const { data: rows, count } = await q;
     let out = (rows ?? []) as AnyRow[];
     if (data.q) {
       const needle = data.q.toLowerCase();
@@ -548,5 +608,47 @@ export const searchCandidateMatches = createServerFn({ method: "POST" })
       const min = data.min_score;
       out = out.filter((r) => (r.score_runs?.score ?? -1) >= min);
     }
-    return out;
+    if (data.max_score != null) {
+      const max = data.max_score;
+      out = out.filter((r) => (r.score_runs?.score ?? 101) <= max);
+    }
+    if (sort === "score_desc") {
+      out.sort((a, b) => (b.score_runs?.score ?? -1) - (a.score_runs?.score ?? -1));
+    } else if (sort === "score_asc") {
+      out.sort((a, b) => (a.score_runs?.score ?? 101) - (b.score_runs?.score ?? 101));
+    }
+    return { rows: out, total: count ?? out.length, limit, offset };
+  });
+
+// ─── Filter option helpers ───────────────────────────────────────────────────
+
+export const listOrgOptions = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await requireStaff(context.userId);
+    const s = await getAdmin();
+    const { data } = await s
+      .from("organizations")
+      .select("id,name")
+      .order("name", { ascending: true })
+      .limit(500);
+    return (data ?? []) as Array<{ id: string; name: string }>;
+  });
+
+export const listPositionOptions = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: unknown) =>
+    z.object({ organization_id: z.string().uuid().optional() }).parse(i ?? {}),
+  )
+  .handler(async ({ data, context }) => {
+    await requireStaff(context.userId);
+    const s = await getAdmin();
+    let q = s
+      .from("positions")
+      .select("id,title,organization_id,organizations(name)")
+      .order("updated_at", { ascending: false })
+      .limit(500);
+    if (data.organization_id) q = q.eq("organization_id", data.organization_id);
+    const { data: rows } = await q;
+    return (rows ?? []) as AnyRow[];
   });
