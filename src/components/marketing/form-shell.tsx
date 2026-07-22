@@ -73,12 +73,12 @@ export function FormShell({
               </div>
             </div>
           )}
-          <Link
-            to={exitTo}
+          <a
+            href={exitTo}
             className="rounded-md px-2.5 py-1.5 text-sm text-[color:var(--brand-navy)]/70 hover:text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
           >
             {exitLabel}
-          </Link>
+          </a>
         </div>
         {progress && (
           <div
