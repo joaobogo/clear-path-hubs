@@ -9,14 +9,23 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as JobsRouteImport } from './routes/jobs'
 import { Route as IntakeRouteImport } from './routes/intake'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as JobsIdRouteImport } from './routes/jobs.$id'
 import { Route as IntakeConfirmationRouteImport } from './routes/intake.confirmation'
+import { Route as JobsIdApplyRouteImport } from './routes/jobs.$id.apply'
+import { Route as ApplyReceivedApplicationIdRouteImport } from './routes/apply.received.$applicationId'
 import { Route as AuthenticatedAdminIntakesRouteImport } from './routes/_authenticated/admin.intakes'
 import { Route as AuthenticatedAdminIntakesIdRouteImport } from './routes/_authenticated/admin.intakes.$id'
 
+const JobsRoute = JobsRouteImport.update({
+  id: '/jobs',
+  path: '/jobs',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IntakeRoute = IntakeRouteImport.update({
   id: '/intake',
   path: '/intake',
@@ -36,11 +45,27 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const JobsIdRoute = JobsIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => JobsRoute,
+} as any)
 const IntakeConfirmationRoute = IntakeConfirmationRouteImport.update({
   id: '/confirmation',
   path: '/confirmation',
   getParentRoute: () => IntakeRoute,
 } as any)
+const JobsIdApplyRoute = JobsIdApplyRouteImport.update({
+  id: '/apply',
+  path: '/apply',
+  getParentRoute: () => JobsIdRoute,
+} as any)
+const ApplyReceivedApplicationIdRoute =
+  ApplyReceivedApplicationIdRouteImport.update({
+    id: '/apply/received/$applicationId',
+    path: '/apply/received/$applicationId',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AuthenticatedAdminIntakesRoute =
   AuthenticatedAdminIntakesRouteImport.update({
     id: '/admin/intakes',
@@ -58,16 +83,24 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/intake': typeof IntakeRouteWithChildren
+  '/jobs': typeof JobsRouteWithChildren
   '/intake/confirmation': typeof IntakeConfirmationRoute
+  '/jobs/$id': typeof JobsIdRouteWithChildren
   '/admin/intakes': typeof AuthenticatedAdminIntakesRouteWithChildren
+  '/apply/received/$applicationId': typeof ApplyReceivedApplicationIdRoute
+  '/jobs/$id/apply': typeof JobsIdApplyRoute
   '/admin/intakes/$id': typeof AuthenticatedAdminIntakesIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/intake': typeof IntakeRouteWithChildren
+  '/jobs': typeof JobsRouteWithChildren
   '/intake/confirmation': typeof IntakeConfirmationRoute
+  '/jobs/$id': typeof JobsIdRouteWithChildren
   '/admin/intakes': typeof AuthenticatedAdminIntakesRouteWithChildren
+  '/apply/received/$applicationId': typeof ApplyReceivedApplicationIdRoute
+  '/jobs/$id/apply': typeof JobsIdApplyRoute
   '/admin/intakes/$id': typeof AuthenticatedAdminIntakesIdRoute
 }
 export interface FileRoutesById {
@@ -76,8 +109,12 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/intake': typeof IntakeRouteWithChildren
+  '/jobs': typeof JobsRouteWithChildren
   '/intake/confirmation': typeof IntakeConfirmationRoute
+  '/jobs/$id': typeof JobsIdRouteWithChildren
   '/_authenticated/admin/intakes': typeof AuthenticatedAdminIntakesRouteWithChildren
+  '/apply/received/$applicationId': typeof ApplyReceivedApplicationIdRoute
+  '/jobs/$id/apply': typeof JobsIdApplyRoute
   '/_authenticated/admin/intakes/$id': typeof AuthenticatedAdminIntakesIdRoute
 }
 export interface FileRouteTypes {
@@ -86,16 +123,24 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/intake'
+    | '/jobs'
     | '/intake/confirmation'
+    | '/jobs/$id'
     | '/admin/intakes'
+    | '/apply/received/$applicationId'
+    | '/jobs/$id/apply'
     | '/admin/intakes/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/auth'
     | '/intake'
+    | '/jobs'
     | '/intake/confirmation'
+    | '/jobs/$id'
     | '/admin/intakes'
+    | '/apply/received/$applicationId'
+    | '/jobs/$id/apply'
     | '/admin/intakes/$id'
   id:
     | '__root__'
@@ -103,8 +148,12 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/auth'
     | '/intake'
+    | '/jobs'
     | '/intake/confirmation'
+    | '/jobs/$id'
     | '/_authenticated/admin/intakes'
+    | '/apply/received/$applicationId'
+    | '/jobs/$id/apply'
     | '/_authenticated/admin/intakes/$id'
   fileRoutesById: FileRoutesById
 }
@@ -113,10 +162,19 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   IntakeRoute: typeof IntakeRouteWithChildren
+  JobsRoute: typeof JobsRouteWithChildren
+  ApplyReceivedApplicationIdRoute: typeof ApplyReceivedApplicationIdRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/jobs': {
+      id: '/jobs'
+      path: '/jobs'
+      fullPath: '/jobs'
+      preLoaderRoute: typeof JobsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/intake': {
       id: '/intake'
       path: '/intake'
@@ -145,12 +203,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/jobs/$id': {
+      id: '/jobs/$id'
+      path: '/$id'
+      fullPath: '/jobs/$id'
+      preLoaderRoute: typeof JobsIdRouteImport
+      parentRoute: typeof JobsRoute
+    }
     '/intake/confirmation': {
       id: '/intake/confirmation'
       path: '/confirmation'
       fullPath: '/intake/confirmation'
       preLoaderRoute: typeof IntakeConfirmationRouteImport
       parentRoute: typeof IntakeRoute
+    }
+    '/jobs/$id/apply': {
+      id: '/jobs/$id/apply'
+      path: '/apply'
+      fullPath: '/jobs/$id/apply'
+      preLoaderRoute: typeof JobsIdApplyRouteImport
+      parentRoute: typeof JobsIdRoute
+    }
+    '/apply/received/$applicationId': {
+      id: '/apply/received/$applicationId'
+      path: '/apply/received/$applicationId'
+      fullPath: '/apply/received/$applicationId'
+      preLoaderRoute: typeof ApplyReceivedApplicationIdRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_authenticated/admin/intakes': {
       id: '/_authenticated/admin/intakes'
@@ -205,11 +284,34 @@ const IntakeRouteChildren: IntakeRouteChildren = {
 const IntakeRouteWithChildren =
   IntakeRoute._addFileChildren(IntakeRouteChildren)
 
+interface JobsIdRouteChildren {
+  JobsIdApplyRoute: typeof JobsIdApplyRoute
+}
+
+const JobsIdRouteChildren: JobsIdRouteChildren = {
+  JobsIdApplyRoute: JobsIdApplyRoute,
+}
+
+const JobsIdRouteWithChildren =
+  JobsIdRoute._addFileChildren(JobsIdRouteChildren)
+
+interface JobsRouteChildren {
+  JobsIdRoute: typeof JobsIdRouteWithChildren
+}
+
+const JobsRouteChildren: JobsRouteChildren = {
+  JobsIdRoute: JobsIdRouteWithChildren,
+}
+
+const JobsRouteWithChildren = JobsRoute._addFileChildren(JobsRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   IntakeRoute: IntakeRouteWithChildren,
+  JobsRoute: JobsRouteWithChildren,
+  ApplyReceivedApplicationIdRoute: ApplyReceivedApplicationIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
