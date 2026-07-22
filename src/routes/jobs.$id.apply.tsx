@@ -278,7 +278,7 @@ function ApplyPage() {
 
   return (
     <FormShell
-      exitTo="/jobs/$id"
+      exitTo={`/jobs/${id}`}
       exitLabel="← Role details"
       progress={{ step, total: STEP_LABELS.length, label: `Step ${step} of ${STEP_LABELS.length}` }}
       width="md"
