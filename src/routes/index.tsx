@@ -16,12 +16,12 @@ import {
 } from "lucide-react";
 
 import {
-  Breadcrumbs,
   CtaSection,
   PublicPage,
   PublicSection,
   SiteShell,
 } from "@/components/marketing/site-shell";
+
 import { getPage } from "@/lib/marketing/content";
 import { marketingHead } from "@/lib/marketing/head";
 
