@@ -139,12 +139,12 @@ function JobDetail() {
         )}
 
         <div className="mt-12 border-t pt-8 flex flex-wrap gap-3">
-          <Link to="/jobs/$id/apply" params={{ id: pos.id }}>
-            <Button size="lg">Apply now</Button>
-          </Link>
-          <Link to="/jobs">
-            <Button variant="outline" size="lg">Back to job board</Button>
-          </Link>
+          <Button asChild size="lg">
+            <Link to="/jobs/$id/apply" params={{ id: pos.id }}>Apply now</Link>
+          </Button>
+          <Button asChild variant="outline" size="lg">
+            <Link to="/jobs">Back to job board</Link>
+          </Button>
         </div>
       </main>
     </div>
