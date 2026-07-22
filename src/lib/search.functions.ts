@@ -87,14 +87,14 @@ export const globalSearch = createServerFn({ method: "POST" })
     if (wanted.has("match")) {
       const { data: rows } = await supabase
         .from("candidate_matches")
-        .select("id, position_id, stage, overall_score")
+        .select("id, position_id, stage, admin_status")
         .limit(limit);
       for (const r of rows ?? [])
         hits.push({
           entity_type: "match",
           entity_id: r.id,
           title: `Match · ${r.stage}`,
-          context: `Score ${r.overall_score ?? "—"}`,
+          context: `Review ${r.admin_status}`,
           href: `/admin/matches/${r.id}`,
         });
     }
