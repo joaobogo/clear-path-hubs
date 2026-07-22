@@ -44,12 +44,6 @@ export const Route = createFileRoute("/_authenticated/client/candidates")({
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
 
-const FIT_COLOR: Record<string, string> = {
-  excellent: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300",
-  strong: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300",
-  moderate: "bg-amber-500/10 text-amber-700 dark:text-amber-300",
-  weak: "bg-muted text-muted-foreground",
-};
 
 function CandidatesPage() {
   const search = Route.useSearch();
