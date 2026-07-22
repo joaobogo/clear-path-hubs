@@ -182,11 +182,15 @@ function PositionDetailPage() {
               .filter(Boolean)
               .join(" · ")}
           </div>
-          {!canEdit && (
+          {support.readOnly ? (
+            <div className="mt-2 text-xs text-muted-foreground">
+              Kanban movement is disabled while viewing this workspace as a TaaSFlow administrator.
+            </div>
+          ) : !canEdit ? (
             <div className="mt-2 text-xs text-muted-foreground">
               Read-only view — you do not have edit permission for this workspace.
             </div>
-          )}
+          ) : null}
         </div>
       </header>
 
