@@ -9,38 +9,135 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as IntakeRouteImport } from './routes/intake'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as IntakeConfirmationRouteImport } from './routes/intake.confirmation'
+import { Route as AuthenticatedAdminIntakesRouteImport } from './routes/_authenticated/admin.intakes'
+import { Route as AuthenticatedAdminIntakesIdRouteImport } from './routes/_authenticated/admin.intakes.$id'
 
+const IntakeRoute = IntakeRouteImport.update({
+  id: '/intake',
+  path: '/intake',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const IntakeConfirmationRoute = IntakeConfirmationRouteImport.update({
+  id: '/confirmation',
+  path: '/confirmation',
+  getParentRoute: () => IntakeRoute,
+} as any)
+const AuthenticatedAdminIntakesRoute =
+  AuthenticatedAdminIntakesRouteImport.update({
+    id: '/admin/intakes',
+    path: '/admin/intakes',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAdminIntakesIdRoute =
+  AuthenticatedAdminIntakesIdRouteImport.update({
+    id: '/$id',
+    path: '/$id',
+    getParentRoute: () => AuthenticatedAdminIntakesRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/intake': typeof IntakeRouteWithChildren
+  '/intake/confirmation': typeof IntakeConfirmationRoute
+  '/admin/intakes': typeof AuthenticatedAdminIntakesRouteWithChildren
+  '/admin/intakes/$id': typeof AuthenticatedAdminIntakesIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/intake': typeof IntakeRouteWithChildren
+  '/intake/confirmation': typeof IntakeConfirmationRoute
+  '/admin/intakes': typeof AuthenticatedAdminIntakesRouteWithChildren
+  '/admin/intakes/$id': typeof AuthenticatedAdminIntakesIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/auth': typeof AuthRoute
+  '/intake': typeof IntakeRouteWithChildren
+  '/intake/confirmation': typeof IntakeConfirmationRoute
+  '/_authenticated/admin/intakes': typeof AuthenticatedAdminIntakesRouteWithChildren
+  '/_authenticated/admin/intakes/$id': typeof AuthenticatedAdminIntakesIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/intake'
+    | '/intake/confirmation'
+    | '/admin/intakes'
+    | '/admin/intakes/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/auth'
+    | '/intake'
+    | '/intake/confirmation'
+    | '/admin/intakes'
+    | '/admin/intakes/$id'
+  id:
+    | '__root__'
+    | '/'
+    | '/_authenticated'
+    | '/auth'
+    | '/intake'
+    | '/intake/confirmation'
+    | '/_authenticated/admin/intakes'
+    | '/_authenticated/admin/intakes/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AuthRoute: typeof AuthRoute
+  IntakeRoute: typeof IntakeRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/intake': {
+      id: '/intake'
+      path: '/intake'
+      fullPath: '/intake'
+      preLoaderRoute: typeof IntakeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,22 +145,72 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/intake/confirmation': {
+      id: '/intake/confirmation'
+      path: '/confirmation'
+      fullPath: '/intake/confirmation'
+      preLoaderRoute: typeof IntakeConfirmationRouteImport
+      parentRoute: typeof IntakeRoute
+    }
+    '/_authenticated/admin/intakes': {
+      id: '/_authenticated/admin/intakes'
+      path: '/admin/intakes'
+      fullPath: '/admin/intakes'
+      preLoaderRoute: typeof AuthenticatedAdminIntakesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/intakes/$id': {
+      id: '/_authenticated/admin/intakes/$id'
+      path: '/$id'
+      fullPath: '/admin/intakes/$id'
+      preLoaderRoute: typeof AuthenticatedAdminIntakesIdRouteImport
+      parentRoute: typeof AuthenticatedAdminIntakesRoute
+    }
   }
 }
 
+interface AuthenticatedAdminIntakesRouteChildren {
+  AuthenticatedAdminIntakesIdRoute: typeof AuthenticatedAdminIntakesIdRoute
+}
+
+const AuthenticatedAdminIntakesRouteChildren: AuthenticatedAdminIntakesRouteChildren =
+  {
+    AuthenticatedAdminIntakesIdRoute: AuthenticatedAdminIntakesIdRoute,
+  }
+
+const AuthenticatedAdminIntakesRouteWithChildren =
+  AuthenticatedAdminIntakesRoute._addFileChildren(
+    AuthenticatedAdminIntakesRouteChildren,
+  )
+
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAdminIntakesRoute: typeof AuthenticatedAdminIntakesRouteWithChildren
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAdminIntakesRoute: AuthenticatedAdminIntakesRouteWithChildren,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
+interface IntakeRouteChildren {
+  IntakeConfirmationRoute: typeof IntakeConfirmationRoute
+}
+
+const IntakeRouteChildren: IntakeRouteChildren = {
+  IntakeConfirmationRoute: IntakeConfirmationRoute,
+}
+
+const IntakeRouteWithChildren =
+  IntakeRoute._addFileChildren(IntakeRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AuthRoute: AuthRoute,
+  IntakeRoute: IntakeRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
