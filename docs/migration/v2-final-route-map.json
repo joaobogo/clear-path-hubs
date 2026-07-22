@@ -1,0 +1,245 @@
+{
+  "public_marketing": [
+    {
+      "route": "/",
+      "source_url": "https://sourcing-suite-ai.lovable.app/",
+      "http_status": 200,
+      "destination_route": "/",
+      "decision": "MIGRATE",
+      "redirect_target": null,
+      "seo": "route-owned head() with unique title/description/og required; images set on leaf only."
+    },
+    {
+      "route": "/how-it-works",
+      "source_url": "https://sourcing-suite-ai.lovable.app/how-it-works",
+      "http_status": 200,
+      "destination_route": "/how-it-works",
+      "decision": "MIGRATE",
+      "redirect_target": null,
+      "seo": "route-owned head() with unique title/description/og required; images set on leaf only."
+    },
+    {
+      "route": "/pricing",
+      "source_url": "https://sourcing-suite-ai.lovable.app/pricing",
+      "http_status": 200,
+      "destination_route": "/pricing",
+      "decision": "MIGRATE",
+      "redirect_target": null,
+      "seo": "route-owned head() with unique title/description/og required; images set on leaf only."
+    },
+    {
+      "route": "/pilot",
+      "source_url": "https://sourcing-suite-ai.lovable.app/pilot",
+      "http_status": 200,
+      "destination_route": "/pilot",
+      "decision": "MIGRATE",
+      "redirect_target": null,
+      "seo": "route-owned head() with unique title/description/og required; images set on leaf only."
+    },
+    {
+      "route": "/enterprise",
+      "source_url": "https://sourcing-suite-ai.lovable.app/enterprise",
+      "http_status": 200,
+      "destination_route": "/enterprise",
+      "decision": "MIGRATE",
+      "redirect_target": null,
+      "seo": "route-owned head() with unique title/description/og required; images set on leaf only."
+    },
+    {
+      "route": "/faq",
+      "source_url": "https://sourcing-suite-ai.lovable.app/faq",
+      "http_status": 200,
+      "destination_route": "/faq",
+      "decision": "MIGRATE",
+      "redirect_target": null,
+      "seo": "route-owned head() with unique title/description/og required; images set on leaf only."
+    },
+    {
+      "route": "/contact",
+      "source_url": "https://sourcing-suite-ai.lovable.app/contact",
+      "http_status": 200,
+      "destination_route": "/contact",
+      "decision": "MIGRATE",
+      "redirect_target": null,
+      "seo": "route-owned head() with unique title/description/og required; images set on leaf only."
+    },
+    {
+      "route": "/resources",
+      "source_url": "https://sourcing-suite-ai.lovable.app/resources",
+      "http_status": 200,
+      "destination_route": "/resources",
+      "decision": "MIGRATE",
+      "redirect_target": null,
+      "seo": "route-owned head() with unique title/description/og required; images set on leaf only."
+    },
+    {
+      "route": "/blog",
+      "source_url": "https://sourcing-suite-ai.lovable.app/blog",
+      "http_status": 200,
+      "destination_route": "/blog",
+      "decision": "MIGRATE",
+      "redirect_target": null,
+      "seo": "route-owned head() with unique title/description/og required; images set on leaf only."
+    },
+    {
+      "route": "/case-studies",
+      "source_url": "https://sourcing-suite-ai.lovable.app/case-studies",
+      "http_status": 200,
+      "destination_route": "/case-studies",
+      "decision": "MIGRATE",
+      "redirect_target": null,
+      "seo": "route-owned head() with unique title/description/og required; images set on leaf only."
+    },
+    {
+      "route": "/taasflow-journey",
+      "source_url": "https://sourcing-suite-ai.lovable.app/taasflow-journey",
+      "http_status": 200,
+      "destination_route": "/journey",
+      "decision": "REDIRECT",
+      "redirect_target": "/journey",
+      "seo": "route-owned head() with unique title/description/og required; images set on leaf only."
+    },
+    {
+      "route": "/industries",
+      "source_url": "https://sourcing-suite-ai.lovable.app/industries",
+      "http_status": 200,
+      "destination_route": "/industries",
+      "decision": "MIGRATE",
+      "redirect_target": null,
+      "seo": "route-owned head() with unique title/description/og required; images set on leaf only."
+    },
+    {
+      "route": "/industries/compare",
+      "source_url": "https://sourcing-suite-ai.lovable.app/industries/compare",
+      "http_status": 200,
+      "destination_route": "/industries/compare",
+      "decision": "MIGRATE_AND_IMPROVE",
+      "redirect_target": null,
+      "seo": "route-owned head() with unique title/description/og required; images set on leaf only."
+    },
+    {
+      "route": "/partnerships/staffing",
+      "source_url": "https://sourcing-suite-ai.lovable.app/partnerships/staffing",
+      "http_status": 200,
+      "destination_route": "/partnerships/staffing",
+      "decision": "MIGRATE",
+      "redirect_target": null,
+      "seo": "route-owned head() with unique title/description/og required; images set on leaf only."
+    },
+    {
+      "route": "/privacy",
+      "source_url": "https://sourcing-suite-ai.lovable.app/privacy",
+      "http_status": 200,
+      "destination_route": "/privacy",
+      "decision": "MIGRATE",
+      "redirect_target": null,
+      "seo": "route-owned head() with unique title/description/og required; images set on leaf only."
+    },
+    {
+      "route": "/terms",
+      "source_url": "https://sourcing-suite-ai.lovable.app/terms",
+      "http_status": 200,
+      "destination_route": "/terms",
+      "decision": "MIGRATE",
+      "redirect_target": null,
+      "seo": "route-owned head() with unique title/description/og required; images set on leaf only."
+    },
+    {
+      "route": "/talent",
+      "source_url": "https://sourcing-suite-ai.lovable.app/talent",
+      "http_status": 200,
+      "destination_route": "/talent-network",
+      "decision": "REDIRECT",
+      "redirect_target": "/talent-network",
+      "seo": "route-owned head() with unique title/description/og required; images set on leaf only."
+    },
+    {
+      "route": "/candidate-success",
+      "source_url": "https://sourcing-suite-ai.lovable.app/candidate-success",
+      "http_status": 200,
+      "destination_route": "/candidate-success",
+      "decision": "MIGRATE_AND_IMPROVE",
+      "redirect_target": null,
+      "seo": "route-owned head() with unique title/description/og required; images set on leaf only."
+    },
+    {
+      "route": "/employer-onboarding",
+      "source_url": "https://sourcing-suite-ai.lovable.app/employer-onboarding",
+      "http_status": 200,
+      "destination_route": "/employer-onboarding",
+      "decision": "MIGRATE",
+      "redirect_target": null,
+      "seo": "route-owned head() with unique title/description/og required; images set on leaf only."
+    },
+    {
+      "route": "/knowledge-base",
+      "source_url": "https://sourcing-suite-ai.lovable.app/knowledge-base",
+      "http_status": 200,
+      "destination_route": "/knowledge-base",
+      "decision": "MIGRATE",
+      "redirect_target": null,
+      "seo": "route-owned head() with unique title/description/og required; images set on leaf only."
+    },
+    {
+      "route": "/global-talent",
+      "source_url": "https://sourcing-suite-ai.lovable.app/global-talent",
+      "http_status": 200,
+      "destination_route": "/global-talent",
+      "decision": "MIGRATE",
+      "redirect_target": null,
+      "seo": "route-owned head() with unique title/description/og required; images set on leaf only."
+    },
+    {
+      "route": "/candidate/join",
+      "source_url": "https://sourcing-suite-ai.lovable.app/candidate/join",
+      "http_status": 200,
+      "destination_route": "/jobs",
+      "decision": "REDIRECT",
+      "redirect_target": "/jobs",
+      "seo": "route-owned head() with unique title/description/og required; images set on leaf only."
+    },
+    {
+      "route": "/about",
+      "source_url": "https://sourcing-suite-ai.lovable.app/about",
+      "http_status": 200,
+      "destination_route": "/about",
+      "decision": "MIGRATE",
+      "redirect_target": null,
+      "seo": "route-owned head() with unique title/description/og required; images set on leaf only."
+    }
+  ],
+  "preserved_operational": [
+    "/jobs",
+    "/jobs/$id",
+    "/jobs/$id/apply",
+    "/intake",
+    "/login",
+    "/auth",
+    "/reset-password",
+    "/access-denied",
+    "/admin/*",
+    "/client/*",
+    "/candidate/*",
+    "/me/*"
+  ],
+  "redirects": [
+    {
+      "from": "/taasflow-journey",
+      "to": "/journey",
+      "code": 301
+    },
+    {
+      "from": "/candidate/join",
+      "to": "/jobs",
+      "code": 301
+    },
+    {
+      "from": "/talent",
+      "to": "/talent-network",
+      "code": 301
+    }
+  ],
+  "sitemap": "src/routes/sitemap[.]xml.ts (destination) \u2014 must include all migrated marketing + dynamic blog/industry entries",
+  "robots": "public/robots.txt (destination) \u2014 Allow: /, exclude /admin, /client, /me, /candidate, /api/",
+  "canonical_host": "https://clear-path-hubs.lovable.app"
+}

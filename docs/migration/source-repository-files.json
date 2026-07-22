@@ -1,0 +1,45 @@
+{
+  "repository": "https://github.com/joaobogo/sourcing-suite-ai.git",
+  "access_status": "REPO_NOT_PUBLICLY_ACCESSIBLE",
+  "notes": "Unauthenticated GitHub REST returns 404 for owner/repo `joaobogo/sourcing-suite-ai`. Either the repo is private or the slug differs. Direct file inventory could not be performed. Fallback: live public site at https://sourcing-suite-ai.lovable.app and destination's already-mirrored content in src/content/ (19 page + 24 industry + 304 blog JSON snapshots) treated as authoritative for classification.",
+  "branch": "unknown (default assumed 'main')",
+  "sha": "unresolved",
+  "framework_inferred": "React SPA (Lovable-generated). Titles serve identical shell across routes, indicating client-side routing.",
+  "classification_scheme": [
+    "MIGRATE_AS_IS",
+    "MIGRATE_AND_ADAPT",
+    "EXTRACT_CONTENT_ONLY",
+    "EXTRACT_ASSET_ONLY",
+    "REBUILD_FROM_REFERENCE",
+    "KEEP_DESTINATION_IMPLEMENTATION",
+    "EXCLUDE_OPERATIONAL",
+    "EXCLUDE_DASHBOARD",
+    "EXCLUDE_BACKEND",
+    "EXCLUDE_DUPLICATE",
+    "REVIEW_REQUIRED"
+  ],
+  "inferred_categories": {
+    "public_layout_and_brand": "REBUILD_FROM_REFERENCE \u2014 no repo access; reproduce from live DOM/CSS + already-migrated tokens in destination.",
+    "public_pages_markdown_json": "EXTRACT_CONTENT_ONLY \u2014 already present in destination src/content/pages/*.json (19).",
+    "industry_pages": "EXTRACT_CONTENT_ONLY \u2014 24 present in destination src/content/industries/.",
+    "blog_articles": "EXTRACT_CONTENT_ONLY \u2014 304 present in destination src/content/blog/.",
+    "public_images_and_hero_illustrations": "EXTRACT_ASSET_ONLY \u2014 pending re-fetch from live site; must be self-hosted (existing hotlinks trigger NotSameSite console warnings).",
+    "logos_and_favicon": "EXTRACT_ASSET_ONLY \u2014 placeholders currently in destination; refetch canonical originals from live site header.",
+    "supabase_integrations_or_migrations": "EXCLUDE_BACKEND \u2014 destination canonical.",
+    "any_dashboards_or_admin_ui": "EXCLUDE_DASHBOARD \u2014 destination canonical.",
+    "auth_intake_job_board_apply_scoring_notifications": "EXCLUDE_OPERATIONAL \u2014 destination canonical.",
+    "duplicate_marketing_shells": "EXCLUDE_DUPLICATE \u2014 destination has premium shell.",
+    "sitemap_robots_seo_helpers": "KEEP_DESTINATION_IMPLEMENTATION \u2014 destination src/routes/sitemap[.]xml.ts + marketing head() utilities are current."
+  },
+  "totals": {
+    "files_inspected_directly": 0,
+    "files_inspected_via_mirror": 347,
+    "public_content_units": {
+      "pages": 19,
+      "industries": 24,
+      "blog": 304
+    },
+    "excluded_by_rule_dashboard": "N/A (no direct access)",
+    "excluded_by_rule_backend": "N/A (no direct access)"
+  }
+}

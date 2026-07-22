@@ -1,0 +1,49 @@
+{
+  "notes": "Repo not accessible for byte-level inventory. Live-site asset discovery yields 25 hotlinked images previously catalogued in docs/migration/brand-inventory.md. All must be self-hosted to eliminate NotSameSite console warnings.",
+  "categories": {
+    "logo": {
+      "count_estimated": 1,
+      "decision": "EXTRACT_ASSET_ONLY",
+      "destination_path": "src/assets/brand/logo.svg",
+      "risk": "placeholder currently in destination"
+    },
+    "favicon": {
+      "count_estimated": 1,
+      "decision": "EXTRACT_ASSET_ONLY",
+      "destination_path": "public/favicon.ico",
+      "risk": "placeholder currently in destination"
+    },
+    "hero_illustrations": {
+      "count_estimated": 3,
+      "decision": "EXTRACT_ASSET_ONLY",
+      "destination_path": "src/assets/marketing/"
+    },
+    "industry_covers": {
+      "count_estimated": 24,
+      "decision": "EXTRACT_ASSET_ONLY",
+      "destination_path": "src/assets/industries/"
+    },
+    "blog_cover_images": {
+      "count_estimated_hotlinked": 25,
+      "decision": "EXTRACT_ASSET_ONLY",
+      "destination_path": "src/assets/blog/"
+    },
+    "svg_icons": {
+      "count_estimated": 0,
+      "decision": "REBUILD_FROM_REFERENCE",
+      "detail": "prefer lucide-react in destination"
+    },
+    "videos": {
+      "count_estimated": 0,
+      "decision": "REVIEW_REQUIRED"
+    }
+  },
+  "do_not_migrate": [
+    "temporary signed URLs",
+    "candidate CVs",
+    "client documents",
+    "dashboard test screenshots",
+    "QA artifacts",
+    "internal reports"
+  ]
+}
