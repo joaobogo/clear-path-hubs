@@ -492,13 +492,17 @@ export type Database = {
           id: string
           is_test_record: boolean | null
           languages: Json
+          linkedin_url: string | null
           location: string | null
           phone: string | null
           skills: Json
+          summary: string | null
           test_run_id: string | null
+          timezone: string | null
           updated_at: string
           user_id: string | null
           work_authorization: Json
+          years_experience: number | null
         }
         Insert: {
           availability?: Json
@@ -516,13 +520,17 @@ export type Database = {
           id?: string
           is_test_record?: boolean | null
           languages?: Json
+          linkedin_url?: string | null
           location?: string | null
           phone?: string | null
           skills?: Json
+          summary?: string | null
           test_run_id?: string | null
+          timezone?: string | null
           updated_at?: string
           user_id?: string | null
           work_authorization?: Json
+          years_experience?: number | null
         }
         Update: {
           availability?: Json
@@ -540,13 +548,17 @@ export type Database = {
           id?: string
           is_test_record?: boolean | null
           languages?: Json
+          linkedin_url?: string | null
           location?: string | null
           phone?: string | null
           skills?: Json
+          summary?: string | null
           test_run_id?: string | null
+          timezone?: string | null
           updated_at?: string
           user_id?: string | null
           work_authorization?: Json
+          years_experience?: number | null
         }
         Relationships: [
           {

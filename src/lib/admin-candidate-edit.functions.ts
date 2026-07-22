@@ -45,7 +45,11 @@ const editSchema = z.object({
       email: z.string().trim().email().max(320).optional(),
       phone: z.string().trim().max(80).optional().nullable(),
       location: z.string().trim().max(200).optional().nullable(),
+      timezone: z.string().trim().max(80).optional().nullable(),
       headline: z.string().trim().max(300).optional().nullable(),
+      summary: z.string().trim().max(4000).optional().nullable(),
+      years_experience: z.number().int().min(0).max(80).optional().nullable(),
+      linkedin_url: z.string().trim().url().max(500).optional().nullable(),
       experience: z.array(z.record(z.string(), z.unknown())).optional(),
       skills: z.array(z.string().min(1).max(80)).max(200).optional(),
       languages: z.array(z.record(z.string(), z.unknown())).optional(),
@@ -55,6 +59,7 @@ const editSchema = z.object({
       compensation_preferences: z.record(z.string(), z.unknown()).optional(),
     })
     .refine((o) => Object.keys(o).length > 0, { message: "patch cannot be empty" }),
+
   // Fields to lock against future auto-enrichment overwrites (["email","phone"] etc.)
   lock_fields: z.array(z.string()).max(30).optional(),
   // Explicit override — set true only for legacy_bridge_repair to allow overwriting a locked field.
@@ -68,8 +73,11 @@ const SCORING_RELEVANT = new Set([
   "education",
   "languages",
   "headline",
+  "summary",
+  "years_experience",
   "work_authorization",
 ]);
+
 
 export const updateCandidateAsAdmin = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -135,24 +143,60 @@ export const updateCandidateAsAdmin = createServerFn({ method: "POST" })
       };
     }
 
-    // 5. Audit event
-    await s.from("audit_events").insert({
-      actor_user_id: context.userId,
-      entity_type: "candidate_profiles",
-      entity_id: data.candidate_profile_id,
-      action: "candidate.update",
-      before_state: before,
-      after_state: after,
-      trace_id: trace,
-      metadata: {
-        source_surface: data.source_surface,
-        patched_fields: Object.keys(data.patch),
-        locked_fields_added: data.lock_fields ?? [],
-        match_id: data.match_id ?? null,
-      },
-    });
+    // 5. Read-after-write verification (fresh SELECT confirms fields persisted)
+    const { data: verify, error: verifyErr } = await s
+      .from("candidate_profiles")
+      .select("*")
+      .eq("id", data.candidate_profile_id)
+      .maybeSingle();
+    if (verifyErr || !verify) {
+      // Roll back the write
+      await s.from("candidate_profiles").update(before).eq("id", data.candidate_profile_id);
+      return {
+        ok: false,
+        code: "verify_failed",
+        message: verifyErr?.message ?? "readback missing",
+        trace_id: trace,
+      };
+    }
+    const drift: string[] = [];
+    for (const [k, v] of Object.entries(data.patch)) {
+      const persisted = (verify as AnyRow)[k];
+      if (JSON.stringify(persisted) !== JSON.stringify(v)) drift.push(k);
+    }
+    if (drift.length > 0) {
+      // Roll back on partial persistence to avoid stale UI
+      await s.from("candidate_profiles").update(before).eq("id", data.candidate_profile_id);
+      return {
+        ok: false,
+        code: "readback_drift",
+        message: `Fields did not persist: ${drift.join(", ")}`,
+        trace_id: trace,
+      };
+    }
 
-    // 6. Mark affected score runs stale (soft — via match note; hard rescore is a separate action)
+    // 6. Audit event (persisted with returned id)
+    const { data: audit } = await s
+      .from("audit_events")
+      .insert({
+        actor_user_id: context.userId,
+        entity_type: "candidate_profiles",
+        entity_id: data.candidate_profile_id,
+        action: "candidate.update",
+        before_state: before,
+        after_state: verify,
+        trace_id: trace,
+        metadata: {
+          source_surface: data.source_surface,
+          patched_fields: Object.keys(data.patch),
+          locked_fields_added: data.lock_fields ?? [],
+          match_id: data.match_id ?? null,
+        },
+      })
+      .select("id")
+      .maybeSingle();
+
+    // 7. Mark affected score runs stale when scoring-relevant fields changed
     const scoringChanged = Object.keys(data.patch).some((k) => SCORING_RELEVANT.has(k));
     let stale_marked = 0;
     if (scoringChanged) {
@@ -175,13 +219,16 @@ export const updateCandidateAsAdmin = createServerFn({ method: "POST" })
     return {
       ok: true,
       trace_id: trace,
-      profile: after,
+      audit_event_id: audit?.id ?? null,
+      profile: verify,
       scoring_relevant: scoringChanged,
       stale_marked,
     };
   });
 
-// Legacy Bridge Repair — create a canonical candidate_profiles row when it is missing.
+
+// Legacy Bridge Repair — resolve or create the canonical candidate_profiles row,
+// then relink an orphan match/application to that profile.
 export const repairCandidateIdentity = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((i: unknown) =>
@@ -190,6 +237,9 @@ export const repairCandidateIdentity = createServerFn({ method: "POST" })
         email: z.string().trim().email(),
         full_name: z.string().trim().min(1).max(200),
         phone: z.string().trim().max(80).optional(),
+        // Optional: relink these to the resolved profile atomically.
+        match_id: z.string().uuid().optional(),
+        application_id: z.string().uuid().optional(),
       })
       .parse(i),
   )
@@ -198,38 +248,74 @@ export const repairCandidateIdentity = createServerFn({ method: "POST" })
     const trace = traceId();
     const s = await getAdmin();
 
-    // idempotent: if an existing profile has the same email (case-insensitive), return it
+    // Idempotent resolve by lowercased email
     const { data: existing } = await s
       .from("candidate_profiles")
       .select("*")
       .ilike("email", data.email)
       .maybeSingle();
-    if (existing) {
-      return { ok: true, created: false, profile: existing, trace_id: trace };
+
+    let profile = existing;
+    let created = false;
+    if (!profile) {
+      const { data: inserted, error } = await s
+        .from("candidate_profiles")
+        .insert({
+          full_name: data.full_name,
+          email: data.email.toLowerCase(),
+          phone: data.phone ?? null,
+        })
+        .select("*")
+        .maybeSingle();
+      if (error || !inserted) {
+        return { ok: false, code: "insert_failed", message: error?.message, trace_id: trace };
+      }
+      profile = inserted;
+      created = true;
     }
 
-    const { data: inserted, error } = await s
-      .from("candidate_profiles")
+    // Relink orphan rows to the resolved profile (never silently creates duplicates)
+    const relinked: { match?: string; application?: string } = {};
+    if (data.match_id) {
+      const { data: m } = await s
+        .from("candidate_matches")
+        .update({ candidate_profile_id: profile.id })
+        .eq("id", data.match_id)
+        .select("id")
+        .maybeSingle();
+      if (m) relinked.match = m.id;
+    }
+    if (data.application_id) {
+      const { data: a } = await s
+        .from("applications")
+        .update({ candidate_profile_id: profile.id })
+        .eq("id", data.application_id)
+        .select("id")
+        .maybeSingle();
+      if (a) relinked.application = a.id;
+    }
+
+    const { data: audit } = await s
+      .from("audit_events")
       .insert({
-        full_name: data.full_name,
-        email: data.email.toLowerCase(),
-        phone: data.phone ?? null,
+        actor_user_id: context.userId,
+        entity_type: "candidate_profiles",
+        entity_id: profile.id,
+        action: created ? "candidate.repair_identity_create" : "candidate.repair_identity_relink",
+        after_state: profile,
+        trace_id: trace,
+        metadata: { source_surface: "legacy_bridge_repair", relinked },
       })
-      .select("*")
+      .select("id")
       .maybeSingle();
-    if (error || !inserted) {
-      return { ok: false, code: "insert_failed", message: error?.message, trace_id: trace };
-    }
 
-    await s.from("audit_events").insert({
-      actor_user_id: context.userId,
-      entity_type: "candidate_profiles",
-      entity_id: inserted.id,
-      action: "candidate.repair_identity",
-      after_state: inserted,
+    return {
+      ok: true,
+      created,
+      profile,
+      relinked,
+      audit_event_id: audit?.id ?? null,
       trace_id: trace,
-      metadata: { source_surface: "legacy_bridge_repair" },
-    });
-
-    return { ok: true, created: true, profile: inserted, trace_id: trace };
+    };
   });
+

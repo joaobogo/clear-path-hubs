@@ -133,10 +133,17 @@ export function CandidateDetailDrawer({
         email: cp.email ?? "",
         phone: cp.phone ?? "",
         location: cp.location ?? "",
+        timezone: cp.timezone ?? "",
         headline: cp.headline ?? "",
+        summary: cp.summary ?? "",
+        years_experience: cp.years_experience ?? "",
+        linkedin_url: cp.linkedin_url ?? "",
+        availability_text: (cp.availability?.notes as string) ?? "",
+        work_auth_text: (cp.work_authorization?.notes as string) ?? "",
       });
     }
   }, [cp?.id]);
+
 
   const runAction = async (label: string, fn: () => Promise<unknown>) => {
     setBusy(label);
@@ -159,8 +166,29 @@ export function CandidateDetailDrawer({
     mutationFn: (surface: "admin_drawer_overview" | "admin_drawer_contact") => {
       if (!cp?.id) throw new Error("no profile id");
       const patch: AnyRow = {};
-      for (const [k, v] of Object.entries(edit)) {
+      const scalarKeys = [
+        "full_name", "email", "phone", "location", "timezone",
+        "headline", "summary", "linkedin_url",
+      ] as const;
+      for (const k of scalarKeys) {
+        const v = edit[k];
         if (v !== (cp[k] ?? "")) patch[k] = v === "" ? null : v;
+      }
+      // years_experience is numeric
+      if (edit.years_experience !== "" && edit.years_experience != null) {
+        const n = Number(edit.years_experience);
+        if (Number.isFinite(n) && n !== (cp.years_experience ?? null)) patch.years_experience = n;
+      } else if (cp.years_experience != null) {
+        patch.years_experience = null;
+      }
+      // availability/work_authorization: merge notes into existing jsonb
+      const availOld = (cp.availability?.notes as string) ?? "";
+      if ((edit.availability_text ?? "") !== availOld) {
+        patch.availability = { ...(cp.availability ?? {}), notes: edit.availability_text || null };
+      }
+      const waOld = (cp.work_authorization?.notes as string) ?? "";
+      if ((edit.work_auth_text ?? "") !== waOld) {
+        patch.work_authorization = { ...(cp.work_authorization ?? {}), notes: edit.work_auth_text || null };
       }
       if (Object.keys(patch).length === 0) throw new Error("nothing to save");
       const lock: string[] = [];
@@ -178,7 +206,7 @@ export function CandidateDetailDrawer({
     },
     onSuccess: (r: AnyRow) => {
       if (r.ok) {
-        setFeedback(`Saved · ${r.trace_id}${r.scoring_relevant ? ` · ${r.stale_marked} score(s) marked stale` : ""}`);
+        setFeedback(`Saved · ${r.trace_id}${r.audit_event_id ? ` · audit ${r.audit_event_id}` : ""}${r.scoring_relevant ? ` · ${r.stale_marked} score(s) marked stale` : ""}`);
         refetch();
         qc.invalidateQueries({ queryKey: ["candidate-search"] });
       } else {
@@ -187,6 +215,7 @@ export function CandidateDetailDrawer({
     },
     onError: (e) => setError((e as Error).message),
   });
+
 
   const stateColor = useMemo(() => {
     const state = match?.processing_state ?? "";
@@ -299,20 +328,45 @@ export function CandidateDetailDrawer({
                 </div>
                 <div>
                   <Label>Location</Label>
-                  <Input value={edit.location ?? ""} onChange={(e) => setEdit({ ...edit, location: e.target.value })} />
+                  <Input data-qa-field="location" value={edit.location ?? ""} onChange={(e) => setEdit({ ...edit, location: e.target.value })} />
+                </div>
+                <div>
+                  <Label>Timezone</Label>
+                  <Input data-qa-field="timezone" placeholder="e.g. Europe/Lisbon" value={edit.timezone ?? ""} onChange={(e) => setEdit({ ...edit, timezone: e.target.value })} />
                 </div>
                 <div className="col-span-2">
                   <Label>Headline</Label>
-                  <Input value={edit.headline ?? ""} onChange={(e) => setEdit({ ...edit, headline: e.target.value })} />
+                  <Input data-qa-field="headline" value={edit.headline ?? ""} onChange={(e) => setEdit({ ...edit, headline: e.target.value })} />
+                </div>
+                <div className="col-span-2">
+                  <Label>Summary</Label>
+                  <Textarea data-qa-field="summary" rows={4} value={edit.summary ?? ""} onChange={(e) => setEdit({ ...edit, summary: e.target.value })} />
+                </div>
+                <div>
+                  <Label>Years of experience</Label>
+                  <Input data-qa-field="years_experience" type="number" min={0} max={80} value={edit.years_experience ?? ""} onChange={(e) => setEdit({ ...edit, years_experience: e.target.value })} />
+                </div>
+                <div>
+                  <Label>LinkedIn URL</Label>
+                  <Input data-qa-field="linkedin_url" placeholder="https://linkedin.com/in/…" value={edit.linkedin_url ?? ""} onChange={(e) => setEdit({ ...edit, linkedin_url: e.target.value })} />
+                </div>
+                <div className="col-span-2">
+                  <Label>Availability</Label>
+                  <Input data-qa-field="availability_text" placeholder="e.g. Available from Sept, 4 weeks notice" value={edit.availability_text ?? ""} onChange={(e) => setEdit({ ...edit, availability_text: e.target.value })} />
+                </div>
+                <div className="col-span-2">
+                  <Label>Work authorization</Label>
+                  <Input data-qa-field="work_auth_text" placeholder="e.g. EU citizen, no visa required" value={edit.work_auth_text ?? ""} onChange={(e) => setEdit({ ...edit, work_auth_text: e.target.value })} />
                 </div>
               </div>
               <div className="flex gap-2">
-                <Button disabled={saveMutation.isPending} onClick={() => saveMutation.mutate("admin_drawer_contact")}>
-                  {saveMutation.isPending ? "Saving…" : "Save contact"}
+                <Button data-qa-action="save-candidate-contact" disabled={saveMutation.isPending} onClick={() => saveMutation.mutate("admin_drawer_contact")}>
+                  {saveMutation.isPending ? "Saving…" : "Save changes"}
                 </Button>
                 {!cp?.id && cp?.email && (
                   <Button
                     variant="secondary"
+                    data-qa-action="repair-identity"
                     disabled={busy !== null}
                     onClick={() =>
                       runAction("repair identity", () =>
@@ -320,6 +374,8 @@ export function CandidateDetailDrawer({
                           data: {
                             email: cp.email,
                             full_name: cp.full_name ?? cp.email.split("@")[0],
+                            match_id: submissionId ?? undefined,
+                            application_id: match?.application_id,
                           },
                         }),
                       )
@@ -329,6 +385,7 @@ export function CandidateDetailDrawer({
                   </Button>
                 )}
               </div>
+
             </TabsContent>
 
             <TabsContent value="application" className="mt-4 space-y-2 text-sm">
