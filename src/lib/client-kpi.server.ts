@@ -135,6 +135,8 @@ export type ClientCandidateDTO = {
     location: string | null;
     headline: string | null;
     availability: string | null;
+    years_experience: number | null;
+    summary: string | null;
   };
   score: number | null;
   fit_label: string | null;
@@ -142,7 +144,78 @@ export type ClientCandidateDTO = {
   strengths: string[];
   main_consideration: string | null;
   evidence: Array<{ label: string; snippet: string }>;
+  experience: Array<{ title: string; company: string | null; period: string | null; description: string | null }>;
+  skills: string[];
+  education: Array<{ degree: string | null; institution: string | null; period: string | null }>;
+  languages: Array<{ name: string; level: string | null }>;
+  work_authorization: string | null;
+  screening_answers: Array<{ question: string; answer: string }>;
 };
+
+function normStr(v: unknown): string | null {
+  if (v == null) return null;
+  const s = String(v).trim();
+  return s.length ? s : null;
+}
+
+function normExperience(raw: unknown): ClientCandidateDTO["experience"] {
+  if (!Array.isArray(raw)) return [];
+  return raw.slice(0, 8).map((e: AnyRow) => ({
+    title: String(e?.title ?? e?.role ?? "Role"),
+    company: normStr(e?.company ?? e?.employer),
+    period: normStr(e?.period ?? e?.dates ?? e?.duration ??
+      [e?.start_date, e?.end_date ?? "Present"].filter(Boolean).join(" – ")),
+    description: normStr(e?.description ?? e?.summary),
+  }));
+}
+
+function normSkills(raw: unknown): string[] {
+  if (Array.isArray(raw)) {
+    return raw.slice(0, 20).map((s) => (typeof s === "string" ? s : (s?.name ?? String(s)))).filter(Boolean);
+  }
+  return [];
+}
+
+function normEducation(raw: unknown): ClientCandidateDTO["education"] {
+  if (!Array.isArray(raw)) return [];
+  return raw.slice(0, 6).map((e: AnyRow) => ({
+    degree: normStr(e?.degree ?? e?.qualification ?? e?.title),
+    institution: normStr(e?.institution ?? e?.school ?? e?.university),
+    period: normStr(e?.period ?? e?.year ??
+      [e?.start_date, e?.end_date].filter(Boolean).join(" – ")),
+  }));
+}
+
+function normLanguages(raw: unknown): ClientCandidateDTO["languages"] {
+  if (!Array.isArray(raw)) return [];
+  return raw.slice(0, 8).map((l: AnyRow) => ({
+    name: String(l?.name ?? l?.language ?? l),
+    level: normStr(l?.level ?? l?.proficiency),
+  })).filter((l) => l.name);
+}
+
+function normWorkAuth(raw: unknown): string | null {
+  if (!raw) return null;
+  if (typeof raw === "string") return raw;
+  const r = raw as AnyRow;
+  return normStr(r?.status ?? r?.summary ?? r?.value);
+}
+
+function normScreeningAnswers(raw: unknown): ClientCandidateDTO["screening_answers"] {
+  if (!Array.isArray(raw)) return [];
+  return raw.map((a: AnyRow) => {
+    const q = a?.screening_questions?.question ?? a?.question ?? "";
+    const ans = a?.answer;
+    let text = "";
+    if (ans == null) text = "";
+    else if (typeof ans === "string") text = ans;
+    else if (typeof ans === "boolean") text = ans ? "Yes" : "No";
+    else if (typeof ans === "number") text = String(ans);
+    else if (Array.isArray(ans)) text = ans.join(", ");
+    else text = ans?.value ?? ans?.text ?? JSON.stringify(ans);
+    return { question: String(q), answer: String(text) };
+  }).filter((a) => a.question);
+}
 
 export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
   const cp = row.candidate_profiles ?? {};
@@ -201,6 +274,8 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
       location: cp.location ?? null,
       headline: cp.headline ?? null,
       availability,
+      years_experience: cp.years_experience ?? null,
+      summary: cp.summary ?? null,
     },
     score: run?.score ?? null,
     fit_label: run?.fit_label ?? null,
@@ -208,5 +283,12 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
     strengths,
     main_consideration: mainConsideration,
     evidence,
+    experience: normExperience(cp.experience),
+    skills: normSkills(cp.skills),
+    education: normEducation(cp.education),
+    languages: normLanguages(cp.languages),
+    work_authorization: normWorkAuth(cp.work_authorization),
+    screening_answers: normScreeningAnswers(row.application_answers),
   };
 }
+
