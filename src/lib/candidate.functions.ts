@@ -137,7 +137,7 @@ export const listMyApplications = createServerFn({ method: "GET" })
       .from("applications")
       .select(
         `id, position_id, status, applied_at, updated_at, withdrawn_at,
-         positions:position_id ( id, title, status, organization_id, employment_type, work_model, location_city, location_country, organizations:organization_id ( id, name, share_company_name_with_candidates ) ),
+         positions:position_id ( id, title, status, organization_id, employment_type, work_model, location, organizations:organization_id ( id, name ) ),
          candidate_matches ( id, stage, client_visibility, updated_at,
            client_decisions ( decision, created_at ) )`,
       )
@@ -164,18 +164,14 @@ export const listMyApplications = createServerFn({ method: "GET" })
       });
       const lastUpdate =
         visibleMatch?.updated_at ?? a.updated_at ?? a.applied_at;
-      // Company disclosure honored per organizations flag; default hide until active org disclosure.
-      const shareCompany = org.share_company_name_with_candidates !== false;
       return {
         id: a.id,
         position_id: pos.id,
         role_title: pos.title ?? "Role",
-        company: shareCompany ? org.name ?? null : null,
+        company: org.name ?? null,
         employment_type: pos.employment_type ?? null,
         work_model: pos.work_model ?? null,
-        location: pos.location_city
-          ? [pos.location_city, pos.location_country].filter(Boolean).join(", ")
-          : null,
+        location: pos.location ?? null,
         applied_at: a.applied_at,
         last_update: lastUpdate,
         status,
