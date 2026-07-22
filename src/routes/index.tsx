@@ -95,7 +95,7 @@ function Home() {
     <SiteShell>
       {/* 1. Hero */}
       <section className="relative overflow-hidden border-b border-border/60 bg-gradient-to-b from-primary/5 to-transparent">
-        <div className="mx-auto grid max-w-7xl gap-12 px-4 py-20 sm:px-6 lg:grid-cols-[1.05fr_1fr] lg:px-8 lg:py-28">
+        <div className="mx-auto grid max-w-7xl grid-cols-1 gap-12 px-4 py-20 sm:px-6 lg:grid-cols-[1.05fr_1fr] lg:px-8 lg:py-28">
           <div className="flex flex-col justify-center gap-6">
             <p className="text-sm font-medium uppercase tracking-widest text-primary">
               Talent as a Service
@@ -269,7 +269,7 @@ function Home() {
 
       {/* 4. Live workspace benefits */}
       <section className="border-t border-border/60 bg-muted/20">
-        <div className="mx-auto grid max-w-7xl gap-10 px-4 py-20 sm:px-6 lg:grid-cols-2 lg:px-8">
+        <div className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-4 py-20 sm:px-6 lg:grid-cols-2 lg:px-8">
           <div>
             <p className="text-sm font-medium uppercase tracking-widest text-primary">
               Live workspace benefits
@@ -354,7 +354,7 @@ function Home() {
 
       {/* 6. Candidate-delivery experience */}
       <section className="border-t border-border/60 bg-muted/20">
-        <div className="mx-auto grid max-w-7xl gap-10 px-4 py-20 sm:px-6 lg:grid-cols-2 lg:px-8">
+        <div className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-4 py-20 sm:px-6 lg:grid-cols-2 lg:px-8">
           <div>
             <p className="text-sm font-medium uppercase tracking-widest text-primary">
               Candidate delivery
