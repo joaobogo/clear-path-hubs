@@ -79,16 +79,14 @@ function CandidateDetailPage() {
   });
 
   if (!data) return <div className="p-8 text-muted-foreground">Loading…</div>;
-  if (!data.match) throw notFound();
+  if (!data.candidate) throw notFound();
 
-  const { match, interviews, decisions } = data as {
-    match: AnyRow;
+  const { candidate, interviews, decisions } = data as {
+    candidate: import("@/lib/client-kpi.server").ClientCandidateDTO;
     interviews: AnyRow[];
     decisions: AnyRow[];
   };
-  const run = match.score_runs as AnyRow | null;
-  const evidence = (run?.evidence ?? []) as AnyRow[];
-  const coverage = (run?.requirement_coverage ?? null) as AnyRow | null;
+  const evidence = candidate.evidence;
 
   return (
     <main className="mx-auto max-w-6xl px-6 py-8">
@@ -101,34 +99,36 @@ function CandidateDetailPage() {
       <header className="mb-6 flex flex-wrap items-start justify-between gap-3">
         <div>
           <h1 className="text-2xl font-semibold">
-            {match.candidate_profiles?.full_name ?? "Candidate"}
+            {candidate.candidate.display_name}
           </h1>
           <div className="text-sm text-muted-foreground mt-1">
-            {match.candidate_profiles?.headline}
+            {candidate.candidate.headline}
           </div>
           <div className="mt-2 flex items-center gap-2 text-sm">
             <Badge variant="outline" className="capitalize">
-              {String(match.stage).replace(/_/g, " ")}
+              {String(candidate.stage).replace(/_/g, " ")}
             </Badge>
-            <Link
-              to="/client/positions/$id"
-              params={{ id: match.positions?.id }}
-              className="text-primary hover:underline"
-            >
-              {match.positions?.title}
-            </Link>
+            {candidate.position && (
+              <Link
+                to="/client/positions/$id"
+                params={{ id: candidate.position.id }}
+                className="text-primary hover:underline"
+              >
+                {candidate.position.title}
+              </Link>
+            )}
           </div>
         </div>
-        {run && (
+        {candidate.score != null && (
           <div className="text-right">
             <div className="text-xs uppercase tracking-wide text-muted-foreground">
               Approved score
             </div>
             <div className="text-3xl font-semibold tabular-nums">
-              {run.score?.toFixed?.(0) ?? "—"}
+              {candidate.score.toFixed(0)}
             </div>
-            {run.fit_label && (
-              <div className="text-xs capitalize text-muted-foreground">{run.fit_label} fit</div>
+            {candidate.fit_label && (
+              <div className="text-xs capitalize text-muted-foreground">{candidate.fit_label} fit</div>
             )}
           </div>
         )}
@@ -136,11 +136,11 @@ function CandidateDetailPage() {
 
       <section className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <div className="lg:col-span-2 space-y-4">
-          {run?.explanation && (
+          {candidate.summary && (
             <div className="rounded-lg border bg-card p-4">
               <h2 className="font-medium mb-1">Summary</h2>
               <p className="text-sm text-muted-foreground whitespace-pre-wrap">
-                {run.explanation}
+                {candidate.summary}
               </p>
             </div>
           )}
@@ -149,24 +149,40 @@ function CandidateDetailPage() {
             <div className="rounded-lg border bg-card p-4">
               <h2 className="font-medium mb-2">Evidence</h2>
               <ul className="space-y-2 text-sm">
-                {evidence.slice(0, 12).map((e, i) => (
+                {evidence.map((e, i) => (
                   <li key={i} className="border-l-2 border-muted pl-3">
-                    <div className="text-xs text-muted-foreground">{e.label ?? e.type}</div>
-                    <div>{e.snippet ?? e.value ?? JSON.stringify(e)}</div>
+                    <div className="text-xs text-muted-foreground">{e.label}</div>
+                    <div>{e.snippet}</div>
                   </li>
                 ))}
               </ul>
             </div>
           )}
 
-          {coverage && (
+          {(candidate.strengths.length > 0 || candidate.main_consideration) && (
             <div className="rounded-lg border bg-card p-4">
               <h2 className="font-medium mb-2">Requirement coverage</h2>
-              <pre className="text-xs overflow-x-auto text-muted-foreground">
-                {JSON.stringify(coverage, null, 2)}
-              </pre>
+              {candidate.strengths.length > 0 && (
+                <div className="text-sm mb-2">
+                  <div className="text-xs uppercase tracking-wide text-muted-foreground mb-1">
+                    Strengths
+                  </div>
+                  <ul className="list-disc pl-5 space-y-0.5">
+                    {candidate.strengths.map((s, i) => (
+                      <li key={i}>{s}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              {candidate.main_consideration && (
+                <div className="text-sm">
+                  <span className="text-muted-foreground">Main consideration: </span>
+                  {candidate.main_consideration}
+                </div>
+              )}
             </div>
           )}
+
 
           {interviews.length > 0 && (
             <div className="rounded-lg border bg-card p-4">
@@ -237,18 +253,11 @@ function CandidateDetailPage() {
             <dl className="space-y-1 text-xs">
               <div>
                 <dt className="text-muted-foreground">Location</dt>
-                <dd>{match.candidate_profiles?.location ?? "—"}</dd>
+                <dd>{candidate.candidate.location ?? "—"}</dd>
               </div>
               <div>
                 <dt className="text-muted-foreground">Availability</dt>
-                <dd>
-                  {(() => {
-                    const av = match.candidate_profiles?.availability as AnyRow | null;
-                    if (!av) return "—";
-                    if (typeof av === "string") return av;
-                    return av.status ?? av.value ?? JSON.stringify(av);
-                  })()}
-                </dd>
+                <dd>{candidate.candidate.availability ?? "—"}</dd>
               </div>
             </dl>
           </div>
