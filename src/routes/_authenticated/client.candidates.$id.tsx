@@ -149,9 +149,18 @@ function CandidateDetailPage() {
         <div className="lg:col-span-2 space-y-4">
           {candidate.summary && (
             <div className="rounded-lg border bg-card p-4">
-              <h2 className="font-medium mb-1">Summary</h2>
+              <h2 className="font-medium mb-1">Recommendation</h2>
               <p className="text-sm text-muted-foreground whitespace-pre-wrap">
                 {candidate.summary}
+              </p>
+            </div>
+          )}
+
+          {candidate.candidate.summary && (
+            <div className="rounded-lg border bg-card p-4">
+              <h2 className="font-medium mb-1">Candidate summary</h2>
+              <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+                {candidate.candidate.summary}
               </p>
             </div>
           )}
@@ -194,6 +203,67 @@ function CandidateDetailPage() {
             </div>
           )}
 
+          {candidate.experience.length > 0 && (
+            <div className="rounded-lg border bg-card p-4">
+              <h2 className="font-medium mb-2">Relevant experience</h2>
+              <ul className="space-y-3 text-sm">
+                {candidate.experience.map((e, i) => (
+                  <li key={i}>
+                    <div className="font-medium">{e.title}</div>
+                    <div className="text-xs text-muted-foreground">
+                      {[e.company, e.period].filter(Boolean).join(" · ")}
+                    </div>
+                    {e.description && (
+                      <p className="mt-1 text-muted-foreground whitespace-pre-wrap">
+                        {e.description}
+                      </p>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {candidate.skills.length > 0 && (
+            <div className="rounded-lg border bg-card p-4">
+              <h2 className="font-medium mb-2">Skills</h2>
+              <div className="flex flex-wrap gap-1.5">
+                {candidate.skills.map((s, i) => (
+                  <Badge key={i} variant="secondary" className="text-xs">{s}</Badge>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {candidate.education.length > 0 && (
+            <div className="rounded-lg border bg-card p-4">
+              <h2 className="font-medium mb-2">Education</h2>
+              <ul className="space-y-2 text-sm">
+                {candidate.education.map((e, i) => (
+                  <li key={i}>
+                    <div className="font-medium">{e.degree ?? "—"}</div>
+                    <div className="text-xs text-muted-foreground">
+                      {[e.institution, e.period].filter(Boolean).join(" · ")}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {candidate.screening_answers.length > 0 && (
+            <div className="rounded-lg border bg-card p-4">
+              <h2 className="font-medium mb-2">Screening answers</h2>
+              <dl className="space-y-3 text-sm">
+                {candidate.screening_answers.map((a, i) => (
+                  <div key={i}>
+                    <dt className="text-xs text-muted-foreground">{a.question}</dt>
+                    <dd className="whitespace-pre-wrap">{a.answer || "—"}</dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
+          )}
 
           {interviews.length > 0 && (
             <div className="rounded-lg border bg-card p-4">
@@ -236,38 +306,46 @@ function CandidateDetailPage() {
         </div>
 
         <aside className="space-y-4">
-          <div className="rounded-lg border bg-card p-4">
-            <h2 className="font-medium mb-2">Actions</h2>
-            {support.readOnly && (
-              <p className="mb-3 rounded border border-dashed border-primary/40 bg-primary/5 p-2 text-xs text-muted-foreground">
-                Client actions are disabled while viewing this workspace as a TaaSFlow administrator.
-              </p>
-            )}
-            <Textarea
-              value={feedback}
-              onChange={(e) => setFeedback(e.target.value)}
-              placeholder="Optional feedback for TaaSFlow"
-              className="mb-3 text-sm"
-              rows={3}
-              disabled={support.readOnly}
-            />
-            <div className="grid grid-cols-1 gap-2">
-              {ACTIONS.map((a) => (
-                <ActionGuard
-                  key={a.key}
-                  reason={`${a.label} is disabled while viewing as an administrator.`}
-                >
-                  <Button
-                    variant={a.key === "hire" ? "default" : "outline"}
-                    disabled={act.isPending}
-                    onClick={() => act.mutate(a.key)}
+          {ctx?.active?.role !== "client_viewer" && (
+            <div className="rounded-lg border bg-card p-4">
+              <h2 className="font-medium mb-2">Actions</h2>
+              {support.readOnly && (
+                <p className="mb-3 rounded border border-dashed border-primary/40 bg-primary/5 p-2 text-xs text-muted-foreground">
+                  Client actions are disabled while viewing this workspace as a TaaSFlow administrator.
+                </p>
+              )}
+              <Textarea
+                value={feedback}
+                onChange={(e) => setFeedback(e.target.value)}
+                placeholder="Optional feedback for TaaSFlow"
+                className="mb-3 text-sm"
+                rows={3}
+                disabled={support.readOnly}
+              />
+              <div className="grid grid-cols-1 gap-2">
+                {ACTIONS.map((a) => (
+                  <ActionGuard
+                    key={a.key}
+                    reason={`${a.label} is disabled while viewing as an administrator.`}
                   >
-                    {a.label}
-                  </Button>
-                </ActionGuard>
-              ))}
+                    <Button
+                      variant={a.key === "hire" ? "default" : "outline"}
+                      disabled={act.isPending}
+                      onClick={() => act.mutate(a.key)}
+                    >
+                      {a.label}
+                    </Button>
+                  </ActionGuard>
+                ))}
+              </div>
+              <Link
+                to="/client/messages"
+                className="mt-3 block text-center text-sm text-primary hover:underline"
+              >
+                Message TaaSFlow →
+              </Link>
             </div>
-          </div>
+          )}
 
           <div className="rounded-lg border bg-card p-4 text-sm">
             <h2 className="font-medium mb-2">Profile</h2>
@@ -280,6 +358,28 @@ function CandidateDetailPage() {
                 <dt className="text-muted-foreground">Availability</dt>
                 <dd>{candidate.candidate.availability ?? "—"}</dd>
               </div>
+              {candidate.candidate.years_experience != null && (
+                <div>
+                  <dt className="text-muted-foreground">Years of experience</dt>
+                  <dd>{candidate.candidate.years_experience}</dd>
+                </div>
+              )}
+              {candidate.work_authorization && (
+                <div>
+                  <dt className="text-muted-foreground">Work authorization</dt>
+                  <dd>{candidate.work_authorization}</dd>
+                </div>
+              )}
+              {candidate.languages.length > 0 && (
+                <div>
+                  <dt className="text-muted-foreground">Languages</dt>
+                  <dd>
+                    {candidate.languages
+                      .map((l) => (l.level ? `${l.name} (${l.level})` : l.name))
+                      .join(", ")}
+                  </dd>
+                </div>
+              )}
             </dl>
           </div>
         </aside>
@@ -287,3 +387,4 @@ function CandidateDetailPage() {
     </main>
   );
 }
+
