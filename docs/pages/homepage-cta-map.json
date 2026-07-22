@@ -1,0 +1,42 @@
+{
+  "route": "/",
+  "primary_cta": { "label": "Start hiring", "to": "/intake" },
+  "sections": [
+    {
+      "id": "hero",
+      "ctas": [
+        { "role": "primary",   "label": "Start hiring",         "to": "/intake",    "verified": true },
+        { "role": "secondary", "label": "Explore the workspace","to": "#workspace", "verified": true }
+      ]
+    },
+    { "id": "dashboard_value", "ctas": [] },
+    { "id": "how_it_works",    "ctas": [ { "role": "secondary", "label": "See the full process", "to": "/how-it-works", "verified": true } ] },
+    { "id": "candidate_delivery", "ctas": [ { "role": "secondary", "label": "See a sample delivery", "to": "/solutions", "verified": true } ] },
+    { "id": "transparency",    "ctas": [] },
+    { "id": "workspaces",      "ctas": [] },
+    { "id": "speed",           "ctas": [] },
+    { "id": "enterprise_global", "ctas": [
+        { "role": "secondary", "label": "Enterprise details", "to": "/enterprise",    "verified": true },
+        { "role": "secondary", "label": "Global talent",      "to": "/global-talent", "verified": true }
+    ]},
+    { "id": "industries", "ctas": [
+        { "role": "chip",      "label": "Industry chips (8)", "to": "/industries/$slug", "verified": true },
+        { "role": "secondary", "label": "All industries",     "to": "/industries",       "verified": true }
+    ]},
+    { "id": "proof", "ctas": [ { "role": "secondary", "label": "Read case studies", "to": "/case-studies", "verified": true } ] },
+    { "id": "final_cta", "ctas": [
+        { "role": "primary",   "label": "Start hiring",     "to": "/intake", "verified": true },
+        { "role": "secondary", "label": "Browse open jobs", "to": "/jobs",   "verified": true }
+    ]}
+  ],
+  "verification": {
+    "method": "Playwright headless — desktop 1280x1800, tablet 820x1400, mobile 390x1400",
+    "results": {
+      "route_status": 200,
+      "console_errors": 0,
+      "cta_hero_start_hiring_href": "/intake",
+      "cta_hero_browse_jobs_href": "/jobs",
+      "cta_hero_workspace_anchor_href": "#workspace"
+    }
+  }
+}
