@@ -15,7 +15,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as JobsIndexRouteImport } from './routes/jobs.index'
 import { Route as IntakeConfirmationRouteImport } from './routes/intake.confirmation'
-import { Route as DevCatalogueRouteImport } from './routes/_dev.catalogue'
+import { Route as DevCatalogueRouteImport } from './routes/dev.catalogue'
 import { Route as AuthenticatedMeRouteImport } from './routes/_authenticated/me'
 import { Route as AuthenticatedClientRouteImport } from './routes/_authenticated/client'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
@@ -78,8 +78,8 @@ const IntakeConfirmationRoute = IntakeConfirmationRouteImport.update({
   getParentRoute: () => IntakeRoute,
 } as any)
 const DevCatalogueRoute = DevCatalogueRouteImport.update({
-  id: '/_dev/catalogue',
-  path: '/catalogue',
+  id: '/dev/catalogue',
+  path: '/dev/catalogue',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedMeRoute = AuthenticatedMeRouteImport.update({
@@ -264,7 +264,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/client': typeof AuthenticatedClientRouteWithChildren
   '/me': typeof AuthenticatedMeRouteWithChildren
-  '/catalogue': typeof DevCatalogueRoute
+  '/dev/catalogue': typeof DevCatalogueRoute
   '/intake/confirmation': typeof IntakeConfirmationRoute
   '/jobs/': typeof JobsIndexRoute
   '/admin/candidates': typeof AuthenticatedAdminCandidatesRouteWithChildren
@@ -300,7 +300,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/intake': typeof IntakeRouteWithChildren
-  '/catalogue': typeof DevCatalogueRoute
+  '/dev/catalogue': typeof DevCatalogueRoute
   '/intake/confirmation': typeof IntakeConfirmationRoute
   '/jobs': typeof JobsIndexRoute
   '/admin/candidates': typeof AuthenticatedAdminCandidatesRouteWithChildren
@@ -341,7 +341,7 @@ export interface FileRoutesById {
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/client': typeof AuthenticatedClientRouteWithChildren
   '/_authenticated/me': typeof AuthenticatedMeRouteWithChildren
-  '/_dev/catalogue': typeof DevCatalogueRoute
+  '/dev/catalogue': typeof DevCatalogueRoute
   '/intake/confirmation': typeof IntakeConfirmationRoute
   '/jobs/': typeof JobsIndexRoute
   '/_authenticated/admin/candidates': typeof AuthenticatedAdminCandidatesRouteWithChildren
@@ -382,7 +382,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/client'
     | '/me'
-    | '/catalogue'
+    | '/dev/catalogue'
     | '/intake/confirmation'
     | '/jobs/'
     | '/admin/candidates'
@@ -418,7 +418,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/intake'
-    | '/catalogue'
+    | '/dev/catalogue'
     | '/intake/confirmation'
     | '/jobs'
     | '/admin/candidates'
@@ -458,7 +458,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin'
     | '/_authenticated/client'
     | '/_authenticated/me'
-    | '/_dev/catalogue'
+    | '/dev/catalogue'
     | '/intake/confirmation'
     | '/jobs/'
     | '/_authenticated/admin/candidates'
@@ -548,10 +548,10 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IntakeConfirmationRouteImport
       parentRoute: typeof IntakeRoute
     }
-    '/_dev/catalogue': {
-      id: '/_dev/catalogue'
-      path: '/catalogue'
-      fullPath: '/catalogue'
+    '/dev/catalogue': {
+      id: '/dev/catalogue'
+      path: '/dev/catalogue'
+      fullPath: '/dev/catalogue'
       preLoaderRoute: typeof DevCatalogueRouteImport
       parentRoute: typeof rootRouteImport
     }
@@ -956,3 +956,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

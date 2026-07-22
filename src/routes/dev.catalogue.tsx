@@ -16,7 +16,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-export const Route = createFileRoute("/_dev/catalogue")({
+export const Route = createFileRoute("/dev/catalogue")({
   component: Catalogue,
   head: () => ({
     meta: [
