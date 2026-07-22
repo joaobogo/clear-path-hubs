@@ -441,6 +441,34 @@ export const moveMatchStage = createServerFn({ method: "POST" })
       .eq("id", data.matchId)
       .eq("organization_id", data.orgId);
     if (error) throw new Error(error.message);
+
+    // Canonical side-effects: mirror clientAction so any transition path
+    // (button, drag, keyboard menu) produces identical decision + interview trails.
+    const stageToDecision: Partial<Record<MatchStage, string>> = {
+      shortlisted: "shortlist",
+      interview_process: "request_interview",
+      offer: "offer",
+      hired: "hire",
+      not_moving_forward: "not_moving_forward",
+    };
+    const decision = stageToDecision[data.toStage];
+    if (decision) {
+      await context.supabase.from("client_decisions").insert({
+        candidate_match_id: data.matchId,
+        organization_id: data.orgId,
+        decision: decision as never,
+        actor_user_id: context.userId,
+      });
+    }
+    if (data.toStage === "interview_process" && from !== "interview_process") {
+      await context.supabase.from("interviews").insert({
+        candidate_match_id: data.matchId,
+        organization_id: data.orgId,
+        status: "requested",
+        requested_at: new Date().toISOString(),
+      });
+    }
+
     await writeAudit(context.supabase, {
       actor: context.userId,
       action: "candidate_match.stage_changed",
@@ -451,6 +479,7 @@ export const moveMatchStage = createServerFn({ method: "POST" })
       after: { stage: data.toStage },
       trace_id: trace,
     });
+
     try {
       const { emitEventFromServer } = await import("./notifications.functions");
       const stageToEvent: Partial<Record<MatchStage, "client_shortlisted" | "interview_requested" | "candidate_hired">> = {
