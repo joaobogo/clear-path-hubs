@@ -1,0 +1,62 @@
+{
+  "$schema": "https://taasflow.dev/schemas/product-contracts-v1.json",
+  "version": "1.0.0",
+  "approved": false,
+  "entities": [
+    {"name":"Client","table":"organizations","filter":"type='client'","tenant":"self","lifecycle":["prospect","active","paused","churned"]},
+    {"name":"Organization","table":"organizations","tenant":"self"},
+    {"name":"ClientUser","table":"memberships","tenant":"organization_id","lifecycle":["invited","active","suspended","revoked"]},
+    {"name":"Candidate","table":"candidate_profiles","tenant":null,"lifecycle":["prospect","registered","active","dormant","withdrawn","deleted"]},
+    {"name":"CandidateProfile","table":"candidate_profiles","tenant":null},
+    {"name":"Position","table":"positions","tenant":"organization_id","lifecycle":["draft","in_review","needs_clarification","approved","active","paused","filled","closed","archived"]},
+    {"name":"PublicJob","view_of":"positions","predicate":"visibility='public' AND status='active' AND is_public_job(row)"},
+    {"name":"PrivateSearch","view_of":"positions","predicate":"visibility='private'"},
+    {"name":"Application","table":"applications","tenant":"organization_id","uniqueness":"(candidate_profile_id, position_id) WHERE status='submitted'"},
+    {"name":"CandidateMatch","table":"candidate_matches","tenant":"organization_id","stages":["new","screening","reviewed","approved_for_client","delivered","shortlisted","interview_requested","interviewing","offer","hired","archived","rejected"],"processing_states":["queued","parsing","parsed","enriching","enriched","scoring","scored","failed"]},
+    {"name":"DeliveredCandidate","derived_from":"candidate_matches","predicate":"first_delivered_at IS NOT NULL"},
+    {"name":"TopMatch","derived_from":"candidate_matches+score_runs","predicate":"delivered AND latest_score.fit_band='top'"},
+    {"name":"Shortlisted","derived_from":"candidate_matches","predicate":"first_shortlisted_at IS NOT NULL"},
+    {"name":"InterviewRequest","table":"interviews","tenant":"organization_id","lifecycle":["requested","scheduled","completed","cancelled","no_show"]},
+    {"name":"InInterviewProcess","derived_from":"candidate_matches+interviews","predicate":"stage IN ('interview_requested','interviewing') AND EXISTS interview status IN ('requested','scheduled')"},
+    {"name":"ScheduledInterview","derived_from":"interviews","predicate":"status='scheduled' AND scheduled_at>now()"},
+    {"name":"Offer","derived_from":"candidate_matches","predicate":"stage='offer'"},
+    {"name":"Hire","derived_from":"candidate_matches","predicate":"first_hired_at IS NOT NULL AND hire_corrected_at IS NULL"},
+    {"name":"ArchivedMatch","derived_from":"candidate_matches","predicate":"stage='archived'"},
+    {"name":"ClosedPosition","derived_from":"positions","predicate":"status IN ('closed','filled','archived')"},
+    {"name":"ActivePosition","derived_from":"positions","predicate":"status='active'"},
+    {"name":"ClientVisibleCandidate","derived_from":"candidate_matches","predicate":"stage IN ('approved_for_client','delivered','shortlisted','interview_requested','interviewing','offer','hired')"},
+    {"name":"AdminApprovedCandidate","derived_from":"candidate_matches","predicate":"stage IN ('approved_for_client','delivered','shortlisted','interview_requested','interviewing','offer','hired')"}
+  ],
+  "client_kpis": [
+    {"id":"CK-1","label":"Candidates Delivered","fn":"client.functions.ts→loadKpiRows('delivered')","predicate":"first_delivered_at IS NOT NULL AND archived_reason<>'duplicate'","period":"all-time","events":["candidate.approved_for_client","candidate.delivered","match.stage_changed"]},
+    {"id":"CK-2","label":"Top Matches","fn":"client.functions.ts→loadKpiRows('top')","predicate":"delivered AND latest_score.fit_band='top'","period":"all-time","events":["candidate.scored","candidate.delivered","match.stage_changed"]},
+    {"id":"CK-3","label":"Shortlisted","fn":"client.functions.ts→loadKpiRows('shortlisted')","predicate":"first_shortlisted_at IS NOT NULL","period":"all-time","events":["match.stage_changed"]},
+    {"id":"CK-4","label":"In Interview Process","fn":"client.functions.ts→loadKpiRows('in_interview')","predicate":"stage IN ('interview_requested','interviewing') AND EXISTS non-terminal interview","period":"snapshot","events":["interview.requested","interview.scheduled","interview.completed","interview.cancelled","match.stage_changed"]},
+    {"id":"CK-5","label":"Scheduled Interviews","fn":"client.functions.ts→loadKpiRows('scheduled')","predicate":"interviews.status='scheduled' AND scheduled_at>now()","period":"snapshot","events":["interview.scheduled","interview.cancelled","interview.completed"]},
+    {"id":"CK-6","label":"Hires","fn":"client.functions.ts→loadKpiRows('hires')","predicate":"first_hired_at IS NOT NULL AND hire_corrected_at IS NULL","period":"all-time","events":["candidate.hired"]},
+    {"id":"CK-7","label":"Active Positions","fn":"client.functions.ts→loadKpiRows('active_positions')","predicate":"positions.status='active'","period":"snapshot","events":["position.activated","position.paused","position.closed","position.filled"]}
+  ],
+  "admin_kpis": [
+    {"id":"AK-1","label":"New Intakes","fn":"admin.functions.ts→loadAdminKpi('new_intakes')","predicate":"client_intakes.status='submitted'","period":"snapshot","events":["intake.submitted","intake.triaged"]},
+    {"id":"AK-2","label":"Positions Awaiting Review","fn":"admin.functions.ts→loadAdminKpi('positions_awaiting_review')","predicate":"positions.status IN ('in_review','needs_clarification')","period":"snapshot","events":["position.submitted","position.approved","position.clarification_requested"]},
+    {"id":"AK-3","label":"Candidates Awaiting Review","fn":"admin.functions.ts→loadAdminKpi('candidates_awaiting_review')","predicate":"stage IN ('screening','reviewed') AND processing_state='scored'","period":"snapshot","events":["candidate.scored","candidate.approved_for_client","candidate.archived"]},
+    {"id":"AK-4","label":"Ready to Publish","fn":"admin.functions.ts→loadAdminKpi('ready_to_publish')","predicate":"stage='approved_for_client' AND first_delivered_at IS NULL","period":"snapshot","events":["candidate.approved_for_client","candidate.delivered"]},
+    {"id":"AK-5","label":"Active Processing Failures","fn":"admin.functions.ts→loadAdminKpi('processing_failures')","predicate":"processing_jobs.status='failed' AND resolved_at IS NULL","period":"snapshot","events":["processing.failed","processing.retried","processing.resolved"]},
+    {"id":"AK-6","label":"Client Decisions Requiring Action","fn":"admin.functions.ts→loadAdminKpi('stalled_decisions')","predicate":"delivered AND no client_decisions row AND first_delivered_at < now()-'5 days'","period":"snapshot","events":["candidate.delivered","match.stage_changed","client_decision.created"]}
+  ],
+  "mutation_registry_ref": "docs/product/mutation-ownership.md",
+  "status_mapper": "src/lib/status-map.ts",
+  "visibility_contract_ref": "docs/product/data-visibility.md",
+  "unresolved_product_decisions": [
+    {"id":"PD-01","topic":"Email provider","impact":"BG-12 email adapter"},
+    {"id":"PD-02","topic":"Scoring engine mode: deterministic-only vs LLM-assisted","impact":"stepScore implementation"},
+    {"id":"PD-03","topic":"Interview scheduling: calendar integration vs manual","impact":"scheduleInterview writer surface"},
+    {"id":"PD-04","topic":"Candidate auto-provisioning: magic link on first application vs manual signup","impact":"submitApplication writer, candidate.claim linking"},
+    {"id":"PD-05","topic":"Billing scope for v1 (confirm EXCLUDED)","impact":"none if excluded"}
+  ],
+  "conflicting_definitions_found": [
+    {"topic":"Active Position","previous":"positions.status='active' AND visibility='public'","canonical":"positions.status='active' (visibility is orthogonal)","resolution":"Adopted canonical; private searches can be Active."},
+    {"topic":"Candidates Delivered","previous":"current stage='delivered'","canonical":"first_delivered_at IS NOT NULL (ever delivered)","resolution":"Adopted canonical; matches downstream of delivered still count."},
+    {"topic":"Top Matches","previous":"overall_score >= 85","canonical":"fit_band='top' (owned by scoring engine, not dashboard)","resolution":"Adopted canonical; dashboard never inspects raw score."}
+  ]
+}
