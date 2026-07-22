@@ -395,9 +395,9 @@ function Home() {
                 ["Team leadership", 88],
                 ["Timezone overlap", 100],
               ].map(([k, v]) => (
-                <div key={String(k)} className="flex items-center gap-3">
-                  <span className="w-40 shrink-0 text-muted-foreground">{k}</span>
-                  <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-muted">
+                <div key={String(k)} className="flex items-center gap-2 sm:gap-3">
+                  <span className="w-24 shrink-0 truncate text-muted-foreground sm:w-40">{k}</span>
+                  <div className="h-1.5 min-w-0 flex-1 overflow-hidden rounded-full bg-muted">
                     <div
                       className="h-full bg-primary"
                       style={{ width: `${v}%` }}
