@@ -243,9 +243,10 @@ export const Route = createFileRoute("/api/public/intake")({
         let requisitionPending = false;
         let workspaceStatus: "ready" | "preparing" = "ready";
         try {
-          const empType = (data.employmentType && data.employmentType !== ""
-            ? data.employmentType
-            : null) as string | null;
+          const empType =
+            data.employmentType && data.employmentType.length > 0
+              ? (data.employmentType as "full_time" | "part_time" | "contract" | "temporary" | "internship")
+              : null;
           const uniqueSkills = Array.from(
             new Map(
               data.mustHaveSkills
