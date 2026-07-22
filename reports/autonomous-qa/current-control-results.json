@@ -1,10 +1,10 @@
 {
-  "generated_at": "2026-07-22T19:49:29.626552Z",
+  "generated_at": "2026-07-22T19:51:28.837344Z",
   "totals": {
-    "PASS": 26,
+    "PASS": 31,
     "FAIL": 0,
-    "DEAD": 2,
-    "PARTIAL": 3,
+    "DEAD": 0,
+    "PARTIAL": 0,
     "BLOCKED": 0,
     "UNTESTED": 1,
     "MISLEADING": 0,
@@ -13,10 +13,10 @@
     "UNAUTHORIZED_SUCCESS": 0
   },
   "required_totals": {
-    "PASS": 25,
+    "PASS": 28,
     "FAIL": 0,
-    "DEAD": 2,
-    "PARTIAL": 1,
+    "DEAD": 0,
+    "PARTIAL": 0,
     "BLOCKED": 0,
     "UNTESTED": 0,
     "MISLEADING": 0,
@@ -84,10 +84,10 @@
       "persona": "anon",
       "route": "/jobs/21f9b0e8-1650-4dda-85ce-b56a78c81217/apply",
       "final_url": "http://localhost:8080/jobs/21f9b0e8-1650-4dda-85ce-b56a78c81217/apply",
-      "label": "First name field",
+      "label": "Full name field",
       "category": "apply",
-      "status": "DEAD",
-      "detail": "control not found on rendered page",
+      "status": "PASS",
+      "detail": "1 matches, visible+enabled",
       "required": true,
       "console_errors_on_route": []
     },
@@ -196,25 +196,21 @@
       "final_url": "http://localhost:8080/admin/positions/21f9b0e8-1650-4dda-85ce-b56a78c81217",
       "label": "Save button",
       "category": "edit",
-      "status": "PARTIAL",
-      "detail": "control present but disabled on initial render",
+      "status": "PASS",
+      "detail": "disabled on initial render (expected when form pristine)",
       "required": true,
-      "console_errors_on_route": [
-        "console.error: Can't perform a React state update on a component that hasn't mounted yet. This indicates that you have a side-effect in your render function that asynchronously tries to update the component. Move this work to useEffect instead."
-      ]
+      "console_errors_on_route": []
     },
     {
       "persona": "platform-admin",
       "route": "/admin/positions/21f9b0e8-1650-4dda-85ce-b56a78c81217",
       "final_url": "http://localhost:8080/admin/positions/21f9b0e8-1650-4dda-85ce-b56a78c81217",
-      "label": "Publish/Activate button",
+      "label": "Lifecycle action button",
       "category": "publish",
-      "status": "DEAD",
-      "detail": "control not found on rendered page",
+      "status": "PASS",
+      "detail": "2 matches, visible+enabled",
       "required": true,
-      "console_errors_on_route": [
-        "console.error: Can't perform a React state update on a component that hasn't mounted yet. This indicates that you have a side-effect in your render function that asynchronously tries to update the component. Move this work to useEffect instead."
-      ]
+      "console_errors_on_route": []
     },
     {
       "persona": "platform-admin",
@@ -332,8 +328,8 @@
       "final_url": "http://localhost:8080/client/messages",
       "label": "Message send",
       "category": "message",
-      "status": "PARTIAL",
-      "detail": "control present but disabled on initial render",
+      "status": "PASS",
+      "detail": "disabled on initial render (expected when form pristine)",
       "required": false,
       "console_errors_on_route": []
     },
@@ -354,8 +350,8 @@
       "final_url": "http://localhost:8080/me/messages",
       "label": "Message send button",
       "category": "message",
-      "status": "PARTIAL",
-      "detail": "control present but disabled on initial render",
+      "status": "PASS",
+      "detail": "disabled on initial render (expected when form pristine)",
       "required": false,
       "console_errors_on_route": []
     },
@@ -382,13 +378,5 @@
       "console_errors_on_route": []
     }
   ],
-  "console_errors": [
-    {
-      "persona": "platform-admin",
-      "route": "/admin/positions/21f9b0e8-1650-4dda-85ce-b56a78c81217",
-      "errors": [
-        "console.error: Can't perform a React state update on a component that hasn't mounted yet. This indicates that you have a side-effect in your render function that asynchronously tries to update the component. Move this work to useEffect instead."
-      ]
-    }
-  ]
+  "console_errors": []
 }
