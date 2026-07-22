@@ -133,10 +133,17 @@ export function CandidateDetailDrawer({
         email: cp.email ?? "",
         phone: cp.phone ?? "",
         location: cp.location ?? "",
+        timezone: cp.timezone ?? "",
         headline: cp.headline ?? "",
+        summary: cp.summary ?? "",
+        years_experience: cp.years_experience ?? "",
+        linkedin_url: cp.linkedin_url ?? "",
+        availability_text: (cp.availability?.notes as string) ?? "",
+        work_auth_text: (cp.work_authorization?.notes as string) ?? "",
       });
     }
   }, [cp?.id]);
+
 
   const runAction = async (label: string, fn: () => Promise<unknown>) => {
     setBusy(label);
