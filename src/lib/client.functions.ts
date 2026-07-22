@@ -365,9 +365,43 @@ const STAGE_GRAPH: Record<MatchStage, MatchStage[]> = {
   not_moving_forward: ["shortlisted"],
 };
 
+/**
+ * Reject if the caller is platform staff acting on an org where they hold no
+ * active client-role membership AND no active interactive support session
+ * exists for that org. Throws the typed `SUPPORT_VIEW_READ_ONLY` error the
+ * spec requires; UI translates it to a friendly toast.
+ */
+async function assertNotSupportViewReadOnly(
+  supabase: AnyRow,
+  userId: string,
+  orgId: string,
+) {
+  const { data: isClientEditor } = await supabase.rpc("is_org_editor", {
+    _user: userId,
+    _org: orgId,
+  });
+  if (isClientEditor === true) return;
+  const { data: isStaff } = await supabase.rpc("is_platform_staff", {
+    _user: userId,
+  });
+  if (isStaff !== true) throw new Error("forbidden");
+  // Staff — allow only when an interactive support session is currently open.
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { data: interactive } = await supabaseAdmin
+    .from("support_sessions")
+    .select("id")
+    .eq("actor_user_id", userId)
+    .eq("organization_id", orgId)
+    .eq("mode", "interactive")
+    .is("ended_at", null)
+    .gt("expires_at", new Date().toISOString())
+    .limit(1)
+    .maybeSingle();
+  if (!interactive) throw new Error("SUPPORT_VIEW_READ_ONLY");
+}
+
 async function assertEditor(supabase: AnyRow, userId: string, orgId: string) {
-  const { data } = await supabase.rpc("is_org_editor", { _user: userId, _org: orgId });
-  if (data !== true) throw new Error("forbidden");
+  await assertNotSupportViewReadOnly(supabase, userId, orgId);
 }
 
 async function loadMatch(supabase: AnyRow, orgId: string, matchId: string) {
