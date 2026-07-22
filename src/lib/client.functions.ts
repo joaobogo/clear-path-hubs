@@ -217,12 +217,13 @@ export const getClientPositions = createServerFn({ method: "GET" })
       .parse(input),
   )
   .handler(async ({ context, data }) => {
-    const statusFilter =
+    const statusFilter = (
       data.status === "closed"
-        ? ["closed", "archived"]
+        ? (["closed", "archived"] as const)
         : data.status
-          ? [data.status]
-          : ["active", "draft", "paused", "closed", "archived"];
+          ? ([data.status] as const)
+          : (["active", "draft", "paused", "closed", "archived"] as const)
+    ) as unknown as string[];
     const { data: positions, error } = await context.supabase
       .from("positions")
       .select("id, title, status, location, work_model, employment_type, seniority, updated_at")
