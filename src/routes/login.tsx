@@ -78,6 +78,11 @@ function LoginPage() {
       return;
     }
     const active = mems.filter((m) => m.status === "active");
+    // Candidate: no org membership, primary_role derived from candidate_profiles.
+    if (primary === "candidate") {
+      window.location.assign("/me");
+      return;
+    }
     if (active.length === 0) {
       navigate({ to: "/access-denied" });
       return;
