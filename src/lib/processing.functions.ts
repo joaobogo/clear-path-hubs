@@ -534,13 +534,14 @@ export const getAdminMatch = createServerFn({ method: "GET" })
     const { data: m, error } = await supabase
       .from("candidate_matches")
       .select(
-        "id,processing_state,processing_error_code,processing_error_message,last_processing_trace_id,admin_status,client_visibility,current_score_run_id,approved_score_run_id,updated_at,candidate_profiles(id,full_name,email,phone,location,skills),positions(id,title,description,requirements,preferred_requirements,status,organizations(name))",
+        "id,application_id,candidate_profile_id,position_id,organization_id,stage,created_at,processing_state,processing_error_code,processing_error_message,last_processing_trace_id,admin_status,client_visibility,current_score_run_id,approved_score_run_id,updated_at,candidate_profiles(id,full_name,email,phone,location,headline,skills,experience,education,languages,work_authorization,availability,compensation_preferences),positions(id,title,description,requirements,preferred_requirements,status,organizations(id,name))",
       )
       .eq("id", data.id)
       .maybeSingle();
     if (error || !m) return null;
 
-    const [runsRes, decisionsRes, jobsRes, evidenceRes, fileRes] = await Promise.all([
+    const cpId = (m.candidate_profiles as AnyRow)?.id ?? "";
+    const [runsRes, decisionsRes, jobsRes, evidenceRes, fileRes, siblingsRes] = await Promise.all([
       supabase
         .from("score_runs")
         .select("id,score,confidence,status,fit_label,must_have_coverage,preferred_coverage,contradiction_status,explanation,result,completed_at,engine_version,input_hash")
@@ -568,10 +569,15 @@ export const getAdminMatch = createServerFn({ method: "GET" })
       supabase
         .from("files")
         .select("id,filename,storage_bucket,storage_path,mime_type,size,ocr_used,extracted_text,extraction_completed_at,extraction_attempts")
-        .eq("candidate_profile_id", (m.candidate_profiles as AnyRow)?.id ?? "")
+        .eq("candidate_profile_id", cpId)
         .order("created_at", { ascending: false })
         .limit(1)
         .maybeSingle(),
+      supabase
+        .from("candidate_matches")
+        .select("id,positions(title)")
+        .eq("candidate_profile_id", cpId)
+        .order("created_at", { ascending: false }),
     ]);
 
     let cv_signed_url: string | null = null;
@@ -589,5 +595,9 @@ export const getAdminMatch = createServerFn({ method: "GET" })
       jobs: jobsRes.data ?? [],
       evidence: evidenceRes.data ?? null,
       cv: fileRes.data ? { ...fileRes.data, signed_url: cv_signed_url } : null,
+      siblings: ((siblingsRes.data ?? []) as AnyRow[]).map((s) => ({
+        id: s.id as string,
+        position_title: (s.positions as AnyRow)?.title ?? "—",
+      })),
     };
   });
