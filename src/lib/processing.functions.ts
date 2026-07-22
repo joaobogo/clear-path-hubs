@@ -540,7 +540,8 @@ export const getAdminMatch = createServerFn({ method: "GET" })
       .maybeSingle();
     if (error || !m) return null;
 
-    const [runsRes, decisionsRes, jobsRes, evidenceRes, fileRes] = await Promise.all([
+    const cpId = (m.candidate_profiles as AnyRow)?.id ?? "";
+    const [runsRes, decisionsRes, jobsRes, evidenceRes, fileRes, siblingsRes] = await Promise.all([
       supabase
         .from("score_runs")
         .select("id,score,confidence,status,fit_label,must_have_coverage,preferred_coverage,contradiction_status,explanation,result,completed_at,engine_version,input_hash")
