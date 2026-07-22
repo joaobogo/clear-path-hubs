@@ -19,9 +19,7 @@ import { Route as IntakeConfirmationRouteImport } from './routes/intake.confirma
 import { Route as JobsIdApplyRouteImport } from './routes/jobs.$id.apply'
 import { Route as ApplyReceivedApplicationIdRouteImport } from './routes/apply.received.$applicationId'
 import { Route as AuthenticatedAdminMatchesRouteImport } from './routes/_authenticated/admin.matches'
-import { Route as AuthenticatedAdminIntakesRouteImport } from './routes/_authenticated/admin.intakes'
 import { Route as AuthenticatedAdminMatchesIdRouteImport } from './routes/_authenticated/admin.matches.$id'
-import { Route as AuthenticatedAdminIntakesIdRouteImport } from './routes/_authenticated/admin.intakes.$id'
 
 const JobsRoute = JobsRouteImport.update({
   id: '/jobs',
@@ -74,23 +72,11 @@ const AuthenticatedAdminMatchesRoute =
     path: '/admin/matches',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
-const AuthenticatedAdminIntakesRoute =
-  AuthenticatedAdminIntakesRouteImport.update({
-    id: '/admin/intakes',
-    path: '/admin/intakes',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
 const AuthenticatedAdminMatchesIdRoute =
   AuthenticatedAdminMatchesIdRouteImport.update({
     id: '/$id',
     path: '/$id',
     getParentRoute: () => AuthenticatedAdminMatchesRoute,
-  } as any)
-const AuthenticatedAdminIntakesIdRoute =
-  AuthenticatedAdminIntakesIdRouteImport.update({
-    id: '/$id',
-    path: '/$id',
-    getParentRoute: () => AuthenticatedAdminIntakesRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
@@ -100,11 +86,9 @@ export interface FileRoutesByFullPath {
   '/jobs': typeof JobsRouteWithChildren
   '/intake/confirmation': typeof IntakeConfirmationRoute
   '/jobs/$id': typeof JobsIdRouteWithChildren
-  '/admin/intakes': typeof AuthenticatedAdminIntakesRouteWithChildren
   '/admin/matches': typeof AuthenticatedAdminMatchesRouteWithChildren
   '/apply/received/$applicationId': typeof ApplyReceivedApplicationIdRoute
   '/jobs/$id/apply': typeof JobsIdApplyRoute
-  '/admin/intakes/$id': typeof AuthenticatedAdminIntakesIdRoute
   '/admin/matches/$id': typeof AuthenticatedAdminMatchesIdRoute
 }
 export interface FileRoutesByTo {
@@ -114,11 +98,9 @@ export interface FileRoutesByTo {
   '/jobs': typeof JobsRouteWithChildren
   '/intake/confirmation': typeof IntakeConfirmationRoute
   '/jobs/$id': typeof JobsIdRouteWithChildren
-  '/admin/intakes': typeof AuthenticatedAdminIntakesRouteWithChildren
   '/admin/matches': typeof AuthenticatedAdminMatchesRouteWithChildren
   '/apply/received/$applicationId': typeof ApplyReceivedApplicationIdRoute
   '/jobs/$id/apply': typeof JobsIdApplyRoute
-  '/admin/intakes/$id': typeof AuthenticatedAdminIntakesIdRoute
   '/admin/matches/$id': typeof AuthenticatedAdminMatchesIdRoute
 }
 export interface FileRoutesById {
@@ -130,11 +112,9 @@ export interface FileRoutesById {
   '/jobs': typeof JobsRouteWithChildren
   '/intake/confirmation': typeof IntakeConfirmationRoute
   '/jobs/$id': typeof JobsIdRouteWithChildren
-  '/_authenticated/admin/intakes': typeof AuthenticatedAdminIntakesRouteWithChildren
   '/_authenticated/admin/matches': typeof AuthenticatedAdminMatchesRouteWithChildren
   '/apply/received/$applicationId': typeof ApplyReceivedApplicationIdRoute
   '/jobs/$id/apply': typeof JobsIdApplyRoute
-  '/_authenticated/admin/intakes/$id': typeof AuthenticatedAdminIntakesIdRoute
   '/_authenticated/admin/matches/$id': typeof AuthenticatedAdminMatchesIdRoute
 }
 export interface FileRouteTypes {
@@ -146,11 +126,9 @@ export interface FileRouteTypes {
     | '/jobs'
     | '/intake/confirmation'
     | '/jobs/$id'
-    | '/admin/intakes'
     | '/admin/matches'
     | '/apply/received/$applicationId'
     | '/jobs/$id/apply'
-    | '/admin/intakes/$id'
     | '/admin/matches/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -160,11 +138,9 @@ export interface FileRouteTypes {
     | '/jobs'
     | '/intake/confirmation'
     | '/jobs/$id'
-    | '/admin/intakes'
     | '/admin/matches'
     | '/apply/received/$applicationId'
     | '/jobs/$id/apply'
-    | '/admin/intakes/$id'
     | '/admin/matches/$id'
   id:
     | '__root__'
@@ -175,11 +151,9 @@ export interface FileRouteTypes {
     | '/jobs'
     | '/intake/confirmation'
     | '/jobs/$id'
-    | '/_authenticated/admin/intakes'
     | '/_authenticated/admin/matches'
     | '/apply/received/$applicationId'
     | '/jobs/$id/apply'
-    | '/_authenticated/admin/intakes/$id'
     | '/_authenticated/admin/matches/$id'
   fileRoutesById: FileRoutesById
 }
@@ -264,13 +238,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminMatchesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/admin/intakes': {
-      id: '/_authenticated/admin/intakes'
-      path: '/admin/intakes'
-      fullPath: '/admin/intakes'
-      preLoaderRoute: typeof AuthenticatedAdminIntakesRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
     '/_authenticated/admin/matches/$id': {
       id: '/_authenticated/admin/matches/$id'
       path: '/$id'
@@ -278,29 +245,8 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminMatchesIdRouteImport
       parentRoute: typeof AuthenticatedAdminMatchesRoute
     }
-    '/_authenticated/admin/intakes/$id': {
-      id: '/_authenticated/admin/intakes/$id'
-      path: '/$id'
-      fullPath: '/admin/intakes/$id'
-      preLoaderRoute: typeof AuthenticatedAdminIntakesIdRouteImport
-      parentRoute: typeof AuthenticatedAdminIntakesRoute
-    }
   }
 }
-
-interface AuthenticatedAdminIntakesRouteChildren {
-  AuthenticatedAdminIntakesIdRoute: typeof AuthenticatedAdminIntakesIdRoute
-}
-
-const AuthenticatedAdminIntakesRouteChildren: AuthenticatedAdminIntakesRouteChildren =
-  {
-    AuthenticatedAdminIntakesIdRoute: AuthenticatedAdminIntakesIdRoute,
-  }
-
-const AuthenticatedAdminIntakesRouteWithChildren =
-  AuthenticatedAdminIntakesRoute._addFileChildren(
-    AuthenticatedAdminIntakesRouteChildren,
-  )
 
 interface AuthenticatedAdminMatchesRouteChildren {
   AuthenticatedAdminMatchesIdRoute: typeof AuthenticatedAdminMatchesIdRoute
@@ -317,12 +263,10 @@ const AuthenticatedAdminMatchesRouteWithChildren =
   )
 
 interface AuthenticatedRouteRouteChildren {
-  AuthenticatedAdminIntakesRoute: typeof AuthenticatedAdminIntakesRouteWithChildren
   AuthenticatedAdminMatchesRoute: typeof AuthenticatedAdminMatchesRouteWithChildren
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
-  AuthenticatedAdminIntakesRoute: AuthenticatedAdminIntakesRouteWithChildren,
   AuthenticatedAdminMatchesRoute: AuthenticatedAdminMatchesRouteWithChildren,
 }
 
