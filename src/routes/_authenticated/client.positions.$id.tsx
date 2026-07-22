@@ -95,7 +95,7 @@ function PositionDetailPage() {
     onMutate: async (v) => {
       await qc.cancelQueries({ queryKey });
       const snapshot = qc.getQueryData<AnyRow>(queryKey);
-      qc.setQueryData<AnyRow>(queryKey, (prev) => {
+      qc.setQueryData<AnyRow>(queryKey, (prev: AnyRow) => {
         if (!prev) return prev;
         return {
           ...prev,
