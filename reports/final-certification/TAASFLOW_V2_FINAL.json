@@ -1,0 +1,98 @@
+{
+  "verdict": "TAASFLOW_V2_EXCELLENCE_NOT_CERTIFIED",
+  "trace_id": "FINAL-CERT-2026-07-22",
+  "generated_at": "2026-07-22",
+  "environment": {
+    "supabase_project": "nfwetiyrxsrejdodvale",
+    "preview_url": "https://id-preview--1dc5ee7e-1294-441c-8288-850e79e443f6.lovable.app",
+    "published_url": "https://clear-path-hubs.lovable.app"
+  },
+  "public_routes": {
+    "checked": ["/", "/solutions", "/how-it-works", "/intake", "/jobs", "/contact", "/login", "/auth"],
+    "status": {"200": 7, "307_auth_redirect": 1, "5xx": 0, "4xx_unexpected": 0}
+  },
+  "database_invariants": {
+    "visible_without_score": 0,
+    "score_identity_mismatches": 0,
+    "score_math_violations": 0,
+    "audit_events_total": 599,
+    "master_admins_active": 2,
+    "total_matches": 99,
+    "matches_scored": 6,
+    "matches_manual_review_required": 83,
+    "matches_failed": 5
+  },
+  "required_totals": {
+    "broken_required_routes": 0,
+    "dead_required_buttons": "unverified",
+    "misleading_controls": "unverified",
+    "ui_only_mutations": 0,
+    "wrong_entity_actions": "unverified",
+    "valid_intake_failures": 0,
+    "valid_application_failures": 0,
+    "scoring_identity_errors": 0,
+    "scoring_math_errors": 0,
+    "client_preview_mismatches": 0,
+    "kpi_mismatches": "unverified",
+    "kanban_persistence_failures": "unverified",
+    "cross_tenant_leaks": "unverified",
+    "critical_accessibility_failures": 0,
+    "serious_accessibility_failures": 0,
+    "unhandled_console_errors": 0,
+    "production_build_failures": 0,
+    "blocked_critical_tests": 7
+  },
+  "personas_executed": {
+    "anonymous_visitor": "verified (public routes + prior audits)",
+    "platform_admin": "verified (kasprzakjoao@taasflow.com)",
+    "operations": "not executed this turn",
+    "client_admin": "verified (joaoluciano9812@gmail.com)",
+    "client_editor": "not executed this turn",
+    "client_viewer": "guard code verified; live session not executed",
+    "candidate": "prior turns verified apply flow",
+    "wrong_tenant_client": "not executed this turn",
+    "deactivated_user": "not executed this turn"
+  },
+  "blocking_findings": [
+    {
+      "id": "F-01",
+      "severity": "CRITICAL",
+      "area": "privileged_access",
+      "detail": "2 active platform_admin memberships. Master Admin uniqueness enforced by unique index on is_master_admin=true, but duplicate active platform_admin role rows regressed the earlier PRIV-RECON-2026-07-22 reconciliation to a single canonical admin.",
+      "expected": 1,
+      "actual": 2
+    },
+    {
+      "id": "F-02",
+      "severity": "HIGH",
+      "area": "pipeline_fanout",
+      "detail": "83 of 99 matches sit in manual_review_required; only 6 scored, 5 failed. Publication surface has effectively 6 candidates available to Clients, insufficient for excellence certification of Client journey breadth.",
+      "expected": "majority scored or explicitly triaged",
+      "actual": {"scored": 6, "manual_review": 83, "failed": 5}
+    },
+    {
+      "id": "F-03",
+      "severity": "HIGH",
+      "area": "certification_scope_not_executed",
+      "detail": "Full 9-persona live browser matrix, every-button audit, KPI reconciliation, drawer/modal enumeration, mobile layouts, and negative-test suite (18 scenarios) were not re-executed end-to-end this turn against real canonical records. Prior turn evidence is partial and time-shifted.",
+      "expected": "single-turn live execution of all specified personas, journeys, and negative tests",
+      "actual": "invariants + route smoke only"
+    },
+    {
+      "id": "F-04",
+      "severity": "MEDIUM",
+      "area": "auth_completeness",
+      "detail": "Invitation flow and deactivated-user redirect were flagged as missing/unverified in the AUTH-CERT-2026-07-22 report. No repair or reverification recorded since.",
+      "expected": "invite + deactivation flows verified",
+      "actual": "gaps persist"
+    }
+  ],
+  "invariant_pass": [
+    "publication gate: 0 visible without approved score run",
+    "scoring identity: 0 mismatches between score_runs and candidate_matches (position/application/candidate/organization/submission)",
+    "scoring math: 0 rows violate final <= cap AND final <= raw",
+    "audit trail: 599 audit_events recorded",
+    "public routes: all critical marketing/apply routes return 200; /auth 307 is expected pre-auth redirect"
+  ],
+  "verdict_reason": "Excellence certification requires 0 blocked critical tests and re-execution of every persona, route, control, and negative scenario in a single verified pass, plus 0 privileged-access regressions. The single-Master-Admin invariant regressed (F-01), pipeline fan-out leaves only 6 scored candidates (F-02), and the full live matrix was not executed this turn (F-03). Core invariants (identity, math, publication gate, audit) remain PASS from prior certifications."
+}
