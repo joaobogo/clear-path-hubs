@@ -365,26 +365,37 @@ export const listOrganizationTeam = createServerFn({ method: "GET" })
     const { supabase, userId } = context;
     await assertPlatformAdmin(supabase, userId);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data: rows, error } = await supabaseAdmin
+    const { data: mems, error } = await supabaseAdmin
       .from("memberships")
-      .select(
-        "id, role, status, created_at, user_id, profiles!inner(id, full_name, email, status, auth_user_id)",
-      )
+      .select("id, role, status, created_at, user_id")
       .eq("organization_id", data.organization_id)
       .order("created_at", { ascending: true });
     if (error) throw error;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return (rows ?? []).map((r: any) => ({
-      membership_id: r.id,
-      role: r.role,
-      status: r.status,
-      created_at: r.created_at,
-      user_id: r.user_id,
-      full_name: r.profiles?.full_name ?? null,
-      email: r.profiles?.email ?? null,
-      user_status: r.profiles?.status ?? null,
-      auth_user_id: r.profiles?.auth_user_id ?? null,
-    }));
+    const authIds = Array.from(new Set((mems ?? []).map((m) => m.user_id as string)));
+    // memberships.user_id references auth.users.id, so join to profiles via
+    // auth_user_id rather than PostgREST's implicit FK (which doesn't exist).
+    const profileMap = new Map<string, { full_name: string | null; email: string | null; status: string | null; auth_user_id: string }>();
+    if (authIds.length > 0) {
+      const { data: profs } = await supabaseAdmin
+        .from("profiles")
+        .select("full_name, email, status, auth_user_id")
+        .in("auth_user_id", authIds);
+      for (const p of profs ?? []) profileMap.set(p.auth_user_id as string, p as never);
+    }
+    return (mems ?? []).map((r) => {
+      const p = profileMap.get(r.user_id as string);
+      return {
+        membership_id: r.id,
+        role: r.role,
+        status: r.status,
+        created_at: r.created_at,
+        user_id: r.user_id,
+        full_name: p?.full_name ?? null,
+        email: p?.email ?? null,
+        user_status: p?.status ?? null,
+        auth_user_id: p?.auth_user_id ?? (r.user_id as string),
+      };
+    });
   });
 
 const membershipMutInput = z.object({
