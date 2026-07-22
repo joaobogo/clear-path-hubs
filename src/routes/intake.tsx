@@ -404,6 +404,15 @@ function IntakePage() {
                   autoComplete="organization"
                 />
               </Field>
+              <Field label="Phone" hint="Optional. Best number to reach you.">
+                <Input
+                  type="tel"
+                  value={state.phone}
+                  onChange={(e) => set("phone", e.target.value)}
+                  autoComplete="tel"
+                  placeholder="+1 555 123 4567"
+                />
+              </Field>
               <Field label="Company website">
                 <Input
                   value={state.companyWebsite}
@@ -415,12 +424,32 @@ function IntakePage() {
                 <Input
                   value={state.industry}
                   onChange={(e) => set("industry", e.target.value)}
+                  placeholder="SaaS, Fintech, Healthcare…"
                 />
               </Field>
-              <Field label="Headquarters">
+              <Field label="Company size">
+                <Select
+                  value={state.companySize}
+                  onValueChange={(v) => set("companySize", v)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select…" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="1-10">1–10</SelectItem>
+                    <SelectItem value="11-50">11–50</SelectItem>
+                    <SelectItem value="51-200">51–200</SelectItem>
+                    <SelectItem value="201-500">201–500</SelectItem>
+                    <SelectItem value="501-1000">501–1000</SelectItem>
+                    <SelectItem value="1000+">1000+</SelectItem>
+                  </SelectContent>
+                </Select>
+              </Field>
+              <Field label="Headquarters" className="sm:col-span-2">
                 <Input
                   value={state.headquarters}
                   onChange={(e) => set("headquarters", e.target.value)}
+                  placeholder="City, Country"
                 />
               </Field>
             </div>
