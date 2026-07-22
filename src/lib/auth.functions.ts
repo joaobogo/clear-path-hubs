@@ -92,14 +92,8 @@ function generatePassword(len = 16): string {
   return out;
 }
 
-async function assertPlatformAdmin(
-  supabase: Awaited<ReturnType<typeof requireSupabaseAuth>>["context"]["supabase"] extends never
-    ? never
-    : Parameters<typeof requireSupabaseAuth>[0] extends never
-    ? never
-    : any, // eslint-disable-line @typescript-eslint/no-explicit-any
-  userId: string,
-): Promise<void> {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function assertPlatformAdmin(supabase: any, userId: string): Promise<void> {
   const { data: profile } = await supabase
     .from("profiles")
     .select("id, status")
