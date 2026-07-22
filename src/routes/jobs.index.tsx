@@ -13,6 +13,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+const positionsQuery = queryOptions({
+  queryKey: ["public-positions"],
+  queryFn: () => listPublicPositions(),
+});
+
 export const Route = createFileRoute("/jobs/")({
   head: () => ({
     meta: [
@@ -31,11 +36,7 @@ export const Route = createFileRoute("/jobs/")({
       { name: "twitter:card", content: "summary" },
     ],
   }),
-  loader: async ({ context }) =>
-    context.queryClient.ensureQueryData({
-      queryKey: ["public-positions"],
-      queryFn: () => listPublicPositions(),
-    }),
+  loader: async ({ context }) => context.queryClient.ensureQueryData(positionsQuery),
   component: JobsPage,
 });
 
@@ -52,10 +53,7 @@ function labelEmployment(e: string | null) {
 }
 
 function JobsPage() {
-  const { data: positions = [] } = useQuery({
-    queryKey: ["public-positions"],
-    queryFn: () => listPublicPositions(),
-  });
+  const { data: positions } = useSuspenseQuery(positionsQuery);
 
   const [q, setQ] = useState("");
   const [workModel, setWorkModel] = useState<string>("any");
