@@ -21,7 +21,19 @@ export const Route = createFileRoute("/industries/")({
 function IndustriesIndex() {
   const legacySlugs = listIndustrySlugs();
   const v2Map = new Map(INDUSTRY_ENTRIES.map((e) => [e.slug, e]));
-  const merged = Array.from(new Set([...v2Map.keys(), ...legacySlugs])).sort();
+  // Legacy aliases that v2 supersedes (avoid duplicate cards for the same industry).
+  const supersededLegacy = new Set(["non-profit"]);
+  // Legacy meta-pages that must not appear as industry cards.
+  const skipSlugs = new Set(["index", "industries", "compare"]);
+  const merged = Array.from(
+    new Set([
+      ...v2Map.keys(),
+      ...legacySlugs.filter(
+        (s) => !skipSlugs.has(s) && !supersededLegacy.has(s) && !v2Map.has(s),
+      ),
+    ]),
+  ).sort();
+
   return (
     <SiteShell>
       <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
