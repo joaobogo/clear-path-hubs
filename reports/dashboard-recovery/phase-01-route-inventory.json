@@ -1,0 +1,430 @@
+{
+  "generated": "2026-07-22",
+  "sha": "5e11a5040a3849554f5ecb8d874584e5669d8295",
+  "total": 47,
+  "routes": [
+    {
+      "file": "src/routes/_authenticated/admin.candidates.$id.tsx",
+      "route": "/_authenticated/admin/candidates/$id",
+      "persona": "admin",
+      "buttons": 8,
+      "links": 2,
+      "tabs": 0,
+      "onclicks": 8
+    },
+    {
+      "file": "src/routes/_authenticated/admin.candidates.tsx",
+      "route": "/_authenticated/admin/candidates",
+      "persona": "admin",
+      "buttons": 0,
+      "links": 1,
+      "tabs": 0,
+      "onclicks": 0
+    },
+    {
+      "file": "src/routes/_authenticated/admin.clients.$id.tsx",
+      "route": "/_authenticated/admin/clients/$id",
+      "persona": "admin",
+      "buttons": 0,
+      "links": 3,
+      "tabs": 0,
+      "onclicks": 0
+    },
+    {
+      "file": "src/routes/_authenticated/admin.clients.tsx",
+      "route": "/_authenticated/admin/clients",
+      "persona": "admin",
+      "buttons": 0,
+      "links": 3,
+      "tabs": 0,
+      "onclicks": 0
+    },
+    {
+      "file": "src/routes/_authenticated/admin.clients_new.tsx",
+      "route": "/_authenticated/admin/clients_new",
+      "persona": "admin",
+      "buttons": 5,
+      "links": 0,
+      "tabs": 0,
+      "onclicks": 4
+    },
+    {
+      "file": "src/routes/_authenticated/admin.health.tsx",
+      "route": "/_authenticated/admin/health",
+      "persona": "admin",
+      "buttons": 1,
+      "links": 1,
+      "tabs": 0,
+      "onclicks": 1
+    },
+    {
+      "file": "src/routes/_authenticated/admin.index.tsx",
+      "route": "/_authenticated/admin/",
+      "persona": "admin",
+      "buttons": 0,
+      "links": 1,
+      "tabs": 0,
+      "onclicks": 0
+    },
+    {
+      "file": "src/routes/_authenticated/admin.notifications.tsx",
+      "route": "/_authenticated/admin/notifications",
+      "persona": "admin",
+      "buttons": 0,
+      "links": 0,
+      "tabs": 0,
+      "onclicks": 0
+    },
+    {
+      "file": "src/routes/_authenticated/admin.positions.$id.tsx",
+      "route": "/_authenticated/admin/positions/$id",
+      "persona": "admin",
+      "buttons": 10,
+      "links": 2,
+      "tabs": 0,
+      "onclicks": 10
+    },
+    {
+      "file": "src/routes/_authenticated/admin.positions.tsx",
+      "route": "/_authenticated/admin/positions",
+      "persona": "admin",
+      "buttons": 0,
+      "links": 1,
+      "tabs": 0,
+      "onclicks": 0
+    },
+    {
+      "file": "src/routes/_authenticated/admin.publish.tsx",
+      "route": "/_authenticated/admin/publish",
+      "persona": "admin",
+      "buttons": 3,
+      "links": 2,
+      "tabs": 0,
+      "onclicks": 4
+    },
+    {
+      "file": "src/routes/_authenticated/admin.settings.tsx",
+      "route": "/_authenticated/admin/settings",
+      "persona": "admin",
+      "buttons": 0,
+      "links": 0,
+      "tabs": 0,
+      "onclicks": 0
+    },
+    {
+      "file": "src/routes/_authenticated/admin.team.tsx",
+      "route": "/_authenticated/admin/team",
+      "persona": "admin",
+      "buttons": 9,
+      "links": 0,
+      "tabs": 0,
+      "onclicks": 10
+    },
+    {
+      "file": "src/routes/_authenticated/admin.tsx",
+      "route": "/_authenticated/admin",
+      "persona": "admin",
+      "buttons": 0,
+      "links": 2,
+      "tabs": 0,
+      "onclicks": 0
+    },
+    {
+      "file": "src/routes/_authenticated/client.candidates.$id.tsx",
+      "route": "/_authenticated/client/candidates/$id",
+      "persona": "client",
+      "buttons": 1,
+      "links": 2,
+      "tabs": 0,
+      "onclicks": 1
+    },
+    {
+      "file": "src/routes/_authenticated/client.candidates.tsx",
+      "route": "/_authenticated/client/candidates",
+      "persona": "client",
+      "buttons": 0,
+      "links": 2,
+      "tabs": 0,
+      "onclicks": 0
+    },
+    {
+      "file": "src/routes/_authenticated/client.index.tsx",
+      "route": "/_authenticated/client/",
+      "persona": "client",
+      "buttons": 0,
+      "links": 4,
+      "tabs": 0,
+      "onclicks": 0
+    },
+    {
+      "file": "src/routes/_authenticated/client.messages.tsx",
+      "route": "/_authenticated/client/messages",
+      "persona": "client",
+      "buttons": 1,
+      "links": 0,
+      "tabs": 0,
+      "onclicks": 0
+    },
+    {
+      "file": "src/routes/_authenticated/client.positions.$id.tsx",
+      "route": "/_authenticated/client/positions/$id",
+      "persona": "client",
+      "buttons": 1,
+      "links": 2,
+      "tabs": 0,
+      "onclicks": 1
+    },
+    {
+      "file": "src/routes/_authenticated/client.positions.tsx",
+      "route": "/_authenticated/client/positions",
+      "persona": "client",
+      "buttons": 0,
+      "links": 2,
+      "tabs": 0,
+      "onclicks": 0
+    },
+    {
+      "file": "src/routes/_authenticated/client.settings.tsx",
+      "route": "/_authenticated/client/settings",
+      "persona": "client",
+      "buttons": 0,
+      "links": 0,
+      "tabs": 0,
+      "onclicks": 0
+    },
+    {
+      "file": "src/routes/_authenticated/client.team.tsx",
+      "route": "/_authenticated/client/team",
+      "persona": "client",
+      "buttons": 0,
+      "links": 0,
+      "tabs": 0,
+      "onclicks": 0
+    },
+    {
+      "file": "src/routes/_authenticated/client.tsx",
+      "route": "/_authenticated/client",
+      "persona": "client",
+      "buttons": 0,
+      "links": 3,
+      "tabs": 0,
+      "onclicks": 0
+    },
+    {
+      "file": "src/routes/_authenticated/me.applications.$id.tsx",
+      "route": "/_authenticated/me/applications/$id",
+      "persona": "candidate",
+      "buttons": 1,
+      "links": 1,
+      "tabs": 0,
+      "onclicks": 1
+    },
+    {
+      "file": "src/routes/_authenticated/me.applications.tsx",
+      "route": "/_authenticated/me/applications",
+      "persona": "candidate",
+      "buttons": 1,
+      "links": 2,
+      "tabs": 0,
+      "onclicks": 1
+    },
+    {
+      "file": "src/routes/_authenticated/me.index.tsx",
+      "route": "/_authenticated/me/",
+      "persona": "candidate",
+      "buttons": 0,
+      "links": 0,
+      "tabs": 0,
+      "onclicks": 0
+    },
+    {
+      "file": "src/routes/_authenticated/me.messages.tsx",
+      "route": "/_authenticated/me/messages",
+      "persona": "candidate",
+      "buttons": 1,
+      "links": 0,
+      "tabs": 0,
+      "onclicks": 0
+    },
+    {
+      "file": "src/routes/_authenticated/me.profile.tsx",
+      "route": "/_authenticated/me/profile",
+      "persona": "candidate",
+      "buttons": 1,
+      "links": 0,
+      "tabs": 0,
+      "onclicks": 0
+    },
+    {
+      "file": "src/routes/_authenticated/me.settings.tsx",
+      "route": "/_authenticated/me/settings",
+      "persona": "candidate",
+      "buttons": 3,
+      "links": 0,
+      "tabs": 0,
+      "onclicks": 3
+    },
+    {
+      "file": "src/routes/_authenticated/me.tsx",
+      "route": "/_authenticated/me",
+      "persona": "candidate",
+      "buttons": 0,
+      "links": 2,
+      "tabs": 0,
+      "onclicks": 0
+    },
+    {
+      "file": "src/routes/_authenticated/route.tsx",
+      "route": "/_authenticated",
+      "persona": "public",
+      "buttons": 0,
+      "links": 0,
+      "tabs": 0,
+      "onclicks": 0
+    },
+    {
+      "file": "src/routes/access-denied.tsx",
+      "route": "/access-denied",
+      "persona": "public",
+      "buttons": 0,
+      "links": 1,
+      "tabs": 0,
+      "onclicks": 1
+    },
+    {
+      "file": "src/routes/apply.received.$applicationId.tsx",
+      "route": "/apply/received/$applicationId",
+      "persona": "public",
+      "buttons": 3,
+      "links": 4,
+      "tabs": 0,
+      "onclicks": 0
+    },
+    {
+      "file": "src/routes/auth.tsx",
+      "route": "/auth",
+      "persona": "public",
+      "buttons": 0,
+      "links": 0,
+      "tabs": 0,
+      "onclicks": 0
+    },
+    {
+      "file": "src/routes/dev.catalogue.tsx",
+      "route": "/dev/catalogue",
+      "persona": "public",
+      "buttons": 10,
+      "links": 0,
+      "tabs": 0,
+      "onclicks": 0
+    },
+    {
+      "file": "src/routes/index.tsx",
+      "route": "/",
+      "persona": "public",
+      "buttons": 3,
+      "links": 6,
+      "tabs": 0,
+      "onclicks": 0
+    },
+    {
+      "file": "src/routes/intake.tsx",
+      "route": "/intake",
+      "persona": "public",
+      "buttons": 8,
+      "links": 0,
+      "tabs": 0,
+      "onclicks": 10
+    },
+    {
+      "file": "src/routes/intake_.confirmation.tsx",
+      "route": "/intake_/confirmation",
+      "persona": "public",
+      "buttons": 1,
+      "links": 0,
+      "tabs": 0,
+      "onclicks": 0
+    },
+    {
+      "file": "src/routes/jobs.$id.apply.tsx",
+      "route": "/jobs/$id/apply",
+      "persona": "public",
+      "buttons": 2,
+      "links": 4,
+      "tabs": 0,
+      "onclicks": 0
+    },
+    {
+      "file": "src/routes/jobs.$id.index.tsx",
+      "route": "/jobs/$id/",
+      "persona": "public",
+      "buttons": 4,
+      "links": 6,
+      "tabs": 0,
+      "onclicks": 0
+    },
+    {
+      "file": "src/routes/jobs.index.tsx",
+      "route": "/jobs/",
+      "persona": "public",
+      "buttons": 0,
+      "links": 4,
+      "tabs": 0,
+      "onclicks": 2
+    },
+    {
+      "file": "src/routes/login.tsx",
+      "route": "/login",
+      "persona": "public",
+      "buttons": 4,
+      "links": 1,
+      "tabs": 0,
+      "onclicks": 6
+    },
+    {
+      "file": "src/routes/reset-password.tsx",
+      "route": "/reset-password",
+      "persona": "public",
+      "buttons": 1,
+      "links": 0,
+      "tabs": 0,
+      "onclicks": 0
+    },
+    {
+      "file": "src/routes/api/public/bootstrap-admin.ts",
+      "route": "/api/public/bootstrap-admin",
+      "persona": "public",
+      "buttons": 0,
+      "links": 0,
+      "tabs": 0,
+      "onclicks": 0
+    },
+    {
+      "file": "src/routes/api/public/intake-status.$id.ts",
+      "route": "/api/public/intake-status/$id",
+      "persona": "public",
+      "buttons": 0,
+      "links": 0,
+      "tabs": 0,
+      "onclicks": 0
+    },
+    {
+      "file": "src/routes/api/public/intake.ts",
+      "route": "/api/public/intake",
+      "persona": "public",
+      "buttons": 0,
+      "links": 0,
+      "tabs": 0,
+      "onclicks": 0
+    },
+    {
+      "file": "src/routes/api/public/qa-seed.ts",
+      "route": "/api/public/qa-seed",
+      "persona": "public",
+      "buttons": 0,
+      "links": 0,
+      "tabs": 0,
+      "onclicks": 0
+    }
+  ]
+}

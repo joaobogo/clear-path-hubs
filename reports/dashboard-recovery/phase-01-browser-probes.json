@@ -1,0 +1,310 @@
+{
+  "probes": [
+    {
+      "persona": "anon_public",
+      "route": "/",
+      "status": 200,
+      "title": "TaaSFlow \u2014 Hire faster with a curated talent pipeline",
+      "controls_visible": 6,
+      "snippet": "TaaSFlow Jobs Sign in Start hiring Hire senior specialists without the recruiting overhead.  Tell us about the role in five short steps. We'll shortlist evidence-backed candidates and hand you the fin",
+      "errors": [],
+      "verdict": "WORKING"
+    },
+    {
+      "persona": "anon_public",
+      "route": "/jobs",
+      "status": 200,
+      "title": "Open roles \u2014 TaaSFlow job board",
+      "controls_visible": 19,
+      "snippet": "TaaSFlow Jobs Sign in Open roles  9 live roles curated by TaaSFlow.  Any work model Any employment All levels Mid\u2013Senior Senior mid senior TaaSFlow client Customer Success Manager Remote Full Time mid",
+      "errors": [],
+      "verdict": "WORKING"
+    },
+    {
+      "persona": "anon_public",
+      "route": "/login",
+      "status": 200,
+      "title": "Sign in \u2014 TaaSFlow",
+      "controls_visible": 4,
+      "snippet": "Sign in  TaaSFlow admin & client portal  Email Password Sign in Forgot password? Create account \u2190 Back home",
+      "errors": [],
+      "verdict": "WORKING"
+    },
+    {
+      "persona": "anon_public",
+      "route": "/auth",
+      "status": 200,
+      "title": "Sign in \u2014 TaaSFlow",
+      "controls_visible": 4,
+      "snippet": "Sign in  TaaSFlow admin & client portal  Email Password Sign in Forgot password? Create account \u2190 Back home",
+      "errors": [],
+      "verdict": "WORKING"
+    },
+    {
+      "persona": "anon_public",
+      "route": "/intake",
+      "status": 200,
+      "title": "Start a hiring engagement \u2014 TaaSFlow",
+      "controls_visible": 4,
+      "snippet": "Start a hiring engagement  Tell us who you need to hire. TaaSFlow returns evidence-scored shortlists \u2014 usually within 48 hours. No account required.  1. Contact & company 2. Role overview 3. Requireme",
+      "errors": [],
+      "verdict": "WORKING"
+    },
+    {
+      "persona": "anon_public",
+      "route": "/reset-password",
+      "status": 200,
+      "title": "Reset password \u2014 TaaSFlow",
+      "controls_visible": 1,
+      "snippet": "Set a new password  Open this page from the reset email link.  New password Confirm password Update password",
+      "errors": [],
+      "verdict": "WORKING"
+    },
+    {
+      "persona": "anon_public",
+      "route": "/access-denied",
+      "status": 200,
+      "title": "Access denied \u2014 TaaSFlow",
+      "controls_visible": 0,
+      "snippet": "",
+      "errors": [],
+      "verdict": "WORKING"
+    },
+    {
+      "persona": "anon_admin_should_redirect",
+      "route": "/admin",
+      "status": 200,
+      "title": "Sign in \u2014 TaaSFlow",
+      "controls_visible": 4,
+      "snippet": "Sign in  TaaSFlow admin & client portal  Email Password Sign in Forgot password? Create account \u2190 Back home",
+      "errors": [
+        "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <QueryClientProvider client={{}} data-tsd-source=\"/src/route...\">\n      <OutletImpl data-tsd-source=\"/src/route...\">\n        <Suspense fallback={null}>\n          <MatchImpl matchId=\"/login/login\">\n            <MatchView router={{...}} matchId=\"/login/login\" resetKey={1784743558058} matchState={{routeId:\"/...\", ...}}>\n              <SafeFragment>\n                <SafeFragment fallback={null}>\n                  <SafeFragment getResetKey={function getResetKey} errorComponent={function ErrorComponent} ...>\n                    <SafeFragment fallback={function fallback}>\n                      <MatchInnerImpl matchId=\"/login/login\">\n                        <Lazy>\n                          <LoginPage>\n+                           <div\n+                             className=\"min-h-screen flex items-center justify-center bg-background px-4\"\n+                             data-tsd-source=\"/src/routes/login.tsx:178:5\"\n+                           >\n-                           <Suspense>\n                ...\n      ...\n"
+      ],
+      "verdict": "WORKING"
+    },
+    {
+      "persona": "anon_admin_should_redirect",
+      "route": "/admin/candidates",
+      "status": 200,
+      "title": "Sign in \u2014 TaaSFlow",
+      "controls_visible": 4,
+      "snippet": "Sign in  TaaSFlow admin & client portal  Email Password Sign in Forgot password? Create account \u2190 Back home",
+      "errors": [
+        "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <QueryClientProvider client={{}} data-tsd-source=\"/src/route...\">\n      <OutletImpl data-tsd-source=\"/src/route...\">\n        <Suspense fallback={null}>\n          <MatchImpl matchId=\"/login/login\">\n            <MatchView router={{...}} matchId=\"/login/login\" resetKey={1784743558862} matchState={{routeId:\"/...\", ...}}>\n              <SafeFragment>\n                <SafeFragment fallback={null}>\n                  <SafeFragment getResetKey={function getResetKey} errorComponent={function ErrorComponent} ...>\n                    <SafeFragment fallback={function fallback}>\n                      <MatchInnerImpl matchId=\"/login/login\">\n                        <Lazy>\n                          <LoginPage>\n+                           <div\n+                             className=\"min-h-screen flex items-center justify-center bg-background px-4\"\n+                             data-tsd-source=\"/src/routes/login.tsx:178:5\"\n+                           >\n-                           <Suspense>\n                ...\n      ...\n"
+      ],
+      "verdict": "WORKING"
+    },
+    {
+      "persona": "anon_admin_should_redirect",
+      "route": "/admin/clients",
+      "status": 200,
+      "title": "Sign in \u2014 TaaSFlow",
+      "controls_visible": 4,
+      "snippet": "Sign in  TaaSFlow admin & client portal  Email Password Sign in Forgot password? Create account \u2190 Back home",
+      "errors": [
+        "Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <QueryClientProvider client={{}} data-tsd-source=\"/src/route...\">\n      <OutletImpl data-tsd-source=\"/src/route...\">\n        <Suspense fallback={null}>\n          <MatchImpl matchId=\"/login/login\">\n            <MatchView router={{...}} matchId=\"/login/login\" resetKey={1784743559690} matchState={{routeId:\"/...\", ...}}>\n              <SafeFragment>\n                <SafeFragment fallback={null}>\n                  <SafeFragment getResetKey={function getResetKey} errorComponent={function ErrorComponent} ...>\n                    <SafeFragment fallback={function fallback}>\n                      <MatchInnerImpl matchId=\"/login/login\">\n                        <Lazy>\n                          <LoginPage>\n+                           <div\n+                             className=\"min-h-screen flex items-center justify-center bg-background px-4\"\n+                             data-tsd-source=\"/src/routes/login.tsx:178:5\"\n+                           >\n-                           <Suspense>\n                ...\n      ...\n"
+      ],
+      "verdict": "WORKING"
+    },
+    {
+      "persona": "admin",
+      "route": "/admin",
+      "status": 200,
+      "title": "Admin \u00b7 TaaSFlow",
+      "controls_visible": 0,
+      "snippet": "",
+      "errors": [],
+      "verdict": "WORKING"
+    },
+    {
+      "persona": "admin",
+      "route": "/admin/candidates",
+      "status": 200,
+      "title": "Candidates \u00b7 TaaSFlow admin",
+      "controls_visible": 15,
+      "snippet": "TaaSFlow admin Overview Clients & Positions Candidates Publish Desk Team & Access Pipeline Health Delivery health Settings Sign out Candidates Searching\u2026 Any stage Any review Any state Any score Candi",
+      "errors": [],
+      "verdict": "WORKING"
+    },
+    {
+      "persona": "admin",
+      "route": "/admin/clients",
+      "status": 200,
+      "title": "Admin \u00b7 TaaSFlow",
+      "controls_visible": 11,
+      "snippet": "TaaSFlow admin Overview Clients & Positions Candidates Publish Desk Team & Access Pipeline Health Delivery health Settings Sign out",
+      "errors": [],
+      "verdict": "WORKING"
+    },
+    {
+      "persona": "admin",
+      "route": "/admin/positions",
+      "status": 200,
+      "title": "Positions \u00b7 TaaSFlow admin",
+      "controls_visible": 12,
+      "snippet": "TaaSFlow admin Overview Clients & Positions Candidates Publish Desk Team & Access Pipeline Health Delivery health Settings Sign out Positions  0 positions  Any status TITLE\tCLIENT\tSTATUS\tVISIBILITY\tUP",
+      "errors": [],
+      "verdict": "WORKING"
+    },
+    {
+      "persona": "admin",
+      "route": "/admin/publish",
+      "status": 200,
+      "title": "Publish Desk \u00b7 TaaSFlow admin",
+      "controls_visible": 11,
+      "snippet": "TaaSFlow admin Overview Clients & Positions Candidates Publish Desk Team & Access Pipeline Health Delivery health Settings Sign out",
+      "errors": [],
+      "verdict": "WORKING"
+    },
+    {
+      "persona": "admin",
+      "route": "/admin/notifications",
+      "status": 200,
+      "title": "Delivery health \u00b7 TaaSFlow",
+      "controls_visible": 11,
+      "snippet": "TaaSFlow admin Overview Clients & Positions Candidates Publish Desk Team & Access Pipeline Health Delivery health Settings Sign out Delivery health  Provider acceptance is not the same as inbox delive",
+      "errors": [],
+      "verdict": "WORKING"
+    },
+    {
+      "persona": "admin",
+      "route": "/admin/team",
+      "status": 200,
+      "title": "Team \u2014 Admin \u00b7 TaaSFlow",
+      "controls_visible": 0,
+      "snippet": "",
+      "errors": [],
+      "verdict": "WORKING"
+    },
+    {
+      "persona": "admin",
+      "route": "/admin/settings",
+      "status": 200,
+      "title": "Settings \u00b7 TaaSFlow admin",
+      "controls_visible": 0,
+      "snippet": "",
+      "errors": [],
+      "verdict": "WORKING"
+    },
+    {
+      "persona": "admin",
+      "route": "/admin/health",
+      "status": 200,
+      "title": "Pipeline Health \u00b7 TaaSFlow admin",
+      "controls_visible": 0,
+      "snippet": "",
+      "errors": [],
+      "verdict": "WORKING"
+    },
+    {
+      "persona": "client",
+      "route": "/client",
+      "status": 200,
+      "title": "Overview \u00b7 Client workspace",
+      "controls_visible": 0,
+      "snippet": "",
+      "errors": [],
+      "verdict": "WORKING"
+    },
+    {
+      "persona": "client",
+      "route": "/client/positions",
+      "status": 200,
+      "title": "Positions \u00b7 Client workspace",
+      "controls_visible": 12,
+      "snippet": "WORKSPACE taasflow Client Admin Overview Positions Candidates Messages Team Settings Sign out Positions Loading\u2026 Active Draft Paused Closed",
+      "errors": [],
+      "verdict": "WORKING"
+    },
+    {
+      "persona": "client",
+      "route": "/client/candidates",
+      "status": 200,
+      "title": "Candidates \u00b7 Client workspace",
+      "controls_visible": 15,
+      "snippet": "",
+      "errors": [],
+      "verdict": "WORKING"
+    },
+    {
+      "persona": "client",
+      "route": "/client/messages",
+      "status": 200,
+      "title": "Messages \u00b7 Client workspace",
+      "controls_visible": 9,
+      "snippet": "WORKSPACE taasflow Client Admin Overview Positions Candidates Messages Team Settings Sign out Messages  Direct line to the TaaSFlow team about any of your roles.  No messages yet  Send a note below an",
+      "errors": [],
+      "verdict": "WORKING"
+    },
+    {
+      "persona": "client",
+      "route": "/client/team",
+      "status": 200,
+      "title": "Team \u00b7 Client workspace",
+      "controls_visible": 0,
+      "snippet": "",
+      "errors": [],
+      "verdict": "WORKING"
+    },
+    {
+      "persona": "client",
+      "route": "/client/settings",
+      "status": 200,
+      "title": "Settings \u00b7 Client workspace",
+      "controls_visible": 0,
+      "snippet": "",
+      "errors": [],
+      "verdict": "WORKING"
+    },
+    {
+      "persona": "me_as_client_user",
+      "route": "/me",
+      "status": 200,
+      "title": "My account \u00b7 TaaSFlow",
+      "controls_visible": 0,
+      "snippet": "",
+      "errors": [],
+      "verdict": "WORKING"
+    },
+    {
+      "persona": "me_as_client_user",
+      "route": "/me/applications",
+      "status": 200,
+      "title": "My applications \u00b7 TaaSFlow",
+      "controls_visible": 1,
+      "snippet": "Welcome to TaaSFlow  We couldn't find a candidate profile linked to joaoluciano9812@gmail.com. If you applied with a different email, sign in with that one \u2014 we'll link your account automatically. Oth",
+      "errors": [],
+      "verdict": "WORKING"
+    },
+    {
+      "persona": "me_as_client_user",
+      "route": "/me/profile",
+      "status": 200,
+      "title": "My profile \u00b7 TaaSFlow",
+      "controls_visible": 1,
+      "snippet": "Welcome to TaaSFlow  We couldn't find a candidate profile linked to joaoluciano9812@gmail.com. If you applied with a different email, sign in with that one \u2014 we'll link your account automatically. Oth",
+      "errors": [],
+      "verdict": "WORKING"
+    },
+    {
+      "persona": "me_as_client_user",
+      "route": "/me/messages",
+      "status": 200,
+      "title": "Messages \u00b7 TaaSFlow",
+      "controls_visible": 1,
+      "snippet": "Welcome to TaaSFlow  We couldn't find a candidate profile linked to joaoluciano9812@gmail.com. If you applied with a different email, sign in with that one \u2014 we'll link your account automatically. Oth",
+      "errors": [],
+      "verdict": "WORKING"
+    },
+    {
+      "persona": "me_as_client_user",
+      "route": "/me/settings",
+      "status": 200,
+      "title": "Privacy & settings \u00b7 TaaSFlow",
+      "controls_visible": 1,
+      "snippet": "Welcome to TaaSFlow  We couldn't find a candidate profile linked to joaoluciano9812@gmail.com. If you applied with a different email, sign in with that one \u2014 we'll link your account automatically. Oth",
+      "errors": [],
+      "verdict": "WORKING"
+    }
+  ]
+}
