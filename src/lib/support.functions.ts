@@ -30,18 +30,12 @@ export const startSupportSession = createServerFn({ method: "POST" })
     await assertPlatformStaff(context.supabase, context.userId);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
-    // Look up actor role for tg_support_session_guard (blocks operations from
-    // acting on platform_admin).
-    const { data: profile } = await supabaseAdmin
-      .from("profiles")
-      .select("id")
-      .eq("auth_user_id", context.userId)
-      .maybeSingle();
-    if (!profile) throw new Error("Profile not found");
+    // Look up actor role for tg_support_session_guard. memberships.user_id
+    // references auth.users.id — query by the auth uid directly.
     const { data: staffMem } = await supabaseAdmin
       .from("memberships")
       .select("role")
-      .eq("user_id", profile.id)
+      .eq("user_id", context.userId)
       .in("role", ["platform_admin", "operations"])
       .eq("status", "active")
       .limit(1)
@@ -68,9 +62,9 @@ export const startSupportSession = createServerFn({ method: "POST" })
       .maybeSingle();
     if (!org) throw new Error("Organization not found");
 
-    // Find target profile id for tg_support_session_guard, which checks the
-    // target's memberships. memberships.user_id references profiles.id, so we
-    // pass the profile id here — not auth_user_id.
+    // tg_support_session_guard reads memberships by target_user_id; that column
+    // therefore stores an auth.users.id. Pick any active client member of the
+    // target org, and fall back to the actor's own auth uid if none exist yet.
     const { data: targetMember } = await supabaseAdmin
       .from("memberships")
       .select("user_id")
@@ -80,7 +74,7 @@ export const startSupportSession = createServerFn({ method: "POST" })
       .order("created_at", { ascending: true })
       .limit(1)
       .maybeSingle();
-    const targetAuthUserId = (targetMember?.user_id as string | null) ?? profile.id;
+    const targetAuthUserId = (targetMember?.user_id as string | null) ?? context.userId;
 
     const expiresAt = new Date(Date.now() + 60 * 60 * 1000).toISOString();
     const trace = `sv_${Math.random().toString(36).slice(2, 10)}${Date.now().toString(36)}`;
