@@ -130,7 +130,7 @@ function CvPage() {
           </p>
         ) : (
           <ul className="divide-y">
-            {versions.map((v) => {
+            {(versions as Array<{ id: string; filename: string; size: number | null; created_at: string }>).map((v) => {
               const isCurrent = v.id === currentId;
               return (
                 <li
