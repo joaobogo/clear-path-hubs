@@ -236,6 +236,7 @@ function SideBySide({ matchId, onDone }: { matchId: string; onDone: () => void }
           <Button
             disabled={doAction.isPending}
             onClick={() => doAction.mutate("approve_for_client")}
+            data-qa-action="publish-approve"
           >
             {doAction.isPending ? "Publishing…" : "Approve & Publish"}
           </Button>
@@ -243,6 +244,7 @@ function SideBySide({ matchId, onDone }: { matchId: string; onDone: () => void }
             variant="secondary"
             disabled={doAction.isPending}
             onClick={() => doAction.mutate("hold")}
+            data-qa-action="publish-hold"
           >
             Hold
           </Button>
