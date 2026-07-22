@@ -77,7 +77,7 @@ function PositionsPage() {
           <form
             onSubmit={(e) => {
               e.preventDefault();
-              navigate({ search: (s) => ({ ...s, q: q || undefined }) });
+              navigate({ search: (s: Record<string, unknown>) => ({ ...s, q: q || undefined }) });
             }}
             className="flex items-center gap-2"
           >
@@ -91,7 +91,7 @@ function PositionsPage() {
           <Select
             value={status || "all"}
             onValueChange={(v) =>
-              navigate({ search: (s) => ({ ...s, status: v === "all" ? undefined : v }) })
+              navigate({ search: (s: Record<string, unknown>) => ({ ...s, status: v === "all" ? undefined : v }) })
             }
           >
             <SelectTrigger className="h-9 w-40">
