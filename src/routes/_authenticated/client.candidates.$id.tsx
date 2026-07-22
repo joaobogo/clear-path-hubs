@@ -253,18 +253,11 @@ function CandidateDetailPage() {
             <dl className="space-y-1 text-xs">
               <div>
                 <dt className="text-muted-foreground">Location</dt>
-                <dd>{match.candidate_profiles?.location ?? "—"}</dd>
+                <dd>{candidate.candidate.location ?? "—"}</dd>
               </div>
               <div>
                 <dt className="text-muted-foreground">Availability</dt>
-                <dd>
-                  {(() => {
-                    const av = match.candidate_profiles?.availability as AnyRow | null;
-                    if (!av) return "—";
-                    if (typeof av === "string") return av;
-                    return av.status ?? av.value ?? JSON.stringify(av);
-                  })()}
-                </dd>
+                <dd>{candidate.candidate.availability ?? "—"}</dd>
               </div>
             </dl>
           </div>
