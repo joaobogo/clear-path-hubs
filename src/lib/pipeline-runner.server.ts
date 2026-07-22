@@ -319,9 +319,9 @@ export async function runHydrationOnly(matchId: string): Promise<PipelineOutcome
   try {
     const ctx = await loadCtx(s, matchId);
     if (!ctx.file) {
-      await setState(s, matchId, "failed", { trace_id, code: "cv_unreadable", message: "No CV on file." });
-      await recordJob(s, matchId, "hydrate", "failed", trace_id, { code: "cv_unreadable", message: "no_cv" });
-      return { match_id: matchId, trace_id, final_state: "failed", steps: [{ step: "hydrate", ok: false, note: "no_cv" }] };
+      await setState(s, matchId, "manual_review_required", { trace_id, code: "missing_usable_cv", message: "No CV on file — manual review required." });
+      await recordJob(s, matchId, "hydrate", "failed", trace_id, { code: "missing_usable_cv", message: "no_cv" });
+      return { match_id: matchId, trace_id, final_state: "manual_review_required", steps: [{ step: "hydrate", ok: false, note: "no_cv" }] };
     }
     const cvText = ctx.file.extracted_text ?? "";
     if (!cvText || cvText.length < 60) {
