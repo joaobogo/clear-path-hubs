@@ -1,0 +1,1255 @@
+{
+  "pages": [
+    {
+      "slug": "about",
+      "url": "https://taasflow.com/about",
+      "title": "About TaaSFlow — Operators Rebuilding Recruiting",
+      "h1": "We built the hiring system that hire.",
+      "description": "TaaSFlow replaces the traditional agency model with subscription recruiting. Learn how we deliver ranked candidates in 14 days with no placement fees.",
+      "og_image": "https://taasflow.com/og-image.png",
+      "content_len": 9718,
+      "top_headings": [
+        "# We built the hiring system that hire.",
+        "## From HR Frustration to Recruiting Innovation",
+        "## From a broken model to a hiring throughput system",
+        "### The old model is broken",
+        "### Why TAASFlow exists",
+        "### Talent-as-a-Service, not agency",
+        "### A faster, transparent delivery",
+        "### Built for hiring throughput"
+      ]
+    },
+    {
+      "slug": "blog",
+      "url": "https://taasflow.com/blog",
+      "title": "Recruiting Insights & Hiring Strategy | TaaSFlow Journal",
+      "h1": "The TaaSFlow Journal",
+      "description": "Recruiting strategy, talent intelligence, and hiring operations insights from the TaaSFlow Journal.",
+      "og_image": "https://taasflow.com/og-image.png",
+      "content_len": 15430,
+      "top_headings": [
+        "# The TaaSFlow Journal",
+        "## Editorial Sections",
+        "### Section Hiring Ops",
+        "### Section Taa S",
+        "### Section Industry",
+        "### Section Playbooks",
+        "### Section Case Studies",
+        "### Section H R Leadership"
+      ]
+    },
+    {
+      "slug": "case-studies",
+      "url": "https://taasflow.com/case-studies",
+      "title": "Case Studies & Hiring Success Stories | TaaSFlow",
+      "h1": "Success Stories",
+      "description": "Real hiring transformations from TaaSFlow case studies — how teams cut time-to-hire, lifted quality-of-hire, and scaled without agency fees.",
+      "og_image": "https://taasflow.com/og-image.png",
+      "content_len": 3310,
+      "top_headings": [
+        "# Success Stories",
+        "## SafiTech: Scaling a Development Team in 4 Weeks",
+        "### The Challenge",
+        "### Our Solution",
+        "### Results",
+        "## Sterling Law Partners: Supporting a Major Litigation with Rapid Paralegal Deployment",
+        "### The Challenge",
+        "### Our Solution"
+      ]
+    },
+    {
+      "slug": "contact",
+      "url": "https://taasflow.com/contact",
+      "title": "Contact | TaaS - Talent as a Service",
+      "h1": "Contact us",
+      "description": "Talk to TaaSFlow about subscription recruiting. Book a call, start a $399 pilot, or replace agency fees with ranked candidates.",
+      "og_image": "https://taasflow.com/og-image.png",
+      "content_len": 472,
+      "top_headings": [
+        "# Contact us",
+        "## Book a call or send a message"
+      ]
+    },
+    {
+      "slug": "employer-onboarding",
+      "url": "https://taasflow.com/employer-onboarding",
+      "title": "Employer Onboarding | TaaSFlow",
+      "h1": "Hero Title Hero Title Accent",
+      "description": "Onboard your first pilot role in minutes: share your requirements and receive a ranked shortlist within 14 days — no placement fees, no salary %.",
+      "og_image": "https://taasflow.com/og-image.png",
+      "content_len": 1084,
+      "top_headings": [
+        "# Hero Title Hero Title Accent",
+        "## Journey Title",
+        "### Step1 Title",
+        "### Step2 Title",
+        "### Step3 Title",
+        "### Step4 Title",
+        "### Step5 Title",
+        "### Step6 Title"
+      ]
+    },
+    {
+      "slug": "enterprise",
+      "url": "https://taasflow.com/enterprise",
+      "title": "Enterprise Recruiting on Subscription | TaaSFlow",
+      "h1": "Scale Your Workforce. Globally.",
+      "description": "Enterprise talent programs on a subscription: dedicated pods, embedded recruiters, SLAs, and reporting for organizations hiring at scale.",
+      "og_image": "https://taasflow.com/og-image.png",
+      "content_len": 7827,
+      "top_headings": [
+        "# Scale Your Workforce. Globally.",
+        "## Built for High-Volume, Global Operations",
+        "### Global Reach",
+        "### 14-Day Delivery Cycles",
+        "### Visa & Relocation",
+        "### Candidate Ownership",
+        "### Pipeline Analytics",
+        "### Dedicated Pod"
+      ]
+    },
+    {
+      "slug": "faq",
+      "url": "https://taasflow.com/faq",
+      "title": "Hiring FAQ — How TaaSFlow Subscription Recruiting Works",
+      "h1": "Frequently asked questions",
+      "description": "TaaSFlow FAQ — pricing, scoring, delivery cadence, data privacy, and how subscription recruiting differs from traditional agencies.",
+      "og_image": "https://taasflow.com/og-image.png",
+      "content_len": 1848,
+      "top_headings": [
+        "# Frequently asked questions",
+        "## Common questions",
+        "### Are you a staffing agency?",
+        "### Do you charge placement fees or salary percentages?",
+        "### What's the difference between one-off and subscription?",
+        "### How fast do you deliver candidates?",
+        "### What do we get in a delivery?",
+        "### What roles and regions do you support?"
+      ]
+    },
+    {
+      "slug": "global-talent",
+      "url": "https://taasflow.com/global-talent",
+      "title": "TaaSFlow Network — Private Network for Senior Talent",
+      "h1": "A quieter way to be considered for the right work.",
+      "description": "A curated network for highly skilled professionals. Express interest in selective briefs, or stay quietly discoverable for premium opportunities worldwide.",
+      "og_image": "https://taasflow.com/og-image.png",
+      "content_len": 4490,
+      "top_headings": [
+        "# A quieter way to be considered for the right work.",
+        "## Built for people who don’t need another job board.",
+        "## Three ways to be considered.",
+        "### Express interest in a role",
+        "### Join the network",
+        "### Be quietly discoverable",
+        "## Fewer roles. Higher signal. Considered work for considered people.",
+        "## Your career, on your terms."
+      ]
+    },
+    {
+      "slug": "how-it-works",
+      "url": "https://taasflow.com/how-it-works",
+      "title": "How it works | TaaS - Talent as a Service",
+      "h1": "Built by Industry Leaders on 10 Years of Data",
+      "description": "TaaSFlow's 5-step operating system delivers ranked, pre-screened candidates in 14 days — precision intake, multi-channel sourcing, and weekly drops.",
+      "og_image": "https://taasflow.com/og-image.png",
+      "content_len": 12781,
+      "top_headings": [
+        "# Built by Industry Leaders on 10 Years of Data",
+        "## From HR Frustration to Recruiting Innovation",
+        "## Traditional Recruiting Is Broken by Design",
+        "### Proprietary Technology Stack",
+        "### Data-Backed Decision Making",
+        "### Global Recruiting Intelligence",
+        "### 14-Day Execution Standard",
+        "## Five Pillars of Precision"
+      ]
+    },
+    {
+      "slug": "index",
+      "url": "https://taasflow.com/",
+      "title": "TaaSFlow — Your hiring team, on demand",
+      "h1": "Your hiring team. On demand.",
+      "description": "Subscription recruiting that delivers ranked, pre-screened candidates in 14 days — with a live pipeline dashboard and zero placement fees.",
+      "og_image": "https://taasflow.com/og-image.png",
+      "content_len": 12244,
+      "top_headings": [
+        "# Your hiring team. On demand.",
+        "## Cut your cost-per-hire. See the math.",
+        "### Assumptions & Inputs",
+        "## You found the perfect candidate. Now comes the invoice.",
+        "### What agencies charge",
+        "### How TaaSFlow works",
+        "## A repeatable operating system, role by role",
+        "### Blueprint & Calibration"
+      ]
+    },
+    {
+      "slug": "jobs",
+      "url": "https://taasflow.com/jobs",
+      "title": "Open Roles — Global Remote & Hybrid Careers | TaaSFlow",
+      "h1": "Find Your Next Role Opportunity",
+      "description": "Browse open positions from top companies. Apply directly and track your progress through our candidate portal.",
+      "og_image": "https://taasflow.com/og-image.png",
+      "content_len": 1721,
+      "top_headings": [
+        "# Find Your Next Role Opportunity",
+        "### Get Job Alerts",
+        "## Featured Section",
+        "## More opportunities",
+        "## Don't see the right role?"
+      ]
+    },
+    {
+      "slug": "knowledge-base",
+      "url": "https://taasflow.com/knowledge-base",
+      "title": "TaaSFlow Knowledge Base — Guides for Hiring Teams",
+      "h1": "How Can We Help?",
+      "description": "Searchable knowledge base for hiring teams and candidates: intake best practices, scoring criteria, delivery cadence, billing, and support.",
+      "og_image": "https://taasflow.com/og-image.png",
+      "content_len": 4072,
+      "top_headings": [
+        "# How Can We Help?",
+        "### What is Talent-as-a-Service?",
+        "### How Does the Process Work?",
+        "### Getting Started as an Employer",
+        "### Getting Started as a Candidate",
+        "### How to Complete the Intake Blueprint",
+        "### Understanding Candidate Scoring",
+        "### Managing Your Hiring Pipeline"
+      ]
+    },
+    {
+      "slug": "partnerships-staffing",
+      "url": "https://taasflow.com/partnerships/staffing",
+      "title": "Staffing Agency Partnership Program | TaaSFlow",
+      "h1": "Everybody Wins When You Partner with TaaS",
+      "description": "Partner with TaaSFlow to power your staffing agency with subscription-based candidate sourcing, ranked shortlists, and dedicated recruiter capacity.",
+      "og_image": "https://taasflow.com/og-image.png",
+      "content_len": 4553,
+      "top_headings": [
+        "# Everybody Wins When You Partner with TaaS",
+        "## A Partnership Where Everyone Wins",
+        "### Your Agency",
+        "### Your Clients",
+        "### TaasFlow",
+        "## More Affordable Than Contingency. Better Results.",
+        "## What Our Agency Partners Say",
+        "## Choose Your Partnership Level"
+      ]
+    },
+    {
+      "slug": "pilot",
+      "url": "https://taasflow.com/pilot",
+      "title": "Start your $399 Pilot | TaaSFlow",
+      "h1": "What the Pilot Is",
+      "description": "Start your pilot for 2 weeks. Complete our role blueprint wizard and experience systematic hiring execution.",
+      "og_image": "https://taasflow.com/og-image.png",
+      "content_len": 1457,
+      "top_headings": [
+        "# What the Pilot Is",
+        "#### Complete role intake",
+        "#### Book Call",
+        "## What Happens Next",
+        "### Blueprint Review",
+        "### Kickoff Call",
+        "### Execution Begins",
+        "### Scored Results"
+      ]
+    },
+    {
+      "slug": "pricing",
+      "url": "https://taasflow.com/pricing",
+      "title": "Pricing — Subscription Recruiting from $6,999/mo | TaaSFlow",
+      "h1": "Plans that scale with volume",
+      "description": "Transparent flat-fee subscription recruiting from TaaSFlow. Ranked, pre-screened candidates in 14 days — no placement fees, no salary percentages.",
+      "og_image": "https://taasflow.com/og-image.png",
+      "content_len": 3494,
+      "top_headings": [
+        "# Plans that scale with volume",
+        "### Pilot — Single Position",
+        "### Multi Position",
+        "### Hiring Sprint",
+        "## Included Title",
+        "### Included Title",
+        "### Excluded Title",
+        "## After Title"
+      ]
+    },
+    {
+      "slug": "privacy",
+      "url": "https://taasflow.com/privacy",
+      "title": "Global Recruitment Privacy Notice | TaaSFlow",
+      "h1": "Global Recruitment Privacy Notice",
+      "description": "How TaaSFlow collects, uses, and protects personal data under GDPR, CCPA/CPRA, UAE PDPL, and other global privacy laws.",
+      "og_image": "https://taasflow.com/og-image.png",
+      "content_len": 11327,
+      "top_headings": [
+        "# Global Recruitment Privacy Notice",
+        "## 1. Who We Are",
+        "## 2. Personal Data We Collect",
+        "### Identification & Contact Information",
+        "### Professional Information",
+        "### Recruitment Process Information",
+        "### Publicly Available Information",
+        "### Sensitive / Special Category Data (Limited)"
+      ]
+    },
+    {
+      "slug": "resources",
+      "url": "https://taasflow.com/resources",
+      "title": "Recruiting Resources & Hiring Playbooks | TaaSFlow",
+      "h1": "Recruiting resources for talent leaders",
+      "description": "Free hiring resources from TaaSFlow: sample deliverables, ROI calculator, subscription recruiting FAQ, and step-by-step guides for talent leaders.",
+      "og_image": "https://taasflow.com/og-image.png",
+      "content_len": 2019,
+      "top_headings": [
+        "# Recruiting resources for talent leaders",
+        "## Recruiting playbooks and guides",
+        "### ROI calculator",
+        "### Sample deliverable pack",
+        "### How it works",
+        "### FAQ",
+        "## How to use these resources",
+        "### Who they're for"
+      ]
+    },
+    {
+      "slug": "talent-network",
+      "url": "https://taasflow.com/talent-network",
+      "title": "Join the TaaSFlow Talent Network — private community for senior professionals",
+      "h1": "Headline",
+      "description": "Join TaaSFlow: a private talent network for senior specialists and leaders. Get matched to vetted roles at growth-stage and enterprise clients globally.",
+      "og_image": "https://taasflow.com/og-image.png",
+      "content_len": 364,
+      "top_headings": [
+        "# Headline",
+        "## Heading",
+        "### Title",
+        "### Title",
+        "### Title",
+        "## Heading",
+        "### Title",
+        "### Title"
+      ]
+    },
+    {
+      "slug": "terms",
+      "url": "https://taasflow.com/terms",
+      "title": "Terms of Service | TaaSFlow",
+      "h1": "Terms of Service",
+      "description": "Terms of Service for TaaSFlow. Read the terms and conditions governing your use of our subscription-based recruiting platform.",
+      "og_image": "https://taasflow.com/og-image.png",
+      "content_len": 5948,
+      "top_headings": [
+        "# Terms of Service",
+        "## 1. Acceptance of Terms",
+        "## 2. Description of Services",
+        "## 3. Account Registration",
+        "## 4. Subscriptions, Pricing, and Payment",
+        "## 5. Client Obligations",
+        "## 6. Candidate Data and Pipeline Ownership",
+        "## 7. Intellectual Property"
+      ]
+    }
+  ],
+  "industries": [
+    {
+      "slug": "accounting",
+      "url": "https://taasflow.com/industries/accounting",
+      "title": "Accounting & Audit Talent | TaaSFlow - Talent as a Service",
+      "h1": "Accounting Talent for Firms & Corporate Finance",
+      "description": "On-demand CPAs, auditors, and accounting professionals. Credential-verified talent for busy season, audits, and special projects.",
+      "og_image": "https://taasflow.com/og-image.png",
+      "content_len": 8836,
+      "top_headings": [
+        "# Accounting Talent for Firms & Corporate Finance",
+        "## Accounting & Audit Industry Insights",
+        "### CPA Shortage",
+        "### Busy Season Gap",
+        "### Temp Rate Premium",
+        "### Pipeline Crisis",
+        "### Industry Overview",
+        "### Ready to transform your accounting & audit recruiting?"
+      ]
+    },
+    {
+      "slug": "compare",
+      "url": "https://taasflow.com/industries/compare",
+      "title": "Compare Recruiting Across 24 Industries | TaaSFlow",
+      "h1": "Industry Comparison",
+      "description": "Side-by-side comparison of hiring difficulty, typical salary bands, and top in-demand roles across 24 industries TaaSFlow recruits for.",
+      "og_image": "https://taasflow.com/og-image.png",
+      "content_len": 4145,
+      "top_headings": [
+        "# Industry Comparison",
+        "## Filter and compare industries"
+      ]
+    },
+    {
+      "slug": "construction",
+      "url": "https://taasflow.com/industries/construction",
+      "title": "Construction & Architecture Talent | TaaSFlow - Talent as a Service",
+      "h1": "Construction Talent for Contractors & Design Firms",
+      "description": "On-demand construction professionals including project managers, estimators, and administrative staff. Scale for projects and peak seasons.",
+      "og_image": "https://taasflow.com/og-image.png",
+      "content_len": 9481,
+      "top_headings": [
+        "# Construction Talent for Contractors & Design Firms",
+        "## Construction & Architecture Industry Insights",
+        "### Construction Spending",
+        "### Labor Shortage",
+        "### PM Turnover",
+        "### Backlog Growth",
+        "### Industry Overview",
+        "### Ready to transform your construction & architecture recruiting?"
+      ]
+    },
+    {
+      "slug": "consulting",
+      "url": "https://taasflow.com/industries/consulting",
+      "title": "Consulting Talent | TaaSFlow - Talent as a Service",
+      "h1": "Consulting Talent for Firms & Advisory Practices",
+      "description": "On-demand consulting professionals including analysts, associates, and project managers. Extend your delivery capacity for more engagements.",
+      "og_image": "https://taasflow.com/og-image.png",
+      "content_len": 9097,
+      "top_headings": [
+        "# Consulting Talent for Firms & Advisory Practices",
+        "## Consulting Industry Insights",
+        "### Consulting Market",
+        "### Utilization Target",
+        "### Bench Cost",
+        "### Subcontract Premium",
+        "### Industry Overview",
+        "### Ready to transform your consulting recruiting?"
+      ]
+    },
+    {
+      "slug": "cybersecurity",
+      "url": "https://taasflow.com/industries/cybersecurity",
+      "title": null,
+      "h1": null,
+      "description": null,
+      "og_image": null,
+      "content_len": 0,
+      "top_headings": []
+    },
+    {
+      "slug": "data-analytics",
+      "url": "https://taasflow.com/industries/data-analytics",
+      "title": "Data & Analytics Talent | TaaSFlow - Talent as a Service",
+      "h1": "Data Talent for Analytics-Driven Organizations",
+      "description": "On-demand data professionals including data scientists, BI analysts, and data engineers. Build analytics capabilities on-demand.",
+      "og_image": "https://taasflow.com/og-image.png",
+      "content_len": 8743,
+      "top_headings": [
+        "# Data Talent for Analytics-Driven Organizations",
+        "## Data & Analytics Industry Insights",
+        "### Big Data Market",
+        "### Data Scientist Gap",
+        "### BI Adoption",
+        "### Analytics ROI",
+        "### Industry Overview",
+        "### Ready to transform your data & analytics recruiting?"
+      ]
+    },
+    {
+      "slug": "ecommerce",
+      "url": "https://taasflow.com/industries/ecommerce",
+      "title": "E-commerce & Retail Talent | TaaSFlow - Talent as a Service",
+      "h1": "E-commerce Talent for DTC Brands & Retailers",
+      "description": "On-demand e-commerce professionals including e-commerce managers, merchandisers, and supply chain specialists. Scale for peak seasons.",
+      "og_image": "https://taasflow.com/og-image.png",
+      "content_len": 9494,
+      "top_headings": [
+        "# E-commerce Talent for DTC Brands & Retailers",
+        "## E-commerce & Retail Industry Insights",
+        "### E-commerce Sales",
+        "### Holiday Surge",
+        "### Cart Abandonment",
+        "### D2C Growth",
+        "### Industry Overview",
+        "### Ready to transform your e-commerce & retail recruiting?"
+      ]
+    },
+    {
+      "slug": "finance",
+      "url": "https://taasflow.com/industries/finance",
+      "title": "Finance & Banking Talent | TaaSFlow - Talent as a Service",
+      "h1": "Financial Professionals for Banks, Funds & Corporations",
+      "description": "On-demand financial analysts, CPAs, compliance officers, and banking professionals. Credential-verified finance talent for your team.",
+      "og_image": "https://taasflow.com/og-image.png",
+      "content_len": 9615,
+      "top_headings": [
+        "# Financial Professionals for Banks, Funds & Corporations",
+        "## Finance & Banking Industry Insights",
+        "### Finance Market",
+        "### CPA Demand",
+        "### Compliance Costs",
+        "### Audit Season Surge",
+        "### Industry Overview",
+        "### Ready to transform your finance & banking recruiting?"
+      ]
+    },
+    {
+      "slug": "healthcare",
+      "url": "https://taasflow.com/industries/healthcare",
+      "title": "Healthcare Talent | TaaSFlow - Talent as a Service",
+      "h1": "Healthcare Talent Built for Compliance, Credentials & Patient Care",
+      "description": "On-demand healthcare professionals including medical coders, billers, and operations staff. HIPAA-compliant talent with credential verification.",
+      "og_image": "https://taasflow.com/og-image.png",
+      "content_len": 9782,
+      "top_headings": [
+        "# Healthcare Talent Built for Compliance, Credentials & Patient Care",
+        "## Healthcare Industry Insights",
+        "### Healthcare Spending",
+        "### Worker Shortage",
+        "### Revenue Cycle",
+        "### Denial Rates",
+        "### Industry Overview",
+        "### Ready to transform your healthcare recruiting?"
+      ]
+    },
+    {
+      "slug": "hospitality",
+      "url": "https://taasflow.com/industries/hospitality",
+      "title": "Hospitality & Events Talent | TaaSFlow - Talent as a Service",
+      "h1": "Hospitality Talent for Hotels, Restaurants, Resorts & Event Venues",
+      "description": "On-demand hospitality professionals for hotels, restaurants, resorts, and event venues. Seasonal hiring, shift scheduling, and frontline workforce talent.",
+      "og_image": "https://taasflow.com/og-image.png",
+      "content_len": 10274,
+      "top_headings": [
+        "# Hospitality Talent for Hotels, Restaurants, Resorts & Event Venues",
+        "## Hospitality & Events Industry Insights",
+        "### Hospitality Market",
+        "### Turnover Rate",
+        "### Labor Shortage",
+        "### Seasonal Surge",
+        "### Industry Overview",
+        "### Ready to transform your hospitality & events recruiting?"
+      ]
+    },
+    {
+      "slug": "human-resources",
+      "url": "https://taasflow.com/industries/human-resources",
+      "title": "Human Resources Talent | TaaSFlow - Talent as a Service",
+      "h1": "HR Talent for Scaling Organizations",
+      "description": "On-demand HR professionals including generalists, recruiters, and people operations specialists. Scale your HR function without permanent headcount.",
+      "og_image": "https://taasflow.com/og-image.png",
+      "content_len": 8911,
+      "top_headings": [
+        "# HR Talent for Scaling Organizations",
+        "## Human Resources Industry Insights",
+        "### HR Tech Market",
+        "### HR-to-Employee",
+        "### Onboarding Cost",
+        "### Compliance Risk",
+        "### Industry Overview",
+        "### Ready to transform your human resources recruiting?"
+      ]
+    },
+    {
+      "slug": "index",
+      "url": "https://taasflow.com/industries",
+      "title": "Industry Recruiting Solutions | TaaSFlow",
+      "h1": "Title",
+      "description": "Industry-specific recruiting solutions across 22+ verticals — tech, healthcare, finance, legal, hospitality, logistics, and more. Subscription pricing.",
+      "og_image": "https://taasflow.com/og-image.png",
+      "content_len": 3381,
+      "top_headings": [
+        "# Title",
+        "## Cta Title"
+      ]
+    },
+    {
+      "slug": "insurance",
+      "url": "https://taasflow.com/industries/insurance",
+      "title": "Insurance Talent | TaaSFlow - Talent as a Service",
+      "h1": "Insurance Talent for Carriers, Agencies & MGAs",
+      "description": "On-demand insurance professionals including licensed agents, claims adjusters, and underwriters. License-verified talent for carriers and agencies.",
+      "og_image": "https://taasflow.com/og-image.png",
+      "content_len": 9239,
+      "top_headings": [
+        "# Insurance Talent for Carriers, Agencies & MGAs",
+        "## Insurance Industry Insights",
+        "### Insurance Market",
+        "### Agent Shortage",
+        "### CAT Losses",
+        "### Insurtech Disruption",
+        "### Industry Overview",
+        "### Ready to transform your insurance recruiting?"
+      ]
+    },
+    {
+      "slug": "legal",
+      "url": "https://taasflow.com/industries/legal",
+      "title": "Legal Industry Talent | TaaSFlow - Talent as a Service",
+      "h1": "Flexible Legal Talent for Firms & Departments",
+      "description": "On-demand paralegals, legal researchers, and support staff for law firms and legal departments. Flexible legal talent when you need it most.",
+      "og_image": "https://taasflow.com/og-image.png",
+      "content_len": 9518,
+      "top_headings": [
+        "# Flexible Legal Talent for Firms & Departments",
+        "## Legal Industry Insights",
+        "### Legal Market Growth",
+        "### Paralegal Demand",
+        "### E-Discovery Volume",
+        "### Temp Legal Spend",
+        "### Industry Overview",
+        "### Ready to transform your legal recruiting?"
+      ]
+    },
+    {
+      "slug": "marketing",
+      "url": "https://taasflow.com/industries/marketing",
+      "title": "Marketing & Advertising Talent | TaaSFlow - Talent as a Service",
+      "h1": "Marketing Talent That Drives Growth & Brand Impact",
+      "description": "On-demand marketing professionals including growth marketers, content creators, and brand strategists. Portfolio-verified marketing talent.",
+      "og_image": "https://taasflow.com/og-image.png",
+      "content_len": 9718,
+      "top_headings": [
+        "# Marketing Talent That Drives Growth & Brand Impact",
+        "## Marketing & Advertising Industry Insights",
+        "### Digital Ad Spend",
+        "### Marketing Talent Gap",
+        "### Channel Fragmentation",
+        "### Content Demand",
+        "### Industry Overview",
+        "### Ready to transform your marketing & advertising recruiting?"
+      ]
+    },
+    {
+      "slug": "media",
+      "url": "https://taasflow.com/industries/media",
+      "title": "Media & Entertainment Talent | TaaSFlow - Talent as a Service",
+      "h1": "Media Talent for Production & Content Companies",
+      "description": "On-demand media professionals including content creators, producers, editors, and digital strategists. Scale your creative team.",
+      "og_image": "https://taasflow.com/og-image.png",
+      "content_len": 8857,
+      "top_headings": [
+        "# Media Talent for Production & Content Companies",
+        "## Media & Entertainment Industry Insights",
+        "### Creator Economy",
+        "### Video Demand",
+        "### Podcast Growth",
+        "### Content Velocity",
+        "### Industry Overview",
+        "### Ready to transform your media & entertainment recruiting?"
+      ]
+    },
+    {
+      "slug": "non-profit",
+      "url": "https://taasflow.com/industries/non-profit",
+      "title": "Non-Profit Talent | TaaSFlow - Talent as a Service",
+      "h1": "Non-Profit Talent for Mission-Driven Organizations",
+      "description": "On-demand non-profit professionals including program managers, fundraisers, and grant writers. Build your mission-driven team affordably.",
+      "og_image": "https://taasflow.com/og-image.png",
+      "content_len": 8869,
+      "top_headings": [
+        "# Non-Profit Talent for Mission-Driven Organizations",
+        "## Non-Profit Industry Insights",
+        "### Non-Profit Sector",
+        "### Employment",
+        "### Grant Spending",
+        "### Hiring Challenges",
+        "### Industry Overview",
+        "### Ready to transform your non-profit recruiting?"
+      ]
+    },
+    {
+      "slug": "private-equity",
+      "url": "https://taasflow.com/industries/private-equity",
+      "title": "Private Equity & VC Talent | TaaSFlow - Talent as a Service",
+      "h1": "PE/VC Talent for Funds & Portfolio Companies",
+      "description": "On-demand PE/VC professionals including deal analysts, due diligence specialists, and portfolio operations talent for funds and portcos.",
+      "og_image": "https://taasflow.com/og-image.png",
+      "content_len": 9094,
+      "top_headings": [
+        "# PE/VC Talent for Funds & Portfolio Companies",
+        "## Private Equity & VC Industry Insights",
+        "### AUM",
+        "### Deal Volume",
+        "### Talent Cost",
+        "### Portfolio Need",
+        "### Industry Overview",
+        "### Ready to transform your private equity & vc recruiting?"
+      ]
+    },
+    {
+      "slug": "public-sector",
+      "url": "https://taasflow.com/industries/public-sector",
+      "title": "Public Sector Talent | TaaSFlow - Talent as a Service",
+      "h1": "Agile Talent Solutions for Government & Public Agencies",
+      "description": "On-demand professionals for government agencies and public sector organizations. Meet project deadlines without lengthy hiring processes.",
+      "og_image": "https://taasflow.com/og-image.png",
+      "content_len": 9801,
+      "top_headings": [
+        "# Agile Talent Solutions for Government & Public Agencies",
+        "## Public Sector Industry Insights",
+        "### Government Workforce",
+        "### Hiring Timeline",
+        "### Federal IT Gap",
+        "### Retirement Wave",
+        "### Industry Overview",
+        "### Ready to transform your public sector recruiting?"
+      ]
+    },
+    {
+      "slug": "real-estate",
+      "url": "https://taasflow.com/industries/real-estate",
+      "title": "Real Estate Talent | TaaSFlow - Talent as a Service",
+      "h1": "Real Estate Professionals for Brokerages & Property Management",
+      "description": "On-demand real estate professionals including licensed agents, property managers, and transaction coordinators. Scale for market opportunities.",
+      "og_image": "https://taasflow.com/og-image.png",
+      "content_len": 9312,
+      "top_headings": [
+        "# Real Estate Professionals for Brokerages & Property Management",
+        "## Real Estate Industry Insights",
+        "### Transaction Volume",
+        "### Agent Count",
+        "### Commission Pressure",
+        "### TC Market",
+        "### Industry Overview",
+        "### Ready to transform your real estate recruiting?"
+      ]
+    },
+    {
+      "slug": "saas",
+      "url": "https://taasflow.com/industries/saas",
+      "title": "SaaS & Cloud Talent | TaaSFlow - Talent as a Service",
+      "h1": "SaaS Talent for Product-Led Growth Companies",
+      "description": "On-demand SaaS professionals including product managers, customer success, and GTM specialists. Talent that understands recurring revenue and PLG.",
+      "og_image": "https://taasflow.com/og-image.png",
+      "content_len": 9120,
+      "top_headings": [
+        "# SaaS Talent for Product-Led Growth Companies",
+        "## SaaS & Cloud Industry Insights",
+        "### SaaS Market",
+        "### Growth Rate",
+        "### Churn Impact",
+        "### CSM Ratio",
+        "### Industry Overview",
+        "### Ready to transform your saas & cloud recruiting?"
+      ]
+    },
+    {
+      "slug": "sales",
+      "url": "https://taasflow.com/industries/sales",
+      "title": "Sales Talent | TaaSFlow - Talent as a Service",
+      "h1": "Sales Professionals Who Drive Revenue Growth",
+      "description": "On-demand sales professionals including SDRs, account executives, and sales managers. Quota-crushing talent with verified track records.",
+      "og_image": "https://taasflow.com/og-image.png",
+      "content_len": 9497,
+      "top_headings": [
+        "# Sales Professionals Who Drive Revenue Growth",
+        "## Sales Industry Insights",
+        "### Sales Rep Turnover",
+        "### Ramp Time",
+        "### Bad Hire Cost",
+        "### Quota Attainment",
+        "### Industry Overview",
+        "### Ready to transform your sales recruiting?"
+      ]
+    },
+    {
+      "slug": "staffing-agencies",
+      "url": "https://taasflow.com/industries/staffing-agencies",
+      "title": "Staffing Agency Partners | TaaSFlow - Talent as a Service",
+      "h1": "White-Label Recruiting for Staffing & Recruiting Firms",
+      "description": "Backend recruiting support for staffing agencies. Extend your capacity, fill more roles, and serve clients better without adding internal overhead.",
+      "og_image": "https://taasflow.com/og-image.png",
+      "content_len": 9090,
+      "top_headings": [
+        "# White-Label Recruiting for Staffing & Recruiting Firms",
+        "## Staffing Agencies Industry Insights",
+        "### Staffing Industry",
+        "### Growth Rate",
+        "### Fill Rate Challenge",
+        "### Recruiter Turnover",
+        "### Industry Overview",
+        "### Ready to transform your staffing agencies recruiting?"
+      ]
+    },
+    {
+      "slug": "tech",
+      "url": "https://taasflow.com/industries/tech",
+      "title": "Tech Industry Talent | TaaSFlow - Talent as a Service",
+      "h1": "Engineering Talent On-Demand for Tech Companies",
+      "description": "On-demand software developers, engineers, and IT specialists for tech companies. Scale your engineering team in days, not months.",
+      "og_image": "https://taasflow.com/og-image.png",
+      "content_len": 9955,
+      "top_headings": [
+        "# Engineering Talent On-Demand for Tech Companies",
+        "## Technology Industry Insights",
+        "### Developer Shortage",
+        "### Time to Hire",
+        "### Passive Talent",
+        "### Recruiter Fees",
+        "### Industry Overview",
+        "### Ready to transform your technology recruiting?"
+      ]
+    }
+  ],
+  "blog": {
+    "total": 304,
+    "rich": 72,
+    "sparse": 232,
+    "rich_samples": [
+      {
+        "slug": "30-60-90-onboarding-plan-2026",
+        "url": "https://taasflow.com/blog/30-60-90-onboarding-plan-2026",
+        "title": "The 30-60-90 Day Onboarding Plan That Reduces Early Turnover by 40%",
+        "h1": "The 30-60-90 Day Onboarding Plan That Reduces Early Turnover by 40%",
+        "description": "A research-backed onboarding framework with week-by-week milestones, manager checklists, and templates for remote and hybrid teams.",
+        "og_image": "https://taasflow.com/blog/onboarding.jpg",
+        "content_len": 7989,
+        "top_headings": [
+          "## The Onboarding Crisis in Numbers",
+          "### Why Most Onboarding Programs Fail",
+          "### The 30-60-90 Framework",
+          "#### Days 1-30: Learn",
+          "#### Days 31-60: Contribute",
+          "#### Days 61-90: Own",
+          "### The Manager's Onboarding Playbook",
+          "### Remote and Hybrid Adaptations"
+        ]
+      },
+      {
+        "slug": "accounting-firm-recruitment-strategies",
+        "url": "https://taasflow.com/blog/accounting-firm-recruitment-strategies",
+        "title": "Accounting Firm Recruitment: How Top Firms Win Campus and Lateral Talent",
+        "h1": "Accounting Firm Recruitment: How Top Firms Win Campus and Lateral Talent",
+        "description": "Campus recruiting for accounting firms has changed dramatically. Here is how leading firms attract both new grads and lateral hires.",
+        "og_image": "https://taasflow.com/blog/cost-per-hire.jpg",
+        "content_len": 3149,
+        "top_headings": [
+          "## Modern Accounting Recruitment",
+          "### Campus Recruiting Evolution",
+          "### The Internship-to-Hire Pipeline",
+          "#### Building a Great Internship Program",
+          "### Lateral Recruitment",
+          "### Diversity in Accounting Recruitment",
+          "### Retention After Hiring"
+        ]
+      },
+      {
+        "slug": "accounting-talent-shortage-big-four",
+        "url": "https://taasflow.com/blog/accounting-talent-shortage-big-four",
+        "title": "The Accounting Talent Shortage: Why Big Four Firms Are Losing the Pipeline War",
+        "h1": "The Accounting Talent Shortage: Why Big Four Firms Are Losing the Pipeline War",
+        "description": "CPA exam candidates dropped 33% in a decade. Here is how accounting firms and corporate finance teams are adapting their hiring strategies.",
+        "og_image": "https://taasflow.com/blog/finance-hiring.jpg",
+        "content_len": 2053,
+        "top_headings": [
+          "## Accounting's Existential Talent Problem",
+          "### Why Students Are Choosing Other Paths",
+          "### Salary Comparison: Accounting vs. Tech (Entry Level)",
+          "### How Leading Firms Are Responding",
+          "### The Subscription Sourcing Advantage"
+        ]
+      },
+      {
+        "slug": "accounting-talent-shortage-guide",
+        "url": "https://taasflow.com/blog/accounting-talent-shortage-guide",
+        "title": "The Accounting Talent Shortage: Why 300,000 CPAs Left and How to Hire the Rest",
+        "h1": "The Accounting Talent Shortage: Why 300,000 CPAs Left and How to Hire the Rest",
+        "description": "The accounting profession lost 300,000 professionals since 2020. Here is how firms and companies can compete for remaining talent.",
+        "og_image": "https://taasflow.com/blog/cost-per-hire.jpg",
+        "content_len": 3232,
+        "top_headings": [
+          "## The Accounting Exodus",
+          "### Why Accountants Are Leaving",
+          "### The Pipeline Problem",
+          "### Compensation Reality",
+          "### How to Compete",
+          "#### For Public Accounting Firms",
+          "#### For Corporate Accounting Departments",
+          "### Alternative Talent Sources"
+        ]
+      },
+      {
+        "slug": "accounting-talent-shortage-solutions",
+        "url": "https://taasflow.com/blog/accounting-talent-shortage-solutions",
+        "title": "The Accounting Talent Shortage: Why Fewer People Are Becoming CPAs and What To Do About It",
+        "h1": "The Accounting Talent Shortage: Why Fewer People Are Becoming CPAs and What To Do About It",
+        "description": "CPA exam candidates dropped 33% since 2016. Here is how accounting firms and companies are adapting their hiring strategies.",
+        "og_image": "https://taasflow.com/blog/accounting.jpg",
+        "content_len": 2572,
+        "top_headings": [
+          "## The CPA Pipeline Crisis",
+          "### Why Young People Are Avoiding Accounting",
+          "### Competitive Compensation Response",
+          "### Innovative Hiring Strategies",
+          "#### 1. Relax CPA Requirements",
+          "#### 2. Technology Integration",
+          "#### 3. Flexible Work Models",
+          "#### 4. Pipeline Development"
+        ]
+      },
+      {
+        "slug": "ai-impact-on-jobs-hiring",
+        "url": "https://taasflow.com/blog/ai-impact-on-jobs-hiring",
+        "title": "How AI Is Changing Jobs: What Employers Need to Know About the Skills Shift",
+        "h1": "How AI Is Changing Jobs: What Employers Need to Know About the Skills Shift",
+        "description": "AI will transform 40% of jobs. Understanding which roles are augmented vs. automated helps you hire for the future, not the past.",
+        "og_image": "https://taasflow.com/blog/ai-recruitment.jpg",
+        "content_len": 2448,
+        "top_headings": [
+          "## AI and the Future of Employment",
+          "### The Augmentation vs. Automation Spectrum",
+          "### Roles Most Likely to Be Augmented (Not Replaced)",
+          "### New Roles Created by AI",
+          "### Hiring for the AI Era",
+          "### Organizational Preparation"
+        ]
+      },
+      {
+        "slug": "ai-in-recruitment",
+        "url": "https://taasflow.com/blog/ai-in-recruitment",
+        "title": "AI in Recruitment 2026: What Works, What Fails, and What Is Next",
+        "h1": "AI in Recruitment 2026: What Works, What Fails, and What Is Next",
+        "description": "Every vendor claims AI capabilities, but what actually works? An honest assessment of AI in recruiting — from resume parsing to predictive analytics.",
+        "og_image": "https://taasflow.com/blog/ai-recruitment.jpg",
+        "content_len": 2654,
+        "top_headings": [
+          "## The AI Hype Cycle",
+          "### What AI Can Actually Do Today",
+          "### What AI Still Cannot Do",
+          "### The TaaS Perspective",
+          "### Evaluating AI Claims",
+          "### The Future of AI in Recruiting"
+        ]
+      },
+      {
+        "slug": "ai-ml-engineering-hiring-guide",
+        "url": "https://taasflow.com/blog/ai-ml-engineering-hiring-guide",
+        "title": "Hiring AI and ML Engineers: The Complete Guide for 2026",
+        "h1": "Hiring AI and ML Engineers: The Complete Guide for 2026",
+        "description": "AI/ML talent is the scarcest and most expensive in tech. Here is how to compete for this critical talent segment. Insights from the TaaSFlow Industry Hi…",
+        "og_image": "https://taasflow.com/blog/ai-recruitment.jpg",
+        "content_len": 3398,
+        "top_headings": [
+          "## The AI/ML Talent Market",
+          "### AI/ML Role Taxonomy",
+          "### Where AI/ML Talent Works",
+          "### Assessment for AI/ML Roles",
+          "#### Technical Interview Structure",
+          "### Competing with Big Tech",
+          "### Retention"
+        ]
+      },
+      {
+        "slug": "ai-replacing-vs-augmenting-recruiters",
+        "url": "https://taasflow.com/blog/ai-replacing-vs-augmenting-recruiters",
+        "title": "AI in Recruiting: What It Actually Replaces vs. What It Amplifies",
+        "h1": "AI in Recruiting: What It Actually Replaces vs. What It Amplifies",
+        "description": "Beyond the hype, a practical analysis of which recruiting tasks AI handles well, which it fails at, and where human judgment remains irreplaceable.",
+        "og_image": "https://taasflow.com/blog/ai-recruitment.jpg",
+        "content_len": 2086,
+        "top_headings": [
+          "## Cutting Through the AI Hype in Recruiting",
+          "### What AI Does Well in Recruiting",
+          "### Where AI Falls Short",
+          "### The Optimal Human-AI Recruiting Stack",
+          "### The Productivity Multiplier",
+          "### How TaaS Uses AI"
+        ]
+      },
+      {
+        "slug": "ai-reshaping-every-industry-hiring",
+        "url": "https://taasflow.com/blog/ai-reshaping-every-industry-hiring",
+        "title": "How AI Is Reshaping Hiring Across Every Industry: A 2026 Analysis",
+        "h1": "How AI Is Reshaping Hiring Across Every Industry: A 2026 Analysis",
+        "description": "Industry-by-industry breakdown of how artificial intelligence is transforming talent acquisition, from candidate sourcing to predictive retention.",
+        "og_image": "https://taasflow.com/blog/ai-recruitment.jpg",
+        "content_len": 3167,
+        "top_headings": [
+          "## The AI Hiring Revolution: Industry Impact Analysis",
+          "### Technology: AI Hiring AI Talent",
+          "### Healthcare: Compliance-First AI",
+          "### Finance: Risk-Aware AI Hiring",
+          "### Cross-Industry Trends",
+          "### The Human-AI Balance"
+        ]
+      },
+      {
+        "slug": "ai-screening-ethics",
+        "url": "https://taasflow.com/blog/ai-screening-ethics",
+        "title": "AI Screening Ethics: Balancing Efficiency With Fairness",
+        "h1": "AI Screening Ethics: Balancing Efficiency With Fairness",
+        "description": "As AI becomes central to recruiting, ethical considerations become critical. Here is how to implement AI responsibly. Insights from the TaaSFlow Technol…",
+        "og_image": "https://taasflow.com/blog/ai-recruitment.jpg",
+        "content_len": 1794,
+        "top_headings": [
+          "## The AI Revolution in Recruiting",
+          "### The Promise of AI Screening",
+          "### The Risks",
+          "### Implementing AI Responsibly",
+          "### Maintain Human Oversight",
+          "### Transparency Requirements",
+          "### Vendor Evaluation",
+          "### The TaaS Approach"
+        ]
+      },
+      {
+        "slug": "ai-workforce-planning-2030",
+        "url": "https://taasflow.com/blog/ai-workforce-planning-2030",
+        "title": "AI and Workforce Planning: Which Jobs Will Grow, Shrink, and Transform by 2030",
+        "h1": "AI and Workforce Planning: Which Jobs Will Grow, Shrink, and Transform by 2030",
+        "description": "A data-driven analysis of how AI will reshape 50 common job categories over the next 4 years, with actionable implications for hiring strategy.",
+        "og_image": "https://taasflow.com/blog/ai-recruitment.jpg",
+        "content_len": 3022,
+        "top_headings": [
+          "## The Great Reshuffling Is Here",
+          "### Jobs That Will Grow (Demand Increase by 2030)",
+          "### Jobs That Will Shrink (Demand Decrease by 2030)",
+          "### Jobs That Will Transform (Same Title, Different Skills)",
+          "### Implications for Hiring Strategy",
+          "### Workforce Planning Action Items"
+        ]
+      },
+      {
+        "slug": "ambient-computing-workplace-transformation",
+        "url": "https://taasflow.com/blog/ambient-computing-workplace-transformation",
+        "title": "Ambient Computing and the Workplace: How Always-On AI Changes Every Job",
+        "h1": "Ambient Computing and the Workplace: How Always-On AI Changes Every Job",
+        "description": "From AI assistants in meetings to predictive workflow tools, ambient computing is quietly transforming white-collar work. What this means for hiring.",
+        "og_image": "https://taasflow.com/blog/ai-recruitment.jpg",
+        "content_len": 1996,
+        "top_headings": [
+          "## The Invisible AI Layer",
+          "### Where Ambient AI Is Already Working",
+          "### Impact on Job Requirements",
+          "### How to Hire for an Ambient AI World"
+        ]
+      },
+      {
+        "slug": "ats-implementation-guide",
+        "url": "https://taasflow.com/blog/ats-implementation-guide",
+        "title": "ATS Implementation Guide: Avoiding the 7 Most Common Mistakes",
+        "h1": "ATS Implementation Guide: Avoiding the 7 Most Common Mistakes",
+        "description": "60% of ATS implementations fail to deliver expected ROI. Here are the pitfalls to avoid and best practices to follow. Insights from the TaaSFlow Technol…",
+        "og_image": "https://taasflow.com/blog/ai-recruitment.jpg",
+        "content_len": 3010,
+        "top_headings": [
+          "## Why ATS Implementations Fail",
+          "### Mistake 1: Choosing Based on Features, Not Workflow",
+          "### Mistake 2: Insufficient Training",
+          "### Mistake 3: Dirty Data Migration",
+          "### Mistake 4: No Integration Strategy",
+          "### Mistake 5: Over-Customization",
+          "### Mistake 6: Ignoring the Candidate Experience",
+          "### Mistake 7: No Measurement Plan"
+        ]
+      },
+      {
+        "slug": "ats-optimization-guide",
+        "url": "https://taasflow.com/blog/ats-optimization-guide",
+        "title": "ATS Optimization: Getting More From Your Applicant Tracking System",
+        "h1": "ATS Optimization: Getting More From Your Applicant Tracking System",
+        "description": "Most companies use only 20% of their ATS capabilities. Learn how to unlock the full potential of your recruiting technology.",
+        "og_image": "https://taasflow.com/blog/tech-hiring.jpg",
+        "content_len": 1728,
+        "top_headings": [
+          "## The Underutilized ATS Problem",
+          "### High-Impact Features Often Ignored",
+          "### Custom Reporting Dashboards",
+          "### Integration Capabilities",
+          "### Candidate Relationship Management",
+          "### Configuration Best Practices",
+          "### Measuring ATS ROI"
+        ]
+      },
+      {
+        "slug": "background-check-best-practices",
+        "url": "https://taasflow.com/blog/background-check-best-practices",
+        "title": "Background Check Best Practices: Thorough Without Overstepping",
+        "h1": "Background Check Best Practices: Thorough Without Overstepping",
+        "description": "Background checks protect your organization. Learn how to conduct them effectively and legally. Insights from the TaaSFlow Best Practices desk.",
+        "og_image": "https://taasflow.com/blog/interview-process.jpg",
+        "content_len": 1797,
+        "top_headings": [
+          "## The Background Check Balance",
+          "### What to Check",
+          "### Legal Considerations",
+          "### Timing in Process",
+          "### Vendor Selection",
+          "### Adjudication Standards",
+          "### Candidate Experience",
+          "### Global Considerations"
+        ]
+      },
+      {
+        "slug": "behavioral-health-hiring-challenges",
+        "url": "https://taasflow.com/blog/behavioral-health-hiring-challenges",
+        "title": "Behavioral Health Hiring: Addressing the Mental Health Workforce Shortage",
+        "h1": "Behavioral Health Hiring: Addressing the Mental Health Workforce Shortage",
+        "description": "America has a critical shortage of mental health professionals. Here is how behavioral health organizations are innovating to attract talent.",
+        "og_image": "https://taasflow.com/blog/healthcare-hiring.jpg",
+        "content_len": 2074,
+        "top_headings": [
+          "## The Behavioral Health Crisis",
+          "### The Supply Challenge",
+          "### Why Behavioral Health Professionals Leave",
+          "### Attraction Strategies",
+          "### Telehealth as a Hiring Multiplier",
+          "### Building the Pipeline"
+        ]
+      },
+      {
+        "slug": "behavioral-interview-guide-employers",
+        "url": "https://taasflow.com/blog/behavioral-interview-guide-employers",
+        "title": "The Employer's Guide to Behavioral Interviews: Questions, Scoring, and Best Practices",
+        "h1": "The Employer's Guide to Behavioral Interviews: Questions, Scoring, and Best Practices",
+        "description": "Behavioral interviews predict job performance 2x better than unstructured interviews. Here is how to design and conduct them effectively.",
+        "og_image": "https://taasflow.com/blog/interview-process.jpg",
+        "content_len": 4697,
+        "top_headings": [
+          "## Why Behavioral Interviews Work",
+          "### The STAR Framework",
+          "### 40 Behavioral Questions by Competency",
+          "#### Leadership (Questions 1-8)",
+          "#### Problem-Solving (Questions 9-16)",
+          "#### Collaboration (Questions 17-24)",
+          "#### Adaptability (Questions 25-32)",
+          "#### Results Orientation (Questions 33-40)"
+        ]
+      },
+      {
+        "slug": "biotech-startup-hiring-strategy",
+        "url": "https://taasflow.com/blog/biotech-startup-hiring-strategy",
+        "title": "Biotech Startup Hiring: Building Teams From Lab to Market",
+        "h1": "Biotech Startup Hiring: Building Teams From Lab to Market",
+        "description": "Biotech startups face unique hiring challenges: long development cycles, regulatory complexity, and competition from pharma giants.",
+        "og_image": "https://taasflow.com/blog/healthcare-hiring.jpg",
+        "content_len": 2410,
+        "top_headings": [
+          "## Biotech Startup Talent Strategy",
+          "### Hiring by Company Stage",
+          "### The Scientific Talent Pipeline",
+          "### Clinical Development Hiring",
+          "### Equity as a Hiring Tool",
+          "### Competing With Big Pharma"
+        ]
+      },
+      {
+        "slug": "blockchain-credentials-hiring",
+        "url": "https://taasflow.com/blog/blockchain-credentials-hiring",
+        "title": "Blockchain Credentials: How Verifiable Digital Diplomas Will Change Hiring",
+        "h1": "Blockchain Credentials: How Verifiable Digital Diplomas Will Change Hiring",
+        "description": "MIT, Harvard, and 500 universities now issue blockchain diplomas. How this technology will eliminate credential fraud and reshape candidate screening.",
+        "og_image": "https://taasflow.com/blog/tech-hiring.jpg",
+        "content_len": 1937,
+        "top_headings": [
+          "## The End of Resume Fraud",
+          "### How Blockchain Credentials Work",
+          "### Current Adoption",
+          "### Impact on Hiring",
+          "### What Employers Should Do Now"
+        ]
+      }
+    ],
+    "sparse_samples": [
+      {
+        "slug": "chro-role-evolution-2026",
+        "url": "https://taasflow.com/blog/chro-role-evolution-2026",
+        "title": null,
+        "h1": null,
+        "description": null,
+        "og_image": null,
+        "content_len": 0,
+        "top_headings": []
+      },
+      {
+        "slug": "climate-tech-startup-hiring",
+        "url": "https://taasflow.com/blog/climate-tech-startup-hiring",
+        "title": null,
+        "h1": null,
+        "description": null,
+        "og_image": null,
+        "content_len": 0,
+        "top_headings": []
+      },
+      {
+        "slug": "closing-top-sales-talent",
+        "url": "https://taasflow.com/blog/closing-top-sales-talent",
+        "title": null,
+        "h1": null,
+        "description": null,
+        "og_image": null,
+        "content_len": 0,
+        "top_headings": []
+      },
+      {
+        "slug": "cold-chain-logistics-hiring-guide",
+        "url": "https://taasflow.com/blog/cold-chain-logistics-hiring-guide",
+        "title": null,
+        "h1": null,
+        "description": null,
+        "og_image": null,
+        "content_len": 0,
+        "top_headings": []
+      },
+      {
+        "slug": "compensation-benchmarking",
+        "url": "https://taasflow.com/blog/compensation-benchmarking",
+        "title": null,
+        "h1": null,
+        "description": null,
+        "og_image": null,
+        "content_len": 0,
+        "top_headings": []
+      },
+      {
+        "slug": "competency-based-hiring-framework",
+        "url": "https://taasflow.com/blog/competency-based-hiring-framework",
+        "title": null,
+        "h1": null,
+        "description": null,
+        "og_image": null,
+        "content_len": 0,
+        "top_headings": []
+      },
+      {
+        "slug": "compliance-officer-hiring-guide",
+        "url": "https://taasflow.com/blog/compliance-officer-hiring-guide",
+        "title": null,
+        "h1": null,
+        "description": null,
+        "og_image": null,
+        "content_len": 0,
+        "top_headings": []
+      },
+      {
+        "slug": "construction-workforce-development",
+        "url": "https://taasflow.com/blog/construction-workforce-development",
+        "title": null,
+        "h1": null,
+        "description": null,
+        "og_image": null,
+        "content_len": 0,
+        "top_headings": []
+      },
+      {
+        "slug": "construction-workforce-strategies",
+        "url": "https://taasflow.com/blog/construction-workforce-strategies",
+        "title": null,
+        "h1": null,
+        "description": null,
+        "og_image": null,
+        "content_len": 0,
+        "top_headings": []
+      },
+      {
+        "slug": "consulting-firm-hiring-strategies",
+        "url": "https://taasflow.com/blog/consulting-firm-hiring-strategies",
+        "title": null,
+        "h1": null,
+        "description": null,
+        "og_image": null,
+        "content_len": 0,
+        "top_headings": []
+      }
+    ]
+  }
+}
