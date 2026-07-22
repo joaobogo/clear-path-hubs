@@ -139,10 +139,12 @@ function PositionDetailPage() {
   if (!data.position) throw notFound();
 
   const canEdit =
-    ctx?.active?.role === "client_admin" ||
-    ctx?.active?.role === "client_editor" ||
-    ctx?.active?.role === "platform_admin" ||
-    ctx?.active?.role === "operations";
+    !support.readOnly &&
+    (ctx?.active?.role === "client_admin" ||
+      ctx?.active?.role === "client_editor" ||
+      ctx?.active?.role === "platform_admin" ||
+      ctx?.active?.role === "operations");
+
 
   const { position, matches } = data;
   const byStage: Record<string, AnyRow[]> = {};
