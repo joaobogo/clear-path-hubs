@@ -1,11 +1,18 @@
 // Client workspace service — canonical read + mutation server fns for Phase 8.
 // All reads go through the authenticated Supabase client (RLS applies as the caller).
-// Mutations validate transitions, write audit events, and return enough info for
-// the caller to refresh caches. Every KPI here is derived from the SAME rows the
-// drill-through queries return, so counts always reconcile.
+// KPI counts are computed via the canonical service in client-kpi.server.ts so
+// every dashboard tile and drill-through view stays reconciled.
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
+import {
+  loadKpiRows,
+  computeKpis,
+  toClientCandidateDTO,
+  TOP_FIT_LABELS,
+  type MatchStage,
+  type KpiRow,
+} from "@/lib/client-kpi.server";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
