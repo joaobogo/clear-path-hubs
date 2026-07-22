@@ -164,9 +164,9 @@ export async function runPipelineForMatch(matchId: string, opts: { force?: boole
 
     // ─── PARSE ────────────────────────────────────────────────────────────────
     if (!ctx.file) {
-      await setState(s, matchId, "failed", { trace_id, code: "cv_unreadable", message: "No CV on file." });
-      await recordJob(s, matchId, "parse", "failed", trace_id, { code: "cv_unreadable", message: "No CV on file." });
-      return { match_id: matchId, trace_id, final_state: "failed", steps: [{ step: "parse", ok: false, note: "no_cv" }] };
+      await setState(s, matchId, "manual_review_required", { trace_id, code: "missing_usable_cv", message: "No CV on file — manual review required." });
+      await recordJob(s, matchId, "parse", "failed", trace_id, { code: "missing_usable_cv", message: "no_cv" });
+      return { match_id: matchId, trace_id, final_state: "manual_review_required", steps: [{ step: "parse", ok: false, note: "no_cv" }] };
     }
 
     await setState(s, matchId, "parsing", { trace_id });
