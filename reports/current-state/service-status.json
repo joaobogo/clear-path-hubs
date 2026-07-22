@@ -1,0 +1,32 @@
+{
+  "generated_at": "2026-07-22T22:00:00Z",
+  "services": {
+    "authService":          { "file": "src/lib/auth.functions.ts", "status": "complete", "tested": "untested_this_phase", "deployed": true },
+    "organizationService":  { "file": "src/lib/intake.functions.ts + admin.functions.ts", "status": "partial", "tested": "untested_this_phase", "deployed": true, "note": "org creation happens inside intake pipeline; no dedicated service module" },
+    "membershipService":    { "file": "src/lib/admin.functions.ts", "status": "partial", "tested": "untested_this_phase", "deployed": true },
+    "intakeService":        { "file": "src/routes/api/public/intake.ts + src/lib/intake.functions.ts", "status": "complete", "tested": "tested_via_db_evidence", "deployed": true },
+    "positionService":      { "file": "src/lib/admin.functions.ts + client.functions.ts", "status": "complete", "tested": "untested_this_phase", "deployed": true },
+    "applicationService":   { "file": "src/lib/apply.functions.ts", "status": "complete", "tested": "tested_via_db_evidence", "deployed": true },
+    "candidateService":     { "file": "src/lib/candidate.functions.ts + admin-candidate-edit.functions.ts", "status": "complete", "tested": "untested_this_phase", "deployed": true },
+    "candidateFileService": { "file": "src/lib/cv-download.functions.ts + apply.functions.ts", "status": "complete", "tested": "untested_this_phase", "deployed": true },
+    "parsingService":       { "file": "src/lib/cv-extractor.server.ts", "status": "partial", "tested": "untested_this_phase", "deployed": true, "note": "17/18 files extracted; 2 matches stuck in ocr_required (no OCR path)" },
+    "enrichmentService":    { "file": "src/lib/cv-hydration.server.ts", "status": "partial", "tested": "untested_this_phase", "deployed": true },
+    "scoringService":       { "file": "src/lib/scoring-service.server.ts + scoring-engine.server.ts", "status": "complete", "tested": "tested_phase_21_certified", "deployed": true },
+    "publicationService":   { "file": "src/lib/scoring-service.server.ts (assertPublishGate)", "status": "complete", "tested": "untested_this_phase", "deployed": true },
+    "clientDecisionService":{ "file": "src/lib/client.functions.ts", "status": "partial", "tested": "untested_this_phase", "deployed": true },
+    "interviewService":     { "file": "src/lib/client.functions.ts", "status": "stub", "tested": "untested_this_phase", "deployed": true },
+    "messagingService":     { "file": "src/lib/client.functions.ts (realtime hook)", "status": "partial", "tested": "untested_this_phase", "deployed": true },
+    "notificationService":  { "file": "src/lib/notifications.functions.ts", "status": "partial", "tested": "untested_this_phase", "deployed": true },
+    "auditService":         { "file": "DB trigger tg_write_audit_event", "status": "complete", "tested": "tested_via_trigger_definition", "deployed": true }
+  },
+  "risk_scan": {
+    "direct_frontend_db_writes":       { "found": false, "note": "No supabase.from().insert/update/delete in src/routes/ page components" },
+    "duplicate_writers_for_scoring":   { "found": false, "note": "executeScoring is sole entry point" },
+    "old_backend_urls":                { "found": "not_scanned_this_phase" },
+    "old_supabase_project_refs":       { "found": "not_scanned_this_phase" },
+    "hardcoded_tenant_ids":            { "found": "not_scanned_this_phase" },
+    "localstorage_as_authority":       { "found": "not_scanned_this_phase" },
+    "candidate_level_global_scores":   { "found": false, "note": "Phase 21: all score_runs tied to candidate_match_id + position_id; cross-role reuse = 0" },
+    "first_or_newest_record_fallbacks":{ "found": "not_scanned_this_phase" }
+  }
+}

@@ -1,0 +1,164 @@
+{
+  "generated_at": "2026-07-22T22:00:00Z",
+  "mode": "read_only_freeze",
+  "repo": {
+    "head_sha": "3add96720d9b0ba80ddb3ea857660a104852b00d",
+    "branch": "edit/edt-74e56c45-8aee-4722-9dfa-5f2c05801479",
+    "latest_commit": "Blocked Phase 5 on DB access"
+  },
+  "backend": {
+    "project_ref": "nfwetiyrxsrejdodvale",
+    "migration_head": "20260722212905_cb2ab22a-0105-494e-a9ec-d89cbf391337.sql"
+  },
+  "deployed_frontend_sha": "UNVERIFIED",
+  "urls": {
+    "preview": "https://id-preview--1dc5ee7e-1294-441c-8288-850e79e443f6.lovable.app",
+    "published": "https://clear-path-hubs.lovable.app"
+  },
+  "db_counts": {
+    "organizations": 12,
+    "active_memberships": 29,
+    "positions_total": 29,
+    "positions_active": 16,
+    "applications": 98,
+    "candidate_profiles": 100,
+    "candidate_matches": 98,
+    "completed_score_runs": 11,
+    "intake_submissions": 6,
+    "files_total": 18,
+    "files_extracted": 17,
+    "migration_runs_aborted": 2
+  },
+  "processing_state_distribution": {
+    "manual_review_required": 72,
+    "failed": 14,
+    "scored": 10,
+    "ocr_required": 2
+  },
+  "capabilities": {
+    "auth": {
+      "platform_admin_login": "IMPLEMENTED_NOT_VERIFIED",
+      "operations_login": "IMPLEMENTED_NOT_VERIFIED",
+      "client_admin_login": "IMPLEMENTED_NOT_VERIFIED",
+      "client_editor_login": "IMPLEMENTED_NOT_VERIFIED",
+      "client_viewer_login": "IMPLEMENTED_NOT_VERIFIED",
+      "candidate_login": "IMPLEMENTED_NOT_VERIFIED",
+      "logout": "IMPLEMENTED_NOT_VERIFIED",
+      "password_reset": "IMPLEMENTED_NOT_VERIFIED",
+      "invitation": "IMPLEMENTED_NOT_VERIFIED",
+      "route_authorization": "VERIFIED_WORKING",
+      "tenant_isolation": "IMPLEMENTED_NOT_VERIFIED",
+      "deactivation": "IMPLEMENTED_NOT_VERIFIED",
+      "master_admin_uniqueness": "REGRESSED"
+    },
+    "client_management": {
+      "list": "IMPLEMENTED_NOT_VERIFIED",
+      "open_exact": "IMPLEMENTED_NOT_VERIFIED",
+      "edit": "IMPLEMENTED_NOT_VERIFIED",
+      "team_management": "IMPLEMENTED_NOT_VERIFIED",
+      "role_changes": "IMPLEMENTED_NOT_VERIFIED",
+      "creation": "IMPLEMENTED_NOT_VERIFIED",
+      "view_client_dashboard": "IMPLEMENTED_NOT_VERIFIED",
+      "support_mode_readonly": "STALE_PREVIOUS_RESULT",
+      "support_session_audit": "IMPLEMENTED_NOT_VERIFIED"
+    },
+    "intake": {
+      "public_form": "VERIFIED_WORKING",
+      "validation": "VERIFIED_WORKING",
+      "submission": "VERIFIED_WORKING",
+      "confirmation": "VERIFIED_WORKING",
+      "duplicate_protection": "IMPLEMENTED_NOT_VERIFIED",
+      "organization_creation_or_matching": "VERIFIED_WORKING",
+      "position_creation": "IMPLEMENTED_NOT_VERIFIED",
+      "admin_intake_visibility": "VERIFIED_WORKING",
+      "admin_position_visibility": "VERIFIED_WORKING"
+    },
+    "positions": {
+      "create": "IMPLEMENTED_NOT_VERIFIED",
+      "edit": "IMPLEMENTED_NOT_VERIFIED",
+      "requirements": "IMPLEMENTED_NOT_VERIFIED",
+      "screening_questions": "IMPLEMENTED_NOT_VERIFIED",
+      "approval": "VERIFIED_WORKING",
+      "activation": "VERIFIED_WORKING",
+      "publication": "VERIFIED_WORKING",
+      "pause": "IMPLEMENTED_NOT_VERIFIED",
+      "close": "IMPLEMENTED_NOT_VERIFIED",
+      "archive": "IMPLEMENTED_NOT_VERIFIED",
+      "public_job_board_visibility": "VERIFIED_WORKING"
+    },
+    "candidate_application": {
+      "public_job": "VERIFIED_WORKING",
+      "apply": "VERIFIED_WORKING",
+      "cv_upload": "VERIFIED_WORKING",
+      "screening_answers": "IMPLEMENTED_NOT_VERIFIED",
+      "consent": "IMPLEMENTED_NOT_VERIFIED",
+      "application_record": "VERIFIED_WORKING",
+      "candidate_profile": "VERIFIED_WORKING",
+      "candidate_submission": "VERIFIED_WORKING",
+      "processing_job": "IMPLEMENTED_NOT_VERIFIED",
+      "confirmation": "VERIFIED_WORKING",
+      "tracking": "VERIFIED_WORKING",
+      "duplicate_prevention": "IMPLEMENTED_NOT_VERIFIED"
+    },
+    "candidate_processing": {
+      "file_storage": "VERIFIED_WORKING",
+      "pdf_parsing": "PARTIAL",
+      "docx_parsing": "IMPLEMENTED_NOT_VERIFIED",
+      "ocr": "STUB",
+      "parse_artifacts": "IMPLEMENTED_NOT_VERIFIED",
+      "evidence_graph": "VERIFIED_WORKING",
+      "profile_hydration": "IMPLEMENTED_NOT_VERIFIED",
+      "enrichment": "IMPLEMENTED_NOT_VERIFIED",
+      "scoring_readiness": "VERIFIED_WORKING",
+      "role_specific_scoring": "VERIFIED_WORKING",
+      "score_history": "VERIFIED_WORKING"
+    },
+    "admin_candidate_workflow": {
+      "candidate_list": "IMPLEMENTED_NOT_VERIFIED",
+      "open_exact_submission": "IMPLEMENTED_NOT_VERIFIED",
+      "cv_access": "IMPLEMENTED_NOT_VERIFIED",
+      "candidate_editing": "IMPLEMENTED_NOT_VERIFIED",
+      "parsing_actions": "PARTIAL",
+      "enrichment_actions": "PARTIAL",
+      "score_execution": "VERIFIED_WORKING",
+      "evidence_review": "IMPLEMENTED_NOT_VERIFIED",
+      "client_preview": "IMPLEMENTED_NOT_VERIFIED",
+      "publication": "IMPLEMENTED_NOT_VERIFIED",
+      "hide": "IMPLEMENTED_NOT_VERIFIED",
+      "republish": "IMPLEMENTED_NOT_VERIFIED"
+    },
+    "client_workflow": {
+      "overview": "IMPLEMENTED_NOT_VERIFIED",
+      "kpis": "IMPLEMENTED_NOT_VERIFIED",
+      "positions": "IMPLEMENTED_NOT_VERIFIED",
+      "candidates": "IMPLEMENTED_NOT_VERIFIED",
+      "candidate_detail": "IMPLEMENTED_NOT_VERIFIED",
+      "client_actions": "IMPLEMENTED_NOT_VERIFIED",
+      "kanban": "VERIFIED_WORKING",
+      "interviews": "IMPLEMENTED_NOT_VERIFIED",
+      "messages": "IMPLEMENTED_NOT_VERIFIED",
+      "team": "IMPLEMENTED_NOT_VERIFIED",
+      "settings": "IMPLEMENTED_NOT_VERIFIED"
+    },
+    "candidate_dashboard": {
+      "applications": "IMPLEMENTED_NOT_VERIFIED",
+      "profile": "IMPLEMENTED_NOT_VERIFIED",
+      "cv": "IMPLEMENTED_NOT_VERIFIED",
+      "messages": "IMPLEMENTED_NOT_VERIFIED",
+      "settings": "IMPLEMENTED_NOT_VERIFIED"
+    }
+  },
+  "regressions": [
+    {
+      "id": "R-01",
+      "area": "master_admin_uniqueness",
+      "detail": "5 platform_admin memberships across 4 emails: kasprzakjoao@taasflow.com, kasprzakjoao@protonmail.com, cert.admin@taasflow.qa, qa.admin@qa.taasflow.test, plus 3 duplicate rows for qa+platform-admin.qa20260722@qa.taasflow.test",
+      "severity": "high"
+    }
+  ],
+  "stale_previous_findings": [
+    "Phases 5-7, 11, 21 certification passes are point-in-time and do not certify current combined state",
+    "Master admin uniqueness (superseded by regression R-01)",
+    "Support-mode read-only enforcement (user flagged as still allowing Client mutations)"
+  ]
+}
