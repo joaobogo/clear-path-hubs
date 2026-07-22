@@ -534,7 +534,7 @@ export const getAdminMatch = createServerFn({ method: "GET" })
     const { data: m, error } = await supabase
       .from("candidate_matches")
       .select(
-        "id,processing_state,processing_error_code,processing_error_message,last_processing_trace_id,admin_status,client_visibility,current_score_run_id,approved_score_run_id,updated_at,candidate_profiles(id,full_name,email,phone,location,skills),positions(id,title,description,requirements,preferred_requirements,status,organizations(name))",
+        "id,application_id,candidate_profile_id,position_id,organization_id,stage,created_at,processing_state,processing_error_code,processing_error_message,last_processing_trace_id,admin_status,client_visibility,current_score_run_id,approved_score_run_id,updated_at,candidate_profiles(id,full_name,email,phone,location,headline,skills,experience,education,languages,work_authorization,availability,compensation_preferences),positions(id,title,description,requirements,preferred_requirements,status,organizations(id,name))",
       )
       .eq("id", data.id)
       .maybeSingle();
