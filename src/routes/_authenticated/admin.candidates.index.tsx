@@ -221,53 +221,79 @@ function CandidatesPage() {
           <thead className="bg-muted/50 text-left">
             <tr>
               <th className="px-3 py-2 font-medium">Candidate</th>
-              <th className="px-3 py-2 font-medium">Role</th>
-              <th className="px-3 py-2 font-medium">State</th>
-              <th className="px-3 py-2 font-medium">Score</th>
+              <th className="px-3 py-2 font-medium">Client</th>
+              <th className="px-3 py-2 font-medium">Position</th>
+              <th className="px-3 py-2 font-medium">Applied</th>
               <th className="px-3 py-2 font-medium">Stage</th>
-              <th className="px-3 py-2 font-medium">Vis</th>
+              <th className="px-3 py-2 font-medium">Pipeline</th>
+              <th className="px-3 py-2 font-medium">Score</th>
+              <th className="px-3 py-2 font-medium">Fit</th>
+              <th className="px-3 py-2 font-medium">Review</th>
+              <th className="px-3 py-2 font-medium">Client</th>
+              <th className="px-3 py-2 font-medium">Updated</th>
               <th className="px-3 py-2"></th>
             </tr>
           </thead>
           <tbody>
-            {rows.map((m) => (
-              <tr
-                key={m.id}
-                className="border-t hover:bg-muted/30 cursor-pointer"
-                onClick={() => openDrawer(m.id)}
-              >
-                <td className="px-3 py-2">
-                  <div className="font-medium">{m.candidate_profiles?.full_name ?? "—"}</div>
-                  <div className="text-xs text-muted-foreground">{m.candidate_profiles?.email}</div>
-                </td>
-                <td className="px-3 py-2">
-                  <div>{m.positions?.title}</div>
-                  <div className="text-xs text-muted-foreground">{m.positions?.organizations?.name}</div>
-                </td>
-                <td className="px-3 py-2">
-                  <span className={`inline-block rounded px-2 py-0.5 text-xs ${STATE_COLOR[m.processing_state] ?? "bg-muted text-muted-foreground"}`}>
-                    {m.processing_state.replace(/_/g," ")}
-                  </span>
-                </td>
-                <td className="px-3 py-2 tabular-nums">
-                  {m.score_runs?.score == null ? "—" : m.score_runs.score.toFixed(1)}
-                </td>
-                <td className="px-3 py-2 capitalize">{m.stage.replace(/_/g," ")}</td>
-                <td className="px-3 py-2 text-xs">{m.client_visibility}</td>
-                <td className="px-3 py-2 text-right">
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    onClick={(e) => { e.stopPropagation(); openDrawer(m.id); }}
-                  >
-                    Review →
-                  </Button>
-                </td>
-              </tr>
-            ))}
+            {rows.map((m) => {
+              const score = m.score_runs?.score;
+              const fit = m.score_runs?.fit_label as string | undefined;
+              const applied = m.created_at ? new Date(m.created_at) : null;
+              const updated = m.updated_at ? new Date(m.updated_at) : null;
+              return (
+                <tr
+                  key={m.id}
+                  className="border-t hover:bg-muted/30 cursor-pointer"
+                  onClick={() => openDrawer(m.id)}
+                  data-qa-row="candidate-match"
+                  data-submission-id={m.id}
+                  data-application-id={m.application_id}
+                  data-candidate-profile-id={m.candidate_profile_id}
+                  data-position-id={m.position_id}
+                  data-organization-id={m.organization_id}
+                >
+                  <td className="px-3 py-2 min-w-[180px]">
+                    <div className="font-medium">{m.candidate_profiles?.full_name ?? "—"}</div>
+                    <div className="text-xs text-muted-foreground truncate max-w-[220px]">{m.candidate_profiles?.email}</div>
+                  </td>
+                  <td className="px-3 py-2 text-xs">{m.positions?.organizations?.name ?? "—"}</td>
+                  <td className="px-3 py-2 text-xs">{m.positions?.title ?? "—"}</td>
+                  <td className="px-3 py-2 text-xs whitespace-nowrap">
+                    {applied ? applied.toLocaleDateString() : "—"}
+                  </td>
+                  <td className="px-3 py-2 text-xs capitalize whitespace-nowrap">{m.stage?.replace(/_/g, " ")}</td>
+                  <td className="px-3 py-2">
+                    <span className={`inline-block rounded px-2 py-0.5 text-xs whitespace-nowrap ${STATE_COLOR[m.processing_state] ?? "bg-muted text-muted-foreground"}`}>
+                      {(m.processing_state ?? "").replace(/_/g, " ")}
+                    </span>
+                  </td>
+                  <td className="px-3 py-2 tabular-nums text-right">
+                    {score == null ? "—" : score.toFixed(1)}
+                  </td>
+                  <td className="px-3 py-2 text-xs whitespace-nowrap">
+                    {fit ? fit.replace(/_/g, " ") : "—"}
+                  </td>
+                  <td className="px-3 py-2 text-xs capitalize">{m.admin_status ?? "—"}</td>
+                  <td className="px-3 py-2 text-xs">{m.client_visibility ?? "—"}</td>
+                  <td className="px-3 py-2 text-xs text-muted-foreground whitespace-nowrap">
+                    {updated ? updated.toLocaleDateString() : "—"}
+                  </td>
+                  <td className="px-3 py-2 text-right">
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      data-qa-action="open-candidate-drawer"
+                      onClick={(e) => { e.stopPropagation(); openDrawer(m.id); }}
+                    >
+                      Open →
+                    </Button>
+                  </td>
+                </tr>
+              );
+            })}
             {rows.length === 0 && !isFetching && (
               <tr>
-                <td colSpan={7} className="px-3 py-16 text-center text-muted-foreground">
+                <td colSpan={12} className="px-3 py-16 text-center text-muted-foreground">
                   No candidates match your filters.
                 </td>
               </tr>
@@ -275,6 +301,7 @@ function CandidatesPage() {
           </tbody>
         </table>
       </div>
+
 
       <div className="mt-4 flex items-center justify-between text-sm">
         <div className="text-muted-foreground">
