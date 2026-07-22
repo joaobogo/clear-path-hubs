@@ -1,22 +1,22 @@
 {
-  "generated_at": "2026-07-22T19:47:33.318945Z",
+  "generated_at": "2026-07-22T19:49:29.626552Z",
   "totals": {
-    "PASS": 13,
+    "PASS": 26,
     "FAIL": 0,
-    "DEAD": 15,
-    "PARTIAL": 0,
+    "DEAD": 2,
+    "PARTIAL": 3,
     "BLOCKED": 0,
-    "UNTESTED": 4,
+    "UNTESTED": 1,
     "MISLEADING": 0,
     "UI_ONLY": 0,
     "WRONG_ENTITY": 0,
     "UNAUTHORIZED_SUCCESS": 0
   },
   "required_totals": {
-    "PASS": 13,
+    "PASS": 25,
     "FAIL": 0,
-    "DEAD": 15,
-    "PARTIAL": 0,
+    "DEAD": 2,
+    "PARTIAL": 1,
     "BLOCKED": 0,
     "UNTESTED": 0,
     "MISLEADING": 0,
@@ -174,8 +174,8 @@
       "final_url": "http://localhost:8080/admin",
       "label": "Admin nav visible",
       "category": "nav",
-      "status": "DEAD",
-      "detail": "control not found on rendered page",
+      "status": "PASS",
+      "detail": "15 matches, visible+enabled",
       "required": true,
       "console_errors_on_route": []
     },
@@ -185,12 +185,10 @@
       "final_url": "http://localhost:8080/admin/positions",
       "label": "Positions rows",
       "category": "list",
-      "status": "DEAD",
-      "detail": "control not found on rendered page",
+      "status": "PASS",
+      "detail": "56 matches, visible+enabled",
       "required": true,
-      "console_errors_on_route": [
-        "console.error: TypeError: Failed to fetch\n    at http://localhost:8080/src/integrations/supabase/client.ts:17:10\n    at http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:12161:39\n    at _handleRequest (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:12443:18)\n    at _request (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:12430:21)\n    at http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17281:18\n    at SupabaseAuthClient._useSession (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17113:17)\n    at async SupabaseAuthClient._getUser (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17273:11)\n    at async SupabaseAuthClient.getUser (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17262:17)\n    at async Object.beforeLoad (http://localhost:8080/src/routes/_authenticated/route.tsx:15:27)\n    at async loadMatches (http://localhost:8080/node_modules/.vite/deps/esm-CY6xHOz6.js?v=9ec21ebd:1635:31)"
-      ]
+      "console_errors_on_route": []
     },
     {
       "persona": "platform-admin",
@@ -198,10 +196,12 @@
       "final_url": "http://localhost:8080/admin/positions/21f9b0e8-1650-4dda-85ce-b56a78c81217",
       "label": "Save button",
       "category": "edit",
-      "status": "DEAD",
-      "detail": "control not found on rendered page",
+      "status": "PARTIAL",
+      "detail": "control present but disabled on initial render",
       "required": true,
-      "console_errors_on_route": []
+      "console_errors_on_route": [
+        "console.error: Can't perform a React state update on a component that hasn't mounted yet. This indicates that you have a side-effect in your render function that asynchronously tries to update the component. Move this work to useEffect instead."
+      ]
     },
     {
       "persona": "platform-admin",
@@ -212,7 +212,9 @@
       "status": "DEAD",
       "detail": "control not found on rendered page",
       "required": true,
-      "console_errors_on_route": []
+      "console_errors_on_route": [
+        "console.error: Can't perform a React state update on a component that hasn't mounted yet. This indicates that you have a side-effect in your render function that asynchronously tries to update the component. Move this work to useEffect instead."
+      ]
     },
     {
       "persona": "platform-admin",
@@ -220,13 +222,10 @@
       "final_url": "http://localhost:8080/admin/candidates?q=&admin_status=&processing_state=&stage=&min_score=&max_score=&client_visibility=&organization_id=&position_id=&date_from=&date_to=&sort=updated_desc&page=1&open=",
       "label": "Candidate row/link",
       "category": "list",
-      "status": "DEAD",
-      "detail": "control not found on rendered page",
+      "status": "PASS",
+      "detail": "50 matches, visible+enabled",
       "required": true,
-      "console_errors_on_route": [
-        "console.error: TypeError: Failed to fetch\n    at http://localhost:8080/src/integrations/supabase/client.ts:17:10\n    at http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:12161:39\n    at _handleRequest (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:12443:18)\n    at _request (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:12430:21)\n    at http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17281:18\n    at SupabaseAuthClient._useSession (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17113:17)\n    at async SupabaseAuthClient._getUser (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17273:11)\n    at async SupabaseAuthClient.getUser (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17262:17)",
-        "console.error: TypeError: Failed to fetch\n    at http://localhost:8080/src/integrations/supabase/client.ts:17:10\n    at http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:12161:39\n    at _handleRequest (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:12443:18)\n    at _request (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:12430:21)\n    at http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17281:18\n    at SupabaseAuthClient._useSession (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17113:17)\n    at async SupabaseAuthClient._getUser (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17273:11)\n    at async SupabaseAuthClient.getUser (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17262:17)"
-      ]
+      "console_errors_on_route": []
     },
     {
       "persona": "platform-admin",
@@ -237,10 +236,7 @@
       "status": "UNTESTED",
       "detail": "control not found on rendered page",
       "required": false,
-      "console_errors_on_route": [
-        "console.error: TypeError: Failed to fetch\n    at http://localhost:8080/src/integrations/supabase/client.ts:17:10\n    at http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:12161:39\n    at _handleRequest (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:12443:18)\n    at _request (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:12430:21)\n    at http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17281:18\n    at SupabaseAuthClient._useSession (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17113:17)\n    at async SupabaseAuthClient._getUser (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17273:11)\n    at async SupabaseAuthClient.getUser (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17262:17)",
-        "console.error: TypeError: Failed to fetch\n    at http://localhost:8080/src/integrations/supabase/client.ts:17:10\n    at http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:12161:39\n    at _handleRequest (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:12443:18)\n    at _request (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:12430:21)\n    at http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17281:18\n    at SupabaseAuthClient._useSession (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17113:17)\n    at async SupabaseAuthClient._getUser (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17273:11)\n    at async SupabaseAuthClient.getUser (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17262:17)"
-      ]
+      "console_errors_on_route": []
     },
     {
       "persona": "platform-admin",
@@ -248,8 +244,8 @@
       "final_url": "http://localhost:8080/admin/candidates/2a00c46f-1370-47df-a892-ae4e502c0135",
       "label": "Candidate detail primary action",
       "category": "candidate-action",
-      "status": "DEAD",
-      "detail": "control not found on rendered page",
+      "status": "PASS",
+      "detail": "3 matches, visible+enabled",
       "required": true,
       "console_errors_on_route": []
     },
@@ -259,8 +255,8 @@
       "final_url": "http://localhost:8080/admin/publish",
       "label": "Publish desk primary action",
       "category": "publish",
-      "status": "DEAD",
-      "detail": "control not found on rendered page",
+      "status": "PASS",
+      "detail": "4 matches, visible+enabled",
       "required": true,
       "console_errors_on_route": []
     },
@@ -270,13 +266,10 @@
       "final_url": "http://localhost:8080/admin/team",
       "label": "Team management action",
       "category": "team",
-      "status": "DEAD",
-      "detail": "control not found on rendered page",
+      "status": "PASS",
+      "detail": "1 matches, visible+enabled",
       "required": true,
-      "console_errors_on_route": [
-        "console.error: TypeError: Failed to fetch\n    at http://localhost:8080/src/integrations/supabase/client.ts:17:10\n    at http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:12161:39\n    at _handleRequest (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:12443:18)\n    at _request (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:12430:21)\n    at http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17281:18\n    at SupabaseAuthClient._useSession (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17113:17)\n    at async SupabaseAuthClient._getUser (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17273:11)\n    at async SupabaseAuthClient.getUser (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17262:17)",
-        "console.error: TypeError: Failed to fetch\n    at http://localhost:8080/src/integrations/supabase/client.ts:17:10\n    at http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:12161:39\n    at _handleRequest (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:12443:18)\n    at _request (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:12430:21)\n    at http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17281:18\n    at SupabaseAuthClient._useSession (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17113:17)\n    at async SupabaseAuthClient._getUser (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17273:11)\n    at async SupabaseAuthClient.getUser (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17262:17)"
-      ]
+      "console_errors_on_route": []
     },
     {
       "persona": "platform-admin",
@@ -284,8 +277,8 @@
       "final_url": "http://localhost:8080/admin/clients?q=",
       "label": "Clients list link",
       "category": "list",
-      "status": "DEAD",
-      "detail": "control not found on rendered page",
+      "status": "PASS",
+      "detail": "26 matches, visible+enabled",
       "required": true,
       "console_errors_on_route": []
     },
@@ -295,13 +288,10 @@
       "final_url": "http://localhost:8080/admin/clients_new",
       "label": "Create client submit",
       "category": "create",
-      "status": "DEAD",
-      "detail": "control not found on rendered page",
+      "status": "PASS",
+      "detail": "1 matches, visible+enabled",
       "required": true,
-      "console_errors_on_route": [
-        "console.error: TypeError: Failed to fetch\n    at http://localhost:8080/src/integrations/supabase/client.ts:17:10\n    at http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:12161:39\n    at _handleRequest (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:12443:18)\n    at _request (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:12430:21)\n    at http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17281:18\n    at SupabaseAuthClient._useSession (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17113:17)\n    at async SupabaseAuthClient._getUser (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17273:11)\n    at async SupabaseAuthClient.getUser (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17262:17)",
-        "console.error: TypeError: Failed to fetch\n    at http://localhost:8080/src/integrations/supabase/client.ts:17:10\n    at http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:12161:39\n    at _handleRequest (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:12443:18)\n    at _request (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:12430:21)\n    at http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17281:18\n    at SupabaseAuthClient._useSession (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17113:17)\n    at async SupabaseAuthClient._getUser (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17273:11)\n    at async SupabaseAuthClient.getUser (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17262:17)"
-      ]
+      "console_errors_on_route": []
     },
     {
       "persona": "alpha-admin",
@@ -309,8 +299,8 @@
       "final_url": "http://localhost:8080/client",
       "label": "Client dashboard positions link",
       "category": "nav",
-      "status": "DEAD",
-      "detail": "control not found on rendered page",
+      "status": "PASS",
+      "detail": "1 matches, visible+enabled",
       "required": true,
       "console_errors_on_route": []
     },
@@ -320,8 +310,8 @@
       "final_url": "http://localhost:8080/client/positions/21f9b0e8-1650-4dda-85ce-b56a78c81217",
       "label": "Kanban column present",
       "category": "kanban",
-      "status": "UNTESTED",
-      "detail": "control not found on rendered page",
+      "status": "PASS",
+      "detail": "1 matches, visible+enabled",
       "required": false,
       "console_errors_on_route": []
     },
@@ -331,8 +321,8 @@
       "final_url": "http://localhost:8080/client/positions/21f9b0e8-1650-4dda-85ce-b56a78c81217",
       "label": "Candidate card",
       "category": "kanban",
-      "status": "DEAD",
-      "detail": "control not found on rendered page",
+      "status": "PASS",
+      "detail": "10 matches, visible+enabled",
       "required": true,
       "console_errors_on_route": []
     },
@@ -342,8 +332,8 @@
       "final_url": "http://localhost:8080/client/messages",
       "label": "Message send",
       "category": "message",
-      "status": "UNTESTED",
-      "detail": "control not found on rendered page",
+      "status": "PARTIAL",
+      "detail": "control present but disabled on initial render",
       "required": false,
       "console_errors_on_route": []
     },
@@ -353,8 +343,8 @@
       "final_url": "http://localhost:8080/me/applications",
       "label": "Application link",
       "category": "list",
-      "status": "DEAD",
-      "detail": "control not found on rendered page",
+      "status": "PASS",
+      "detail": "3 matches, visible+enabled",
       "required": true,
       "console_errors_on_route": []
     },
@@ -364,13 +354,10 @@
       "final_url": "http://localhost:8080/me/messages",
       "label": "Message send button",
       "category": "message",
-      "status": "UNTESTED",
-      "detail": "control not found on rendered page",
+      "status": "PARTIAL",
+      "detail": "control present but disabled on initial render",
       "required": false,
-      "console_errors_on_route": [
-        "console.error: TypeError: Failed to fetch\n    at http://localhost:8080/src/integrations/supabase/client.ts:17:10\n    at http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:12161:39\n    at _handleRequest (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:12443:18)\n    at _request (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:12430:21)\n    at http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17281:18\n    at SupabaseAuthClient._useSession (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17113:17)\n    at async SupabaseAuthClient._getUser (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17273:11)\n    at async SupabaseAuthClient.getUser (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17262:17)\n    at async Object.beforeLoad (http://localhost:8080/src/routes/_authenticated/route.tsx:15:27)\n    at async loadMatches (http://localhost:8080/node_modules/.vite/deps/esm-CY6xHOz6.js?v=9ec21ebd:1635:31)",
-        "console.error: Can't perform a React state update on a component that hasn't mounted yet. This indicates that you have a side-effect in your render function that asynchronously tries to update the component. Move this work to useEffect instead."
-      ]
+      "console_errors_on_route": []
     },
     {
       "persona": "cand-multi",
@@ -378,15 +365,10 @@
       "final_url": "http://localhost:8080/me/profile",
       "label": "Profile save",
       "category": "profile",
-      "status": "DEAD",
-      "detail": "control not found on rendered page",
+      "status": "PASS",
+      "detail": "1 matches, visible+enabled",
       "required": true,
-      "console_errors_on_route": [
-        "console.error: TypeError: Failed to fetch\n    at http://localhost:8080/src/integrations/supabase/client.ts:17:10\n    at http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:12161:39\n    at _handleRequest (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:12443:18)\n    at _request (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:12430:21)\n    at http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17281:18\n    at SupabaseAuthClient._useSession (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17113:17)\n    at async SupabaseAuthClient._getUser (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17273:11)\n    at async SupabaseAuthClient.getUser (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17262:17)",
-        "console.error: TypeError: Failed to fetch\n    at http://localhost:8080/src/integrations/supabase/client.ts:17:10\n    at http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:12161:39\n    at _handleRequest (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:12443:18)\n    at _request (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:12430:21)\n    at http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17281:18\n    at SupabaseAuthClient._useSession (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17113:17)\n    at async SupabaseAuthClient._getUser (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17273:11)\n    at async SupabaseAuthClient.getUser (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17262:17)",
-        "console.error: TypeError: Failed to fetch\n    at http://localhost:8080/src/integrations/supabase/client.ts:17:10\n    at http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:12161:39\n    at _handleRequest (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:12443:18)\n    at _request (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:12430:21)\n    at http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17281:18\n    at SupabaseAuthClient._useSession (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17113:17)\n    at async SupabaseAuthClient._getUser (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17273:11)\n    at async SupabaseAuthClient.getUser (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17262:17)",
-        "console.error: TypeError: Failed to fetch\n    at http://localhost:8080/src/integrations/supabase/client.ts:17:10\n    at http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:12161:39\n    at _handleRequest (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:12443:18)\n    at _request (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:12430:21)\n    at http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17281:18\n    at SupabaseAuthClient._useSession (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17113:17)\n    at async SupabaseAuthClient._getUser (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17273:11)\n    at async SupabaseAuthClient.getUser (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17262:17)"
-      ]
+      "console_errors_on_route": []
     },
     {
       "persona": "wrong-tenant",
@@ -403,51 +385,9 @@
   "console_errors": [
     {
       "persona": "platform-admin",
-      "route": "/admin/positions",
+      "route": "/admin/positions/21f9b0e8-1650-4dda-85ce-b56a78c81217",
       "errors": [
-        "console.error: TypeError: Failed to fetch\n    at http://localhost:8080/src/integrations/supabase/client.ts:17:10\n    at http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:12161:39\n    at _handleRequest (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:12443:18)\n    at _request (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:12430:21)\n    at http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17281:18\n    at SupabaseAuthClient._useSession (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17113:17)\n    at async SupabaseAuthClient._getUser (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17273:11)\n    at async SupabaseAuthClient.getUser (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17262:17)\n    at async Object.beforeLoad (http://localhost:8080/src/routes/_authenticated/route.tsx:15:27)\n    at async loadMatches (http://localhost:8080/node_modules/.vite/deps/esm-CY6xHOz6.js?v=9ec21ebd:1635:31)"
-      ]
-    },
-    {
-      "persona": "platform-admin",
-      "route": "/admin/candidates",
-      "errors": [
-        "console.error: TypeError: Failed to fetch\n    at http://localhost:8080/src/integrations/supabase/client.ts:17:10\n    at http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:12161:39\n    at _handleRequest (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:12443:18)\n    at _request (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:12430:21)\n    at http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17281:18\n    at SupabaseAuthClient._useSession (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17113:17)\n    at async SupabaseAuthClient._getUser (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17273:11)\n    at async SupabaseAuthClient.getUser (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17262:17)",
-        "console.error: TypeError: Failed to fetch\n    at http://localhost:8080/src/integrations/supabase/client.ts:17:10\n    at http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:12161:39\n    at _handleRequest (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:12443:18)\n    at _request (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:12430:21)\n    at http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17281:18\n    at SupabaseAuthClient._useSession (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17113:17)\n    at async SupabaseAuthClient._getUser (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17273:11)\n    at async SupabaseAuthClient.getUser (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17262:17)"
-      ]
-    },
-    {
-      "persona": "platform-admin",
-      "route": "/admin/team",
-      "errors": [
-        "console.error: TypeError: Failed to fetch\n    at http://localhost:8080/src/integrations/supabase/client.ts:17:10\n    at http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:12161:39\n    at _handleRequest (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:12443:18)\n    at _request (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:12430:21)\n    at http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17281:18\n    at SupabaseAuthClient._useSession (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17113:17)\n    at async SupabaseAuthClient._getUser (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17273:11)\n    at async SupabaseAuthClient.getUser (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17262:17)",
-        "console.error: TypeError: Failed to fetch\n    at http://localhost:8080/src/integrations/supabase/client.ts:17:10\n    at http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:12161:39\n    at _handleRequest (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:12443:18)\n    at _request (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:12430:21)\n    at http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17281:18\n    at SupabaseAuthClient._useSession (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17113:17)\n    at async SupabaseAuthClient._getUser (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17273:11)\n    at async SupabaseAuthClient.getUser (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17262:17)"
-      ]
-    },
-    {
-      "persona": "platform-admin",
-      "route": "/admin/clients_new",
-      "errors": [
-        "console.error: TypeError: Failed to fetch\n    at http://localhost:8080/src/integrations/supabase/client.ts:17:10\n    at http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:12161:39\n    at _handleRequest (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:12443:18)\n    at _request (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:12430:21)\n    at http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17281:18\n    at SupabaseAuthClient._useSession (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17113:17)\n    at async SupabaseAuthClient._getUser (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17273:11)\n    at async SupabaseAuthClient.getUser (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17262:17)",
-        "console.error: TypeError: Failed to fetch\n    at http://localhost:8080/src/integrations/supabase/client.ts:17:10\n    at http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:12161:39\n    at _handleRequest (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:12443:18)\n    at _request (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:12430:21)\n    at http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17281:18\n    at SupabaseAuthClient._useSession (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17113:17)\n    at async SupabaseAuthClient._getUser (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17273:11)\n    at async SupabaseAuthClient.getUser (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17262:17)"
-      ]
-    },
-    {
-      "persona": "cand-multi",
-      "route": "/me/messages",
-      "errors": [
-        "console.error: TypeError: Failed to fetch\n    at http://localhost:8080/src/integrations/supabase/client.ts:17:10\n    at http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:12161:39\n    at _handleRequest (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:12443:18)\n    at _request (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:12430:21)\n    at http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17281:18\n    at SupabaseAuthClient._useSession (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17113:17)\n    at async SupabaseAuthClient._getUser (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17273:11)\n    at async SupabaseAuthClient.getUser (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17262:17)\n    at async Object.beforeLoad (http://localhost:8080/src/routes/_authenticated/route.tsx:15:27)\n    at async loadMatches (http://localhost:8080/node_modules/.vite/deps/esm-CY6xHOz6.js?v=9ec21ebd:1635:31)",
         "console.error: Can't perform a React state update on a component that hasn't mounted yet. This indicates that you have a side-effect in your render function that asynchronously tries to update the component. Move this work to useEffect instead."
-      ]
-    },
-    {
-      "persona": "cand-multi",
-      "route": "/me/profile",
-      "errors": [
-        "console.error: TypeError: Failed to fetch\n    at http://localhost:8080/src/integrations/supabase/client.ts:17:10\n    at http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:12161:39\n    at _handleRequest (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:12443:18)\n    at _request (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:12430:21)\n    at http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17281:18\n    at SupabaseAuthClient._useSession (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17113:17)\n    at async SupabaseAuthClient._getUser (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17273:11)\n    at async SupabaseAuthClient.getUser (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17262:17)",
-        "console.error: TypeError: Failed to fetch\n    at http://localhost:8080/src/integrations/supabase/client.ts:17:10\n    at http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:12161:39\n    at _handleRequest (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:12443:18)\n    at _request (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:12430:21)\n    at http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17281:18\n    at SupabaseAuthClient._useSession (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17113:17)\n    at async SupabaseAuthClient._getUser (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17273:11)\n    at async SupabaseAuthClient.getUser (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17262:17)",
-        "console.error: TypeError: Failed to fetch\n    at http://localhost:8080/src/integrations/supabase/client.ts:17:10\n    at http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:12161:39\n    at _handleRequest (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:12443:18)\n    at _request (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:12430:21)\n    at http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17281:18\n    at SupabaseAuthClient._useSession (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17113:17)\n    at async SupabaseAuthClient._getUser (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17273:11)\n    at async SupabaseAuthClient.getUser (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17262:17)",
-        "console.error: TypeError: Failed to fetch\n    at http://localhost:8080/src/integrations/supabase/client.ts:17:10\n    at http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:12161:39\n    at _handleRequest (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:12443:18)\n    at _request (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:12430:21)\n    at http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17281:18\n    at SupabaseAuthClient._useSession (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17113:17)\n    at async SupabaseAuthClient._getUser (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17273:11)\n    at async SupabaseAuthClient.getUser (http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:17262:17)"
       ]
     }
   ]
