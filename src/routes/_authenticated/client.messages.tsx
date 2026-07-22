@@ -8,9 +8,13 @@ import {
   getClientMessages,
   sendClientMessage,
 } from "@/lib/client.functions";
+import { useClientOrgSearch } from "@/lib/use-client-org";
+import { useSupportView } from "@/lib/support-view";
+import { ActionGuard } from "@/components/action-guard";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+
 
 export const Route = createFileRoute("/_authenticated/client/messages")({
   head: () => ({
