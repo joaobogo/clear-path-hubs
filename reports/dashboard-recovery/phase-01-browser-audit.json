@@ -1,0 +1,342 @@
+{
+  "anonymous": [
+    {
+      "url": "/",
+      "final": "/",
+      "status": 200,
+      "title": "TaaSFlow \u2014 Hire faster with a curated talent pipeline",
+      "verdict": "WORKING",
+      "errors": [],
+      "body_preview": "TaaSFlow\nJobs\nSign in\nStart hiring\nHire senior specialists without the recruiting overhead.\n\nTell us about the role in five short steps. We'll shortlist evidence-backed candidates and hand you the fin"
+    },
+    {
+      "url": "/jobs",
+      "final": "/jobs",
+      "status": 200,
+      "title": "Open roles \u2014 TaaSFlow job board",
+      "verdict": "WORKING",
+      "errors": [],
+      "body_preview": "TaaSFlow\nJobs\nSign in\nOpen roles\n\n13 live roles curated by TaaSFlow.\n\nAny work model\nAny employment\nAll levels\nMid\u2013Senior\nSenior\nmid\nsenior\nTaaSFlow client\nHead of Marketing [QA:qa20260722]\nRemote\nFul"
+    },
+    {
+      "url": "/intake",
+      "final": "/intake",
+      "status": 200,
+      "title": "Start a hiring engagement \u2014 TaaSFlow",
+      "verdict": "WORKING",
+      "errors": [],
+      "body_preview": "Start a hiring engagement\n\nTell us who you need to hire. TaaSFlow returns evidence-scored shortlists \u2014 usually within 48 hours. No account required.\n\n1. Contact & company\n2. Role overview\n3. Requireme"
+    },
+    {
+      "url": "/login",
+      "final": "/login",
+      "status": 200,
+      "title": "Sign in \u2014 TaaSFlow",
+      "verdict": "WORKING",
+      "errors": [],
+      "body_preview": "Sign in\n\nTaaSFlow admin & client portal\n\nEmail\nPassword\nSign in\nForgot password?\nCreate account\n\u2190 Back home"
+    }
+  ],
+  "platform_admin": [
+    {
+      "__login__": "ok",
+      "final": "/login"
+    },
+    {
+      "url": "/",
+      "final": "/",
+      "status": 200,
+      "title": "TaaSFlow \u2014 Hire faster with a curated talent pipeline",
+      "verdict": "BROKEN",
+      "errors": [
+        "console: TypeError: Failed to fetch\n    at http://localhost:8080/src/integrations/supabase/client.ts:17:10\n    at http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:12161:39\n    "
+      ],
+      "body_preview": "TaaSFlow\nJobs\nSign in\nStart hiring\nHire senior specialists without the recruiting overhead.\n\nTell us about the role in five short steps. We'll shortlist evidence-backed candidates and hand you the fin"
+    },
+    {
+      "url": "/jobs",
+      "final": "/jobs",
+      "status": 200,
+      "title": "Open roles \u2014 TaaSFlow job board",
+      "verdict": "WORKING",
+      "errors": [],
+      "body_preview": "TaaSFlow\nJobs\nSign in\nOpen roles\n\n13 live roles curated by TaaSFlow.\n\nAny work model\nAny employment\nAll levels\nMid\u2013Senior\nSenior\nmid\nsenior\nTaaSFlow client\nHead of Marketing [QA:qa20260722]\nRemote\nFul"
+    },
+    {
+      "url": "/admin",
+      "final": "/login?redirect=%2Fadmin",
+      "status": 200,
+      "title": "Sign in \u2014 TaaSFlow",
+      "verdict": "REDIRECT_AUTH_WITH_ERRORS",
+      "errors": [
+        "pageerror: Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <QueryClientProvider client={{}} data-tsd-source=\"/src/route...\">\n      <OutletImpl data-tsd-source=\"/src/route...\">\n        <Suspense fallback={null}>\n          <MatchImpl matchId=\"/login/login\">\n            <MatchView router={{...}} matchId=\"/login/login\" resetKey={1784748112624} matchState={{routeId:\"/...\", ...}}>\n              <SafeFragment>\n                <SafeFragment fallback={null}>\n                  <SafeFragment getResetKey={function getResetKey} errorComponent={function ErrorComponent} ...>\n                    <SafeFragment fallback={function fallback}>\n                      <MatchInnerImpl matchId=\"/login/login\">\n                        <Lazy>\n                          <LoginPage>\n+                           <div\n+                             className=\"min-h-screen flex items-center justify-center bg-background px-4\"\n+                             data-tsd-source=\"/src/routes/login.tsx:178:5\"\n+                           >\n-                           <Suspense>\n                ...\n      ...\n"
+      ],
+      "body_preview": "Sign in\n\nTaaSFlow admin & client portal\n\nEmail\nPassword\nSign in\nForgot password?\nCreate account\n\u2190 Back home"
+    },
+    {
+      "url": "/admin/clients",
+      "final": "/login?redirect=%2Fadmin%2Fclients%3Fq%3D",
+      "status": 200,
+      "title": "Sign in \u2014 TaaSFlow",
+      "verdict": "REDIRECT_AUTH_WITH_ERRORS",
+      "errors": [
+        "pageerror: Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <QueryClientProvider client={{}} data-tsd-source=\"/src/route...\">\n      <OutletImpl data-tsd-source=\"/src/route...\">\n        <Suspense fallback={null}>\n          <MatchImpl matchId=\"/login/login\">\n            <MatchView router={{...}} matchId=\"/login/login\" resetKey={1784748114051} matchState={{routeId:\"/...\", ...}}>\n              <SafeFragment>\n                <SafeFragment fallback={null}>\n                  <SafeFragment getResetKey={function getResetKey} errorComponent={function ErrorComponent} ...>\n                    <SafeFragment fallback={function fallback}>\n                      <MatchInnerImpl matchId=\"/login/login\">\n                        <Lazy>\n                          <LoginPage>\n+                           <div\n+                             className=\"min-h-screen flex items-center justify-center bg-background px-4\"\n+                             data-tsd-source=\"/src/routes/login.tsx:178:5\"\n+                           >\n-                           <Suspense>\n                ...\n      ...\n"
+      ],
+      "body_preview": "Sign in\n\nTaaSFlow admin & client portal\n\nEmail\nPassword\nSign in\nForgot password?\nCreate account\n\u2190 Back home"
+    },
+    {
+      "url": "/admin/candidates",
+      "final": "/login?redirect=%2Fadmin%2Fcandidates%3Fq%3D%26admin_status%3D%26processing_state%3D%26stage%3D%26min_score%3D%26max_score%3D%26client_visibility%3D%26organization_id%3D%26position_id%3D%26date_from%3D%26date_to%3D%26sort%3Dupdated_desc%26page%3D1%26open%3D",
+      "status": 200,
+      "title": "Sign in \u2014 TaaSFlow",
+      "verdict": "REDIRECT_AUTH_WITH_ERRORS",
+      "errors": [
+        "pageerror: Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <QueryClientProvider client={{}} data-tsd-source=\"/src/route...\">\n      <OutletImpl data-tsd-source=\"/src/route...\">\n        <Suspense fallback={null}>\n          <MatchImpl matchId=\"/login/login\">\n            <MatchView router={{...}} matchId=\"/login/login\" resetKey={1784748115640} matchState={{routeId:\"/...\", ...}}>\n              <SafeFragment>\n                <SafeFragment fallback={null}>\n                  <SafeFragment getResetKey={function getResetKey} errorComponent={function ErrorComponent} ...>\n                    <SafeFragment fallback={function fallback}>\n                      <MatchInnerImpl matchId=\"/login/login\">\n                        <Lazy>\n                          <LoginPage>\n+                           <div\n+                             className=\"min-h-screen flex items-center justify-center bg-background px-4\"\n+                             data-tsd-source=\"/src/routes/login.tsx:178:5\"\n+                           >\n-                           <Suspense>\n                ...\n      ...\n"
+      ],
+      "body_preview": "Sign in\n\nTaaSFlow admin & client portal\n\nEmail\nPassword\nSign in\nForgot password?\nCreate account\n\u2190 Back home"
+    },
+    {
+      "url": "/admin/positions",
+      "final": "/login?redirect=%2Fadmin%2Fpositions",
+      "status": 200,
+      "title": "Sign in \u2014 TaaSFlow",
+      "verdict": "REDIRECT_AUTH_WITH_ERRORS",
+      "errors": [
+        "pageerror: Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <QueryClientProvider client={{}} data-tsd-source=\"/src/route...\">\n      <OutletImpl data-tsd-source=\"/src/route...\">\n        <Suspense fallback={null}>\n          <MatchImpl matchId=\"/login/login\">\n            <MatchView router={{...}} matchId=\"/login/login\" resetKey={1784748117158} matchState={{routeId:\"/...\", ...}}>\n              <SafeFragment>\n                <SafeFragment fallback={null}>\n                  <SafeFragment getResetKey={function getResetKey} errorComponent={function ErrorComponent} ...>\n                    <SafeFragment fallback={function fallback}>\n                      <MatchInnerImpl matchId=\"/login/login\">\n                        <Lazy>\n                          <LoginPage>\n+                           <div\n+                             className=\"min-h-screen flex items-center justify-center bg-background px-4\"\n+                             data-tsd-source=\"/src/routes/login.tsx:178:5\"\n+                           >\n-                           <Suspense>\n                ...\n      ...\n"
+      ],
+      "body_preview": "Sign in\n\nTaaSFlow admin & client portal\n\nEmail\nPassword\nSign in\nForgot password?\nCreate account\n\u2190 Back home"
+    },
+    {
+      "url": "/admin/publish",
+      "final": "/login?redirect=%2Fadmin%2Fpublish",
+      "status": 200,
+      "title": "Sign in \u2014 TaaSFlow",
+      "verdict": "REDIRECT_AUTH_WITH_ERRORS",
+      "errors": [
+        "pageerror: Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <QueryClientProvider client={{}} data-tsd-source=\"/src/route...\">\n      <OutletImpl data-tsd-source=\"/src/route...\">\n        <Suspense fallback={null}>\n          <MatchImpl matchId=\"/login/login\">\n            <MatchView router={{...}} matchId=\"/login/login\" resetKey={1784748118661} matchState={{routeId:\"/...\", ...}}>\n              <SafeFragment>\n                <SafeFragment fallback={null}>\n                  <SafeFragment getResetKey={function getResetKey} errorComponent={function ErrorComponent} ...>\n                    <SafeFragment fallback={function fallback}>\n                      <MatchInnerImpl matchId=\"/login/login\">\n                        <Lazy>\n                          <LoginPage>\n+                           <div\n+                             className=\"min-h-screen flex items-center justify-center bg-background px-4\"\n+                             data-tsd-source=\"/src/routes/login.tsx:178:5\"\n+                           >\n-                           <Suspense>\n                ...\n      ...\n"
+      ],
+      "body_preview": "Sign in\n\nTaaSFlow admin & client portal\n\nEmail\nPassword\nSign in\nForgot password?\nCreate account\n\u2190 Back home"
+    },
+    {
+      "url": "/admin/team",
+      "final": "/login?redirect=%2Fadmin%2Fteam",
+      "status": 200,
+      "title": "Sign in \u2014 TaaSFlow",
+      "verdict": "REDIRECT_AUTH_WITH_ERRORS",
+      "errors": [
+        "pageerror: Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <QueryClientProvider client={{}} data-tsd-source=\"/src/route...\">\n      <OutletImpl data-tsd-source=\"/src/route...\">\n        <Suspense fallback={null}>\n          <MatchImpl matchId=\"/login/login\">\n            <MatchView router={{...}} matchId=\"/login/login\" resetKey={1784748120110} matchState={{routeId:\"/...\", ...}}>\n              <SafeFragment>\n                <SafeFragment fallback={null}>\n                  <SafeFragment getResetKey={function getResetKey} errorComponent={function ErrorComponent} ...>\n                    <SafeFragment fallback={function fallback}>\n                      <MatchInnerImpl matchId=\"/login/login\">\n                        <Lazy>\n                          <LoginPage>\n+                           <div\n+                             className=\"min-h-screen flex items-center justify-center bg-background px-4\"\n+                             data-tsd-source=\"/src/routes/login.tsx:178:5\"\n+                           >\n-                           <Suspense>\n                ...\n      ...\n"
+      ],
+      "body_preview": "Sign in\n\nTaaSFlow admin & client portal\n\nEmail\nPassword\nSign in\nForgot password?\nCreate account\n\u2190 Back home"
+    },
+    {
+      "url": "/admin/health",
+      "final": "/login?redirect=%2Fadmin%2Fhealth",
+      "status": 200,
+      "title": "Sign in \u2014 TaaSFlow",
+      "verdict": "REDIRECT_AUTH_WITH_ERRORS",
+      "errors": [
+        "pageerror: Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <QueryClientProvider client={{}} data-tsd-source=\"/src/route...\">\n      <OutletImpl data-tsd-source=\"/src/route...\">\n        <Suspense fallback={null}>\n          <MatchImpl matchId=\"/login/login\">\n            <MatchView router={{...}} matchId=\"/login/login\" resetKey={1784748121600} matchState={{routeId:\"/...\", ...}}>\n              <SafeFragment>\n                <SafeFragment fallback={null}>\n                  <SafeFragment getResetKey={function getResetKey} errorComponent={function ErrorComponent} ...>\n                    <SafeFragment fallback={function fallback}>\n                      <MatchInnerImpl matchId=\"/login/login\">\n                        <Lazy>\n                          <LoginPage>\n+                           <div\n+                             className=\"min-h-screen flex items-center justify-center bg-background px-4\"\n+                             data-tsd-source=\"/src/routes/login.tsx:178:5\"\n+                           >\n-                           <Suspense>\n                ...\n      ...\n"
+      ],
+      "body_preview": "Sign in\n\nTaaSFlow admin & client portal\n\nEmail\nPassword\nSign in\nForgot password?\nCreate account\n\u2190 Back home"
+    },
+    {
+      "url": "/admin/notifications",
+      "final": "/login?redirect=%2Fadmin%2Fnotifications",
+      "status": 200,
+      "title": "Sign in \u2014 TaaSFlow",
+      "verdict": "REDIRECT_AUTH_WITH_ERRORS",
+      "errors": [
+        "pageerror: Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <QueryClientProvider client={{}} data-tsd-source=\"/src/route...\">\n      <OutletImpl data-tsd-source=\"/src/route...\">\n        <Suspense fallback={null}>\n          <MatchImpl matchId=\"/login/login\">\n            <MatchView router={{...}} matchId=\"/login/login\" resetKey={1784748123004} matchState={{routeId:\"/...\", ...}}>\n              <SafeFragment>\n                <SafeFragment fallback={null}>\n                  <SafeFragment getResetKey={function getResetKey} errorComponent={function ErrorComponent} ...>\n                    <SafeFragment fallback={function fallback}>\n                      <MatchInnerImpl matchId=\"/login/login\">\n                        <Lazy>\n                          <LoginPage>\n+                           <div\n+                             className=\"min-h-screen flex items-center justify-center bg-background px-4\"\n+                             data-tsd-source=\"/src/routes/login.tsx:178:5\"\n+                           >\n-                           <Suspense>\n                ...\n      ...\n"
+      ],
+      "body_preview": "Sign in\n\nTaaSFlow admin & client portal\n\nEmail\nPassword\nSign in\nForgot password?\nCreate account\n\u2190 Back home"
+    },
+    {
+      "url": "/admin/settings",
+      "final": "/login?redirect=%2Fadmin%2Fsettings",
+      "status": 200,
+      "title": "Sign in \u2014 TaaSFlow",
+      "verdict": "REDIRECT_AUTH_WITH_ERRORS",
+      "errors": [
+        "pageerror: Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <QueryClientProvider client={{}} data-tsd-source=\"/src/route...\">\n      <OutletImpl data-tsd-source=\"/src/route...\">\n        <Suspense fallback={null}>\n          <MatchImpl matchId=\"/login/login\">\n            <MatchView router={{...}} matchId=\"/login/login\" resetKey={1784748124452} matchState={{routeId:\"/...\", ...}}>\n              <SafeFragment>\n                <SafeFragment fallback={null}>\n                  <SafeFragment getResetKey={function getResetKey} errorComponent={function ErrorComponent} ...>\n                    <SafeFragment fallback={function fallback}>\n                      <MatchInnerImpl matchId=\"/login/login\">\n                        <Lazy>\n                          <LoginPage>\n+                           <div\n+                             className=\"min-h-screen flex items-center justify-center bg-background px-4\"\n+                             data-tsd-source=\"/src/routes/login.tsx:178:5\"\n+                           >\n-                           <Suspense>\n                ...\n      ...\n"
+      ],
+      "body_preview": "Sign in\n\nTaaSFlow admin & client portal\n\nEmail\nPassword\nSign in\nForgot password?\nCreate account\n\u2190 Back home"
+    },
+    {
+      "url": "/client",
+      "final": "/login?redirect=%2Fclient",
+      "status": 200,
+      "title": "Sign in \u2014 TaaSFlow",
+      "verdict": "REDIRECT_AUTH_WITH_ERRORS",
+      "errors": [
+        "pageerror: Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <QueryClientProvider client={{}} data-tsd-source=\"/src/route...\">\n      <OutletImpl data-tsd-source=\"/src/route...\">\n        <Suspense fallback={null}>\n          <MatchImpl matchId=\"/login/login\">\n            <MatchView router={{...}} matchId=\"/login/login\" resetKey={1784748125866} matchState={{routeId:\"/...\", ...}}>\n              <SafeFragment>\n                <SafeFragment fallback={null}>\n                  <SafeFragment getResetKey={function getResetKey} errorComponent={function ErrorComponent} ...>\n                    <SafeFragment fallback={function fallback}>\n                      <MatchInnerImpl matchId=\"/login/login\">\n                        <Lazy>\n                          <LoginPage>\n+                           <div\n+                             className=\"min-h-screen flex items-center justify-center bg-background px-4\"\n+                             data-tsd-source=\"/src/routes/login.tsx:178:5\"\n+                           >\n-                           <Suspense>\n                ...\n      ...\n"
+      ],
+      "body_preview": "Sign in\n\nTaaSFlow admin & client portal\n\nEmail\nPassword\nSign in\nForgot password?\nCreate account\n\u2190 Back home"
+    }
+  ],
+  "client_admin_alpha": [
+    {
+      "__login__": "ok",
+      "final": "/login"
+    },
+    {
+      "url": "/",
+      "final": "/",
+      "status": 200,
+      "title": "TaaSFlow \u2014 Hire faster with a curated talent pipeline",
+      "verdict": "BROKEN",
+      "errors": [
+        "console: TypeError: Failed to fetch\n    at http://localhost:8080/src/integrations/supabase/client.ts:17:10\n    at http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:12161:39\n    "
+      ],
+      "body_preview": "TaaSFlow\nJobs\nSign in\nStart hiring\nHire senior specialists without the recruiting overhead.\n\nTell us about the role in five short steps. We'll shortlist evidence-backed candidates and hand you the fin"
+    },
+    {
+      "url": "/admin",
+      "final": "/login?redirect=%2Fadmin",
+      "status": 200,
+      "title": "Sign in \u2014 TaaSFlow",
+      "verdict": "REDIRECT_AUTH_WITH_ERRORS",
+      "errors": [
+        "pageerror: Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <QueryClientProvider client={{}} data-tsd-source=\"/src/route...\">\n      <OutletImpl data-tsd-source=\"/src/route...\">\n        <Suspense fallback={null}>\n          <MatchImpl matchId=\"/login/login\">\n            <MatchView router={{...}} matchId=\"/login/login\" resetKey={1784748130571} matchState={{routeId:\"/...\", ...}}>\n              <SafeFragment>\n                <SafeFragment fallback={null}>\n                  <SafeFragment getResetKey={function getResetKey} errorComponent={function ErrorComponent} ...>\n                    <SafeFragment fallback={function fallback}>\n                      <MatchInnerImpl matchId=\"/login/login\">\n                        <Lazy>\n                          <LoginPage>\n+                           <div\n+                             className=\"min-h-screen flex items-center justify-center bg-background px-4\"\n+                             data-tsd-source=\"/src/routes/login.tsx:178:5\"\n+                           >\n-                           <Suspense>\n                ...\n      ...\n"
+      ],
+      "body_preview": "Sign in\n\nTaaSFlow admin & client portal\n\nEmail\nPassword\nSign in\nForgot password?\nCreate account\n\u2190 Back home"
+    },
+    {
+      "url": "/client",
+      "final": "/login?redirect=%2Fclient",
+      "status": 200,
+      "title": "Sign in \u2014 TaaSFlow",
+      "verdict": "REDIRECT_AUTH_WITH_ERRORS",
+      "errors": [
+        "pageerror: Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <QueryClientProvider client={{}} data-tsd-source=\"/src/route...\">\n      <OutletImpl data-tsd-source=\"/src/route...\">\n        <Suspense fallback={null}>\n          <MatchImpl matchId=\"/login/login\">\n            <MatchView router={{...}} matchId=\"/login/login\" resetKey={1784748132078} matchState={{routeId:\"/...\", ...}}>\n              <SafeFragment>\n                <SafeFragment fallback={null}>\n                  <SafeFragment getResetKey={function getResetKey} errorComponent={function ErrorComponent} ...>\n                    <SafeFragment fallback={function fallback}>\n                      <MatchInnerImpl matchId=\"/login/login\">\n                        <Lazy>\n                          <LoginPage>\n+                           <div\n+                             className=\"min-h-screen flex items-center justify-center bg-background px-4\"\n+                             data-tsd-source=\"/src/routes/login.tsx:178:5\"\n+                           >\n-                           <Suspense>\n                ...\n      ...\n"
+      ],
+      "body_preview": "Sign in\n\nTaaSFlow admin & client portal\n\nEmail\nPassword\nSign in\nForgot password?\nCreate account\n\u2190 Back home"
+    },
+    {
+      "url": "/client/positions",
+      "final": "/login?redirect=%2Fclient%2Fpositions%3Ftab%3Dactive",
+      "status": 200,
+      "title": "Sign in \u2014 TaaSFlow",
+      "verdict": "REDIRECT_AUTH_WITH_ERRORS",
+      "errors": [
+        "pageerror: Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <QueryClientProvider client={{}} data-tsd-source=\"/src/route...\">\n      <OutletImpl data-tsd-source=\"/src/route...\">\n        <Suspense fallback={null}>\n          <MatchImpl matchId=\"/login/login\">\n            <MatchView router={{...}} matchId=\"/login/login\" resetKey={1784748133536} matchState={{routeId:\"/...\", ...}}>\n              <SafeFragment>\n                <SafeFragment fallback={null}>\n                  <SafeFragment getResetKey={function getResetKey} errorComponent={function ErrorComponent} ...>\n                    <SafeFragment fallback={function fallback}>\n                      <MatchInnerImpl matchId=\"/login/login\">\n                        <Lazy>\n                          <LoginPage>\n+                           <div\n+                             className=\"min-h-screen flex items-center justify-center bg-background px-4\"\n+                             data-tsd-source=\"/src/routes/login.tsx:178:5\"\n+                           >\n-                           <Suspense>\n                ...\n      ...\n"
+      ],
+      "body_preview": "Sign in\n\nTaaSFlow admin & client portal\n\nEmail\nPassword\nSign in\nForgot password?\nCreate account\n\u2190 Back home"
+    },
+    {
+      "url": "/client/candidates",
+      "final": "/login?redirect=%2Fclient%2Fcandidates%3Ffilter%3Dall%26position%3D%26min_score%3D%26fit%3D%26location%3D",
+      "status": 200,
+      "title": "Sign in \u2014 TaaSFlow",
+      "verdict": "REDIRECT_AUTH_WITH_ERRORS",
+      "errors": [
+        "pageerror: Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <QueryClientProvider client={{}} data-tsd-source=\"/src/route...\">\n      <OutletImpl data-tsd-source=\"/src/route...\">\n        <Suspense fallback={null}>\n          <MatchImpl matchId=\"/login/login\">\n            <MatchView router={{...}} matchId=\"/login/login\" resetKey={1784748134927} matchState={{routeId:\"/...\", ...}}>\n              <SafeFragment>\n                <SafeFragment fallback={null}>\n                  <SafeFragment getResetKey={function getResetKey} errorComponent={function ErrorComponent} ...>\n                    <SafeFragment fallback={function fallback}>\n                      <MatchInnerImpl matchId=\"/login/login\">\n                        <Lazy>\n                          <LoginPage>\n+                           <div\n+                             className=\"min-h-screen flex items-center justify-center bg-background px-4\"\n+                             data-tsd-source=\"/src/routes/login.tsx:178:5\"\n+                           >\n-                           <Suspense>\n                ...\n      ...\n"
+      ],
+      "body_preview": "Sign in\n\nTaaSFlow admin & client portal\n\nEmail\nPassword\nSign in\nForgot password?\nCreate account\n\u2190 Back home"
+    },
+    {
+      "url": "/client/messages",
+      "final": "/login?redirect=%2Fclient%2Fmessages",
+      "status": 200,
+      "title": "Sign in \u2014 TaaSFlow",
+      "verdict": "REDIRECT_AUTH_WITH_ERRORS",
+      "errors": [
+        "pageerror: Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <QueryClientProvider client={{}} data-tsd-source=\"/src/route...\">\n      <OutletImpl data-tsd-source=\"/src/route...\">\n        <Suspense fallback={null}>\n          <MatchImpl matchId=\"/login/login\">\n            <MatchView router={{...}} matchId=\"/login/login\" resetKey={1784748136375} matchState={{routeId:\"/...\", ...}}>\n              <SafeFragment>\n                <SafeFragment fallback={null}>\n                  <SafeFragment getResetKey={function getResetKey} errorComponent={function ErrorComponent} ...>\n                    <SafeFragment fallback={function fallback}>\n                      <MatchInnerImpl matchId=\"/login/login\">\n                        <Lazy>\n                          <LoginPage>\n+                           <div\n+                             className=\"min-h-screen flex items-center justify-center bg-background px-4\"\n+                             data-tsd-source=\"/src/routes/login.tsx:178:5\"\n+                           >\n-                           <Suspense>\n                ...\n      ...\n"
+      ],
+      "body_preview": "Sign in\n\nTaaSFlow admin & client portal\n\nEmail\nPassword\nSign in\nForgot password?\nCreate account\n\u2190 Back home"
+    },
+    {
+      "url": "/client/team",
+      "final": "/login?redirect=%2Fclient%2Fteam",
+      "status": 200,
+      "title": "Sign in \u2014 TaaSFlow",
+      "verdict": "REDIRECT_AUTH_WITH_ERRORS",
+      "errors": [
+        "pageerror: Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <QueryClientProvider client={{}} data-tsd-source=\"/src/route...\">\n      <OutletImpl data-tsd-source=\"/src/route...\">\n        <Suspense fallback={null}>\n          <MatchImpl matchId=\"/login/login\">\n            <MatchView router={{...}} matchId=\"/login/login\" resetKey={1784748137807} matchState={{routeId:\"/...\", ...}}>\n              <SafeFragment>\n                <SafeFragment fallback={null}>\n                  <SafeFragment getResetKey={function getResetKey} errorComponent={function ErrorComponent} ...>\n                    <SafeFragment fallback={function fallback}>\n                      <MatchInnerImpl matchId=\"/login/login\">\n                        <Lazy>\n                          <LoginPage>\n+                           <div\n+                             className=\"min-h-screen flex items-center justify-center bg-background px-4\"\n+                             data-tsd-source=\"/src/routes/login.tsx:178:5\"\n+                           >\n-                           <Suspense>\n                ...\n      ...\n"
+      ],
+      "body_preview": "Sign in\n\nTaaSFlow admin & client portal\n\nEmail\nPassword\nSign in\nForgot password?\nCreate account\n\u2190 Back home"
+    },
+    {
+      "url": "/client/settings",
+      "final": "/login?redirect=%2Fclient%2Fsettings",
+      "status": 200,
+      "title": "Sign in \u2014 TaaSFlow",
+      "verdict": "REDIRECT_AUTH_WITH_ERRORS",
+      "errors": [
+        "pageerror: Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <QueryClientProvider client={{}} data-tsd-source=\"/src/route...\">\n      <OutletImpl data-tsd-source=\"/src/route...\">\n        <Suspense fallback={null}>\n          <MatchImpl matchId=\"/login/login\">\n            <MatchView router={{...}} matchId=\"/login/login\" resetKey={1784748139254} matchState={{routeId:\"/...\", ...}}>\n              <SafeFragment>\n                <SafeFragment fallback={null}>\n                  <SafeFragment getResetKey={function getResetKey} errorComponent={function ErrorComponent} ...>\n                    <SafeFragment fallback={function fallback}>\n                      <MatchInnerImpl matchId=\"/login/login\">\n                        <Lazy>\n                          <LoginPage>\n+                           <div\n+                             className=\"min-h-screen flex items-center justify-center bg-background px-4\"\n+                             data-tsd-source=\"/src/routes/login.tsx:178:5\"\n+                           >\n-                           <Suspense>\n                ...\n      ...\n"
+      ],
+      "body_preview": "Sign in\n\nTaaSFlow admin & client portal\n\nEmail\nPassword\nSign in\nForgot password?\nCreate account\n\u2190 Back home"
+    }
+  ],
+  "candidate_single": [
+    {
+      "__login__": "ok",
+      "final": "/login"
+    },
+    {
+      "url": "/",
+      "final": "/",
+      "status": 200,
+      "title": "TaaSFlow \u2014 Hire faster with a curated talent pipeline",
+      "verdict": "BROKEN",
+      "errors": [
+        "console: TypeError: Failed to fetch\n    at http://localhost:8080/src/integrations/supabase/client.ts:17:10\n    at http://localhost:8080/node_modules/.vite/deps/@supabase_supabase-js.js?v=9ec21ebd:12161:39\n    "
+      ],
+      "body_preview": "TaaSFlow\nJobs\nSign in\nStart hiring\nHire senior specialists without the recruiting overhead.\n\nTell us about the role in five short steps. We'll shortlist evidence-backed candidates and hand you the fin"
+    },
+    {
+      "url": "/me",
+      "final": "/login?redirect=%2Fme",
+      "status": 200,
+      "title": "Sign in \u2014 TaaSFlow",
+      "verdict": "REDIRECT_AUTH_WITH_ERRORS",
+      "errors": [
+        "pageerror: Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <QueryClientProvider client={{}} data-tsd-source=\"/src/route...\">\n      <OutletImpl data-tsd-source=\"/src/route...\">\n        <Suspense fallback={null}>\n          <MatchImpl matchId=\"/login/login\">\n            <MatchView router={{...}} matchId=\"/login/login\" resetKey={1784748144356} matchState={{routeId:\"/...\", ...}}>\n              <SafeFragment>\n                <SafeFragment fallback={null}>\n                  <SafeFragment getResetKey={function getResetKey} errorComponent={function ErrorComponent} ...>\n                    <SafeFragment fallback={function fallback}>\n                      <MatchInnerImpl matchId=\"/login/login\">\n                        <Lazy>\n                          <LoginPage>\n+                           <div\n+                             className=\"min-h-screen flex items-center justify-center bg-background px-4\"\n+                             data-tsd-source=\"/src/routes/login.tsx:178:5\"\n+                           >\n-                           <Suspense>\n                ...\n      ...\n"
+      ],
+      "body_preview": "Sign in\n\nTaaSFlow admin & client portal\n\nEmail\nPassword\nSign in\nForgot password?\nCreate account\n\u2190 Back home"
+    },
+    {
+      "url": "/me/applications",
+      "final": "/login?redirect=%2Fme%2Fapplications",
+      "status": 200,
+      "title": "Sign in \u2014 TaaSFlow",
+      "verdict": "REDIRECT_AUTH_WITH_ERRORS",
+      "errors": [
+        "pageerror: Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <QueryClientProvider client={{}} data-tsd-source=\"/src/route...\">\n      <OutletImpl data-tsd-source=\"/src/route...\">\n        <Suspense fallback={null}>\n          <MatchImpl matchId=\"/login/login\">\n            <MatchView router={{...}} matchId=\"/login/login\" resetKey={1784748145899} matchState={{routeId:\"/...\", ...}}>\n              <SafeFragment>\n                <SafeFragment fallback={null}>\n                  <SafeFragment getResetKey={function getResetKey} errorComponent={function ErrorComponent} ...>\n                    <SafeFragment fallback={function fallback}>\n                      <MatchInnerImpl matchId=\"/login/login\">\n                        <Lazy>\n                          <LoginPage>\n+                           <div\n+                             className=\"min-h-screen flex items-center justify-center bg-background px-4\"\n+                             data-tsd-source=\"/src/routes/login.tsx:178:5\"\n+                           >\n-                           <Suspense>\n                ...\n      ...\n"
+      ],
+      "body_preview": "Sign in\n\nTaaSFlow admin & client portal\n\nEmail\nPassword\nSign in\nForgot password?\nCreate account\n\u2190 Back home"
+    },
+    {
+      "url": "/me/messages",
+      "final": "/login?redirect=%2Fme%2Fmessages",
+      "status": 200,
+      "title": "Sign in \u2014 TaaSFlow",
+      "verdict": "REDIRECT_AUTH_WITH_ERRORS",
+      "errors": [
+        "pageerror: Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <QueryClientProvider client={{}} data-tsd-source=\"/src/route...\">\n      <OutletImpl data-tsd-source=\"/src/route...\">\n        <Suspense fallback={null}>\n          <MatchImpl matchId=\"/login/login\">\n            <MatchView router={{...}} matchId=\"/login/login\" resetKey={1784748147447} matchState={{routeId:\"/...\", ...}}>\n              <SafeFragment>\n                <SafeFragment fallback={null}>\n                  <SafeFragment getResetKey={function getResetKey} errorComponent={function ErrorComponent} ...>\n                    <SafeFragment fallback={function fallback}>\n                      <MatchInnerImpl matchId=\"/login/login\">\n                        <Lazy>\n                          <LoginPage>\n+                           <div\n+                             className=\"min-h-screen flex items-center justify-center bg-background px-4\"\n+                             data-tsd-source=\"/src/routes/login.tsx:178:5\"\n+                           >\n-                           <Suspense>\n                ...\n      ...\n"
+      ],
+      "body_preview": "Sign in\n\nTaaSFlow admin & client portal\n\nEmail\nPassword\nSign in\nForgot password?\nCreate account\n\u2190 Back home"
+    },
+    {
+      "url": "/me/profile",
+      "final": "/login?redirect=%2Fme%2Fprofile",
+      "status": 200,
+      "title": "Sign in \u2014 TaaSFlow",
+      "verdict": "REDIRECT_AUTH_WITH_ERRORS",
+      "errors": [
+        "pageerror: Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <QueryClientProvider client={{}} data-tsd-source=\"/src/route...\">\n      <OutletImpl data-tsd-source=\"/src/route...\">\n        <Suspense fallback={null}>\n          <MatchImpl matchId=\"/login/login\">\n            <MatchView router={{...}} matchId=\"/login/login\" resetKey={1784748148971} matchState={{routeId:\"/...\", ...}}>\n              <SafeFragment>\n                <SafeFragment fallback={null}>\n                  <SafeFragment getResetKey={function getResetKey} errorComponent={function ErrorComponent} ...>\n                    <SafeFragment fallback={function fallback}>\n                      <MatchInnerImpl matchId=\"/login/login\">\n                        <Lazy>\n                          <LoginPage>\n+                           <div\n+                             className=\"min-h-screen flex items-center justify-center bg-background px-4\"\n+                             data-tsd-source=\"/src/routes/login.tsx:178:5\"\n+                           >\n-                           <Suspense>\n                ...\n      ...\n"
+      ],
+      "body_preview": "Sign in\n\nTaaSFlow admin & client portal\n\nEmail\nPassword\nSign in\nForgot password?\nCreate account\n\u2190 Back home"
+    },
+    {
+      "url": "/me/settings",
+      "final": "/login?redirect=%2Fme%2Fsettings",
+      "status": 200,
+      "title": "Sign in \u2014 TaaSFlow",
+      "verdict": "REDIRECT_AUTH_WITH_ERRORS",
+      "errors": [
+        "pageerror: Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <QueryClientProvider client={{}} data-tsd-source=\"/src/route...\">\n      <OutletImpl data-tsd-source=\"/src/route...\">\n        <Suspense fallback={null}>\n          <MatchImpl matchId=\"/login/login\">\n            <MatchView router={{...}} matchId=\"/login/login\" resetKey={1784748150409} matchState={{routeId:\"/...\", ...}}>\n              <SafeFragment>\n                <SafeFragment fallback={null}>\n                  <SafeFragment getResetKey={function getResetKey} errorComponent={function ErrorComponent} ...>\n                    <SafeFragment fallback={function fallback}>\n                      <MatchInnerImpl matchId=\"/login/login\">\n                        <Lazy>\n                          <LoginPage>\n+                           <div\n+                             className=\"min-h-screen flex items-center justify-center bg-background px-4\"\n+                             data-tsd-source=\"/src/routes/login.tsx:178:5\"\n+                           >\n-                           <Suspense>\n                ...\n      ...\n"
+      ],
+      "body_preview": "Sign in\n\nTaaSFlow admin & client portal\n\nEmail\nPassword\nSign in\nForgot password?\nCreate account\n\u2190 Back home"
+    }
+  ]
+}
