@@ -4,7 +4,7 @@ import { getPublicPosition } from "@/lib/jobs.functions";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
-export const Route = createFileRoute("/jobs/$id")({
+export const Route = createFileRoute("/jobs/$id/")({
   loader: async ({ context, params }) => {
     const data = await context.queryClient.ensureQueryData({
       queryKey: ["public-position", params.id],
