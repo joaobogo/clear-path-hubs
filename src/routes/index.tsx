@@ -31,6 +31,9 @@ function Home() {
             TaaSFlow
           </Link>
           <nav className="flex items-center gap-3 text-sm">
+            <Link to="/jobs" className="text-muted-foreground hover:text-foreground">
+              Jobs
+            </Link>
             <Link to="/auth" className="text-muted-foreground hover:text-foreground">
               Sign in
             </Link>
