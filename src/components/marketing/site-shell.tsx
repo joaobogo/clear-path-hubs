@@ -3,7 +3,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import { ChevronRight, Loader2, Menu, Linkedin, Twitter, Github, Mail } from "lucide-react";
 
 import { brand } from "@/config/brand";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
