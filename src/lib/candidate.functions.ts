@@ -628,3 +628,54 @@ export const requestCorrection = createServerFn({ method: "POST" })
     if (error) return { ok: false, message: error.message };
     return { ok: true };
   });
+
+// ─── CV versions / download ─────────────────────────────────────────────────
+
+export const listMyCvVersions = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const supabase = context.supabase as AnyRow;
+    const { data: cp } = await supabase
+      .from("candidate_profiles")
+      .select("id,current_cv_file_id")
+      .eq("user_id", context.userId)
+      .maybeSingle();
+    if (!cp) return { current_id: null, versions: [] as AnyRow[] };
+    const { data, error } = await supabase
+      .from("files")
+      .select("id,filename,mime_type,size,checksum,created_at")
+      .eq("candidate_profile_id", cp.id)
+      .eq("storage_bucket", "cvs")
+      .order("created_at", { ascending: false })
+      .limit(20);
+    if (error) throw new Error(error.message);
+    return { current_id: cp.current_cv_file_id ?? null, versions: (data ?? []) as AnyRow[] };
+  });
+
+export const getMyCvDownloadUrl = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: { file_id: string }) =>
+    z.object({ file_id: z.string().uuid() }).parse(input),
+  )
+  .handler(async ({ context, data }) => {
+    const supabase = context.supabase as AnyRow;
+    const { data: cp } = await supabase
+      .from("candidate_profiles")
+      .select("id")
+      .eq("user_id", context.userId)
+      .maybeSingle();
+    if (!cp) return { ok: false as const, message: "No profile" };
+    const { data: f } = await supabase
+      .from("files")
+      .select("id,storage_bucket,storage_path,filename")
+      .eq("id", data.file_id)
+      .eq("candidate_profile_id", cp.id)
+      .maybeSingle();
+    if (!f) return { ok: false as const, message: "Not found" };
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: signed, error } = await supabaseAdmin.storage
+      .from(f.storage_bucket)
+      .createSignedUrl(f.storage_path, 60);
+    if (error || !signed) return { ok: false as const, message: error?.message ?? "Sign failed" };
+    return { ok: true as const, url: signed.signedUrl, filename: f.filename };
+  });
