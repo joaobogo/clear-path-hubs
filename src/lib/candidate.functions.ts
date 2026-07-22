@@ -253,6 +253,17 @@ export const getMyApplication = createServerFn({ method: "GET" })
       visibleStage: visibleMatch?.stage ?? null,
       infoRequested,
     });
+    const events: { at: string; label: string }[] = [
+      { at: a.applied_at, label: "Application received" },
+    ];
+    for (const m of a.candidate_matches ?? []) {
+      for (const d of m.client_decisions ?? []) {
+        const label = decisionLabel(d.decision);
+        if (label) events.push({ at: d.created_at, label });
+      }
+    }
+    if (a.withdrawn_at) events.push({ at: a.withdrawn_at, label: "Withdrawn" });
+    events.sort((x, y) => x.at.localeCompare(y.at));
     return {
       id: a.id,
       role_title: pos.title ?? "Role",
