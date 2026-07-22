@@ -2057,6 +2057,175 @@ export type Database = {
           },
         ]
       }
+      support_actions: {
+        Row: {
+          action: string
+          actor_user_id: string
+          after_state: Json | null
+          before_state: Json | null
+          id: string
+          occurred_at: string
+          organization_id: string | null
+          reason: string
+          session_id: string | null
+          target_id: string | null
+          target_type: string
+          trace_id: string | null
+        }
+        Insert: {
+          action: string
+          actor_user_id: string
+          after_state?: Json | null
+          before_state?: Json | null
+          id?: string
+          occurred_at?: string
+          organization_id?: string | null
+          reason: string
+          session_id?: string | null
+          target_id?: string | null
+          target_type: string
+          trace_id?: string | null
+        }
+        Update: {
+          action?: string
+          actor_user_id?: string
+          after_state?: Json | null
+          before_state?: Json | null
+          id?: string
+          occurred_at?: string
+          organization_id?: string | null
+          reason?: string
+          session_id?: string | null
+          target_id?: string | null
+          target_type?: string
+          trace_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "support_actions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "admin_clients_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "support_actions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "support_actions_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "support_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      support_sessions: {
+        Row: {
+          actor_role: string
+          actor_user_id: string
+          end_reason: string | null
+          ended_at: string | null
+          expires_at: string
+          id: string
+          reason: string
+          scope: string
+          started_at: string
+          target_role_snapshot: string | null
+          target_user_id: string
+          ticket_ref: string | null
+          trace_id: string
+        }
+        Insert: {
+          actor_role: string
+          actor_user_id: string
+          end_reason?: string | null
+          ended_at?: string | null
+          expires_at: string
+          id?: string
+          reason: string
+          scope?: string
+          started_at?: string
+          target_role_snapshot?: string | null
+          target_user_id: string
+          ticket_ref?: string | null
+          trace_id: string
+        }
+        Update: {
+          actor_role?: string
+          actor_user_id?: string
+          end_reason?: string | null
+          ended_at?: string | null
+          expires_at?: string
+          id?: string
+          reason?: string
+          scope?: string
+          started_at?: string
+          target_role_snapshot?: string | null
+          target_user_id?: string
+          ticket_ref?: string | null
+          trace_id?: string
+        }
+        Relationships: []
+      }
+      trace_index: {
+        Row: {
+          action: string
+          actor_user_id: string | null
+          failure_reason: string | null
+          http_status: number | null
+          occurred_at: string
+          organization_id: string | null
+          reference_id: string
+          request_summary: Json | null
+          result: string
+          trace_id: string
+        }
+        Insert: {
+          action: string
+          actor_user_id?: string | null
+          failure_reason?: string | null
+          http_status?: number | null
+          occurred_at?: string
+          organization_id?: string | null
+          reference_id: string
+          request_summary?: Json | null
+          result: string
+          trace_id: string
+        }
+        Update: {
+          action?: string
+          actor_user_id?: string | null
+          failure_reason?: string | null
+          http_status?: number | null
+          occurred_at?: string
+          organization_id?: string | null
+          reference_id?: string
+          request_summary?: Json | null
+          result?: string
+          trace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trace_index_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "admin_clients_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "trace_index_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           created_at: string
