@@ -16,9 +16,13 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as JobsIdRouteImport } from './routes/jobs.$id'
 import { Route as IntakeConfirmationRouteImport } from './routes/intake.confirmation'
+import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as JobsIdApplyRouteImport } from './routes/jobs.$id.apply'
 import { Route as ApplyReceivedApplicationIdRouteImport } from './routes/apply.received.$applicationId'
+import { Route as AuthenticatedAdminClientsRouteImport } from './routes/_authenticated/admin.clients'
 import { Route as AuthenticatedAdminCandidatesRouteImport } from './routes/_authenticated/admin.candidates'
+import { Route as AuthenticatedAdminClientsIdRouteImport } from './routes/_authenticated/admin.clients.$id'
 import { Route as AuthenticatedAdminCandidatesIdRouteImport } from './routes/_authenticated/admin.candidates.$id'
 
 const JobsRoute = JobsRouteImport.update({
@@ -55,6 +59,16 @@ const IntakeConfirmationRoute = IntakeConfirmationRouteImport.update({
   path: '/confirmation',
   getParentRoute: () => IntakeRoute,
 } as any)
+const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
 const JobsIdApplyRoute = JobsIdApplyRouteImport.update({
   id: '/apply',
   path: '/apply',
@@ -66,11 +80,23 @@ const ApplyReceivedApplicationIdRoute =
     path: '/apply/received/$applicationId',
     getParentRoute: () => rootRouteImport,
   } as any)
+const AuthenticatedAdminClientsRoute =
+  AuthenticatedAdminClientsRouteImport.update({
+    id: '/clients',
+    path: '/clients',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminCandidatesRoute =
   AuthenticatedAdminCandidatesRouteImport.update({
-    id: '/admin/candidates',
-    path: '/admin/candidates',
-    getParentRoute: () => AuthenticatedRouteRoute,
+    id: '/candidates',
+    path: '/candidates',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminClientsIdRoute =
+  AuthenticatedAdminClientsIdRouteImport.update({
+    id: '/$id',
+    path: '/$id',
+    getParentRoute: () => AuthenticatedAdminClientsRoute,
   } as any)
 const AuthenticatedAdminCandidatesIdRoute =
   AuthenticatedAdminCandidatesIdRouteImport.update({
@@ -84,12 +110,16 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/intake': typeof IntakeRouteWithChildren
   '/jobs': typeof JobsRouteWithChildren
+  '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/intake/confirmation': typeof IntakeConfirmationRoute
   '/jobs/$id': typeof JobsIdRouteWithChildren
   '/admin/candidates': typeof AuthenticatedAdminCandidatesRouteWithChildren
+  '/admin/clients': typeof AuthenticatedAdminClientsRouteWithChildren
   '/apply/received/$applicationId': typeof ApplyReceivedApplicationIdRoute
   '/jobs/$id/apply': typeof JobsIdApplyRoute
+  '/admin/': typeof AuthenticatedAdminIndexRoute
   '/admin/candidates/$id': typeof AuthenticatedAdminCandidatesIdRoute
+  '/admin/clients/$id': typeof AuthenticatedAdminClientsIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -99,9 +129,12 @@ export interface FileRoutesByTo {
   '/intake/confirmation': typeof IntakeConfirmationRoute
   '/jobs/$id': typeof JobsIdRouteWithChildren
   '/admin/candidates': typeof AuthenticatedAdminCandidatesRouteWithChildren
+  '/admin/clients': typeof AuthenticatedAdminClientsRouteWithChildren
   '/apply/received/$applicationId': typeof ApplyReceivedApplicationIdRoute
   '/jobs/$id/apply': typeof JobsIdApplyRoute
+  '/admin': typeof AuthenticatedAdminIndexRoute
   '/admin/candidates/$id': typeof AuthenticatedAdminCandidatesIdRoute
+  '/admin/clients/$id': typeof AuthenticatedAdminClientsIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -110,12 +143,16 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/intake': typeof IntakeRouteWithChildren
   '/jobs': typeof JobsRouteWithChildren
+  '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/intake/confirmation': typeof IntakeConfirmationRoute
   '/jobs/$id': typeof JobsIdRouteWithChildren
   '/_authenticated/admin/candidates': typeof AuthenticatedAdminCandidatesRouteWithChildren
+  '/_authenticated/admin/clients': typeof AuthenticatedAdminClientsRouteWithChildren
   '/apply/received/$applicationId': typeof ApplyReceivedApplicationIdRoute
   '/jobs/$id/apply': typeof JobsIdApplyRoute
+  '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/admin/candidates/$id': typeof AuthenticatedAdminCandidatesIdRoute
+  '/_authenticated/admin/clients/$id': typeof AuthenticatedAdminClientsIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -124,12 +161,16 @@ export interface FileRouteTypes {
     | '/auth'
     | '/intake'
     | '/jobs'
+    | '/admin'
     | '/intake/confirmation'
     | '/jobs/$id'
     | '/admin/candidates'
+    | '/admin/clients'
     | '/apply/received/$applicationId'
     | '/jobs/$id/apply'
+    | '/admin/'
     | '/admin/candidates/$id'
+    | '/admin/clients/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -139,9 +180,12 @@ export interface FileRouteTypes {
     | '/intake/confirmation'
     | '/jobs/$id'
     | '/admin/candidates'
+    | '/admin/clients'
     | '/apply/received/$applicationId'
     | '/jobs/$id/apply'
+    | '/admin'
     | '/admin/candidates/$id'
+    | '/admin/clients/$id'
   id:
     | '__root__'
     | '/'
@@ -149,12 +193,16 @@ export interface FileRouteTypes {
     | '/auth'
     | '/intake'
     | '/jobs'
+    | '/_authenticated/admin'
     | '/intake/confirmation'
     | '/jobs/$id'
     | '/_authenticated/admin/candidates'
+    | '/_authenticated/admin/clients'
     | '/apply/received/$applicationId'
     | '/jobs/$id/apply'
+    | '/_authenticated/admin/'
     | '/_authenticated/admin/candidates/$id'
+    | '/_authenticated/admin/clients/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -217,6 +265,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IntakeConfirmationRouteImport
       parentRoute: typeof IntakeRoute
     }
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/': {
+      id: '/_authenticated/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/jobs/$id/apply': {
       id: '/jobs/$id/apply'
       path: '/apply'
@@ -231,12 +293,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApplyReceivedApplicationIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/admin/clients': {
+      id: '/_authenticated/admin/clients'
+      path: '/clients'
+      fullPath: '/admin/clients'
+      preLoaderRoute: typeof AuthenticatedAdminClientsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/candidates': {
       id: '/_authenticated/admin/candidates'
-      path: '/admin/candidates'
+      path: '/candidates'
       fullPath: '/admin/candidates'
       preLoaderRoute: typeof AuthenticatedAdminCandidatesRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/clients/$id': {
+      id: '/_authenticated/admin/clients/$id'
+      path: '/$id'
+      fullPath: '/admin/clients/$id'
+      preLoaderRoute: typeof AuthenticatedAdminClientsIdRouteImport
+      parentRoute: typeof AuthenticatedAdminClientsRoute
     }
     '/_authenticated/admin/candidates/$id': {
       id: '/_authenticated/admin/candidates/$id'
@@ -262,13 +338,42 @@ const AuthenticatedAdminCandidatesRouteWithChildren =
     AuthenticatedAdminCandidatesRouteChildren,
   )
 
-interface AuthenticatedRouteRouteChildren {
+interface AuthenticatedAdminClientsRouteChildren {
+  AuthenticatedAdminClientsIdRoute: typeof AuthenticatedAdminClientsIdRoute
+}
+
+const AuthenticatedAdminClientsRouteChildren: AuthenticatedAdminClientsRouteChildren =
+  {
+    AuthenticatedAdminClientsIdRoute: AuthenticatedAdminClientsIdRoute,
+  }
+
+const AuthenticatedAdminClientsRouteWithChildren =
+  AuthenticatedAdminClientsRoute._addFileChildren(
+    AuthenticatedAdminClientsRouteChildren,
+  )
+
+interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminCandidatesRoute: typeof AuthenticatedAdminCandidatesRouteWithChildren
+  AuthenticatedAdminClientsRoute: typeof AuthenticatedAdminClientsRouteWithChildren
+  AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
+}
+
+const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
+  AuthenticatedAdminCandidatesRoute:
+    AuthenticatedAdminCandidatesRouteWithChildren,
+  AuthenticatedAdminClientsRoute: AuthenticatedAdminClientsRouteWithChildren,
+  AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
+}
+
+const AuthenticatedAdminRouteWithChildren =
+  AuthenticatedAdminRoute._addFileChildren(AuthenticatedAdminRouteChildren)
+
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRouteWithChildren
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
-  AuthenticatedAdminCandidatesRoute:
-    AuthenticatedAdminCandidatesRouteWithChildren,
+  AuthenticatedAdminRoute: AuthenticatedAdminRouteWithChildren,
 }
 
 const AuthenticatedRouteRouteWithChildren =

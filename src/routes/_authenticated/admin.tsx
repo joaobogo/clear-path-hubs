@@ -18,14 +18,19 @@ export const Route = createFileRoute("/_authenticated/admin")({
   component: AdminLayout,
 });
 
-const SECTIONS = [
+const SECTIONS: Array<{
+  to: string;
+  label: string;
+  icon: typeof LayoutDashboard;
+  exact?: boolean;
+}> = [
   { to: "/admin", label: "Overview", icon: LayoutDashboard, exact: true },
   { to: "/admin/clients", label: "Clients & Positions", icon: Building2 },
   { to: "/admin/candidates", label: "Candidates", icon: Users },
   { to: "/admin/publish", label: "Publish Desk", icon: Send },
   { to: "/admin/health", label: "Pipeline Health", icon: Activity },
   { to: "/admin/settings", label: "Settings", icon: Settings },
-] as const;
+];
 
 function AdminLayout() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
