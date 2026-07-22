@@ -116,17 +116,35 @@ export const getAdminOverview = createServerFn({ method: "GET" })
 export const listClients = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .inputValidator((i: unknown) =>
-    z.object({ q: z.string().optional().default("") }).parse(i ?? {}),
+    z
+      .object({
+        q: z.string().optional().default(""),
+        status: z.enum(["prospect", "active", "paused", "closed"]).optional(),
+        include_archived: z.boolean().optional().default(false),
+        sort: z
+          .enum(["updated_desc", "updated_asc", "name_asc", "name_desc", "status_asc"])
+          .optional()
+          .default("updated_desc"),
+      })
+      .parse(i ?? {}),
   )
   .handler(async ({ data, context }) => {
     await requireStaff(context.userId);
     const s = await getAdmin();
     let q = s
       .from("organizations")
-      .select("id,name,status,domain,industry,updated_at")
-      .order("updated_at", { ascending: false })
-      .limit(200);
+      .select("id,name,status,domain,industry,updated_at,archived_at,onboarding_status,dashboard_status")
+      .limit(500);
     if (data.q) q = q.ilike("name", `%${data.q}%`);
+    if (data.status) q = q.eq("status", data.status);
+    if (!data.include_archived) q = q.is("archived_at", null);
+    switch (data.sort) {
+      case "updated_asc": q = q.order("updated_at", { ascending: true }); break;
+      case "name_asc": q = q.order("name", { ascending: true }); break;
+      case "name_desc": q = q.order("name", { ascending: false }); break;
+      case "status_asc": q = q.order("status", { ascending: true }).order("name", { ascending: true }); break;
+      default: q = q.order("updated_at", { ascending: false });
+    }
     const { data: rows } = await q;
     const orgIds = (rows ?? []).map((r: AnyRow) => r.id);
     let counts: Record<string, { positions: number; active: number }> = {};
@@ -147,6 +165,7 @@ export const listClients = createServerFn({ method: "GET" })
       positions_active: counts[r.id]?.active ?? 0,
     }));
   });
+
 
 export const getClient = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
