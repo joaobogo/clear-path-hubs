@@ -365,9 +365,43 @@ const STAGE_GRAPH: Record<MatchStage, MatchStage[]> = {
   not_moving_forward: ["shortlisted"],
 };
 
+/**
+ * Reject if the caller is platform staff acting on an org where they hold no
+ * active client-role membership AND no active interactive support session
+ * exists for that org. Throws the typed `SUPPORT_VIEW_READ_ONLY` error the
+ * spec requires; UI translates it to a friendly toast.
+ */
+async function assertNotSupportViewReadOnly(
+  supabase: AnyRow,
+  userId: string,
+  orgId: string,
+) {
+  const { data: isClientEditor } = await supabase.rpc("is_org_editor", {
+    _user: userId,
+    _org: orgId,
+  });
+  if (isClientEditor === true) return;
+  const { data: isStaff } = await supabase.rpc("is_platform_staff", {
+    _user: userId,
+  });
+  if (isStaff !== true) throw new Error("forbidden");
+  // Staff — allow only when an interactive support session is currently open.
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { data: interactive } = await supabaseAdmin
+    .from("support_sessions")
+    .select("id")
+    .eq("actor_user_id", userId)
+    .eq("organization_id", orgId)
+    .eq("mode", "interactive")
+    .is("ended_at", null)
+    .gt("expires_at", new Date().toISOString())
+    .limit(1)
+    .maybeSingle();
+  if (!interactive) throw new Error("SUPPORT_VIEW_READ_ONLY");
+}
+
 async function assertEditor(supabase: AnyRow, userId: string, orgId: string) {
-  const { data } = await supabase.rpc("is_org_editor", { _user: userId, _org: orgId });
-  if (data !== true) throw new Error("forbidden");
+  await assertNotSupportViewReadOnly(supabase, userId, orgId);
 }
 
 async function loadMatch(supabase: AnyRow, orgId: string, matchId: string) {
@@ -656,15 +690,9 @@ export const sendClientMessage = createServerFn({ method: "POST" })
     z.object({ orgId: z.string().uuid(), body: z.string().min(1).max(4000) }).parse(input),
   )
   .handler(async ({ context, data }) => {
-    // Membership check — sender must belong to the org (any client role or staff).
-    const { data: ok } = await context.supabase.rpc("is_org_viewer", {
-      _user: context.userId,
-      _org: data.orgId,
-    });
-    const { data: staff } = await context.supabase.rpc("is_platform_staff", {
-      _user: context.userId,
-    });
-    if (ok !== true && staff !== true) throw new Error("forbidden");
+    // Sender must be a real client member of the org, OR staff in an active
+    // interactive support session. Read-only support view cannot send.
+    await assertNotSupportViewReadOnly(context.supabase, context.userId, data.orgId);
     const { data: row, error } = await context.supabase
       .from("messages")
       .insert({
