@@ -232,12 +232,46 @@ function LoginPage() {
               <Button type="submit" className="w-full" disabled={loading}>
                 {loading ? "Signing in…" : "Sign in"}
               </Button>
+              <div className="flex items-center justify-between">
+                <button
+                  type="button"
+                  className="text-xs text-muted-foreground hover:underline"
+                  onClick={() => setMode("forgot")}
+                >
+                  Forgot password?
+                </button>
+                <button
+                  type="button"
+                  className="text-xs text-muted-foreground hover:underline"
+                  onClick={() => setMode("signup")}
+                >
+                  Create account
+                </button>
+              </div>
+            </form>
+          ) : mode === "signup" ? (
+            <form onSubmit={onSignUp} className="space-y-3">
+              <div className="space-y-1.5">
+                <Label htmlFor="sname">Full name</Label>
+                <Input id="sname" type="text" autoComplete="name" required value={fullName} onChange={(e) => setFullName(e.target.value)} />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="semail">Email</Label>
+                <Input id="semail" type="email" autoComplete="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="spassword">Password</Label>
+                <Input id="spassword" type="password" autoComplete="new-password" required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} />
+              </div>
+              <Button type="submit" className="w-full" disabled={loading}>
+                {loading ? "Creating account…" : "Create account"}
+              </Button>
               <button
                 type="button"
                 className="text-xs text-muted-foreground hover:underline"
-                onClick={() => setMode("forgot")}
+                onClick={() => setMode("signin")}
               >
-                Forgot password?
+                ← Already have an account? Sign in
               </button>
             </form>
           ) : (
