@@ -86,7 +86,7 @@ function OverviewPage() {
             <Link
               key={k}
               to="/client/candidates"
-              search={{ filter: meta.filter }}
+              search={(prev) => ({ ...prev, filter: meta.filter })}
               className="group block rounded-lg border bg-card p-4 hover:border-primary transition"
             >
               <div className="text-xs uppercase tracking-wide text-muted-foreground">
@@ -114,7 +114,7 @@ function OverviewPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
           <Link
             to="/client/candidates"
-            search={{ filter: "new" }}
+            search={(prev) => ({ ...prev, filter: "new" })}
             className="rounded border p-3 hover:border-primary transition"
           >
             <div className="text-sm font-medium">New to review</div>
@@ -124,7 +124,7 @@ function OverviewPage() {
           </Link>
           <Link
             to="/client/candidates"
-            search={{ filter: "interview" }}
+            search={(prev) => ({ ...prev, filter: "interview" })}
             className="rounded border p-3 hover:border-primary transition"
           >
             <div className="text-sm font-medium">Interview outcomes</div>
