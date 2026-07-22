@@ -116,17 +116,35 @@ export const getAdminOverview = createServerFn({ method: "GET" })
 export const listClients = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .inputValidator((i: unknown) =>
-    z.object({ q: z.string().optional().default("") }).parse(i ?? {}),
+    z
+      .object({
+        q: z.string().optional().default(""),
+        status: z.enum(["prospect", "active", "paused", "closed"]).optional(),
+        include_archived: z.boolean().optional().default(false),
+        sort: z
+          .enum(["updated_desc", "updated_asc", "name_asc", "name_desc", "status_asc"])
+          .optional()
+          .default("updated_desc"),
+      })
+      .parse(i ?? {}),
   )
   .handler(async ({ data, context }) => {
     await requireStaff(context.userId);
     const s = await getAdmin();
     let q = s
       .from("organizations")
-      .select("id,name,status,domain,industry,updated_at")
-      .order("updated_at", { ascending: false })
-      .limit(200);
+      .select("id,name,status,domain,industry,updated_at,archived_at,onboarding_status,dashboard_status")
+      .limit(500);
     if (data.q) q = q.ilike("name", `%${data.q}%`);
+    if (data.status) q = q.eq("status", data.status);
+    if (!data.include_archived) q = q.is("archived_at", null);
+    switch (data.sort) {
+      case "updated_asc": q = q.order("updated_at", { ascending: true }); break;
+      case "name_asc": q = q.order("name", { ascending: true }); break;
+      case "name_desc": q = q.order("name", { ascending: false }); break;
+      case "status_asc": q = q.order("status", { ascending: true }).order("name", { ascending: true }); break;
+      default: q = q.order("updated_at", { ascending: false });
+    }
     const { data: rows } = await q;
     const orgIds = (rows ?? []).map((r: AnyRow) => r.id);
     let counts: Record<string, { positions: number; active: number }> = {};
@@ -147,6 +165,7 @@ export const listClients = createServerFn({ method: "GET" })
       positions_active: counts[r.id]?.active ?? 0,
     }));
   });
+
 
 export const getClient = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
@@ -656,6 +675,17 @@ export const listPositionOptions = createServerFn({ method: "POST" })
 // ─── Client workspace: canonical update, activity, tenant-scoped candidates ─
 
 const ORG_STATUS = z.enum(["prospect", "active", "paused", "closed"]);
+const ONBOARDING_STATUS = z.enum(["not_started", "in_progress", "live", "on_hold"]);
+const DASHBOARD_STATUS = z.enum(["inactive", "active", "maintenance"]);
+
+const nullableText = (max: number) =>
+  z
+    .string()
+    .trim()
+    .max(max)
+    .transform((v) => (v.length === 0 ? null : v))
+    .nullable()
+    .optional();
 
 export const updateOrganization = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -666,13 +696,30 @@ export const updateOrganization = createServerFn({ method: "POST" })
         patch: z
           .object({
             name: z.string().trim().min(1).max(200).optional(),
-            website: z.string().trim().max(500).nullable().optional(),
-            domain: z.string().trim().max(200).nullable().optional(),
-            industry: z.string().trim().max(120).nullable().optional(),
-            headquarters: z.string().trim().max(200).nullable().optional(),
+            website: nullableText(500),
+            domain: nullableText(200),
+            industry: nullableText(120),
+            headquarters: nullableText(200),
+            locations: nullableText(1000),
+            phone: nullableText(80),
+            primary_contact_name: nullableText(200),
+            primary_contact_email: z
+              .string()
+              .trim()
+              .max(320)
+              .transform((v) => (v.length === 0 ? null : v))
+              .nullable()
+              .optional()
+              .refine(
+                (v) => v == null || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v),
+                { message: "invalid_email" },
+              ),
+            internal_notes: nullableText(20_000),
             status: ORG_STATUS.optional(),
+            onboarding_status: ONBOARDING_STATUS.optional(),
+            dashboard_status: DASHBOARD_STATUS.optional(),
           })
-          .refine((p) => Object.keys(p).length > 0, { message: "empty patch" }),
+          .refine((p) => Object.keys(p).length > 0, { message: "empty_patch" }),
       })
       .parse(i),
   )
@@ -685,14 +732,16 @@ export const updateOrganization = createServerFn({ method: "POST" })
       .select("*")
       .eq("id", data.id)
       .maybeSingle();
-    if (!before) throw new Error("organization_not_found");
+    if (!before) throw new Error(`organization_not_found [${trace}]`);
+    if (before.archived_at) throw new Error(`organization_archived [${trace}]`);
     const { data: after, error } = await s
       .from("organizations")
-      .update(data.patch)
+      .update({ ...data.patch, updated_at: new Date().toISOString() })
       .eq("id", data.id)
       .select("*")
       .maybeSingle();
     if (error) throw new Error(`update_failed:${error.message} [${trace}]`);
+    if (!after) throw new Error(`readback_failed [${trace}]`);
     await writeAudit({
       actor: context.userId,
       action: "organization.update",
@@ -705,6 +754,51 @@ export const updateOrganization = createServerFn({ method: "POST" })
     });
     return { ok: true as const, organization: after, trace_id: trace };
   });
+
+export const archiveOrganization = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: unknown) =>
+    z
+      .object({
+        id: z.string().uuid(),
+        confirm_name: z.string().trim().min(1),
+      })
+      .parse(i),
+  )
+  .handler(async ({ data, context }) => {
+    await requireStaff(context.userId);
+    const s = await getAdmin();
+    const trace = traceId();
+    const { data: before } = await s
+      .from("organizations")
+      .select("*")
+      .eq("id", data.id)
+      .maybeSingle();
+    if (!before) throw new Error(`organization_not_found [${trace}]`);
+    if (before.name.trim().toLowerCase() !== data.confirm_name.trim().toLowerCase()) {
+      throw new Error(`confirmation_mismatch [${trace}]`);
+    }
+    const now = new Date().toISOString();
+    const { data: after, error } = await s
+      .from("organizations")
+      .update({ archived_at: now, status: "closed", dashboard_status: "inactive", updated_at: now })
+      .eq("id", data.id)
+      .select("*")
+      .maybeSingle();
+    if (error) throw new Error(`archive_failed:${error.message} [${trace}]`);
+    await writeAudit({
+      actor: context.userId,
+      action: "organization.archive",
+      entity_type: "organizations",
+      entity_id: data.id,
+      organization_id: data.id,
+      before,
+      after,
+      trace_id: trace,
+    });
+    return { ok: true as const, organization: after, trace_id: trace };
+  });
+
 
 export const getClientActivity = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])

@@ -1,4 +1,4 @@
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { createFileRoute, Link, notFound, useRouter } from "@tanstack/react-router";
 import { useSuspenseQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { z } from "zod";
@@ -6,12 +6,14 @@ import { toast } from "sonner";
 import {
   getClient,
   updateOrganization,
+  archiveOrganization,
   getClientActivity,
   getClientCandidatesForOrg,
 } from "@/lib/admin.functions";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -20,6 +22,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 const TABS = [
   "overview",
@@ -83,7 +93,8 @@ function ClientDetail() {
         </Link>
         <div className="mt-2 flex flex-wrap items-baseline gap-3">
           <h1 className="text-2xl font-semibold">{org.name}</h1>
-          <Badge variant="outline">{org.status}</Badge>
+          <Badge variant="outline" className="capitalize">{org.status}</Badge>
+          {org.archived_at && <Badge variant="secondary">archived</Badge>}
           <Link
             to="/client"
             search={{ org: org.id, preview: "client_admin" }}
@@ -96,6 +107,9 @@ function ClientDetail() {
         </div>
         <p className="mt-1 text-sm text-muted-foreground">
           {org.domain ?? "—"} · {org.industry ?? "—"} · {org.headquarters ?? "—"}
+        </p>
+        <p className="mt-1 font-mono text-[10px] text-muted-foreground">
+          tenant_id: {org.id}
         </p>
       </div>
 
@@ -142,10 +156,16 @@ function OverviewTab({ org, members, positions }: { org: any; members: any[]; po
         <dl className="grid grid-cols-2 gap-x-6 gap-y-1 text-muted-foreground">
           <dt>Name</dt><dd className="text-foreground">{org.name}</dd>
           <dt>Status</dt><dd className="text-foreground capitalize">{org.status}</dd>
+          <dt>Onboarding</dt><dd className="text-foreground capitalize">{(org.onboarding_status ?? "not_started").replace("_"," ")}</dd>
+          <dt>Dashboard</dt><dd className="text-foreground capitalize">{(org.dashboard_status ?? "inactive").replace("_"," ")}</dd>
           <dt>Website</dt><dd className="text-foreground">{org.website ?? "—"}</dd>
           <dt>Domain</dt><dd className="text-foreground">{org.domain ?? "—"}</dd>
           <dt>Industry</dt><dd className="text-foreground">{org.industry ?? "—"}</dd>
           <dt>Headquarters</dt><dd className="text-foreground">{org.headquarters ?? "—"}</dd>
+          <dt>Locations</dt><dd className="text-foreground whitespace-pre-wrap">{org.locations ?? "—"}</dd>
+          <dt>Primary contact</dt><dd className="text-foreground">{org.primary_contact_name ?? "—"}</dd>
+          <dt>Contact email</dt><dd className="text-foreground">{org.primary_contact_email ?? "—"}</dd>
+          <dt>Phone</dt><dd className="text-foreground">{org.phone ?? "—"}</dd>
           <dt>Created</dt><dd className="text-foreground">{new Date(org.created_at).toLocaleString()}</dd>
           <dt>Updated</dt><dd className="text-foreground">{new Date(org.updated_at).toLocaleString()}</dd>
         </dl>
@@ -166,32 +186,32 @@ function StatCard({ label, value }: { label: string; value: number }) {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function CompanyTab({ org }: { org: any }) {
   const qc = useQueryClient();
-  const [form, setForm] = useState({
+  const disabled = Boolean(org.archived_at);
+
+  const initial = {
     name: org.name ?? "",
     website: org.website ?? "",
     domain: org.domain ?? "",
     industry: org.industry ?? "",
     headquarters: org.headquarters ?? "",
+    locations: org.locations ?? "",
+    phone: org.phone ?? "",
+    primary_contact_name: org.primary_contact_name ?? "",
+    primary_contact_email: org.primary_contact_email ?? "",
+    internal_notes: org.internal_notes ?? "",
     status: org.status as string,
-  });
+    onboarding_status: (org.onboarding_status ?? "not_started") as string,
+    dashboard_status: (org.dashboard_status ?? "inactive") as string,
+  };
+  const [form, setForm] = useState(initial);
   useEffect(() => {
-    setForm({
-      name: org.name ?? "",
-      website: org.website ?? "",
-      domain: org.domain ?? "",
-      industry: org.industry ?? "",
-      headquarters: org.headquarters ?? "",
-      status: org.status,
-    });
-  }, [org.id, org.updated_at]); // eslint-disable-line react-hooks/exhaustive-deps
+    setForm(initial);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [org.id, org.updated_at]);
 
-  const dirty =
-    form.name !== (org.name ?? "") ||
-    form.website !== (org.website ?? "") ||
-    form.domain !== (org.domain ?? "") ||
-    form.industry !== (org.industry ?? "") ||
-    form.headquarters !== (org.headquarters ?? "") ||
-    form.status !== org.status;
+  const dirty = (Object.keys(initial) as (keyof typeof initial)[]).some(
+    (k) => form[k] !== initial[k],
+  );
 
   const m = useMutation({
     mutationFn: () =>
@@ -200,16 +220,25 @@ function CompanyTab({ org }: { org: any }) {
           id: org.id,
           patch: {
             name: form.name.trim(),
-            website: form.website.trim() || null,
-            domain: form.domain.trim() || null,
-            industry: form.industry.trim() || null,
-            headquarters: form.headquarters.trim() || null,
+            website: form.website,
+            domain: form.domain,
+            industry: form.industry,
+            headquarters: form.headquarters,
+            locations: form.locations,
+            phone: form.phone,
+            primary_contact_name: form.primary_contact_name,
+            primary_contact_email: form.primary_contact_email,
+            internal_notes: form.internal_notes,
             status: form.status as "prospect" | "active" | "paused" | "closed",
+            onboarding_status: form.onboarding_status as
+              | "not_started" | "in_progress" | "live" | "on_hold",
+            dashboard_status: form.dashboard_status as
+              | "inactive" | "active" | "maintenance",
           },
         },
       }),
-    onSuccess: async () => {
-      toast.success("Company profile saved");
+    onSuccess: async (res) => {
+      toast.success(`Saved · ${res.trace_id}`);
       await qc.invalidateQueries({ queryKey: ["admin-client", org.id] });
       await qc.invalidateQueries({ queryKey: ["admin-clients"] });
     },
@@ -221,40 +250,86 @@ function CompanyTab({ org }: { org: any }) {
       className="grid gap-4 max-w-2xl"
       onSubmit={(e) => {
         e.preventDefault();
-        if (dirty) m.mutate();
+        if (dirty && !disabled) m.mutate();
       }}
     >
+      {disabled && (
+        <div className="rounded border border-amber-500/40 bg-amber-500/10 p-3 text-xs text-amber-700 dark:text-amber-400">
+          This organization is archived. Editing is disabled.
+        </div>
+      )}
       <Field label="Company name">
-        <Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required />
+        <Input value={form.name} disabled={disabled} onChange={(e) => setForm({ ...form, name: e.target.value })} required />
       </Field>
-      <Field label="Website">
-        <Input value={form.website} onChange={(e) => setForm({ ...form, website: e.target.value })} placeholder="https://…" />
+      <div className="grid gap-4 md:grid-cols-2">
+        <Field label="Website">
+          <Input value={form.website} disabled={disabled} onChange={(e) => setForm({ ...form, website: e.target.value })} placeholder="https://…" />
+        </Field>
+        <Field label="Email domain">
+          <Input value={form.domain} disabled={disabled} onChange={(e) => setForm({ ...form, domain: e.target.value })} placeholder="acme.com" />
+        </Field>
+        <Field label="Industry">
+          <Input value={form.industry} disabled={disabled} onChange={(e) => setForm({ ...form, industry: e.target.value })} />
+        </Field>
+        <Field label="Headquarters">
+          <Input value={form.headquarters} disabled={disabled} onChange={(e) => setForm({ ...form, headquarters: e.target.value })} />
+        </Field>
+      </div>
+      <Field label="Locations (comma-separated)">
+        <Input value={form.locations} disabled={disabled} onChange={(e) => setForm({ ...form, locations: e.target.value })} placeholder="Lisbon, London, Remote-EU" />
       </Field>
-      <Field label="Email domain">
-        <Input value={form.domain} onChange={(e) => setForm({ ...form, domain: e.target.value })} placeholder="acme.com" />
-      </Field>
-      <Field label="Industry">
-        <Input value={form.industry} onChange={(e) => setForm({ ...form, industry: e.target.value })} />
-      </Field>
-      <Field label="Headquarters">
-        <Input value={form.headquarters} onChange={(e) => setForm({ ...form, headquarters: e.target.value })} />
-      </Field>
-      <Field label="Organization status">
-        <Select value={form.status} onValueChange={(v) => setForm({ ...form, status: v })}>
-          <SelectTrigger className="max-w-xs" data-qa-action="org-status-trigger">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {["prospect", "active", "paused", "closed"].map((s) => (
-              <SelectItem key={s} value={s} className="capitalize">
-                {s}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+      <div className="grid gap-4 md:grid-cols-2">
+        <Field label="Primary contact">
+          <Input value={form.primary_contact_name} disabled={disabled} onChange={(e) => setForm({ ...form, primary_contact_name: e.target.value })} />
+        </Field>
+        <Field label="Contact email">
+          <Input type="email" value={form.primary_contact_email} disabled={disabled} onChange={(e) => setForm({ ...form, primary_contact_email: e.target.value })} />
+        </Field>
+        <Field label="Phone">
+          <Input value={form.phone} disabled={disabled} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
+        </Field>
+        <Field label="Organization status">
+          <Select value={form.status} disabled={disabled} onValueChange={(v) => setForm({ ...form, status: v })}>
+            <SelectTrigger data-qa-action="org-status-trigger"><SelectValue /></SelectTrigger>
+            <SelectContent>
+              {["prospect","active","paused","closed"].map((s) => (
+                <SelectItem key={s} value={s} className="capitalize">{s}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </Field>
+        <Field label="Onboarding status">
+          <Select value={form.onboarding_status} disabled={disabled} onValueChange={(v) => setForm({ ...form, onboarding_status: v })}>
+            <SelectTrigger data-qa-action="org-onboarding-trigger"><SelectValue /></SelectTrigger>
+            <SelectContent>
+              {["not_started","in_progress","live","on_hold"].map((s) => (
+                <SelectItem key={s} value={s} className="capitalize">{s.replace("_"," ")}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </Field>
+        <Field label="Dashboard status">
+          <Select value={form.dashboard_status} disabled={disabled} onValueChange={(v) => setForm({ ...form, dashboard_status: v })}>
+            <SelectTrigger data-qa-action="org-dashboard-trigger"><SelectValue /></SelectTrigger>
+            <SelectContent>
+              {["inactive","active","maintenance"].map((s) => (
+                <SelectItem key={s} value={s} className="capitalize">{s}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </Field>
+      </div>
+      <Field label="Internal notes (not visible to the client)">
+        <Textarea
+          value={form.internal_notes}
+          disabled={disabled}
+          onChange={(e) => setForm({ ...form, internal_notes: e.target.value })}
+          rows={4}
+          placeholder="Ops notes, key context, escalation info…"
+        />
       </Field>
       <div>
-        <Button type="submit" disabled={!dirty || m.isPending} data-qa-action="save-company">
+        <Button type="submit" disabled={!dirty || m.isPending || disabled} data-qa-action="save-company">
           {m.isPending ? "Saving…" : "Save changes"}
         </Button>
       </div>
@@ -456,27 +531,90 @@ function ActivityTab({ id }: { id: string }) {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function SettingsTab({ org }: { org: any }) {
+  const qc = useQueryClient();
+  const router = useRouter();
+  const [open, setOpen] = useState(false);
+  const [confirm, setConfirm] = useState("");
+  const alreadyArchived = Boolean(org.archived_at);
+
+  const m = useMutation({
+    mutationFn: () =>
+      archiveOrganization({ data: { id: org.id, confirm_name: confirm } }),
+    onSuccess: async (res) => {
+      toast.success(`Client archived · ${res.trace_id}`);
+      setOpen(false);
+      setConfirm("");
+      await qc.invalidateQueries({ queryKey: ["admin-client", org.id] });
+      await qc.invalidateQueries({ queryKey: ["admin-clients"] });
+      router.invalidate();
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
   return (
     <section className="space-y-4">
       <div className="rounded-lg border p-4 text-sm">
         <div className="font-medium">Identifiers</div>
         <dl className="mt-2 grid grid-cols-2 gap-x-6 gap-y-1 text-muted-foreground font-mono text-xs">
           <dt>Organization ID</dt><dd className="text-foreground break-all">{org.id}</dd>
+          {org.archived_at && (
+            <>
+              <dt>Archived at</dt>
+              <dd className="text-foreground break-all">{new Date(org.archived_at).toLocaleString()}</dd>
+            </>
+          )}
         </dl>
       </div>
       <div className="rounded-lg border border-destructive/30 bg-destructive/5 p-4 text-sm">
-        <div className="font-medium text-destructive">Archive organization</div>
+        <div className="font-medium text-destructive">Archive client</div>
         <p className="mt-1 text-muted-foreground">
-          Archiving is a destructive multi-tenant operation. It requires: platform-admin
-          verification, dry-run affected-record counts, typed company-name confirmation,
-          retention-policy check, and an audit event. This flow is not wired in this
-          screen — it will land as a dedicated modal to keep the safety gates first-class.
-          Do not use the browser back button to attempt deletion.
+          Archiving hides the organization from active client lists and sets its
+          dashboard to inactive. Data is retained for audit and can be restored by
+          the platform team. Type the exact company name to confirm.
         </p>
-        <Button variant="outline" disabled className="mt-2" data-qa-action="archive-org-placeholder">
-          Archive… (not available in this workspace)
+        <Button
+          variant="outline"
+          className="mt-3"
+          disabled={alreadyArchived}
+          onClick={() => setOpen(true)}
+          data-qa-action="open-archive-dialog"
+        >
+          {alreadyArchived ? "Already archived" : "Archive client…"}
         </Button>
       </div>
+
+      <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) setConfirm(""); }}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Archive {org.name}?</DialogTitle>
+            <DialogDescription>
+              This is a soft archive. Type <strong>{org.name}</strong> below to confirm.
+            </DialogDescription>
+          </DialogHeader>
+          <Input
+            value={confirm}
+            onChange={(e) => setConfirm(e.target.value)}
+            placeholder={org.name}
+            data-qa-action="archive-confirm-input"
+          />
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setOpen(false)} data-qa-action="archive-cancel">
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              disabled={
+                confirm.trim().toLowerCase() !== String(org.name).trim().toLowerCase() ||
+                m.isPending
+              }
+              onClick={() => m.mutate()}
+              data-qa-action="archive-confirm"
+            >
+              {m.isPending ? "Archiving…" : "Archive client"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </section>
   );
 }

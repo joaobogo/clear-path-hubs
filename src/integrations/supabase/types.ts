@@ -1512,48 +1512,72 @@ export type Database = {
       }
       organizations: {
         Row: {
+          archived_at: string | null
           created_at: string
           created_by_audit: boolean | null
+          dashboard_status: string
           domain: string | null
           expires_at: string | null
           headquarters: string | null
           id: string
           industry: string | null
+          internal_notes: string | null
           is_test_record: boolean | null
+          locations: string | null
           name: string
           name_normalized: string | null
+          onboarding_status: string
+          phone: string | null
+          primary_contact_email: string | null
+          primary_contact_name: string | null
           status: Database["public"]["Enums"]["org_status"]
           test_run_id: string | null
           updated_at: string
           website: string | null
         }
         Insert: {
+          archived_at?: string | null
           created_at?: string
           created_by_audit?: boolean | null
+          dashboard_status?: string
           domain?: string | null
           expires_at?: string | null
           headquarters?: string | null
           id?: string
           industry?: string | null
+          internal_notes?: string | null
           is_test_record?: boolean | null
+          locations?: string | null
           name: string
           name_normalized?: string | null
+          onboarding_status?: string
+          phone?: string | null
+          primary_contact_email?: string | null
+          primary_contact_name?: string | null
           status?: Database["public"]["Enums"]["org_status"]
           test_run_id?: string | null
           updated_at?: string
           website?: string | null
         }
         Update: {
+          archived_at?: string | null
           created_at?: string
           created_by_audit?: boolean | null
+          dashboard_status?: string
           domain?: string | null
           expires_at?: string | null
           headquarters?: string | null
           id?: string
           industry?: string | null
+          internal_notes?: string | null
           is_test_record?: boolean | null
+          locations?: string | null
           name?: string
           name_normalized?: string | null
+          onboarding_status?: string
+          phone?: string | null
+          primary_contact_email?: string | null
+          primary_contact_name?: string | null
           status?: Database["public"]["Enums"]["org_status"]
           test_run_id?: string | null
           updated_at?: string
