@@ -53,6 +53,7 @@ import { Route as AuthenticatedMeIndexRouteImport } from './routes/_authenticate
 import { Route as AuthenticatedClientIndexRouteImport } from './routes/_authenticated/client.index'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as JobsIdApplyRouteImport } from './routes/jobs.$id.apply'
+import { Route as BlogCategorySlugRouteImport } from './routes/blog.category.$slug'
 import { Route as ApplyReceivedApplicationIdRouteImport } from './routes/apply.received.$applicationId'
 import { Route as ApiPublicQaSeedRouteImport } from './routes/api/public/qa-seed'
 import { Route as ApiPublicIntakeRouteImport } from './routes/api/public/intake'
@@ -312,6 +313,11 @@ const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
 const JobsIdApplyRoute = JobsIdApplyRouteImport.update({
   id: '/jobs/$id/apply',
   path: '/jobs/$id/apply',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BlogCategorySlugRoute = BlogCategorySlugRouteImport.update({
+  id: '/blog/category/$slug',
+  path: '/blog/category/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApplyReceivedApplicationIdRoute =
@@ -608,6 +614,7 @@ export interface FileRoutesByFullPath {
   '/api/public/intake': typeof ApiPublicIntakeRoute
   '/api/public/qa-seed': typeof ApiPublicQaSeedRoute
   '/apply/received/$applicationId': typeof ApplyReceivedApplicationIdRoute
+  '/blog/category/$slug': typeof BlogCategorySlugRoute
   '/jobs/$id/apply': typeof JobsIdApplyRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/client/': typeof AuthenticatedClientIndexRoute
@@ -684,6 +691,7 @@ export interface FileRoutesByTo {
   '/api/public/intake': typeof ApiPublicIntakeRoute
   '/api/public/qa-seed': typeof ApiPublicQaSeedRoute
   '/apply/received/$applicationId': typeof ApplyReceivedApplicationIdRoute
+  '/blog/category/$slug': typeof BlogCategorySlugRoute
   '/jobs/$id/apply': typeof JobsIdApplyRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/client': typeof AuthenticatedClientIndexRoute
@@ -771,6 +779,7 @@ export interface FileRoutesById {
   '/api/public/intake': typeof ApiPublicIntakeRoute
   '/api/public/qa-seed': typeof ApiPublicQaSeedRoute
   '/apply/received/$applicationId': typeof ApplyReceivedApplicationIdRoute
+  '/blog/category/$slug': typeof BlogCategorySlugRoute
   '/jobs/$id/apply': typeof JobsIdApplyRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/client/': typeof AuthenticatedClientIndexRoute
@@ -858,6 +867,7 @@ export interface FileRouteTypes {
     | '/api/public/intake'
     | '/api/public/qa-seed'
     | '/apply/received/$applicationId'
+    | '/blog/category/$slug'
     | '/jobs/$id/apply'
     | '/admin/'
     | '/client/'
@@ -934,6 +944,7 @@ export interface FileRouteTypes {
     | '/api/public/intake'
     | '/api/public/qa-seed'
     | '/apply/received/$applicationId'
+    | '/blog/category/$slug'
     | '/jobs/$id/apply'
     | '/admin'
     | '/client'
@@ -1020,6 +1031,7 @@ export interface FileRouteTypes {
     | '/api/public/intake'
     | '/api/public/qa-seed'
     | '/apply/received/$applicationId'
+    | '/blog/category/$slug'
     | '/jobs/$id/apply'
     | '/_authenticated/admin/'
     | '/_authenticated/client/'
@@ -1083,6 +1095,7 @@ export interface RootRouteChildren {
   ApiPublicIntakeRoute: typeof ApiPublicIntakeRoute
   ApiPublicQaSeedRoute: typeof ApiPublicQaSeedRoute
   ApplyReceivedApplicationIdRoute: typeof ApplyReceivedApplicationIdRoute
+  BlogCategorySlugRoute: typeof BlogCategorySlugRoute
   JobsIdApplyRoute: typeof JobsIdApplyRoute
   JobsIdIndexRoute: typeof JobsIdIndexRoute
   ApiPublicIntakeStatusIdRoute: typeof ApiPublicIntakeStatusIdRoute
@@ -1397,6 +1410,13 @@ declare module '@tanstack/react-router' {
       path: '/jobs/$id/apply'
       fullPath: '/jobs/$id/apply'
       preLoaderRoute: typeof JobsIdApplyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/blog/category/$slug': {
+      id: '/blog/category/$slug'
+      path: '/blog/category/$slug'
+      fullPath: '/blog/category/$slug'
+      preLoaderRoute: typeof BlogCategorySlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/apply/received/$applicationId': {
@@ -1921,6 +1941,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicIntakeRoute: ApiPublicIntakeRoute,
   ApiPublicQaSeedRoute: ApiPublicQaSeedRoute,
   ApplyReceivedApplicationIdRoute: ApplyReceivedApplicationIdRoute,
+  BlogCategorySlugRoute: BlogCategorySlugRoute,
   JobsIdApplyRoute: JobsIdApplyRoute,
   JobsIdIndexRoute: JobsIdIndexRoute,
   ApiPublicIntakeStatusIdRoute: ApiPublicIntakeStatusIdRoute,
