@@ -127,19 +127,22 @@ function CandidateDetailPage() {
             )}
           </div>
         </div>
-        {candidate.score != null && (
-          <div className="text-right">
-            <div className="text-xs uppercase tracking-wide text-muted-foreground">
-              Approved score
+        <div className="flex items-center gap-4">
+          {candidate.score != null && (
+            <div className="text-right">
+              <div className="text-xs uppercase tracking-wide text-muted-foreground">
+                Approved score
+              </div>
+              <div className="text-3xl font-semibold tabular-nums">
+                {candidate.score.toFixed(0)}
+              </div>
+              {candidate.fit_label && (
+                <div className="text-xs capitalize text-muted-foreground">{candidate.fit_label} fit</div>
+              )}
             </div>
-            <div className="text-3xl font-semibold tabular-nums">
-              {candidate.score.toFixed(0)}
-            </div>
-            {candidate.fit_label && (
-              <div className="text-xs capitalize text-muted-foreground">{candidate.fit_label} fit</div>
-            )}
-          </div>
-        )}
+          )}
+          <DownloadCvButton matchId={candidate.match_id} />
+        </div>
       </header>
 
       <section className="grid grid-cols-1 lg:grid-cols-3 gap-4">
