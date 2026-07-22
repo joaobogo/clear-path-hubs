@@ -68,18 +68,19 @@ export const startSupportSession = createServerFn({ method: "POST" })
       .maybeSingle();
     if (!org) throw new Error("Organization not found");
 
-    // Find target profile (client_admin of the org) for tg_support_session_guard.
+    // Find target profile id for tg_support_session_guard, which checks the
+    // target's memberships. memberships.user_id references profiles.id, so we
+    // pass the profile id here — not auth_user_id.
     const { data: targetMember } = await supabaseAdmin
       .from("memberships")
-      .select("user_id, profiles:user_id(auth_user_id)")
+      .select("user_id")
       .eq("organization_id", data.organization_id)
       .eq("status", "active")
       .in("role", ["client_admin", "client_editor", "client_viewer"])
       .order("created_at", { ascending: true })
       .limit(1)
       .maybeSingle();
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const targetAuthUserId = ((targetMember as any)?.profiles?.auth_user_id as string | null) ?? null;
+    const targetAuthUserId = (targetMember?.user_id as string | null) ?? profile.id;
 
     const expiresAt = new Date(Date.now() + 60 * 60 * 1000).toISOString();
     const trace = `sv_${Math.random().toString(36).slice(2, 10)}${Date.now().toString(36)}`;
