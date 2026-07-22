@@ -126,6 +126,17 @@ function MatchDetail() {
               trace: <code>{m.last_processing_trace_id}</code>
             </span>
           )}
+          {m.organization_id && (
+            <Link
+              to="/client/candidates/$id"
+              params={{ id: m.id }}
+              search={{ org: m.organization_id, preview: "client_admin" }}
+              className="ml-auto inline-flex items-center rounded border px-2 py-1 text-xs hover:bg-muted"
+              title="See this candidate as the client sees them (read-only)"
+            >
+              Preview in Client Dashboard →
+            </Link>
+          )}
         </div>
         {m.processing_error_message && (
           <Alert variant="destructive" className="mt-3">
