@@ -528,6 +528,50 @@ export const moveMatchStage = createServerFn({ method: "POST" })
       after: { stage: data.toStage },
       trace_id: trace,
     });
+    try {
+      const { emitEventFromServer } = await import("./notifications.functions");
+      const stageToEvent: Partial<Record<MatchStage, "client_shortlisted" | "interview_requested" | "candidate_hired">> = {
+        shortlisted: "client_shortlisted",
+        interview_process: "interview_requested",
+        hired: "candidate_hired",
+      };
+      const evt = stageToEvent[data.toStage];
+      if (evt) {
+        const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+        const { data: staff } = await supabaseAdmin
+          .from("memberships")
+          .select("user_id")
+          .in("role", ["platform_admin", "operations"])
+          .eq("status", "active");
+        const adminRecipients = (staff ?? []).map((s) => ({
+          user_id: s.user_id as string,
+          audience: "admin" as const,
+          link_path: `/admin/candidates`,
+        }));
+        const { data: matchRow } = await supabaseAdmin
+          .from("candidate_matches")
+          .select("candidate_profile_id, application_id, position_id, candidate_profiles:candidate_profile_id(user_id)")
+          .eq("id", data.matchId)
+          .maybeSingle();
+        const cpUser = (matchRow?.candidate_profiles as { user_id: string | null } | null)?.user_id ?? null;
+        const candidateRecipients = cpUser
+          ? [{ user_id: cpUser, audience: "candidate" as const, link_path: `/me/applications/${matchRow?.application_id ?? ""}` }]
+          : [];
+        await emitEventFromServer({
+          event: evt,
+          scope: `${data.matchId}:${data.toStage}`,
+          organization_id: data.orgId,
+          position_id: matchRow?.position_id ?? null,
+          application_id: matchRow?.application_id ?? null,
+          candidate_match_id: data.matchId,
+          candidate_profile_id: matchRow?.candidate_profile_id ?? null,
+          actor_user_id: context.userId,
+          recipients: [...adminRecipients, ...candidateRecipients],
+        });
+      }
+    } catch (emitErr) {
+      console.error("[moveMatchStage] emit failed", trace, emitErr);
+    }
     return { ok: true, trace_id: trace };
   });
 

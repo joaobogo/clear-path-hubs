@@ -521,6 +521,39 @@ export const applyReviewDecision = createServerFn({ method: "POST" })
           delivered_at: new Date().toISOString(),
         })
         .eq("id", data.match_id);
+
+      // Emit candidate_published to the client org (visible delivery)
+      try {
+        const { emitEventFromServer } = await import("./notifications.functions");
+        const { data: matchRow } = await supabase
+          .from("candidate_matches")
+          .select("organization_id, position_id, application_id, candidate_profile_id, candidate_profiles:candidate_profile_id(user_id)")
+          .eq("id", data.match_id)
+          .maybeSingle();
+        const cpUser = (matchRow?.candidate_profiles as { user_id: string | null } | null)?.user_id ?? null;
+        await emitEventFromServer({
+          event: "candidate_published",
+          scope: data.match_id,
+          organization_id: matchRow?.organization_id ?? null,
+          position_id: matchRow?.position_id ?? null,
+          application_id: matchRow?.application_id ?? null,
+          candidate_match_id: data.match_id,
+          candidate_profile_id: matchRow?.candidate_profile_id ?? null,
+          actor_user_id: context.userId,
+          link_path: `/client/candidates`,
+        });
+        if (cpUser) {
+          await emitEventFromServer({
+            event: "candidate_published",
+            scope: `candidate:${data.match_id}`,
+            candidate_match_id: data.match_id,
+            candidate_profile_id: matchRow?.candidate_profile_id ?? null,
+            recipients: [{ user_id: cpUser, audience: "candidate", link_path: `/me/applications/${matchRow?.application_id ?? ""}` }],
+          });
+        }
+      } catch (emitErr) {
+        console.error("[approve_for_client] emit failed", emitErr);
+      }
       return { ok: true as const, action: data.action };
     }
 

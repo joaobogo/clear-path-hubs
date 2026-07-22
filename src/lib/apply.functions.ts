@@ -275,6 +275,38 @@ export const submitApplication = createServerFn({ method: "POST" })
         trace_id,
       });
 
+      // Emit canonical lifecycle events (idempotent).
+      try {
+        const { emitEventFromServer } = await import("./notifications.functions");
+        // 1) admin queue: new application received
+        await emitEventFromServer({
+          event: "application_received",
+          scope: appRow.id,
+          organization_id: pos.organization_id,
+          position_id: data.position_id,
+          application_id: appRow.id,
+          candidate_profile_id: candidateProfileId,
+          link_path: `/admin/candidates`,
+        });
+        // 2) candidate confirmation (only if this candidate is signed in / has an auth user)
+        const { data: cp } = await supabaseAdmin
+          .from("candidate_profiles")
+          .select("user_id")
+          .eq("id", candidateProfileId)
+          .maybeSingle();
+        if (cp?.user_id) {
+          await emitEventFromServer({
+            event: "application_received",
+            scope: `candidate:${appRow.id}`,
+            application_id: appRow.id,
+            candidate_profile_id: candidateProfileId,
+            recipients: [{ user_id: cp.user_id, audience: "candidate", link_path: `/me/applications/${appRow.id}` }],
+          });
+        }
+      } catch (emitErr) {
+        console.error("[submitApplication] emit failed", trace_id, emitErr);
+      }
+
       return {
         ok: true,
         application_id: appRow.id,

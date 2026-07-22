@@ -6,7 +6,13 @@ import {
   Send,
   Activity,
   Settings,
+  Inbox,
 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useEffect, useState } from "react";
+import { NotificationBell } from "@/components/notification-bell";
+import { useDashboardRealtime } from "@/hooks/use-realtime-refresh";
+import { NOTIFICATIONS_QUERY_KEY } from "@/components/notification-bell";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({
@@ -29,18 +35,34 @@ const SECTIONS: Array<{
   { to: "/admin/candidates", label: "Candidates", icon: Users },
   { to: "/admin/publish", label: "Publish Desk", icon: Send },
   { to: "/admin/health", label: "Pipeline Health", icon: Activity },
+  { to: "/admin/notifications", label: "Delivery health", icon: Inbox },
   { to: "/admin/settings", label: "Settings", icon: Settings },
 ];
 
+// Query keys to invalidate on ANY admin-relevant notification arrival.
+const ADMIN_REFRESH_KEYS = [
+  ["admin", "overview"],
+  ["admin", "intakes"],
+  ["admin", "matches"],
+  ["admin", "positions"],
+  ["admin", "delivery-failures"],
+  NOTIFICATIONS_QUERY_KEY,
+] as const;
+
 function AdminLayout() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const [userId, setUserId] = useState<string | null>(null);
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => setUserId(data.user?.id ?? null));
+  }, []);
+  useDashboardRealtime({ userId, audience: "admin", invalidateKeys: ADMIN_REFRESH_KEYS });
+
   return (
     <div className="min-h-screen flex w-full bg-background">
       <aside className="w-56 shrink-0 border-r bg-card">
-        <div className="px-4 py-4 border-b">
-          <Link to="/" className="font-semibold text-sm">
-            TaaSFlow admin
-          </Link>
+        <div className="px-4 py-4 border-b flex items-center justify-between gap-2">
+          <Link to="/" className="font-semibold text-sm">TaaSFlow admin</Link>
+          <NotificationBell />
         </div>
         <nav className="p-2 space-y-1">
           {SECTIONS.map((s) => {
@@ -68,3 +90,4 @@ function AdminLayout() {
     </div>
   );
 }
+

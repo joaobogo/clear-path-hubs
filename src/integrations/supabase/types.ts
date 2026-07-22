@@ -838,6 +838,269 @@ export type Database = {
         }
         Relationships: []
       }
+      notification_deliveries: {
+        Row: {
+          channel: Database["public"]["Enums"]["delivery_channel"]
+          created_at: string
+          error_code: string | null
+          error_message: string | null
+          id: string
+          notification_id: string
+          provider_message_id: string | null
+          status: Database["public"]["Enums"]["delivery_status"]
+          updated_at: string
+        }
+        Insert: {
+          channel: Database["public"]["Enums"]["delivery_channel"]
+          created_at?: string
+          error_code?: string | null
+          error_message?: string | null
+          id?: string
+          notification_id: string
+          provider_message_id?: string | null
+          status?: Database["public"]["Enums"]["delivery_status"]
+          updated_at?: string
+        }
+        Update: {
+          channel?: Database["public"]["Enums"]["delivery_channel"]
+          created_at?: string
+          error_code?: string | null
+          error_message?: string | null
+          id?: string
+          notification_id?: string
+          provider_message_id?: string | null
+          status?: Database["public"]["Enums"]["delivery_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notification_deliveries_notification_id_fkey"
+            columns: ["notification_id"]
+            isOneToOne: false
+            referencedRelation: "notifications"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notification_events: {
+        Row: {
+          actor_user_id: string | null
+          application_id: string | null
+          candidate_match_id: string | null
+          candidate_profile_id: string | null
+          created_at: string
+          event_type: Database["public"]["Enums"]["event_type"]
+          id: string
+          idempotency_key: string
+          organization_id: string | null
+          payload: Json
+          position_id: string | null
+        }
+        Insert: {
+          actor_user_id?: string | null
+          application_id?: string | null
+          candidate_match_id?: string | null
+          candidate_profile_id?: string | null
+          created_at?: string
+          event_type: Database["public"]["Enums"]["event_type"]
+          id?: string
+          idempotency_key: string
+          organization_id?: string | null
+          payload?: Json
+          position_id?: string | null
+        }
+        Update: {
+          actor_user_id?: string | null
+          application_id?: string | null
+          candidate_match_id?: string | null
+          candidate_profile_id?: string | null
+          created_at?: string
+          event_type?: Database["public"]["Enums"]["event_type"]
+          id?: string
+          idempotency_key?: string
+          organization_id?: string | null
+          payload?: Json
+          position_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notification_events_application_id_fkey"
+            columns: ["application_id"]
+            isOneToOne: false
+            referencedRelation: "applications"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notification_events_application_id_fkey"
+            columns: ["application_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_my_applications"
+            referencedColumns: ["application_id"]
+          },
+          {
+            foreignKeyName: "notification_events_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "admin_candidate_matches_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notification_events_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "admin_work_inbox"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notification_events_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_matches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notification_events_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "client_candidate_matches_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notification_events_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "client_kanban_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notification_events_candidate_profile_id_fkey"
+            columns: ["candidate_profile_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_profile_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notification_events_candidate_profile_id_fkey"
+            columns: ["candidate_profile_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notification_events_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "admin_clients_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notification_events_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notification_events_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "admin_pipeline_health"
+            referencedColumns: ["position_id"]
+          },
+          {
+            foreignKeyName: "notification_events_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "admin_positions_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notification_events_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_my_applications"
+            referencedColumns: ["position_id"]
+          },
+          {
+            foreignKeyName: "notification_events_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "client_positions_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notification_events_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "positions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notifications: {
+        Row: {
+          audience: Database["public"]["Enums"]["notification_audience"]
+          body: string | null
+          created_at: string
+          event_id: string | null
+          event_type: Database["public"]["Enums"]["event_type"]
+          id: string
+          link_path: string | null
+          organization_id: string | null
+          read_at: string | null
+          recipient_user_id: string
+          title: string
+        }
+        Insert: {
+          audience: Database["public"]["Enums"]["notification_audience"]
+          body?: string | null
+          created_at?: string
+          event_id?: string | null
+          event_type: Database["public"]["Enums"]["event_type"]
+          id?: string
+          link_path?: string | null
+          organization_id?: string | null
+          read_at?: string | null
+          recipient_user_id: string
+          title: string
+        }
+        Update: {
+          audience?: Database["public"]["Enums"]["notification_audience"]
+          body?: string | null
+          created_at?: string
+          event_id?: string | null
+          event_type?: Database["public"]["Enums"]["event_type"]
+          id?: string
+          link_path?: string | null
+          organization_id?: string | null
+          read_at?: string | null
+          recipient_user_id?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notifications_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "notification_events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notifications_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "admin_clients_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notifications_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       organizations: {
         Row: {
           created_at: string
@@ -2063,12 +2326,37 @@ export type Database = {
         | "not_moving_forward"
         | "hire"
       client_visibility: "hidden" | "visible" | "archived"
+      delivery_channel: "in_app" | "email" | "sms"
+      delivery_status:
+        | "created"
+        | "queued"
+        | "provider_accepted"
+        | "delivered"
+        | "failed"
+        | "bounced"
+        | "suppressed"
       employment_type:
         | "full_time"
         | "part_time"
         | "contract"
         | "temporary"
         | "internship"
+      event_type:
+        | "intake_submitted"
+        | "clarification_requested"
+        | "position_approved"
+        | "position_activated"
+        | "application_received"
+        | "candidate_processing_completed"
+        | "candidate_ready_for_admin_review"
+        | "candidate_published"
+        | "client_shortlisted"
+        | "interview_requested"
+        | "interview_scheduled"
+        | "client_feedback_submitted"
+        | "candidate_hired"
+        | "position_closed"
+        | "message_sent"
       file_status: "uploading" | "ready" | "failed" | "deleted"
       interview_status:
         | "requested"
@@ -2095,6 +2383,7 @@ export type Database = {
         | "client_viewer"
         | "candidate"
       membership_status: "active" | "invited" | "suspended" | "removed"
+      notification_audience: "admin" | "client" | "candidate"
       org_status: "prospect" | "active" | "paused" | "archived"
       position_status:
         | "draft"
@@ -2280,12 +2569,39 @@ export const Constants = {
         "hire",
       ],
       client_visibility: ["hidden", "visible", "archived"],
+      delivery_channel: ["in_app", "email", "sms"],
+      delivery_status: [
+        "created",
+        "queued",
+        "provider_accepted",
+        "delivered",
+        "failed",
+        "bounced",
+        "suppressed",
+      ],
       employment_type: [
         "full_time",
         "part_time",
         "contract",
         "temporary",
         "internship",
+      ],
+      event_type: [
+        "intake_submitted",
+        "clarification_requested",
+        "position_approved",
+        "position_activated",
+        "application_received",
+        "candidate_processing_completed",
+        "candidate_ready_for_admin_review",
+        "candidate_published",
+        "client_shortlisted",
+        "interview_requested",
+        "interview_scheduled",
+        "client_feedback_submitted",
+        "candidate_hired",
+        "position_closed",
+        "message_sent",
       ],
       file_status: ["uploading", "ready", "failed", "deleted"],
       interview_status: [
@@ -2316,6 +2632,7 @@ export const Constants = {
         "candidate",
       ],
       membership_status: ["active", "invited", "suspended", "removed"],
+      notification_audience: ["admin", "client", "candidate"],
       org_status: ["prospect", "active", "paused", "archived"],
       position_status: [
         "draft",

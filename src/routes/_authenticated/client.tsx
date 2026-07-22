@@ -7,10 +7,12 @@ import {
 } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { z } from "zod";
 import { getClientContext } from "@/lib/client.functions";
 import { supabase } from "@/integrations/supabase/client";
+import { NotificationBell, NOTIFICATIONS_QUERY_KEY } from "@/components/notification-bell";
+import { useDashboardRealtime } from "@/hooks/use-realtime-refresh";
 import {
   LayoutDashboard,
   Briefcase,
@@ -114,13 +116,17 @@ function ClientLayout() {
 
   return (
     <div className="min-h-screen flex w-full bg-background">
+      <ClientCoordinator />
       <aside className="w-60 shrink-0 border-r bg-card">
-        <div className="px-4 py-4 border-b">
-          <div className="text-xs uppercase tracking-wide text-muted-foreground">Workspace</div>
-          <div className="font-semibold truncate">{active.name}</div>
-          <div className="text-xs text-muted-foreground capitalize">
-            {active.role.replace(/_/g, " ")}
+        <div className="px-4 py-4 border-b flex items-start justify-between gap-2">
+          <div className="min-w-0">
+            <div className="text-xs uppercase tracking-wide text-muted-foreground">Workspace</div>
+            <div className="font-semibold truncate">{active.name}</div>
+            <div className="text-xs text-muted-foreground capitalize">
+              {active.role.replace(/_/g, " ")}
+            </div>
           </div>
+          <NotificationBell />
         </div>
         <nav className="p-2 space-y-1">
           {TABS.filter((t) => t.everyone || canManage).map((t) => {
@@ -147,4 +153,22 @@ function ClientLayout() {
       </div>
     </div>
   );
+}
+
+const CLIENT_REFRESH_KEYS = [
+  ["client-context", null],
+  ["client", "kpis"],
+  ["client", "positions"],
+  ["client", "candidates"],
+  ["client", "messages"],
+  NOTIFICATIONS_QUERY_KEY,
+] as const;
+
+function ClientCoordinator() {
+  const [userId, setUserId] = useState<string | null>(null);
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => setUserId(data.user?.id ?? null));
+  }, []);
+  useDashboardRealtime({ userId, audience: "client", invalidateKeys: CLIENT_REFRESH_KEYS });
+  return null;
 }
