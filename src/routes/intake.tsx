@@ -950,7 +950,7 @@ function IntakePage() {
           )}
         </div>
       </div>
-    </main>
+    </FormShell>
   );
 }
 
