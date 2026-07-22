@@ -11,19 +11,15 @@ export const Route = createFileRoute("/blog/$slug")({
     return { entry };
   },
   head: ({ params, loaderData }) => {
-    const base = marketingHead(
-      loaderData?.entry,
-      `/blog/${params.slug}`,
-      { title: `${params.slug} — TaaSFlow Blog`, description: "TaaSFlow blog article." },
-    );
-    return {
-      ...base,
-      meta: base.meta.map((m) =>
-        "property" in m && m.property === "og:type"
-          ? { property: "og:type", content: "article" }
-          : m,
-      ),
-    };
+    const entry = loaderData?.entry;
+    // Force og:type=article for blog posts regardless of scraped metadata.
+    const patched = entry
+      ? { ...entry, meta: { ...entry.meta, "og:type": "article" } }
+      : undefined;
+    return marketingHead(patched, `/blog/${params.slug}`, {
+      title: `${params.slug} — TaaSFlow Blog`,
+      description: "TaaSFlow blog article.",
+    });
   },
   component: BlogPost,
   notFoundComponent: () => (

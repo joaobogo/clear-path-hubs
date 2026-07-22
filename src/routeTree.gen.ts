@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as TalentNetworkRouteImport } from './routes/talent-network'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ResourcesRouteImport } from './routes/resources'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as PrivacyRouteImport } from './routes/privacy'
@@ -92,6 +93,11 @@ const TermsRoute = TermsRouteImport.update({
 const TalentNetworkRoute = TalentNetworkRouteImport.update({
   id: '/talent-network',
   path: '/talent-network',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ResourcesRoute = ResourcesRouteImport.update({
@@ -501,6 +507,7 @@ export interface FileRoutesByFullPath {
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
   '/resources': typeof ResourcesRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/talent-network': typeof TalentNetworkRoute
   '/terms': typeof TermsRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
@@ -576,6 +583,7 @@ export interface FileRoutesByTo {
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
   '/resources': typeof ResourcesRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/talent-network': typeof TalentNetworkRoute
   '/terms': typeof TermsRoute
   '/blog/$slug': typeof BlogSlugRoute
@@ -644,6 +652,7 @@ export interface FileRoutesById {
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
   '/resources': typeof ResourcesRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/talent-network': typeof TalentNetworkRoute
   '/terms': typeof TermsRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
@@ -721,6 +730,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/reset-password'
     | '/resources'
+    | '/sitemap.xml'
     | '/talent-network'
     | '/terms'
     | '/admin'
@@ -796,6 +806,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/reset-password'
     | '/resources'
+    | '/sitemap.xml'
     | '/talent-network'
     | '/terms'
     | '/blog/$slug'
@@ -863,6 +874,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/reset-password'
     | '/resources'
+    | '/sitemap.xml'
     | '/talent-network'
     | '/terms'
     | '/_authenticated/admin'
@@ -940,6 +952,7 @@ export interface RootRouteChildren {
   PrivacyRoute: typeof PrivacyRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   ResourcesRoute: typeof ResourcesRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TalentNetworkRoute: typeof TalentNetworkRoute
   TermsRoute: typeof TermsRoute
   BlogSlugRoute: typeof BlogSlugRoute
@@ -974,6 +987,13 @@ declare module '@tanstack/react-router' {
       path: '/talent-network'
       fullPath: '/talent-network'
       preLoaderRoute: typeof TalentNetworkRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/resources': {
@@ -1695,6 +1715,7 @@ const rootRouteChildren: RootRouteChildren = {
   PrivacyRoute: PrivacyRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   ResourcesRoute: ResourcesRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   TalentNetworkRoute: TalentNetworkRoute,
   TermsRoute: TermsRoute,
   BlogSlugRoute: BlogSlugRoute,
