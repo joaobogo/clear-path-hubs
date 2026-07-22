@@ -595,5 +595,9 @@ export const getAdminMatch = createServerFn({ method: "GET" })
       jobs: jobsRes.data ?? [],
       evidence: evidenceRes.data ?? null,
       cv: fileRes.data ? { ...fileRes.data, signed_url: cv_signed_url } : null,
+      siblings: ((siblingsRes.data ?? []) as AnyRow[]).map((s) => ({
+        id: s.id as string,
+        position_title: (s.positions as AnyRow)?.title ?? "—",
+      })),
     };
   });
