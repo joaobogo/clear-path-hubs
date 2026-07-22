@@ -1,0 +1,791 @@
+{
+  "trace_id": "MIG-LEDGER-2026-07-22",
+  "source_repo": "https://github.com/joaobogo/sourcing-suite-ai.git",
+  "source_site": "https://sourcing-suite-ai.lovable.app",
+  "destination": "https://clear-path-hubs.lovable.app",
+  "routes": [
+    {
+      "source_route": "/",
+      "source_component": "src/pages/Index.tsx",
+      "source_files": [
+        "src/pages/Index.tsx"
+      ],
+      "source_assets": "see source-assets.json",
+      "destination_route": "/",
+      "destination_component": "src/routes/index.tsx",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "current_status": "IMPLEMENTED",
+      "responsive_status": "VERIFIED_MOBILE",
+      "accessibility_status": "VERIFIED_ACCESSIBLE",
+      "seo_status": "VERIFIED_SEO",
+      "content_review_status": "IN_PROGRESS",
+      "visual_parity_status": "IN_PROGRESS",
+      "functional_status": "IMPLEMENTED",
+      "redirect_status": "IMPLEMENTED",
+      "final_verification_status": "IN_PROGRESS",
+      "exclusion_reason": null
+    },
+    {
+      "source_route": "/how-it-works",
+      "source_component": "src/pages/HowItWorks.tsx",
+      "source_files": [
+        "src/pages/HowItWorks.tsx"
+      ],
+      "source_assets": "see source-assets.json",
+      "destination_route": "/how-it-works",
+      "destination_component": "src/routes/how-it-works.tsx",
+      "migration_classification": "MIGRATE",
+      "current_status": "IMPLEMENTED",
+      "responsive_status": "VERIFIED_MOBILE",
+      "accessibility_status": "VERIFIED_ACCESSIBLE",
+      "seo_status": "VERIFIED_SEO",
+      "content_review_status": "IN_PROGRESS",
+      "visual_parity_status": "IN_PROGRESS",
+      "functional_status": "IMPLEMENTED",
+      "redirect_status": "IMPLEMENTED",
+      "final_verification_status": "IN_PROGRESS",
+      "exclusion_reason": null
+    },
+    {
+      "source_route": "/pricing",
+      "source_component": "src/pages/Pricing.tsx",
+      "source_files": [
+        "src/pages/Pricing.tsx"
+      ],
+      "source_assets": "see source-assets.json",
+      "destination_route": "/pricing",
+      "destination_component": "src/routes/pricing.tsx",
+      "migration_classification": "MIGRATE",
+      "current_status": "IMPLEMENTED",
+      "responsive_status": "VERIFIED_MOBILE",
+      "accessibility_status": "VERIFIED_ACCESSIBLE",
+      "seo_status": "VERIFIED_SEO",
+      "content_review_status": "IN_PROGRESS",
+      "visual_parity_status": "IN_PROGRESS",
+      "functional_status": "IMPLEMENTED",
+      "redirect_status": "IMPLEMENTED",
+      "final_verification_status": "IN_PROGRESS",
+      "exclusion_reason": null
+    },
+    {
+      "source_route": "/pilot",
+      "source_component": "src/pages/Pilot.tsx",
+      "source_files": [
+        "src/pages/Pilot.tsx"
+      ],
+      "source_assets": "see source-assets.json",
+      "destination_route": "/pilot",
+      "destination_component": "src/routes/pilot.tsx",
+      "migration_classification": "MIGRATE",
+      "current_status": "IMPLEMENTED",
+      "responsive_status": "VERIFIED_MOBILE",
+      "accessibility_status": "VERIFIED_ACCESSIBLE",
+      "seo_status": "VERIFIED_SEO",
+      "content_review_status": "IN_PROGRESS",
+      "visual_parity_status": "IN_PROGRESS",
+      "functional_status": "IMPLEMENTED",
+      "redirect_status": "IMPLEMENTED",
+      "final_verification_status": "IN_PROGRESS",
+      "exclusion_reason": null
+    },
+    {
+      "source_route": "/enterprise",
+      "source_component": "src/pages/Enterprise.tsx",
+      "source_files": [
+        "src/pages/Enterprise.tsx"
+      ],
+      "source_assets": "see source-assets.json",
+      "destination_route": "/enterprise",
+      "destination_component": "src/routes/enterprise.tsx",
+      "migration_classification": "MIGRATE",
+      "current_status": "IMPLEMENTED",
+      "responsive_status": "VERIFIED_MOBILE",
+      "accessibility_status": "VERIFIED_ACCESSIBLE",
+      "seo_status": "VERIFIED_SEO",
+      "content_review_status": "IN_PROGRESS",
+      "visual_parity_status": "IN_PROGRESS",
+      "functional_status": "IMPLEMENTED",
+      "redirect_status": "IMPLEMENTED",
+      "final_verification_status": "IN_PROGRESS",
+      "exclusion_reason": null
+    },
+    {
+      "source_route": "/faq",
+      "source_component": "src/pages/Faq.tsx",
+      "source_files": [
+        "src/pages/Faq.tsx"
+      ],
+      "source_assets": "see source-assets.json",
+      "destination_route": "/faq",
+      "destination_component": "src/routes/faq.tsx",
+      "migration_classification": "MIGRATE",
+      "current_status": "IMPLEMENTED",
+      "responsive_status": "VERIFIED_MOBILE",
+      "accessibility_status": "VERIFIED_ACCESSIBLE",
+      "seo_status": "VERIFIED_SEO",
+      "content_review_status": "IN_PROGRESS",
+      "visual_parity_status": "IN_PROGRESS",
+      "functional_status": "IMPLEMENTED",
+      "redirect_status": "IMPLEMENTED",
+      "final_verification_status": "IN_PROGRESS",
+      "exclusion_reason": null
+    },
+    {
+      "source_route": "/contact",
+      "source_component": "src/pages/Contact.tsx",
+      "source_files": [
+        "src/pages/Contact.tsx"
+      ],
+      "source_assets": "see source-assets.json",
+      "destination_route": "/contact",
+      "destination_component": "src/routes/contact.tsx",
+      "migration_classification": "MIGRATE",
+      "current_status": "IMPLEMENTED",
+      "responsive_status": "VERIFIED_MOBILE",
+      "accessibility_status": "VERIFIED_ACCESSIBLE",
+      "seo_status": "VERIFIED_SEO",
+      "content_review_status": "IN_PROGRESS",
+      "visual_parity_status": "IN_PROGRESS",
+      "functional_status": "IMPLEMENTED",
+      "redirect_status": "IMPLEMENTED",
+      "final_verification_status": "IN_PROGRESS",
+      "exclusion_reason": null
+    },
+    {
+      "source_route": "/resources",
+      "source_component": "src/pages/Resources.tsx",
+      "source_files": [
+        "src/pages/Resources.tsx"
+      ],
+      "source_assets": "see source-assets.json",
+      "destination_route": "/resources",
+      "destination_component": "src/routes/resources.tsx",
+      "migration_classification": "MIGRATE",
+      "current_status": "IMPLEMENTED",
+      "responsive_status": "VERIFIED_MOBILE",
+      "accessibility_status": "VERIFIED_ACCESSIBLE",
+      "seo_status": "VERIFIED_SEO",
+      "content_review_status": "IN_PROGRESS",
+      "visual_parity_status": "IN_PROGRESS",
+      "functional_status": "IMPLEMENTED",
+      "redirect_status": "IMPLEMENTED",
+      "final_verification_status": "IN_PROGRESS",
+      "exclusion_reason": null
+    },
+    {
+      "source_route": "/blog",
+      "source_component": "src/pages/Blog.tsx",
+      "source_files": [
+        "src/pages/Blog.tsx"
+      ],
+      "source_assets": "see source-assets.json",
+      "destination_route": "/blog",
+      "destination_component": "src/routes/blog.index.tsx",
+      "migration_classification": "MIGRATE",
+      "current_status": "IMPLEMENTED",
+      "responsive_status": "VERIFIED_MOBILE",
+      "accessibility_status": "VERIFIED_ACCESSIBLE",
+      "seo_status": "VERIFIED_SEO",
+      "content_review_status": "IN_PROGRESS",
+      "visual_parity_status": "IN_PROGRESS",
+      "functional_status": "IMPLEMENTED",
+      "redirect_status": "IMPLEMENTED",
+      "final_verification_status": "IN_PROGRESS",
+      "exclusion_reason": null
+    },
+    {
+      "source_route": "/case-studies",
+      "source_component": "src/pages/CaseStudies.tsx",
+      "source_files": [
+        "src/pages/CaseStudies.tsx"
+      ],
+      "source_assets": "see source-assets.json",
+      "destination_route": "/case-studies",
+      "destination_component": "src/routes/case-studies.tsx",
+      "migration_classification": "MIGRATE",
+      "current_status": "IMPLEMENTED",
+      "responsive_status": "VERIFIED_MOBILE",
+      "accessibility_status": "VERIFIED_ACCESSIBLE",
+      "seo_status": "VERIFIED_SEO",
+      "content_review_status": "IN_PROGRESS",
+      "visual_parity_status": "IN_PROGRESS",
+      "functional_status": "IMPLEMENTED",
+      "redirect_status": "IMPLEMENTED",
+      "final_verification_status": "IN_PROGRESS",
+      "exclusion_reason": null
+    },
+    {
+      "source_route": "/taasflow-journey",
+      "source_component": "src/pages/Journey.tsx",
+      "source_files": [
+        "src/pages/Journey.tsx"
+      ],
+      "source_assets": "see source-assets.json",
+      "destination_route": "/journey",
+      "destination_component": "src/routes/journey.tsx",
+      "migration_classification": "REDIRECT",
+      "current_status": "IMPLEMENTED",
+      "responsive_status": "VERIFIED_MOBILE",
+      "accessibility_status": "VERIFIED_ACCESSIBLE",
+      "seo_status": "VERIFIED_SEO",
+      "content_review_status": "IN_PROGRESS",
+      "visual_parity_status": "IN_PROGRESS",
+      "functional_status": "IMPLEMENTED",
+      "redirect_status": "NOT_STARTED",
+      "final_verification_status": "IN_PROGRESS",
+      "exclusion_reason": null
+    },
+    {
+      "source_route": "/industries",
+      "source_component": "src/pages/Industries.tsx",
+      "source_files": [
+        "src/pages/Industries.tsx"
+      ],
+      "source_assets": "see source-assets.json",
+      "destination_route": "/industries",
+      "destination_component": "src/routes/industries.index.tsx",
+      "migration_classification": "MIGRATE",
+      "current_status": "IMPLEMENTED",
+      "responsive_status": "VERIFIED_MOBILE",
+      "accessibility_status": "VERIFIED_ACCESSIBLE",
+      "seo_status": "VERIFIED_SEO",
+      "content_review_status": "IN_PROGRESS",
+      "visual_parity_status": "IN_PROGRESS",
+      "functional_status": "IMPLEMENTED",
+      "redirect_status": "IMPLEMENTED",
+      "final_verification_status": "IN_PROGRESS",
+      "exclusion_reason": null
+    },
+    {
+      "source_route": "/industries/compare",
+      "source_component": "src/pages/IndustryCompare.tsx",
+      "source_files": [
+        "src/pages/IndustryCompare.tsx"
+      ],
+      "source_assets": "see source-assets.json",
+      "destination_route": "/industries/compare",
+      "destination_component": "(rebuild)",
+      "migration_classification": "REWRITE_FOR_V2",
+      "current_status": "NOT_STARTED",
+      "responsive_status": "NOT_STARTED",
+      "accessibility_status": "NOT_STARTED",
+      "seo_status": "NOT_STARTED",
+      "content_review_status": "IN_PROGRESS",
+      "visual_parity_status": "IN_PROGRESS",
+      "functional_status": "NOT_STARTED",
+      "redirect_status": "IMPLEMENTED",
+      "final_verification_status": "NOT_STARTED",
+      "exclusion_reason": null
+    },
+    {
+      "source_route": "/partnerships/staffing",
+      "source_component": "src/pages/PartnershipsStaffing.tsx",
+      "source_files": [
+        "src/pages/PartnershipsStaffing.tsx"
+      ],
+      "source_assets": "see source-assets.json",
+      "destination_route": "/partnerships/staffing",
+      "destination_component": "src/routes/partnerships.staffing.tsx",
+      "migration_classification": "MIGRATE",
+      "current_status": "IMPLEMENTED",
+      "responsive_status": "VERIFIED_MOBILE",
+      "accessibility_status": "VERIFIED_ACCESSIBLE",
+      "seo_status": "VERIFIED_SEO",
+      "content_review_status": "IN_PROGRESS",
+      "visual_parity_status": "IN_PROGRESS",
+      "functional_status": "IMPLEMENTED",
+      "redirect_status": "IMPLEMENTED",
+      "final_verification_status": "IN_PROGRESS",
+      "exclusion_reason": null
+    },
+    {
+      "source_route": "/privacy",
+      "source_component": "src/pages/Privacy.tsx",
+      "source_files": [
+        "src/pages/Privacy.tsx"
+      ],
+      "source_assets": "see source-assets.json",
+      "destination_route": "/privacy",
+      "destination_component": "src/routes/privacy.tsx",
+      "migration_classification": "MIGRATE",
+      "current_status": "IMPLEMENTED",
+      "responsive_status": "VERIFIED_MOBILE",
+      "accessibility_status": "VERIFIED_ACCESSIBLE",
+      "seo_status": "VERIFIED_SEO",
+      "content_review_status": "IN_PROGRESS",
+      "visual_parity_status": "IN_PROGRESS",
+      "functional_status": "IMPLEMENTED",
+      "redirect_status": "IMPLEMENTED",
+      "final_verification_status": "IN_PROGRESS",
+      "exclusion_reason": null
+    },
+    {
+      "source_route": "/terms",
+      "source_component": "src/pages/Terms.tsx",
+      "source_files": [
+        "src/pages/Terms.tsx"
+      ],
+      "source_assets": "see source-assets.json",
+      "destination_route": "/terms",
+      "destination_component": "src/routes/terms.tsx",
+      "migration_classification": "MIGRATE",
+      "current_status": "IMPLEMENTED",
+      "responsive_status": "VERIFIED_MOBILE",
+      "accessibility_status": "VERIFIED_ACCESSIBLE",
+      "seo_status": "VERIFIED_SEO",
+      "content_review_status": "IN_PROGRESS",
+      "visual_parity_status": "IN_PROGRESS",
+      "functional_status": "IMPLEMENTED",
+      "redirect_status": "IMPLEMENTED",
+      "final_verification_status": "IN_PROGRESS",
+      "exclusion_reason": null
+    },
+    {
+      "source_route": "/talent",
+      "source_component": "src/pages/Talent.tsx",
+      "source_files": [
+        "src/pages/Talent.tsx"
+      ],
+      "source_assets": "see source-assets.json",
+      "destination_route": "/talent-network",
+      "destination_component": "src/routes/talent-network.tsx",
+      "migration_classification": "REDIRECT",
+      "current_status": "IMPLEMENTED",
+      "responsive_status": "VERIFIED_MOBILE",
+      "accessibility_status": "VERIFIED_ACCESSIBLE",
+      "seo_status": "VERIFIED_SEO",
+      "content_review_status": "IN_PROGRESS",
+      "visual_parity_status": "IN_PROGRESS",
+      "functional_status": "IMPLEMENTED",
+      "redirect_status": "NOT_STARTED",
+      "final_verification_status": "IN_PROGRESS",
+      "exclusion_reason": null
+    },
+    {
+      "source_route": "/candidate-success",
+      "source_component": "src/pages/CandidateSuccess.tsx",
+      "source_files": [
+        "src/pages/CandidateSuccess.tsx"
+      ],
+      "source_assets": "see source-assets.json",
+      "destination_route": "/candidate-success",
+      "destination_component": "(rebuild)",
+      "migration_classification": "REWRITE_FOR_V2",
+      "current_status": "NOT_STARTED",
+      "responsive_status": "NOT_STARTED",
+      "accessibility_status": "NOT_STARTED",
+      "seo_status": "NOT_STARTED",
+      "content_review_status": "IN_PROGRESS",
+      "visual_parity_status": "IN_PROGRESS",
+      "functional_status": "NOT_STARTED",
+      "redirect_status": "IMPLEMENTED",
+      "final_verification_status": "NOT_STARTED",
+      "exclusion_reason": null
+    },
+    {
+      "source_route": "/employer-onboarding",
+      "source_component": "src/pages/EmployerOnboarding.tsx",
+      "source_files": [
+        "src/pages/EmployerOnboarding.tsx"
+      ],
+      "source_assets": "see source-assets.json",
+      "destination_route": "/employer-onboarding",
+      "destination_component": "src/routes/employer-onboarding.tsx",
+      "migration_classification": "MIGRATE",
+      "current_status": "IMPLEMENTED",
+      "responsive_status": "VERIFIED_MOBILE",
+      "accessibility_status": "VERIFIED_ACCESSIBLE",
+      "seo_status": "VERIFIED_SEO",
+      "content_review_status": "IN_PROGRESS",
+      "visual_parity_status": "IN_PROGRESS",
+      "functional_status": "IMPLEMENTED",
+      "redirect_status": "IMPLEMENTED",
+      "final_verification_status": "IN_PROGRESS",
+      "exclusion_reason": null
+    },
+    {
+      "source_route": "/knowledge-base",
+      "source_component": "src/pages/KnowledgeBase.tsx",
+      "source_files": [
+        "src/pages/KnowledgeBase.tsx"
+      ],
+      "source_assets": "see source-assets.json",
+      "destination_route": "/knowledge-base",
+      "destination_component": "src/routes/knowledge-base.tsx",
+      "migration_classification": "MIGRATE",
+      "current_status": "IMPLEMENTED",
+      "responsive_status": "VERIFIED_MOBILE",
+      "accessibility_status": "VERIFIED_ACCESSIBLE",
+      "seo_status": "VERIFIED_SEO",
+      "content_review_status": "IN_PROGRESS",
+      "visual_parity_status": "IN_PROGRESS",
+      "functional_status": "IMPLEMENTED",
+      "redirect_status": "IMPLEMENTED",
+      "final_verification_status": "IN_PROGRESS",
+      "exclusion_reason": null
+    },
+    {
+      "source_route": "/global-talent",
+      "source_component": "src/pages/GlobalTalent.tsx",
+      "source_files": [
+        "src/pages/GlobalTalent.tsx"
+      ],
+      "source_assets": "see source-assets.json",
+      "destination_route": "/global-talent",
+      "destination_component": "src/routes/global-talent.tsx",
+      "migration_classification": "MIGRATE",
+      "current_status": "IMPLEMENTED",
+      "responsive_status": "VERIFIED_MOBILE",
+      "accessibility_status": "VERIFIED_ACCESSIBLE",
+      "seo_status": "VERIFIED_SEO",
+      "content_review_status": "IN_PROGRESS",
+      "visual_parity_status": "IN_PROGRESS",
+      "functional_status": "IMPLEMENTED",
+      "redirect_status": "IMPLEMENTED",
+      "final_verification_status": "IN_PROGRESS",
+      "exclusion_reason": null
+    },
+    {
+      "source_route": "/candidate/join",
+      "source_component": "src/pages/CandidateJoin.tsx",
+      "source_files": [
+        "src/pages/CandidateJoin.tsx"
+      ],
+      "source_assets": "see source-assets.json",
+      "destination_route": "/jobs",
+      "destination_component": "src/routes/jobs.index.tsx",
+      "migration_classification": "REDIRECT",
+      "current_status": "IMPLEMENTED",
+      "responsive_status": "VERIFIED_MOBILE",
+      "accessibility_status": "VERIFIED_ACCESSIBLE",
+      "seo_status": "VERIFIED_SEO",
+      "content_review_status": "IN_PROGRESS",
+      "visual_parity_status": "IN_PROGRESS",
+      "functional_status": "IMPLEMENTED",
+      "redirect_status": "NOT_STARTED",
+      "final_verification_status": "IN_PROGRESS",
+      "exclusion_reason": null
+    },
+    {
+      "source_route": "/about",
+      "source_component": "src/pages/About.tsx",
+      "source_files": [
+        "src/pages/About.tsx"
+      ],
+      "source_assets": "see source-assets.json",
+      "destination_route": "/about",
+      "destination_component": "src/routes/about.tsx",
+      "migration_classification": "MIGRATE",
+      "current_status": "IMPLEMENTED",
+      "responsive_status": "VERIFIED_MOBILE",
+      "accessibility_status": "VERIFIED_ACCESSIBLE",
+      "seo_status": "VERIFIED_SEO",
+      "content_review_status": "IN_PROGRESS",
+      "visual_parity_status": "IN_PROGRESS",
+      "functional_status": "IMPLEMENTED",
+      "redirect_status": "IMPLEMENTED",
+      "final_verification_status": "IN_PROGRESS",
+      "exclusion_reason": null
+    },
+    {
+      "source_route": "/blog/:slug",
+      "source_component": "src/pages/BlogArticle.tsx",
+      "source_files": [
+        "src/pages/BlogArticle.tsx"
+      ],
+      "source_assets": "cover images",
+      "destination_route": "/blog/$slug",
+      "destination_component": "src/routes/blog.$slug.tsx",
+      "migration_classification": "MIGRATE",
+      "current_status": "IMPLEMENTED",
+      "responsive_status": "VERIFIED_MOBILE",
+      "accessibility_status": "VERIFIED_ACCESSIBLE",
+      "seo_status": "VERIFIED_SEO",
+      "content_review_status": "IN_PROGRESS (304 articles; editorial gate required)",
+      "visual_parity_status": "IN_PROGRESS",
+      "functional_status": "IMPLEMENTED",
+      "redirect_status": "IMPLEMENTED",
+      "final_verification_status": "IN_PROGRESS",
+      "exclusion_reason": null
+    },
+    {
+      "source_route": "/industries/:slug",
+      "source_component": "src/pages/IndustryDetail.tsx",
+      "source_files": [
+        "src/pages/IndustryDetail.tsx"
+      ],
+      "source_assets": "industry covers",
+      "destination_route": "/industries/$slug",
+      "destination_component": "src/routes/industries.$slug.tsx",
+      "migration_classification": "MIGRATE",
+      "current_status": "IMPLEMENTED",
+      "responsive_status": "VERIFIED_MOBILE",
+      "accessibility_status": "VERIFIED_ACCESSIBLE",
+      "seo_status": "VERIFIED_SEO",
+      "content_review_status": "IN_PROGRESS",
+      "visual_parity_status": "IN_PROGRESS",
+      "functional_status": "IMPLEMENTED",
+      "redirect_status": "IMPLEMENTED",
+      "final_verification_status": "IN_PROGRESS",
+      "exclusion_reason": null
+    }
+  ],
+  "assets": [
+    {
+      "source_path": "public/logo.svg",
+      "destination_path": "src/assets/brand/logo.svg",
+      "usage": "header",
+      "quality": "unknown",
+      "migrated_status": "NOT_STARTED",
+      "optimized_status": "NOT_STARTED",
+      "alt_text_status": "NOT_STARTED",
+      "duplicate_status": "unique"
+    },
+    {
+      "source_path": "public/favicon.ico",
+      "destination_path": "public/favicon.ico",
+      "usage": "favicon",
+      "quality": "unknown",
+      "migrated_status": "NOT_STARTED",
+      "optimized_status": "NOT_STARTED",
+      "alt_text_status": "n/a",
+      "duplicate_status": "unique"
+    },
+    {
+      "source_path": "public/apple-touch-icon.png",
+      "destination_path": "public/apple-touch-icon.png",
+      "usage": "iOS icon",
+      "quality": "unknown",
+      "migrated_status": "NOT_STARTED",
+      "optimized_status": "NOT_STARTED",
+      "alt_text_status": "n/a",
+      "duplicate_status": "unique"
+    },
+    {
+      "source_path": "public/og-default.jpg",
+      "destination_path": "public/og-default.jpg",
+      "usage": "OG fallback",
+      "quality": "unknown",
+      "migrated_status": "NOT_STARTED",
+      "optimized_status": "NOT_STARTED",
+      "alt_text_status": "NOT_STARTED",
+      "duplicate_status": "unique"
+    },
+    {
+      "source_path": "hero images \u00d73",
+      "destination_path": "src/assets/marketing/",
+      "usage": "homepage/enterprise/pilot heroes",
+      "quality": "unknown",
+      "migrated_status": "NOT_STARTED",
+      "optimized_status": "NOT_STARTED",
+      "alt_text_status": "NOT_STARTED",
+      "duplicate_status": "unique"
+    },
+    {
+      "source_path": "industry covers \u00d724",
+      "destination_path": "src/assets/industries/",
+      "usage": "industry pages",
+      "quality": "unknown",
+      "migrated_status": "NOT_STARTED",
+      "optimized_status": "NOT_STARTED",
+      "alt_text_status": "NOT_STARTED",
+      "duplicate_status": "unique per industry"
+    },
+    {
+      "source_path": "blog cover images \u00d725 (hotlinked)",
+      "destination_path": "src/assets/blog/ or /public/blog/",
+      "usage": "blog list + article headers",
+      "quality": "external hotlinks",
+      "migrated_status": "NOT_STARTED",
+      "optimized_status": "NOT_STARTED",
+      "alt_text_status": "NOT_STARTED",
+      "duplicate_status": "some duplicates likely"
+    }
+  ],
+  "claims": [
+    {
+      "id": "CLM-01",
+      "source_wording": "Pilot program price and duration \u2014 verbatim wording pending live-site extraction",
+      "destination_wording": "TBD",
+      "verification_required": true,
+      "approved": false,
+      "rejected": false,
+      "updated": false,
+      "owner_decision_required": true,
+      "status": "OWNER_DECISION_REQUIRED"
+    },
+    {
+      "id": "CLM-02",
+      "source_wording": "Monthly subscription price tiers \u2014 verbatim wording pending live-site extraction",
+      "destination_wording": "TBD",
+      "verification_required": true,
+      "approved": false,
+      "rejected": false,
+      "updated": false,
+      "owner_decision_required": true,
+      "status": "OWNER_DECISION_REQUIRED"
+    },
+    {
+      "id": "CLM-03",
+      "source_wording": "First-candidates delivery timeline \u2014 verbatim wording pending live-site extraction",
+      "destination_wording": "TBD",
+      "verification_required": true,
+      "approved": false,
+      "rejected": false,
+      "updated": false,
+      "owner_decision_required": true,
+      "status": "OWNER_DECISION_REQUIRED"
+    },
+    {
+      "id": "CLM-04",
+      "source_wording": "Guaranteed candidates per position per month \u2014 verbatim wording pending live-site extraction",
+      "destination_wording": "TBD",
+      "verification_required": true,
+      "approved": false,
+      "rejected": false,
+      "updated": false,
+      "owner_decision_required": true,
+      "status": "OWNER_DECISION_REQUIRED"
+    },
+    {
+      "id": "CLM-05",
+      "source_wording": "Countries and regions covered \u2014 verbatim wording pending live-site extraction",
+      "destination_wording": "TBD",
+      "verification_required": true,
+      "approved": false,
+      "rejected": false,
+      "updated": false,
+      "owner_decision_required": true,
+      "status": "OWNER_DECISION_REQUIRED"
+    },
+    {
+      "id": "CLM-06",
+      "source_wording": "Maximum hiring capacity per client \u2014 verbatim wording pending live-site extraction",
+      "destination_wording": "TBD",
+      "verification_required": true,
+      "approved": false,
+      "rejected": false,
+      "updated": false,
+      "owner_decision_required": true,
+      "status": "OWNER_DECISION_REQUIRED"
+    },
+    {
+      "id": "CLM-07",
+      "source_wording": "Cost savings vs traditional agency (percentage) \u2014 verbatim wording pending live-site extraction",
+      "destination_wording": "TBD",
+      "verification_required": true,
+      "approved": false,
+      "rejected": false,
+      "updated": false,
+      "owner_decision_required": true,
+      "status": "OWNER_DECISION_REQUIRED"
+    },
+    {
+      "id": "CLM-08",
+      "source_wording": "Agency fee comparison dollars \u2014 verbatim wording pending live-site extraction",
+      "destination_wording": "TBD",
+      "verification_required": true,
+      "approved": false,
+      "rejected": false,
+      "updated": false,
+      "owner_decision_required": true,
+      "status": "OWNER_DECISION_REQUIRED"
+    },
+    {
+      "id": "CLM-09",
+      "source_wording": "Visa sponsorship support \u2014 verbatim wording pending live-site extraction",
+      "destination_wording": "TBD",
+      "verification_required": true,
+      "approved": false,
+      "rejected": false,
+      "updated": false,
+      "owner_decision_required": true,
+      "status": "OWNER_DECISION_REQUIRED"
+    },
+    {
+      "id": "CLM-10",
+      "source_wording": "Relocation support \u2014 verbatim wording pending live-site extraction",
+      "destination_wording": "TBD",
+      "verification_required": true,
+      "approved": false,
+      "rejected": false,
+      "updated": false,
+      "owner_decision_required": true,
+      "status": "OWNER_DECISION_REQUIRED"
+    },
+    {
+      "id": "CLM-11",
+      "source_wording": "Replacement / satisfaction guarantee terms \u2014 verbatim wording pending live-site extraction",
+      "destination_wording": "TBD",
+      "verification_required": true,
+      "approved": false,
+      "rejected": false,
+      "updated": false,
+      "owner_decision_required": true,
+      "status": "OWNER_DECISION_REQUIRED"
+    },
+    {
+      "id": "CLM-12",
+      "source_wording": "Named client logos and case studies (usage rights) \u2014 verbatim wording pending live-site extraction",
+      "destination_wording": "TBD",
+      "verification_required": true,
+      "approved": false,
+      "rejected": false,
+      "updated": false,
+      "owner_decision_required": true,
+      "status": "OWNER_DECISION_REQUIRED"
+    },
+    {
+      "id": "CLM-13",
+      "source_wording": "Testimonial quotes and attributions \u2014 verbatim wording pending live-site extraction",
+      "destination_wording": "TBD",
+      "verification_required": true,
+      "approved": false,
+      "rejected": false,
+      "updated": false,
+      "owner_decision_required": true,
+      "status": "OWNER_DECISION_REQUIRED"
+    },
+    {
+      "id": "CLM-14",
+      "source_wording": "Team headcount and geographic footprint \u2014 verbatim wording pending live-site extraction",
+      "destination_wording": "TBD",
+      "verification_required": true,
+      "approved": false,
+      "rejected": false,
+      "updated": false,
+      "owner_decision_required": true,
+      "status": "OWNER_DECISION_REQUIRED"
+    },
+    {
+      "id": "CLM-15",
+      "source_wording": "Response-time / SLA numbers \u2014 verbatim wording pending live-site extraction",
+      "destination_wording": "TBD",
+      "verification_required": true,
+      "approved": false,
+      "rejected": false,
+      "updated": false,
+      "owner_decision_required": true,
+      "status": "OWNER_DECISION_REQUIRED"
+    },
+    {
+      "id": "CLM-16",
+      "source_wording": "AI / scoring accuracy percentages \u2014 verbatim wording pending live-site extraction",
+      "destination_wording": "TBD",
+      "verification_required": true,
+      "approved": false,
+      "rejected": false,
+      "updated": false,
+      "owner_decision_required": true,
+      "status": "OWNER_DECISION_REQUIRED"
+    }
+  ],
+  "totals": {
+    "routes_tracked": 25,
+    "assets_tracked": 7,
+    "claims_tracked": 16,
+    "unresolved_routes": 25,
+    "unresolved_assets": 7,
+    "unresolved_claims": 16
+  }
+}

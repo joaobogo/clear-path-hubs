@@ -1,0 +1,181 @@
+{
+  "trace_id": "MIG-LEDGER-2026-07-22",
+  "items": [
+    {
+      "id": "CLM-01",
+      "source_wording": "Pilot program price and duration \u2014 verbatim wording pending live-site extraction",
+      "destination_wording": "TBD",
+      "verification_required": true,
+      "approved": false,
+      "rejected": false,
+      "updated": false,
+      "owner_decision_required": true,
+      "status": "OWNER_DECISION_REQUIRED"
+    },
+    {
+      "id": "CLM-02",
+      "source_wording": "Monthly subscription price tiers \u2014 verbatim wording pending live-site extraction",
+      "destination_wording": "TBD",
+      "verification_required": true,
+      "approved": false,
+      "rejected": false,
+      "updated": false,
+      "owner_decision_required": true,
+      "status": "OWNER_DECISION_REQUIRED"
+    },
+    {
+      "id": "CLM-03",
+      "source_wording": "First-candidates delivery timeline \u2014 verbatim wording pending live-site extraction",
+      "destination_wording": "TBD",
+      "verification_required": true,
+      "approved": false,
+      "rejected": false,
+      "updated": false,
+      "owner_decision_required": true,
+      "status": "OWNER_DECISION_REQUIRED"
+    },
+    {
+      "id": "CLM-04",
+      "source_wording": "Guaranteed candidates per position per month \u2014 verbatim wording pending live-site extraction",
+      "destination_wording": "TBD",
+      "verification_required": true,
+      "approved": false,
+      "rejected": false,
+      "updated": false,
+      "owner_decision_required": true,
+      "status": "OWNER_DECISION_REQUIRED"
+    },
+    {
+      "id": "CLM-05",
+      "source_wording": "Countries and regions covered \u2014 verbatim wording pending live-site extraction",
+      "destination_wording": "TBD",
+      "verification_required": true,
+      "approved": false,
+      "rejected": false,
+      "updated": false,
+      "owner_decision_required": true,
+      "status": "OWNER_DECISION_REQUIRED"
+    },
+    {
+      "id": "CLM-06",
+      "source_wording": "Maximum hiring capacity per client \u2014 verbatim wording pending live-site extraction",
+      "destination_wording": "TBD",
+      "verification_required": true,
+      "approved": false,
+      "rejected": false,
+      "updated": false,
+      "owner_decision_required": true,
+      "status": "OWNER_DECISION_REQUIRED"
+    },
+    {
+      "id": "CLM-07",
+      "source_wording": "Cost savings vs traditional agency (percentage) \u2014 verbatim wording pending live-site extraction",
+      "destination_wording": "TBD",
+      "verification_required": true,
+      "approved": false,
+      "rejected": false,
+      "updated": false,
+      "owner_decision_required": true,
+      "status": "OWNER_DECISION_REQUIRED"
+    },
+    {
+      "id": "CLM-08",
+      "source_wording": "Agency fee comparison dollars \u2014 verbatim wording pending live-site extraction",
+      "destination_wording": "TBD",
+      "verification_required": true,
+      "approved": false,
+      "rejected": false,
+      "updated": false,
+      "owner_decision_required": true,
+      "status": "OWNER_DECISION_REQUIRED"
+    },
+    {
+      "id": "CLM-09",
+      "source_wording": "Visa sponsorship support \u2014 verbatim wording pending live-site extraction",
+      "destination_wording": "TBD",
+      "verification_required": true,
+      "approved": false,
+      "rejected": false,
+      "updated": false,
+      "owner_decision_required": true,
+      "status": "OWNER_DECISION_REQUIRED"
+    },
+    {
+      "id": "CLM-10",
+      "source_wording": "Relocation support \u2014 verbatim wording pending live-site extraction",
+      "destination_wording": "TBD",
+      "verification_required": true,
+      "approved": false,
+      "rejected": false,
+      "updated": false,
+      "owner_decision_required": true,
+      "status": "OWNER_DECISION_REQUIRED"
+    },
+    {
+      "id": "CLM-11",
+      "source_wording": "Replacement / satisfaction guarantee terms \u2014 verbatim wording pending live-site extraction",
+      "destination_wording": "TBD",
+      "verification_required": true,
+      "approved": false,
+      "rejected": false,
+      "updated": false,
+      "owner_decision_required": true,
+      "status": "OWNER_DECISION_REQUIRED"
+    },
+    {
+      "id": "CLM-12",
+      "source_wording": "Named client logos and case studies (usage rights) \u2014 verbatim wording pending live-site extraction",
+      "destination_wording": "TBD",
+      "verification_required": true,
+      "approved": false,
+      "rejected": false,
+      "updated": false,
+      "owner_decision_required": true,
+      "status": "OWNER_DECISION_REQUIRED"
+    },
+    {
+      "id": "CLM-13",
+      "source_wording": "Testimonial quotes and attributions \u2014 verbatim wording pending live-site extraction",
+      "destination_wording": "TBD",
+      "verification_required": true,
+      "approved": false,
+      "rejected": false,
+      "updated": false,
+      "owner_decision_required": true,
+      "status": "OWNER_DECISION_REQUIRED"
+    },
+    {
+      "id": "CLM-14",
+      "source_wording": "Team headcount and geographic footprint \u2014 verbatim wording pending live-site extraction",
+      "destination_wording": "TBD",
+      "verification_required": true,
+      "approved": false,
+      "rejected": false,
+      "updated": false,
+      "owner_decision_required": true,
+      "status": "OWNER_DECISION_REQUIRED"
+    },
+    {
+      "id": "CLM-15",
+      "source_wording": "Response-time / SLA numbers \u2014 verbatim wording pending live-site extraction",
+      "destination_wording": "TBD",
+      "verification_required": true,
+      "approved": false,
+      "rejected": false,
+      "updated": false,
+      "owner_decision_required": true,
+      "status": "OWNER_DECISION_REQUIRED"
+    },
+    {
+      "id": "CLM-16",
+      "source_wording": "AI / scoring accuracy percentages \u2014 verbatim wording pending live-site extraction",
+      "destination_wording": "TBD",
+      "verification_required": true,
+      "approved": false,
+      "rejected": false,
+      "updated": false,
+      "owner_decision_required": true,
+      "status": "OWNER_DECISION_REQUIRED"
+    }
+  ]
+}

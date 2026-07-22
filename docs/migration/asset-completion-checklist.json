@@ -1,0 +1,75 @@
+{
+  "trace_id": "MIG-LEDGER-2026-07-22",
+  "items": [
+    {
+      "source_path": "public/logo.svg",
+      "destination_path": "src/assets/brand/logo.svg",
+      "checks": {
+        "migrated": false,
+        "optimized": false,
+        "alt_text_present": false,
+        "deduplicated": true
+      }
+    },
+    {
+      "source_path": "public/favicon.ico",
+      "destination_path": "public/favicon.ico",
+      "checks": {
+        "migrated": false,
+        "optimized": false,
+        "alt_text_present": true,
+        "deduplicated": true
+      }
+    },
+    {
+      "source_path": "public/apple-touch-icon.png",
+      "destination_path": "public/apple-touch-icon.png",
+      "checks": {
+        "migrated": false,
+        "optimized": false,
+        "alt_text_present": true,
+        "deduplicated": true
+      }
+    },
+    {
+      "source_path": "public/og-default.jpg",
+      "destination_path": "public/og-default.jpg",
+      "checks": {
+        "migrated": false,
+        "optimized": false,
+        "alt_text_present": false,
+        "deduplicated": true
+      }
+    },
+    {
+      "source_path": "hero images \u00d73",
+      "destination_path": "src/assets/marketing/",
+      "checks": {
+        "migrated": false,
+        "optimized": false,
+        "alt_text_present": false,
+        "deduplicated": true
+      }
+    },
+    {
+      "source_path": "industry covers \u00d724",
+      "destination_path": "src/assets/industries/",
+      "checks": {
+        "migrated": false,
+        "optimized": false,
+        "alt_text_present": false,
+        "deduplicated": true
+      }
+    },
+    {
+      "source_path": "blog cover images \u00d725 (hotlinked)",
+      "destination_path": "src/assets/blog/ or /public/blog/",
+      "checks": {
+        "migrated": false,
+        "optimized": false,
+        "alt_text_present": false,
+        "deduplicated": false
+      }
+    }
+  ]
+}
