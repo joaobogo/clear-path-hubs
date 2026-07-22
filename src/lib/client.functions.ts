@@ -113,14 +113,6 @@ export const getClientContext = createServerFn({ method: "GET" })
 // Definitions live in `@/lib/client-kpi.server` (loadKpiRows, computeKpis,
 // isTopMatch, isInInterview). Everything below composes those primitives.
 
-  const delivered = new Set(rows.map((r) => r.candidate_profile_id)).size;
-  const top = rows.filter(isTopMatch).length;
-  const shortlisted = rows.filter((r) => r.stage === "shortlisted").length;
-  const interviewing = rows.filter(isInInterview).length;
-  const hires = rows.filter((r) => r.stage === "hired").length;
-  return { delivered, top, shortlisted, interviewing, hires };
-}
-
 // ─── Overview ───────────────────────────────────────────────────────────────
 
 export const getClientOverview = createServerFn({ method: "GET" })
