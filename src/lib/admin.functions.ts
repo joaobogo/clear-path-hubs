@@ -652,3 +652,97 @@ export const listPositionOptions = createServerFn({ method: "POST" })
     const { data: rows } = await q;
     return (rows ?? []) as AnyRow[];
   });
+
+// ─── Client workspace: canonical update, activity, tenant-scoped candidates ─
+
+const ORG_STATUS = z.enum(["prospect", "active", "paused", "closed"]);
+
+export const updateOrganization = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: unknown) =>
+    z
+      .object({
+        id: z.string().uuid(),
+        patch: z
+          .object({
+            name: z.string().trim().min(1).max(200).optional(),
+            website: z.string().trim().max(500).nullable().optional(),
+            domain: z.string().trim().max(200).nullable().optional(),
+            industry: z.string().trim().max(120).nullable().optional(),
+            headquarters: z.string().trim().max(200).nullable().optional(),
+            status: ORG_STATUS.optional(),
+          })
+          .refine((p) => Object.keys(p).length > 0, { message: "empty patch" }),
+      })
+      .parse(i),
+  )
+  .handler(async ({ data, context }) => {
+    await requireStaff(context.userId);
+    const s = await getAdmin();
+    const trace = traceId();
+    const { data: before } = await s
+      .from("organizations")
+      .select("*")
+      .eq("id", data.id)
+      .maybeSingle();
+    if (!before) throw new Error("organization_not_found");
+    const { data: after, error } = await s
+      .from("organizations")
+      .update(data.patch)
+      .eq("id", data.id)
+      .select("*")
+      .maybeSingle();
+    if (error) throw new Error(`update_failed:${error.message} [${trace}]`);
+    await writeAudit({
+      actor: context.userId,
+      action: "organization.update",
+      entity_type: "organizations",
+      entity_id: data.id,
+      organization_id: data.id,
+      before,
+      after,
+      trace_id: trace,
+    });
+    return { ok: true as const, organization: after, trace_id: trace };
+  });
+
+export const getClientActivity = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: unknown) =>
+    z
+      .object({
+        id: z.string().uuid(),
+        limit: z.number().int().min(1).max(200).optional().default(50),
+      })
+      .parse(i),
+  )
+  .handler(async ({ data, context }) => {
+    await requireStaff(context.userId);
+    const s = await getAdmin();
+    const { data: rows } = await s
+      .from("audit_events")
+      .select("id,action,entity_type,entity_id,created_at,actor_user_id,trace_id")
+      .eq("organization_id", data.id)
+      .order("created_at", { ascending: false })
+      .limit(data.limit);
+    return (rows ?? []) as AnyRow[];
+  });
+
+export const getClientCandidatesForOrg = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: unknown) =>
+    z.object({ id: z.string().uuid(), limit: z.number().int().min(1).max(500).optional().default(200) }).parse(i),
+  )
+  .handler(async ({ data, context }) => {
+    await requireStaff(context.userId);
+    const s = await getAdmin();
+    const { data: rows } = await s
+      .from("candidate_matches")
+      .select(
+        "id,current_stage,processing_state,fit_band,fit_score_final,admin_status,client_visibility,updated_at,candidate_profiles(id,full_name,email),positions(id,title)",
+      )
+      .eq("organization_id", data.id)
+      .order("updated_at", { ascending: false })
+      .limit(data.limit);
+    return (rows ?? []) as AnyRow[];
+  });
