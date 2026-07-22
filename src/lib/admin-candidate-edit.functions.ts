@@ -45,7 +45,11 @@ const editSchema = z.object({
       email: z.string().trim().email().max(320).optional(),
       phone: z.string().trim().max(80).optional().nullable(),
       location: z.string().trim().max(200).optional().nullable(),
+      timezone: z.string().trim().max(80).optional().nullable(),
       headline: z.string().trim().max(300).optional().nullable(),
+      summary: z.string().trim().max(4000).optional().nullable(),
+      years_experience: z.number().int().min(0).max(80).optional().nullable(),
+      linkedin_url: z.string().trim().url().max(500).optional().nullable(),
       experience: z.array(z.record(z.string(), z.unknown())).optional(),
       skills: z.array(z.string().min(1).max(80)).max(200).optional(),
       languages: z.array(z.record(z.string(), z.unknown())).optional(),
@@ -55,6 +59,7 @@ const editSchema = z.object({
       compensation_preferences: z.record(z.string(), z.unknown()).optional(),
     })
     .refine((o) => Object.keys(o).length > 0, { message: "patch cannot be empty" }),
+
   // Fields to lock against future auto-enrichment overwrites (["email","phone"] etc.)
   lock_fields: z.array(z.string()).max(30).optional(),
   // Explicit override — set true only for legacy_bridge_repair to allow overwriting a locked field.
