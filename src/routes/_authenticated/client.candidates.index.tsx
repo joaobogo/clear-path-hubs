@@ -9,8 +9,10 @@ import {
   getClientContext,
   type CandidateFilter,
 } from "@/lib/client.functions";
+import { useClientOrgSearch } from "@/lib/use-client-org";
 import { Input } from "@/components/ui/input";
 import { CandidateCard } from "@/components/client/candidate-card";
+
 
 const FILTERS: { key: CandidateFilter; label: string }[] = [
   { key: "all", label: "All" },
