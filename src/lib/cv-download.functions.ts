@@ -37,10 +37,11 @@ export const getCandidateCvDownload = createServerFn({ method: "POST" })
     let authorized = Boolean(isAdmin) || Boolean(isStaff);
     if (!authorized && orgId) {
       const { data: mem } = await supabase
-        .from("organization_members")
+        .from("memberships")
         .select("id")
         .eq("organization_id", orgId)
         .eq("user_id", userId)
+        .eq("status", "active")
         .maybeSingle();
       authorized = Boolean(mem);
     }
