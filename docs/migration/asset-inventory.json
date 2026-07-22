@@ -1,0 +1,176 @@
+{
+  "brand": [
+    {
+      "file": "public/favicon.png",
+      "purpose": "favicon (transitional; replace with brand mark)",
+      "status": "placeholder"
+    },
+    {
+      "file": "public/og-image.png",
+      "purpose": "default social share image",
+      "status": "placeholder"
+    },
+    {
+      "file": "src/assets/joao.jpg.asset.json",
+      "purpose": "founder headshot (CDN pointer)",
+      "status": "ok"
+    },
+    {
+      "file": "src/assets/christian.jpg.asset.json",
+      "purpose": "founder headshot (CDN pointer)",
+      "status": "ok"
+    }
+  ],
+  "content_images": [
+    {
+      "url": "https://taasflow.com/assets/accounting-BCD-M3vD.jpg",
+      "origin": "taasflow.com",
+      "status": "hotlink \u2014 must download + rehost via lovable-assets",
+      "decision": "MIGRATE"
+    },
+    {
+      "url": "https://taasflow.com/assets/christian-9Ad2XECQ.jpg",
+      "origin": "taasflow.com",
+      "status": "hotlink \u2014 must download + rehost via lovable-assets",
+      "decision": "MIGRATE"
+    },
+    {
+      "url": "https://taasflow.com/assets/construction-BKo7PaLF.jpg",
+      "origin": "taasflow.com",
+      "status": "hotlink \u2014 must download + rehost via lovable-assets",
+      "decision": "MIGRATE"
+    },
+    {
+      "url": "https://taasflow.com/assets/consulting-BJHEQnFp.jpg",
+      "origin": "taasflow.com",
+      "status": "hotlink \u2014 must download + rehost via lovable-assets",
+      "decision": "MIGRATE"
+    },
+    {
+      "url": "https://taasflow.com/assets/data-analytics-QVoH5lCt.jpg",
+      "origin": "taasflow.com",
+      "status": "hotlink \u2014 must download + rehost via lovable-assets",
+      "decision": "MIGRATE"
+    },
+    {
+      "url": "https://taasflow.com/assets/ecommerce-BZMk-1ga.jpg",
+      "origin": "taasflow.com",
+      "status": "hotlink \u2014 must download + rehost via lovable-assets",
+      "decision": "MIGRATE"
+    },
+    {
+      "url": "https://taasflow.com/assets/finance-bU6FMx8g.jpg",
+      "origin": "taasflow.com",
+      "status": "hotlink \u2014 must download + rehost via lovable-assets",
+      "decision": "MIGRATE"
+    },
+    {
+      "url": "https://taasflow.com/assets/healthcare-zBwovZK5.jpg",
+      "origin": "taasflow.com",
+      "status": "hotlink \u2014 must download + rehost via lovable-assets",
+      "decision": "MIGRATE"
+    },
+    {
+      "url": "https://taasflow.com/assets/hero-dashboard-cards-DPdXn-GF.jpg",
+      "origin": "taasflow.com",
+      "status": "hotlink \u2014 must download + rehost via lovable-assets",
+      "decision": "MIGRATE"
+    },
+    {
+      "url": "https://taasflow.com/assets/hero-globe-network-B6AA_1ph.jpg",
+      "origin": "taasflow.com",
+      "status": "hotlink \u2014 must download + rehost via lovable-assets",
+      "decision": "MIGRATE"
+    },
+    {
+      "url": "https://taasflow.com/assets/hospitality-DdGxwA11.jpg",
+      "origin": "taasflow.com",
+      "status": "hotlink \u2014 must download + rehost via lovable-assets",
+      "decision": "MIGRATE"
+    },
+    {
+      "url": "https://taasflow.com/assets/human-resources-CXMcZvTZ.jpg",
+      "origin": "taasflow.com",
+      "status": "hotlink \u2014 must download + rehost via lovable-assets",
+      "decision": "MIGRATE"
+    },
+    {
+      "url": "https://taasflow.com/assets/insurance-B6J_8kEs.jpg",
+      "origin": "taasflow.com",
+      "status": "hotlink \u2014 must download + rehost via lovable-assets",
+      "decision": "MIGRATE"
+    },
+    {
+      "url": "https://taasflow.com/assets/joao-BvCqv2_l.jpg",
+      "origin": "taasflow.com",
+      "status": "hotlink \u2014 must download + rehost via lovable-assets",
+      "decision": "MIGRATE"
+    },
+    {
+      "url": "https://taasflow.com/assets/legal-CgBdG8e-.jpg",
+      "origin": "taasflow.com",
+      "status": "hotlink \u2014 must download + rehost via lovable-assets",
+      "decision": "MIGRATE"
+    },
+    {
+      "url": "https://taasflow.com/assets/marketing-BgkI0U6F.jpg",
+      "origin": "taasflow.com",
+      "status": "hotlink \u2014 must download + rehost via lovable-assets",
+      "decision": "MIGRATE"
+    },
+    {
+      "url": "https://taasflow.com/assets/media-BSeqk3mG.jpg",
+      "origin": "taasflow.com",
+      "status": "hotlink \u2014 must download + rehost via lovable-assets",
+      "decision": "MIGRATE"
+    },
+    {
+      "url": "https://taasflow.com/assets/nonprofit-CBDceX8B.jpg",
+      "origin": "taasflow.com",
+      "status": "hotlink \u2014 must download + rehost via lovable-assets",
+      "decision": "MIGRATE"
+    },
+    {
+      "url": "https://taasflow.com/assets/private-equity-DUuUs_k6.jpg",
+      "origin": "taasflow.com",
+      "status": "hotlink \u2014 must download + rehost via lovable-assets",
+      "decision": "MIGRATE"
+    },
+    {
+      "url": "https://taasflow.com/assets/public-sector-BKXoE7Wi.jpg",
+      "origin": "taasflow.com",
+      "status": "hotlink \u2014 must download + rehost via lovable-assets",
+      "decision": "MIGRATE"
+    },
+    {
+      "url": "https://taasflow.com/assets/real-estate-Dpu59h1G.jpg",
+      "origin": "taasflow.com",
+      "status": "hotlink \u2014 must download + rehost via lovable-assets",
+      "decision": "MIGRATE"
+    },
+    {
+      "url": "https://taasflow.com/assets/saas-Cn_QGyNU.jpg",
+      "origin": "taasflow.com",
+      "status": "hotlink \u2014 must download + rehost via lovable-assets",
+      "decision": "MIGRATE"
+    },
+    {
+      "url": "https://taasflow.com/assets/sales-B_YOEenq.jpg",
+      "origin": "taasflow.com",
+      "status": "hotlink \u2014 must download + rehost via lovable-assets",
+      "decision": "MIGRATE"
+    },
+    {
+      "url": "https://taasflow.com/assets/staffing-agencies-BqziRiMB.jpg",
+      "origin": "taasflow.com",
+      "status": "hotlink \u2014 must download + rehost via lovable-assets",
+      "decision": "MIGRATE"
+    },
+    {
+      "url": "https://taasflow.com/assets/tech-CUH6a1PL.jpg",
+      "origin": "taasflow.com",
+      "status": "hotlink \u2014 must download + rehost via lovable-assets",
+      "decision": "MIGRATE"
+    }
+  ]
+}
