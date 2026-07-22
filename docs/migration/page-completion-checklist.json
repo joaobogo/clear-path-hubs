@@ -1,0 +1,355 @@
+{
+  "trace_id": "MIG-LEDGER-2026-07-22",
+  "items": [
+    {
+      "source_route": "/",
+      "destination_route": "/",
+      "checks": {
+        "implemented": true,
+        "responsive_verified": true,
+        "accessible_verified": true,
+        "seo_verified": true,
+        "content_reviewed": false,
+        "visual_parity_reviewed": false,
+        "redirect_configured": true,
+        "final_verification": false
+      }
+    },
+    {
+      "source_route": "/how-it-works",
+      "destination_route": "/how-it-works",
+      "checks": {
+        "implemented": true,
+        "responsive_verified": true,
+        "accessible_verified": true,
+        "seo_verified": true,
+        "content_reviewed": false,
+        "visual_parity_reviewed": false,
+        "redirect_configured": true,
+        "final_verification": false
+      }
+    },
+    {
+      "source_route": "/pricing",
+      "destination_route": "/pricing",
+      "checks": {
+        "implemented": true,
+        "responsive_verified": true,
+        "accessible_verified": true,
+        "seo_verified": true,
+        "content_reviewed": false,
+        "visual_parity_reviewed": false,
+        "redirect_configured": true,
+        "final_verification": false
+      }
+    },
+    {
+      "source_route": "/pilot",
+      "destination_route": "/pilot",
+      "checks": {
+        "implemented": true,
+        "responsive_verified": true,
+        "accessible_verified": true,
+        "seo_verified": true,
+        "content_reviewed": false,
+        "visual_parity_reviewed": false,
+        "redirect_configured": true,
+        "final_verification": false
+      }
+    },
+    {
+      "source_route": "/enterprise",
+      "destination_route": "/enterprise",
+      "checks": {
+        "implemented": true,
+        "responsive_verified": true,
+        "accessible_verified": true,
+        "seo_verified": true,
+        "content_reviewed": false,
+        "visual_parity_reviewed": false,
+        "redirect_configured": true,
+        "final_verification": false
+      }
+    },
+    {
+      "source_route": "/faq",
+      "destination_route": "/faq",
+      "checks": {
+        "implemented": true,
+        "responsive_verified": true,
+        "accessible_verified": true,
+        "seo_verified": true,
+        "content_reviewed": false,
+        "visual_parity_reviewed": false,
+        "redirect_configured": true,
+        "final_verification": false
+      }
+    },
+    {
+      "source_route": "/contact",
+      "destination_route": "/contact",
+      "checks": {
+        "implemented": true,
+        "responsive_verified": true,
+        "accessible_verified": true,
+        "seo_verified": true,
+        "content_reviewed": false,
+        "visual_parity_reviewed": false,
+        "redirect_configured": true,
+        "final_verification": false
+      }
+    },
+    {
+      "source_route": "/resources",
+      "destination_route": "/resources",
+      "checks": {
+        "implemented": true,
+        "responsive_verified": true,
+        "accessible_verified": true,
+        "seo_verified": true,
+        "content_reviewed": false,
+        "visual_parity_reviewed": false,
+        "redirect_configured": true,
+        "final_verification": false
+      }
+    },
+    {
+      "source_route": "/blog",
+      "destination_route": "/blog",
+      "checks": {
+        "implemented": true,
+        "responsive_verified": true,
+        "accessible_verified": true,
+        "seo_verified": true,
+        "content_reviewed": false,
+        "visual_parity_reviewed": false,
+        "redirect_configured": true,
+        "final_verification": false
+      }
+    },
+    {
+      "source_route": "/case-studies",
+      "destination_route": "/case-studies",
+      "checks": {
+        "implemented": true,
+        "responsive_verified": true,
+        "accessible_verified": true,
+        "seo_verified": true,
+        "content_reviewed": false,
+        "visual_parity_reviewed": false,
+        "redirect_configured": true,
+        "final_verification": false
+      }
+    },
+    {
+      "source_route": "/taasflow-journey",
+      "destination_route": "/journey",
+      "checks": {
+        "implemented": true,
+        "responsive_verified": true,
+        "accessible_verified": true,
+        "seo_verified": true,
+        "content_reviewed": false,
+        "visual_parity_reviewed": false,
+        "redirect_configured": false,
+        "final_verification": false
+      }
+    },
+    {
+      "source_route": "/industries",
+      "destination_route": "/industries",
+      "checks": {
+        "implemented": true,
+        "responsive_verified": true,
+        "accessible_verified": true,
+        "seo_verified": true,
+        "content_reviewed": false,
+        "visual_parity_reviewed": false,
+        "redirect_configured": true,
+        "final_verification": false
+      }
+    },
+    {
+      "source_route": "/industries/compare",
+      "destination_route": "/industries/compare",
+      "checks": {
+        "implemented": false,
+        "responsive_verified": false,
+        "accessible_verified": false,
+        "seo_verified": false,
+        "content_reviewed": false,
+        "visual_parity_reviewed": false,
+        "redirect_configured": true,
+        "final_verification": false
+      }
+    },
+    {
+      "source_route": "/partnerships/staffing",
+      "destination_route": "/partnerships/staffing",
+      "checks": {
+        "implemented": true,
+        "responsive_verified": true,
+        "accessible_verified": true,
+        "seo_verified": true,
+        "content_reviewed": false,
+        "visual_parity_reviewed": false,
+        "redirect_configured": true,
+        "final_verification": false
+      }
+    },
+    {
+      "source_route": "/privacy",
+      "destination_route": "/privacy",
+      "checks": {
+        "implemented": true,
+        "responsive_verified": true,
+        "accessible_verified": true,
+        "seo_verified": true,
+        "content_reviewed": false,
+        "visual_parity_reviewed": false,
+        "redirect_configured": true,
+        "final_verification": false
+      }
+    },
+    {
+      "source_route": "/terms",
+      "destination_route": "/terms",
+      "checks": {
+        "implemented": true,
+        "responsive_verified": true,
+        "accessible_verified": true,
+        "seo_verified": true,
+        "content_reviewed": false,
+        "visual_parity_reviewed": false,
+        "redirect_configured": true,
+        "final_verification": false
+      }
+    },
+    {
+      "source_route": "/talent",
+      "destination_route": "/talent-network",
+      "checks": {
+        "implemented": true,
+        "responsive_verified": true,
+        "accessible_verified": true,
+        "seo_verified": true,
+        "content_reviewed": false,
+        "visual_parity_reviewed": false,
+        "redirect_configured": false,
+        "final_verification": false
+      }
+    },
+    {
+      "source_route": "/candidate-success",
+      "destination_route": "/candidate-success",
+      "checks": {
+        "implemented": false,
+        "responsive_verified": false,
+        "accessible_verified": false,
+        "seo_verified": false,
+        "content_reviewed": false,
+        "visual_parity_reviewed": false,
+        "redirect_configured": true,
+        "final_verification": false
+      }
+    },
+    {
+      "source_route": "/employer-onboarding",
+      "destination_route": "/employer-onboarding",
+      "checks": {
+        "implemented": true,
+        "responsive_verified": true,
+        "accessible_verified": true,
+        "seo_verified": true,
+        "content_reviewed": false,
+        "visual_parity_reviewed": false,
+        "redirect_configured": true,
+        "final_verification": false
+      }
+    },
+    {
+      "source_route": "/knowledge-base",
+      "destination_route": "/knowledge-base",
+      "checks": {
+        "implemented": true,
+        "responsive_verified": true,
+        "accessible_verified": true,
+        "seo_verified": true,
+        "content_reviewed": false,
+        "visual_parity_reviewed": false,
+        "redirect_configured": true,
+        "final_verification": false
+      }
+    },
+    {
+      "source_route": "/global-talent",
+      "destination_route": "/global-talent",
+      "checks": {
+        "implemented": true,
+        "responsive_verified": true,
+        "accessible_verified": true,
+        "seo_verified": true,
+        "content_reviewed": false,
+        "visual_parity_reviewed": false,
+        "redirect_configured": true,
+        "final_verification": false
+      }
+    },
+    {
+      "source_route": "/candidate/join",
+      "destination_route": "/jobs",
+      "checks": {
+        "implemented": true,
+        "responsive_verified": true,
+        "accessible_verified": true,
+        "seo_verified": true,
+        "content_reviewed": false,
+        "visual_parity_reviewed": false,
+        "redirect_configured": false,
+        "final_verification": false
+      }
+    },
+    {
+      "source_route": "/about",
+      "destination_route": "/about",
+      "checks": {
+        "implemented": true,
+        "responsive_verified": true,
+        "accessible_verified": true,
+        "seo_verified": true,
+        "content_reviewed": false,
+        "visual_parity_reviewed": false,
+        "redirect_configured": true,
+        "final_verification": false
+      }
+    },
+    {
+      "source_route": "/blog/:slug",
+      "destination_route": "/blog/$slug",
+      "checks": {
+        "implemented": true,
+        "responsive_verified": true,
+        "accessible_verified": true,
+        "seo_verified": true,
+        "content_reviewed": false,
+        "visual_parity_reviewed": false,
+        "redirect_configured": true,
+        "final_verification": false
+      }
+    },
+    {
+      "source_route": "/industries/:slug",
+      "destination_route": "/industries/$slug",
+      "checks": {
+        "implemented": true,
+        "responsive_verified": true,
+        "accessible_verified": true,
+        "seo_verified": true,
+        "content_reviewed": false,
+        "visual_parity_reviewed": false,
+        "redirect_configured": true,
+        "final_verification": false
+      }
+    }
+  ]
+}
