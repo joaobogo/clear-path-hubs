@@ -228,7 +228,7 @@ export const getClientPositions = createServerFn({ method: "GET" })
       .from("positions")
       .select("id, title, status, location, work_model, employment_type, seniority, updated_at")
       .eq("organization_id", data.orgId)
-      .in("status", statusFilter)
+      .in("status", statusFilter as never)
       .order("updated_at", { ascending: false });
     if (error) throw new Error(error.message);
 
