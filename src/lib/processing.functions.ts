@@ -409,14 +409,10 @@ export const applyReviewDecision = createServerFn({ method: "POST" })
     }
 
     if (data.action === "approve_for_client") {
-      const { data: run } = await supabase
-        .from("score_runs")
-        .select("id,evidence,status,contradiction_status")
-        .eq("id", runIdForDecision)
-        .maybeSingle();
-      const evidenceArr = (run?.evidence as unknown as unknown[]) ?? [];
-      if (!run || run.status !== "completed" || evidenceArr.length === 0) {
-        throw new Error("publish_requires_evidence");
+      // Canonical publish gate: identity + status + evidence + contradiction.
+      const gate = await assertPublishGate(data.match_id, runIdForDecision);
+      if (!gate.ok) {
+        throw new Error(`publish_blocked:${gate.reason}`);
       }
       await supabase.from("score_decisions").insert({
         candidate_match_id: data.match_id,
