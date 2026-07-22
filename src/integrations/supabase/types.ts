@@ -3039,6 +3039,7 @@ export type Database = {
         Returns: boolean
       }
       is_platform_staff: { Args: { _user: string }; Returns: boolean }
+      scoring_readiness: { Args: { _match_id: string }; Returns: Json }
       show_limit: { Args: never; Returns: number }
       show_trgm: { Args: { "": string }; Returns: string[] }
     }
