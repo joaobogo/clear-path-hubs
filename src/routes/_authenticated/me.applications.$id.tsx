@@ -95,7 +95,7 @@ function TrackPage() {
       <section className="rounded-lg border bg-card p-5 mb-6">
         <h2 className="text-sm font-medium mb-3">Timeline</h2>
         <ol className="space-y-3">
-          {data.events.map((e, i) => (
+          {(data.events as Array<{ at: string; label: string }>).map((e, i) => (
             <li key={i} className="flex gap-3 text-sm">
               <div className="mt-1 h-2 w-2 rounded-full bg-primary shrink-0" />
               <div className="flex-1">

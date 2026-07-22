@@ -106,7 +106,19 @@ function MyApplicationsPage() {
       )}
 
       <div className="space-y-3">
-        {apps.map((a) => (
+        {(apps as Array<{
+          id: string;
+          role_title: string;
+          company: string | null;
+          location: string | null;
+          employment_type: string | null;
+          work_model: string | null;
+          applied_at: string;
+          last_update: string;
+          status: CandidateSafeStatus;
+          next_step: string | null;
+          can_withdraw: boolean;
+        }>).map((a) => (
           <Card key={a.id}>
             <CardHeader className="pb-3">
               <div className="flex items-start justify-between gap-4">
