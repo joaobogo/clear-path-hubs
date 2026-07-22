@@ -256,18 +256,32 @@ export const submitApplication = createServerFn({ method: "POST" })
       }
 
       // 9. Create candidate_match (unique on application_id).
-      const { error: cmErr } = await supabaseAdmin.from("candidate_matches").insert({
-        application_id: appRow.id,
-        candidate_profile_id: candidateProfileId,
-        position_id: data.position_id,
-        organization_id: pos.organization_id,
-        stage: "new",
-        admin_status: "pending",
-        client_visibility: "hidden",
-      });
+      const { data: matchRow, error: cmErr } = await supabaseAdmin
+        .from("candidate_matches")
+        .insert({
+          application_id: appRow.id,
+          candidate_profile_id: candidateProfileId,
+          position_id: data.position_id,
+          organization_id: pos.organization_id,
+          stage: "new",
+          admin_status: "pending",
+          client_visibility: "hidden",
+          processing_state: "queued",
+        })
+        .select("id")
+        .maybeSingle();
       if (cmErr && !String(cmErr.message).toLowerCase().includes("duplicate")) throw cmErr;
+      let matchId = matchRow?.id as string | undefined;
+      if (!matchId) {
+        const { data: existingMatch } = await supabaseAdmin
+          .from("candidate_matches")
+          .select("id")
+          .eq("application_id", appRow.id)
+          .maybeSingle();
+        matchId = existingMatch?.id;
+      }
 
-      // 10. Enqueue processing job.
+      // 10. Enqueue processing job (drain fallback).
       await supabaseAdmin.from("processing_jobs").insert({
         entity_type: "application",
         entity_id: appRow.id,
@@ -275,6 +289,21 @@ export const submitApplication = createServerFn({ method: "POST" })
         status: "queued",
         trace_id,
       });
+
+      // 10b. Automatic pipeline — fire-and-forget. Do NOT await; the applicant
+      // must not wait for LLM hydration. If the runner is interrupted, the
+      // pg_cron drain endpoint picks up the queued/stuck row within minutes.
+      if (matchId) {
+        try {
+          const { runPipelineForMatch } = await import("./pipeline-runner.server");
+          void runPipelineForMatch(matchId).catch((e) => {
+            console.error("[submitApplication] pipeline error", trace_id, e);
+          });
+        } catch (kickErr) {
+          console.error("[submitApplication] pipeline kick failed", trace_id, kickErr);
+        }
+      }
+
 
       // Emit canonical lifecycle events (idempotent).
       try {
