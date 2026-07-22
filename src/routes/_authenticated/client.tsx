@@ -7,7 +7,7 @@ import {
 } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { z } from "zod";
 import { getClientContext } from "@/lib/client.functions";
 import { supabase } from "@/integrations/supabase/client";
@@ -116,7 +116,7 @@ function ClientLayout() {
 
   return (
     <div className="min-h-screen flex w-full bg-background">
-      <ClientRealtime userId={data?.userId ?? null} />
+      <ClientCoordinator />
       <aside className="w-60 shrink-0 border-r bg-card">
         <div className="px-4 py-4 border-b flex items-start justify-between gap-2">
           <div className="min-w-0">
