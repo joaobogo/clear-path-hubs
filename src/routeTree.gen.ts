@@ -15,6 +15,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as JobsIndexRouteImport } from './routes/jobs.index'
 import { Route as IntakeConfirmationRouteImport } from './routes/intake.confirmation'
+import { Route as DevCatalogueRouteImport } from './routes/_dev.catalogue'
 import { Route as AuthenticatedMeRouteImport } from './routes/_authenticated/me'
 import { Route as AuthenticatedClientRouteImport } from './routes/_authenticated/client'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
@@ -75,6 +76,11 @@ const IntakeConfirmationRoute = IntakeConfirmationRouteImport.update({
   id: '/confirmation',
   path: '/confirmation',
   getParentRoute: () => IntakeRoute,
+} as any)
+const DevCatalogueRoute = DevCatalogueRouteImport.update({
+  id: '/_dev/catalogue',
+  path: '/catalogue',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedMeRoute = AuthenticatedMeRouteImport.update({
   id: '/me',
@@ -258,6 +264,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/client': typeof AuthenticatedClientRouteWithChildren
   '/me': typeof AuthenticatedMeRouteWithChildren
+  '/catalogue': typeof DevCatalogueRoute
   '/intake/confirmation': typeof IntakeConfirmationRoute
   '/jobs/': typeof JobsIndexRoute
   '/admin/candidates': typeof AuthenticatedAdminCandidatesRouteWithChildren
@@ -293,6 +300,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/intake': typeof IntakeRouteWithChildren
+  '/catalogue': typeof DevCatalogueRoute
   '/intake/confirmation': typeof IntakeConfirmationRoute
   '/jobs': typeof JobsIndexRoute
   '/admin/candidates': typeof AuthenticatedAdminCandidatesRouteWithChildren
@@ -333,6 +341,7 @@ export interface FileRoutesById {
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/client': typeof AuthenticatedClientRouteWithChildren
   '/_authenticated/me': typeof AuthenticatedMeRouteWithChildren
+  '/_dev/catalogue': typeof DevCatalogueRoute
   '/intake/confirmation': typeof IntakeConfirmationRoute
   '/jobs/': typeof JobsIndexRoute
   '/_authenticated/admin/candidates': typeof AuthenticatedAdminCandidatesRouteWithChildren
@@ -373,6 +382,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/client'
     | '/me'
+    | '/catalogue'
     | '/intake/confirmation'
     | '/jobs/'
     | '/admin/candidates'
@@ -408,6 +418,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/intake'
+    | '/catalogue'
     | '/intake/confirmation'
     | '/jobs'
     | '/admin/candidates'
@@ -447,6 +458,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin'
     | '/_authenticated/client'
     | '/_authenticated/me'
+    | '/_dev/catalogue'
     | '/intake/confirmation'
     | '/jobs/'
     | '/_authenticated/admin/candidates'
@@ -484,6 +496,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   IntakeRoute: typeof IntakeRouteWithChildren
+  DevCatalogueRoute: typeof DevCatalogueRoute
   JobsIndexRoute: typeof JobsIndexRoute
   ApiPublicQaSeedRoute: typeof ApiPublicQaSeedRoute
   ApplyReceivedApplicationIdRoute: typeof ApplyReceivedApplicationIdRoute
@@ -534,6 +547,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/intake/confirmation'
       preLoaderRoute: typeof IntakeConfirmationRouteImport
       parentRoute: typeof IntakeRoute
+    }
+    '/_dev/catalogue': {
+      id: '/_dev/catalogue'
+      path: '/catalogue'
+      fullPath: '/catalogue'
+      preLoaderRoute: typeof DevCatalogueRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_authenticated/me': {
       id: '/_authenticated/me'
@@ -926,6 +946,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   IntakeRoute: IntakeRouteWithChildren,
+  DevCatalogueRoute: DevCatalogueRoute,
   JobsIndexRoute: JobsIndexRoute,
   ApiPublicQaSeedRoute: ApiPublicQaSeedRoute,
   ApplyReceivedApplicationIdRoute: ApplyReceivedApplicationIdRoute,
