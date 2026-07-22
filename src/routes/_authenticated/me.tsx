@@ -12,7 +12,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { NotificationBell, NOTIFICATIONS_QUERY_KEY } from "@/components/notification-bell";
 import { SignOutButton } from "@/components/sign-out-button";
 import { useDashboardRealtime } from "@/hooks/use-realtime-refresh";
-import { FileText, User, MessageSquare, Shield } from "lucide-react";
+import { FileText, User, MessageSquare, Shield, FileUp } from "lucide-react";
 
 const CANDIDATE_REFRESH_KEYS = [
   ["me-context"],
@@ -44,9 +44,11 @@ export const Route = createFileRoute("/_authenticated/me")({
 const TABS = [
   { to: "/me/applications", label: "Applications", icon: FileText },
   { to: "/me/profile", label: "Profile", icon: User },
+  { to: "/me/cv", label: "CV", icon: FileUp },
   { to: "/me/messages", label: "Messages", icon: MessageSquare },
   { to: "/me/settings", label: "Privacy & settings", icon: Shield },
 ] as const;
+
 
 function MeLayout() {
   const ctx = Route.useLoaderData();

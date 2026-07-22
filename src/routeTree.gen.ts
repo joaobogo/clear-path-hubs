@@ -55,6 +55,7 @@ import { Route as ApiPublicBootstrapAdminRouteImport } from './routes/api/public
 import { Route as AuthenticatedMeSettingsRouteImport } from './routes/_authenticated/me.settings'
 import { Route as AuthenticatedMeProfileRouteImport } from './routes/_authenticated/me.profile'
 import { Route as AuthenticatedMeMessagesRouteImport } from './routes/_authenticated/me.messages'
+import { Route as AuthenticatedMeCvRouteImport } from './routes/_authenticated/me.cv'
 import { Route as AuthenticatedMeApplicationsRouteImport } from './routes/_authenticated/me.applications'
 import { Route as AuthenticatedClientTeamRouteImport } from './routes/_authenticated/client.team'
 import { Route as AuthenticatedClientSettingsRouteImport } from './routes/_authenticated/client.settings'
@@ -318,6 +319,11 @@ const AuthenticatedMeMessagesRoute = AuthenticatedMeMessagesRouteImport.update({
   path: '/messages',
   getParentRoute: () => AuthenticatedMeRoute,
 } as any)
+const AuthenticatedMeCvRoute = AuthenticatedMeCvRouteImport.update({
+  id: '/cv',
+  path: '/cv',
+  getParentRoute: () => AuthenticatedMeRoute,
+} as any)
 const AuthenticatedMeApplicationsRoute =
   AuthenticatedMeApplicationsRouteImport.update({
     id: '/applications',
@@ -552,6 +558,7 @@ export interface FileRoutesByFullPath {
   '/client/settings': typeof AuthenticatedClientSettingsRoute
   '/client/team': typeof AuthenticatedClientTeamRoute
   '/me/applications': typeof AuthenticatedMeApplicationsRouteWithChildren
+  '/me/cv': typeof AuthenticatedMeCvRoute
   '/me/messages': typeof AuthenticatedMeMessagesRoute
   '/me/profile': typeof AuthenticatedMeProfileRoute
   '/me/settings': typeof AuthenticatedMeSettingsRoute
@@ -621,6 +628,7 @@ export interface FileRoutesByTo {
   '/client/messages': typeof AuthenticatedClientMessagesRoute
   '/client/settings': typeof AuthenticatedClientSettingsRoute
   '/client/team': typeof AuthenticatedClientTeamRoute
+  '/me/cv': typeof AuthenticatedMeCvRoute
   '/me/messages': typeof AuthenticatedMeMessagesRoute
   '/me/profile': typeof AuthenticatedMeProfileRoute
   '/me/settings': typeof AuthenticatedMeSettingsRoute
@@ -701,6 +709,7 @@ export interface FileRoutesById {
   '/_authenticated/client/settings': typeof AuthenticatedClientSettingsRoute
   '/_authenticated/client/team': typeof AuthenticatedClientTeamRoute
   '/_authenticated/me/applications': typeof AuthenticatedMeApplicationsRouteWithChildren
+  '/_authenticated/me/cv': typeof AuthenticatedMeCvRoute
   '/_authenticated/me/messages': typeof AuthenticatedMeMessagesRoute
   '/_authenticated/me/profile': typeof AuthenticatedMeProfileRoute
   '/_authenticated/me/settings': typeof AuthenticatedMeSettingsRoute
@@ -781,6 +790,7 @@ export interface FileRouteTypes {
     | '/client/settings'
     | '/client/team'
     | '/me/applications'
+    | '/me/cv'
     | '/me/messages'
     | '/me/profile'
     | '/me/settings'
@@ -850,6 +860,7 @@ export interface FileRouteTypes {
     | '/client/messages'
     | '/client/settings'
     | '/client/team'
+    | '/me/cv'
     | '/me/messages'
     | '/me/profile'
     | '/me/settings'
@@ -929,6 +940,7 @@ export interface FileRouteTypes {
     | '/_authenticated/client/settings'
     | '/_authenticated/client/team'
     | '/_authenticated/me/applications'
+    | '/_authenticated/me/cv'
     | '/_authenticated/me/messages'
     | '/_authenticated/me/profile'
     | '/_authenticated/me/settings'
@@ -1323,6 +1335,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedMeMessagesRouteImport
       parentRoute: typeof AuthenticatedMeRoute
     }
+    '/_authenticated/me/cv': {
+      id: '/_authenticated/me/cv'
+      path: '/cv'
+      fullPath: '/me/cv'
+      preLoaderRoute: typeof AuthenticatedMeCvRouteImport
+      parentRoute: typeof AuthenticatedMeRoute
+    }
     '/_authenticated/me/applications': {
       id: '/_authenticated/me/applications'
       path: '/applications'
@@ -1704,6 +1723,7 @@ const AuthenticatedMeApplicationsRouteWithChildren =
 
 interface AuthenticatedMeRouteChildren {
   AuthenticatedMeApplicationsRoute: typeof AuthenticatedMeApplicationsRouteWithChildren
+  AuthenticatedMeCvRoute: typeof AuthenticatedMeCvRoute
   AuthenticatedMeMessagesRoute: typeof AuthenticatedMeMessagesRoute
   AuthenticatedMeProfileRoute: typeof AuthenticatedMeProfileRoute
   AuthenticatedMeSettingsRoute: typeof AuthenticatedMeSettingsRoute
@@ -1713,6 +1733,7 @@ interface AuthenticatedMeRouteChildren {
 const AuthenticatedMeRouteChildren: AuthenticatedMeRouteChildren = {
   AuthenticatedMeApplicationsRoute:
     AuthenticatedMeApplicationsRouteWithChildren,
+  AuthenticatedMeCvRoute: AuthenticatedMeCvRoute,
   AuthenticatedMeMessagesRoute: AuthenticatedMeMessagesRoute,
   AuthenticatedMeProfileRoute: AuthenticatedMeProfileRoute,
   AuthenticatedMeSettingsRoute: AuthenticatedMeSettingsRoute,

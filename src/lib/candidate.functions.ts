@@ -91,12 +91,12 @@ export const getMyContext = createServerFn({ method: "GET" })
     const userId = context.userId;
     const email = (context.claims?.email as string | undefined)?.toLowerCase();
 
-    // Try existing profile linked to this user first.
+    const PROFILE_COLS =
+      "id,user_id,full_name,email,phone,location,headline,summary,years_experience,timezone,linkedin_url,portfolio_url,certifications,experience,skills,education,languages,work_authorization,availability,compensation_preferences,current_cv_file_id,consent,created_at,updated_at";
+
     let { data: cp } = await supabase
       .from("candidate_profiles")
-      .select(
-        "id,user_id,full_name,email,phone,location,headline,experience,skills,education,languages,work_authorization,availability,compensation_preferences,current_cv_file_id,consent,created_at,updated_at",
-      )
+      .select(PROFILE_COLS)
       .eq("user_id", userId)
       .maybeSingle();
 
@@ -114,13 +114,12 @@ export const getMyContext = createServerFn({ method: "GET" })
           .update({ user_id: userId })
           .eq("id", claimable.id)
           .is("user_id", null)
-          .select(
-            "id,user_id,full_name,email,phone,location,headline,experience,skills,education,languages,work_authorization,availability,compensation_preferences,current_cv_file_id,consent,created_at,updated_at",
-          )
+          .select(PROFILE_COLS)
           .maybeSingle();
         cp = claimed ?? cp;
       }
     }
+
 
     return {
       user_id: userId,
@@ -370,6 +369,12 @@ const profileSchema = z.object({
   phone: z.string().trim().max(50).optional().nullable(),
   location: z.string().trim().max(200).optional().nullable(),
   headline: z.string().trim().max(300).optional().nullable(),
+  summary: z.string().trim().max(4000).optional().nullable(),
+  years_experience: z.coerce.number().int().min(0).max(80).optional().nullable(),
+  timezone: z.string().trim().max(80).optional().nullable(),
+  linkedin_url: z.string().trim().max(300).optional().nullable(),
+  portfolio_url: z.string().trim().max(300).optional().nullable(),
+  certifications: z.array(z.any()).max(50).default([]),
   experience: z.array(z.any()).max(50).default([]),
   skills: z.array(z.string().trim().min(1).max(60)).max(100).default([]),
   education: z.array(z.any()).max(30).default([]),
@@ -378,6 +383,7 @@ const profileSchema = z.object({
   availability: z.any().optional().nullable(),
   compensation_preferences: z.any().optional().nullable(),
 });
+
 
 export type ProfilePatch = z.infer<typeof profileSchema>;
 
@@ -401,6 +407,12 @@ export const updateMyProfile = createServerFn({ method: "POST" })
         phone: data.phone || null,
         location: data.location || null,
         headline: data.headline || null,
+        summary: data.summary || null,
+        years_experience: data.years_experience ?? null,
+        timezone: data.timezone || null,
+        linkedin_url: data.linkedin_url || null,
+        portfolio_url: data.portfolio_url || null,
+        certifications: data.certifications,
         experience: data.experience,
         skills: data.skills,
         education: data.education,
@@ -410,6 +422,7 @@ export const updateMyProfile = createServerFn({ method: "POST" })
         compensation_preferences: data.compensation_preferences ?? null,
       })
       .eq("id", cp.id);
+
     if (error) return { ok: false, trace_id: trace, message: error.message };
 
     // Mark active matches for staff review (candidate never sees this state).
@@ -614,4 +627,55 @@ export const requestCorrection = createServerFn({ method: "POST" })
     });
     if (error) return { ok: false, message: error.message };
     return { ok: true };
+  });
+
+// ─── CV versions / download ─────────────────────────────────────────────────
+
+export const listMyCvVersions = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const supabase = context.supabase as AnyRow;
+    const { data: cp } = await supabase
+      .from("candidate_profiles")
+      .select("id,current_cv_file_id")
+      .eq("user_id", context.userId)
+      .maybeSingle();
+    if (!cp) return { current_id: null, versions: [] as AnyRow[] };
+    const { data, error } = await supabase
+      .from("files")
+      .select("id,filename,mime_type,size,checksum,created_at")
+      .eq("candidate_profile_id", cp.id)
+      .eq("storage_bucket", "cvs")
+      .order("created_at", { ascending: false })
+      .limit(20);
+    if (error) throw new Error(error.message);
+    return { current_id: cp.current_cv_file_id ?? null, versions: (data ?? []) as AnyRow[] };
+  });
+
+export const getMyCvDownloadUrl = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: { file_id: string }) =>
+    z.object({ file_id: z.string().uuid() }).parse(input),
+  )
+  .handler(async ({ context, data }) => {
+    const supabase = context.supabase as AnyRow;
+    const { data: cp } = await supabase
+      .from("candidate_profiles")
+      .select("id")
+      .eq("user_id", context.userId)
+      .maybeSingle();
+    if (!cp) return { ok: false as const, message: "No profile" };
+    const { data: f } = await supabase
+      .from("files")
+      .select("id,storage_bucket,storage_path,filename")
+      .eq("id", data.file_id)
+      .eq("candidate_profile_id", cp.id)
+      .maybeSingle();
+    if (!f) return { ok: false as const, message: "Not found" };
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: signed, error } = await supabaseAdmin.storage
+      .from(f.storage_bucket)
+      .createSignedUrl(f.storage_path, 60);
+    if (error || !signed) return { ok: false as const, message: error?.message ?? "Sign failed" };
+    return { ok: true as const, url: signed.signedUrl, filename: f.filename };
   });

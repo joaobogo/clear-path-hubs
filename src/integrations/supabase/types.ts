@@ -613,6 +613,7 @@ export type Database = {
       candidate_profiles: {
         Row: {
           availability: Json
+          certifications: Json
           compensation_preferences: Json
           consent: Json
           created_at: string
@@ -639,6 +640,7 @@ export type Database = {
             | null
           migration_version: string | null
           phone: string | null
+          portfolio_url: string | null
           skills: Json
           summary: string | null
           test_run_id: string | null
@@ -650,6 +652,7 @@ export type Database = {
         }
         Insert: {
           availability?: Json
+          certifications?: Json
           compensation_preferences?: Json
           consent?: Json
           created_at?: string
@@ -676,6 +679,7 @@ export type Database = {
             | null
           migration_version?: string | null
           phone?: string | null
+          portfolio_url?: string | null
           skills?: Json
           summary?: string | null
           test_run_id?: string | null
@@ -687,6 +691,7 @@ export type Database = {
         }
         Update: {
           availability?: Json
+          certifications?: Json
           compensation_preferences?: Json
           consent?: Json
           created_at?: string
@@ -713,6 +718,7 @@ export type Database = {
             | null
           migration_version?: string | null
           phone?: string | null
+          portfolio_url?: string | null
           skills?: Json
           summary?: string | null
           test_run_id?: string | null
