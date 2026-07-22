@@ -50,7 +50,15 @@ export const Route = createFileRoute("/jobs/$id/apply")({
   component: ApplyPage,
 });
 
-type Answer = { question_id: string; value: string | boolean | number | null };
+type AnswerValue = string | boolean | number | null;
+
+const STEP_LABELS = [
+  "Your details",
+  "CV upload",
+  "Screening",
+  "Consent & review",
+  "Submit",
+] as const;
 
 function ApplyPage() {
   const { id } = Route.useParams();
@@ -63,6 +71,7 @@ function ApplyPage() {
   const draftKey = APPLY_DRAFT_KEY(id);
   const idemKey = APPLY_IDEMPOTENCY_KEY(id);
 
+  const [step, setStep] = useState(1);
   const [form, setForm] = useState({
     full_name: "",
     email: "",
@@ -71,7 +80,7 @@ function ApplyPage() {
   });
   const [cvFile, setCvFile] = useState<File | null>(null);
   const [cvError, setCvError] = useState<string | null>(null);
-  const [answers, setAnswers] = useState<Record<string, Answer["value"]>>({});
+  const [answers, setAnswers] = useState<Record<string, AnswerValue>>({});
   const [consent, setConsent] = useState(false);
   const [network, setNetwork] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -81,7 +90,7 @@ function ApplyPage() {
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const submittingRef = useRef(false);
 
-  // Autosave/restore draft (text fields + answers only, never the CV file).
+  // Restore text draft (never the CV).
   useEffect(() => {
     try {
       const raw = localStorage.getItem(draftKey);
@@ -96,10 +105,7 @@ function ApplyPage() {
 
   useEffect(() => {
     try {
-      localStorage.setItem(
-        draftKey,
-        JSON.stringify({ form, answers, network }),
-      );
+      localStorage.setItem(draftKey, JSON.stringify({ form, answers, network }));
     } catch { /* ignore */ }
   }, [draftKey, form, answers, network]);
 
@@ -133,7 +139,7 @@ function ApplyPage() {
     setCvFile(f);
   };
 
-  const setAnswer = (qid: string, v: Answer["value"]) =>
+  const setAnswer = (qid: string, v: AnswerValue) =>
     setAnswers((a) => ({ ...a, [qid]: v }));
 
   const getOrCreateIdempotencyKey = useCallback(() => {
@@ -148,14 +154,63 @@ function ApplyPage() {
     }
   }, [idemKey]);
 
-  const onSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  // Per-step validation used to gate Continue.
+  const stepIssues = (n: number): Record<string, string> => {
+    const errs: Record<string, string> = {};
+    if (n === 1) {
+      if (!form.full_name.trim() || form.full_name.trim().length < 2)
+        errs.full_name = "Enter your full name";
+      if (!/^\S+@\S+\.\S+$/.test(form.email.trim()))
+        errs.email = "Enter a valid email";
+    }
+    if (n === 2) {
+      if (!cvFile) errs.cv = "Attach your CV to continue";
+      if (cvError) errs.cv = cvError;
+    }
+    if (n === 3) {
+      pos!.questions.forEach((q) => {
+        if (!q.required) return;
+        const v = answers[q.id];
+        const empty =
+          v == null ||
+          (typeof v === "string" && v.trim() === "") ||
+          (Array.isArray(v) && v.length === 0);
+        if (empty) errs[`q:${q.id}`] = "This question is required";
+      });
+    }
+    if (n === 4) {
+      if (!consent) errs.consent_terms = "You must accept the terms to continue";
+    }
+    return errs;
+  };
+
+  const goNext = () => {
+    const errs = stepIssues(step);
+    setFieldErrors(errs);
+    if (Object.keys(errs).length > 0) return;
+    setStep((s) => Math.min(5, s + 1));
+  };
+  const goBack = () => {
+    setFieldErrors({});
+    setStep((s) => Math.max(1, s - 1));
+  };
+
+  const onSubmit = async () => {
     if (submittingRef.current) return;
     setServerError(null);
-    setFieldErrors({});
-
+    // Final aggregate validation across all steps.
+    const allErrs = { ...stepIssues(1), ...stepIssues(2), ...stepIssues(3), ...stepIssues(4) };
+    setFieldErrors(allErrs);
+    if (Object.keys(allErrs).length > 0) {
+      // Jump to earliest failing step.
+      if (allErrs.full_name || allErrs.email) setStep(1);
+      else if (allErrs.cv) setStep(2);
+      else if (Object.keys(allErrs).some((k) => k.startsWith("q:"))) setStep(3);
+      else if (allErrs.consent_terms) setStep(4);
+      return;
+    }
     if (!cvFile) {
-      setCvError("Please attach your CV.");
+      setStep(2);
       return;
     }
 
@@ -202,7 +257,6 @@ function ApplyPage() {
         submittingRef.current = false;
         return;
       }
-      // Clear draft; keep idempotency key so retries dedupe.
       try {
         localStorage.removeItem(draftKey);
       } catch { /* ignore */ }
@@ -242,11 +296,42 @@ function ApplyPage() {
           Apply — {pos.title}
         </h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Takes about 3 minutes. Your draft is saved as you type.
+          Takes about 3 minutes. Your progress is saved as you type.
         </p>
 
+        {/* Progress bar */}
+        <div className="mt-6">
+          <div className="h-1.5 w-full rounded-full bg-muted overflow-hidden">
+            <div
+              className="h-full bg-primary transition-all"
+              style={{ width: `${(step / STEP_LABELS.length) * 100}%` }}
+            />
+          </div>
+          <ol className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs">
+            {STEP_LABELS.map((label, i) => {
+              const n = i + 1;
+              const done = n < step;
+              const active = n === step;
+              return (
+                <li
+                  key={label}
+                  className={
+                    active
+                      ? "font-medium text-foreground"
+                      : done
+                        ? "text-foreground/70"
+                        : "text-muted-foreground"
+                  }
+                >
+                  {n}. {label}
+                </li>
+              );
+            })}
+          </ol>
+        </div>
+
         {serverError && (
-          <Alert variant="destructive" className="mt-6">
+          <Alert variant="destructive" className="mt-6" data-testid="apply-server-error">
             <AlertTitle>Something went wrong</AlertTitle>
             <AlertDescription>
               {serverError.message}
@@ -259,181 +344,334 @@ function ApplyPage() {
           </Alert>
         )}
 
-        <form onSubmit={onSubmit} className="mt-6 space-y-6" noValidate>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="full_name">Full name *</Label>
-              <Input
-                id="full_name"
-                autoComplete="name"
-                required
-                value={form.full_name}
-                onChange={(e) => setForm({ ...form, full_name: e.target.value })}
-              />
-              {fieldErrors.full_name && (
-                <p className="mt-1 text-xs text-destructive">{fieldErrors.full_name}</p>
-              )}
+        <div className="mt-8 rounded-lg border bg-card p-5 md:p-6">
+          {step === 1 && (
+            <div className="space-y-5">
+              <div>
+                <h2 className="text-lg font-semibold">Your details</h2>
+                <p className="text-sm text-muted-foreground">
+                  We'll use this to reach out about the role.
+                </p>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="full_name">Full name *</Label>
+                  <Input
+                    id="full_name"
+                    autoComplete="name"
+                    data-field="full_name"
+                    value={form.full_name}
+                    onChange={(e) => setForm({ ...form, full_name: e.target.value })}
+                  />
+                  {fieldErrors.full_name && (
+                    <p className="mt-1 text-xs text-destructive">{fieldErrors.full_name}</p>
+                  )}
+                </div>
+                <div>
+                  <Label htmlFor="email">Email *</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    autoComplete="email"
+                    data-field="email"
+                    value={form.email}
+                    onChange={(e) => setForm({ ...form, email: e.target.value })}
+                  />
+                  {fieldErrors.email && (
+                    <p className="mt-1 text-xs text-destructive">{fieldErrors.email}</p>
+                  )}
+                </div>
+                <div>
+                  <Label htmlFor="phone">Phone</Label>
+                  <Input
+                    id="phone"
+                    type="tel"
+                    autoComplete="tel"
+                    data-field="phone"
+                    value={form.phone}
+                    onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                  />
+                  <p className="mt-1 text-xs text-muted-foreground">Optional.</p>
+                </div>
+                <div>
+                  <Label htmlFor="location">Location</Label>
+                  <Input
+                    id="location"
+                    autoComplete="address-level2"
+                    data-field="location"
+                    placeholder="City, Country"
+                    value={form.location}
+                    onChange={(e) => setForm({ ...form, location: e.target.value })}
+                  />
+                  <p className="mt-1 text-xs text-muted-foreground">Optional.</p>
+                </div>
+              </div>
             </div>
-            <div>
-              <Label htmlFor="email">Email *</Label>
-              <Input
-                id="email"
-                type="email"
-                autoComplete="email"
-                required
-                value={form.email}
-                onChange={(e) => setForm({ ...form, email: e.target.value })}
-              />
-              {fieldErrors.email && (
-                <p className="mt-1 text-xs text-destructive">{fieldErrors.email}</p>
-              )}
-            </div>
-            <div>
-              <Label htmlFor="phone">Phone</Label>
-              <Input
-                id="phone"
-                type="tel"
-                autoComplete="tel"
-                value={form.phone}
-                onChange={(e) => setForm({ ...form, phone: e.target.value })}
-              />
-            </div>
-            <div>
-              <Label htmlFor="location">Location</Label>
-              <Input
-                id="location"
-                autoComplete="address-level2"
-                value={form.location}
-                onChange={(e) => setForm({ ...form, location: e.target.value })}
-              />
-            </div>
-          </div>
-
-          <div>
-            <Label htmlFor="cv">CV *</Label>
-            <Input
-              id="cv"
-              type="file"
-              accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-              onChange={(e) => onFile(e.target.files?.[0] ?? null)}
-              required
-            />
-            <p className="mt-1 text-xs text-muted-foreground">
-              PDF, DOC, or DOCX. Up to 10 MB.
-            </p>
-            {cvError && <p className="mt-1 text-xs text-destructive">{cvError}</p>}
-            {cvFile && !cvError && (
-              <p className="mt-1 text-xs text-muted-foreground">
-                Attached: {cvFile.name} ({Math.ceil(cvFile.size / 1024)} KB)
-              </p>
-            )}
-          </div>
-
-          {pos.questions.length > 0 && (
-            <fieldset className="space-y-4">
-              <legend className="text-lg font-semibold">Screening questions</legend>
-              {pos.questions.map((q) => {
-                const errKey = `answers.${pos.questions.indexOf(q)}.value`;
-                const err = fieldErrors[errKey];
-                const val = answers[q.id];
-                return (
-                  <div key={q.id}>
-                    <Label htmlFor={q.id}>
-                      {q.question}
-                      {q.required && " *"}
-                    </Label>
-                    {q.answer_type === "long_text" ? (
-                      <Textarea
-                        id={q.id}
-                        required={q.required}
-                        value={(val as string) ?? ""}
-                        onChange={(e) => setAnswer(q.id, e.target.value)}
-                        rows={4}
-                      />
-                    ) : q.answer_type === "boolean" ? (
-                      <RadioGroup
-                        id={q.id}
-                        value={val === true ? "yes" : val === false ? "no" : ""}
-                        onValueChange={(v) => setAnswer(q.id, v === "yes")}
-                        className="flex gap-4 mt-1"
-                      >
-                        <label className="flex items-center gap-2 text-sm">
-                          <RadioGroupItem value="yes" id={`${q.id}-y`} /> Yes
-                        </label>
-                        <label className="flex items-center gap-2 text-sm">
-                          <RadioGroupItem value="no" id={`${q.id}-n`} /> No
-                        </label>
-                      </RadioGroup>
-                    ) : q.answer_type === "number" ? (
-                      <Input
-                        id={q.id}
-                        type="number"
-                        inputMode="decimal"
-                        required={q.required}
-                        value={val == null ? "" : String(val)}
-                        onChange={(e) =>
-                          setAnswer(q.id, e.target.value === "" ? null : Number(e.target.value))
-                        }
-                      />
-                    ) : (
-                      <Input
-                        id={q.id}
-                        type="text"
-                        required={q.required}
-                        value={(val as string) ?? ""}
-                        onChange={(e) => setAnswer(q.id, e.target.value)}
-                      />
-                    )}
-                    {err && <p className="mt-1 text-xs text-destructive">{err}</p>}
-                  </div>
-                );
-              })}
-            </fieldset>
           )}
 
-          <div className="space-y-3 rounded-lg border p-4">
-            <label className="flex items-start gap-3 text-sm">
-              <Checkbox
-                checked={consent}
-                onCheckedChange={(v) => setConsent(v === true)}
-                required
-                aria-label="I agree to the terms"
-              />
-              <span>
-                I agree to TaaSFlow's terms and privacy policy and consent to sharing my CV with the
-                hiring team for this role. *
-              </span>
-            </label>
-            {fieldErrors.consent_terms && (
-              <p className="text-xs text-destructive">{fieldErrors.consent_terms}</p>
-            )}
-            <label className="flex items-start gap-3 text-sm">
-              <Checkbox
-                checked={network}
-                onCheckedChange={(v) => setNetwork(v === true)}
-                aria-label="Join the TaaSFlow talent network"
-              />
-              <span>
-                Optional — also add me to the TaaSFlow talent network so recruiters can consider me
-                for future matching roles.
-              </span>
-            </label>
-          </div>
+          {step === 2 && (
+            <div className="space-y-5">
+              <div>
+                <h2 className="text-lg font-semibold">Upload your CV</h2>
+                <p className="text-sm text-muted-foreground">
+                  PDF, DOC, or DOCX up to 10 MB. Unicode filenames welcome.
+                </p>
+              </div>
+              <div>
+                <Label htmlFor="cv">CV file *</Label>
+                <Input
+                  id="cv"
+                  type="file"
+                  data-field="cv"
+                  accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                  onChange={(e) => onFile(e.target.files?.[0] ?? null)}
+                />
+                {cvError ? (
+                  <p className="mt-1 text-xs text-destructive">{cvError}</p>
+                ) : fieldErrors.cv ? (
+                  <p className="mt-1 text-xs text-destructive">{fieldErrors.cv}</p>
+                ) : null}
+                {cvFile && !cvError && (
+                  <p className="mt-2 text-sm text-foreground/80">
+                    ✓ Attached: <span className="font-medium">{cvFile.name}</span>{" "}
+                    <span className="text-muted-foreground">
+                      ({Math.ceil(cvFile.size / 1024)} KB)
+                    </span>
+                  </p>
+                )}
+                <ul className="mt-3 text-xs text-muted-foreground list-disc pl-4 space-y-0.5">
+                  <li>Accepted formats: .pdf, .doc, .docx</li>
+                  <li>Max size: 10 MB</li>
+                  <li>We store your CV securely; only the hiring team can access it.</li>
+                </ul>
+              </div>
+            </div>
+          )}
 
-          <div className="flex flex-wrap items-center gap-3 pt-2">
-            <Button type="submit" size="lg" disabled={submitting}>
-              {submitting ? "Submitting…" : "Submit application"}
-            </Button>
-            <Link
-              to="/jobs/$id"
-              params={{ id }}
-              className="text-sm text-muted-foreground hover:text-foreground"
+          {step === 3 && (
+            <div className="space-y-5">
+              <div>
+                <h2 className="text-lg font-semibold">Screening questions</h2>
+                <p className="text-sm text-muted-foreground">
+                  {pos.questions.length === 0
+                    ? "No screening questions for this role — you're all set."
+                    : `${pos.questions.length} short ${
+                        pos.questions.length === 1 ? "question" : "questions"
+                      } from the hiring team.`}
+                </p>
+              </div>
+              {pos.questions.length > 0 && (
+                <div className="space-y-5">
+                  {pos.questions.map((q) => {
+                    const err = fieldErrors[`q:${q.id}`];
+                    const val = answers[q.id];
+                    return (
+                      <div key={q.id}>
+                        <Label htmlFor={q.id}>
+                          {q.question}
+                          {q.required && " *"}
+                        </Label>
+                        {q.answer_type === "long_text" ? (
+                          <Textarea
+                            id={q.id}
+                            value={(val as string) ?? ""}
+                            onChange={(e) => setAnswer(q.id, e.target.value)}
+                            rows={4}
+                          />
+                        ) : q.answer_type === "boolean" ? (
+                          <RadioGroup
+                            id={q.id}
+                            value={val === true ? "yes" : val === false ? "no" : ""}
+                            onValueChange={(v) => setAnswer(q.id, v === "yes")}
+                            className="flex gap-4 mt-1"
+                          >
+                            <label className="flex items-center gap-2 text-sm">
+                              <RadioGroupItem value="yes" id={`${q.id}-y`} /> Yes
+                            </label>
+                            <label className="flex items-center gap-2 text-sm">
+                              <RadioGroupItem value="no" id={`${q.id}-n`} /> No
+                            </label>
+                          </RadioGroup>
+                        ) : q.answer_type === "number" ? (
+                          <Input
+                            id={q.id}
+                            type="number"
+                            inputMode="decimal"
+                            value={val == null ? "" : String(val)}
+                            onChange={(e) =>
+                              setAnswer(
+                                q.id,
+                                e.target.value === "" ? null : Number(e.target.value),
+                              )
+                            }
+                          />
+                        ) : (
+                          <Input
+                            id={q.id}
+                            type="text"
+                            value={(val as string) ?? ""}
+                            onChange={(e) => setAnswer(q.id, e.target.value)}
+                          />
+                        )}
+                        {err && <p className="mt-1 text-xs text-destructive">{err}</p>}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          )}
+
+          {step === 4 && (
+            <div className="space-y-5">
+              <div>
+                <h2 className="text-lg font-semibold">Consent & review</h2>
+                <p className="text-sm text-muted-foreground">
+                  Confirm the details below before submitting.
+                </p>
+              </div>
+
+              <div className="rounded-md border divide-y">
+                <ReviewRow label="Name" value={form.full_name || "—"} onEdit={() => setStep(1)} />
+                <ReviewRow label="Email" value={form.email || "—"} onEdit={() => setStep(1)} />
+                <ReviewRow
+                  label="Phone"
+                  value={form.phone || "—"}
+                  onEdit={() => setStep(1)}
+                />
+                <ReviewRow
+                  label="Location"
+                  value={form.location || "—"}
+                  onEdit={() => setStep(1)}
+                />
+                <ReviewRow
+                  label="CV"
+                  value={cvFile ? `${cvFile.name} (${Math.ceil(cvFile.size / 1024)} KB)` : "—"}
+                  onEdit={() => setStep(2)}
+                />
+                <ReviewRow
+                  label="Screening"
+                  value={
+                    pos.questions.length === 0
+                      ? "No questions"
+                      : `${pos.questions.filter((q) => {
+                          const v = answers[q.id];
+                          return v != null && !(typeof v === "string" && v.trim() === "");
+                        }).length} of ${pos.questions.length} answered`
+                  }
+                  onEdit={() => setStep(3)}
+                />
+              </div>
+
+              <div className="space-y-3 rounded-lg border p-4">
+                <label className="flex items-start gap-3 text-sm">
+                  <Checkbox
+                    checked={consent}
+                    onCheckedChange={(v) => setConsent(v === true)}
+                    aria-label="I agree to the terms"
+                  />
+                  <span>
+                    I agree to TaaSFlow's terms and privacy policy and consent to sharing my CV
+                    and answers with the hiring team for this role. *
+                  </span>
+                </label>
+                {fieldErrors.consent_terms && (
+                  <p className="text-xs text-destructive">{fieldErrors.consent_terms}</p>
+                )}
+                <label className="flex items-start gap-3 text-sm">
+                  <Checkbox
+                    checked={network}
+                    onCheckedChange={(v) => setNetwork(v === true)}
+                    aria-label="Join the TaaSFlow talent network"
+                  />
+                  <span>
+                    Optional — also add me to the TaaSFlow talent network so recruiters can
+                    consider me for future matching roles.
+                  </span>
+                </label>
+              </div>
+            </div>
+          )}
+
+          {step === 5 && (
+            <div className="space-y-5">
+              <div>
+                <h2 className="text-lg font-semibold">Ready to submit</h2>
+                <p className="text-sm text-muted-foreground">
+                  Submit your application for <span className="font-medium">{pos.title}</span> at{" "}
+                  <span className="font-medium">{pos.organization_name}</span>. You'll receive a
+                  tracking reference on the next screen.
+                </p>
+              </div>
+              <div className="rounded-md border bg-muted/30 p-4 text-sm text-muted-foreground">
+                Submissions are final. We'll email you when there's a decision or a next step.
+              </div>
+            </div>
+          )}
+
+          <div className="mt-8 flex flex-wrap items-center justify-between gap-3">
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={goBack}
+              disabled={step === 1 || submitting}
             >
-              Cancel
-            </Link>
+              ← Back
+            </Button>
+            {step < 5 ? (
+              <Button type="button" onClick={goNext} data-testid="apply-continue">
+                Continue →
+              </Button>
+            ) : (
+              <Button
+                type="button"
+                size="lg"
+                onClick={onSubmit}
+                disabled={submitting}
+                data-testid="apply-submit"
+              >
+                {submitting ? "Submitting…" : "Submit application"}
+              </Button>
+            )}
           </div>
-        </form>
+        </div>
+
+        <div className="mt-4 text-center">
+          <Link
+            to="/jobs/$id"
+            params={{ id }}
+            className="text-sm text-muted-foreground hover:text-foreground"
+          >
+            Cancel and return to role
+          </Link>
+        </div>
       </main>
+    </div>
+  );
+}
+
+function ReviewRow({
+  label,
+  value,
+  onEdit,
+}: {
+  label: string;
+  value: string;
+  onEdit: () => void;
+}) {
+  return (
+    <div className="flex items-start justify-between gap-3 px-4 py-3">
+      <div className="min-w-0">
+        <div className="text-xs uppercase tracking-wide text-muted-foreground">{label}</div>
+        <div className="mt-0.5 text-sm text-foreground/90 truncate">{value}</div>
+      </div>
+      <button
+        type="button"
+        onClick={onEdit}
+        className="text-xs text-muted-foreground hover:text-foreground underline underline-offset-2"
+      >
+        Edit
+      </button>
     </div>
   );
 }

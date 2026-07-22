@@ -61,6 +61,27 @@ function labelEmployment(e: string | null) {
   return e ? e.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()) : null;
 }
 
+// Very light heuristic: split description into an overview and a responsibilities
+// list when the client wrote bullets or the classic "Responsibilities:" header.
+function splitOverviewAndResponsibilities(description: string): {
+  overview: string;
+  responsibilities: string[];
+} {
+  const text = description.trim();
+  const headerMatch = text.match(
+    /^([\s\S]*?)(?:\n|^)\s*(?:responsibilities|what you'?ll do|key responsibilities|your role)\s*:?\s*\n([\s\S]+)$/i,
+  );
+  if (headerMatch) {
+    const overview = headerMatch[1].trim();
+    const bullets = headerMatch[2]
+      .split(/\n+/)
+      .map((l) => l.replace(/^[-*•\d.\)\s]+/, "").trim())
+      .filter(Boolean);
+    if (bullets.length >= 2) return { overview, responsibilities: bullets.slice(0, 12) };
+  }
+  return { overview: text, responsibilities: [] };
+}
+
 function JobDetail() {
   const { id } = Route.useParams();
   const { data: pos } = useSuspenseQuery({
@@ -68,6 +89,7 @@ function JobDetail() {
     queryFn: () => getPublicPosition({ data: { id } }),
   });
   if (!pos) return null;
+  const { overview, responsibilities } = splitOverviewAndResponsibilities(pos.description);
 
   return (
     <div className="min-h-screen bg-background">
@@ -108,9 +130,18 @@ function JobDetail() {
         <section className="mt-10">
           <h2 className="text-lg font-semibold">About the role</h2>
           <p className="mt-3 whitespace-pre-wrap text-foreground/90 leading-relaxed">
-            {pos.description}
+            {overview}
           </p>
         </section>
+
+        {responsibilities.length > 0 && (
+          <section className="mt-8">
+            <h2 className="text-lg font-semibold">Responsibilities</h2>
+            <ul className="mt-3 list-disc pl-5 space-y-1 text-foreground/90">
+              {responsibilities.map((r, i) => <li key={i}>{r}</li>)}
+            </ul>
+          </section>
+        )}
 
         <section className="mt-8">
           <h2 className="text-lg font-semibold">Requirements</h2>
@@ -121,22 +152,34 @@ function JobDetail() {
 
         {pos.preferred_requirements.length > 0 && (
           <section className="mt-8">
-            <h2 className="text-lg font-semibold">Nice to have</h2>
+            <h2 className="text-lg font-semibold">Preferred qualifications</h2>
             <ul className="mt-3 list-disc pl-5 space-y-1 text-foreground/90">
               {pos.preferred_requirements.map((r, i) => <li key={i}>{r}</li>)}
             </ul>
           </section>
         )}
 
-        {pos.questions.length > 0 && (
-          <section className="mt-8">
-            <h2 className="text-lg font-semibold">Application questions</h2>
-            <p className="mt-2 text-sm text-muted-foreground">
-              You'll be asked to answer {pos.questions.length}{" "}
-              {pos.questions.length === 1 ? "question" : "questions"} when you apply.
-            </p>
-          </section>
-        )}
+        <section className="mt-8 rounded-lg border bg-muted/30 p-6">
+          <h2 className="text-lg font-semibold">Application process</h2>
+          <ol className="mt-3 list-decimal pl-5 space-y-2 text-sm text-foreground/90">
+            <li>
+              Apply in about 3 minutes — share your details, upload your CV
+              {pos.questions.length > 0
+                ? `, and answer ${pos.questions.length} short screening ${
+                    pos.questions.length === 1 ? "question" : "questions"
+                  }.`
+                : "."}
+            </li>
+            <li>
+              TaaSFlow reviewers verify fit against the role's requirements and preferred
+              qualifications.
+            </li>
+            <li>
+              Shortlisted candidates are introduced to {pos.organization_name} within a few
+              business days.
+            </li>
+          </ol>
+        </section>
 
         <div className="mt-12 border-t pt-8 flex flex-wrap gap-3">
           <Button asChild size="lg">
