@@ -37,6 +37,7 @@ type State =
 type ProcessingCode =
   | "ok"
   | "cv_unreadable"
+  | "missing_usable_cv"
   | "requirements_missing"
   | "provider_error"
   | "position_inactive"
@@ -196,9 +197,9 @@ async function stepParse(matchId: string, trace_id: string): Promise<State> {
   const supabase = (await getAdmin()) as AnyRow;
   const ctx = await loadMatchContext(matchId);
   if (!ctx.file) {
-    await setState(matchId, "failed", { trace_id, code: "cv_unreadable", message: "No CV on file." });
-    await recordJob(matchId, "parse", "failed", trace_id, { code: "cv_unreadable", message: "No CV on file." });
-    return "failed";
+    await setState(matchId, "manual_review_required", { trace_id, code: "missing_usable_cv", message: "No CV on file — manual review required." });
+    await recordJob(matchId, "parse", "failed", trace_id, { code: "missing_usable_cv", message: "no_cv" });
+    return "manual_review_required";
   }
 
   await setState(matchId, "parsing", { trace_id });
