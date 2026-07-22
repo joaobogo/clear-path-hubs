@@ -668,6 +668,39 @@ export type Database = {
           },
         ]
       }
+      cost_limits: {
+        Row: {
+          id: string
+          max_bytes_per_op: number | null
+          notes: string | null
+          operation: string
+          per_entity_daily_cap: number
+          per_org_daily_cap: number
+          per_platform_hourly_cap: number
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          max_bytes_per_op?: number | null
+          notes?: string | null
+          operation: string
+          per_entity_daily_cap: number
+          per_org_daily_cap: number
+          per_platform_hourly_cap: number
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          max_bytes_per_op?: number | null
+          notes?: string | null
+          operation?: string
+          per_entity_daily_cap?: number
+          per_org_daily_cap?: number
+          per_platform_hourly_cap?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       data_subject_requests: {
         Row: {
           candidate_profile_id: string | null
@@ -1529,6 +1562,75 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      provider_usage_events: {
+        Row: {
+          bytes: number | null
+          cost_estimate_micros: number | null
+          entity_id: string | null
+          entity_type: string | null
+          error_code: string | null
+          id: string
+          latency_ms: number | null
+          occurred_at: string
+          operation: string
+          organization_id: string | null
+          provider: string
+          success: boolean
+          tokens_in: number | null
+          tokens_out: number | null
+          trace_id: string | null
+        }
+        Insert: {
+          bytes?: number | null
+          cost_estimate_micros?: number | null
+          entity_id?: string | null
+          entity_type?: string | null
+          error_code?: string | null
+          id?: string
+          latency_ms?: number | null
+          occurred_at?: string
+          operation: string
+          organization_id?: string | null
+          provider: string
+          success?: boolean
+          tokens_in?: number | null
+          tokens_out?: number | null
+          trace_id?: string | null
+        }
+        Update: {
+          bytes?: number | null
+          cost_estimate_micros?: number | null
+          entity_id?: string | null
+          entity_type?: string | null
+          error_code?: string | null
+          id?: string
+          latency_ms?: number | null
+          occurred_at?: string
+          operation?: string
+          organization_id?: string | null
+          provider?: string
+          success?: boolean
+          tokens_in?: number | null
+          tokens_out?: number | null
+          trace_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "provider_usage_events_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "admin_clients_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "provider_usage_events_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       retention_policies: {
         Row: {
