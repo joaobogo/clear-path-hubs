@@ -1,0 +1,409 @@
+{
+  "migration_run_id": "MIG-2026-07-22-001",
+  "migration_version": "v1.0.0",
+  "legacy_source_system": "taasflow-legacy",
+  "source_supabase_ref": "qldhdrxdnrnwbkaxozno",
+  "destination_supabase_ref": "nfwetiyrxsrejdodvale",
+  "global_conflict_policy": [
+    "MATCH_BY_LEGACY_SOURCE_ID_FIRST",
+    "MATCH_AUTH_BY_UID_OR_NORMALIZED_EMAIL_ONLY_WHEN_SAFE",
+    "MATCH_ORGS_BY_VERIFIED_OWNERSHIP_OR_DOMAIN",
+    "NEVER_FUZZY_MATCH_CANDIDATES_BY_NAME_ONLY",
+    "NEVER_FUZZY_MATCH_CLIENTS_BY_COMPANY_NAME_ONLY",
+    "NEVER_OVERWRITE_NEWER_VERIFIED_DESTINATION_VALUE",
+    "NEVER_MERGE_CANDIDATES_WITHOUT_EXPLICIT_IDENTITY_EVIDENCE",
+    "NEVER_REUSE_A_SCORE_ACROSS_POSITIONS",
+    "PRESERVE_IMMUTABLE_HISTORICAL_SCORE_RUNS",
+    "REJECT_AMBIGUOUS_ROWS_TO_MIGRATION_REVIEW_QUEUE"
+  ],
+  "required_provenance_fields": [
+    "legacy_source_system TEXT NOT NULL DEFAULT 'taasflow-legacy'",
+    "legacy_source_table TEXT NOT NULL",
+    "legacy_source_id TEXT NOT NULL",
+    "migrated_at TIMESTAMPTZ NOT NULL DEFAULT now()",
+    "migration_run_id TEXT NOT NULL",
+    "migration_version TEXT NOT NULL",
+    "migration_status TEXT NOT NULL CHECK (migration_status IN ('imported','verified','superseded','rejected'))"
+  ],
+  "required_destination_migrations": [
+    "Create table migration_review_queue(id uuid pk, source_table text, source_id text, reason text, payload jsonb, created_at, resolved_at, resolution text).",
+    "Create table migration_user_map(legacy_uid uuid pk, new_uid uuid not null unique, matched_by text check (matched_by in ('uid','email_verified')), created_at).",
+    "Create table migration_org_map(legacy_tenant_id uuid pk, new_org_id uuid not null unique, matched_by text check (matched_by in ('legacy_id','domain','owner_email')), created_at).",
+    "Create table migration_candidate_map(legacy_id uuid, legacy_table text, new_candidate_profile_id uuid not null, matched_by text check (matched_by in ('legacy_id','email','phone','manual')), created_at, primary key (legacy_id, legacy_table)).",
+    "Add provenance columns (legacy_source_system, legacy_source_table, legacy_source_id, migrated_at, migration_run_id, migration_version, migration_status) to: profiles, organizations, memberships, positions, screening_questions, candidate_profiles, applications, application_answers, candidate_matches, files, candidate_evidence, score_runs, client_decisions, interviews, messages, notifications, audit_events, intake_submissions, consent_records.",
+    "Add UNIQUE index on (legacy_source_table, legacy_source_id) per migrated table to enforce idempotency.",
+    "Add CHECK constraint app_role does not include legacy 'super_admin' unless mapped to platform_admin membership."
+  ],
+  "entities": [
+    {
+      "logical": "users",
+      "source_table": "auth.users",
+      "source_pk": "id (uuid)",
+      "destination_table": "auth.users (via Auth Admin API) + public.profiles",
+      "destination_pk": "auth.users.id (new uuid); public.profiles.id (uuid)",
+      "source_tenant_key": "n/a (auth is global)",
+      "destination_org_key": "n/a on auth.users; profiles has NO org column (org linkage lives in memberships)",
+      "source_user_key": "auth.users.id",
+      "destination_user_key": "public.profiles.auth_user_id",
+      "idempotency_key": "migration_user_map.legacy_uid",
+      "conflict_policy": "Match legacy uid via migration_user_map; if absent, match by lower(email) ONLY when legacy email_confirmed_at IS NOT NULL AND no existing destination user shares that normalized email. Otherwise reject.",
+      "validation": [
+        "legacy row.email_confirmed_at IS NOT NULL AND legacy row.deleted_at IS NULL",
+        "lower(trim(email)) unique across destination",
+        "raw_user_meta_data JSON preserved as user_metadata"
+      ],
+      "rejection": [
+        "banned_until in future → reject to review queue",
+        "email null or malformed → reject",
+        "duplicate normalized email in source without a distinguishing verified uid → reject both, manual merge"
+      ],
+      "field_map": {
+        "id": "→ new uuid; store (legacy_uid, new_uid) in migration_user_map",
+        "email": "lower(trim(email))",
+        "email_confirmed_at": "verbatim; required NOT NULL for MIGRATE_ALL_VERIFIED",
+        "phone": "E.164 normalize; drop if invalid",
+        "raw_user_meta_data": "→ user_metadata (JSONB)",
+        "created_at": "verbatim",
+        "last_sign_in_at": "verbatim (informational)",
+        "encrypted_password / recovery tokens": "DO_NOT_MIGRATE (regenerate via password-reset email)"
+      },
+      "provenance_written_to": "public.profiles (auth-schema rows cannot carry provenance columns)"
+    },
+    {
+      "logical": "profiles",
+      "source_table": "public.profiles",
+      "source_pk": "id",
+      "destination_table": "public.profiles",
+      "destination_pk": "id",
+      "source_user_key": "user_id",
+      "destination_user_key": "auth_user_id",
+      "idempotency_key": "(legacy_source_table='profiles', legacy_source_id=source.id)",
+      "conflict_policy": "Insert-if-missing keyed by auth_user_id (resolved via migration_user_map). If destination row exists and was updated via app after migration_run start → NEVER overwrite; merge only null-in-destination fields.",
+      "field_map": {
+        "user_id": "→ auth_user_id (remapped via migration_user_map)",
+        "full_name / first_name / last_name": "trim + collapse whitespace; split into first/last if destination stores separately",
+        "avatar_url": "verbatim; NOT copied through Storage in this phase (public URL only)",
+        "timezone": "IANA name; default 'UTC' if invalid",
+        "locale": "default 'en'",
+        "status": "map {'active'→'active','pending'→'active','disabled'→'inactive'}",
+        "notification_settings.*": "merge into profiles.notification_prefs JSONB"
+      },
+      "null_handling": "empty strings → NULL; unknown enum → reject",
+      "array_handling": "n/a",
+      "json_handling": "notification_prefs, metadata preserved; unknown keys retained"
+    },
+    {
+      "logical": "organizations",
+      "source_table": "public.tenants",
+      "source_pk": "id",
+      "destination_table": "public.organizations",
+      "destination_pk": "id",
+      "idempotency_key": "migration_org_map.legacy_tenant_id",
+      "conflict_policy": "Match legacy id via migration_org_map; if absent, match by verified primary domain (owner email domain OR verified custom domain). NEVER fuzzy-match on company name.",
+      "field_map": {
+        "id": "→ new uuid",
+        "name": "trim; not lowercased",
+        "domain": "lower(trim(domain))",
+        "billing_email": "lower(trim); must be a migrated user's email or NULL",
+        "industry": "map via industries lookup; unknown → NULL",
+        "logo_url": "not copied through Storage in this phase",
+        "settings jsonb": "shallow-merge (destination wins on conflict)"
+      },
+      "validation": ["at least one migrated membership row must exist"],
+      "rejection": ["0 memberships AND 0 requisitions → reject as empty tenant"]
+    },
+    {
+      "logical": "memberships",
+      "source_table": "public.user_roles + implicit tenant-user link on requisitions/candidate_submissions",
+      "source_pk": "user_roles.id",
+      "destination_table": "public.memberships (org-scoped) + public.user_roles (platform-scoped)",
+      "destination_pk": "memberships.id / user_roles.id",
+      "idempotency_key": "(legacy_source_table='user_roles', legacy_source_id=source.id)",
+      "conflict_policy": "Insert-if-missing keyed by (organization_id, user_id, role).",
+      "enum_transformations": {
+        "'super_admin'": "→ public.user_roles.role='platform_admin' (no membership row)",
+        "'admin'": "→ memberships.role='client_admin' scoped to (user, org)",
+        "'recruiter' / 'ops'": "→ memberships.role='operations' (platform staff) OR memberships.role='client_editor' (client staff) — DISAMBIGUATE per source flag; ambiguous → review queue",
+        "'client'": "→ memberships.role='client_viewer'",
+        "'candidate'": "NOT a membership; skipped"
+      },
+      "validation": ["user_id must resolve via migration_user_map", "organization_id must resolve via migration_org_map"],
+      "rejection": ["unresolved user or org → reject to review queue"]
+    },
+    {
+      "logical": "positions",
+      "source_tables": ["public.requisitions", "public.job_postings"],
+      "source_pk": "requisitions.id (job_postings.id folded in)",
+      "destination_table": "public.positions",
+      "destination_pk": "id",
+      "source_tenant_key": "requisitions.tenant_id",
+      "destination_org_key": "positions.organization_id",
+      "idempotency_key": "(legacy_source_table='requisitions', legacy_source_id=source.id)",
+      "conflict_policy": "Insert-if-missing keyed by legacy_source_id. If destination position with same legacy_source_id exists and status='active' in destination but legacy is 'closed' → NEVER downgrade; keep destination.",
+      "enum_transformations": {
+        "status": "{'open'→'active','approved'→'approved','draft'→'draft','on_hold'→'paused','closed'|'filled'|'cancelled'→'closed'}",
+        "employment_type": "{'full_time','part_time','contract','temp','intern'} preserved; unknown → NULL",
+        "seniority": "{junior,mid,senior,lead,principal} preserved; unknown → NULL"
+      },
+      "field_map": {
+        "title": "trim",
+        "description / responsibilities / requirements_text": "concatenate into positions.description (markdown); split requirements into positions.requirements[] JSONB with {label, weight, must_have}",
+        "job_postings.slug": "→ positions.public_slug (unique; regenerate if collision)",
+        "job_postings.published_at": "→ positions.published_at",
+        "location / remote_policy": "→ positions.location, positions.remote_policy enum {remote,hybrid,onsite}",
+        "salary_min / salary_max / currency": "verbatim",
+        "hiring_manager_user_id": "remap via migration_user_map (may be NULL)"
+      },
+      "date_transformations": "all timestamps → UTC; naïve times rejected",
+      "array_handling": "skills[] normalized via skills dictionary (unknown skills preserved as free text)",
+      "json_handling": "custom_fields JSONB preserved"
+    },
+    {
+      "logical": "screening_questions",
+      "source_table": "public.candidate_questions",
+      "source_pk": "id",
+      "destination_table": "public.screening_questions",
+      "destination_pk": "id",
+      "idempotency_key": "(legacy_source_table='candidate_questions', legacy_source_id=source.id)",
+      "conflict_policy": "Insert-if-missing; MUST resolve to a migrated position.",
+      "enum_transformations": {
+        "question_type": "{'text','long_text','single_select','multi_select','boolean','number','file'} preserved; unknown → 'text'"
+      },
+      "field_map": {
+        "position_id": "remapped via positions migration",
+        "prompt": "trim",
+        "required": "boolean; default false",
+        "options jsonb": "array of {value,label}; unknown shapes → reject",
+        "order_index": "verbatim; if null → append"
+      },
+      "rejection": ["orphan (no position) → reject"]
+    },
+    {
+      "logical": "candidates",
+      "source_tables": ["public.candidates", "public.candidate_profiles", "public.candidate_profiles_secure"],
+      "source_pk": "candidate_profiles.id (canonical after merge)",
+      "destination_table": "public.candidate_profiles",
+      "destination_pk": "id",
+      "idempotency_key": "migration_candidate_map.(legacy_id, legacy_table)",
+      "conflict_policy": "1) match by (legacy_id, legacy_table); 2) match by verified user_id via migration_user_map; 3) match by lower(email) IF single deterministic match AND legacy email_verified; 4) match by E.164 phone AS TIE-BREAKER only; NEVER match by name alone. Ambiguous → review queue.",
+      "field_map": {
+        "user_id": "remap via migration_user_map (NULL for unclaimed candidates)",
+        "full_name": "trim; split into first/last only if unambiguous",
+        "email": "lower(trim(email))",
+        "phone": "E.164 normalize; drop if invalid",
+        "location.country/city": "ISO-3166 country; free-text city",
+        "summary / headline / linkedin_url / github_url / portfolio_url": "verbatim, URL-validated",
+        "timezone": "IANA; default NULL",
+        "years_experience": "integer; drop if <0 or >70",
+        "current_cv_file_id": "REMAPPED after files migration (see below); NULL until then",
+        "provenance JSONB": "regenerated during hydration — do NOT copy legacy candidate_field_provenance"
+      },
+      "rejection": [
+        "duplicate normalized email that maps to distinct legacy candidates AND no phone/uid tie-breaker → review queue",
+        "no email, no phone, no user_id → review queue (cannot bind identity)"
+      ]
+    },
+    {
+      "logical": "applications",
+      "source_tables": ["public.job_applications", "public.candidate_submissions"],
+      "source_pk": "job_applications.id (each row explodes into application + candidate_match)",
+      "destination_table": "public.applications (+ public.candidate_matches, see next)",
+      "destination_pk": "applications.id",
+      "source_tenant_key": "derived from job_posting.requisition.tenant_id",
+      "destination_org_key": "applications.organization_id",
+      "idempotency_key": "(legacy_source_table='job_applications', legacy_source_id=source.id)",
+      "conflict_policy": "Insert-if-missing keyed by legacy_source_id. Do NOT re-open a destination application that was closed after migration_run start.",
+      "field_map": {
+        "job_posting_id": "→ position_id via positions migration",
+        "candidate_id | candidate_profile_id": "→ candidate_profile_id via migration_candidate_map",
+        "reference_code": "verbatim if 6-char alnum unique; else regenerate",
+        "source": "enum {'job_board','referral','import','admin'} — legacy free text mapped; unknown → 'import'",
+        "created_at / submitted_at": "verbatim UTC",
+        "ip_address": "DROP (privacy)",
+        "user_agent": "DROP",
+        "answers jsonb (inlined)": "explode into application_answers rows keyed by screening_question mapping"
+      }
+    },
+    {
+      "logical": "submissions / matches",
+      "source_table": "public.candidate_submissions",
+      "source_pk": "id",
+      "destination_table": "public.candidate_matches",
+      "destination_pk": "id",
+      "idempotency_key": "(legacy_source_table='candidate_submissions', legacy_source_id=source.id)",
+      "conflict_policy": "Insert-if-missing. If (position_id, candidate_profile_id) already exists in destination with a later approved_score_run_id → NEVER overwrite; log as superseded.",
+      "field_map": {
+        "tenant_id → organization_id": "via migration_org_map",
+        "requisition_id → position_id": "via positions migration",
+        "candidate_id → candidate_profile_id": "via migration_candidate_map",
+        "application_id": "via applications migration; NULL if no source application",
+        "current_stage": "enum via STAGE_GRAPH: {'new'→'new','shortlisted'→'shortlisted','interview'→'interview','offer'→'offer','hire'→'hire','rejected'→'rejected','withdrawn'→'withdrawn'}",
+        "processing_state": "reset to 'queued' — real state rebuilt from files+score_runs",
+        "visibility_to_client": "boolean; default false until re-evaluated by publish gate",
+        "approved_score_run_id": "REMAPPED after score_runs migration; NULL until then",
+        "client_view_snapshot jsonb": "regenerated on destination; do NOT copy stale copy"
+      },
+      "rejection": ["orphan (missing position or candidate) → reject"]
+    },
+    {
+      "logical": "CV files",
+      "source": "Storage bucket 'cvs' + public.files (or embedded file refs)",
+      "source_pk": "files.id (or storage object name)",
+      "destination_table": "public.files (rows) + Storage bucket 'cvs' (objects)",
+      "destination_pk": "files.id",
+      "idempotency_key": "(legacy_source_table='files', legacy_source_id=source.id) — physical object keyed by sha256",
+      "conflict_policy": "Insert-if-missing keyed by sha256 of file bytes. If a destination file with same sha256 exists → reuse row, skip re-upload.",
+      "field_map": {
+        "candidate_profile_id": "via migration_candidate_map",
+        "organization_id": "derived from candidate match tenant",
+        "kind": "enum {'cv','intake_attachment','client_document'}",
+        "storage_object_path": "regenerated on destination as 'org/{org}/candidate/{cp}/{sha256}.{ext}'",
+        "content_type / size_bytes / sha256 / original_filename": "recomputed on re-upload",
+        "extracted_text": "NULL — rebuilt by re-parse (see parse artifacts)",
+        "extraction_completed_at": "NULL",
+        "signed_urls": "DO_NOT_MIGRATE (temporary)"
+      },
+      "validation": ["MIME in {application/pdf, application/vnd.openxmlformats-officedocument.wordprocessingml.document, text/plain}", "size ≤ 20 MB"],
+      "rejection": ["MIME/size out of policy → reject; orphan (no candidate) → reject"]
+    },
+    {
+      "logical": "parse artifacts",
+      "source_table": "public.candidate_parse_artifacts",
+      "destination_table": "(rebuilt via HYDRATION_PARSER_VERSION on destination)",
+      "conflict_policy": "REBUILD_FROM_CANONICAL_DATA — do NOT copy legacy artifacts. After files migration completes, enqueue re-parse.",
+      "rationale": "Parser version and evidence shape differ; stale artifacts would corrupt scoring evidence."
+    },
+    {
+      "logical": "evidence",
+      "source_table": "public.candidate_enrichment_evidence + public.candidate_evidence_graphs",
+      "destination_table": "public.candidate_evidence (regenerated) + score_runs.evidence JSONB (embedded)",
+      "conflict_policy": "REBUILD_FROM_CANONICAL_DATA. Historical score_runs (see below) carry their own frozen evidence JSONB.",
+      "rejection": ["do not import stale evidence — regenerate against destination parser"]
+    },
+    {
+      "logical": "enrichment",
+      "source_table": "public.candidate_enriched_profiles + public.candidate_profile_enrichments",
+      "destination_table": "public.candidate_profiles (enriched fields)",
+      "conflict_policy": "REBUILD_FROM_CANONICAL_DATA. Enrichment history → audit_events.",
+      "field_map_notes": "Enriched fields (industries[], adjacent_domains[], strengths[]) are re-derived; only human-verified overrides (if any) are carried."
+    },
+    {
+      "logical": "scoring blueprints",
+      "source_tables": ["scoring_overrides", "scoring_feedback", "scoring_review_feedback", "manual_scoring_history"],
+      "destination_table": "REQUIRES_REVIEW (no direct destination equivalent)",
+      "conflict_policy": "Blocked pending product decision (Phase 2 REQUIRES_REVIEW).",
+      "note": "Destination scoring is deterministic per position.requirements + candidate evidence; there is no persistent blueprint entity."
+    },
+    {
+      "logical": "scoring runs",
+      "source_table": "public.score_runs",
+      "source_pk": "id",
+      "destination_table": "public.score_runs",
+      "destination_pk": "id",
+      "idempotency_key": "(legacy_source_table='score_runs', legacy_source_id=source.id)",
+      "conflict_policy": "IMMUTABLE HISTORY. Only rows with status='completed' AND jsonb_array_length(evidence) > 0 AND position identity resolves AND candidate_match identity resolves are imported. Never mutate an existing destination run. Never reuse a run across positions (enforced by tg_score_runs_identity trigger).",
+      "field_map": {
+        "candidate_match_id": "REMAP via candidate_matches migration; MUST equal the run's remapped position identity",
+        "position_id": "REMAP via positions migration; MUST equal the resolved match.position_id (trigger enforces)",
+        "candidate_id (legacy)": "DROP — global candidate score explicitly excluded; keep candidate_match_id + position_id as identity",
+        "status": "verbatim ('completed','failed','cancelled')",
+        "score_total / score_breakdown jsonb": "verbatim (frozen)",
+        "evidence jsonb": "verbatim (frozen; must be non-empty array)",
+        "model_version / prompt_version": "verbatim",
+        "started_at / completed_at": "verbatim UTC",
+        "is_test_record": "false"
+      },
+      "rejection": [
+        "position identity mismatch → reject",
+        "empty evidence → reject",
+        "status IN ('running','queued') → reject (incomplete)",
+        "cross-position reuse (same legacy candidate score attempted for two destination positions) → reject both, review queue"
+      ]
+    },
+    {
+      "logical": "reviews (admin review of runs)",
+      "source_tables": ["explanation_reviews", "scoring_review_feedback"],
+      "destination_table": "REQUIRES_REVIEW",
+      "conflict_policy": "Blocked pending product decision."
+    },
+    {
+      "logical": "publication (client visibility)",
+      "source": "job_postings.published_at + candidate_submissions.visibility_to_client",
+      "destination_table": "public.positions (published_at, public_slug) + public.candidate_matches (approved_score_run_id, visibility_to_client)",
+      "conflict_policy": "Set visibility_to_client=false at import; re-run publish-gate (tg_candidate_matches_publish_gate) on destination to re-establish visibility from migrated score_runs.",
+      "rationale": "Publish decisions must be re-validated because evidence-shape may differ."
+    },
+    {
+      "logical": "client decisions",
+      "source_tables": ["pipeline_stage_history", "candidate_submissions.current_stage"],
+      "destination_table": "public.client_decisions (+ audit_events for history)",
+      "destination_pk": "id",
+      "idempotency_key": "(legacy_source_table='pipeline_stage_history', legacy_source_id=source.id)",
+      "enum_transformations": {
+        "decision_type": "{'shortlist','request_interview','offer','hire','reject','withdraw'} — legacy 'move_to_offer'→'offer', 'made_offer'→'offer', 'hired'→'hire', 'rejected'→'reject'"
+      },
+      "field_map": {
+        "actor_user_id": "remap via migration_user_map (NULL if platform-generated)",
+        "candidate_match_id": "via candidate_matches migration",
+        "note": "verbatim",
+        "created_at": "verbatim UTC"
+      },
+      "conflict_policy": "Insert-if-missing keyed by legacy_source_id; never re-apply a decision to advance destination stage backward."
+    },
+    {
+      "logical": "interviews",
+      "source_table": "public.interview_schedules",
+      "source_pk": "id",
+      "destination_table": "public.interviews",
+      "destination_pk": "id",
+      "idempotency_key": "(legacy_source_table='interview_schedules', legacy_source_id=source.id)",
+      "enum_transformations": {
+        "status": "{'scheduled','completed','cancelled','no_show','rescheduled'} preserved"
+      },
+      "field_map": {
+        "candidate_match_id": "via candidate_matches migration",
+        "starts_at / ends_at / timezone": "verbatim UTC + IANA tz",
+        "meeting_url": "verbatim; validate scheme https",
+        "attendees jsonb": "remap user_ids via migration_user_map; unresolved attendees kept as email-only entries",
+        "notes": "verbatim"
+      },
+      "rejection": ["orphan (no match) → reject"]
+    },
+    {
+      "logical": "messages",
+      "source_tables": ["public.message_threads", "public.messages"],
+      "source_pk": "messages.id",
+      "destination_table": "public.messages",
+      "destination_pk": "id",
+      "idempotency_key": "(legacy_source_table='messages', legacy_source_id=source.id)",
+      "conflict_policy": "Insert-if-missing. Group by (thread.tenant→org, thread.subject→(position,candidate_profile)) — destination has no explicit thread table.",
+      "field_map": {
+        "sender_user_id": "remap via migration_user_map; unresolved → reject",
+        "recipient scope": "derive (organization_id, position_id, candidate_profile_id) from legacy thread",
+        "body": "verbatim (markdown allowed)",
+        "attachments": "MIGRATE_FILES_SEPARATELY (see files)",
+        "created_at": "verbatim UTC"
+      },
+      "rejection": ["either party not migrated → reject"]
+    },
+    {
+      "logical": "audit history",
+      "source_tables": ["audit_logs", "system_incidents", "candidate_change_history", "candidate_collaboration_events", "candidate_journey_incidents", "candidate_enrichment_history", "candidate_processing_logs (errors only)", "job_posting_revisions", "job_status_history", "score_audit_trail", "score_change_log", "scoring_audit_log", "scoring_intake_incidents", "scoring_lifecycle_audit", "message_reports"],
+      "destination_table": "public.audit_events",
+      "destination_pk": "id",
+      "idempotency_key": "(legacy_source_table, legacy_source_id)",
+      "field_map": {
+        "actor_user_id": "remap via migration_user_map (NULL if system)",
+        "organization_id": "derive via parent entity",
+        "entity_type": "legacy table name normalized to destination table name where mapped, else raw",
+        "entity_id": "remap to destination id where possible; else keep legacy_source_id and set entity_type='legacy_*'",
+        "action": "verbatim TG_OP-style or free text",
+        "before_state / after_state jsonb": "verbatim (may contain legacy ids)",
+        "trace_id": "verbatim",
+        "created_at": "verbatim UTC"
+      },
+      "conflict_policy": "Append-only; never dedupe across legacy_source_ids.",
+      "retention": "Convert last 180 days for high-signal tables; older kept in cold storage export."
+    }
+  ]
+}
