@@ -2045,13 +2045,16 @@ export type Database = {
           completed_at: string | null
           confidence: number | null
           contradiction_status: string | null
+          created_by_audit: boolean
           engine_version: string
           error_code: string | null
           evidence: Json
+          expires_at: string | null
           explanation: string | null
           fit_label: string | null
           id: string
           input_hash: string | null
+          is_test_record: boolean
           must_have_coverage: number | null
           position_id: string
           preferred_coverage: number | null
@@ -2060,6 +2063,7 @@ export type Database = {
           score: number | null
           started_at: string | null
           status: Database["public"]["Enums"]["score_status"]
+          test_run_id: string | null
           trace_id: string | null
         }
         Insert: {
@@ -2067,13 +2071,16 @@ export type Database = {
           completed_at?: string | null
           confidence?: number | null
           contradiction_status?: string | null
+          created_by_audit?: boolean
           engine_version: string
           error_code?: string | null
           evidence?: Json
+          expires_at?: string | null
           explanation?: string | null
           fit_label?: string | null
           id?: string
           input_hash?: string | null
+          is_test_record?: boolean
           must_have_coverage?: number | null
           position_id: string
           preferred_coverage?: number | null
@@ -2082,6 +2089,7 @@ export type Database = {
           score?: number | null
           started_at?: string | null
           status?: Database["public"]["Enums"]["score_status"]
+          test_run_id?: string | null
           trace_id?: string | null
         }
         Update: {
@@ -2089,13 +2097,16 @@ export type Database = {
           completed_at?: string | null
           confidence?: number | null
           contradiction_status?: string | null
+          created_by_audit?: boolean
           engine_version?: string
           error_code?: string | null
           evidence?: Json
+          expires_at?: string | null
           explanation?: string | null
           fit_label?: string | null
           id?: string
           input_hash?: string | null
+          is_test_record?: boolean
           must_have_coverage?: number | null
           position_id?: string
           preferred_coverage?: number | null
@@ -2104,6 +2115,7 @@ export type Database = {
           score?: number | null
           started_at?: string | null
           status?: Database["public"]["Enums"]["score_status"]
+          test_run_id?: string | null
           trace_id?: string | null
         }
         Relationships: [
