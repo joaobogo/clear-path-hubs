@@ -372,6 +372,113 @@ export const rescore = createServerFn({ method: "POST" })
     return { ok: true, state, trace_id };
   });
 
+// ---------- Phase 6: narrow admin actions ----------
+
+export const retryHydration = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => z.object({ match_id: z.string().uuid() }).parse(input))
+  .handler(async ({ data, context }) => {
+    if (!(await isStaff(context.userId))) throw new Error("forbidden");
+    const { runHydrationOnly } = await import("./pipeline-runner.server");
+    const out = await runHydrationOnly(data.match_id);
+    return { ok: out.final_state !== "failed", state: out.final_state, trace_id: out.trace_id };
+  });
+
+export const retryEnrichment = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => z.object({ match_id: z.string().uuid() }).parse(input))
+  .handler(async ({ data, context }) => {
+    if (!(await isStaff(context.userId))) throw new Error("forbidden");
+    const { runEnrichmentOnly } = await import("./pipeline-runner.server");
+    const out = await runEnrichmentOnly(data.match_id);
+    return { ok: out.final_state !== "failed", state: out.final_state, trace_id: out.trace_id };
+  });
+
+export const markManualReview = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) =>
+    z.object({ match_id: z.string().uuid(), reason: z.string().trim().min(3).max(500) }).parse(input),
+  )
+  .handler(async ({ data, context }) => {
+    if (!(await isStaff(context.userId))) throw new Error("forbidden");
+    const { forceManualReview } = await import("./pipeline-runner.server");
+    const out = await forceManualReview(data.match_id, data.reason);
+    return { ok: true, state: out.final_state, trace_id: out.trace_id };
+  });
+
+const replaceCvInput = z.object({
+  match_id: z.string().uuid(),
+  cv: z.object({
+    filename: z.string().min(1).max(200),
+    mime: z.string().min(1).max(120),
+    base64: z.string().min(100),
+  }),
+});
+
+export const replaceCv = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => replaceCvInput.parse(input))
+  .handler(async ({ data, context }) => {
+    if (!(await isStaff(context.userId))) throw new Error("forbidden");
+    const trace_id = traceId();
+    const supabase = (await getAdmin()) as AnyRow;
+    const { data: m } = await supabase
+      .from("candidate_matches")
+      .select("id,candidate_profile_id")
+      .eq("id", data.match_id).maybeSingle();
+    if (!m?.candidate_profile_id) return { ok: false as const, code: "match_not_found", trace_id };
+
+    // Decode + validate CV
+    const clean = data.cv.base64.includes(",") ? data.cv.base64.split(",", 2)[1] : data.cv.base64;
+    const bin = atob(clean);
+    const bytes = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    const { validateCv } = await import("./cv-validation");
+    const v = await validateCv(bytes, data.cv.filename, data.cv.mime);
+    if (!v.ok) return { ok: false as const, code: v.code ?? "invalid_cv", message: v.message, trace_id };
+
+    const safe = data.cv.filename.replace(/[^a-zA-Z0-9._-]+/g, "_").slice(0, 120) || "cv";
+    const storagePath = `candidate/${m.candidate_profile_id}/${Date.now()}-admin-${safe}`;
+    const up = await supabase.storage.from("cvs").upload(storagePath, bytes, {
+      contentType: v.detected_mime ?? data.cv.mime, upsert: false,
+    });
+    if (up.error) return { ok: false as const, code: "upload_failed", message: up.error.message, trace_id };
+
+    const { data: fileRow, error: fileErr } = await supabase.from("files").insert({
+      candidate_profile_id: m.candidate_profile_id,
+      storage_bucket: "cvs", storage_path: storagePath,
+      filename: data.cv.filename, mime_type: v.detected_mime ?? data.cv.mime,
+      size: bytes.length, checksum: v.sha256 ?? null, file_status: "ready",
+    }).select("id").single();
+    if (fileErr) return { ok: false as const, code: "file_insert_failed", message: fileErr.message, trace_id };
+
+    await supabase.from("candidate_profiles")
+      .update({ current_cv_file_id: fileRow.id })
+      .eq("id", m.candidate_profile_id);
+
+    // Reset match to queued so the pipeline re-parses from scratch.
+    await supabase.from("candidate_matches").update({
+      processing_state: "queued",
+      processing_error_code: null, processing_error_message: null,
+      last_processing_trace_id: trace_id,
+    }).eq("id", data.match_id);
+
+    await supabase.from("processing_jobs").insert({
+      entity_type: "candidate_match", entity_id: data.match_id,
+      job_type: "replace_cv", status: "completed", trace_id,
+      completed_at: new Date().toISOString(),
+    });
+
+    // Fire-and-forget pipeline; cron drain covers interrupted runs.
+    try {
+      const { runPipelineForMatch } = await import("./pipeline-runner.server");
+      void runPipelineForMatch(data.match_id, { force: true }).catch(() => undefined);
+    } catch { /* swallow */ }
+
+    return { ok: true as const, state: "queued" as State, trace_id, file_id: fileRow.id };
+  });
+
+
 const decisionInput = z.object({
   match_id: z.string().uuid(),
   action: z.enum(["approve_for_client", "hold", "archive", "manual_override"]),
