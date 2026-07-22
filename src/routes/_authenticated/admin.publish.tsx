@@ -126,10 +126,10 @@ function SideBySide({ matchId, onDone }: { matchId: string; onDone: () => void }
             Admin review
           </div>
           <h2 className="text-xl font-semibold mt-1">
-            {p.candidate.display_name} — {p.position.title}
+            {p.candidate.display_name} — {p.position?.title ?? "—"}
           </h2>
           <div className="text-sm text-muted-foreground">
-            {p.position.client_name}
+            Stage: {p.stage}
           </div>
           <div className="mt-2 flex gap-2">
             <Badge>score {p.score?.toFixed(1) ?? "—"}</Badge>
@@ -141,22 +141,17 @@ function SideBySide({ matchId, onDone }: { matchId: string; onDone: () => void }
           <ul className="mt-2 space-y-2 text-sm">
             {(p.evidence as AnyRow[])?.slice(0, 8).map((e, i) => (
               <li key={i} className="rounded border bg-muted/30 p-2">
-                <div className="font-medium">{e.requirement_text}</div>
-                <div className="mt-1 text-xs text-muted-foreground">
-                  “…{e.snippet}…” <code>{e.source}</code>
-                </div>
+                <div className="font-medium">{e.label}</div>
+                <div className="mt-1 text-xs text-muted-foreground">“…{e.snippet}…”</div>
               </li>
             ))}
           </ul>
         </div>
         <div>
-          <h3 className="font-medium">Concerns</h3>
-          <ul className="list-disc pl-5 text-sm space-y-1">
-            {(p.concerns as string[])?.map((c, i) => <li key={i}>{c}</li>)}
-            {(p.concerns?.length ?? 0) === 0 && (
-              <li className="list-none text-muted-foreground">None flagged.</li>
-            )}
-          </ul>
+          <h3 className="font-medium">Main consideration</h3>
+          <p className="text-sm text-muted-foreground">
+            {p.main_consideration ?? "None flagged."}
+          </p>
         </div>
         <Link
           to="/admin/candidates/$id"
@@ -170,14 +165,12 @@ function SideBySide({ matchId, onDone }: { matchId: string; onDone: () => void }
       <div className="p-6 bg-muted/20 space-y-4">
         <header>
           <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-            Client preview (sanitized)
+            Client preview (identical DTO)
           </div>
           <h2 className="text-xl font-semibold mt-1">{p.candidate.display_name}</h2>
           <div className="text-sm text-muted-foreground">
-            {p.candidate.location ?? "Location undisclosed"} ·{" "}
-            {p.candidate.experience_years
-              ? `${p.candidate.experience_years} yrs`
-              : "experience undisclosed"}
+            {p.candidate.location ?? "Location undisclosed"}
+            {p.candidate.headline ? ` · ${p.candidate.headline}` : ""}
           </div>
         </header>
         <div className="rounded-lg border bg-card p-4">
@@ -189,10 +182,10 @@ function SideBySide({ matchId, onDone }: { matchId: string; onDone: () => void }
               <div className="font-medium capitalize">
                 {p.fit_label?.replace(/_/g, " ")}
               </div>
-              <div className="text-xs text-muted-foreground">Fit for {p.position.title}</div>
+              <div className="text-xs text-muted-foreground">Fit for {p.position?.title ?? "—"}</div>
             </div>
           </div>
-          <p className="mt-3 text-sm">{p.explanation}</p>
+          <p className="mt-3 text-sm">{p.summary}</p>
         </div>
         <div className="rounded-lg border bg-card p-4">
           <h3 className="font-medium">Strengths</h3>
@@ -203,21 +196,11 @@ function SideBySide({ matchId, onDone }: { matchId: string; onDone: () => void }
             )}
           </ul>
         </div>
-        <div className="rounded-lg border bg-card p-4">
-          <h3 className="font-medium">Skills</h3>
-          <div className="mt-2 flex flex-wrap gap-1">
-            {(p.candidate.skills as string[])?.slice(0, 20).map((sk, i) => (
-              <Badge key={i} variant="outline">
-                {sk}
-              </Badge>
-            ))}
-          </div>
-        </div>
         <p className="text-xs text-muted-foreground">
-          Withheld from clients: contact details, CV, contradiction flags, admin notes,
-          trace ids.
+          Withheld: contact details, CV, contradiction flags, admin notes, trace ids.
         </p>
       </div>
+
 
       <div className="xl:col-span-2 border-t p-6 bg-card space-y-3">
         {feedback && <Alert><AlertDescription>{feedback}</AlertDescription></Alert>}

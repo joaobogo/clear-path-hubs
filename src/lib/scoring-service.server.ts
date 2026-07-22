@@ -312,6 +312,18 @@ export async function executeScoring(
       const { data: run, error: runErr } = await s.from("score_runs").insert({
         candidate_match_id: matchId,
         position_id: ctx.match.position_id, // enforced by trigger
+        // ── Scoring Identity Contract (first-class columns) ────────────────
+        application_id: ctx.match.application_id,
+        candidate_profile_id: ctx.match.candidate_profile_id,
+        candidate_submission_id: ctx.match.application_id,
+        organization_id: ctx.match.organization_id,
+        blueprint_version: SCORING_BLUEPRINT_VERSION,
+        // ── Math (raw / cap / final) ───────────────────────────────────────
+        raw_score: rec.computed,
+        applied_cap: raw.score,
+        final_score: raw.score,
+        fit_band: raw.fit_label,
+        // ── Legacy mirror columns kept for existing readers ────────────────
         engine_version: ENGINE_VERSION,
         score: raw.score,
         confidence: raw.overall_confidence,
@@ -334,6 +346,7 @@ export async function executeScoring(
         contradiction_status: raw.contradiction_status,
         input_hash: raw.input_hash,
       }).select("id").single();
+
       if (runErr || !run) throw new Error(runErr?.message ?? "score_insert_failed");
       runId = run.id;
     }
