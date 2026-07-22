@@ -203,43 +203,157 @@ export type Database = {
           },
         ]
       }
+      candidate_evidence: {
+        Row: {
+          candidate_match_id: string
+          candidate_profile_id: string
+          created_at: string
+          cv_file_id: string | null
+          engine_version: string
+          extracted: Json
+          id: string
+          raw_text_sample: string | null
+          screening_normalized: Json
+        }
+        Insert: {
+          candidate_match_id: string
+          candidate_profile_id: string
+          created_at?: string
+          cv_file_id?: string | null
+          engine_version: string
+          extracted?: Json
+          id?: string
+          raw_text_sample?: string | null
+          screening_normalized?: Json
+        }
+        Update: {
+          candidate_match_id?: string
+          candidate_profile_id?: string
+          created_at?: string
+          cv_file_id?: string | null
+          engine_version?: string
+          extracted?: Json
+          id?: string
+          raw_text_sample?: string | null
+          screening_normalized?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "candidate_evidence_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "admin_candidate_matches_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "candidate_evidence_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "admin_work_inbox"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "candidate_evidence_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_matches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "candidate_evidence_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "client_candidate_matches_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "candidate_evidence_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "client_kanban_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "candidate_evidence_candidate_profile_id_fkey"
+            columns: ["candidate_profile_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_profile_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "candidate_evidence_candidate_profile_id_fkey"
+            columns: ["candidate_profile_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "candidate_evidence_cv_file_id_fkey"
+            columns: ["cv_file_id"]
+            isOneToOne: false
+            referencedRelation: "files"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       candidate_matches: {
         Row: {
           admin_status: Database["public"]["Enums"]["admin_review_status"]
           application_id: string
+          approved_score_run_id: string | null
           candidate_profile_id: string
           client_visibility: Database["public"]["Enums"]["client_visibility"]
           created_at: string
+          current_score_run_id: string | null
           delivered_at: string | null
           id: string
+          last_processing_trace_id: string | null
           organization_id: string
           position_id: string
+          processing_error_code: string | null
+          processing_error_message: string | null
+          processing_state: Database["public"]["Enums"]["processing_state"]
+          processing_updated_at: string
           stage: Database["public"]["Enums"]["match_stage"]
           updated_at: string
         }
         Insert: {
           admin_status?: Database["public"]["Enums"]["admin_review_status"]
           application_id: string
+          approved_score_run_id?: string | null
           candidate_profile_id: string
           client_visibility?: Database["public"]["Enums"]["client_visibility"]
           created_at?: string
+          current_score_run_id?: string | null
           delivered_at?: string | null
           id?: string
+          last_processing_trace_id?: string | null
           organization_id: string
           position_id: string
+          processing_error_code?: string | null
+          processing_error_message?: string | null
+          processing_state?: Database["public"]["Enums"]["processing_state"]
+          processing_updated_at?: string
           stage?: Database["public"]["Enums"]["match_stage"]
           updated_at?: string
         }
         Update: {
           admin_status?: Database["public"]["Enums"]["admin_review_status"]
           application_id?: string
+          approved_score_run_id?: string | null
           candidate_profile_id?: string
           client_visibility?: Database["public"]["Enums"]["client_visibility"]
           created_at?: string
+          current_score_run_id?: string | null
           delivered_at?: string | null
           id?: string
+          last_processing_trace_id?: string | null
           organization_id?: string
           position_id?: string
+          processing_error_code?: string | null
+          processing_error_message?: string | null
+          processing_state?: Database["public"]["Enums"]["processing_state"]
+          processing_updated_at?: string
           stage?: Database["public"]["Enums"]["match_stage"]
           updated_at?: string
         }
@@ -259,6 +373,13 @@ export type Database = {
             referencedColumns: ["application_id"]
           },
           {
+            foreignKeyName: "candidate_matches_approved_score_run_id_fkey"
+            columns: ["approved_score_run_id"]
+            isOneToOne: false
+            referencedRelation: "score_runs"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "candidate_matches_candidate_profile_id_fkey"
             columns: ["candidate_profile_id"]
             isOneToOne: false
@@ -270,6 +391,13 @@ export type Database = {
             columns: ["candidate_profile_id"]
             isOneToOne: false
             referencedRelation: "candidate_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "candidate_matches_current_score_run_id_fkey"
+            columns: ["current_score_run_id"]
+            isOneToOne: false
+            referencedRelation: "score_runs"
             referencedColumns: ["id"]
           },
           {
@@ -482,10 +610,14 @@ export type Database = {
           candidate_profile_id: string | null
           checksum: string | null
           created_at: string
+          extracted_text: string | null
+          extraction_attempts: number
+          extraction_completed_at: string | null
           file_status: Database["public"]["Enums"]["file_status"]
           filename: string
           id: string
           mime_type: string | null
+          ocr_used: boolean
           owner_user_id: string | null
           size: number | null
           storage_bucket: string
@@ -495,10 +627,14 @@ export type Database = {
           candidate_profile_id?: string | null
           checksum?: string | null
           created_at?: string
+          extracted_text?: string | null
+          extraction_attempts?: number
+          extraction_completed_at?: string | null
           file_status?: Database["public"]["Enums"]["file_status"]
           filename: string
           id?: string
           mime_type?: string | null
+          ocr_used?: boolean
           owner_user_id?: string | null
           size?: number | null
           storage_bucket: string
@@ -508,10 +644,14 @@ export type Database = {
           candidate_profile_id?: string | null
           checksum?: string | null
           created_at?: string
+          extracted_text?: string | null
+          extraction_attempts?: number
+          extraction_completed_at?: string | null
           file_status?: Database["public"]["Enums"]["file_status"]
           filename?: string
           id?: string
           mime_type?: string | null
+          ocr_used?: boolean
           owner_user_id?: string | null
           size?: number | null
           storage_bucket?: string
@@ -999,13 +1139,19 @@ export type Database = {
           candidate_match_id: string
           completed_at: string | null
           confidence: number | null
+          contradiction_status: string | null
           engine_version: string
           error_code: string | null
           evidence: Json
           explanation: string | null
+          fit_label: string | null
           id: string
+          input_hash: string | null
+          must_have_coverage: number | null
           position_id: string
+          preferred_coverage: number | null
           requirement_coverage: Json
+          result: Json
           score: number | null
           started_at: string | null
           status: Database["public"]["Enums"]["score_status"]
@@ -1015,13 +1161,19 @@ export type Database = {
           candidate_match_id: string
           completed_at?: string | null
           confidence?: number | null
+          contradiction_status?: string | null
           engine_version: string
           error_code?: string | null
           evidence?: Json
           explanation?: string | null
+          fit_label?: string | null
           id?: string
+          input_hash?: string | null
+          must_have_coverage?: number | null
           position_id: string
+          preferred_coverage?: number | null
           requirement_coverage?: Json
+          result?: Json
           score?: number | null
           started_at?: string | null
           status?: Database["public"]["Enums"]["score_status"]
@@ -1031,13 +1183,19 @@ export type Database = {
           candidate_match_id?: string
           completed_at?: string | null
           confidence?: number | null
+          contradiction_status?: string | null
           engine_version?: string
           error_code?: string | null
           evidence?: Json
           explanation?: string | null
+          fit_label?: string | null
           id?: string
+          input_hash?: string | null
+          must_have_coverage?: number | null
           position_id?: string
+          preferred_coverage?: number | null
           requirement_coverage?: Json
+          result?: Json
           score?: number | null
           started_at?: string | null
           status?: Database["public"]["Enums"]["score_status"]
@@ -1948,6 +2106,18 @@ export type Database = {
         | "closed"
         | "archived"
       position_visibility: "public" | "private" | "internal"
+      processing_state:
+        | "queued"
+        | "parsing"
+        | "ocr_required"
+        | "parsed"
+        | "enriching"
+        | "ready_to_score"
+        | "scoring"
+        | "scored"
+        | "manual_review_required"
+        | "provider_blocked"
+        | "failed"
       profile_status: "active" | "suspended" | "deleted"
       score_decision_type:
         | "approve"
@@ -2158,6 +2328,19 @@ export const Constants = {
         "archived",
       ],
       position_visibility: ["public", "private", "internal"],
+      processing_state: [
+        "queued",
+        "parsing",
+        "ocr_required",
+        "parsed",
+        "enriching",
+        "ready_to_score",
+        "scoring",
+        "scored",
+        "manual_review_required",
+        "provider_blocked",
+        "failed",
+      ],
       profile_status: ["active", "suspended", "deleted"],
       score_decision_type: [
         "approve",
