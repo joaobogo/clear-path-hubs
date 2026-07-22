@@ -227,7 +227,8 @@ export const updateCandidateAsAdmin = createServerFn({ method: "POST" })
   });
 
 
-// Legacy Bridge Repair — create a canonical candidate_profiles row when it is missing.
+// Legacy Bridge Repair — resolve or create the canonical candidate_profiles row,
+// then relink an orphan match/application to that profile.
 export const repairCandidateIdentity = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((i: unknown) =>
@@ -236,6 +237,9 @@ export const repairCandidateIdentity = createServerFn({ method: "POST" })
         email: z.string().trim().email(),
         full_name: z.string().trim().min(1).max(200),
         phone: z.string().trim().max(80).optional(),
+        // Optional: relink these to the resolved profile atomically.
+        match_id: z.string().uuid().optional(),
+        application_id: z.string().uuid().optional(),
       })
       .parse(i),
   )
@@ -244,38 +248,74 @@ export const repairCandidateIdentity = createServerFn({ method: "POST" })
     const trace = traceId();
     const s = await getAdmin();
 
-    // idempotent: if an existing profile has the same email (case-insensitive), return it
+    // Idempotent resolve by lowercased email
     const { data: existing } = await s
       .from("candidate_profiles")
       .select("*")
       .ilike("email", data.email)
       .maybeSingle();
-    if (existing) {
-      return { ok: true, created: false, profile: existing, trace_id: trace };
+
+    let profile = existing;
+    let created = false;
+    if (!profile) {
+      const { data: inserted, error } = await s
+        .from("candidate_profiles")
+        .insert({
+          full_name: data.full_name,
+          email: data.email.toLowerCase(),
+          phone: data.phone ?? null,
+        })
+        .select("*")
+        .maybeSingle();
+      if (error || !inserted) {
+        return { ok: false, code: "insert_failed", message: error?.message, trace_id: trace };
+      }
+      profile = inserted;
+      created = true;
     }
 
-    const { data: inserted, error } = await s
-      .from("candidate_profiles")
+    // Relink orphan rows to the resolved profile (never silently creates duplicates)
+    const relinked: { match?: string; application?: string } = {};
+    if (data.match_id) {
+      const { data: m } = await s
+        .from("candidate_matches")
+        .update({ candidate_profile_id: profile.id })
+        .eq("id", data.match_id)
+        .select("id")
+        .maybeSingle();
+      if (m) relinked.match = m.id;
+    }
+    if (data.application_id) {
+      const { data: a } = await s
+        .from("applications")
+        .update({ candidate_profile_id: profile.id })
+        .eq("id", data.application_id)
+        .select("id")
+        .maybeSingle();
+      if (a) relinked.application = a.id;
+    }
+
+    const { data: audit } = await s
+      .from("audit_events")
       .insert({
-        full_name: data.full_name,
-        email: data.email.toLowerCase(),
-        phone: data.phone ?? null,
+        actor_user_id: context.userId,
+        entity_type: "candidate_profiles",
+        entity_id: profile.id,
+        action: created ? "candidate.repair_identity_create" : "candidate.repair_identity_relink",
+        after_state: profile,
+        trace_id: trace,
+        metadata: { source_surface: "legacy_bridge_repair", relinked },
       })
-      .select("*")
+      .select("id")
       .maybeSingle();
-    if (error || !inserted) {
-      return { ok: false, code: "insert_failed", message: error?.message, trace_id: trace };
-    }
 
-    await s.from("audit_events").insert({
-      actor_user_id: context.userId,
-      entity_type: "candidate_profiles",
-      entity_id: inserted.id,
-      action: "candidate.repair_identity",
-      after_state: inserted,
+    return {
+      ok: true,
+      created,
+      profile,
+      relinked,
+      audit_event_id: audit?.id ?? null,
       trace_id: trace,
-      metadata: { source_surface: "legacy_bridge_repair" },
-    });
-
-    return { ok: true, created: true, profile: inserted, trace_id: trace };
+    };
   });
+
