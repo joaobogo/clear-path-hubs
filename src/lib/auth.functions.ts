@@ -16,10 +16,11 @@ export const getSessionContext = createServerFn({ method: "GET" })
       .select("id, full_name, email, status, auth_user_id")
       .eq("auth_user_id", userId)
       .maybeSingle();
+    // memberships.user_id references auth.users.id — pass the auth uid, not profile.id.
     const { data: mems } = await supabase
       .from("memberships")
       .select("id, organization_id, role, status, organizations(name)")
-      .eq("user_id", profile?.id ?? "00000000-0000-0000-0000-000000000000");
+      .eq("user_id", userId);
     const memberships: SessionMembership[] = (mems ?? []).map((m) => ({
       membership_id: m.id as string,
       organization_id: (m.organization_id as string | null) ?? null,
@@ -99,11 +100,12 @@ async function assertPlatformAdmin(supabase: any, userId: string): Promise<void>
     .select("id, status")
     .eq("auth_user_id", userId)
     .maybeSingle();
-  if (!profile || profile.status !== "active") throw new Error("Forbidden");
+  if (profile && profile.status !== "active") throw new Error("Forbidden");
+  // memberships.user_id = auth.users.id — query by the auth uid, not profile.id.
   const { data: rows } = await supabase
     .from("memberships")
     .select("role, status")
-    .eq("user_id", profile.id)
+    .eq("user_id", userId)
     .eq("status", "active")
     .eq("role", "platform_admin");
   if (!rows || rows.length === 0) throw new Error("Forbidden: platform_admin required");
