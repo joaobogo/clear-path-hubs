@@ -264,10 +264,10 @@ export const getClientCandidates = createServerFn({ method: "GET" })
     let q = context.supabase
       .from("candidate_matches")
       .select(
-        `id, stage, admin_status, delivered_at, position_id,
+        `id, stage, delivered_at, position_id,
          candidate_profiles(id, full_name, headline, location, availability),
          positions(id, title),
-         score_runs:approved_score_run_id (score, fit_label, explanation, requirement_coverage)`,
+         score_runs:approved_score_run_id (score, fit_label, explanation, strengths, concerns, requirement_coverage)`,
       )
       .eq("organization_id", data.orgId)
       .eq("client_visibility", "visible");
@@ -277,40 +277,37 @@ export const getClientCandidates = createServerFn({ method: "GET" })
     const { data: rows, error } = await q.order("delivered_at", { ascending: false });
     if (error) throw new Error(error.message);
 
-    let matches = ((rows as AnyRow[]) ?? []).map((m) => ({
-      ...m,
-      approved_score: m.score_runs?.score ?? null,
-      approved_fit_label: m.score_runs?.fit_label ?? null,
-    }));
+    // Map to sanitized client-safe DTOs first — filters below operate on those.
+    let dtos = ((rows as AnyRow[]) ?? []).map(toClientCandidateDTO);
 
     if (data.filter && data.filter !== "all") {
-      matches = matches.filter((m) => {
-        if (data.filter === "new") return m.stage === "delivered";
-        if (data.filter === "shortlisted") return m.stage === "shortlisted";
-        if (data.filter === "hired") return m.stage === "hired";
-        if (data.filter === "not_moving_forward") return m.stage === "not_moving_forward";
+      dtos = dtos.filter((d) => {
+        if (data.filter === "new") return d.stage === "delivered";
+        if (data.filter === "shortlisted") return d.stage === "shortlisted";
+        if (data.filter === "hired") return d.stage === "hired";
+        if (data.filter === "not_moving_forward")
+          return d.stage === "not_moving_forward";
         if (data.filter === "interview")
-          return m.stage === "interview_process" || m.stage === "offer";
+          return d.stage === "interview_process" || d.stage === "offer";
         if (data.filter === "top")
           return (
-            m.approved_fit_label != null &&
-            (TOP_FIT_LABELS as readonly string[]).includes(m.approved_fit_label)
+            d.fit_label != null &&
+            (TOP_FIT_LABELS as readonly string[]).includes(d.fit_label)
           );
         return true;
       });
     }
     if (data.minScore != null)
-      matches = matches.filter((m) => (m.approved_score ?? 0) >= data.minScore!);
-    if (data.fitBand)
-      matches = matches.filter((m) => m.approved_fit_label === data.fitBand);
+      dtos = dtos.filter((d) => (d.score ?? 0) >= data.minScore!);
+    if (data.fitBand) dtos = dtos.filter((d) => d.fit_label === data.fitBand);
     if (data.location) {
       const needle = data.location.toLowerCase();
-      matches = matches.filter((m) =>
-        (m.candidate_profiles?.location ?? "").toLowerCase().includes(needle),
+      dtos = dtos.filter((d) =>
+        (d.candidate.location ?? "").toLowerCase().includes(needle),
       );
     }
 
-    return matches;
+    return dtos;
   });
 
 export const getClientCandidate = createServerFn({ method: "GET" })
@@ -322,10 +319,10 @@ export const getClientCandidate = createServerFn({ method: "GET" })
     const { data: match, error } = await context.supabase
       .from("candidate_matches")
       .select(
-        `id, stage, admin_status, delivered_at, position_id,
-         candidate_profiles(id, full_name, headline, location, availability, skills, languages),
+        `id, stage, delivered_at, position_id,
+         candidate_profiles(id, full_name, headline, location, availability),
          positions(id, title, location, work_model),
-         score_runs:approved_score_run_id (score, fit_label, explanation, evidence, requirement_coverage)`,
+         score_runs:approved_score_run_id (score, fit_label, explanation, strengths, concerns, evidence, requirement_coverage)`,
       )
       .eq("organization_id", data.orgId)
       .eq("id", data.matchId)
@@ -342,12 +339,12 @@ export const getClientCandidate = createServerFn({ method: "GET" })
 
     const { data: decisions } = await context.supabase
       .from("client_decisions")
-      .select("id, decision, feedback, created_at, actor_user_id")
+      .select("id, decision, feedback, created_at")
       .eq("candidate_match_id", data.matchId)
       .order("created_at", { ascending: false });
 
     return {
-      match: match as AnyRow,
+      candidate: toClientCandidateDTO(match as AnyRow),
       interviews: (interviews as AnyRow[]) ?? [],
       decisions: (decisions as AnyRow[]) ?? [],
     };
