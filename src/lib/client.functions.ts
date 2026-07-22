@@ -599,21 +599,20 @@ export const clientAction = createServerFn({ method: "POST" })
       });
     }
 
-    // Persist a decision for the actionable choices that carry client intent.
-    const decisionMap: Record<string, string> = {
-      shortlist: "advance",
-      request_interview: "advance",
-      request_more_information: "hold",
-      not_moving_forward: "reject",
-      submit_feedback: "hold",
-      hire: "advance",
-    };
-    const decision = decisionMap[data.action] ?? null;
+    // Persist a decision that mirrors the client's intent.
+    const decisionMap = {
+      shortlist: "shortlist",
+      request_interview: "request_interview",
+      request_more_information: "request_information",
+      not_moving_forward: "not_moving_forward",
+      hire: "hire",
+    } as const;
+    const decision = (decisionMap as Record<string, string>)[data.action] ?? null;
     if (decision) {
       await context.supabase.from("client_decisions").insert({
         candidate_match_id: data.matchId,
         organization_id: data.orgId,
-        decision,
+        decision: decision as never,
         feedback: data.feedback ?? null,
         actor_user_id: context.userId,
       });
