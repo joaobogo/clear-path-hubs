@@ -130,6 +130,39 @@ function LoginPage() {
     }
   };
 
+  const onSignUp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/login`,
+          data: { full_name: fullName },
+        },
+      });
+      if (error) throw error;
+      // Try immediate sign-in in case email confirmation is disabled.
+      const { error: signInErr } = await supabase.auth.signInWithPassword({ email, password });
+      if (signInErr) {
+        toast.success("Account created. Check your email to confirm, then sign in.");
+        setMode("signin");
+        return;
+      }
+      try {
+        const ctx = await runSession();
+        routeToDest(ctx.memberships, ctx.primary_role);
+      } catch {
+        navigate({ to: "/access-denied" });
+      }
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Sign up failed");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const onPersona = async (key: "platform_admin" | "operations" | "client_admin" | "client_editor" | "client_viewer") => {
     setLoading(true);
     try {
