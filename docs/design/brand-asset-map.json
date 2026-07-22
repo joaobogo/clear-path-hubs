@@ -1,0 +1,16 @@
+{
+  "trace_id": "BRAND-EXTRACT-2026-07-22",
+  "source_project": "Talent Streamline",
+  "source_repo": "https://github.com/joaobogo/sourcing-suite-ai.git",
+  "destination_project": "clear-path-hubs",
+  "assets": [
+    { "role": "logo_primary",   "source": "src/assets/logo-on-white.png", "destination": "src/assets/brand/logo-on-white.png", "size_bytes": 62821, "usage": "header / light backgrounds",       "status": "MIGRATED" },
+    { "role": "logo_light",     "source": "src/assets/logo-on-white.png", "destination": "src/assets/brand/logo-on-white.png", "size_bytes": 62821, "usage": "alias of primary",                "status": "MIGRATED" },
+    { "role": "logo_dark",      "source": "src/assets/logo-on-blue.png",  "destination": "src/assets/brand/logo-on-blue.png",  "size_bytes": 31092, "usage": "navy hero, footer, dark mode",     "status": "MIGRATED" },
+    { "role": "icon_mark",      "source": "src/assets/icon-white.png",    "destination": "src/assets/brand/icon-white.png",    "size_bytes": 54026, "usage": "mobile nav, app icons, avatars",   "status": "MIGRATED" },
+    { "role": "favicon_png",    "source": "public/favicon.png",           "destination": "public/favicon.png",                 "size_bytes": 3323,  "usage": "modern browser tab icon",          "status": "MIGRATED" },
+    { "role": "favicon_ico",    "source": "public/favicon.ico",           "destination": "public/favicon.ico",                 "size_bytes": 32038, "usage": "legacy fallback",                  "status": "MIGRATED" },
+    { "role": "og_image",       "source": "public/og-image.png",          "destination": "public/og-image.png",                "size_bytes": 62821, "usage": "social share preview 1200x630",    "status": "MIGRATED" }
+  ],
+  "totals": { "migrated": 7, "skipped": 0, "failed": 0 }
+}
