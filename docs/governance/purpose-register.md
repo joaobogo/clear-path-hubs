@@ -1,0 +1,18 @@
+# Purpose Register
+
+For every data class: purpose, collection point, access, processing, providers, retention, correction, deletion, export.
+
+| Class | Purpose | Collected at | Accessed by | Processing | External providers | Retention | Correction | Deletion | Export |
+|---|---|---|---|---|---|---|---|---|---|
+| Candidate identity (name, email, phone) | Contact candidate about the specific role applied to and (with consent) future roles | Public apply form `/jobs/:id/apply` | Candidate self, platform staff, client admin/editor after shortlist | Duplicate detection, notifications | Email provider (send only) | While an active application, Talent Network consent, or hire record exists | `/me/profile` self-service; admin edit via DSR | DSR `deletion` type; hard delete after 30-day grace | DSR `export` type; JSON bundle via signed URL |
+| CV file | Match candidate to role, produce evidence | Apply form upload | Candidate self, staff, client after shortlist | Parsing (server), evidence extraction | LLM gateway for parsing (redacted subset only) | 365 days per version; keep latest + one prior | Candidate uploads new version | On profile deletion or DSR | Via export bundle |
+| Work history / skills / education | Requirement matching, evidence scoring | Apply form + profile updates | Candidate self, staff, client after shortlist | Evidence extraction, scoring | LLM gateway (subset only, no PII fields) | With profile lifetime | Self-service edit | With profile | Via export bundle |
+| Work authorization | Legal eligibility check for the role | Apply form | Candidate, platform staff only | Requirement match | None | With profile | Self-service edit | With profile | Via export bundle |
+| Compensation preferences | Match candidate to role band | Apply form | Candidate, platform staff; client only after shortlist advance | Requirement match | None | With profile | Self-service edit | With profile | Via export bundle |
+| Screening answers | Filter candidates against structured position questions | Apply form | Candidate, staff, client after shortlist | Deterministic + LLM scoring | LLM gateway (question + answer only) | With application | Amend via new application | With application/profile | Via export bundle |
+| Scores / evidence | Rank candidates for a position | Server-side scoring pipeline | Staff always; client after publish | Deterministic + LLM | LLM gateway | Immutable; retained with position | N/A (regenerate) | With position deletion | Via admin export |
+| Client feedback / decisions | Advance candidates through pipeline | Client dashboard | Staff, org members | Stage transitions | None | With position | Client edits within org RLS | With position | Not exported to candidate |
+| Interview notes | Prepare interview, record outcome | Admin/Client dashboards | Staff, org members | Timeline | None | With interview | Author edits | With position | Not exported to candidate |
+| Messages | Coordinate candidates / clients / staff | In-app composer | Sender + audience only | Realtime delivery | None | 730 days after last activity | Sender can edit within 15 min | On DSR deletion | Via export bundle |
+| IP / device metadata | Rate limit, fraud detection, audit | Request middleware | Platform staff | Aggregation | None | 90 days (processing_jobs) / 7 years (audit_events) | Not user-editable | Not user-deletable (legitimate interest / legal obligation) | Not exported |
+| Audit logs | Security, dispute resolution, regulator response | Trigger on write | Platform staff only | Read-only | None | 7 years | Immutable | Immutable | Not exported to candidate |
