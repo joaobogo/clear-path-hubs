@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as TalentNetworkRouteImport } from './routes/talent-network'
+import { Route as TalentMarketplaceRouteImport } from './routes/talent-marketplace'
 import { Route as SolutionsRouteImport } from './routes/solutions'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ResourcesRouteImport } from './routes/resources'
@@ -29,6 +30,8 @@ import { Route as EnterpriseRouteImport } from './routes/enterprise'
 import { Route as EmployerOnboardingRouteImport } from './routes/employer-onboarding'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as CaseStudiesRouteImport } from './routes/case-studies'
+import { Route as CandidateSuccessRouteImport } from './routes/candidate-success'
+import { Route as CandidateJoinRouteImport } from './routes/candidate-join'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AccessDeniedRouteImport } from './routes/access-denied'
 import { Route as AboutRouteImport } from './routes/about'
@@ -99,6 +102,11 @@ const TermsRoute = TermsRouteImport.update({
 const TalentNetworkRoute = TalentNetworkRouteImport.update({
   id: '/talent-network',
   path: '/talent-network',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TalentMarketplaceRoute = TalentMarketplaceRouteImport.update({
+  id: '/talent-marketplace',
+  path: '/talent-marketplace',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SolutionsRoute = SolutionsRouteImport.update({
@@ -189,6 +197,16 @@ const ContactRoute = ContactRouteImport.update({
 const CaseStudiesRoute = CaseStudiesRouteImport.update({
   id: '/case-studies',
   path: '/case-studies',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CandidateSuccessRoute = CandidateSuccessRouteImport.update({
+  id: '/candidate-success',
+  path: '/candidate-success',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CandidateJoinRoute = CandidateJoinRouteImport.update({
+  id: '/candidate-join',
+  path: '/candidate-join',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -530,6 +548,8 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/access-denied': typeof AccessDeniedRoute
   '/auth': typeof AuthRoute
+  '/candidate-join': typeof CandidateJoinRoute
+  '/candidate-success': typeof CandidateSuccessRoute
   '/case-studies': typeof CaseStudiesRoute
   '/contact': typeof ContactRoute
   '/employer-onboarding': typeof EmployerOnboardingRoute
@@ -548,6 +568,7 @@ export interface FileRoutesByFullPath {
   '/resources': typeof ResourcesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/solutions': typeof SolutionsRoute
+  '/talent-marketplace': typeof TalentMarketplaceRoute
   '/talent-network': typeof TalentNetworkRoute
   '/terms': typeof TermsRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
@@ -612,6 +633,8 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/access-denied': typeof AccessDeniedRoute
   '/auth': typeof AuthRoute
+  '/candidate-join': typeof CandidateJoinRoute
+  '/candidate-success': typeof CandidateSuccessRoute
   '/case-studies': typeof CaseStudiesRoute
   '/contact': typeof ContactRoute
   '/employer-onboarding': typeof EmployerOnboardingRoute
@@ -630,6 +653,7 @@ export interface FileRoutesByTo {
   '/resources': typeof ResourcesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/solutions': typeof SolutionsRoute
+  '/talent-marketplace': typeof TalentMarketplaceRoute
   '/talent-network': typeof TalentNetworkRoute
   '/terms': typeof TermsRoute
   '/blog/$slug': typeof BlogSlugRoute
@@ -687,6 +711,8 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/access-denied': typeof AccessDeniedRoute
   '/auth': typeof AuthRoute
+  '/candidate-join': typeof CandidateJoinRoute
+  '/candidate-success': typeof CandidateSuccessRoute
   '/case-studies': typeof CaseStudiesRoute
   '/contact': typeof ContactRoute
   '/employer-onboarding': typeof EmployerOnboardingRoute
@@ -705,6 +731,7 @@ export interface FileRoutesById {
   '/resources': typeof ResourcesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/solutions': typeof SolutionsRoute
+  '/talent-marketplace': typeof TalentMarketplaceRoute
   '/talent-network': typeof TalentNetworkRoute
   '/terms': typeof TermsRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
@@ -771,6 +798,8 @@ export interface FileRouteTypes {
     | '/about'
     | '/access-denied'
     | '/auth'
+    | '/candidate-join'
+    | '/candidate-success'
     | '/case-studies'
     | '/contact'
     | '/employer-onboarding'
@@ -789,6 +818,7 @@ export interface FileRouteTypes {
     | '/resources'
     | '/sitemap.xml'
     | '/solutions'
+    | '/talent-marketplace'
     | '/talent-network'
     | '/terms'
     | '/admin'
@@ -853,6 +883,8 @@ export interface FileRouteTypes {
     | '/about'
     | '/access-denied'
     | '/auth'
+    | '/candidate-join'
+    | '/candidate-success'
     | '/case-studies'
     | '/contact'
     | '/employer-onboarding'
@@ -871,6 +903,7 @@ export interface FileRouteTypes {
     | '/resources'
     | '/sitemap.xml'
     | '/solutions'
+    | '/talent-marketplace'
     | '/talent-network'
     | '/terms'
     | '/blog/$slug'
@@ -927,6 +960,8 @@ export interface FileRouteTypes {
     | '/about'
     | '/access-denied'
     | '/auth'
+    | '/candidate-join'
+    | '/candidate-success'
     | '/case-studies'
     | '/contact'
     | '/employer-onboarding'
@@ -945,6 +980,7 @@ export interface FileRouteTypes {
     | '/resources'
     | '/sitemap.xml'
     | '/solutions'
+    | '/talent-marketplace'
     | '/talent-network'
     | '/terms'
     | '/_authenticated/admin'
@@ -1011,6 +1047,8 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   AccessDeniedRoute: typeof AccessDeniedRoute
   AuthRoute: typeof AuthRoute
+  CandidateJoinRoute: typeof CandidateJoinRoute
+  CandidateSuccessRoute: typeof CandidateSuccessRoute
   CaseStudiesRoute: typeof CaseStudiesRoute
   ContactRoute: typeof ContactRoute
   EmployerOnboardingRoute: typeof EmployerOnboardingRoute
@@ -1029,6 +1067,7 @@ export interface RootRouteChildren {
   ResourcesRoute: typeof ResourcesRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SolutionsRoute: typeof SolutionsRoute
+  TalentMarketplaceRoute: typeof TalentMarketplaceRoute
   TalentNetworkRoute: typeof TalentNetworkRoute
   TermsRoute: typeof TermsRoute
   BlogSlugRoute: typeof BlogSlugRoute
@@ -1064,6 +1103,13 @@ declare module '@tanstack/react-router' {
       path: '/talent-network'
       fullPath: '/talent-network'
       preLoaderRoute: typeof TalentNetworkRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/talent-marketplace': {
+      id: '/talent-marketplace'
+      path: '/talent-marketplace'
+      fullPath: '/talent-marketplace'
+      preLoaderRoute: typeof TalentMarketplaceRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/solutions': {
@@ -1190,6 +1236,20 @@ declare module '@tanstack/react-router' {
       path: '/case-studies'
       fullPath: '/case-studies'
       preLoaderRoute: typeof CaseStudiesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/candidate-success': {
+      id: '/candidate-success'
+      path: '/candidate-success'
+      fullPath: '/candidate-success'
+      preLoaderRoute: typeof CandidateSuccessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/candidate-join': {
+      id: '/candidate-join'
+      path: '/candidate-join'
+      fullPath: '/candidate-join'
+      preLoaderRoute: typeof CandidateJoinRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -1825,6 +1885,8 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   AccessDeniedRoute: AccessDeniedRoute,
   AuthRoute: AuthRoute,
+  CandidateJoinRoute: CandidateJoinRoute,
+  CandidateSuccessRoute: CandidateSuccessRoute,
   CaseStudiesRoute: CaseStudiesRoute,
   ContactRoute: ContactRoute,
   EmployerOnboardingRoute: EmployerOnboardingRoute,
@@ -1843,6 +1905,7 @@ const rootRouteChildren: RootRouteChildren = {
   ResourcesRoute: ResourcesRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   SolutionsRoute: SolutionsRoute,
+  TalentMarketplaceRoute: TalentMarketplaceRoute,
   TalentNetworkRoute: TalentNetworkRoute,
   TermsRoute: TermsRoute,
   BlogSlugRoute: BlogSlugRoute,
@@ -1866,3 +1929,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
