@@ -90,6 +90,11 @@ export function CandidateDetailDrawer({
   const repairFn = useServerFn(repairCandidateIdentity);
   const setVis = useServerFn(setMatchClientVisibility);
   const retryParseFn = useServerFn(retryParse);
+  const retryHydrationFn = useServerFn(retryHydration);
+  const retryEnrichmentFn = useServerFn(retryEnrichment);
+  const markManualReviewFn = useServerFn(markManualReview);
+  const replaceCvFn = useServerFn(replaceCv);
+
   const rescoreFn = useServerFn(rescore);
   const advanceFn = useServerFn(advanceProcessing);
   const decisionFn = useServerFn(applyReviewDecision);
