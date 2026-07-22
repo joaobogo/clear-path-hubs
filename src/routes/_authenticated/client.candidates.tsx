@@ -147,77 +147,9 @@ function CandidatesPage() {
       </div>
 
       <div className="grid gap-2">
-        {(rows as AnyRow[]).map((m) => {
-          const cov = m.score_runs?.requirement_coverage as AnyRow | null;
-          const strongest =
-            cov?.strongest?.label ??
-            cov?.top_match?.label ??
-            (Array.isArray(cov?.matched) ? cov.matched[0] : null);
-          const gap =
-            cov?.main_consideration ??
-            cov?.gap ??
-            (Array.isArray(cov?.missing) ? cov.missing[0] : null);
-          return (
-            <div key={m.id} className="rounded-lg border bg-card p-4 hover:border-primary transition">
-              <div className="flex flex-wrap items-start justify-between gap-3">
-                <div className="min-w-0">
-                  <div className="flex items-center gap-2">
-                    <div className="font-medium">
-                      {m.candidate_profiles?.full_name ?? "Candidate"}
-                    </div>
-                    {m.approved_fit_label && (
-                      <span
-                        className={`text-xs rounded px-2 py-0.5 capitalize ${
-                          FIT_COLOR[m.approved_fit_label] ?? "bg-muted"
-                        }`}
-                      >
-                        {m.approved_fit_label}
-                      </span>
-                    )}
-                    <Badge variant="outline" className="text-xs capitalize">
-                      {String(m.stage).replace(/_/g, " ")}
-                    </Badge>
-                  </div>
-                  <div className="text-xs text-muted-foreground mt-1">
-                    {m.positions?.title} ·{" "}
-                    {m.candidate_profiles?.location ?? "—"}
-                  </div>
-                  <div className="text-xs mt-2 space-y-0.5">
-                    {strongest && (
-                      <div>
-                        <span className="text-muted-foreground">Strongest match: </span>
-                        {String(strongest)}
-                      </div>
-                    )}
-                    {gap && (
-                      <div>
-                        <span className="text-muted-foreground">Main consideration: </span>
-                        {String(gap)}
-                      </div>
-                    )}
-                  </div>
-                </div>
-                <div className="flex items-center gap-3 shrink-0">
-                  <div className="text-right">
-                    <div className="text-xs uppercase tracking-wide text-muted-foreground">
-                      Score
-                    </div>
-                    <div className="text-xl font-semibold tabular-nums">
-                      {m.approved_score == null ? "—" : m.approved_score.toFixed(0)}
-                    </div>
-                  </div>
-                  <Link
-                    to="/client/candidates/$id"
-                    params={{ id: m.id }}
-                    className="text-sm text-primary hover:underline"
-                  >
-                    Review →
-                  </Link>
-                </div>
-              </div>
-            </div>
-          );
-        })}
+        {(rows as AnyRow[]).map((c) => (
+          <CandidateCard key={c.match_id} candidate={c} />
+        ))}
         {rows.length === 0 && !isFetching && (
           <div className="rounded border bg-card p-8 text-center text-muted-foreground text-sm">
             No candidates match this view.
