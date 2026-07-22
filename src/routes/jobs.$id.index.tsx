@@ -47,7 +47,7 @@ export const Route = createFileRoute("/jobs/$id/")({
         It may have been closed or paused. Browse other open roles.
       </p>
       <div className="mt-6">
-        <Link to="/jobs"><Button>Back to job board</Button></Link>
+        <Button asChild><Link to="/jobs">Back to job board</Link></Button>
       </div>
     </div>
   ),
