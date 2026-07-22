@@ -687,5 +687,3 @@ function Home() {
   );
 }
 
-// Re-export so unused imports don't warn if a helper is later removed.
-export { Breadcrumbs };
