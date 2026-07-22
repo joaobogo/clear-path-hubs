@@ -1,0 +1,116 @@
+{
+  "scenarios": [
+    {
+      "scenario": "public.jobs.board",
+      "status": "PASS",
+      "detail": "http=200"
+    },
+    {
+      "scenario": "public.job.detail",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "scenario": "public.apply.submission",
+      "status": "PASS",
+      "detail": "ref=BBB183"
+    },
+    {
+      "scenario": "db.application.persisted",
+      "status": "PASS",
+      "detail": "match_id=0252d334-43b9-43f3-98ad-2d57f54a0d61"
+    },
+    {
+      "scenario": "pipeline.run.invoked",
+      "status": "PASS",
+      "detail": "http=200 resp={\"ok\":true,\"outcome\":{\"match_id\":\"0252d334-43b9-43f3-98ad-2d57f54a0d61\",\"trace_id\":\"pl_i6vjurlvmrwgrtfl\",\"final_state\":\""
+    },
+    {
+      "scenario": "pipeline.scored",
+      "status": "PASS",
+      "detail": "state=scored"
+    },
+    {
+      "scenario": "cv.parsed",
+      "status": "PASS",
+      "detail": "chars=1531"
+    },
+    {
+      "scenario": "scoring.identity",
+      "status": "PASS",
+      "detail": "score_pos=47c03d54-4066-4e53-8aec-127611556f42 target=47c03d54-4066-4e53-8aec-127611556f42"
+    },
+    {
+      "scenario": "scoring.calculation",
+      "status": "PASS",
+      "detail": "overall=56.00"
+    },
+    {
+      "scenario": "scoring.evidence",
+      "status": "PASS",
+      "detail": "evidence_items=6"
+    },
+    {
+      "scenario": "admin.overview.reachable",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "scenario": "admin.publish.desk_shows_candidate",
+      "status": "WARN",
+      "detail": "email_found=False"
+    },
+    {
+      "scenario": "admin.publish.gate",
+      "status": "PASS",
+      "detail": "{\"ok\":true,\"data\":[{\"id\":\"0252d334-43b9-43f3-98ad-2d57f54a0d61\",\"client_visibility\":\"visible\",\"admin_status\":\"approved\"}]}\n"
+    },
+    {
+      "scenario": "client.candidate.visible",
+      "status": "WARN",
+      "detail": "visible=False"
+    },
+    {
+      "scenario": "client.kanban.shortlist_persist",
+      "status": "PASS",
+      "detail": "stage=shortlisted"
+    },
+    {
+      "scenario": "kpi.shortlisted.count",
+      "status": "PASS",
+      "detail": "count=19"
+    },
+    {
+      "scenario": "persistence.refresh",
+      "status": "PASS",
+      "detail": "stage=shortlisted"
+    },
+    {
+      "scenario": "negative.corrupt_cv.rejected",
+      "status": "PASS",
+      "detail": "body_hint=reject"
+    },
+    {
+      "scenario": "negative.duplicate_application",
+      "status": "PASS",
+      "detail": "matches_after_dup=1"
+    },
+    {
+      "scenario": "negative.cross_tenant_isolation",
+      "status": "PASS",
+      "detail": "unrelated_user_membership=f"
+    },
+    {
+      "scenario": "negative.invalid_kanban_transition_guard",
+      "status": "PASS",
+      "detail": "STAGE_GRAPH gate present"
+    },
+    {
+      "scenario": "negative.duplicate_intake_idempotent",
+      "status": "PASS",
+      "detail": "http1=200 http2=200"
+    }
+  ],
+  "started": 1784747809.5377529,
+  "ended": 1784747879.2073257
+}
