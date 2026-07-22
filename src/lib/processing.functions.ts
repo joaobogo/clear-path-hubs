@@ -569,13 +569,6 @@ export const getAdminMatch = createServerFn({ method: "GET" })
       supabase
         .from("files")
         .select("id,filename,storage_bucket,storage_path,mime_type,size,ocr_used,extracted_text,extraction_completed_at,extraction_attempts")
-        .eq("candidate_profile_id", (m.candidate_profiles as AnyRow)?.id ?? "")
-        .order("created_at", { ascending: false })
-        .limit(1)
-        .maybeSingle(),
-      supabase
-        .from("files")
-        .select("id,filename,storage_bucket,storage_path,mime_type,size,ocr_used,extracted_text,extraction_completed_at,extraction_attempts")
         .eq("candidate_profile_id", cpId)
         .order("created_at", { ascending: false })
         .limit(1)
