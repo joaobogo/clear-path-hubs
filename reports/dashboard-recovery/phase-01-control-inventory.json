@@ -1,1623 +1,232 @@
 {
-  "sha": "5e11a5040a3849554f5ecb8d874584e5669d8295",
-  "total": 147,
-  "controls": [
-    {
-      "id": "A0001",
-      "route": "src/routes/__root.tsx",
-      "component": "__root.tsx",
-      "tag": "Link",
-      "label": "Go home",
-      "to": "/",
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0002",
-      "route": "/_authenticated/admin/candidates/$id",
-      "component": "admin.candidates.$id.tsx",
-      "tag": "Link",
-      "label": "\u2190 Queue",
-      "to": "/admin/candidates",
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0003",
-      "route": "/_authenticated/admin/candidates/$id",
-      "component": "admin.candidates.$id.tsx",
-      "tag": "Link",
-      "label": "Preview in Client Dashboard \u2192",
-      "to": "/client/candidates/$id",
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0004",
-      "route": "/_authenticated/admin/candidates/$id",
-      "component": "admin.candidates.$id.tsx",
-      "tag": "Button",
-      "label": "run(\"advance\", () => advanceProcessing({ data: { match_id: i",
-      "to": null,
-      "handler_ref": "()",
-      "has_onclick": true,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0005",
-      "route": "/_authenticated/admin/candidates/$id",
-      "component": "admin.candidates.$id.tsx",
-      "tag": "Button",
-      "label": "run(\"retry parse\", () => retryParse({ data: { match_id: id }",
-      "to": null,
-      "handler_ref": "()",
-      "has_onclick": true,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0006",
-      "route": "/_authenticated/admin/candidates/$id",
-      "component": "admin.candidates.$id.tsx",
-      "tag": "Button",
-      "label": "run(\"rescore\", () => rescore({ data: { match_id: id } }))} >",
-      "to": null,
-      "handler_ref": "()",
-      "has_onclick": true,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0007",
-      "route": "/_authenticated/admin/candidates/$id",
-      "component": "admin.candidates.$id.tsx",
-      "tag": "Button",
-      "label": "run(\"mark OCR done\", () => markOcrDone({ data: { match_id:",
-      "to": null,
-      "handler_ref": "()",
-      "has_onclick": true,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0008",
-      "route": "/_authenticated/admin/candidates/$id",
-      "component": "admin.candidates.$id.tsx",
-      "tag": "Button",
-      "label": "run(\"approve for client\", () => applyReviewDe",
-      "to": null,
-      "handler_ref": "()",
-      "has_onclick": true,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0009",
-      "route": "/_authenticated/admin/candidates/$id",
-      "component": "admin.candidates.$id.tsx",
-      "tag": "Button",
-      "label": "run(\"hold\", () => applyReviewDecision({ data:",
-      "to": null,
-      "handler_ref": "()",
-      "has_onclick": true,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0010",
-      "route": "/_authenticated/admin/candidates/$id",
-      "component": "admin.candidates.$id.tsx",
-      "tag": "Button",
-      "label": "run(\"archive\", () => applyReviewDecision({ da",
-      "to": null,
-      "handler_ref": "()",
-      "has_onclick": true,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0011",
-      "route": "/_authenticated/admin/candidates/$id",
-      "component": "admin.candidates.$id.tsx",
-      "tag": "Button",
-      "label": "run(\"override\", () => applyReviewDeci",
-      "to": null,
-      "handler_ref": "()",
-      "has_onclick": true,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0012",
-      "route": "/_authenticated/admin/candidates",
-      "component": "admin.candidates.tsx",
-      "tag": "Link",
-      "label": "Review \u2192",
-      "to": "/admin/candidates/$id",
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0013",
-      "route": "/_authenticated/admin/clients/$id",
-      "component": "admin.clients.$id.tsx",
-      "tag": "Link",
-      "label": "\u2190 Clients",
-      "to": "/admin/clients",
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0014",
-      "route": "/_authenticated/admin/clients/$id",
-      "component": "admin.clients.$id.tsx",
-      "tag": "Link",
-      "label": "View Client Dashboard \u2192",
-      "to": "/client",
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0015",
-      "route": "/_authenticated/admin/clients/$id",
-      "component": "admin.clients.$id.tsx",
-      "tag": "Link",
-      "label": "{p.title}",
-      "to": "/admin/positions/$id",
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0016",
-      "route": "/_authenticated/admin/clients",
-      "component": "admin.clients.tsx",
-      "tag": "Link",
-      "label": "+ New client",
-      "to": "/admin/clients_new",
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0017",
-      "route": "/_authenticated/admin/clients",
-      "component": "admin.clients.tsx",
-      "tag": "Link",
-      "label": "{r.name}",
-      "to": "/admin/clients/$id",
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0018",
-      "route": "/_authenticated/admin/clients",
-      "component": "admin.clients.tsx",
-      "tag": "Link",
-      "label": "View Dashboard",
-      "to": "/client",
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0019",
-      "route": "/_authenticated/admin/clients_new",
-      "component": "admin.clients_new.tsx",
-      "tag": "Button",
-      "label": "{mut.isPending ? \"Creating\u2026\" : \"Create client\"}",
-      "to": null,
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0020",
-      "route": "/_authenticated/admin/clients_new",
-      "component": "admin.clients_new.tsx",
-      "tag": "Button",
-      "label": "navigate({ to: \"/admin/clients\" })} > Cancel",
-      "to": null,
-      "handler_ref": "()",
-      "has_onclick": true,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0021",
-      "route": "/_authenticated/admin/clients_new",
-      "component": "admin.clients_new.tsx",
-      "tag": "Button",
-      "label": "navigate({ to: \"/admin/clients/$id\",",
-      "to": null,
-      "handler_ref": "()",
-      "has_onclick": true,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0022",
-      "route": "/_authenticated/admin/clients_new",
-      "component": "admin.clients_new.tsx",
-      "tag": "Button",
-      "label": "navigate({ to: \"/client\", search: { org: result.organization",
-      "to": null,
-      "handler_ref": "()",
-      "has_onclick": true,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0023",
-      "route": "/_authenticated/admin/clients_new",
-      "component": "admin.clients_new.tsx",
-      "tag": "Button",
-      "label": "navigator.clipboard.writeText( `Email: ${",
-      "to": null,
-      "handler_ref": "()",
-      "has_onclick": true,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0024",
-      "route": "/_authenticated/admin/health",
-      "component": "admin.health.tsx",
-      "tag": "Button",
-      "label": "repair.mutate({ id: j.entity_",
-      "to": null,
-      "handler_ref": "()",
-      "has_onclick": true,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0025",
-      "route": "/_authenticated/admin/health",
-      "component": "admin.health.tsx",
-      "tag": "Link",
-      "label": "open",
-      "to": "/admin/candidates/$id",
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0026",
-      "route": "/_authenticated/admin/",
-      "component": "admin.index.tsx",
-      "tag": "Link",
-      "label": "",
-      "to": "c.to",
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0027",
-      "route": "/_authenticated/admin/positions/$id",
-      "component": "admin.positions.$id.tsx",
-      "tag": "Link",
-      "label": "\u2190 {p.organizations?.name ?? \"Client\"}",
-      "to": "/admin/clients/$id",
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0028",
-      "route": "/_authenticated/admin/positions/$id",
-      "component": "admin.positions.$id.tsx",
-      "tag": "Button",
-      "label": "saveMut.mutate()}> {saveMut.isPending ? \"Saving\u2026\" : \"Save re",
-      "to": null,
-      "handler_ref": "()",
-      "has_onclick": true,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0029",
-      "route": "/_authenticated/admin/positions/$id",
-      "component": "admin.positions.$id.tsx",
-      "tag": "Button",
-      "label": "statusMut.mutate(\"request_clarification\")} >",
-      "to": null,
-      "handler_ref": "()",
-      "has_onclick": true,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0030",
-      "route": "/_authenticated/admin/positions/$id",
-      "component": "admin.positions.$id.tsx",
-      "tag": "Button",
-      "label": "statusMut.mutate(\"approve\")} > Approve",
-      "to": null,
-      "handler_ref": "()",
-      "has_onclick": true,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0031",
-      "route": "/_authenticated/admin/positions/$id",
-      "component": "admin.positions.$id.tsx",
-      "tag": "Button",
-      "label": "statusMut.mutate(\"approve\")} > Approve",
-      "to": null,
-      "handler_ref": "()",
-      "has_onclick": true,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0032",
-      "route": "/_authenticated/admin/positions/$id",
-      "component": "admin.positions.$id.tsx",
-      "tag": "Button",
-      "label": "statusMut.mutate(\"activate\")} > Activate",
-      "to": null,
-      "handler_ref": "()",
-      "has_onclick": true,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0033",
-      "route": "/_authenticated/admin/positions/$id",
-      "component": "admin.positions.$id.tsx",
-      "tag": "Button",
-      "label": "statusMut.mutate(\"pause\")} > Pause",
-      "to": null,
-      "handler_ref": "()",
-      "has_onclick": true,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0034",
-      "route": "/_authenticated/admin/positions/$id",
-      "component": "admin.positions.$id.tsx",
-      "tag": "Button",
-      "label": "statusMut.mutate(\"close\")} > Close",
-      "to": null,
-      "handler_ref": "()",
-      "has_onclick": true,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0035",
-      "route": "/_authenticated/admin/positions/$id",
-      "component": "admin.positions.$id.tsx",
-      "tag": "Button",
-      "label": "statusMut.mutate(\"activate\")} > Resume",
-      "to": null,
-      "handler_ref": "()",
-      "has_onclick": true,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0036",
-      "route": "/_authenticated/admin/positions/$id",
-      "component": "admin.positions.$id.tsx",
-      "tag": "Button",
-      "label": "statusMut.mutate(\"close\")} > Close",
-      "to": null,
-      "handler_ref": "()",
-      "has_onclick": true,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0037",
-      "route": "/_authenticated/admin/positions/$id",
-      "component": "admin.positions.$id.tsx",
-      "tag": "Button",
-      "label": "statusMut.mutate(\"reopen\")} > Reopen",
-      "to": null,
-      "handler_ref": "()",
-      "has_onclick": true,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0038",
-      "route": "/_authenticated/admin/positions/$id",
-      "component": "admin.positions.$id.tsx",
-      "tag": "Link",
-      "label": "{m.candidate_profiles?.full_name ?? \"\u2014\"}",
-      "to": "/admin/candidates/$id",
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0039",
-      "route": "/_authenticated/admin/positions",
-      "component": "admin.positions.tsx",
-      "tag": "Link",
-      "label": "Review \u2192",
-      "to": "/admin/positions/$id",
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0040",
-      "route": "/_authenticated/admin/publish",
-      "component": "admin.publish.tsx",
-      "tag": "Link",
-      "label": "Full candidate workspace \u2192",
-      "to": "/admin/candidates/$id",
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0041",
-      "route": "/_authenticated/admin/publish",
-      "component": "admin.publish.tsx",
-      "tag": "Button",
-      "label": "doAction.mutate(\"approve_for_client\")} > {doAction.isPend",
-      "to": null,
-      "handler_ref": "()",
-      "has_onclick": true,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0042",
-      "route": "/_authenticated/admin/publish",
-      "component": "admin.publish.tsx",
-      "tag": "Button",
-      "label": "doAction.mutate(\"hold\")} > Hold",
-      "to": null,
-      "handler_ref": "()",
-      "has_onclick": true,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0043",
-      "route": "/_authenticated/admin/publish",
-      "component": "admin.publish.tsx",
-      "tag": "Link",
-      "label": "Request repair",
-      "to": "/admin/candidates/$id",
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0044",
-      "route": "/_authenticated/admin/publish",
-      "component": "admin.publish.tsx",
-      "tag": "Button",
-      "label": "doAction.mutate(\"archive\")} > Archive",
-      "to": null,
-      "handler_ref": "()",
-      "has_onclick": true,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0045",
-      "route": "/_authenticated/admin/team",
-      "component": "admin.team.tsx",
-      "tag": "Button",
-      "label": "{mut.isPending ? \"Creating\u2026\" : \"Create user\"}",
-      "to": null,
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0046",
-      "route": "/_authenticated/admin/team",
-      "component": "admin.team.tsx",
-      "tag": "Button",
-      "label": "navigator.clipboard.writeText( `Email: ${resu",
-      "to": null,
-      "handler_ref": "()",
-      "has_onclick": true,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0047",
-      "route": "/_authenticated/admin/team",
-      "component": "admin.team.tsx",
-      "tag": "Button",
-      "label": "setResult(null)}> Dismiss",
-      "to": null,
-      "handler_ref": "()",
-      "has_onclick": true,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0048",
-      "route": "/_authenticated/admin/team",
-      "component": "admin.team.tsx",
-      "tag": "Button",
-      "label": "reset.mutate({ auth_user_id: m.auth_user_id!, email: m.",
-      "to": null,
-      "handler_ref": "()",
-      "has_onclick": true,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0049",
-      "route": "/_authenticated/admin/team",
-      "component": "admin.team.tsx",
-      "tag": "Button",
-      "label": "deact.mutate({ membership_id: m.membership_id })} >",
-      "to": null,
-      "handler_ref": "()",
-      "has_onclick": true,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0050",
-      "route": "/_authenticated/admin/team",
-      "component": "admin.team.tsx",
-      "tag": "Button",
-      "label": "react.mutate({ membership_id: m.membership_id })} >",
-      "to": null,
-      "handler_ref": "()",
-      "has_onclick": true,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0051",
-      "route": "/_authenticated/admin/team",
-      "component": "admin.team.tsx",
-      "tag": "Button",
-      "label": "{ if (confirm(\"Remove this member from the client?\")) {",
-      "to": null,
-      "handler_ref": "()",
-      "has_onclick": true,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0052",
-      "route": "/_authenticated/admin/team",
-      "component": "admin.team.tsx",
-      "tag": "Button",
-      "label": "navigator.clipboard.writeText( `Email: ${rese",
-      "to": null,
-      "handler_ref": "()",
-      "has_onclick": true,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0053",
-      "route": "/_authenticated/admin/team",
-      "component": "admin.team.tsx",
-      "tag": "Button",
-      "label": "setResetShown(null)}> Dismiss",
-      "to": null,
-      "handler_ref": "()",
-      "has_onclick": true,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0054",
-      "route": "/_authenticated/admin",
-      "component": "admin.tsx",
-      "tag": "Link",
-      "label": "TaaSFlow admin",
-      "to": "/",
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0055",
-      "route": "/_authenticated/admin",
-      "component": "admin.tsx",
-      "tag": "Link",
-      "label": "",
-      "to": "s.to",
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0056",
-      "route": "/_authenticated/client/candidates/$id",
-      "component": "client.candidates.$id.tsx",
-      "tag": "Link",
-      "label": "\u2190 All candidates",
-      "to": "/client/candidates",
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0057",
-      "route": "/_authenticated/client/candidates/$id",
-      "component": "client.candidates.$id.tsx",
-      "tag": "Link",
-      "label": "{match.positions?.title}",
-      "to": "/client/positions/$id",
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0058",
-      "route": "/_authenticated/client/candidates/$id",
-      "component": "client.candidates.$id.tsx",
-      "tag": "Button",
-      "label": "act.mutate(a.key)} > {a.label}",
-      "to": null,
-      "handler_ref": "()",
-      "has_onclick": true,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0059",
-      "route": "/_authenticated/client/candidates",
-      "component": "client.candidates.tsx",
-      "tag": "Link",
-      "label": "{f.label}",
-      "to": "/client/candidates",
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0060",
-      "route": "/_authenticated/client/candidates",
-      "component": "client.candidates.tsx",
-      "tag": "Link",
-      "label": "Review \u2192",
-      "to": "/client/candidates/$id",
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0061",
-      "route": "/_authenticated/client/",
-      "component": "client.index.tsx",
-      "tag": "Link",
-      "label": "",
-      "to": "/client/candidates",
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0062",
-      "route": "/_authenticated/client/",
-      "component": "client.index.tsx",
-      "tag": "Link",
-      "label": "",
-      "to": "/client/candidates",
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0063",
-      "route": "/_authenticated/client/",
-      "component": "client.index.tsx",
-      "tag": "Link",
-      "label": "",
-      "to": "/client/candidates",
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0064",
-      "route": "/_authenticated/client/",
-      "component": "client.index.tsx",
-      "tag": "Link",
-      "label": "",
-      "to": "/client/messages",
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0065",
-      "route": "/_authenticated/client/messages",
-      "component": "client.messages.tsx",
-      "tag": "Button",
-      "label": "Send",
-      "to": null,
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0066",
-      "route": "/_authenticated/client/positions/$id",
-      "component": "client.positions.$id.tsx",
-      "tag": "Link",
-      "label": "\u2190 All positions",
-      "to": "/client/positions",
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0067",
-      "route": "/_authenticated/client/positions/$id",
-      "component": "client.positions.$id.tsx",
-      "tag": "Link",
-      "label": "{m.candidate_profiles?.full_name ?? \"Candidate\"}",
-      "to": "/client/candidates/$id",
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0068",
-      "route": "/_authenticated/client/positions/$id",
-      "component": "client.positions.$id.tsx",
-      "tag": "Button",
-      "label": "move.mutate({ matchId: m.id, toStage: n.to })",
-      "to": null,
-      "handler_ref": "()",
-      "has_onclick": true,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0069",
-      "route": "/_authenticated/client/positions",
-      "component": "client.positions.tsx",
-      "tag": "Link",
-      "label": "{t.label}",
-      "to": "/client/positions",
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0070",
-      "route": "/_authenticated/client/positions",
-      "component": "client.positions.tsx",
-      "tag": "Link",
-      "label": "Open position \u2192",
-      "to": "/client/positions/$id",
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0071",
-      "route": "/_authenticated/client",
-      "component": "client.tsx",
-      "tag": "Link",
-      "label": "submit a new intake",
-      "to": "/intake",
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0072",
-      "route": "/_authenticated/client",
-      "component": "client.tsx",
-      "tag": "Link",
-      "label": "{p.replace(\"client_\", \"\")}",
-      "to": "/client",
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0073",
-      "route": "/_authenticated/client",
-      "component": "client.tsx",
-      "tag": "Link",
-      "label": "",
-      "to": "t.to",
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0074",
-      "route": "/_authenticated/me/applications/$id",
-      "component": "me.applications.$id.tsx",
-      "tag": "Link",
-      "label": "\u2190 All applications",
-      "to": "/me/applications",
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0075",
-      "route": "/_authenticated/me/applications/$id",
-      "component": "me.applications.$id.tsx",
-      "tag": "Button",
-      "label": "{ if (confirm(\"Withdraw this application?\")) withdraw.mutate",
-      "to": null,
-      "handler_ref": "()",
-      "has_onclick": true,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0076",
-      "route": "/_authenticated/me/applications",
-      "component": "me.applications.tsx",
-      "tag": "Link",
-      "label": "Browse open roles",
-      "to": "/jobs",
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0077",
-      "route": "/_authenticated/me/applications",
-      "component": "me.applications.tsx",
-      "tag": "Link",
-      "label": "Track application",
-      "to": "/me/applications/$id",
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0078",
-      "route": "/_authenticated/me/applications",
-      "component": "me.applications.tsx",
-      "tag": "Button",
-      "label": "{ if (confirm(\"Withdraw this application?\")) {",
-      "to": null,
-      "handler_ref": "()",
-      "has_onclick": true,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0079",
-      "route": "/_authenticated/me/messages",
-      "component": "me.messages.tsx",
-      "tag": "Button",
-      "label": "Send",
-      "to": null,
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0080",
-      "route": "/_authenticated/me/profile",
-      "component": "me.profile.tsx",
-      "tag": "Button",
-      "label": "{save.isPending ? \"Saving\u2026\" : \"Save profile\"}",
-      "to": null,
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0081",
-      "route": "/_authenticated/me/settings",
-      "component": "me.settings.tsx",
-      "tag": "Button",
-      "label": "saveConsent.mutate()} disabled={saveConsent.isPending} >",
-      "to": null,
-      "handler_ref": "()",
-      "has_onclick": true,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0082",
-      "route": "/_authenticated/me/settings",
-      "component": "me.settings.tsx",
-      "tag": "Button",
-      "label": "submitCorrection.mutate(correction.trim())} > Send request",
-      "to": null,
-      "handler_ref": "()",
-      "has_onclick": true,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0083",
-      "route": "/_authenticated/me/settings",
-      "component": "me.settings.tsx",
-      "tag": "Button",
-      "label": "{ if (confirm(\"Request account deletion? Our team will follo",
-      "to": null,
-      "handler_ref": "()",
-      "has_onclick": true,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0084",
-      "route": "/_authenticated/me",
-      "component": "me.tsx",
-      "tag": "Link",
-      "label": "Browse jobs",
-      "to": "/jobs",
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0085",
-      "route": "/_authenticated/me",
-      "component": "me.tsx",
-      "tag": "Link",
-      "label": "",
-      "to": "t.to",
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0086",
-      "route": "/access-denied",
-      "component": "access-denied.tsx",
-      "tag": "Link",
-      "label": "setTimeout(() => navigate({ to: \"/login\" }), 0)} > Back t",
-      "to": "/login",
-      "handler_ref": "()",
-      "has_onclick": true,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0087",
-      "route": "/apply/received/$applicationId",
-      "component": "apply.received.$applicationId.tsx",
-      "tag": "Button",
-      "label": "",
-      "to": null,
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0088",
-      "route": "/apply/received/$applicationId",
-      "component": "apply.received.$applicationId.tsx",
-      "tag": "Link",
-      "label": "Back to job board",
-      "to": "/jobs",
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0089",
-      "route": "/apply/received/$applicationId",
-      "component": "apply.received.$applicationId.tsx",
-      "tag": "Link",
-      "label": "TaaSFlow",
-      "to": "/",
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0090",
-      "route": "/apply/received/$applicationId",
-      "component": "apply.received.$applicationId.tsx",
-      "tag": "Button",
-      "label": "",
-      "to": null,
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0091",
-      "route": "/apply/received/$applicationId",
-      "component": "apply.received.$applicationId.tsx",
-      "tag": "Link",
-      "label": "Create account to track application",
-      "to": "/auth",
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0092",
-      "route": "/apply/received/$applicationId",
-      "component": "apply.received.$applicationId.tsx",
-      "tag": "Button",
-      "label": "",
-      "to": null,
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0093",
-      "route": "/apply/received/$applicationId",
-      "component": "apply.received.$applicationId.tsx",
-      "tag": "Link",
-      "label": "Browse more roles",
-      "to": "/jobs",
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0094",
-      "route": "/dev/catalogue",
-      "component": "dev.catalogue.tsx",
-      "tag": "Button",
-      "label": "View tokens",
-      "to": null,
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0095",
-      "route": "/dev/catalogue",
-      "component": "dev.catalogue.tsx",
-      "tag": "Button",
-      "label": "Learn more",
-      "to": null,
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0096",
-      "route": "/dev/catalogue",
-      "component": "dev.catalogue.tsx",
-      "tag": "Button",
-      "label": "Cancel",
-      "to": null,
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0097",
-      "route": "/dev/catalogue",
-      "component": "dev.catalogue.tsx",
-      "tag": "Button",
-      "label": "Save changes",
-      "to": null,
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0098",
-      "route": "/dev/catalogue",
-      "component": "dev.catalogue.tsx",
-      "tag": "Button",
-      "label": "Primary",
-      "to": null,
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0099",
-      "route": "/dev/catalogue",
-      "component": "dev.catalogue.tsx",
-      "tag": "Button",
-      "label": "Secondary",
-      "to": null,
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0100",
-      "route": "/dev/catalogue",
-      "component": "dev.catalogue.tsx",
-      "tag": "Button",
-      "label": "Outline",
-      "to": null,
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0101",
-      "route": "/dev/catalogue",
-      "component": "dev.catalogue.tsx",
-      "tag": "Button",
-      "label": "Ghost",
-      "to": null,
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0102",
-      "route": "/dev/catalogue",
-      "component": "dev.catalogue.tsx",
-      "tag": "Button",
-      "label": "Destructive",
-      "to": null,
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0103",
-      "route": "/dev/catalogue",
-      "component": "dev.catalogue.tsx",
-      "tag": "Button",
-      "label": "Disabled",
-      "to": null,
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0104",
-      "route": "/",
-      "component": "index.tsx",
-      "tag": "Link",
-      "label": "TaaSFlow",
-      "to": "/",
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0105",
-      "route": "/",
-      "component": "index.tsx",
-      "tag": "Link",
-      "label": "Jobs",
-      "to": "/jobs",
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0106",
-      "route": "/",
-      "component": "index.tsx",
-      "tag": "Link",
-      "label": "Sign in",
-      "to": "/auth",
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0107",
-      "route": "/",
-      "component": "index.tsx",
-      "tag": "Button",
-      "label": "",
-      "to": null,
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0108",
-      "route": "/",
-      "component": "index.tsx",
-      "tag": "Link",
-      "label": "Start hiring",
-      "to": "/intake",
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0109",
-      "route": "/",
-      "component": "index.tsx",
-      "tag": "Button",
-      "label": "",
-      "to": null,
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0110",
-      "route": "/",
-      "component": "index.tsx",
-      "tag": "Link",
-      "label": "Submit an intake",
-      "to": "/intake",
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0111",
-      "route": "/",
-      "component": "index.tsx",
-      "tag": "Button",
-      "label": "",
-      "to": null,
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0112",
-      "route": "/",
-      "component": "index.tsx",
-      "tag": "Link",
-      "label": "Browse open roles",
-      "to": "/jobs",
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0113",
-      "route": "/intake",
-      "component": "intake.tsx",
-      "tag": "Button",
-      "label": "{ const v = skillDraft.trim(); if (",
-      "to": null,
-      "handler_ref": "()",
-      "has_onclick": true,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0114",
-      "route": "/intake",
-      "component": "intake.tsx",
-      "tag": "Button",
-      "label": "{ const v = countryDraft.trim(); if",
-      "to": null,
-      "handler_ref": "()",
-      "has_onclick": true,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0115",
-      "route": "/intake",
-      "component": "intake.tsx",
-      "tag": "Button",
-      "label": "{ const v = titleDraft.trim(); if (",
-      "to": null,
-      "handler_ref": "()",
-      "has_onclick": true,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0116",
-      "route": "/intake",
-      "component": "intake.tsx",
-      "tag": "Button",
-      "label": "{ const v = qDraft.trim(); if (v.le",
-      "to": null,
-      "handler_ref": "()",
-      "has_onclick": true,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0117",
-      "route": "/intake",
-      "component": "intake.tsx",
-      "tag": "Button",
-      "label": "Back",
-      "to": null,
-      "handler_ref": "back",
-      "has_onclick": true,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0118",
-      "route": "/intake",
-      "component": "intake.tsx",
-      "tag": "Button",
-      "label": "Save draft",
-      "to": null,
-      "handler_ref": "saveDraft",
-      "has_onclick": true,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0119",
-      "route": "/intake",
-      "component": "intake.tsx",
-      "tag": "Button",
-      "label": "Continue",
-      "to": null,
-      "handler_ref": "next",
-      "has_onclick": true,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0120",
-      "route": "/intake",
-      "component": "intake.tsx",
-      "tag": "Button",
-      "label": "{submitting ? \"Submitting\u2026\" : \"Submit intake\"}",
-      "to": null,
-      "handler_ref": "submit",
-      "has_onclick": true,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0121",
-      "route": "/intake_/confirmation",
-      "component": "intake_.confirmation.tsx",
-      "tag": "Button",
-      "label": "",
-      "to": null,
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0122",
-      "route": "/jobs/$id/apply",
-      "component": "jobs.$id.apply.tsx",
-      "tag": "Button",
-      "label": "",
-      "to": null,
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0123",
-      "route": "/jobs/$id/apply",
-      "component": "jobs.$id.apply.tsx",
-      "tag": "Link",
-      "label": "Browse open roles",
-      "to": "/jobs",
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0124",
-      "route": "/jobs/$id/apply",
-      "component": "jobs.$id.apply.tsx",
-      "tag": "Link",
-      "label": "TaaSFlow",
-      "to": "/",
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0125",
-      "route": "/jobs/$id/apply",
-      "component": "jobs.$id.apply.tsx",
-      "tag": "Link",
-      "label": "\u2190 Role details",
-      "to": "/jobs/$id",
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0126",
-      "route": "/jobs/$id/apply",
-      "component": "jobs.$id.apply.tsx",
-      "tag": "Button",
-      "label": "{submitting ? \"Submitting\u2026\" : \"Submit application\"}",
-      "to": null,
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0127",
-      "route": "/jobs/$id/apply",
-      "component": "jobs.$id.apply.tsx",
-      "tag": "Link",
-      "label": "Cancel",
-      "to": "/jobs/$id",
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0128",
-      "route": "/jobs/$id/",
-      "component": "jobs.$id.index.tsx",
-      "tag": "Button",
-      "label": "",
-      "to": null,
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0129",
-      "route": "/jobs/$id/",
-      "component": "jobs.$id.index.tsx",
-      "tag": "Link",
-      "label": "Back to job board",
-      "to": "/jobs",
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0130",
-      "route": "/jobs/$id/",
-      "component": "jobs.$id.index.tsx",
-      "tag": "Link",
-      "label": "TaaSFlow",
-      "to": "/",
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0131",
-      "route": "/jobs/$id/",
-      "component": "jobs.$id.index.tsx",
-      "tag": "Link",
-      "label": "\u2190 All roles",
-      "to": "/jobs",
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0132",
-      "route": "/jobs/$id/",
-      "component": "jobs.$id.index.tsx",
-      "tag": "Button",
-      "label": "",
-      "to": null,
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0133",
-      "route": "/jobs/$id/",
-      "component": "jobs.$id.index.tsx",
-      "tag": "Link",
-      "label": "Apply for this role",
-      "to": "/jobs/$id/apply",
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0134",
-      "route": "/jobs/$id/",
-      "component": "jobs.$id.index.tsx",
-      "tag": "Button",
-      "label": "",
-      "to": null,
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0135",
-      "route": "/jobs/$id/",
-      "component": "jobs.$id.index.tsx",
-      "tag": "Link",
-      "label": "Apply now",
-      "to": "/jobs/$id/apply",
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0136",
-      "route": "/jobs/$id/",
-      "component": "jobs.$id.index.tsx",
-      "tag": "Button",
-      "label": "",
-      "to": null,
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0137",
-      "route": "/jobs/$id/",
-      "component": "jobs.$id.index.tsx",
-      "tag": "Link",
-      "label": "Back to job board",
-      "to": "/jobs",
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0138",
-      "route": "/jobs/",
-      "component": "jobs.index.tsx",
-      "tag": "Link",
-      "label": "TaaSFlow",
-      "to": "/",
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0139",
-      "route": "/jobs/",
-      "component": "jobs.index.tsx",
-      "tag": "Link",
-      "label": "Jobs",
-      "to": "/jobs",
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0140",
-      "route": "/jobs/",
-      "component": "jobs.index.tsx",
-      "tag": "Link",
-      "label": "Sign in",
-      "to": "/auth",
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0141",
-      "route": "/jobs/",
-      "component": "jobs.index.tsx",
-      "tag": "Link",
-      "label": "",
-      "to": "/jobs/$id",
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0142",
-      "route": "/login",
-      "component": "login.tsx",
-      "tag": "Button",
-      "label": "{loading ? \"Signing in\u2026\" : \"Sign in\"}",
-      "to": null,
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0143",
-      "route": "/login",
-      "component": "login.tsx",
-      "tag": "Button",
-      "label": "{loading ? \"Creating account\u2026\" : \"Create account\"}",
-      "to": null,
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0144",
-      "route": "/login",
-      "component": "login.tsx",
-      "tag": "Button",
-      "label": "{loading ? \"Sending\u2026\" : \"Send reset email\"}",
-      "to": null,
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0145",
-      "route": "/login",
-      "component": "login.tsx",
-      "tag": "Link",
-      "label": "\u2190 Back home",
-      "to": "/",
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0146",
-      "route": "/login",
-      "component": "login.tsx",
-      "tag": "Button",
-      "label": "onPersona(p.key)} > Continue as {p.label}",
-      "to": null,
-      "handler_ref": "()",
-      "has_onclick": true,
-      "verdict": "UNTESTED"
-    },
-    {
-      "id": "A0147",
-      "route": "/reset-password",
-      "component": "reset-password.tsx",
-      "tag": "Button",
-      "label": "{loading ? \"Updating\u2026\" : \"Update password\"}",
-      "to": null,
-      "handler_ref": null,
-      "has_onclick": false,
-      "verdict": "UNTESTED"
+  "summary": {
+    "total_buttons": 124,
+    "total_onclicks": 87,
+    "total_data_qa": 0,
+    "files": 37
+  },
+  "per_file": {
+    "src/routes/__root.tsx": {
+      "buttons": 1,
+      "onClicks": 1,
+      "data_qa": 0,
+      "has_mutation_hook": false
+    },
+    "src/routes/access-denied.tsx": {
+      "buttons": 0,
+      "onClicks": 1,
+      "data_qa": 0,
+      "has_mutation_hook": false
+    },
+    "src/routes/apply.received.$applicationId.tsx": {
+      "buttons": 3,
+      "onClicks": 0,
+      "data_qa": 0,
+      "has_mutation_hook": false
+    },
+    "src/routes/dev.catalogue.tsx": {
+      "buttons": 10,
+      "onClicks": 0,
+      "data_qa": 0,
+      "has_mutation_hook": false
+    },
+    "src/routes/index.tsx": {
+      "buttons": 3,
+      "onClicks": 0,
+      "data_qa": 0,
+      "has_mutation_hook": false
+    },
+    "src/routes/intake.tsx": {
+      "buttons": 10,
+      "onClicks": 10,
+      "data_qa": 0,
+      "has_mutation_hook": false
+    },
+    "src/routes/intake_.confirmation.tsx": {
+      "buttons": 1,
+      "onClicks": 0,
+      "data_qa": 0,
+      "has_mutation_hook": false
+    },
+    "src/routes/jobs.$id.apply.tsx": {
+      "buttons": 2,
+      "onClicks": 0,
+      "data_qa": 0,
+      "has_mutation_hook": false
+    },
+    "src/routes/jobs.$id.index.tsx": {
+      "buttons": 4,
+      "onClicks": 0,
+      "data_qa": 0,
+      "has_mutation_hook": false
+    },
+    "src/routes/jobs.index.tsx": {
+      "buttons": 2,
+      "onClicks": 2,
+      "data_qa": 0,
+      "has_mutation_hook": false
+    },
+    "src/routes/login.tsx": {
+      "buttons": 9,
+      "onClicks": 6,
+      "data_qa": 0,
+      "has_mutation_hook": true
+    },
+    "src/routes/reset-password.tsx": {
+      "buttons": 1,
+      "onClicks": 0,
+      "data_qa": 0,
+      "has_mutation_hook": false
+    },
+    "src/routes/_authenticated/admin.candidates.$id.tsx": {
+      "buttons": 8,
+      "onClicks": 8,
+      "data_qa": 0,
+      "has_mutation_hook": false
+    },
+    "src/routes/_authenticated/admin.clients_new.tsx": {
+      "buttons": 5,
+      "onClicks": 4,
+      "data_qa": 0,
+      "has_mutation_hook": true
+    },
+    "src/routes/_authenticated/admin.health.tsx": {
+      "buttons": 1,
+      "onClicks": 1,
+      "data_qa": 0,
+      "has_mutation_hook": true
+    },
+    "src/routes/_authenticated/admin.positions.$id.tsx": {
+      "buttons": 10,
+      "onClicks": 10,
+      "data_qa": 0,
+      "has_mutation_hook": true
+    },
+    "src/routes/_authenticated/admin.publish.tsx": {
+      "buttons": 4,
+      "onClicks": 4,
+      "data_qa": 0,
+      "has_mutation_hook": true
+    },
+    "src/routes/_authenticated/admin.team.tsx": {
+      "buttons": 11,
+      "onClicks": 10,
+      "data_qa": 0,
+      "has_mutation_hook": true
+    },
+    "src/routes/_authenticated/client.candidates.$id.tsx": {
+      "buttons": 1,
+      "onClicks": 1,
+      "data_qa": 0,
+      "has_mutation_hook": true
+    },
+    "src/routes/_authenticated/client.messages.tsx": {
+      "buttons": 1,
+      "onClicks": 0,
+      "data_qa": 0,
+      "has_mutation_hook": true
+    },
+    "src/routes/_authenticated/client.positions.$id.tsx": {
+      "buttons": 2,
+      "onClicks": 0,
+      "data_qa": 0,
+      "has_mutation_hook": true
+    },
+    "src/routes/_authenticated/me.applications.$id.tsx": {
+      "buttons": 1,
+      "onClicks": 1,
+      "data_qa": 0,
+      "has_mutation_hook": true
+    },
+    "src/routes/_authenticated/me.messages.tsx": {
+      "buttons": 1,
+      "onClicks": 0,
+      "data_qa": 0,
+      "has_mutation_hook": true
+    },
+    "src/routes/_authenticated/me.profile.tsx": {
+      "buttons": 1,
+      "onClicks": 0,
+      "data_qa": 0,
+      "has_mutation_hook": true
+    },
+    "src/routes/_authenticated/me.settings.tsx": {
+      "buttons": 3,
+      "onClicks": 3,
+      "data_qa": 0,
+      "has_mutation_hook": true
+    },
+    "src/routes/_authenticated/admin.candidates.index.tsx": {
+      "buttons": 3,
+      "onClicks": 4,
+      "data_qa": 0,
+      "has_mutation_hook": true
+    },
+    "src/routes/_authenticated/admin.clients.index.tsx": {
+      "buttons": 1,
+      "onClicks": 0,
+      "data_qa": 0,
+      "has_mutation_hook": false
+    },
+    "src/routes/_authenticated/me.applications.index.tsx": {
+      "buttons": 1,
+      "onClicks": 1,
+      "data_qa": 0,
+      "has_mutation_hook": true
+    },
+    "src/components/action-guard.tsx": {
+      "buttons": 1,
+      "onClicks": 1,
+      "data_qa": 0,
+      "has_mutation_hook": false
+    },
+    "src/components/notification-bell.tsx": {
+      "buttons": 2,
+      "onClicks": 2,
+      "data_qa": 0,
+      "has_mutation_hook": true
+    },
+    "src/components/sign-out-button.tsx": {
+      "buttons": 1,
+      "onClicks": 1,
+      "data_qa": 0,
+      "has_mutation_hook": false
+    },
+    "src/components/support-view-banner.tsx": {
+      "buttons": 1,
+      "onClicks": 1,
+      "data_qa": 0,
+      "has_mutation_hook": false
+    },
+    "src/components/candidate-detail-drawer.tsx": {
+      "buttons": 13,
+      "onClicks": 10,
+      "data_qa": 0,
+      "has_mutation_hook": true
+    },
+    "src/components/ds/error-state.tsx": {
+      "buttons": 1,
+      "onClicks": 1,
+      "data_qa": 0,
+      "has_mutation_hook": false
+    },
+    "src/components/ui/calendar.tsx": {
+      "buttons": 1,
+      "onClicks": 0,
+      "data_qa": 0,
+      "has_mutation_hook": false
+    },
+    "src/components/ui/carousel.tsx": {
+      "buttons": 2,
+      "onClicks": 2,
+      "data_qa": 0,
+      "has_mutation_hook": false
+    },
+    "src/components/ui/sidebar.tsx": {
+      "buttons": 2,
+      "onClicks": 2,
+      "data_qa": 0,
+      "has_mutation_hook": false
     }
-  ]
+  }
 }
