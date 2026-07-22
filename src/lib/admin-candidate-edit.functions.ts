@@ -73,8 +73,11 @@ const SCORING_RELEVANT = new Set([
   "education",
   "languages",
   "headline",
+  "summary",
+  "years_experience",
   "work_authorization",
 ]);
+
 
 export const updateCandidateAsAdmin = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
