@@ -510,6 +510,251 @@ export const INDUSTRY_ENTRIES: IndustryEntry[] = [
         "Submit the mandate — one private workspace, one rubric, one reviewed shortlist.",
     },
   },
+  {
+    slug: "healthcare",
+    eyebrow: "Healthcare",
+    name: "Healthcare",
+    meta: {
+      title: "Healthcare hiring — TaaSFlow",
+      description:
+        "Structured sourcing for healthcare providers, payers and health-tech teams. Ranked shortlists with evidence of the settings, systems and populations worked with.",
+    },
+    hero: {
+      title: "Healthcare hiring, calibrated per setting and specialty.",
+      subtitle:
+        "TaaSFlow gives healthcare leaders a workspace for every hire — clinical, operational, technical — with rubrics tuned to the care setting, specialty and systems the role actually touches.",
+    },
+    challenges: [
+      {
+        title: "Setting and specialty fit",
+        body: "Acute, ambulatory, primary care and health-tech each need distinct evidence. Our rubric captures the settings and specialties the candidate has worked in — not generic 'healthcare experience'.",
+      },
+      {
+        title: "Systems and workflow context",
+        body: "EHR platforms, coding systems and clinical workflows are captured in intake so shortlists reflect the operating environment the hire will actually work in.",
+      },
+      {
+        title: "Licensure and role scope",
+        body: "Where a role requires specific licensure or scope of practice, we capture it as a first-class filter. We do not assert compliance on behalf of a candidate — we surface what the CV states so your team can verify.",
+      },
+    ],
+    roles: [
+      "Healthcare operations leads",
+      "Practice and clinic managers",
+      "Revenue cycle and billing specialists",
+      "Health informatics and EHR analysts",
+      "Health-tech product and engineering",
+      "Payer operations and claims specialists",
+      "Quality and clinical operations analysts",
+      "Population health and care coordination",
+    ],
+    signals: [
+      "Setting and specialty rubric per role",
+      "Systems and workflow captured in intake",
+      "Human review before publication",
+    ],
+    cta: {
+      title: "Hiring in healthcare?",
+      description:
+        "Submit the role — one workspace per requisition, ranked and reviewed.",
+    },
+  },
+  {
+    slug: "public-sector",
+    eyebrow: "Public Sector",
+    name: "Public Sector",
+    meta: {
+      title: "Public sector hiring — TaaSFlow",
+      description:
+        "Structured sourcing for public agencies, government contractors and civic-tech teams. Ranked shortlists with evidence of programme, policy and delivery experience.",
+    },
+    hero: {
+      title: "Public sector hiring with evidence tied to programme.",
+      subtitle:
+        "TaaSFlow gives agency and contractor leaders a workspace for every hire — programme, policy, delivery, technology — with rubrics tuned to the programme context and outcome.",
+    },
+    challenges: [
+      {
+        title: "Programme and mission context",
+        body: "Public sector CVs often blur across programmes. Our rubric captures the specific programmes, missions and outcomes the candidate contributed to.",
+      },
+      {
+        title: "Delivery model fit",
+        body: "In-house, contractor and vendor-side experience shape the role differently. We capture the delivery model so shortlists match how your team actually works.",
+      },
+      {
+        title: "Clearance and eligibility signals",
+        body: "Where a role has clearance or eligibility requirements, we capture what the CV states as structured signals. We do not attest to clearance status — your team verifies through the appropriate channel.",
+      },
+    ],
+    roles: [
+      "Programme and project managers",
+      "Policy analysts and advisors",
+      "Delivery managers",
+      "Service designers",
+      "Public-sector product managers",
+      "Data and analytics specialists",
+      "Digital transformation leads",
+      "Contract and procurement specialists",
+    ],
+    signals: [
+      "Programme and outcome evidence",
+      "Delivery model captured in intake",
+      "Human review before publication",
+    ],
+    cta: {
+      title: "Building a public sector team?",
+      description:
+        "Submit the role — one workspace, one rubric, one reviewed shortlist.",
+    },
+  },
+  {
+    slug: "nonprofit",
+    eyebrow: "Nonprofit",
+    name: "Nonprofit",
+    meta: {
+      title: "Nonprofit hiring — TaaSFlow",
+      description:
+        "Structured sourcing for foundations, NGOs and mission-driven organisations. Ranked shortlists with evidence of programme, funding and community impact.",
+    },
+    hero: {
+      title: "Nonprofit hiring, calibrated per mission and programme.",
+      subtitle:
+        "TaaSFlow gives nonprofit leaders a workspace for every hire — programme, development, operations — with rubrics tuned to mission fit and delivery evidence.",
+    },
+    challenges: [
+      {
+        title: "Mission and programme fit",
+        body: "Nonprofit CVs need to show real programme contribution, not just cause alignment. Our rubric extracts the programmes owned, outcomes measured and communities served.",
+      },
+      {
+        title: "Funding and development context",
+        body: "Foundation, individual giving, government grants and earned revenue each require different signals. We capture the funding context so shortlists reflect it.",
+      },
+      {
+        title: "Lean-team operating reality",
+        body: "Nonprofit roles usually carry multiple hats. Rubrics reflect the actual scope of ownership rather than idealised job descriptions.",
+      },
+    ],
+    roles: [
+      "Executive directors and COOs",
+      "Programme directors and managers",
+      "Development and fundraising leads",
+      "Grant writers and grants managers",
+      "Communications and community leads",
+      "Operations and finance managers",
+      "Volunteer and partnerships managers",
+      "Monitoring and evaluation specialists",
+    ],
+    signals: [
+      "Programme and outcome evidence from the CV",
+      "Funding and development context captured",
+      "Rubric per role and level",
+    ],
+    cta: {
+      title: "Hiring for a nonprofit role?",
+      description:
+        "Submit the role — one workspace, one rubric, one reviewed shortlist.",
+    },
+  },
+  {
+    slug: "real-estate",
+    eyebrow: "Real Estate",
+    name: "Real Estate",
+    meta: {
+      title: "Real estate hiring — TaaSFlow",
+      description:
+        "Structured sourcing for owners, developers, operators and real-estate services firms. Ranked shortlists with evidence of asset class, market and lifecycle experience.",
+    },
+    hero: {
+      title: "Real estate hiring, calibrated per asset class and market.",
+      subtitle:
+        "TaaSFlow gives real-estate leaders a workspace for every hire — investment, development, operations, asset management — with rubrics tuned per asset class and lifecycle stage.",
+    },
+    challenges: [
+      {
+        title: "Asset-class precision",
+        body: "Office, industrial, multifamily, retail and specialty each need distinct signal. Our rubric captures the asset classes actually worked on and the size of the portfolios owned.",
+      },
+      {
+        title: "Lifecycle-stage fit",
+        body: "Acquisitions, development, operations and dispositions reward different skills. We capture the lifecycle stage in intake so shortlists reflect it.",
+      },
+      {
+        title: "Market and geography",
+        body: "Real estate is local. Market coverage is captured as a first-class filter rather than a free-text note.",
+      },
+    ],
+    roles: [
+      "Acquisitions and investments",
+      "Development and construction management",
+      "Asset managers",
+      "Property and facilities managers",
+      "Portfolio finance and analysts",
+      "Leasing and brokerage",
+      "Real-estate operations leads",
+      "Capital markets and debt specialists",
+    ],
+    signals: [
+      "Asset-class rubric per requisition",
+      "Lifecycle stage captured in intake",
+      "Human review before publication",
+    ],
+    cta: {
+      title: "Hiring in real estate?",
+      description:
+        "Submit the role — one workspace per requisition, ranked and reviewed.",
+    },
+  },
+  {
+    slug: "construction",
+    eyebrow: "Construction",
+    name: "Construction",
+    meta: {
+      title: "Construction hiring — TaaSFlow",
+      description:
+        "Structured sourcing for general contractors, subcontractors and owner-builders. Ranked shortlists with evidence of project type, delivery method and trade experience.",
+    },
+    hero: {
+      title: "Construction hiring, tuned per project type and delivery method.",
+      subtitle:
+        "TaaSFlow gives construction leaders a workspace for every hire — field, project and preconstruction — with rubrics tuned to project type, delivery method and trade scope.",
+    },
+    challenges: [
+      {
+        title: "Project-type fit",
+        body: "Commercial, industrial, infrastructure and residential each demand different signal. Our rubric captures the project types the candidate has actually delivered.",
+      },
+      {
+        title: "Delivery method and role",
+        body: "Design-build, CM-at-risk, design-bid-build and IPD change the role. We capture the delivery model in intake so shortlists reflect it.",
+      },
+      {
+        title: "Field vs office context",
+        body: "Superintendents, PMs and preconstruction leaders reward different evidence. Rubrics per seat surface what the CV actually shows about scope and ownership.",
+      },
+    ],
+    roles: [
+      "Project managers and senior PMs",
+      "Superintendents and general superintendents",
+      "Preconstruction managers and estimators",
+      "Project engineers",
+      "Field engineers",
+      "Safety managers",
+      "Schedulers and planners",
+      "Construction operations leads",
+    ],
+    signals: [
+      "Project-type and delivery-method rubric",
+      "Trade and scope captured in intake",
+      "Human review before publication",
+    ],
+    cta: {
+      title: "Hiring for a construction seat?",
+      description:
+        "Submit the role — one workspace, one rubric, one reviewed shortlist.",
+    },
+  },
 ];
 
 export function getIndustryEntry(slug: string): IndustryEntry | undefined {
