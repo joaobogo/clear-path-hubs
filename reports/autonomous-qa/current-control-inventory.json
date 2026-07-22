@@ -1,0 +1,2100 @@
+{
+  "generated_at": "2026-07-22T19:46:20.175Z",
+  "routes": {
+    "__root": {
+      "file": "src/routes/__root.tsx",
+      "controls": [
+        {
+          "file": "src/routes/__root.tsx",
+          "line": 55,
+          "kind": "button",
+          "label": "{\n              router.invalidate();\n              reset();\n            }}\n     ",
+          "hasQa": false,
+          "onClick": true
+        },
+        {
+          "file": "src/routes/__root.tsx",
+          "line": 26,
+          "kind": "link",
+          "label": "Go home",
+          "to": "/",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/__root.tsx",
+          "line": 64,
+          "kind": "anchor",
+          "label": "Go home",
+          "href": "/",
+          "hasQa": false
+        }
+      ]
+    },
+    "/admin/candidates/:id": {
+      "file": "src/routes/_authenticated/admin.candidates.$id.tsx",
+      "controls": [
+        {
+          "file": "src/routes/_authenticated/admin.candidates.$id.tsx",
+          "line": 325,
+          "kind": "button",
+          "label": "run(\"advance\", () => advanceProcessing({ data: { match_id: id } }))}\n           ",
+          "hasQa": false,
+          "onClick": true
+        },
+        {
+          "file": "src/routes/_authenticated/admin.candidates.$id.tsx",
+          "line": 332,
+          "kind": "button",
+          "label": "run(\"retry parse\", () => retryParse({ data: { match_id: id } }))}\n            >\n",
+          "hasQa": false,
+          "onClick": true
+        },
+        {
+          "file": "src/routes/_authenticated/admin.candidates.$id.tsx",
+          "line": 340,
+          "kind": "button",
+          "label": "run(\"rescore\", () => rescore({ data: { match_id: id } }))}\n            >\n       ",
+          "hasQa": false,
+          "onClick": true
+        },
+        {
+          "file": "src/routes/_authenticated/admin.candidates.$id.tsx",
+          "line": 358,
+          "kind": "button",
+          "label": "run(\"mark OCR done\", () => markOcrDone({ data: { match_id: id, ocr_text: ocrText",
+          "hasQa": false,
+          "onClick": true
+        },
+        {
+          "file": "src/routes/_authenticated/admin.candidates.$id.tsx",
+          "line": 377,
+          "kind": "button",
+          "label": "run(\"approve for client\", () =>\n                  applyReviewDecision({ data: { ",
+          "hasQa": false,
+          "onClick": true
+        },
+        {
+          "file": "src/routes/_authenticated/admin.candidates.$id.tsx",
+          "line": 393,
+          "kind": "button",
+          "label": "run(\"hold\", () =>\n                  applyReviewDecision({ data: { match_id: id, ",
+          "hasQa": false,
+          "onClick": true
+        },
+        {
+          "file": "src/routes/_authenticated/admin.candidates.$id.tsx",
+          "line": 405,
+          "kind": "button",
+          "label": "run(\"archive\", () =>\n                  applyReviewDecision({ data: { match_id: i",
+          "hasQa": false,
+          "onClick": true
+        },
+        {
+          "file": "src/routes/_authenticated/admin.candidates.$id.tsx",
+          "line": 428,
+          "kind": "button",
+          "label": "run(\"override\", () =>\n                      applyReviewDecision({\n              ",
+          "hasQa": false,
+          "onClick": true
+        },
+        {
+          "file": "src/routes/_authenticated/admin.candidates.$id.tsx",
+          "line": 110,
+          "kind": "link",
+          "label": "← Queue",
+          "to": "/admin/candidates",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/_authenticated/admin.candidates.$id.tsx",
+          "line": 130,
+          "kind": "link",
+          "label": "Preview in Client Dashboard →",
+          "to": "/client/candidates/$id",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/_authenticated/admin.candidates.$id.tsx",
+          "line": 462,
+          "kind": "anchor",
+          "label": "Open CV (5 min link) →",
+          "href": null,
+          "hasQa": false
+        }
+      ]
+    },
+    "/admin/candidates/index": {
+      "file": "src/routes/_authenticated/admin.candidates.index.tsx",
+      "controls": [
+        {
+          "file": "src/routes/_authenticated/admin.candidates.index.tsx",
+          "line": 258,
+          "kind": "button",
+          "label": "{ e.stopPropagation(); openDrawer(m.id); }}\n                  >\n                ",
+          "hasQa": false,
+          "onClick": true
+        },
+        {
+          "file": "src/routes/_authenticated/admin.candidates.index.tsx",
+          "line": 284,
+          "kind": "button",
+          "label": "navigate({ search: { ...search, page: search.page - 1 } })}\n          >Prev",
+          "hasQa": false,
+          "onClick": true
+        },
+        {
+          "file": "src/routes/_authenticated/admin.candidates.index.tsx",
+          "line": 289,
+          "kind": "button",
+          "label": "= totalPages}\n            onClick={() => navigate({ search: { ...search, page: s",
+          "hasQa": false,
+          "onClick": false
+        },
+        {
+          "file": "src/routes/_authenticated/admin.candidates.index.tsx",
+          "line": 125,
+          "kind": "form",
+          "label": null,
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/_authenticated/admin.candidates.index.tsx",
+          "line": 134,
+          "kind": "selectitem",
+          "label": "Any client",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/_authenticated/admin.candidates.index.tsx",
+          "line": 135,
+          "kind": "selectitem",
+          "label": "{o.name}",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/_authenticated/admin.candidates.index.tsx",
+          "line": 141,
+          "kind": "selectitem",
+          "label": "Any position",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/_authenticated/admin.candidates.index.tsx",
+          "line": 142,
+          "kind": "selectitem",
+          "label": "{p.title}",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/_authenticated/admin.candidates.index.tsx",
+          "line": 148,
+          "kind": "selectitem",
+          "label": "Any stage",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/_authenticated/admin.candidates.index.tsx",
+          "line": 150,
+          "kind": "selectitem",
+          "label": "{s.replace(/_/g,\" \")}",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/_authenticated/admin.candidates.index.tsx",
+          "line": 157,
+          "kind": "selectitem",
+          "label": "Any state",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/_authenticated/admin.candidates.index.tsx",
+          "line": 159,
+          "kind": "selectitem",
+          "label": "{s.replace(/_/g,\" \")}",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/_authenticated/admin.candidates.index.tsx",
+          "line": 169,
+          "kind": "selectitem",
+          "label": "Any review",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/_authenticated/admin.candidates.index.tsx",
+          "line": 171,
+          "kind": "selectitem",
+          "label": "{s}",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/_authenticated/admin.candidates.index.tsx",
+          "line": 178,
+          "kind": "selectitem",
+          "label": "Any visibility",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/_authenticated/admin.candidates.index.tsx",
+          "line": 179,
+          "kind": "selectitem",
+          "label": "Hidden",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/_authenticated/admin.candidates.index.tsx",
+          "line": 180,
+          "kind": "selectitem",
+          "label": "Client-visible",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/_authenticated/admin.candidates.index.tsx",
+          "line": 186,
+          "kind": "selectitem",
+          "label": "Any min",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/_authenticated/admin.candidates.index.tsx",
+          "line": 187,
+          "kind": "selectitem",
+          "label": "≥ 50",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/_authenticated/admin.candidates.index.tsx",
+          "line": 188,
+          "kind": "selectitem",
+          "label": "≥ 70",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/_authenticated/admin.candidates.index.tsx",
+          "line": 189,
+          "kind": "selectitem",
+          "label": "≥ 85",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/_authenticated/admin.candidates.index.tsx",
+          "line": 195,
+          "kind": "selectitem",
+          "label": "Any max",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/_authenticated/admin.candidates.index.tsx",
+          "line": 196,
+          "kind": "selectitem",
+          "label": "&lt; 50",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/_authenticated/admin.candidates.index.tsx",
+          "line": 197,
+          "kind": "selectitem",
+          "label": "&lt; 70",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/_authenticated/admin.candidates.index.tsx",
+          "line": 198,
+          "kind": "selectitem",
+          "label": "&lt; 85",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/_authenticated/admin.candidates.index.tsx",
+          "line": 210,
+          "kind": "selectitem",
+          "label": "Updated ↓",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/_authenticated/admin.candidates.index.tsx",
+          "line": 211,
+          "kind": "selectitem",
+          "label": "Updated ↑",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/_authenticated/admin.candidates.index.tsx",
+          "line": 212,
+          "kind": "selectitem",
+          "label": "Score ↓",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/_authenticated/admin.candidates.index.tsx",
+          "line": 213,
+          "kind": "selectitem",
+          "label": "Score ↑",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/_authenticated/admin.candidates.index.tsx",
+          "line": 214,
+          "kind": "selectitem",
+          "label": "Created ↓",
+          "hasQa": false
+        }
+      ]
+    },
+    "/admin/clients/:id": {
+      "file": "src/routes/_authenticated/admin.clients.$id.tsx",
+      "controls": [
+        {
+          "file": "src/routes/_authenticated/admin.clients.$id.tsx",
+          "line": 37,
+          "kind": "link",
+          "label": "← Clients",
+          "to": "/admin/clients",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/_authenticated/admin.clients.$id.tsx",
+          "line": 43,
+          "kind": "link",
+          "label": "View Client Dashboard →",
+          "to": "/client",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/_authenticated/admin.clients.$id.tsx",
+          "line": 76,
+          "kind": "link",
+          "label": "{p.title}",
+          "to": "/admin/positions/$id",
+          "hasQa": false
+        }
+      ]
+    },
+    "/admin/clients/index": {
+      "file": "src/routes/_authenticated/admin.clients.index.tsx",
+      "controls": [
+        {
+          "file": "src/routes/_authenticated/admin.clients.index.tsx",
+          "line": 63,
+          "kind": "button",
+          "label": "Search",
+          "hasQa": false,
+          "onClick": false
+        },
+        {
+          "file": "src/routes/_authenticated/admin.clients.index.tsx",
+          "line": 43,
+          "kind": "link",
+          "label": "+ New client",
+          "to": "/admin/clients_new",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/_authenticated/admin.clients.index.tsx",
+          "line": 83,
+          "kind": "link",
+          "label": "{r.name}",
+          "to": "/admin/clients/$id",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/_authenticated/admin.clients.index.tsx",
+          "line": 101,
+          "kind": "link",
+          "label": "View Dashboard",
+          "to": "/client",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/_authenticated/admin.clients.index.tsx",
+          "line": 50,
+          "kind": "form",
+          "label": null,
+          "hasQa": false
+        }
+      ]
+    },
+    "/admin/clients_new": {
+      "file": "src/routes/_authenticated/admin.clients_new.tsx",
+      "controls": [
+        {
+          "file": "src/routes/_authenticated/admin.clients_new.tsx",
+          "line": 135,
+          "kind": "form-submit-button",
+          "label": "{mut.isPending ? \"Creating…\" : \"Create client\"}",
+          "hasQa": false,
+          "onClick": false
+        },
+        {
+          "file": "src/routes/_authenticated/admin.clients_new.tsx",
+          "line": 138,
+          "kind": "button",
+          "label": "navigate({ to: \"/admin/clients\" })}\n            >\n              Cancel",
+          "hasQa": false,
+          "onClick": true
+        },
+        {
+          "file": "src/routes/_authenticated/admin.clients_new.tsx",
+          "line": 171,
+          "kind": "button",
+          "label": "navigate({\n                  to: \"/admin/clients/$id\",\n                  params:",
+          "hasQa": false,
+          "onClick": true
+        },
+        {
+          "file": "src/routes/_authenticated/admin.clients_new.tsx",
+          "line": 181,
+          "kind": "button",
+          "label": "navigate({ to: \"/client\", search: { org: result.organization_id } })\n           ",
+          "hasQa": false,
+          "onClick": true
+        },
+        {
+          "file": "src/routes/_authenticated/admin.clients_new.tsx",
+          "line": 190,
+          "kind": "button",
+          "label": "navigator.clipboard.writeText(\n                    `Email: ${result.email}\\nPass",
+          "hasQa": false,
+          "onClick": true
+        },
+        {
+          "file": "src/routes/_authenticated/admin.clients_new.tsx",
+          "line": 65,
+          "kind": "form",
+          "label": null,
+          "hasQa": false
+        }
+      ]
+    },
+    "/admin/health": {
+      "file": "src/routes/_authenticated/admin.health.tsx",
+      "controls": [
+        {
+          "file": "src/routes/_authenticated/admin.health.tsx",
+          "line": 141,
+          "kind": "button",
+          "label": "repair.mutate({\n                          id: j.entity_id,\n                     ",
+          "hasQa": false,
+          "onClick": true
+        },
+        {
+          "file": "src/routes/_authenticated/admin.health.tsx",
+          "line": 154,
+          "kind": "link",
+          "label": "open",
+          "to": "/admin/candidates/$id",
+          "hasQa": false
+        }
+      ]
+    },
+    "/admin/index": {
+      "file": "src/routes/_authenticated/admin.index.tsx",
+      "controls": [
+        {
+          "file": "src/routes/_authenticated/admin.index.tsx",
+          "line": 91,
+          "kind": "link",
+          "label": "{c.title}\n                 0 ? \"text-foreground\" : \"text-muted-foreground/60\"\n  ",
+          "to": null,
+          "hasQa": false
+        }
+      ]
+    },
+    "/admin/positions/:id": {
+      "file": "src/routes/_authenticated/admin.positions.$id.tsx",
+      "controls": [
+        {
+          "file": "src/routes/_authenticated/admin.positions.$id.tsx",
+          "line": 285,
+          "kind": "button",
+          "label": "saveMut.mutate()}>\n              {saveMut.isPending ? \"Saving…\" : \"Save requisit",
+          "hasQa": false,
+          "onClick": true
+        },
+        {
+          "file": "src/routes/_authenticated/admin.positions.$id.tsx",
+          "line": 304,
+          "kind": "button",
+          "label": "statusMut.mutate(\"request_clarification\")}\n                >\n                  R",
+          "hasQa": false,
+          "onClick": true
+        },
+        {
+          "file": "src/routes/_authenticated/admin.positions.$id.tsx",
+          "line": 311,
+          "kind": "button",
+          "label": "statusMut.mutate(\"approve\")}\n                >\n                  Approve",
+          "hasQa": false,
+          "onClick": true
+        },
+        {
+          "file": "src/routes/_authenticated/admin.positions.$id.tsx",
+          "line": 322,
+          "kind": "button",
+          "label": "statusMut.mutate(\"approve\")}\n              >\n                Approve",
+          "hasQa": false,
+          "onClick": true
+        },
+        {
+          "file": "src/routes/_authenticated/admin.positions.$id.tsx",
+          "line": 331,
+          "kind": "button",
+          "label": "statusMut.mutate(\"activate\")}\n              >\n                Activate",
+          "hasQa": false,
+          "onClick": true
+        },
+        {
+          "file": "src/routes/_authenticated/admin.positions.$id.tsx",
+          "line": 341,
+          "kind": "button",
+          "label": "statusMut.mutate(\"pause\")}\n                >\n                  Pause",
+          "hasQa": false,
+          "onClick": true
+        },
+        {
+          "file": "src/routes/_authenticated/admin.positions.$id.tsx",
+          "line": 349,
+          "kind": "button",
+          "label": "statusMut.mutate(\"close\")}\n                >\n                  Close",
+          "hasQa": false,
+          "onClick": true
+        },
+        {
+          "file": "src/routes/_authenticated/admin.positions.$id.tsx",
+          "line": 361,
+          "kind": "button",
+          "label": "statusMut.mutate(\"activate\")}\n                >\n                  Resume",
+          "hasQa": false,
+          "onClick": true
+        },
+        {
+          "file": "src/routes/_authenticated/admin.positions.$id.tsx",
+          "line": 368,
+          "kind": "button",
+          "label": "statusMut.mutate(\"close\")}\n                >\n                  Close",
+          "hasQa": false,
+          "onClick": true
+        },
+        {
+          "file": "src/routes/_authenticated/admin.positions.$id.tsx",
+          "line": 379,
+          "kind": "button",
+          "label": "statusMut.mutate(\"reopen\")}\n              >\n                Reopen",
+          "hasQa": false,
+          "onClick": true
+        },
+        {
+          "file": "src/routes/_authenticated/admin.positions.$id.tsx",
+          "line": 140,
+          "kind": "link",
+          "label": "← {p.organizations?.name ?? \"Client\"}",
+          "to": "/admin/clients/$id",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/_authenticated/admin.positions.$id.tsx",
+          "line": 431,
+          "kind": "link",
+          "label": "{m.candidate_profiles?.full_name ?? \"—\"}",
+          "to": "/admin/candidates/$id",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/_authenticated/admin.positions.$id.tsx",
+          "line": 228,
+          "kind": "selectitem",
+          "label": "—",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/_authenticated/admin.positions.$id.tsx",
+          "line": 229,
+          "kind": "selectitem",
+          "label": "Remote",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/_authenticated/admin.positions.$id.tsx",
+          "line": 230,
+          "kind": "selectitem",
+          "label": "Hybrid",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/_authenticated/admin.positions.$id.tsx",
+          "line": 231,
+          "kind": "selectitem",
+          "label": "Onsite",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/_authenticated/admin.positions.$id.tsx",
+          "line": 248,
+          "kind": "selectitem",
+          "label": "—",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/_authenticated/admin.positions.$id.tsx",
+          "line": 249,
+          "kind": "selectitem",
+          "label": "Full time",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/_authenticated/admin.positions.$id.tsx",
+          "line": 250,
+          "kind": "selectitem",
+          "label": "Part time",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/_authenticated/admin.positions.$id.tsx",
+          "line": 251,
+          "kind": "selectitem",
+          "label": "Contract",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/_authenticated/admin.positions.$id.tsx",
+          "line": 252,
+          "kind": "selectitem",
+          "label": "Temporary",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/_authenticated/admin.positions.$id.tsx",
+          "line": 253,
+          "kind": "selectitem",
+          "label": "Internship",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/_authenticated/admin.positions.$id.tsx",
+          "line": 404,
+          "kind": "selectitem",
+          "label": "Public — on job board",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/_authenticated/admin.positions.$id.tsx",
+          "line": 405,
+          "kind": "selectitem",
+          "label": "Private — invite only",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/_authenticated/admin.positions.$id.tsx",
+          "line": 406,
+          "kind": "selectitem",
+          "label": "Internal — staff only",
+          "hasQa": false
+        }
+      ]
+    },
+    "/admin/positions/index": {
+      "file": "src/routes/_authenticated/admin.positions.index.tsx",
+      "controls": [
+        {
+          "file": "src/routes/_authenticated/admin.positions.index.tsx",
+          "line": 161,
+          "kind": "link",
+          "label": "Review →",
+          "to": "/admin/positions/$id",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/_authenticated/admin.positions.index.tsx",
+          "line": 77,
+          "kind": "form",
+          "label": null,
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/_authenticated/admin.positions.index.tsx",
+          "line": 101,
+          "kind": "selectitem",
+          "label": "Any status",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/_authenticated/admin.positions.index.tsx",
+          "line": 102,
+          "kind": "selectitem",
+          "label": "Draft",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/_authenticated/admin.positions.index.tsx",
+          "line": 103,
+          "kind": "selectitem",
+          "label": "Submitted",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/_authenticated/admin.positions.index.tsx",
+          "line": 104,
+          "kind": "selectitem",
+          "label": "Needs clarification",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/_authenticated/admin.positions.index.tsx",
+          "line": 105,
+          "kind": "selectitem",
+          "label": "Active",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/_authenticated/admin.positions.index.tsx",
+          "line": 106,
+          "kind": "selectitem",
+          "label": "Paused",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/_authenticated/admin.positions.index.tsx",
+          "line": 107,
+          "kind": "selectitem",
+          "label": "Closed",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/_authenticated/admin.positions.index.tsx",
+          "line": 108,
+          "kind": "selectitem",
+          "label": "Archived",
+          "hasQa": false
+        }
+      ]
+    },
+    "/admin/publish": {
+      "file": "src/routes/_authenticated/admin.publish.tsx",
+      "controls": [
+        {
+          "file": "src/routes/_authenticated/admin.publish.tsx",
+          "line": 236,
+          "kind": "button",
+          "label": "doAction.mutate(\"approve_for_client\")}\n          >\n            {doAction.isPendi",
+          "hasQa": false,
+          "onClick": true
+        },
+        {
+          "file": "src/routes/_authenticated/admin.publish.tsx",
+          "line": 242,
+          "kind": "button",
+          "label": "doAction.mutate(\"hold\")}\n          >\n            Hold",
+          "hasQa": false,
+          "onClick": true
+        },
+        {
+          "file": "src/routes/_authenticated/admin.publish.tsx",
+          "line": 256,
+          "kind": "button",
+          "label": "doAction.mutate(\"archive\")}\n          >\n            Archive",
+          "hasQa": false,
+          "onClick": true
+        },
+        {
+          "file": "src/routes/_authenticated/admin.publish.tsx",
+          "line": 50,
+          "kind": "button",
+          "label": "setActiveId(r.id)}\n                className={`w-full rounded p-2 text-left text",
+          "hasQa": false,
+          "onClick": true
+        },
+        {
+          "file": "src/routes/_authenticated/admin.publish.tsx",
+          "line": 161,
+          "kind": "link",
+          "label": "Full candidate workspace →",
+          "to": "/admin/candidates/$id",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/_authenticated/admin.publish.tsx",
+          "line": 249,
+          "kind": "link",
+          "label": "Request repair",
+          "to": "/admin/candidates/$id",
+          "hasQa": false
+        }
+      ]
+    },
+    "/admin/team": {
+      "file": "src/routes/_authenticated/admin.team.tsx",
+      "controls": [
+        {
+          "file": "src/routes/_authenticated/admin.team.tsx",
+          "line": 182,
+          "kind": "form-submit-button",
+          "label": "{mut.isPending ? \"Creating…\" : \"Create user\"}",
+          "hasQa": false,
+          "onClick": false
+        },
+        {
+          "file": "src/routes/_authenticated/admin.team.tsx",
+          "line": 212,
+          "kind": "button",
+          "label": "navigator.clipboard.writeText(\n                  `Email: ${result.email}\\nPasswo",
+          "hasQa": false,
+          "onClick": true
+        },
+        {
+          "file": "src/routes/_authenticated/admin.team.tsx",
+          "line": 223,
+          "kind": "button",
+          "label": "setResult(null)}>\n              Dismiss",
+          "hasQa": false,
+          "onClick": true
+        },
+        {
+          "file": "src/routes/_authenticated/admin.team.tsx",
+          "line": 298,
+          "kind": "button",
+          "label": "reset.mutate({ auth_user_id: m.auth_user_id!, email: m.email ?? \"\" })\n          ",
+          "hasQa": false,
+          "onClick": true
+        },
+        {
+          "file": "src/routes/_authenticated/admin.team.tsx",
+          "line": 309,
+          "kind": "button",
+          "label": "deact.mutate({ membership_id: m.membership_id })}\n                    >\n        ",
+          "hasQa": false,
+          "onClick": true
+        },
+        {
+          "file": "src/routes/_authenticated/admin.team.tsx",
+          "line": 317,
+          "kind": "button",
+          "label": "react.mutate({ membership_id: m.membership_id })}\n                    >\n        ",
+          "hasQa": false,
+          "onClick": true
+        },
+        {
+          "file": "src/routes/_authenticated/admin.team.tsx",
+          "line": 325,
+          "kind": "button",
+          "label": "{\n                      if (confirm(\"Remove this member from the client?\")) {\n  ",
+          "hasQa": false,
+          "onClick": true
+        },
+        {
+          "file": "src/routes/_authenticated/admin.team.tsx",
+          "line": 367,
+          "kind": "button",
+          "label": "navigator.clipboard.writeText(\n                  `Email: ${resetShown.email}\\nPa",
+          "hasQa": false,
+          "onClick": true
+        },
+        {
+          "file": "src/routes/_authenticated/admin.team.tsx",
+          "line": 378,
+          "kind": "button",
+          "label": "setResetShown(null)}>\n              Dismiss",
+          "hasQa": false,
+          "onClick": true
+        },
+        {
+          "file": "src/routes/_authenticated/admin.team.tsx",
+          "line": 55,
+          "kind": "button",
+          "label": "navigate({ search: {} })}\n          >\n            Platform staff",
+          "hasQa": false,
+          "onClick": true
+        },
+        {
+          "file": "src/routes/_authenticated/admin.team.tsx",
+          "line": 66,
+          "kind": "button",
+          "label": "navigate({ search: { org: c.id } })}\n              >\n                {c.name}",
+          "hasQa": false,
+          "onClick": true
+        },
+        {
+          "file": "src/routes/_authenticated/admin.team.tsx",
+          "line": 129,
+          "kind": "form",
+          "label": null,
+          "hasQa": false
+        }
+      ]
+    },
+    "/admin": {
+      "file": "src/routes/_authenticated/admin.tsx",
+      "controls": [
+        {
+          "file": "src/routes/_authenticated/admin.tsx",
+          "line": 84,
+          "kind": "link",
+          "label": "TaaSFlow admin",
+          "to": "/",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/_authenticated/admin.tsx",
+          "line": 91,
+          "kind": "link",
+          "label": "{s.label}",
+          "to": null,
+          "hasQa": false
+        }
+      ]
+    },
+    "/client/candidates/:id": {
+      "file": "src/routes/_authenticated/client.candidates.$id.tsx",
+      "controls": [
+        {
+          "file": "src/routes/_authenticated/client.candidates.$id.tsx",
+          "line": 239,
+          "kind": "button",
+          "label": "act.mutate(a.key)}\n                >\n                  {a.label}",
+          "hasQa": false,
+          "onClick": true
+        },
+        {
+          "file": "src/routes/_authenticated/client.candidates.$id.tsx",
+          "line": 94,
+          "kind": "link",
+          "label": "← All candidates",
+          "to": "/client/candidates",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/_authenticated/client.candidates.$id.tsx",
+          "line": 112,
+          "kind": "link",
+          "label": "{candidate.position.title}",
+          "to": "/client/positions/$id",
+          "hasQa": false
+        }
+      ]
+    },
+    "/client/candidates/index": {
+      "file": "src/routes/_authenticated/client.candidates.index.tsx",
+      "controls": [
+        {
+          "file": "src/routes/_authenticated/client.candidates.index.tsx",
+          "line": 104,
+          "kind": "link",
+          "label": "{f.label}",
+          "to": "/client/candidates",
+          "hasQa": false
+        }
+      ]
+    },
+    "/client/index": {
+      "file": "src/routes/_authenticated/client.index.tsx",
+      "controls": [
+        {
+          "file": "src/routes/_authenticated/client.index.tsx",
+          "line": 83,
+          "kind": "link",
+          "label": "{meta.label}\n              \n              \n                {value ?? (isFetching",
+          "to": "/client/candidates",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/_authenticated/client.index.tsx",
+          "line": 112,
+          "kind": "link",
+          "label": "New to review\n            \n              Candidates delivered but not yet shortl",
+          "to": "/client/candidates",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/_authenticated/client.index.tsx",
+          "line": 122,
+          "kind": "link",
+          "label": "Interview outcomes\n            \n              Candidates currently in your inter",
+          "to": "/client/candidates",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/_authenticated/client.index.tsx",
+          "line": 132,
+          "kind": "link",
+          "label": "Message TaaSFlow\n            \n              Ask a question or share feedback on ",
+          "to": "/client/messages",
+          "hasQa": false
+        }
+      ]
+    },
+    "/client/messages": {
+      "file": "src/routes/_authenticated/client.messages.tsx",
+      "controls": [
+        {
+          "file": "src/routes/_authenticated/client.messages.tsx",
+          "line": 145,
+          "kind": "form-submit-button",
+          "label": "Send",
+          "hasQa": false,
+          "onClick": false
+        },
+        {
+          "file": "src/routes/_authenticated/client.messages.tsx",
+          "line": 131,
+          "kind": "form",
+          "label": null,
+          "hasQa": false
+        }
+      ]
+    },
+    "/client/positions/:id": {
+      "file": "src/routes/_authenticated/client.positions.$id.tsx",
+      "controls": [
+        {
+          "file": "src/routes/_authenticated/client.positions.$id.tsx",
+          "line": 264,
+          "kind": "button",
+          "label": "Change stage",
+          "hasQa": false,
+          "onClick": false
+        },
+        {
+          "file": "src/routes/_authenticated/client.positions.$id.tsx",
+          "line": 162,
+          "kind": "link",
+          "label": "← All positions",
+          "to": "/client/positions",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/_authenticated/client.positions.$id.tsx",
+          "line": 238,
+          "kind": "link",
+          "label": "{m.candidate_profiles?.full_name ?? \"Candidate\"}",
+          "to": "/client/candidates/$id",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/_authenticated/client.positions.$id.tsx",
+          "line": 276,
+          "kind": "dropdownmenuitem",
+          "label": "attemptMove(m.id, from, to)}\n                                >\n                 ",
+          "hasQa": false
+        }
+      ]
+    },
+    "/client/positions/index": {
+      "file": "src/routes/_authenticated/client.positions.index.tsx",
+      "controls": [
+        {
+          "file": "src/routes/_authenticated/client.positions.index.tsx",
+          "line": 67,
+          "kind": "link",
+          "label": "{t.label}",
+          "to": "/client/positions",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/_authenticated/client.positions.index.tsx",
+          "line": 100,
+          "kind": "link",
+          "label": "Open position →",
+          "to": "/client/positions/$id",
+          "hasQa": false
+        }
+      ]
+    },
+    "/client": {
+      "file": "src/routes/_authenticated/client.tsx",
+      "controls": [
+        {
+          "file": "src/routes/_authenticated/client.tsx",
+          "line": 174,
+          "kind": "link",
+          "label": "submit a new intake",
+          "to": "/intake",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/_authenticated/client.tsx",
+          "line": 194,
+          "kind": "link",
+          "label": "{p.replace(\"client_\", \"\")}",
+          "to": "/client",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/_authenticated/client.tsx",
+          "line": 230,
+          "kind": "link",
+          "label": "{t.label}",
+          "to": null,
+          "hasQa": false
+        }
+      ]
+    },
+    "/me/applications/:id": {
+      "file": "src/routes/_authenticated/me.applications.$id.tsx",
+      "controls": [
+        {
+          "file": "src/routes/_authenticated/me.applications.$id.tsx",
+          "line": 81,
+          "kind": "button",
+          "label": "{\n                if (confirm(\"Withdraw this application?\")) withdraw.mutate();\n",
+          "hasQa": false,
+          "onClick": true
+        },
+        {
+          "file": "src/routes/_authenticated/me.applications.$id.tsx",
+          "line": 55,
+          "kind": "link",
+          "label": "← All applications",
+          "to": "/me/applications",
+          "hasQa": false
+        }
+      ]
+    },
+    "/me/applications/index": {
+      "file": "src/routes/_authenticated/me.applications.index.tsx",
+      "controls": [
+        {
+          "file": "src/routes/_authenticated/me.applications.index.tsx",
+          "line": 171,
+          "kind": "button",
+          "label": "{\n                      if (confirm(\"Withdraw this application?\")) {\n           ",
+          "hasQa": false,
+          "onClick": true
+        },
+        {
+          "file": "src/routes/_authenticated/me.applications.index.tsx",
+          "line": 98,
+          "kind": "link",
+          "label": "Browse open roles",
+          "to": "/jobs",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/_authenticated/me.applications.index.tsx",
+          "line": 163,
+          "kind": "link",
+          "label": "Track application",
+          "to": "/me/applications/$id",
+          "hasQa": false
+        }
+      ]
+    },
+    "/me/messages": {
+      "file": "src/routes/_authenticated/me.messages.tsx",
+      "controls": [
+        {
+          "file": "src/routes/_authenticated/me.messages.tsx",
+          "line": 139,
+          "kind": "form-submit-button",
+          "label": "Send",
+          "hasQa": false,
+          "onClick": false
+        },
+        {
+          "file": "src/routes/_authenticated/me.messages.tsx",
+          "line": 125,
+          "kind": "form",
+          "label": null,
+          "hasQa": false
+        }
+      ]
+    },
+    "/me/profile": {
+      "file": "src/routes/_authenticated/me.profile.tsx",
+      "controls": [
+        {
+          "file": "src/routes/_authenticated/me.profile.tsx",
+          "line": 253,
+          "kind": "form-submit-button",
+          "label": "{save.isPending ? \"Saving…\" : \"Save profile\"}",
+          "hasQa": false,
+          "onClick": false
+        },
+        {
+          "file": "src/routes/_authenticated/me.profile.tsx",
+          "line": 144,
+          "kind": "form",
+          "label": null,
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/_authenticated/me.profile.tsx",
+          "line": 264,
+          "kind": "file-upload",
+          "label": null,
+          "hasQa": false
+        }
+      ]
+    },
+    "/me/settings": {
+      "file": "src/routes/_authenticated/me.settings.tsx",
+      "controls": [
+        {
+          "file": "src/routes/_authenticated/me.settings.tsx",
+          "line": 154,
+          "kind": "button",
+          "label": "saveConsent.mutate()}\n          disabled={saveConsent.isPending}\n        >\n     ",
+          "hasQa": false,
+          "onClick": true
+        },
+        {
+          "file": "src/routes/_authenticated/me.settings.tsx",
+          "line": 173,
+          "kind": "button",
+          "label": "submitCorrection.mutate(correction.trim())}\n        >\n          Send request",
+          "hasQa": false,
+          "onClick": true
+        },
+        {
+          "file": "src/routes/_authenticated/me.settings.tsx",
+          "line": 194,
+          "kind": "button",
+          "label": "{\n            if (confirm(\"Request account deletion? Our team will follow up.\"))",
+          "hasQa": false,
+          "onClick": true
+        }
+      ]
+    },
+    "/me": {
+      "file": "src/routes/_authenticated/me.tsx",
+      "controls": [
+        {
+          "file": "src/routes/_authenticated/me.tsx",
+          "line": 79,
+          "kind": "link",
+          "label": "Browse jobs",
+          "to": "/jobs",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/_authenticated/me.tsx",
+          "line": 109,
+          "kind": "link",
+          "label": "{t.label}",
+          "to": null,
+          "hasQa": false
+        }
+      ]
+    },
+    "/access-denied": {
+      "file": "src/routes/access-denied.tsx",
+      "controls": [
+        {
+          "file": "src/routes/access-denied.tsx",
+          "line": 32,
+          "kind": "link",
+          "label": "setTimeout(() => navigate({ to: \"/login\" }), 0)}\n          >\n            Back to",
+          "to": "/login",
+          "hasQa": false
+        }
+      ]
+    },
+    "/apply/received/:applicationId": {
+      "file": "src/routes/apply.received.$applicationId.tsx",
+      "controls": [
+        {
+          "file": "src/routes/apply.received.$applicationId.tsx",
+          "line": 26,
+          "kind": "button",
+          "label": "Back to job board",
+          "hasQa": false,
+          "onClick": false
+        },
+        {
+          "file": "src/routes/apply.received.$applicationId.tsx",
+          "line": 84,
+          "kind": "button",
+          "label": "Create account to track application",
+          "hasQa": false,
+          "onClick": false
+        },
+        {
+          "file": "src/routes/apply.received.$applicationId.tsx",
+          "line": 87,
+          "kind": "button",
+          "label": "Browse more roles",
+          "hasQa": false,
+          "onClick": false
+        },
+        {
+          "file": "src/routes/apply.received.$applicationId.tsx",
+          "line": 26,
+          "kind": "link",
+          "label": "Back to job board",
+          "to": "/jobs",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/apply.received.$applicationId.tsx",
+          "line": 45,
+          "kind": "link",
+          "label": "TaaSFlow",
+          "to": "/",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/apply.received.$applicationId.tsx",
+          "line": 85,
+          "kind": "link",
+          "label": "Create account to track application",
+          "to": "/auth",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/apply.received.$applicationId.tsx",
+          "line": 88,
+          "kind": "link",
+          "label": "Browse more roles",
+          "to": "/jobs",
+          "hasQa": false
+        }
+      ]
+    },
+    "/dev/catalogue": {
+      "file": "src/routes/dev.catalogue.tsx",
+      "controls": [
+        {
+          "file": "src/routes/dev.catalogue.tsx",
+          "line": 36,
+          "kind": "button",
+          "label": "View tokens",
+          "hasQa": false,
+          "onClick": false
+        },
+        {
+          "file": "src/routes/dev.catalogue.tsx",
+          "line": 90,
+          "kind": "button",
+          "label": "Learn more",
+          "hasQa": false,
+          "onClick": false
+        },
+        {
+          "file": "src/routes/dev.catalogue.tsx",
+          "line": 110,
+          "kind": "button",
+          "label": "Cancel",
+          "hasQa": false,
+          "onClick": false
+        },
+        {
+          "file": "src/routes/dev.catalogue.tsx",
+          "line": 111,
+          "kind": "button",
+          "label": "Save changes",
+          "hasQa": false,
+          "onClick": false
+        },
+        {
+          "file": "src/routes/dev.catalogue.tsx",
+          "line": 118,
+          "kind": "button",
+          "label": "Primary",
+          "hasQa": false,
+          "onClick": false
+        },
+        {
+          "file": "src/routes/dev.catalogue.tsx",
+          "line": 119,
+          "kind": "button",
+          "label": "Secondary",
+          "hasQa": false,
+          "onClick": false
+        },
+        {
+          "file": "src/routes/dev.catalogue.tsx",
+          "line": 120,
+          "kind": "button",
+          "label": "Outline",
+          "hasQa": false,
+          "onClick": false
+        },
+        {
+          "file": "src/routes/dev.catalogue.tsx",
+          "line": 121,
+          "kind": "button",
+          "label": "Ghost",
+          "hasQa": false,
+          "onClick": false
+        },
+        {
+          "file": "src/routes/dev.catalogue.tsx",
+          "line": 122,
+          "kind": "button",
+          "label": "Destructive",
+          "hasQa": false,
+          "onClick": false
+        },
+        {
+          "file": "src/routes/dev.catalogue.tsx",
+          "line": 123,
+          "kind": "button",
+          "label": "Disabled",
+          "hasQa": false,
+          "onClick": false
+        }
+      ]
+    },
+    "/": {
+      "file": "src/routes/index.tsx",
+      "controls": [
+        {
+          "file": "src/routes/index.tsx",
+          "line": 40,
+          "kind": "button",
+          "label": "Start hiring",
+          "hasQa": false,
+          "onClick": false
+        },
+        {
+          "file": "src/routes/index.tsx",
+          "line": 55,
+          "kind": "button",
+          "label": "Submit an intake",
+          "hasQa": false,
+          "onClick": false
+        },
+        {
+          "file": "src/routes/index.tsx",
+          "line": 58,
+          "kind": "button",
+          "label": "Browse open roles",
+          "hasQa": false,
+          "onClick": false
+        },
+        {
+          "file": "src/routes/index.tsx",
+          "line": 30,
+          "kind": "link",
+          "label": "TaaSFlow",
+          "to": "/",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/index.tsx",
+          "line": 34,
+          "kind": "link",
+          "label": "Jobs",
+          "to": "/jobs",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/index.tsx",
+          "line": 37,
+          "kind": "link",
+          "label": "Sign in",
+          "to": "/auth",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/index.tsx",
+          "line": 41,
+          "kind": "link",
+          "label": "Start hiring",
+          "to": "/intake",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/index.tsx",
+          "line": 56,
+          "kind": "link",
+          "label": "Submit an intake",
+          "to": "/intake",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/index.tsx",
+          "line": 59,
+          "kind": "link",
+          "label": "Browse open roles",
+          "to": "/jobs",
+          "hasQa": false
+        }
+      ]
+    },
+    "/intake": {
+      "file": "src/routes/intake.tsx",
+      "controls": [
+        {
+          "file": "src/routes/intake.tsx",
+          "line": 495,
+          "kind": "button",
+          "label": "{\n                      const v = skillDraft.trim();\n                      if (v",
+          "hasQa": false,
+          "onClick": true
+        },
+        {
+          "file": "src/routes/intake.tsx",
+          "line": 590,
+          "kind": "button",
+          "label": "{\n                      const v = countryDraft.trim();\n                      if ",
+          "hasQa": false,
+          "onClick": true
+        },
+        {
+          "file": "src/routes/intake.tsx",
+          "line": 626,
+          "kind": "button",
+          "label": "{\n                      const v = titleDraft.trim();\n                      if (v",
+          "hasQa": false,
+          "onClick": true
+        },
+        {
+          "file": "src/routes/intake.tsx",
+          "line": 665,
+          "kind": "button",
+          "label": "{\n                      const v = qDraft.trim();\n                      if (v.len",
+          "hasQa": false,
+          "onClick": true
+        },
+        {
+          "file": "src/routes/intake.tsx",
+          "line": 763,
+          "kind": "button",
+          "label": "Back",
+          "hasQa": false,
+          "onClick": true
+        },
+        {
+          "file": "src/routes/intake.tsx",
+          "line": 766,
+          "kind": "button",
+          "label": "Save draft",
+          "hasQa": false,
+          "onClick": true
+        },
+        {
+          "file": "src/routes/intake.tsx",
+          "line": 775,
+          "kind": "button",
+          "label": "Continue",
+          "hasQa": false,
+          "onClick": true
+        },
+        {
+          "file": "src/routes/intake.tsx",
+          "line": 779,
+          "kind": "button",
+          "label": "{submitting ? \"Submitting…\" : \"Submit intake\"}",
+          "hasQa": false,
+          "onClick": true
+        },
+        {
+          "file": "src/routes/intake.tsx",
+          "line": 690,
+          "kind": "button",
+          "label": "set(\n                              \"screeningQuestions\",\n                       ",
+          "hasQa": false,
+          "onClick": true
+        },
+        {
+          "file": "src/routes/intake.tsx",
+          "line": 833,
+          "kind": "button",
+          "label": "onRemove(i)}\n          >\n            ×",
+          "hasQa": false,
+          "onClick": true
+        },
+        {
+          "file": "src/routes/intake.tsx",
+          "line": 771,
+          "kind": "anchor",
+          "label": "Talk to TaaSFlow",
+          "href": "mailto:hello@taasflow.com",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/intake.tsx",
+          "line": 431,
+          "kind": "selectitem",
+          "label": "Remote",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/intake.tsx",
+          "line": 432,
+          "kind": "selectitem",
+          "label": "Hybrid",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/intake.tsx",
+          "line": 433,
+          "kind": "selectitem",
+          "label": "Onsite",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/intake.tsx",
+          "line": 446,
+          "kind": "selectitem",
+          "label": "Full time",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/intake.tsx",
+          "line": 447,
+          "kind": "selectitem",
+          "label": "Part time",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/intake.tsx",
+          "line": 448,
+          "kind": "selectitem",
+          "label": "Contract",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/intake.tsx",
+          "line": 449,
+          "kind": "selectitem",
+          "label": "Temporary",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/intake.tsx",
+          "line": 450,
+          "kind": "selectitem",
+          "label": "Internship",
+          "hasQa": false
+        }
+      ]
+    },
+    "/intake_/confirmation": {
+      "file": "src/routes/intake_.confirmation.tsx",
+      "controls": [
+        {
+          "file": "src/routes/intake_.confirmation.tsx",
+          "line": 134,
+          "kind": "button",
+          "label": "Back to home",
+          "hasQa": false,
+          "onClick": false
+        },
+        {
+          "file": "src/routes/intake_.confirmation.tsx",
+          "line": 84,
+          "kind": "anchor",
+          "label": "hello@taasflow.com",
+          "href": "mailto:hello@taasflow.com",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/intake_.confirmation.tsx",
+          "line": 95,
+          "kind": "anchor",
+          "label": "hello@taasflow.com",
+          "href": "mailto:hello@taasflow.com",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/intake_.confirmation.tsx",
+          "line": 135,
+          "kind": "anchor",
+          "label": "Back to home",
+          "href": "/",
+          "hasQa": false
+        }
+      ]
+    },
+    "/jobs/:id/apply": {
+      "file": "src/routes/jobs.$id.apply.tsx",
+      "controls": [
+        {
+          "file": "src/routes/jobs.$id.apply.tsx",
+          "line": 46,
+          "kind": "button",
+          "label": "Browse open roles",
+          "hasQa": false,
+          "onClick": false
+        },
+        {
+          "file": "src/routes/jobs.$id.apply.tsx",
+          "line": 424,
+          "kind": "form-submit-button",
+          "label": "{submitting ? \"Submitting…\" : \"Submit application\"}",
+          "hasQa": false,
+          "onClick": false
+        },
+        {
+          "file": "src/routes/jobs.$id.apply.tsx",
+          "line": 46,
+          "kind": "link",
+          "label": "Browse open roles",
+          "to": "/jobs",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/jobs.$id.apply.tsx",
+          "line": 228,
+          "kind": "link",
+          "label": "TaaSFlow",
+          "to": "/",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/jobs.$id.apply.tsx",
+          "line": 229,
+          "kind": "link",
+          "label": "← Role details",
+          "to": "/jobs/$id",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/jobs.$id.apply.tsx",
+          "line": 427,
+          "kind": "link",
+          "label": "Cancel",
+          "to": "/jobs/$id",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/jobs.$id.apply.tsx",
+          "line": 262,
+          "kind": "form",
+          "label": null,
+          "hasQa": false
+        }
+      ]
+    },
+    "/jobs/:id/index": {
+      "file": "src/routes/jobs.$id.index.tsx",
+      "controls": [
+        {
+          "file": "src/routes/jobs.$id.index.tsx",
+          "line": 50,
+          "kind": "button",
+          "label": "Back to job board",
+          "hasQa": false,
+          "onClick": false
+        },
+        {
+          "file": "src/routes/jobs.$id.index.tsx",
+          "line": 103,
+          "kind": "button",
+          "label": "Apply for this role",
+          "hasQa": false,
+          "onClick": false
+        },
+        {
+          "file": "src/routes/jobs.$id.index.tsx",
+          "line": 142,
+          "kind": "button",
+          "label": "Apply now",
+          "hasQa": false,
+          "onClick": false
+        },
+        {
+          "file": "src/routes/jobs.$id.index.tsx",
+          "line": 145,
+          "kind": "button",
+          "label": "Back to job board",
+          "hasQa": false,
+          "onClick": false
+        },
+        {
+          "file": "src/routes/jobs.$id.index.tsx",
+          "line": 50,
+          "kind": "link",
+          "label": "Back to job board",
+          "to": "/jobs",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/jobs.$id.index.tsx",
+          "line": 76,
+          "kind": "link",
+          "label": "TaaSFlow",
+          "to": "/",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/jobs.$id.index.tsx",
+          "line": 78,
+          "kind": "link",
+          "label": "← All roles",
+          "to": "/jobs",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/jobs.$id.index.tsx",
+          "line": 104,
+          "kind": "link",
+          "label": "Apply for this role",
+          "to": "/jobs/$id/apply",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/jobs.$id.index.tsx",
+          "line": 143,
+          "kind": "link",
+          "label": "Apply now",
+          "to": "/jobs/$id/apply",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/jobs.$id.index.tsx",
+          "line": 146,
+          "kind": "link",
+          "label": "Back to job board",
+          "to": "/jobs",
+          "hasQa": false
+        }
+      ]
+    },
+    "/jobs/index": {
+      "file": "src/routes/jobs.index.tsx",
+      "controls": [
+        {
+          "file": "src/routes/jobs.index.tsx",
+          "line": 148,
+          "kind": "button",
+          "label": "setSeniority(\"any\")}\n              className={`text-xs px-3 py-1 rounded-full bo",
+          "hasQa": false,
+          "onClick": true
+        },
+        {
+          "file": "src/routes/jobs.index.tsx",
+          "line": 158,
+          "kind": "button",
+          "label": "setSeniority(s)}\n                className={`text-xs px-3 py-1 rounded-full bord",
+          "hasQa": false,
+          "onClick": true
+        },
+        {
+          "file": "src/routes/jobs.index.tsx",
+          "line": 90,
+          "kind": "link",
+          "label": "TaaSFlow",
+          "to": "/",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/jobs.index.tsx",
+          "line": 92,
+          "kind": "link",
+          "label": "Jobs",
+          "to": "/jobs",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/jobs.index.tsx",
+          "line": 93,
+          "kind": "link",
+          "label": "Sign in",
+          "to": "/auth",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/jobs.index.tsx",
+          "line": 180,
+          "kind": "link",
+          "label": "{p.organization_name}\n                      {p.title}\n                    \n     ",
+          "to": "/jobs/$id",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/jobs.index.tsx",
+          "line": 126,
+          "kind": "selectitem",
+          "label": "Any work model",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/jobs.index.tsx",
+          "line": 127,
+          "kind": "selectitem",
+          "label": "Remote",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/jobs.index.tsx",
+          "line": 128,
+          "kind": "selectitem",
+          "label": "Hybrid",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/jobs.index.tsx",
+          "line": 129,
+          "kind": "selectitem",
+          "label": "Onsite",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/jobs.index.tsx",
+          "line": 137,
+          "kind": "selectitem",
+          "label": "Any employment",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/jobs.index.tsx",
+          "line": 138,
+          "kind": "selectitem",
+          "label": "Full-time",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/jobs.index.tsx",
+          "line": 139,
+          "kind": "selectitem",
+          "label": "Part-time",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/jobs.index.tsx",
+          "line": 140,
+          "kind": "selectitem",
+          "label": "Contract",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/jobs.index.tsx",
+          "line": 141,
+          "kind": "selectitem",
+          "label": "Temporary",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/jobs.index.tsx",
+          "line": 142,
+          "kind": "selectitem",
+          "label": "Internship",
+          "hasQa": false
+        }
+      ]
+    },
+    "/login": {
+      "file": "src/routes/login.tsx",
+      "controls": [
+        {
+          "file": "src/routes/login.tsx",
+          "line": 237,
+          "kind": "form-submit-button",
+          "label": "{loading ? \"Signing in…\" : \"Sign in\"}",
+          "hasQa": false,
+          "onClick": false
+        },
+        {
+          "file": "src/routes/login.tsx",
+          "line": 271,
+          "kind": "form-submit-button",
+          "label": "{loading ? \"Creating account…\" : \"Create account\"}",
+          "hasQa": false,
+          "onClick": false
+        },
+        {
+          "file": "src/routes/login.tsx",
+          "line": 294,
+          "kind": "form-submit-button",
+          "label": "{loading ? \"Sending…\" : \"Send reset email\"}",
+          "hasQa": false,
+          "onClick": false
+        },
+        {
+          "file": "src/routes/login.tsx",
+          "line": 319,
+          "kind": "button",
+          "label": "onPersona(p.key)}\n                >\n                  Continue as {p.label}",
+          "hasQa": false,
+          "onClick": true
+        },
+        {
+          "file": "src/routes/login.tsx",
+          "line": 197,
+          "kind": "button",
+          "label": "navigate({\n                      to: \"/client\",\n                      search: { ",
+          "hasQa": false,
+          "onClick": true
+        },
+        {
+          "file": "src/routes/login.tsx",
+          "line": 241,
+          "kind": "button",
+          "label": "setMode(\"forgot\")}\n                >\n                  Forgot password?",
+          "hasQa": false,
+          "onClick": true
+        },
+        {
+          "file": "src/routes/login.tsx",
+          "line": 248,
+          "kind": "button",
+          "label": "setMode(\"signup\")}\n                >\n                  Create account",
+          "hasQa": false,
+          "onClick": true
+        },
+        {
+          "file": "src/routes/login.tsx",
+          "line": 274,
+          "kind": "button",
+          "label": "setMode(\"signin\")}\n              >\n                ← Already have an account? Si",
+          "hasQa": false,
+          "onClick": true
+        },
+        {
+          "file": "src/routes/login.tsx",
+          "line": 297,
+          "kind": "button",
+          "label": "setMode(\"signin\")}\n              >\n                ← Back to sign in",
+          "hasQa": false,
+          "onClick": true
+        },
+        {
+          "file": "src/routes/login.tsx",
+          "line": 307,
+          "kind": "link",
+          "label": "← Back home",
+          "to": "/",
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/login.tsx",
+          "line": 213,
+          "kind": "form",
+          "label": null,
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/login.tsx",
+          "line": 258,
+          "kind": "form",
+          "label": null,
+          "hasQa": false
+        },
+        {
+          "file": "src/routes/login.tsx",
+          "line": 283,
+          "kind": "form",
+          "label": null,
+          "hasQa": false
+        }
+      ]
+    },
+    "/reset-password": {
+      "file": "src/routes/reset-password.tsx",
+      "controls": [
+        {
+          "file": "src/routes/reset-password.tsx",
+          "line": 91,
+          "kind": "form-submit-button",
+          "label": "{loading ? \"Updating…\" : \"Update password\"}",
+          "hasQa": false,
+          "onClick": false
+        },
+        {
+          "file": "src/routes/reset-password.tsx",
+          "line": 68,
+          "kind": "form",
+          "label": null,
+          "hasQa": false
+        }
+      ]
+    }
+  },
+  "totals": {
+    "routes": 37,
+    "controls": 248,
+    "controls_with_qa_action": 0,
+    "coverage_pct": 0
+  }
+}
