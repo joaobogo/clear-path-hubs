@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as LoginRouteImport } from './routes/login'
 import { Route as IntakeRouteImport } from './routes/intake'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
@@ -48,6 +49,11 @@ import { Route as AuthenticatedAdminPositionsIdRouteImport } from './routes/_aut
 import { Route as AuthenticatedAdminClientsIdRouteImport } from './routes/_authenticated/admin.clients.$id'
 import { Route as AuthenticatedAdminCandidatesIdRouteImport } from './routes/_authenticated/admin.candidates.$id'
 
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IntakeRoute = IntakeRouteImport.update({
   id: '/intake',
   path: '/intake',
@@ -261,6 +267,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/intake': typeof IntakeRouteWithChildren
+  '/login': typeof LoginRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/client': typeof AuthenticatedClientRouteWithChildren
   '/me': typeof AuthenticatedMeRouteWithChildren
@@ -300,6 +307,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/intake': typeof IntakeRouteWithChildren
+  '/login': typeof LoginRoute
   '/dev/catalogue': typeof DevCatalogueRoute
   '/intake/confirmation': typeof IntakeConfirmationRoute
   '/jobs': typeof JobsIndexRoute
@@ -338,6 +346,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/intake': typeof IntakeRouteWithChildren
+  '/login': typeof LoginRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/client': typeof AuthenticatedClientRouteWithChildren
   '/_authenticated/me': typeof AuthenticatedMeRouteWithChildren
@@ -379,6 +388,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/intake'
+    | '/login'
     | '/admin'
     | '/client'
     | '/me'
@@ -418,6 +428,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/intake'
+    | '/login'
     | '/dev/catalogue'
     | '/intake/confirmation'
     | '/jobs'
@@ -455,6 +466,7 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/auth'
     | '/intake'
+    | '/login'
     | '/_authenticated/admin'
     | '/_authenticated/client'
     | '/_authenticated/me'
@@ -496,6 +508,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   IntakeRoute: typeof IntakeRouteWithChildren
+  LoginRoute: typeof LoginRoute
   DevCatalogueRoute: typeof DevCatalogueRoute
   JobsIndexRoute: typeof JobsIndexRoute
   ApiPublicQaSeedRoute: typeof ApiPublicQaSeedRoute
@@ -506,6 +519,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/intake': {
       id: '/intake'
       path: '/intake'
@@ -946,6 +966,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   IntakeRoute: IntakeRouteWithChildren,
+  LoginRoute: LoginRoute,
   DevCatalogueRoute: DevCatalogueRoute,
   JobsIndexRoute: JobsIndexRoute,
   ApiPublicQaSeedRoute: ApiPublicQaSeedRoute,

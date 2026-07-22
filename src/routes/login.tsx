@@ -242,7 +242,7 @@ function LoginPage() {
               QA persona access (non-production)
             </p>
             <div className="mt-2 grid gap-2">
-              {qa.personas.map((p) => (
+              {qa.personas.map((p: { key: "platform_admin" | "operations" | "client_admin" | "client_editor" | "client_viewer"; label: string }) => (
                 <Button
                   key={p.key}
                   variant="outline"
