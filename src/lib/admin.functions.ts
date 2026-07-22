@@ -545,7 +545,46 @@ export const getPipelineHealth = createServerFn({ method: "GET" })
     };
   });
 
-// ─── Match visibility (admin) ────────────────────────────────────────────────
+// ─── Admin messages inbox — every org thread visible to platform staff ──────
+export const listAdminMessages = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await requireStaff(context.userId);
+    const s = await getAdmin();
+    // Latest message per thread (thread_id = organization_id in the current model).
+    const { data: latest } = await s
+      .from("messages")
+      .select("id,thread_id,sender_user_id,body,created_at,read_at")
+      .order("created_at", { ascending: false })
+      .limit(200);
+    const byThread = new Map<string, AnyRow>();
+    for (const m of (latest ?? []) as AnyRow[]) {
+      if (!byThread.has(m.thread_id)) byThread.set(m.thread_id, m);
+    }
+    const threadIds = Array.from(byThread.keys());
+    if (threadIds.length === 0) return { threads: [] as AnyRow[] };
+    const { data: orgs } = await s
+      .from("organizations")
+      .select("id,name")
+      .in("id", threadIds);
+    const orgMap = new Map((orgs ?? []).map((o: AnyRow) => [o.id, o]));
+    const threads = threadIds
+      .map((tid) => {
+        const m = byThread.get(tid) as AnyRow;
+        const org = orgMap.get(tid) as AnyRow | undefined;
+        return {
+          thread_id: tid,
+          organization: org ? { id: org.id, name: org.name } : null,
+          last_body: m.body as string,
+          last_at: m.created_at as string,
+          unread: !m.read_at,
+        };
+      })
+      .sort((a, b) => (a.last_at < b.last_at ? 1 : -1));
+    return { threads };
+  });
+
+
 
 const matchVisInput = z.object({
   match_id: z.string().uuid(),
