@@ -52,9 +52,11 @@ type FormState = {
   firstName: string;
   lastName: string;
   workEmail: string;
+  phone: string;
   companyName: string;
   companyWebsite: string;
   industry: string;
+  companySize: string;
   headquarters: string;
   roleTitle: string;
   department: string;
@@ -64,15 +66,27 @@ type FormState = {
   seniority: string;
   headcount: string;
   jobDescription: string;
+  responsibilities: string;
   mustHaveSkills: string[];
   preferredRequirements: string;
+  experience: string;
+  education: string;
+  certifications: string;
+  languages: string;
+  industryExperience: string;
   dealbreakers: string;
   compensation: string;
   hiringUrgency: string;
+  hiringTimeline: string;
   targetCountries: string[];
   workAuthorization: string;
   targetTitles: string[];
   timezoneRequirements: string;
+  reasonForHiring: "" | "replacement" | "growth" | "backfill" | "new_team";
+  hiringChallenges: string;
+  interviewProcess: string;
+  decisionMakers: string;
+  additionalContext: string;
   screeningQuestions: ScreeningQ[];
   consent: boolean;
 };
@@ -81,9 +95,11 @@ const EMPTY: FormState = {
   firstName: "",
   lastName: "",
   workEmail: "",
+  phone: "",
   companyName: "",
   companyWebsite: "",
   industry: "",
+  companySize: "",
   headquarters: "",
   roleTitle: "",
   department: "",
@@ -93,15 +109,27 @@ const EMPTY: FormState = {
   seniority: "",
   headcount: "",
   jobDescription: "",
+  responsibilities: "",
   mustHaveSkills: [],
   preferredRequirements: "",
+  experience: "",
+  education: "",
+  certifications: "",
+  languages: "",
+  industryExperience: "",
   dealbreakers: "",
   compensation: "",
   hiringUrgency: "",
+  hiringTimeline: "",
   targetCountries: [],
   workAuthorization: "",
   targetTitles: [],
   timezoneRequirements: "",
+  reasonForHiring: "",
+  hiringChallenges: "",
+  interviewProcess: "",
+  decisionMakers: "",
+  additionalContext: "",
   screeningQuestions: [],
   consent: false,
 };
