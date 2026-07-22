@@ -123,6 +123,8 @@ export function CandidateDetailDrawer({
   const currentRun = runs[0];
   const jobs = (data?.jobs ?? []) as AnyRow[];
   const decisions = (data?.decisions ?? []) as AnyRow[];
+  const autoSiblings = (data?.siblings ?? []) as Array<{ id: string; position_title: string }>;
+  const siblings = siblingSubmissions ?? autoSiblings;
 
   useEffect(() => {
     if (cp) {
