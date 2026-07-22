@@ -72,6 +72,7 @@ function ClientsPage() {
               <th className="px-3 py-2 font-medium tabular-nums">Positions</th>
               <th className="px-3 py-2 font-medium tabular-nums">Active</th>
               <th className="px-3 py-2 font-medium">Updated</th>
+              <th className="px-3 py-2 font-medium text-right">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -96,11 +97,21 @@ function ClientsPage() {
                 <td className="px-3 py-2 text-xs text-muted-foreground">
                   {new Date(r.updated_at).toLocaleDateString()}
                 </td>
+                <td className="px-3 py-2 text-right">
+                  <Link
+                    to="/client"
+                    search={{ org: r.id, preview: "client_admin" }}
+                    className="inline-flex items-center rounded border px-2 py-1 text-xs hover:bg-muted"
+                    title="View this client's dashboard as an administrator (read-only)"
+                  >
+                    View Dashboard
+                  </Link>
+                </td>
               </tr>
             ))}
             {rows.length === 0 && (
               <tr>
-                <td colSpan={6} className="px-3 py-16 text-center text-muted-foreground">
+                <td colSpan={7} className="px-3 py-16 text-center text-muted-foreground">
                   No clients found.
                 </td>
               </tr>
