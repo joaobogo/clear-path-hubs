@@ -162,8 +162,12 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
   const mainConsideration: string | null =
     coverage?.main_consideration ??
     coverage?.gap ??
-    (Array.isArray(coverage?.missing) ? (coverage.missing[0] ?? null) : null) ??
-    (Array.isArray(run?.concerns) ? (run.concerns[0] ?? null) : null);
+    (Array.isArray(coverage?.missing) && coverage.missing.length > 0
+      ? String(coverage.missing[0])
+      : null) ??
+    (Array.isArray(run?.concerns) && run.concerns.length > 0
+      ? String(run.concerns[0])
+      : null);
 
   const evidence: Array<{ label: string; snippet: string }> = Array.isArray(
     run?.evidence,
