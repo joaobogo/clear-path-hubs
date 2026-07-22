@@ -389,10 +389,10 @@ export const Route = createFileRoute("/api/public/intake")({
             if (uniqueRecipients.length > 0) {
               const notifRows = uniqueRecipients.map((uid) => ({
                 event_id: evt.id,
-                recipient_user_id: uid,
-                audience: "admin",
+                recipient_user_id: uid as string,
+                audience: "admin" as const,
                 organization_id: organizationId,
-                event_type: "intake_submitted",
+                event_type: "intake_submitted" as const,
                 title: `New intake — ${data.companyName}`,
                 body: `${data.firstName} ${data.lastName} · ${data.roleTitle}${requisitionPending ? " (workspace preparing)" : ""}`,
                 link_path: `/admin/clients/${organizationId}`,
