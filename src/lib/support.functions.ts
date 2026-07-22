@@ -82,18 +82,22 @@ export const startSupportSession = createServerFn({ method: "POST" })
     const targetAuthUserId = ((targetMember as any)?.profiles?.auth_user_id as string | null) ?? null;
 
     const expiresAt = new Date(Date.now() + 60 * 60 * 1000).toISOString();
+    const trace = `sv_${Math.random().toString(36).slice(2, 10)}${Date.now().toString(36)}`;
+    const reason = data.reason?.trim() || "Support view session";
 
     const { data: session, error } = await supabaseAdmin
       .from("support_sessions")
       .insert({
         actor_user_id: context.userId,
         actor_role: actorRole,
-        target_user_id: targetAuthUserId ?? context.userId, // guard trigger reads this
+        target_user_id: targetAuthUserId ?? context.userId,
         organization_id: data.organization_id,
         mode: data.mode,
-        reason: data.reason ?? null,
         permission_preview: data.permission_preview,
+        reason,
+        scope: `org:${data.organization_id}`,
         expires_at: expiresAt,
+        trace_id: trace,
       })
       .select("id")
       .single();
