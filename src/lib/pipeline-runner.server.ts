@@ -96,7 +96,7 @@ export type PipelineOutcome = {
 async function loadCtx(s: Any, matchId: string) {
   const { data: match } = await s
     .from("candidate_matches")
-    .select("id,application_id,candidate_profile_id,position_id,organization_id,processing_state,current_score_run_id")
+    .select("id,application_id,candidate_profile_id,position_id,organization_id,processing_state,processing_updated_at,current_score_run_id")
     .eq("id", matchId)
     .maybeSingle();
   if (!match) throw new Error(`match_not_found:${matchId}`);
@@ -113,8 +113,23 @@ async function loadCtx(s: Any, matchId: string) {
   return { match, position: posRes.data, profile: profRes.data, file, answers: (ansRes.data ?? []) as Any[] };
 }
 
-// Advisory-lock via updating a sentinel: skip if already terminal state and no override.
-// (Same match can be retried; caller uses `force`.)
+const TRANSIENT_STATES = new Set(["parsing", "enriching", "scoring"]);
+const MAX_ATTEMPTS = 3;
+
+async function countRecentFailures(s: Any, matchId: string): Promise<number> {
+  const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+  const { count } = await s
+    .from("processing_jobs")
+    .select("id", { count: "exact", head: true })
+    .eq("entity_type", "candidate_match")
+    .eq("entity_id", matchId)
+    .eq("status", "failed")
+    .gte("started_at", since);
+  return count ?? 0;
+}
+
+// Advisory-lock via checking transient state age: if another runner claimed
+// this match <90s ago, skip to prevent duplicate concurrent work (retry storms).
 export async function runPipelineForMatch(matchId: string, opts: { force?: boolean } = {}): Promise<PipelineOutcome> {
   const s = await getAdmin();
   const trace_id = newTraceId();
@@ -125,6 +140,26 @@ export async function runPipelineForMatch(matchId: string, opts: { force?: boole
     const ctx = await loadCtx(s, matchId);
     if (!opts.force && (ctx.match.processing_state === "scored" || ctx.match.processing_state === "manual_review_required")) {
       return { match_id: matchId, trace_id, final_state: ctx.match.processing_state as State, steps: [{ step: "skip", ok: true, note: "already_terminal" }] };
+    }
+    // Duplicate-trigger guard: another worker holds this match.
+    if (!opts.force && TRANSIENT_STATES.has(ctx.match.processing_state)) {
+      const ageMs = ctx.match.processing_updated_at
+        ? Date.now() - new Date(ctx.match.processing_updated_at).getTime()
+        : Infinity;
+      if (ageMs < 90_000) {
+        return { match_id: matchId, trace_id, final_state: ctx.match.processing_state as State, steps: [{ step: "skip", ok: true, note: `locked_${Math.round(ageMs / 1000)}s` }] };
+      }
+    }
+    // Retry-storm guard: too many recent failures → mark permanent, need admin.
+    if (!opts.force) {
+      const fails = await countRecentFailures(s, matchId);
+      if (fails >= MAX_ATTEMPTS) {
+        await setState(s, matchId, "manual_review_required", {
+          trace_id, code: "max_attempts_exceeded",
+          message: `Auto-processing failed ${fails} times in 24h — admin review required.`,
+        });
+        return { match_id: matchId, trace_id, final_state: "manual_review_required", steps: [{ step: "skip", ok: false, note: `max_attempts:${fails}` }] };
+      }
     }
 
     // ─── PARSE ────────────────────────────────────────────────────────────────
