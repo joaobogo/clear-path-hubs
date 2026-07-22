@@ -8,6 +8,7 @@ import {
   getClientCandidate,
   getClientContext,
 } from "@/lib/client.functions";
+import { getCandidateCvDownload } from "@/lib/cv-download.functions";
 import { useClientOrgSearch } from "@/lib/use-client-org";
 import { useSupportView } from "@/lib/support-view";
 import { ActionGuard } from "@/components/action-guard";
