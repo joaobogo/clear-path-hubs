@@ -43,6 +43,7 @@ import { Route as AuthenticatedClientCandidatesRouteImport } from './routes/_aut
 import { Route as AuthenticatedAdminTeamRouteImport } from './routes/_authenticated/admin.team'
 import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin.settings'
 import { Route as AuthenticatedAdminPublishRouteImport } from './routes/_authenticated/admin.publish'
+import { Route as AuthenticatedAdminPositionsRouteImport } from './routes/_authenticated/admin.positions'
 import { Route as AuthenticatedAdminNotificationsRouteImport } from './routes/_authenticated/admin.notifications'
 import { Route as AuthenticatedAdminHealthRouteImport } from './routes/_authenticated/admin.health'
 import { Route as AuthenticatedAdminClients_newRouteImport } from './routes/_authenticated/admin.clients_new'
@@ -234,6 +235,12 @@ const AuthenticatedAdminPublishRoute =
     path: '/publish',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminPositionsRoute =
+  AuthenticatedAdminPositionsRouteImport.update({
+    id: '/positions',
+    path: '/positions',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminNotificationsRoute =
   AuthenticatedAdminNotificationsRouteImport.update({
     id: '/notifications',
@@ -289,9 +296,9 @@ const AuthenticatedClientCandidatesIdRoute =
   } as any)
 const AuthenticatedAdminPositionsIdRoute =
   AuthenticatedAdminPositionsIdRouteImport.update({
-    id: '/positions/$id',
-    path: '/positions/$id',
-    getParentRoute: () => AuthenticatedAdminRoute,
+    id: '/$id',
+    path: '/$id',
+    getParentRoute: () => AuthenticatedAdminPositionsRoute,
   } as any)
 const AuthenticatedAdminClientsIdRoute =
   AuthenticatedAdminClientsIdRouteImport.update({
@@ -324,6 +331,7 @@ export interface FileRoutesByFullPath {
   '/admin/clients_new': typeof AuthenticatedAdminClients_newRoute
   '/admin/health': typeof AuthenticatedAdminHealthRoute
   '/admin/notifications': typeof AuthenticatedAdminNotificationsRoute
+  '/admin/positions': typeof AuthenticatedAdminPositionsRouteWithChildren
   '/admin/publish': typeof AuthenticatedAdminPublishRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/team': typeof AuthenticatedAdminTeamRoute
@@ -368,6 +376,7 @@ export interface FileRoutesByTo {
   '/admin/clients_new': typeof AuthenticatedAdminClients_newRoute
   '/admin/health': typeof AuthenticatedAdminHealthRoute
   '/admin/notifications': typeof AuthenticatedAdminNotificationsRoute
+  '/admin/positions': typeof AuthenticatedAdminPositionsRouteWithChildren
   '/admin/publish': typeof AuthenticatedAdminPublishRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/team': typeof AuthenticatedAdminTeamRoute
@@ -417,6 +426,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/clients_new': typeof AuthenticatedAdminClients_newRoute
   '/_authenticated/admin/health': typeof AuthenticatedAdminHealthRoute
   '/_authenticated/admin/notifications': typeof AuthenticatedAdminNotificationsRoute
+  '/_authenticated/admin/positions': typeof AuthenticatedAdminPositionsRouteWithChildren
   '/_authenticated/admin/publish': typeof AuthenticatedAdminPublishRoute
   '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/_authenticated/admin/team': typeof AuthenticatedAdminTeamRoute
@@ -466,6 +476,7 @@ export interface FileRouteTypes {
     | '/admin/clients_new'
     | '/admin/health'
     | '/admin/notifications'
+    | '/admin/positions'
     | '/admin/publish'
     | '/admin/settings'
     | '/admin/team'
@@ -510,6 +521,7 @@ export interface FileRouteTypes {
     | '/admin/clients_new'
     | '/admin/health'
     | '/admin/notifications'
+    | '/admin/positions'
     | '/admin/publish'
     | '/admin/settings'
     | '/admin/team'
@@ -558,6 +570,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/clients_new'
     | '/_authenticated/admin/health'
     | '/_authenticated/admin/notifications'
+    | '/_authenticated/admin/positions'
     | '/_authenticated/admin/publish'
     | '/_authenticated/admin/settings'
     | '/_authenticated/admin/team'
@@ -848,6 +861,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminPublishRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/positions': {
+      id: '/_authenticated/admin/positions'
+      path: '/positions'
+      fullPath: '/admin/positions'
+      preLoaderRoute: typeof AuthenticatedAdminPositionsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/notifications': {
       id: '/_authenticated/admin/notifications'
       path: '/notifications'
@@ -913,10 +933,10 @@ declare module '@tanstack/react-router' {
     }
     '/_authenticated/admin/positions/$id': {
       id: '/_authenticated/admin/positions/$id'
-      path: '/positions/$id'
+      path: '/$id'
       fullPath: '/admin/positions/$id'
       preLoaderRoute: typeof AuthenticatedAdminPositionsIdRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
+      parentRoute: typeof AuthenticatedAdminPositionsRoute
     }
     '/_authenticated/admin/clients/$id': {
       id: '/_authenticated/admin/clients/$id'
@@ -963,17 +983,31 @@ const AuthenticatedAdminClientsRouteWithChildren =
     AuthenticatedAdminClientsRouteChildren,
   )
 
+interface AuthenticatedAdminPositionsRouteChildren {
+  AuthenticatedAdminPositionsIdRoute: typeof AuthenticatedAdminPositionsIdRoute
+}
+
+const AuthenticatedAdminPositionsRouteChildren: AuthenticatedAdminPositionsRouteChildren =
+  {
+    AuthenticatedAdminPositionsIdRoute: AuthenticatedAdminPositionsIdRoute,
+  }
+
+const AuthenticatedAdminPositionsRouteWithChildren =
+  AuthenticatedAdminPositionsRoute._addFileChildren(
+    AuthenticatedAdminPositionsRouteChildren,
+  )
+
 interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminCandidatesRoute: typeof AuthenticatedAdminCandidatesRouteWithChildren
   AuthenticatedAdminClientsRoute: typeof AuthenticatedAdminClientsRouteWithChildren
   AuthenticatedAdminClients_newRoute: typeof AuthenticatedAdminClients_newRoute
   AuthenticatedAdminHealthRoute: typeof AuthenticatedAdminHealthRoute
   AuthenticatedAdminNotificationsRoute: typeof AuthenticatedAdminNotificationsRoute
+  AuthenticatedAdminPositionsRoute: typeof AuthenticatedAdminPositionsRouteWithChildren
   AuthenticatedAdminPublishRoute: typeof AuthenticatedAdminPublishRoute
   AuthenticatedAdminSettingsRoute: typeof AuthenticatedAdminSettingsRoute
   AuthenticatedAdminTeamRoute: typeof AuthenticatedAdminTeamRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
-  AuthenticatedAdminPositionsIdRoute: typeof AuthenticatedAdminPositionsIdRoute
 }
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
@@ -983,11 +1017,12 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminClients_newRoute: AuthenticatedAdminClients_newRoute,
   AuthenticatedAdminHealthRoute: AuthenticatedAdminHealthRoute,
   AuthenticatedAdminNotificationsRoute: AuthenticatedAdminNotificationsRoute,
+  AuthenticatedAdminPositionsRoute:
+    AuthenticatedAdminPositionsRouteWithChildren,
   AuthenticatedAdminPublishRoute: AuthenticatedAdminPublishRoute,
   AuthenticatedAdminSettingsRoute: AuthenticatedAdminSettingsRoute,
   AuthenticatedAdminTeamRoute: AuthenticatedAdminTeamRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
-  AuthenticatedAdminPositionsIdRoute: AuthenticatedAdminPositionsIdRoute,
 }
 
 const AuthenticatedAdminRouteWithChildren =
