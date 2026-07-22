@@ -43,7 +43,7 @@ export const Route = createFileRoute("/jobs/$id/apply")({
     <div className="p-16 text-center">
       <h1 className="text-2xl font-semibold">This role is no longer accepting applications.</h1>
       <div className="mt-6">
-        <Link to="/jobs"><Button>Browse open roles</Button></Link>
+        <Button asChild><Link to="/jobs">Browse open roles</Link></Button>
       </div>
     </div>
   ),
