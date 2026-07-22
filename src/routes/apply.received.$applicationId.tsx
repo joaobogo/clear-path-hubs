@@ -23,7 +23,7 @@ export const Route = createFileRoute("/apply/received/$applicationId")({
     <div className="p-16 text-center">
       <h1 className="text-2xl font-semibold">Application not found</h1>
       <div className="mt-6">
-        <Link to="/jobs"><Button>Back to job board</Button></Link>
+        <Button asChild><Link to="/jobs">Back to job board</Link></Button>
       </div>
     </div>
   ),
@@ -81,12 +81,12 @@ function Received() {
         </section>
 
         <div className="mt-8 flex flex-wrap gap-3">
-          <Link to="/auth">
-            <Button>Create account to track application</Button>
-          </Link>
-          <Link to="/jobs">
-            <Button variant="outline">Browse more roles</Button>
-          </Link>
+          <Button asChild>
+            <Link to="/auth">Create account to track application</Link>
+          </Button>
+          <Button asChild variant="outline">
+            <Link to="/jobs">Browse more roles</Link>
+          </Button>
         </div>
 
         <p className="mt-6 text-xs text-muted-foreground">

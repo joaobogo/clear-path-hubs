@@ -47,7 +47,7 @@ export const Route = createFileRoute("/jobs/$id/")({
         It may have been closed or paused. Browse other open roles.
       </p>
       <div className="mt-6">
-        <Link to="/jobs"><Button>Back to job board</Button></Link>
+        <Button asChild><Link to="/jobs">Back to job board</Link></Button>
       </div>
     </div>
   ),
@@ -100,9 +100,9 @@ function JobDetail() {
         </div>
 
         <div className="mt-6">
-          <Link to="/jobs/$id/apply" params={{ id: pos.id }}>
-            <Button size="lg">Apply for this role</Button>
-          </Link>
+          <Button asChild size="lg">
+            <Link to="/jobs/$id/apply" params={{ id: pos.id }}>Apply for this role</Link>
+          </Button>
         </div>
 
         <section className="mt-10">
@@ -139,12 +139,12 @@ function JobDetail() {
         )}
 
         <div className="mt-12 border-t pt-8 flex flex-wrap gap-3">
-          <Link to="/jobs/$id/apply" params={{ id: pos.id }}>
-            <Button size="lg">Apply now</Button>
-          </Link>
-          <Link to="/jobs">
-            <Button variant="outline" size="lg">Back to job board</Button>
-          </Link>
+          <Button asChild size="lg">
+            <Link to="/jobs/$id/apply" params={{ id: pos.id }}>Apply now</Link>
+          </Button>
+          <Button asChild variant="outline" size="lg">
+            <Link to="/jobs">Back to job board</Link>
+          </Button>
         </div>
       </main>
     </div>

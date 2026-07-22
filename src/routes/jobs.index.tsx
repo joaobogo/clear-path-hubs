@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { listPublicPositions } from "@/lib/jobs.functions";
 import { Input } from "@/components/ui/input";
@@ -12,6 +12,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+
+const positionsQuery = queryOptions({
+  queryKey: ["public-positions"],
+  queryFn: () => listPublicPositions(),
+});
 
 export const Route = createFileRoute("/jobs/")({
   head: () => ({
@@ -31,11 +36,7 @@ export const Route = createFileRoute("/jobs/")({
       { name: "twitter:card", content: "summary" },
     ],
   }),
-  loader: async ({ context }) =>
-    context.queryClient.ensureQueryData({
-      queryKey: ["public-positions"],
-      queryFn: () => listPublicPositions(),
-    }),
+  loader: async ({ context }) => context.queryClient.ensureQueryData(positionsQuery),
   component: JobsPage,
 });
 
@@ -52,10 +53,7 @@ function labelEmployment(e: string | null) {
 }
 
 function JobsPage() {
-  const { data: positions = [] } = useQuery({
-    queryKey: ["public-positions"],
-    queryFn: () => listPublicPositions(),
-  });
+  const { data: positions } = useSuspenseQuery(positionsQuery);
 
   const [q, setQ] = useState("");
   const [workModel, setWorkModel] = useState<string>("any");
@@ -206,7 +204,9 @@ function JobsPage() {
                     {p.description_preview}
                   </p>
                   <div className="mt-4">
-                    <Button size="sm" variant="secondary">View role</Button>
+                    <span className="inline-flex items-center rounded-md bg-secondary px-3 py-1.5 text-sm font-medium text-secondary-foreground">
+                      View role
+                    </span>
                   </div>
                 </Link>
               </li>
