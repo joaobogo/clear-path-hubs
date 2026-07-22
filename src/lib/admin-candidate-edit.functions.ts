@@ -143,24 +143,60 @@ export const updateCandidateAsAdmin = createServerFn({ method: "POST" })
       };
     }
 
-    // 5. Audit event
-    await s.from("audit_events").insert({
-      actor_user_id: context.userId,
-      entity_type: "candidate_profiles",
-      entity_id: data.candidate_profile_id,
-      action: "candidate.update",
-      before_state: before,
-      after_state: after,
-      trace_id: trace,
-      metadata: {
-        source_surface: data.source_surface,
-        patched_fields: Object.keys(data.patch),
-        locked_fields_added: data.lock_fields ?? [],
-        match_id: data.match_id ?? null,
-      },
-    });
+    // 5. Read-after-write verification (fresh SELECT confirms fields persisted)
+    const { data: verify, error: verifyErr } = await s
+      .from("candidate_profiles")
+      .select("*")
+      .eq("id", data.candidate_profile_id)
+      .maybeSingle();
+    if (verifyErr || !verify) {
+      // Roll back the write
+      await s.from("candidate_profiles").update(before).eq("id", data.candidate_profile_id);
+      return {
+        ok: false,
+        code: "verify_failed",
+        message: verifyErr?.message ?? "readback missing",
+        trace_id: trace,
+      };
+    }
+    const drift: string[] = [];
+    for (const [k, v] of Object.entries(data.patch)) {
+      const persisted = (verify as AnyRow)[k];
+      if (JSON.stringify(persisted) !== JSON.stringify(v)) drift.push(k);
+    }
+    if (drift.length > 0) {
+      // Roll back on partial persistence to avoid stale UI
+      await s.from("candidate_profiles").update(before).eq("id", data.candidate_profile_id);
+      return {
+        ok: false,
+        code: "readback_drift",
+        message: `Fields did not persist: ${drift.join(", ")}`,
+        trace_id: trace,
+      };
+    }
 
-    // 6. Mark affected score runs stale (soft — via match note; hard rescore is a separate action)
+    // 6. Audit event (persisted with returned id)
+    const { data: audit } = await s
+      .from("audit_events")
+      .insert({
+        actor_user_id: context.userId,
+        entity_type: "candidate_profiles",
+        entity_id: data.candidate_profile_id,
+        action: "candidate.update",
+        before_state: before,
+        after_state: verify,
+        trace_id: trace,
+        metadata: {
+          source_surface: data.source_surface,
+          patched_fields: Object.keys(data.patch),
+          locked_fields_added: data.lock_fields ?? [],
+          match_id: data.match_id ?? null,
+        },
+      })
+      .select("id")
+      .maybeSingle();
+
+    // 7. Mark affected score runs stale when scoring-relevant fields changed
     const scoringChanged = Object.keys(data.patch).some((k) => SCORING_RELEVANT.has(k));
     let stale_marked = 0;
     if (scoringChanged) {
@@ -183,11 +219,13 @@ export const updateCandidateAsAdmin = createServerFn({ method: "POST" })
     return {
       ok: true,
       trace_id: trace,
-      profile: after,
+      audit_event_id: audit?.id ?? null,
+      profile: verify,
       scoring_relevant: scoringChanged,
       stale_marked,
     };
   });
+
 
 // Legacy Bridge Repair — create a canonical candidate_profiles row when it is missing.
 export const repairCandidateIdentity = createServerFn({ method: "POST" })
