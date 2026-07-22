@@ -1,430 +1,296 @@
-{
-  "generated": "2026-07-22",
-  "sha": "5e11a5040a3849554f5ecb8d874584e5669d8295",
-  "total": 47,
-  "routes": [
-    {
-      "file": "src/routes/_authenticated/admin.candidates.$id.tsx",
-      "route": "/_authenticated/admin/candidates/$id",
-      "persona": "admin",
-      "buttons": 8,
-      "links": 2,
-      "tabs": 0,
-      "onclicks": 8
-    },
-    {
-      "file": "src/routes/_authenticated/admin.candidates.tsx",
-      "route": "/_authenticated/admin/candidates",
-      "persona": "admin",
-      "buttons": 0,
-      "links": 1,
-      "tabs": 0,
-      "onclicks": 0
-    },
-    {
-      "file": "src/routes/_authenticated/admin.clients.$id.tsx",
-      "route": "/_authenticated/admin/clients/$id",
-      "persona": "admin",
-      "buttons": 0,
-      "links": 3,
-      "tabs": 0,
-      "onclicks": 0
-    },
-    {
-      "file": "src/routes/_authenticated/admin.clients.tsx",
-      "route": "/_authenticated/admin/clients",
-      "persona": "admin",
-      "buttons": 0,
-      "links": 3,
-      "tabs": 0,
-      "onclicks": 0
-    },
-    {
-      "file": "src/routes/_authenticated/admin.clients_new.tsx",
-      "route": "/_authenticated/admin/clients_new",
-      "persona": "admin",
-      "buttons": 5,
-      "links": 0,
-      "tabs": 0,
-      "onclicks": 4
-    },
-    {
-      "file": "src/routes/_authenticated/admin.health.tsx",
-      "route": "/_authenticated/admin/health",
-      "persona": "admin",
-      "buttons": 1,
-      "links": 1,
-      "tabs": 0,
-      "onclicks": 1
-    },
-    {
-      "file": "src/routes/_authenticated/admin.index.tsx",
-      "route": "/_authenticated/admin/",
-      "persona": "admin",
-      "buttons": 0,
-      "links": 1,
-      "tabs": 0,
-      "onclicks": 0
-    },
-    {
-      "file": "src/routes/_authenticated/admin.notifications.tsx",
-      "route": "/_authenticated/admin/notifications",
-      "persona": "admin",
-      "buttons": 0,
-      "links": 0,
-      "tabs": 0,
-      "onclicks": 0
-    },
-    {
-      "file": "src/routes/_authenticated/admin.positions.$id.tsx",
-      "route": "/_authenticated/admin/positions/$id",
-      "persona": "admin",
-      "buttons": 10,
-      "links": 2,
-      "tabs": 0,
-      "onclicks": 10
-    },
-    {
-      "file": "src/routes/_authenticated/admin.positions.tsx",
-      "route": "/_authenticated/admin/positions",
-      "persona": "admin",
-      "buttons": 0,
-      "links": 1,
-      "tabs": 0,
-      "onclicks": 0
-    },
-    {
-      "file": "src/routes/_authenticated/admin.publish.tsx",
-      "route": "/_authenticated/admin/publish",
-      "persona": "admin",
-      "buttons": 3,
-      "links": 2,
-      "tabs": 0,
-      "onclicks": 4
-    },
-    {
-      "file": "src/routes/_authenticated/admin.settings.tsx",
-      "route": "/_authenticated/admin/settings",
-      "persona": "admin",
-      "buttons": 0,
-      "links": 0,
-      "tabs": 0,
-      "onclicks": 0
-    },
-    {
-      "file": "src/routes/_authenticated/admin.team.tsx",
-      "route": "/_authenticated/admin/team",
-      "persona": "admin",
-      "buttons": 9,
-      "links": 0,
-      "tabs": 0,
-      "onclicks": 10
-    },
-    {
-      "file": "src/routes/_authenticated/admin.tsx",
-      "route": "/_authenticated/admin",
-      "persona": "admin",
-      "buttons": 0,
-      "links": 2,
-      "tabs": 0,
-      "onclicks": 0
-    },
-    {
-      "file": "src/routes/_authenticated/client.candidates.$id.tsx",
-      "route": "/_authenticated/client/candidates/$id",
-      "persona": "client",
-      "buttons": 1,
-      "links": 2,
-      "tabs": 0,
-      "onclicks": 1
-    },
-    {
-      "file": "src/routes/_authenticated/client.candidates.tsx",
-      "route": "/_authenticated/client/candidates",
-      "persona": "client",
-      "buttons": 0,
-      "links": 2,
-      "tabs": 0,
-      "onclicks": 0
-    },
-    {
-      "file": "src/routes/_authenticated/client.index.tsx",
-      "route": "/_authenticated/client/",
-      "persona": "client",
-      "buttons": 0,
-      "links": 4,
-      "tabs": 0,
-      "onclicks": 0
-    },
-    {
-      "file": "src/routes/_authenticated/client.messages.tsx",
-      "route": "/_authenticated/client/messages",
-      "persona": "client",
-      "buttons": 1,
-      "links": 0,
-      "tabs": 0,
-      "onclicks": 0
-    },
-    {
-      "file": "src/routes/_authenticated/client.positions.$id.tsx",
-      "route": "/_authenticated/client/positions/$id",
-      "persona": "client",
-      "buttons": 1,
-      "links": 2,
-      "tabs": 0,
-      "onclicks": 1
-    },
-    {
-      "file": "src/routes/_authenticated/client.positions.tsx",
-      "route": "/_authenticated/client/positions",
-      "persona": "client",
-      "buttons": 0,
-      "links": 2,
-      "tabs": 0,
-      "onclicks": 0
-    },
-    {
-      "file": "src/routes/_authenticated/client.settings.tsx",
-      "route": "/_authenticated/client/settings",
-      "persona": "client",
-      "buttons": 0,
-      "links": 0,
-      "tabs": 0,
-      "onclicks": 0
-    },
-    {
-      "file": "src/routes/_authenticated/client.team.tsx",
-      "route": "/_authenticated/client/team",
-      "persona": "client",
-      "buttons": 0,
-      "links": 0,
-      "tabs": 0,
-      "onclicks": 0
-    },
-    {
-      "file": "src/routes/_authenticated/client.tsx",
-      "route": "/_authenticated/client",
-      "persona": "client",
-      "buttons": 0,
-      "links": 3,
-      "tabs": 0,
-      "onclicks": 0
-    },
-    {
-      "file": "src/routes/_authenticated/me.applications.$id.tsx",
-      "route": "/_authenticated/me/applications/$id",
-      "persona": "candidate",
-      "buttons": 1,
-      "links": 1,
-      "tabs": 0,
-      "onclicks": 1
-    },
-    {
-      "file": "src/routes/_authenticated/me.applications.tsx",
-      "route": "/_authenticated/me/applications",
-      "persona": "candidate",
-      "buttons": 1,
-      "links": 2,
-      "tabs": 0,
-      "onclicks": 1
-    },
-    {
-      "file": "src/routes/_authenticated/me.index.tsx",
-      "route": "/_authenticated/me/",
-      "persona": "candidate",
-      "buttons": 0,
-      "links": 0,
-      "tabs": 0,
-      "onclicks": 0
-    },
-    {
-      "file": "src/routes/_authenticated/me.messages.tsx",
-      "route": "/_authenticated/me/messages",
-      "persona": "candidate",
-      "buttons": 1,
-      "links": 0,
-      "tabs": 0,
-      "onclicks": 0
-    },
-    {
-      "file": "src/routes/_authenticated/me.profile.tsx",
-      "route": "/_authenticated/me/profile",
-      "persona": "candidate",
-      "buttons": 1,
-      "links": 0,
-      "tabs": 0,
-      "onclicks": 0
-    },
-    {
-      "file": "src/routes/_authenticated/me.settings.tsx",
-      "route": "/_authenticated/me/settings",
-      "persona": "candidate",
-      "buttons": 3,
-      "links": 0,
-      "tabs": 0,
-      "onclicks": 3
-    },
-    {
-      "file": "src/routes/_authenticated/me.tsx",
-      "route": "/_authenticated/me",
-      "persona": "candidate",
-      "buttons": 0,
-      "links": 2,
-      "tabs": 0,
-      "onclicks": 0
-    },
-    {
-      "file": "src/routes/_authenticated/route.tsx",
-      "route": "/_authenticated",
-      "persona": "public",
-      "buttons": 0,
-      "links": 0,
-      "tabs": 0,
-      "onclicks": 0
-    },
-    {
-      "file": "src/routes/access-denied.tsx",
-      "route": "/access-denied",
-      "persona": "public",
-      "buttons": 0,
-      "links": 1,
-      "tabs": 0,
-      "onclicks": 1
-    },
-    {
-      "file": "src/routes/apply.received.$applicationId.tsx",
-      "route": "/apply/received/$applicationId",
-      "persona": "public",
-      "buttons": 3,
-      "links": 4,
-      "tabs": 0,
-      "onclicks": 0
-    },
-    {
-      "file": "src/routes/auth.tsx",
-      "route": "/auth",
-      "persona": "public",
-      "buttons": 0,
-      "links": 0,
-      "tabs": 0,
-      "onclicks": 0
-    },
-    {
-      "file": "src/routes/dev.catalogue.tsx",
-      "route": "/dev/catalogue",
-      "persona": "public",
-      "buttons": 10,
-      "links": 0,
-      "tabs": 0,
-      "onclicks": 0
-    },
-    {
-      "file": "src/routes/index.tsx",
-      "route": "/",
-      "persona": "public",
-      "buttons": 3,
-      "links": 6,
-      "tabs": 0,
-      "onclicks": 0
-    },
-    {
-      "file": "src/routes/intake.tsx",
-      "route": "/intake",
-      "persona": "public",
-      "buttons": 8,
-      "links": 0,
-      "tabs": 0,
-      "onclicks": 10
-    },
-    {
-      "file": "src/routes/intake_.confirmation.tsx",
-      "route": "/intake_/confirmation",
-      "persona": "public",
-      "buttons": 1,
-      "links": 0,
-      "tabs": 0,
-      "onclicks": 0
-    },
-    {
-      "file": "src/routes/jobs.$id.apply.tsx",
-      "route": "/jobs/$id/apply",
-      "persona": "public",
-      "buttons": 2,
-      "links": 4,
-      "tabs": 0,
-      "onclicks": 0
-    },
-    {
-      "file": "src/routes/jobs.$id.index.tsx",
-      "route": "/jobs/$id/",
-      "persona": "public",
-      "buttons": 4,
-      "links": 6,
-      "tabs": 0,
-      "onclicks": 0
-    },
-    {
-      "file": "src/routes/jobs.index.tsx",
-      "route": "/jobs/",
-      "persona": "public",
-      "buttons": 0,
-      "links": 4,
-      "tabs": 0,
-      "onclicks": 2
-    },
-    {
-      "file": "src/routes/login.tsx",
-      "route": "/login",
-      "persona": "public",
-      "buttons": 4,
-      "links": 1,
-      "tabs": 0,
-      "onclicks": 6
-    },
-    {
-      "file": "src/routes/reset-password.tsx",
-      "route": "/reset-password",
-      "persona": "public",
-      "buttons": 1,
-      "links": 0,
-      "tabs": 0,
-      "onclicks": 0
-    },
-    {
-      "file": "src/routes/api/public/bootstrap-admin.ts",
-      "route": "/api/public/bootstrap-admin",
-      "persona": "public",
-      "buttons": 0,
-      "links": 0,
-      "tabs": 0,
-      "onclicks": 0
-    },
-    {
-      "file": "src/routes/api/public/intake-status.$id.ts",
-      "route": "/api/public/intake-status/$id",
-      "persona": "public",
-      "buttons": 0,
-      "links": 0,
-      "tabs": 0,
-      "onclicks": 0
-    },
-    {
-      "file": "src/routes/api/public/intake.ts",
-      "route": "/api/public/intake",
-      "persona": "public",
-      "buttons": 0,
-      "links": 0,
-      "tabs": 0,
-      "onclicks": 0
-    },
-    {
-      "file": "src/routes/api/public/qa-seed.ts",
-      "route": "/api/public/qa-seed",
-      "persona": "public",
-      "buttons": 0,
-      "links": 0,
-      "tabs": 0,
-      "onclicks": 0
-    }
-  ]
-}
+[
+  {
+    "file": "_authenticated/admin.candidates.$id.tsx",
+    "url": "/admin/candidates/$id",
+    "persona": "platform_admin/operations",
+    "status": "UNTESTED"
+  },
+  {
+    "file": "_authenticated/admin.candidates.index.tsx",
+    "url": "/admin/candidates/index",
+    "persona": "platform_admin/operations",
+    "status": "UNTESTED"
+  },
+  {
+    "file": "_authenticated/admin.candidates.tsx",
+    "url": "/admin/candidates",
+    "persona": "platform_admin/operations",
+    "status": "UNTESTED"
+  },
+  {
+    "file": "_authenticated/admin.clients.$id.tsx",
+    "url": "/admin/clients/$id",
+    "persona": "platform_admin/operations",
+    "status": "UNTESTED"
+  },
+  {
+    "file": "_authenticated/admin.clients.index.tsx",
+    "url": "/admin/clients/index",
+    "persona": "platform_admin/operations",
+    "status": "UNTESTED"
+  },
+  {
+    "file": "_authenticated/admin.clients.tsx",
+    "url": "/admin/clients",
+    "persona": "platform_admin/operations",
+    "status": "UNTESTED"
+  },
+  {
+    "file": "_authenticated/admin.clients_new.tsx",
+    "url": "/admin/clients_new",
+    "persona": "platform_admin/operations",
+    "status": "UNTESTED"
+  },
+  {
+    "file": "_authenticated/admin.health.tsx",
+    "url": "/admin/health",
+    "persona": "platform_admin/operations",
+    "status": "UNTESTED"
+  },
+  {
+    "file": "_authenticated/admin.index.tsx",
+    "url": "/admin/index",
+    "persona": "platform_admin/operations",
+    "status": "UNTESTED"
+  },
+  {
+    "file": "_authenticated/admin.notifications.tsx",
+    "url": "/admin/notifications",
+    "persona": "platform_admin/operations",
+    "status": "UNTESTED"
+  },
+  {
+    "file": "_authenticated/admin.positions.$id.tsx",
+    "url": "/admin/positions/$id",
+    "persona": "platform_admin/operations",
+    "status": "UNTESTED"
+  },
+  {
+    "file": "_authenticated/admin.positions.index.tsx",
+    "url": "/admin/positions/index",
+    "persona": "platform_admin/operations",
+    "status": "UNTESTED"
+  },
+  {
+    "file": "_authenticated/admin.positions.tsx",
+    "url": "/admin/positions",
+    "persona": "platform_admin/operations",
+    "status": "UNTESTED"
+  },
+  {
+    "file": "_authenticated/admin.publish.tsx",
+    "url": "/admin/publish",
+    "persona": "platform_admin/operations",
+    "status": "UNTESTED"
+  },
+  {
+    "file": "_authenticated/admin.settings.tsx",
+    "url": "/admin/settings",
+    "persona": "platform_admin/operations",
+    "status": "UNTESTED"
+  },
+  {
+    "file": "_authenticated/admin.team.tsx",
+    "url": "/admin/team",
+    "persona": "platform_admin/operations",
+    "status": "UNTESTED"
+  },
+  {
+    "file": "_authenticated/admin.tsx",
+    "url": "/admin",
+    "persona": "platform_admin/operations",
+    "status": "UNTESTED"
+  },
+  {
+    "file": "_authenticated/client.candidates.$id.tsx",
+    "url": "/client/candidates/$id",
+    "persona": "client_*",
+    "status": "UNTESTED"
+  },
+  {
+    "file": "_authenticated/client.candidates.index.tsx",
+    "url": "/client/candidates/index",
+    "persona": "client_*",
+    "status": "UNTESTED"
+  },
+  {
+    "file": "_authenticated/client.candidates.tsx",
+    "url": "/client/candidates",
+    "persona": "client_*",
+    "status": "UNTESTED"
+  },
+  {
+    "file": "_authenticated/client.index.tsx",
+    "url": "/client/index",
+    "persona": "client_*",
+    "status": "UNTESTED"
+  },
+  {
+    "file": "_authenticated/client.messages.tsx",
+    "url": "/client/messages",
+    "persona": "client_*",
+    "status": "UNTESTED"
+  },
+  {
+    "file": "_authenticated/client.positions.$id.tsx",
+    "url": "/client/positions/$id",
+    "persona": "client_*",
+    "status": "UNTESTED"
+  },
+  {
+    "file": "_authenticated/client.positions.index.tsx",
+    "url": "/client/positions/index",
+    "persona": "client_*",
+    "status": "UNTESTED"
+  },
+  {
+    "file": "_authenticated/client.positions.tsx",
+    "url": "/client/positions",
+    "persona": "client_*",
+    "status": "UNTESTED"
+  },
+  {
+    "file": "_authenticated/client.settings.tsx",
+    "url": "/client/settings",
+    "persona": "client_*",
+    "status": "UNTESTED"
+  },
+  {
+    "file": "_authenticated/client.team.tsx",
+    "url": "/client/team",
+    "persona": "client_*",
+    "status": "UNTESTED"
+  },
+  {
+    "file": "_authenticated/client.tsx",
+    "url": "/client",
+    "persona": "client_*",
+    "status": "UNTESTED"
+  },
+  {
+    "file": "_authenticated/me.applications.$id.tsx",
+    "url": "/me/applications/$id",
+    "persona": "candidate",
+    "status": "UNTESTED"
+  },
+  {
+    "file": "_authenticated/me.applications.index.tsx",
+    "url": "/me/applications/index",
+    "persona": "candidate",
+    "status": "UNTESTED"
+  },
+  {
+    "file": "_authenticated/me.applications.tsx",
+    "url": "/me/applications",
+    "persona": "candidate",
+    "status": "UNTESTED"
+  },
+  {
+    "file": "_authenticated/me.index.tsx",
+    "url": "/me/index",
+    "persona": "candidate",
+    "status": "UNTESTED"
+  },
+  {
+    "file": "_authenticated/me.messages.tsx",
+    "url": "/me/messages",
+    "persona": "candidate",
+    "status": "UNTESTED"
+  },
+  {
+    "file": "_authenticated/me.profile.tsx",
+    "url": "/me/profile",
+    "persona": "candidate",
+    "status": "UNTESTED"
+  },
+  {
+    "file": "_authenticated/me.settings.tsx",
+    "url": "/me/settings",
+    "persona": "candidate",
+    "status": "UNTESTED"
+  },
+  {
+    "file": "_authenticated/me.tsx",
+    "url": "/me",
+    "persona": "candidate",
+    "status": "UNTESTED"
+  },
+  {
+    "file": "_authenticated/route.tsx",
+    "url": "/route",
+    "persona": "authenticated",
+    "status": "UNTESTED"
+  },
+  {
+    "file": "access-denied.tsx",
+    "url": "/access-denied",
+    "persona": "public",
+    "status": "UNTESTED"
+  },
+  {
+    "file": "apply.received.$applicationId.tsx",
+    "url": "/apply/received/$applicationId",
+    "persona": "public",
+    "status": "UNTESTED"
+  },
+  {
+    "file": "auth.tsx",
+    "url": "/auth",
+    "persona": "public",
+    "status": "UNTESTED"
+  },
+  {
+    "file": "dev.catalogue.tsx",
+    "url": "/dev/catalogue",
+    "persona": "public",
+    "status": "UNTESTED"
+  },
+  {
+    "file": "index.tsx",
+    "url": "/",
+    "persona": "public",
+    "status": "UNTESTED"
+  },
+  {
+    "file": "intake.tsx",
+    "url": "/intake",
+    "persona": "public",
+    "status": "UNTESTED"
+  },
+  {
+    "file": "intake_.confirmation.tsx",
+    "url": "/intake_/confirmation",
+    "persona": "public",
+    "status": "UNTESTED"
+  },
+  {
+    "file": "jobs.$id.apply.tsx",
+    "url": "/jobs/$id/apply",
+    "persona": "public",
+    "status": "UNTESTED"
+  },
+  {
+    "file": "jobs.$id.index.tsx",
+    "url": "/jobs/$id/index",
+    "persona": "public",
+    "status": "UNTESTED"
+  },
+  {
+    "file": "jobs.index.tsx",
+    "url": "/jobs/index",
+    "persona": "public",
+    "status": "UNTESTED"
+  },
+  {
+    "file": "login.tsx",
+    "url": "/login",
+    "persona": "public",
+    "status": "UNTESTED"
+  },
+  {
+    "file": "reset-password.tsx",
+    "url": "/reset-password",
+    "persona": "public",
+    "status": "UNTESTED"
+  }
+]
