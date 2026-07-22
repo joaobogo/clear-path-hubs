@@ -5,7 +5,9 @@ import { useEffect } from "react";
 import { z } from "zod";
 import { fallback, zodValidator } from "@tanstack/zod-adapter";
 import { getClientContext, getClientPositions } from "@/lib/client.functions";
+import { useClientOrgSearch } from "@/lib/use-client-org";
 import { Badge } from "@/components/ui/badge";
+
 
 const searchSchema = z.object({
   tab: fallback(z.string(), "active").default("active"),
