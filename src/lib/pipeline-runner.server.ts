@@ -304,6 +304,136 @@ export async function runPipelineForMatch(matchId: string, opts: { force?: boole
   }
 }
 
+// ─── Narrow re-runnable steps (used by Admin drawer actions) ─────────────────
+
+/**
+ * Re-run hydration + evidence snapshot for a single match without re-parsing
+ * the CV. Respects locked_fields / admin_corrected / user_confirmed via
+ * hydrateProfileFromCv. Ends in ready_to_score (or manual_review_required if
+ * requirements/position gates fail).
+ */
+export async function runHydrationOnly(matchId: string): Promise<PipelineOutcome> {
+  const s = await getAdmin();
+  const trace_id = newTraceId();
+  const steps: PipelineOutcome["steps"] = [];
+  try {
+    const ctx = await loadCtx(s, matchId);
+    if (!ctx.file) {
+      await setState(s, matchId, "failed", { trace_id, code: "cv_unreadable", message: "No CV on file." });
+      await recordJob(s, matchId, "hydrate", "failed", trace_id, { code: "cv_unreadable", message: "no_cv" });
+      return { match_id: matchId, trace_id, final_state: "failed", steps: [{ step: "hydrate", ok: false, note: "no_cv" }] };
+    }
+    const cvText = ctx.file.extracted_text ?? "";
+    if (!cvText || cvText.length < 60) {
+      await setState(s, matchId, "failed", { trace_id, code: "cv_unreadable", message: "CV text not yet extracted — run Retry Parse first." });
+      await recordJob(s, matchId, "hydrate", "failed", trace_id, { code: "cv_unreadable", message: "no_text" });
+      return { match_id: matchId, trace_id, final_state: "failed", steps: [{ step: "hydrate", ok: false, note: "no_text" }] };
+    }
+    await setState(s, matchId, "enriching", { trace_id });
+    const hydration = await hydrateProfileFromCv({
+      candidate_profile_id: ctx.match.candidate_profile_id,
+      cv_text: cvText,
+      trace_id,
+      source_surface: "admin_retry_hydration",
+    });
+    await recordJob(
+      s, matchId, "hydrate",
+      hydration.ok ? "completed" : "failed", trace_id,
+      hydration.ok ? undefined : { code: "hydration_failed", message: hydration.reason ?? "unknown" },
+    );
+    steps.push({ step: "hydrate", ok: hydration.ok, note: hydration.ok ? `applied:${hydration.applied.length}` : hydration.reason });
+    // Refresh evidence + advance readiness.
+    return await runEnrichmentOnly(matchId, { trace_id, previousSteps: steps });
+  } catch (err) {
+    const msg = (err as Error).message ?? "hydrate_error";
+    await setState(s, matchId, "failed", { trace_id, code: "engine_error", message: msg }).catch(() => undefined);
+    await recordJob(s, matchId, "hydrate", "failed", trace_id, { code: "engine_error", message: msg }).catch(() => undefined);
+    return { match_id: matchId, trace_id, final_state: "failed", steps: [{ step: "hydrate", ok: false, note: msg }] };
+  }
+}
+
+/**
+ * Refresh evidence graph from the current profile + CV without invoking the
+ * LLM. Marks match as ready_to_score (or manual_review_required if gates fail).
+ */
+export async function runEnrichmentOnly(
+  matchId: string,
+  opts: { trace_id?: string; previousSteps?: PipelineOutcome["steps"] } = {},
+): Promise<PipelineOutcome> {
+  const s = await getAdmin();
+  const trace_id = opts.trace_id ?? newTraceId();
+  const steps: PipelineOutcome["steps"] = [...(opts.previousSteps ?? [])];
+  try {
+    const ctx = await loadCtx(s, matchId);
+    if (!ctx.file) {
+      await setState(s, matchId, "failed", { trace_id, code: "cv_unreadable", message: "No CV on file." });
+      await recordJob(s, matchId, "enrich", "failed", trace_id, { code: "cv_unreadable", message: "no_cv" });
+      return { match_id: matchId, trace_id, final_state: "failed", steps: [...steps, { step: "enrich", ok: false, note: "no_cv" }] };
+    }
+    const cvText = ctx.file.extracted_text ?? "";
+    if (!cvText) {
+      await setState(s, matchId, "failed", { trace_id, code: "cv_unreadable", message: "No extracted CV text." });
+      await recordJob(s, matchId, "enrich", "failed", trace_id, { code: "cv_unreadable", message: "no_text" });
+      return { match_id: matchId, trace_id, final_state: "failed", steps: [...steps, { step: "enrich", ok: false, note: "no_text" }] };
+    }
+    const { data: freshProfile } = await s
+      .from("candidate_profiles")
+      .select("id,skills,experience,headline,location,consent")
+      .eq("id", ctx.match.candidate_profile_id).maybeSingle();
+    const screening = buildScreening(ctx.answers);
+    await s.from("candidate_evidence").upsert({
+      candidate_match_id: matchId,
+      candidate_profile_id: ctx.match.candidate_profile_id,
+      cv_file_id: ctx.file.id ?? null,
+      engine_version: ENGINE_VERSION,
+      extracted: {
+        cv_length: cvText.length,
+        skills: (freshProfile?.skills ?? []) as Json,
+        experience: (freshProfile?.experience ?? []) as Json,
+        headline: freshProfile?.headline ?? null,
+        location: freshProfile?.location ?? null,
+        refreshed_at: new Date().toISOString(),
+      } as unknown as Json,
+      screening_normalized: {
+        answers: screening.map((s2) => ({
+          question_id: s2.question_id, question: s2.question,
+          value: s2.value as Json, answer_type: s2.answer_type, required: s2.required,
+        })),
+      } as unknown as Json,
+      raw_text_sample: cvText.slice(0, 800),
+    }, { onConflict: "candidate_match_id,engine_version" });
+    await recordJob(s, matchId, "enrich", "completed", trace_id);
+    const pos = ctx.position;
+    if (!pos || pos.status !== "active") {
+      await setState(s, matchId, "manual_review_required", { trace_id, code: "position_inactive", message: `Position is ${pos?.status ?? "missing"} — manual review required.` });
+      return { match_id: matchId, trace_id, final_state: "manual_review_required", steps: [...steps, { step: "enrich", ok: true }] };
+    }
+    if (!hasStructuredRequirements(pos)) {
+      await setState(s, matchId, "manual_review_required", { trace_id, code: "requirements_missing", message: "Position has no structured requirements to score against." });
+      return { match_id: matchId, trace_id, final_state: "manual_review_required", steps: [...steps, { step: "enrich", ok: true }] };
+    }
+    await setState(s, matchId, "ready_to_score", { trace_id });
+    return { match_id: matchId, trace_id, final_state: "ready_to_score", steps: [...steps, { step: "enrich", ok: true }] };
+  } catch (err) {
+    const msg = (err as Error).message ?? "enrich_error";
+    await setState(s, matchId, "failed", { trace_id, code: "engine_error", message: msg }).catch(() => undefined);
+    await recordJob(s, matchId, "enrich", "failed", trace_id, { code: "engine_error", message: msg }).catch(() => undefined);
+    return { match_id: matchId, trace_id, final_state: "failed", steps: [...steps, { step: "enrich", ok: false, note: msg }] };
+  }
+}
+
+/**
+ * Force a match into manual_review_required. Records an audit-visible job row
+ * with the supplied reason. Does not touch scoring or profile fields.
+ */
+export async function forceManualReview(matchId: string, reason: string): Promise<PipelineOutcome> {
+  const s = await getAdmin();
+  const trace_id = newTraceId();
+  await setState(s, matchId, "manual_review_required", { trace_id, code: "admin_manual_review", message: reason });
+  await recordJob(s, matchId, "manual_review", "completed", trace_id);
+  return { match_id: matchId, trace_id, final_state: "manual_review_required", steps: [{ step: "manual_review", ok: true, note: reason.slice(0, 80) }] };
+}
+
 // Drain queued/stuck matches. Used by cron + fire-and-forget.
 export async function drainQueue(opts: { limit?: number } = {}): Promise<{ processed: number; results: PipelineOutcome[] }> {
   const s = await getAdmin();
@@ -322,3 +452,4 @@ export async function drainQueue(opts: { limit?: number } = {}): Promise<{ proce
   }
   return { processed: results.length, results };
 }
+
