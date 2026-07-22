@@ -8,9 +8,13 @@ import {
   getClientCandidate,
   getClientContext,
 } from "@/lib/client.functions";
+import { useClientOrgSearch } from "@/lib/use-client-org";
+import { useSupportView } from "@/lib/support-view";
+import { ActionGuard } from "@/components/action-guard";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
+
 
 export const Route = createFileRoute("/_authenticated/client/candidates/$id")({
   head: () => ({
