@@ -1,0 +1,109 @@
+{
+  "logins": [
+    {
+      "persona": "platform-admin",
+      "email_masked": "qa+platform-\u2026",
+      "target": "/admin",
+      "final_url": "/admin",
+      "title": "Admin \u00b7 TaaSFlow",
+      "screenshot": "platform-admin.png",
+      "status": "PASS"
+    },
+    {
+      "persona": "operations",
+      "email_masked": "qa+operation\u2026",
+      "target": "/admin",
+      "final_url": "/admin",
+      "title": "Admin \u00b7 TaaSFlow",
+      "screenshot": "operations.png",
+      "status": "PASS"
+    },
+    {
+      "persona": "alpha-admin",
+      "email_masked": "qa+alpha-adm\u2026",
+      "target": "/client",
+      "final_url": "/client",
+      "title": "Overview \u00b7 Client workspace",
+      "screenshot": "alpha-admin.png",
+      "status": "PASS"
+    },
+    {
+      "persona": "alpha-editor",
+      "email_masked": "qa+alpha-edi\u2026",
+      "target": "/client",
+      "final_url": "/client",
+      "title": "Overview \u00b7 Client workspace",
+      "screenshot": "alpha-editor.png",
+      "status": "PASS"
+    },
+    {
+      "persona": "alpha-viewer",
+      "email_masked": "qa+alpha-vie\u2026",
+      "target": "/client",
+      "final_url": "/client",
+      "title": "Overview \u00b7 Client workspace",
+      "screenshot": "alpha-viewer.png",
+      "status": "PASS"
+    },
+    {
+      "persona": "beta-admin",
+      "email_masked": "qa+beta-admi\u2026",
+      "target": "/client",
+      "final_url": "/client",
+      "title": "Overview \u00b7 Client workspace",
+      "screenshot": "beta-admin.png",
+      "status": "PASS"
+    },
+    {
+      "persona": "cand-single",
+      "email_masked": "qa+cand-sing\u2026",
+      "target": "/me",
+      "final_url": "/me/applications",
+      "title": "My applications \u00b7 TaaSFlow",
+      "screenshot": "cand-single.png",
+      "status": "PASS"
+    },
+    {
+      "persona": "cand-multi",
+      "email_masked": "qa+cand-mult\u2026",
+      "target": "/me",
+      "final_url": "/me/applications",
+      "title": "My applications \u00b7 TaaSFlow",
+      "screenshot": "cand-multi.png",
+      "status": "PASS"
+    },
+    {
+      "persona": "cand-none",
+      "email_masked": "qa+cand-none\u2026",
+      "target": "/me",
+      "final_url": "/me/applications",
+      "title": "My applications \u00b7 TaaSFlow",
+      "screenshot": "cand-none.png",
+      "status": "PASS"
+    }
+  ],
+  "parallel_probes": [
+    {
+      "persona": "platform-admin",
+      "url": "/admin/positions",
+      "final": "/admin/positions",
+      "authed": true
+    },
+    {
+      "persona": "alpha-admin",
+      "url": "/client",
+      "final": "/client",
+      "authed": true
+    },
+    {
+      "persona": "cand-single",
+      "url": "/me/applications",
+      "final": "/me/applications",
+      "authed": true
+    }
+  ],
+  "isolation_check": {
+    "alpha_saw_beta_data": false,
+    "status": "PASS"
+  }
+}
