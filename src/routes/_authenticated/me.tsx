@@ -12,7 +12,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { NotificationBell, NOTIFICATIONS_QUERY_KEY } from "@/components/notification-bell";
 import { SignOutButton } from "@/components/sign-out-button";
 import { useDashboardRealtime } from "@/hooks/use-realtime-refresh";
-import { FileText, User, MessageSquare, Shield } from "lucide-react";
+import { FileText, User, MessageSquare, Shield, FileUp } from "lucide-react";
 
 const CANDIDATE_REFRESH_KEYS = [
   ["me-context"],
