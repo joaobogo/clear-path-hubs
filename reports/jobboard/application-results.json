@@ -1,0 +1,43 @@
+[
+  {
+    "job_id": "b980228a-b433-464f-ad30-e615b30e2571",
+    "cv": "cv.pdf",
+    "slug": "j0",
+    "console_errors": [],
+    "email": "phase9+j0-aca218de@qa.taasflow.test",
+    "ok": true,
+    "received_url": "http://localhost:8080/apply/received/1bf03d3c-d53a-4a94-b74a-fc91b748ba45",
+    "application_id": "1bf03d3c-d53a-4a94-b74a-fc91b748ba45"
+  },
+  {
+    "job_id": "c1ca1800-b8f5-4eb6-85a5-7e08a71ee5ae",
+    "cv": "cv.docx",
+    "slug": "j1",
+    "console_errors": [],
+    "email": "phase9+j1-d6b853a1@qa.taasflow.test",
+    "ok": true,
+    "received_url": "http://localhost:8080/apply/received/2dcbb6c7-220f-4900-afc1-58eead7a2ffe",
+    "application_id": "2dcbb6c7-220f-4900-afc1-58eead7a2ffe"
+  },
+  {
+    "job_id": "a27b24b6-f715-41c3-9c16-d2a405632661",
+    "cv": "cv.txt",
+    "slug": "j2",
+    "console_errors": [],
+    "email": "phase9+j2-d019bfc6@qa.taasflow.test",
+    "ok": false,
+    "error": "Timeout 30000ms exceeded.\n=========================== logs ===========================\nwaiting for navigation to \"**/apply/received/**\" until 'load'\n============================================================",
+    "body_excerpt": "TaaSFlow\n\u2190 Role details\nTaaSFlow client\nApply \u2014 Product Designer [QA:qa20260722]\n\nTakes about 3 minutes. Your draft is saved as you type.\n\nFull name *\nEmail *\nPhone\nLocation\nCV *\n\nPDF, DOC, or DOCX. Up to 10 MB.\n\nPlease attach your CV.\n\nI agree to TaaSFlow's terms and privacy policy and consent to sharing my CV with the hiring team for this role. *\nOptional \u2014 also add me to the TaaSFlow talent network so recruiters can consider me for future matching roles.\nSubmit application\nCancel"
+  },
+  {
+    "scenario": "fresh-second-applicant",
+    "job_id": "b980228a-b433-464f-ad30-e615b30e2571",
+    "cv": "cv.pdf",
+    "slug": "dup",
+    "console_errors": [],
+    "email": "phase9+dup-da3a5e6a@qa.taasflow.test",
+    "ok": true,
+    "received_url": "http://localhost:8080/apply/received/09a1f2f8-a2b5-4818-96a7-f22d8762aabe",
+    "application_id": "09a1f2f8-a2b5-4818-96a7-f22d8762aabe"
+  }
+]
