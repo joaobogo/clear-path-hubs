@@ -275,9 +275,9 @@ async function handle(request: Request): Promise<Response> {
   if (!expected) return new Response("QA_SEED_TOKEN not configured", { status: 500 });
   if (!token || token !== expected) return new Response("forbidden", { status: 401 });
 
-  let body: { action?: string } = {};
+  let body: { action?: string; email?: string; user_id?: string; position_id?: string; full_name?: string } = {};
   try {
-    body = (await request.json()) as { action?: string };
+    body = (await request.json()) as typeof body;
   } catch {
     body = {};
   }
@@ -300,7 +300,39 @@ async function handle(request: Request): Promise<Response> {
         .in("name", [QA_ORG_NAME, QA_OTHER_ORG_NAME]);
       return Response.json({ ok: true, action, qa_orgs_present: count ?? 0 });
     }
+    if (action === "create_application") {
+      if (!body.user_id || !body.email || !body.position_id) {
+        return Response.json({ ok: false, error: "user_id, email, position_id required" }, { status: 400 });
+      }
+      const sb = await loadAdmin();
+      // Ensure candidate_profile
+      const { data: existingCp } = await sb.from("candidate_profiles").select("id").eq("user_id", body.user_id).maybeSingle();
+      let cpId = existingCp?.id as string | undefined;
+      if (!cpId) {
+        const { data: cpRow, error: cpErr } = await sb.from("candidate_profiles")
+          .insert({ user_id: body.user_id, full_name: body.full_name ?? "QA Candidate", email: body.email, consent: { terms: true, privacy: true } })
+          .select("id").single();
+        if (cpErr) throw cpErr;
+        cpId = cpRow.id as string;
+      }
+      // Position org
+      const { data: posRow, error: posErr } = await sb.from("positions").select("organization_id").eq("id", body.position_id).single();
+      if (posErr) throw posErr;
+      // Application
+      const { data: appRow, error: appErr } = await sb.from("applications")
+        .insert({ candidate_profile_id: cpId, position_id: body.position_id, source: "web", status: "received" })
+        .select("id").single();
+      if (appErr) throw appErr;
+      const appId = appRow.id as string;
+      // Match
+      const { data: matchRow, error: mErr } = await sb.from("candidate_matches")
+        .insert({ application_id: appId, candidate_profile_id: cpId, position_id: body.position_id, organization_id: posRow.organization_id, stage: "sourced", processing_state: "queued", admin_status: "pending", client_visibility: "hidden" })
+        .select("id").single();
+      if (mErr) throw mErr;
+      return Response.json({ ok: true, action, application_id: appId, candidate_profile_id: cpId, candidate_match_id: matchRow.id });
+    }
     return new Response(`unknown action: ${action}`, { status: 400 });
+
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     console.error("[qa-seed] failed", message);
