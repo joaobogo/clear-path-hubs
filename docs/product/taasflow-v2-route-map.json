@@ -1,0 +1,79 @@
+{
+  "canonical": {
+    "project_name": "TaaSFlow V2 (Clear Path Hubs)",
+    "repository_branch": "edit/edt-5fbbae72-5375-4b0f-94cf-5e56373d14fb",
+    "repository_sha": "fcbd8472139f8bd78b4db3acfc10066d29bcbdeb",
+    "preview_url": "https://id-preview--1dc5ee7e-1294-441c-8288-850e79e443f6.lovable.app",
+    "published_url": "https://clear-path-hubs.lovable.app",
+    "backend_project_ref": "nfwetiyrxsrejdodvale",
+    "migration_head": "20260722214417_27616daf-aeff-43b6-aac0-b0e043999227.sql",
+    "stack": "TanStack Start v1 on Cloudflare Workers, Supabase (Postgres/Auth/Storage/Edge Functions), Tailwind v4"
+  },
+  "public_routes": [
+    { "path": "/",                       "purpose": "Homepage — workspace-first positioning",           "source": "REWRITE_FOR_V2" },
+    { "path": "/solutions",              "purpose": "Solutions overview",                                "source": "NEW" },
+    { "path": "/industries",             "purpose": "Industries index",                                  "source": "MIGRATE" },
+    { "path": "/industries/$slug",       "purpose": "Industry leaf (22 slugs + compare)",                "source": "MIGRATE" },
+    { "path": "/enterprise",             "purpose": "Enterprise pitch",                                  "source": "MIGRATE" },
+    { "path": "/how-it-works",           "purpose": "Process + scoring explainer",                       "source": "MIGRATE + V2 screenshots" },
+    { "path": "/pricing",                "purpose": "Pricing tiers",                                     "source": "MIGRATE (VERIFY)" },
+    { "path": "/journey",                "purpose": "Founder + company timeline",                        "source": "MERGE from /about" },
+    { "path": "/about",                  "purpose": "Company",                                            "source": "MIGRATE (VERIFY stats)" },
+    { "path": "/resources",              "purpose": "Content hub",                                        "source": "MIGRATE" },
+    { "path": "/blog",                   "purpose": "Blog index",                                         "source": "MIGRATE (V2 implementation)" },
+    { "path": "/blog/$slug",             "purpose": "Blog article (72 rich, 232 pending re-crawl)",     "source": "MIGRATE" },
+    { "path": "/contact",                "purpose": "Contact + consultation",                            "source": "MIGRATE (rewire form)" },
+    { "path": "/privacy",                "purpose": "Legal — privacy",                                   "source": "MIGRATE (VERIFY legal)" },
+    { "path": "/terms",                  "purpose": "Legal — terms",                                     "source": "MIGRATE (VERIFY legal)" },
+    { "path": "/jobs",                   "purpose": "Public job board",                                  "source": "KEEP_NEW_IMPLEMENTATION" },
+    { "path": "/jobs/$id",               "purpose": "Job detail",                                        "source": "KEEP_NEW_IMPLEMENTATION" },
+    { "path": "/jobs/$id/apply",         "purpose": "Candidate application form",                        "source": "KEEP_NEW_IMPLEMENTATION" },
+    { "path": "/get-started",            "purpose": "Marketing entry to employer intake",                "source": "NEW (redirects to /intake)" },
+    { "path": "/login",                  "purpose": "Auth landing (redirects to /auth)",                 "source": "REDIRECT → /auth" },
+    { "path": "/reset-password",         "purpose": "Password reset",                                    "source": "KEEP_NEW_IMPLEMENTATION" },
+    { "path": "/sitemap.xml",            "purpose": "Search-engine sitemap",                             "source": "V2 server route" },
+    { "path": "/robots.txt",             "purpose": "Crawler policy",                                    "source": "V2 static" }
+  ],
+  "operational_routes": [
+    { "path": "/intake",                 "purpose": "Employer intake wizard",                            "owner": "V2 CANONICAL" },
+    { "path": "/api/public/intake",      "purpose": "Intake POST endpoint",                              "owner": "V2 CANONICAL" },
+    { "path": "/auth",                   "purpose": "Authentication",                                     "owner": "V2 CANONICAL" }
+  ],
+  "workspace_routes": {
+    "admin": [
+      "/admin",
+      "/admin/positions",
+      "/admin/positions/$id",
+      "/admin/candidates",
+      "/admin/candidates/$id",
+      "/admin/publish-desk",
+      "/admin/organizations",
+      "/admin/organizations/$id",
+      "/admin/support-mode",
+      "/admin/settings"
+    ],
+    "client": [
+      "/client",
+      "/client/positions",
+      "/client/positions/$id",
+      "/client/candidates/$id",
+      "/client/decisions",
+      "/client/messages",
+      "/client/settings"
+    ],
+    "candidate": [
+      "/candidate",
+      "/candidate/applications",
+      "/candidate/applications/$id",
+      "/candidate/messages",
+      "/candidate/profile"
+    ]
+  },
+  "redirects": [
+    { "from": "/employer-onboarding", "to": "/intake",  "code": 301 },
+    { "from": "/apply",               "to": "/jobs",    "code": 301 },
+    { "from": "/signup",              "to": "/auth",    "code": 301 },
+    { "from": "/login",               "to": "/auth",    "code": 301 },
+    { "from": "/dashboard",           "to": "/auth",    "code": 301 }
+  ]
+}
