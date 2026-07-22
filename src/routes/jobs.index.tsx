@@ -12,11 +12,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { X } from "lucide-react";
 
 const positionsQuery = queryOptions({
   queryKey: ["public-positions"],
   queryFn: () => listPublicPositions(),
 });
+
+const PAGE_SIZE = 20;
 
 export const Route = createFileRoute("/jobs/")({
   head: () => ({
@@ -25,7 +28,7 @@ export const Route = createFileRoute("/jobs/")({
       {
         name: "description",
         content:
-          "Browse open roles hand-picked by TaaSFlow. Remote, hybrid, and onsite positions across engineering, design, and data.",
+          "Browse open roles curated by TaaSFlow. Remote, hybrid, and onsite positions across engineering, design, product, and data.",
       },
       { property: "og:title", content: "Open roles — TaaSFlow" },
       {
@@ -52,6 +55,23 @@ function labelEmployment(e: string | null) {
   return e.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
+type ChipProps = { label: string; onClear: () => void };
+function FilterChip({ label, onClear }: ChipProps) {
+  return (
+    <span className="inline-flex items-center gap-1 rounded-full border bg-muted/50 px-2.5 py-1 text-xs">
+      {label}
+      <button
+        type="button"
+        onClick={onClear}
+        className="rounded-full p-0.5 hover:bg-muted"
+        aria-label={`Remove filter ${label}`}
+      >
+        <X className="h-3 w-3" />
+      </button>
+    </span>
+  );
+}
+
 function JobsPage() {
   const { data: positions } = useSuspenseQuery(positionsQuery);
 
@@ -60,6 +80,7 @@ function JobsPage() {
   const [employment, setEmployment] = useState<string>("any");
   const [seniority, setSeniority] = useState<string>("any");
   const [location, setLocation] = useState("");
+  const [page, setPage] = useState(1);
 
   const seniorityOptions = useMemo(() => {
     const s = new Set<string>();
@@ -83,14 +104,50 @@ function JobsPage() {
     });
   }, [positions, q, workModel, employment, seniority, location]);
 
+  // Reset paging on filter change
+  const activeChips: ChipProps[] = [];
+  if (q.trim()) activeChips.push({ label: `“${q.trim()}”`, onClear: () => { setQ(""); setPage(1); } });
+  if (location.trim())
+    activeChips.push({ label: `Location: ${location.trim()}`, onClear: () => { setLocation(""); setPage(1); } });
+  if (workModel !== "any")
+    activeChips.push({
+      label: `Work: ${labelWorkModel(workModel) ?? workModel}`,
+      onClear: () => { setWorkModel("any"); setPage(1); },
+    });
+  if (employment !== "any")
+    activeChips.push({
+      label: `Type: ${labelEmployment(employment) ?? employment}`,
+      onClear: () => { setEmployment("any"); setPage(1); },
+    });
+  if (seniority !== "any")
+    activeChips.push({ label: `Level: ${seniority}`, onClear: () => { setSeniority("any"); setPage(1); } });
+
+  const clearAll = () => {
+    setQ("");
+    setLocation("");
+    setWorkModel("any");
+    setEmployment("any");
+    setSeniority("any");
+    setPage(1);
+  };
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const clampedPage = Math.min(page, totalPages);
+  const pageItems = filtered.slice((clampedPage - 1) * PAGE_SIZE, clampedPage * PAGE_SIZE);
+
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b">
         <div className="mx-auto max-w-6xl px-4 py-4 flex items-center justify-between">
           <Link to="/" className="font-semibold tracking-tight">TaaSFlow</Link>
-          <nav className="flex items-center gap-3 text-sm">
+          <nav className="flex items-center gap-4 text-sm">
             <Link to="/jobs" className="text-foreground">Jobs</Link>
-            <Link to="/auth" className="text-muted-foreground hover:text-foreground">Sign in</Link>
+            <Link to="/intake" className="text-muted-foreground hover:text-foreground">
+              For employers
+            </Link>
+            <Link to="/auth" className="text-muted-foreground hover:text-foreground">
+              Sign in
+            </Link>
           </nav>
         </div>
       </header>
@@ -100,25 +157,29 @@ function JobsPage() {
           <h1 className="text-3xl md:text-4xl font-semibold tracking-tight">Open roles</h1>
           <p className="mt-2 text-muted-foreground">
             {positions.length} live {positions.length === 1 ? "role" : "roles"} curated by TaaSFlow.
+            Apply in minutes — no account required.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-3 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-3 mb-4">
           <div className="md:col-span-2">
             <Input
               aria-label="Search roles"
               placeholder="Search roles, skills, companies…"
               value={q}
-              onChange={(e) => setQ(e.target.value)}
+              onChange={(e) => { setQ(e.target.value); setPage(1); }}
             />
           </div>
           <Input
             aria-label="Location"
-            placeholder="Location"
+            placeholder="Location (city, country, remote)"
             value={location}
-            onChange={(e) => setLocation(e.target.value)}
+            onChange={(e) => { setLocation(e.target.value); setPage(1); }}
           />
-          <Select value={workModel} onValueChange={setWorkModel}>
+          <Select
+            value={workModel}
+            onValueChange={(v) => { setWorkModel(v); setPage(1); }}
+          >
             <SelectTrigger aria-label="Work model">
               <SelectValue placeholder="Work model" />
             </SelectTrigger>
@@ -129,7 +190,10 @@ function JobsPage() {
               <SelectItem value="onsite">Onsite</SelectItem>
             </SelectContent>
           </Select>
-          <Select value={employment} onValueChange={setEmployment}>
+          <Select
+            value={employment}
+            onValueChange={(v) => { setEmployment(v); setPage(1); }}
+          >
             <SelectTrigger aria-label="Employment type">
               <SelectValue placeholder="Employment" />
             </SelectTrigger>
@@ -143,11 +207,12 @@ function JobsPage() {
             </SelectContent>
           </Select>
         </div>
+
         {seniorityOptions.length > 0 && (
-          <div className="mb-6 flex flex-wrap gap-2">
+          <div className="mb-4 flex flex-wrap gap-2">
             <button
               type="button"
-              onClick={() => setSeniority("any")}
+              onClick={() => { setSeniority("any"); setPage(1); }}
               className={`text-xs px-3 py-1 rounded-full border ${
                 seniority === "any" ? "bg-primary text-primary-foreground" : "bg-background"
               }`}
@@ -158,7 +223,7 @@ function JobsPage() {
               <button
                 type="button"
                 key={s}
-                onClick={() => setSeniority(s)}
+                onClick={() => { setSeniority(s); setPage(1); }}
                 className={`text-xs px-3 py-1 rounded-full border ${
                   seniority === s ? "bg-primary text-primary-foreground" : "bg-background"
                 }`}
@@ -169,49 +234,109 @@ function JobsPage() {
           </div>
         )}
 
+        <div className="mb-6 flex flex-wrap items-center gap-2 text-sm">
+          <span className="text-muted-foreground">
+            {filtered.length} {filtered.length === 1 ? "result" : "results"}
+            {filtered.length !== positions.length ? ` of ${positions.length}` : ""}
+          </span>
+          {activeChips.length > 0 && (
+            <>
+              <span className="text-muted-foreground">·</span>
+              {activeChips.map((c, i) => (
+                <FilterChip key={i} {...c} />
+              ))}
+              <button
+                type="button"
+                onClick={clearAll}
+                className="text-xs text-muted-foreground hover:text-foreground underline underline-offset-2"
+              >
+                Clear all
+              </button>
+            </>
+          )}
+        </div>
+
         {filtered.length === 0 ? (
-          <div className="text-center py-20 text-muted-foreground">
-            No roles match your filters right now.
+          <div className="rounded-lg border bg-muted/30 py-16 text-center">
+            <div className="mx-auto max-w-md">
+              <h2 className="text-lg font-semibold">No roles match your filters</h2>
+              <p className="mt-2 text-sm text-muted-foreground">
+                Try widening the location or removing a filter. New roles are added weekly.
+              </p>
+              {activeChips.length > 0 && (
+                <Button variant="outline" className="mt-6" onClick={clearAll}>
+                  Clear filters
+                </Button>
+              )}
+            </div>
           </div>
         ) : (
-          <ul className="space-y-3">
-            {filtered.map((p) => (
-              <li key={p.id}>
-                <Link
-                  to="/jobs/$id"
-                  params={{ id: p.id }}
-                  className="block rounded-lg border bg-card p-4 md:p-5 hover:border-foreground/40 transition-colors"
+          <>
+            <ul className="space-y-3">
+              {pageItems.map((p) => (
+                <li key={p.id}>
+                  <Link
+                    to="/jobs/$id"
+                    params={{ id: p.id }}
+                    className="block rounded-lg border bg-card p-4 md:p-5 hover:border-foreground/40 hover:shadow-sm transition-all"
+                  >
+                    <div className="flex flex-wrap items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <div className="text-sm text-muted-foreground truncate">
+                          {p.organization_name}
+                        </div>
+                        <h2 className="mt-0.5 text-lg font-semibold truncate">{p.title}</h2>
+                      </div>
+                      <div className="flex flex-wrap gap-1.5 shrink-0">
+                        {labelWorkModel(p.work_model) && (
+                          <Badge variant="secondary">{labelWorkModel(p.work_model)}</Badge>
+                        )}
+                        {labelEmployment(p.employment_type) && (
+                          <Badge variant="outline">{labelEmployment(p.employment_type)}</Badge>
+                        )}
+                        {p.seniority && <Badge variant="outline">{p.seniority}</Badge>}
+                      </div>
+                    </div>
+                    <div className="mt-2 text-sm text-muted-foreground">
+                      {[p.location, p.compensation_display].filter(Boolean).join(" · ")}
+                    </div>
+                    <p className="mt-3 text-sm text-foreground/80 line-clamp-2">
+                      {p.description_preview}
+                    </p>
+                    <div className="mt-4">
+                      <span className="inline-flex items-center rounded-md bg-secondary px-3 py-1.5 text-sm font-medium text-secondary-foreground">
+                        View role
+                      </span>
+                    </div>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+
+            {totalPages > 1 && (
+              <div className="mt-8 flex items-center justify-between gap-4">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={clampedPage <= 1}
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
                 >
-                  <div className="flex flex-wrap items-start justify-between gap-3">
-                    <div>
-                      <div className="text-sm text-muted-foreground">{p.organization_name}</div>
-                      <h2 className="mt-0.5 text-lg font-semibold">{p.title}</h2>
-                    </div>
-                    <div className="flex flex-wrap gap-1.5">
-                      {labelWorkModel(p.work_model) && (
-                        <Badge variant="secondary">{labelWorkModel(p.work_model)}</Badge>
-                      )}
-                      {labelEmployment(p.employment_type) && (
-                        <Badge variant="outline">{labelEmployment(p.employment_type)}</Badge>
-                      )}
-                      {p.seniority && <Badge variant="outline">{p.seniority}</Badge>}
-                    </div>
-                  </div>
-                  <div className="mt-2 text-sm text-muted-foreground">
-                    {[p.location, p.compensation_display].filter(Boolean).join(" · ")}
-                  </div>
-                  <p className="mt-3 text-sm text-foreground/80 line-clamp-2">
-                    {p.description_preview}
-                  </p>
-                  <div className="mt-4">
-                    <span className="inline-flex items-center rounded-md bg-secondary px-3 py-1.5 text-sm font-medium text-secondary-foreground">
-                      View role
-                    </span>
-                  </div>
-                </Link>
-              </li>
-            ))}
-          </ul>
+                  ← Previous
+                </Button>
+                <div className="text-sm text-muted-foreground">
+                  Page {clampedPage} of {totalPages}
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={clampedPage >= totalPages}
+                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                >
+                  Next →
+                </Button>
+              </div>
+            )}
+          </>
         )}
       </main>
     </div>
