@@ -180,7 +180,7 @@ function LoginPage() {
         <Card className="p-6 space-y-4">
           <div>
             <h1 className="text-xl font-semibold">
-              {mode === "signin" ? "Sign in" : "Reset your password"}
+              {mode === "signin" ? "Sign in" : mode === "signup" ? "Create your account" : "Reset your password"}
             </h1>
             <p className="text-sm text-muted-foreground">TaaSFlow admin & client portal</p>
           </div>
