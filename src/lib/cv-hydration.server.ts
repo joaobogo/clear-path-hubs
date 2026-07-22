@@ -43,8 +43,12 @@ export type StructuredCv = {
   industry?: HydrationField;
 };
 
+// Bumped when the extraction/hydration contract changes materially.
+export const HYDRATION_PARSER_VERSION = "cv-hydration@2026.07.22";
+
 const MODEL = "google/gemini-2.5-flash";
 const GATEWAY_URL = "https://ai.gateway.lovable.dev/v1/chat/completions";
+
 
 const SYSTEM = `You extract structured resume data. Output STRICT JSON matching the schema. For every field include a confidence 0..1. If a field is not present, omit it. Do not invent values. Prefer verbatim strings from the CV.`;
 
