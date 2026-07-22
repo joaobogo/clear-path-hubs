@@ -522,21 +522,14 @@ export function CandidateDetailDrawer({
                   <Field label="OCR used" value={cv.ocr_used ? "Yes" : "No"} />
                   <Field label="Extracted at" value={cv.extraction_completed_at ? new Date(cv.extraction_completed_at).toLocaleString() : "—"} />
                   <Field label="Attempts" value={cv.extraction_attempts} />
-                  {cv.signed_url ? (
-                    <div className="flex gap-2 pt-2">
+                  <div className="flex gap-2 pt-2">
+                    {cv.signed_url && (
                       <a href={cv.signed_url} target="_blank" rel="noopener noreferrer">
                         <Button variant="secondary" size="sm">Preview CV</Button>
                       </a>
-                      <a href={cv.signed_url} download={cv.filename}>
-                        <Button variant="outline" size="sm">Download</Button>
-                      </a>
-                    </div>
-                  ) : (
-                    <Alert variant="destructive">
-                      <AlertTitle>Signed link failed</AlertTitle>
-                      <AlertDescription>Refresh to retry — links expire in 5 minutes.</AlertDescription>
-                    </Alert>
-                  )}
+                    )}
+                    <DownloadCvButton matchId={matchId} />
+                  </div>
                 </>
               )}
             </TabsContent>
