@@ -29,6 +29,7 @@ import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authentic
 import { Route as JobsIdApplyRouteImport } from './routes/jobs.$id.apply'
 import { Route as ApplyReceivedApplicationIdRouteImport } from './routes/apply.received.$applicationId'
 import { Route as ApiPublicQaSeedRouteImport } from './routes/api/public/qa-seed'
+import { Route as ApiPublicBootstrapAdminRouteImport } from './routes/api/public/bootstrap-admin'
 import { Route as AuthenticatedMeSettingsRouteImport } from './routes/_authenticated/me.settings'
 import { Route as AuthenticatedMeProfileRouteImport } from './routes/_authenticated/me.profile'
 import { Route as AuthenticatedMeMessagesRouteImport } from './routes/_authenticated/me.messages'
@@ -152,6 +153,11 @@ const ApplyReceivedApplicationIdRoute =
 const ApiPublicQaSeedRoute = ApiPublicQaSeedRouteImport.update({
   id: '/api/public/qa-seed',
   path: '/api/public/qa-seed',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicBootstrapAdminRoute = ApiPublicBootstrapAdminRouteImport.update({
+  id: '/api/public/bootstrap-admin',
+  path: '/api/public/bootstrap-admin',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedMeSettingsRoute = AuthenticatedMeSettingsRouteImport.update({
@@ -318,6 +324,7 @@ export interface FileRoutesByFullPath {
   '/me/messages': typeof AuthenticatedMeMessagesRoute
   '/me/profile': typeof AuthenticatedMeProfileRoute
   '/me/settings': typeof AuthenticatedMeSettingsRoute
+  '/api/public/bootstrap-admin': typeof ApiPublicBootstrapAdminRoute
   '/api/public/qa-seed': typeof ApiPublicQaSeedRoute
   '/apply/received/$applicationId': typeof ApplyReceivedApplicationIdRoute
   '/jobs/$id/apply': typeof JobsIdApplyRoute
@@ -359,6 +366,7 @@ export interface FileRoutesByTo {
   '/me/messages': typeof AuthenticatedMeMessagesRoute
   '/me/profile': typeof AuthenticatedMeProfileRoute
   '/me/settings': typeof AuthenticatedMeSettingsRoute
+  '/api/public/bootstrap-admin': typeof ApiPublicBootstrapAdminRoute
   '/api/public/qa-seed': typeof ApiPublicQaSeedRoute
   '/apply/received/$applicationId': typeof ApplyReceivedApplicationIdRoute
   '/jobs/$id/apply': typeof JobsIdApplyRoute
@@ -405,6 +413,7 @@ export interface FileRoutesById {
   '/_authenticated/me/messages': typeof AuthenticatedMeMessagesRoute
   '/_authenticated/me/profile': typeof AuthenticatedMeProfileRoute
   '/_authenticated/me/settings': typeof AuthenticatedMeSettingsRoute
+  '/api/public/bootstrap-admin': typeof ApiPublicBootstrapAdminRoute
   '/api/public/qa-seed': typeof ApiPublicQaSeedRoute
   '/apply/received/$applicationId': typeof ApplyReceivedApplicationIdRoute
   '/jobs/$id/apply': typeof JobsIdApplyRoute
@@ -451,6 +460,7 @@ export interface FileRouteTypes {
     | '/me/messages'
     | '/me/profile'
     | '/me/settings'
+    | '/api/public/bootstrap-admin'
     | '/api/public/qa-seed'
     | '/apply/received/$applicationId'
     | '/jobs/$id/apply'
@@ -492,6 +502,7 @@ export interface FileRouteTypes {
     | '/me/messages'
     | '/me/profile'
     | '/me/settings'
+    | '/api/public/bootstrap-admin'
     | '/api/public/qa-seed'
     | '/apply/received/$applicationId'
     | '/jobs/$id/apply'
@@ -537,6 +548,7 @@ export interface FileRouteTypes {
     | '/_authenticated/me/messages'
     | '/_authenticated/me/profile'
     | '/_authenticated/me/settings'
+    | '/api/public/bootstrap-admin'
     | '/api/public/qa-seed'
     | '/apply/received/$applicationId'
     | '/jobs/$id/apply'
@@ -562,6 +574,7 @@ export interface RootRouteChildren {
   ResetPasswordRoute: typeof ResetPasswordRoute
   DevCatalogueRoute: typeof DevCatalogueRoute
   JobsIndexRoute: typeof JobsIndexRoute
+  ApiPublicBootstrapAdminRoute: typeof ApiPublicBootstrapAdminRoute
   ApiPublicQaSeedRoute: typeof ApiPublicQaSeedRoute
   ApplyReceivedApplicationIdRoute: typeof ApplyReceivedApplicationIdRoute
   JobsIdApplyRoute: typeof JobsIdApplyRoute
@@ -708,6 +721,13 @@ declare module '@tanstack/react-router' {
       path: '/api/public/qa-seed'
       fullPath: '/api/public/qa-seed'
       preLoaderRoute: typeof ApiPublicQaSeedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/bootstrap-admin': {
+      id: '/api/public/bootstrap-admin'
+      path: '/api/public/bootstrap-admin'
+      fullPath: '/api/public/bootstrap-admin'
+      preLoaderRoute: typeof ApiPublicBootstrapAdminRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/me/settings': {
@@ -1054,6 +1074,7 @@ const rootRouteChildren: RootRouteChildren = {
   ResetPasswordRoute: ResetPasswordRoute,
   DevCatalogueRoute: DevCatalogueRoute,
   JobsIndexRoute: JobsIndexRoute,
+  ApiPublicBootstrapAdminRoute: ApiPublicBootstrapAdminRoute,
   ApiPublicQaSeedRoute: ApiPublicQaSeedRoute,
   ApplyReceivedApplicationIdRoute: ApplyReceivedApplicationIdRoute,
   JobsIdApplyRoute: JobsIdApplyRoute,
