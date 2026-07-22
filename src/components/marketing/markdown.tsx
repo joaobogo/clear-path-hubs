@@ -20,6 +20,10 @@ export function Markdown({ children }: { children: string }) {
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         components={{
+          // Prevent duplicate H1s — the page header already renders the H1.
+          h1: ({ children, ...rest }) => <h2 {...rest}>{children}</h2>,
+          h2: ({ children, ...rest }) => <h3 {...rest}>{children}</h3>,
+          h3: ({ children, ...rest }) => <h4 {...rest}>{children}</h4>,
           a: ({ href, children, ...rest }) => (
             <a href={rewriteHref(href)} {...rest}>
               {children}
@@ -27,7 +31,7 @@ export function Markdown({ children }: { children: string }) {
           ),
           img: ({ src, alt, ...rest }) => (
             // eslint-disable-next-line @next/next/no-img-element, jsx-a11y/alt-text
-            <img src={src} alt={alt ?? ""} loading="lazy" {...rest} />
+            <img src={src} alt={alt ?? ""} loading="lazy" decoding="async" {...rest} />
           ),
         }}
       >
