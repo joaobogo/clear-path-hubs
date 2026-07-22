@@ -17,7 +17,7 @@ import { Route as AccessDeniedRouteImport } from './routes/access-denied'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as JobsIndexRouteImport } from './routes/jobs.index'
-import { Route as IntakeConfirmationRouteImport } from './routes/intake.confirmation'
+import { Route as IntakeConfirmationRouteImport } from './routes/intake_.confirmation'
 import { Route as DevCatalogueRouteImport } from './routes/dev.catalogue'
 import { Route as AuthenticatedMeRouteImport } from './routes/_authenticated/me'
 import { Route as AuthenticatedClientRouteImport } from './routes/_authenticated/client'
@@ -96,9 +96,9 @@ const JobsIndexRoute = JobsIndexRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const IntakeConfirmationRoute = IntakeConfirmationRouteImport.update({
-  id: '/confirmation',
-  path: '/confirmation',
-  getParentRoute: () => IntakeRoute,
+  id: '/intake_/confirmation',
+  path: '/intake/confirmation',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const DevCatalogueRoute = DevCatalogueRouteImport.update({
   id: '/dev/catalogue',
@@ -310,7 +310,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/access-denied': typeof AccessDeniedRoute
   '/auth': typeof AuthRoute
-  '/intake': typeof IntakeRouteWithChildren
+  '/intake': typeof IntakeRoute
   '/login': typeof LoginRoute
   '/reset-password': typeof ResetPasswordRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
@@ -357,7 +357,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/access-denied': typeof AccessDeniedRoute
   '/auth': typeof AuthRoute
-  '/intake': typeof IntakeRouteWithChildren
+  '/intake': typeof IntakeRoute
   '/login': typeof LoginRoute
   '/reset-password': typeof ResetPasswordRoute
   '/dev/catalogue': typeof DevCatalogueRoute
@@ -403,14 +403,14 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/access-denied': typeof AccessDeniedRoute
   '/auth': typeof AuthRoute
-  '/intake': typeof IntakeRouteWithChildren
+  '/intake': typeof IntakeRoute
   '/login': typeof LoginRoute
   '/reset-password': typeof ResetPasswordRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/client': typeof AuthenticatedClientRouteWithChildren
   '/_authenticated/me': typeof AuthenticatedMeRouteWithChildren
   '/dev/catalogue': typeof DevCatalogueRoute
-  '/intake/confirmation': typeof IntakeConfirmationRoute
+  '/intake_/confirmation': typeof IntakeConfirmationRoute
   '/jobs/': typeof JobsIndexRoute
   '/_authenticated/admin/candidates': typeof AuthenticatedAdminCandidatesRouteWithChildren
   '/_authenticated/admin/clients': typeof AuthenticatedAdminClientsRouteWithChildren
@@ -551,7 +551,7 @@ export interface FileRouteTypes {
     | '/_authenticated/client'
     | '/_authenticated/me'
     | '/dev/catalogue'
-    | '/intake/confirmation'
+    | '/intake_/confirmation'
     | '/jobs/'
     | '/_authenticated/admin/candidates'
     | '/_authenticated/admin/clients'
@@ -593,10 +593,11 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AccessDeniedRoute: typeof AccessDeniedRoute
   AuthRoute: typeof AuthRoute
-  IntakeRoute: typeof IntakeRouteWithChildren
+  IntakeRoute: typeof IntakeRoute
   LoginRoute: typeof LoginRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   DevCatalogueRoute: typeof DevCatalogueRoute
+  IntakeConfirmationRoute: typeof IntakeConfirmationRoute
   JobsIndexRoute: typeof JobsIndexRoute
   ApiPublicBootstrapAdminRoute: typeof ApiPublicBootstrapAdminRoute
   ApiPublicIntakeRoute: typeof ApiPublicIntakeRoute
@@ -665,12 +666,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof JobsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/intake/confirmation': {
-      id: '/intake/confirmation'
-      path: '/confirmation'
+    '/intake_/confirmation': {
+      id: '/intake_/confirmation'
+      path: '/intake/confirmation'
       fullPath: '/intake/confirmation'
       preLoaderRoute: typeof IntakeConfirmationRouteImport
-      parentRoute: typeof IntakeRoute
+      parentRoute: typeof rootRouteImport
     }
     '/dev/catalogue': {
       id: '/dev/catalogue'
@@ -1093,26 +1094,16 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
 const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
-interface IntakeRouteChildren {
-  IntakeConfirmationRoute: typeof IntakeConfirmationRoute
-}
-
-const IntakeRouteChildren: IntakeRouteChildren = {
-  IntakeConfirmationRoute: IntakeConfirmationRoute,
-}
-
-const IntakeRouteWithChildren =
-  IntakeRoute._addFileChildren(IntakeRouteChildren)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AccessDeniedRoute: AccessDeniedRoute,
   AuthRoute: AuthRoute,
-  IntakeRoute: IntakeRouteWithChildren,
+  IntakeRoute: IntakeRoute,
   LoginRoute: LoginRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   DevCatalogueRoute: DevCatalogueRoute,
+  IntakeConfirmationRoute: IntakeConfirmationRoute,
   JobsIndexRoute: JobsIndexRoute,
   ApiPublicBootstrapAdminRoute: ApiPublicBootstrapAdminRoute,
   ApiPublicIntakeRoute: ApiPublicIntakeRoute,
