@@ -2,12 +2,12 @@ import { createFileRoute, Link, Outlet, redirect, useRouterState } from "@tansta
 import {
   LayoutDashboard,
   Building2,
+  Briefcase,
   Users,
   Send,
   Activity,
+  MessageSquare,
   Settings,
-  Inbox,
-  UserCog,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
@@ -18,8 +18,6 @@ import { NOTIFICATIONS_QUERY_KEY } from "@/components/notification-bell";
 import { getSessionContext } from "@/lib/auth.functions";
 
 export const Route = createFileRoute("/_authenticated/admin")({
-  // Route gate: only platform_admin / operations may enter the admin subtree.
-  // Runs client-side because the _authenticated layout is ssr:false.
   beforeLoad: async () => {
     try {
       const ctx = await getSessionContext();
@@ -28,7 +26,6 @@ export const Route = createFileRoute("/_authenticated/admin")({
       );
       if (!staff) throw redirect({ to: "/access-denied" });
     } catch (e) {
-      // Rethrow redirects; fail-closed on any other error.
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       if (e && typeof e === "object" && (e as any).isRedirect) throw e;
       throw redirect({ to: "/access-denied" });
@@ -50,24 +47,27 @@ const SECTIONS: Array<{
   exact?: boolean;
 }> = [
   { to: "/admin", label: "Overview", icon: LayoutDashboard, exact: true },
-  { to: "/admin/clients", label: "Clients & Positions", icon: Building2 },
+  { to: "/admin/clients", label: "Clients", icon: Building2 },
+  { to: "/admin/positions", label: "Positions", icon: Briefcase },
   { to: "/admin/candidates", label: "Candidates", icon: Users },
   { to: "/admin/publish", label: "Publish Desk", icon: Send },
-  { to: "/admin/team", label: "Team & Access", icon: UserCog },
-  { to: "/admin/health", label: "Pipeline Health", icon: Activity },
-  { to: "/admin/notifications", label: "Delivery health", icon: Inbox },
+  { to: "/admin/operations", label: "Operations", icon: Activity },
+  { to: "/admin/messages", label: "Messages", icon: MessageSquare },
   { to: "/admin/settings", label: "Settings", icon: Settings },
 ];
 
-// Query keys to invalidate on ANY admin-relevant notification arrival.
 const ADMIN_REFRESH_KEYS = [
-  ["admin", "overview"],
+  ["admin-overview"],
   ["admin", "intakes"],
   ["admin", "matches"],
   ["admin", "positions"],
   ["admin", "delivery-failures"],
+  ["pipeline-health"],
+  ["publish-queue"],
+  ["admin-messages"],
   NOTIFICATIONS_QUERY_KEY,
 ] as const;
+
 
 function AdminLayout() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
