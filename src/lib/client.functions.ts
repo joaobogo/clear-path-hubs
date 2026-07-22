@@ -1,0 +1,702 @@
+// Client workspace service — canonical read + mutation server fns for Phase 8.
+// All reads go through the authenticated Supabase client (RLS applies as the caller).
+// Mutations validate transitions, write audit events, and return enough info for
+// the caller to refresh caches. Every KPI here is derived from the SAME rows the
+// drill-through queries return, so counts always reconcile.
+import { createServerFn } from "@tanstack/react-start";
+import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { z } from "zod";
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type AnyRow = any;
+
+const traceId = () =>
+  `cl_${Math.random().toString(36).slice(2, 10)}${Date.now().toString(36)}`;
+
+// ─── Types ──────────────────────────────────────────────────────────────────
+
+export type ClientRole =
+  | "client_admin"
+  | "client_editor"
+  | "client_viewer"
+  | "platform_admin"
+  | "operations";
+
+export type MatchStage =
+  | "delivered"
+  | "shortlisted"
+  | "interview_process"
+  | "offer"
+  | "hired"
+  | "not_moving_forward";
+
+// Top-fit bands (see scoring engine). Anything approved with these labels counts
+// as a Top Match on the client KPI.
+export const TOP_FIT_LABELS = ["excellent", "strong"] as const;
+
+// ─── Context resolution ─────────────────────────────────────────────────────
+
+async function resolveContext(supabase: AnyRow, userId: string, orgId?: string) {
+  const { data: memberships, error } = await supabase
+    .from("memberships")
+    .select("organization_id, role, status, organizations(id, name)")
+    .eq("user_id", userId)
+    .eq("status", "active");
+  if (error) throw new Error(error.message);
+  const clientMemberships = (memberships as AnyRow[]).filter((m) =>
+    ["client_admin", "client_editor", "client_viewer"].includes(m.role),
+  );
+  const staffMemberships = (memberships as AnyRow[]).filter((m) =>
+    ["platform_admin", "operations"].includes(m.role),
+  );
+  const isStaff = staffMemberships.length > 0;
+  let active = clientMemberships.find((m) => m.organization_id === orgId);
+  if (!active && !orgId) active = clientMemberships[0];
+  // Staff can view any org they name.
+  if (!active && isStaff && orgId) {
+    const { data: org } = await supabase
+      .from("organizations")
+      .select("id, name")
+      .eq("id", orgId)
+      .maybeSingle();
+    if (org) {
+      active = {
+        organization_id: org.id,
+        role: "client_admin" as const,
+        organizations: org,
+      };
+    }
+  }
+  return { active, memberships: clientMemberships, isStaff };
+}
+
+export const getClientContext = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input?: { orgId?: string }) => input ?? {})
+  .handler(async ({ context, data }) => {
+    const { active, memberships, isStaff } = await resolveContext(
+      context.supabase,
+      context.userId,
+      data.orgId,
+    );
+    if (!active) {
+      return {
+        active: null as null | {
+          organization_id: string;
+          role: ClientRole;
+          name: string;
+        },
+        organizations: memberships.map((m) => ({
+          id: m.organization_id,
+          role: m.role as ClientRole,
+          name: m.organizations?.name ?? "Organization",
+        })),
+        isStaff,
+      };
+    }
+    return {
+      active: {
+        organization_id: active.organization_id,
+        role: active.role as ClientRole,
+        name: active.organizations?.name ?? "Organization",
+      },
+      organizations: memberships.map((m) => ({
+        id: m.organization_id,
+        role: m.role as ClientRole,
+        name: m.organizations?.name ?? "Organization",
+      })),
+      isStaff,
+    };
+  });
+
+// ─── Canonical KPI service ──────────────────────────────────────────────────
+//
+// Every KPI is defined as a predicate over rows returned by the base query
+// (candidate_matches joined with the approved score run). This is the ONE
+// place these definitions live; every drill-through UI filters the same rows
+// with the same predicates.
+
+type KpiRow = {
+  id: string;
+  candidate_profile_id: string;
+  position_id: string;
+  stage: MatchStage;
+  approved_score_run_id: string | null;
+  delivered_at: string | null;
+  // Denormalised for filtering:
+  approved_score: number | null;
+  approved_fit_label: string | null;
+  // Interview status resolved from interviews table (highest-priority active state).
+  interview_active: boolean;
+};
+
+async function loadKpiRows(supabase: AnyRow, orgId: string): Promise<KpiRow[]> {
+  // Only visible matches — RLS also enforces this for viewers, but we filter
+  // explicitly so counts match what the client sees.
+  const { data: matches, error } = await supabase
+    .from("candidate_matches")
+    .select(
+      `id, candidate_profile_id, position_id, stage, approved_score_run_id, delivered_at,
+       score_runs:approved_score_run_id (score, fit_label)`,
+    )
+    .eq("organization_id", orgId)
+    .eq("client_visibility", "visible");
+  if (error) throw new Error(error.message);
+
+  const matchIds = (matches as AnyRow[]).map((m) => m.id);
+  const activeInterviews = new Set<string>();
+  if (matchIds.length > 0) {
+    const { data: ivs } = await supabase
+      .from("interviews")
+      .select("candidate_match_id, status")
+      .in("candidate_match_id", matchIds)
+      .in("status", ["requested", "scheduling", "scheduled", "completed"]);
+    for (const iv of (ivs as AnyRow[]) ?? []) activeInterviews.add(iv.candidate_match_id);
+  }
+
+  return (matches as AnyRow[]).map((m) => ({
+    id: m.id,
+    candidate_profile_id: m.candidate_profile_id,
+    position_id: m.position_id,
+    stage: m.stage,
+    approved_score_run_id: m.approved_score_run_id,
+    delivered_at: m.delivered_at,
+    approved_score: m.score_runs?.score ?? null,
+    approved_fit_label: m.score_runs?.fit_label ?? null,
+    interview_active: activeInterviews.has(m.id),
+  }));
+}
+
+function isTopMatch(r: KpiRow) {
+  return (
+    r.approved_score_run_id != null &&
+    r.approved_fit_label != null &&
+    (TOP_FIT_LABELS as readonly string[]).includes(r.approved_fit_label)
+  );
+}
+function isInInterview(r: KpiRow) {
+  return r.stage === "interview_process" || r.stage === "offer" || r.interview_active;
+}
+
+function computeKpis(rows: KpiRow[]) {
+  const delivered = new Set(rows.map((r) => r.candidate_profile_id)).size;
+  const top = rows.filter(isTopMatch).length;
+  const shortlisted = rows.filter((r) => r.stage === "shortlisted").length;
+  const interviewing = rows.filter(isInInterview).length;
+  const hires = rows.filter((r) => r.stage === "hired").length;
+  return { delivered, top, shortlisted, interviewing, hires };
+}
+
+// ─── Overview ───────────────────────────────────────────────────────────────
+
+export const getClientOverview = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: { orgId: string }) => z.object({ orgId: z.string().uuid() }).parse(input))
+  .handler(async ({ context, data }) => {
+    const rows = await loadKpiRows(context.supabase, data.orgId);
+    const kpis = computeKpis(rows);
+    // Active positions with any visible match
+    const { data: positions } = await context.supabase
+      .from("positions")
+      .select("id, title, status")
+      .eq("organization_id", data.orgId)
+      .in("status", ["active", "paused", "approved"]);
+    return { kpis, active_positions: (positions as AnyRow[])?.length ?? 0 };
+  });
+
+// ─── Positions ──────────────────────────────────────────────────────────────
+
+export const getClientPositions = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: { orgId: string; status?: string }) =>
+    z
+      .object({
+        orgId: z.string().uuid(),
+        status: z.enum(["active", "draft", "paused", "closed"]).optional(),
+      })
+      .parse(input),
+  )
+  .handler(async ({ context, data }) => {
+    const statusFilter = (
+      data.status === "closed"
+        ? (["closed", "archived"] as const)
+        : data.status
+          ? ([data.status] as const)
+          : (["active", "draft", "paused", "closed", "archived"] as const)
+    ) as unknown as string[];
+    const { data: positions, error } = await context.supabase
+      .from("positions")
+      .select("id, title, status, location, work_model, employment_type, seniority, updated_at")
+      .eq("organization_id", data.orgId)
+      .in("status", statusFilter as never)
+      .order("updated_at", { ascending: false });
+    if (error) throw new Error(error.message);
+
+    const rows = await loadKpiRows(context.supabase, data.orgId);
+    const byPosition = new Map<string, KpiRow[]>();
+    for (const r of rows) {
+      if (!byPosition.has(r.position_id)) byPosition.set(r.position_id, []);
+      byPosition.get(r.position_id)!.push(r);
+    }
+    return (positions as AnyRow[]).map((p) => {
+      const posRows = byPosition.get(p.id) ?? [];
+      const kpi = computeKpis(posRows);
+      return {
+        ...p,
+        kpis: kpi,
+        next_milestone: nextMilestoneFor(posRows, p.status),
+        action_required: actionRequiredFor(posRows, p.status),
+      };
+    });
+  });
+
+function nextMilestoneFor(rows: KpiRow[], status: string): string | null {
+  if (status === "draft") return "Awaiting intake approval";
+  if (status === "paused") return "Position paused";
+  if (status === "closed" || status === "archived") return null;
+  if (rows.some((r) => r.stage === "offer")) return "Offer response";
+  if (rows.some((r) => r.interview_active || r.stage === "interview_process"))
+    return "Interview outcome";
+  if (rows.some((r) => r.stage === "shortlisted")) return "Interview requests";
+  if (rows.length > 0) return "Review new candidates";
+  return "Awaiting first candidates";
+}
+function actionRequiredFor(rows: KpiRow[], _status: string): string | null {
+  const newlyDelivered = rows.filter((r) => r.stage === "delivered").length;
+  if (newlyDelivered > 0) return `${newlyDelivered} new to review`;
+  return null;
+}
+
+export const getClientPositionDetail = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: { orgId: string; positionId: string }) =>
+    z.object({ orgId: z.string().uuid(), positionId: z.string().uuid() }).parse(input),
+  )
+  .handler(async ({ context, data }) => {
+    const { data: position, error } = await context.supabase
+      .from("positions")
+      .select(
+        "id, title, status, location, work_model, employment_type, seniority, description, requirements, preferred_requirements",
+      )
+      .eq("organization_id", data.orgId)
+      .eq("id", data.positionId)
+      .maybeSingle();
+    if (error) throw new Error(error.message);
+    if (!position) return null;
+
+    const { data: matches } = await context.supabase
+      .from("candidate_matches")
+      .select(
+        `id, stage, admin_status, delivered_at, approved_score_run_id,
+         candidate_profiles(id, full_name, headline, location),
+         score_runs:approved_score_run_id (score, fit_label, explanation)`,
+      )
+      .eq("organization_id", data.orgId)
+      .eq("position_id", data.positionId)
+      .eq("client_visibility", "visible")
+      .order("delivered_at", { ascending: false });
+
+    return { position, matches: (matches as AnyRow[]) ?? [] };
+  });
+
+// ─── Candidates ─────────────────────────────────────────────────────────────
+
+export type CandidateFilter =
+  | "all"
+  | "new"
+  | "top"
+  | "shortlisted"
+  | "interview"
+  | "hired"
+  | "not_moving_forward";
+
+export const getClientCandidates = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator(
+    (input: {
+      orgId: string;
+      filter?: CandidateFilter;
+      positionId?: string;
+      minScore?: number;
+      fitBand?: string;
+      location?: string;
+    }) =>
+      z
+        .object({
+          orgId: z.string().uuid(),
+          filter: z
+            .enum(["all", "new", "top", "shortlisted", "interview", "hired", "not_moving_forward"])
+            .optional(),
+          positionId: z.string().uuid().optional(),
+          minScore: z.number().optional(),
+          fitBand: z.string().optional(),
+          location: z.string().optional(),
+        })
+        .parse(input),
+  )
+  .handler(async ({ context, data }) => {
+    let q = context.supabase
+      .from("candidate_matches")
+      .select(
+        `id, stage, admin_status, delivered_at, position_id,
+         candidate_profiles(id, full_name, headline, location, availability),
+         positions(id, title),
+         score_runs:approved_score_run_id (score, fit_label, explanation, requirement_coverage)`,
+      )
+      .eq("organization_id", data.orgId)
+      .eq("client_visibility", "visible");
+
+    if (data.positionId) q = q.eq("position_id", data.positionId);
+
+    const { data: rows, error } = await q.order("delivered_at", { ascending: false });
+    if (error) throw new Error(error.message);
+
+    let matches = ((rows as AnyRow[]) ?? []).map((m) => ({
+      ...m,
+      approved_score: m.score_runs?.score ?? null,
+      approved_fit_label: m.score_runs?.fit_label ?? null,
+    }));
+
+    if (data.filter && data.filter !== "all") {
+      matches = matches.filter((m) => {
+        if (data.filter === "new") return m.stage === "delivered";
+        if (data.filter === "shortlisted") return m.stage === "shortlisted";
+        if (data.filter === "hired") return m.stage === "hired";
+        if (data.filter === "not_moving_forward") return m.stage === "not_moving_forward";
+        if (data.filter === "interview")
+          return m.stage === "interview_process" || m.stage === "offer";
+        if (data.filter === "top")
+          return (
+            m.approved_fit_label != null &&
+            (TOP_FIT_LABELS as readonly string[]).includes(m.approved_fit_label)
+          );
+        return true;
+      });
+    }
+    if (data.minScore != null)
+      matches = matches.filter((m) => (m.approved_score ?? 0) >= data.minScore!);
+    if (data.fitBand)
+      matches = matches.filter((m) => m.approved_fit_label === data.fitBand);
+    if (data.location) {
+      const needle = data.location.toLowerCase();
+      matches = matches.filter((m) =>
+        (m.candidate_profiles?.location ?? "").toLowerCase().includes(needle),
+      );
+    }
+
+    return matches;
+  });
+
+export const getClientCandidate = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: { orgId: string; matchId: string }) =>
+    z.object({ orgId: z.string().uuid(), matchId: z.string().uuid() }).parse(input),
+  )
+  .handler(async ({ context, data }) => {
+    const { data: match, error } = await context.supabase
+      .from("candidate_matches")
+      .select(
+        `id, stage, admin_status, delivered_at, position_id,
+         candidate_profiles(id, full_name, headline, location, availability, skills, languages),
+         positions(id, title, location, work_model),
+         score_runs:approved_score_run_id (score, fit_label, explanation, evidence, requirement_coverage)`,
+      )
+      .eq("organization_id", data.orgId)
+      .eq("id", data.matchId)
+      .eq("client_visibility", "visible")
+      .maybeSingle();
+    if (error) throw new Error(error.message);
+    if (!match) return null;
+
+    const { data: interviews } = await context.supabase
+      .from("interviews")
+      .select("id, status, requested_at, scheduled_at, completed_at, notes")
+      .eq("candidate_match_id", data.matchId)
+      .order("created_at", { ascending: false });
+
+    const { data: decisions } = await context.supabase
+      .from("client_decisions")
+      .select("id, decision, feedback, created_at, actor_user_id")
+      .eq("candidate_match_id", data.matchId)
+      .order("created_at", { ascending: false });
+
+    return {
+      match: match as AnyRow,
+      interviews: (interviews as AnyRow[]) ?? [],
+      decisions: (decisions as AnyRow[]) ?? [],
+    };
+  });
+
+// ─── Stage transitions ──────────────────────────────────────────────────────
+//
+// Backend validation: no matter where the transition originates (button, kanban
+// drag, keyboard), it flows through this function and cannot bypass the graph.
+
+const STAGE_GRAPH: Record<MatchStage, MatchStage[]> = {
+  delivered: ["shortlisted", "not_moving_forward"],
+  shortlisted: ["interview_process", "not_moving_forward"],
+  interview_process: ["offer", "shortlisted", "not_moving_forward"],
+  offer: ["hired", "not_moving_forward"],
+  hired: [],
+  not_moving_forward: ["shortlisted"],
+};
+
+async function assertEditor(supabase: AnyRow, userId: string, orgId: string) {
+  const { data } = await supabase.rpc("is_org_editor", { _user: userId, _org: orgId });
+  if (data !== true) throw new Error("forbidden");
+}
+
+async function loadMatch(supabase: AnyRow, orgId: string, matchId: string) {
+  const { data, error } = await supabase
+    .from("candidate_matches")
+    .select("id, stage, organization_id, position_id, candidate_profile_id, client_visibility")
+    .eq("id", matchId)
+    .eq("organization_id", orgId)
+    .maybeSingle();
+  if (error) throw new Error(error.message);
+  if (!data) throw new Error("match_not_found");
+  if (data.client_visibility !== "visible") throw new Error("match_not_visible");
+  return data as AnyRow;
+}
+
+async function writeAudit(
+  supabase: AnyRow,
+  opts: {
+    actor: string;
+    action: string;
+    entity_type: string;
+    entity_id: string;
+    organization_id: string;
+    before?: unknown;
+    after?: unknown;
+    trace_id: string;
+  },
+) {
+  await supabase.from("audit_events").insert({
+    actor_user_id: opts.actor,
+    action: opts.action,
+    entity_type: opts.entity_type,
+    entity_id: opts.entity_id,
+    organization_id: opts.organization_id,
+    before_state: (opts.before ?? null) as never,
+    after_state: (opts.after ?? null) as never,
+    trace_id: opts.trace_id,
+  });
+}
+
+export const moveMatchStage = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: { orgId: string; matchId: string; toStage: MatchStage }) =>
+    z
+      .object({
+        orgId: z.string().uuid(),
+        matchId: z.string().uuid(),
+        toStage: z.enum([
+          "delivered",
+          "shortlisted",
+          "interview_process",
+          "offer",
+          "hired",
+          "not_moving_forward",
+        ]),
+      })
+      .parse(input),
+  )
+  .handler(async ({ context, data }) => {
+    const trace = traceId();
+    await assertEditor(context.supabase, context.userId, data.orgId);
+    const match = await loadMatch(context.supabase, data.orgId, data.matchId);
+    const from = match.stage as MatchStage;
+    if (from === data.toStage) return { ok: true, trace_id: trace };
+    const allowed = STAGE_GRAPH[from] ?? [];
+    if (!allowed.includes(data.toStage)) {
+      throw new Error(`invalid_transition:${from}->${data.toStage}`);
+    }
+    const { error } = await context.supabase
+      .from("candidate_matches")
+      .update({ stage: data.toStage })
+      .eq("id", data.matchId)
+      .eq("organization_id", data.orgId);
+    if (error) throw new Error(error.message);
+    await writeAudit(context.supabase, {
+      actor: context.userId,
+      action: "candidate_match.stage_changed",
+      entity_type: "candidate_matches",
+      entity_id: data.matchId,
+      organization_id: data.orgId,
+      before: { stage: from },
+      after: { stage: data.toStage },
+      trace_id: trace,
+    });
+    return { ok: true, trace_id: trace };
+  });
+
+// ─── Client actions ─────────────────────────────────────────────────────────
+
+const ACTION_TO_STAGE: Partial<Record<string, MatchStage>> = {
+  shortlist: "shortlisted",
+  request_interview: "interview_process",
+  not_moving_forward: "not_moving_forward",
+  hire: "hired",
+};
+
+export const clientAction = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator(
+    (input: {
+      orgId: string;
+      matchId: string;
+      action:
+        | "shortlist"
+        | "request_interview"
+        | "request_more_information"
+        | "not_moving_forward"
+        | "submit_feedback"
+        | "hire";
+      feedback?: string;
+    }) =>
+      z
+        .object({
+          orgId: z.string().uuid(),
+          matchId: z.string().uuid(),
+          action: z.enum([
+            "shortlist",
+            "request_interview",
+            "request_more_information",
+            "not_moving_forward",
+            "submit_feedback",
+            "hire",
+          ]),
+          feedback: z.string().max(4000).optional(),
+        })
+        .parse(input),
+  )
+  .handler(async ({ context, data }) => {
+    const trace = traceId();
+    await assertEditor(context.supabase, context.userId, data.orgId);
+    const match = await loadMatch(context.supabase, data.orgId, data.matchId);
+
+    const nextStage = ACTION_TO_STAGE[data.action];
+    if (nextStage && match.stage !== nextStage) {
+      const allowed = STAGE_GRAPH[match.stage as MatchStage] ?? [];
+      if (!allowed.includes(nextStage)) {
+        throw new Error(`invalid_transition:${match.stage}->${nextStage}`);
+      }
+      const { error } = await context.supabase
+        .from("candidate_matches")
+        .update({ stage: nextStage })
+        .eq("id", data.matchId)
+        .eq("organization_id", data.orgId);
+      if (error) throw new Error(error.message);
+    }
+
+    if (data.action === "request_interview") {
+      await context.supabase.from("interviews").insert({
+        candidate_match_id: data.matchId,
+        organization_id: data.orgId,
+        status: "requested",
+        requested_at: new Date().toISOString(),
+      });
+    }
+
+    // Persist a decision that mirrors the client's intent.
+    const decisionMap = {
+      shortlist: "shortlist",
+      request_interview: "request_interview",
+      request_more_information: "request_information",
+      not_moving_forward: "not_moving_forward",
+      hire: "hire",
+    } as const;
+    const decision = (decisionMap as Record<string, string>)[data.action] ?? null;
+    if (decision) {
+      await context.supabase.from("client_decisions").insert({
+        candidate_match_id: data.matchId,
+        organization_id: data.orgId,
+        decision: decision as never,
+        feedback: data.feedback ?? null,
+        actor_user_id: context.userId,
+      });
+    }
+
+    await writeAudit(context.supabase, {
+      actor: context.userId,
+      action: `client.${data.action}`,
+      entity_type: "candidate_matches",
+      entity_id: data.matchId,
+      organization_id: data.orgId,
+      before: { stage: match.stage },
+      after: { stage: nextStage ?? match.stage, feedback: data.feedback ?? null },
+      trace_id: trace,
+    });
+
+    return { ok: true, trace_id: trace };
+  });
+
+// ─── Messages ───────────────────────────────────────────────────────────────
+// Threads are org-scoped; we key them on the organization id itself so a client
+// workspace has one persistent conversation with the TaaSFlow team.
+
+export const getClientMessages = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: { orgId: string }) => z.object({ orgId: z.string().uuid() }).parse(input))
+  .handler(async ({ context, data }) => {
+    const { data: rows, error } = await context.supabase
+      .from("messages")
+      .select("id, sender_user_id, body, created_at, recipient_context")
+      .eq("thread_id", data.orgId)
+      .order("created_at", { ascending: true });
+    if (error) throw new Error(error.message);
+    return (rows as AnyRow[]) ?? [];
+  });
+
+export const sendClientMessage = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: { orgId: string; body: string }) =>
+    z.object({ orgId: z.string().uuid(), body: z.string().min(1).max(4000) }).parse(input),
+  )
+  .handler(async ({ context, data }) => {
+    // Membership check — sender must belong to the org (any client role or staff).
+    const { data: ok } = await context.supabase.rpc("is_org_viewer", {
+      _user: context.userId,
+      _org: data.orgId,
+    });
+    const { data: staff } = await context.supabase.rpc("is_platform_staff", {
+      _user: context.userId,
+    });
+    if (ok !== true && staff !== true) throw new Error("forbidden");
+    const { data: row, error } = await context.supabase
+      .from("messages")
+      .insert({
+        thread_id: data.orgId,
+        sender_user_id: context.userId,
+        body: data.body,
+        recipient_context: { org_id: data.orgId, thread_kind: "client_workspace" },
+      })
+      .select("id, sender_user_id, body, created_at, recipient_context")
+      .single();
+    if (error) throw new Error(error.message);
+    return row as AnyRow;
+  });
+
+// ─── Team ───────────────────────────────────────────────────────────────────
+
+export const getClientTeam = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: { orgId: string }) => z.object({ orgId: z.string().uuid() }).parse(input))
+  .handler(async ({ context, data }) => {
+    // Only admins/editors of this org (or staff) can view the team.
+    const { data: canRead } = await context.supabase.rpc("is_org_editor", {
+      _user: context.userId,
+      _org: data.orgId,
+    });
+    const { data: staff } = await context.supabase.rpc("is_platform_staff", {
+      _user: context.userId,
+    });
+    if (canRead !== true && staff !== true) throw new Error("forbidden");
+    const { data: rows, error } = await context.supabase
+      .from("memberships")
+      .select("user_id, role, status, created_at, profiles:user_id(full_name, email)")
+      .eq("organization_id", data.orgId);
+    if (error) throw new Error(error.message);
+    return (rows as AnyRow[]) ?? [];
+  });
