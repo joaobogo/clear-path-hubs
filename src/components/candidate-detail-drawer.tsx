@@ -33,6 +33,7 @@ import { Link } from "@tanstack/react-router";
 import { getAdminMatch, retryParse, rescore, advanceProcessing, applyReviewDecision, markOcrDone, retryHydration, retryEnrichment, markManualReview, replaceCv } from "@/lib/processing.functions";
 import { updateCandidateAsAdmin, repairCandidateIdentity } from "@/lib/admin-candidate-edit.functions";
 import { setMatchClientVisibility } from "@/lib/admin.functions";
+import { DownloadCvButton } from "@/components/download-cv-button";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
@@ -522,21 +523,14 @@ export function CandidateDetailDrawer({
                   <Field label="OCR used" value={cv.ocr_used ? "Yes" : "No"} />
                   <Field label="Extracted at" value={cv.extraction_completed_at ? new Date(cv.extraction_completed_at).toLocaleString() : "—"} />
                   <Field label="Attempts" value={cv.extraction_attempts} />
-                  {cv.signed_url ? (
-                    <div className="flex gap-2 pt-2">
+                  <div className="flex gap-2 pt-2">
+                    {cv.signed_url && (
                       <a href={cv.signed_url} target="_blank" rel="noopener noreferrer">
                         <Button variant="secondary" size="sm">Preview CV</Button>
                       </a>
-                      <a href={cv.signed_url} download={cv.filename}>
-                        <Button variant="outline" size="sm">Download</Button>
-                      </a>
-                    </div>
-                  ) : (
-                    <Alert variant="destructive">
-                      <AlertTitle>Signed link failed</AlertTitle>
-                      <AlertDescription>Refresh to retry — links expire in 5 minutes.</AlertDescription>
-                    </Alert>
-                  )}
+                    )}
+                    {submissionId && <DownloadCvButton matchId={submissionId} />}
+                  </div>
                 </>
               )}
             </TabsContent>

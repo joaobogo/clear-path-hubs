@@ -10,6 +10,7 @@ import {
   listPositionOptions,
 } from "@/lib/admin.functions";
 import { CandidateDetailDrawer } from "@/components/candidate-detail-drawer";
+import { DownloadCvButton } from "@/components/download-cv-button";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -278,15 +279,18 @@ function CandidatesPage() {
                   <td className="px-3 py-2 text-xs text-muted-foreground whitespace-nowrap">
                     {updated ? updated.toLocaleDateString() : "—"}
                   </td>
-                  <td className="px-3 py-2 text-right">
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      data-qa-action="open-candidate-drawer"
-                      onClick={(e) => { e.stopPropagation(); openDrawer(m.id); }}
-                    >
-                      Open →
-                    </Button>
+                  <td className="px-3 py-2 text-right whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
+                    <div className="inline-flex gap-1">
+                      <DownloadCvButton matchId={m.id} size="sm" variant="ghost" label="CV" />
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        data-qa-action="open-candidate-drawer"
+                        onClick={(e) => { e.stopPropagation(); openDrawer(m.id); }}
+                      >
+                        Open →
+                      </Button>
+                    </div>
                   </td>
                 </tr>
               );
