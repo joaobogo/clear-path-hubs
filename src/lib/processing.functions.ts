@@ -37,6 +37,7 @@ type State =
 type ProcessingCode =
   | "ok"
   | "cv_unreadable"
+  | "missing_usable_cv"
   | "requirements_missing"
   | "provider_error"
   | "position_inactive"
