@@ -35,7 +35,9 @@ export type ClientKpis = {
   top: number;
   shortlisted: number;
   interviewing: number;
+  interview_scheduled: number;
   hires: number;
+  active_positions: number;
 };
 
 /**
@@ -59,14 +61,17 @@ export async function loadKpiRows(
 
   const matchIds = (matches as AnyRow[]).map((m) => m.id);
   const activeInterviews = new Set<string>();
+  const scheduledInterviews = new Set<string>();
   if (matchIds.length > 0) {
     const { data: ivs } = await supabase
       .from("interviews")
       .select("candidate_match_id, status")
       .in("candidate_match_id", matchIds)
       .in("status", ["requested", "scheduling", "scheduled", "completed"]);
-    for (const iv of (ivs as AnyRow[]) ?? [])
+    for (const iv of (ivs as AnyRow[]) ?? []) {
       activeInterviews.add(iv.candidate_match_id);
+      if (iv.status === "scheduled") scheduledInterviews.add(iv.candidate_match_id);
+    }
   }
 
   return (matches as AnyRow[]).map((m) => ({
@@ -79,6 +84,7 @@ export async function loadKpiRows(
     approved_score: m.score_runs?.score ?? null,
     approved_fit_label: m.score_runs?.fit_label ?? null,
     interview_active: activeInterviews.has(m.id),
+    interview_scheduled: scheduledInterviews.has(m.id),
   }));
 }
 
@@ -98,15 +104,18 @@ export function isInInterview(r: KpiRow): boolean {
   );
 }
 
-export function computeKpis(rows: KpiRow[]): ClientKpis {
+export function computeKpis(rows: KpiRow[], activePositions = 0): ClientKpis {
   return {
     delivered: new Set(rows.map((r) => r.candidate_profile_id)).size,
     top: rows.filter(isTopMatch).length,
     shortlisted: rows.filter((r) => r.stage === "shortlisted").length,
     interviewing: rows.filter(isInInterview).length,
+    interview_scheduled: rows.filter((r) => r.interview_scheduled).length,
     hires: rows.filter((r) => r.stage === "hired").length,
+    active_positions: activePositions,
   };
 }
+
 
 /**
  * Canonical client-safe candidate DTO. Drops PII (email, phone, last name),
