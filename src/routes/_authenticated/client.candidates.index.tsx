@@ -52,11 +52,13 @@ function CandidatesPage() {
   const navigate = Route.useNavigate();
   const ctxFn = useServerFn(getClientContext);
   const listFn = useServerFn(getClientCandidates);
+  const orgSearch = useClientOrgSearch();
   const { data: ctx } = useQuery({
-    queryKey: ["client-context", null],
-    queryFn: () => ctxFn({ data: {} }),
+    queryKey: ["client-context", orgSearch ?? null],
+    queryFn: () => ctxFn({ data: orgSearch ? { orgId: orgSearch } : {} }),
   });
   const orgId = ctx?.active?.organization_id;
+
 
   const filterKey = (FILTERS.find((f) => f.key === search.filter)?.key ?? "all") as CandidateFilter;
   const minScore = search.min_score ? Number(search.min_score) : undefined;
