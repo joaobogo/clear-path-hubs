@@ -31,6 +31,9 @@ function Home() {
             TaaSFlow
           </Link>
           <nav className="flex items-center gap-3 text-sm">
+            <Link to="/jobs" className="text-muted-foreground hover:text-foreground">
+              Jobs
+            </Link>
             <Link to="/auth" className="text-muted-foreground hover:text-foreground">
               Sign in
             </Link>
@@ -48,16 +51,13 @@ function Home() {
           Tell us about the role in five short steps. We'll shortlist evidence-backed candidates and
           hand you the final decisions.
         </p>
-        <div className="flex items-center justify-center gap-3">
+        <div className="flex flex-wrap items-center justify-center gap-3">
           <Link to="/intake">
             <Button size="lg">Submit an intake</Button>
           </Link>
-          <a
-            href="mailto:hello@taasflow.example"
-            className="text-sm text-muted-foreground hover:underline"
-          >
-            Talk to TaaSFlow →
-          </a>
+          <Link to="/jobs">
+            <Button size="lg" variant="outline">Browse open roles</Button>
+          </Link>
         </div>
         <p className="text-xs text-muted-foreground">
           No payment. No pricing selection. Your draft is saved automatically.
