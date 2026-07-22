@@ -166,8 +166,29 @@ export function CandidateDetailDrawer({
     mutationFn: (surface: "admin_drawer_overview" | "admin_drawer_contact") => {
       if (!cp?.id) throw new Error("no profile id");
       const patch: AnyRow = {};
-      for (const [k, v] of Object.entries(edit)) {
+      const scalarKeys = [
+        "full_name", "email", "phone", "location", "timezone",
+        "headline", "summary", "linkedin_url",
+      ] as const;
+      for (const k of scalarKeys) {
+        const v = edit[k];
         if (v !== (cp[k] ?? "")) patch[k] = v === "" ? null : v;
+      }
+      // years_experience is numeric
+      if (edit.years_experience !== "" && edit.years_experience != null) {
+        const n = Number(edit.years_experience);
+        if (Number.isFinite(n) && n !== (cp.years_experience ?? null)) patch.years_experience = n;
+      } else if (cp.years_experience != null) {
+        patch.years_experience = null;
+      }
+      // availability/work_authorization: merge notes into existing jsonb
+      const availOld = (cp.availability?.notes as string) ?? "";
+      if ((edit.availability_text ?? "") !== availOld) {
+        patch.availability = { ...(cp.availability ?? {}), notes: edit.availability_text || null };
+      }
+      const waOld = (cp.work_authorization?.notes as string) ?? "";
+      if ((edit.work_auth_text ?? "") !== waOld) {
+        patch.work_authorization = { ...(cp.work_authorization ?? {}), notes: edit.work_auth_text || null };
       }
       if (Object.keys(patch).length === 0) throw new Error("nothing to save");
       const lock: string[] = [];
@@ -185,7 +206,7 @@ export function CandidateDetailDrawer({
     },
     onSuccess: (r: AnyRow) => {
       if (r.ok) {
-        setFeedback(`Saved · ${r.trace_id}${r.scoring_relevant ? ` · ${r.stale_marked} score(s) marked stale` : ""}`);
+        setFeedback(`Saved · ${r.trace_id}${r.audit_event_id ? ` · audit ${r.audit_event_id}` : ""}${r.scoring_relevant ? ` · ${r.stale_marked} score(s) marked stale` : ""}`);
         refetch();
         qc.invalidateQueries({ queryKey: ["candidate-search"] });
       } else {
@@ -194,6 +215,7 @@ export function CandidateDetailDrawer({
     },
     onError: (e) => setError((e as Error).message),
   });
+
 
   const stateColor = useMemo(() => {
     const state = match?.processing_state ?? "";
