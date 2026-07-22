@@ -37,9 +37,17 @@ function ClientDetail() {
         <Link to="/admin/clients" className="text-sm text-muted-foreground hover:underline">
           ← Clients
         </Link>
-        <div className="mt-2 flex items-baseline gap-3">
+        <div className="mt-2 flex flex-wrap items-baseline gap-3">
           <h1 className="text-2xl font-semibold">{org.name}</h1>
           <Badge variant="outline">{org.status}</Badge>
+          <Link
+            to="/client"
+            search={{ org: org.id, preview: "client_admin" }}
+            className="ml-auto inline-flex items-center rounded border px-3 py-1.5 text-sm hover:bg-muted"
+            title="View this client's dashboard as an administrator (read-only)"
+          >
+            View Client Dashboard →
+          </Link>
         </div>
         <p className="mt-1 text-sm text-muted-foreground">
           {org.domain ?? "—"} · {org.industry ?? "—"} · {org.headquarters ?? "—"}
