@@ -206,7 +206,9 @@ function JobsPage() {
                     {p.description_preview}
                   </p>
                   <div className="mt-4">
-                    <Button size="sm" variant="secondary">View role</Button>
+                    <span className="inline-flex items-center rounded-md bg-secondary px-3 py-1.5 text-sm font-medium text-secondary-foreground">
+                      View role
+                    </span>
                   </div>
                 </Link>
               </li>
