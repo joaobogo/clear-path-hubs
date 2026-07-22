@@ -2,6 +2,7 @@
 // Fully server-side; uses supabaseAdmin (loaded inside handler) to bypass RLS
 // because applicants are unauthenticated at this point.
 import { createServerFn } from "@tanstack/react-start";
+import { z } from "zod";
 import { applySchema, type ApplyInput } from "./apply-schema";
 
 export type SubmitApplicationResult =
@@ -328,7 +329,6 @@ export const submitApplication = createServerFn({ method: "POST" })
 // Public confirmation lookup — no PII beyond what the candidate just submitted.
 export const getApplicationReceipt = createServerFn({ method: "GET" })
   .inputValidator((input: unknown) => {
-    const { z } = require("zod") as typeof import("zod");
     return z.object({ id: z.string().uuid() }).parse(input);
   })
   .handler(async ({ data }) => {
