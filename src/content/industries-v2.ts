@@ -1001,6 +1001,104 @@ export const INDUSTRY_ENTRIES: IndustryEntry[] = [
         "Submit the role — one workspace, one rubric, one reviewed shortlist.",
     },
   },
+  {
+    slug: "staffing-agencies",
+    eyebrow: "Staffing Agencies",
+    name: "Staffing Agencies",
+    meta: {
+      title: "Staffing agency delivery — TaaSFlow",
+      description:
+        "TaaSFlow as a delivery engine for staffing agencies. Ranked, evidence-based shortlists your recruiters can present under their own brand.",
+    },
+    hero: {
+      title: "A delivery layer for staffing agencies.",
+      subtitle:
+        "TaaSFlow gives staffing firms a workspace per mandate — structured intake, role-specific scoring, evidence extracted from the CV — so recruiters spend their time on client conversations, not shortlisting.",
+    },
+    challenges: [
+      {
+        title: "Recruiter capacity",
+        body: "Every recruiter has a ceiling on active searches. Our workspace absorbs the intake, scoring and ranking work so recruiters run more mandates without dropping quality.",
+      },
+      {
+        title: "Consistent quality across desks",
+        body: "Different recruiters shortlist differently. A shared rubric per mandate keeps quality consistent across desks and hand-offs.",
+      },
+      {
+        title: "Client-ready output",
+        body: "Shortlists arrive with evidence tied to the CV, ready to present. Recruiters spend less time formatting profiles and more time closing.",
+      },
+    ],
+    roles: [
+      "Contingent and retained desks",
+      "Executive search practices",
+      "Perm recruitment teams",
+      "Contract and interim desks",
+      "RPO delivery pods",
+      "Vertical-specialist boutiques",
+      "MSP delivery teams",
+      "Talent research and sourcing teams",
+    ],
+    signals: [
+      "One workspace per client mandate",
+      "Rubric per requisition, applied consistently",
+      "Human review before candidates go to client",
+    ],
+    cta: {
+      title: "Running a staffing desk?",
+      description:
+        "Submit a live mandate — see the workspace, the rubric and the reviewed shortlist end-to-end.",
+    },
+  },
+  {
+    slug: "hospitality",
+    eyebrow: "Hospitality",
+    name: "Hospitality",
+    meta: {
+      title: "Hospitality hiring — TaaSFlow",
+      description:
+        "Structured sourcing for hotels, restaurants and hospitality groups. Ranked shortlists with evidence of property type, service level and operating model.",
+    },
+    hero: {
+      title: "Hospitality hiring, calibrated per property and service level.",
+      subtitle:
+        "TaaSFlow gives hospitality leaders a workspace for every hire — property leadership, F&B, guest experience, operations — with rubrics tuned to property type, service level and operating model.",
+    },
+    challenges: [
+      {
+        title: "Property and segment fit",
+        body: "Luxury, lifestyle, select-service and F&B-led operations each need distinct signal. Our rubric captures the property types the candidate has actually operated in.",
+      },
+      {
+        title: "Service level and standards",
+        body: "Service standards, cover counts and guest-experience expectations vary widely. We capture them in intake so shortlists reflect the operating reality of the property.",
+      },
+      {
+        title: "Multi-unit and single-unit context",
+        body: "Multi-unit leadership rewards different signal than single-property GM work. Rubrics per seat surface the actual scope of ownership on the CV.",
+      },
+    ],
+    roles: [
+      "General managers and assistant GMs",
+      "Executive chefs and F&B directors",
+      "Rooms division and front-office leaders",
+      "Revenue managers",
+      "Sales and catering leaders",
+      "Guest experience and brand leaders",
+      "Multi-unit operations directors",
+      "Hospitality HR and training leads",
+    ],
+    signals: [
+      "Property type and segment rubric",
+      "Service level captured in intake",
+      "Scope of ownership evidence from the CV",
+    ],
+    cta: {
+      title: "Hiring for a hospitality role?",
+      description:
+        "Submit the role — one workspace, one rubric, one reviewed shortlist.",
+    },
+  },
 ];
 
 export function getIndustryEntry(slug: string): IndustryEntry | undefined {
