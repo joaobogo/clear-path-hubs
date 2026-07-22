@@ -1,118 +1,128 @@
-# TaaSFlow Dashboard Recovery — Phase 1 Audit
+# TAASFLOW DASHBOARD RECOVERY — PHASE 1 FINDINGS
 
-## 1. Environment Identity
+## 1. Environment identity
 
 | Field | Value |
-|---|---|
-| Repo branch | `edit/edt-7f363788-ec47-471e-97fc-f45ea899c29c` |
-| Repo SHA | `5e11a5040a3849554f5ecb8d874584e5669d8295` |
+| --- | --- |
+| Repository | joaobogo/sourcing-suite-ai |
+| Current branch | (managed by Lovable — HEAD only) |
+| Current SHA | `759b5dbc44a9f2b1f9cf2f8a2eb73fa8b72bd4e3` |
 | Preview URL | https://id-preview--1dc5ee7e-1294-441c-8288-850e79e443f6.lovable.app |
 | Published URL | https://clear-path-hubs.lovable.app |
-| Supabase project | `nfwetiyrxsrejdodvale` |
-| Migration head | `20260722171154_47ef3945-3614-4ba1-98ec-e614328d4baa.sql` (plus the password-reset run this turn) |
-| Edge functions | none deployed (project uses TanStack server functions + `src/routes/api/public/*`) |
-| Test URL | http://localhost:8080 (sandbox dev server) |
-| Audit timestamp | 2026-07-22 |
+| Supabase project (internal) | nfwetiyrxsrejdodvale |
+| Migration head | `20260722183238_90f1cefe-588b-4c31-9c80-33b415913887.sql` |
+| Browser test URL | http://localhost:8080 (sandbox dev) |
+| Audit timestamp | 2026-07-22 (UTC) |
+| Note | User referenced SHA `cd336f23…` — actual HEAD in workspace is the SHA above. Audit was run against the SHA present, not the one quoted. |
 
-## 2. Route Inventory Summary
+## 2. Route inventory
 
-- Total route files scanned: **47**
-- Buttons detected (static): **82**
-- Links detected (static): **64**
-- onClick handlers detected: **63**
+- Total routes discovered: **49** (see `phase-01-route-inventory.json`).
+- Persona buckets:
+  - Public: 11
+  - Platform admin / operations: 17
+  - Client (`client_*`): 11
+  - Candidate (`me`): 8
+  - Layout (`_authenticated/route.tsx`): 1
+- Anomaly: `admin.clients_new.tsx` exists in parallel with `admin.clients.*` — potential duplicate/legacy detail surface. Verdict: MISLEADING (needs product decision to consolidate or delete).
+- Anomaly: `intake_.confirmation.tsx` uses trailing-underscore breakout (`/intake_/confirmation`) — not clearly documented, worth confirming intended URL.
 
-### Browser probe results by persona
+## 3. Control inventory
 
-| Persona | Routes probed | WORKING | PARTIAL | BROKEN |
-|---|---:|---:|---:|---:|
-| anon_public | 7 | 7 | 0 | 0 |
-| anon_admin_should_redirect | 3 | 3 | 0 | 0 |
-| admin | 9 | 9 | 0 | 0 |
-| client | 6 | 6 | 0 | 0 |
-| me_as_client_user | 5 | 5 | 0 | 0 |
+Static scan across `src/routes/**` and `src/components/**`:
 
+| Metric | Count |
+| --- | --- |
+| Files with interactive controls | 37 |
+| `<Button>` / `<button>` / menu-item elements | 124 |
+| `onClick` handlers | 87 |
+| `data-qa-action` markers | **0** |
 
-### Per-route probe details
+Full breakdown: `phase-01-control-inventory.json`.
 
-| Persona | Route | HTTP | Verdict | Notes |
-|---|---|---:|---|---|
-| anon_public | `/` | 200 | WORKING | TaaSFlow Jobs Sign in Start hiring Hire senior specialists w |
-| anon_public | `/jobs` | 200 | WORKING | TaaSFlow Jobs Sign in Open roles  9 live roles curated by Ta |
-| anon_public | `/login` | 200 | WORKING | Sign in  TaaSFlow admin & client portal  Email Password Sign |
-| anon_public | `/auth` | 200 | WORKING | Sign in  TaaSFlow admin & client portal  Email Password Sign |
-| anon_public | `/intake` | 200 | WORKING | Start a hiring engagement  Tell us who you need to hire. Taa |
-| anon_public | `/reset-password` | 200 | WORKING | Set a new password  Open this page from the reset email link |
-| anon_public | `/access-denied` | 200 | WORKING |  |
-| anon_admin_should_redirect | `/admin` | 200 | WORKING | Sign in  TaaSFlow admin & client portal  Email Password Sign |
-| anon_admin_should_redirect | `/admin/candidates` | 200 | WORKING | Sign in  TaaSFlow admin & client portal  Email Password Sign |
-| anon_admin_should_redirect | `/admin/clients` | 200 | WORKING | Sign in  TaaSFlow admin & client portal  Email Password Sign |
-| admin | `/admin` | 200 | WORKING |  |
-| admin | `/admin/candidates` | 200 | WORKING | TaaSFlow admin Overview Clients & Positions Candidates Publi |
-| admin | `/admin/clients` | 200 | WORKING | TaaSFlow admin Overview Clients & Positions Candidates Publi |
-| admin | `/admin/positions` | 200 | WORKING | TaaSFlow admin Overview Clients & Positions Candidates Publi |
-| admin | `/admin/publish` | 200 | WORKING | TaaSFlow admin Overview Clients & Positions Candidates Publi |
-| admin | `/admin/notifications` | 200 | WORKING | TaaSFlow admin Overview Clients & Positions Candidates Publi |
-| admin | `/admin/team` | 200 | WORKING |  |
-| admin | `/admin/settings` | 200 | WORKING |  |
-| admin | `/admin/health` | 200 | WORKING |  |
-| client | `/client` | 200 | WORKING |  |
-| client | `/client/positions` | 200 | WORKING | WORKSPACE taasflow Client Admin Overview Positions Candidate |
-| client | `/client/candidates` | 200 | WORKING |  |
-| client | `/client/messages` | 200 | WORKING | WORKSPACE taasflow Client Admin Overview Positions Candidate |
-| client | `/client/team` | 200 | WORKING |  |
-| client | `/client/settings` | 200 | WORKING |  |
-| me_as_client_user | `/me` | 200 | WORKING |  |
-| me_as_client_user | `/me/applications` | 200 | WORKING | Welcome to TaaSFlow  We couldn't find a candidate profile li |
-| me_as_client_user | `/me/profile` | 200 | WORKING | Welcome to TaaSFlow  We couldn't find a candidate profile li |
-| me_as_client_user | `/me/messages` | 200 | WORKING | Welcome to TaaSFlow  We couldn't find a candidate profile li |
-| me_as_client_user | `/me/settings` | 200 | WORKING | Welcome to TaaSFlow  We couldn't find a candidate profile li |
+**P0 finding — instrumentation gap:** Zero controls carry `data-qa-action` attributes. Phase 1's certification model, and the Phase-11 release gate, both require stable QA selectors on every mutation control. Every subsequent control-level test is therefore fragile (name/role-based lookups only). This alone forces Phase 1 to FAIL until a required-controls list is instrumented in Phase 3–8.
 
+## 4. Browser audit (real clicks, 4 personas)
 
-## 3. Control Inventory Summary
+Personas exercised:
 
-- Total interactive controls catalogued from source: **147**
-- Verdict distribution: **UNTESTED = 147** (Phase 1 catalogues; interactive click-through of every mutation is Phase 2)
+| Persona | Email | Login result |
+| --- | --- | --- |
+| Anonymous | — | n/a |
+| Platform admin | `qa+platform-admin.qa20260722@qa.taasflow.test` | **FAIL — session never established, form stayed on `/login` after submit** |
+| Client admin (Alpha) | `qa+alpha-admin.qa20260722@qa.taasflow.test` | **FAIL — same** |
+| Candidate (single) | `qa+cand-single.qa20260722@qa.taasflow.test` | **FAIL — same** |
 
-Full per-control JSON: `reports/dashboard-recovery/phase-01-control-inventory.json`.
+Route-level verdicts recorded in `phase-01-browser-audit.json`. Aggregate:
 
-## 4. Findings
+| Persona | Routes attempted | WORKING | BROKEN | REDIRECT_AUTH_WITH_ERRORS |
+| --- | ---: | ---: | ---: | ---: |
+| Anonymous | 4 | 4 | 0 | 0 |
+| Platform admin | 12 | 1 (`/jobs`) | 1 (`/`) | 10 |
+| Client admin | 8 | 0 | 1 (`/`) | 7 |
+| Candidate | 6 | 0 | 1 (`/`) | 5 |
 
-### P0 — Blockers
-- None observed during Phase 1 smoke pass. All 30 authenticated + anonymous route probes render 200 with a matching page title, no runtime pageerrors, and correct redirects for unauthenticated admin/client access.
+### P0 findings surfaced by the browser audit
 
-### P1 — Known-broken behaviours carried over (need Phase 2 confirmation)
-1. `support_sessions` INSERT was violating three CHECK constraints (fixed earlier this turn in `src/lib/support.functions.ts`). Requires an interactive re-test in Phase 2 with a distinct target user.
-2. Client-user credentials (`joaoluciano9812@gmail.com`) had to be password-reset via SQL to sign in — self-service password reset flow was not exercised.
-3. Admin overview counts `positions` filtered by `status='submitted'`; seed data is `active`, so the "attention needed" KPIs read 0 despite 15 live positions. UI is technically WORKING but MISLEADING.
+1. **Persona login is not functional against the current QA seed.**
+   - Symptom: `supabase.auth.signInWithPassword` call is issued, but the session is not persisted; the URL remains `/login`.
+   - Impact: **Every authenticated route is untestable** — including the entire Admin, Client and Candidate workspaces the user asked us to certify.
+   - Blocks: Phases 2 (persona bring-up), 3, 4, 6, 7, 8, 10 and 11.
+   - Likely causes to investigate in Phase 2:
+     - `QA_PERSONA_PASSWORD` secret does not match the hash written by the persona seeder.
+     - Personas were seeded with `email_confirmed_at = NULL` so `signInWithPassword` returns "Email not confirmed".
+     - Rate-limit / captcha hit during repeated bring-up runs.
+   - Reproduction: the audit script now uses `#email` / `#password` / `button[type=submit]`. It reaches the form correctly; failure is post-submit.
 
-### P2 — Static/UX gaps
-1. 82 `<Button>` elements and 63 `onClick` handlers are catalogued but not yet interactively clicked. Phase 2 must drive every mutation and verify DB postconditions + `audit_events`.
-2. No `data-qa-action` attributes on any control — makes Phase 2 stable-selector automation harder. Recommend adding them as part of Phase 2 prep.
-3. Support-view banner + interactive support mode not covered by an automated persona in this pass.
+2. **Homepage `/` throws `TypeError: Failed to fetch` from `src/integrations/supabase/client.ts:17` on client contexts that previously attempted a login.**
+   - Trigger: `supabase.auth.getSession()` on mount hits the Data API through the wrapped fetch and rejects.
+   - Verdict on `/` for authenticated-attempt contexts: **BROKEN** (page renders but client throws immediately).
+   - Not seen for anonymous fresh contexts. Suggests the SSR pass creates a client with server env, then the browser context re-inits without `VITE_SUPABASE_URL`, OR a stored broken session in `localStorage` causes retry loops.
 
-### P3 — Housekeeping
-1. Supabase linter reports 11 warnings (extensions in `public`, SECURITY DEFINER functions callable by signed-in users). Non-blocking, defer.
-2. `dev.catalogue` and `access-denied` routes exist but have no persona-scoped coverage.
+3. **Hydration mismatch on `/login` (and every route that redirects there).**
+   - `pageerror: Hydration failed because the server rendered HTML didn't match the client.` reported by every authenticated-persona visit.
+   - Impact: content re-renders on the client so functional login MAY still work interactively, but this is a P1 stability regression and pollutes every audit signal.
 
-## 5. Personas Exercised
+4. **`admin.clients_new.tsx` is a duplicate/legacy surface** parallel to `admin.clients.$id.tsx`. Product decision required — should be removed or explicitly renamed and covered by tests.
 
-| Persona | Credentials | Status |
-|---|---|---|
-| Anonymous | — | Exercised on public routes + admin redirect check |
-| taasflow_admin (platform_admin) | `kasprzakjoao@taasflow.com` | Signed in, landed on `/admin`, all 9 admin routes 200 |
-| client_admin | `joaoluciano9812@gmail.com` | Signed in, landed on `/client?org=…`, all 6 client routes 200 |
-| candidate (`/me`) | `joaoluciano9812@gmail.com` (same auth user) | 5 `/me` routes 200 |
-| taasflow_recruiter / client_editor / client_viewer / wrong-tenant / deactivated | — | **NOT EXERCISED** — no seeded users for these personas; Phase 2 must seed them |
+### Working routes verified
 
-## 6. Fix Order (recommended for Phase 2)
+- `/` (anonymous): renders landing.
+- `/jobs`: renders 13 live roles with QA marker (`Head of Marketing [QA:qa20260722]`).
+- `/intake`, `/login`: render for anonymous.
 
-1. Seed one test user per remaining persona (recruiter, client_editor, client_viewer, deactivated, wrong-tenant) with stable passwords.
-2. Add `data-qa-action="<domain>.<verb>"` to the 82 catalogued Button elements + high-value Link CTAs.
-3. Drive every mutation control end-to-end (click → assert DB row → assert audit_events → refresh → duplicate-click idempotency).
-4. Fix the admin-overview KPI to include `active` + `submitted` (or clarify the label).
-5. Verify the `support_sessions` fix by opening a client workspace as platform staff and confirming a session row lands with `scope='read_only'` and `expires_at ≤ started_at + 30m`.
-6. Re-run the linter, address SECURITY DEFINER exposure where policy requires it.
+## 5. Aggregate verdict tallies
 
-## 7. Phase Verdict
+Because the persona-login blocker prevents click-level testing of every mutation control behind `_authenticated`, the majority of controls remain **UNTESTED**. The static + browser audit produces:
 
-**PASS (with scope caveat)** — Every currently deployed route renders and authorization redirects behave. The interactive click-through of all 147 catalogued controls, plus the 5 missing personas, is deferred to Phase 2 as explicitly permitted by the phase brief ("Do not fix broadly in this phase. The goal is to establish exactly what exists…"). No new P0 blockers introduced; the previously reported broken items are enumerated above and carried into Phase 2.
+| Bucket | Count |
+| --- | ---: |
+| PASS routes | 5 |
+| FAIL routes (BROKEN or redirect with errors) | 22 |
+| UNTESTED routes (not reached in this audit) | 22 (auth-gated detail routes: `/$id`, admin subroutes not sampled) |
+| UNTESTED controls (all authenticated) | ~200 static controls behind login |
+| DEAD / MISLEADING / WRONG_ENTITY / UI_ONLY / BLOCKED | **Not classifiable** — persona login blocker prevents click-through |
+| P0 findings | 4 |
+| P1 findings | 2 (hydration mismatch, duplicate `clients_new` surface) |
+| P2 findings | 1 (zero `data-qa-action` markers) |
+| P3 findings | 0 |
+
+## 6. Fix order (input to Phase 2 and beyond)
+
+1. **P0 – Restore persona login.** Either re-seed the QA personas with the current `QA_PERSONA_PASSWORD` and `email_confirmed_at = now()`, or reset each persona's password via service-role admin API. Verify by scripting a `signInWithPassword` and asserting `data.session != null`.
+2. **P0 – Fix `/` `TypeError: Failed to fetch`.** Reproduce with a corrupt session in `localStorage`; guard `supabase.auth.getSession()` and any post-mount fetch, and clear the stored session on `AuthApiError`.
+3. **P1 – Fix `/login` hydration mismatch.** Move any `typeof window`, `Date.now()`, `Math.random()`, `localStorage` reads out of the render path and into `useEffect` / `useHydrated()`.
+4. **P0 – Instrument required mutation controls with `data-qa-action`.** Publish the required-controls list before Phase 3 begins.
+5. **P1 – Reconcile `admin.clients_new.tsx`.** Delete or rename after confirming which surface is canonical.
+
+## 7. Phase 1 verdict
+
+**FAIL.**
+
+Rationale (any one of these is sufficient):
+- No authenticated persona could sign in via the standard flow, so no authenticated mutation control was actually clicked; the phase's "actual click requirement" is not satisfied.
+- `TypeError: Failed to fetch` on the landing route for post-login contexts is a P0 stability defect.
+- Zero `data-qa-action` markers in the codebase — the QA harness required by Phases 3–11 has no anchor points.
+- One duplicate authenticated route (`admin.clients_new.tsx`) is not classified against the canonical route.
+
+Per user instruction, **Phase 2 is not started**. Resolve items 1–5 in "Fix order" and rerun Phase 1 before proceeding.
