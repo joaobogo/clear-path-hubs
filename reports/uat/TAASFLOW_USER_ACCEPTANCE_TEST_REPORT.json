@@ -1,0 +1,102 @@
+{
+  "report": "TaaSFlow Greenfield Rebuild — Formal User Acceptance Test",
+  "generated_at": "2026-07-22",
+  "status": "NOT_EXECUTED",
+  "verdict": "FAIL",
+  "reason_not_executed": [
+    "Phase 17 P1 — auth redirect targets removed routes; representative users cannot reach the authenticated app.",
+    "Phase 17 P3 — candidate application submission fails during redirect; end-to-end candidate flow cannot be exercised.",
+    "Phase 17 BG-02/BG-04 — CV parsing and enrichment are stubs; scoring, evidence, publication cannot be tested with real data.",
+    "BG-SCALE-01 — no seeded fixture representative of production data; participants would test an empty product."
+  ],
+  "acceptance_criteria": {
+    "primary_task_completion_threshold": "NOT_MEASURED",
+    "zero_launch_blocking_findings": "NOT_MEASURED",
+    "kpi_terminology_understood": "NOT_MEASURED",
+    "no_permission_confusion": "NOT_MEASURED",
+    "no_primary_action_failure": "NOT_MEASURED",
+    "admin_operational_approval": "NOT_GIVEN",
+    "client_representative_approval": "NOT_GIVEN",
+    "candidate_flow_approval": "NOT_GIVEN"
+  },
+  "participants_planned": [
+    { "id": "P1", "role": "TaaSFlow admin", "count": 2 },
+    { "id": "P2", "role": "recruiter or operations user", "count": 2 },
+    { "id": "P3", "role": "client decision-maker", "count": 2 },
+    { "id": "P4", "role": "client hiring manager", "count": 2 },
+    { "id": "P5", "role": "candidate tester", "count": 5 },
+    { "id": "P6", "role": "support or implementation user", "count": 1 }
+  ],
+  "scenarios": {
+    "admin": [
+      { "id": "A1", "task": "review a new intake", "target_completion_s": 120, "target_pass_rate": 0.9 },
+      { "id": "A2", "task": "activate a position", "target_completion_s": 60, "target_pass_rate": 0.95 },
+      { "id": "A3", "task": "find a specific candidate", "target_completion_s": 30, "target_pass_rate": 0.95 },
+      { "id": "A4", "task": "understand a candidate's score", "target_completion_s": 90, "target_pass_rate": 0.9 },
+      { "id": "A5", "task": "preview the client's view of a position", "target_completion_s": 45, "target_pass_rate": 0.9 },
+      { "id": "A6", "task": "publish a candidate", "target_completion_s": 120, "target_pass_rate": 0.9 },
+      { "id": "A7", "task": "repair a failed CV parse", "target_completion_s": 180, "target_pass_rate": 0.8 },
+      { "id": "A8", "task": "find a client's most recent feedback on a candidate", "target_completion_s": 60, "target_pass_rate": 0.9 }
+    ],
+    "client": [
+      { "id": "C1", "task": "understand the Overview page without prompting" },
+      { "id": "C2", "task": "explain each KPI in your own words" },
+      { "id": "C3", "task": "find a specific position" },
+      { "id": "C4", "task": "find new candidates delivered today" },
+      { "id": "C5", "task": "compare two candidates side by side" },
+      { "id": "C6", "task": "shortlist a candidate" },
+      { "id": "C7", "task": "request an interview" },
+      { "id": "C8", "task": "move a candidate through Kanban stages" },
+      { "id": "C9", "task": "submit feedback (reject with note)" },
+      { "id": "C10", "task": "send a message to the recruiter" }
+    ],
+    "candidate": [
+      { "id": "K1", "task": "find a job on the public board" },
+      { "id": "K2", "task": "apply for a job" },
+      { "id": "K3", "task": "upload a CV" },
+      { "id": "K4", "task": "understand the confirmation page" },
+      { "id": "K5", "task": "track your application after signing in" },
+      { "id": "K6", "task": "update your profile" },
+      { "id": "K7", "task": "replace your CV" },
+      { "id": "K8", "task": "understand your current status label" },
+      { "id": "K9", "task": "find and reply to a recruiter message" }
+    ]
+  },
+  "measurements_planned": {
+    "per_task": ["completion_boolean", "time_seconds", "error_count", "confusion_notes", "unnecessary_clicks", "help_requested_boolean"],
+    "per_session": ["satisfaction_1_5", "confidence_1_5", "terminology_comprehension_1_5"]
+  },
+  "finding_taxonomy": {
+    "BLOCKS_LAUNCH": "Any P1 preventing a primary task completion or exposing data across tenants.",
+    "MUST_FIX_BEFORE_CUTOVER": "Recurring confusion, wrong-audience terminology, or workflow requiring undocumented help.",
+    "FIX_WITHIN_30_DAYS": "Papercuts that reduce satisfaction but do not block primary tasks.",
+    "OPTIONAL_IMPROVEMENT": "Cosmetic or convenience improvements."
+  },
+  "pre_conditions_to_execute_uat": [
+    "Phase 17 P1 fixed and green in E2E.",
+    "Phase 17 P3 fixed and green in E2E.",
+    "BG-02 and BG-04 replaced with real processing pipeline (no stubs).",
+    "BG-SCALE-01 seed fixture loaded (Growth tier: 100 orgs / 1,000 positions / 100,000 candidates).",
+    "Screenshots captured for all role guides (docs/guides/*)."
+  ],
+  "results": {
+    "admin": [],
+    "client": [],
+    "candidate": []
+  },
+  "findings": [
+    {
+      "id": "UAT-000",
+      "class": "BLOCKS_LAUNCH",
+      "summary": "UAT cannot be executed — pre-conditions (Phase 17 P1/P3, BG-02, BG-04, BG-SCALE-01) unresolved.",
+      "owner": "Engineering",
+      "next_action": "Close Phase 17 P1/P3 and BG-02/BG-04, seed BG-SCALE-01, then rerun this test plan.",
+      "target_date": "TBD"
+    }
+  ],
+  "approvals": {
+    "admin_operational": { "given": false, "signatory": null, "date": null },
+    "client_representative": { "given": false, "signatory": null, "date": null },
+    "candidate_flow": { "given": false, "signatory": null, "date": null }
+  }
+}
