@@ -10,10 +10,10 @@ export const Route = createFileRoute("/")({
         content:
           "TaaSFlow helps teams hire senior specialists faster. Submit an intake and get shortlisted candidates without the recruiting overhead.",
       },
-      { property: "og:title", content: "TaaSFlow — Hire faster" },
+      { property: "og:title", content: "TaaSFlow — Hire faster with a curated talent pipeline" },
       {
         property: "og:description",
-        content: "Submit a role. Get shortlisted, evidence-backed candidates.",
+        content: "TaaSFlow helps teams hire senior specialists faster. Submit an intake and get shortlisted candidates without the recruiting overhead.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
