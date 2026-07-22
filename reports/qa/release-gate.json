@@ -1,0 +1,22 @@
+{
+  "started": "2026-07-22T19:43:22.043Z",
+  "duration_ms": 70313,
+  "steps": [
+    {
+      "name": "seed",
+      "ok": true,
+      "ms": 45650
+    },
+    {
+      "name": "storage-state",
+      "ok": true,
+      "ms": 69051
+    },
+    {
+      "name": "cleanup-dry-run",
+      "ok": true,
+      "ms": 70312
+    }
+  ],
+  "verdict": "PASS"
+}
