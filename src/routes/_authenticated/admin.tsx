@@ -1,4 +1,6 @@
 import { createFileRoute, Link, Outlet, useRouterState } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
 import {
   LayoutDashboard,
   Building2,
@@ -6,7 +8,13 @@ import {
   Send,
   Activity,
   Settings,
+  Inbox,
 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useEffect, useState } from "react";
+import { NotificationBell } from "@/components/notification-bell";
+import { useDashboardRealtime } from "@/hooks/use-realtime-refresh";
+import { NOTIFICATIONS_QUERY_KEY } from "@/components/notification-bell";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({
@@ -29,8 +37,19 @@ const SECTIONS: Array<{
   { to: "/admin/candidates", label: "Candidates", icon: Users },
   { to: "/admin/publish", label: "Publish Desk", icon: Send },
   { to: "/admin/health", label: "Pipeline Health", icon: Activity },
+  { to: "/admin/notifications", label: "Delivery health", icon: Inbox },
   { to: "/admin/settings", label: "Settings", icon: Settings },
 ];
+
+// Query keys to invalidate on ANY admin-relevant notification arrival.
+const ADMIN_REFRESH_KEYS = [
+  ["admin", "overview"],
+  ["admin", "intakes"],
+  ["admin", "matches"],
+  ["admin", "positions"],
+  ["admin", "delivery-failures"],
+  NOTIFICATIONS_QUERY_KEY,
+] as const;
 
 function AdminLayout() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
