@@ -55,6 +55,17 @@ export const getSessionContext = createServerFn({ method: "GET" })
         break;
       }
     }
+    // Candidates are not tracked via memberships (no organization scope).
+    // If the caller has an active profile and a candidate_profile row,
+    // classify them as a candidate so login routes to /me.
+    if (!primary) {
+      const { data: candProfile } = await supabase
+        .from("candidate_profiles")
+        .select("id")
+        .eq("user_id", userId)
+        .maybeSingle();
+      if (candProfile) primary = "candidate";
+    }
     return {
       user_id: userId,
       email: profile?.email ?? null,
