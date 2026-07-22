@@ -121,7 +121,7 @@ function ClientLayout() {
   const staffMembershipsElsewhere =
     (data?.isStaff ?? false) &&
     active != null &&
-    !data!.organizations.some((o) => o.id === active.organization_id);
+    !data!.organizations.some((o: { id: string }) => o.id === active.organization_id);
 
   const [supportSessionId, setSupportSessionId] = useState<string | null>(null);
   const permissionPreview: PermissionPreview =
