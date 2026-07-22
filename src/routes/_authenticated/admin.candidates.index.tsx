@@ -10,6 +10,7 @@ import {
   listPositionOptions,
 } from "@/lib/admin.functions";
 import { CandidateDetailDrawer } from "@/components/candidate-detail-drawer";
+import { DownloadCvButton } from "@/components/download-cv-button";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
