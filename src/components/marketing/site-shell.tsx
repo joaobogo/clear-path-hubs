@@ -165,6 +165,9 @@ function Header() {
                 <SheetTitle className="text-base font-semibold text-[color:var(--brand-navy)]">
                   Menu
                 </SheetTitle>
+                <SheetDescription className="sr-only">
+                  Primary site navigation
+                </SheetDescription>
               </SheetHeader>
               <nav aria-label="Mobile primary" className="flex flex-col gap-1 px-3 py-4">
                 {PRIMARY_NAV.map((n) => (
