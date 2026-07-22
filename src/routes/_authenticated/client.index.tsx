@@ -3,6 +3,8 @@ import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect } from "react";
 import { getClientContext, getClientOverview } from "@/lib/client.functions";
+import { useClientOrgSearch } from "@/lib/use-client-org";
+
 
 export const Route = createFileRoute("/_authenticated/client/")({
   head: () => ({
@@ -47,9 +49,10 @@ const KPI_META: Record<KpiKey, { label: string; sub: string; filter: string }> =
 function OverviewPage() {
   const ctxFn = useServerFn(getClientContext);
   const overviewFn = useServerFn(getClientOverview);
+  const orgSearch = useClientOrgSearch();
   const { data: ctx } = useQuery({
-    queryKey: ["client-context", null],
-    queryFn: () => ctxFn({ data: {} }),
+    queryKey: ["client-context", orgSearch ?? null],
+    queryFn: () => ctxFn({ data: orgSearch ? { orgId: orgSearch } : {} }),
   });
   const orgId = ctx?.active?.organization_id;
   const { data, refetch, isFetching } = useQuery({
@@ -83,7 +86,7 @@ function OverviewPage() {
             <Link
               key={k}
               to="/client/candidates"
-              search={{ filter: meta.filter }}
+              search={(prev: Record<string, unknown>) => ({ ...prev, filter: meta.filter })}
               className="group block rounded-lg border bg-card p-4 hover:border-primary transition"
             >
               <div className="text-xs uppercase tracking-wide text-muted-foreground">
@@ -111,7 +114,7 @@ function OverviewPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
           <Link
             to="/client/candidates"
-            search={{ filter: "new" }}
+            search={(prev: Record<string, unknown>) => ({ ...prev, filter: "new" })}
             className="rounded border p-3 hover:border-primary transition"
           >
             <div className="text-sm font-medium">New to review</div>
@@ -121,7 +124,7 @@ function OverviewPage() {
           </Link>
           <Link
             to="/client/candidates"
-            search={{ filter: "interview" }}
+            search={(prev: Record<string, unknown>) => ({ ...prev, filter: "interview" })}
             className="rounded border p-3 hover:border-primary transition"
           >
             <div className="text-sm font-medium">Interview outcomes</div>

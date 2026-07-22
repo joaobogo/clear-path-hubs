@@ -8,9 +8,13 @@ import {
   getClientMessages,
   sendClientMessage,
 } from "@/lib/client.functions";
+import { useClientOrgSearch } from "@/lib/use-client-org";
+import { useSupportView } from "@/lib/support-view";
+import { ActionGuard } from "@/components/action-guard";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+
 
 export const Route = createFileRoute("/_authenticated/client/messages")({
   head: () => ({
@@ -38,9 +42,11 @@ function MessagesPage() {
     supabase.auth.getUser().then(({ data }) => setSelfId(data.user?.id ?? null));
   }, []);
 
+  const orgSearch = useClientOrgSearch();
+  const support = useSupportView();
   const { data: ctx } = useQuery({
-    queryKey: ["client-context", null],
-    queryFn: () => ctxFn({ data: {} }),
+    queryKey: ["client-context", orgSearch ?? null],
+    queryFn: () => ctxFn({ data: orgSearch ? { orgId: orgSearch } : {} }),
   });
   const orgId = ctx?.active?.organization_id;
 
@@ -132,6 +138,7 @@ function MessagesPage() {
         className="mt-3 flex gap-2 items-end"
         onSubmit={(e) => {
           e.preventDefault();
+          if (support.readOnly) return;
           if (body.trim()) send.mutate(body.trim());
         }}
       >
@@ -139,12 +146,15 @@ function MessagesPage() {
           value={body}
           onChange={(e) => setBody(e.target.value)}
           rows={2}
-          placeholder="Write a message…"
+          placeholder={support.readOnly ? "Sending messages is disabled in Admin View." : "Write a message…"}
           className="flex-1"
+          disabled={support.readOnly}
         />
-        <Button type="submit" disabled={!body.trim() || send.isPending}>
-          Send
-        </Button>
+        <ActionGuard reason="Sending messages is disabled while viewing as an administrator.">
+          <Button type="submit" disabled={!body.trim() || send.isPending}>
+            Send
+          </Button>
+        </ActionGuard>
       </form>
     </main>
   );

@@ -9,6 +9,9 @@ import {
   moveMatchStage,
   type MatchStage,
 } from "@/lib/client.functions";
+import { useClientOrgSearch } from "@/lib/use-client-org";
+import { useSupportView } from "@/lib/support-view";
+import { ActionGuard } from "@/components/action-guard";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -17,6 +20,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+
 
 export const Route = createFileRoute("/_authenticated/client/positions/$id")({
   head: () => ({
@@ -69,9 +73,11 @@ function PositionDetailPage() {
   const ctxFn = useServerFn(getClientContext);
   const detailFn = useServerFn(getClientPositionDetail);
   const moveFn = useServerFn(moveMatchStage);
+  const orgSearch = useClientOrgSearch();
+  const support = useSupportView();
   const { data: ctx } = useQuery({
-    queryKey: ["client-context", null],
-    queryFn: () => ctxFn({ data: {} }),
+    queryKey: ["client-context", orgSearch ?? null],
+    queryFn: () => ctxFn({ data: orgSearch ? { orgId: orgSearch } : {} }),
   });
   const orgId = ctx?.active?.organization_id;
   const queryKey = ["client-position", orgId, id];
@@ -133,10 +139,12 @@ function PositionDetailPage() {
   if (!data.position) throw notFound();
 
   const canEdit =
-    ctx?.active?.role === "client_admin" ||
-    ctx?.active?.role === "client_editor" ||
-    ctx?.active?.role === "platform_admin" ||
-    ctx?.active?.role === "operations";
+    !support.readOnly &&
+    (ctx?.active?.role === "client_admin" ||
+      ctx?.active?.role === "client_editor" ||
+      ctx?.active?.role === "platform_admin" ||
+      ctx?.active?.role === "operations");
+
 
   const { position, matches } = data;
   const byStage: Record<string, AnyRow[]> = {};
@@ -174,11 +182,15 @@ function PositionDetailPage() {
               .filter(Boolean)
               .join(" · ")}
           </div>
-          {!canEdit && (
+          {support.readOnly ? (
+            <div className="mt-2 text-xs text-muted-foreground">
+              Kanban movement is disabled while viewing this workspace as a TaaSFlow administrator.
+            </div>
+          ) : !canEdit ? (
             <div className="mt-2 text-xs text-muted-foreground">
               Read-only view — you do not have edit permission for this workspace.
             </div>
-          )}
+          ) : null}
         </div>
       </header>
 

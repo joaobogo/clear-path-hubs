@@ -5,7 +5,9 @@ import { useEffect } from "react";
 import { z } from "zod";
 import { fallback, zodValidator } from "@tanstack/zod-adapter";
 import { getClientContext, getClientPositions } from "@/lib/client.functions";
+import { useClientOrgSearch } from "@/lib/use-client-org";
 import { Badge } from "@/components/ui/badge";
+
 
 const searchSchema = z.object({
   tab: fallback(z.string(), "active").default("active"),
@@ -37,9 +39,10 @@ function PositionsPage() {
   const safeTab = TABS.some((t) => t.key === tab) ? (tab as typeof TABS[number]["key"]) : "active";
   const ctxFn = useServerFn(getClientContext);
   const listFn = useServerFn(getClientPositions);
+  const orgSearch = useClientOrgSearch();
   const { data: ctx } = useQuery({
-    queryKey: ["client-context", null],
-    queryFn: () => ctxFn({ data: {} }),
+    queryKey: ["client-context", orgSearch ?? null],
+    queryFn: () => ctxFn({ data: orgSearch ? { orgId: orgSearch } : {} }),
   });
   const orgId = ctx?.active?.organization_id;
   const { data: rows = [], refetch, isFetching } = useQuery({
@@ -67,7 +70,7 @@ function PositionsPage() {
           <Link
             key={t.key}
             to="/client/positions"
-            search={{ tab: t.key }}
+            search={(prev: Record<string, unknown>) => ({ ...prev, tab: t.key })}
             className={`px-3 py-2 text-sm border-b-2 -mb-px ${
               safeTab === t.key
                 ? "border-primary text-foreground"
