@@ -73,9 +73,11 @@ function PositionDetailPage() {
   const ctxFn = useServerFn(getClientContext);
   const detailFn = useServerFn(getClientPositionDetail);
   const moveFn = useServerFn(moveMatchStage);
+  const orgSearch = useClientOrgSearch();
+  const support = useSupportView();
   const { data: ctx } = useQuery({
-    queryKey: ["client-context", null],
-    queryFn: () => ctxFn({ data: {} }),
+    queryKey: ["client-context", orgSearch ?? null],
+    queryFn: () => ctxFn({ data: orgSearch ? { orgId: orgSearch } : {} }),
   });
   const orgId = ctx?.active?.organization_id;
   const queryKey = ["client-position", orgId, id];
