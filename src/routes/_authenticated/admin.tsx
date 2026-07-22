@@ -90,6 +90,4 @@ function AdminLayout() {
     </div>
   );
 }
-// Kept: useQuery import reserved for future dashboard-scoped queries wired via coordinator.
-export { useQuery, useServerFn };
 
