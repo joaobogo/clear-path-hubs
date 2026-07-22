@@ -233,23 +233,33 @@ function CandidateDetailPage() {
         <aside className="space-y-4">
           <div className="rounded-lg border bg-card p-4">
             <h2 className="font-medium mb-2">Actions</h2>
+            {support.readOnly && (
+              <p className="mb-3 rounded border border-dashed border-primary/40 bg-primary/5 p-2 text-xs text-muted-foreground">
+                Client actions are disabled while viewing this workspace as a TaaSFlow administrator.
+              </p>
+            )}
             <Textarea
               value={feedback}
               onChange={(e) => setFeedback(e.target.value)}
               placeholder="Optional feedback for TaaSFlow"
               className="mb-3 text-sm"
               rows={3}
+              disabled={support.readOnly}
             />
             <div className="grid grid-cols-1 gap-2">
               {ACTIONS.map((a) => (
-                <Button
+                <ActionGuard
                   key={a.key}
-                  variant={a.key === "hire" ? "default" : "outline"}
-                  disabled={act.isPending}
-                  onClick={() => act.mutate(a.key)}
+                  reason={`${a.label} is disabled while viewing as an administrator.`}
                 >
-                  {a.label}
-                </Button>
+                  <Button
+                    variant={a.key === "hire" ? "default" : "outline"}
+                    disabled={act.isPending}
+                    onClick={() => act.mutate(a.key)}
+                  >
+                    {a.label}
+                  </Button>
+                </ActionGuard>
               ))}
             </div>
           </div>
