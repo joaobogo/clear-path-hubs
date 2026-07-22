@@ -328,20 +328,45 @@ export function CandidateDetailDrawer({
                 </div>
                 <div>
                   <Label>Location</Label>
-                  <Input value={edit.location ?? ""} onChange={(e) => setEdit({ ...edit, location: e.target.value })} />
+                  <Input data-qa-field="location" value={edit.location ?? ""} onChange={(e) => setEdit({ ...edit, location: e.target.value })} />
+                </div>
+                <div>
+                  <Label>Timezone</Label>
+                  <Input data-qa-field="timezone" placeholder="e.g. Europe/Lisbon" value={edit.timezone ?? ""} onChange={(e) => setEdit({ ...edit, timezone: e.target.value })} />
                 </div>
                 <div className="col-span-2">
                   <Label>Headline</Label>
-                  <Input value={edit.headline ?? ""} onChange={(e) => setEdit({ ...edit, headline: e.target.value })} />
+                  <Input data-qa-field="headline" value={edit.headline ?? ""} onChange={(e) => setEdit({ ...edit, headline: e.target.value })} />
+                </div>
+                <div className="col-span-2">
+                  <Label>Summary</Label>
+                  <Textarea data-qa-field="summary" rows={4} value={edit.summary ?? ""} onChange={(e) => setEdit({ ...edit, summary: e.target.value })} />
+                </div>
+                <div>
+                  <Label>Years of experience</Label>
+                  <Input data-qa-field="years_experience" type="number" min={0} max={80} value={edit.years_experience ?? ""} onChange={(e) => setEdit({ ...edit, years_experience: e.target.value })} />
+                </div>
+                <div>
+                  <Label>LinkedIn URL</Label>
+                  <Input data-qa-field="linkedin_url" placeholder="https://linkedin.com/in/…" value={edit.linkedin_url ?? ""} onChange={(e) => setEdit({ ...edit, linkedin_url: e.target.value })} />
+                </div>
+                <div className="col-span-2">
+                  <Label>Availability</Label>
+                  <Input data-qa-field="availability_text" placeholder="e.g. Available from Sept, 4 weeks notice" value={edit.availability_text ?? ""} onChange={(e) => setEdit({ ...edit, availability_text: e.target.value })} />
+                </div>
+                <div className="col-span-2">
+                  <Label>Work authorization</Label>
+                  <Input data-qa-field="work_auth_text" placeholder="e.g. EU citizen, no visa required" value={edit.work_auth_text ?? ""} onChange={(e) => setEdit({ ...edit, work_auth_text: e.target.value })} />
                 </div>
               </div>
               <div className="flex gap-2">
-                <Button disabled={saveMutation.isPending} onClick={() => saveMutation.mutate("admin_drawer_contact")}>
-                  {saveMutation.isPending ? "Saving…" : "Save contact"}
+                <Button data-qa-action="save-candidate-contact" disabled={saveMutation.isPending} onClick={() => saveMutation.mutate("admin_drawer_contact")}>
+                  {saveMutation.isPending ? "Saving…" : "Save changes"}
                 </Button>
                 {!cp?.id && cp?.email && (
                   <Button
                     variant="secondary"
+                    data-qa-action="repair-identity"
                     disabled={busy !== null}
                     onClick={() =>
                       runAction("repair identity", () =>
@@ -349,6 +374,8 @@ export function CandidateDetailDrawer({
                           data: {
                             email: cp.email,
                             full_name: cp.full_name ?? cp.email.split("@")[0],
+                            match_id: submissionId ?? undefined,
+                            application_id: match?.application_id,
                           },
                         }),
                       )
@@ -358,6 +385,7 @@ export function CandidateDetailDrawer({
                   </Button>
                 )}
               </div>
+
             </TabsContent>
 
             <TabsContent value="application" className="mt-4 space-y-2 text-sm">
