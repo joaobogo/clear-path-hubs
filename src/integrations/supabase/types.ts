@@ -741,6 +741,79 @@ export type Database = {
           },
         ]
       }
+      export_jobs: {
+        Row: {
+          completed_at: string | null
+          data_freshness_at: string | null
+          error: string | null
+          expires_at: string | null
+          export_type: string
+          filters: Json
+          id: string
+          organization_id: string | null
+          output_file_id: string | null
+          requested_at: string
+          requested_by: string
+          row_count: number | null
+          status: string
+          trace_id: string | null
+        }
+        Insert: {
+          completed_at?: string | null
+          data_freshness_at?: string | null
+          error?: string | null
+          expires_at?: string | null
+          export_type: string
+          filters?: Json
+          id?: string
+          organization_id?: string | null
+          output_file_id?: string | null
+          requested_at?: string
+          requested_by: string
+          row_count?: number | null
+          status?: string
+          trace_id?: string | null
+        }
+        Update: {
+          completed_at?: string | null
+          data_freshness_at?: string | null
+          error?: string | null
+          expires_at?: string | null
+          export_type?: string
+          filters?: Json
+          id?: string
+          organization_id?: string | null
+          output_file_id?: string | null
+          requested_at?: string
+          requested_by?: string
+          row_count?: number | null
+          status?: string
+          trace_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "export_jobs_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "admin_clients_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "export_jobs_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "export_jobs_output_file_id_fkey"
+            columns: ["output_file_id"]
+            isOneToOne: false
+            referencedRelation: "files"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       files: {
         Row: {
           candidate_profile_id: string | null
@@ -1527,6 +1600,60 @@ export type Database = {
             columns: ["policy_id"]
             isOneToOne: false
             referencedRelation: "retention_policies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      saved_views: {
+        Row: {
+          created_at: string
+          filters: Json
+          id: string
+          is_default: boolean
+          is_shared: boolean
+          name: string
+          organization_id: string | null
+          surface: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          filters?: Json
+          id?: string
+          is_default?: boolean
+          is_shared?: boolean
+          name: string
+          organization_id?: string | null
+          surface: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          filters?: Json
+          id?: string
+          is_default?: boolean
+          is_shared?: boolean
+          name?: string
+          organization_id?: string | null
+          surface?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "saved_views_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "admin_clients_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "saved_views_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
         ]
@@ -2510,6 +2637,8 @@ export type Database = {
         Returns: boolean
       }
       is_platform_staff: { Args: { _user: string }; Returns: boolean }
+      show_limit: { Args: never; Returns: number }
+      show_trgm: { Args: { "": string }; Returns: string[] }
     }
     Enums: {
       admin_review_status: "pending" | "approved" | "rejected" | "on_hold"
