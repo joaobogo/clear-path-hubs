@@ -72,26 +72,38 @@ export const getAdminOverview = createServerFn({ method: "GET" })
     const [
       new_intakes,
       positions_review,
+      new_applications,
       candidates_review,
       candidates_ready,
       processing_failures,
       client_requests,
       aging,
     ] = await Promise.all([
-      count("positions", (q) => q.eq("status", "submitted")),
+      // Fresh submissions from the public intake wizard (last 7d)
+      count("positions", (q) => q.eq("status", "submitted").gte("created_at", weekAgo)),
+      // Submitted / needs-clarification — anything not yet approved
       count("positions", (q) => q.in("status", ["submitted", "needs_clarification"])),
+      // Applications landed in the pipeline in the last 24h
+      count("candidate_matches", (q) =>
+        q.in("processing_state", ["queued", "parsing", "enriching", "ready_to_score", "parsed"]).gte("created_at", dayAgo),
+      ),
+      // Scored, awaiting admin decision
       count("candidate_matches", (q) =>
         q.eq("admin_status", "pending").eq("processing_state", "scored"),
       ),
+      // Approved but hidden — ready for the Publish Desk
       count("candidate_matches", (q) =>
         q.eq("admin_status", "approved").eq("client_visibility", "hidden"),
       ),
+      // Processing incidents to triage
       count("candidate_matches", (q) =>
-        q.in("processing_state", ["failed", "provider_blocked", "ocr_required"]),
+        q.in("processing_state", ["failed", "provider_blocked", "ocr_required", "manual_review_required"]),
       ),
+      // Client-initiated recompute / feedback in the last 7d
       count("score_decisions", (q) =>
         q.eq("decision_type", "request_recompute").gte("created_at", weekAgo),
       ),
+      // In-flight work older than 24h
       count("candidate_matches", (q) =>
         q
           .in("processing_state", ["queued", "parsing", "enriching", "ready_to_score"])
@@ -99,17 +111,45 @@ export const getAdminOverview = createServerFn({ method: "GET" })
       ),
     ]);
 
+    // ── Action Required feed: top prioritized items across the platform ────
+    const [{ data: pendingReview }, { data: readyPublish }, { data: submittedPositions }, { data: recentActivity }] =
+      await Promise.all([
+        s.from("candidate_matches")
+          .select("id,updated_at,candidate_profiles(full_name),positions(title,organizations(name)),score_runs!candidate_matches_current_score_run_id_fkey(score,fit_label)")
+          .eq("processing_state", "scored").eq("admin_status", "pending")
+          .order("updated_at", { ascending: false }).limit(6),
+        s.from("candidate_matches")
+          .select("id,updated_at,candidate_profiles(full_name),positions(title,organizations(name))")
+          .eq("admin_status", "approved").eq("client_visibility", "hidden")
+          .order("updated_at", { ascending: false }).limit(4),
+        s.from("positions")
+          .select("id,title,status,created_at,organizations(name)")
+          .in("status", ["submitted", "needs_clarification"])
+          .order("created_at", { ascending: false }).limit(4),
+        s.from("audit_events")
+          .select("id,action,entity_type,entity_id,created_at,organization_id")
+          .order("created_at", { ascending: false }).limit(8),
+      ]);
+
     return {
       new_intakes,
       positions_review,
+      new_applications,
       candidates_review,
       candidates_ready,
       processing_failures,
       client_requests,
       aging,
+      action_items: {
+        candidates_pending_review: (pendingReview ?? []) as AnyRow[],
+        candidates_ready_to_publish: (readyPublish ?? []) as AnyRow[],
+        positions_awaiting_approval: (submittedPositions ?? []) as AnyRow[],
+      },
+      recent_activity: (recentActivity ?? []) as AnyRow[],
       generated_at: new Date().toISOString(),
     };
   });
+
 
 // ─── Clients & Positions ─────────────────────────────────────────────────────
 
