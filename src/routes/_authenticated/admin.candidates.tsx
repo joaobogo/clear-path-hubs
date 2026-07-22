@@ -3,10 +3,10 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { listAdminMatches } from "@/lib/processing.functions";
 import { Badge } from "@/components/ui/badge";
 
-export const Route = createFileRoute("/_authenticated/admin/matches")({
+export const Route = createFileRoute("/_authenticated/admin/candidates")({
   loader: ({ context }) =>
     context.queryClient.ensureQueryData({
-      queryKey: ["admin-matches"],
+      queryKey: ["admin-candidates"],
       queryFn: () => listAdminMatches(),
     }),
   errorComponent: ({ error }) => (
@@ -31,7 +31,7 @@ const STATE_COLOR: Record<string, string> = {
 
 function MatchesPage() {
   const { data: rows } = useSuspenseQuery({
-    queryKey: ["admin-matches"],
+    queryKey: ["admin-candidates"],
     queryFn: () => listAdminMatches(),
   });
 
@@ -99,7 +99,7 @@ function MatchesPage() {
                 <td className="px-3 py-2 capitalize">{m.client_visibility}</td>
                 <td className="px-3 py-2 text-right">
                   <Link
-                    to="/admin/matches/$id"
+                    to="/admin/candidates/$id"
                     params={{ id: m.id }}
                     className="text-primary hover:underline"
                   >
