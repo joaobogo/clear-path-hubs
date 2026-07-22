@@ -48,7 +48,8 @@ function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [mode, setMode] = useState<"signin" | "forgot">("signin");
+  const [mode, setMode] = useState<"signin" | "forgot" | "signup">("signin");
+  const [fullName, setFullName] = useState("");
   const [pickerFor, setPickerFor] = useState<SessionMembership[] | null>(null);
 
   // Already signed in? Redirect immediately.
