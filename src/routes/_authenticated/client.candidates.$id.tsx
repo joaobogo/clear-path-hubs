@@ -34,8 +34,9 @@ const ACTIONS = [
   { key: "shortlist", label: "Shortlist" },
   { key: "request_interview", label: "Request interview" },
   { key: "request_more_information", label: "Request more info" },
-  { key: "not_moving_forward", label: "Not moving forward" },
   { key: "submit_feedback", label: "Submit feedback" },
+  { key: "not_moving_forward", label: "Not moving forward" },
+  { key: "offer", label: "Extend offer" },
   { key: "hire", label: "Hire" },
 ] as const;
 

@@ -1,0 +1,1 @@
+ALTER TYPE public.client_decision_type ADD VALUE IF NOT EXISTS 'offer';
