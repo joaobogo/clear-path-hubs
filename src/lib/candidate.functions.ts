@@ -227,7 +227,7 @@ export const getMyApplication = createServerFn({ method: "GET" })
       .from("applications")
       .select(
         `id, position_id, status, applied_at, updated_at, withdrawn_at, candidate_profile_id,
-         positions:position_id ( id, title, description, status, organization_id, employment_type, work_model, location_city, location_country, organizations:organization_id ( id, name, share_company_name_with_candidates ) ),
+         positions:position_id ( id, title, description, status, organization_id, employment_type, work_model, location, organizations:organization_id ( id, name ) ),
          candidate_matches ( id, stage, client_visibility, updated_at,
            client_decisions ( decision, feedback, created_at ) )`,
       )
@@ -253,32 +253,14 @@ export const getMyApplication = createServerFn({ method: "GET" })
       visibleStage: visibleMatch?.stage ?? null,
       infoRequested,
     });
-    const shareCompany = org.share_company_name_with_candidates !== false;
-
-    // Timeline (candidate-safe): applied, then any client_decision that has a
-    // safe surface. We DO NOT include admin_status, scores, or processing_state.
-    const events: { at: string; label: string }[] = [
-      { at: a.applied_at, label: "Application received" },
-    ];
-    for (const m of a.candidate_matches ?? []) {
-      for (const d of m.client_decisions ?? []) {
-        const label = decisionLabel(d.decision);
-        if (label) events.push({ at: d.created_at, label });
-      }
-    }
-    if (a.withdrawn_at) events.push({ at: a.withdrawn_at, label: "Withdrawn" });
-    events.sort((x, y) => x.at.localeCompare(y.at));
-
     return {
       id: a.id,
       role_title: pos.title ?? "Role",
       role_description: pos.description ?? "",
-      company: shareCompany ? org.name ?? null : null,
+      company: org.name ?? null,
       employment_type: pos.employment_type ?? null,
       work_model: pos.work_model ?? null,
-      location: pos.location_city
-        ? [pos.location_city, pos.location_country].filter(Boolean).join(", ")
-        : null,
+      location: pos.location ?? null,
       applied_at: a.applied_at,
       status,
       next_step: nextStepHint(status),
