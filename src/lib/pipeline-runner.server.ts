@@ -60,13 +60,12 @@ async function recordJob(
   });
 }
 
-function buildRequirements(pos: Any): RequirementInput[] {
-  const req = Array.isArray(pos?.requirements) ? (pos.requirements as string[]) : [];
-  const pref = Array.isArray(pos?.preferred_requirements) ? (pos.preferred_requirements as string[]) : [];
-  return [
-    ...req.map((t, i) => ({ id: `req-${i}`, text: String(t), required: true, keywords: [] })),
-    ...pref.map((t, i) => ({ id: `pref-${i}`, text: String(t), required: false, keywords: [] })),
-  ];
+// Requirements are built inside the canonical scoring service now.
+// This helper only remains to detect "no structured requirements" for the enrich gate.
+function hasStructuredRequirements(pos: Any): boolean {
+  const req = Array.isArray(pos?.requirements) ? pos.requirements : [];
+  const pref = Array.isArray(pos?.preferred_requirements) ? pos.preferred_requirements : [];
+  return req.length + pref.length > 0;
 }
 
 function buildScreening(rows: Any[]): ScreeningAnswer[] {
