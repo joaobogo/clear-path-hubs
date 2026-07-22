@@ -9,6 +9,15 @@ const FIT_COLOR: Record<string, string> = {
   weak: "bg-muted text-muted-foreground",
 };
 
+function primaryCta(stage: ClientCandidateDTO["stage"]): string {
+  if (stage === "delivered") return "Review →";
+  if (stage === "shortlisted") return "Request interview →";
+  if (stage === "interview_process") return "Interview details →";
+  if (stage === "offer") return "Decide on offer →";
+  if (stage === "hired") return "View profile →";
+  return "View →";
+}
+
 export function CandidateCard({ candidate }: { candidate: ClientCandidateDTO }) {
   const c = candidate;
   return (
@@ -31,7 +40,9 @@ export function CandidateCard({ candidate }: { candidate: ClientCandidateDTO }) 
             </Badge>
           </div>
           <div className="text-xs text-muted-foreground mt-1">
-            {c.position?.title ?? "—"} · {c.candidate.location ?? "—"}
+            {[c.position?.title ?? "—", c.candidate.location ?? null, c.candidate.availability ?? null]
+              .filter(Boolean)
+              .join(" · ")}
           </div>
           <div className="text-xs mt-2 space-y-0.5">
             {c.strengths[0] && (
@@ -42,9 +53,7 @@ export function CandidateCard({ candidate }: { candidate: ClientCandidateDTO }) 
             )}
             {c.main_consideration && (
               <div>
-                <span className="text-muted-foreground">
-                  Main consideration:{" "}
-                </span>
+                <span className="text-muted-foreground">Main consideration: </span>
                 {c.main_consideration}
               </div>
             )}
@@ -52,9 +61,7 @@ export function CandidateCard({ candidate }: { candidate: ClientCandidateDTO }) 
         </div>
         <div className="flex items-center gap-3 shrink-0">
           <div className="text-right">
-            <div className="text-xs uppercase tracking-wide text-muted-foreground">
-              Score
-            </div>
+            <div className="text-xs uppercase tracking-wide text-muted-foreground">Score</div>
             <div className="text-xl font-semibold tabular-nums">
               {c.score == null ? "—" : c.score.toFixed(0)}
             </div>
@@ -64,7 +71,7 @@ export function CandidateCard({ candidate }: { candidate: ClientCandidateDTO }) 
             params={{ id: c.match_id }}
             className="text-sm text-primary hover:underline"
           >
-            Review →
+            {primaryCta(c.stage)}
           </Link>
         </div>
       </div>
