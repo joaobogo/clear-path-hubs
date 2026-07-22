@@ -19,6 +19,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { FormShell } from "@/components/marketing/form-shell";
 
 export const Route = createFileRoute("/jobs/$id/apply")({
   loader: async ({ context, params }) => {
