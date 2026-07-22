@@ -10,7 +10,7 @@ import {
   type CandidateFilter,
 } from "@/lib/client.functions";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
+import { CandidateCard } from "@/components/client/candidate-card";
 
 const FILTERS: { key: CandidateFilter; label: string }[] = [
   { key: "all", label: "All" },
