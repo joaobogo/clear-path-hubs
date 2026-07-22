@@ -1,0 +1,385 @@
+{
+  "run_id": "qa20260722",
+  "tag": "[QA:qa20260722]",
+  "generated_at": "2026-07-22T19:40:52.417Z",
+  "expires_at": "2026-07-29T19:40:29.425Z",
+  "password_secret": "QA_PERSONA_PASSWORD",
+  "orgs": {
+    "alpha": "c077bcb1-6e4c-4823-9971-43dc2248b804",
+    "beta": "1f3cfdf8-dcef-4f6b-bf22-f7c1200d4eb4",
+    "gamma": "54d10ff5-c6d1-47b4-affb-3a509b742d6a"
+  },
+  "personas": {
+    "platform-admin": {
+      "user_id": "cfd99589-af80-4f43-a63f-197cc58edf94",
+      "email": "qa+platform-admin.qa20260722@qa.taasflow.test",
+      "name": "QA Platform Admin [QA:qa20260722]"
+    },
+    "operations": {
+      "user_id": "d1ec0791-9d03-4fe6-ac11-7d766e10ecaf",
+      "email": "qa+operations.qa20260722@qa.taasflow.test",
+      "name": "QA Operations [QA:qa20260722]"
+    },
+    "alpha-admin": {
+      "user_id": "c15cafbb-ba45-4cfc-a334-f778a48106d1",
+      "email": "qa+alpha-admin.qa20260722@qa.taasflow.test",
+      "name": "QA Alpha Admin [QA:qa20260722]"
+    },
+    "alpha-editor": {
+      "user_id": "f267221a-acb9-4aae-b1b4-51289d0c9784",
+      "email": "qa+alpha-editor.qa20260722@qa.taasflow.test",
+      "name": "QA Alpha Editor [QA:qa20260722]"
+    },
+    "alpha-viewer": {
+      "user_id": "25a0efa6-90d6-42b3-a4ab-62069ab9abc9",
+      "email": "qa+alpha-viewer.qa20260722@qa.taasflow.test",
+      "name": "QA Alpha Viewer [QA:qa20260722]"
+    },
+    "beta-admin": {
+      "user_id": "24d5f5f5-4c5b-4fab-ab11-6b392c399db6",
+      "email": "qa+beta-admin.qa20260722@qa.taasflow.test",
+      "name": "QA Beta Admin [QA:qa20260722]"
+    },
+    "beta-editor": {
+      "user_id": "5cfc5db1-49cf-4b5e-a169-d2717be33c6e",
+      "email": "qa+beta-editor.qa20260722@qa.taasflow.test",
+      "name": "QA Beta Editor [QA:qa20260722]"
+    },
+    "beta-viewer": {
+      "user_id": "2777acb7-cdf5-42fb-a813-579a94383328",
+      "email": "qa+beta-viewer.qa20260722@qa.taasflow.test",
+      "name": "QA Beta Viewer [QA:qa20260722]"
+    },
+    "wrong-tenant": {
+      "user_id": "5082daab-15db-40d7-9e77-5beb65be5ed0",
+      "email": "qa+wrong-tenant.qa20260722@qa.taasflow.test",
+      "name": "QA Wrong-Tenant Client [QA:qa20260722]"
+    },
+    "cand-single": {
+      "user_id": "3721704a-a4d3-4a76-8404-d2864286762a",
+      "email": "qa+cand-single.qa20260722@qa.taasflow.test",
+      "name": "QA Candidate Single [QA:qa20260722]"
+    },
+    "cand-multi": {
+      "user_id": "3269d255-6312-4f8f-818e-a9b6a0e7e1b5",
+      "email": "qa+cand-multi.qa20260722@qa.taasflow.test",
+      "name": "QA Candidate Multi [QA:qa20260722]"
+    },
+    "cand-none": {
+      "user_id": "975ef8bc-03a8-4d3d-ac77-19f9cba532d6",
+      "email": "qa+cand-none.qa20260722@qa.taasflow.test",
+      "name": "QA Candidate None [QA:qa20260722]"
+    },
+    "deactivated": {
+      "user_id": "4008bc1c-7305-4dce-85fc-89315702690b",
+      "email": "qa+deactivated.qa20260722@qa.taasflow.test",
+      "name": "QA Deactivated [QA:qa20260722]"
+    }
+  },
+  "positions": {
+    "alpha:Senior Backend Engineer": "e4a0406e-319b-4674-9b19-59de964ad7f3",
+    "alpha:Product Designer (Priv)": "283bfb8d-9d9a-47e2-b3b1-f55fd5f4329c",
+    "alpha:Data Analyst (Draft)": "5115f818-03a6-465a-90e4-d8f0bf69ddfa",
+    "alpha:Sales Ops (Submitted)": "9ba2a1c6-2db5-4a46-be78-05cca1b8029c",
+    "alpha:DevOps (Paused)": "e9c20c7c-9e80-4a84-800e-2d7b56f511a5",
+    "alpha:Legacy Role (Closed)": "92422f39-20ae-41b7-9948-1af48e245278",
+    "alpha:Archived Role": "84f023ee-5d73-40bd-9ee9-7868bb1cc6cc",
+    "beta:Full-Stack Engineer": "a041db74-9ebc-4bfd-8674-d1f3e42ab030",
+    "beta:Head of Marketing (Priv)": "980560a5-eb15-4490-b0d6-3f9e5be430a6",
+    "beta:CSM (Submitted)": "3b8308ec-3ca5-43e7-9dce-07b999221746"
+  },
+  "lifecycle_candidates": [
+    {
+      "tag": "alpha",
+      "slug": "newly-applied",
+      "cp": "8d3a4911-c955-4d63-a2ba-4952b6ce50d9",
+      "app": "15630e91-e464-49c2-a6b0-c3346f100d73",
+      "match": "278bd463-7605-49cf-b90f-4c0861a38e2e",
+      "pos": "e4a0406e-319b-4674-9b19-59de964ad7f3"
+    },
+    {
+      "tag": "alpha",
+      "slug": "parse-pending",
+      "cp": "05948a3d-293f-4e9f-8e2a-b8575d956c61",
+      "app": "4bd72bdb-8237-4de1-a596-c737c5bbf071",
+      "match": "dbb31a60-553c-4acf-89df-a1b03b85b4b3",
+      "pos": "283bfb8d-9d9a-47e2-b3b1-f55fd5f4329c"
+    },
+    {
+      "tag": "alpha",
+      "slug": "parse-failed",
+      "cp": "5569d6f6-37a2-42cf-9cc4-f03496d1fac6",
+      "app": "1b453b15-fa1c-45fc-b0d3-b7f275747216",
+      "match": "2e6a6675-ffea-454f-b038-a60ee7539903",
+      "pos": "e4a0406e-319b-4674-9b19-59de964ad7f3"
+    },
+    {
+      "tag": "alpha",
+      "slug": "ocr-required",
+      "cp": "a8ffb582-c4d5-462f-9833-ac1937a7ea9d",
+      "app": "b181159b-996a-45e1-aa68-318a65af045a",
+      "match": "390e1f0d-a7b6-4e5e-86d2-f2486506391f",
+      "pos": "283bfb8d-9d9a-47e2-b3b1-f55fd5f4329c"
+    },
+    {
+      "tag": "alpha",
+      "slug": "enrichment-pending",
+      "cp": "b78baefa-c6a8-4459-9991-6d397e55df9e",
+      "app": "c37b6dda-d11e-4762-ba06-abaa0e8397ff",
+      "match": "2c04216b-d7f3-4ec2-a707-92b673a22ab4",
+      "pos": "e4a0406e-319b-4674-9b19-59de964ad7f3"
+    },
+    {
+      "tag": "alpha",
+      "slug": "scoring-pending",
+      "cp": "4f419b81-3625-4d80-b066-b18bcc54ec3c",
+      "app": "d90194da-230b-44f4-a171-ac258a5f784a",
+      "match": "4264e11a-b8c0-48dd-b397-c71d6cff630d",
+      "pos": "283bfb8d-9d9a-47e2-b3b1-f55fd5f4329c"
+    },
+    {
+      "tag": "alpha",
+      "slug": "scoring-failed",
+      "cp": "99a80fb2-4403-4863-8824-12c0768c48dc",
+      "app": "adf06bee-4e4e-488a-b80a-dc9592a0f2aa",
+      "match": "4709f9a2-bc5e-47d0-8b8d-702ff049d5ca",
+      "pos": "e4a0406e-319b-4674-9b19-59de964ad7f3"
+    },
+    {
+      "tag": "alpha",
+      "slug": "score-complete",
+      "cp": "0a3db1f9-5fdc-49df-8ad7-6684db439b41",
+      "app": "591471b1-0d6a-4c77-bdee-4d73ff1cc218",
+      "match": "0002cec8-0501-46df-ab51-366fe1461f30",
+      "pos": "283bfb8d-9d9a-47e2-b3b1-f55fd5f4329c"
+    },
+    {
+      "tag": "alpha",
+      "slug": "review-required",
+      "cp": "161a09b6-c1c8-49e7-a737-78f83c759b58",
+      "app": "2fb76f2e-f965-4def-86bb-4266e85c873e",
+      "match": "8244f8dc-b839-4136-8dde-46dd3a22d6cb",
+      "pos": "e4a0406e-319b-4674-9b19-59de964ad7f3"
+    },
+    {
+      "tag": "alpha",
+      "slug": "ready-to-publish",
+      "cp": "72c8342f-38ee-472a-b3aa-088639a4aa9c",
+      "app": "bfdcfc30-845c-46a3-95d9-95ed64fd9a48",
+      "match": "840ea1c9-51b5-440a-b1d7-396ecc396bd4",
+      "pos": "283bfb8d-9d9a-47e2-b3b1-f55fd5f4329c"
+    },
+    {
+      "tag": "alpha",
+      "slug": "client-visible",
+      "cp": "9f033aa5-b537-4307-9284-4d68e1dd1ac8",
+      "app": "0c78db3f-42dc-4fad-b198-63294757bf61",
+      "match": "5a3e1460-83e0-43cf-bce8-4ad7c9527f64",
+      "pos": "e4a0406e-319b-4674-9b19-59de964ad7f3"
+    },
+    {
+      "tag": "alpha",
+      "slug": "shortlisted",
+      "cp": "ba024e31-54d9-455a-9108-104777258757",
+      "app": "e4da4605-2316-49d2-bdeb-2a0ffc613483",
+      "match": "a972283b-8d44-4924-b693-c982563c4a25",
+      "pos": "283bfb8d-9d9a-47e2-b3b1-f55fd5f4329c"
+    },
+    {
+      "tag": "alpha",
+      "slug": "interview",
+      "cp": "4f980a44-7b21-4ba2-ba25-8a6125337978",
+      "app": "561cee64-9cbb-4fa5-8560-17b06bbde9bc",
+      "match": "86919547-1b22-4c3f-b584-68c14549cc0d",
+      "pos": "e4a0406e-319b-4674-9b19-59de964ad7f3"
+    },
+    {
+      "tag": "alpha",
+      "slug": "offer",
+      "cp": "739edee2-c03e-4a39-9144-1ac5c052ebff",
+      "app": "1082d6e9-4ce1-4ecc-9512-063d7fb2426e",
+      "match": "2c3fd84d-aa96-46c4-b53b-a3d6198a9a3b",
+      "pos": "283bfb8d-9d9a-47e2-b3b1-f55fd5f4329c"
+    },
+    {
+      "tag": "alpha",
+      "slug": "hired",
+      "cp": "edffd846-ebf3-4ebe-92d8-fc240197b2f3",
+      "app": "b3485bfb-44c0-47fc-9a23-91457fd28127",
+      "match": "6f6bff5d-8953-4249-82fa-4432bcf5df6d",
+      "pos": "e4a0406e-319b-4674-9b19-59de964ad7f3"
+    },
+    {
+      "tag": "alpha",
+      "slug": "not-moving-forward",
+      "cp": "45cb847d-ca4a-4086-9b56-eb96401578d3",
+      "app": "4d053d74-e152-41be-a138-729a16052f12",
+      "match": "e193f67e-6f0d-4786-8a23-7074fa37b4f2",
+      "pos": "283bfb8d-9d9a-47e2-b3b1-f55fd5f4329c"
+    },
+    {
+      "tag": "beta",
+      "slug": "newly-applied",
+      "cp": "a28071b3-af1c-4606-af4d-08023b3a3e6a",
+      "app": "bcf95464-0702-45dd-9edd-295cc54b14ce",
+      "match": "71e83d08-91c5-4fc0-9342-dd09d7df640e",
+      "pos": "a041db74-9ebc-4bfd-8674-d1f3e42ab030"
+    },
+    {
+      "tag": "beta",
+      "slug": "parse-pending",
+      "cp": "bfee3ee9-2deb-4a44-9289-a3e11dc98530",
+      "app": "50314601-9a68-426c-80f5-3752e0092a40",
+      "match": "24a66ba0-6219-4fe6-9994-5dd05e655129",
+      "pos": "980560a5-eb15-4490-b0d6-3f9e5be430a6"
+    },
+    {
+      "tag": "beta",
+      "slug": "parse-failed",
+      "cp": "76e62b25-a021-459f-8118-cd50071ac5c5",
+      "app": "9e3e32d5-9c5b-45d2-af0f-581bd31b0075",
+      "match": "e730b253-c4e7-4b89-96ed-eb84b165f985",
+      "pos": "a041db74-9ebc-4bfd-8674-d1f3e42ab030"
+    },
+    {
+      "tag": "beta",
+      "slug": "ocr-required",
+      "cp": "cac0f5cc-845c-453e-a63f-0d90d427bfdd",
+      "app": "e8341de2-2219-493f-88fe-46285c8c378e",
+      "match": "3a0fec7e-8443-4290-b371-1b2ed5ce6607",
+      "pos": "980560a5-eb15-4490-b0d6-3f9e5be430a6"
+    },
+    {
+      "tag": "beta",
+      "slug": "enrichment-pending",
+      "cp": "44cf5633-4ac9-4737-98b0-fa95c94b0663",
+      "app": "afc990e8-d12e-4702-a1a7-e08ce7fca3ba",
+      "match": "948e6aa1-8707-42a2-adb8-199857302f63",
+      "pos": "a041db74-9ebc-4bfd-8674-d1f3e42ab030"
+    },
+    {
+      "tag": "beta",
+      "slug": "scoring-pending",
+      "cp": "60e3affe-b2df-499b-9801-b742823654e8",
+      "app": "68fe6b83-9f85-4cac-b176-febb641d3a78",
+      "match": "a17ed689-143a-43cc-beba-fa15c4e81201",
+      "pos": "980560a5-eb15-4490-b0d6-3f9e5be430a6"
+    },
+    {
+      "tag": "beta",
+      "slug": "scoring-failed",
+      "cp": "81a3ae43-2b13-4073-bbdb-c0402855377e",
+      "app": "7cae8660-bb3e-4b16-9915-f0b0964b2959",
+      "match": "93205ca5-f58e-4083-8bae-fcd9688bfe2f",
+      "pos": "a041db74-9ebc-4bfd-8674-d1f3e42ab030"
+    },
+    {
+      "tag": "beta",
+      "slug": "score-complete",
+      "cp": "ec9a1404-dc4a-4e80-aac4-e2530fc76787",
+      "app": "45cbaabd-eedd-4a5e-a917-477c717c2fcc",
+      "match": "37b220b1-fcd8-45b7-aaa7-83b3da7169e9",
+      "pos": "980560a5-eb15-4490-b0d6-3f9e5be430a6"
+    },
+    {
+      "tag": "beta",
+      "slug": "review-required",
+      "cp": "c22eb16f-5419-4673-8e79-ac3c4e42c472",
+      "app": "1620acab-8dad-4b0d-ac95-31abfe759e22",
+      "match": "07a5f17b-310d-4c66-b161-0cd718632401",
+      "pos": "a041db74-9ebc-4bfd-8674-d1f3e42ab030"
+    },
+    {
+      "tag": "beta",
+      "slug": "ready-to-publish",
+      "cp": "fd7c7e12-f1ef-4536-bb6e-c6b836bb9bc4",
+      "app": "9419c0a3-0200-4207-baa8-722d7db853d9",
+      "match": "a474c0bb-12fd-46f9-8379-a6c46254a841",
+      "pos": "980560a5-eb15-4490-b0d6-3f9e5be430a6"
+    },
+    {
+      "tag": "beta",
+      "slug": "client-visible",
+      "cp": "b853cbd3-9cf7-472c-87dd-440a17ce48c3",
+      "app": "95a6b356-715e-4af4-b93b-4766b16c1856",
+      "match": "c7d46374-fe6b-421f-a30f-d9f9cda7187c",
+      "pos": "a041db74-9ebc-4bfd-8674-d1f3e42ab030"
+    },
+    {
+      "tag": "beta",
+      "slug": "shortlisted",
+      "cp": "62dc883d-c2ac-44ec-84e8-4fb3d5e7d6c3",
+      "app": "63f9760c-874c-4e35-ab7b-c6701cf65115",
+      "match": "9b87c13a-0f20-40d6-8eb8-2a468b3ef4bc",
+      "pos": "980560a5-eb15-4490-b0d6-3f9e5be430a6"
+    },
+    {
+      "tag": "beta",
+      "slug": "interview",
+      "cp": "f0a151cc-fa51-4c66-9093-c171f96b4f63",
+      "app": "0965ff6a-b4cf-49c9-8400-f068bafb36d8",
+      "match": "14b2d452-624d-4615-b3c7-6d79b52018ff",
+      "pos": "a041db74-9ebc-4bfd-8674-d1f3e42ab030"
+    },
+    {
+      "tag": "beta",
+      "slug": "offer",
+      "cp": "b996ce05-46a9-4dc1-ab04-105036540e45",
+      "app": "b203a926-f2c3-4bf4-84b3-c57bf8704070",
+      "match": "629c7b17-4dfc-49d0-8ef7-efffe4b6b16f",
+      "pos": "980560a5-eb15-4490-b0d6-3f9e5be430a6"
+    },
+    {
+      "tag": "beta",
+      "slug": "hired",
+      "cp": "c03cb71e-2567-45fc-87ff-4a5b021d0ddd",
+      "app": "63e093d2-d4d6-48d8-9a6c-29c7b65dc790",
+      "match": "a323d11e-fe04-49cd-b000-bb98613528db",
+      "pos": "a041db74-9ebc-4bfd-8674-d1f3e42ab030"
+    },
+    {
+      "tag": "beta",
+      "slug": "not-moving-forward",
+      "cp": "f5697bba-8c05-440e-a214-bc0374860a25",
+      "app": "07d272b5-65e8-4d83-8d09-d45164cdd24f",
+      "match": "62b37a87-cedb-4ead-854c-0b7fbb7b2791",
+      "pos": "980560a5-eb15-4490-b0d6-3f9e5be430a6"
+    }
+  ],
+  "persona_candidates": {
+    "single": {
+      "cp": "4fda0fd8-2ff6-4f1d-a141-588ae1575c73",
+      "apps": [
+        {
+          "pos": "e4a0406e-319b-4674-9b19-59de964ad7f3",
+          "app": "daebb344-7adf-4874-b331-c9ae250b32b0",
+          "match": "6bf9c3b2-d60b-4ff2-a04b-1bf2eace79ad"
+        }
+      ]
+    },
+    "multi": {
+      "cp": "15911b64-96ac-413b-b28d-997282242a1a",
+      "apps": [
+        {
+          "pos": "e4a0406e-319b-4674-9b19-59de964ad7f3",
+          "app": "6379034f-97fe-41d0-88b3-76a98572aafd",
+          "match": "42e714f6-51e0-47cb-8b01-9b3e3626543b"
+        },
+        {
+          "pos": "283bfb8d-9d9a-47e2-b3b1-f55fd5f4329c",
+          "app": "09fe8622-b49d-4dd2-9e28-45c5d0a618b8",
+          "match": "04d268aa-c853-412f-8320-f1cfa41a2a85"
+        },
+        {
+          "pos": "a041db74-9ebc-4bfd-8674-d1f3e42ab030",
+          "app": "dd78e8c3-5ef9-4383-a4a2-87ab21bc5c78",
+          "match": "d400ded9-b1dd-4a52-9d73-78f0d6a546d9"
+        }
+      ]
+    },
+    "none": {
+      "cp": "0e3cd8c6-ce38-498f-9731-0fa75c6b2fc0",
+      "apps": []
+    }
+  }
+}
