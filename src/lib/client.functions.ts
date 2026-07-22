@@ -690,15 +690,9 @@ export const sendClientMessage = createServerFn({ method: "POST" })
     z.object({ orgId: z.string().uuid(), body: z.string().min(1).max(4000) }).parse(input),
   )
   .handler(async ({ context, data }) => {
-    // Membership check — sender must belong to the org (any client role or staff).
-    const { data: ok } = await context.supabase.rpc("is_org_viewer", {
-      _user: context.userId,
-      _org: data.orgId,
-    });
-    const { data: staff } = await context.supabase.rpc("is_platform_staff", {
-      _user: context.userId,
-    });
-    if (ok !== true && staff !== true) throw new Error("forbidden");
+    // Sender must be a real client member of the org, OR staff in an active
+    // interactive support session. Read-only support view cannot send.
+    await assertNotSupportViewReadOnly(context.supabase, context.userId, data.orgId);
     const { data: row, error } = await context.supabase
       .from("messages")
       .insert({
