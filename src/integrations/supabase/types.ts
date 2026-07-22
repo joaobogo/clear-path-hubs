@@ -916,6 +916,113 @@ export type Database = {
           },
         ]
       }
+      intake_submissions: {
+        Row: {
+          company_name: string
+          created_at: string
+          id: string
+          idempotency_key: string
+          organization_id: string | null
+          payload: Json
+          position_id: string | null
+          primary_email: string
+          primary_user_id: string | null
+          requisition_pending: boolean
+          role_title: string
+          source: string
+          status: string
+          trace_id: string | null
+          updated_at: string
+          workspace_status: string
+        }
+        Insert: {
+          company_name: string
+          created_at?: string
+          id?: string
+          idempotency_key: string
+          organization_id?: string | null
+          payload?: Json
+          position_id?: string | null
+          primary_email: string
+          primary_user_id?: string | null
+          requisition_pending?: boolean
+          role_title: string
+          source?: string
+          status?: string
+          trace_id?: string | null
+          updated_at?: string
+          workspace_status?: string
+        }
+        Update: {
+          company_name?: string
+          created_at?: string
+          id?: string
+          idempotency_key?: string
+          organization_id?: string | null
+          payload?: Json
+          position_id?: string | null
+          primary_email?: string
+          primary_user_id?: string | null
+          requisition_pending?: boolean
+          role_title?: string
+          source?: string
+          status?: string
+          trace_id?: string | null
+          updated_at?: string
+          workspace_status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "intake_submissions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "admin_clients_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "intake_submissions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "intake_submissions_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "admin_pipeline_health"
+            referencedColumns: ["position_id"]
+          },
+          {
+            foreignKeyName: "intake_submissions_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "admin_positions_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "intake_submissions_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_my_applications"
+            referencedColumns: ["position_id"]
+          },
+          {
+            foreignKeyName: "intake_submissions_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "client_positions_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "intake_submissions_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "positions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       interviews: {
         Row: {
           cancelled_at: string | null
