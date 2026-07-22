@@ -55,7 +55,7 @@ export async function emitEventFromServer(args: {
         candidate_match_id: args.candidate_match_id ?? null,
         candidate_profile_id: args.candidate_profile_id ?? null,
         actor_user_id: args.actor_user_id ?? null,
-        payload: args.payload ?? {},
+        payload: (args.payload ?? {}) as never,
       })
       .select("id")
       .single();
