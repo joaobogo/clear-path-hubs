@@ -407,6 +407,12 @@ export const updateMyProfile = createServerFn({ method: "POST" })
         phone: data.phone || null,
         location: data.location || null,
         headline: data.headline || null,
+        summary: data.summary || null,
+        years_experience: data.years_experience ?? null,
+        timezone: data.timezone || null,
+        linkedin_url: data.linkedin_url || null,
+        portfolio_url: data.portfolio_url || null,
+        certifications: data.certifications,
         experience: data.experience,
         skills: data.skills,
         education: data.education,
@@ -416,6 +422,7 @@ export const updateMyProfile = createServerFn({ method: "POST" })
         compensation_preferences: data.compensation_preferences ?? null,
       })
       .eq("id", cp.id);
+
     if (error) return { ok: false, trace_id: trace, message: error.message };
 
     // Mark active matches for staff review (candidate never sees this state).
