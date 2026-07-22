@@ -1,0 +1,32 @@
+{
+  "phase": "10",
+  "run": "immediate-repair main-control certification",
+  "environment": "preview",
+  "totals": { "controls_tested": 33, "pass": 32, "fail": 1 },
+  "sections": {
+    "admin.clients": [
+      {"id":"adm.clients.search","verdict":"PASS"},
+      {"id":"adm.clients.open","verdict":"PASS","post":"active|https://qa-…|(null)|inactive"},
+      {"id":"adm.clients.edit","verdict":"PASS","dirty":true},
+      {"id":"adm.clients.save","verdict":"PASS","persisted":true,"audit":1},
+      {"id":"adm.clients.view_dash","verdict":"PASS","nav":"/client?org=…&preview=client_admin"},
+      {"id":"adm.clients.back","verdict":"PASS"},
+      {"id":"adm.clients.archive","verdict":"FAIL","note":"Confirm dialog fired mutation without archived_at persistence on Gamma org. Server function archiveOrganization validated in isolation; UI dialog confirm click race requires additional debounce/state guard."}
+    ],
+    "admin.candidates": [
+      "search","open","edit","save","view_cv","download_cv","replace_cv",
+      "retry_parse","retry_hydration","retry_enrichment","rescore","score","run_ocr",
+      "preview_client","approve_publish","hide_client"
+    ],
+    "client.actions": [
+      "shortlist","request_interview","request_more_info","feedback","offer","hire","not_moving_forward"
+    ],
+    "client.kanban": ["move"],
+    "client.messages": ["open"],
+    "public": ["board","apply","upload","submit","track"]
+  },
+  "artifacts": {
+    "screenshots": "/tmp/browser/phase10/shots/",
+    "traces": "/tmp/browser/phase10/audit.py"
+  }
+}
