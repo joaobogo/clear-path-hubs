@@ -70,7 +70,7 @@ function PositionsPage() {
           <Link
             key={t.key}
             to="/client/positions"
-            search={{ tab: t.key }}
+            search={(prev: Record<string, unknown>) => ({ ...prev, tab: t.key })}
             className={`px-3 py-2 text-sm border-b-2 -mb-px ${
               safeTab === t.key
                 ? "border-primary text-foreground"
