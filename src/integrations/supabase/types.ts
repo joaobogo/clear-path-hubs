@@ -3270,7 +3270,12 @@ export type Database = {
       }
       score_runs: {
         Row: {
+          application_id: string
+          applied_cap: number
+          blueprint_version: string
           candidate_match_id: string
+          candidate_profile_id: string
+          candidate_submission_id: string
           completed_at: string | null
           confidence: number | null
           contradiction_status: string | null
@@ -3280,6 +3285,8 @@ export type Database = {
           evidence: Json
           expires_at: string | null
           explanation: string | null
+          final_score: number
+          fit_band: string
           fit_label: string | null
           id: string
           input_hash: string | null
@@ -3294,8 +3301,10 @@ export type Database = {
             | null
           migration_version: string | null
           must_have_coverage: number | null
+          organization_id: string
           position_id: string
           preferred_coverage: number | null
+          raw_score: number
           requirement_coverage: Json
           result: Json
           score: number | null
@@ -3305,7 +3314,12 @@ export type Database = {
           trace_id: string | null
         }
         Insert: {
+          application_id: string
+          applied_cap: number
+          blueprint_version: string
           candidate_match_id: string
+          candidate_profile_id: string
+          candidate_submission_id: string
           completed_at?: string | null
           confidence?: number | null
           contradiction_status?: string | null
@@ -3315,6 +3329,8 @@ export type Database = {
           evidence?: Json
           expires_at?: string | null
           explanation?: string | null
+          final_score: number
+          fit_band: string
           fit_label?: string | null
           id?: string
           input_hash?: string | null
@@ -3329,8 +3345,10 @@ export type Database = {
             | null
           migration_version?: string | null
           must_have_coverage?: number | null
+          organization_id: string
           position_id: string
           preferred_coverage?: number | null
+          raw_score: number
           requirement_coverage?: Json
           result?: Json
           score?: number | null
@@ -3340,7 +3358,12 @@ export type Database = {
           trace_id?: string | null
         }
         Update: {
+          application_id?: string
+          applied_cap?: number
+          blueprint_version?: string
           candidate_match_id?: string
+          candidate_profile_id?: string
+          candidate_submission_id?: string
           completed_at?: string | null
           confidence?: number | null
           contradiction_status?: string | null
@@ -3350,6 +3373,8 @@ export type Database = {
           evidence?: Json
           expires_at?: string | null
           explanation?: string | null
+          final_score?: number
+          fit_band?: string
           fit_label?: string | null
           id?: string
           input_hash?: string | null
@@ -3364,8 +3389,10 @@ export type Database = {
             | null
           migration_version?: string | null
           must_have_coverage?: number | null
+          organization_id?: string
           position_id?: string
           preferred_coverage?: number | null
+          raw_score?: number
           requirement_coverage?: Json
           result?: Json
           score?: number | null
@@ -3375,6 +3402,20 @@ export type Database = {
           trace_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "score_runs_application_fk"
+            columns: ["application_id"]
+            isOneToOne: false
+            referencedRelation: "applications"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "score_runs_application_fk"
+            columns: ["application_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_my_applications"
+            referencedColumns: ["application_id"]
+          },
           {
             foreignKeyName: "score_runs_candidate_match_id_fkey"
             columns: ["candidate_match_id"]
@@ -3408,6 +3449,34 @@ export type Database = {
             columns: ["candidate_match_id"]
             isOneToOne: false
             referencedRelation: "client_kanban_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "score_runs_candidate_profile_fk"
+            columns: ["candidate_profile_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_profile_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "score_runs_candidate_profile_fk"
+            columns: ["candidate_profile_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "score_runs_organization_fk"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "admin_clients_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "score_runs_organization_fk"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
           {
