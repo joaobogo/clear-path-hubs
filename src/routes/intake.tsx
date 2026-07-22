@@ -52,9 +52,11 @@ type FormState = {
   firstName: string;
   lastName: string;
   workEmail: string;
+  phone: string;
   companyName: string;
   companyWebsite: string;
   industry: string;
+  companySize: string;
   headquarters: string;
   roleTitle: string;
   department: string;
@@ -64,15 +66,27 @@ type FormState = {
   seniority: string;
   headcount: string;
   jobDescription: string;
+  responsibilities: string;
   mustHaveSkills: string[];
   preferredRequirements: string;
+  experience: string;
+  education: string;
+  certifications: string;
+  languages: string;
+  industryExperience: string;
   dealbreakers: string;
   compensation: string;
   hiringUrgency: string;
+  hiringTimeline: string;
   targetCountries: string[];
   workAuthorization: string;
   targetTitles: string[];
   timezoneRequirements: string;
+  reasonForHiring: "" | "replacement" | "growth" | "backfill" | "new_team";
+  hiringChallenges: string;
+  interviewProcess: string;
+  decisionMakers: string;
+  additionalContext: string;
   screeningQuestions: ScreeningQ[];
   consent: boolean;
 };
@@ -81,9 +95,11 @@ const EMPTY: FormState = {
   firstName: "",
   lastName: "",
   workEmail: "",
+  phone: "",
   companyName: "",
   companyWebsite: "",
   industry: "",
+  companySize: "",
   headquarters: "",
   roleTitle: "",
   department: "",
@@ -93,15 +109,27 @@ const EMPTY: FormState = {
   seniority: "",
   headcount: "",
   jobDescription: "",
+  responsibilities: "",
   mustHaveSkills: [],
   preferredRequirements: "",
+  experience: "",
+  education: "",
+  certifications: "",
+  languages: "",
+  industryExperience: "",
   dealbreakers: "",
   compensation: "",
   hiringUrgency: "",
+  hiringTimeline: "",
   targetCountries: [],
   workAuthorization: "",
   targetTitles: [],
   timezoneRequirements: "",
+  reasonForHiring: "",
+  hiringChallenges: "",
+  interviewProcess: "",
+  decisionMakers: "",
+  additionalContext: "",
   screeningQuestions: [],
   consent: false,
 };
@@ -376,6 +404,15 @@ function IntakePage() {
                   autoComplete="organization"
                 />
               </Field>
+              <Field label="Phone" hint="Optional. Best number to reach you.">
+                <Input
+                  type="tel"
+                  value={state.phone}
+                  onChange={(e) => set("phone", e.target.value)}
+                  autoComplete="tel"
+                  placeholder="+1 555 123 4567"
+                />
+              </Field>
               <Field label="Company website">
                 <Input
                   value={state.companyWebsite}
@@ -387,12 +424,32 @@ function IntakePage() {
                 <Input
                   value={state.industry}
                   onChange={(e) => set("industry", e.target.value)}
+                  placeholder="SaaS, Fintech, Healthcare…"
                 />
               </Field>
-              <Field label="Headquarters">
+              <Field label="Company size">
+                <Select
+                  value={state.companySize}
+                  onValueChange={(v) => set("companySize", v)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select…" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="1-10">1–10</SelectItem>
+                    <SelectItem value="11-50">11–50</SelectItem>
+                    <SelectItem value="51-200">51–200</SelectItem>
+                    <SelectItem value="201-500">201–500</SelectItem>
+                    <SelectItem value="501-1000">501–1000</SelectItem>
+                    <SelectItem value="1000+">1000+</SelectItem>
+                  </SelectContent>
+                </Select>
+              </Field>
+              <Field label="Headquarters" className="sm:col-span-2">
                 <Input
                   value={state.headquarters}
                   onChange={(e) => set("headquarters", e.target.value)}
+                  placeholder="City, Country"
                 />
               </Field>
             </div>
@@ -526,13 +583,58 @@ function IntakePage() {
                   {state.jobDescription.trim().length} / 40 minimum characters
                 </p>
               </Field>
-              <Field label="Preferred requirements" hint="One per line.">
+              <Field label="Key responsibilities" hint="Top outcomes and day-to-day scope.">
+                <Textarea
+                  rows={3}
+                  value={state.responsibilities}
+                  onChange={(e) => set("responsibilities", e.target.value)}
+                  placeholder="Own X. Lead Y. Deliver Z."
+                />
+              </Field>
+              <Field label="Preferred skills" hint="One per line.">
                 <Textarea
                   rows={3}
                   value={state.preferredRequirements}
                   onChange={(e) => set("preferredRequirements", e.target.value)}
                 />
               </Field>
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <Field label="Experience">
+                  <Input
+                    value={state.experience}
+                    onChange={(e) => set("experience", e.target.value)}
+                    placeholder="e.g. 5+ years"
+                  />
+                </Field>
+                <Field label="Education">
+                  <Input
+                    value={state.education}
+                    onChange={(e) => set("education", e.target.value)}
+                    placeholder="e.g. BSc CS or equivalent"
+                  />
+                </Field>
+                <Field label="Certifications">
+                  <Input
+                    value={state.certifications}
+                    onChange={(e) => set("certifications", e.target.value)}
+                    placeholder="AWS SA, PMP…"
+                  />
+                </Field>
+                <Field label="Languages">
+                  <Input
+                    value={state.languages}
+                    onChange={(e) => set("languages", e.target.value)}
+                    placeholder="English (fluent), German (B2)…"
+                  />
+                </Field>
+                <Field label="Industry experience" className="sm:col-span-2">
+                  <Input
+                    value={state.industryExperience}
+                    onChange={(e) => set("industryExperience", e.target.value)}
+                    placeholder="Fintech, healthcare, gaming…"
+                  />
+                </Field>
+              </div>
               <Field label="Dealbreakers" hint="One per line.">
                 <Textarea
                   rows={3}
@@ -553,11 +655,44 @@ function IntakePage() {
                 />
               </Field>
               <Field label="Hiring urgency">
-                <Input
+                <Select
                   value={state.hiringUrgency}
-                  onChange={(e) => set("hiringUrgency", e.target.value)}
-                  placeholder="ASAP, 30 days, 60 days…"
+                  onValueChange={(v) => set("hiringUrgency", v)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select…" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="asap">ASAP</SelectItem>
+                    <SelectItem value="30_days">Within 30 days</SelectItem>
+                    <SelectItem value="60_days">Within 60 days</SelectItem>
+                    <SelectItem value="90_days">Within 90 days</SelectItem>
+                    <SelectItem value="exploratory">Exploratory</SelectItem>
+                  </SelectContent>
+                </Select>
+              </Field>
+              <Field label="Hiring timeline" hint="Target start date or key milestones.">
+                <Input
+                  value={state.hiringTimeline}
+                  onChange={(e) => set("hiringTimeline", e.target.value)}
+                  placeholder="Start by Q3, onboarding by Sept…"
                 />
+              </Field>
+              <Field label="Reason for hiring" className="sm:col-span-2">
+                <Select
+                  value={state.reasonForHiring}
+                  onValueChange={(v) => set("reasonForHiring", v as FormState["reasonForHiring"])}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select…" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="growth">Growth — new headcount</SelectItem>
+                    <SelectItem value="replacement">Replacement</SelectItem>
+                    <SelectItem value="backfill">Backfill</SelectItem>
+                    <SelectItem value="new_team">New team / function</SelectItem>
+                  </SelectContent>
+                </Select>
               </Field>
               <Field label="Work authorization">
                 <Input
@@ -703,6 +838,37 @@ function IntakePage() {
                     ))}
                   </ul>
                 )}
+              </Field>
+              <Field label="Current hiring challenges" className="sm:col-span-2">
+                <Textarea
+                  rows={2}
+                  value={state.hiringChallenges}
+                  onChange={(e) => set("hiringChallenges", e.target.value)}
+                  placeholder="What has made this role hard to fill?"
+                />
+              </Field>
+              <Field label="Interview process" hint="Number of rounds, format, panel." className="sm:col-span-2">
+                <Textarea
+                  rows={2}
+                  value={state.interviewProcess}
+                  onChange={(e) => set("interviewProcess", e.target.value)}
+                  placeholder="Screen → Technical → Panel → Offer"
+                />
+              </Field>
+              <Field label="Decision makers" hint="Who signs off on the hire?" className="sm:col-span-2">
+                <Input
+                  value={state.decisionMakers}
+                  onChange={(e) => set("decisionMakers", e.target.value)}
+                  placeholder="Hiring manager, VP Eng, CEO…"
+                />
+              </Field>
+              <Field label="Additional context" className="sm:col-span-2">
+                <Textarea
+                  rows={3}
+                  value={state.additionalContext}
+                  onChange={(e) => set("additionalContext", e.target.value)}
+                  placeholder="Anything else we should know?"
+                />
               </Field>
             </div>
           )}
