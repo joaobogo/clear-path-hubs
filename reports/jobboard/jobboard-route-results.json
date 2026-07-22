@@ -1,0 +1,145 @@
+[
+  {
+    "id": "b980228a-b433-464f-ad30-e615b30e2571",
+    "url": "http://localhost:8080/jobs/b980228a-b433-464f-ad30-e615b30e2571",
+    "card": "PASS",
+    "detail": "PASS",
+    "console": [],
+    "network_fail": [],
+    "title": "Head of Marketing [QA:qa20260722] \u2014 TaaSFlow client \u00b7 TaaSFlow",
+    "h1": "Head of Marketing [QA:qa20260722]",
+    "apply_href": "/jobs/b980228a-b433-464f-ad30-e615b30e2571/apply"
+  },
+  {
+    "id": "c1ca1800-b8f5-4eb6-85a5-7e08a71ee5ae",
+    "url": "http://localhost:8080/jobs/c1ca1800-b8f5-4eb6-85a5-7e08a71ee5ae",
+    "card": "PASS",
+    "detail": "PASS",
+    "console": [],
+    "network_fail": [],
+    "title": "Full-Stack Engineer [QA:qa20260722] \u2014 TaaSFlow client \u00b7 TaaSFlow",
+    "h1": "Full-Stack Engineer [QA:qa20260722]",
+    "apply_href": "/jobs/c1ca1800-b8f5-4eb6-85a5-7e08a71ee5ae/apply"
+  },
+  {
+    "id": "a27b24b6-f715-41c3-9c16-d2a405632661",
+    "url": "http://localhost:8080/jobs/a27b24b6-f715-41c3-9c16-d2a405632661",
+    "card": "PASS",
+    "detail": "PASS",
+    "console": [],
+    "network_fail": [],
+    "title": "Product Designer [QA:qa20260722] \u2014 TaaSFlow client \u00b7 TaaSFlow",
+    "h1": "Product Designer [QA:qa20260722]",
+    "apply_href": "/jobs/a27b24b6-f715-41c3-9c16-d2a405632661/apply"
+  },
+  {
+    "id": "766b13a0-10d3-40df-820c-face1f5bed62",
+    "url": "http://localhost:8080/jobs/766b13a0-10d3-40df-820c-face1f5bed62",
+    "card": "PASS",
+    "detail": "PASS",
+    "console": [],
+    "network_fail": [],
+    "title": "Senior Backend Engineer [QA:qa20260722] \u2014 TaaSFlow client \u00b7 TaaSFlow",
+    "h1": "Senior Backend Engineer [QA:qa20260722]",
+    "apply_href": "/jobs/766b13a0-10d3-40df-820c-face1f5bed62/apply"
+  },
+  {
+    "id": "47c03d54-4066-4e53-8aec-127611556f42",
+    "url": "http://localhost:8080/jobs/47c03d54-4066-4e53-8aec-127611556f42",
+    "card": "PASS",
+    "detail": "PASS",
+    "console": [],
+    "network_fail": [],
+    "title": "Data Analyst \u2014 TaaSFlow client \u00b7 TaaSFlow",
+    "h1": "Data Analyst",
+    "apply_href": "/jobs/47c03d54-4066-4e53-8aec-127611556f42/apply"
+  },
+  {
+    "id": "805d58cb-ed3f-4ef0-afec-b534c87c4a72",
+    "url": "http://localhost:8080/jobs/805d58cb-ed3f-4ef0-afec-b534c87c4a72",
+    "card": "PASS",
+    "detail": "PASS",
+    "console": [],
+    "network_fail": [],
+    "title": "Senior Backend Engineer \u2014 TaaSFlow client \u00b7 TaaSFlow",
+    "h1": "Senior Backend Engineer",
+    "apply_href": "/jobs/805d58cb-ed3f-4ef0-afec-b534c87c4a72/apply"
+  },
+  {
+    "id": "79301765-57dd-47ac-9df9-5649015bdb0c",
+    "url": "http://localhost:8080/jobs/79301765-57dd-47ac-9df9-5649015bdb0c",
+    "card": "PASS",
+    "detail": "PASS",
+    "console": [],
+    "network_fail": [],
+    "title": "Product Designer \u2014 TaaSFlow client \u00b7 TaaSFlow",
+    "h1": "Product Designer",
+    "apply_href": "/jobs/79301765-57dd-47ac-9df9-5649015bdb0c/apply"
+  },
+  {
+    "id": "3bb966eb-e2d4-44eb-9073-63c7e1c2053a",
+    "url": "http://localhost:8080/jobs/3bb966eb-e2d4-44eb-9073-63c7e1c2053a",
+    "card": "PASS",
+    "detail": "PASS",
+    "console": [],
+    "network_fail": [],
+    "title": "Talent Acquisition Partner \u2014 TaaSFlow client \u00b7 TaaSFlow",
+    "h1": "Talent Acquisition Partner",
+    "apply_href": "/jobs/3bb966eb-e2d4-44eb-9073-63c7e1c2053a/apply"
+  },
+  {
+    "id": "ddfa79cd-78ad-40f7-bfa6-7fcc3c40bb54",
+    "url": "http://localhost:8080/jobs/ddfa79cd-78ad-40f7-bfa6-7fcc3c40bb54",
+    "card": "PASS",
+    "detail": "PASS",
+    "console": [],
+    "network_fail": [],
+    "title": "Customer Success Manager \u2014 TaaSFlow client \u00b7 TaaSFlow",
+    "h1": "Customer Success Manager",
+    "apply_href": "/jobs/ddfa79cd-78ad-40f7-bfa6-7fcc3c40bb54/apply"
+  },
+  {
+    "id": "c1eb8bac-abb1-464a-aaf4-9b5db0e55daf",
+    "url": "http://localhost:8080/jobs/c1eb8bac-abb1-464a-aaf4-9b5db0e55daf",
+    "card": "PASS",
+    "detail": "PASS",
+    "console": [],
+    "network_fail": [],
+    "title": "QA Backend Engineer \u2014 TaaSFlow client \u00b7 TaaSFlow",
+    "h1": "QA Backend Engineer",
+    "apply_href": "/jobs/c1eb8bac-abb1-464a-aaf4-9b5db0e55daf/apply"
+  },
+  {
+    "id": "976c7234-9361-4925-b1cb-ec8079b83bce",
+    "url": "http://localhost:8080/jobs/976c7234-9361-4925-b1cb-ec8079b83bce",
+    "card": "PASS",
+    "detail": "PASS",
+    "console": [],
+    "network_fail": [],
+    "title": "Product Designer \u2014 TaaSFlow client \u00b7 TaaSFlow",
+    "h1": "Product Designer",
+    "apply_href": "/jobs/976c7234-9361-4925-b1cb-ec8079b83bce/apply"
+  },
+  {
+    "id": "edaea674-e742-4d2c-a212-a8c469265872",
+    "url": "http://localhost:8080/jobs/edaea674-e742-4d2c-a212-a8c469265872",
+    "card": "PASS",
+    "detail": "PASS",
+    "console": [],
+    "network_fail": [],
+    "title": "Senior Backend Engineer (Go) \u2014 TaaSFlow client \u00b7 TaaSFlow",
+    "h1": "Senior Backend Engineer (Go)",
+    "apply_href": "/jobs/edaea674-e742-4d2c-a212-a8c469265872/apply"
+  },
+  {
+    "id": "44575a25-0508-4eec-9731-a6e939beda3a",
+    "url": "http://localhost:8080/jobs/44575a25-0508-4eec-9731-a6e939beda3a",
+    "card": "PASS",
+    "detail": "PASS",
+    "console": [],
+    "network_fail": [],
+    "title": "Data Engineer (Contract, 6 months) \u2014 TaaSFlow client \u00b7 TaaSFlow",
+    "h1": "Data Engineer (Contract, 6 months)",
+    "apply_href": "/jobs/44575a25-0508-4eec-9731-a6e939beda3a/apply"
+  }
+]
