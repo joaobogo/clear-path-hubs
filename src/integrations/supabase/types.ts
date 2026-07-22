@@ -605,6 +605,142 @@ export type Database = {
           },
         ]
       }
+      consent_records: {
+        Row: {
+          candidate_profile_id: string | null
+          consent_type: string
+          context: Json
+          created_at: string
+          granted: boolean
+          granted_at: string
+          id: string
+          ip_address: unknown
+          policy_version: string
+          source: string
+          subject_email: string | null
+          user_agent: string | null
+          withdrawn_at: string | null
+        }
+        Insert: {
+          candidate_profile_id?: string | null
+          consent_type: string
+          context?: Json
+          created_at?: string
+          granted: boolean
+          granted_at?: string
+          id?: string
+          ip_address?: unknown
+          policy_version: string
+          source: string
+          subject_email?: string | null
+          user_agent?: string | null
+          withdrawn_at?: string | null
+        }
+        Update: {
+          candidate_profile_id?: string | null
+          consent_type?: string
+          context?: Json
+          created_at?: string
+          granted?: boolean
+          granted_at?: string
+          id?: string
+          ip_address?: unknown
+          policy_version?: string
+          source?: string
+          subject_email?: string | null
+          user_agent?: string | null
+          withdrawn_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "consent_records_candidate_profile_id_fkey"
+            columns: ["candidate_profile_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_profile_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "consent_records_candidate_profile_id_fkey"
+            columns: ["candidate_profile_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      data_subject_requests: {
+        Row: {
+          candidate_profile_id: string | null
+          completed_at: string | null
+          details: Json
+          due_at: string
+          export_file_id: string | null
+          handled_by: string | null
+          id: string
+          received_at: string
+          reference_code: string
+          request_type: string
+          resolution_note: string | null
+          status: string
+          subject_email: string
+          trace_id: string | null
+        }
+        Insert: {
+          candidate_profile_id?: string | null
+          completed_at?: string | null
+          details?: Json
+          due_at?: string
+          export_file_id?: string | null
+          handled_by?: string | null
+          id?: string
+          received_at?: string
+          reference_code: string
+          request_type: string
+          resolution_note?: string | null
+          status?: string
+          subject_email: string
+          trace_id?: string | null
+        }
+        Update: {
+          candidate_profile_id?: string | null
+          completed_at?: string | null
+          details?: Json
+          due_at?: string
+          export_file_id?: string | null
+          handled_by?: string | null
+          id?: string
+          received_at?: string
+          reference_code?: string
+          request_type?: string
+          resolution_note?: string | null
+          status?: string
+          subject_email?: string
+          trace_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "data_subject_requests_candidate_profile_id_fkey"
+            columns: ["candidate_profile_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_profile_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "data_subject_requests_candidate_profile_id_fkey"
+            columns: ["candidate_profile_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "data_subject_requests_export_file_id_fkey"
+            columns: ["export_file_id"]
+            isOneToOne: false
+            referencedRelation: "files"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       files: {
         Row: {
           candidate_profile_id: string | null
@@ -1320,6 +1456,80 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      retention_policies: {
+        Row: {
+          action: string
+          data_class: string
+          entity: string
+          id: string
+          legal_basis: string
+          notes: string | null
+          retention_days: number | null
+          updated_at: string
+        }
+        Insert: {
+          action: string
+          data_class: string
+          entity: string
+          id?: string
+          legal_basis: string
+          notes?: string | null
+          retention_days?: number | null
+          updated_at?: string
+        }
+        Update: {
+          action?: string
+          data_class?: string
+          entity?: string
+          id?: string
+          legal_basis?: string
+          notes?: string | null
+          retention_days?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      retention_runs: {
+        Row: {
+          error: string | null
+          finished_at: string | null
+          id: string
+          policy_id: string
+          rows_affected: number | null
+          started_at: string
+          status: string
+          trace_id: string | null
+        }
+        Insert: {
+          error?: string | null
+          finished_at?: string | null
+          id?: string
+          policy_id: string
+          rows_affected?: number | null
+          started_at?: string
+          status?: string
+          trace_id?: string | null
+        }
+        Update: {
+          error?: string | null
+          finished_at?: string | null
+          id?: string
+          policy_id?: string
+          rows_affected?: number | null
+          started_at?: string
+          status?: string
+          trace_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "retention_runs_policy_id_fkey"
+            columns: ["policy_id"]
+            isOneToOne: false
+            referencedRelation: "retention_policies"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       score_decisions: {
         Row: {
