@@ -198,13 +198,6 @@ export type Database = {
             foreignKeyName: "audit_events_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
-            referencedRelation: "candidate_my_applications"
-            referencedColumns: ["organization_id"]
-          },
-          {
-            foreignKeyName: "audit_events_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
@@ -285,13 +278,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "admin_clients_view"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "candidate_matches_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "candidate_my_applications"
-            referencedColumns: ["organization_id"]
           },
           {
             foreignKeyName: "candidate_matches_organization_id_fkey"
@@ -486,13 +472,6 @@ export type Database = {
             foreignKeyName: "client_decisions_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
-            referencedRelation: "candidate_my_applications"
-            referencedColumns: ["organization_id"]
-          },
-          {
-            foreignKeyName: "client_decisions_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
@@ -642,13 +621,6 @@ export type Database = {
             foreignKeyName: "interviews_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
-            referencedRelation: "candidate_my_applications"
-            referencedColumns: ["organization_id"]
-          },
-          {
-            foreignKeyName: "interviews_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
@@ -686,13 +658,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "admin_clients_view"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "memberships_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "candidate_my_applications"
-            referencedColumns: ["organization_id"]
           },
           {
             foreignKeyName: "memberships_organization_id_fkey"
@@ -859,13 +824,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "admin_clients_view"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "positions_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "candidate_my_applications"
-            referencedColumns: ["organization_id"]
           },
           {
             foreignKeyName: "positions_organization_id_fkey"
@@ -1325,13 +1283,6 @@ export type Database = {
             foreignKeyName: "candidate_matches_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
-            referencedRelation: "candidate_my_applications"
-            referencedColumns: ["organization_id"]
-          },
-          {
-            foreignKeyName: "candidate_matches_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
@@ -1471,13 +1422,6 @@ export type Database = {
             foreignKeyName: "positions_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
-            referencedRelation: "candidate_my_applications"
-            referencedColumns: ["organization_id"]
-          },
-          {
-            foreignKeyName: "positions_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
@@ -1519,13 +1463,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "admin_clients_view"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "candidate_matches_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "candidate_my_applications"
-            referencedColumns: ["organization_id"]
           },
           {
             foreignKeyName: "candidate_matches_organization_id_fkey"
@@ -1605,15 +1542,11 @@ export type Database = {
         Row: {
           application_id: string | null
           applied_at: string | null
-          client_visibility:
-            | Database["public"]["Enums"]["client_visibility"]
-            | null
+          candidate_status: string | null
           employment_type: Database["public"]["Enums"]["employment_type"] | null
           location: string | null
-          organization_id: string | null
           organization_name: string | null
           position_id: string | null
-          stage: Database["public"]["Enums"]["match_stage"] | null
           status: Database["public"]["Enums"]["application_status"] | null
           title: string | null
           withdrawn_at: string | null
@@ -1717,13 +1650,6 @@ export type Database = {
             foreignKeyName: "candidate_matches_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
-            referencedRelation: "candidate_my_applications"
-            referencedColumns: ["organization_id"]
-          },
-          {
-            foreignKeyName: "candidate_matches_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
@@ -1785,13 +1711,6 @@ export type Database = {
             foreignKeyName: "candidate_matches_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
-            referencedRelation: "candidate_my_applications"
-            referencedColumns: ["organization_id"]
-          },
-          {
-            foreignKeyName: "candidate_matches_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
@@ -1813,13 +1732,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "admin_clients_view"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "candidate_matches_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "candidate_my_applications"
-            referencedColumns: ["organization_id"]
           },
           {
             foreignKeyName: "candidate_matches_organization_id_fkey"
@@ -1935,13 +1847,6 @@ export type Database = {
             foreignKeyName: "positions_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
-            referencedRelation: "candidate_my_applications"
-            referencedColumns: ["organization_id"]
-          },
-          {
-            foreignKeyName: "positions_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
@@ -1949,6 +1854,14 @@ export type Database = {
       }
     }
     Functions: {
+      has_org_role: {
+        Args: {
+          _org: string
+          _roles: Database["public"]["Enums"]["membership_role"][]
+          _user: string
+        }
+        Returns: boolean
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -1956,7 +1869,15 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_active_user: { Args: { _user: string }; Returns: boolean }
+      is_org_admin: { Args: { _org: string; _user: string }; Returns: boolean }
+      is_org_editor: { Args: { _org: string; _user: string }; Returns: boolean }
       is_org_member: { Args: { _org: string; _user: string }; Returns: boolean }
+      is_org_viewer: { Args: { _org: string; _user: string }; Returns: boolean }
+      is_owning_candidate: {
+        Args: { _cp: string; _user: string }
+        Returns: boolean
+      }
       is_platform_staff: { Args: { _user: string }; Returns: boolean }
     }
     Enums: {
