@@ -53,13 +53,18 @@ const ADMIN_REFRESH_KEYS = [
 
 function AdminLayout() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const [userId, setUserId] = useState<string | null>(null);
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => setUserId(data.user?.id ?? null));
+  }, []);
+  useDashboardRealtime({ userId, audience: "admin", invalidateKeys: ADMIN_REFRESH_KEYS });
+
   return (
     <div className="min-h-screen flex w-full bg-background">
       <aside className="w-56 shrink-0 border-r bg-card">
-        <div className="px-4 py-4 border-b">
-          <Link to="/" className="font-semibold text-sm">
-            TaaSFlow admin
-          </Link>
+        <div className="px-4 py-4 border-b flex items-center justify-between gap-2">
+          <Link to="/" className="font-semibold text-sm">TaaSFlow admin</Link>
+          <NotificationBell />
         </div>
         <nav className="p-2 space-y-1">
           {SECTIONS.map((s) => {
@@ -87,3 +92,6 @@ function AdminLayout() {
     </div>
   );
 }
+// Kept: useQuery import reserved for future dashboard-scoped queries wired via coordinator.
+export { useQuery, useServerFn };
+
