@@ -243,9 +243,10 @@ export const getClientPositions = createServerFn({ method: "GET" })
     }
     return (positions as AnyRow[]).map((p) => {
       const posRows = byPosition.get(p.id) ?? [];
-      const kpi = computeKpis(posRows);
+      const kpi = computeKpis(posRows, 0);
       return {
         ...p,
+
         kpis: kpi,
         next_milestone: nextMilestoneFor(posRows, p.status),
         action_required: actionRequiredFor(posRows, p.status),
