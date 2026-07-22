@@ -264,6 +264,252 @@ export const INDUSTRY_ENTRIES: IndustryEntry[] = [
         "Submit the role — one workspace, one rubric, one accountable delivery team.",
     },
   },
+  {
+    slug: "legal",
+    eyebrow: "Legal",
+    name: "Legal",
+    meta: {
+      title: "Legal hiring — TaaSFlow",
+      description:
+        "Structured sourcing for law firms and in-house legal teams. Ranked shortlists with practice-area evidence extracted directly from the CV.",
+    },
+    hero: {
+      title: "Legal hiring with evidence tied to practice area.",
+      subtitle:
+        "TaaSFlow gives general counsel and firm leaders a workspace for every legal search — rubrics tuned per practice area, jurisdiction and level, with a human-reviewed shortlist.",
+    },
+    challenges: [
+      {
+        title: "Practice-area precision",
+        body: "Legal CVs blur across practice groups. Our rubric captures the specific matters, deal types and jurisdictions worked on so shortlists match the mandate — not the label.",
+      },
+      {
+        title: "Jurisdiction and qualification",
+        body: "Bar admissions, qualification routes and regulatory exposure are captured in intake and treated as first-class filters, not free-text notes.",
+      },
+      {
+        title: "Confidentiality by default",
+        body: "Every requisition sits in a private workspace scoped to your team. Candidate context stays inside the mandate it was collected for.",
+      },
+    ],
+    roles: [
+      "General counsel",
+      "Corporate & commercial lawyers",
+      "M&A and private equity counsel",
+      "Litigation and disputes",
+      "Regulatory and compliance counsel",
+      "Employment lawyers",
+      "IP and technology lawyers",
+      "Legal operations leads",
+      "Paralegals and legal analysts",
+    ],
+    signals: [
+      "Practice-area rubric per requisition",
+      "Jurisdiction and qualification as filters",
+      "Evidence traced to the CV",
+    ],
+    cta: {
+      title: "Hiring for a legal mandate?",
+      description:
+        "Submit the role — one workspace, one rubric, one reviewed shortlist.",
+    },
+  },
+  {
+    slug: "finance",
+    eyebrow: "Finance",
+    name: "Finance",
+    meta: {
+      title: "Finance hiring — TaaSFlow",
+      description:
+        "Structured sourcing for corporate finance, FP&A, treasury and controllership teams. Ranked shortlists with evidence extracted from the CV.",
+    },
+    hero: {
+      title: "Finance hiring with rubrics tuned per function.",
+      subtitle:
+        "TaaSFlow gives CFOs and finance leaders a workspace for every hire — from FP&A analysts to VP-level controllers — with role-specific scoring and human-reviewed shortlists.",
+    },
+    challenges: [
+      {
+        title: "Function-specific signal",
+        body: "FP&A, treasury, controllership and corporate development each need a different rubric. We build one per requisition instead of matching a generic 'finance' keyword set.",
+      },
+      {
+        title: "Systems and reporting stack",
+        body: "ERP, consolidation tools and reporting stack are captured in intake so shortlists reflect the operating environment the hire will actually work in.",
+      },
+      {
+        title: "Level calibration",
+        body: "Senior finance roles need judgement evidence, not tool lists. Rubrics per level surface the decision scope and ownership the CV actually describes.",
+      },
+    ],
+    roles: [
+      "CFOs and finance directors",
+      "Financial controllers",
+      "FP&A leads and analysts",
+      "Corporate development and M&A",
+      "Treasury and cash management",
+      "Financial reporting and consolidation",
+      "Business partners",
+      "Investor relations",
+    ],
+    signals: [
+      "Rubric per finance function and level",
+      "Systems and reporting stack captured",
+      "Human review before publication",
+    ],
+    cta: {
+      title: "Building the finance team?",
+      description:
+        "Submit the role — one workspace per requisition, ranked and reviewed.",
+    },
+  },
+  {
+    slug: "accounting",
+    eyebrow: "Accounting",
+    name: "Accounting",
+    meta: {
+      title: "Accounting hiring — TaaSFlow",
+      description:
+        "Structured sourcing for accounting firms and in-house accounting teams. Ranked shortlists with evidence of the standards, cycles and systems worked on.",
+    },
+    hero: {
+      title: "Accounting hiring, calibrated per standard and cycle.",
+      subtitle:
+        "TaaSFlow gives accounting leaders a workspace for every hire — audit, tax, statutory, technical accounting — with rubrics tuned to the standards and cycles the role actually owns.",
+    },
+    challenges: [
+      {
+        title: "Standards and framework fit",
+        body: "IFRS, US GAAP, local statutory work — each requires distinct evidence. Our rubric captures the frameworks the candidate has actually applied, not just listed.",
+      },
+      {
+        title: "Cycle ownership",
+        body: "Month-end close, year-end audit, tax season — we capture the cycles owned end-to-end so shortlists match the operating rhythm of your team.",
+      },
+      {
+        title: "Firm and in-house context",
+        body: "Firm-side and in-house roles reward different signals. Rubrics adjust so a controller search doesn't get audit-firm-shaped CVs at the top.",
+      },
+    ],
+    roles: [
+      "Audit managers and seniors",
+      "Tax managers and advisors",
+      "Statutory and technical accountants",
+      "Financial accountants",
+      "Group and consolidation accountants",
+      "Management accountants",
+      "Bookkeepers and assistant accountants",
+      "Accounting operations leads",
+    ],
+    signals: [
+      "Standards and frameworks captured in intake",
+      "Cycle ownership evidence from the CV",
+      "Rubric per role and level",
+    ],
+    cta: {
+      title: "Hiring for an accounting seat?",
+      description:
+        "Submit the role — one workspace, one rubric, one reviewed shortlist.",
+    },
+  },
+  {
+    slug: "insurance",
+    eyebrow: "Insurance",
+    name: "Insurance",
+    meta: {
+      title: "Insurance hiring — TaaSFlow",
+      description:
+        "Structured sourcing for carriers, brokers and MGAs. Ranked shortlists with evidence of the lines of business, product and distribution experience.",
+    },
+    hero: {
+      title: "Insurance hiring, calibrated per line of business.",
+      subtitle:
+        "TaaSFlow gives insurance leaders a workspace for every hire — underwriting, claims, actuarial, distribution — with rubrics tuned to the line of business and product.",
+    },
+    challenges: [
+      {
+        title: "Line-of-business precision",
+        body: "P&C, life, specialty and reinsurance each need distinct signal. Our rubric captures the lines and products actually handled instead of generic 'insurance experience'.",
+      },
+      {
+        title: "Distribution and channel context",
+        body: "Direct, broker, MGA and bancassurance change the shape of the role. We capture the channel in intake so shortlists reflect it.",
+      },
+      {
+        title: "Technical and quantitative depth",
+        body: "Underwriting authority, reserving methods and pricing exposure are captured as structured signals — not searched for in prose.",
+      },
+    ],
+    roles: [
+      "Underwriters and senior underwriters",
+      "Claims managers and adjusters",
+      "Actuaries and pricing analysts",
+      "Product managers and portfolio leads",
+      "Broking and distribution leads",
+      "Risk and compliance officers",
+      "Operations and transformation leads",
+      "Reinsurance specialists",
+    ],
+    signals: [
+      "Line-of-business rubric per requisition",
+      "Channel and distribution captured",
+      "Human review before publication",
+    ],
+    cta: {
+      title: "Hiring in insurance?",
+      description:
+        "Submit the role — one workspace per requisition, ranked and reviewed.",
+    },
+  },
+  {
+    slug: "private-equity",
+    eyebrow: "Private Equity",
+    name: "Private Equity",
+    meta: {
+      title: "Private equity hiring — TaaSFlow",
+      description:
+        "Structured sourcing for funds and portfolio companies. Ranked shortlists with evidence of deal experience, sector focus and value-creation work.",
+    },
+    hero: {
+      title: "PE hiring, from deal team to portfolio operators.",
+      subtitle:
+        "TaaSFlow gives partners and talent leads a workspace for every search — fund-side investment roles and portfolio-company leadership hires — with rubrics tuned per mandate.",
+    },
+    challenges: [
+      {
+        title: "Deal and sector evidence",
+        body: "PE CVs need to show the deals actually worked on and the sector depth behind them. Our rubric extracts deal roles, cheque sizes and sector coverage — not just firm names.",
+      },
+      {
+        title: "Fund vs portfolio context",
+        body: "Investment-team hires and portfolio-company operators need different signals. We build the rubric per mandate instead of treating both as the same search.",
+      },
+      {
+        title: "Confidentiality and discretion",
+        body: "Every mandate sits in a private workspace scoped to the sponsor. Candidate context stays inside the search it was collected for.",
+      },
+    ],
+    roles: [
+      "Investment associates and VPs",
+      "Investment principals and partners",
+      "Portfolio operations leads",
+      "Value creation and transformation leads",
+      "Portfolio CFOs and finance directors",
+      "Portfolio CEOs and general managers",
+      "Fund operations and investor relations",
+      "Sector specialists and operating advisors",
+    ],
+    signals: [
+      "Deal and sector evidence extracted",
+      "Rubric per fund or portfolio mandate",
+      "Private workspace per requisition",
+    ],
+    cta: {
+      title: "Running a PE search?",
+      description:
+        "Submit the mandate — one private workspace, one rubric, one reviewed shortlist.",
+    },
+  },
 ];
 
 export function getIndustryEntry(slug: string): IndustryEntry | undefined {
