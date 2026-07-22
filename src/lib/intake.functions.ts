@@ -52,7 +52,7 @@ export const submitIntake = createServerFn({ method: "POST" })
       .insert({
         idempotency_key: idempotencyKey,
         submitter_email: payload.workEmail,
-        payload: payload as unknown as Record<string, unknown>,
+        payload: payload as any,
         trace_id: traceId,
         status: "received",
       })
