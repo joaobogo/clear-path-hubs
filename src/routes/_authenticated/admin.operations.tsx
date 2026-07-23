@@ -598,4 +598,3 @@ function BackfillInsightsButton({ onDone }: { onDone: (msg: string) => void }) {
     </Button>
   );
 }
-}
