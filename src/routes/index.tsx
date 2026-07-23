@@ -255,6 +255,112 @@ const HOMEPAGE_FAQ = [
   },
 ] as const;
 
+const PROBLEM_ROWS = [
+  {
+    label: "Commercial model",
+    icon: Wallet,
+    old: "Percentage-of-salary placement fees, paid on every hire.",
+    next: "Flat subscription. No placement fees per hire.",
+  },
+  {
+    label: "Sourcing",
+    icon: Search,
+    old: "Black-box sourcing. You see the CVs, not the search behind them.",
+    next: "Continuous sourcing you can follow in the workspace.",
+  },
+  {
+    label: "Candidate delivery",
+    icon: ListChecks,
+    old: "CV volume forwarded by email. No ranking, no reasoning.",
+    next: "Ranked candidates with role-specific evidence per requirement.",
+  },
+  {
+    label: "Visibility",
+    icon: Eye,
+    old: "Limited visibility until the agency decides to update you.",
+    next: "Live Client workspace with transparent progress at every stage.",
+  },
+  {
+    label: "Communication",
+    icon: MessageSquare,
+    old: "Fragmented across email threads, calls, and forwarded attachments.",
+    next: "One workspace thread with your recruiter, tied to the role.",
+  },
+  {
+    label: "Effort on your team",
+    icon: Users,
+    old: "Sourcing work quietly ends up on internal HR after the first pass.",
+    next: "TaaSFlow carries the sourcing and evaluation load end-to-end.",
+  },
+  {
+    label: "Pipeline ownership",
+    icon: Repeat,
+    old: "Pipeline and candidate context disappear when the engagement ends.",
+    next: "Reusable, Client-owned candidate pipeline that stays with you.",
+  },
+] as const;
+
+const PROCESS_STEPS = [
+  {
+    title: "Define the role",
+    icon: ClipboardCheck,
+    taasflow: "Structured intake with your team to align on scope and must-haves.",
+    client: "A draft role brief to review and approve.",
+    output: "Approved requirements and success criteria.",
+  },
+  {
+    title: "Build the search strategy",
+    icon: Compass,
+    taasflow: "Design the sourcing plan, target profiles, and outreach angles.",
+    client: "A summary of where and how we'll search.",
+    output: "Search strategy tied to the approved brief.",
+  },
+  {
+    title: "Source candidates",
+    icon: Radar,
+    taasflow: "Continuous multi-channel sourcing and outreach.",
+    client: "Live sourcing progress inside the workspace.",
+    output: "A pool of engaged candidates for the role.",
+  },
+  {
+    title: "Evaluate evidence",
+    icon: FileText,
+    taasflow: "Recruiter review of each CV, mapped to your requirements.",
+    client: "Evidence and CV quotes per requirement.",
+    output: "A recruiter-written evidence file per candidate.",
+  },
+  {
+    title: "Rank the strongest profiles",
+    icon: BarChart3,
+    taasflow: "Role-specific scoring against the approved criteria.",
+    client: "Ranked candidates with fit scores and reasoning.",
+    output: "A ranked shortlist, highest fit first.",
+  },
+  {
+    title: "Deliver to the workspace",
+    icon: Send,
+    taasflow: "Publish the shortlist and open direct handover.",
+    client: "Candidates, evidence, and contact ready to act on.",
+    output: "A live shortlist you can review and move forward.",
+  },
+  {
+    title: "Client reviews and decides",
+    icon: Handshake,
+    taasflow: "Support your team through interview scheduling and questions.",
+    client: "Full profiles, evidence, and status controls.",
+    output: "Interview, offer, and hiring decisions — yours.",
+  },
+  {
+    title: "Feedback improves the next delivery",
+    icon: Workflow,
+    taasflow: "Recalibrate the search from your feedback on each candidate.",
+    client: "A pipeline that gets sharper delivery after delivery.",
+    output: "A refined search and a reusable candidate pipeline.",
+  },
+] as const;
+
+
+
 /* ---------- Small building blocks ---------- */
 
 function Eyebrow({ children }: { children: React.ReactNode }) {
