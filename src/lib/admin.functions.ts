@@ -734,10 +734,13 @@ export const updatePosition = createServerFn({ method: "POST" })
 const statusTransition = z.object({
   id: z.string().uuid(),
   action: z.enum([
+    "submit",
+    "start_review",
     "request_clarification",
     "approve",
     "activate",
     "pause",
+    "mark_filled",
     "close",
     "reopen",
     "archive",
@@ -746,12 +749,15 @@ const statusTransition = z.object({
 });
 
 const STATUS_MAP: Record<string, string> = {
+  submit: "submitted",
+  start_review: "under_review",
   request_clarification: "needs_clarification",
   approve: "approved",
   activate: "active",
   pause: "paused",
+  mark_filled: "filled",
   close: "closed",
-  reopen: "approved",
+  reopen: "active",
   archive: "archived",
 };
 
@@ -771,9 +777,10 @@ export const setPositionStatus = createServerFn({ method: "POST" })
     if (!before) throw new Error("position_not_found");
     const next = STATUS_MAP[data.action];
     const patch: AnyRow = { status: next };
+    if (data.action === "submit") patch.submitted_at = new Date().toISOString();
     if (data.action === "approve") patch.approved_at = new Date().toISOString();
-    if (data.action === "activate") patch.published_at = new Date().toISOString();
-    if (data.action === "close") patch.closed_at = new Date().toISOString();
+    if (data.action === "activate" || data.action === "reopen") patch.published_at = new Date().toISOString();
+    if (data.action === "close" || data.action === "mark_filled") patch.closed_at = new Date().toISOString();
     if (data.action === "archive") patch.closed_at = before.closed_at ?? new Date().toISOString();
     const { data: after, error } = await s
       .from("positions")
