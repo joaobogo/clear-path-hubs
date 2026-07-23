@@ -395,6 +395,60 @@ export const retryEnrichment = createServerFn({ method: "POST" })
     return { ok: out.final_state !== "failed", state: out.final_state, trace_id: out.trace_id };
   });
 
+/**
+ * Bulk backfill: re-run enrichment on every candidate match whose evidence is
+ * missing structured insights (or that has no evidence row yet). Skips matches
+ * without usable CV text so the pipeline doesn't churn on unrecoverable rows.
+ * Returns a summary of processed / skipped / failed match ids.
+ */
+export const backfillCandidateInsights = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) =>
+    z.object({ limit: z.number().int().min(1).max(500).optional() }).parse(input ?? {}),
+  )
+  .handler(async ({ data, context }) => {
+    if (!(await isStaff(context.userId))) throw new Error("forbidden");
+    const supabase = (await getAdmin()) as AnyRow;
+    const limit = data.limit ?? 200;
+
+    const { data: matches } = await supabase
+      .from("candidate_matches")
+      .select("id,candidate_profile_id,candidate_evidence(extracted),candidate_profiles!inner(current_cv_file_id,files:current_cv_file_id(extracted_text))")
+      .limit(limit);
+
+    const targets: string[] = [];
+    for (const row of (matches ?? []) as AnyRow[]) {
+      const ev = Array.isArray(row.candidate_evidence) ? row.candidate_evidence[0] : row.candidate_evidence;
+      const hasInsights =
+        ev?.extracted && typeof ev.extracted === "object" && ev.extracted.insights
+          ? true
+          : false;
+      const cvText = row.candidate_profiles?.files?.extracted_text ?? "";
+      if (!hasInsights && cvText && cvText.length >= 60) targets.push(row.id as string);
+    }
+
+    const { runEnrichmentOnly } = await import("./pipeline-runner.server");
+    const processed: string[] = [];
+    const failed: { match_id: string; message: string }[] = [];
+    for (const id of targets) {
+      try {
+        const out = await runEnrichmentOnly(id);
+        if (out.final_state === "failed") failed.push({ match_id: id, message: "enrichment_failed" });
+        else processed.push(id);
+      } catch (err) {
+        failed.push({ match_id: id, message: (err as Error).message ?? "error" });
+      }
+    }
+
+    return {
+      ok: true,
+      scanned: (matches ?? []).length,
+      targeted: targets.length,
+      processed: processed.length,
+      failed,
+    };
+  });
+
 export const markManualReview = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) =>
