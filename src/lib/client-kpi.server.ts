@@ -295,31 +295,94 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
       }))
     : [];
 
+  const experience = normExperience(cp.experience);
+  const currentRole = experience[0]?.title ?? null;
+  const currentCompany = experience[0]?.company ?? null;
+
+  const certifications = Array.isArray(cp.certifications)
+    ? (cp.certifications as AnyRow[]).slice(0, 8).map((c) => ({
+        name: String(c?.name ?? c?.title ?? ""),
+        issuer: normStr(c?.issuer ?? c?.organization ?? c?.authority),
+        date: normStr(c?.date ?? c?.issued ?? c?.year),
+      })).filter((c) => c.name)
+    : [];
+
+  const isHttp = (v: unknown): string | null => {
+    if (typeof v !== "string") return null;
+    const s = v.trim();
+    return /^https?:\/\/[^\s]+$/i.test(s) ? s : null;
+  };
+  const links = {
+    linkedin: isHttp(cp.linkedin_url),
+    portfolio: isHttp(cp.portfolio_url),
+    github: isHttp((cp as AnyRow).github_url),
+    website: isHttp((cp as AnyRow).website_url ?? (cp as AnyRow).website),
+  };
+
+  const { headline: prettyHeadline, chips } = prettifyHeadline(cp.headline ?? null);
+
+  const concerns: string[] = Array.isArray(runConcerns)
+    ? runConcerns.slice(0, 5).map(String)
+    : Array.isArray(coverage?.missing)
+      ? coverage.missing.slice(0, 5).map(String)
+      : [];
+
+  const requirement_rows = buildRequirementRows(
+    pos ? { requirements: pos.requirements, preferred_requirements: pos.preferred_requirements } : null,
+    coverage,
+  );
+  const coverageSummary = summariseCoverage(requirement_rows);
+
+  const workAuth = normWorkAuth(cp.work_authorization);
+  const interview_guide = buildInterviewGuide({
+    positionTitle: pos?.title ?? null,
+    rows: requirement_rows,
+    strengths,
+    concerns,
+    availability,
+    workAuth,
+  });
+
+  const fit = toFitPresentation(run?.fit_label ?? null, run?.score ?? null);
+
   return {
     match_id: row.id,
     stage: row.stage,
     delivered_at: row.delivered_at ?? null,
+    last_updated: run?.completed_at ?? row.updated_at ?? row.delivered_at ?? null,
     position: pos ? { id: pos.id, title: pos.title } : null,
     candidate: {
       display_name: displayName,
       location: cp.location ?? null,
-      headline: cp.headline ?? null,
+      timezone: cp.timezone ?? null,
+      headline: prettyHeadline,
+      headline_chips: chips,
       availability,
       years_experience: cp.years_experience ?? null,
       summary: cp.summary ?? null,
+      current_role: currentRole,
+      current_company: currentCompany,
+      links,
     },
     score: run?.score ?? null,
     fit_label: run?.fit_label ?? null,
+    fit,
     summary: run?.explanation ?? null,
     strengths,
+    concerns,
     main_consideration: mainConsideration,
+    requirement_rows,
+    coverage: coverageSummary,
+    interview_guide,
     evidence,
-    experience: normExperience(cp.experience),
+    experience,
     skills: normSkills(cp.skills),
     education: normEducation(cp.education),
     languages: normLanguages(cp.languages),
-    work_authorization: normWorkAuth(cp.work_authorization),
+    certifications,
+    work_authorization: workAuth,
     screening_answers: normScreeningAnswers(row.application_answers),
   };
 }
+
 
