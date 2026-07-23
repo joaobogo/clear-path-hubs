@@ -1,0 +1,157 @@
+{
+  "generated_at": "2026-07-23",
+  "source_repo": "https://github.com/joaobogo/sourcing-suite-ai.git",
+  "source_repo_access": "DENIED_NO_CREDENTIALS",
+  "source_website": "https://sourcing-suite-ai.lovable.app",
+  "classification_basis": "Live source website crawl + destination content mirror in src/content/. Repository-level file inspection not possible; allowlist expressed as source path PATTERNS.",
+  "policy": "Direct copy is permitted only for files with zero runtime dependency on old Supabase, Auth, dashboard, database, environment variables, or operational services.",
+  "entries": [
+    {
+      "source_path_pattern": "src/content/blog/**/*.md",
+      "classification": "CONTENT_ONLY",
+      "purpose": "Blog article prose (304 articles)",
+      "dependencies": "none (static markdown)",
+      "destination_use": "src/content/blog/**",
+      "safe_to_copy_directly": true,
+      "adaptation_required": "Frontmatter normalization (author, slug, canonical URL)",
+      "risk_level": "low"
+    },
+    {
+      "source_path_pattern": "src/content/industries/**/*.md",
+      "classification": "CONTENT_ONLY",
+      "purpose": "Industry landing copy (24 industries)",
+      "dependencies": "none",
+      "destination_use": "src/content/industries/**",
+      "safe_to_copy_directly": true,
+      "adaptation_required": "Rewrite CTAs to destination routes",
+      "risk_level": "low"
+    },
+    {
+      "source_path_pattern": "src/content/case-studies/**/*.md",
+      "classification": "CONTENT_ONLY",
+      "purpose": "Case study prose",
+      "dependencies": "none",
+      "destination_use": "src/content/case-studies/**",
+      "safe_to_copy_directly": true,
+      "adaptation_required": "Verify metrics remain factually accurate",
+      "risk_level": "low"
+    },
+    {
+      "source_path_pattern": "src/content/legal/**/*.md",
+      "classification": "CONTENT_ONLY",
+      "purpose": "Privacy, terms, DPA copy",
+      "dependencies": "none",
+      "destination_use": "src/content/legal/**",
+      "safe_to_copy_directly": true,
+      "adaptation_required": "Legal counsel review of party names and jurisdiction",
+      "risk_level": "medium"
+    },
+    {
+      "source_path_pattern": "public/favicon*",
+      "classification": "ASSET_ONLY",
+      "purpose": "Site favicon",
+      "dependencies": "none",
+      "destination_use": "public/",
+      "safe_to_copy_directly": true,
+      "adaptation_required": "none",
+      "risk_level": "low"
+    },
+    {
+      "source_path_pattern": "public/images/industries/**",
+      "classification": "ASSET_ONLY",
+      "purpose": "Industry cover images",
+      "dependencies": "none",
+      "destination_use": "public/images/industries/",
+      "safe_to_copy_directly": true,
+      "adaptation_required": "Optimize/compress",
+      "risk_level": "low"
+    },
+    {
+      "source_path_pattern": "public/images/blog/**",
+      "classification": "ASSET_ONLY",
+      "purpose": "Blog cover images",
+      "dependencies": "none",
+      "destination_use": "public/images/blog/",
+      "safe_to_copy_directly": true,
+      "adaptation_required": "none",
+      "risk_level": "low"
+    },
+    {
+      "source_path_pattern": "public/logo*, public/brand/**",
+      "classification": "ASSET_ONLY",
+      "purpose": "Logotype and brand marks",
+      "dependencies": "none",
+      "destination_use": "public/",
+      "safe_to_copy_directly": true,
+      "adaptation_required": "none",
+      "risk_level": "low"
+    },
+    {
+      "source_path_pattern": "src/components/site/Header.tsx (reference only)",
+      "classification": "REBUILD_FROM_REFERENCE",
+      "purpose": "Public navigation reference layout",
+      "dependencies": "May import old Auth/session state",
+      "destination_use": "src/components/site/PublicPageShell.tsx (already implemented)",
+      "safe_to_copy_directly": false,
+      "adaptation_required": "Rebuild in destination shell; consume src/config/public-navigation.ts",
+      "risk_level": "medium"
+    },
+    {
+      "source_path_pattern": "src/components/site/Footer.tsx (reference only)",
+      "classification": "REBUILD_FROM_REFERENCE",
+      "purpose": "Public footer reference layout",
+      "dependencies": "May import old newsletter/Supabase form",
+      "destination_use": "src/components/site/PublicPageShell.tsx (already implemented)",
+      "safe_to_copy_directly": false,
+      "adaptation_required": "Rebuild; strip subscription hook",
+      "risk_level": "medium"
+    },
+    {
+      "source_path_pattern": "src/config/navigation.ts (reference only)",
+      "classification": "REBUILD_FROM_REFERENCE",
+      "purpose": "Route map",
+      "dependencies": "none functional",
+      "destination_use": "src/config/public-navigation.ts",
+      "safe_to_copy_directly": false,
+      "adaptation_required": "Rewrite entries to destination route strings",
+      "risk_level": "low"
+    },
+    {
+      "source_path_pattern": "src/styles/tokens/**, tailwind theme extracts (reference only)",
+      "classification": "REBUILD_FROM_REFERENCE",
+      "purpose": "Typography & color reference",
+      "dependencies": "none",
+      "destination_use": "src/styles.css OKLCH tokens",
+      "safe_to_copy_directly": false,
+      "adaptation_required": "Values re-expressed as OKLCH in destination DS",
+      "risk_level": "low"
+    },
+    {
+      "source_path_pattern": "src/lib/seo/**, src/lib/structured-data/** (reference only)",
+      "classification": "REBUILD_FROM_REFERENCE",
+      "purpose": "Meta/OG/JSON-LD templates",
+      "dependencies": "none functional",
+      "destination_use": "Route-level head() functions",
+      "safe_to_copy_directly": false,
+      "adaptation_required": "Adapt to TanStack Start head() shape",
+      "risk_level": "low"
+    },
+    {
+      "source_path_pattern": "public/_redirects (reference only)",
+      "classification": "REBUILD_FROM_REFERENCE",
+      "purpose": "Legacy URL redirect map",
+      "dependencies": "none",
+      "destination_use": "TanStack Start route redirects",
+      "safe_to_copy_directly": false,
+      "adaptation_required": "Convert to router-level redirects",
+      "risk_level": "low"
+    }
+  ],
+  "totals": {
+    "allowlisted_patterns": 14,
+    "directly_copyable_patterns": 8,
+    "requires_adaptation_patterns": 6,
+    "high_risk_items": 0,
+    "medium_risk_items": 3
+  }
+}

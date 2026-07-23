@@ -1,0 +1,79 @@
+{
+  "generated_at": "2026-07-23",
+  "policy": "Visually useful source components with unsafe runtime dependencies. Preserve visual behavior + content; rebuild against destination systems.",
+  "targets": [
+    {
+      "source_path": "src/components/site/Header.tsx",
+      "visual_behavior": "Sticky top nav with mega-menu, mobile drawer, active-route styling",
+      "content_to_preserve": "Menu labels, ordering, CTAs (Sign in, Get started)",
+      "unsafe_dependency": "Old Auth session hook to swap Sign in ↔ Dashboard",
+      "destination_component": "src/components/site/PublicPageShell.tsx (Header slot)",
+      "reconstruction_approach": "Use src/config/public-navigation.ts; Sign in link routes to /login (destination Supabase auth)"
+    },
+    {
+      "source_path": "src/components/site/Footer.tsx",
+      "visual_behavior": "4-column footer + newsletter form + legal strip",
+      "content_to_preserve": "Column headings, link lists, legal microcopy",
+      "unsafe_dependency": "Newsletter submits to old Supabase table",
+      "destination_component": "src/components/site/PublicPageShell.tsx (Footer slot)",
+      "reconstruction_approach": "Replace newsletter with destination server fn or link to /contact"
+    },
+    {
+      "source_path": "src/components/site/ContactForm.tsx",
+      "visual_behavior": "3-field contact form with validation & success state",
+      "content_to_preserve": "Field labels, success copy",
+      "unsafe_dependency": "Direct supabase.from('leads').insert",
+      "destination_component": "New form -> src/routes/api/public/contact.ts",
+      "reconstruction_approach": "Zod schema + public API route with rate limit + honeypot"
+    },
+    {
+      "source_path": "src/components/site/BookingCTA.tsx",
+      "visual_behavior": "Prominent Calendly-style booking block",
+      "content_to_preserve": "Headline, subhead, testimonial strip",
+      "unsafe_dependency": "Embeds legacy Calendly link tied to old brand",
+      "destination_component": "src/components/ds/dashboard-card.tsx variant",
+      "reconstruction_approach": "Update URL; render behind ClientOnly to preserve SSR"
+    },
+    {
+      "source_path": "src/components/jobs/JobBoardList.tsx (public)",
+      "visual_behavior": "Card grid with filters, chips, empty state",
+      "content_to_preserve": "Card layout, filter chips, empty-state copy",
+      "unsafe_dependency": "Queries old positions table via source Supabase client",
+      "destination_component": "src/routes/jobs.tsx",
+      "reconstruction_approach": "Fetch via destination jobs.functions.ts; reuse presentation only"
+    },
+    {
+      "source_path": "src/components/jobs/JobDetail.tsx (public)",
+      "visual_behavior": "Split layout with sticky Apply CTA + structured data",
+      "content_to_preserve": "Section headings, benefits block, JSON-LD template",
+      "unsafe_dependency": "Reads legacy candidate_matches",
+      "destination_component": "src/routes/jobs.$id.tsx",
+      "reconstruction_approach": "Use destination position view + head() JSON-LD"
+    },
+    {
+      "source_path": "src/components/talent/TalentProfileCard.tsx (public)",
+      "visual_behavior": "Public talent profile with skills chips + evidence badges",
+      "content_to_preserve": "Layout, badge design",
+      "unsafe_dependency": "Reads legacy candidate profile via old services",
+      "destination_component": "Destination candidate_evidence-backed component",
+      "reconstruction_approach": "Rebuild against destination evidence graph"
+    },
+    {
+      "source_path": "src/components/marketing/DashboardPreview.tsx",
+      "visual_behavior": "Animated preview of dashboard for marketing",
+      "content_to_preserve": "Aspect, glass style, hover states",
+      "unsafe_dependency": "Imports actual old dashboard components (heavy tree)",
+      "destination_component": "src/components/marketing/WorkspacePreview.tsx (already built)",
+      "reconstruction_approach": "Already implemented in destination; keep as canonical"
+    },
+    {
+      "source_path": "src/components/site/PublicApplicationShell.tsx",
+      "visual_behavior": "Wrapper providing brand chrome for public application flow",
+      "content_to_preserve": "Header/footer alignment",
+      "unsafe_dependency": "Injects old Auth provider",
+      "destination_component": "src/components/site/PublicPageShell.tsx",
+      "reconstruction_approach": "Use PublicPageShell; do not port provider"
+    }
+  ],
+  "rebuild_count": 9
+}
