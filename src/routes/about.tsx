@@ -12,309 +12,144 @@ export const Route = createFileRoute("/about")({
     marketingHead(undefined, "/about", {
       title: "About TaaSFlow — operators rebuilding recruiting",
       description:
-        "TaaSFlow was founded by HR and talent leaders who lived the pain of the traditional agency model. We built the subscription recruiting system we always wanted.",
+        "TaaSFlow was founded by operators who lived the pain of traditional agency recruiting. We rebuilt the model around evidence, transparency and client ownership.",
     }),
   component: AboutPage,
 });
 
-const PRINCIPLES = [
+const BROKEN = [
   {
-    title: "Evidence over opinion",
-    body: "Every candidate score is backed by CV evidence. If we can't cite it, we don't claim it.",
+    title: "Opaque shortlists",
+    body: "Agencies deliver a name and a summary. Buyers cannot see why a candidate is on the list — or who was rejected and why.",
   },
   {
-    title: "Own your pipeline",
-    body: "You keep the candidates we source — during and after your subscription. No gatekeeping, no vendor lock-in.",
+    title: "Contingent incentives",
+    body: "Placement fees push volume over fit. The incentive is to close, not to build a durable hiring engine.",
   },
   {
-    title: "Speak plainly",
-    body: "Recruiters write fit narratives in plain language. No jargon, no black boxes, no vague summaries.",
+    title: "Fragmented pipelines",
+    body: "Multiple vendors, spreadsheets, and inboxes. There is no single source of truth on any given role.",
   },
   {
-    title: "Respect the candidate",
-    body: "Applicants get status, feedback, and a real answer — not silence. That is not optional; it's the model.",
-  },
-];
-
-const WINS = [
-  {
-    who: "Candidates win",
-    body: "Direct access to real roles, transparent status, and honest feedback at every stage.",
-  },
-  {
-    who: "Companies win",
-    body: "Ranked shortlists on a predictable cadence, with full pipeline ownership and one dashboard for decisions.",
-  },
-  {
-    who: "The team wins",
-    body: "Subscription incentives align us with your long-term outcomes, not one-off placements.",
+    title: "Candidates left in silence",
+    body: "Most applicants never hear back. Talent brand and repeat pipeline suffer as a result.",
   },
 ];
 
-// Migrated: "From a broken model to a hiring throughput system" — 6 phases.
-const JOURNEY = [
+const CHANGES = [
   {
-    n: "01",
-    label: "The problem",
-    title: "The old model is broken",
-    body: "Agencies, job boards, and RPO struggle at scale. Cost, speed, and quality fall apart under volume.",
+    title: "Evidence-first scoring",
+    body: "Every candidate is scored against a role-specific rubric with the exact CV evidence attached. If we cannot cite it, we do not claim it.",
   },
   {
-    n: "02",
-    label: "The idea",
-    title: "Why TaaSFlow exists",
-    body: "A subscription-based hiring system designed to replace fragmented labour with a single throughput engine.",
+    title: "One transparent workspace",
+    body: "Clients see the same ranked shortlist, evidence and recruiter notes we do. Nothing lives in a private inbox.",
   },
   {
-    n: "03",
-    label: "The model",
-    title: "Talent-as-a-Service, not agency",
-    body: "Flat fees. Client-owned pipeline. Global multi-channel sourcing. Human-first, AI-assisted screening.",
+    title: "Subscription-aligned incentives",
+    body: "A flat fee decouples our revenue from placement pressure and aligns us with your long-term hiring outcomes.",
   },
   {
-    n: "04",
-    label: "The process",
-    title: "A faster, transparent delivery",
-    body: "Intake → sourcing → scoring → shortlist → hire. A repeatable flow with weekly feedback loops.",
-  },
-  {
-    n: "05",
-    label: "The platform",
-    title: "Built for hiring throughput",
-    body: "One workspace for sourcing, scoring, ranking, and decision-making — designed for HR, hiring managers, and finance.",
-  },
-  {
-    n: "06",
-    label: "The outcome",
-    title: "A better model for everyone",
-    body: "Speed, cost, control, quality, and candidate experience — aligned across HR, CFO, procurement, and candidates.",
+    title: "Candidates treated as people",
+    body: "Applicants get status, feedback and a real answer. Silence is not a delivery mode.",
   },
 ];
 
-// Migrated: "Recruiting Across 50+ Countries" — regions kept, unverified per-region volumes REMOVED (see about-parity.md).
-const REGIONS = [
-  { name: "Middle East", hub: "Dubai", note: "Visa support for UAE markets." },
-  { name: "Europe", hub: "London", note: "Strong fintech & SaaS coverage." },
-  { name: "North America", hub: "New York", note: "H-1B & visa-sponsored placements." },
-  { name: "South America", hub: "São Paulo", note: "Growing remote talent hub." },
-  { name: "Asia Pacific", hub: "Singapore", note: "Tech & engineering specialisation." },
-  { name: "Africa", hub: "Nairobi", note: "Emerging market expertise." },
+const VALUES = [
+  { title: "Evidence over opinion", body: "Rubrics, citations, and reviewed shortlists — not vibes." },
+  { title: "Transparency by default", body: "If the client cannot see it, we should not be doing it." },
+  { title: "Own your pipeline", body: "You keep every candidate we source. No gatekeeping, no lock-in." },
+  { title: "Respect the candidate", body: "Real answers, real feedback, real timelines." },
+  { title: "Operator discipline", body: "We build the system we would want as hiring managers." },
+  { title: "Boring reliability", body: "Cadence, ownership, and clarity beat heroics." },
 ];
 
-// Migrated: "Meet the Founders" — names, roles, quotes retained (approved company info).
-// Founder headshots omitted (source hotlinked taasflow.com images; will rehost once brand pack lands).
-const FOUNDERS = [
+const SERVES = [
   {
-    name: "Christian Brogger",
-    role: "Co-founder & CEO",
-    quote: "Great hiring starts with great process. We just made it repeatable.",
-    bio: "Two decades designing and driving value creation across Fortune 500s and private equity, with a career focus on turning ambiguous strategy into repeatable operating systems.",
-    initials: "CB",
+    who: "Founders and heads of talent",
+    body: "Scaling teams that need predictable throughput without hiring an internal recruiting org overnight.",
   },
   {
-    name: "João Bogo",
-    role: "Co-founder",
-    quote: "Recruiting deserves the same rigour we apply to product and finance.",
-    bio: "Talent acquisition operator who has built and led global sourcing teams across five continents, bringing frontline recruiting discipline into the platform.",
-    initials: "JB",
-  },
-];
-
-// Migrated: "From Startups to Enterprises" — tiered segments.
-const SEGMENTS = [
-  {
-    tier: "Startups & scale-ups",
-    body: "Founder-led hiring that needs weekly candidate flow without adding a full recruiter to the team.",
+    who: "Enterprise talent leaders",
+    body: "Programmes across multiple business units that need one operating model and one aggregated view.",
   },
   {
-    tier: "Mid-market companies",
-    body: "Talent teams that need extra capacity for one or many roles without agency retainers or long contracts.",
+    who: "Operators leading a hire personally",
+    body: "Founders and executives who want to run the search themselves without losing their week to sourcing.",
   },
-  {
-    tier: "Enterprise organisations",
-    body: "TA leaders who want a subscription partner that integrates into existing ATS and hiring workflows.",
-  },
-];
-
-// Migrated: "How we think" — six operating traits (destination "Principles" plus these).
-const OPERATING_TRAITS = [
-  { title: "Systematic", body: "Every role runs through the same intake, sourcing, scoring, and delivery flow." },
-  { title: "Global", body: "Sourcing spans six continents; delivery is scheduled around your team's timezone." },
-  { title: "Data-driven", body: "Decisions are backed by structured evidence, not gut feel or resume vibes." },
-  { title: "Iterative", body: "Weekly feedback loops sharpen the search plan and the shortlist over time." },
-  { title: "Transparent", body: "You and the recruiter see the same workspace — status, evidence, and next steps." },
-  { title: "Fast", body: "Structured hand-offs remove the delays that make traditional hiring feel stuck." },
 ];
 
 function AboutPage() {
   return (
     <SiteShell>
-      {/* Hero */}
+      {/* Purpose */}
       <PublicSection className="pt-24">
-        <PublicPage className="max-w-3xl text-center">
+        <PublicPage className="max-w-4xl">
           <p className="text-sm font-medium uppercase tracking-widest text-[color:var(--brand-ocean)]">
             About TaaSFlow
           </p>
-          <h1 className="mt-3 text-4xl font-semibold tracking-tight sm:text-5xl">
-            We built the hiring system we always wanted.
+          <h1 className="mt-3 font-[family-name:var(--brand-font-display)] text-4xl font-semibold tracking-tight sm:text-5xl lg:text-6xl">
+            We exist to make recruiting explainable again.
           </h1>
-          <p className="mt-5 text-lg text-[color:var(--brand-navy)]/70">
-            After years of watching brilliant teams struggle with a broken
-            recruiting model, we stopped complaining and started building.
-            TaaSFlow is a subscription recruiting service — evidence-based,
-            transparent, and owned by the client.
+          <p className="mt-6 max-w-2xl text-lg text-[color:var(--brand-navy)]/70">
+            TaaSFlow is a subscription recruiting model built by operators. Our
+            purpose is simple: give hiring teams a system where every
+            shortlist, every score and every decision can be traced to the
+            evidence behind it.
           </p>
-          <div className="mt-8 flex flex-wrap justify-center gap-3">
-            <Link
-              to="/journey"
-              className="inline-flex min-h-11 items-center rounded-md bg-[color:var(--brand-navy)] px-5 py-3 text-sm font-semibold text-white hover:bg-[color:var(--brand-navy-dark)]"
-            >
-              See the journey
-            </Link>
-            <Link
-              to="/pilot"
-              className="inline-flex min-h-11 items-center rounded-md border border-[color:var(--brand-navy)]/15 px-5 py-3 text-sm font-semibold hover:bg-[color:var(--brand-sky)]/60"
-            >
-              Explore the 2-week pilot
-            </Link>
-          </div>
         </PublicPage>
       </PublicSection>
 
-      {/* Our Story */}
-      <PublicSection className="border-t border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-sky)]/30">
-        <PublicPage>
-          <div className="grid gap-10 lg:grid-cols-[1.1fr_.9fr] lg:items-start">
-            <div>
-              <p className="text-sm font-medium uppercase tracking-widest text-[color:var(--brand-ocean)]">
-                Our story
-              </p>
-              <h2 className="mt-2 text-3xl font-semibold tracking-tight">
-                From HR frustration to a repeatable recruiting system
-              </h2>
-              <div className="mt-5 space-y-4 text-[color:var(--brand-navy)]/80">
-                <p>
-                  TaaSFlow was founded by HR and talent acquisition leaders who
-                  lived every pain point people teams face: overloaded
-                  recruiters, agencies charging placement fees with little
-                  accountability, tools that create more work than they solve,
-                  and hiring managers waiting months for a shortlist.
-                </p>
-                <p>
-                  We knew the talent function deserved better. So we built
-                  TaaSFlow as the recruiting arm your HR team always wanted —
-                  a subscription-based partner with structured sourcing,
-                  evidence-first screening, and a candidate delivery cadence
-                  you can plan around. No placement fees. No long contracts.
-                </p>
-                <p>
-                  Think of us as your on-demand recruiting department: we plug
-                  into your existing HR workflow, align with your hiring
-                  managers, and deliver pre-screened, scored candidates on a
-                  schedule. Your people team stays in control.
-                </p>
-              </div>
-            </div>
-            <aside className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6 shadow-sm">
-              <h3 className="text-sm font-medium uppercase tracking-widest text-[color:var(--brand-ocean)]">
-                What we do
-              </h3>
-              <ul className="mt-4 space-y-3 text-sm text-[color:var(--brand-navy)]/80">
-                <li>
-                  <span className="font-semibold text-[color:var(--brand-navy)]">Sourcing</span> across job boards,
-                  referrals, and outbound — mapped to your role.
-                </li>
-                <li>
-                  <span className="font-semibold text-[color:var(--brand-navy)]">Structured screening</span> with
-                  role-specific screening questions.
-                </li>
-                <li>
-                  <span className="font-semibold text-[color:var(--brand-navy)]">Evidence-based scoring</span> with
-                  citations from the candidate&apos;s CV.
-                </li>
-                <li>
-                  <span className="font-semibold text-[color:var(--brand-navy)]">Ranked delivery</span> into a
-                  workspace your team can review together.
-                </li>
-              </ul>
-              <div className="mt-6 flex flex-wrap gap-3">
-                <Link
-                  to="/journey"
-                  className="inline-flex min-h-11 items-center rounded-md border border-[color:var(--brand-navy)]/15 px-4 py-2 text-sm font-semibold hover:bg-[color:var(--brand-sky)]/60"
-                >
-                  See the journey
-                </Link>
-                <Link
-                  to="/how-it-works"
-                  className="inline-flex min-h-11 items-center rounded-md border border-[color:var(--brand-navy)]/15 px-4 py-2 text-sm font-semibold hover:bg-[color:var(--brand-sky)]/60"
-                >
-                  How it works
-                </Link>
-              </div>
-            </aside>
+      {/* Why TaaSFlow was created */}
+      <PublicSection className="border-t border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-mist)]/40 py-16">
+        <PublicPage className="grid gap-10 md:grid-cols-2">
+          <div>
+            <h2 className="font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight sm:text-4xl">
+              Why TaaSFlow was created
+            </h2>
+            <p className="mt-4 text-[color:var(--brand-navy)]/70">
+              We kept hitting the same wall in-house: agency partners returned
+              opaque shortlists, RPO added process without improving quality,
+              and the actual signal we needed — why a candidate might be
+              great — sat locked inside a recruiter's head.
+            </p>
+            <p className="mt-4 text-[color:var(--brand-navy)]/70">
+              We wanted a model where the rubric was written down, the
+              evidence lived next to the score, and the workspace was the
+              same one the client used. So we built it.
+            </p>
           </div>
+          <blockquote className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6 sm:p-8">
+            <p className="text-lg text-[color:var(--brand-navy)] sm:text-xl">
+              "As operators we spent years accepting shortlists we could not
+              explain. TaaSFlow is the recruiting system we always wanted on
+              the buying side — one workspace, one rubric, one story per
+              candidate."
+            </p>
+            <footer className="mt-6 text-sm text-[color:var(--brand-navy)]/60">
+              — TaaSFlow founding team
+            </footer>
+          </blockquote>
         </PublicPage>
       </PublicSection>
 
-      {/* Journey — 6 phases */}
-      <PublicSection className="border-t border-[color:var(--brand-navy)]/10">
+      {/* What is broken */}
+      <PublicSection>
         <PublicPage>
-          <p className="text-sm font-medium uppercase tracking-widest text-[color:var(--brand-ocean)]">
-            Journey
-          </p>
-          <h2 className="mt-2 max-w-2xl text-3xl font-semibold tracking-tight">
-            From a broken model to a hiring throughput system
+          <h2 className="max-w-2xl font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight sm:text-4xl">
+            What is broken in traditional recruiting
           </h2>
-          <p className="mt-3 max-w-2xl text-[color:var(--brand-navy)]/75">
-            The full story of why we exist, how we deliver, and why TaaSFlow is
-            a platform — not another agency.
-          </p>
-          <div className="mt-8 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {JOURNEY.map((j) => (
+          <div className="mt-10 grid gap-5 md:grid-cols-2">
+            {BROKEN.map((b) => (
               <div
-                key={j.n}
-                className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6 shadow-sm"
-              >
-                <div className="flex items-center gap-3">
-                  <span className="rounded-md bg-[color:var(--brand-sky)]/60 px-2 py-1 text-xs font-semibold text-[color:var(--brand-navy)]">
-                    {j.n}
-                  </span>
-                  <span className="text-xs font-medium uppercase tracking-widest text-[color:var(--brand-ocean)]">
-                    {j.label}
-                  </span>
-                </div>
-                <h3 className="mt-3 text-lg font-semibold text-[color:var(--brand-navy)]">
-                  {j.title}
-                </h3>
-                <p className="mt-2 text-sm text-[color:var(--brand-navy)]/75">
-                  {j.body}
-                </p>
-              </div>
-            ))}
-          </div>
-        </PublicPage>
-      </PublicSection>
-
-      {/* How we operate — principles */}
-      <PublicSection className="border-t border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-sky)]/30">
-        <PublicPage>
-          <p className="text-sm font-medium uppercase tracking-widest text-[color:var(--brand-ocean)]">
-            How we operate
-          </p>
-          <h2 className="mt-2 max-w-2xl text-3xl font-semibold tracking-tight">
-            Principles we build every product decision on
-          </h2>
-          <div className="mt-8 grid gap-4 sm:grid-cols-2">
-            {PRINCIPLES.map((p) => (
-              <div
-                key={p.title}
-                className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6 shadow-sm"
+                key={b.title}
+                className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6"
               >
                 <h3 className="text-lg font-semibold text-[color:var(--brand-navy)]">
-                  {p.title}
+                  {b.title}
                 </h3>
-                <p className="mt-2 text-sm text-[color:var(--brand-navy)]/75">
-                  {p.body}
+                <p className="mt-3 text-sm text-[color:var(--brand-navy)]/70">
+                  {b.body}
                 </p>
               </div>
             ))}
@@ -322,31 +157,43 @@ function AboutPage() {
         </PublicPage>
       </PublicSection>
 
-      {/* Win-Win-Win */}
-      <PublicSection className="border-t border-[color:var(--brand-navy)]/10">
+      {/* What TaaSFlow changes */}
+      <PublicSection className="border-t border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-navy)] py-20 text-white">
         <PublicPage>
-          <p className="text-sm font-medium uppercase tracking-widest text-[color:var(--brand-ocean)]">
-            Our philosophy
-          </p>
-          <h2 className="mt-2 max-w-2xl text-3xl font-semibold tracking-tight">
-            The win–win–win mentality
+          <h2 className="max-w-2xl font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight sm:text-4xl">
+            What TaaSFlow changes
           </h2>
-          <p className="mt-3 max-w-2xl text-[color:var(--brand-navy)]/75">
-            Great hiring happens when everyone benefits. Our model is built so
-            that candidates, companies, and the TaaSFlow team all succeed
-            together.
-          </p>
-          <div className="mt-8 grid gap-4 md:grid-cols-3">
-            {WINS.map((w) => (
+          <div className="mt-10 grid gap-5 md:grid-cols-2">
+            {CHANGES.map((c) => (
               <div
-                key={w.who}
-                className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6 shadow-sm"
+                key={c.title}
+                className="rounded-2xl border border-white/15 bg-white/5 p-6"
+              >
+                <h3 className="text-lg font-semibold text-white">{c.title}</h3>
+                <p className="mt-3 text-sm text-white/75">{c.body}</p>
+              </div>
+            ))}
+          </div>
+        </PublicPage>
+      </PublicSection>
+
+      {/* Values */}
+      <PublicSection>
+        <PublicPage>
+          <h2 className="font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight sm:text-4xl">
+            Company values
+          </h2>
+          <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+            {VALUES.map((v) => (
+              <div
+                key={v.title}
+                className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6"
               >
                 <h3 className="text-base font-semibold text-[color:var(--brand-navy)]">
-                  {w.who}
+                  {v.title}
                 </h3>
-                <p className="mt-2 text-sm text-[color:var(--brand-navy)]/75">
-                  {w.body}
+                <p className="mt-2 text-sm text-[color:var(--brand-navy)]/70">
+                  {v.body}
                 </p>
               </div>
             ))}
@@ -354,107 +201,22 @@ function AboutPage() {
         </PublicPage>
       </PublicSection>
 
-      {/* Global presence — regions retained, unverified per-region volumes removed */}
-      <PublicSection className="border-t border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-sky)]/30">
+      {/* Who we serve */}
+      <PublicSection className="border-t border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-mist)]/40">
         <PublicPage>
-          <p className="text-sm font-medium uppercase tracking-widest text-[color:var(--brand-ocean)]">
-            Global presence
-          </p>
-          <h2 className="mt-2 max-w-2xl text-3xl font-semibold tracking-tight">
-            Recruiting across every major hiring region
+          <h2 className="max-w-2xl font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight sm:text-4xl">
+            Who TaaSFlow serves
           </h2>
-          <p className="mt-3 max-w-2xl text-[color:var(--brand-navy)]/75">
-            From Silicon Valley to Dubai, São Paulo to Singapore — we source
-            talent wherever it lives. Specific per-region volumes are reported
-            to clients under their engagement, not pre-published.
-          </p>
-          <div className="mt-8 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {REGIONS.map((r) => (
+          <div className="mt-10 grid gap-5 md:grid-cols-3">
+            {SERVES.map((s) => (
               <div
-                key={r.name}
-                className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6 shadow-sm"
+                key={s.who}
+                className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6"
               >
-                <h3 className="text-base font-semibold text-[color:var(--brand-navy)]">
-                  {r.name}
+                <h3 className="text-lg font-semibold text-[color:var(--brand-navy)]">
+                  {s.who}
                 </h3>
-                <p className="mt-1 text-xs font-medium uppercase tracking-widest text-[color:var(--brand-ocean)]">
-                  Key hub · {r.hub}
-                </p>
-                <p className="mt-3 text-sm text-[color:var(--brand-navy)]/75">
-                  {r.note}
-                </p>
-              </div>
-            ))}
-          </div>
-        </PublicPage>
-      </PublicSection>
-
-      {/* Founders */}
-      <PublicSection className="border-t border-[color:var(--brand-navy)]/10">
-        <PublicPage>
-          <p className="text-sm font-medium uppercase tracking-widest text-[color:var(--brand-ocean)]">
-            Leadership
-          </p>
-          <h2 className="mt-2 max-w-2xl text-3xl font-semibold tracking-tight">
-            Meet the founders
-          </h2>
-          <p className="mt-3 max-w-2xl text-[color:var(--brand-navy)]/75">
-            Built careers advising global enterprises. Now applying that same
-            rigour to the world of hiring.
-          </p>
-          <div className="mt-8 grid gap-4 md:grid-cols-2">
-            {FOUNDERS.map((f) => (
-              <div
-                key={f.name}
-                className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6 shadow-sm"
-              >
-                <div className="flex items-center gap-4">
-                  <div
-                    aria-hidden="true"
-                    className="flex h-14 w-14 items-center justify-center rounded-full bg-[color:var(--brand-navy)] text-lg font-semibold text-white"
-                  >
-                    {f.initials}
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-semibold text-[color:var(--brand-navy)]">
-                      {f.name}
-                    </h3>
-                    <p className="text-sm text-[color:var(--brand-navy)]/70">
-                      {f.role}
-                    </p>
-                  </div>
-                </div>
-                <blockquote className="mt-4 border-l-2 border-[color:var(--brand-ocean)] pl-4 text-sm italic text-[color:var(--brand-navy)]/80">
-                  “{f.quote}”
-                </blockquote>
-                <p className="mt-4 text-sm text-[color:var(--brand-navy)]/75">
-                  {f.bio}
-                </p>
-              </div>
-            ))}
-          </div>
-        </PublicPage>
-      </PublicSection>
-
-      {/* Startups → Enterprises */}
-      <PublicSection className="border-t border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-sky)]/30">
-        <PublicPage>
-          <p className="text-sm font-medium uppercase tracking-widest text-[color:var(--brand-ocean)]">
-            Who we partner with
-          </p>
-          <h2 className="mt-2 max-w-2xl text-3xl font-semibold tracking-tight">
-            From startups to enterprises
-          </h2>
-          <div className="mt-8 grid gap-4 md:grid-cols-3">
-            {SEGMENTS.map((s) => (
-              <div
-                key={s.tier}
-                className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6 shadow-sm"
-              >
-                <h3 className="text-base font-semibold text-[color:var(--brand-navy)]">
-                  {s.tier}
-                </h3>
-                <p className="mt-2 text-sm text-[color:var(--brand-navy)]/75">
+                <p className="mt-3 text-sm text-[color:var(--brand-navy)]/70">
                   {s.body}
                 </p>
               </div>
@@ -463,68 +225,44 @@ function AboutPage() {
         </PublicPage>
       </PublicSection>
 
-      {/* How we think — operating traits */}
-      <PublicSection className="border-t border-[color:var(--brand-navy)]/10">
+      {/* Link to Journey */}
+      <PublicSection>
         <PublicPage>
-          <p className="text-sm font-medium uppercase tracking-widest text-[color:var(--brand-ocean)]">
-            How we think
-          </p>
-          <h2 className="mt-2 max-w-2xl text-3xl font-semibold tracking-tight">
-            Six traits that shape every engagement
-          </h2>
-          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {OPERATING_TRAITS.map((t) => (
-              <div
-                key={t.title}
-                className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6 shadow-sm"
-              >
-                <h3 className="text-base font-semibold text-[color:var(--brand-navy)]">
-                  {t.title}
-                </h3>
-                <p className="mt-2 text-sm text-[color:var(--brand-navy)]/75">
-                  {t.body}
+          <div className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-8 sm:p-12">
+            <div className="grid gap-6 md:grid-cols-[2fr_1fr] md:items-center">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean)]">
+                  Continue reading
+                </p>
+                <h2 className="mt-2 font-[family-name:var(--brand-font-display)] text-2xl font-semibold tracking-tight sm:text-3xl">
+                  The story behind the model
+                </h2>
+                <p className="mt-3 max-w-xl text-[color:var(--brand-navy)]/70">
+                  Our journey page walks through the operator insight that led
+                  to TaaSFlow, and how the model evolved into the workspace
+                  clients use today.
                 </p>
               </div>
-            ))}
+              <div className="md:justify-self-end">
+                <Link
+                  to="/journey"
+                  className="inline-flex min-h-11 items-center justify-center rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[color:var(--brand-navy)]/90"
+                >
+                  Explore our journey
+                </Link>
+              </div>
+            </div>
           </div>
         </PublicPage>
       </PublicSection>
 
-      {/* Get in touch */}
-      <PublicSection className="border-t border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-sky)]/30">
-        <PublicPage className="max-w-3xl">
-          <p className="text-sm font-medium uppercase tracking-widest text-[color:var(--brand-ocean)]">
-            Get in touch
-          </p>
-          <h2 className="mt-2 text-3xl font-semibold tracking-tight">
-            Talk to a hiring lead
-          </h2>
-          <p className="mt-3 text-[color:var(--brand-navy)]/75">
-            The fastest way to understand TaaSFlow is to walk through a real
-            role. Share what you&apos;re hiring for and we&apos;ll show you what a
-            shortlist would look like.
-          </p>
-          <div className="mt-6 flex flex-wrap gap-3">
-            <Link
-              to="/contact"
-              className="inline-flex min-h-11 items-center rounded-md bg-[color:var(--brand-navy)] px-5 py-3 text-sm font-semibold text-white hover:bg-[color:var(--brand-navy-dark)]"
-            >
-              Contact us
-            </Link>
-            <Link
-              to="/intake"
-              className="inline-flex min-h-11 items-center rounded-md border border-[color:var(--brand-navy)]/15 px-5 py-3 text-sm font-semibold hover:bg-[color:var(--brand-sky)]/60"
-            >
-              Start an intake
-            </Link>
-          </div>
-        </PublicPage>
-      </PublicSection>
-
+      {/* Final CTA */}
       <CtaSection
         eyebrow="Ready when you are"
-        title="Give your hiring the system it deserves."
-        description="Subscription recruiting, evidence-based scoring, and a workspace built for decisions — not spreadsheets."
+        title="Start hiring with an evidence-first model."
+        description="Submit a role in the guided intake — your workspace is ready as soon as you finish."
+        primary={{ to: "/journey", label: "Explore our journey" }}
+        secondary={{ to: "/intake", label: "Start hiring" }}
       />
     </SiteShell>
   );
