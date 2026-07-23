@@ -1338,20 +1338,14 @@ function Home() {
                   to="/intake"
                   className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-[color:var(--brand-navy-dark)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
                 >
-                  Open a role <ArrowRight className="h-4 w-4" aria-hidden />
+                  Start Hiring <ArrowRight className="h-4 w-4" aria-hidden />
                 </Link>
                 <Link
                   to="/how-it-works"
                   className="inline-flex min-h-11 items-center justify-center rounded-md border border-[color:var(--brand-navy)]/15 bg-white px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
                 >
-                  See a sample shortlist
+                  See How It Works
                 </Link>
-                <a
-                  href="#roi-calculator"
-                  className="inline-flex min-h-11 items-center rounded-md px-2 py-2.5 text-sm font-medium text-[color:var(--brand-navy)]/70 underline-offset-4 hover:text-[color:var(--brand-navy)] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
-                >
-                  Compare to agency fees
-                </a>
               </div>
               <ul className="flex flex-wrap gap-x-5 gap-y-1.5 text-xs text-[color:var(--brand-navy)]/65">
                 {[
@@ -1375,459 +1369,10 @@ function Home() {
         </PublicPage>
       </section>
 
-      {/* 1b — TRUST STRIP */}
+      {/* 2 — TRUST */}
       <TrustStrip />
 
-      {/* 2 — WHAT YOU GET EVERY WEEK */}
-      <PublicSection>
-        <PublicPage>
-          <SectionHead
-            eyebrow="What you get every week"
-            title="A ranked shortlist, evidence, and a live pipeline."
-            lead="Every week the workspace refreshes with the work that actually moves a role forward — nothing you have to chase in email."
-          />
-          <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
-            {WEEKLY_DELIVERABLES.map((w) => (
-              <Card key={w.t}>
-                <w.icon className="h-6 w-6 text-[color:var(--brand-ocean)]" aria-hidden />
-                <h3 className="mt-4 text-base font-semibold text-[color:var(--brand-navy)]">
-                  {w.t}
-                </h3>
-                <p className="mt-2 text-sm text-[color:var(--brand-navy)]/70">{w.d}</p>
-              </Card>
-            ))}
-          </div>
-        </PublicPage>
-      </PublicSection>
-
-      {/* 2b — WHY TEAMS SWITCH — decision matrix */}
-      <WhySwitchMatrix />
-
-      {/* 3 — WHO TAASFLOW SERVES (Audience lanes) */}
-      <section
-        aria-labelledby="home-audiences-heading"
-        className="border-y border-[color:var(--brand-navy)]/8 bg-white"
-      >
-        <PublicSection>
-          <PublicPage>
-            <SectionHead
-              eyebrow="Who TaaSFlow serves"
-              title="Four hiring realities. One recruiting function."
-              lead="TaaSFlow adapts to how your team hires — from a single founder covering every role to enterprise TA leaders coordinating across regions."
-            />
-            <div id="home-audiences-heading" className="sr-only">
-              Audiences TaaSFlow serves
-            </div>
-            <div className="mt-10 grid gap-5 md:grid-cols-2">
-              {AUDIENCE_LANES.map((lane) => {
-                const accentMap: Record<string, { bar: string; icon: string; chip: string }> = {
-                  ocean: {
-                    bar: "bg-[color:var(--brand-ocean)]",
-                    icon: "text-[color:var(--brand-ocean)] bg-[color:var(--brand-ocean)]/10",
-                    chip: "bg-[color:var(--brand-ocean)]/10 text-[color:var(--brand-ocean)]",
-                  },
-                  sky: {
-                    bar: "bg-[color:var(--brand-sky)]",
-                    icon: "text-[color:var(--brand-navy)] bg-[color:var(--brand-sky)]/50",
-                    chip: "bg-[color:var(--brand-sky)]/50 text-[color:var(--brand-navy)]",
-                  },
-                  navy: {
-                    bar: "bg-[color:var(--brand-navy)]",
-                    icon: "text-white bg-[color:var(--brand-navy)]",
-                    chip: "bg-[color:var(--brand-navy)]/10 text-[color:var(--brand-navy)]",
-                  },
-                  sand: {
-                    bar: "bg-[color:var(--brand-sand,#c9a76a)]",
-                    icon: "text-[color:var(--brand-navy)] bg-[color:var(--brand-sand,#c9a76a)]/25",
-                    chip: "bg-[color:var(--brand-sand,#c9a76a)]/25 text-[color:var(--brand-navy)]",
-                  },
-                };
-                const a = accentMap[lane.accent] ?? accentMap.ocean;
-                return (
-                  <article
-                    key={lane.name}
-                    className="group relative flex flex-col overflow-hidden rounded-2xl border border-[color:var(--brand-navy)]/12 bg-white p-6 shadow-sm transition-shadow hover:shadow-[var(--brand-shadow-lg)] sm:p-7"
-                  >
-                    <span className={`absolute inset-x-0 top-0 h-1 ${a.bar}`} aria-hidden />
-                    <div className="flex items-center gap-3">
-                      <span
-                        className={`inline-flex h-10 w-10 items-center justify-center rounded-xl ${a.icon}`}
-                        aria-hidden
-                      >
-                        <lane.icon className="h-5 w-5" />
-                      </span>
-                      <h3 className="text-lg font-semibold text-[color:var(--brand-navy)]">
-                        {lane.name}
-                      </h3>
-                    </div>
-
-                    <dl className="mt-5 space-y-4 text-sm">
-                      <div>
-                        <dt className="text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/55">
-                          The hiring problem
-                        </dt>
-                        <dd className="mt-1 text-[color:var(--brand-navy)]/80">{lane.problem}</dd>
-                      </div>
-                      <div>
-                        <dt className="text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/55">
-                          How TaaSFlow helps
-                        </dt>
-                        <dd className="mt-1 text-[color:var(--brand-navy)]/80">{lane.value}</dd>
-                      </div>
-                    </dl>
-
-                    <div
-                      className={`mt-5 inline-flex w-fit items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold ${a.chip}`}
-                    >
-                      <TrendingUp className="h-3.5 w-3.5" aria-hidden />
-                      {lane.result}
-                    </div>
-
-                    <div className="mt-6 flex-1" />
-                    <Link
-                      to={lane.ctaTo}
-                      className="mt-2 inline-flex min-h-10 w-fit items-center gap-1.5 rounded-md border border-[color:var(--brand-navy)]/15 bg-white px-4 py-2 text-sm font-semibold text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
-                    >
-                      {lane.ctaLabel}
-                      <ArrowRight className="h-4 w-4" aria-hidden />
-                    </Link>
-                  </article>
-                );
-              })}
-            </div>
-          </PublicPage>
-        </PublicSection>
-      </section>
-
-
-      {/* 3.25 — ROI CALCULATOR (reusable, canonical config) */}
-      <div id="roi-calculator" className="scroll-mt-24">
-        <PublicSection>
-          <PublicPage>
-            <RoiCalculator
-              variant="homepage"
-              supportingCopy="Adjust the assumptions to compare traditional agency and internal sourcing costs with the TaaSFlow model."
-            />
-          </PublicPage>
-        </PublicSection>
-      </div>
-
-      {/* 3.5 — THE RECRUITING PROBLEM (old model vs TaaSFlow model) */}
-      <PublicSection>
-        <PublicPage>
-          <SectionHead
-            eyebrow="The recruiting problem"
-            title="Recruiting should not restart from zero every time you hire."
-            lead="Traditional agencies sell placements. When the engagement ends, the sourcing work, the candidate context, and the pipeline leave with them. Subscription recruiting is a different arrangement."
-          />
-
-          {/* Header row — hidden on mobile, shown on md+ */}
-          <div className="mt-10 hidden grid-cols-[1.1fr_1fr_1fr] gap-4 md:grid">
-            <div />
-            <div className="rounded-t-xl border border-b-0 border-[color:var(--brand-navy)]/12 bg-[color:var(--brand-navy)]/5 px-5 py-3">
-              <div className="flex items-center gap-2 text-[color:var(--brand-navy)]/70">
-                <XCircle className="h-4 w-4" aria-hidden />
-                <span className="text-xs font-semibold uppercase tracking-wide">
-                  Traditional agency model
-                </span>
-              </div>
-            </div>
-            <div className="rounded-t-xl border border-b-0 border-[color:var(--brand-ocean)]/25 bg-[color:var(--brand-ocean)]/8 px-5 py-3">
-              <div className="flex items-center gap-2 text-[color:var(--brand-ocean)]">
-                <CheckCircle2 className="h-4 w-4" aria-hidden />
-                <span className="text-xs font-semibold uppercase tracking-wide">
-                  TaaSFlow model
-                </span>
-              </div>
-            </div>
-          </div>
-
-          <div className="md:grid md:grid-cols-[1.1fr_1fr_1fr] md:gap-4">
-            {PROBLEM_ROWS.map((row, i) => (
-              <React.Fragment key={row.label}>
-                {/* Row label */}
-                <div
-                  className={`mt-6 md:mt-0 ${
-                    i > 0 ? "md:border-t md:border-[color:var(--brand-navy)]/10" : ""
-                  } md:flex md:items-center md:px-5 md:py-5`}
-                >
-                  <div className="flex items-center gap-2">
-                    <row.icon
-                      className="h-4 w-4 text-[color:var(--brand-navy)]/60"
-                      aria-hidden
-                    />
-                    <span className="text-sm font-semibold text-[color:var(--brand-navy)]">
-                      {row.label}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Old model cell */}
-                <div
-                  className={`mt-2 rounded-lg border border-[color:var(--brand-navy)]/12 bg-[color:var(--brand-navy)]/[0.03] px-4 py-3 text-sm text-[color:var(--brand-navy)]/75 md:mt-0 md:rounded-none md:border-x md:border-b-0 md:border-t md:border-[color:var(--brand-navy)]/12 md:bg-[color:var(--brand-navy)]/[0.03] md:px-5 md:py-5 ${
-                    i === PROBLEM_ROWS.length - 1 ? "md:rounded-b-xl md:border-b" : ""
-                  }`}
-                >
-                  <div className="flex items-start gap-2 md:hidden">
-                    <XCircle
-                      className="mt-0.5 h-4 w-4 shrink-0 text-[color:var(--brand-navy)]/50"
-                      aria-hidden
-                    />
-                    <div>
-                      <div className="text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/55">
-                        Traditional agency
-                      </div>
-                      <div className="mt-0.5">{row.old}</div>
-                    </div>
-                  </div>
-                  <div className="hidden md:block">{row.old}</div>
-                </div>
-
-                {/* TaaSFlow cell */}
-                <div
-                  className={`mt-2 rounded-lg border border-[color:var(--brand-ocean)]/30 bg-[color:var(--brand-ocean)]/8 px-4 py-3 text-sm text-[color:var(--brand-navy)] md:mt-0 md:rounded-none md:border-x md:border-b-0 md:border-t md:border-[color:var(--brand-ocean)]/25 md:px-5 md:py-5 ${
-                    i === PROBLEM_ROWS.length - 1 ? "md:rounded-b-xl md:border-b" : ""
-                  }`}
-                >
-                  <div className="flex items-start gap-2 md:hidden">
-                    <CheckCircle2
-                      className="mt-0.5 h-4 w-4 shrink-0 text-[color:var(--brand-ocean)]"
-                      aria-hidden
-                    />
-                    <div>
-                      <div className="text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-ocean)]">
-                        TaaSFlow
-                      </div>
-                      <div className="mt-0.5">{row.next}</div>
-                    </div>
-                  </div>
-                  <div className="hidden md:block font-medium">{row.next}</div>
-                </div>
-              </React.Fragment>
-            ))}
-          </div>
-        </PublicPage>
-      </PublicSection>
-
-      {/* 3.6 — INTERACTIVE OPERATING SYSTEM */}
-      <section className="border-y border-[color:var(--brand-navy)]/8 bg-white">
-        <PublicSection>
-          <PublicPage>
-            <SectionHead
-              eyebrow="The TaaSFlow operating system"
-              title="One hiring engine. Every step visible."
-              lead="Human recruiting expertise, technology-supported execution, and Client visibility — from open role to hiring decision."
-            />
-            <OperatingSystem />
-
-            <p className="mt-8 max-w-3xl rounded-xl border border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-paper)] px-5 py-4 text-sm text-[color:var(--brand-navy)]/80">
-              TaaSFlow manages the sourcing and evaluation work. Your team stays
-              in control of interviews, offers, and hiring decisions.
-            </p>
-
-            <div className="mt-6">
-              <Link
-                to="/how-it-works"
-                className="inline-flex min-h-11 items-center gap-2 rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-[color:var(--brand-navy-dark)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
-              >
-                See the Full Process <ArrowRight className="h-4 w-4" aria-hidden />
-              </Link>
-            </div>
-          </PublicPage>
-        </PublicSection>
-      </section>
-
-      {/* 4 — SUBSCRIPTION MODEL */}
-      <PublicSection>
-        <PublicPage>
-          <SectionHead
-            eyebrow="The subscription model"
-            title="A recruiting function, not another placement fee."
-            lead="TaaSFlow replaces one-off agency transactions with a recurring recruiting function — predictable cost, continuous pipeline, and candidates you keep."
-          />
-
-          <div className="mt-10 grid grid-cols-1 gap-5 lg:grid-cols-2">
-            {/* Traditional agency card */}
-            <div className="relative flex flex-col rounded-2xl border border-[color:var(--brand-navy)]/12 bg-[color:var(--brand-navy)]/[0.03] p-6 sm:p-7">
-              <div className="flex items-center gap-2 text-[color:var(--brand-navy)]/70">
-                <XCircle className="h-4 w-4" aria-hidden />
-                <span className="text-xs font-semibold uppercase tracking-wide">
-                  Traditional agency transaction
-                </span>
-              </div>
-              <h3 className="mt-3 text-xl font-semibold text-[color:var(--brand-navy)]">
-                Paid per hire, resets every role.
-              </h3>
-              <ul className="mt-5 space-y-3 text-sm text-[color:var(--brand-navy)]/80">
-                {[
-                  "Percentage-of-salary placement fee on every hire.",
-                  "Cost is unpredictable and scales with each new hire.",
-                  "Sourcing restarts from zero for each new engagement.",
-                  "Candidate context leaves with the agency at the end.",
-                  "Structured as isolated transactions, not ongoing hiring support.",
-                ].map((line) => (
-                  <li key={line} className="flex items-start gap-2">
-                    <XCircle
-                      className="mt-0.5 h-4 w-4 shrink-0 text-[color:var(--brand-navy)]/45"
-                      aria-hidden
-                    />
-                    <span>{line}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* TaaSFlow subscription card */}
-            <div className="relative flex flex-col overflow-hidden rounded-2xl border border-[color:var(--brand-ocean)]/30 bg-[color:var(--brand-ocean)]/8 p-6 shadow-[var(--brand-shadow-sm)] sm:p-7">
-              <span
-                className="absolute inset-x-0 top-0 h-1 bg-[color:var(--brand-ocean)]"
-                aria-hidden
-              />
-              <div className="flex items-center gap-2 text-[color:var(--brand-ocean)]">
-                <CheckCircle2 className="h-4 w-4" aria-hidden />
-                <span className="text-xs font-semibold uppercase tracking-wide">
-                  TaaSFlow continuous subscription
-                </span>
-              </div>
-              <h3 className="mt-3 text-xl font-semibold text-[color:var(--brand-navy)]">
-                One recurring cost. Continuous recruiting.
-              </h3>
-              <ul className="mt-5 space-y-3 text-sm text-[color:var(--brand-navy)]">
-                {[
-                  "Predictable recurring cost for the recruiting function.",
-                  "No percentage-of-salary placement fee.",
-                  "Continuous candidate pipeline instead of one-off searches.",
-                  "You own the delivered candidate information in your workspace.",
-                  "No extra placement fee when a delivered candidate is hired.",
-                  "Built to support ongoing hiring, not isolated transactions.",
-                ].map((line) => (
-                  <li key={line} className="flex items-start gap-2">
-                    <CheckCircle2
-                      className="mt-0.5 h-4 w-4 shrink-0 text-[color:var(--brand-ocean)]"
-                      aria-hidden
-                    />
-                    <span>{line}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-
-          <div className="mt-8">
-            <Link
-              to="/pricing"
-              className="inline-flex min-h-11 items-center gap-2 rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-[color:var(--brand-navy-dark)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
-            >
-              View Pricing <ArrowRight className="h-4 w-4" aria-hidden />
-            </Link>
-          </div>
-        </PublicPage>
-      </PublicSection>
-
-
-      {/* 5 — LIVE WORKSPACE SHOWCASE */}
-      <section className="border-y border-[color:var(--brand-navy)]/8 bg-[color:var(--brand-paper)]">
-        <PublicSection>
-          <PublicPage>
-            <SectionHead
-              eyebrow="Inside the workspace"
-              title="One product. Three purpose-built views."
-              lead="Admin operations, hiring teams, and candidates each get a workspace tailored to what they need to do — synchronized in realtime."
-            />
-            <div className="mt-10 grid gap-5 lg:grid-cols-3">
-              {WORKSPACES.map((w) => (
-                <Card key={w.title} className="flex flex-col">
-                  <div className="flex items-center gap-2">
-                    <w.icon className="h-5 w-5 text-[color:var(--brand-ocean)]" aria-hidden />
-                    <Eyebrow>{w.who}</Eyebrow>
-                  </div>
-                  <h3 className="mt-3 text-lg font-semibold text-[color:var(--brand-navy)]">
-                    {w.title}
-                  </h3>
-                  <p className="mt-2 text-sm text-[color:var(--brand-navy)]/70">{w.body}</p>
-                  <ul className="mt-4 space-y-2 text-sm text-[color:var(--brand-navy)]">
-                    {w.bullets.map((b) => (
-                      <li key={b} className="flex items-start gap-2">
-                        <CheckCircle2
-                          className="mt-0.5 h-4 w-4 shrink-0 text-[color:var(--brand-ocean)]/70"
-                          aria-hidden
-                        />
-                        <span>{b}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </Card>
-              ))}
-            </div>
-            <div className="mt-8">
-              <Link
-                to="/how-it-works"
-                className="inline-flex items-center gap-1 text-sm font-semibold text-[color:var(--brand-ocean)] hover:text-[color:var(--brand-navy)]"
-              >
-                See how the workspace works <ArrowRight className="h-4 w-4" aria-hidden />
-              </Link>
-            </div>
-          </PublicPage>
-        </PublicSection>
-      </section>
-
-      {/* 5.5 — INDUSTRIES PREVIEW */}
-      <PublicSection>
-        <PublicPage>
-          <SectionHead
-            eyebrow="Industries"
-            title="Recruiting tuned to the industry you actually hire in."
-            lead="Every intake, evidence file, and shortlist is scoped to the hiring reality of the industry — not a generic recruiter template."
-          />
-
-          <ul className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {FEATURED_INDUSTRIES.map((ind) => (
-              <li key={ind.slug} className="min-w-0">
-                <Link
-                  to="/industries/$slug"
-                  params={{ slug: ind.slug }}
-                  className="group flex h-full flex-col rounded-2xl border border-[color:var(--brand-navy)]/12 bg-white p-5 shadow-[var(--brand-shadow-sm)] transition-shadow hover:shadow-[var(--brand-shadow-lg)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
-                >
-                  <div className="flex items-center gap-2">
-                    <Building2
-                      className="h-4 w-4 text-[color:var(--brand-ocean)]"
-                      aria-hidden
-                    />
-                    <h3 className="text-base font-semibold text-[color:var(--brand-navy)]">
-                      {ind.name}
-                    </h3>
-                  </div>
-                  <p className="mt-3 text-sm text-[color:var(--brand-navy)]/75">
-                    {ind.context}
-                  </p>
-                  <div className="mt-4 border-t border-[color:var(--brand-navy)]/8 pt-3">
-                    <div className="text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/55">
-                      Example roles
-                    </div>
-                    <div className="mt-1 text-sm text-[color:var(--brand-navy)]/85">
-                      {ind.roles}
-                    </div>
-                  </div>
-                  <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-[color:var(--brand-ocean)] group-hover:text-[color:var(--brand-navy)]">
-                    View industry <ArrowRight className="h-4 w-4" aria-hidden />
-                  </span>
-                </Link>
-              </li>
-            ))}
-          </ul>
-
-          <div className="mt-8">
-            <Link
-              to="/industries"
-              className="inline-flex min-h-11 items-center gap-2 rounded-md border border-[color:var(--brand-navy)]/15 bg-white px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
-            >
-              View All Industries <ArrowRight className="h-4 w-4" aria-hidden />
-            </Link>
-          </div>
-        </PublicPage>
-      </PublicSection>
-
-      {/* 6 — WHAT CLIENTS RECEIVE (deliverable + candidate detail visual) */}
+      {/* 3 — WHAT YOU RECEIVE */}
       <PublicSection>
         <PublicPage>
           <div className="grid grid-cols-1 gap-10 lg:grid-cols-[1fr_1.1fr] lg:items-start">
@@ -1835,7 +1380,7 @@ function Home() {
               <SectionHead
                 eyebrow="What you receive"
                 title="More than candidates. Clear hiring decisions."
-                lead="Instead of receiving a stack of CVs, your team receives candidates organized around the role, with the evidence needed to decide who should move forward."
+                lead="Every week the workspace refreshes with a ranked shortlist, evidence cited per requirement, and the decision controls your team actually uses — not a stack of CVs to sort."
               />
               <ul className="mt-6 grid grid-cols-1 gap-x-6 gap-y-2.5 text-sm text-[color:var(--brand-navy)] sm:grid-cols-2">
                 {[
@@ -1860,58 +1405,173 @@ function Home() {
                 ))}
               </ul>
             </div>
-
             <ClientCandidateDelivery />
           </div>
         </PublicPage>
       </PublicSection>
 
-      {/* 6.5 — CLIENT WORKSPACE TOUR */}
-      <section className="border-y border-[color:var(--brand-navy)]/8 bg-[color:var(--brand-mist)]/30">
+      {/* 4 — CALCULATOR */}
+      <section
+        id="roi-calculator"
+        className="scroll-mt-24 border-y border-[color:var(--brand-navy)]/8 bg-[color:var(--brand-paper)]"
+      >
         <PublicSection>
           <PublicPage>
             <SectionHead
-              eyebrow="Inside the workspace"
-              title="See how clients actually work with us."
-              lead="Every open role, ranked candidate, and decision in one place."
+              eyebrow="What it costs"
+              title="Do the math on your next hire."
+              lead="Compare the flat TaaSFlow subscription against contingency placement fees and internal recruiter loading for your actual role mix."
             />
-            <WorkspaceTour />
+            <div className="mt-8">
+              <RoiCalculator
+                variant="homepage"
+                supportingCopy="Adjust the assumptions to compare traditional agency and internal sourcing costs with the TaaSFlow model."
+              />
+            </div>
           </PublicPage>
         </PublicSection>
       </section>
 
-      {/* 7 — TAASFLOW VS AGENCY MODEL */}
+      {/* 5 — MODEL COMPARISON */}
+      <PublicSection>
+        <PublicPage>
+          <SectionHead
+            eyebrow="TaaSFlow vs the agency model"
+            title="Pick a dimension. See how each model behaves."
+            lead="Recruiting agency, internal recruiter, ATS-only software, or a subscription recruiting function — the trade-offs are structural, not marketing."
+          />
+          <div className="mt-10">
+            <ModelComparison />
+          </div>
+          <div className="mt-8">
+            <Link
+              to="/pricing"
+              className="inline-flex items-center gap-1 text-sm font-semibold text-[color:var(--brand-ocean)] hover:text-[color:var(--brand-navy)]"
+            >
+              View Pricing <ArrowRight className="h-4 w-4" aria-hidden />
+            </Link>
+          </div>
+        </PublicPage>
+      </PublicSection>
+
+      {/* 6 — HOW IT WORKS */}
       <section className="border-y border-[color:var(--brand-navy)]/8 bg-white">
         <PublicSection>
           <PublicPage>
             <SectionHead
-              eyebrow="TaaSFlow vs the agency model"
-              title="Recruiting should not restart from zero."
-              lead="Pick a dimension, pick your hiring intent, and see how each model behaves."
+              eyebrow="How it works"
+              title="One hiring engine. Every step visible."
+              lead="Human recruiting expertise, technology-supported execution, and client visibility from open role to hiring decision."
             />
-            <ModelComparison />
+            <div className="mt-10">
+              <OperatingSystem />
+            </div>
+            <p className="mt-8 max-w-3xl rounded-xl border border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-paper)] px-5 py-4 text-sm text-[color:var(--brand-navy)]/80">
+              TaaSFlow manages the sourcing and evaluation work. Your team stays
+              in control of interviews, offers, and hiring decisions.
+            </p>
+            <div className="mt-6">
+              <Link
+                to="/how-it-works"
+                className="inline-flex min-h-11 items-center gap-2 rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-[color:var(--brand-navy-dark)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+              >
+                See How It Works <ArrowRight className="h-4 w-4" aria-hidden />
+              </Link>
+            </div>
           </PublicPage>
         </PublicSection>
       </section>
 
-      {/* 7.5 — AUDIENCE PERSONALIZATION */}
+      {/* 7 — WORKSPACE TOUR */}
+      <section className="border-b border-[color:var(--brand-navy)]/8 bg-[color:var(--brand-mist)]/30">
+        <PublicSection>
+          <PublicPage>
+            <SectionHead
+              eyebrow="Inside the workspace"
+              title="See what your team actually opens every day."
+              lead="Every open role, ranked candidate, and decision in one place — synchronized in realtime across admin, client and candidate views."
+            />
+            <div className="mt-10">
+              <WorkspaceTour />
+            </div>
+          </PublicPage>
+        </PublicSection>
+      </section>
+
+      {/* 8 — AUDIENCE SELECTOR */}
       <PublicSection>
         <PublicPage>
           <SectionHead
             eyebrow="Built for your context"
-            title="Built around how you hire."
-            lead="Pick your role. See exactly what TaaSFlow does for you."
+            title="Does this fit how you actually hire?"
+            lead="Pick your role. See exactly what TaaSFlow does for a founder, an in-house recruiter, a hiring manager, or an enterprise TA leader."
           />
-          <AudienceSelector />
+          <div className="mt-10">
+            <AudienceSelector />
+          </div>
         </PublicPage>
       </PublicSection>
 
+      {/* 9 — INDUSTRY PREVIEW */}
+      <section className="border-y border-[color:var(--brand-navy)]/8 bg-white">
+        <PublicSection>
+          <PublicPage>
+            <SectionHead
+              eyebrow="Industries"
+              title="Recruiting tuned to the industry you actually hire in."
+              lead="Every intake, evidence file, and shortlist is scoped to the hiring reality of the industry — not a generic recruiter template."
+            />
+            <ul className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {FEATURED_INDUSTRIES.map((ind) => (
+                <li key={ind.slug} className="min-w-0">
+                  <Link
+                    to="/industries/$slug"
+                    params={{ slug: ind.slug }}
+                    className="group flex h-full flex-col rounded-2xl border border-[color:var(--brand-navy)]/12 bg-white p-5 shadow-[var(--brand-shadow-sm)] transition-shadow hover:shadow-[var(--brand-shadow-lg)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+                  >
+                    <div className="flex items-center gap-2">
+                      <Building2
+                        className="h-4 w-4 text-[color:var(--brand-ocean)]"
+                        aria-hidden
+                      />
+                      <h3 className="text-base font-semibold text-[color:var(--brand-navy)]">
+                        {ind.name}
+                      </h3>
+                    </div>
+                    <p className="mt-3 text-sm text-[color:var(--brand-navy)]/75">
+                      {ind.context}
+                    </p>
+                    <div className="mt-4 border-t border-[color:var(--brand-navy)]/8 pt-3">
+                      <div className="text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/55">
+                        Example roles
+                      </div>
+                      <div className="mt-1 text-sm text-[color:var(--brand-navy)]/85">
+                        {ind.roles}
+                      </div>
+                    </div>
+                    <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-[color:var(--brand-ocean)] group-hover:text-[color:var(--brand-navy)]">
+                      View industry <ArrowRight className="h-4 w-4" aria-hidden />
+                    </span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+            <div className="mt-8">
+              <Link
+                to="/industries"
+                className="inline-flex min-h-11 items-center gap-2 rounded-md border border-[color:var(--brand-navy)]/15 bg-white px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+              >
+                Explore Industries <ArrowRight className="h-4 w-4" aria-hidden />
+              </Link>
+            </div>
+          </PublicPage>
+        </PublicSection>
+      </section>
 
-      {/* 8 — APPROVED PROOF (process credibility) */}
-      {/* 8 — PROOF SYSTEM (no fake testimonials) */}
+      {/* 10 — PROOF */}
       <ProofSystem />
 
-      {/* 9 — RESOURCES PREVIEW */}
+      {/* 11 — RESOURCES */}
       <section className="border-y border-[color:var(--brand-navy)]/8 bg-[color:var(--brand-paper)]">
         <PublicSection>
           <PublicPage>
@@ -1969,12 +1629,13 @@ function Home() {
         </PublicSection>
       </section>
 
-      {/* 10 — FAQ */}
+      {/* 12 — FAQ */}
       <PublicSection>
         <PublicPage>
           <SectionHead
             eyebrow="Quick answers"
-            title="Common questions about TaaSFlow."
+            title="Still have questions?"
+            lead="The most common questions from hiring teams before they start a first role with us."
           />
           <dl className="mt-10 grid gap-5 md:grid-cols-2">
             {HOMEPAGE_FAQ.map((item) => (
@@ -1999,13 +1660,13 @@ function Home() {
         </PublicPage>
       </PublicSection>
 
-      {/* 11 — FINAL CTA */}
+      {/* 13 — FINAL CTA */}
       <CtaSection
-        eyebrow="Get started"
-        title="Build your next candidate pipeline with TaaSFlow."
-        description="Open a role and get a ranked shortlist, evidence per requirement, and a live workspace your whole hiring team can see."
+        eyebrow="Ready to hire?"
+        title="Start with one role. See a ranked shortlist by Friday."
+        description="Open a role and get evidence per requirement, a live workspace your whole team can see, and a flat subscription instead of placement fees."
         primary={{ to: "/intake", label: "Start Hiring" }}
-        secondary={{ to: "/contact", label: "Book a Conversation" }}
+        secondary={{ to: "/contact", label: "Book a Call" }}
       />
     </SiteShell>
   );
