@@ -183,6 +183,8 @@ function validateStep(step: number, s: FormState): Record<string, string> {
     }
   }
   if (step === 5) {
+    if (!s.password || s.password.length < 8) e.password = "Choose a password with at least 8 characters";
+    if (s.password !== s.passwordConfirm) e.passwordConfirm = "Passwords do not match";
     if (!s.consent) e.consent = "You must accept the terms to submit";
   }
   return e;
