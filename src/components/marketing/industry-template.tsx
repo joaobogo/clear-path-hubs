@@ -2,7 +2,6 @@ import { Link } from "@tanstack/react-router";
 import {
   PublicPage,
   PublicSection,
-  CtaSection,
   Breadcrumbs,
 } from "@/components/marketing/site-shell";
 import type { IndustryEntry } from "@/content/industries-v2";
@@ -14,6 +13,12 @@ import { IndustryInsights } from "@/components/marketing/industry-insights";
 import { getIndustryVisualIdentity } from "@/content/industry-visual-identity";
 import { SubtleCta } from "@/components/marketing/subtle-cta";
 import { getIndustryRelationships } from "@/lib/marketing/industry-relationships";
+import {
+  BookACallDialog,
+  BookACallSection,
+} from "@/components/marketing/book-a-call";
+import { CalendarDays, MessageSquare } from "lucide-react";
+
 
 
 /**
@@ -66,19 +71,35 @@ export function IndustryTemplate({ entry }: { entry: IndustryEntry }) {
                 {entry.hero.subtitle}
               </p>
               <div className="mt-8 flex flex-wrap gap-3">
-                <Link
-                  to="/intake"
-                  className="inline-flex min-h-11 items-center justify-center rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-white hover:opacity-90"
-                >
-                  Start hiring
-                </Link>
+                <BookACallDialog
+                  industrySlug={entry.slug}
+                  industryName={entry.name}
+                  trigger={
+                    <button className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-opacity hover:opacity-90">
+                      <CalendarDays className="h-4 w-4" />
+                      Book a {entry.name} call
+                    </button>
+                  }
+                />
+                <BookACallDialog
+                  industrySlug={entry.slug}
+                  industryName={entry.name}
+                  defaultTab="message"
+                  trigger={
+                    <button className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md border border-[color:var(--brand-navy)]/20 px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5">
+                      <MessageSquare className="h-4 w-4" />
+                      Send a message
+                    </button>
+                  }
+                />
                 <a
                   href="#role-explorer"
-                  className="inline-flex min-h-11 items-center justify-center rounded-md border border-[color:var(--brand-navy)]/20 px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5"
+                  className="inline-flex min-h-11 items-center justify-center rounded-md px-3 py-2.5 text-sm font-semibold text-[color:var(--brand-navy)]/70 hover:text-[color:var(--brand-navy)]"
                 >
-                  Explore roles
+                  Explore roles →
                 </a>
               </div>
+
               <ul className="mt-8 flex flex-wrap gap-2">
                 {entry.signals.map((s) => (
                   <li
@@ -423,17 +444,24 @@ export function IndustryTemplate({ entry }: { entry: IndustryEntry }) {
               </div>
               <span className="text-lg text-[color:var(--brand-ocean)] transition-transform group-hover:translate-x-1">→</span>
             </Link>
-            <Link
-              to="/intake"
-              className="group flex items-center justify-between rounded-2xl border border-[color:var(--brand-navy)] bg-[color:var(--brand-navy)] p-6 text-white transition-opacity hover:opacity-95"
-            >
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.14em] text-white/70">Next step</p>
-                <p className="mt-1 font-semibold">Start hiring for {entry.name}</p>
-                <p className="mt-1 text-sm text-white/80">Guided intake — draft saving, no login required.</p>
-              </div>
-              <span className="text-lg transition-transform group-hover:translate-x-1">→</span>
-            </Link>
+            <BookACallDialog
+              industrySlug={entry.slug}
+              industryName={entry.name}
+              trigger={
+                <button
+                  type="button"
+                  className="group flex w-full items-center justify-between rounded-2xl border border-[color:var(--brand-navy)] bg-[color:var(--brand-navy)] p-6 text-left text-white transition-opacity hover:opacity-95"
+                >
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-[0.14em] text-white/70">Next step</p>
+                    <p className="mt-1 font-semibold">Book a {entry.name} hiring call</p>
+                    <p className="mt-1 text-sm text-white/80">20 minutes — role, timeline, shortlist plan.</p>
+                  </div>
+                  <span className="text-lg transition-transform group-hover:translate-x-1">→</span>
+                </button>
+              }
+            />
+
           </div>
         </PublicPage>
       </PublicSection>
@@ -508,14 +536,15 @@ export function IndustryTemplate({ entry }: { entry: IndustryEntry }) {
         </PublicSection>
       ) : null}
 
-      {/* 12. Final CTA */}
-      <CtaSection
+      {/* 12. Final CTA — book a call directly on the page */}
+      <BookACallSection
+        industrySlug={entry.slug}
+        industryName={entry.name}
         eyebrow={entry.eyebrow}
         title={entry.cta.title}
         description={entry.cta.description}
-        primary={{ to: "/intake", label: "Start intake" }}
-        secondary={{ to: "/industries", label: "See other industries" }}
       />
+
     </>
   );
 }
