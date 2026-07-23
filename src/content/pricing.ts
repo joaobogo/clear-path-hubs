@@ -1,9 +1,19 @@
-// Canonical pricing configuration — single source of truth.
-// Mirrors the public taasflow.com/pricing packages exactly:
-// Pilot $399 (1 role), Multi Position $2.1K (2–5 roles), Hiring Sprint $4.5K (6–10 roles).
-// All packages are one-time flat fees with 14-day turnaround.
+// Tier-card display shape for public pricing surfaces.
+// Numeric values come from src/config/pricing-core.ts — the single source of
+// truth. Do NOT hard-code prices here; update pricing-core.ts and every
+// consumer (Pricing page, ROI calculator, homepage, agency comparator)
+// updates automatically.
 //
 // Consumed by: /pricing, ROI calculator, homepage cost band, agency comparator.
+
+import {
+  PRICE_PILOT_USD,
+  PRICE_MULTI_USD,
+  PRICE_SPRINT_USD,
+  ROI_REFERENCE_PACKAGE_USD,
+  ROI_REFERENCE_PACKAGE_LABEL as CORE_ROI_LABEL,
+  TURNAROUND_LABEL,
+} from "@/config/pricing-core";
 
 export type PricingTier = {
   id: "pilot" | "multi" | "sprint" | "enterprise";
@@ -43,11 +53,11 @@ export const PRICING_TIERS: PricingTier[] = [
     id: "pilot",
     name: "Pilot — Single Position",
     eyebrow: "1 active role",
-    oneTime: 399,
-    priceDisplay: "$399",
+    oneTime: PRICE_PILOT_USD,
+    priceDisplay: `$${PRICE_PILOT_USD}`,
     bestFor: "Test the model on one critical hire.",
     rolesIncluded: "1 active role",
-    turnaround: "14-day turnaround",
+    turnaround: TURNAROUND_LABEL,
     included: BASE_INCLUDED,
     ctaLabel: "Book a discovery call",
     ctaTo: "/contact",
