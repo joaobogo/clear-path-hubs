@@ -51,6 +51,7 @@ export function IndustryTemplate({ entry }: { entry: IndustryEntry }) {
         <PublicPage>
 
           <div className={heroImage ? "grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:items-center" : ""}>
+          <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:items-center">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">
                 {entry.eyebrow}
@@ -102,7 +103,15 @@ export function IndustryTemplate({ entry }: { entry: IndustryEntry }) {
                   className="relative z-0 aspect-[2/1] h-auto w-full object-cover lg:aspect-auto"
                 />
               </figure>
-            ) : null}
+            ) : (
+              <IndustryHeroBackdrop
+                gradient={identity.gradient}
+                accent={identity.accent}
+                pattern={identity.pattern}
+                label={entry.name}
+                eyebrow={entry.eyebrow}
+              />
+            )}
           </div>
         </PublicPage>
       </PublicSection>
