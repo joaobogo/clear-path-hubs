@@ -25,11 +25,56 @@ function ResetPasswordPage() {
   const [confirm, setConfirm] = useState("");
   const [loading, setLoading] = useState(false);
   const [hasRecoverySession, setHasRecoverySession] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      setHasRecoverySession(Boolean(data.session));
+    let cancelled = false;
+
+    // Listen for PASSWORD_RECOVERY event (fires when Supabase auto-processes
+    // the recovery link hash on load).
+    const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
+      if (cancelled) return;
+      if (event === "PASSWORD_RECOVERY" || event === "SIGNED_IN") {
+        if (session) setHasRecoverySession(true);
+      }
     });
+
+    (async () => {
+      const url = new URL(window.location.href);
+
+      // Supabase surfaces link errors in the URL hash (e.g. #error=access_denied&error_code=otp_expired).
+      const hashParams = new URLSearchParams(url.hash.replace(/^#/, ""));
+      const hashError = hashParams.get("error_description") || hashParams.get("error");
+      if (hashError) {
+        setErrorMsg(hashError.replace(/\+/g, " "));
+      }
+
+      // PKCE flow: recovery link redirects with ?code=... — must be exchanged
+      // for a session before updateUser({ password }) can run.
+      const code = url.searchParams.get("code");
+      if (code) {
+        try {
+          const { error } = await supabase.auth.exchangeCodeForSession(code);
+          if (error) {
+            setErrorMsg(error.message);
+          } else {
+            // Clean the code out of the URL so a refresh doesn't re-exchange.
+            url.searchParams.delete("code");
+            window.history.replaceState({}, "", url.pathname + url.search + url.hash);
+          }
+        } catch (err) {
+          setErrorMsg(err instanceof Error ? err.message : "Invalid or expired reset link");
+        }
+      }
+
+      const { data } = await supabase.auth.getSession();
+      if (!cancelled && data.session) setHasRecoverySession(true);
+    })();
+
+    return () => {
+      cancelled = true;
+      sub.subscription.unsubscribe();
+    };
   }, []);
 
   const onSubmit = async (e: React.FormEvent) => {
