@@ -2,6 +2,8 @@ import { useEffect, useMemo, useState } from "react";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { SiteShell } from "@/components/marketing/site-shell";
 import { Markdown } from "@/components/marketing/markdown";
+import { SubtleCta } from "@/components/marketing/subtle-cta";
+import { INDUSTRY_ENTRIES } from "@/content/industries-v2";
 import {
   blog,
   estimateReadMinutes,
@@ -75,7 +77,7 @@ function BlogPost() {
   const published = meta["article:published_time"];
   const updated = meta["article:modified_time"] || published;
   const author = meta.author || "TaaSFlow";
-  const entryAny = entry as unknown as { category?: string; tags?: string[] };
+  const entryAny = entry as unknown as { category?: string; tags?: string[]; industry?: string };
   const category =
     BLOG_METADATA[slug]?.category ?? entryAny.category ?? "General";
   const tags = BLOG_METADATA[slug]?.tags ?? entryAny.tags ?? [];
@@ -157,6 +159,76 @@ function BlogPost() {
         <div className="mt-10">
           <Markdown>{entry.markdown}</Markdown>
         </div>
+
+        <SubtleCta variant="hire" className="mt-12" />
+
+        {/* Keyword-anchored contextual links back to money pages */}
+        <p className="mt-8 text-sm leading-relaxed text-muted-foreground">
+          {entryAny.industry
+            ? (() => {
+                const ind = INDUSTRY_ENTRIES.find((e) => e.slug === entryAny.industry);
+                return ind ? (
+                  <>
+                    Building your{" "}
+                    <Link
+                      to="/industries/$slug"
+                      params={{ slug: ind.slug }}
+                      className="font-medium text-foreground underline underline-offset-4 hover:text-primary"
+                    >
+                      {ind.name} hiring
+                    </Link>{" "}
+                    plan? See how{" "}
+                    <Link
+                      to="/"
+                      className="font-medium text-foreground underline underline-offset-4 hover:text-primary"
+                    >
+                      TaaSFlow
+                    </Link>{" "}
+                    delivers ranked candidates weekly for{" "}
+                    <Link
+                      to="/solutions"
+                      className="font-medium text-foreground underline underline-offset-4 hover:text-primary"
+                    >
+                      growing companies
+                    </Link>{" "}
+                    and{" "}
+                    <Link
+                      to="/enterprise"
+                      className="font-medium text-foreground underline underline-offset-4 hover:text-primary"
+                    >
+                      enterprise teams
+                    </Link>
+                    .
+                  </>
+                ) : null;
+              })()
+            : (
+                <>
+                  Explore{" "}
+                  <Link
+                    to="/how-it-works"
+                    className="font-medium text-foreground underline underline-offset-4 hover:text-primary"
+                  >
+                    how TaaSFlow works
+                  </Link>
+                  , compare{" "}
+                  <Link
+                    to="/pricing"
+                    className="font-medium text-foreground underline underline-offset-4 hover:text-primary"
+                  >
+                    pricing
+                  </Link>
+                  , or read more on the{" "}
+                  <Link
+                    to="/blog"
+                    className="font-medium text-foreground underline underline-offset-4 hover:text-primary"
+                  >
+                    talent strategy blog
+                  </Link>
+                  .
+                </>
+              )}
+        </p>
 
         {tags.length > 0 && (
           <div className="mt-10 flex flex-wrap gap-2 border-t border-border/60 pt-6">

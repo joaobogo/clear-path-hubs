@@ -12,6 +12,7 @@ import { IndustrySignalExplorer } from "@/components/marketing/industry-signal-e
 import { IndustryHeroBackdrop } from "@/components/marketing/industry-hero-backdrop";
 import { IndustryInsights } from "@/components/marketing/industry-insights";
 import { getIndustryVisualIdentity } from "@/content/industry-visual-identity";
+import { SubtleCta } from "@/components/marketing/subtle-cta";
 
 
 /**
@@ -116,6 +117,40 @@ export function IndustryTemplate({ entry }: { entry: IndustryEntry }) {
         </PublicPage>
       </PublicSection>
 
+      {/* 1b. Keyword-anchored intro links — SEO internal-link density */}
+      <PublicSection className="py-4">
+        <PublicPage>
+          <p className="max-w-3xl text-sm leading-relaxed text-[color:var(--brand-navy)]/70">
+            Hiring in <span className="font-semibold text-[color:var(--brand-navy)]">{entry.name}</span>?
+            See how{" "}
+            <Link to="/" className="font-medium text-[color:var(--brand-navy)] underline underline-offset-4">
+              TaaSFlow
+            </Link>{" "}
+            delivers ranked candidates weekly for{" "}
+            <Link to="/solutions" className="font-medium text-[color:var(--brand-navy)] underline underline-offset-4">
+              growing companies
+            </Link>{" "}
+            and{" "}
+            <Link to="/enterprise" className="font-medium text-[color:var(--brand-navy)] underline underline-offset-4">
+              enterprise teams
+            </Link>
+            . Explore{" "}
+            <Link to="/how-it-works" className="font-medium text-[color:var(--brand-navy)] underline underline-offset-4">
+              how it works
+            </Link>
+            , see{" "}
+            <Link to="/pricing" className="font-medium text-[color:var(--brand-navy)] underline underline-offset-4">
+              pricing
+            </Link>
+            , or{" "}
+            <Link to="/case-studies" className="font-medium text-[color:var(--brand-navy)] underline underline-offset-4">
+              read the case studies
+            </Link>
+            .
+          </p>
+          <SubtleCta variant="hire" headline={`Hiring for ${entry.name}? Get ranked ${entry.name} candidates every week.`} className="mt-6" />
+        </PublicPage>
+      </PublicSection>
 
       {/* 2. Industry hiring challenges */}
       <PublicSection className="py-8">
