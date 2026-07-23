@@ -86,29 +86,11 @@ function ClientLayout() {
     initialData: ctx,
   });
 
-  useEffect(() => {
-    if (!data?.active) return;
-    const orgId = data.active.organization_id;
-    const channel = supabase
-      .channel(`client-workspace-${orgId}`)
-      .on(
-        "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "candidate_matches",
-          filter: `organization_id=eq.${orgId}`,
-        },
-        () => {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          (window as any).dispatchEvent(new CustomEvent("client:refresh"));
-        },
-      )
-      .subscribe();
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [data?.active]);
+  // Realtime + focus + interval fallback is owned by ClientCoordinator below,
+  // which subscribes exactly once to `notifications` for this user. Do not add
+  // per-table channels here — Realtime is only enabled on `notifications`,
+  // `notification_events`, and `messages`, and duplicate subscriptions on
+  // `candidate_matches` (previously here) were silently no-ops.
 
   const active = data?.active;
 
