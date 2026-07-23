@@ -1399,6 +1399,9 @@ function Home() {
         </PublicPage>
       </PublicSection>
 
+      {/* 2b — WHY TEAMS SWITCH — decision matrix */}
+      <WhySwitchMatrix />
+
       {/* 3 — WHO TAASFLOW SERVES (Audience lanes) */}
       <section
         aria-labelledby="home-audiences-heading"
