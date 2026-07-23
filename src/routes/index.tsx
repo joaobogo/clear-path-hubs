@@ -970,12 +970,13 @@ function Home() {
 
       {/* 11 — FINAL CTA */}
       <CtaSection
-        eyebrow="Start today"
-        title="Bring your next hire into the workspace."
-        description="Publish a role, invite your team, and see ranked candidates arrive with evidence — all in one place."
-        primary={{ to: "/intake", label: "Start hiring" }}
-        secondary={{ to: "/jobs", label: "Browse open jobs" }}
+        eyebrow="Get started"
+        title="A faster, clearer, more transparent way to recruit."
+        description="Give your hiring team ranked candidates, evidence per requirement, and a live workspace everyone can see."
+        primary={{ to: "/intake", label: "Start Hiring" }}
+        secondary={{ to: "/jobs", label: "Browse Jobs" }}
       />
+
     </SiteShell>
   );
 }
