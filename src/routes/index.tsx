@@ -1449,11 +1449,9 @@ function Home() {
               lead="Compare the flat TaaSFlow subscription against contingency placement fees and internal recruiter loading for your actual role mix."
             />
             <div className="mt-8">
-              <RoiCalculator
-                variant="homepage"
-                supportingCopy="Adjust the assumptions to compare traditional agency and internal sourcing costs with the TaaSFlow model."
-              />
+              <HomeCalculator />
             </div>
+
           </PublicPage>
         </PublicSection>
       </section>
