@@ -470,23 +470,139 @@ export const listPositions = createServerFn({ method: "GET" })
       .object({
         status: z.string().optional(),
         q: z.string().optional(),
+        organization_id: z.string().uuid().optional(),
+        location: z.string().optional(),
+        sort: z
+          .enum([
+            "updated_desc",
+            "updated_asc",
+            "title_asc",
+            "title_desc",
+            "delivered_desc",
+            "action_desc",
+          ])
+          .optional()
+          .default("updated_desc"),
+        page: z.number().int().min(1).max(200).optional().default(1),
+        page_size: z.number().int().min(5).max(100).optional().default(25),
       })
       .parse(i ?? {}),
   )
   .handler(async ({ data, context }) => {
     await requireStaff(context.userId);
     const s = await getAdmin();
-    let q = s
+
+    // Base query with count for pagination.
+    let base = s
       .from("positions")
       .select(
-        "id,title,status,visibility,updated_at,organizations(id,name)",
-      )
-      .order("updated_at", { ascending: false })
-      .limit(300);
-    if (data.status) q = q.eq("status", data.status);
-    if (data.q) q = q.ilike("title", `%${data.q}%`);
-    const { data: rows } = await q;
-    return (rows ?? []) as AnyRow[];
+        "id,title,status,visibility,updated_at,location,organization_id,organizations(id,name)",
+        { count: "exact" },
+      );
+    if (data.status) base = base.eq("status", data.status);
+    if (data.organization_id) base = base.eq("organization_id", data.organization_id);
+    if (data.location) base = base.ilike("location", `%${data.location}%`);
+    if (data.q) base = base.ilike("title", `%${data.q}%`);
+
+    // Sort — DB-side for updated/title; delivered/action sorts happen after enrichment.
+    const sort = data.sort ?? "updated_desc";
+    if (sort === "updated_desc") base = base.order("updated_at", { ascending: false });
+    else if (sort === "updated_asc") base = base.order("updated_at", { ascending: true });
+    else if (sort === "title_asc") base = base.order("title", { ascending: true });
+    else if (sort === "title_desc") base = base.order("title", { ascending: false });
+    else base = base.order("updated_at", { ascending: false });
+
+    const isPostFilterSort = sort === "delivered_desc" || sort === "action_desc";
+
+    // For post-enrichment sorts we widen the fetch window so the top-N stays stable.
+    const from = (data.page - 1) * data.page_size;
+    const to = from + data.page_size - 1;
+    if (!isPostFilterSort) base = base.range(from, to);
+    else base = base.range(0, Math.min(299, from + data.page_size * 4 - 1));
+
+    const { data: rows, count } = await base;
+    const positions = (rows ?? []) as AnyRow[];
+
+    // Enrich each position with pipeline counts + action-required count.
+    const ids = positions.map((p) => p.id);
+    let counts: Record<
+      string,
+      { delivered: number; shortlisted: number; interviews: number; action_required: number }
+    > = {};
+    if (ids.length > 0) {
+      const { data: matchRows } = await s
+        .from("candidate_matches")
+        .select("position_id,stage,admin_status,client_visibility,processing_state")
+        .in("position_id", ids);
+      const m = (matchRows ?? []) as AnyRow[];
+      for (const id of ids) {
+        counts[id] = { delivered: 0, shortlisted: 0, interviews: 0, action_required: 0 };
+      }
+      for (const r of m) {
+        const c = counts[r.position_id];
+        if (!c) continue;
+        if (r.client_visibility === "visible") c.delivered += 1;
+        if (r.stage === "shortlisted") c.shortlisted += 1;
+        if (r.stage === "interview_process") c.interviews += 1;
+        // "Action required" = scored+approved but not yet published, or manual review, or failed processing.
+        const needsAdmin =
+          (r.processing_state === "scored" && r.admin_status === "pending") ||
+          r.processing_state === "manual_review_required" ||
+          ["failed", "provider_blocked", "ocr_required"].includes(r.processing_state);
+        const needsPublish =
+          r.processing_state === "scored" &&
+          r.admin_status === "approved" &&
+          r.client_visibility !== "visible";
+        if (needsAdmin || needsPublish) c.action_required += 1;
+      }
+    }
+
+    let enriched = positions.map((p) => ({
+      ...p,
+      counts: counts[p.id] ?? { delivered: 0, shortlisted: 0, interviews: 0, action_required: 0 },
+    }));
+
+    if (isPostFilterSort) {
+      const key = sort === "delivered_desc" ? "delivered" : "action_required";
+      enriched.sort(
+        (a, b) => (b.counts[key] ?? 0) - (a.counts[key] ?? 0) ||
+          new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime(),
+      );
+      enriched = enriched.slice(from, from + data.page_size);
+    }
+
+    return {
+      rows: enriched as AnyRow[],
+      total: count ?? enriched.length,
+      page: data.page,
+      page_size: data.page_size,
+    };
+  });
+
+export const listPositionFilters = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await requireStaff(context.userId);
+    const s = await getAdmin();
+    const [orgsRes, locsRes] = await Promise.all([
+      s
+        .from("organizations")
+        .select("id,name")
+        .order("name", { ascending: true })
+        .limit(500),
+      s
+        .from("positions")
+        .select("location")
+        .not("location", "is", null)
+        .limit(500),
+    ]);
+    const locations = Array.from(
+      new Set(((locsRes.data ?? []) as AnyRow[]).map((r) => String(r.location ?? "").trim()).filter(Boolean)),
+    ).sort();
+    return {
+      clients: (orgsRes.data ?? []) as AnyRow[],
+      locations,
+    };
   });
 
 export const getPosition = createServerFn({ method: "GET" })
