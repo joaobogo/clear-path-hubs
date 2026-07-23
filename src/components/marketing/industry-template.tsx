@@ -128,11 +128,11 @@ export function IndustryTemplate({ entry }: { entry: IndustryEntry }) {
             </Link>{" "}
             delivers ranked candidates weekly for{" "}
             <Link to="/solutions" className="font-medium text-[color:var(--brand-navy)] underline underline-offset-4">
-              growing companies
+              Series A–C operators
             </Link>{" "}
             and{" "}
             <Link to="/enterprise" className="font-medium text-[color:var(--brand-navy)] underline underline-offset-4">
-              enterprise teams
+              50–5,000-employee businesses
             </Link>
             . Explore{" "}
             <Link to="/how-it-works" className="font-medium text-[color:var(--brand-navy)] underline underline-offset-4">

@@ -12,7 +12,7 @@ import { INDUSTRY_ENTRIES } from "@/content/industries-v2";
 
 const SOLUTION_LINKS = [
   { to: "/", label: "TaaSFlow — subscription recruiting", desc: "The homepage" },
-  { to: "/solutions", label: "For growing companies", desc: "On-demand recruiting for scaling teams" },
+  { to: "/solutions", label: "For Series A–C operators", desc: "On-demand recruiting for scaling teams" },
   { to: "/enterprise", label: "Enterprise recruiting", desc: "Compliance, scale, and security" },
   { to: "/how-it-works", label: "How it works", desc: "Evidence-first ranking, weekly delivery" },
   { to: "/pricing", label: "Pricing", desc: "Fixed monthly subscription" },
