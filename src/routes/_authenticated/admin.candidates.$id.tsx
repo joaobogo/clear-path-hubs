@@ -535,13 +535,17 @@ function safeNode(v: unknown): React.ReactNode {
 
 function toReqText(v: unknown): string {
   if (v == null) return "—";
-  if (typeof v === "string") return v;
+  if (typeof v === "string") {
+    const t = v.trim();
+    if (!t || t === "[object Object]") return "—";
+    return t;
+  }
   if (typeof v === "number" || typeof v === "boolean") return String(v);
   if (Array.isArray(v)) return v.map(toReqText).filter((s) => s && s !== "—").join(", ") || "—";
   if (typeof v === "object") {
     const o = v as Record<string, unknown>;
     const cand = o.text ?? o.label ?? o.name ?? o.requirement ?? o.requirement_text ?? o.title;
-    if (typeof cand === "string" && cand.trim()) return cand;
+    if (typeof cand === "string" && cand.trim() && cand.trim() !== "[object Object]") return cand.trim();
     return "—";
   }
   return "—";
@@ -964,7 +968,7 @@ function ScoreTab({ currentRun, result }: { currentRun: Any; result: Any }) {
           </span>
         </div>
         {currentRun.explanation && (
-          <p className="mt-3 whitespace-pre-wrap text-sm">{currentRun.explanation}</p>
+          <p className="mt-3 whitespace-pre-wrap text-sm">{cleanLine(String(currentRun.explanation))}</p>
         )}
 
         <h3 className="mt-6 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
@@ -982,7 +986,7 @@ function ScoreTab({ currentRun, result }: { currentRun: Any; result: Any }) {
               <h4 className="text-xs font-semibold uppercase text-emerald-700 dark:text-emerald-300">Strengths</h4>
               <ul className="mt-1 list-disc space-y-1 pl-4 text-sm">
                 {(result?.strengths ?? []).map((s: string, i: number) => (
-                  <li key={i}>{s}</li>
+                  <li key={i}>{cleanLine(String(s))}</li>
                 ))}
                 {(result?.strengths ?? []).length === 0 && (
                   <li className="list-none text-muted-foreground">None surfaced.</li>
