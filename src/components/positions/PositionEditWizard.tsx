@@ -100,7 +100,21 @@ export function PositionEditWizard({
     work_authorization: initial.work_authorization,
     target_titles: initial.target_titles,
     screening_questions: initial.screening_questions,
+    responsibilities: initial.responsibilities,
+    experience: initial.experience,
+    education: initial.education,
+    certifications: initial.certifications,
+    languages: initial.languages,
+    industry_experience: initial.industry_experience,
+    hiring_timeline: initial.hiring_timeline,
+    timezone_requirements: initial.timezone_requirements,
+    reason_for_hiring: initial.reason_for_hiring,
+    hiring_challenges: initial.hiring_challenges,
+    interview_process: initial.interview_process,
+    decision_makers: initial.decision_makers,
+    additional_context: initial.additional_context,
   });
+
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [skillDraft, setSkillDraft] = useState("");
   const [countryDraft, setCountryDraft] = useState("");
