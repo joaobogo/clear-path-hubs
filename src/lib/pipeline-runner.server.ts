@@ -293,6 +293,9 @@ export async function runPipelineForMatch(matchId: string, opts: { force?: boole
       .eq("id", ctx.match.candidate_profile_id)
       .maybeSingle();
     const screening = buildScreening(ctx.answers);
+    const { insights, insights_error } = await buildInsights({
+      cvText, position: ctx.position, screening,
+    });
     await s.from("candidate_evidence").upsert({
       candidate_match_id: matchId,
       candidate_profile_id: ctx.match.candidate_profile_id,
@@ -305,6 +308,8 @@ export async function runPipelineForMatch(matchId: string, opts: { force?: boole
         headline: freshProfile?.headline ?? null,
         location: freshProfile?.location ?? null,
         hydration: { applied: hydration.applied, skipped: hydration.skipped, ok: hydration.ok, reason: hydration.reason ?? null },
+        insights: insights as unknown as Json,
+        insights_error,
       } as unknown as Json,
       screening_normalized: {
         answers: screening.map((s2) => ({
@@ -314,6 +319,7 @@ export async function runPipelineForMatch(matchId: string, opts: { force?: boole
       } as unknown as Json,
       raw_text_sample: cvText.slice(0, 800),
     }, { onConflict: "candidate_match_id,engine_version" });
+    steps.push({ step: "insights", ok: !!insights, note: insights ? `verdicts:${insights.requirement_verdicts.length}` : insights_error ?? "skipped" });
 
     const pos = ctx.position;
     if (!pos || pos.status !== "active") {
