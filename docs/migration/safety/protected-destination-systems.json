@@ -1,0 +1,30 @@
+{
+  "generated_at": "2026-07-23",
+  "policy": "These destination systems are CANONICAL. No source file may replace, shadow, or bypass them.",
+  "systems": [
+    { "name": "Admin workspace", "path": "src/routes/_authenticated/admin.*", "owner": "Phase 7/V2 rebuild" },
+    { "name": "Client workspace", "path": "src/routes/_authenticated/client.*", "owner": "V2 rebuild" },
+    { "name": "Candidate workspace", "path": "src/routes/_authenticated/candidate.*", "owner": "Phase 9" },
+    { "name": "Workspace navigation", "path": "src/components/app-shell.tsx + role-aware nav", "owner": "V2" },
+    { "name": "Destination database", "path": "supabase/migrations/**", "owner": "Phases 2, 3, 6, 10, V2" },
+    { "name": "Destination Auth", "path": "src/integrations/supabase/auth-middleware.ts + auth-attacher.ts", "owner": "Phase 3" },
+    { "name": "Memberships / organizations", "path": "public.organization_memberships + is_org_member()", "owner": "Phase 3" },
+    { "name": "Employer intake", "path": "src/routes/api/public/intake.ts + src/lib/intake.functions.ts + src/lib/intake-schema.ts", "owner": "Phase 4" },
+    { "name": "Job Board", "path": "src/routes/jobs.tsx + src/lib/jobs.functions.ts", "owner": "Phase 5" },
+    { "name": "Job detail / application", "path": "src/routes/jobs.$id.apply.tsx + src/lib/apply.functions.ts + src/lib/apply-schema.ts", "owner": "Phase 5" },
+    { "name": "Application tracking", "path": "src/routes/_authenticated/candidate.applications.*", "owner": "Phase 9" },
+    { "name": "CV upload & Storage", "path": "cvs bucket + storage policies", "owner": "Phase 3" },
+    { "name": "Parsing / OCR / hydration", "path": "Gemini 2.5 Flash hydration + candidate_evidence", "owner": "Phase 6 + Dashboard Recovery" },
+    { "name": "Enrichment / evidence graph", "path": "public.candidate_evidence", "owner": "Phase 6" },
+    { "name": "Role-specific scoring", "path": "src/lib/scoring-service.server.ts + tg_score_runs_immutable", "owner": "Phase 6" },
+    { "name": "Admin review / Publish Desk", "path": "src/routes/_authenticated/admin.review.*", "owner": "Phase 7" },
+    { "name": "Client Preview & decisions", "path": "src/routes/_authenticated/client.kanban.tsx", "owner": "Phase 8" },
+    { "name": "Interviews", "path": "src/lib/interviews.functions.ts", "owner": "V2" },
+    { "name": "Messages", "path": "public.messages + realtime channel", "owner": "Phase 9" },
+    { "name": "Notifications", "path": "public.notification_events", "owner": "Phase 10" },
+    { "name": "KPIs", "path": "Domain views (13) + dashboard-card ledger", "owner": "Phase 2 + V2" },
+    { "name": "Realtime synchronization", "path": "src/hooks/use-realtime-refresh.ts", "owner": "Phase 10" },
+    { "name": "Audit events", "path": "public.audit_events", "owner": "Phase 3" }
+  ],
+  "protected_count": 23
+}
