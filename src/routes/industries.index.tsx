@@ -270,11 +270,12 @@ function IndustriesIndex() {
         </PublicPage>
       </PublicSection>
 
-      {/* Role examples by industry */}
+      {/* Common role families */}
       <PublicSection className="border-t border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-mist)]/40">
         <PublicPage>
           <h2 className="max-w-2xl font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight sm:text-4xl">
-            Role examples by industry
+            Common role families
+
           </h2>
           <p className="mt-3 max-w-2xl text-[color:var(--brand-navy)]/70">
             A snapshot of the roles TaaSFlow calibrates for across the most
