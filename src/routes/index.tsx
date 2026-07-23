@@ -8,12 +8,15 @@ import {
   ClipboardCheck,
   Eye,
   Globe2,
+  Handshake,
   LayoutDashboard,
   MessageSquare,
   Quote,
+  Search,
   Sparkles,
   Users,
 } from "lucide-react";
+
 
 import {
   CtaSection,
