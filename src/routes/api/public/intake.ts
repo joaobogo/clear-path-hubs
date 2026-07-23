@@ -346,7 +346,7 @@ export const Route = createFileRoute("/api/public/intake")({
             workspace_status: workspaceStatus,
             requisition_pending: requisitionPending,
             trace_id: traceId,
-            payload: data,
+            payload: (() => { const { password: _pw, ...rest } = data; return rest; })(),
           })
           .select("id")
           .single();
