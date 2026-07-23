@@ -617,6 +617,17 @@ function SettingsTab({ org }: { org: any }) {
     onError: (e: Error) => toast.error(e.message),
   });
 
+  const restore = useMutation({
+    mutationFn: () => restoreOrganization({ data: { id: org.id } }),
+    onSuccess: async (res) => {
+      toast.success(`Client restored · ${res.trace_id ?? "ok"}`);
+      await qc.invalidateQueries({ queryKey: ["admin-client", org.id] });
+      await qc.invalidateQueries({ queryKey: ["admin-clients"] });
+      router.invalidate();
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
   return (
     <section className="space-y-4">
       <div className="rounded-lg border p-4 text-sm">
