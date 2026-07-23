@@ -431,21 +431,21 @@ function Home() {
         <PublicPage>
           <div className="grid grid-cols-1 gap-12 py-16 sm:py-20 lg:grid-cols-[1.05fr_1fr] lg:py-24">
             <div className="flex min-w-0 flex-col justify-center gap-6">
-              <span className="inline-flex w-fit items-center gap-2 rounded-full border border-[color:var(--brand-navy)]/12 bg-white/70 px-3 py-1 text-xs font-semibold text-[color:var(--brand-navy)]/75 backdrop-blur">
+              <span className="inline-flex w-fit items-center gap-2 rounded-full border border-[color:var(--brand-navy)]/12 bg-white/70 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/75 backdrop-blur">
                 <Sparkles className="h-3.5 w-3.5 text-[color:var(--brand-ocean)]" aria-hidden />
-                Subscription recruiting — with a live workspace
+                Talent as a Service
               </span>
               <h1
                 id="home-hero-heading"
-                className="font-[family-name:var(--brand-font-display)] text-4xl font-semibold leading-tight tracking-tight text-[color:var(--brand-navy)] sm:text-5xl lg:text-[3.5rem]"
+                className="font-[family-name:var(--brand-font-display)] text-4xl font-semibold leading-[1.05] tracking-tight text-[color:var(--brand-navy)] sm:text-5xl lg:text-[3.5rem]"
               >
-                Ranked candidates.
-                <br className="hidden sm:block" /> Live hiring workspace.
+                Your hiring team.
+                <br className="hidden sm:block" /> On demand.
               </h1>
               <p className="max-w-xl text-lg text-[color:var(--brand-navy)]/75">
-                See every candidate ranked to your requirements. Watch the pipeline
-                move as it happens. Own the handover after shortlist — no placement
-                fees, no black box.
+                TaaSFlow gives growing companies an always-on recruiting function that
+                sources, evaluates, ranks, and delivers qualified candidates through one
+                transparent workspace.
               </p>
               <div className="flex flex-wrap items-center gap-3 pt-1">
                 <Link
