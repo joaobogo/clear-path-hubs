@@ -154,7 +154,7 @@ async function loadCtx(s: Any, matchId: string) {
     .maybeSingle();
   if (!match) throw new Error(`match_not_found:${matchId}`);
   const [posRes, profRes, ansRes] = await Promise.all([
-    s.from("positions").select("id,status,requirements,preferred_requirements,title").eq("id", match.position_id).maybeSingle(),
+    s.from("positions").select("id,status,requirements,preferred_requirements,title,description").eq("id", match.position_id).maybeSingle(),
     s.from("candidate_profiles").select("id,current_cv_file_id,skills,experience,consent").eq("id", match.candidate_profile_id).maybeSingle(),
     s.from("application_answers").select("question_id,answer,screening_questions(question,answer_type,required,dealbreaker,preferred_answer)").eq("application_id", match.application_id),
   ]);
