@@ -40,8 +40,15 @@ export interface RoiCalculatorProps {
   supportingCopy?: string;
   /** When false, hide the pair of CTAs beneath the results. */
   showCtas?: boolean;
+  /**
+   * Fires whenever the computed result changes. Downstream consumers use this
+   * to adapt CTA copy without duplicating pricing math (single source of truth
+   * = src/lib/roi-calculator.ts).
+   */
+  onResultChange?: (result: import("@/lib/roi-calculator").CalculatorResult) => void;
   className?: string;
 }
+
 
 const DEFAULT_EYEBROW = "Recruiting Cost Calculator";
 const DEFAULT_HEADING = "Cut your cost-per-hire. See the math.";
@@ -207,6 +214,7 @@ export function RoiCalculator({
   heading = DEFAULT_HEADING,
   supportingCopy = DEFAULT_COPY,
   showCtas = true,
+  onResultChange,
   className,
 }: RoiCalculatorProps) {
   const [inputs, setInputs] = React.useState<CalculatorInputs>({
@@ -216,8 +224,14 @@ export function RoiCalculator({
     recruiterHourlyUsd: CALCULATOR_DEFAULTS.recruiterHourlyUsd,
     sourcingHoursPerRole: CALCULATOR_DEFAULTS.sourcingHoursPerRole,
   });
+  const [showHelper, setShowHelper] = React.useState(false);
 
   const result = React.useMemo(() => computeRoi(inputs), [inputs]);
+
+  React.useEffect(() => {
+    onResultChange?.(result);
+  }, [result, onResultChange]);
+
 
   const patch = <K extends keyof CalculatorInputs>(key: K, v: number) =>
     setInputs((prev) => ({ ...prev, [key]: v }));
@@ -252,8 +266,55 @@ export function RoiCalculator({
             {heading}
           </h2>
           <p className="mt-3 text-[color:var(--brand-navy)]/75">{supportingCopy}</p>
+
+          {/* How to read this — expandable helper (Prompt 12) */}
+          <div className="mt-4 rounded-xl border border-[color:var(--brand-navy)]/10 bg-white">
+            <button
+              type="button"
+              aria-expanded={showHelper}
+              aria-controls="roi-helper-body"
+              onClick={() => setShowHelper((s) => !s)}
+              className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left text-sm font-semibold text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/[0.03] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+            >
+              <span className="inline-flex items-center gap-2">
+                <Info className="h-4 w-4 text-[color:var(--brand-ocean)]" aria-hidden />
+                How to read this calculator
+              </span>
+              <span className="text-xs font-medium text-[color:var(--brand-navy)]/55">
+                {showHelper ? "Hide" : "Show"}
+              </span>
+            </button>
+            {showHelper ? (
+              <div
+                id="roi-helper-body"
+                className="border-t border-[color:var(--brand-navy)]/8 px-4 py-3 text-sm leading-relaxed text-[color:var(--brand-navy)]/75"
+              >
+                <ul className="grid gap-2 sm:grid-cols-2">
+                  <li>
+                    <span className="font-semibold text-[color:var(--brand-navy)]">Traditional cost</span> = agency placement (positions × salary × fee) plus internal sourcing time (positions × hourly × hours).
+                  </li>
+                  <li>
+                    <span className="font-semibold text-[color:var(--brand-navy)]">TaaSFlow cost</span> comes from the approved package that covers your volume — never a fabricated number.
+                  </li>
+                  <li>
+                    <span className="font-semibold text-[color:var(--brand-navy)]">Presets</span> only change the inputs. The math still runs against the same approved pricing.
+                  </li>
+                  <li>
+                    <span className="font-semibold text-[color:var(--brand-navy)]">Custom quote</span> appears when your volume crosses into Subscription — no savings number is invented.
+                  </li>
+                  <li>
+                    <span className="font-semibold text-[color:var(--brand-navy)]">Negative savings</span> is shown honestly when your inputs don't favor us — we surface it instead of hiding it.
+                  </li>
+                  <li>
+                    <span className="font-semibold text-[color:var(--brand-navy)]">Sliders</span> respond to arrow keys, Page Up/Down, and Home/End for precise adjustment.
+                  </li>
+                </ul>
+              </div>
+            ) : null}
+          </div>
         </header>
       ) : null}
+
 
       <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)]">
         {/* Inputs */}
@@ -463,6 +524,15 @@ export function RoiCalculator({
                 </p>
               ) : null}
             </div>
+            {/* Annualized context — only meaningful for monthly billing */}
+            {result.taasflowCostUsd != null &&
+            result.taasflowPackage?.billingType === "monthly-subscription" ? (
+              <p className="mt-1 text-[11px] text-white/60">
+                Annualized reference: {formatUsdCompact(result.taasflowCostUsd * 12)} at 12 months.
+                Subscription is month-to-month — cancel anytime.
+              </p>
+            ) : null}
+
 
             {result.isCustomPricing ? (
               <div className="mt-4 rounded-lg bg-white/8 p-3 text-sm text-white/85">
