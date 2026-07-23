@@ -144,7 +144,6 @@ export const getPublicPosition = createServerFn({ method: "GET" })
       description: desc,
       requirements: reqs,
       preferred_requirements: toReqStrings(pos.preferred_requirements),
-        : [],
       compensation_display: comp.approved && comp.display ? comp.display : null,
       published_at: pos.published_at,
       openings: (pos as { openings?: number }).openings ?? 1,
