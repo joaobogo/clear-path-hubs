@@ -46,34 +46,18 @@ type Readiness = {
   hasScore: boolean;
   evidenceOk: boolean;
   contradictionOk: boolean;
-  reviewOk: boolean;
   clientSafeOk: boolean;
+  adminApproved: boolean;
+  orgOk: boolean;
   canPublish: boolean;
   blockedReasons: string[];
 };
 
-function assessReadiness(r: Any): Readiness {
-  const run = r.score_runs;
-  const hasScore = run?.score != null;
-  const coverage = Number(run?.must_have_coverage ?? 0);
-  const evidenceOk = hasScore && coverage >= 0.5;
-  const contradictionOk = !run?.contradiction_status || run.contradiction_status === "none";
-  const reviewOk = r.admin_status === "approved";
-  const clientSafeOk = !!r.candidate_profiles?.full_name && !!r.positions?.id;
-  const blockedReasons: string[] = [];
-  if (["failed", "provider_blocked"].includes(r.processing_state))
-    blockedReasons.push(`Processing ${r.processing_state.replace(/_/g, " ")}`);
-  if (r.processing_state === "ocr_required") blockedReasons.push("OCR required on CV");
-  if (!hasScore) blockedReasons.push("Score incomplete");
-  else if (!evidenceOk) blockedReasons.push("Evidence coverage insufficient");
-  if (!contradictionOk) blockedReasons.push(`Contradiction unresolved (${run.contradiction_status})`);
-  if (!clientSafeOk) blockedReasons.push("Client-safe data incomplete");
-  if (!reviewOk && r.admin_status !== "on_hold")
-    blockedReasons.push(`Admin review ${r.admin_status ?? "pending"}`);
-  const canPublish =
-    hasScore && evidenceOk && contradictionOk && reviewOk && clientSafeOk &&
-    !["failed", "provider_blocked", "ocr_required"].includes(r.processing_state);
-  return { hasScore, evidenceOk, contradictionOk, reviewOk, clientSafeOk, canPublish, blockedReasons };
+function readinessOf(r: Any): Readiness {
+  return (r._readiness ?? {
+    hasScore: false, evidenceOk: false, contradictionOk: true, clientSafeOk: false,
+    adminApproved: false, orgOk: true, canPublish: false, blockedReasons: [],
+  }) as Readiness;
 }
 
 function Check({ ok, label }: { ok: boolean; label: string }) {
