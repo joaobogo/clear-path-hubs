@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { SiteShell } from "@/components/marketing/site-shell";
 import { marketingHead } from "@/lib/marketing/head";
+import { PRICING_PACKAGES, isTierPricePublic, formatUsdCompact } from "@/config/public-pricing";
 import {
   Users,
   Building2,
@@ -9,6 +10,12 @@ import {
   ClipboardList,
   ShieldCheck,
 } from "lucide-react";
+
+const PILOT = PRICING_PACKAGES.find((p) => p.id === "pilot");
+const PILOT_PRICE_LABEL =
+  PILOT && isTierPricePublic(PILOT) && PILOT.priceUsd !== null
+    ? ` for ${formatUsdCompact(PILOT.priceUsd)}`
+    : "";
 
 export const Route = createFileRoute("/solutions")({
   head: () =>
