@@ -968,7 +968,7 @@ function ScoreTab({ currentRun, result }: { currentRun: Any; result: Any }) {
           </span>
         </div>
         {currentRun.explanation && (
-          <p className="mt-3 whitespace-pre-wrap text-sm">{currentRun.explanation}</p>
+          <p className="mt-3 whitespace-pre-wrap text-sm">{cleanLine(String(currentRun.explanation))}</p>
         )}
 
         <h3 className="mt-6 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
