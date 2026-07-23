@@ -227,7 +227,7 @@ function TeamPage() {
                 orgId={orgId!}
                 member={m}
                 canMutate={!!canMutate}
-                selfId={ctx?.userId}
+                selfId={selfId}
               />
             ))}
           </ul>
