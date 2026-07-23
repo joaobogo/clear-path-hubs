@@ -3,18 +3,25 @@ import {
   Activity,
   ArrowRight,
   BarChart3,
+  Briefcase,
   Building2,
+  CalendarClock,
   CheckCircle2,
   ClipboardCheck,
   Compass,
   Eye,
+  FileText,
   Handshake,
   LayoutDashboard,
+  MapPin,
+  MessageCircle,
   MessageSquare,
   Quote,
   Rocket,
   ShieldCheck,
   Sparkles,
+  Target,
+  TrendingUp,
   Users,
   Wallet,
   Zap,
@@ -69,26 +76,54 @@ const WEEKLY_DELIVERABLES = [
   },
 ] as const;
 
-const AUDIENCES = [
+const AUDIENCE_LANES = [
   {
     icon: Rocket,
-    t: "Growing startups",
-    d: "Founders and Heads of People hiring in bursts who need pipeline without hiring a full in-house recruiting team.",
+    accent: "ocean",
+    name: "Founders & Hiring Managers",
+    problem:
+      "Limited time, no dedicated sourcing capacity, and hires that can't wait for a full internal team to be built.",
+    value:
+      "An on-demand recruiting function that runs beside you — sourcing, evaluating, and delivering ranked candidates without hiring a full internal team.",
+    result: "Interview-ready shortlists on roles you'd otherwise leave open.",
+    ctaLabel: "See How It Works",
+    ctaTo: "/how-it-works",
+  },
+  {
+    icon: Users,
+    accent: "sky",
+    name: "HR & Talent Acquisition",
+    problem:
+      "Recruiters spend too much time sourcing and too little time interviewing, supporting hiring managers, and improving candidate experience.",
+    value:
+      "Continuous sourcing and ranked candidate delivery through one visible workspace your TA team owns — so recruiters get their calendar back.",
+    result: "Sourcing capacity that scales with demand, evidence in view.",
+    ctaLabel: "Explore the Model",
+    ctaTo: "/solutions",
   },
   {
     icon: Building2,
-    t: "Scale-ups & mid-market",
-    d: "Talent teams filling several roles in parallel that want a single workspace instead of juggling agencies and spreadsheets.",
-  },
-  {
-    icon: LayoutDashboard,
-    t: "In-house recruiting teams",
-    d: "Recruiters who want an on-demand sourcing pod that plugs in beside their ATS and shares the same status with hiring managers.",
+    accent: "navy",
+    name: "Enterprise Hiring Teams",
+    problem:
+      "High-volume and multi-market hiring becomes fragmented across agencies, regions, and spreadsheets — and expensive to coordinate.",
+    value:
+      "Structured sourcing capacity, ranked candidate delivery, and portfolio-level visibility across every active role and business unit.",
+    result: "One consolidated view across regions, roles, and teams.",
+    ctaLabel: "Enterprise Solutions",
+    ctaTo: "/enterprise",
   },
   {
     icon: Handshake,
-    t: "Hiring managers",
-    d: "Owners of a role who want ranked candidates with evidence — not 40 CVs to skim — and one click to shortlist, interview, or pass.",
+    accent: "sand",
+    name: "Staffing & Recruiting Agencies",
+    problem:
+      "Client demand exceeds internal sourcing capacity — but hiring recruiters to meet peaks doesn't fit the margin structure.",
+    value:
+      "A scalable sourcing and candidate-delivery partner behind the agency — you keep the client relationship, we extend the bench.",
+    result: "More placements fulfilled without expanding headcount.",
+    ctaLabel: "Staffing Partnerships",
+    ctaTo: "/partnerships/staffing",
   },
 ] as const;
 
@@ -418,7 +453,156 @@ function HeroWorkspacePreview() {
   );
 }
 
+function ClientCandidateDelivery() {
+  const coverage = [
+    { label: "Design systems ownership", pct: 96, verdict: "Strong" },
+    { label: "B2B SaaS product experience", pct: 92, verdict: "Strong" },
+    { label: "Team leadership (4+ designers)", pct: 88, verdict: "Strong" },
+    { label: "Design ops tooling", pct: 62, verdict: "Validate" },
+  ];
+  const strengths = [
+    "Led design-system rollout across three product lines, reducing component debt materially.",
+    "Six years shipping B2B SaaS products used by revenue and operations teams.",
+    "Managed a design team through two hiring cycles and one org restructure.",
+  ];
+  const validations = [
+    "Confirm scope of hands-on design-ops tooling ownership versus partnership with engineering.",
+    "Clarify recent experience with usage-based product analytics for prioritization.",
+  ];
+
+  return (
+    <div
+      role="img"
+      aria-label="A preview of the client candidate detail view showing candidate identity, professional headline, fit recommendation, requirement coverage, strengths, validation areas, personalized interview questions, and client decision controls."
+      className="rounded-2xl border border-[color:var(--brand-navy)]/12 bg-white p-5 shadow-[var(--brand-shadow-lg)] sm:p-6"
+    >
+      {/* Header: identity + fit recommendation */}
+      <div className="flex flex-wrap items-start justify-between gap-4 border-b border-[color:var(--brand-navy)]/8 pb-4">
+        <div className="min-w-0">
+          <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/55">
+            <span className="inline-flex h-1.5 w-1.5 rounded-full bg-[color:var(--brand-ocean)]" aria-hidden />
+            Candidate #A-1042
+          </div>
+          <div className="mt-1 text-lg font-semibold text-[color:var(--brand-navy)]">Alex R.</div>
+          <div className="truncate text-sm text-[color:var(--brand-navy)]/70">
+            Senior Product Designer · 8 years · B2B SaaS
+          </div>
+          <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-[color:var(--brand-navy)]/60">
+            <span className="inline-flex items-center gap-1">
+              <MapPin className="h-3.5 w-3.5" aria-hidden /> Lisbon, PT · Remote-friendly
+            </span>
+            <span className="inline-flex items-center gap-1">
+              <CalendarClock className="h-3.5 w-3.5" aria-hidden /> Available in 4 weeks
+            </span>
+            <span className="inline-flex items-center gap-1">
+              <FileText className="h-3.5 w-3.5" aria-hidden /> CV attached
+            </span>
+          </div>
+        </div>
+        <div className="flex shrink-0 flex-col items-end gap-1.5">
+          <div className="rounded-md bg-[color:var(--brand-ocean)]/12 px-3 py-1 text-lg font-semibold tabular-nums text-[color:var(--brand-ocean)]">
+            94
+          </div>
+          <span className="inline-flex items-center gap-1 rounded-full bg-[color:var(--brand-ocean)]/10 px-2 py-0.5 text-[11px] font-semibold text-[color:var(--brand-ocean)]">
+            <Sparkles className="h-3 w-3" aria-hidden /> Recommended: shortlist
+          </span>
+          <span className="inline-flex items-center gap-1 rounded-full border border-[color:var(--brand-navy)]/12 bg-white px-2 py-0.5 text-[11px] font-medium text-[color:var(--brand-navy)]/70">
+            Stage · Under review
+          </span>
+        </div>
+      </div>
+
+      {/* Requirement coverage */}
+      <div className="mt-4">
+        <div className="text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/55">
+          Requirement coverage
+        </div>
+        <div className="mt-2 space-y-2">
+          {coverage.map((c) => (
+            <div key={c.label} className="flex items-center gap-3 text-xs">
+              <span className="w-40 shrink-0 truncate text-[color:var(--brand-navy)]/75 sm:w-52">
+                {c.label}
+              </span>
+              <div className="h-1.5 min-w-0 flex-1 overflow-hidden rounded-full bg-[color:var(--brand-navy)]/8">
+                <div
+                  className={`h-full rounded-full ${c.pct >= 80 ? "bg-[color:var(--brand-ocean)]" : "bg-[color:var(--brand-navy)]/35"}`}
+                  style={{ width: `${c.pct}%` }}
+                  aria-hidden
+                />
+              </div>
+              <span
+                className={`w-16 shrink-0 text-right text-[10px] font-semibold uppercase tracking-wide ${c.pct >= 80 ? "text-[color:var(--brand-ocean)]" : "text-[color:var(--brand-navy)]/55"}`}
+              >
+                {c.verdict}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Strengths + Validation areas */}
+      <div className="mt-4 grid gap-3 sm:grid-cols-2">
+        <div className="rounded-xl border border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-paper)] p-3.5">
+          <div className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/60">
+            <CheckCircle2 className="h-3.5 w-3.5 text-[color:var(--brand-ocean)]" aria-hidden />
+            Strengths
+          </div>
+          <ul className="mt-2 space-y-1.5 text-xs text-[color:var(--brand-navy)]/80">
+            {strengths.map((s) => (
+              <li key={s} className="flex gap-1.5">
+                <span className="mt-1 inline-block h-1 w-1 shrink-0 rounded-full bg-[color:var(--brand-ocean)]" aria-hidden />
+                <span>{s}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div className="rounded-xl border border-[color:var(--brand-navy)]/10 bg-white p-3.5">
+          <div className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/60">
+            <Target className="h-3.5 w-3.5 text-[color:var(--brand-navy)]/60" aria-hidden />
+            Validate in interview
+          </div>
+          <ul className="mt-2 space-y-1.5 text-xs text-[color:var(--brand-navy)]/80">
+            {validations.map((v) => (
+              <li key={v} className="flex gap-1.5">
+                <span className="mt-1 inline-block h-1 w-1 shrink-0 rounded-full bg-[color:var(--brand-navy)]/40" aria-hidden />
+                <span>{v}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+
+      {/* Personalized interview question */}
+      <div className="mt-4 rounded-xl border border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-sky)]/25 p-3.5">
+        <div className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/65">
+          <MessageCircle className="h-3.5 w-3.5" aria-hidden />
+          Suggested interview question
+        </div>
+        <p className="mt-1.5 text-sm italic text-[color:var(--brand-navy)]/85">
+          "Walk us through the design-system rollout you led — how you handled adoption across
+          teams that hadn't asked for it."
+        </p>
+      </div>
+
+      {/* Client decision controls */}
+      <div className="mt-4 grid grid-cols-3 gap-2 border-t border-[color:var(--brand-navy)]/8 pt-4">
+        <div className="rounded-md bg-[color:var(--brand-navy)] px-3 py-2 text-center text-sm font-semibold text-white">
+          Shortlist
+        </div>
+        <div className="rounded-md border border-[color:var(--brand-navy)]/15 bg-white px-3 py-2 text-center text-sm font-semibold text-[color:var(--brand-navy)]">
+          Interview
+        </div>
+        <div className="rounded-md border border-[color:var(--brand-navy)]/15 bg-white px-3 py-2 text-center text-sm font-semibold text-[color:var(--brand-navy)]/70">
+          Pass
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* ---------- Component ---------- */
+
+
 
 function Home() {
   return (
@@ -511,29 +695,102 @@ function Home() {
         </PublicPage>
       </PublicSection>
 
-      {/* 3 — WHO TAASFLOW IS FOR */}
-      <section className="border-y border-[color:var(--brand-navy)]/8 bg-white">
+      {/* 3 — WHO TAASFLOW SERVES (Audience lanes) */}
+      <section
+        aria-labelledby="home-audiences-heading"
+        className="border-y border-[color:var(--brand-navy)]/8 bg-white"
+      >
         <PublicSection>
           <PublicPage>
             <SectionHead
-              eyebrow="Who TaaSFlow is for"
-              title="Teams that would rather hire than manage recruiters."
-              lead="TaaSFlow is built for hiring teams that want an on-demand recruiting function without the friction of traditional agency work."
+              eyebrow="Who TaaSFlow serves"
+              title="Four hiring realities. One recruiting function."
+              lead="TaaSFlow adapts to how your team hires — from a single founder covering every role to enterprise TA leaders coordinating across regions."
             />
-            <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
-              {AUDIENCES.map((a) => (
-                <Card key={a.t}>
-                  <a.icon className="h-6 w-6 text-[color:var(--brand-ocean)]" aria-hidden />
-                  <h3 className="mt-4 text-base font-semibold text-[color:var(--brand-navy)]">
-                    {a.t}
-                  </h3>
-                  <p className="mt-2 text-sm text-[color:var(--brand-navy)]/70">{a.d}</p>
-                </Card>
-              ))}
+            <div id="home-audiences-heading" className="sr-only">
+              Audiences TaaSFlow serves
+            </div>
+            <div className="mt-10 grid gap-5 md:grid-cols-2">
+              {AUDIENCE_LANES.map((lane) => {
+                const accentMap: Record<string, { bar: string; icon: string; chip: string }> = {
+                  ocean: {
+                    bar: "bg-[color:var(--brand-ocean)]",
+                    icon: "text-[color:var(--brand-ocean)] bg-[color:var(--brand-ocean)]/10",
+                    chip: "bg-[color:var(--brand-ocean)]/10 text-[color:var(--brand-ocean)]",
+                  },
+                  sky: {
+                    bar: "bg-[color:var(--brand-sky)]",
+                    icon: "text-[color:var(--brand-navy)] bg-[color:var(--brand-sky)]/50",
+                    chip: "bg-[color:var(--brand-sky)]/50 text-[color:var(--brand-navy)]",
+                  },
+                  navy: {
+                    bar: "bg-[color:var(--brand-navy)]",
+                    icon: "text-white bg-[color:var(--brand-navy)]",
+                    chip: "bg-[color:var(--brand-navy)]/10 text-[color:var(--brand-navy)]",
+                  },
+                  sand: {
+                    bar: "bg-[color:var(--brand-sand,#c9a76a)]",
+                    icon: "text-[color:var(--brand-navy)] bg-[color:var(--brand-sand,#c9a76a)]/25",
+                    chip: "bg-[color:var(--brand-sand,#c9a76a)]/25 text-[color:var(--brand-navy)]",
+                  },
+                };
+                const a = accentMap[lane.accent] ?? accentMap.ocean;
+                return (
+                  <article
+                    key={lane.name}
+                    className="group relative flex flex-col overflow-hidden rounded-2xl border border-[color:var(--brand-navy)]/12 bg-white p-6 shadow-sm transition-shadow hover:shadow-[var(--brand-shadow-lg)] sm:p-7"
+                  >
+                    <span className={`absolute inset-x-0 top-0 h-1 ${a.bar}`} aria-hidden />
+                    <div className="flex items-center gap-3">
+                      <span
+                        className={`inline-flex h-10 w-10 items-center justify-center rounded-xl ${a.icon}`}
+                        aria-hidden
+                      >
+                        <lane.icon className="h-5 w-5" />
+                      </span>
+                      <h3 className="text-lg font-semibold text-[color:var(--brand-navy)]">
+                        {lane.name}
+                      </h3>
+                    </div>
+
+                    <dl className="mt-5 space-y-4 text-sm">
+                      <div>
+                        <dt className="text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/55">
+                          The hiring problem
+                        </dt>
+                        <dd className="mt-1 text-[color:var(--brand-navy)]/80">{lane.problem}</dd>
+                      </div>
+                      <div>
+                        <dt className="text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/55">
+                          How TaaSFlow helps
+                        </dt>
+                        <dd className="mt-1 text-[color:var(--brand-navy)]/80">{lane.value}</dd>
+                      </div>
+                    </dl>
+
+                    <div
+                      className={`mt-5 inline-flex w-fit items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold ${a.chip}`}
+                    >
+                      <TrendingUp className="h-3.5 w-3.5" aria-hidden />
+                      {lane.result}
+                    </div>
+
+                    <div className="mt-6 flex-1" />
+                    <Link
+                      to={lane.ctaTo}
+                      className="mt-2 inline-flex min-h-10 w-fit items-center gap-1.5 rounded-md border border-[color:var(--brand-navy)]/15 bg-white px-4 py-2 text-sm font-semibold text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+                    >
+                      {lane.ctaLabel}
+                      <ArrowRight className="h-4 w-4" aria-hidden />
+                    </Link>
+                  </article>
+                );
+              })}
             </div>
           </PublicPage>
         </PublicSection>
       </section>
+
 
       {/* 4 — WHY SUBSCRIPTION RECRUITING */}
       <PublicSection>
@@ -603,22 +860,28 @@ function Home() {
         </PublicSection>
       </section>
 
-      {/* 6 — CANDIDATE DELIVERY & EVIDENCE */}
+      {/* 6 — WHAT CLIENTS RECEIVE (deliverable + candidate detail visual) */}
       <PublicSection>
         <PublicPage>
-          <div className="grid grid-cols-1 gap-10 lg:grid-cols-2 lg:items-center">
+          <div className="grid grid-cols-1 gap-10 lg:grid-cols-[1fr_1.1fr] lg:items-start">
             <div>
               <SectionHead
-                eyebrow="Candidate delivery & evidence"
-                title="Recruiter-written fit narratives — not attached PDFs."
-                lead="Each candidate arrives in your workspace with a role-specific score and the exact CV quotes behind every requirement. Debate the requirement, not the candidate."
+                eyebrow="What you receive"
+                title="More than candidates. Clear hiring decisions."
+                lead="Instead of receiving a stack of CVs, your team receives candidates organized around the role, with the evidence needed to decide who should move forward."
               />
-              <ul className="mt-6 space-y-3 text-sm text-[color:var(--brand-navy)]">
+              <ul className="mt-6 grid grid-cols-1 gap-x-6 gap-y-2.5 text-sm text-[color:var(--brand-navy)] sm:grid-cols-2">
                 {[
-                  "Ranked delivery with a composite score per candidate",
-                  "Evidence and CV quotes mapped to every must-have",
-                  "Recruiter-written fit narrative attached to the profile",
-                  "One-click shortlist, interview, or pass",
+                  "Ranked candidate shortlist",
+                  "Role-specific fit analysis",
+                  "Strengths and validation areas",
+                  "Requirement coverage",
+                  "Professional background",
+                  "CV access",
+                  "Location and availability",
+                  "Personalized interview questions",
+                  "Visible candidate stage",
+                  "Decision controls in one click",
                 ].map((t) => (
                   <li key={t} className="flex items-start gap-2">
                     <CheckCircle2
@@ -630,50 +893,12 @@ function Home() {
                 ))}
               </ul>
             </div>
-            <Card className="p-6 sm:p-7">
-              <div className="flex items-start justify-between gap-4">
-                <div className="min-w-0">
-                  <div className="truncate text-sm font-semibold text-[color:var(--brand-navy)]">
-                    Alex R.
-                  </div>
-                  <div className="truncate text-xs text-[color:var(--brand-navy)]/60">
-                    Senior Product Designer · Remote
-                  </div>
-                </div>
-                <div className="shrink-0 rounded-md bg-[color:var(--brand-ocean)]/12 px-3 py-1 text-sm font-semibold tabular-nums text-[color:var(--brand-ocean)]">
-                  94
-                </div>
-              </div>
-              <div className="mt-5 space-y-2.5">
-                {DELIVERY_EVIDENCE.map(([k, v]) => (
-                  <div key={String(k)} className="flex items-center gap-3 text-xs">
-                    <span className="w-24 shrink-0 truncate text-[color:var(--brand-navy)]/60 sm:w-36">
-                      {k}
-                    </span>
-                    <div className="h-1.5 min-w-0 flex-1 overflow-hidden rounded-full bg-[color:var(--brand-navy)]/8">
-                      <div
-                        className="h-full rounded-full bg-[color:var(--brand-ocean)]"
-                        style={{ width: `${v}%` }}
-                        aria-hidden
-                      />
-                    </div>
-                    <span className="w-8 shrink-0 text-right font-semibold tabular-nums text-[color:var(--brand-navy)]">
-                      {v}
-                    </span>
-                  </div>
-                ))}
-              </div>
-              <blockquote className="mt-5 flex gap-2 border-t border-[color:var(--brand-navy)]/8 pt-4 text-xs text-[color:var(--brand-navy)]/70">
-                <Quote className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[color:var(--brand-navy)]/40" aria-hidden />
-                <span>
-                  "Led design system rollout, reducing component debt by ~40%."
-                  <span className="ml-1 text-[color:var(--brand-navy)]/50">— CV, page 2</span>
-                </span>
-              </blockquote>
-            </Card>
+
+            <ClientCandidateDelivery />
           </div>
         </PublicPage>
       </PublicSection>
+
 
       {/* 7 — TAASFLOW VS AGENCY MODEL */}
       <section className="border-y border-[color:var(--brand-navy)]/8 bg-white">
