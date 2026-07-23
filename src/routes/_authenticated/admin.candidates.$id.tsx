@@ -727,6 +727,45 @@ function EvidenceTab({ evidence, result }: { evidence: Any; result: Any }) {
         </ul>
       )}
 
+      {llmVerdicts.length > 0 && (
+        <div className="rounded-lg border bg-card p-4">
+          <div className="flex items-center justify-between">
+            <h3 className="text-sm font-semibold">AI evidence review</h3>
+            <span className="text-xs text-muted-foreground">
+              Per-requirement verdicts grounded in verbatim CV quotes.
+            </span>
+          </div>
+          <ul className="mt-3 space-y-2">
+            {llmVerdicts.map((v, i) => {
+              const tone =
+                v.verdict === "met" ? "default"
+                : v.verdict === "partial" ? "secondary"
+                : v.verdict === "contradicted" ? "destructive"
+                : "outline";
+              return (
+                <li key={i} className="rounded-md border bg-background/60 p-3">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0 text-sm">
+                      {v.required && <span className="text-destructive">* </span>}
+                      <span className="font-medium">{v.requirement_text}</span>
+                    </div>
+                    <Badge variant={tone as Any} className="capitalize">{v.verdict}</Badge>
+                  </div>
+                  {v.rationale && (
+                    <div className="mt-1 text-xs text-muted-foreground">{v.rationale}</div>
+                  )}
+                  {v.cv_quote && (
+                    <div className="mt-1 border-l-2 border-primary/30 pl-2 text-xs italic text-muted-foreground">
+                      "{v.cv_quote}"
+                    </div>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      )}
+
       {evidence?.raw_text_sample && (
         <details className="rounded-lg border bg-muted/30 p-3">
           <summary className="cursor-pointer text-sm font-medium">Raw text sample</summary>
