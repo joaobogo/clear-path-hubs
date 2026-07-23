@@ -1,0 +1,4062 @@
+{
+  "version": "1.0.0",
+  "approved_count": 57,
+  "industries": [
+    {
+      "index": 1,
+      "id": "IND-01",
+      "name": "Technology",
+      "slug": "tech",
+      "category": "Technology & Engineering",
+      "aliases": [
+        "Tech",
+        "Software",
+        "Engineering",
+        "IT",
+        "Developers"
+      ],
+      "previous_slugs": [],
+      "redirect_required": [],
+      "source_file": "src/content/industries-v2.ts",
+      "source_content_status": "present",
+      "destination_status": "live",
+      "example_roles": [
+        "Full-stack engineers",
+        "Backend & platform engineers",
+        "Frontend engineers",
+        "DevOps & site reliability",
+        "Mobile engineers",
+        "Security engineers"
+      ],
+      "candidate_signals": [
+        "Rubric per role level",
+        "Technical-evidence validation from the CV",
+        "Ranked shortlist in your workspace"
+      ],
+      "skills": [
+        "TypeScript",
+        "Python",
+        "Go",
+        "Java",
+        "Rust",
+        "SQL",
+        "System design",
+        "Distributed systems"
+      ],
+      "tools": [
+        "AWS",
+        "GCP",
+        "Azure",
+        "Kubernetes",
+        "Terraform",
+        "Docker",
+        "React",
+        "Next.js"
+      ],
+      "licenses_or_certifications": [
+        "AWS Solutions Architect",
+        "AWS DevOps Engineer",
+        "GCP Professional Cloud Architect",
+        "Azure Solutions Architect Expert",
+        "CKA / CKAD",
+        "OSCP"
+      ],
+      "related_industries": [
+        "saas",
+        "cybersecurity",
+        "data-analytics"
+      ],
+      "relevant_resources": [
+        {
+          "title": "How TaaSFlow works",
+          "to": "/how-it-works"
+        },
+        {
+          "title": "Pricing",
+          "to": "/pricing"
+        },
+        {
+          "title": "Submit a role",
+          "to": "/intake"
+        }
+      ],
+      "primary_audience": "Hiring leaders and Heads of Talent",
+      "cta_destination": "/intake"
+    },
+    {
+      "index": 2,
+      "id": "IND-02",
+      "name": "SaaS",
+      "slug": "saas",
+      "category": "Technology & Engineering",
+      "aliases": [
+        "Software as a Service",
+        "Recurring revenue",
+        "PLG",
+        "Cloud software"
+      ],
+      "previous_slugs": [],
+      "redirect_required": [],
+      "source_file": "src/content/industries-v2.ts",
+      "source_content_status": "present",
+      "destination_status": "live",
+      "example_roles": [
+        "Product managers",
+        "Customer success managers",
+        "Revenue operations",
+        "Product marketing",
+        "Sales engineers",
+        "Implementation & onboarding"
+      ],
+      "candidate_signals": [
+        "Motion-specific rubric (PLG, mid-market, enterprise)",
+        "Metrics evidence from the CV",
+        "Stage & headcount captured as filters"
+      ],
+      "skills": [
+        "ARR forecasting",
+        "Activation design",
+        "Cohort analysis",
+        "Pricing & packaging",
+        "Enterprise deal architecture",
+        "Customer health scoring",
+        "Playbook design",
+        "Product-led growth"
+      ],
+      "tools": [
+        "Salesforce",
+        "HubSpot",
+        "Gainsight",
+        "Outreach",
+        "Salesloft",
+        "Amplitude",
+        "Mixpanel",
+        "Pendo"
+      ],
+      "licenses_or_certifications": [
+        "Pragmatic Institute (PMC)",
+        "Reforge programs",
+        "Gainsight Admin",
+        "Salesforce Administrator"
+      ],
+      "related_industries": [
+        "tech",
+        "data-analytics",
+        "sales"
+      ],
+      "relevant_resources": [
+        {
+          "title": "How TaaSFlow works",
+          "to": "/how-it-works"
+        },
+        {
+          "title": "Pricing",
+          "to": "/pricing"
+        },
+        {
+          "title": "Submit a role",
+          "to": "/intake"
+        }
+      ],
+      "primary_audience": "Hiring leaders and Heads of Talent",
+      "cta_destination": "/intake"
+    },
+    {
+      "index": 3,
+      "id": "IND-03",
+      "name": "Data & Analytics",
+      "slug": "data-analytics",
+      "category": "Technology & Engineering",
+      "aliases": [
+        "Data",
+        "Analytics",
+        "BI",
+        "Business Intelligence",
+        "Data Science",
+        "Machine Learning",
+        "ML",
+        "Data Governance"
+      ],
+      "previous_slugs": [],
+      "redirect_required": [],
+      "source_file": "src/content/industries-v2.ts",
+      "source_content_status": "present",
+      "destination_status": "live",
+      "example_roles": [
+        "Data engineers",
+        "Analytics engineers",
+        "Data analysts",
+        "BI developers",
+        "Data scientists",
+        "ML engineers"
+      ],
+      "candidate_signals": [
+        "Stack-specific rubric",
+        "Business-outcome evidence",
+        "Ranked shortlist in your workspace"
+      ],
+      "skills": [
+        "SQL",
+        "Python",
+        "dbt",
+        "Airflow",
+        "Spark",
+        "Statistics",
+        "Causal inference",
+        "Experimentation"
+      ],
+      "tools": [
+        "Snowflake",
+        "BigQuery",
+        "Databricks",
+        "Redshift",
+        "dbt",
+        "Airflow",
+        "Prefect",
+        "Fivetran"
+      ],
+      "licenses_or_certifications": [
+        "Snowflake SnowPro",
+        "Databricks Certified Data Engineer",
+        "GCP Professional Data Engineer",
+        "AWS Data Analytics Specialty",
+        "Azure Data Engineer Associate"
+      ],
+      "related_industries": [
+        "tech",
+        "saas",
+        "finance"
+      ],
+      "relevant_resources": [
+        {
+          "title": "How TaaSFlow works",
+          "to": "/how-it-works"
+        },
+        {
+          "title": "Pricing",
+          "to": "/pricing"
+        },
+        {
+          "title": "Submit a role",
+          "to": "/intake"
+        }
+      ],
+      "primary_audience": "Hiring leaders and Heads of Talent",
+      "cta_destination": "/intake"
+    },
+    {
+      "index": 4,
+      "id": "IND-04",
+      "name": "Cybersecurity",
+      "slug": "cybersecurity",
+      "category": "Technology & Engineering",
+      "aliases": [
+        "Security",
+        "InfoSec",
+        "AppSec",
+        "CloudSec",
+        "GRC"
+      ],
+      "previous_slugs": [],
+      "redirect_required": [],
+      "source_file": "src/content/industries-v2.ts",
+      "source_content_status": "present",
+      "destination_status": "live",
+      "example_roles": [
+        "Security engineers",
+        "Cloud & infrastructure security",
+        "Application security",
+        "Detection & response (SOC)",
+        "Offensive security & red team",
+        "Governance, risk & compliance"
+      ],
+      "candidate_signals": [
+        "Domain-specific rubric",
+        "Evidence quotes from the CV",
+        "Private, tenant-isolated workspace"
+      ],
+      "skills": [],
+      "tools": [],
+      "licenses_or_certifications": [],
+      "related_industries": [],
+      "relevant_resources": [
+        {
+          "title": "How TaaSFlow works",
+          "to": "/how-it-works"
+        },
+        {
+          "title": "Pricing",
+          "to": "/pricing"
+        },
+        {
+          "title": "Submit a role",
+          "to": "/intake"
+        }
+      ],
+      "primary_audience": "Hiring leaders and Heads of Talent",
+      "cta_destination": "/intake"
+    },
+    {
+      "index": 5,
+      "id": "IND-05",
+      "name": "Finance",
+      "slug": "finance",
+      "category": "Financial Services",
+      "aliases": [
+        "Banking",
+        "Corporate Finance",
+        "FP&A",
+        "Investment",
+        "Risk",
+        "Compliance",
+        "Treasury"
+      ],
+      "previous_slugs": [],
+      "redirect_required": [],
+      "source_file": "src/content/industries-v2.ts",
+      "source_content_status": "present",
+      "destination_status": "live",
+      "example_roles": [
+        "CFOs and finance directors",
+        "Investment bankers",
+        "FP&A leads and analysts",
+        "Corporate development and M&A",
+        "Treasury and cash management",
+        "Risk officers and analysts"
+      ],
+      "candidate_signals": [
+        "Rubric per finance function and level",
+        "Regulatory exposure captured",
+        "Systems and reporting stack captured"
+      ],
+      "skills": [
+        "Financial modelling",
+        "Valuation",
+        "Credit analysis",
+        "Portfolio construction",
+        "Market risk",
+        "Liquidity management",
+        "Regulatory reporting",
+        "SOX controls"
+      ],
+      "tools": [
+        "Bloomberg",
+        "Aladdin",
+        "Murex",
+        "Kyriba",
+        "Oracle EPM",
+        "SAP",
+        "Anaplan",
+        "Adaptive Planning"
+      ],
+      "licenses_or_certifications": [
+        "CFA",
+        "FRM",
+        "ACA / ACCA / CIMA",
+        "CPA",
+        "PRM",
+        "CAIA"
+      ],
+      "related_industries": [
+        "accounting",
+        "insurance",
+        "private-equity"
+      ],
+      "relevant_resources": [
+        {
+          "title": "How TaaSFlow works",
+          "to": "/how-it-works"
+        },
+        {
+          "title": "Pricing",
+          "to": "/pricing"
+        },
+        {
+          "title": "Submit a role",
+          "to": "/intake"
+        }
+      ],
+      "primary_audience": "Hiring leaders and Heads of Talent",
+      "cta_destination": "/intake"
+    },
+    {
+      "index": 6,
+      "id": "IND-06",
+      "name": "Accounting",
+      "slug": "accounting",
+      "category": "Financial Services",
+      "aliases": [
+        "Audit",
+        "Tax",
+        "Controllership",
+        "Reporting",
+        "Bookkeeping",
+        "CPA",
+        "ACA",
+        "ACCA"
+      ],
+      "previous_slugs": [],
+      "redirect_required": [],
+      "source_file": "src/content/industries-v2.ts",
+      "source_content_status": "present",
+      "destination_status": "live",
+      "example_roles": [
+        "Audit managers and seniors",
+        "Tax managers and advisors",
+        "Statutory and technical accountants",
+        "Financial controllers",
+        "Group and consolidation accountants",
+        "Management accountants"
+      ],
+      "candidate_signals": [
+        "Standards and frameworks captured in intake",
+        "Cycle ownership evidence from the CV",
+        "Qualification calibrated per role"
+      ],
+      "skills": [
+        "IFRS",
+        "US GAAP",
+        "Statutory reporting",
+        "Audit planning",
+        "Corporate tax",
+        "Indirect tax",
+        "Consolidation",
+        "Close management"
+      ],
+      "tools": [
+        "SAP",
+        "Oracle Financials",
+        "NetSuite",
+        "Xero",
+        "QuickBooks",
+        "Sage",
+        "Workday",
+        "OneStream"
+      ],
+      "licenses_or_certifications": [
+        "CPA",
+        "ACA (ICAEW)",
+        "ACCA",
+        "CIMA",
+        "CTA (Chartered Tax Adviser)",
+        "CFE"
+      ],
+      "related_industries": [
+        "finance",
+        "consulting",
+        "insurance"
+      ],
+      "relevant_resources": [
+        {
+          "title": "How TaaSFlow works",
+          "to": "/how-it-works"
+        },
+        {
+          "title": "Pricing",
+          "to": "/pricing"
+        },
+        {
+          "title": "Submit a role",
+          "to": "/intake"
+        }
+      ],
+      "primary_audience": "Hiring leaders and Heads of Talent",
+      "cta_destination": "/intake"
+    },
+    {
+      "index": 7,
+      "id": "IND-07",
+      "name": "Insurance",
+      "slug": "insurance",
+      "category": "Financial Services",
+      "aliases": [
+        "Underwriting",
+        "Claims",
+        "Actuarial",
+        "Broking",
+        "P&C",
+        "Life",
+        "Reinsurance"
+      ],
+      "previous_slugs": [],
+      "redirect_required": [],
+      "source_file": "src/content/industries-v2.ts",
+      "source_content_status": "present",
+      "destination_status": "live",
+      "example_roles": [
+        "Underwriters and senior underwriters",
+        "Claims managers and adjusters",
+        "Actuaries and pricing analysts",
+        "Product managers and portfolio leads",
+        "Broking and distribution leads",
+        "Risk and compliance officers"
+      ],
+      "candidate_signals": [
+        "Line-of-business rubric per requisition",
+        "Channel and distribution captured",
+        "Regulator exposure evidenced"
+      ],
+      "skills": [
+        "Underwriting",
+        "Reserving",
+        "Pricing",
+        "Reinsurance",
+        "Claims adjudication",
+        "Risk modelling",
+        "Capital modelling",
+        "Regulatory reporting"
+      ],
+      "tools": [
+        "Guidewire",
+        "Duck Creek",
+        "Sapiens",
+        "SAS",
+        "R",
+        "Python",
+        "Emblem / Radar",
+        "Igloo"
+      ],
+      "licenses_or_certifications": [
+        "ACAS / FCAS",
+        "FIA / FFA",
+        "IFoA fellowship",
+        "CII (ACII / FCII)",
+        "CPCU",
+        "AICPCU"
+      ],
+      "related_industries": [
+        "finance",
+        "accounting",
+        "healthcare"
+      ],
+      "relevant_resources": [
+        {
+          "title": "How TaaSFlow works",
+          "to": "/how-it-works"
+        },
+        {
+          "title": "Pricing",
+          "to": "/pricing"
+        },
+        {
+          "title": "Submit a role",
+          "to": "/intake"
+        }
+      ],
+      "primary_audience": "Hiring leaders and Heads of Talent",
+      "cta_destination": "/intake"
+    },
+    {
+      "index": 8,
+      "id": "IND-08",
+      "name": "Private Equity",
+      "slug": "private-equity",
+      "category": "Financial Services",
+      "aliases": [
+        "PE",
+        "Buy-side",
+        "Portfolio Operations",
+        "Value Creation"
+      ],
+      "previous_slugs": [],
+      "redirect_required": [],
+      "source_file": "src/content/industries-v2.ts",
+      "source_content_status": "present",
+      "destination_status": "live",
+      "example_roles": [
+        "Investment associates and VPs",
+        "Investment principals and partners",
+        "Portfolio operations leads",
+        "Value creation and transformation leads",
+        "Portfolio CFOs and finance directors",
+        "Portfolio CEOs and general managers"
+      ],
+      "candidate_signals": [
+        "Deal and sector evidence extracted",
+        "Rubric per fund or portfolio mandate",
+        "Private workspace per requisition"
+      ],
+      "skills": [],
+      "tools": [],
+      "licenses_or_certifications": [],
+      "related_industries": [],
+      "relevant_resources": [
+        {
+          "title": "How TaaSFlow works",
+          "to": "/how-it-works"
+        },
+        {
+          "title": "Pricing",
+          "to": "/pricing"
+        },
+        {
+          "title": "Submit a role",
+          "to": "/intake"
+        }
+      ],
+      "primary_audience": "Hiring leaders and Heads of Talent",
+      "cta_destination": "/intake"
+    },
+    {
+      "index": 9,
+      "id": "IND-09",
+      "name": "Healthcare",
+      "slug": "healthcare",
+      "category": "Health & Life Sciences",
+      "aliases": [
+        "Health",
+        "Clinical",
+        "Healthtech",
+        "Payer",
+        "Provider",
+        "MedTech"
+      ],
+      "previous_slugs": [],
+      "redirect_required": [],
+      "source_file": "src/content/industries-v2.ts",
+      "source_content_status": "present",
+      "destination_status": "live",
+      "example_roles": [
+        "Physicians and specialists",
+        "Nurses and advanced practice providers",
+        "Healthcare operations leaders",
+        "Practice and clinic managers",
+        "Revenue cycle and billing specialists",
+        "Health informatics and EHR analysts"
+      ],
+      "candidate_signals": [
+        "Setting and specialty rubric per role",
+        "Systems, workflow and licensure captured in intake",
+        "Human review before publication"
+      ],
+      "skills": [
+        "Clinical documentation",
+        "Care coordination",
+        "Revenue cycle management",
+        "Prior authorisation",
+        "Value-based care",
+        "Health economics",
+        "Clinical trial design",
+        "Regulatory affairs"
+      ],
+      "tools": [
+        "Epic",
+        "Cerner",
+        "Meditech",
+        "athenahealth",
+        "NextGen",
+        "Allscripts",
+        "NHS-Spine",
+        "Snowflake for health data"
+      ],
+      "licenses_or_certifications": [
+        "RN / NP / PA licensure",
+        "MD / DO",
+        "PMP for programme roles",
+        "CPHIMS",
+        "RHIA / RHIT",
+        "Epic / Cerner certifications"
+      ],
+      "related_industries": [
+        "insurance",
+        "public-sector",
+        "tech"
+      ],
+      "relevant_resources": [
+        {
+          "title": "How TaaSFlow works",
+          "to": "/how-it-works"
+        },
+        {
+          "title": "Pricing",
+          "to": "/pricing"
+        },
+        {
+          "title": "Submit a role",
+          "to": "/intake"
+        }
+      ],
+      "primary_audience": "Hiring leaders and Heads of Talent",
+      "cta_destination": "/intake"
+    },
+    {
+      "index": 10,
+      "id": "IND-10",
+      "name": "Legal",
+      "slug": "legal",
+      "category": "Professional Services",
+      "aliases": [
+        "Law",
+        "Attorneys",
+        "Solicitors",
+        "Counsel",
+        "In-house Legal",
+        "Legal Ops"
+      ],
+      "previous_slugs": [],
+      "redirect_required": [],
+      "source_file": "src/content/industries-v2.ts",
+      "source_content_status": "present",
+      "destination_status": "live",
+      "example_roles": [
+        "General counsel and DGCs",
+        "Corporate & commercial lawyers",
+        "M&A and private equity counsel",
+        "Litigation and disputes",
+        "Regulatory and compliance counsel",
+        "Employment lawyers"
+      ],
+      "candidate_signals": [
+        "Practice-area rubric per requisition",
+        "Jurisdiction and qualification as filters",
+        "Evidence traced to the CV"
+      ],
+      "skills": [
+        "Contract drafting",
+        "Deal execution",
+        "Dispute strategy",
+        "Regulatory advocacy",
+        "Board advisory",
+        "Data protection",
+        "Cross-border transactions",
+        "Employment advisory"
+      ],
+      "tools": [
+        "iManage",
+        "NetDocuments",
+        "HighQ",
+        "Ironclad",
+        "DocuSign CLM",
+        "Litera",
+        "Clio",
+        "Thomson Reuters"
+      ],
+      "licenses_or_certifications": [
+        "Bar admissions (state / country-specific)",
+        "Solicitors Regulation Authority (SRA) admission",
+        "Practising certificate",
+        "CIPP/E, CIPP/US (privacy)"
+      ],
+      "related_industries": [
+        "finance",
+        "public-sector",
+        "consulting"
+      ],
+      "relevant_resources": [
+        {
+          "title": "How TaaSFlow works",
+          "to": "/how-it-works"
+        },
+        {
+          "title": "Pricing",
+          "to": "/pricing"
+        },
+        {
+          "title": "Submit a role",
+          "to": "/intake"
+        }
+      ],
+      "primary_audience": "Hiring leaders and Heads of Talent",
+      "cta_destination": "/intake"
+    },
+    {
+      "index": 11,
+      "id": "IND-11",
+      "name": "Public Sector",
+      "slug": "public-sector",
+      "category": "Public & Social Impact",
+      "aliases": [
+        "Government",
+        "GovTech",
+        "Civil Service",
+        "Public Services",
+        "Defence",
+        "Municipal"
+      ],
+      "previous_slugs": [],
+      "redirect_required": [],
+      "source_file": "src/content/industries-v2.ts",
+      "source_content_status": "present",
+      "destination_status": "live",
+      "example_roles": [
+        "Programme and project managers",
+        "Policy analysts and advisors",
+        "Delivery managers",
+        "Service designers",
+        "Public-sector product managers",
+        "Data and analytics specialists"
+      ],
+      "candidate_signals": [
+        "Programme and outcome evidence",
+        "Delivery model and procurement captured in intake",
+        "Human review before publication"
+      ],
+      "skills": [
+        "Programme management",
+        "Policy analysis",
+        "Service design",
+        "Agile in government",
+        "Procurement",
+        "Stakeholder engagement",
+        "Public consultation",
+        "Impact assessment"
+      ],
+      "tools": [
+        "Jira",
+        "Confluence",
+        "Miro",
+        "Government Digital Service patterns",
+        "GSA / GovTech tooling",
+        "Salesforce Public Sector",
+        "ServiceNow Public Sector"
+      ],
+      "licenses_or_certifications": [
+        "PRINCE2",
+        "MSP",
+        "PMP",
+        "APM",
+        "Agile PM",
+        "Government-specific programme frameworks"
+      ],
+      "related_industries": [
+        "healthcare",
+        "consulting",
+        "nonprofit"
+      ],
+      "relevant_resources": [
+        {
+          "title": "How TaaSFlow works",
+          "to": "/how-it-works"
+        },
+        {
+          "title": "Pricing",
+          "to": "/pricing"
+        },
+        {
+          "title": "Submit a role",
+          "to": "/intake"
+        }
+      ],
+      "primary_audience": "Hiring leaders and Heads of Talent",
+      "cta_destination": "/intake"
+    },
+    {
+      "index": 12,
+      "id": "IND-12",
+      "name": "Nonprofit",
+      "slug": "nonprofit",
+      "category": "Public & Social Impact",
+      "aliases": [
+        "NGO",
+        "Foundation",
+        "Charity",
+        "Third Sector"
+      ],
+      "previous_slugs": [
+        "non-profit"
+      ],
+      "redirect_required": [
+        {
+          "from": "/industries/non-profit",
+          "to": "/industries/nonprofit",
+          "status": 301
+        }
+      ],
+      "source_file": "src/content/industries-v2.ts",
+      "source_content_status": "present",
+      "destination_status": "live",
+      "example_roles": [
+        "Executive directors and COOs",
+        "Programme directors and managers",
+        "Development and fundraising leads",
+        "Grant writers and grants managers",
+        "Communications and community leads",
+        "Operations and finance managers"
+      ],
+      "candidate_signals": [
+        "Programme and outcome evidence from the CV",
+        "Funding and development context captured",
+        "Rubric per role and level"
+      ],
+      "skills": [],
+      "tools": [],
+      "licenses_or_certifications": [],
+      "related_industries": [],
+      "relevant_resources": [
+        {
+          "title": "How TaaSFlow works",
+          "to": "/how-it-works"
+        },
+        {
+          "title": "Pricing",
+          "to": "/pricing"
+        },
+        {
+          "title": "Submit a role",
+          "to": "/intake"
+        }
+      ],
+      "primary_audience": "Hiring leaders and Heads of Talent",
+      "cta_destination": "/intake"
+    },
+    {
+      "index": 13,
+      "id": "IND-13",
+      "name": "Sales",
+      "slug": "sales",
+      "category": "Go-to-Market",
+      "aliases": [
+        "Revenue",
+        "AE",
+        "SDR",
+        "BDR",
+        "Enterprise Sales",
+        "Sales Leadership",
+        "RevOps"
+      ],
+      "previous_slugs": [],
+      "redirect_required": [],
+      "source_file": "src/content/industries-v2.ts",
+      "source_content_status": "present",
+      "destination_status": "live",
+      "example_roles": [
+        "SDRs and BDRs",
+        "Account executives (SMB, mid-market, enterprise)",
+        "Account managers and CSMs",
+        "Sales engineers and solutions consultants",
+        "Sales managers and directors",
+        "VPs of sales and CROs"
+      ],
+      "candidate_signals": [
+        "Motion, deal size and cycle captured",
+        "Quota and attainment evidence from the CV",
+        "ICP and segment as first-class filters"
+      ],
+      "skills": [
+        "Discovery",
+        "MEDDIC / MEDDPICC",
+        "Value selling",
+        "Enterprise deal architecture",
+        "Forecasting",
+        "Territory design",
+        "Comp design",
+        "Pipeline management"
+      ],
+      "tools": [
+        "Salesforce",
+        "HubSpot",
+        "Outreach",
+        "Salesloft",
+        "Gong",
+        "Chorus",
+        "Clari",
+        "6sense"
+      ],
+      "licenses_or_certifications": [
+        "MEDDIC / MEDDPICC accreditation",
+        "Challenger training",
+        "Winning by Design",
+        "Sandler"
+      ],
+      "related_industries": [
+        "saas",
+        "marketing",
+        "human-resources"
+      ],
+      "relevant_resources": [
+        {
+          "title": "How TaaSFlow works",
+          "to": "/how-it-works"
+        },
+        {
+          "title": "Pricing",
+          "to": "/pricing"
+        },
+        {
+          "title": "Submit a role",
+          "to": "/intake"
+        }
+      ],
+      "primary_audience": "Hiring leaders and Heads of Talent",
+      "cta_destination": "/intake"
+    },
+    {
+      "index": 14,
+      "id": "IND-14",
+      "name": "Marketing & Advertising",
+      "slug": "marketing",
+      "category": "Go-to-Market",
+      "aliases": [
+        "Marketing",
+        "Advertising",
+        "Demand Gen",
+        "Brand",
+        "Content",
+        "Lifecycle",
+        "Performance Marketing"
+      ],
+      "previous_slugs": [],
+      "redirect_required": [],
+      "source_file": "src/content/industries-v2.ts",
+      "source_content_status": "present",
+      "destination_status": "live",
+      "example_roles": [
+        "Demand generation managers",
+        "Product marketing managers",
+        "Content and editorial leads",
+        "Brand and creative directors",
+        "Lifecycle and CRM marketers",
+        "SEO and organic growth leads"
+      ],
+      "candidate_signals": [
+        "Channel ownership captured per role",
+        "Funnel-stage rubric per requisition",
+        "Audience and motion as first-class filters"
+      ],
+      "skills": [
+        "Demand generation",
+        "Performance marketing",
+        "SEO",
+        "Content strategy",
+        "Lifecycle marketing",
+        "Marketing analytics",
+        "Brand strategy",
+        "Media planning"
+      ],
+      "tools": [
+        "HubSpot",
+        "Marketo",
+        "Pardot",
+        "Salesforce",
+        "Iterable",
+        "Braze",
+        "Customer.io",
+        "Google Ads"
+      ],
+      "licenses_or_certifications": [
+        "Google Ads certifications",
+        "Meta Blueprint",
+        "HubSpot certifications",
+        "Marketo Certified Expert",
+        "IAB Digital Marketing"
+      ],
+      "related_industries": [
+        "sales",
+        "media",
+        "saas"
+      ],
+      "relevant_resources": [
+        {
+          "title": "How TaaSFlow works",
+          "to": "/how-it-works"
+        },
+        {
+          "title": "Pricing",
+          "to": "/pricing"
+        },
+        {
+          "title": "Submit a role",
+          "to": "/intake"
+        }
+      ],
+      "primary_audience": "Hiring leaders and Heads of Talent",
+      "cta_destination": "/intake"
+    },
+    {
+      "index": 15,
+      "id": "IND-15",
+      "name": "Media",
+      "slug": "media",
+      "category": "Consumer & Retail",
+      "aliases": [
+        "Publishing",
+        "Broadcast",
+        "Streaming",
+        "Editorial",
+        "Production",
+        "Digital Media"
+      ],
+      "previous_slugs": [],
+      "redirect_required": [],
+      "source_file": "src/content/industries-v2.ts",
+      "source_content_status": "present",
+      "destination_status": "live",
+      "example_roles": [
+        "Editors and editorial leads",
+        "Producers and executive producers",
+        "Video and audio production leads",
+        "Social and community leads",
+        "Distribution and platform managers",
+        "Ad sales and monetisation leads"
+      ],
+      "candidate_signals": [
+        "Format and craft rubric per role",
+        "Revenue model captured in intake",
+        "Distribution surface as a first-class filter"
+      ],
+      "skills": [
+        "Editing",
+        "Reporting",
+        "Video production",
+        "Audio production",
+        "Audience development",
+        "Rights & clearances",
+        "Podcast production",
+        "Ad sales strategy"
+      ],
+      "tools": [
+        "Adobe Creative Cloud",
+        "Avid",
+        "Final Cut",
+        "Frame.io",
+        "Airtable",
+        "Slack + newsroom CMSes",
+        "Google Analytics",
+        "Chartable / Podtrac"
+      ],
+      "licenses_or_certifications": [
+        "Journalism qualifications where applicable",
+        "Broadcast union credentials where applicable"
+      ],
+      "related_industries": [
+        "marketing",
+        "ecommerce",
+        "tech"
+      ],
+      "relevant_resources": [
+        {
+          "title": "How TaaSFlow works",
+          "to": "/how-it-works"
+        },
+        {
+          "title": "Pricing",
+          "to": "/pricing"
+        },
+        {
+          "title": "Submit a role",
+          "to": "/intake"
+        }
+      ],
+      "primary_audience": "Hiring leaders and Heads of Talent",
+      "cta_destination": "/intake"
+    },
+    {
+      "index": 16,
+      "id": "IND-16",
+      "name": "Human Resources",
+      "slug": "human-resources",
+      "category": "Professional Services",
+      "aliases": [
+        "HR",
+        "People Ops",
+        "Talent Acquisition",
+        "HRBP",
+        "L&D",
+        "Compensation and Benefits"
+      ],
+      "previous_slugs": [],
+      "redirect_required": [],
+      "source_file": "src/content/industries-v2.ts",
+      "source_content_status": "present",
+      "destination_status": "live",
+      "example_roles": [
+        "Recruiters and talent leads",
+        "HR business partners",
+        "People operations specialists",
+        "Compensation and benefits specialists",
+        "Learning and development leads",
+        "DEI and culture specialists"
+      ],
+      "candidate_signals": [
+        "Function and scope rubric per role",
+        "Stage and headcount captured in intake",
+        "Systems and operating model as filters"
+      ],
+      "skills": [
+        "Recruiting",
+        "Sourcing",
+        "Total rewards design",
+        "Performance management",
+        "Employee relations",
+        "Talent development",
+        "DEI programme design",
+        "HR analytics"
+      ],
+      "tools": [
+        "Workday",
+        "SAP SuccessFactors",
+        "BambooHR",
+        "Personio",
+        "Rippling",
+        "Greenhouse",
+        "Lever",
+        "Ashby"
+      ],
+      "licenses_or_certifications": [
+        "SHRM-CP / SHRM-SCP",
+        "CIPD",
+        "GPHR",
+        "AIRS certifications",
+        "Reforge People programs"
+      ],
+      "related_industries": [
+        "staffing-agencies",
+        "consulting",
+        "tech"
+      ],
+      "relevant_resources": [
+        {
+          "title": "How TaaSFlow works",
+          "to": "/how-it-works"
+        },
+        {
+          "title": "Pricing",
+          "to": "/pricing"
+        },
+        {
+          "title": "Submit a role",
+          "to": "/intake"
+        }
+      ],
+      "primary_audience": "Hiring leaders and Heads of Talent",
+      "cta_destination": "/intake"
+    },
+    {
+      "index": 17,
+      "id": "IND-17",
+      "name": "Staffing Agencies",
+      "slug": "staffing-agencies",
+      "category": "Professional Services",
+      "aliases": [
+        "Recruitment Agencies",
+        "Staffing Firms",
+        "RPO",
+        "Search Firms",
+        "MSP"
+      ],
+      "previous_slugs": [],
+      "redirect_required": [],
+      "source_file": "src/content/industries-v2.ts",
+      "source_content_status": "present",
+      "destination_status": "live",
+      "example_roles": [
+        "Contingent and retained desks",
+        "Executive search practices",
+        "Perm recruitment teams",
+        "Contract and interim desks",
+        "RPO delivery pods",
+        "Vertical-specialist boutiques"
+      ],
+      "candidate_signals": [
+        "One workspace per client mandate",
+        "Rubric per requisition, applied consistently",
+        "Human review before candidates go to client"
+      ],
+      "skills": [
+        "Client management",
+        "Requisition intake",
+        "Sourcing at scale",
+        "Candidate assessment",
+        "Offer negotiation",
+        "Contract lifecycle",
+        "Delivery leadership"
+      ],
+      "tools": [
+        "Bullhorn",
+        "Vincere",
+        "Salesforce (Talent)",
+        "Loxo",
+        "Greenhouse",
+        "LinkedIn Recruiter",
+        "SourceWhale",
+        "hireEZ"
+      ],
+      "licenses_or_certifications": [
+        "AIRS certifications",
+        "REC / APSCo qualifications (UK)",
+        "NPAworldwide"
+      ],
+      "related_industries": [
+        "human-resources",
+        "consulting",
+        "tech"
+      ],
+      "relevant_resources": [
+        {
+          "title": "How TaaSFlow works",
+          "to": "/how-it-works"
+        },
+        {
+          "title": "Pricing",
+          "to": "/pricing"
+        },
+        {
+          "title": "Submit a role",
+          "to": "/intake"
+        }
+      ],
+      "primary_audience": "Hiring leaders and Heads of Talent",
+      "cta_destination": "/intake"
+    },
+    {
+      "index": 18,
+      "id": "IND-18",
+      "name": "Consulting",
+      "slug": "consulting",
+      "category": "Professional Services",
+      "aliases": [
+        "Management Consulting",
+        "Strategy",
+        "Transformation",
+        "Implementation",
+        "Advisory"
+      ],
+      "previous_slugs": [],
+      "redirect_required": [],
+      "source_file": "src/content/industries-v2.ts",
+      "source_content_status": "present",
+      "destination_status": "live",
+      "example_roles": [
+        "Management consultants",
+        "Strategy advisors",
+        "Operations consultants",
+        "Technology consultants",
+        "Change & transformation leads",
+        "Project & programme managers"
+      ],
+      "candidate_signals": [
+        "Rubric per practice and level",
+        "Outcome evidence from the CV",
+        "Human review before publication"
+      ],
+      "skills": [
+        "Case structuring",
+        "Executive communication",
+        "Financial modelling",
+        "Change management",
+        "Programme management",
+        "Facilitation",
+        "Data-driven decision support"
+      ],
+      "tools": [
+        "Excel / PowerPoint at partner standard",
+        "Alteryx",
+        "Tableau",
+        "Power BI",
+        "Miro",
+        "Jira",
+        "Asana",
+        "ERP and CRM platforms in scope"
+      ],
+      "licenses_or_certifications": [
+        "MBA (top-tier where relevant)",
+        "PMP",
+        "PRINCE2",
+        "Scaled Agile (SAFe)",
+        "Six Sigma Green / Black Belt"
+      ],
+      "related_industries": [
+        "human-resources",
+        "finance",
+        "tech"
+      ],
+      "relevant_resources": [
+        {
+          "title": "How TaaSFlow works",
+          "to": "/how-it-works"
+        },
+        {
+          "title": "Pricing",
+          "to": "/pricing"
+        },
+        {
+          "title": "Submit a role",
+          "to": "/intake"
+        }
+      ],
+      "primary_audience": "Hiring leaders and Heads of Talent",
+      "cta_destination": "/intake"
+    },
+    {
+      "index": 19,
+      "id": "IND-19",
+      "name": "Construction",
+      "slug": "construction",
+      "category": "Built Environment",
+      "aliases": [
+        "Contractors",
+        "Subcontractors",
+        "Site Management",
+        "Civil Engineering",
+        "Building"
+      ],
+      "previous_slugs": [],
+      "redirect_required": [],
+      "source_file": "src/content/industries-v2.ts",
+      "source_content_status": "present",
+      "destination_status": "live",
+      "example_roles": [
+        "Project managers and senior PMs",
+        "Superintendents and general superintendents",
+        "Preconstruction managers and estimators",
+        "Project engineers",
+        "Field engineers",
+        "Safety managers"
+      ],
+      "candidate_signals": [
+        "Project-type and delivery-method rubric",
+        "Trade and scope captured in intake",
+        "Location dependency captured"
+      ],
+      "skills": [
+        "Project planning",
+        "Scheduling (P6)",
+        "Cost control",
+        "Contract administration",
+        "Coordination",
+        "MEP knowledge",
+        "Constructability review"
+      ],
+      "tools": [
+        "Procore",
+        "Autodesk Construction Cloud",
+        "Primavera P6",
+        "Microsoft Project",
+        "Bluebeam",
+        "PlanGrid",
+        "Revit",
+        "SAP for construction"
+      ],
+      "licenses_or_certifications": [
+        "OSHA 30 (US)",
+        "SMSTS / SSSTS (UK)",
+        "CSCS card (UK)",
+        "PMP",
+        "LEED AP",
+        "PE licensure (US)"
+      ],
+      "related_industries": [
+        "real-estate",
+        "manufacturing",
+        "public-sector"
+      ],
+      "relevant_resources": [
+        {
+          "title": "How TaaSFlow works",
+          "to": "/how-it-works"
+        },
+        {
+          "title": "Pricing",
+          "to": "/pricing"
+        },
+        {
+          "title": "Submit a role",
+          "to": "/intake"
+        }
+      ],
+      "primary_audience": "Hiring leaders and Heads of Talent",
+      "cta_destination": "/intake"
+    },
+    {
+      "index": 20,
+      "id": "IND-20",
+      "name": "Real Estate",
+      "slug": "real-estate",
+      "category": "Built Environment",
+      "aliases": [
+        "Property",
+        "CRE",
+        "Commercial Real Estate",
+        "Development",
+        "Asset Management",
+        "Brokerage"
+      ],
+      "previous_slugs": [],
+      "redirect_required": [],
+      "source_file": "src/content/industries-v2.ts",
+      "source_content_status": "present",
+      "destination_status": "live",
+      "example_roles": [
+        "Acquisitions and investments",
+        "Development and construction management",
+        "Asset managers",
+        "Property and facilities managers",
+        "Portfolio finance and analysts",
+        "Leasing and brokerage"
+      ],
+      "candidate_signals": [
+        "Asset-class rubric per requisition",
+        "Lifecycle stage captured in intake",
+        "Market coverage as a first-class filter"
+      ],
+      "skills": [
+        "Underwriting",
+        "Discounted cash flow modelling",
+        "Argus modelling",
+        "Entitlements",
+        "Leasing strategy",
+        "Asset strategy",
+        "Debt structuring",
+        "Portfolio analytics"
+      ],
+      "tools": [
+        "Argus Enterprise",
+        "Yardi",
+        "MRI",
+        "RealPage",
+        "VTS",
+        "CoStar",
+        "REIS",
+        "Excel at underwriting-standard"
+      ],
+      "licenses_or_certifications": [
+        "CCIM",
+        "MAI",
+        "CFA (for capital markets)",
+        "RICS",
+        "LEED AP",
+        "BOMA-certified property manager"
+      ],
+      "related_industries": [
+        "construction",
+        "finance",
+        "hospitality"
+      ],
+      "relevant_resources": [
+        {
+          "title": "How TaaSFlow works",
+          "to": "/how-it-works"
+        },
+        {
+          "title": "Pricing",
+          "to": "/pricing"
+        },
+        {
+          "title": "Submit a role",
+          "to": "/intake"
+        }
+      ],
+      "primary_audience": "Hiring leaders and Heads of Talent",
+      "cta_destination": "/intake"
+    },
+    {
+      "index": 21,
+      "id": "IND-21",
+      "name": "Manufacturing",
+      "slug": "manufacturing",
+      "category": "Built Environment",
+      "aliases": [
+        "Industrial",
+        "Operations",
+        "Plant Management",
+        "Supply Chain",
+        "Quality",
+        "Maintenance"
+      ],
+      "previous_slugs": [],
+      "redirect_required": [],
+      "source_file": "src/content/industries-v2.ts",
+      "source_content_status": "not-in-source",
+      "destination_status": "live",
+      "example_roles": [
+        "Manufacturing and process engineers",
+        "Quality engineers and managers",
+        "Maintenance and reliability engineers",
+        "Supply planners and materials managers",
+        "Production supervisors and managers",
+        "Plant managers and directors"
+      ],
+      "candidate_signals": [
+        "Product and process rubric per role",
+        "Plant scale captured in intake",
+        "Methods and standards evidenced from the CV"
+      ],
+      "skills": [
+        "Lean manufacturing",
+        "Six Sigma",
+        "TPM",
+        "Kaizen",
+        "SPC",
+        "Root-cause analysis",
+        "APQP / PPAP",
+        "Value-stream mapping"
+      ],
+      "tools": [
+        "SAP PP/PM",
+        "Oracle EBS",
+        "Rockwell / Siemens PLCs",
+        "MES",
+        "PLM (Windchill, Teamcenter)",
+        "Minitab",
+        "AutoCAD",
+        "SolidWorks"
+      ],
+      "licenses_or_certifications": [
+        "Six Sigma Green / Black Belt",
+        "Lean certifications",
+        "CMRP",
+        "CQE / CQM (ASQ)",
+        "APICS CPIM / CSCP",
+        "ISO auditor qualifications"
+      ],
+      "related_industries": [
+        "logistics",
+        "construction",
+        "tech"
+      ],
+      "relevant_resources": [
+        {
+          "title": "How TaaSFlow works",
+          "to": "/how-it-works"
+        },
+        {
+          "title": "Pricing",
+          "to": "/pricing"
+        },
+        {
+          "title": "Submit a role",
+          "to": "/intake"
+        }
+      ],
+      "primary_audience": "Hiring leaders and Heads of Talent",
+      "cta_destination": "/intake"
+    },
+    {
+      "index": 22,
+      "id": "IND-22",
+      "name": "Hospitality and Events",
+      "slug": "hospitality",
+      "category": "Consumer & Retail",
+      "aliases": [
+        "Hotels",
+        "Restaurants",
+        "F&B",
+        "Events",
+        "Guest Experience",
+        "Hospitality Groups"
+      ],
+      "previous_slugs": [],
+      "redirect_required": [],
+      "source_file": "src/content/industries-v2.ts",
+      "source_content_status": "present",
+      "destination_status": "live",
+      "example_roles": [
+        "General managers and hotel managers",
+        "Executive chefs and F&B directors",
+        "Restaurant and outlet managers",
+        "Event producers and managers",
+        "Revenue and reservations leaders",
+        "Guest experience and brand leaders"
+      ],
+      "candidate_signals": [
+        "Property/format rubric per role",
+        "Service standards captured in intake",
+        "Multi-unit and seasonal scope evidenced"
+      ],
+      "skills": [
+        "Revenue management",
+        "F&B P&L",
+        "Menu engineering",
+        "Guest experience design",
+        "Event production",
+        "Venue operations",
+        "Staffing and rostering",
+        "Multi-unit leadership"
+      ],
+      "tools": [
+        "Opera PMS",
+        "Cloudbeds",
+        "Sabre",
+        "Toast",
+        "Lightspeed Restaurant",
+        "OpenTable",
+        "Cvent",
+        "Aventri"
+      ],
+      "licenses_or_certifications": [
+        "CHA (Certified Hotel Administrator)",
+        "CFBE (F&B)",
+        "CSEP (Special Events)",
+        "AH&LA certifications",
+        "WSET for wine roles"
+      ],
+      "related_industries": [
+        "real-estate",
+        "retail",
+        "media"
+      ],
+      "relevant_resources": [
+        {
+          "title": "How TaaSFlow works",
+          "to": "/how-it-works"
+        },
+        {
+          "title": "Pricing",
+          "to": "/pricing"
+        },
+        {
+          "title": "Submit a role",
+          "to": "/intake"
+        }
+      ],
+      "primary_audience": "Hiring leaders and Heads of Talent",
+      "cta_destination": "/intake"
+    },
+    {
+      "index": 23,
+      "id": "IND-23",
+      "name": "Retail",
+      "slug": "retail",
+      "category": "Consumer & Retail",
+      "aliases": [
+        "Store Operations",
+        "Merchandising",
+        "Buying",
+        "Retail Leadership",
+        "Omnichannel"
+      ],
+      "previous_slugs": [],
+      "redirect_required": [],
+      "source_file": "src/content/industries-v2.ts",
+      "source_content_status": "not-in-source",
+      "destination_status": "live",
+      "example_roles": [
+        "Store and district managers",
+        "Regional and VP store operations",
+        "Ecommerce managers and directors",
+        "Buyers and category directors",
+        "Merchandise planners and allocators",
+        "Retail marketing leaders"
+      ],
+      "candidate_signals": [
+        "Format and channel rubric per role",
+        "Category and footprint captured in intake",
+        "P&L ownership as first-class evidence"
+      ],
+      "skills": [
+        "Store operations",
+        "Merchandise planning",
+        "Assortment strategy",
+        "Buying and negotiation",
+        "Retail P&L",
+        "Loss prevention",
+        "Store labour design",
+        "Omnichannel operations"
+      ],
+      "tools": [
+        "Oracle Retail",
+        "SAP Retail",
+        "JDA / Blue Yonder",
+        "Shopify Plus",
+        "Salesforce Commerce Cloud",
+        "Adobe Commerce",
+        "Aptos",
+        "NetSuite Retail"
+      ],
+      "licenses_or_certifications": [
+        "NRF Retail Industry Fundamentals",
+        "APICS CPIM for retail supply",
+        "PMP for store development"
+      ],
+      "related_industries": [
+        "ecommerce",
+        "logistics",
+        "hospitality"
+      ],
+      "relevant_resources": [
+        {
+          "title": "How TaaSFlow works",
+          "to": "/how-it-works"
+        },
+        {
+          "title": "Pricing",
+          "to": "/pricing"
+        },
+        {
+          "title": "Submit a role",
+          "to": "/intake"
+        }
+      ],
+      "primary_audience": "Hiring leaders and Heads of Talent",
+      "cta_destination": "/intake"
+    },
+    {
+      "index": 24,
+      "id": "IND-24",
+      "name": "Logistics and Supply Chain",
+      "slug": "logistics",
+      "category": "Industrial & Energy",
+      "aliases": [
+        "Supply Chain",
+        "Warehousing",
+        "Transportation",
+        "3PL",
+        "Procurement",
+        "Distribution",
+        "Operations Leadership"
+      ],
+      "previous_slugs": [],
+      "redirect_required": [],
+      "source_file": "src/content/industries-v2.ts",
+      "source_content_status": "not-in-source",
+      "destination_status": "live",
+      "example_roles": [
+        "Warehouse and DC managers",
+        "Transportation and fleet managers",
+        "Procurement and category managers",
+        "Supply and demand planners",
+        "S&OP leaders",
+        "Distribution and network managers"
+      ],
+      "candidate_signals": [
+        "Function-specific rubric per role",
+        "Network scale and modal mix captured",
+        "Shipper vs 3PL tracks separated"
+      ],
+      "skills": [
+        "Network design",
+        "WMS operations",
+        "TMS operations",
+        "Category management",
+        "S&OP",
+        "Inventory optimisation",
+        "Freight negotiation",
+        "Last-mile design"
+      ],
+      "tools": [
+        "SAP",
+        "Oracle SCM",
+        "Manhattan Associates",
+        "Blue Yonder",
+        "Kinaxis RapidResponse",
+        "o9",
+        "Coupa",
+        "Ariba"
+      ],
+      "licenses_or_certifications": [
+        "APICS CSCP / CPIM",
+        "CSCMP SCPro",
+        "CIPS",
+        "Lean Six Sigma"
+      ],
+      "related_industries": [
+        "manufacturing",
+        "retail",
+        "ecommerce"
+      ],
+      "relevant_resources": [
+        {
+          "title": "How TaaSFlow works",
+          "to": "/how-it-works"
+        },
+        {
+          "title": "Pricing",
+          "to": "/pricing"
+        },
+        {
+          "title": "Submit a role",
+          "to": "/intake"
+        }
+      ],
+      "primary_audience": "Hiring leaders and Heads of Talent",
+      "cta_destination": "/intake"
+    },
+    {
+      "index": 25,
+      "id": "IND-25",
+      "name": "E-commerce",
+      "slug": "ecommerce",
+      "category": "Consumer & Retail",
+      "aliases": [
+        "DTC",
+        "Direct to Consumer",
+        "Online Retail",
+        "Marketplaces"
+      ],
+      "previous_slugs": [],
+      "redirect_required": [],
+      "source_file": "src/content/industries-v2.ts",
+      "source_content_status": "present",
+      "destination_status": "live",
+      "example_roles": [
+        "E-commerce managers and directors",
+        "Merchandising and buying leads",
+        "Growth and performance marketers",
+        "Retention and lifecycle marketers",
+        "Marketplace and channel managers",
+        "E-commerce operations and fulfilment"
+      ],
+      "candidate_signals": [
+        "Channel and marketplace rubric per role",
+        "Category and margin context captured",
+        "Funnel-stage ownership from the CV"
+      ],
+      "skills": [],
+      "tools": [],
+      "licenses_or_certifications": [],
+      "related_industries": [],
+      "relevant_resources": [
+        {
+          "title": "How TaaSFlow works",
+          "to": "/how-it-works"
+        },
+        {
+          "title": "Pricing",
+          "to": "/pricing"
+        },
+        {
+          "title": "Submit a role",
+          "to": "/intake"
+        }
+      ],
+      "primary_audience": "Hiring leaders and Heads of Talent",
+      "cta_destination": "/intake"
+    },
+    {
+      "index": 26,
+      "id": "IND-26",
+      "name": "AI & Machine Learning",
+      "slug": "ai-ml",
+      "category": "Technology & Engineering",
+      "aliases": [
+        "Machine Learning",
+        "Applied AI",
+        "Generative AI",
+        "MLOps",
+        "LLM"
+      ],
+      "previous_slugs": [],
+      "redirect_required": [],
+      "source_file": "src/content/industries-batch2.ts",
+      "source_content_status": "not-in-source",
+      "destination_status": "live",
+      "example_roles": [
+        "Applied research scientists",
+        "ML engineers (backend + serving)",
+        "MLOps and platform engineers",
+        "LLM and RAG engineers",
+        "AI product managers",
+        "Heads of AI / VP ML"
+      ],
+      "candidate_signals": [
+        "Track-specific rubric per role",
+        "Model-lifecycle evidence captured",
+        "LLM/GenAI specialisation surfaced"
+      ],
+      "skills": [
+        "Deep learning",
+        "Transformers",
+        "RAG",
+        "Fine-tuning",
+        "MLOps",
+        "Distributed training",
+        "Model serving",
+        "Evaluation design"
+      ],
+      "tools": [
+        "PyTorch",
+        "JAX",
+        "HuggingFace",
+        "LangChain",
+        "LlamaIndex",
+        "Ray",
+        "Weights & Biases",
+        "MLflow"
+      ],
+      "licenses_or_certifications": [],
+      "related_industries": [
+        "tech",
+        "data-analytics",
+        "fintech"
+      ],
+      "relevant_resources": [
+        {
+          "title": "How TaaSFlow works",
+          "to": "/how-it-works"
+        },
+        {
+          "title": "Pricing",
+          "to": "/pricing"
+        },
+        {
+          "title": "Submit a role",
+          "to": "/intake"
+        }
+      ],
+      "primary_audience": "Hiring leaders and Heads of Talent",
+      "cta_destination": "/intake"
+    },
+    {
+      "index": 27,
+      "id": "IND-27",
+      "name": "FinTech",
+      "slug": "fintech",
+      "category": "Financial Services",
+      "aliases": [
+        "Financial Technology",
+        "Payments",
+        "Digital Banking",
+        "Neobank",
+        "Embedded Finance"
+      ],
+      "previous_slugs": [],
+      "redirect_required": [],
+      "source_file": "src/content/industries-batch2.ts",
+      "source_content_status": "not-in-source",
+      "destination_status": "live",
+      "example_roles": [
+        "Payments product managers",
+        "Backend engineers (Go/Java/Kotlin)",
+        "Mobile engineers",
+        "Financial crime and MLRO leads",
+        "Fraud and risk analysts",
+        "BD and partnerships leads"
+      ],
+      "candidate_signals": [
+        "Regulatory-regime capture",
+        "Rail-specific rubric",
+        "Risk and compliance in the same workspace"
+      ],
+      "skills": [
+        "Payments",
+        "Card issuing",
+        "Open Banking",
+        "AML/KYC",
+        "Financial crime",
+        "PSD2",
+        "Dispute management"
+      ],
+      "tools": [
+        "Stripe",
+        "Adyen",
+        "Marqeta",
+        "Plaid",
+        "TrueLayer",
+        "Chainalysis",
+        "SumSub",
+        "Onfido"
+      ],
+      "licenses_or_certifications": [
+        "ICA / ACAMS",
+        "CFE",
+        "CISI"
+      ],
+      "related_industries": [
+        "finance",
+        "insurance",
+        "tech"
+      ],
+      "relevant_resources": [
+        {
+          "title": "How TaaSFlow works",
+          "to": "/how-it-works"
+        },
+        {
+          "title": "Pricing",
+          "to": "/pricing"
+        },
+        {
+          "title": "Submit a role",
+          "to": "/intake"
+        }
+      ],
+      "primary_audience": "Hiring leaders and Heads of Talent",
+      "cta_destination": "/intake"
+    },
+    {
+      "index": 28,
+      "id": "IND-28",
+      "name": "HealthTech",
+      "slug": "healthtech",
+      "category": "Health & Life Sciences",
+      "aliases": [
+        "Digital Health",
+        "Health IT",
+        "Telemedicine",
+        "MedTech Software"
+      ],
+      "previous_slugs": [],
+      "redirect_required": [],
+      "source_file": "src/content/industries-batch2.ts",
+      "source_content_status": "not-in-source",
+      "destination_status": "live",
+      "example_roles": [
+        "Digital-health PMs",
+        "FHIR/HL7 integration engineers",
+        "Clinical informaticists",
+        "Regulatory affairs leads",
+        "Clinical safety officers",
+        "VPs of engineering"
+      ],
+      "candidate_signals": [
+        "Regulatory-pathway rubric",
+        "Standards fluency from the CV",
+        "Clinical partnerships surfaced"
+      ],
+      "skills": [
+        "FHIR",
+        "HL7",
+        "SMART-on-FHIR",
+        "HIPAA",
+        "SaMD",
+        "Clinical workflow design"
+      ],
+      "tools": [
+        "Epic",
+        "Cerner (Oracle Health)",
+        "Meditech",
+        "Redox",
+        "1upHealth",
+        "Firely",
+        "Aidbox"
+      ],
+      "licenses_or_certifications": [
+        "HL7 / FHIR",
+        "CPHIMS",
+        "AHIMA"
+      ],
+      "related_industries": [
+        "healthcare",
+        "biotech",
+        "tech"
+      ],
+      "relevant_resources": [
+        {
+          "title": "How TaaSFlow works",
+          "to": "/how-it-works"
+        },
+        {
+          "title": "Pricing",
+          "to": "/pricing"
+        },
+        {
+          "title": "Submit a role",
+          "to": "/intake"
+        }
+      ],
+      "primary_audience": "Hiring leaders and Heads of Talent",
+      "cta_destination": "/intake"
+    },
+    {
+      "index": 29,
+      "id": "IND-29",
+      "name": "EdTech",
+      "slug": "edtech",
+      "category": "Public & Social Impact",
+      "aliases": [
+        "Education Technology",
+        "LMS",
+        "Learning Platforms",
+        "K-12",
+        "Higher Ed Software"
+      ],
+      "previous_slugs": [],
+      "redirect_required": [],
+      "source_file": "src/content/industries-batch2.ts",
+      "source_content_status": "not-in-source",
+      "destination_status": "live",
+      "example_roles": [
+        "EdTech product managers",
+        "Instructional designers",
+        "Learning scientists",
+        "District/higher-ed sales reps",
+        "Customer success managers"
+      ],
+      "candidate_signals": [
+        "Audience-specific rubric",
+        "Pedagogy portfolio surfaced",
+        "District/university procurement evidence"
+      ],
+      "skills": [
+        "Instructional design",
+        "Learning science",
+        "LMS integration (LTI)",
+        "Adaptive learning"
+      ],
+      "tools": [
+        "Canvas",
+        "Blackboard",
+        "Moodle",
+        "Schoology",
+        "PowerSchool",
+        "Clever",
+        "OneRoster"
+      ],
+      "licenses_or_certifications": [],
+      "related_industries": [
+        "education",
+        "tech"
+      ],
+      "relevant_resources": [
+        {
+          "title": "How TaaSFlow works",
+          "to": "/how-it-works"
+        },
+        {
+          "title": "Pricing",
+          "to": "/pricing"
+        },
+        {
+          "title": "Submit a role",
+          "to": "/intake"
+        }
+      ],
+      "primary_audience": "Hiring leaders and Heads of Talent",
+      "cta_destination": "/intake"
+    },
+    {
+      "index": 30,
+      "id": "IND-30",
+      "name": "PropTech",
+      "slug": "proptech",
+      "category": "Built Environment",
+      "aliases": [
+        "Property Technology",
+        "Real Estate Tech",
+        "ConTech"
+      ],
+      "previous_slugs": [],
+      "redirect_required": [],
+      "source_file": "src/content/industries-batch2.ts",
+      "source_content_status": "not-in-source",
+      "destination_status": "live",
+      "example_roles": [
+        "PropTech PMs",
+        "Full-stack engineers",
+        "GIS specialists",
+        "Broker-partnership leads",
+        "Underwriting analysts"
+      ],
+      "candidate_signals": [
+        "Segment-specific rubric",
+        "Data-partnership evidence",
+        "Field vs software separation"
+      ],
+      "skills": [
+        "GIS",
+        "Property valuation",
+        "IoT sensor integration",
+        "Real-estate data"
+      ],
+      "tools": [
+        "MLS",
+        "CoStar",
+        "Yardi",
+        "MRI Software",
+        "AppFolio",
+        "Procore"
+      ],
+      "licenses_or_certifications": [],
+      "related_industries": [
+        "real-estate",
+        "construction"
+      ],
+      "relevant_resources": [
+        {
+          "title": "How TaaSFlow works",
+          "to": "/how-it-works"
+        },
+        {
+          "title": "Pricing",
+          "to": "/pricing"
+        },
+        {
+          "title": "Submit a role",
+          "to": "/intake"
+        }
+      ],
+      "primary_audience": "Hiring leaders and Heads of Talent",
+      "cta_destination": "/intake"
+    },
+    {
+      "index": 31,
+      "id": "IND-31",
+      "name": "Gaming & Interactive",
+      "slug": "gaming",
+      "category": "Technology & Engineering",
+      "aliases": [
+        "Video Games",
+        "Interactive Media",
+        "eSports",
+        "Game Development"
+      ],
+      "previous_slugs": [],
+      "redirect_required": [],
+      "source_file": "src/content/industries-batch2.ts",
+      "source_content_status": "not-in-source",
+      "destination_status": "live",
+      "example_roles": [
+        "Gameplay/engine engineers",
+        "Technical and character artists",
+        "Systems and level designers",
+        "Live-ops leads",
+        "Producers"
+      ],
+      "candidate_signals": [
+        "Engine and platform captured",
+        "Genre-specific rubric",
+        "Live-service track separated"
+      ],
+      "skills": [
+        "Unreal",
+        "Unity",
+        "C++",
+        "C#",
+        "Graphics programming",
+        "Level design",
+        "Narrative design"
+      ],
+      "tools": [
+        "Unreal Engine",
+        "Unity",
+        "Perforce",
+        "Houdini",
+        "Maya",
+        "Substance",
+        "Jira/Hansoft"
+      ],
+      "licenses_or_certifications": [],
+      "related_industries": [
+        "media",
+        "tech"
+      ],
+      "relevant_resources": [
+        {
+          "title": "How TaaSFlow works",
+          "to": "/how-it-works"
+        },
+        {
+          "title": "Pricing",
+          "to": "/pricing"
+        },
+        {
+          "title": "Submit a role",
+          "to": "/intake"
+        }
+      ],
+      "primary_audience": "Hiring leaders and Heads of Talent",
+      "cta_destination": "/intake"
+    },
+    {
+      "index": 32,
+      "id": "IND-32",
+      "name": "Web3 & Blockchain",
+      "slug": "web3",
+      "category": "Technology & Engineering",
+      "aliases": [
+        "Crypto",
+        "DeFi",
+        "Smart Contracts",
+        "Layer 1",
+        "Layer 2",
+        "Web3"
+      ],
+      "previous_slugs": [],
+      "redirect_required": [],
+      "source_file": "src/content/industries-batch2.ts",
+      "source_content_status": "not-in-source",
+      "destination_status": "live",
+      "example_roles": [
+        "Solidity/Rust engineers",
+        "Protocol engineers",
+        "Smart-contract auditors",
+        "DeFi product managers",
+        "Exchange compliance leads"
+      ],
+      "candidate_signals": [
+        "Security-track rubric",
+        "Chain-specific scoring",
+        "Regulatory regime captured"
+      ],
+      "skills": [
+        "Solidity",
+        "Rust",
+        "Cryptography",
+        "Zero-knowledge proofs",
+        "Formal verification",
+        "MEV"
+      ],
+      "tools": [
+        "Foundry",
+        "Hardhat",
+        "Anchor",
+        "Halmos",
+        "Certora",
+        "Etherscan",
+        "Dune"
+      ],
+      "licenses_or_certifications": [],
+      "related_industries": [
+        "fintech",
+        "cybersecurity"
+      ],
+      "relevant_resources": [
+        {
+          "title": "How TaaSFlow works",
+          "to": "/how-it-works"
+        },
+        {
+          "title": "Pricing",
+          "to": "/pricing"
+        },
+        {
+          "title": "Submit a role",
+          "to": "/intake"
+        }
+      ],
+      "primary_audience": "Hiring leaders and Heads of Talent",
+      "cta_destination": "/intake"
+    },
+    {
+      "index": 33,
+      "id": "IND-33",
+      "name": "DevOps & Cloud Infrastructure",
+      "slug": "devops",
+      "category": "Technology & Engineering",
+      "aliases": [
+        "SRE",
+        "Platform Engineering",
+        "Cloud",
+        "Infrastructure",
+        "Kubernetes"
+      ],
+      "previous_slugs": [],
+      "redirect_required": [],
+      "source_file": "src/content/industries-batch2.ts",
+      "source_content_status": "not-in-source",
+      "destination_status": "live",
+      "example_roles": [
+        "SREs (all levels)",
+        "Platform engineers",
+        "Cloud infrastructure engineers",
+        "Kubernetes specialists",
+        "Cloud security engineers",
+        "Heads of platform"
+      ],
+      "candidate_signals": [
+        "Remit-specific rubric",
+        "Scale and blast radius captured",
+        "FinOps fluency surfaced"
+      ],
+      "skills": [
+        "Kubernetes",
+        "Terraform",
+        "Observability",
+        "IaC",
+        "FinOps",
+        "Incident response"
+      ],
+      "tools": [
+        "AWS",
+        "GCP",
+        "Azure",
+        "Kubernetes",
+        "Terraform",
+        "Pulumi",
+        "Datadog",
+        "Grafana"
+      ],
+      "licenses_or_certifications": [],
+      "related_industries": [
+        "tech",
+        "cybersecurity"
+      ],
+      "relevant_resources": [
+        {
+          "title": "How TaaSFlow works",
+          "to": "/how-it-works"
+        },
+        {
+          "title": "Pricing",
+          "to": "/pricing"
+        },
+        {
+          "title": "Submit a role",
+          "to": "/intake"
+        }
+      ],
+      "primary_audience": "Hiring leaders and Heads of Talent",
+      "cta_destination": "/intake"
+    },
+    {
+      "index": 34,
+      "id": "IND-34",
+      "name": "Investment Banking",
+      "slug": "investment-banking",
+      "category": "Financial Services",
+      "aliases": [
+        "IBD",
+        "M&A",
+        "Capital Markets",
+        "Corporate Finance Advisory"
+      ],
+      "previous_slugs": [],
+      "redirect_required": [],
+      "source_file": "src/content/industries-batch2.ts",
+      "source_content_status": "not-in-source",
+      "destination_status": "live",
+      "example_roles": [
+        "M&A analysts to MDs",
+        "ECM/DCM originators",
+        "LevFin professionals",
+        "Sector coverage bankers"
+      ],
+      "candidate_signals": [
+        "Deal-tape rubric",
+        "Product vs coverage separated",
+        "Boutique vs bulge captured"
+      ],
+      "skills": [
+        "M&A execution",
+        "LBO modelling",
+        "Debt structuring",
+        "Equity syndication",
+        "Pitching"
+      ],
+      "tools": [
+        "Excel (advanced)",
+        "PowerPoint",
+        "Bloomberg",
+        "Refinitiv",
+        "Capital IQ",
+        "Dealogic",
+        "FactSet"
+      ],
+      "licenses_or_certifications": [],
+      "related_industries": [
+        "finance",
+        "private-equity",
+        "wealth-management"
+      ],
+      "relevant_resources": [
+        {
+          "title": "How TaaSFlow works",
+          "to": "/how-it-works"
+        },
+        {
+          "title": "Pricing",
+          "to": "/pricing"
+        },
+        {
+          "title": "Submit a role",
+          "to": "/intake"
+        }
+      ],
+      "primary_audience": "Hiring leaders and Heads of Talent",
+      "cta_destination": "/intake"
+    },
+    {
+      "index": 35,
+      "id": "IND-35",
+      "name": "Wealth Management",
+      "slug": "wealth-management",
+      "category": "Financial Services",
+      "aliases": [
+        "Private Banking",
+        "Family Office",
+        "RIA",
+        "Financial Planning"
+      ],
+      "previous_slugs": [],
+      "redirect_required": [],
+      "source_file": "src/content/industries-batch2.ts",
+      "source_content_status": "not-in-source",
+      "destination_status": "live",
+      "example_roles": [
+        "Private bankers",
+        "Financial advisors (RIA/broker-dealer)",
+        "Portfolio managers",
+        "Family-office CIOs"
+      ],
+      "candidate_signals": [
+        "AUM and book context",
+        "Licensing captured",
+        "Segment-specific rubric"
+      ],
+      "skills": [
+        "Financial planning",
+        "Portfolio construction",
+        "Trust & estate",
+        "Alternative investments"
+      ],
+      "tools": [
+        "Salesforce Financial Services Cloud",
+        "eMoney",
+        "Envestnet",
+        "Addepar",
+        "Orion"
+      ],
+      "licenses_or_certifications": [
+        "CFP",
+        "CFA",
+        "CISI",
+        "Series 7/66"
+      ],
+      "related_industries": [
+        "finance",
+        "investment-banking"
+      ],
+      "relevant_resources": [
+        {
+          "title": "How TaaSFlow works",
+          "to": "/how-it-works"
+        },
+        {
+          "title": "Pricing",
+          "to": "/pricing"
+        },
+        {
+          "title": "Submit a role",
+          "to": "/intake"
+        }
+      ],
+      "primary_audience": "Hiring leaders and Heads of Talent",
+      "cta_destination": "/intake"
+    },
+    {
+      "index": 36,
+      "id": "IND-36",
+      "name": "Venture Capital",
+      "slug": "venture-capital",
+      "category": "Financial Services",
+      "aliases": [
+        "VC",
+        "Growth Equity",
+        "Seed",
+        "Series A"
+      ],
+      "previous_slugs": [],
+      "redirect_required": [],
+      "source_file": "src/content/industries-batch2.ts",
+      "source_content_status": "not-in-source",
+      "destination_status": "live",
+      "example_roles": [
+        "Investment associates to partners",
+        "Platform and portfolio talent leads",
+        "Fund controllers",
+        "IR / LP-relations professionals"
+      ],
+      "candidate_signals": [
+        "Thesis fit captured",
+        "Track-record signal from CV",
+        "Function-specific rubric"
+      ],
+      "skills": [
+        "Investment memos",
+        "Board governance",
+        "Portfolio support",
+        "LP fundraising"
+      ],
+      "tools": [
+        "Affinity",
+        "PitchBook",
+        "Crunchbase",
+        "Carta",
+        "Airtable"
+      ],
+      "licenses_or_certifications": [],
+      "related_industries": [
+        "private-equity",
+        "investment-banking"
+      ],
+      "relevant_resources": [
+        {
+          "title": "How TaaSFlow works",
+          "to": "/how-it-works"
+        },
+        {
+          "title": "Pricing",
+          "to": "/pricing"
+        },
+        {
+          "title": "Submit a role",
+          "to": "/intake"
+        }
+      ],
+      "primary_audience": "Hiring leaders and Heads of Talent",
+      "cta_destination": "/intake"
+    },
+    {
+      "index": 37,
+      "id": "IND-37",
+      "name": "Architecture & Design",
+      "slug": "architecture",
+      "category": "Built Environment",
+      "aliases": [
+        "Architects",
+        "Interior Design",
+        "Urban Design"
+      ],
+      "previous_slugs": [],
+      "redirect_required": [],
+      "source_file": "src/content/industries-batch2.ts",
+      "source_content_status": "not-in-source",
+      "destination_status": "live",
+      "example_roles": [
+        "Architects (Part 1/2/3)",
+        "Interior designers",
+        "BIM specialists",
+        "Project architects",
+        "Studio directors"
+      ],
+      "candidate_signals": [
+        "Portfolio-based rubric",
+        "Stage specialisation captured",
+        "Registration status verified"
+      ],
+      "skills": [
+        "Concept design",
+        "Technical detailing",
+        "BIM (Revit)",
+        "Planning & consent",
+        "Contract administration"
+      ],
+      "tools": [
+        "Revit",
+        "AutoCAD",
+        "Rhino/Grasshopper",
+        "SketchUp",
+        "V-Ray",
+        "Enscape",
+        "Bluebeam"
+      ],
+      "licenses_or_certifications": [
+        "ARB / RIBA",
+        "AIA",
+        "LEED / BREEAM / WELL"
+      ],
+      "related_industries": [
+        "construction",
+        "real-estate",
+        "proptech"
+      ],
+      "relevant_resources": [
+        {
+          "title": "How TaaSFlow works",
+          "to": "/how-it-works"
+        },
+        {
+          "title": "Pricing",
+          "to": "/pricing"
+        },
+        {
+          "title": "Submit a role",
+          "to": "/intake"
+        }
+      ],
+      "primary_audience": "Hiring leaders and Heads of Talent",
+      "cta_destination": "/intake"
+    },
+    {
+      "index": 38,
+      "id": "IND-38",
+      "name": "Pharmaceuticals",
+      "slug": "pharmaceuticals",
+      "category": "Health & Life Sciences",
+      "aliases": [
+        "Pharma",
+        "Drug Development",
+        "Big Pharma"
+      ],
+      "previous_slugs": [],
+      "redirect_required": [],
+      "source_file": "src/content/industries-batch2.ts",
+      "source_content_status": "not-in-source",
+      "destination_status": "live",
+      "example_roles": [
+        "Clinical scientists and study directors",
+        "MSLs",
+        "Regulatory affairs professionals",
+        "Market-access leads",
+        "R&D scientists"
+      ],
+      "candidate_signals": [
+        "TA and phase rubric",
+        "Submission history captured",
+        "GxP evidence from CV"
+      ],
+      "skills": [
+        "Clinical development",
+        "Regulatory strategy",
+        "Medical writing",
+        "Biostatistics"
+      ],
+      "tools": [
+        "Veeva Vault",
+        "Medidata Rave",
+        "Oracle Argus",
+        "SAS",
+        "Trial Master File systems"
+      ],
+      "licenses_or_certifications": [
+        "RAC",
+        "PharmD / PhD / MD",
+        "GCP training"
+      ],
+      "related_industries": [
+        "biotech",
+        "medical-devices",
+        "healthcare"
+      ],
+      "relevant_resources": [
+        {
+          "title": "How TaaSFlow works",
+          "to": "/how-it-works"
+        },
+        {
+          "title": "Pricing",
+          "to": "/pricing"
+        },
+        {
+          "title": "Submit a role",
+          "to": "/intake"
+        }
+      ],
+      "primary_audience": "Hiring leaders and Heads of Talent",
+      "cta_destination": "/intake"
+    },
+    {
+      "index": 39,
+      "id": "IND-39",
+      "name": "Biotechnology",
+      "slug": "biotech",
+      "category": "Health & Life Sciences",
+      "aliases": [
+        "Bio",
+        "Life Sciences",
+        "Cell & Gene Therapy",
+        "Synthetic Biology"
+      ],
+      "previous_slugs": [],
+      "redirect_required": [],
+      "source_file": "src/content/industries-batch2.ts",
+      "source_content_status": "not-in-source",
+      "destination_status": "live",
+      "example_roles": [
+        "Molecular biologists",
+        "Computational biologists",
+        "Process development scientists",
+        "Translational scientists",
+        "CMC leads"
+      ],
+      "candidate_signals": [
+        "Modality-specific rubric",
+        "Bench vs translational separated",
+        "CMC track captured"
+      ],
+      "skills": [
+        "Cell biology",
+        "Bioinformatics",
+        "Upstream/downstream processing",
+        "Analytical development"
+      ],
+      "tools": [
+        "Benchling",
+        "Geneious",
+        "GraphPad Prism",
+        "SnapGene",
+        "SEQUEL / NovaSeq platforms"
+      ],
+      "licenses_or_certifications": [
+        "PhD in relevant biology",
+        "GMP training for CMC"
+      ],
+      "related_industries": [
+        "pharmaceuticals",
+        "medical-devices"
+      ],
+      "relevant_resources": [
+        {
+          "title": "How TaaSFlow works",
+          "to": "/how-it-works"
+        },
+        {
+          "title": "Pricing",
+          "to": "/pricing"
+        },
+        {
+          "title": "Submit a role",
+          "to": "/intake"
+        }
+      ],
+      "primary_audience": "Hiring leaders and Heads of Talent",
+      "cta_destination": "/intake"
+    },
+    {
+      "index": 40,
+      "id": "IND-40",
+      "name": "Medical Devices",
+      "slug": "medical-devices",
+      "category": "Health & Life Sciences",
+      "aliases": [
+        "MedTech",
+        "IVD",
+        "Diagnostics",
+        "Combination Products"
+      ],
+      "previous_slugs": [],
+      "redirect_required": [],
+      "source_file": "src/content/industries-batch2.ts",
+      "source_content_status": "not-in-source",
+      "destination_status": "live",
+      "example_roles": [
+        "Medical-device R&D engineers",
+        "Regulatory affairs (MedTech)",
+        "Quality engineers",
+        "Clinical affairs leads"
+      ],
+      "candidate_signals": [
+        "Class and pathway captured",
+        "QMS evidence from CV",
+        "R&D specialisation separated"
+      ],
+      "skills": [
+        "Design controls",
+        "ISO 13485",
+        "Risk management (ISO 14971)",
+        "Verification & validation"
+      ],
+      "tools": [
+        "Greenlight Guru",
+        "MasterControl",
+        "Solidworks",
+        "Altium"
+      ],
+      "licenses_or_certifications": [
+        "RAC",
+        "ASQ CQE",
+        "Notified-body audit history"
+      ],
+      "related_industries": [
+        "pharmaceuticals",
+        "biotech",
+        "healthtech"
+      ],
+      "relevant_resources": [
+        {
+          "title": "How TaaSFlow works",
+          "to": "/how-it-works"
+        },
+        {
+          "title": "Pricing",
+          "to": "/pricing"
+        },
+        {
+          "title": "Submit a role",
+          "to": "/intake"
+        }
+      ],
+      "primary_audience": "Hiring leaders and Heads of Talent",
+      "cta_destination": "/intake"
+    },
+    {
+      "index": 41,
+      "id": "IND-41",
+      "name": "Defense & Aerospace",
+      "slug": "defense",
+      "category": "Public & Social Impact",
+      "aliases": [
+        "Defence",
+        "A&D",
+        "Military",
+        "Space"
+      ],
+      "previous_slugs": [],
+      "redirect_required": [],
+      "source_file": "src/content/industries-batch2.ts",
+      "source_content_status": "not-in-source",
+      "destination_status": "live",
+      "example_roles": [
+        "Systems engineers",
+        "GNC engineers",
+        "Avionics software engineers",
+        "Programme managers (cleared)"
+      ],
+      "candidate_signals": [
+        "Clearance captured",
+        "Programme heritage from CV",
+        "Standards fluency scored"
+      ],
+      "skills": [
+        "Requirements engineering",
+        "V&V",
+        "Embedded systems",
+        "GNC",
+        "Systems safety"
+      ],
+      "tools": [
+        "DOORS",
+        "Rhapsody",
+        "MATLAB/Simulink",
+        "SysML",
+        "Ansys"
+      ],
+      "licenses_or_certifications": [
+        "INCOSE CSEP",
+        "PMP / APM PMQ",
+        "Security clearances (SC/DV/TS/SCI)"
+      ],
+      "related_industries": [
+        "aviation",
+        "manufacturing",
+        "public-sector"
+      ],
+      "relevant_resources": [
+        {
+          "title": "How TaaSFlow works",
+          "to": "/how-it-works"
+        },
+        {
+          "title": "Pricing",
+          "to": "/pricing"
+        },
+        {
+          "title": "Submit a role",
+          "to": "/intake"
+        }
+      ],
+      "primary_audience": "Hiring leaders and Heads of Talent",
+      "cta_destination": "/intake"
+    },
+    {
+      "index": 42,
+      "id": "IND-42",
+      "name": "Education",
+      "slug": "education",
+      "category": "Public & Social Impact",
+      "aliases": [
+        "K-12",
+        "Schools",
+        "Teaching",
+        "Academic Support"
+      ],
+      "previous_slugs": [],
+      "redirect_required": [],
+      "source_file": "src/content/industries-batch2.ts",
+      "source_content_status": "not-in-source",
+      "destination_status": "live",
+      "example_roles": [
+        "Teachers (all phases)",
+        "SEND specialists",
+        "School leaders",
+        "MAT central-team roles"
+      ],
+      "candidate_signals": [
+        "Phase and subject captured",
+        "Safeguarding baseline verified",
+        "Leadership pipeline separated"
+      ],
+      "skills": [
+        "Curriculum planning",
+        "Assessment",
+        "Safeguarding",
+        "Behaviour management"
+      ],
+      "tools": [
+        "SIMS",
+        "Arbor",
+        "Bromcom",
+        "Google Classroom",
+        "Microsoft Teams for Education"
+      ],
+      "licenses_or_certifications": [
+        "QTS",
+        "NPQ suite",
+        "Enhanced DBS"
+      ],
+      "related_industries": [
+        "edtech",
+        "higher-education"
+      ],
+      "relevant_resources": [
+        {
+          "title": "How TaaSFlow works",
+          "to": "/how-it-works"
+        },
+        {
+          "title": "Pricing",
+          "to": "/pricing"
+        },
+        {
+          "title": "Submit a role",
+          "to": "/intake"
+        }
+      ],
+      "primary_audience": "Hiring leaders and Heads of Talent",
+      "cta_destination": "/intake"
+    },
+    {
+      "index": 43,
+      "id": "IND-43",
+      "name": "Higher Education",
+      "slug": "higher-education",
+      "category": "Public & Social Impact",
+      "aliases": [
+        "Universities",
+        "Research Institutions",
+        "Colleges"
+      ],
+      "previous_slugs": [],
+      "redirect_required": [],
+      "source_file": "src/content/industries-batch2.ts",
+      "source_content_status": "not-in-source",
+      "destination_status": "live",
+      "example_roles": [
+        "Academic staff (all grades)",
+        "Postdocs and research fellows",
+        "Registry and admissions leaders",
+        "Deans and PVCs"
+      ],
+      "candidate_signals": [
+        "Academic vs professional separated",
+        "Research portfolio captured",
+        "Mission fit scored"
+      ],
+      "skills": [
+        "Teaching",
+        "Research design",
+        "Grant writing",
+        "Curriculum design"
+      ],
+      "tools": [
+        "Blackboard",
+        "Canvas",
+        "SITS",
+        "Banner",
+        "Symplectic Elements"
+      ],
+      "licenses_or_certifications": [],
+      "related_industries": [
+        "education",
+        "edtech",
+        "public-sector"
+      ],
+      "relevant_resources": [
+        {
+          "title": "How TaaSFlow works",
+          "to": "/how-it-works"
+        },
+        {
+          "title": "Pricing",
+          "to": "/pricing"
+        },
+        {
+          "title": "Submit a role",
+          "to": "/intake"
+        }
+      ],
+      "primary_audience": "Hiring leaders and Heads of Talent",
+      "cta_destination": "/intake"
+    },
+    {
+      "index": 44,
+      "id": "IND-44",
+      "name": "Customer Success",
+      "slug": "customer-success",
+      "category": "Professional Services",
+      "aliases": [
+        "CS",
+        "CSM",
+        "Post-Sales",
+        "Account Management"
+      ],
+      "previous_slugs": [],
+      "redirect_required": [],
+      "source_file": "src/content/industries-batch2.ts",
+      "source_content_status": "not-in-source",
+      "destination_status": "live",
+      "example_roles": [
+        "CSMs (all segments)",
+        "Renewal managers",
+        "CS operations leads",
+        "VPs of Customer Success"
+      ],
+      "candidate_signals": [
+        "Segment-specific rubric",
+        "Retention outcomes captured",
+        "Motion clarity from CV"
+      ],
+      "skills": [
+        "Onboarding design",
+        "QBRs",
+        "Adoption analytics",
+        "Renewal negotiation",
+        "Executive relationship management"
+      ],
+      "tools": [
+        "Gainsight",
+        "Salesforce",
+        "ChurnZero",
+        "Vitally",
+        "Catalyst",
+        "Totango"
+      ],
+      "licenses_or_certifications": [],
+      "related_industries": [
+        "saas",
+        "sales"
+      ],
+      "relevant_resources": [
+        {
+          "title": "How TaaSFlow works",
+          "to": "/how-it-works"
+        },
+        {
+          "title": "Pricing",
+          "to": "/pricing"
+        },
+        {
+          "title": "Submit a role",
+          "to": "/intake"
+        }
+      ],
+      "primary_audience": "Hiring leaders and Heads of Talent",
+      "cta_destination": "/intake"
+    },
+    {
+      "index": 45,
+      "id": "IND-45",
+      "name": "Product Management",
+      "slug": "product-management",
+      "category": "Technology & Engineering",
+      "aliases": [
+        "PM",
+        "Product",
+        "APM",
+        "Group PM",
+        "CPO"
+      ],
+      "previous_slugs": [],
+      "redirect_required": [],
+      "source_file": "src/content/industries-batch2.ts",
+      "source_content_status": "not-in-source",
+      "destination_status": "live",
+      "example_roles": [
+        "PMs (all levels)",
+        "Platform / Growth / Data PMs",
+        "Group PMs",
+        "VPs of Product",
+        "CPOs"
+      ],
+      "candidate_signals": [
+        "Surface-specific rubric",
+        "Outcome evidence captured",
+        "0\u21921 vs scale separated"
+      ],
+      "skills": [
+        "Discovery",
+        "Prioritisation frameworks",
+        "A/B testing",
+        "Roadmap communication",
+        "Metrics design"
+      ],
+      "tools": [
+        "Jira",
+        "Linear",
+        "Amplitude",
+        "Mixpanel",
+        "Figma",
+        "Notion",
+        "Productboard"
+      ],
+      "licenses_or_certifications": [],
+      "related_industries": [
+        "saas",
+        "tech",
+        "ai-ml"
+      ],
+      "relevant_resources": [
+        {
+          "title": "How TaaSFlow works",
+          "to": "/how-it-works"
+        },
+        {
+          "title": "Pricing",
+          "to": "/pricing"
+        },
+        {
+          "title": "Submit a role",
+          "to": "/intake"
+        }
+      ],
+      "primary_audience": "Hiring leaders and Heads of Talent",
+      "cta_destination": "/intake"
+    },
+    {
+      "index": 46,
+      "id": "IND-46",
+      "name": "Design & Creative",
+      "slug": "design",
+      "category": "Technology & Engineering",
+      "aliases": [
+        "Product Design",
+        "UX",
+        "UI",
+        "Brand",
+        "Creative"
+      ],
+      "previous_slugs": [],
+      "redirect_required": [],
+      "source_file": "src/content/industries-batch2.ts",
+      "source_content_status": "not-in-source",
+      "destination_status": "live",
+      "example_roles": [
+        "Product designers (all levels)",
+        "UX researchers",
+        "Design-systems leads",
+        "Brand designers",
+        "Heads of Design"
+      ],
+      "candidate_signals": [
+        "Portfolio-based rubric",
+        "Craft specialisation captured",
+        "Product vs agency separated"
+      ],
+      "skills": [
+        "Interaction design",
+        "Visual design",
+        "User research",
+        "Design systems",
+        "Prototyping"
+      ],
+      "tools": [
+        "Figma",
+        "FigJam",
+        "Sketch",
+        "Adobe CC",
+        "Framer",
+        "Principle",
+        "Dovetail"
+      ],
+      "licenses_or_certifications": [],
+      "related_industries": [
+        "saas",
+        "marketing"
+      ],
+      "relevant_resources": [
+        {
+          "title": "How TaaSFlow works",
+          "to": "/how-it-works"
+        },
+        {
+          "title": "Pricing",
+          "to": "/pricing"
+        },
+        {
+          "title": "Submit a role",
+          "to": "/intake"
+        }
+      ],
+      "primary_audience": "Hiring leaders and Heads of Talent",
+      "cta_destination": "/intake"
+    },
+    {
+      "index": 47,
+      "id": "IND-47",
+      "name": "Automotive",
+      "slug": "automotive",
+      "category": "Industrial & Energy",
+      "aliases": [
+        "Auto",
+        "EV",
+        "OEM",
+        "Tier-1 Suppliers"
+      ],
+      "previous_slugs": [],
+      "redirect_required": [],
+      "source_file": "src/content/industries-batch2.ts",
+      "source_content_status": "not-in-source",
+      "destination_status": "live",
+      "example_roles": [
+        "Vehicle engineers",
+        "ADAS/autonomy engineers",
+        "Battery engineers",
+        "Plant and quality leaders"
+      ],
+      "candidate_signals": [
+        "OEM vs Tier-1 captured",
+        "ICE/EV/software separated",
+        "Standards fluency scored"
+      ],
+      "skills": [
+        "Functional safety",
+        "MBSE",
+        "Powertrain",
+        "Vehicle dynamics",
+        "Manufacturing engineering"
+      ],
+      "tools": [
+        "MATLAB/Simulink",
+        "dSPACE",
+        "CANoe",
+        "Teamcenter",
+        "CATIA"
+      ],
+      "licenses_or_certifications": [
+        "ISO 26262 practitioner",
+        "APQP / PPAP",
+        "Six Sigma"
+      ],
+      "related_industries": [
+        "manufacturing",
+        "energy"
+      ],
+      "relevant_resources": [
+        {
+          "title": "How TaaSFlow works",
+          "to": "/how-it-works"
+        },
+        {
+          "title": "Pricing",
+          "to": "/pricing"
+        },
+        {
+          "title": "Submit a role",
+          "to": "/intake"
+        }
+      ],
+      "primary_audience": "Hiring leaders and Heads of Talent",
+      "cta_destination": "/intake"
+    },
+    {
+      "index": 48,
+      "id": "IND-48",
+      "name": "Energy & Utilities",
+      "slug": "energy",
+      "category": "Industrial & Energy",
+      "aliases": [
+        "Power",
+        "Grid",
+        "Utilities",
+        "Transmission"
+      ],
+      "previous_slugs": [],
+      "redirect_required": [],
+      "source_file": "src/content/industries-batch2.ts",
+      "source_content_status": "not-in-source",
+      "destination_status": "live",
+      "example_roles": [
+        "Generation engineers",
+        "Grid and substation engineers",
+        "Power traders",
+        "Regulatory affairs leads"
+      ],
+      "candidate_signals": [
+        "Asset-class rubric",
+        "Network layer captured",
+        "Regulatory context surfaced"
+      ],
+      "skills": [
+        "Power systems",
+        "Grid planning",
+        "Energy trading",
+        "PPA structuring"
+      ],
+      "tools": [
+        "PSS/E",
+        "DIgSILENT",
+        "PSCAD",
+        "ETAP"
+      ],
+      "licenses_or_certifications": [
+        "Chartered engineer status (CEng)",
+        "IET / IEEE membership"
+      ],
+      "related_industries": [
+        "renewable-energy",
+        "oil-gas"
+      ],
+      "relevant_resources": [
+        {
+          "title": "How TaaSFlow works",
+          "to": "/how-it-works"
+        },
+        {
+          "title": "Pricing",
+          "to": "/pricing"
+        },
+        {
+          "title": "Submit a role",
+          "to": "/intake"
+        }
+      ],
+      "primary_audience": "Hiring leaders and Heads of Talent",
+      "cta_destination": "/intake"
+    },
+    {
+      "index": 49,
+      "id": "IND-49",
+      "name": "Renewable Energy",
+      "slug": "renewable-energy",
+      "category": "Industrial & Energy",
+      "aliases": [
+        "CleanTech",
+        "Wind",
+        "Solar",
+        "Battery Storage",
+        "Green Hydrogen"
+      ],
+      "previous_slugs": [],
+      "redirect_required": [],
+      "source_file": "src/content/industries-batch2.ts",
+      "source_content_status": "not-in-source",
+      "destination_status": "live",
+      "example_roles": [
+        "Project developers",
+        "Grid-connection specialists",
+        "Asset managers",
+        "Project finance analysts"
+      ],
+      "candidate_signals": [
+        "Technology-specific rubric",
+        "Lifecycle stage captured",
+        "Jurisdiction and consent surfaced"
+      ],
+      "skills": [
+        "Project development",
+        "Grid connection",
+        "PV/wind engineering",
+        "PPA origination"
+      ],
+      "tools": [
+        "PVsyst",
+        "WindPRO",
+        "PLEXOS",
+        "HOMER"
+      ],
+      "licenses_or_certifications": [],
+      "related_industries": [
+        "energy",
+        "finance"
+      ],
+      "relevant_resources": [
+        {
+          "title": "How TaaSFlow works",
+          "to": "/how-it-works"
+        },
+        {
+          "title": "Pricing",
+          "to": "/pricing"
+        },
+        {
+          "title": "Submit a role",
+          "to": "/intake"
+        }
+      ],
+      "primary_audience": "Hiring leaders and Heads of Talent",
+      "cta_destination": "/intake"
+    },
+    {
+      "index": 50,
+      "id": "IND-50",
+      "name": "Oil & Gas",
+      "slug": "oil-gas",
+      "category": "Industrial & Energy",
+      "aliases": [
+        "Upstream",
+        "Midstream",
+        "Downstream",
+        "LNG",
+        "Petrochemicals"
+      ],
+      "previous_slugs": [],
+      "redirect_required": [],
+      "source_file": "src/content/industries-batch2.ts",
+      "source_content_status": "not-in-source",
+      "destination_status": "live",
+      "example_roles": [
+        "Reservoir and drilling engineers",
+        "Facilities and production engineers",
+        "Commercial and trading leads",
+        "HSE managers"
+      ],
+      "candidate_signals": [
+        "Segment scoring",
+        "Asset and geography captured",
+        "HSE discipline surfaced"
+      ],
+      "skills": [
+        "Reservoir modelling",
+        "Well engineering",
+        "Process safety",
+        "Energy trading"
+      ],
+      "tools": [
+        "Petrel",
+        "Eclipse",
+        "OLGA",
+        "Aspen HYSYS"
+      ],
+      "licenses_or_certifications": [
+        "SPE membership",
+        "NEBOSH",
+        "IOGP-aligned safety qualifications"
+      ],
+      "related_industries": [
+        "energy",
+        "renewable-energy"
+      ],
+      "relevant_resources": [
+        {
+          "title": "How TaaSFlow works",
+          "to": "/how-it-works"
+        },
+        {
+          "title": "Pricing",
+          "to": "/pricing"
+        },
+        {
+          "title": "Submit a role",
+          "to": "/intake"
+        }
+      ],
+      "primary_audience": "Hiring leaders and Heads of Talent",
+      "cta_destination": "/intake"
+    },
+    {
+      "index": 51,
+      "id": "IND-51",
+      "name": "Agriculture & AgriTech",
+      "slug": "agriculture",
+      "category": "Industrial & Energy",
+      "aliases": [
+        "AgTech",
+        "Farming",
+        "Food Production",
+        "Agribusiness"
+      ],
+      "previous_slugs": [],
+      "redirect_required": [],
+      "source_file": "src/content/industries-batch2.ts",
+      "source_content_status": "not-in-source",
+      "destination_status": "live",
+      "example_roles": [
+        "Agronomists",
+        "Farm managers",
+        "Agri-commodities traders",
+        "AgTech PMs and engineers"
+      ],
+      "candidate_signals": [
+        "Segment-specific rubric",
+        "AgTech separation",
+        "Commodities exposure captured"
+      ],
+      "skills": [
+        "Agronomy",
+        "Livestock management",
+        "Commodities trading",
+        "Precision agriculture"
+      ],
+      "tools": [
+        "Climate FieldView",
+        "John Deere Operations Center",
+        "Cropwise",
+        "SAP for Agribusiness"
+      ],
+      "licenses_or_certifications": [],
+      "related_industries": [
+        "food-beverage",
+        "logistics"
+      ],
+      "relevant_resources": [
+        {
+          "title": "How TaaSFlow works",
+          "to": "/how-it-works"
+        },
+        {
+          "title": "Pricing",
+          "to": "/pricing"
+        },
+        {
+          "title": "Submit a role",
+          "to": "/intake"
+        }
+      ],
+      "primary_audience": "Hiring leaders and Heads of Talent",
+      "cta_destination": "/intake"
+    },
+    {
+      "index": 52,
+      "id": "IND-52",
+      "name": "Food & Beverage",
+      "slug": "food-beverage",
+      "category": "Consumer & Retail",
+      "aliases": [
+        "CPG",
+        "FMCG",
+        "Food Manufacturing",
+        "Beverages"
+      ],
+      "previous_slugs": [],
+      "redirect_required": [],
+      "source_file": "src/content/industries-batch2.ts",
+      "source_content_status": "not-in-source",
+      "destination_status": "live",
+      "example_roles": [
+        "Food scientists and NPD leads",
+        "Plant and quality managers",
+        "National account managers"
+      ],
+      "candidate_signals": [
+        "Category-specific rubric",
+        "Plant experience captured",
+        "Channel mix scored"
+      ],
+      "skills": [
+        "NPD",
+        "HACCP",
+        "Food safety",
+        "Category management",
+        "Trade marketing"
+      ],
+      "tools": [
+        "SAP",
+        "Infor M3",
+        "TraceGains",
+        "Kalypso"
+      ],
+      "licenses_or_certifications": [
+        "BRC / SQF audit history",
+        "HACCP",
+        "IFST membership"
+      ],
+      "related_industries": [
+        "retail",
+        "agriculture",
+        "hospitality"
+      ],
+      "relevant_resources": [
+        {
+          "title": "How TaaSFlow works",
+          "to": "/how-it-works"
+        },
+        {
+          "title": "Pricing",
+          "to": "/pricing"
+        },
+        {
+          "title": "Submit a role",
+          "to": "/intake"
+        }
+      ],
+      "primary_audience": "Hiring leaders and Heads of Talent",
+      "cta_destination": "/intake"
+    },
+    {
+      "index": 53,
+      "id": "IND-53",
+      "name": "Telecommunications",
+      "slug": "telecom",
+      "category": "Industrial & Energy",
+      "aliases": [
+        "Telco",
+        "Carrier",
+        "Networks",
+        "5G",
+        "Fibre"
+      ],
+      "previous_slugs": [],
+      "redirect_required": [],
+      "source_file": "src/content/industries-batch2.ts",
+      "source_content_status": "not-in-source",
+      "destination_status": "live",
+      "example_roles": [
+        "RAN and core engineers",
+        "Transport/IP engineers",
+        "OSS/BSS specialists",
+        "B2B solutions architects"
+      ],
+      "candidate_signals": [
+        "Layer-specific rubric",
+        "Vendor mix captured",
+        "Transformation programme evidence"
+      ],
+      "skills": [
+        "5G/4G",
+        "IP/MPLS",
+        "OSS/BSS",
+        "Network planning"
+      ],
+      "tools": [
+        "Amdocs",
+        "Netcracker",
+        "Ericsson OSS",
+        "Nokia NetAct"
+      ],
+      "licenses_or_certifications": [],
+      "related_industries": [
+        "tech",
+        "devops"
+      ],
+      "relevant_resources": [
+        {
+          "title": "How TaaSFlow works",
+          "to": "/how-it-works"
+        },
+        {
+          "title": "Pricing",
+          "to": "/pricing"
+        },
+        {
+          "title": "Submit a role",
+          "to": "/intake"
+        }
+      ],
+      "primary_audience": "Hiring leaders and Heads of Talent",
+      "cta_destination": "/intake"
+    },
+    {
+      "index": 54,
+      "id": "IND-54",
+      "name": "Aviation",
+      "slug": "aviation",
+      "category": "Industrial & Energy",
+      "aliases": [
+        "Airlines",
+        "Airports",
+        "MRO",
+        "Air Traffic"
+      ],
+      "previous_slugs": [],
+      "redirect_required": [],
+      "source_file": "src/content/industries-batch2.ts",
+      "source_content_status": "not-in-source",
+      "destination_status": "live",
+      "example_roles": [
+        "Airline operations leaders",
+        "MRO engineers",
+        "Airport operations managers",
+        "Revenue management analysts"
+      ],
+      "candidate_signals": [
+        "Operator-type rubric",
+        "Regulatory framework captured",
+        "Function-specific scoring"
+      ],
+      "skills": [
+        "Flight operations",
+        "Airworthiness",
+        "Aviation safety",
+        "Revenue management"
+      ],
+      "tools": [
+        "Sabre",
+        "Amadeus",
+        "AIMS",
+        "AMOS",
+        "Ramco Aviation"
+      ],
+      "licenses_or_certifications": [
+        "Part 66 licences",
+        "IATA qualifications"
+      ],
+      "related_industries": [
+        "defense",
+        "logistics",
+        "travel"
+      ],
+      "relevant_resources": [
+        {
+          "title": "How TaaSFlow works",
+          "to": "/how-it-works"
+        },
+        {
+          "title": "Pricing",
+          "to": "/pricing"
+        },
+        {
+          "title": "Submit a role",
+          "to": "/intake"
+        }
+      ],
+      "primary_audience": "Hiring leaders and Heads of Talent",
+      "cta_destination": "/intake"
+    },
+    {
+      "index": 55,
+      "id": "IND-55",
+      "name": "Travel & Tourism",
+      "slug": "travel",
+      "category": "Consumer & Retail",
+      "aliases": [
+        "OTA",
+        "Tour Operator",
+        "Hotels",
+        "Destination Marketing"
+      ],
+      "previous_slugs": [],
+      "redirect_required": [],
+      "source_file": "src/content/industries-batch2.ts",
+      "source_content_status": "not-in-source",
+      "destination_status": "live",
+      "example_roles": [
+        "Revenue and distribution managers",
+        "Product managers",
+        "Contracting managers"
+      ],
+      "candidate_signals": [
+        "Operator-type rubric",
+        "Distribution channel captured",
+        "Segment scoring"
+      ],
+      "skills": [
+        "Revenue management",
+        "Distribution",
+        "Contracting",
+        "Product design"
+      ],
+      "tools": [
+        "Amadeus",
+        "Sabre",
+        "IDeaS RMS",
+        "Duetto",
+        "Opera PMS"
+      ],
+      "licenses_or_certifications": [],
+      "related_industries": [
+        "hospitality",
+        "aviation"
+      ],
+      "relevant_resources": [
+        {
+          "title": "How TaaSFlow works",
+          "to": "/how-it-works"
+        },
+        {
+          "title": "Pricing",
+          "to": "/pricing"
+        },
+        {
+          "title": "Submit a role",
+          "to": "/intake"
+        }
+      ],
+      "primary_audience": "Hiring leaders and Heads of Talent",
+      "cta_destination": "/intake"
+    },
+    {
+      "index": 56,
+      "id": "IND-56",
+      "name": "Sports & Entertainment",
+      "slug": "sports",
+      "category": "Consumer & Retail",
+      "aliases": [
+        "Sports",
+        "Live Events",
+        "Music",
+        "Talent Agencies"
+      ],
+      "previous_slugs": [],
+      "redirect_required": [],
+      "source_file": "src/content/industries-batch2.ts",
+      "source_content_status": "not-in-source",
+      "destination_status": "live",
+      "example_roles": [
+        "Sponsorship sales",
+        "Match-day operations",
+        "Talent agents",
+        "Broadcast rights leads"
+      ],
+      "candidate_signals": [
+        "Operator-type rubric",
+        "Revenue mix captured",
+        "Rights fluency scored"
+      ],
+      "skills": [
+        "Sponsorship sales",
+        "Event production",
+        "Talent management",
+        "Rights commercialisation"
+      ],
+      "tools": [
+        "Salesforce",
+        "SAP Ticketing",
+        "AXS",
+        "Ticketmaster Enterprise"
+      ],
+      "licenses_or_certifications": [],
+      "related_industries": [
+        "media",
+        "hospitality"
+      ],
+      "relevant_resources": [
+        {
+          "title": "How TaaSFlow works",
+          "to": "/how-it-works"
+        },
+        {
+          "title": "Pricing",
+          "to": "/pricing"
+        },
+        {
+          "title": "Submit a role",
+          "to": "/intake"
+        }
+      ],
+      "primary_audience": "Hiring leaders and Heads of Talent",
+      "cta_destination": "/intake"
+    },
+    {
+      "index": 57,
+      "id": "IND-57",
+      "name": "Fashion & Apparel",
+      "slug": "fashion",
+      "category": "Consumer & Retail",
+      "aliases": [
+        "Apparel",
+        "Luxury",
+        "Footwear",
+        "Beauty",
+        "Accessories"
+      ],
+      "previous_slugs": [],
+      "redirect_required": [],
+      "source_file": "src/content/industries-batch2.ts",
+      "source_content_status": "not-in-source",
+      "destination_status": "live",
+      "example_roles": [
+        "Designers and design directors",
+        "Buyers and merchandisers",
+        "Wholesale account managers"
+      ],
+      "candidate_signals": [
+        "Segment scoring",
+        "Category captured",
+        "Channel separated"
+      ],
+      "skills": [
+        "Trend forecasting",
+        "Range planning",
+        "Merchandise planning",
+        "Wholesale sales"
+      ],
+      "tools": [
+        "PLM (Centric/Flex)",
+        "Anaplan",
+        "SAP Fashion Management",
+        "Nuorder"
+      ],
+      "licenses_or_certifications": [],
+      "related_industries": [
+        "retail",
+        "ecommerce"
+      ],
+      "relevant_resources": [
+        {
+          "title": "How TaaSFlow works",
+          "to": "/how-it-works"
+        },
+        {
+          "title": "Pricing",
+          "to": "/pricing"
+        },
+        {
+          "title": "Submit a role",
+          "to": "/intake"
+        }
+      ],
+      "primary_audience": "Hiring leaders and Heads of Talent",
+      "cta_destination": "/intake"
+    }
+  ]
+}
