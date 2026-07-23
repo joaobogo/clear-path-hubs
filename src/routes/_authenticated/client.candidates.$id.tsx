@@ -59,7 +59,12 @@ function CandidateDetailPage() {
     queryFn: () => ctxFn({ data: orgSearch ? { orgId: orgSearch } : {} }),
   });
   const orgId = ctx?.active?.organization_id;
-  const { data } = useQuery({
+  const {
+    data,
+    isPending: detailPending,
+    isFetching: detailFetching,
+    error: detailError,
+  } = useQuery({
     queryKey: ["client-candidate", orgId, id],
     queryFn: () => detailFn({ data: { orgId: orgId!, matchId: id } }),
     enabled: !!orgId,
@@ -86,8 +91,52 @@ function CandidateDetailPage() {
     onError: (e: Error) => toast.error(e.message.replace(/^Error: /, "")),
   });
 
-  if (!data) return <div className="p-8 text-muted-foreground">Loading…</div>;
-  if (!data.candidate) throw notFound();
+  // Loading: waiting on org context, or the query is enabled and still fetching.
+  if (!orgId || detailPending || (data === undefined && detailFetching)) {
+    return <div className="p-8 text-muted-foreground">Loading…</div>;
+  }
+
+  if (detailError) {
+    return (
+      <div className="mx-auto max-w-3xl p-8">
+        <div className="rounded-lg border border-destructive/40 bg-destructive/5 p-4 text-sm text-destructive">
+          Failed to load candidate: {detailError.message}
+        </div>
+        <div className="mt-4">
+          <Link to="/client/candidates" className="text-sm text-primary hover:underline">
+            ← Back to candidates
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  // Server returned null — the match is not visible to this org (either it
+  // was withdrawn, the org context is wrong, or client_visibility is hidden).
+  if (data === null || !data?.candidate) {
+    return (
+      <main className="mx-auto max-w-3xl px-6 py-12">
+        <div className="rounded-lg border bg-card p-8 text-center">
+          <h1 className="text-lg font-semibold">Candidate unavailable</h1>
+          <p className="mt-2 text-sm text-muted-foreground">
+            This candidate is no longer visible in your workspace. They may have
+            been withdrawn, or you may be viewing a different client account.
+          </p>
+          <div className="mt-4">
+            <Link
+              to="/client/candidates"
+              search={(prev) => prev}
+              className="text-sm text-primary hover:underline"
+            >
+              ← Back to candidates
+            </Link>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
+
 
   const { candidate, interviews, decisions } = data as {
     candidate: import("@/lib/client-kpi.server").ClientCandidateDTO;
