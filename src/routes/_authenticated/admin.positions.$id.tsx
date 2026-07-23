@@ -1,19 +1,21 @@
 import { createFileRoute, Link, notFound, useRouter } from "@tanstack/react-router";
 import { useSuspenseQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { toast } from "sonner";
 import {
   getPosition,
   updatePosition,
   setPositionStatus,
   setPositionVisibility,
+  saveScreeningQuestions,
+  getPositionActivity,
 } from "@/lib/admin.functions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import {
   Select,
   SelectContent,
@@ -21,6 +23,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Building2,
+  Trash2,
+  Plus,
+  ExternalLink,
+  FileCheck2,
+  Sparkles,
+  ShieldAlert,
+  ListChecks,
+  Gauge,
+  Users,
+  History,
+  Settings2,
+} from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/admin/positions/$id")({
   loader: async ({ context, params }) => {
@@ -31,14 +48,90 @@ export const Route = createFileRoute("/_authenticated/admin/positions/$id")({
     if (!d) throw notFound();
     return d;
   },
-  notFoundComponent: () => <div className="p-8">Position not found.</div>,
-  errorComponent: ({ error }) => <div className="p-8 text-destructive">{error.message}</div>,
+  notFoundComponent: () => (
+    <div className="p-10 text-center text-muted-foreground">Position not found.</div>
+  ),
+  errorComponent: ({ error, reset }) => {
+    const router = useRouter();
+    return (
+      <div className="mx-auto max-w-xl space-y-3 p-10 text-center">
+        <h1 className="text-lg font-semibold text-destructive">Couldn't load position</h1>
+        <p className="text-sm text-muted-foreground">{error.message}</p>
+        <Button
+          onClick={() => {
+            reset();
+            router.invalidate();
+          }}
+        >
+          Try again
+        </Button>
+      </div>
+    );
+  },
   head: () => ({ meta: [{ title: "Position workspace · TaaSFlow admin" }] }),
   component: PositionWorkspace,
 });
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-type AnyRow = any;
+type Any = any;
+
+const TABS = [
+  { id: "overview", label: "Overview", icon: Building2 },
+  { id: "requirements", label: "Requirements", icon: FileCheck2 },
+  { id: "preferred", label: "Preferred", icon: Sparkles },
+  { id: "dealbreakers", label: "Dealbreakers", icon: ShieldAlert },
+  { id: "screening", label: "Screening", icon: ListChecks },
+  { id: "blueprint", label: "Scoring blueprint", icon: Gauge },
+  { id: "pipeline", label: "Pipeline", icon: Users },
+  { id: "activity", label: "Activity", icon: History },
+  { id: "settings", label: "Settings", icon: Settings2 },
+] as const;
+type TabId = (typeof TABS)[number]["id"];
+
+const STATUS_BADGE: Record<string, string> = {
+  draft: "bg-muted text-muted-foreground",
+  submitted: "bg-amber-500/15 text-amber-800 dark:text-amber-200",
+  needs_clarification: "bg-amber-500/15 text-amber-800 dark:text-amber-200",
+  approved: "bg-blue-500/15 text-blue-800 dark:text-blue-200",
+  active: "bg-emerald-500/15 text-emerald-800 dark:text-emerald-200",
+  paused: "bg-muted text-muted-foreground",
+  closed: "bg-muted text-muted-foreground",
+  archived: "bg-muted text-muted-foreground",
+};
+
+const STAGE_ORDER = [
+  "new",
+  "reviewing",
+  "delivered",
+  "shortlisted",
+  "interview_process",
+  "offer",
+  "hired",
+  "not_moving_forward",
+  "archived",
+] as const;
+
+function labelFrom(entry: unknown): string {
+  if (typeof entry === "string") return entry;
+  if (entry && typeof entry === "object") {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const r = entry as any;
+    return String(r.label ?? r.text ?? r.name ?? JSON.stringify(r));
+  }
+  return String(entry ?? "");
+}
+
+function toStringList(json: unknown): string[] {
+  return (Array.isArray(json) ? json : []).map(labelFrom).filter(Boolean);
+}
+
+function fromStringList(lines: string): unknown[] {
+  return lines
+    .split(/\r?\n/)
+    .map((s) => s.trim())
+    .filter(Boolean)
+    .map((label) => ({ label }));
+}
 
 function PositionWorkspace() {
   const { id } = Route.useParams();
@@ -48,405 +141,1012 @@ function PositionWorkspace() {
     queryKey: ["admin-position", id],
     queryFn: () => getPosition({ data: { id } }),
   });
-  const p = data!.position as AnyRow;
+  const p = data!.position as Any;
+  const screening = data!.screening as Any[];
+  const matches = data!.matches as Any[];
 
-  const updateFn = useServerFn(updatePosition);
-  const statusFn = useServerFn(setPositionStatus);
-  const visibilityFn = useServerFn(setPositionVisibility);
-
-  const [feedback, setFeedback] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [dirty, setDirty] = useState(false);
-  const [form, setForm] = useState({
-    title: p.title ?? "",
-    description: p.description ?? "",
-    location: p.location ?? "",
-    work_model: p.work_model ?? "",
-    employment_type: p.employment_type ?? "",
-    seniority: p.seniority ?? "",
-    requirements: JSON.stringify(p.requirements ?? [], null, 2),
-    preferred_requirements: JSON.stringify(p.preferred_requirements ?? [], null, 2),
-  });
-
-  useEffect(() => setDirty(false), [id]);
+  const [tab, setTab] = useState<TabId>("overview");
 
   const invalidate = async () => {
     await qc.invalidateQueries({ queryKey: ["admin-position", id] });
     await router.invalidate();
   };
 
-  const saveMut = useMutation({
-    mutationFn: async () => {
-      let requirements: unknown[];
-      let preferred: unknown[];
-      try {
-        requirements = JSON.parse(form.requirements);
-        preferred = JSON.parse(form.preferred_requirements);
-      } catch {
-        throw new Error("Requirements must be valid JSON arrays");
-      }
-      return updateFn({
+  return (
+    <main className="mx-auto max-w-7xl space-y-6 px-6 py-6">
+      <header className="space-y-3">
+        <Link
+          to="/admin/clients/$id"
+          params={{ id: p.organizations?.id ?? p.organization_id }}
+          className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:underline"
+        >
+          <Building2 className="h-3.5 w-3.5" />
+          {p.organizations?.name ?? "Client"}
+        </Link>
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div className="min-w-0 flex-1">
+            <div className="flex flex-wrap items-center gap-2">
+              <h1 className="truncate text-2xl font-semibold tracking-tight">
+                {p.title}
+              </h1>
+              <Badge className={STATUS_BADGE[p.status] ?? "bg-muted"}>
+                {p.status.replace(/_/g, " ")}
+              </Badge>
+              <Badge variant="outline">{p.visibility}</Badge>
+            </div>
+            <div className="mt-1 flex flex-wrap gap-3 text-xs text-muted-foreground">
+              <span className="font-mono">#{p.id.slice(0, 8)}</span>
+              {p.location && <span>· {p.location}</span>}
+              {p.work_model && <span>· {p.work_model}</span>}
+              {p.employment_type && <span>· {p.employment_type.replace(/_/g, " ")}</span>}
+              {p.seniority && <span>· {p.seniority}</span>}
+            </div>
+          </div>
+          <LifecycleBar position={p} onDone={invalidate} />
+        </div>
+      </header>
+
+      <nav
+        role="tablist"
+        aria-label="Position sections"
+        className="flex flex-wrap gap-1 border-b"
+      >
+        {TABS.map((t) => {
+          const Icon = t.icon;
+          const active = tab === t.id;
+          return (
+            <button
+              key={t.id}
+              role="tab"
+              aria-selected={active}
+              onClick={() => setTab(t.id)}
+              data-qa-action={`position-tab-${t.id}`}
+              className={
+                "inline-flex items-center gap-1.5 rounded-t-md border-b-2 px-3 py-2 text-sm transition " +
+                (active
+                  ? "border-primary text-foreground"
+                  : "border-transparent text-muted-foreground hover:text-foreground")
+              }
+            >
+              <Icon className="h-3.5 w-3.5" />
+              {t.label}
+            </button>
+          );
+        })}
+      </nav>
+
+      <section>
+        {tab === "overview" && <OverviewTab position={p} matches={matches} screening={screening} />}
+        {tab === "requirements" && (
+          <RequirementsEditor
+            positionId={id}
+            field="requirements"
+            title="Must-have requirements"
+            hint="One requirement per line. These are treated as required in scoring."
+            value={p.requirements}
+          />
+        )}
+        {tab === "preferred" && (
+          <RequirementsEditor
+            positionId={id}
+            field="preferred_requirements"
+            title="Preferred criteria"
+            hint="One item per line. Contributes to fit but never causes a fail."
+            value={p.preferred_requirements}
+          />
+        )}
+        {tab === "dealbreakers" && (
+          <RequirementsEditor
+            positionId={id}
+            field="dealbreakers"
+            title="Dealbreakers"
+            hint="One dealbreaker per line. A single miss disqualifies the candidate."
+            value={p.dealbreakers}
+          />
+        )}
+        {tab === "screening" && (
+          <ScreeningEditor positionId={id} questions={screening} />
+        )}
+        {tab === "blueprint" && (
+          <BlueprintTab position={p} screening={screening} />
+        )}
+        {tab === "pipeline" && <PipelineTab matches={matches} />}
+        {tab === "activity" && <ActivityTab id={id} />}
+        {tab === "settings" && <SettingsTab position={p} onDone={invalidate} />}
+      </section>
+    </main>
+  );
+}
+
+// ── Lifecycle action bar (approve / activate / publish / pause / close / archive)
+function LifecycleBar({ position, onDone }: { position: Any; onDone: () => Promise<void> }) {
+  const statusFn = useServerFn(setPositionStatus);
+  const visibilityFn = useServerFn(setPositionVisibility);
+  const [busy, setBusy] = useState(false);
+
+  const run = async (fn: () => Promise<Any>, label: string) => {
+    setBusy(true);
+    try {
+      const r = await fn();
+      toast.success(`${label} · trace ${r.trace_id}`);
+      await onDone();
+    } catch (e) {
+      toast.error((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const doStatus = (action: Any, label: string) =>
+    run(() => statusFn({ data: { id: position.id, action } }), label);
+  const doVis = (v: Any, label: string) =>
+    run(() => visibilityFn({ data: { id: position.id, visibility: v } }), label);
+
+  const s = position.status as string;
+  const v = position.visibility as string;
+  const isPublic = v === "public";
+
+  const buttons: Array<{ key: string; label: string; onClick: () => Promise<void>; variant?: Any }> = [];
+
+  if (s === "submitted") {
+    buttons.push({ key: "clar", label: "Request clarification", variant: "outline", onClick: () => doStatus("request_clarification", "Clarification requested") });
+    buttons.push({ key: "approve", label: "Approve", onClick: () => doStatus("approve", "Approved") });
+  }
+  if (s === "needs_clarification") {
+    buttons.push({ key: "approve", label: "Approve", onClick: () => doStatus("approve", "Approved") });
+  }
+  if (s === "approved") {
+    buttons.push({ key: "activate", label: "Activate", onClick: () => doStatus("activate", "Activated") });
+  }
+  if (s === "active") {
+    buttons.push({
+      key: "publish",
+      label: isPublic ? "Unpublish" : "Publish",
+      variant: isPublic ? "outline" : "default",
+      onClick: () => doVis(isPublic ? "private" : "public", isPublic ? "Removed from job board" : "Live on job board"),
+    });
+    buttons.push({ key: "pause", label: "Pause", variant: "outline", onClick: () => doStatus("pause", "Paused") });
+    buttons.push({ key: "close", label: "Close", variant: "outline", onClick: () => doStatus("close", "Closed") });
+  }
+  if (s === "paused") {
+    buttons.push({ key: "resume", label: "Resume", onClick: () => doStatus("activate", "Resumed") });
+    buttons.push({ key: "close", label: "Close", variant: "outline", onClick: () => doStatus("close", "Closed") });
+  }
+  if (s === "closed") {
+    buttons.push({ key: "reopen", label: "Reopen", onClick: () => doStatus("reopen", "Reopened") });
+    buttons.push({ key: "archive", label: "Archive", variant: "outline", onClick: () => doStatus("archive", "Archived") });
+  }
+  if (s !== "archived" && s !== "closed") {
+    buttons.push({ key: "archive", label: "Archive", variant: "ghost", onClick: () => doStatus("archive", "Archived") });
+  }
+
+  return (
+    <div className="flex flex-wrap items-center gap-2">
+      {buttons.map((b) => (
+        <Button
+          key={b.key}
+          size="sm"
+          variant={b.variant}
+          disabled={busy}
+          onClick={b.onClick}
+          data-qa-action={`position-${b.key}`}
+        >
+          {b.label}
+        </Button>
+      ))}
+    </div>
+  );
+}
+
+// ── Overview ───────────────────────────────────────────────────────────────
+function OverviewTab({
+  position,
+  matches,
+  screening,
+}: {
+  position: Any;
+  matches: Any[];
+  screening: Any[];
+}) {
+  const qc = useQueryClient();
+  const updateFn = useServerFn(updatePosition);
+  const [form, setForm] = useState({
+    title: position.title ?? "",
+    description: position.description ?? "",
+    location: position.location ?? "",
+    department: position.department ?? "",
+    seniority: position.seniority ?? "",
+    work_model: position.work_model ?? "",
+    employment_type: position.employment_type ?? "",
+  });
+  const [dirty, setDirty] = useState(false);
+  useEffect(() => {
+    setForm({
+      title: position.title ?? "",
+      description: position.description ?? "",
+      location: position.location ?? "",
+      department: position.department ?? "",
+      seniority: position.seniority ?? "",
+      work_model: position.work_model ?? "",
+      employment_type: position.employment_type ?? "",
+    });
+    setDirty(false);
+  }, [position.id, position.updated_at]);
+
+  const m = useMutation({
+    mutationFn: () =>
+      updateFn({
         data: {
-          id,
+          id: position.id,
           patch: {
             title: form.title,
             description: form.description,
             location: form.location || null,
+            department: form.department || null,
+            seniority: form.seniority || null,
             work_model: (form.work_model || null) as never,
             employment_type: (form.employment_type || null) as never,
-            seniority: form.seniority || null,
-            requirements,
-            preferred_requirements: preferred,
           },
         },
-      });
-    },
+      }),
     onSuccess: async (r) => {
-      setFeedback(`Saved · trace ${r.trace_id}`);
-      setError(null);
+      toast.success(`Saved · trace ${r.trace_id}`);
       setDirty(false);
-      await invalidate();
+      await qc.invalidateQueries({ queryKey: ["admin-position", position.id] });
     },
-    onError: (e: Error) => setError(e.message),
+    onError: (e: Error) => toast.error(e.message),
   });
 
-  const statusMut = useMutation({
-    mutationFn: (action: string) =>
-      statusFn({ data: { id, action: action as never } }),
-    onSuccess: async (r) => {
-      setFeedback(`Status → ${r.position?.status} · trace ${r.trace_id}`);
-      setError(null);
-      await invalidate();
-    },
-    onError: (e: Error) => setError(e.message),
-  });
+  const set = <K extends keyof typeof form>(k: K, val: (typeof form)[K]) => {
+    setForm((f) => ({ ...f, [k]: val }));
+    setDirty(true);
+  };
 
-  const visMut = useMutation({
-    mutationFn: (visibility: string) =>
-      visibilityFn({ data: { id, visibility: visibility as never } }),
-    onSuccess: async (r) => {
-      setFeedback(`Visibility → ${r.position?.visibility} · trace ${r.trace_id}`);
-      setError(null);
-      await invalidate();
-    },
-    onError: (e: Error) => setError(e.message),
-  });
-
-  const busy = saveMut.isPending || statusMut.isPending || visMut.isPending;
+  const stats = useMemo(() => {
+    const scored = matches.filter((m) => m.score_runs?.score != null).length;
+    const active = matches.filter(
+      (m) => m.stage && !["archived", "not_moving_forward"].includes(m.stage),
+    ).length;
+    return {
+      total: matches.length,
+      scored,
+      active,
+      screening: screening.length,
+    };
+  }, [matches, screening]);
 
   return (
-    <main className="mx-auto max-w-6xl px-6 py-8 space-y-6">
-      <div>
-        <Link
-          to="/admin/clients/$id"
-          params={{ id: p.organizations?.id ?? p.organization_id }}
-          className="text-sm text-muted-foreground hover:underline"
-        >
-          ← {p.organizations?.name ?? "Client"}
-        </Link>
-        <div className="mt-2 flex flex-wrap items-baseline gap-3">
-          <h1 className="text-2xl font-semibold">{p.title}</h1>
-          <Badge>{p.status}</Badge>
-          <Badge variant="outline">{p.visibility}</Badge>
+    <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
+      <div className="space-y-4 rounded-lg border bg-card p-5">
+        <div className="flex items-center justify-between">
+          <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+            Requisition
+          </h2>
+          <Button
+            size="sm"
+            disabled={!dirty || m.isPending}
+            onClick={() => m.mutate()}
+            data-qa-action="save-overview"
+          >
+            {m.isPending ? "Saving…" : "Save changes"}
+          </Button>
+        </div>
+        <div>
+          <Label htmlFor="title">Title</Label>
+          <Input id="title" value={form.title} onChange={(e) => set("title", e.target.value)} />
+        </div>
+        <div>
+          <Label htmlFor="desc">Description</Label>
+          <Textarea
+            id="desc"
+            rows={8}
+            value={form.description}
+            onChange={(e) => set("description", e.target.value)}
+          />
+        </div>
+        <div className="grid gap-3 md:grid-cols-2">
+          <div>
+            <Label htmlFor="dept">Department</Label>
+            <Input id="dept" value={form.department} onChange={(e) => set("department", e.target.value)} />
+          </div>
+          <div>
+            <Label htmlFor="loc">Location</Label>
+            <Input id="loc" value={form.location} onChange={(e) => set("location", e.target.value)} />
+          </div>
+          <div>
+            <Label htmlFor="sen">Seniority</Label>
+            <Input id="sen" value={form.seniority} onChange={(e) => set("seniority", e.target.value)} />
+          </div>
+          <div>
+            <Label>Work model</Label>
+            <Select
+              value={form.work_model || "unset"}
+              onValueChange={(v) => set("work_model", v === "unset" ? "" : v)}
+            >
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="unset">—</SelectItem>
+                <SelectItem value="remote">Remote</SelectItem>
+                <SelectItem value="hybrid">Hybrid</SelectItem>
+                <SelectItem value="onsite">Onsite</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <Label>Employment type</Label>
+            <Select
+              value={form.employment_type || "unset"}
+              onValueChange={(v) => set("employment_type", v === "unset" ? "" : v)}
+            >
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="unset">—</SelectItem>
+                <SelectItem value="full_time">Full time</SelectItem>
+                <SelectItem value="part_time">Part time</SelectItem>
+                <SelectItem value="contract">Contract</SelectItem>
+                <SelectItem value="temporary">Temporary</SelectItem>
+                <SelectItem value="internship">Internship</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+        {dirty && (
+          <p className="text-xs text-amber-700 dark:text-amber-300">Unsaved changes.</p>
+        )}
+      </div>
+
+      <aside className="space-y-4">
+        <div className="rounded-lg border bg-card p-4">
+          <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            Pipeline
+          </h3>
+          <div className="mt-3 grid grid-cols-2 gap-3 text-sm">
+            <Stat label="Total" value={stats.total} />
+            <Stat label="Active" value={stats.active} />
+            <Stat label="Scored" value={stats.scored} />
+            <Stat label="Screening qs" value={stats.screening} />
+          </div>
+        </div>
+
+        <div className="rounded-lg border bg-card p-4 text-sm">
+          <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            Timestamps
+          </h3>
+          <dl className="mt-2 grid grid-cols-2 gap-y-1 text-xs">
+            <dt className="text-muted-foreground">Submitted</dt>
+            <dd>{fmt(position.submitted_at)}</dd>
+            <dt className="text-muted-foreground">Approved</dt>
+            <dd>{fmt(position.approved_at)}</dd>
+            <dt className="text-muted-foreground">Published</dt>
+            <dd>{fmt(position.published_at)}</dd>
+            <dt className="text-muted-foreground">Closed</dt>
+            <dd>{fmt(position.closed_at)}</dd>
+            <dt className="text-muted-foreground">Updated</dt>
+            <dd>{fmt(position.updated_at)}</dd>
+          </dl>
+        </div>
+
+        <div className="rounded-lg border bg-card p-4">
+          <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            Job board
+          </h3>
+          <p className="mt-2 text-xs text-muted-foreground">
+            Only <code>active + public</code> positions appear on the board.
+          </p>
+          <Link
+            to="/jobs/$id/apply"
+            params={{ id: position.id }}
+            target="_blank"
+            className="mt-3 inline-flex items-center gap-1.5 text-sm text-primary hover:underline"
+          >
+            Open application form <ExternalLink className="h-3.5 w-3.5" />
+          </Link>
+        </div>
+      </aside>
+    </div>
+  );
+}
+
+function Stat({ label, value }: { label: string; value: number }) {
+  return (
+    <div className="rounded-md border bg-background/50 p-2">
+      <div className="text-xs text-muted-foreground">{label}</div>
+      <div className="text-lg font-semibold tabular-nums">{value}</div>
+    </div>
+  );
+}
+
+function fmt(v?: string | null) {
+  if (!v) return <span className="text-muted-foreground">—</span>;
+  return new Date(v).toLocaleString();
+}
+
+// ── Requirements / Preferred / Dealbreakers editor (shared) ─────────────────
+function RequirementsEditor({
+  positionId,
+  field,
+  title,
+  hint,
+  value,
+}: {
+  positionId: string;
+  field: "requirements" | "preferred_requirements" | "dealbreakers";
+  title: string;
+  hint: string;
+  value: unknown;
+}) {
+  const qc = useQueryClient();
+  const updateFn = useServerFn(updatePosition);
+  const initial = useMemo(() => toStringList(value).join("\n"), [value]);
+  const [text, setText] = useState(initial);
+  useEffect(() => setText(initial), [initial]);
+
+  const dirty = text !== initial;
+  const items = useMemo(
+    () => text.split(/\r?\n/).map((s) => s.trim()).filter(Boolean),
+    [text],
+  );
+
+  const m = useMutation({
+    mutationFn: () =>
+      updateFn({
+        data: {
+          id: positionId,
+          patch: { [field]: fromStringList(text) } as Any,
+        },
+      }),
+    onSuccess: async (r) => {
+      toast.success(`${title} saved · trace ${r.trace_id}`);
+      await qc.invalidateQueries({ queryKey: ["admin-position", positionId] });
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  return (
+    <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_320px]">
+      <div className="rounded-lg border bg-card p-5">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-sm font-semibold">{title}</h2>
+            <p className="text-xs text-muted-foreground">{hint}</p>
+          </div>
+          <Button
+            size="sm"
+            disabled={!dirty || m.isPending}
+            onClick={() => m.mutate()}
+            data-qa-action={`save-${field}`}
+          >
+            {m.isPending ? "Saving…" : "Save"}
+          </Button>
+        </div>
+        <Textarea
+          className="mt-3 font-mono text-sm"
+          rows={14}
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          placeholder={"Postgres experience\nWritten and spoken English (B2+)\n…"}
+        />
+        <p className="mt-2 text-xs text-muted-foreground tabular-nums">
+          {items.length} item{items.length === 1 ? "" : "s"}
+        </p>
+      </div>
+
+      <div className="rounded-lg border bg-muted/30 p-4">
+        <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+          Preview
+        </h3>
+        {items.length === 0 ? (
+          <p className="mt-2 text-sm text-muted-foreground">
+            Add one item per line. Preview updates as you type.
+          </p>
+        ) : (
+          <ul className="mt-2 space-y-1.5 text-sm">
+            {items.map((it, i) => (
+              <li key={i} className="flex gap-2">
+                <span className="mt-0.5 text-muted-foreground tabular-nums">{i + 1}.</span>
+                <span>{it}</span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ── Screening editor ───────────────────────────────────────────────────────
+type LocalQ = {
+  id?: string;
+  question: string;
+  answer_type: Any;
+  required: boolean;
+  dealbreaker: boolean;
+  scoring_weight: number;
+  display_order: number;
+};
+
+function ScreeningEditor({ positionId, questions }: { positionId: string; questions: Any[] }) {
+  const qc = useQueryClient();
+  const saveFn = useServerFn(saveScreeningQuestions);
+
+  const initial = useMemo<LocalQ[]>(
+    () =>
+      questions.map((q, i) => ({
+        id: q.id,
+        question: q.question ?? "",
+        answer_type: q.answer_type ?? "text",
+        required: Boolean(q.required),
+        dealbreaker: Boolean(q.dealbreaker),
+        scoring_weight: Number(q.scoring_weight ?? 1),
+        display_order: i,
+      })),
+    [questions],
+  );
+  const [items, setItems] = useState<LocalQ[]>(initial);
+  useEffect(() => setItems(initial), [initial]);
+
+  const dirty = JSON.stringify(items) !== JSON.stringify(initial);
+
+  const m = useMutation({
+    mutationFn: () =>
+      saveFn({
+        data: {
+          position_id: positionId,
+          questions: items.map((q, i) => ({ ...q, display_order: i })),
+        },
+      }),
+    onSuccess: async (r) => {
+      toast.success(`Saved ${r.count} question${r.count === 1 ? "" : "s"} · trace ${r.trace_id}`);
+      await qc.invalidateQueries({ queryKey: ["admin-position", positionId] });
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const add = () =>
+    setItems((xs) => [
+      ...xs,
+      {
+        question: "",
+        answer_type: "text",
+        required: false,
+        dealbreaker: false,
+        scoring_weight: 1,
+        display_order: xs.length,
+      },
+    ]);
+  const remove = (i: number) => setItems((xs) => xs.filter((_, idx) => idx !== i));
+  const patch = (i: number, next: Partial<LocalQ>) =>
+    setItems((xs) => xs.map((q, idx) => (idx === i ? { ...q, ...next } : q)));
+
+  return (
+    <div className="space-y-3">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-sm font-semibold">Screening questions</h2>
+          <p className="text-xs text-muted-foreground">
+            Applicants answer these on the job board. Dealbreaker questions can auto-disqualify.
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          <Button variant="outline" size="sm" onClick={add} data-qa-action="add-screening">
+            <Plus className="h-3.5 w-3.5" /> Add question
+          </Button>
+          <Button
+            size="sm"
+            disabled={!dirty || m.isPending}
+            onClick={() => m.mutate()}
+            data-qa-action="save-screening"
+          >
+            {m.isPending ? "Saving…" : `Save ${items.length}`}
+          </Button>
         </div>
       </div>
 
-      {feedback && (
-        <Alert>
-          <AlertDescription>{feedback}</AlertDescription>
-        </Alert>
-      )}
-      {error && (
-        <Alert variant="destructive">
-          <AlertTitle>Action failed</AlertTitle>
-          <AlertDescription>{error}</AlertDescription>
-        </Alert>
+      {items.length === 0 && (
+        <div className="rounded-lg border border-dashed p-6 text-center text-sm text-muted-foreground">
+          No screening questions yet. Add one to gate applications.
+        </div>
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <section className="lg:col-span-2 rounded-lg border p-4 space-y-3">
-          <h2 className="font-semibold">Requisition</h2>
-          <div>
-            <Label htmlFor="title">Title</Label>
-            <Input
-              id="title"
-              value={form.title}
-              onChange={(e) => {
-                setForm({ ...form, title: e.target.value });
-                setDirty(true);
-              }}
-            />
-          </div>
-          <div>
-            <Label htmlFor="desc">Description</Label>
-            <Textarea
-              id="desc"
-              rows={6}
-              value={form.description}
-              onChange={(e) => {
-                setForm({ ...form, description: e.target.value });
-                setDirty(true);
-              }}
-            />
-          </div>
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <Label htmlFor="loc">Location</Label>
-              <Input
-                id="loc"
-                value={form.location}
-                onChange={(e) => {
-                  setForm({ ...form, location: e.target.value });
-                  setDirty(true);
-                }}
-              />
-            </div>
-            <div>
-              <Label htmlFor="sen">Seniority</Label>
-              <Input
-                id="sen"
-                value={form.seniority}
-                onChange={(e) => {
-                  setForm({ ...form, seniority: e.target.value });
-                  setDirty(true);
-                }}
-              />
-            </div>
-            <div>
-              <Label>Work model</Label>
-              <Select
-                value={form.work_model || "unset"}
-                onValueChange={(v) => {
-                  setForm({ ...form, work_model: v === "unset" ? "" : v });
-                  setDirty(true);
-                }}
+      <ol className="space-y-3">
+        {items.map((q, i) => (
+          <li key={q.id ?? `new-${i}`} className="rounded-lg border bg-card p-4">
+            <div className="flex items-start gap-3">
+              <div className="mt-2 text-xs text-muted-foreground tabular-nums">Q{i + 1}</div>
+              <div className="flex-1 space-y-3">
+                <Textarea
+                  rows={2}
+                  value={q.question}
+                  onChange={(e) => patch(i, { question: e.target.value })}
+                  placeholder="Ask the candidate a specific, evidence-based question…"
+                />
+                <div className="flex flex-wrap items-center gap-4 text-sm">
+                  <Select
+                    value={q.answer_type}
+                    onValueChange={(v) => patch(i, { answer_type: v })}
+                  >
+                    <SelectTrigger className="h-8 w-40">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="text">Short text</SelectItem>
+                      <SelectItem value="long_text">Long text</SelectItem>
+                      <SelectItem value="number">Number</SelectItem>
+                      <SelectItem value="boolean">Yes / No</SelectItem>
+                      <SelectItem value="single_choice">Single choice</SelectItem>
+                      <SelectItem value="multi_choice">Multi choice</SelectItem>
+                      <SelectItem value="date">Date</SelectItem>
+                      <SelectItem value="file">File upload</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <label className="inline-flex items-center gap-2">
+                    <Checkbox
+                      checked={q.required}
+                      onCheckedChange={(v) => patch(i, { required: Boolean(v) })}
+                    />
+                    <span>Required</span>
+                  </label>
+                  <label className="inline-flex items-center gap-2">
+                    <Checkbox
+                      checked={q.dealbreaker}
+                      onCheckedChange={(v) => patch(i, { dealbreaker: Boolean(v) })}
+                    />
+                    <span className="text-destructive">Dealbreaker</span>
+                  </label>
+                  <label className="inline-flex items-center gap-2">
+                    <span className="text-muted-foreground">Weight</span>
+                    <Input
+                      type="number"
+                      min={0}
+                      max={10}
+                      step={0.5}
+                      className="h-8 w-20"
+                      value={q.scoring_weight}
+                      onChange={(e) =>
+                        patch(i, { scoring_weight: Number(e.target.value) || 0 })
+                      }
+                    />
+                  </label>
+                </div>
+              </div>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => remove(i)}
+                aria-label={`Remove question ${i + 1}`}
               >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="unset">—</SelectItem>
-                  <SelectItem value="remote">Remote</SelectItem>
-                  <SelectItem value="hybrid">Hybrid</SelectItem>
-                  <SelectItem value="onsite">Onsite</SelectItem>
-                </SelectContent>
-              </Select>
+                <Trash2 className="h-4 w-4 text-destructive" />
+              </Button>
             </div>
-            <div>
-              <Label>Employment type</Label>
-              <Select
-                value={form.employment_type || "unset"}
-                onValueChange={(v) => {
-                  setForm({ ...form, employment_type: v === "unset" ? "" : v });
-                  setDirty(true);
-                }}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="unset">—</SelectItem>
-                  <SelectItem value="full_time">Full time</SelectItem>
-                  <SelectItem value="part_time">Part time</SelectItem>
-                  <SelectItem value="contract">Contract</SelectItem>
-                  <SelectItem value="temporary">Temporary</SelectItem>
-                  <SelectItem value="internship">Internship</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-          <div>
-            <Label htmlFor="req">Requirements (JSON array)</Label>
-            <Textarea
-              id="req"
-              rows={5}
-              className="font-mono text-xs"
-              value={form.requirements}
-              onChange={(e) => {
-                setForm({ ...form, requirements: e.target.value });
-                setDirty(true);
-              }}
-            />
-          </div>
-          <div>
-            <Label htmlFor="pref">Preferred (JSON array)</Label>
-            <Textarea
-              id="pref"
-              rows={4}
-              className="font-mono text-xs"
-              value={form.preferred_requirements}
-              onChange={(e) => {
-                setForm({ ...form, preferred_requirements: e.target.value });
-                setDirty(true);
-              }}
-            />
-          </div>
-          <div className="flex gap-2 pt-2">
-            <Button disabled={busy || !dirty} onClick={() => saveMut.mutate()}>
-              {saveMut.isPending ? "Saving…" : "Save requisition"}
-            </Button>
-            {dirty && (
-              <span className="self-center text-xs text-amber-700 dark:text-amber-300">
-                Unsaved changes
+          </li>
+        ))}
+      </ol>
+    </div>
+  );
+}
+
+// ── Scoring blueprint (read-only derived view) ─────────────────────────────
+function BlueprintTab({ position, screening }: { position: Any; screening: Any[] }) {
+  const reqs = toStringList(position.requirements);
+  const prefs = toStringList(position.preferred_requirements);
+  const deals = toStringList(position.dealbreakers);
+  const reqWeight = reqs.length * 2;
+  const prefWeight = prefs.length * 1;
+  const scrWeight = screening.reduce(
+    (n, q) => n + (Number(q.scoring_weight) || 1),
+    0,
+  );
+  const total = reqWeight + prefWeight + scrWeight;
+  const share = (n: number) => (total > 0 ? Math.round((n / total) * 100) : 0);
+
+  const ready = reqs.length > 0;
+
+  return (
+    <div className="grid gap-4 lg:grid-cols-2">
+      <div className="rounded-lg border bg-card p-5">
+        <h2 className="text-sm font-semibold">Scoring blueprint</h2>
+        <p className="text-xs text-muted-foreground">
+          Derived from requirements, preferred criteria, dealbreakers, and screening
+          questions. Runs the same way for every candidate on this position.
+        </p>
+        <div className="mt-4 space-y-3">
+          <BlueprintRow label="Must-have requirements" count={reqs.length} weight={reqWeight} share={share(reqWeight)} />
+          <BlueprintRow label="Preferred criteria" count={prefs.length} weight={prefWeight} share={share(prefWeight)} />
+          <BlueprintRow label="Screening questions" count={screening.length} weight={scrWeight} share={share(scrWeight)} />
+          <BlueprintRow label="Dealbreakers (auto-fail)" count={deals.length} weight={0} share={0} />
+        </div>
+        {!ready && (
+          <p className="mt-3 rounded-md border border-amber-500/40 bg-amber-500/10 p-2 text-xs text-amber-900 dark:text-amber-100">
+            Scoring is blocked until at least one must-have requirement is set.
+          </p>
+        )}
+      </div>
+
+      <div className="rounded-lg border bg-card p-5 text-sm">
+        <h2 className="text-sm font-semibold">Engine</h2>
+        <dl className="mt-3 grid grid-cols-2 gap-y-1 text-xs">
+          <dt className="text-muted-foreground">Blueprint version</dt>
+          <dd className="font-mono">taasflow-blueprint-v1.0.0</dd>
+          <dt className="text-muted-foreground">Scoring mode</dt>
+          <dd>Evidence-first, deterministic</dd>
+          <dt className="text-muted-foreground">Immutability</dt>
+          <dd>Enforced by DB trigger</dd>
+        </dl>
+        <p className="mt-3 text-xs text-muted-foreground">
+          Every candidate score references this blueprint version so results stay
+          reproducible even after criteria change.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function BlueprintRow({
+  label,
+  count,
+  weight,
+  share,
+}: {
+  label: string;
+  count: number;
+  weight: number;
+  share: number;
+}) {
+  return (
+    <div className="space-y-1">
+      <div className="flex items-baseline justify-between text-sm">
+        <span>{label}</span>
+        <span className="text-xs text-muted-foreground tabular-nums">
+          {count} · weight {weight} · {share}%
+        </span>
+      </div>
+      <div className="h-1.5 rounded-full bg-muted">
+        <div
+          className="h-1.5 rounded-full bg-primary"
+          style={{ width: `${share}%` }}
+        />
+      </div>
+    </div>
+  );
+}
+
+// ── Pipeline ────────────────────────────────────────────────────────────────
+function PipelineTab({ matches }: { matches: Any[] }) {
+  const byStage = useMemo(() => {
+    const buckets: Record<string, Any[]> = {};
+    for (const s of STAGE_ORDER) buckets[s] = [];
+    for (const m of matches) {
+      const key = (m.stage ?? "new") as string;
+      (buckets[key] ??= []).push(m);
+    }
+    return buckets;
+  }, [matches]);
+
+  return (
+    <div className="space-y-4">
+      <div className="grid gap-3 md:grid-cols-3 xl:grid-cols-5">
+        {STAGE_ORDER.filter((s) => byStage[s]?.length).map((s) => (
+          <div key={s} className="rounded-lg border bg-card p-3">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                {s.replace(/_/g, " ")}
               </span>
-            )}
-          </div>
-        </section>
-
-        <aside className="space-y-4">
-          <section className="rounded-lg border p-4 space-y-2">
-            <h2 className="font-semibold">Lifecycle</h2>
-            <p className="text-xs text-muted-foreground">
-              Precondition: current status = <code>{p.status}</code>.
-            </p>
-            {p.status === "submitted" && (
-              <>
-                <Button
-                  className="w-full"
-                  disabled={busy}
-                  onClick={() => statusMut.mutate("request_clarification")}
-                >
-                  Request clarification
-                </Button>
-                <Button
-                  className="w-full"
-                  variant="secondary"
-                  disabled={busy}
-                  onClick={() => statusMut.mutate("approve")}
-                >
-                  Approve
-                </Button>
-              </>
-            )}
-            {p.status === "needs_clarification" && (
-              <Button
-                className="w-full"
-                disabled={busy}
-                onClick={() => statusMut.mutate("approve")}
-              >
-                Approve
-              </Button>
-            )}
-            {p.status === "approved" && (
-              <Button
-                className="w-full"
-                disabled={busy}
-                onClick={() => statusMut.mutate("activate")}
-              >
-                Activate
-              </Button>
-            )}
-            {p.status === "active" && (
-              <>
-                <Button
-                  className="w-full"
-                  variant="secondary"
-                  disabled={busy}
-                  onClick={() => statusMut.mutate("pause")}
-                >
-                  Pause
-                </Button>
-                <Button
-                  className="w-full"
-                  variant="destructive"
-                  disabled={busy}
-                  onClick={() => statusMut.mutate("close")}
-                >
-                  Close
-                </Button>
-              </>
-            )}
-            {p.status === "paused" && (
-              <>
-                <Button
-                  className="w-full"
-                  disabled={busy}
-                  onClick={() => statusMut.mutate("activate")}
-                >
-                  Resume
-                </Button>
-                <Button
-                  className="w-full"
-                  variant="destructive"
-                  disabled={busy}
-                  onClick={() => statusMut.mutate("close")}
-                >
-                  Close
-                </Button>
-              </>
-            )}
-            {p.status === "closed" && (
-              <Button
-                className="w-full"
-                variant="secondary"
-                disabled={busy}
-                onClick={() => statusMut.mutate("reopen")}
-              >
-                Reopen
-              </Button>
-            )}
-          </section>
-
-          <section className="rounded-lg border p-4 space-y-2">
-            <h2 className="font-semibold">Visibility</h2>
-            <p className="text-xs text-muted-foreground">
-              Only <code>active + public</code> positions appear on the job board.
-            </p>
-            <Select
-              value={p.visibility}
-              onValueChange={(v) => visMut.mutate(v)}
-              disabled={busy}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="public">Public — on job board</SelectItem>
-                <SelectItem value="private">Private — invite only</SelectItem>
-                <SelectItem value="internal">Internal — staff only</SelectItem>
-              </SelectContent>
-            </Select>
-          </section>
-
-          <section className="rounded-lg border p-4">
-            <h2 className="font-semibold">Screening ({data!.screening.length})</h2>
-            <ul className="mt-2 space-y-1 text-sm">
-              {data!.screening.map((q: AnyRow) => (
-                <li key={q.id} className="border-b pb-1">
-                  {q.dealbreaker && <span className="text-destructive">* </span>}
-                  {q.question}
-                </li>
-              ))}
-              {data!.screening.length === 0 && (
-                <li className="text-muted-foreground">No screening questions.</li>
-              )}
-            </ul>
-          </section>
-
-          <section className="rounded-lg border p-4">
-            <h2 className="font-semibold">Candidates ({data!.matches.length})</h2>
-            <ul className="mt-2 space-y-1 text-sm">
-              {data!.matches.slice(0, 10).map((m: AnyRow) => (
-                <li key={m.id} className="flex justify-between gap-2 border-b pb-1">
+              <span className="tabular-nums text-xs text-muted-foreground">
+                {byStage[s].length}
+              </span>
+            </div>
+            <ul className="mt-2 space-y-1.5 text-sm">
+              {byStage[s].slice(0, 6).map((m) => (
+                <li key={m.id}>
                   <Link
                     to="/admin/candidates/$id"
                     params={{ id: m.id }}
-                    className="truncate text-primary hover:underline"
+                    className="flex items-center justify-between gap-2 rounded-md px-1.5 py-1 hover:bg-muted/50"
                   >
-                    {m.candidate_profiles?.full_name ?? "—"}
+                    <span className="truncate">
+                      {m.candidate_profiles?.full_name ?? "Unknown"}
+                    </span>
+                    <span className="shrink-0 text-xs text-muted-foreground tabular-nums">
+                      {m.score_runs?.score != null
+                        ? Math.round(m.score_runs.score)
+                        : "—"}
+                    </span>
                   </Link>
-                  <span className="text-muted-foreground text-xs">
-                    {m.score_runs?.score?.toFixed(0) ?? "—"} · {m.stage}
-                  </span>
                 </li>
               ))}
-              {data!.matches.length === 0 && (
-                <li className="text-muted-foreground">No candidates yet.</li>
+              {byStage[s].length > 6 && (
+                <li className="text-xs text-muted-foreground">
+                  +{byStage[s].length - 6} more
+                </li>
               )}
             </ul>
-          </section>
-        </aside>
+          </div>
+        ))}
       </div>
-    </main>
+
+      <div className="overflow-hidden rounded-lg border bg-card">
+        <header className="border-b px-4 py-2.5 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+          All candidates ({matches.length})
+        </header>
+        <table className="w-full text-sm">
+          <thead className="bg-muted/30 text-left text-xs uppercase text-muted-foreground">
+            <tr>
+              <th className="px-3 py-2 font-medium">Candidate</th>
+              <th className="px-3 py-2 font-medium">Stage</th>
+              <th className="px-3 py-2 font-medium">Processing</th>
+              <th className="px-3 py-2 font-medium">Client</th>
+              <th className="px-3 py-2 font-medium tabular-nums">Score</th>
+              <th className="px-3 py-2 font-medium">Updated</th>
+              <th className="px-3 py-2"></th>
+            </tr>
+          </thead>
+          <tbody className="divide-y">
+            {matches.map((m) => (
+              <tr key={m.id} className="hover:bg-muted/30">
+                <td className="px-3 py-2">
+                  <div className="font-medium">{m.candidate_profiles?.full_name ?? "—"}</div>
+                  <div className="text-[10px] text-muted-foreground">
+                    {m.candidate_profiles?.email ?? ""}
+                  </div>
+                </td>
+                <td className="px-3 py-2 text-xs">{(m.stage ?? "—").replace(/_/g, " ")}</td>
+                <td className="px-3 py-2 text-xs text-muted-foreground">
+                  {(m.processing_state ?? "—").replace(/_/g, " ")}
+                </td>
+                <td className="px-3 py-2 text-xs">
+                  {(m.client_visibility ?? "—").replace(/_/g, " ")}
+                </td>
+                <td className="px-3 py-2 tabular-nums">
+                  {m.score_runs?.score != null ? Math.round(m.score_runs.score) : "—"}
+                </td>
+                <td className="px-3 py-2 text-xs text-muted-foreground">
+                  {m.updated_at ? new Date(m.updated_at).toLocaleDateString() : "—"}
+                </td>
+                <td className="px-3 py-2 text-right">
+                  <Link
+                    to="/admin/candidates/$id"
+                    params={{ id: m.id }}
+                    className="text-primary hover:underline"
+                  >
+                    Open
+                  </Link>
+                </td>
+              </tr>
+            ))}
+            {matches.length === 0 && (
+              <tr>
+                <td colSpan={7} className="px-3 py-8 text-center text-muted-foreground">
+                  No candidates on this position yet.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+// ── Activity ────────────────────────────────────────────────────────────────
+function ActivityTab({ id }: { id: string }) {
+  const { data } = useSuspenseQuery({
+    queryKey: ["admin-position-activity", id],
+    queryFn: () => getPositionActivity({ data: { id, limit: 100 } }),
+  });
+  const rows = (data ?? []) as Any[];
+  return (
+    <div className="overflow-hidden rounded-lg border bg-card">
+      <table className="w-full text-sm">
+        <thead className="bg-muted/40 text-left text-xs uppercase text-muted-foreground">
+          <tr>
+            <th className="px-3 py-2 font-medium">When</th>
+            <th className="px-3 py-2 font-medium">Action</th>
+            <th className="px-3 py-2 font-medium">Actor</th>
+            <th className="px-3 py-2 font-medium">Trace</th>
+          </tr>
+        </thead>
+        <tbody className="divide-y">
+          {rows.map((r) => (
+            <tr key={r.id}>
+              <td className="px-3 py-2 text-xs text-muted-foreground">
+                {new Date(r.created_at).toLocaleString()}
+              </td>
+              <td className="px-3 py-2 font-mono text-xs">{r.action}</td>
+              <td className="px-3 py-2 font-mono text-[10px] text-muted-foreground">
+                {r.actor_user_id ? String(r.actor_user_id).slice(0, 8) : "system"}
+              </td>
+              <td className="px-3 py-2 font-mono text-[10px] text-muted-foreground">
+                {r.trace_id ?? "—"}
+              </td>
+            </tr>
+          ))}
+          {rows.length === 0 && (
+            <tr>
+              <td colSpan={4} className="px-3 py-10 text-center text-muted-foreground">
+                No activity yet.
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+// ── Settings ────────────────────────────────────────────────────────────────
+function SettingsTab({ position, onDone }: { position: Any; onDone: () => Promise<void> }) {
+  const visibilityFn = useServerFn(setPositionVisibility);
+  const statusFn = useServerFn(setPositionStatus);
+
+  const setVis = async (v: Any) => {
+    try {
+      const r = await visibilityFn({ data: { id: position.id, visibility: v } });
+      toast.success(`Visibility → ${v} · trace ${r.trace_id}`);
+      await onDone();
+    } catch (e) {
+      toast.error((e as Error).message);
+    }
+  };
+
+  const archive = async () => {
+    try {
+      const r = await statusFn({ data: { id: position.id, action: "archive" } });
+      toast.success(`Archived · trace ${r.trace_id}`);
+      await onDone();
+    } catch (e) {
+      toast.error((e as Error).message);
+    }
+  };
+
+  return (
+    <div className="grid gap-4 lg:grid-cols-2">
+      <div className="rounded-lg border bg-card p-5 text-sm">
+        <h2 className="font-semibold">Visibility</h2>
+        <p className="text-xs text-muted-foreground">
+          Only <code>active + public</code> positions appear on the job board.
+        </p>
+        <div className="mt-3">
+          <Select value={position.visibility} onValueChange={setVis}>
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="public">Public — on job board</SelectItem>
+              <SelectItem value="private">Private — invite only</SelectItem>
+              <SelectItem value="internal">Internal — staff only</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+
+      <div className="rounded-lg border bg-card p-5 text-sm">
+        <h2 className="font-semibold">Identifiers</h2>
+        <dl className="mt-2 grid grid-cols-[7rem_1fr] gap-y-1 text-xs">
+          <dt className="text-muted-foreground">Position ID</dt>
+          <dd className="break-all font-mono">{position.id}</dd>
+          <dt className="text-muted-foreground">Org ID</dt>
+          <dd className="break-all font-mono">{position.organization_id}</dd>
+        </dl>
+      </div>
+
+      <div className="rounded-lg border border-destructive/30 bg-destructive/5 p-5 text-sm lg:col-span-2">
+        <h2 className="font-semibold text-destructive">Danger zone</h2>
+        <p className="text-xs text-muted-foreground">
+          Archive hides the position from every workspace and removes it from job board and pipelines.
+          Candidates on the position are retained.
+        </p>
+        <div className="mt-3">
+          <Button
+            variant="destructive"
+            size="sm"
+            disabled={position.status === "archived"}
+            onClick={archive}
+            data-qa-action="archive-position"
+          >
+            {position.status === "archived" ? "Already archived" : "Archive position"}
+          </Button>
+        </div>
+      </div>
+    </div>
   );
 }

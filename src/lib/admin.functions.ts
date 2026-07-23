@@ -457,6 +457,7 @@ const positionPatch = z.object({
       title: z.string().min(3).max(200).optional(),
       description: z.string().max(20_000).optional(),
       location: z.string().max(200).nullable().optional(),
+      department: z.string().max(200).nullable().optional(),
       work_model: z.enum(["remote", "hybrid", "onsite"]).nullable().optional(),
       employment_type: z
         .enum(["full_time", "part_time", "contract", "temporary", "internship"])
@@ -465,6 +466,9 @@ const positionPatch = z.object({
       seniority: z.string().max(60).nullable().optional(),
       requirements: z.array(z.unknown()).optional(),
       preferred_requirements: z.array(z.unknown()).optional(),
+      dealbreakers: z.array(z.unknown()).optional(),
+      compensation: z.record(z.string(), z.unknown()).optional(),
+      work_authorization: z.record(z.string(), z.unknown()).optional(),
     })
     .refine((p) => Object.keys(p).length > 0, "no_changes"),
   reason: z.string().max(500).optional(),
@@ -512,6 +516,7 @@ const statusTransition = z.object({
     "pause",
     "close",
     "reopen",
+    "archive",
   ]),
   reason: z.string().max(500).optional(),
 });
@@ -523,7 +528,9 @@ const STATUS_MAP: Record<string, string> = {
   pause: "paused",
   close: "closed",
   reopen: "approved",
+  archive: "archived",
 };
+
 
 export const setPositionStatus = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -543,6 +550,7 @@ export const setPositionStatus = createServerFn({ method: "POST" })
     if (data.action === "approve") patch.approved_at = new Date().toISOString();
     if (data.action === "activate") patch.published_at = new Date().toISOString();
     if (data.action === "close") patch.closed_at = new Date().toISOString();
+    if (data.action === "archive") patch.closed_at = before.closed_at ?? new Date().toISOString();
     const { data: after, error } = await s
       .from("positions")
       .update(patch)
@@ -1108,4 +1116,117 @@ export const updateClientNotes = createServerFn({ method: "POST" })
       .eq("id", data.id);
     if (error) throw new Error(error.message);
     return { ok: true, trace_id: crypto.randomUUID() };
+  });
+
+// ─── Position workspace: screening + activity ────────────────────────────────
+
+const screeningItem = z.object({
+  id: z.string().uuid().optional(),
+  question: z.string().min(3).max(600),
+  answer_type: z
+    .enum(["text", "long_text", "number", "boolean", "single_choice", "multi_choice", "date", "file"])
+    .default("text"),
+  required: z.boolean().default(false),
+  dealbreaker: z.boolean().default(false),
+  scoring_weight: z.number().min(0).max(10).default(1),
+  display_order: z.number().int().min(0).default(0),
+  preferred_answer: z.unknown().optional(),
+  options: z.unknown().optional(),
+});
+
+const saveScreeningInput = z.object({
+  position_id: z.string().uuid(),
+  questions: z.array(screeningItem).max(30),
+});
+
+export const saveScreeningQuestions = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: unknown) => saveScreeningInput.parse(i))
+  .handler(async ({ data, context }) => {
+    await requireStaff(context.userId);
+    const trace_id = traceId();
+    const s = await getAdmin();
+    const { data: pos } = await s
+      .from("positions")
+      .select("id,organization_id")
+      .eq("id", data.position_id)
+      .maybeSingle();
+    if (!pos) throw new Error("position_not_found");
+
+    const { data: existing } = await s
+      .from("screening_questions")
+      .select("id")
+      .eq("position_id", data.position_id);
+    const existingIds = new Set(((existing ?? []) as AnyRow[]).map((r) => r.id));
+    const keepIds = new Set(
+      data.questions.map((q) => q.id).filter((v): v is string => Boolean(v)),
+    );
+    const toDelete = [...existingIds].filter((id) => !keepIds.has(id));
+    if (toDelete.length > 0) {
+      const { error } = await s
+        .from("screening_questions")
+        .delete()
+        .in("id", toDelete);
+      if (error) throw new Error(error.message);
+    }
+
+    for (let i = 0; i < data.questions.length; i++) {
+      const q = data.questions[i];
+      const row = {
+        position_id: data.position_id,
+        question: q.question,
+        answer_type: q.answer_type,
+        required: q.required,
+        dealbreaker: q.dealbreaker,
+        scoring_weight: q.scoring_weight,
+        display_order: i,
+        preferred_answer: (q.preferred_answer ?? null) as never,
+        options: (q.options ?? null) as never,
+      };
+      if (q.id && existingIds.has(q.id)) {
+        const { error } = await s
+          .from("screening_questions")
+          .update(row)
+          .eq("id", q.id);
+        if (error) throw new Error(error.message);
+      } else {
+        const { error } = await s.from("screening_questions").insert(row);
+        if (error) throw new Error(error.message);
+      }
+    }
+
+    await writeAudit({
+      actor: context.userId,
+      action: "position.screening.save",
+      entity_type: "position",
+      entity_id: data.position_id,
+      organization_id: pos.organization_id,
+      after: { count: data.questions.length },
+      trace_id,
+    });
+    return { ok: true as const, trace_id, count: data.questions.length };
+  });
+
+export const getPositionActivity = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: unknown) =>
+    z
+      .object({
+        id: z.string().uuid(),
+        limit: z.number().int().min(1).max(200).optional().default(100),
+      })
+      .parse(i),
+  )
+  .handler(async ({ data, context }) => {
+    await requireStaff(context.userId);
+    const s = await getAdmin();
+    const { data: rows } = await s
+      .from("audit_events")
+      .select("id,action,entity_type,entity_id,created_at,actor_user_id,trace_id,before_state,after_state")
+      .or(
+        `and(entity_type.eq.position,entity_id.eq.${data.id}),and(entity_type.eq.screening_question,entity_id.eq.${data.id})`,
+      )
+      .order("created_at", { ascending: false })
+      .limit(data.limit);
+    return (rows ?? []) as AnyRow[];
   });
