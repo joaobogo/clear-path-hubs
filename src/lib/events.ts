@@ -15,6 +15,8 @@ export const EVENT_TYPES = [
   "interview_scheduled",
   "client_feedback_submitted",
   "candidate_hired",
+  "position_paused",
+  "position_filled",
   "position_closed",
   "message_sent",
 ] as const;

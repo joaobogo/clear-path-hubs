@@ -5,6 +5,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
+import type { EventType } from "./events";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
@@ -734,10 +735,13 @@ export const updatePosition = createServerFn({ method: "POST" })
 const statusTransition = z.object({
   id: z.string().uuid(),
   action: z.enum([
+    "submit",
+    "start_review",
     "request_clarification",
     "approve",
     "activate",
     "pause",
+    "mark_filled",
     "close",
     "reopen",
     "archive",
@@ -746,12 +750,15 @@ const statusTransition = z.object({
 });
 
 const STATUS_MAP: Record<string, string> = {
+  submit: "submitted",
+  start_review: "under_review",
   request_clarification: "needs_clarification",
   approve: "approved",
   activate: "active",
   pause: "paused",
+  mark_filled: "filled",
   close: "closed",
-  reopen: "approved",
+  reopen: "active",
   archive: "archived",
 };
 
@@ -771,9 +778,10 @@ export const setPositionStatus = createServerFn({ method: "POST" })
     if (!before) throw new Error("position_not_found");
     const next = STATUS_MAP[data.action];
     const patch: AnyRow = { status: next };
+    if (data.action === "submit") patch.submitted_at = new Date().toISOString();
     if (data.action === "approve") patch.approved_at = new Date().toISOString();
-    if (data.action === "activate") patch.published_at = new Date().toISOString();
-    if (data.action === "close") patch.closed_at = new Date().toISOString();
+    if (data.action === "activate" || data.action === "reopen") patch.published_at = new Date().toISOString();
+    if (data.action === "close" || data.action === "mark_filled") patch.closed_at = new Date().toISOString();
     if (data.action === "archive") patch.closed_at = before.closed_at ?? new Date().toISOString();
     const { data: after, error } = await s
       .from("positions")
@@ -793,16 +801,19 @@ export const setPositionStatus = createServerFn({ method: "POST" })
       trace_id,
     });
     // Emit lifecycle events so Client + Admin dashboards refresh in real time.
-    if (data.action === "activate" || data.action === "approve" || data.action === "close") {
+    const eventMap: Record<string, string> = {
+      activate: "position_activated",
+      reopen: "position_activated",
+      approve: "position_approved",
+      close: "position_closed",
+      mark_filled: "position_filled",
+      pause: "position_paused",
+    };
+    if (eventMap[data.action]) {
       try {
         const { emitEventFromServer } = await import("./notifications.functions");
-        const eventMap = {
-          activate: "position_activated",
-          approve: "position_approved",
-          close: "position_closed",
-        } as const;
         await emitEventFromServer({
-          event: eventMap[data.action as keyof typeof eventMap],
+          event: eventMap[data.action] as EventType,
           scope: `${data.id}:${data.action}`,
           organization_id: before.organization_id,
           position_id: data.id,

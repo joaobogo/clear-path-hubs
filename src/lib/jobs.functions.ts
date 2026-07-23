@@ -39,6 +39,7 @@ export type PublicPositionSummary = {
   compensation_display: string | null;
   published_at: string | null;
   description_preview: string;
+  openings: number;
 };
 
 // Completeness: description must be at least 40 chars, requirements array non-empty.
@@ -50,7 +51,7 @@ export const listPublicPositions = createServerFn({ method: "GET" }).handler(
     const { data, error } = await supabase
       .from("positions")
       .select(
-        "id,title,location,work_model,employment_type,seniority,description,requirements,compensation,published_at,organizations(name)",
+        "id,title,location,work_model,employment_type,seniority,description,requirements,compensation,published_at,openings,organizations(name)",
       )
       .eq("status", "active")
       .eq("visibility", "public")
@@ -80,6 +81,7 @@ export const listPublicPositions = createServerFn({ method: "GET" }).handler(
           published_at: p.published_at,
           description_preview:
             desc.length > 220 ? desc.slice(0, 217).trimEnd() + "…" : desc,
+          openings: (p as { openings?: number }).openings ?? 1,
         };
       });
   },
@@ -94,7 +96,7 @@ export const getPublicPosition = createServerFn({ method: "GET" })
     const { data: pos, error } = await supabase
       .from("positions")
       .select(
-        "id,title,department,location,work_model,employment_type,seniority,description,requirements,preferred_requirements,compensation,published_at,organizations(name)",
+        "id,title,department,location,work_model,employment_type,seniority,description,requirements,preferred_requirements,compensation,published_at,openings,organizations(name)",
       )
       .eq("id", data.id)
       .eq("status", "active")
@@ -131,6 +133,7 @@ export const getPublicPosition = createServerFn({ method: "GET" })
         : [],
       compensation_display: comp.approved && comp.display ? comp.display : null,
       published_at: pos.published_at,
+      openings: (pos as { openings?: number }).openings ?? 1,
       organization_name:
         (pos.organizations as unknown as { name?: string } | null)?.name ?? "TaaSFlow client",
       questions: (questions ?? []).map((q) => ({

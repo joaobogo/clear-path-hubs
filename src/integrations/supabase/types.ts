@@ -2948,6 +2948,7 @@ export type Database = {
             | Database["public"]["Enums"]["migration_row_status"]
             | null
           migration_version: string | null
+          openings: number
           organization_id: string
           preferred_requirements: Json
           published_at: string | null
@@ -2988,6 +2989,7 @@ export type Database = {
             | Database["public"]["Enums"]["migration_row_status"]
             | null
           migration_version?: string | null
+          openings?: number
           organization_id: string
           preferred_requirements?: Json
           published_at?: string | null
@@ -3028,6 +3030,7 @@ export type Database = {
             | Database["public"]["Enums"]["migration_row_status"]
             | null
           migration_version?: string | null
+          openings?: number
           organization_id?: string
           preferred_requirements?: Json
           published_at?: string | null
@@ -4736,6 +4739,7 @@ export type Database = {
         | "clarification_requested"
         | "position_approved"
         | "position_activated"
+        | "position_paused"
         | "application_received"
         | "candidate_processing_completed"
         | "candidate_ready_for_admin_review"
@@ -4745,6 +4749,7 @@ export type Database = {
         | "interview_scheduled"
         | "client_feedback_submitted"
         | "candidate_hired"
+        | "position_filled"
         | "position_closed"
         | "message_sent"
       file_status: "uploading" | "ready" | "failed" | "deleted"
@@ -4792,10 +4797,12 @@ export type Database = {
       position_status:
         | "draft"
         | "submitted"
+        | "under_review"
         | "needs_clarification"
         | "approved"
         | "active"
         | "paused"
+        | "filled"
         | "closed"
         | "archived"
       position_visibility: "public" | "private" | "internal"
@@ -4996,6 +5003,7 @@ export const Constants = {
         "clarification_requested",
         "position_approved",
         "position_activated",
+        "position_paused",
         "application_received",
         "candidate_processing_completed",
         "candidate_ready_for_admin_review",
@@ -5005,6 +5013,7 @@ export const Constants = {
         "interview_scheduled",
         "client_feedback_submitted",
         "candidate_hired",
+        "position_filled",
         "position_closed",
         "message_sent",
       ],
@@ -5058,10 +5067,12 @@ export const Constants = {
       position_status: [
         "draft",
         "submitted",
+        "under_review",
         "needs_clarification",
         "approved",
         "active",
         "paused",
+        "filled",
         "closed",
         "archived",
       ],
