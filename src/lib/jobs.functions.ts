@@ -121,7 +121,7 @@ export const getPublicPosition = createServerFn({ method: "GET" })
     if (!pos) return null;
 
     const desc = (pos.description ?? "").trim();
-    const reqs = Array.isArray(pos.requirements) ? (pos.requirements as string[]) : [];
+    const reqs = toReqStrings(pos.requirements);
     if (desc.length < MIN_DESC || reqs.length === 0) return null;
 
     const { data: questions, error: qErr } = await supabase
