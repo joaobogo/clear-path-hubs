@@ -46,16 +46,16 @@ function matchTier(positions: number): TierMatch {
       price: PRICING_TIERS[1].oneTime,
     };
   }
-  if (positions >= 6 && positions <= 10) {
+  if (positions >= 6 && positions <= 20) {
     return {
       label: PRICING_TIERS[2].name,
-      detail: "Hiring Sprint one-off package (6-10)",
+      detail: "Hiring Sprint one-off package (6-20)",
       price: PRICING_TIERS[2].oneTime,
     };
   }
   return {
     label: "Custom Billing",
-    detail: "10+ roles or continuous hiring — quote-based",
+    detail: "20+ roles or continuous hiring — quote-based",
     price: null,
   };
 }
