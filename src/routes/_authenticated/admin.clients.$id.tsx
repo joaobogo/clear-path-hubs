@@ -539,7 +539,7 @@ function CandidatesTab({ id }: { id: string }) {
   );
 }
 
-function ActivityTab({ id }: { id: string }) {
+function ActivityTab({ id, audit = false }: { id: string; audit?: boolean }) {
   const { data } = useSuspenseQuery({
     queryKey: ["admin-client-activity", id],
     queryFn: () => getClientActivity({ data: { id, limit: 100 } }),
