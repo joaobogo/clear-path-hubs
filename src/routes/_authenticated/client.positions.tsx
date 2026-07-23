@@ -1,5 +1,5 @@
 import { createFileRoute, Outlet } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_authenticated/client/positions")({
-  component: () => <Outlet />,
+ component: () => <Outlet />,
 });
