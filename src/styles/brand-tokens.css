@@ -234,9 +234,37 @@
   --taas-stage-hired:       oklch(0.50 0.14 155);
   --taas-stage-rejected:    var(--brand-danger);
   --taas-stage-withdrawn:   oklch(0.65 0.02 262);
+
+  /* ============================================================
+   * Workspace shell tokens (authenticated dashboard chrome)
+   * Single source shared with the public surface — do not fork.
+   * ============================================================ */
+  --taas-shell-bg:              oklch(0.985 0.006 245);
+  --taas-shell-bg-gradient:     radial-gradient(1200px 600px at 100% -10%, oklch(0.94 0.045 245 / 0.55), transparent 60%),
+                                radial-gradient(900px 500px at -10% 110%, oklch(0.955 0.03 262 / 0.55), transparent 55%),
+                                var(--taas-shell-bg);
+  --taas-shell-sidebar-bg:      oklch(1 0 0);
+  --taas-shell-sidebar-border:  var(--taas-border-subtle);
+  --taas-shell-topbar-bg:       oklch(1 0 0 / 0.75);
+  --taas-shell-topbar-border:   var(--taas-border-subtle);
+  --taas-shell-nav-active-bg:   color-mix(in oklab, var(--taas-brand-primary) 10%, transparent);
+  --taas-shell-nav-active-fg:   var(--taas-brand-primary);
+  --taas-shell-nav-hover-bg:    var(--taas-interactive-hover);
+  --taas-shell-nav-rail:        var(--taas-brand-primary);
+  --taas-shell-logo-gradient:   linear-gradient(135deg, var(--brand-ocean) 0%, var(--brand-navy-dark) 100%);
+  --taas-shell-logo-shadow:     0 6px 18px -6px oklch(0.60 0.19 258 / 0.55), inset 0 0 0 1px oklch(1 0 0 / 0.08);
 }
 
 .dark {
+  --taas-shell-bg:             oklch(0.14 0.030 262);
+  --taas-shell-bg-gradient:    radial-gradient(1200px 600px at 100% -10%, oklch(0.30 0.12 258 / 0.30), transparent 60%),
+                               radial-gradient(900px 500px at -10% 110%, oklch(0.24 0.06 262 / 0.40), transparent 55%),
+                               var(--taas-shell-bg);
+  --taas-shell-sidebar-bg:     oklch(0.17 0.030 262);
+  --taas-shell-sidebar-border: oklch(1 0 0 / 0.08);
+  --taas-shell-topbar-bg:      oklch(0.15 0.030 262 / 0.72);
+  --taas-shell-topbar-border:  oklch(1 0 0 / 0.08);
+  --taas-shell-nav-hover-bg:   oklch(1 0 0 / 0.05);
   --brand-navy:        oklch(0.92 0.015 245);
   --brand-navy-light:  oklch(0.78 0.020 245);
   --brand-navy-dark:   oklch(0.98 0.005 245);
