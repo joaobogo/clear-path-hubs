@@ -140,11 +140,12 @@ const EMPTY: FormState = {
 };
 
 const STEPS = [
-  { id: 1, label: "Contact & company" },
-  { id: 2, label: "Role overview" },
-  { id: 3, label: "Requirements" },
-  { id: 4, label: "Hiring context" },
-  { id: 5, label: "Review & submit" },
+  { id: 1, label: "Role Definition" },
+  { id: 2, label: "Hiring Contact" },
+  { id: 3, label: "Candidate Profile" },
+  { id: 4, label: "Compensation" },
+  { id: 5, label: "Search Criteria" },
+  { id: 6, label: "Review & Submit" },
 ];
 
 function emailIsValid(v: string) {
@@ -165,14 +166,14 @@ function uniqueLower(arr: string[]) {
 function validateStep(step: number, s: FormState): Record<string, string> {
   const e: Record<string, string> = {};
   if (step === 1) {
+    if (!s.roleTitle.trim()) e.roleTitle = "Role title is required";
+    if (!s.workModel) e.workModel = "Select a work model";
+  }
+  if (step === 2) {
     if (!s.firstName.trim()) e.firstName = "First name is required";
     if (!s.lastName.trim()) e.lastName = "Last name is required";
     if (!emailIsValid(s.workEmail)) e.workEmail = "Enter a valid work email";
     if (!s.companyName.trim()) e.companyName = "Company name is required";
-  }
-  if (step === 2) {
-    if (!s.roleTitle.trim()) e.roleTitle = "Role title is required";
-    if (!s.workModel) e.workModel = "Select a work model";
   }
   if (step === 3) {
     const skills = uniqueLower(s.mustHaveSkills);
@@ -182,7 +183,7 @@ function validateStep(step: number, s: FormState): Record<string, string> {
         "Provide at least 3 must-have skills or a job description of at least 40 characters";
     }
   }
-  if (step === 5) {
+  if (step === 6) {
     if (!s.password || s.password.length < 8) e.password = "Choose a password with at least 8 characters";
     if (s.password !== s.passwordConfirm) e.passwordConfirm = "Passwords do not match";
     if (!s.consent) e.consent = "You must accept the terms to submit";
