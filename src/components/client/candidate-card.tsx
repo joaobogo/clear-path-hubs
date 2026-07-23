@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useSearch } from "@tanstack/react-router";
 import { Badge } from "@/components/ui/badge";
 import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
 
