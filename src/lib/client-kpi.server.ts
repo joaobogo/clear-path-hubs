@@ -4,9 +4,21 @@
 //
 // Server-only: consumed by createServerFn handlers via the authenticated
 // supabase client (RLS applies as the caller).
+import {
+  buildRequirementRows,
+  summariseCoverage,
+  buildInterviewGuide,
+  toFitPresentation,
+  prettifyHeadline,
+  type RequirementRow,
+  type CoverageSummary,
+  type InterviewQuestion,
+  type FitPresentation,
+} from "@/lib/client-fit-presentation";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
+
 
 export type MatchStage =
   | "delivered"
@@ -129,28 +141,47 @@ export type ClientCandidateDTO = {
   match_id: string;
   stage: MatchStage;
   delivered_at: string | null;
+  last_updated: string | null;
   position: { id: string; title: string } | null;
   candidate: {
     display_name: string; // first name + last initial
     location: string | null;
+    timezone: string | null;
     headline: string | null;
+    headline_chips: string[];
     availability: string | null;
     years_experience: number | null;
     summary: string | null;
+    current_role: string | null;
+    current_company: string | null;
+    links: {
+      linkedin: string | null;
+      portfolio: string | null;
+      github: string | null;
+      website: string | null;
+    };
   };
   score: number | null;
   fit_label: string | null;
+  fit: FitPresentation;
   summary: string | null;
   strengths: string[];
+  concerns: string[];
   main_consideration: string | null;
+  requirement_rows: RequirementRow[];
+  coverage: CoverageSummary;
+  interview_guide: InterviewQuestion[];
   evidence: Array<{ label: string; snippet: string }>;
   experience: Array<{ title: string; company: string | null; period: string | null; description: string | null }>;
   skills: string[];
   education: Array<{ degree: string | null; institution: string | null; period: string | null }>;
   languages: Array<{ name: string; level: string | null }>;
+  certifications: Array<{ name: string; issuer: string | null; date: string | null }>;
   work_authorization: string | null;
   screening_answers: Array<{ question: string; answer: string }>;
 };
+
+
 
 function normStr(v: unknown): string | null {
   if (v == null) return null;
@@ -264,31 +295,94 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
       }))
     : [];
 
+  const experience = normExperience(cp.experience);
+  const currentRole = experience[0]?.title ?? null;
+  const currentCompany = experience[0]?.company ?? null;
+
+  const certifications = Array.isArray(cp.certifications)
+    ? (cp.certifications as AnyRow[]).slice(0, 8).map((c) => ({
+        name: String(c?.name ?? c?.title ?? ""),
+        issuer: normStr(c?.issuer ?? c?.organization ?? c?.authority),
+        date: normStr(c?.date ?? c?.issued ?? c?.year),
+      })).filter((c) => c.name)
+    : [];
+
+  const isHttp = (v: unknown): string | null => {
+    if (typeof v !== "string") return null;
+    const s = v.trim();
+    return /^https?:\/\/[^\s]+$/i.test(s) ? s : null;
+  };
+  const links = {
+    linkedin: isHttp(cp.linkedin_url),
+    portfolio: isHttp(cp.portfolio_url),
+    github: isHttp((cp as AnyRow).github_url),
+    website: isHttp((cp as AnyRow).website_url ?? (cp as AnyRow).website),
+  };
+
+  const { headline: prettyHeadline, chips } = prettifyHeadline(cp.headline ?? null);
+
+  const concerns: string[] = Array.isArray(runConcerns)
+    ? runConcerns.slice(0, 5).map(String)
+    : Array.isArray(coverage?.missing)
+      ? coverage.missing.slice(0, 5).map(String)
+      : [];
+
+  const requirement_rows = buildRequirementRows(
+    pos ? { requirements: pos.requirements, preferred_requirements: pos.preferred_requirements } : null,
+    coverage,
+  );
+  const coverageSummary = summariseCoverage(requirement_rows);
+
+  const workAuth = normWorkAuth(cp.work_authorization);
+  const interview_guide = buildInterviewGuide({
+    positionTitle: pos?.title ?? null,
+    rows: requirement_rows,
+    strengths,
+    concerns,
+    availability,
+    workAuth,
+  });
+
+  const fit = toFitPresentation(run?.fit_label ?? null, run?.score ?? null);
+
   return {
     match_id: row.id,
     stage: row.stage,
     delivered_at: row.delivered_at ?? null,
+    last_updated: run?.completed_at ?? row.updated_at ?? row.delivered_at ?? null,
     position: pos ? { id: pos.id, title: pos.title } : null,
     candidate: {
       display_name: displayName,
       location: cp.location ?? null,
-      headline: cp.headline ?? null,
+      timezone: cp.timezone ?? null,
+      headline: prettyHeadline,
+      headline_chips: chips,
       availability,
       years_experience: cp.years_experience ?? null,
       summary: cp.summary ?? null,
+      current_role: currentRole,
+      current_company: currentCompany,
+      links,
     },
     score: run?.score ?? null,
     fit_label: run?.fit_label ?? null,
+    fit,
     summary: run?.explanation ?? null,
     strengths,
+    concerns,
     main_consideration: mainConsideration,
+    requirement_rows,
+    coverage: coverageSummary,
+    interview_guide,
     evidence,
-    experience: normExperience(cp.experience),
+    experience,
     skills: normSkills(cp.skills),
     education: normEducation(cp.education),
     languages: normLanguages(cp.languages),
-    work_authorization: normWorkAuth(cp.work_authorization),
+    certifications,
+    work_authorization: workAuth,
     screening_answers: normScreeningAnswers(row.application_answers),
   };
 }
+
 

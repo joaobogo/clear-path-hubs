@@ -400,7 +400,7 @@ export const getClientCandidates = createServerFn({ method: "GET" })
       .from("candidate_matches")
       .select(
         `id, stage, delivered_at, position_id, application_id,
-         candidate_profiles(id, full_name, headline, location, availability, years_experience, summary, experience, skills, education, languages, work_authorization),
+         candidate_profiles(id, full_name, headline, location, timezone, availability, years_experience, summary, experience, skills, education, languages, work_authorization, linkedin_url, portfolio_url, certifications),
          positions(id, title),
          score_runs:approved_score_run_id (score, fit_label, explanation, result, requirement_coverage, evidence)`,
       )
@@ -456,9 +456,9 @@ export const getClientCandidate = createServerFn({ method: "GET" })
       .from("candidate_matches")
       .select(
         `id, stage, delivered_at, position_id, application_id,
-         candidate_profiles(id, full_name, headline, location, availability, years_experience, summary, experience, skills, education, languages, work_authorization),
-         positions(id, title, location, work_model),
-         score_runs:approved_score_run_id (score, fit_label, explanation, result, evidence, requirement_coverage)`,
+         candidate_profiles(id, full_name, headline, location, timezone, availability, years_experience, summary, experience, skills, education, languages, work_authorization, linkedin_url, portfolio_url, certifications),
+         positions(id, title, location, work_model, requirements, preferred_requirements),
+         score_runs:approved_score_run_id (score, fit_label, explanation, result, evidence, requirement_coverage, completed_at)`,
       )
       .eq("organization_id", data.orgId)
       .eq("id", data.matchId)
