@@ -61,6 +61,10 @@ const searchSchema = z.object({
   sort: fallback(z.string(), "recent").default("recent"),
   view: fallback(z.enum(["cards", "list"]), "cards").default("cards"),
   org: fallback(z.string(), "").default(""),
+  // Canonical KPI drill-through key. Mirrors client-kpi.server predicates:
+  //   "top"                → isTopMatch (fit_label ∈ excellent|strong)
+  //   "interview_pipeline" → isInInterview (stage ∈ interview_process|offer OR active interview)
+  filter: fallback(z.enum(["all", "top", "interview_pipeline"]), "all").default("all"),
 });
 
 export const Route = createFileRoute("/_authenticated/client/candidates/")({
