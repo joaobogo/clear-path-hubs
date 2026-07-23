@@ -21,6 +21,7 @@ import {
   CALCULATOR_DEFAULTS,
   CALCULATOR_LIMITS,
   CALCULATOR_DISCLAIMER,
+  CALCULATOR_PRESETS,
   formatUsdCompact,
 } from "@/config/public-pricing";
 import { computeRoi, type CalculatorInputs } from "@/lib/roi-calculator";
