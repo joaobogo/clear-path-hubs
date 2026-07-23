@@ -192,22 +192,28 @@ function Header() {
             </div>
           </NavigationMenuPrimitive.Root>
 
-          <div className="ml-auto hidden items-center gap-2 lg:flex">
-            <Link
-              to={signIn.to}
-              className="rounded-md px-3 py-1.5 text-sm font-medium text-[color:var(--brand-navy)]/80 hover:text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
-            >
-              {signIn.label}
-            </Link>
+          <div className="ml-auto hidden items-center gap-1 lg:flex">
             <Link
               to={browseJobs.to}
-              className="rounded-md border border-[color:var(--brand-navy)]/15 bg-white px-3 py-1.5 text-sm font-medium text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+              className="rounded-md px-2.5 py-1.5 text-sm font-medium text-[color:var(--brand-navy)]/80 hover:text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
             >
               {browseJobs.label}
             </Link>
             <Link
+              to={joinNetwork.to}
+              className="hidden rounded-md px-2.5 py-1.5 text-sm font-medium text-[color:var(--brand-navy)]/80 hover:text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)] xl:inline-flex"
+            >
+              Join Talent Network
+            </Link>
+            <Link
+              to={signIn.to}
+              className="rounded-md px-2.5 py-1.5 text-sm font-medium text-[color:var(--brand-navy)]/80 hover:text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+            >
+              {signIn.label}
+            </Link>
+            <Link
               to={PRIMARY_CTA.to}
-              className="rounded-md bg-[color:var(--brand-navy)] px-4 py-1.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-[color:var(--brand-navy-dark)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+              className="ml-1 rounded-md bg-[color:var(--brand-navy)] px-4 py-1.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-[color:var(--brand-navy-dark)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
             >
               {PRIMARY_CTA.label}
             </Link>
