@@ -130,18 +130,19 @@ function NavList({
                 aria-current={active ? "page" : undefined}
                 title={collapsed ? item.label : undefined}
                 className={cn(
-                  "group relative flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium outline-none transition-colors",
+                  "group relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium outline-none transition-all duration-150",
                   "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background",
                   active
-                    ? "bg-primary/10 text-primary"
-                    : "text-muted-foreground hover:bg-muted hover:text-foreground",
+                    ? "text-[color:var(--taas-shell-nav-active-fg)] bg-[color:var(--taas-shell-nav-active-bg)] shadow-[inset_0_0_0_1px_color-mix(in_oklab,var(--taas-brand-primary)_18%,transparent)]"
+                    : "text-muted-foreground hover:bg-[color:var(--taas-shell-nav-hover-bg)] hover:text-foreground",
                   collapsed && "justify-center px-2",
                 )}
               >
                 {active && (
                   <span
                     aria-hidden
-                    className="absolute left-0 top-1/2 h-6 w-0.5 -translate-y-1/2 rounded-r-full bg-primary"
+                    className="absolute left-0 top-1/2 h-6 w-[3px] -translate-y-1/2 rounded-r-full"
+                    style={{ background: "var(--taas-shell-nav-rail)" }}
                   />
                 )}
                 <item.icon className="h-4 w-4 shrink-0" />
