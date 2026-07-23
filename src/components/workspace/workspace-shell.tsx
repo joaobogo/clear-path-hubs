@@ -209,12 +209,26 @@ export function WorkspaceShell(props: WorkspaceShellProps) {
     aboveNav,
     topBanner,
     linkSearch,
+    searchScope,
     children,
   } = props;
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const { collapsed, toggle, mobileOpen, setMobileOpen } = useSidebarState();
   const crumbs = buildBreadcrumbs(pathname, navItems);
   const currentPage = crumbs[crumbs.length - 1]?.label ?? "";
+  const [searchOpen, setSearchOpen] = useState(false);
+
+  // Cmd/Ctrl-K opens search from anywhere.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        setSearchOpen((v) => !v);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
 
   // Close mobile drawer on route change.
   useEffect(() => {
