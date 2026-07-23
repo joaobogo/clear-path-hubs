@@ -1,0 +1,63 @@
+# Industry Color Map
+
+Accents apply to eyebrow, icon fill, and one hero highlight. Base surface, text, and interactive tokens stay canonical TaaSFlow.
+
+| # | Slug | Primary | Secondary |
+|---|------|---------|-----------|
+| 1 | `tech` | `#1E4FD9` | `#4FC3F7` |
+| 2 | `saas` | `#2563EB` | `#22D3EE` |
+| 3 | `data-analytics` | `#0EA5E9` | `#A855F7` |
+| 4 | `cybersecurity` | `#0F172A` | `#22D3EE` |
+| 5 | `finance` | `#0B3B6B` | `#C9A24B` |
+| 6 | `accounting` | `#134E4A` | `#F59E0B` |
+| 7 | `insurance` | `#1E3A8A` | `#F97316` |
+| 8 | `private-equity` | `#0A0F1E` | `#B08D57` |
+| 9 | `healthcare` | `#0F766E` | `#EFF6FF` |
+| 10 | `legal` | `#111827` | `#B91C1C` |
+| 11 | `public-sector` | `#1E3A8A` | `#EF4444` |
+| 12 | `nonprofit` | `#065F46` | `#FDE68A` |
+| 13 | `sales` | `#DC2626` | `#0F172A` |
+| 14 | `marketing` | `#DB2777` | `#F59E0B` |
+| 15 | `media` | `#7C3AED` | `#FACC15` |
+| 16 | `human-resources` | `#0891B2` | `#F472B6` |
+| 17 | `staffing-agencies` | `#1F2937` | `#10B981` |
+| 18 | `consulting` | `#111827` | `#EAB308` |
+| 19 | `construction` | `#B45309` | `#0F172A` |
+| 20 | `real-estate` | `#0F172A` | `#D4A373` |
+| 21 | `manufacturing` | `#374151` | `#F59E0B` |
+| 22 | `hospitality` | `#7C2D12` | `#F5D6A6` |
+| 23 | `retail` | `#EF4444` | `#0F172A` |
+| 24 | `logistics` | `#0F172A` | `#22C55E` |
+| 25 | `ecommerce` | `#4F46E5` | `#F97316` |
+| 26 | `ai-ml` | `#7C3AED` | `#22D3EE` |
+| 27 | `fintech` | `#0EA5E9` | `#0F172A` |
+| 28 | `healthtech` | `#0D9488` | `#818CF8` |
+| 29 | `edtech` | `#2563EB` | `#F59E0B` |
+| 30 | `proptech` | `#1D4ED8` | `#F472B6` |
+| 31 | `gaming` | `#A21CAF` | `#22D3EE` |
+| 32 | `web3` | `#0F172A` | `#F472B6` |
+| 33 | `devops` | `#1E293B` | `#F59E0B` |
+| 34 | `investment-banking` | `#0B1220` | `#B08D57` |
+| 35 | `wealth-management` | `#052E2B` | `#C9A24B` |
+| 36 | `venture-capital` | `#111827` | `#22C55E` |
+| 37 | `architecture` | `#1F2937` | `#D97706` |
+| 38 | `pharmaceuticals` | `#0E7490` | `#F8FAFC` |
+| 39 | `biotech` | `#166534` | `#22D3EE` |
+| 40 | `medical-devices` | `#0F766E` | `#F97316` |
+| 41 | `defense` | `#1F2937` | `#9CA3AF` |
+| 42 | `education` | `#1D4ED8` | `#F59E0B` |
+| 43 | `higher-education` | `#111827` | `#B45309` |
+| 44 | `customer-success` | `#0EA5E9` | `#F472B6` |
+| 45 | `product-management` | `#4338CA` | `#22C55E` |
+| 46 | `design` | `#111827` | `#F0ABFC` |
+| 47 | `automotive` | `#1F2937` | `#DC2626` |
+| 48 | `energy` | `#0F172A` | `#F59E0B` |
+| 49 | `renewable-energy` | `#059669` | `#0EA5E9` |
+| 50 | `oil-gas` | `#111827` | `#F59E0B` |
+| 51 | `agriculture` | `#166534` | `#D97706` |
+| 52 | `food-beverage` | `#B91C1C` | `#F59E0B` |
+| 53 | `telecom` | `#1E3A8A` | `#22D3EE` |
+| 54 | `aviation` | `#0B3B6B` | `#E5E7EB` |
+| 55 | `travel` | `#0EA5E9` | `#F97316` |
+| 56 | `sports` | `#0F172A` | `#22C55E` |
+| 57 | `fashion` | `#111827` | `#F5D6A6` |
