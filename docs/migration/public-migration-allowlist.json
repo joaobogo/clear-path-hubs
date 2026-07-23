@@ -1,0 +1,80 @@
+{
+  "trace": "MIG-SAFETY-GATE-2026-07-23",
+  "source_repo": "https://github.com/joaobogo/sourcing-suite-ai.git",
+  "destination": "https://clear-path-hubs.lovable.app",
+  "inspection_mode": "read_only",
+  "code_changes": 0,
+  "source_access_status": "UNRESOLVED — repo returns HTTP 404 to unauthenticated GitHub REST; no code changes possible from direct byte inspection this pass. Classification below reflects canonical directory conventions plus the destination mirror already established in docs/migration/source-repository-inventory.md and content-inventory.md.",
+  "policy": "Only entries below MAY be used as reference during public-website migration. Everything not in this list is implicitly denied. Content and asset entries are copy-once inputs; presentation entries are REBUILD_FROM_REFERENCE (visual reference only, never a direct code import).",
+  "allowed": [
+    {
+      "path": "src/content/pages/**/*.json",
+      "class": "CONTENT_ONLY",
+      "usage": "Copy-once source of visible page copy for /, /about, /journey, /contact, /faq, /how-it-works, /pricing, /pilot, /enterprise, /partnerships/staffing, /employer-onboarding, /talent-network, /global-talent, /candidate-success, /candidate-join, /resources, /knowledge-base, /case-studies. Strip source-side handlers, tracking, and analytics before use."
+    },
+    {
+      "path": "src/content/industries/**/*.json",
+      "class": "CONTENT_ONLY",
+      "usage": "24 industry entries. Copy body copy only; per-industry KPIs stay on the VERIFY list until confirmed."
+    },
+    {
+      "path": "src/content/blog/**/*.json",
+      "class": "CONTENT_ONLY",
+      "usage": "304 blog article payloads (title, slug, author, date, excerpt, body, hero). Excludes drafts, test posts, duplicates flagged in docs/migration/exclusions/."
+    },
+    {
+      "path": "public/assets/brand/**",
+      "class": "ASSET_ONLY",
+      "usage": "Logo, favicon, wordmark. Rehost under destination public/ or src/assets/brand/."
+    },
+    {
+      "path": "public/assets/industries/**",
+      "class": "ASSET_ONLY",
+      "usage": "Industry cover images. Rehost — do not hotlink from source."
+    },
+    {
+      "path": "public/assets/blog/**",
+      "class": "ASSET_ONLY",
+      "usage": "Blog hero images. Rehost — do not hotlink."
+    },
+    {
+      "path": "src/components/marketing/**",
+      "class": "REBUILD_FROM_REFERENCE",
+      "usage": "Visual reference only. Rebuild layout, spacing, and typography against destination OKLCH tokens and src/components/ds/. Do not copy source implementations of forms, submit handlers, or hooks."
+    },
+    {
+      "path": "src/components/site/**",
+      "class": "REBUILD_FROM_REFERENCE",
+      "usage": "Header/footer visual reference. Destination canonical shell already lives at src/components/marketing/site-shell.tsx."
+    },
+    {
+      "path": "src/pages/(marketing public routes)/**",
+      "class": "REBUILD_FROM_REFERENCE",
+      "usage": "Public route bodies (About, Journey, Contact, FAQ, How It Works, Pricing, Pilot, Enterprise, Partnerships/Staffing, Employer Onboarding, Talent Network, Global Talent, Candidate Success, Candidate Join, Resources, Knowledge Base, Case Studies, Blog index, Industries index). Copy visible copy and section order only. All CTAs must be re-pointed to destination canonical routes (/intake, /jobs, /login, /contact). Do NOT copy submit handlers, useEffect data-fetchers, Supabase clients, or auth wrappers."
+    },
+    {
+      "path": "public/robots.txt (reference)",
+      "class": "CONTENT_ONLY",
+      "usage": "Directive layout only; destination already ships its own robots.txt."
+    },
+    {
+      "path": "public/sitemap.xml (reference)",
+      "class": "CONTENT_ONLY",
+      "usage": "URL list only; destination serves /sitemap.xml as a server route enumerating live routes and slugs."
+    },
+    {
+      "path": "tailwind.config.* (design-token reference)",
+      "class": "REBUILD_FROM_REFERENCE",
+      "usage": "Read color/spacing values as brand-inventory reference. Do not import the file. Destination uses Tailwind v4 with tokens in src/styles.css."
+    },
+    {
+      "path": "README.md / docs/**",
+      "class": "REVIEW_REQUIRED",
+      "usage": "Public docs may safely inform historical context. Any references to source auth, dashboard, KPI, or pipeline internals must be excluded."
+    }
+  ],
+  "notes": [
+    "Any source file matching the denylist takes precedence over an allowlist match.",
+    "Any allowlisted file that transitively imports a denylist target is downgraded to REBUILD_FROM_REFERENCE — the body may inform the rebuild but the file itself must not be copied."
+  ]
+}
