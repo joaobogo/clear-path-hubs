@@ -2,6 +2,7 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState, type ReactNode } from "react";
 import { ChevronRight, ChevronDown, Loader2, Menu, Linkedin, Mail } from "lucide-react";
 import * as NavigationMenuPrimitive from "@radix-ui/react-navigation-menu";
+import { InternalLinkHub } from "@/components/marketing/internal-link-hub";
 
 import { brand } from "@/config/brand";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
@@ -416,7 +417,13 @@ function Footer() {
 
 /* ---------------------------------------------------------------- Shell */
 
-export function SiteShell({ children }: { children: ReactNode }) {
+export function SiteShell({
+  children,
+  hideLinkHub = false,
+}: {
+  children: ReactNode;
+  hideLinkHub?: boolean;
+}) {
   return (
     <div className="flex min-h-dvh flex-col bg-[color:var(--brand-paper)] text-[color:var(--brand-navy)]">
       <SkipNav />
@@ -424,6 +431,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
       <main id="main" tabIndex={-1} className="flex-1 focus:outline-none">
         {children}
       </main>
+      {!hideLinkHub && <InternalLinkHub />}
       <Footer />
     </div>
   );
