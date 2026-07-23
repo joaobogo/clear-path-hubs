@@ -192,7 +192,7 @@ function PublishDesk() {
             <tbody className="divide-y">
               {rows.map((r) => {
                 const run = r.score_runs;
-                const rd = assessReadiness(r);
+                const rd = readinessOf(r);
                 const orgId = r.positions?.organizations?.id as string | undefined;
                 const previewHref = orgId
                   ? `/client/candidates/${r.id}?org=${encodeURIComponent(orgId)}&preview=client_admin`
