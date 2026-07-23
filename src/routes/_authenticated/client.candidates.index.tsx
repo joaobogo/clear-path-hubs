@@ -309,10 +309,7 @@ function CandidatesPage() {
           />
           <SnapshotTile
             label="Offers"
-            value={
-              (overview?.kpis as unknown as { offers?: number } | undefined)?.offers ??
-              undefined
-            }
+            value={overview?.kpis.offers}
             loading={kpisLoading && !overview}
             to="/client/candidates"
             filter={{ stage: "offer" }}
