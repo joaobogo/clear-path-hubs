@@ -448,8 +448,11 @@ function ResourcesPage() {
           </p>
         </header>
 
+        <CollectionsNav />
+
         <Section
-          eyebrow="Featured research"
+          id="cost-roi"
+          eyebrow="Cost & ROI"
           title="Where hiring costs, quality, and speed collide"
           description="Three insights every talent leader is measured on."
         >
@@ -461,7 +464,8 @@ function ResourcesPage() {
         </Section>
 
         <Section
-          eyebrow="Hiring guides"
+          id="candidate-evaluation"
+          eyebrow="Candidate evaluation"
           title="Short checklists, full playbooks"
           description="Distilled from long-form articles — click through for the full version."
         >
@@ -473,7 +477,8 @@ function ResourcesPage() {
         </Section>
 
         <Section
-          eyebrow="Industry insights"
+          id="industry-hiring"
+          eyebrow="Industry hiring"
           title="Context varies by industry"
           description="No fabricated statistics — every claim links to its source."
         >
@@ -494,7 +499,8 @@ function ResourcesPage() {
         </Section>
 
         <Section
-          eyebrow="Calculators and tools"
+          id="tools-calculators"
+          eyebrow="Tools & calculators"
           title="Model your own numbers"
           description="Interactive tools you can use right now."
         >
@@ -502,6 +508,7 @@ function ResourcesPage() {
         </Section>
 
         <Section
+          id="case-studies"
           eyebrow="Case studies"
           title="How different teams work with TaaSFlow"
           description="Enterprise programmes, agency partnerships, and traditional-agency comparison."
@@ -510,14 +517,16 @@ function ResourcesPage() {
         </Section>
 
         <Section
-          eyebrow="Candidate resources"
-          title="For candidates"
-          description="Open roles, private network access, and reference material."
+          id="recruiting-operations"
+          eyebrow="Recruiting operations"
+          title="Operating rhythm for talent leaders"
+          description="Reference material for how engagements start, run, and get reviewed."
         >
           <CardGrid items={CANDIDATE_RESOURCES} />
         </Section>
 
         <Section
+          id="hiring-guides"
           eyebrow="Hiring guides"
           title="Playbooks for talent leaders"
           description="Operational reference for how engagements start and run."
