@@ -115,6 +115,11 @@ function TeamPage() {
   const support = useSupportView();
   const readOnly = support.readOnly;
 
+  const [selfId, setSelfId] = useState<string | null>(null);
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => setSelfId(data.user?.id ?? null));
+  }, []);
+
   const { data: ctx } = useQuery({
     queryKey: ["client-context", orgSearch ?? null],
     queryFn: () => ctxFn({ data: orgSearch ? { orgId: orgSearch } : {} }),
