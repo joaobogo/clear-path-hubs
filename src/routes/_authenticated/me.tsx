@@ -1,18 +1,16 @@
-import {
-  createFileRoute,
-  Link,
-  Outlet,
-  useRouterState,
-} from "@tanstack/react-router";
+import { createFileRoute, Link, Outlet } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
 import { getMyContext } from "@/lib/candidate.functions";
 import { supabase } from "@/integrations/supabase/client";
-import { NotificationBell, NOTIFICATIONS_QUERY_KEY } from "@/components/notification-bell";
-import { SignOutButton } from "@/components/sign-out-button";
+import { NOTIFICATIONS_QUERY_KEY } from "@/components/notification-bell";
 import { useDashboardRealtime } from "@/hooks/use-realtime-refresh";
 import { FileText, User, MessageSquare, Shield, FileUp } from "lucide-react";
+import {
+  WorkspaceShell,
+  type WorkspaceNavItem,
+} from "@/components/workspace/workspace-shell";
 
 const CANDIDATE_REFRESH_KEYS = [
   ["me-context"],
@@ -41,18 +39,16 @@ export const Route = createFileRoute("/_authenticated/me")({
   component: MeLayout,
 });
 
-const TABS = [
+const NAV: WorkspaceNavItem[] = [
   { to: "/me/applications", label: "Applications", icon: FileText },
   { to: "/me/profile", label: "Profile", icon: User },
   { to: "/me/cv", label: "CV", icon: FileUp },
   { to: "/me/messages", label: "Messages", icon: MessageSquare },
-  { to: "/me/settings", label: "Privacy & settings", icon: Shield },
-] as const;
-
+  { to: "/me/settings", label: "Settings", icon: Shield },
+];
 
 function MeLayout() {
   const ctx = Route.useLoaderData();
-  const pathname = useRouterState({ select: (s) => s.location.pathname });
   const getCtx = useServerFn(getMyContext);
   const { data } = useQuery({
     queryKey: ["me-context"],
@@ -65,7 +61,6 @@ function MeLayout() {
     supabase.auth.getUser().then(({ data }) => setUserId(data.user?.id ?? null));
   }, []);
   useDashboardRealtime({ userId, audience: "candidate", invalidateKeys: CANDIDATE_REFRESH_KEYS });
-
 
   if (!data?.profile) {
     return (
@@ -90,46 +85,14 @@ function MeLayout() {
   }
 
   return (
-    <div className="min-h-screen flex w-full bg-background">
-      <aside className="w-60 shrink-0 border-r bg-card flex flex-col">
-        <div className="px-4 py-4 border-b flex items-start justify-between gap-2">
-          <div className="min-w-0">
-            <div className="text-xs uppercase tracking-wide text-muted-foreground">
-              Signed in as
-            </div>
-            <div className="font-semibold truncate">{data.profile.full_name}</div>
-            <div className="text-xs text-muted-foreground truncate">
-              {data.profile.email}
-            </div>
-          </div>
-          <NotificationBell />
-        </div>
-        <nav className="p-2 space-y-1">
-          {TABS.map((t) => {
-            const active = pathname.startsWith(t.to);
-            return (
-              <Link
-                key={t.to}
-                to={t.to}
-                className={`flex items-center gap-2 rounded px-3 py-2 text-sm transition-colors ${
-                  active
-                    ? "bg-primary text-primary-foreground"
-                    : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                }`}
-              >
-                <t.icon className="h-4 w-4" />
-                {t.label}
-              </Link>
-            );
-          })}
-        </nav>
-        <div className="mt-auto p-3 border-t">
-          <SignOutButton className="w-full inline-flex items-center gap-1.5 rounded px-2 py-1.5 text-xs text-muted-foreground hover:bg-muted hover:text-foreground" />
-        </div>
-      </aside>
-      <div className="flex-1 min-w-0">
-        <Outlet />
-      </div>
-    </div>
+    <WorkspaceShell
+      contextKicker="Signed in as"
+      contextLabel={data.profile.full_name || data.profile.email || "Candidate"}
+      contextSubLabel={data.profile.email ?? undefined}
+      navItems={NAV}
+    >
+      <Outlet />
+    </WorkspaceShell>
   );
 }
+
