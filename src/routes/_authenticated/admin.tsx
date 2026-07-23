@@ -1,4 +1,4 @@
-import { createFileRoute, Link, Outlet, redirect, useRouterState } from "@tanstack/react-router";
+import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import {
   LayoutDashboard,
   Building2,
@@ -11,11 +11,13 @@ import {
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
-import { NotificationBell } from "@/components/notification-bell";
-import { SignOutButton } from "@/components/sign-out-button";
-import { useDashboardRealtime } from "@/hooks/use-realtime-refresh";
 import { NOTIFICATIONS_QUERY_KEY } from "@/components/notification-bell";
+import { useDashboardRealtime } from "@/hooks/use-realtime-refresh";
 import { getSessionContext } from "@/lib/auth.functions";
+import {
+  WorkspaceShell,
+  type WorkspaceNavItem,
+} from "@/components/workspace/workspace-shell";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   beforeLoad: async () => {
@@ -40,12 +42,7 @@ export const Route = createFileRoute("/_authenticated/admin")({
   component: AdminLayout,
 });
 
-const SECTIONS: Array<{
-  to: string;
-  label: string;
-  icon: typeof LayoutDashboard;
-  exact?: boolean;
-}> = [
+const NAV: WorkspaceNavItem[] = [
   { to: "/admin", label: "Overview", icon: LayoutDashboard, exact: true },
   { to: "/admin/clients", label: "Clients", icon: Building2 },
   { to: "/admin/positions", label: "Positions", icon: Briefcase },
@@ -68,49 +65,27 @@ const ADMIN_REFRESH_KEYS = [
   NOTIFICATIONS_QUERY_KEY,
 ] as const;
 
-
 function AdminLayout() {
-  const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [userId, setUserId] = useState<string | null>(null);
+  const [email, setEmail] = useState<string | null>(null);
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => setUserId(data.user?.id ?? null));
+    supabase.auth.getUser().then(({ data }) => {
+      setUserId(data.user?.id ?? null);
+      setEmail(data.user?.email ?? null);
+    });
   }, []);
   useDashboardRealtime({ userId, audience: "admin", invalidateKeys: ADMIN_REFRESH_KEYS });
 
   return (
-    <div className="min-h-screen flex w-full bg-background">
-      <aside className="w-56 shrink-0 border-r bg-card flex flex-col">
-        <div className="px-4 py-4 border-b flex items-center justify-between gap-2">
-          <Link to="/" className="font-semibold text-sm">TaaSFlow admin</Link>
-          <NotificationBell />
-        </div>
-        <nav className="p-2 space-y-1">
-          {SECTIONS.map((s) => {
-            const active = s.exact ? pathname === s.to : pathname.startsWith(s.to);
-            return (
-              <Link
-                key={s.to}
-                to={s.to}
-                className={`flex items-center gap-2 rounded px-3 py-2 text-sm transition-colors ${
-                  active
-                    ? "bg-primary text-primary-foreground"
-                    : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                }`}
-              >
-                <s.icon className="h-4 w-4" />
-                {s.label}
-              </Link>
-            );
-          })}
-        </nav>
-        <div className="mt-auto p-3 border-t">
-          <SignOutButton className="w-full inline-flex items-center gap-1.5 rounded px-2 py-1.5 text-xs text-muted-foreground hover:bg-muted hover:text-foreground" />
-        </div>
-      </aside>
-      <div className="flex-1 min-w-0">
-        <Outlet />
-      </div>
-    </div>
+    <WorkspaceShell
+      contextKicker="TaaSFlow"
+      contextLabel="Admin"
+      contextSubLabel={email ?? undefined}
+      navItems={NAV}
+    >
+      <Outlet />
+    </WorkspaceShell>
   );
 }
+
 
