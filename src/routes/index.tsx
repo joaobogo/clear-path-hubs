@@ -45,6 +45,7 @@ import {
 import { getPage } from "@/lib/marketing/content";
 import { marketingHead } from "@/lib/marketing/head";
 import { RoiCalculator } from "@/components/marketing/roi-calculator";
+import { ModelComparison } from "@/components/marketing/model-comparison";
 
 // Homepage metadata is authored inline (guardrail: legacy JSON entry contains
 // unapproved "14 days" and totals claims). Do not pass the legacy entry here.
@@ -1909,38 +1910,10 @@ function Home() {
           <PublicPage>
             <SectionHead
               eyebrow="TaaSFlow vs the agency model"
-              title="Same objective. A different way of getting there."
-              lead="A side-by-side view of how a subscription recruiting workspace compares to a traditional contingent agency."
+              title="Recruiting should not restart from zero."
+              lead="Pick a dimension, pick your hiring intent, and see how each model behaves."
             />
-            <div className="mt-10 overflow-hidden rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white shadow-[var(--brand-shadow-sm)]">
-              <div className="hidden grid-cols-[1.1fr_1.4fr_1.4fr] items-center gap-4 border-b border-[color:var(--brand-navy)]/8 bg-[color:var(--brand-paper)] px-5 py-3 text-xs font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/60 md:grid">
-                <span>Dimension</span>
-                <span className="text-[color:var(--brand-navy)]">TaaSFlow</span>
-                <span>Traditional agency</span>
-              </div>
-              <ul>
-                {AGENCY_COMPARE.map((row) => (
-                  <li
-                    key={row.axis}
-                    className="grid grid-cols-1 gap-2 border-b border-[color:var(--brand-navy)]/8 px-5 py-4 last:border-0 md:grid-cols-[1.1fr_1.4fr_1.4fr] md:items-start md:gap-4"
-                  >
-                    <div className="text-sm font-semibold text-[color:var(--brand-navy)]">
-                      {row.axis}
-                    </div>
-                    <div className="flex items-start gap-2 text-sm text-[color:var(--brand-navy)]">
-                      <CheckCircle2
-                        className="mt-0.5 h-4 w-4 shrink-0 text-[color:var(--brand-ocean)]"
-                        aria-hidden
-                      />
-                      <span>{row.taasflow}</span>
-                    </div>
-                    <div className="text-sm text-[color:var(--brand-navy)]/60">
-                      {row.agency}
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            <ModelComparison />
           </PublicPage>
         </PublicSection>
       </section>
