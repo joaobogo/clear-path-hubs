@@ -76,26 +76,54 @@ const WEEKLY_DELIVERABLES = [
   },
 ] as const;
 
-const AUDIENCES = [
+const AUDIENCE_LANES = [
   {
     icon: Rocket,
-    t: "Growing startups",
-    d: "Founders and Heads of People hiring in bursts who need pipeline without hiring a full in-house recruiting team.",
+    accent: "ocean",
+    name: "Founders & Hiring Managers",
+    problem:
+      "Limited time, no dedicated sourcing capacity, and hires that can't wait for a full internal team to be built.",
+    value:
+      "An on-demand recruiting function that runs beside you — sourcing, evaluating, and delivering ranked candidates without hiring a full internal team.",
+    result: "Interview-ready shortlists on roles you'd otherwise leave open.",
+    ctaLabel: "See How It Works",
+    ctaTo: "/how-it-works",
+  },
+  {
+    icon: Users,
+    accent: "sky",
+    name: "HR & Talent Acquisition",
+    problem:
+      "Recruiters spend too much time sourcing and too little time interviewing, supporting hiring managers, and improving candidate experience.",
+    value:
+      "Continuous sourcing and ranked candidate delivery through one visible workspace your TA team owns — so recruiters get their calendar back.",
+    result: "Sourcing capacity that scales with demand, evidence in view.",
+    ctaLabel: "Explore the Model",
+    ctaTo: "/solutions",
   },
   {
     icon: Building2,
-    t: "Scale-ups & mid-market",
-    d: "Talent teams filling several roles in parallel that want a single workspace instead of juggling agencies and spreadsheets.",
-  },
-  {
-    icon: LayoutDashboard,
-    t: "In-house recruiting teams",
-    d: "Recruiters who want an on-demand sourcing pod that plugs in beside their ATS and shares the same status with hiring managers.",
+    accent: "navy",
+    name: "Enterprise Hiring Teams",
+    problem:
+      "High-volume and multi-market hiring becomes fragmented across agencies, regions, and spreadsheets — and expensive to coordinate.",
+    value:
+      "Structured sourcing capacity, ranked candidate delivery, and portfolio-level visibility across every active role and business unit.",
+    result: "One consolidated view across regions, roles, and teams.",
+    ctaLabel: "Enterprise Solutions",
+    ctaTo: "/enterprise",
   },
   {
     icon: Handshake,
-    t: "Hiring managers",
-    d: "Owners of a role who want ranked candidates with evidence — not 40 CVs to skim — and one click to shortlist, interview, or pass.",
+    accent: "sand",
+    name: "Staffing & Recruiting Agencies",
+    problem:
+      "Client demand exceeds internal sourcing capacity — but hiring recruiters to meet peaks doesn't fit the margin structure.",
+    value:
+      "A scalable sourcing and candidate-delivery partner behind the agency — you keep the client relationship, we extend the bench.",
+    result: "More placements fulfilled without expanding headcount.",
+    ctaLabel: "Staffing Partnerships",
+    ctaTo: "/partnerships/staffing",
   },
 ] as const;
 
