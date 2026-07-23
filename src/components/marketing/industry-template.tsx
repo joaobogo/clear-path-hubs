@@ -192,6 +192,9 @@ export function IndustryTemplate({ entry }: { entry: IndustryEntry }) {
         </PublicPage>
       </PublicSection>
 
+      {/* 1a. Animated impact metrics band */}
+      <IndustryMetricsBand entry={entry} />
+
       {/* 1b. Keyword-anchored intro links — SEO internal-link density */}
       <PublicSection className="py-4">
         <PublicPage>
