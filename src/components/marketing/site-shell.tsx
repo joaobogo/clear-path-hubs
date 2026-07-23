@@ -10,10 +10,12 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import {
   NAV_GROUPS,
+  PRIMARY_ITEMS,
   PRIMARY_NAV as CONFIG_PRIMARY_NAV,
   PRIMARY_CTA,
   SECONDARY_CTAS,
   FOOTER_GROUPS,
+  FOOTER_DESCRIPTION,
   SOCIAL_LINKS,
   type NavLink,
 } from "@/config/public-navigation";
@@ -155,7 +157,8 @@ function Header() {
   useEffect(() => { setOpen(false); }, [pathname]);
 
   const signIn = SECONDARY_CTAS.find((c) => c.label === "Sign in") ?? { to: "/login", label: "Sign in" };
-  const browseJobs = SECONDARY_CTAS.find((c) => c.label === "Browse jobs") ?? { to: "/jobs", label: "Browse jobs" };
+  const browseJobs = SECONDARY_CTAS.find((c) => c.label === "Browse Jobs") ?? { to: "/jobs", label: "Browse Jobs" };
+  const joinNetwork = SECONDARY_CTAS.find((c) => c.label === "Join the Talent Network") ?? { to: "/candidate-join", label: "Join the Talent Network" };
 
   return (
     <>
@@ -169,41 +172,48 @@ function Header() {
             className="relative hidden flex-1 items-center justify-center lg:flex"
           >
             <NavigationMenuPrimitive.List className="flex items-center gap-1">
-              {NAV_GROUPS.map((group) => (
-                <NavigationMenuPrimitive.Item key={group.label}>
-                  <GroupTrigger label={group.label} />
-                  <GroupContent links={group.links} />
-                </NavigationMenuPrimitive.Item>
-              ))}
-              {CONFIG_PRIMARY_NAV.filter((n) => !n.hidden).map((n) => (
-                <NavigationMenuPrimitive.Item key={n.to}>
-                  <NavigationMenuPrimitive.Link asChild>
-                    <DesktopNavLink to={n.to} label={n.label} />
-                  </NavigationMenuPrimitive.Link>
-                </NavigationMenuPrimitive.Item>
-              ))}
+              {PRIMARY_ITEMS.map((item) =>
+                item.kind === "link" ? (
+                  <NavigationMenuPrimitive.Item key={item.to}>
+                    <NavigationMenuPrimitive.Link asChild>
+                      <DesktopNavLink to={item.to} label={item.label} />
+                    </NavigationMenuPrimitive.Link>
+                  </NavigationMenuPrimitive.Item>
+                ) : (
+                  <NavigationMenuPrimitive.Item key={item.label}>
+                    <GroupTrigger label={item.label} />
+                    <GroupContent links={item.links} />
+                  </NavigationMenuPrimitive.Item>
+                ),
+              )}
             </NavigationMenuPrimitive.List>
             <div className="absolute left-0 top-full flex w-full justify-center">
               <NavigationMenuPrimitive.Viewport className="origin-top-center relative mt-2 h-[var(--radix-navigation-menu-viewport-height)] w-full overflow-hidden rounded-xl border border-[color:var(--brand-navy)]/10 bg-white text-[color:var(--brand-navy)] shadow-lg data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-90 md:w-[var(--radix-navigation-menu-viewport-width)]" />
             </div>
           </NavigationMenuPrimitive.Root>
 
-          <div className="ml-auto hidden items-center gap-2 lg:flex">
-            <Link
-              to={signIn.to}
-              className="rounded-md px-3 py-1.5 text-sm font-medium text-[color:var(--brand-navy)]/80 hover:text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
-            >
-              {signIn.label}
-            </Link>
+          <div className="ml-auto hidden items-center gap-1 lg:flex">
             <Link
               to={browseJobs.to}
-              className="rounded-md border border-[color:var(--brand-navy)]/15 bg-white px-3 py-1.5 text-sm font-medium text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+              className="rounded-md px-2.5 py-1.5 text-sm font-medium text-[color:var(--brand-navy)]/80 hover:text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
             >
               {browseJobs.label}
             </Link>
             <Link
+              to={joinNetwork.to}
+              className="hidden rounded-md px-2.5 py-1.5 text-sm font-medium text-[color:var(--brand-navy)]/80 hover:text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)] xl:inline-flex"
+            >
+              Join Talent Network
+            </Link>
+            <Link
+              to={signIn.to}
+              className="rounded-md px-2.5 py-1.5 text-sm font-medium text-[color:var(--brand-navy)]/80 hover:text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+            >
+              {signIn.label}
+            </Link>
+            <Link
               to={PRIMARY_CTA.to}
-              className="rounded-md bg-[color:var(--brand-navy)] px-4 py-1.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-[color:var(--brand-navy-dark)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+              className="ml-1 rounded-md bg-[color:var(--brand-navy)] px-4 py-1.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-[color:var(--brand-navy-dark)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
             >
               {PRIMARY_CTA.label}
             </Link>
@@ -231,42 +241,58 @@ function Header() {
                 </SheetDescription>
               </SheetHeader>
               <div className="flex-1 overflow-y-auto">
-                <nav aria-label="Mobile primary" className="flex flex-col gap-1 px-3 py-4">
-                  {CONFIG_PRIMARY_NAV.filter((n) => !n.hidden).map((n) => (
-                    <Link
-                      key={n.to}
-                      to={n.to}
-                      className="min-h-11 rounded-md px-3 py-2.5 text-base text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
-                      activeProps={{ className: "bg-[color:var(--brand-navy)]/5 font-semibold" }}
-                    >
-                      {n.label}
-                    </Link>
-                  ))}
-                </nav>
-                <Accordion type="multiple" className="px-3 pb-4">
-                  {NAV_GROUPS.map((group) => (
-                    <AccordionItem key={group.label} value={group.label} className="border-b-0">
-                      <AccordionTrigger className="min-h-11 rounded-md px-3 py-2.5 text-base font-medium text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5 hover:no-underline">
-                        {group.label}
-                      </AccordionTrigger>
-                      <AccordionContent className="pb-1">
-                        <ul className="flex flex-col">
-                          {group.links.filter((l) => !l.hidden).map((l) => (
-                            <li key={`${l.to}-${l.label}`}>
-                              <Link
-                                to={l.to}
-                                className="block min-h-11 rounded-md px-6 py-2.5 text-sm text-[color:var(--brand-navy)]/85 hover:bg-[color:var(--brand-navy)]/5 hover:text-[color:var(--brand-navy)]"
-                                activeProps={{ className: "font-semibold text-[color:var(--brand-navy)]" }}
-                              >
-                                {l.label}
-                              </Link>
-                            </li>
-                          ))}
-                        </ul>
-                      </AccordionContent>
-                    </AccordionItem>
-                  ))}
+                <Accordion type="multiple" className="px-3 py-4">
+                  {PRIMARY_ITEMS.map((item) =>
+                    item.kind === "link" ? (
+                      <Link
+                        key={item.to}
+                        to={item.to}
+                        className="flex min-h-11 items-center rounded-md px-3 py-2.5 text-base font-medium text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+                        activeProps={{ className: "bg-[color:var(--brand-navy)]/5 font-semibold" }}
+                      >
+                        {item.label}
+                      </Link>
+                    ) : (
+                      <AccordionItem key={item.label} value={item.label} className="border-b-0">
+                        <AccordionTrigger className="min-h-11 rounded-md px-3 py-2.5 text-base font-medium text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5 hover:no-underline">
+                          {item.label}
+                        </AccordionTrigger>
+                        <AccordionContent className="pb-1">
+                          <ul className="flex flex-col">
+                            {item.links.filter((l) => !l.hidden).map((l) => (
+                              <li key={`${l.to}-${l.label}`}>
+                                <Link
+                                  to={l.to}
+                                  className="block min-h-11 rounded-md px-6 py-2.5 text-sm text-[color:var(--brand-navy)]/85 hover:bg-[color:var(--brand-navy)]/5 hover:text-[color:var(--brand-navy)]"
+                                  activeProps={{ className: "font-semibold text-[color:var(--brand-navy)]" }}
+                                >
+                                  {l.label}
+                                </Link>
+                              </li>
+                            ))}
+                          </ul>
+                        </AccordionContent>
+                      </AccordionItem>
+                    ),
+                  )}
                 </Accordion>
+                <div className="border-t border-[color:var(--brand-navy)]/10 px-3 py-4">
+                  <p className="px-3 pb-2 text-xs font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/55">
+                    For candidates
+                  </p>
+                  <Link
+                    to={browseJobs.to}
+                    className="flex min-h-11 items-center rounded-md px-3 py-2.5 text-base text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5"
+                  >
+                    {browseJobs.label}
+                  </Link>
+                  <Link
+                    to={joinNetwork.to}
+                    className="flex min-h-11 items-center rounded-md px-3 py-2.5 text-base text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5"
+                  >
+                    {joinNetwork.label}
+                  </Link>
+                </div>
               </div>
               <div className="space-y-2 border-t border-[color:var(--brand-navy)]/10 p-4">
                 <Link
@@ -275,20 +301,12 @@ function Header() {
                 >
                   {PRIMARY_CTA.label}
                 </Link>
-                <div className="grid grid-cols-2 gap-2">
-                  <Link
-                    to={browseJobs.to}
-                    className="flex min-h-11 items-center justify-center rounded-md border border-[color:var(--brand-navy)]/15 px-3 py-2 text-sm font-medium text-[color:var(--brand-navy)]"
-                  >
-                    {browseJobs.label}
-                  </Link>
-                  <Link
-                    to={signIn.to}
-                    className="flex min-h-11 items-center justify-center rounded-md border border-[color:var(--brand-navy)]/15 px-3 py-2 text-sm font-medium text-[color:var(--brand-navy)]"
-                  >
-                    {signIn.label}
-                  </Link>
-                </div>
+                <Link
+                  to={signIn.to}
+                  className="flex min-h-11 items-center justify-center rounded-md border border-[color:var(--brand-navy)]/15 px-3 py-2 text-sm font-medium text-[color:var(--brand-navy)]"
+                >
+                  {signIn.label}
+                </Link>
               </div>
             </SheetContent>
           </Sheet>
@@ -343,7 +361,7 @@ function Footer() {
           <div className="lg:col-span-2">
             <BrandMark />
             <p className="mt-4 max-w-sm text-sm text-[color:var(--brand-navy)]/70">
-              A live recruiting workspace with ranked, evidence-backed candidate delivery.
+              {FOOTER_DESCRIPTION}
             </p>
             <div className="mt-5 flex items-center gap-3">
               {SOCIAL_LINKS.map(({ href, label }) => {
