@@ -114,6 +114,8 @@ export const INDUSTRY_HERO_IMAGES: Record<string, IndustryHeroImage> = {
   },
 };
 
+import { getIndustryHeroPhoto } from "./industry-hero-photos";
+
 export function getIndustryHeroImage(slug: string): IndustryHeroImage | undefined {
-  return INDUSTRY_HERO_IMAGES[slug];
+  return INDUSTRY_HERO_IMAGES[slug] ?? getIndustryHeroPhoto(slug);
 }
