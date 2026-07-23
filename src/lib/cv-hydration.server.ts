@@ -273,6 +273,9 @@ export async function hydrateProfileFromCv(opts: {
   const parsed = await structureCv(opts.cv_text);
   if (!parsed.ok) return { ok: false, applied: [], skipped: [], reason: parsed.reason };
 
+  const parserSource: "llm" | "heuristic" = parsed.source;
+  const degradedReason = parsed.degraded_reason;
+
   const consent: Row = (profile.consent as Row) ?? {};
   const provenance: Record<string, unknown> =
     (consent.provenance as Record<string, unknown>) ?? {};
@@ -285,6 +288,7 @@ export async function hydrateProfileFromCv(opts: {
   const stampProvenance = (field: string, conf: number, snippet?: string) => {
     provenance[field] = {
       source: "cv_parsed",
+      parser: parserSource,
       confidence: Number(conf.toFixed(3)),
       extracted_at: new Date().toISOString(),
       trace_id: opts.trace_id,
@@ -321,7 +325,14 @@ export async function hydrateProfileFromCv(opts: {
     applied.push(field);
   }
 
-  const newConsent: Row = { ...consent, provenance, extracted: consentExtras, hydrated_at: new Date().toISOString() };
+  const newConsent: Row = {
+    ...consent,
+    provenance,
+    extracted: consentExtras,
+    hydrated_at: new Date().toISOString(),
+    hydration_parser: parserSource,
+    ...(degradedReason ? { hydration_degraded_reason: degradedReason } : {}),
+  };
 
   const { error: upErr } = await s
     .from("candidate_profiles")
@@ -329,5 +340,10 @@ export async function hydrateProfileFromCv(opts: {
     .eq("id", opts.candidate_profile_id);
   if (upErr) return { ok: false, applied, skipped, reason: `update_failed:${upErr.message}` };
 
-  return { ok: true, applied, skipped };
+  return {
+    ok: true,
+    applied,
+    skipped,
+    reason: degradedReason ? `degraded:${parserSource}:${degradedReason}` : undefined,
+  };
 }
