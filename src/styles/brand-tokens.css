@@ -265,7 +265,6 @@
   --taas-shell-topbar-bg:      oklch(0.15 0.030 262 / 0.72);
   --taas-shell-topbar-border:  oklch(1 0 0 / 0.08);
   --taas-shell-nav-hover-bg:   oklch(1 0 0 / 0.05);
-}
   --brand-navy:        oklch(0.92 0.015 245);
   --brand-navy-light:  oklch(0.78 0.020 245);
   --brand-navy-dark:   oklch(0.98 0.005 245);
