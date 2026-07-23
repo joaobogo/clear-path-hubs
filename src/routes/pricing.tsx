@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { marketingHead } from "@/lib/marketing/head";
-import { PublicPage, PublicSection, CtaSection } from "@/components/marketing/site-shell";
+import { SiteShell, PublicPage, PublicSection, CtaSection } from "@/components/marketing/site-shell";
 import {
   Check,
   X,
@@ -48,7 +48,7 @@ const EXCLUDED = [
 
 function PricingPage() {
   return (
-    <>
+    <SiteShell>
       {/* ── Pricing Hero ─────────────────────────────────────────── */}
       <PublicSection className="pb-10 pt-16 sm:pt-20">
         <PublicPage>
@@ -333,7 +333,7 @@ function PricingPage() {
         primary={{ to: "/intake", label: "Start Hiring" }}
         secondary={{ to: "/contact", label: "Contact Sales" }}
       />
-    </>
+    </SiteShell>
   );
 }
 

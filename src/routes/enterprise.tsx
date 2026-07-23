@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { marketingHead } from "@/lib/marketing/head";
-import { PublicPage, PublicSection, CtaSection } from "@/components/marketing/site-shell";
+import { SiteShell, PublicPage, PublicSection, CtaSection } from "@/components/marketing/site-shell";
 import {
   Building2,
   Layers,
@@ -28,7 +28,7 @@ export const Route = createFileRoute("/enterprise")({
 
 function EnterprisePage() {
   return (
-    <>
+    <SiteShell>
       {/* ── Hero ─────────────────────────────────────────────────── */}
       <PublicSection className="pb-10 pt-16 sm:pt-20">
         <PublicPage>
@@ -340,7 +340,7 @@ function EnterprisePage() {
         primary={{ to: "/contact", label: "Book Enterprise Consultation" }}
         secondary={{ to: "/intake", label: "Start Hiring" }}
       />
-    </>
+    </SiteShell>
   );
 }
 
