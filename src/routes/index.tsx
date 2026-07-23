@@ -359,6 +359,82 @@ const PROCESS_STEPS = [
   },
 ] as const;
 
+const FEATURED_INDUSTRIES = [
+  {
+    name: "Technology",
+    slug: "tech",
+    context: "Engineering, product, and platform hiring where technical depth has to be verified, not assumed.",
+    roles: "Senior Backend Engineer · Staff Platform Engineer",
+  },
+  {
+    name: "SaaS",
+    slug: "saas",
+    context: "Go-to-market and product roles for subscription businesses balancing growth and retention.",
+    roles: "Product Manager · Customer Success Lead",
+  },
+  {
+    name: "Finance",
+    slug: "finance",
+    context: "Regulated hiring where domain knowledge, licenses, and risk experience are non-negotiable.",
+    roles: "FP&A Manager · Risk Analyst",
+  },
+  {
+    name: "Healthcare",
+    slug: "healthcare",
+    context: "Clinical, operations, and healthtech roles where credentials and compliance matter as much as skills.",
+    roles: "Clinical Operations Lead · Healthtech Product Manager",
+  },
+  {
+    name: "Legal",
+    slug: "legal",
+    context: "In-house counsel and legal operations hiring with jurisdiction, matter type, and seniority scoped up front.",
+    roles: "In-house Counsel · Legal Operations Manager",
+  },
+  {
+    name: "Sales",
+    slug: "sales",
+    context: "Quota-carrying roles evaluated against segment, cycle length, and demonstrated attainment.",
+    roles: "Enterprise Account Executive · Sales Development Lead",
+  },
+  {
+    name: "Human Resources",
+    slug: "human-resources",
+    context: "HR, People, and Talent hires assessed on the operating model behind their previous programs.",
+    roles: "Head of People · Talent Partner",
+  },
+  {
+    name: "Consulting",
+    slug: "consulting",
+    context: "Strategy, operations, and delivery consultants scoped to industry, function, and engagement scale.",
+    roles: "Management Consultant · Delivery Manager",
+  },
+  {
+    name: "Construction",
+    slug: "construction",
+    context: "Site, project, and engineering roles evaluated on project scale, safety record, and delivery history.",
+    roles: "Project Manager · Site Engineer",
+  },
+  {
+    name: "Real Estate",
+    slug: "real-estate",
+    context: "Investment, development, and asset management hires scoped to sector, geography, and deal size.",
+    roles: "Investment Associate · Asset Manager",
+  },
+  {
+    name: "Hospitality",
+    slug: "hospitality",
+    context: "Operations and guest-experience leaders assessed on property type, brand standards, and P&L scope.",
+    roles: "General Manager · Director of Operations",
+  },
+  {
+    name: "Staffing Agencies",
+    slug: "staffing-agencies",
+    context: "Recruiting capacity for agencies that need overflow sourcing without losing client ownership.",
+    roles: "Recruiter · Sourcing Partner",
+  },
+] as const;
+
+
 
 
 /* ---------- Small building blocks ---------- */
