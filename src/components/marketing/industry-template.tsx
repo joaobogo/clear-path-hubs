@@ -19,7 +19,9 @@ import { IndustrySignalExplorer } from "@/components/marketing/industry-signal-e
  * partially populated industry silently hides sections it lacks.
  */
 export function IndustryTemplate({ entry }: { entry: IndustryEntry }) {
+  const heroImage = getIndustryHeroImage(entry.slug);
   const jsonLd = entry.faqs
+
     ? {
         "@context": "https://schema.org",
         "@type": "FAQPage",
@@ -44,41 +46,63 @@ export function IndustryTemplate({ entry }: { entry: IndustryEntry }) {
       {/* 1. Industry-specific hero */}
       <PublicSection className="pb-8 pt-10 sm:pt-14">
         <PublicPage>
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">
-            {entry.eyebrow}
-          </p>
-          <h1 className="mt-3 max-w-3xl font-[family-name:var(--brand-font-display)] text-4xl font-semibold tracking-tight sm:text-5xl">
-            {entry.hero.title}
-          </h1>
-          <p className="mt-5 max-w-2xl text-lg text-[color:var(--brand-navy)]/70">
-            {entry.hero.subtitle}
-          </p>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <Link
-              to="/intake"
-              className="inline-flex min-h-11 items-center justify-center rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-white hover:opacity-90"
-            >
-              Start hiring
-            </Link>
-            <Link
-              to="/contact"
-              className="inline-flex min-h-11 items-center justify-center rounded-md border border-[color:var(--brand-navy)]/20 px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5"
-            >
-              Talk to us
-            </Link>
+      {/* 1. Industry-specific hero */}
+      <PublicSection className="pb-8 pt-10 sm:pt-14">
+        <PublicPage>
+          <div className={heroImage ? "grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:items-center" : ""}>
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">
+                {entry.eyebrow}
+              </p>
+              <h1 className="mt-3 max-w-3xl font-[family-name:var(--brand-font-display)] text-4xl font-semibold tracking-tight sm:text-5xl">
+                {entry.hero.title}
+              </h1>
+              <p className="mt-5 max-w-2xl text-lg text-[color:var(--brand-navy)]/70">
+                {entry.hero.subtitle}
+              </p>
+              <div className="mt-8 flex flex-wrap gap-3">
+                <Link
+                  to="/intake"
+                  className="inline-flex min-h-11 items-center justify-center rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-white hover:opacity-90"
+                >
+                  Start hiring
+                </Link>
+                <a
+                  href="#role-explorer"
+                  className="inline-flex min-h-11 items-center justify-center rounded-md border border-[color:var(--brand-navy)]/20 px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5"
+                >
+                  Explore roles
+                </a>
+              </div>
+              <ul className="mt-8 flex flex-wrap gap-2">
+                {entry.signals.map((s) => (
+                  <li
+                    key={s}
+                    className="rounded-full bg-[color:var(--brand-navy)]/5 px-3 py-1 text-xs font-medium text-[color:var(--brand-navy)]/80"
+                  >
+                    {s}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            {heroImage ? (
+              <figure className="relative overflow-hidden rounded-2xl border border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-mist)]/40 shadow-sm motion-safe:animate-[fade-in_400ms_ease-out]">
+                <img
+                  src={heroImage.src}
+                  alt={heroImage.alt}
+                  width={heroImage.width}
+                  height={heroImage.height}
+                  loading="eager"
+                  fetchPriority="high"
+                  decoding="async"
+                  className="aspect-[2/1] h-auto w-full object-cover lg:aspect-auto"
+                />
+              </figure>
+            ) : null}
           </div>
-          <ul className="mt-8 flex flex-wrap gap-2">
-            {entry.signals.map((s) => (
-              <li
-                key={s}
-                className="rounded-full bg-[color:var(--brand-navy)]/5 px-3 py-1 text-xs font-medium text-[color:var(--brand-navy)]/80"
-              >
-                {s}
-              </li>
-            ))}
-          </ul>
         </PublicPage>
       </PublicSection>
+
 
       {/* 2. Industry hiring challenges */}
       <PublicSection className="py-8">
