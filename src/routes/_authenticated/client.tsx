@@ -37,8 +37,11 @@ import {
 import { OrgSwitcher } from "@/components/workspace/org-switcher";
 
 const searchSchema = z.object({
-  org: z.string().uuid().optional(),
-  preview: z.enum(["client_admin", "client_editor", "client_viewer"]).optional(),
+  org: fallback(z.string().uuid().optional(), undefined).optional(),
+  preview: fallback(
+    z.enum(["client_admin", "client_editor", "client_viewer"]).optional(),
+    undefined,
+  ).optional(),
 });
 
 export const Route = createFileRoute("/_authenticated/client")({
