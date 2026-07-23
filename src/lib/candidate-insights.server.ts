@@ -28,6 +28,8 @@ export interface ScreeningInsight {
 }
 
 export interface CandidateInsights {
+  pitch_summary: string;
+  pitch_tone: "sell" | "balanced" | "cautious";
   narrative: string;
   headline_suggested: string | null;
   seniority: Seniority;
@@ -52,12 +54,15 @@ const SYSTEM = `You are a senior recruiter analyst. Given a candidate's CV, the 
 Non-negotiables:
 - Ground every strength, concern, and verdict in the CV. When you cite the CV, quote it verbatim (short, <=200 chars) in "cv_quote".
 - If the CV does not support a claim, mark the verdict "missing" or the support "no" or "unclear". Do NOT invent experience.
+- "pitch_summary" is a punchy 3–5 sentence elevator pitch a recruiter could paste to a hiring manager. If the fit is strong, SELL the candidate with specific, verifiable proof from the CV. If the fit is weak, be honest and lead with the critical gaps in a professional, non-derogatory tone. Set "pitch_tone" to "sell" (strong fit), "balanced" (mixed), or "cautious" (weak fit).
 - The narrative must be 2–3 short paragraphs (3–6 sentences each) describing the person's career story, seniority, and specific fit for THIS role — not a generic bio.
 - Highlights are 3–6 concrete achievements from the CV (numbers/scope/impact where present).
 - Strengths and concerns are ROLE-SPECIFIC: tie each one to something in the position brief.
 - Return STRICT JSON matching the schema. Do not include prose outside JSON.`;
 
 const SCHEMA_HINT = `{
+  "pitch_summary": "3-5 sentence elevator pitch to a hiring manager (sell if strong, honest gaps if weak)",
+  "pitch_tone": "sell|balanced|cautious",
   "narrative": "2-3 paragraphs",
   "headline_suggested": "one-line professional headline",
   "seniority": "junior|mid|senior|lead|executive|unknown",
@@ -185,6 +190,10 @@ export async function generateCandidateInsights(
       typeof v === "string" ? v.slice(0, max) : "";
     const arr = (v: unknown): unknown[] => (Array.isArray(v) ? v : []);
     const clean: CandidateInsights = {
+      pitch_summary: clampStr(parsed.pitch_summary, 1200),
+      pitch_tone: (["sell", "balanced", "cautious"].includes(String(parsed.pitch_tone))
+        ? (parsed.pitch_tone as "sell" | "balanced" | "cautious")
+        : "balanced"),
       narrative: clampStr(parsed.narrative, 2400),
       headline_suggested: typeof parsed.headline_suggested === "string" ? parsed.headline_suggested.slice(0, 160) : null,
       seniority: (["junior", "mid", "senior", "lead", "executive"].includes(String(parsed.seniority))

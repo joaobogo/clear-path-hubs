@@ -203,7 +203,7 @@ function CandidateWorkspace() {
             {tab === "profile" && (
               <ProfileTab cp={cp} pos={pos} m={m} siblings={siblings} evidence={evidence} />
             )}
-            {tab === "cv" && <CvTab cv={cv} matchId={id} />}
+            {tab === "cv" && <CvTab cv={cv} matchId={id} cp={cp} insights={evidence?.extracted?.insights ?? null} />}
             {tab === "enrichment" && <EnrichmentTab cp={cp} evidence={evidence} />}
             {tab === "evidence" && (
               <EvidenceTab evidence={evidence} result={currentResult} />
@@ -432,6 +432,26 @@ function InsightsBriefing({ insights }: { insights: Any }) {
       {insights?.headline_suggested && (
         <p className="mt-2 text-sm font-medium text-foreground">{insights.headline_suggested}</p>
       )}
+      {insights?.pitch_summary && (
+        <div
+          className={`mt-3 rounded-md border-l-4 p-3 text-sm leading-relaxed ${
+            insights.pitch_tone === "sell"
+              ? "border-emerald-500 bg-emerald-500/10 text-foreground"
+              : insights.pitch_tone === "cautious"
+                ? "border-destructive bg-destructive/10 text-foreground"
+                : "border-amber-500 bg-amber-500/10 text-foreground"
+          }`}
+        >
+          <div className="mb-1 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+            {insights.pitch_tone === "sell"
+              ? "Recruiter pitch"
+              : insights.pitch_tone === "cautious"
+                ? "Honest read"
+                : "Balanced view"}
+          </div>
+          {insights.pitch_summary}
+        </div>
+      )}
       {insights?.narrative && (
         <div className="mt-3 whitespace-pre-wrap text-sm leading-relaxed text-foreground/90">
           {insights.narrative}
@@ -543,49 +563,168 @@ function Row({ label, v }: { label: string; v: React.ReactNode }) {
 }
 
 // ── CV & parsed ────────────────────────────────────────────────────────────
-function CvTab({ cv, matchId }: { cv: Any; matchId: string }) {
+function CvTab({ cv, matchId, cp, insights }: { cv: Any; matchId: string; cp: Any; insights: Any }) {
   if (!cv)
     return (
       <div className="rounded-lg border border-dashed p-10 text-center text-sm text-muted-foreground">
         No CV on file for this candidate.
       </div>
     );
+  const skills: string[] = Array.isArray(cp?.skills) ? cp.skills : [];
+  const experience: Any[] = Array.isArray(cp?.experience) ? cp.experience : [];
+  const education: Any[] = Array.isArray(cp?.education) ? cp.education : [];
+  const languages: Any[] = Array.isArray(cp?.languages) ? cp.languages : [];
+  const currentRole = experience[0];
+  const pitchTone = String(insights?.pitch_tone ?? "balanced");
   return (
-    <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_320px]">
-      <div className="rounded-lg border bg-card p-5">
-        <div className="flex items-center justify-between gap-2">
-          <h2 className="text-sm font-semibold">Extracted text</h2>
-          <div className="flex items-center gap-2">
-            {cv.signed_url && (
-              <a
-                href={cv.signed_url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 text-sm text-primary hover:underline"
-              >
-                Open original <ExternalLink className="h-3.5 w-3.5" />
-              </a>
+    <div className="space-y-4">
+      {insights?.pitch_summary && (
+        <div
+          className={`rounded-lg border-l-4 p-4 text-sm leading-relaxed ${
+            pitchTone === "sell"
+              ? "border-emerald-500 bg-emerald-500/10"
+              : pitchTone === "cautious"
+                ? "border-destructive bg-destructive/10"
+                : "border-amber-500 bg-amber-500/10"
+          }`}
+        >
+          <div className="mb-1 flex items-center gap-2 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+            <span>
+              {pitchTone === "sell"
+                ? "Recruiter pitch"
+                : pitchTone === "cautious"
+                  ? "Honest read"
+                  : "Balanced view"}
+            </span>
+            {insights?.headline_suggested && (
+              <span className="normal-case text-muted-foreground">· {insights.headline_suggested}</span>
             )}
-            <DownloadCvButton matchId={matchId} />
+          </div>
+          <div className="whitespace-pre-wrap text-foreground">{insights.pitch_summary}</div>
+        </div>
+      )}
+
+      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_340px]">
+        <div className="space-y-4">
+          <div className="rounded-lg border bg-card p-5">
+            <h2 className="text-sm font-semibold">Snapshot</h2>
+            <dl className="mt-3 grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+              <div>
+                <dt className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">Seniority</dt>
+                <dd className="capitalize">{insights?.seniority ?? "—"}</dd>
+              </div>
+              <div>
+                <dt className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">Current role</dt>
+                <dd className="truncate">
+                  {currentRole
+                    ? `${currentRole.title ?? currentRole.role ?? "—"} · ${currentRole.company ?? "—"}`
+                    : "—"}
+                </dd>
+              </div>
+              <div className="col-span-2">
+                <dt className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+                  Languages
+                </dt>
+                <dd>
+                  {languages.length === 0
+                    ? "—"
+                    : languages
+                        .map((l) => (typeof l === "string" ? l : `${l.language ?? "?"}${l.level ? ` (${l.level})` : ""}`))
+                        .join(" · ")}
+                </dd>
+              </div>
+            </dl>
+
+            {skills.length > 0 && (
+              <div className="mt-4">
+                <div className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+                  Top skills
+                </div>
+                <div className="mt-1.5 flex flex-wrap gap-1.5">
+                  {skills.slice(0, 20).map((s, i) => (
+                    <Badge key={i} variant="secondary">{s}</Badge>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {experience.length > 0 && (
+              <div className="mt-4">
+                <div className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+                  Experience
+                </div>
+                <ul className="mt-2 space-y-2 text-sm">
+                  {experience.slice(0, 5).map((e, i) => (
+                    <li key={i} className="border-l-2 border-primary/40 pl-3">
+                      <div className="font-medium">
+                        {e.title ?? e.role ?? "Role"}{" "}
+                        <span className="text-muted-foreground">· {e.company ?? "—"}</span>
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        {e.start_date ?? e.start ?? ""} — {e.end_date ?? e.end ?? "present"}
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {education.length > 0 && (
+              <div className="mt-4">
+                <div className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+                  Education
+                </div>
+                <ul className="mt-1.5 space-y-1 text-sm">
+                  {education.slice(0, 4).map((e, i) => (
+                    <li key={i}>
+                      {e.degree ?? "Degree"} · {e.institution ?? e.school ?? "—"}{" "}
+                      <span className="text-xs text-muted-foreground">
+                        {e.start_date ?? ""}—{e.end_date ?? ""}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+
+          <div className="rounded-lg border bg-card p-5">
+            <div className="flex items-center justify-between gap-2">
+              <h2 className="text-sm font-semibold">Extracted text</h2>
+              <div className="flex items-center gap-2">
+                {cv.signed_url && (
+                  <a
+                    href={cv.signed_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 text-sm text-primary hover:underline"
+                  >
+                    Open original <ExternalLink className="h-3.5 w-3.5" />
+                  </a>
+                )}
+                <DownloadCvButton matchId={matchId} />
+              </div>
+            </div>
+            <pre className="mt-3 max-h-[600px] overflow-auto whitespace-pre-wrap rounded-md bg-muted/40 p-3 text-xs">
+              {cv.extracted_text?.trim() || "(no text extracted)"}
+            </pre>
           </div>
         </div>
-        <pre className="mt-3 max-h-[600px] overflow-auto whitespace-pre-wrap rounded-md bg-muted/40 p-3 text-xs">
-          {cv.extracted_text?.trim() || "(no text extracted)"}
-        </pre>
+
+        <aside className="rounded-lg border bg-card p-4 text-sm">
+          <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            File details
+          </h3>
+          <dl className="mt-2 grid grid-cols-[6.5rem_1fr] gap-y-1 text-xs">
+            <Row label="Filename" v={cv.filename} />
+            <Row label="Type" v={cv.mime_type} />
+            <Row label="Size" v={`${(Number(cv.size ?? 0) / 1024).toFixed(0)} KB`} />
+            <Row label="OCR used" v={cv.ocr_used ? "Yes" : "No"} />
+            <Row label="Attempts" v={cv.extraction_attempts} />
+            <Row label="Extracted" v={cv.extraction_completed_at ? new Date(cv.extraction_completed_at).toLocaleString() : "—"} />
+          </dl>
+        </aside>
       </div>
-      <aside className="rounded-lg border bg-card p-4 text-sm">
-        <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-          File details
-        </h3>
-        <dl className="mt-2 grid grid-cols-[6.5rem_1fr] gap-y-1 text-xs">
-          <Row label="Filename" v={cv.filename} />
-          <Row label="Type" v={cv.mime_type} />
-          <Row label="Size" v={`${(Number(cv.size ?? 0) / 1024).toFixed(0)} KB`} />
-          <Row label="OCR used" v={cv.ocr_used ? "Yes" : "No"} />
-          <Row label="Attempts" v={cv.extraction_attempts} />
-          <Row label="Extracted" v={cv.extraction_completed_at ? new Date(cv.extraction_completed_at).toLocaleString() : "—"} />
-        </dl>
-      </aside>
     </div>
   );
 }
