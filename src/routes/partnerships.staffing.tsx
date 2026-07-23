@@ -2,16 +2,18 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { marketingHead } from "@/lib/marketing/head";
 import { SiteShell, PublicPage, PublicSection } from "@/components/marketing/site-shell";
 import {
+  StaffingWorkflow,
+  StaffingOwnershipMatrix,
+} from "@/components/marketing/staffing-workflow";
+import {
   Handshake,
   Layers,
   Users,
   Eye,
   ShieldCheck,
   ClipboardList,
-  Workflow,
   Building2,
   ArrowRight,
-  MessagesSquare,
 } from "lucide-react";
 
 export const Route = createFileRoute("/partnerships/staffing")({
