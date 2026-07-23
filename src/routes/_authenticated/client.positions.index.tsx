@@ -268,7 +268,7 @@ function PositionsPage() {
                   </div>
                 </div>
                 <Link
-                  to="/client/positions/$id"
+                  to="/client/positions/$id/edit"
                   params={{ id: p.id }}
                   className="text-xs font-medium text-primary hover:underline shrink-0"
                 >
