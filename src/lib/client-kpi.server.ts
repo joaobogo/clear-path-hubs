@@ -50,6 +50,7 @@ export type ClientKpis = {
   shortlisted: number;
   interviewing: number;
   interview_scheduled: number;
+  offers: number;
   hires: number;
   active_positions: number;
 };
