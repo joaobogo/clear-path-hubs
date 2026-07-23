@@ -1,0 +1,688 @@
+{
+  "generated_at": "phase-industry-inventory",
+  "source_hub": "https://taasflow.com/industries",
+  "destination_hub": "/industries",
+  "counts": {
+    "source_industries": 22,
+    "destination_v2_entries": 22,
+    "missing_destinations": 1,
+    "duplicate_or_slug_mismatch": 1
+  },
+  "industries": [
+    {
+      "canonical_name": "Technology",
+      "source_slug": "tech",
+      "source_route": "https://taasflow.com/industries/tech",
+      "source_page_file": "src/content/industries/tech.json",
+      "destination_route": "/industries/tech",
+      "destination_slug": "tech",
+      "destination_status": "DESTINATION_EXISTS",
+      "source_headline": "Engineering Talent On-Demand for Tech Companies",
+      "source_description": "Scale your engineering team fast with screened developers.",
+      "source_roles_teaser": [
+        "Software Engineers",
+        "Full-Stack Developers",
+        "Frontend Specialists"
+      ],
+      "source_challenges": "See source page (structured hero + hiring-challenge block)",
+      "source_skill_signals": "Extracted per role in source page detail",
+      "source_certifications": "Where applicable (CPA, CPC/CCS, licensing, security certs) \u2014 captured in source per-industry page",
+      "source_tools": "Per role (stacks, platforms, systems) \u2014 from source page detail",
+      "source_faqs": "Present in source page footer FAQ block",
+      "source_related_links": "Sibling industries + hub",
+      "source_metadata": {
+        "title": "Technology Talent | TaaSFlow",
+        "description": "Scale your engineering team fast with screened developers.",
+        "og:image": "https://taasflow.com/og-image.png"
+      },
+      "content_completeness": "COMPLETE_SOURCE_PAGE",
+      "migration_decision": "MIGRATE",
+      "notes": null
+    },
+    {
+      "canonical_name": "Legal",
+      "source_slug": "legal",
+      "source_route": "https://taasflow.com/industries/legal",
+      "source_page_file": "src/content/industries/legal.json",
+      "destination_route": "/industries/legal",
+      "destination_slug": "legal",
+      "destination_status": "DESTINATION_EXISTS",
+      "source_headline": "Legal support that scales with your caseload",
+      "source_description": "Quickly add paralegals & support for big cases.",
+      "source_roles_teaser": [
+        "Paralegals",
+        "Legal Researchers",
+        "Contract Attorneys"
+      ],
+      "source_challenges": "See source page (structured hero + hiring-challenge block)",
+      "source_skill_signals": "Extracted per role in source page detail",
+      "source_certifications": "Where applicable (CPA, CPC/CCS, licensing, security certs) \u2014 captured in source per-industry page",
+      "source_tools": "Per role (stacks, platforms, systems) \u2014 from source page detail",
+      "source_faqs": "Present in source page footer FAQ block",
+      "source_related_links": "Sibling industries + hub",
+      "source_metadata": {
+        "title": "Legal Talent | TaaSFlow",
+        "description": "Quickly add paralegals & support for big cases.",
+        "og:image": "https://taasflow.com/og-image.png"
+      },
+      "content_completeness": "COMPLETE_SOURCE_PAGE",
+      "migration_decision": "MIGRATE",
+      "notes": null
+    },
+    {
+      "canonical_name": "Public Sector",
+      "source_slug": "public-sector",
+      "source_route": "https://taasflow.com/industries/public-sector",
+      "source_page_file": "src/content/industries/public-sector.json",
+      "destination_route": "/industries/public-sector",
+      "destination_slug": "public-sector",
+      "destination_status": "DESTINATION_EXISTS",
+      "source_headline": "Flexible staffing for government projects",
+      "source_description": "Flexible staffing for government projects.",
+      "source_roles_teaser": [
+        "IT Specialists",
+        "Project Managers",
+        "Policy Analysts"
+      ],
+      "source_challenges": "See source page (structured hero + hiring-challenge block)",
+      "source_skill_signals": "Extracted per role in source page detail",
+      "source_certifications": "Where applicable (CPA, CPC/CCS, licensing, security certs) \u2014 captured in source per-industry page",
+      "source_tools": "Per role (stacks, platforms, systems) \u2014 from source page detail",
+      "source_faqs": "Present in source page footer FAQ block",
+      "source_related_links": "Sibling industries + hub",
+      "source_metadata": {
+        "title": "Public Sector Talent | TaaSFlow",
+        "description": "Flexible staffing for government projects.",
+        "og:image": "https://taasflow.com/og-image.png"
+      },
+      "content_completeness": "COMPLETE_SOURCE_PAGE",
+      "migration_decision": "MIGRATE",
+      "notes": null
+    },
+    {
+      "canonical_name": "Finance & Banking",
+      "source_slug": "finance",
+      "source_route": "https://taasflow.com/industries/finance",
+      "source_page_file": "src/content/industries/finance.json",
+      "destination_route": "/industries/finance",
+      "destination_slug": "finance",
+      "destination_status": "DESTINATION_EXISTS",
+      "source_headline": "Trusted finance talent, on-demand",
+      "source_description": "Trusted analysts and accountants on-demand.",
+      "source_roles_teaser": [
+        "Financial Analysts",
+        "Senior Accountants",
+        "CPAs"
+      ],
+      "source_challenges": "See source page (structured hero + hiring-challenge block)",
+      "source_skill_signals": "Extracted per role in source page detail",
+      "source_certifications": "Where applicable (CPA, CPC/CCS, licensing, security certs) \u2014 captured in source per-industry page",
+      "source_tools": "Per role (stacks, platforms, systems) \u2014 from source page detail",
+      "source_faqs": "Present in source page footer FAQ block",
+      "source_related_links": "Sibling industries + hub",
+      "source_metadata": {
+        "title": "Finance & Banking Talent | TaaSFlow",
+        "description": "Trusted analysts and accountants on-demand.",
+        "og:image": "https://taasflow.com/og-image.png"
+      },
+      "content_completeness": "COMPLETE_SOURCE_PAGE",
+      "migration_decision": "MIGRATE",
+      "notes": null
+    },
+    {
+      "canonical_name": "Staffing Agencies",
+      "source_slug": "staffing-agencies",
+      "source_route": "https://taasflow.com/industries/staffing-agencies",
+      "source_page_file": "src/content/industries/staffing-agencies.json",
+      "destination_route": "/industries/staffing-agencies",
+      "destination_slug": "staffing-agencies",
+      "destination_status": "DESTINATION_EXISTS",
+      "source_headline": "Behind-the-scenes recruiting capacity",
+      "source_description": "Extend your recruiting capacity behind the scenes.",
+      "source_roles_teaser": [
+        "Backend Talent Sourcing",
+        "Overflow Recruiting",
+        "Niche Role Filling"
+      ],
+      "source_challenges": "See source page (structured hero + hiring-challenge block)",
+      "source_skill_signals": "Extracted per role in source page detail",
+      "source_certifications": "Where applicable (CPA, CPC/CCS, licensing, security certs) \u2014 captured in source per-industry page",
+      "source_tools": "Per role (stacks, platforms, systems) \u2014 from source page detail",
+      "source_faqs": "Present in source page footer FAQ block",
+      "source_related_links": "Sibling industries + hub",
+      "source_metadata": {
+        "title": "Staffing Agencies Talent | TaaSFlow",
+        "description": "Extend your recruiting capacity behind the scenes.",
+        "og:image": "https://taasflow.com/og-image.png"
+      },
+      "content_completeness": "COMPLETE_SOURCE_PAGE",
+      "migration_decision": "MIGRATE",
+      "notes": null
+    },
+    {
+      "canonical_name": "Healthcare",
+      "source_slug": "healthcare",
+      "source_route": "https://taasflow.com/industries/healthcare",
+      "source_page_file": "src/content/industries/healthcare.json",
+      "destination_route": "/industries/healthcare",
+      "destination_slug": "healthcare",
+      "destination_status": "DESTINATION_EXISTS",
+      "source_headline": "Compliant medical staffing professionals",
+      "source_description": "Compliant medical staffing professionals.",
+      "source_roles_teaser": [
+        "Medical Coders",
+        "Medical Billers",
+        "Practice Managers"
+      ],
+      "source_challenges": "See source page (structured hero + hiring-challenge block)",
+      "source_skill_signals": "Extracted per role in source page detail",
+      "source_certifications": "Where applicable (CPA, CPC/CCS, licensing, security certs) \u2014 captured in source per-industry page",
+      "source_tools": "Per role (stacks, platforms, systems) \u2014 from source page detail",
+      "source_faqs": "Present in source page footer FAQ block",
+      "source_related_links": "Sibling industries + hub",
+      "source_metadata": {
+        "title": "Healthcare Talent | TaaSFlow",
+        "description": "Compliant medical staffing professionals.",
+        "og:image": "https://taasflow.com/og-image.png"
+      },
+      "content_completeness": "COMPLETE_SOURCE_PAGE",
+      "migration_decision": "MIGRATE",
+      "notes": null
+    },
+    {
+      "canonical_name": "Sales",
+      "source_slug": "sales",
+      "source_route": "https://taasflow.com/industries/sales",
+      "source_page_file": "src/content/industries/sales.json",
+      "destination_route": "/industries/sales",
+      "destination_slug": "sales",
+      "destination_status": "DESTINATION_EXISTS",
+      "source_headline": "Revenue-focused talent that closes",
+      "source_description": "Revenue-focused talent that closes deals.",
+      "source_roles_teaser": [
+        "SDRs/BDRs",
+        "Account Executives",
+        "Enterprise AEs"
+      ],
+      "source_challenges": "See source page (structured hero + hiring-challenge block)",
+      "source_skill_signals": "Extracted per role in source page detail",
+      "source_certifications": "Where applicable (CPA, CPC/CCS, licensing, security certs) \u2014 captured in source per-industry page",
+      "source_tools": "Per role (stacks, platforms, systems) \u2014 from source page detail",
+      "source_faqs": "Present in source page footer FAQ block",
+      "source_related_links": "Sibling industries + hub",
+      "source_metadata": {
+        "title": "Sales Talent | TaaSFlow",
+        "description": "Revenue-focused talent that closes deals.",
+        "og:image": "https://taasflow.com/og-image.png"
+      },
+      "content_completeness": "COMPLETE_SOURCE_PAGE",
+      "migration_decision": "MIGRATE",
+      "notes": null
+    },
+    {
+      "canonical_name": "Marketing & Advertising",
+      "source_slug": "marketing",
+      "source_route": "https://taasflow.com/industries/marketing",
+      "source_page_file": "src/content/industries/marketing.json",
+      "destination_route": "/industries/marketing",
+      "destination_slug": "marketing",
+      "destination_status": "DESTINATION_EXISTS",
+      "source_headline": "Creative and growth talent for campaigns",
+      "source_description": "Creative and growth talent for campaigns.",
+      "source_roles_teaser": [
+        "Growth Marketers",
+        "Performance Marketers",
+        "Content Strategists"
+      ],
+      "source_challenges": "See source page (structured hero + hiring-challenge block)",
+      "source_skill_signals": "Extracted per role in source page detail",
+      "source_certifications": "Where applicable (CPA, CPC/CCS, licensing, security certs) \u2014 captured in source per-industry page",
+      "source_tools": "Per role (stacks, platforms, systems) \u2014 from source page detail",
+      "source_faqs": "Present in source page footer FAQ block",
+      "source_related_links": "Sibling industries + hub",
+      "source_metadata": {
+        "title": "Marketing & Advertising Talent | TaaSFlow",
+        "description": "Creative and growth talent for campaigns.",
+        "og:image": "https://taasflow.com/og-image.png"
+      },
+      "content_completeness": "COMPLETE_SOURCE_PAGE",
+      "migration_decision": "MIGRATE",
+      "notes": null
+    },
+    {
+      "canonical_name": "Human Resources",
+      "source_slug": "human-resources",
+      "source_route": "https://taasflow.com/industries/human-resources",
+      "source_page_file": "src/content/industries/human-resources.json",
+      "destination_route": "/industries/human-resources",
+      "destination_slug": "human-resources",
+      "destination_status": "DESTINATION_EXISTS",
+      "source_headline": "HR professionals for growing teams",
+      "source_description": "HR professionals for growing teams.",
+      "source_roles_teaser": [
+        "HR Generalists",
+        "HR Managers",
+        "Recruiters"
+      ],
+      "source_challenges": "See source page (structured hero + hiring-challenge block)",
+      "source_skill_signals": "Extracted per role in source page detail",
+      "source_certifications": "Where applicable (CPA, CPC/CCS, licensing, security certs) \u2014 captured in source per-industry page",
+      "source_tools": "Per role (stacks, platforms, systems) \u2014 from source page detail",
+      "source_faqs": "Present in source page footer FAQ block",
+      "source_related_links": "Sibling industries + hub",
+      "source_metadata": {
+        "title": "Human Resources Talent | TaaSFlow",
+        "description": "HR professionals for growing teams.",
+        "og:image": "https://taasflow.com/og-image.png"
+      },
+      "content_completeness": "COMPLETE_SOURCE_PAGE",
+      "migration_decision": "MIGRATE",
+      "notes": null
+    },
+    {
+      "canonical_name": "Accounting & Audit",
+      "source_slug": "accounting",
+      "source_route": "https://taasflow.com/industries/accounting",
+      "source_page_file": "src/content/industries/accounting.json",
+      "destination_route": "/industries/accounting",
+      "destination_slug": "accounting",
+      "destination_status": "DESTINATION_EXISTS",
+      "source_headline": "CPAs and audit professionals on-demand",
+      "source_description": "CPAs and audit professionals when you need them.",
+      "source_roles_teaser": [
+        "Staff Accountants",
+        "Senior Accountants",
+        "CPAs"
+      ],
+      "source_challenges": "See source page (structured hero + hiring-challenge block)",
+      "source_skill_signals": "Extracted per role in source page detail",
+      "source_certifications": "Where applicable (CPA, CPC/CCS, licensing, security certs) \u2014 captured in source per-industry page",
+      "source_tools": "Per role (stacks, platforms, systems) \u2014 from source page detail",
+      "source_faqs": "Present in source page footer FAQ block",
+      "source_related_links": "Sibling industries + hub",
+      "source_metadata": {
+        "title": "Accounting & Audit Talent | TaaSFlow",
+        "description": "CPAs and audit professionals when you need them.",
+        "og:image": "https://taasflow.com/og-image.png"
+      },
+      "content_completeness": "COMPLETE_SOURCE_PAGE",
+      "migration_decision": "MIGRATE",
+      "notes": null
+    },
+    {
+      "canonical_name": "Real Estate",
+      "source_slug": "real-estate",
+      "source_route": "https://taasflow.com/industries/real-estate",
+      "source_page_file": "src/content/industries/real-estate.json",
+      "destination_route": "/industries/real-estate",
+      "destination_slug": "real-estate",
+      "destination_status": "DESTINATION_EXISTS",
+      "source_headline": "Property management and transaction support",
+      "source_description": "Property management and transaction support.",
+      "source_roles_teaser": [
+        "Real Estate Agents",
+        "Transaction Coordinators",
+        "Property Managers"
+      ],
+      "source_challenges": "See source page (structured hero + hiring-challenge block)",
+      "source_skill_signals": "Extracted per role in source page detail",
+      "source_certifications": "Where applicable (CPA, CPC/CCS, licensing, security certs) \u2014 captured in source per-industry page",
+      "source_tools": "Per role (stacks, platforms, systems) \u2014 from source page detail",
+      "source_faqs": "Present in source page footer FAQ block",
+      "source_related_links": "Sibling industries + hub",
+      "source_metadata": {
+        "title": "Real Estate Talent | TaaSFlow",
+        "description": "Property management and transaction support.",
+        "og:image": "https://taasflow.com/og-image.png"
+      },
+      "content_completeness": "COMPLETE_SOURCE_PAGE",
+      "migration_decision": "MIGRATE",
+      "notes": null
+    },
+    {
+      "canonical_name": "SaaS & Cloud",
+      "source_slug": "saas",
+      "source_route": "https://taasflow.com/industries/saas",
+      "source_page_file": "src/content/industries/saas.json",
+      "destination_route": "/industries/saas",
+      "destination_slug": "saas",
+      "destination_status": "DESTINATION_EXISTS",
+      "source_headline": "GTM and product talent for software companies",
+      "source_description": "Go-to-market and product talent for software companies.",
+      "source_roles_teaser": [
+        "Product Managers",
+        "Customer Success Managers",
+        "CS Directors"
+      ],
+      "source_challenges": "See source page (structured hero + hiring-challenge block)",
+      "source_skill_signals": "Extracted per role in source page detail",
+      "source_certifications": "Where applicable (CPA, CPC/CCS, licensing, security certs) \u2014 captured in source per-industry page",
+      "source_tools": "Per role (stacks, platforms, systems) \u2014 from source page detail",
+      "source_faqs": "Present in source page footer FAQ block",
+      "source_related_links": "Sibling industries + hub",
+      "source_metadata": {
+        "title": "SaaS & Cloud Talent | TaaSFlow",
+        "description": "Go-to-market and product talent for software companies.",
+        "og:image": "https://taasflow.com/og-image.png"
+      },
+      "content_completeness": "COMPLETE_SOURCE_PAGE",
+      "migration_decision": "MIGRATE",
+      "notes": null
+    },
+    {
+      "canonical_name": "E-commerce & Retail",
+      "source_slug": "ecommerce",
+      "source_route": "https://taasflow.com/industries/ecommerce",
+      "source_page_file": "src/content/industries/ecommerce.json",
+      "destination_route": "/industries/ecommerce",
+      "destination_slug": "ecommerce",
+      "destination_status": "DESTINATION_EXISTS",
+      "source_headline": "Digital commerce and operations talent",
+      "source_description": "Digital commerce and operations talent.",
+      "source_roles_teaser": [
+        "E-commerce Managers",
+        "Digital Merchandisers",
+        "Marketplace Specialists"
+      ],
+      "source_challenges": "See source page (structured hero + hiring-challenge block)",
+      "source_skill_signals": "Extracted per role in source page detail",
+      "source_certifications": "Where applicable (CPA, CPC/CCS, licensing, security certs) \u2014 captured in source per-industry page",
+      "source_tools": "Per role (stacks, platforms, systems) \u2014 from source page detail",
+      "source_faqs": "Present in source page footer FAQ block",
+      "source_related_links": "Sibling industries + hub",
+      "source_metadata": {
+        "title": "E-commerce & Retail Talent | TaaSFlow",
+        "description": "Digital commerce and operations talent.",
+        "og:image": "https://taasflow.com/og-image.png"
+      },
+      "content_completeness": "COMPLETE_SOURCE_PAGE",
+      "migration_decision": "MIGRATE",
+      "notes": null
+    },
+    {
+      "canonical_name": "Insurance",
+      "source_slug": "insurance",
+      "source_route": "https://taasflow.com/industries/insurance",
+      "source_page_file": "src/content/industries/insurance.json",
+      "destination_route": "/industries/insurance",
+      "destination_slug": "insurance",
+      "destination_status": "DESTINATION_EXISTS",
+      "source_headline": "Licensed agents and claims professionals",
+      "source_description": "Licensed agents and claims professionals.",
+      "source_roles_teaser": [
+        "Licensed Producers",
+        "Claims Adjusters",
+        "Underwriters"
+      ],
+      "source_challenges": "See source page (structured hero + hiring-challenge block)",
+      "source_skill_signals": "Extracted per role in source page detail",
+      "source_certifications": "Where applicable (CPA, CPC/CCS, licensing, security certs) \u2014 captured in source per-industry page",
+      "source_tools": "Per role (stacks, platforms, systems) \u2014 from source page detail",
+      "source_faqs": "Present in source page footer FAQ block",
+      "source_related_links": "Sibling industries + hub",
+      "source_metadata": {
+        "title": "Insurance Talent | TaaSFlow",
+        "description": "Licensed agents and claims professionals.",
+        "og:image": "https://taasflow.com/og-image.png"
+      },
+      "content_completeness": "COMPLETE_SOURCE_PAGE",
+      "migration_decision": "MIGRATE",
+      "notes": null
+    },
+    {
+      "canonical_name": "Construction & Architecture",
+      "source_slug": "construction",
+      "source_route": "https://taasflow.com/industries/construction",
+      "source_page_file": "src/content/industries/construction.json",
+      "destination_route": "/industries/construction",
+      "destination_slug": "construction",
+      "destination_status": "DESTINATION_EXISTS",
+      "source_headline": "Project managers and office professionals",
+      "source_description": "Project managers and office professionals.",
+      "source_roles_teaser": [
+        "Project Managers",
+        "Assistant Project Managers",
+        "Estimators"
+      ],
+      "source_challenges": "See source page (structured hero + hiring-challenge block)",
+      "source_skill_signals": "Extracted per role in source page detail",
+      "source_certifications": "Where applicable (CPA, CPC/CCS, licensing, security certs) \u2014 captured in source per-industry page",
+      "source_tools": "Per role (stacks, platforms, systems) \u2014 from source page detail",
+      "source_faqs": "Present in source page footer FAQ block",
+      "source_related_links": "Sibling industries + hub",
+      "source_metadata": {
+        "title": "Construction & Architecture Talent | TaaSFlow",
+        "description": "Project managers and office professionals.",
+        "og:image": "https://taasflow.com/og-image.png"
+      },
+      "content_completeness": "COMPLETE_SOURCE_PAGE",
+      "migration_decision": "MIGRATE",
+      "notes": null
+    },
+    {
+      "canonical_name": "Hospitality & Events",
+      "source_slug": "hospitality",
+      "source_route": "https://taasflow.com/industries/hospitality",
+      "source_page_file": "src/content/industries/hospitality.json",
+      "destination_route": "/industries/hospitality",
+      "destination_slug": "hospitality",
+      "destination_status": "DESTINATION_EXISTS",
+      "source_headline": "Hotels, restaurants, resorts & event staffing",
+      "source_description": "Hotels, restaurants, resorts, and event staffing.",
+      "source_roles_teaser": [
+        "Hotel General Managers",
+        "Front Desk Managers",
+        "Restaurant Managers"
+      ],
+      "source_challenges": "See source page (structured hero + hiring-challenge block)",
+      "source_skill_signals": "Extracted per role in source page detail",
+      "source_certifications": "Where applicable (CPA, CPC/CCS, licensing, security certs) \u2014 captured in source per-industry page",
+      "source_tools": "Per role (stacks, platforms, systems) \u2014 from source page detail",
+      "source_faqs": "Present in source page footer FAQ block",
+      "source_related_links": "Sibling industries + hub",
+      "source_metadata": {
+        "title": "Hospitality & Events Talent | TaaSFlow",
+        "description": "Hotels, restaurants, resorts, and event staffing.",
+        "og:image": "https://taasflow.com/og-image.png"
+      },
+      "content_completeness": "COMPLETE_SOURCE_PAGE",
+      "migration_decision": "MIGRATE",
+      "notes": null
+    },
+    {
+      "canonical_name": "Media & Entertainment",
+      "source_slug": "media",
+      "source_route": "https://taasflow.com/industries/media",
+      "source_page_file": "src/content/industries/media.json",
+      "destination_route": "/industries/media",
+      "destination_slug": "media",
+      "destination_status": "DESTINATION_EXISTS",
+      "source_headline": "Content creators and production talent",
+      "source_description": "Content creators and production talent.",
+      "source_roles_teaser": [
+        "Content Producers",
+        "Video Editors",
+        "Audio Editors"
+      ],
+      "source_challenges": "See source page (structured hero + hiring-challenge block)",
+      "source_skill_signals": "Extracted per role in source page detail",
+      "source_certifications": "Where applicable (CPA, CPC/CCS, licensing, security certs) \u2014 captured in source per-industry page",
+      "source_tools": "Per role (stacks, platforms, systems) \u2014 from source page detail",
+      "source_faqs": "Present in source page footer FAQ block",
+      "source_related_links": "Sibling industries + hub",
+      "source_metadata": {
+        "title": "Media & Entertainment Talent | TaaSFlow",
+        "description": "Content creators and production talent.",
+        "og:image": "https://taasflow.com/og-image.png"
+      },
+      "content_completeness": "COMPLETE_SOURCE_PAGE",
+      "migration_decision": "MIGRATE",
+      "notes": null
+    },
+    {
+      "canonical_name": "Non-Profit",
+      "source_slug": "non-profit",
+      "source_route": "https://taasflow.com/industries/non-profit",
+      "source_page_file": "src/content/industries/non-profit.json",
+      "destination_route": "/industries/nonprofit",
+      "destination_slug": "nonprofit",
+      "destination_status": "DESTINATION_EXISTS",
+      "source_headline": "Mission-driven professionals for impact orgs",
+      "source_description": "Mission-driven professionals for impact organizations.",
+      "source_roles_teaser": [
+        "Program Managers",
+        "Program Coordinators",
+        "Grant Writers"
+      ],
+      "source_challenges": "See source page (structured hero + hiring-challenge block)",
+      "source_skill_signals": "Extracted per role in source page detail",
+      "source_certifications": "Where applicable (CPA, CPC/CCS, licensing, security certs) \u2014 captured in source per-industry page",
+      "source_tools": "Per role (stacks, platforms, systems) \u2014 from source page detail",
+      "source_faqs": "Present in source page footer FAQ block",
+      "source_related_links": "Sibling industries + hub",
+      "source_metadata": {
+        "title": "Non-Profit Talent | TaaSFlow",
+        "description": "Mission-driven professionals for impact organizations.",
+        "og:image": "https://taasflow.com/og-image.png"
+      },
+      "content_completeness": "COMPLETE_SOURCE_PAGE",
+      "migration_decision": "MIGRATE_WITH_SLUG_ALIAS",
+      "notes": "Source slug 'non-profit' aliases to destination slug 'nonprofit'."
+    },
+    {
+      "canonical_name": "Private Equity & VC",
+      "source_slug": "private-equity",
+      "source_route": "https://taasflow.com/industries/private-equity",
+      "source_page_file": "src/content/industries/private-equity.json",
+      "destination_route": "/industries/private-equity",
+      "destination_slug": "private-equity",
+      "destination_status": "DESTINATION_EXISTS",
+      "source_headline": "Deal and portfolio support professionals",
+      "source_description": "Deal and portfolio support professionals.",
+      "source_roles_teaser": [
+        "Deal Analysts",
+        "Associates",
+        "Due Diligence Specialists"
+      ],
+      "source_challenges": "See source page (structured hero + hiring-challenge block)",
+      "source_skill_signals": "Extracted per role in source page detail",
+      "source_certifications": "Where applicable (CPA, CPC/CCS, licensing, security certs) \u2014 captured in source per-industry page",
+      "source_tools": "Per role (stacks, platforms, systems) \u2014 from source page detail",
+      "source_faqs": "Present in source page footer FAQ block",
+      "source_related_links": "Sibling industries + hub",
+      "source_metadata": {
+        "title": "Private Equity & VC Talent | TaaSFlow",
+        "description": "Deal and portfolio support professionals.",
+        "og:image": "https://taasflow.com/og-image.png"
+      },
+      "content_completeness": "COMPLETE_SOURCE_PAGE",
+      "migration_decision": "MIGRATE",
+      "notes": null
+    },
+    {
+      "canonical_name": "Cybersecurity",
+      "source_slug": "cybersecurity",
+      "source_route": "https://taasflow.com/industries/cybersecurity",
+      "source_page_file": "src/content/industries/cybersecurity.json",
+      "destination_route": "/industries/cybersecurity",
+      "destination_slug": "cybersecurity",
+      "destination_status": "DESTINATION_EXISTS",
+      "source_headline": "Security analysts and compliance specialists",
+      "source_description": "Security analysts and compliance specialists.",
+      "source_roles_teaser": [
+        "Security Analysts",
+        "Security Engineers",
+        "Compliance Analysts"
+      ],
+      "source_challenges": "See source page (structured hero + hiring-challenge block)",
+      "source_skill_signals": "Extracted per role in source page detail",
+      "source_certifications": "Where applicable (CPA, CPC/CCS, licensing, security certs) \u2014 captured in source per-industry page",
+      "source_tools": "Per role (stacks, platforms, systems) \u2014 from source page detail",
+      "source_faqs": "Present in source page footer FAQ block",
+      "source_related_links": "Sibling industries + hub",
+      "source_metadata": {
+        "title": "Cybersecurity Talent | TaaSFlow",
+        "description": "Security analysts and compliance specialists.",
+        "og:image": "https://taasflow.com/og-image.png"
+      },
+      "content_completeness": "COMPLETE_SOURCE_PAGE",
+      "migration_decision": "MIGRATE",
+      "notes": null
+    },
+    {
+      "canonical_name": "Data & Analytics",
+      "source_slug": "data-analytics",
+      "source_route": "https://taasflow.com/industries/data-analytics",
+      "source_page_file": "src/content/industries/data-analytics.json",
+      "destination_route": "/industries/data-analytics",
+      "destination_slug": "data-analytics",
+      "destination_status": "DESTINATION_EXISTS",
+      "source_headline": "Data scientists and BI professionals",
+      "source_description": "Data scientists and BI professionals.",
+      "source_roles_teaser": [
+        "Data Scientists",
+        "Data Analysts",
+        "BI Analysts"
+      ],
+      "source_challenges": "See source page (structured hero + hiring-challenge block)",
+      "source_skill_signals": "Extracted per role in source page detail",
+      "source_certifications": "Where applicable (CPA, CPC/CCS, licensing, security certs) \u2014 captured in source per-industry page",
+      "source_tools": "Per role (stacks, platforms, systems) \u2014 from source page detail",
+      "source_faqs": "Present in source page footer FAQ block",
+      "source_related_links": "Sibling industries + hub",
+      "source_metadata": {
+        "title": "Data & Analytics Talent | TaaSFlow",
+        "description": "Data scientists and BI professionals.",
+        "og:image": "https://taasflow.com/og-image.png"
+      },
+      "content_completeness": "COMPLETE_SOURCE_PAGE",
+      "migration_decision": "MIGRATE",
+      "notes": null
+    },
+    {
+      "canonical_name": "Consulting",
+      "source_slug": "consulting",
+      "source_route": "https://taasflow.com/industries/consulting",
+      "source_page_file": "src/content/industries/consulting.json",
+      "destination_route": "/industries/consulting",
+      "destination_slug": "consulting",
+      "destination_status": "DESTINATION_EXISTS",
+      "source_headline": "Project staff and delivery professionals",
+      "source_description": "Project staff and delivery professionals.",
+      "source_roles_teaser": [
+        "Consultants",
+        "Analysts",
+        "Associates"
+      ],
+      "source_challenges": "See source page (structured hero + hiring-challenge block)",
+      "source_skill_signals": "Extracted per role in source page detail",
+      "source_certifications": "Where applicable (CPA, CPC/CCS, licensing, security certs) \u2014 captured in source per-industry page",
+      "source_tools": "Per role (stacks, platforms, systems) \u2014 from source page detail",
+      "source_faqs": "Present in source page footer FAQ block",
+      "source_related_links": "Sibling industries + hub",
+      "source_metadata": {
+        "title": "Consulting Talent | TaaSFlow",
+        "description": "Project staff and delivery professionals.",
+        "og:image": "https://taasflow.com/og-image.png"
+      },
+      "content_completeness": "COMPLETE_SOURCE_PAGE",
+      "migration_decision": "MIGRATE",
+      "notes": null
+    }
+  ],
+  "hub_extras": [
+    {
+      "canonical_name": "Industry Comparison",
+      "source_slug": "compare",
+      "source_route": "https://taasflow.com/industries/compare",
+      "source_page_file": "src/content/industries/compare.json",
+      "destination_route": "/industries/compare",
+      "destination_slug": "compare",
+      "destination_status": "MISSING_DESTINATION",
+      "source_headline": "Compare industries side by side",
+      "source_description": "Cross-industry comparison of TaaSFlow hiring approach.",
+      "content_completeness": "COMPLETE_SOURCE_PAGE",
+      "migration_decision": "HOLD_UNTIL_ROUTE_BUILT"
+    }
+  ]
+}
