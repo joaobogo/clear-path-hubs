@@ -54,13 +54,6 @@ export function listBlogSlugs(): string[] {
   return Object.keys(blog).sort();
 }
 export function listIndustrySlugs(): string[] {
-  // Canonical list is the v2 taxonomy; legacy JSON slugs are absorbed into it.
-  // `non-profit` is a source-slug redirect → excluded from sitemap.
-  // `index`/`industries`/`compare` are hub/utility files, not pages.
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const { INDUSTRY_ENTRIES } = require("@/content/industries-v2") as {
-    INDUSTRY_ENTRIES: { slug: string }[];
-  };
   return INDUSTRY_ENTRIES.map((e) => e.slug).sort();
 }
 
