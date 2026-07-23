@@ -19,6 +19,7 @@ import {
   type SupportViewState,
   type PermissionPreview,
 } from "@/lib/support-view";
+import { ClientOnboardingModal } from "@/components/client/onboarding-modal";
 import {
   LayoutDashboard,
   Briefcase,
