@@ -1,0 +1,55 @@
+{
+  "$schema": "./public-navigation.schema.json",
+  "source": "src/config/public-navigation.ts",
+  "generatedAt": "2026-07-23",
+  "primaryCta": { "to": "/intake", "label": "Start hiring" },
+  "secondaryCtas": [
+    { "to": "/jobs",  "label": "Browse jobs" },
+    { "to": "/login", "label": "Sign in" }
+  ],
+  "primaryNav": [
+    { "to": "/jobs", "label": "Jobs" }
+  ],
+  "groups": [
+    {
+      "label": "Solutions",
+      "links": [
+        { "to": "/solutions",             "label": "TaaSFlow for employers" },
+        { "to": "/how-it-works",          "label": "How it works" },
+        { "to": "/enterprise",            "label": "Enterprise" },
+        { "to": "/partnerships/staffing", "label": "Staffing partnerships" },
+        { "to": "/pricing",               "label": "Pricing" }
+      ]
+    },
+    {
+      "label": "Industries",
+      "links": [
+        { "to": "/industries",                     "label": "Industries overview" },
+        { "to": "/industries/technology",          "label": "Technology" },
+        { "to": "/industries/financial-services",  "label": "Financial services" },
+        { "to": "/industries/legal",               "label": "Legal" },
+        { "to": "/industries/healthcare",          "label": "Healthcare" },
+        { "to": "/industries/sales-marketing",     "label": "Sales & marketing" },
+        { "to": "/industries",                     "label": "View all industries" }
+      ]
+    },
+    {
+      "label": "Resources",
+      "links": [
+        { "to": "/resources",      "label": "Resources hub" },
+        { "to": "/blog",           "label": "Blog" },
+        { "to": "/case-studies",   "label": "Case studies" },
+        { "to": "/knowledge-base", "label": "Knowledge base" },
+        { "to": "/faq",            "label": "FAQ" }
+      ]
+    },
+    {
+      "label": "About",
+      "links": [
+        { "to": "/about",   "label": "About TaaSFlow" },
+        { "to": "/journey", "label": "TaaSFlow journey" },
+        { "to": "/contact", "label": "Contact" }
+      ]
+    }
+  ]
+}

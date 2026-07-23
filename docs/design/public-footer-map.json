@@ -1,0 +1,65 @@
+{
+  "source": "src/config/public-navigation.ts",
+  "groups": [
+    {
+      "label": "Company",
+      "links": [
+        { "to": "/about",   "label": "About" },
+        { "to": "/journey", "label": "Journey" },
+        { "to": "/contact", "label": "Contact" }
+      ]
+    },
+    {
+      "label": "Solutions",
+      "links": [
+        { "to": "/solutions",             "label": "Solutions" },
+        { "to": "/how-it-works",          "label": "How it works" },
+        { "to": "/enterprise",            "label": "Enterprise" },
+        { "to": "/employer-onboarding",   "label": "Employer onboarding" },
+        { "to": "/partnerships/staffing", "label": "Staffing partnership" }
+      ]
+    },
+    {
+      "label": "Employers",
+      "links": [
+        { "to": "/intake",     "label": "Start hiring" },
+        { "to": "/pilot",      "label": "Pilot" },
+        { "to": "/pricing",    "label": "Pricing" },
+        { "to": "/industries", "label": "Industries" },
+        { "to": "/login",      "label": "Client sign in" }
+      ]
+    },
+    {
+      "label": "Candidates",
+      "links": [
+        { "to": "/jobs",              "label": "Browse jobs" },
+        { "to": "/talent-network",    "label": "Talent network" },
+        { "to": "/candidate-success", "label": "Candidate success" },
+        { "to": "/journey",           "label": "Candidate journey" },
+        { "to": "/login",             "label": "Candidate sign in" }
+      ]
+    },
+    {
+      "label": "Resources",
+      "links": [
+        { "to": "/resources",      "label": "Resources" },
+        { "to": "/blog",           "label": "Blog" },
+        { "to": "/case-studies",   "label": "Case studies" },
+        { "to": "/knowledge-base", "label": "Knowledge base" },
+        { "to": "/faq",            "label": "FAQ" }
+      ]
+    },
+    {
+      "label": "Legal",
+      "links": [
+        { "to": "/privacy",     "label": "Privacy" },
+        { "to": "/terms",       "label": "Terms" },
+        { "to": "/sitemap.xml", "label": "Sitemap", "external": true }
+      ]
+    }
+  ],
+  "social": [
+    { "href": "https://www.linkedin.com/company/taasflow", "label": "LinkedIn" },
+    { "href": "mailto:hello@taasflow.com",                 "label": "Email" }
+  ]
+}
