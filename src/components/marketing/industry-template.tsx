@@ -157,7 +157,9 @@ export function IndustryTemplate({ entry }: { entry: IndustryEntry }) {
       ) : null}
 
       {/* 4. Interactive role explorer */}
-      <PublicSection id="role-explorer" className="py-12">
+      <PublicSection className="py-12">
+        <span id="role-explorer" className="sr-only" aria-hidden />
+
         <PublicPage>
           <div className="max-w-3xl">
             <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean)]">
