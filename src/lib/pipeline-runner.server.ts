@@ -442,6 +442,9 @@ export async function runEnrichmentOnly(
       .select("id,skills,experience,headline,location,consent")
       .eq("id", ctx.match.candidate_profile_id).maybeSingle();
     const screening = buildScreening(ctx.answers);
+    const { insights, insights_error } = await buildInsights({
+      cvText, position: ctx.position, screening,
+    });
     await s.from("candidate_evidence").upsert({
       candidate_match_id: matchId,
       candidate_profile_id: ctx.match.candidate_profile_id,
@@ -454,6 +457,8 @@ export async function runEnrichmentOnly(
         headline: freshProfile?.headline ?? null,
         location: freshProfile?.location ?? null,
         refreshed_at: new Date().toISOString(),
+        insights: insights as unknown as Json,
+        insights_error,
       } as unknown as Json,
       screening_normalized: {
         answers: screening.map((s2) => ({
