@@ -577,3 +577,25 @@ function CategoryPill({
     </button>
   );
 }
+
+function BackfillInsightsButton({ onDone }: { onDone: (msg: string) => void }) {
+  const qc = useQueryClient();
+  const backfillFn = useServerFn(backfillCandidateInsights);
+  const m = useMutation({
+    mutationFn: () => backfillFn({ data: {} }),
+    onSuccess: async (r: { scanned: number; targeted: number; processed: number; failed: { message: string }[] }) => {
+      onDone(
+        `Insights backfill · scanned ${r.scanned}, enriched ${r.processed} of ${r.targeted}` +
+          (r.failed.length ? ` · ${r.failed.length} failed` : ""),
+      );
+      await qc.invalidateQueries({ queryKey: ["pipeline-health"] });
+    },
+    onError: (e: Error) => onDone(`Backfill failed: ${e.message}`),
+  });
+  return (
+    <Button size="sm" variant="secondary" onClick={() => m.mutate()} disabled={m.isPending}>
+      {m.isPending ? "Enriching candidates…" : "Enrich all candidate profiles"}
+    </Button>
+  );
+}
+}
