@@ -73,6 +73,7 @@ import { Route as AuthenticatedClientPositionsRouteImport } from './routes/_auth
 import { Route as AuthenticatedClientMessagesRouteImport } from './routes/_authenticated/client.messages'
 import { Route as AuthenticatedClientInterviewsRouteImport } from './routes/_authenticated/client.interviews'
 import { Route as AuthenticatedClientCandidatesRouteImport } from './routes/_authenticated/client.candidates'
+import { Route as AuthenticatedAdminWbrRouteImport } from './routes/_authenticated/admin.wbr'
 import { Route as AuthenticatedAdminTeamRouteImport } from './routes/_authenticated/admin.team'
 import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin.settings'
 import { Route as AuthenticatedAdminPublishRouteImport } from './routes/_authenticated/admin.publish'
@@ -431,6 +432,11 @@ const AuthenticatedClientCandidatesRoute =
     path: '/candidates',
     getParentRoute: () => AuthenticatedClientRoute,
   } as any)
+const AuthenticatedAdminWbrRoute = AuthenticatedAdminWbrRouteImport.update({
+  id: '/wbr',
+  path: '/wbr',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
 const AuthenticatedAdminTeamRoute = AuthenticatedAdminTeamRouteImport.update({
   id: '/team',
   path: '/team',
@@ -663,6 +669,7 @@ export interface FileRoutesByFullPath {
   '/admin/publish': typeof AuthenticatedAdminPublishRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/team': typeof AuthenticatedAdminTeamRoute
+  '/admin/wbr': typeof AuthenticatedAdminWbrRoute
   '/client/candidates': typeof AuthenticatedClientCandidatesRouteWithChildren
   '/client/interviews': typeof AuthenticatedClientInterviewsRoute
   '/client/messages': typeof AuthenticatedClientMessagesRoute
@@ -751,6 +758,7 @@ export interface FileRoutesByTo {
   '/admin/publish': typeof AuthenticatedAdminPublishRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/team': typeof AuthenticatedAdminTeamRoute
+  '/admin/wbr': typeof AuthenticatedAdminWbrRoute
   '/client/interviews': typeof AuthenticatedClientInterviewsRoute
   '/client/messages': typeof AuthenticatedClientMessagesRoute
   '/client/settings': typeof AuthenticatedClientSettingsRoute
@@ -845,6 +853,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/publish': typeof AuthenticatedAdminPublishRoute
   '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/_authenticated/admin/team': typeof AuthenticatedAdminTeamRoute
+  '/_authenticated/admin/wbr': typeof AuthenticatedAdminWbrRoute
   '/_authenticated/client/candidates': typeof AuthenticatedClientCandidatesRouteWithChildren
   '/_authenticated/client/interviews': typeof AuthenticatedClientInterviewsRoute
   '/_authenticated/client/messages': typeof AuthenticatedClientMessagesRoute
@@ -942,6 +951,7 @@ export interface FileRouteTypes {
     | '/admin/publish'
     | '/admin/settings'
     | '/admin/team'
+    | '/admin/wbr'
     | '/client/candidates'
     | '/client/interviews'
     | '/client/messages'
@@ -1030,6 +1040,7 @@ export interface FileRouteTypes {
     | '/admin/publish'
     | '/admin/settings'
     | '/admin/team'
+    | '/admin/wbr'
     | '/client/interviews'
     | '/client/messages'
     | '/client/settings'
@@ -1123,6 +1134,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/publish'
     | '/_authenticated/admin/settings'
     | '/_authenticated/admin/team'
+    | '/_authenticated/admin/wbr'
     | '/_authenticated/client/candidates'
     | '/_authenticated/client/interviews'
     | '/_authenticated/client/messages'
@@ -1667,6 +1679,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedClientCandidatesRouteImport
       parentRoute: typeof AuthenticatedClientRoute
     }
+    '/_authenticated/admin/wbr': {
+      id: '/_authenticated/admin/wbr'
+      path: '/wbr'
+      fullPath: '/admin/wbr'
+      preLoaderRoute: typeof AuthenticatedAdminWbrRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/team': {
       id: '/_authenticated/admin/team'
       path: '/team'
@@ -1975,6 +1994,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminPublishRoute: typeof AuthenticatedAdminPublishRoute
   AuthenticatedAdminSettingsRoute: typeof AuthenticatedAdminSettingsRoute
   AuthenticatedAdminTeamRoute: typeof AuthenticatedAdminTeamRoute
+  AuthenticatedAdminWbrRoute: typeof AuthenticatedAdminWbrRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
 }
 
@@ -1993,6 +2013,7 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminPublishRoute: AuthenticatedAdminPublishRoute,
   AuthenticatedAdminSettingsRoute: AuthenticatedAdminSettingsRoute,
   AuthenticatedAdminTeamRoute: AuthenticatedAdminTeamRoute,
+  AuthenticatedAdminWbrRoute: AuthenticatedAdminWbrRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
 }
 

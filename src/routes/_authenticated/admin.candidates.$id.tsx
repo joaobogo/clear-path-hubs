@@ -209,7 +209,13 @@ function CandidateWorkspace() {
               <EvidenceTab evidence={evidence} result={currentResult} />
             )}
             {tab === "score" && (
-              <ScoreTab currentRun={currentRun} result={currentResult} />
+              <ScoreTab
+                currentRun={currentRun}
+                result={currentResult}
+                runs={runs}
+                decisions={decisions}
+                evidence={evidence}
+              />
             )}
             {tab === "screening" && (
               <ScreeningTab result={currentResult} evidence={evidence} />
@@ -941,7 +947,19 @@ function EvidenceTab({ evidence, result }: { evidence: Any; result: Any }) {
 }
 
 // ── Score ──────────────────────────────────────────────────────────────────
-function ScoreTab({ currentRun, result }: { currentRun: Any; result: Any }) {
+function ScoreTab({
+  currentRun,
+  result,
+  runs,
+  decisions,
+  evidence,
+}: {
+  currentRun: Any;
+  result: Any;
+  runs?: Any[];
+  decisions?: Any[];
+  evidence?: Any;
+}) {
   if (!currentRun)
     return (
       <div className="rounded-lg border border-dashed p-10 text-center text-sm text-muted-foreground">
