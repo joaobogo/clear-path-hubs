@@ -2,16 +2,18 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { marketingHead } from "@/lib/marketing/head";
 import { SiteShell, PublicPage, PublicSection } from "@/components/marketing/site-shell";
 import {
+  StaffingWorkflow,
+  StaffingOwnershipMatrix,
+} from "@/components/marketing/staffing-workflow";
+import {
   Handshake,
   Layers,
   Users,
   Eye,
   ShieldCheck,
   ClipboardList,
-  Workflow,
   Building2,
   ArrowRight,
-  MessagesSquare,
 } from "lucide-react";
 
 export const Route = createFileRoute("/partnerships/staffing")({
@@ -178,72 +180,44 @@ function PartnershipsStaffingPage() {
         </PublicPage>
       </PublicSection>
 
-      {/* ── How partner delivery works ──────────────────────────── */}
+      {/* ── Interactive workflow ────────────────────────────────── */}
       <PublicSection className="bg-[color:var(--brand-cream)] py-16">
         <PublicPage>
-          <h2 className="max-w-2xl font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight">
-            How partner delivery works
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">
+            The workflow
+          </p>
+          <h2 className="mt-3 max-w-2xl font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight">
+            Client request → agency → TaaSFlow → shortlist → your review → client delivery
           </h2>
           <p className="mt-4 max-w-2xl text-[color:var(--brand-navy)]/70">
-            Partnerships are set up per account. The workflow is the same one we run for direct
-            clients — adapted so your agency stays in front of the relationship.
+            Click any step to see what happens and who owns it. The client relationship
+            stays with your agency at every stage.
           </p>
-          <ol className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {[
-              {
-                n: "01",
-                icon: Handshake,
-                title: "Partnership setup",
-                body: "We align on scope, role types, brand posture, and how your clients will be introduced to the workspace.",
-              },
-              {
-                n: "02",
-                icon: ClipboardList,
-                title: "Role intake",
-                body: "For each role, we run a structured intake so requirements, must-haves, and context are captured cleanly.",
-              },
-              {
-                n: "03",
-                icon: Workflow,
-                title: "Sourcing & screening",
-                body: "Our delivery layer sources, screens, and captures evidence against each requirement.",
-              },
-              {
-                n: "04",
-                icon: Users,
-                title: "Ranked shortlist",
-                body: "Candidates surface in your workspace with a rank, an evidence view, and the notes your team needs.",
-              },
-              {
-                n: "05",
-                icon: Eye,
-                title: "Client review",
-                body: "Your client sees the same ranked view, reviews evidence, and gives feedback in the workspace.",
-              },
-              {
-                n: "06",
-                icon: MessagesSquare,
-                title: "Ongoing cadence",
-                body: "Your agency stays in front of decisions, interviews, and outcomes. We keep delivery moving underneath.",
-              },
-            ].map((step) => (
-              <li
-                key={step.n}
-                className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6"
-              >
-                <div className="flex items-center gap-3">
-                  <span className="text-sm font-semibold text-[color:var(--brand-navy)]/50">
-                    {step.n}
-                  </span>
-                  <step.icon className="h-5 w-5 text-[color:var(--brand-navy)]" />
-                </div>
-                <h3 className="mt-4 text-lg font-semibold">{step.title}</h3>
-                <p className="mt-2 text-sm text-[color:var(--brand-navy)]/70">{step.body}</p>
-              </li>
-            ))}
-          </ol>
+          <div className="mt-10">
+            <StaffingWorkflow />
+          </div>
         </PublicPage>
       </PublicSection>
+
+      {/* ── Ownership matrix ────────────────────────────────────── */}
+      <PublicSection className="py-16">
+        <PublicPage>
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">
+            Who owns what
+          </p>
+          <h2 className="mt-3 max-w-2xl font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight">
+            The line is drawn cleanly.
+          </h2>
+          <p className="mt-4 max-w-2xl text-[color:var(--brand-navy)]/70">
+            No ambiguity about relationship, communication, presentation, or decision
+            rights. The line is documented per partnership and enforced by the workspace.
+          </p>
+          <div className="mt-10">
+            <StaffingOwnershipMatrix />
+          </div>
+        </PublicPage>
+      </PublicSection>
+
 
       {/* ── White-label / support options ───────────────────────── */}
       <PublicSection className="py-16">

@@ -176,20 +176,20 @@ function DecisionMock() {
 const CHAPTERS = [
   {
     n: "01",
-    label: "The problem",
-    title: "Why hiring is broken",
-    body: "As operators we lived it: agencies delivered names without reasoning, RPO added process without improving quality, and every search felt like a fresh set of spreadsheets. There was no shared surface where the rubric, the evidence and the decisions lived together.",
+    label: "What was broken",
+    title: "Hiring had no shared surface.",
+    body: "As operators we lived it: agencies delivered names without reasoning, RPO added process without improving quality, and every search felt like a fresh set of spreadsheets. There was no shared surface where the rubric, the evidence, and the decisions lived together.",
   },
   {
     n: "02",
-    label: "The insight",
-    title: "The operator insight behind TaaSFlow",
-    body: "The problem was not sourcing — it was explainability. If we could write the rubric down, extract evidence for it directly from the CV, and put both in a workspace the client could see, most of the friction disappeared.",
+    label: "Why agencies failed",
+    title: "Incentives were pointed at the wrong outcome.",
+    body: "Contingent fees rewarded speed to placement, not quality of match. Recruiters had every reason to push a candidate over the line and no reason to explain why. Clients paid five figures per hire and still had to trust a summary paragraph.",
   },
   {
     n: "03",
-    label: "The model",
-    title: "Building a structured recruiting model",
+    label: "What TaaSFlow changed",
+    title: "A recruiting function, delivered as product.",
     body: "Instead of contingent fees, a subscription. Instead of a private inbox, a per-requisition workspace. Instead of a summary paragraph, a rubric with citations. The model is boring on purpose — cadence and clarity beat heroics.",
   },
 ];
@@ -251,10 +251,10 @@ function JourneyPage() {
           <div className="grid gap-10 md:grid-cols-2 md:items-center">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean)]">
-                Chapter 04
+                Chapter 05 — Ranking + evidence
               </p>
               <h2 className="mt-2 font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight sm:text-4xl">
-                Ranked candidate delivery
+                Every shortlist arrives ranked and cited.
               </h2>
               <p className="mt-4 max-w-xl text-[color:var(--brand-navy)]/75">
                 Every shortlist arrives ranked against a role-specific rubric,
@@ -273,10 +273,10 @@ function JourneyPage() {
           <div className="grid gap-10 md:grid-cols-2 md:items-center">
             <div className="md:order-2">
               <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean)]">
-                Chapter 05
+                Chapter 04 — The live workspace
               </p>
               <h2 className="mt-2 font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight sm:text-4xl">
-                Client workspace visibility
+                One workspace per requisition.
               </h2>
               <p className="mt-4 max-w-xl text-[color:var(--brand-navy)]/75">
                 One workspace per requisition, one aggregate view across all
@@ -297,10 +297,10 @@ function JourneyPage() {
           <div className="grid gap-10 md:grid-cols-2 md:items-center">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean)]">
-                Chapter 06
+                Chapter 06 — Client control
               </p>
               <h2 className="mt-2 font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight sm:text-4xl">
-                Decision-making and control
+                Every action is captured with a reason.
               </h2>
               <p className="mt-4 max-w-xl text-[color:var(--brand-navy)]/75">
                 Advance, hold or pass — every action is captured with the
@@ -337,6 +337,70 @@ function JourneyPage() {
           </div>
         </PublicPage>
       </PublicSection>
+
+      {/* Chapter 07 — Economics */}
+      <PublicSection>
+        <PublicPage>
+          <div className="grid gap-10 md:grid-cols-2 md:items-start">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean)]">
+                Chapter 07 — Economics
+              </p>
+              <h2 className="mt-2 font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight sm:text-4xl">
+                Priced like software, not like a placement.
+              </h2>
+              <p className="mt-4 max-w-xl text-[color:var(--brand-navy)]/75">
+                A flat subscription instead of contingent fees. Predictable
+                per-role economics your finance team can model, and no
+                incentive to push a hire that doesn't fit. When the search
+                is done, the pipeline stays with you — not the recruiter.
+              </p>
+              <div className="mt-6 flex flex-wrap gap-3">
+                <Link
+                  to="/pricing"
+                  className="inline-flex min-h-11 items-center justify-center rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-white hover:opacity-90"
+                >
+                  View pricing
+                </Link>
+              </div>
+            </div>
+            <ul className="space-y-3 rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6">
+              {[
+                "Flat monthly subscription — no placement fees, no percentage of salary",
+                "Cancel anytime — no long-term lock-in",
+                "The candidates and evidence you paid for stay in your workspace",
+                "Finance can forecast recruiting cost like any SaaS line item",
+              ].map((point) => (
+                <li key={point} className="flex gap-3 text-sm text-[color:var(--brand-navy)]/80">
+                  <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[color:var(--brand-ocean)]" />
+                  <span>{point}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </PublicPage>
+      </PublicSection>
+
+      {/* Chapter 08 — The future */}
+      <PublicSection className="border-t border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-mist)]/40">
+        <PublicPage>
+          <div className="max-w-3xl">
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean)]">
+              Chapter 08 — What the future looks like
+            </p>
+            <h2 className="mt-2 font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight sm:text-4xl">
+              Hiring stops being a black box.
+            </h2>
+            <p className="mt-4 text-[color:var(--brand-navy)]/75">
+              Every hire has a rubric behind it. Every rejection has a reason.
+              Every pipeline is owned by the company that paid for it. The
+              recruiter is still human — the reasoning is finally visible.
+              We think that's the version of hiring companies actually want.
+            </p>
+          </div>
+        </PublicPage>
+      </PublicSection>
+
 
       {/* Start with TaaSFlow */}
       <CtaSection

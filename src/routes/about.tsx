@@ -12,8 +12,19 @@ import { marketingHead } from "@/lib/marketing/head";
 // If any field is empty string, that block hides gracefully.
 const LEADERS = [
   {
-    name: "Christian Brogger",
+    name: "João Luciano",
     title: "Co-founder & CEO",
+    location: "Lisbon · Global",
+    photoUrl: "",
+    linkedin: "https://www.linkedin.com/in/joaoluciano/",
+    quote:
+      "We built TaaSFlow because we were tired of hiring being the least explainable part of running a company.",
+    bio: "Operator turned founder. Ran hiring at venture-backed teams across LATAM and EMEA before realising the tooling gap was structural, not brand. Focused on building a recruiting function that behaves like software — visible, priced predictably, and accountable to evidence.",
+    tags: ["Product-led recruiting", "Operator background", "Evidence-first", "GTM"],
+  },
+  {
+    name: "Christian Brogger",
+    title: "Co-founder & COO",
     location: "London · Global",
     photoUrl: "https://taasflow.com/assets/christian-9Ad2XECQ.jpg",
     linkedin: "https://www.linkedin.com/in/christian-brogger/",
@@ -118,7 +129,7 @@ function AboutPage() {
             rigor to the world of hiring.
           </p>
 
-          <div className="mt-10 grid gap-6 md:grid-cols-2">
+          <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {LEADERS.map((leader) => {
               const initials = leader.name
                 .split(" ")
