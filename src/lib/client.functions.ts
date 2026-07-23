@@ -373,7 +373,9 @@ export const getClientPositionDetail = createServerFn({ method: "GET" })
     const { data: position, error } = await context.supabase
       .from("positions")
       .select(
-        "id, title, status, location, work_model, employment_type, seniority, description, requirements, preferred_requirements",
+        `id, title, status, location, work_model, employment_type, seniority, department,
+         description, requirements, preferred_requirements, dealbreakers, openings,
+         published_at, approved_at, submitted_at, closed_at, created_at, updated_at`,
       )
       .eq("organization_id", data.orgId)
       .eq("id", data.positionId)
@@ -381,6 +383,7 @@ export const getClientPositionDetail = createServerFn({ method: "GET" })
     if (error) throw new Error(error.message);
     if (!position) return null;
 
+    // Client-visible candidates only. Wrong-tenant / unpublished filtered at source.
     const { data: matches } = await context.supabase
       .from("candidate_matches")
       .select(
@@ -393,7 +396,61 @@ export const getClientPositionDetail = createServerFn({ method: "GET" })
       .eq("client_visibility", "visible")
       .order("delivered_at", { ascending: false });
 
-    return { position, matches: (matches as AnyRow[]) ?? [] };
+    // Recent activity — sanitized safe audit trail for this position.
+    // Filter out internal admin_note / scoring_weight / score_run.* actions.
+    const { data: rawActivity } = await context.supabase
+      .from("audit_events")
+      .select("id, action, created_at, actor_user_id")
+      .eq("organization_id", data.orgId)
+      .eq("entity_id", data.positionId)
+      .order("created_at", { ascending: false })
+      .limit(20);
+    const SAFE_ACTION_PREFIXES = [
+      "position.",
+      "candidate_match.stage",
+      "candidate_match.publish",
+      "interview.",
+      "client_decision.",
+      "message.external",
+    ];
+    const activity = ((rawActivity as AnyRow[]) ?? [])
+      .filter((a) =>
+        SAFE_ACTION_PREFIXES.some((p) => String(a.action ?? "").startsWith(p)),
+      )
+      .slice(0, 10);
+
+    // Pipeline counts (visible only, matches server truth).
+    const stageCounts: Record<string, number> = {
+      delivered: 0,
+      shortlisted: 0,
+      interview_process: 0,
+      offer: 0,
+      hired: 0,
+      not_moving_forward: 0,
+    };
+    for (const m of (matches as AnyRow[]) ?? []) {
+      const s = String(m.stage);
+      if (s in stageCounts) stageCounts[s]! += 1;
+    }
+    const openings = Math.max(1, Number(position.openings ?? 1));
+    const hires = stageCounts.hired ?? 0;
+    const remaining = Math.max(0, openings - hires);
+
+    return {
+      position,
+      matches: (matches as AnyRow[]) ?? [],
+      activity,
+      summary: {
+        openings,
+        hires,
+        remaining,
+        delivered: stageCounts.delivered,
+        shortlisted: stageCounts.shortlisted,
+        interviewing: stageCounts.interview_process,
+        offers: stageCounts.offer,
+        not_moving_forward: stageCounts.not_moving_forward,
+      },
+    };
   });
 
 // ─── Candidates ─────────────────────────────────────────────────────────────
