@@ -251,10 +251,10 @@ function JourneyPage() {
           <div className="grid gap-10 md:grid-cols-2 md:items-center">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean)]">
-                Chapter 04
+                Chapter 05 — Ranking + evidence
               </p>
               <h2 className="mt-2 font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight sm:text-4xl">
-                Ranked candidate delivery
+                Every shortlist arrives ranked and cited.
               </h2>
               <p className="mt-4 max-w-xl text-[color:var(--brand-navy)]/75">
                 Every shortlist arrives ranked against a role-specific rubric,
