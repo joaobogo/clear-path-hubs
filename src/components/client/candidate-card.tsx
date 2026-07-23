@@ -23,10 +23,10 @@ const ACCENT: Record<FitPresentation["accent"], { ring: string; chip: string; ba
     dot: "bg-warning",
   },
   slate: {
-    ring: "ring-slate-400/30",
+    ring: "ring-muted-foreground/30",
     chip: "bg-muted text-muted-foreground border-border",
-    bar: "bg-slate-400",
-    dot: "bg-slate-400",
+    bar: "bg-muted-foreground/60",
+    dot: "bg-muted-foreground/60",
   },
   rose: {
     ring: "ring-destructive/40",
