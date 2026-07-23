@@ -63,11 +63,12 @@ function HowItWorksPage() {
             How it works
           </p>
           <h1 className="mt-3 max-w-3xl font-[family-name:var(--brand-font-display)] text-4xl font-semibold tracking-tight sm:text-5xl">
-            One repeatable operating system, from brief to hire.
+            Human recruiters. AI-supported structure. One workspace.
           </h1>
           <p className="mt-5 max-w-2xl text-lg text-[color:var(--brand-navy)]/70">
-            TaaSFlow is a single workflow shared by your team and ours. The same brief, the same
-            scoring, the same workspace — from the first intake through to signed offer.
+            Same brief, same scoring, same workspace — from intake to signed
+            offer. You watch every candidate rank in real time and decide who
+            advances. Ranked candidates, not CV dumps.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Link

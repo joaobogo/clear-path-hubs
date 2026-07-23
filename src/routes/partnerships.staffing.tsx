@@ -34,12 +34,13 @@ function PartnershipsStaffingPage() {
             Staffing partnerships
           </p>
           <h1 className="mt-3 max-w-3xl font-[family-name:var(--brand-font-display)] text-4xl font-semibold tracking-tight sm:text-5xl">
-            Extend your agency&rsquo;s delivery — without losing the client.
+            White-label recruiting execution behind your agency.
           </h1>
           <p className="mt-5 max-w-2xl text-lg text-[color:var(--brand-navy)]/70">
-            TaaSFlow partners with staffing and recruiting agencies who want more capacity,
-            structured delivery, and a workspace their clients can actually see into. You keep
-            the relationship; we operate behind you on sourcing, ranking, and evidence.
+            TaaSFlow extends staffing and search firms with ranked delivery,
+            evidence per requirement, and a workspace clients can see into —
+            while you keep the relationship and the fee. Human recruiters +
+            AI-supported structure. Subscription, not placement.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Link

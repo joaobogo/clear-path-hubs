@@ -34,19 +34,19 @@ function PricingPage() {
             Pricing
           </p>
           <h1 className="mt-3 max-w-3xl font-[family-name:var(--brand-font-display)] text-4xl font-semibold tracking-tight sm:text-5xl">
-            One flat fee. No placement commissions.
+            One flat subscription. Zero placement fees.
           </h1>
           <p className="mt-5 max-w-2xl text-lg text-[color:var(--brand-navy)]/70">
-            You pay for the work, not a share of the salary. Every tier includes
-            the same evidence-based scoring, workspace visibility, and direct
-            handover after shortlist.
+            You pay for the recruiting work, not a share of the salary. Every
+            tier includes ranked candidates with evidence, live workspace
+            visibility, and full pipeline ownership.
           </p>
           <ul className="mt-6 grid gap-3 text-sm text-[color:var(--brand-navy)]/75 sm:grid-cols-2 lg:grid-cols-4">
             {[
-              "No salary-percentage fees",
+              "Flat subscription — no placement fees",
               "Ranked candidates every week",
               "Live workspace visibility",
-              "You keep the candidates",
+              "You own pipeline and decisions",
             ].map((x) => (
               <li key={x} className="flex items-start gap-2">
                 <Check

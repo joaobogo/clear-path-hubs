@@ -36,12 +36,13 @@ function EnterprisePage() {
             Enterprise
           </p>
           <h1 className="mt-3 max-w-3xl font-[family-name:var(--brand-font-display)] text-4xl font-semibold tracking-tight sm:text-5xl">
-            Scale hiring on one operating system.
+            Your hiring function. Scaled. On one workspace.
           </h1>
           <p className="mt-5 max-w-2xl text-lg text-[color:var(--brand-navy)]/70">
-            TaaSFlow gives enterprise talent teams a single workspace where every open role,
-            every ranked candidate, and every piece of evidence lives in the same account —
-            with a direct handover to your hiring managers after shortlist.
+            Every open role, every ranked candidate, every piece of evidence —
+            in a single account your TA, hiring managers, and executives share.
+            Human recruiters + AI-supported structure. Flat subscription;
+            direct handover after shortlist.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Link

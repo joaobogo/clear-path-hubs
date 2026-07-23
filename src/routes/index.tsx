@@ -1325,8 +1325,8 @@ function Home() {
                 <br className="hidden sm:block" /> On demand.
               </h1>
               <p className="max-w-xl text-lg text-[color:var(--brand-navy)]/75">
-                TaaSFlow sources, evaluates, and ranks qualified candidates — then
-                delivers them through one transparent hiring workspace.
+                Recruiting execution, a live workspace, and AI-supported
+                evaluation — one flat subscription. <span className="font-semibold text-[color:var(--brand-navy)]">Ranked candidates, not CV dumps.</span> You own the pipeline.
               </p>
               <div className="flex flex-wrap items-center gap-3 pt-1">
                 <Link
@@ -1350,11 +1350,11 @@ function Home() {
               </div>
               <ul className="flex flex-wrap gap-x-5 gap-y-1.5 text-xs text-[color:var(--brand-navy)]/65">
                 {[
-                  "Ranked delivery",
-                  "Evidence per requirement",
-                  "Live pipeline",
-                  "Direct handover after shortlist",
-                  "No placement fees",
+                  "Ranked candidates, not CV dumps",
+                  "Human recruiters + AI-supported structure",
+                  "Live workspace visibility",
+                  "Flat subscription — no placement fees",
+                  "You own pipeline and decisions",
                 ].map((t) => (
                   <li key={t} className="inline-flex items-center gap-1.5">
                     <CheckCircle2 className="h-3.5 w-3.5 text-[color:var(--brand-ocean)]" aria-hidden />
