@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-23T02:31:00.255Z",
+  "generatedAt": "2026-07-23T02:40:02.273Z",
   "sourceOrigin": "https://taasflow.com",
   "destinationOrigin": "https://clear-path-hubs.lovable.app",
   "viewports": [
@@ -20,11 +20,11 @@
     }
   ],
   "counts": {
-    "routesCompared": 3,
-    "screenshotsCreated": 36,
-    "passing": 0,
-    "critical": 0,
-    "high": 3,
+    "routesCompared": 48,
+    "screenshotsCreated": 576,
+    "passing": 1,
+    "critical": 1,
+    "high": 46,
     "medium": 0,
     "low": 0,
     "approved": 0,
@@ -96,6 +96,996 @@
         {
           "viewport": "desktop",
           "diffs": 4
+        }
+      ]
+    },
+    {
+      "sourcePath": "/about",
+      "destinationPath": "/about",
+      "pageType": "marketing_static",
+      "verdict": "MAJOR_DIFFERENCE",
+      "severity": "HIGH",
+      "summary": "21 differences detected",
+      "viewportDiffCounts": [
+        {
+          "viewport": "mobile",
+          "diffs": 7
+        },
+        {
+          "viewport": "tablet",
+          "diffs": 7
+        },
+        {
+          "viewport": "desktop",
+          "diffs": 7
+        }
+      ]
+    },
+    {
+      "sourcePath": "/enterprise",
+      "destinationPath": "/enterprise",
+      "pageType": "marketing_static",
+      "verdict": "MAJOR_DIFFERENCE",
+      "severity": "HIGH",
+      "summary": "18 differences detected",
+      "viewportDiffCounts": [
+        {
+          "viewport": "mobile",
+          "diffs": 6
+        },
+        {
+          "viewport": "tablet",
+          "diffs": 6
+        },
+        {
+          "viewport": "desktop",
+          "diffs": 6
+        }
+      ]
+    },
+    {
+      "sourcePath": "/pilot",
+      "destinationPath": "/pilot",
+      "pageType": "marketing_static",
+      "verdict": "MAJOR_DIFFERENCE",
+      "severity": "HIGH",
+      "summary": "15 differences detected",
+      "viewportDiffCounts": [
+        {
+          "viewport": "mobile",
+          "diffs": 5
+        },
+        {
+          "viewport": "tablet",
+          "diffs": 5
+        },
+        {
+          "viewport": "desktop",
+          "diffs": 5
+        }
+      ]
+    },
+    {
+      "sourcePath": "/contact",
+      "destinationPath": "/contact",
+      "pageType": "marketing_static",
+      "verdict": "MAJOR_DIFFERENCE",
+      "severity": "HIGH",
+      "summary": "15 differences detected",
+      "viewportDiffCounts": [
+        {
+          "viewport": "mobile",
+          "diffs": 5
+        },
+        {
+          "viewport": "tablet",
+          "diffs": 5
+        },
+        {
+          "viewport": "desktop",
+          "diffs": 5
+        }
+      ]
+    },
+    {
+      "sourcePath": "/faq",
+      "destinationPath": "/faq",
+      "pageType": "marketing_static",
+      "verdict": "MAJOR_DIFFERENCE",
+      "severity": "HIGH",
+      "summary": "15 differences detected",
+      "viewportDiffCounts": [
+        {
+          "viewport": "mobile",
+          "diffs": 5
+        },
+        {
+          "viewport": "tablet",
+          "diffs": 5
+        },
+        {
+          "viewport": "desktop",
+          "diffs": 5
+        }
+      ]
+    },
+    {
+      "sourcePath": "/resources",
+      "destinationPath": "/resources",
+      "pageType": "marketing_static",
+      "verdict": "MAJOR_DIFFERENCE",
+      "severity": "HIGH",
+      "summary": "18 differences detected",
+      "viewportDiffCounts": [
+        {
+          "viewport": "mobile",
+          "diffs": 6
+        },
+        {
+          "viewport": "tablet",
+          "diffs": 6
+        },
+        {
+          "viewport": "desktop",
+          "diffs": 6
+        }
+      ]
+    },
+    {
+      "sourcePath": "/blog",
+      "destinationPath": "/blog",
+      "pageType": "marketing_static",
+      "verdict": "MAJOR_DIFFERENCE",
+      "severity": "HIGH",
+      "summary": "15 differences detected",
+      "viewportDiffCounts": [
+        {
+          "viewport": "mobile",
+          "diffs": 5
+        },
+        {
+          "viewport": "tablet",
+          "diffs": 5
+        },
+        {
+          "viewport": "desktop",
+          "diffs": 5
+        }
+      ]
+    },
+    {
+      "sourcePath": "/case-studies",
+      "destinationPath": "/case-studies",
+      "pageType": "marketing_static",
+      "verdict": "MAJOR_DIFFERENCE",
+      "severity": "HIGH",
+      "summary": "18 differences detected",
+      "viewportDiffCounts": [
+        {
+          "viewport": "mobile",
+          "diffs": 6
+        },
+        {
+          "viewport": "tablet",
+          "diffs": 6
+        },
+        {
+          "viewport": "desktop",
+          "diffs": 6
+        }
+      ]
+    },
+    {
+      "sourcePath": "/talent-network",
+      "destinationPath": "/talent-network",
+      "pageType": "marketing_static",
+      "verdict": "MAJOR_DIFFERENCE",
+      "severity": "HIGH",
+      "summary": "18 differences detected",
+      "viewportDiffCounts": [
+        {
+          "viewport": "mobile",
+          "diffs": 6
+        },
+        {
+          "viewport": "tablet",
+          "diffs": 6
+        },
+        {
+          "viewport": "desktop",
+          "diffs": 6
+        }
+      ]
+    },
+    {
+      "sourcePath": "/global-talent",
+      "destinationPath": "/global-talent",
+      "pageType": "marketing_static",
+      "verdict": "MAJOR_DIFFERENCE",
+      "severity": "HIGH",
+      "summary": "18 differences detected",
+      "viewportDiffCounts": [
+        {
+          "viewport": "mobile",
+          "diffs": 6
+        },
+        {
+          "viewport": "tablet",
+          "diffs": 6
+        },
+        {
+          "viewport": "desktop",
+          "diffs": 6
+        }
+      ]
+    },
+    {
+      "sourcePath": "/employer-onboarding",
+      "destinationPath": "/employer-onboarding",
+      "pageType": "marketing_static",
+      "verdict": "MAJOR_DIFFERENCE",
+      "severity": "HIGH",
+      "summary": "15 differences detected",
+      "viewportDiffCounts": [
+        {
+          "viewport": "mobile",
+          "diffs": 5
+        },
+        {
+          "viewport": "tablet",
+          "diffs": 5
+        },
+        {
+          "viewport": "desktop",
+          "diffs": 5
+        }
+      ]
+    },
+    {
+      "sourcePath": "/knowledge-base",
+      "destinationPath": "/knowledge-base",
+      "pageType": "marketing_static",
+      "verdict": "MAJOR_DIFFERENCE",
+      "severity": "HIGH",
+      "summary": "18 differences detected",
+      "viewportDiffCounts": [
+        {
+          "viewport": "mobile",
+          "diffs": 6
+        },
+        {
+          "viewport": "tablet",
+          "diffs": 6
+        },
+        {
+          "viewport": "desktop",
+          "diffs": 6
+        }
+      ]
+    },
+    {
+      "sourcePath": "/partnerships/staffing",
+      "destinationPath": "/partnerships/staffing",
+      "pageType": "marketing_static",
+      "verdict": "MAJOR_DIFFERENCE",
+      "severity": "HIGH",
+      "summary": "18 differences detected",
+      "viewportDiffCounts": [
+        {
+          "viewport": "mobile",
+          "diffs": 6
+        },
+        {
+          "viewport": "tablet",
+          "diffs": 6
+        },
+        {
+          "viewport": "desktop",
+          "diffs": 6
+        }
+      ]
+    },
+    {
+      "sourcePath": "/privacy",
+      "destinationPath": "/privacy",
+      "pageType": "marketing_static",
+      "verdict": "MAJOR_DIFFERENCE",
+      "severity": "HIGH",
+      "summary": "18 differences detected",
+      "viewportDiffCounts": [
+        {
+          "viewport": "mobile",
+          "diffs": 6
+        },
+        {
+          "viewport": "tablet",
+          "diffs": 6
+        },
+        {
+          "viewport": "desktop",
+          "diffs": 6
+        }
+      ]
+    },
+    {
+      "sourcePath": "/terms",
+      "destinationPath": "/terms",
+      "pageType": "marketing_static",
+      "verdict": "MAJOR_DIFFERENCE",
+      "severity": "HIGH",
+      "summary": "18 differences detected",
+      "viewportDiffCounts": [
+        {
+          "viewport": "mobile",
+          "diffs": 6
+        },
+        {
+          "viewport": "tablet",
+          "diffs": 6
+        },
+        {
+          "viewport": "desktop",
+          "diffs": 6
+        }
+      ]
+    },
+    {
+      "sourcePath": "/candidate/join",
+      "destinationPath": "/candidate-join",
+      "pageType": "marketing_static",
+      "verdict": "MAJOR_DIFFERENCE",
+      "severity": "HIGH",
+      "summary": "24 differences detected",
+      "viewportDiffCounts": [
+        {
+          "viewport": "mobile",
+          "diffs": 8
+        },
+        {
+          "viewport": "tablet",
+          "diffs": 8
+        },
+        {
+          "viewport": "desktop",
+          "diffs": 8
+        }
+      ]
+    },
+    {
+      "sourcePath": "/taasflow-journey",
+      "destinationPath": "/journey",
+      "pageType": "marketing_static",
+      "verdict": "MAJOR_DIFFERENCE",
+      "severity": "HIGH",
+      "summary": "18 differences detected",
+      "viewportDiffCounts": [
+        {
+          "viewport": "mobile",
+          "diffs": 6
+        },
+        {
+          "viewport": "tablet",
+          "diffs": 6
+        },
+        {
+          "viewport": "desktop",
+          "diffs": 6
+        }
+      ]
+    },
+    {
+      "sourcePath": "/talent",
+      "destinationPath": "/talent-marketplace",
+      "pageType": "marketing_static",
+      "verdict": "MAJOR_DIFFERENCE",
+      "severity": "HIGH",
+      "summary": "21 differences detected",
+      "viewportDiffCounts": [
+        {
+          "viewport": "mobile",
+          "diffs": 7
+        },
+        {
+          "viewport": "tablet",
+          "diffs": 7
+        },
+        {
+          "viewport": "desktop",
+          "diffs": 7
+        }
+      ]
+    },
+    {
+      "sourcePath": "/candidate-success",
+      "destinationPath": "/candidate-success",
+      "pageType": "marketing_static",
+      "verdict": "MAJOR_DIFFERENCE",
+      "severity": "HIGH",
+      "summary": "18 differences detected",
+      "viewportDiffCounts": [
+        {
+          "viewport": "mobile",
+          "diffs": 6
+        },
+        {
+          "viewport": "tablet",
+          "diffs": 6
+        },
+        {
+          "viewport": "desktop",
+          "diffs": 6
+        }
+      ]
+    },
+    {
+      "sourcePath": "/industries",
+      "destinationPath": "/industries",
+      "pageType": "industries_index",
+      "verdict": "MAJOR_DIFFERENCE",
+      "severity": "HIGH",
+      "summary": "18 differences detected",
+      "viewportDiffCounts": [
+        {
+          "viewport": "mobile",
+          "diffs": 6
+        },
+        {
+          "viewport": "tablet",
+          "diffs": 6
+        },
+        {
+          "viewport": "desktop",
+          "diffs": 6
+        }
+      ]
+    },
+    {
+      "sourcePath": "/industries/compare",
+      "destinationPath": "/industries/compare",
+      "pageType": "industries_compare",
+      "verdict": "MAJOR_DIFFERENCE",
+      "severity": "HIGH",
+      "summary": "15 differences detected",
+      "viewportDiffCounts": [
+        {
+          "viewport": "mobile",
+          "diffs": 5
+        },
+        {
+          "viewport": "tablet",
+          "diffs": 5
+        },
+        {
+          "viewport": "desktop",
+          "diffs": 5
+        }
+      ]
+    },
+    {
+      "sourcePath": "/industries/tech",
+      "destinationPath": "/industries/tech",
+      "pageType": "industry_page",
+      "verdict": "MAJOR_DIFFERENCE",
+      "severity": "HIGH",
+      "summary": "18 differences detected",
+      "viewportDiffCounts": [
+        {
+          "viewport": "mobile",
+          "diffs": 6
+        },
+        {
+          "viewport": "tablet",
+          "diffs": 6
+        },
+        {
+          "viewport": "desktop",
+          "diffs": 6
+        }
+      ]
+    },
+    {
+      "sourcePath": "/industries/legal",
+      "destinationPath": "/industries/legal",
+      "pageType": "industry_page",
+      "verdict": "MAJOR_DIFFERENCE",
+      "severity": "HIGH",
+      "summary": "18 differences detected",
+      "viewportDiffCounts": [
+        {
+          "viewport": "mobile",
+          "diffs": 6
+        },
+        {
+          "viewport": "tablet",
+          "diffs": 6
+        },
+        {
+          "viewport": "desktop",
+          "diffs": 6
+        }
+      ]
+    },
+    {
+      "sourcePath": "/industries/public-sector",
+      "destinationPath": "/industries/public-sector",
+      "pageType": "industry_page",
+      "verdict": "MAJOR_DIFFERENCE",
+      "severity": "HIGH",
+      "summary": "18 differences detected",
+      "viewportDiffCounts": [
+        {
+          "viewport": "mobile",
+          "diffs": 6
+        },
+        {
+          "viewport": "tablet",
+          "diffs": 6
+        },
+        {
+          "viewport": "desktop",
+          "diffs": 6
+        }
+      ]
+    },
+    {
+      "sourcePath": "/industries/finance",
+      "destinationPath": "/industries/finance",
+      "pageType": "industry_page",
+      "verdict": "MAJOR_DIFFERENCE",
+      "severity": "HIGH",
+      "summary": "18 differences detected",
+      "viewportDiffCounts": [
+        {
+          "viewport": "mobile",
+          "diffs": 6
+        },
+        {
+          "viewport": "tablet",
+          "diffs": 6
+        },
+        {
+          "viewport": "desktop",
+          "diffs": 6
+        }
+      ]
+    },
+    {
+      "sourcePath": "/industries/staffing-agencies",
+      "destinationPath": "/industries/staffing-agencies",
+      "pageType": "industry_page",
+      "verdict": "MAJOR_DIFFERENCE",
+      "severity": "HIGH",
+      "summary": "18 differences detected",
+      "viewportDiffCounts": [
+        {
+          "viewport": "mobile",
+          "diffs": 6
+        },
+        {
+          "viewport": "tablet",
+          "diffs": 6
+        },
+        {
+          "viewport": "desktop",
+          "diffs": 6
+        }
+      ]
+    },
+    {
+      "sourcePath": "/industries/healthcare",
+      "destinationPath": "/industries/healthcare",
+      "pageType": "industry_page",
+      "verdict": "MAJOR_DIFFERENCE",
+      "severity": "HIGH",
+      "summary": "18 differences detected",
+      "viewportDiffCounts": [
+        {
+          "viewport": "mobile",
+          "diffs": 6
+        },
+        {
+          "viewport": "tablet",
+          "diffs": 6
+        },
+        {
+          "viewport": "desktop",
+          "diffs": 6
+        }
+      ]
+    },
+    {
+      "sourcePath": "/industries/sales",
+      "destinationPath": "/industries/sales",
+      "pageType": "industry_page",
+      "verdict": "MAJOR_DIFFERENCE",
+      "severity": "HIGH",
+      "summary": "18 differences detected",
+      "viewportDiffCounts": [
+        {
+          "viewport": "mobile",
+          "diffs": 6
+        },
+        {
+          "viewport": "tablet",
+          "diffs": 6
+        },
+        {
+          "viewport": "desktop",
+          "diffs": 6
+        }
+      ]
+    },
+    {
+      "sourcePath": "/industries/marketing",
+      "destinationPath": "/industries/marketing",
+      "pageType": "industry_page",
+      "verdict": "MAJOR_DIFFERENCE",
+      "severity": "HIGH",
+      "summary": "18 differences detected",
+      "viewportDiffCounts": [
+        {
+          "viewport": "mobile",
+          "diffs": 6
+        },
+        {
+          "viewport": "tablet",
+          "diffs": 6
+        },
+        {
+          "viewport": "desktop",
+          "diffs": 6
+        }
+      ]
+    },
+    {
+      "sourcePath": "/industries/human-resources",
+      "destinationPath": "/industries/human-resources",
+      "pageType": "industry_page",
+      "verdict": "MAJOR_DIFFERENCE",
+      "severity": "HIGH",
+      "summary": "18 differences detected",
+      "viewportDiffCounts": [
+        {
+          "viewport": "mobile",
+          "diffs": 6
+        },
+        {
+          "viewport": "tablet",
+          "diffs": 6
+        },
+        {
+          "viewport": "desktop",
+          "diffs": 6
+        }
+      ]
+    },
+    {
+      "sourcePath": "/industries/accounting",
+      "destinationPath": "/industries/accounting",
+      "pageType": "industry_page",
+      "verdict": "MAJOR_DIFFERENCE",
+      "severity": "HIGH",
+      "summary": "18 differences detected",
+      "viewportDiffCounts": [
+        {
+          "viewport": "mobile",
+          "diffs": 6
+        },
+        {
+          "viewport": "tablet",
+          "diffs": 6
+        },
+        {
+          "viewport": "desktop",
+          "diffs": 6
+        }
+      ]
+    },
+    {
+      "sourcePath": "/industries/real-estate",
+      "destinationPath": "/industries/real-estate",
+      "pageType": "industry_page",
+      "verdict": "MAJOR_DIFFERENCE",
+      "severity": "HIGH",
+      "summary": "18 differences detected",
+      "viewportDiffCounts": [
+        {
+          "viewport": "mobile",
+          "diffs": 6
+        },
+        {
+          "viewport": "tablet",
+          "diffs": 6
+        },
+        {
+          "viewport": "desktop",
+          "diffs": 6
+        }
+      ]
+    },
+    {
+      "sourcePath": "/industries/saas",
+      "destinationPath": "/industries/saas",
+      "pageType": "industry_page",
+      "verdict": "MAJOR_DIFFERENCE",
+      "severity": "HIGH",
+      "summary": "18 differences detected",
+      "viewportDiffCounts": [
+        {
+          "viewport": "mobile",
+          "diffs": 6
+        },
+        {
+          "viewport": "tablet",
+          "diffs": 6
+        },
+        {
+          "viewport": "desktop",
+          "diffs": 6
+        }
+      ]
+    },
+    {
+      "sourcePath": "/industries/ecommerce",
+      "destinationPath": "/industries/ecommerce",
+      "pageType": "industry_page",
+      "verdict": "MAJOR_DIFFERENCE",
+      "severity": "HIGH",
+      "summary": "18 differences detected",
+      "viewportDiffCounts": [
+        {
+          "viewport": "mobile",
+          "diffs": 6
+        },
+        {
+          "viewport": "tablet",
+          "diffs": 6
+        },
+        {
+          "viewport": "desktop",
+          "diffs": 6
+        }
+      ]
+    },
+    {
+      "sourcePath": "/industries/insurance",
+      "destinationPath": "/industries/insurance",
+      "pageType": "industry_page",
+      "verdict": "MAJOR_DIFFERENCE",
+      "severity": "HIGH",
+      "summary": "18 differences detected",
+      "viewportDiffCounts": [
+        {
+          "viewport": "mobile",
+          "diffs": 6
+        },
+        {
+          "viewport": "tablet",
+          "diffs": 6
+        },
+        {
+          "viewport": "desktop",
+          "diffs": 6
+        }
+      ]
+    },
+    {
+      "sourcePath": "/industries/construction",
+      "destinationPath": "/industries/construction",
+      "pageType": "industry_page",
+      "verdict": "MAJOR_DIFFERENCE",
+      "severity": "HIGH",
+      "summary": "18 differences detected",
+      "viewportDiffCounts": [
+        {
+          "viewport": "mobile",
+          "diffs": 6
+        },
+        {
+          "viewport": "tablet",
+          "diffs": 6
+        },
+        {
+          "viewport": "desktop",
+          "diffs": 6
+        }
+      ]
+    },
+    {
+      "sourcePath": "/industries/hospitality",
+      "destinationPath": "/industries/hospitality",
+      "pageType": "industry_page",
+      "verdict": "MAJOR_DIFFERENCE",
+      "severity": "HIGH",
+      "summary": "18 differences detected",
+      "viewportDiffCounts": [
+        {
+          "viewport": "mobile",
+          "diffs": 6
+        },
+        {
+          "viewport": "tablet",
+          "diffs": 6
+        },
+        {
+          "viewport": "desktop",
+          "diffs": 6
+        }
+      ]
+    },
+    {
+      "sourcePath": "/industries/media",
+      "destinationPath": "/industries/media",
+      "pageType": "industry_page",
+      "verdict": "MAJOR_DIFFERENCE",
+      "severity": "HIGH",
+      "summary": "18 differences detected",
+      "viewportDiffCounts": [
+        {
+          "viewport": "mobile",
+          "diffs": 6
+        },
+        {
+          "viewport": "tablet",
+          "diffs": 6
+        },
+        {
+          "viewport": "desktop",
+          "diffs": 6
+        }
+      ]
+    },
+    {
+      "sourcePath": "/industries/non-profit",
+      "destinationPath": "/industries/non-profit",
+      "pageType": "industry_page",
+      "verdict": "MAJOR_DIFFERENCE",
+      "severity": "HIGH",
+      "summary": "21 differences detected",
+      "viewportDiffCounts": [
+        {
+          "viewport": "mobile",
+          "diffs": 7
+        },
+        {
+          "viewport": "tablet",
+          "diffs": 7
+        },
+        {
+          "viewport": "desktop",
+          "diffs": 7
+        }
+      ]
+    },
+    {
+      "sourcePath": "/industries/private-equity",
+      "destinationPath": "/industries/private-equity",
+      "pageType": "industry_page",
+      "verdict": "MAJOR_DIFFERENCE",
+      "severity": "HIGH",
+      "summary": "18 differences detected",
+      "viewportDiffCounts": [
+        {
+          "viewport": "mobile",
+          "diffs": 6
+        },
+        {
+          "viewport": "tablet",
+          "diffs": 6
+        },
+        {
+          "viewport": "desktop",
+          "diffs": 6
+        }
+      ]
+    },
+    {
+      "sourcePath": "/industries/cybersecurity",
+      "destinationPath": "/industries/cybersecurity",
+      "pageType": "industry_page",
+      "verdict": "MAJOR_DIFFERENCE",
+      "severity": "HIGH",
+      "summary": "18 differences detected",
+      "viewportDiffCounts": [
+        {
+          "viewport": "mobile",
+          "diffs": 6
+        },
+        {
+          "viewport": "tablet",
+          "diffs": 6
+        },
+        {
+          "viewport": "desktop",
+          "diffs": 6
+        }
+      ]
+    },
+    {
+      "sourcePath": "/industries/data-analytics",
+      "destinationPath": "/industries/data-analytics",
+      "pageType": "industry_page",
+      "verdict": "MAJOR_DIFFERENCE",
+      "severity": "HIGH",
+      "summary": "18 differences detected",
+      "viewportDiffCounts": [
+        {
+          "viewport": "mobile",
+          "diffs": 6
+        },
+        {
+          "viewport": "tablet",
+          "diffs": 6
+        },
+        {
+          "viewport": "desktop",
+          "diffs": 6
+        }
+      ]
+    },
+    {
+      "sourcePath": "/industries/consulting",
+      "destinationPath": "/industries/consulting",
+      "pageType": "industry_page",
+      "verdict": "MAJOR_DIFFERENCE",
+      "severity": "HIGH",
+      "summary": "18 differences detected",
+      "viewportDiffCounts": [
+        {
+          "viewport": "mobile",
+          "diffs": 6
+        },
+        {
+          "viewport": "tablet",
+          "diffs": 6
+        },
+        {
+          "viewport": "desktop",
+          "diffs": 6
+        }
+      ]
+    },
+    {
+      "sourcePath": "/blog/category/*",
+      "destinationPath": "/blog/category/$slug",
+      "pageType": "blog_category_index",
+      "verdict": "MISSING_ROUTE",
+      "severity": "CRITICAL",
+      "summary": "destination returned 404",
+      "viewportDiffCounts": [
+        {
+          "viewport": "mobile",
+          "diffs": 9
+        },
+        {
+          "viewport": "tablet",
+          "diffs": 9
+        },
+        {
+          "viewport": "desktop",
+          "diffs": 9
+        }
+      ]
+    },
+    {
+      "sourcePath": "/sitemap.xml",
+      "destinationPath": "/sitemap.xml",
+      "pageType": "utility",
+      "verdict": "PASS",
+      "severity": "NONE",
+      "summary": "all checks matched",
+      "viewportDiffCounts": [
+        {
+          "viewport": "mobile",
+          "diffs": 0
+        },
+        {
+          "viewport": "tablet",
+          "diffs": 0
+        },
+        {
+          "viewport": "desktop",
+          "diffs": 0
         }
       ]
     }

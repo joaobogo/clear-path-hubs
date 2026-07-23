@@ -1,0 +1,3328 @@
+{
+  "sourcePath": "/industries/public-sector",
+  "destinationPath": "/industries/public-sector",
+  "pageType": "industry_page",
+  "protected": false,
+  "verdict": "MAJOR_DIFFERENCE",
+  "severity": "HIGH",
+  "viewports": [
+    {
+      "viewport": "mobile",
+      "source": {
+        "url": "https://taasflow.com/industries/public-sector",
+        "finalUrl": "https://taasflow.com/industries/public-sector",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [
+          {
+            "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HJ2ECKCNK4&gtm=45je67l1v9245339446za200zd9245339446&_p=1784774127131&gcd=13l3l3l3l1l1&npa=0&_ng=1&dma=0&are=1&cid=2012897005.1784774127&frm=0&ngs=1&pscdl=noapi&rcb=11&sr=375x812&uaa=x86&uab=64&uafvl=Not-A.Brand%3B24.0.0.0%7CChromium%3B146.0.7680.80&uam=&uamb=0&uap=Windows&uapv=&uaw=0&ul=en-us&_s=1&tag_exp=115938466~115938468~118897920~118897930~119527019~119724320~119896803&dp=%2Findustries%2Fpublic-sector&dt=TaaSFlow%20%7C%20Talent%20as%20a%20Service%20%7C%20Subscription%20Recruiting&dl=https%3A%2F%2Ftaasflow.com%2Findustries%2Fpublic-sector&sid=1784774127&sct=1&seg=0&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&ep.role_type=public&ep.is_authenticated=false&tfd=617",
+            "status": null,
+            "failure": "net::ERR_ABORTED"
+          }
+        ],
+        "title": "Public Sector Talent | TaaSFlow - Talent as a Service",
+        "description": "On-demand professionals for government agencies and public sector organizations. Meet project deadlines without lengthy hiring processes.",
+        "canonical": "https://taasflow.com/industries/public-sector",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:type": "website",
+          "og:url": "https://taasflow.com/industries/public-sector",
+          "og:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "og:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "og:image": "https://taasflow.com/og-image.png",
+          "og:image:width": "1200",
+          "og:image:height": "630",
+          "og:locale": "en_US",
+          "twitter:card": "summary_large_image",
+          "twitter:site": "@TaasFlow",
+          "twitter:creator": "@TaasFlow",
+          "twitter:url": "https://taasflow.com/industries/public-sector",
+          "twitter:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "twitter:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "twitter:image": "https://taasflow.com/og-image.png"
+        },
+        "structuredData": [
+          {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "@id": "https://taasflow.com/#organization",
+            "name": "TaaSFlow",
+            "legalName": "TaaSFlow",
+            "url": "https://taasflow.com/",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://taasflow.com/favicon.png",
+              "width": 512,
+              "height": 512
+            },
+            "image": "https://taasflow.com/og-image.png",
+            "description": "Talent as a Service — subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+            "slogan": "Your hiring team. On demand.",
+            "foundingDate": "2024",
+            "areaServed": [
+              {
+                "@type": "Country",
+                "name": "United States"
+              },
+              {
+                "@type": "Country",
+                "name": "United Arab Emirates"
+              },
+              {
+                "@type": "Country",
+                "name": "United Kingdom"
+              },
+              {
+                "@type": "Country",
+                "name": "Brazil"
+              }
+            ],
+            "knowsAbout": [
+              "Subscription recruiting",
+              "Talent as a Service",
+              "Candidate sourcing",
+              "Pre-screened candidates",
+              "Recruitment process outsourcing"
+            ],
+            "contactPoint": [
+              {
+                "@type": "ContactPoint",
+                "contactType": "sales",
+                "email": "hello@taasflow.com",
+                "url": "https://taasflow.com/contact",
+                "availableLanguage": [
+                  "English",
+                  "Portuguese",
+                  "Spanish"
+                ]
+              }
+            ],
+            "sameAs": [
+              "https://www.linkedin.com/company/taasflow",
+              "https://twitter.com/TaasFlow"
+            ]
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "@id": "https://taasflow.com/#website",
+            "name": "TaaSFlow",
+            "alternateName": "Talent as a Service",
+            "url": "https://taasflow.com/",
+            "description": "Subscription recruiting that delivers pre-screened, ranked candidates in 14 days.",
+            "inLanguage": "en-US",
+            "publisher": {
+              "@id": "https://taasflow.com/#organization"
+            },
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": {
+                "@type": "EntryPoint",
+                "urlTemplate": "https://taasflow.com/jobs?q={search_term_string}"
+              },
+              "query-input": "required name=search_term_string"
+            }
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "Service",
+            "name": "Public Sector Talent Sourcing",
+            "description": "On-demand professionals for government agencies and public sector organizations. Meet project deadlines without lengthy hiring processes.",
+            "provider": {
+              "@type": "Organization",
+              "name": "TaasFlow",
+              "url": "https://taasflow.com"
+            },
+            "serviceType": "Talent Acquisition",
+            "areaServed": "United States",
+            "hasOfferCatalog": {
+              "@type": "OfferCatalog",
+              "name": "Public Sector Recruiting Services",
+              "itemListElement": [
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "IT Specialists Recruiting"
+                  },
+                  "position": 1
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Project Managers Recruiting"
+                  },
+                  "position": 2
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Policy Analysts Recruiting"
+                  },
+                  "position": 3
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Program Coordinators Recruiting"
+                  },
+                  "position": 4
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Administrative Staff Recruiting"
+                  },
+                  "position": 5
+                }
+              ]
+            }
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "https://taasflow.com"
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Industries",
+                "item": "https://taasflow.com/industries"
+              },
+              {
+                "@type": "ListItem",
+                "position": 3,
+                "name": "Public Sector",
+                "item": "https://taasflow.com/industries//industries/public-sector"
+              }
+            ]
+          }
+        ],
+        "h1": [
+          "Agile Talent Solutions for Government & Public Agencies"
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "Agile Talent Solutions for Government & Public Agencies"
+          },
+          {
+            "level": 2,
+            "text": "Public Sector Industry Insights"
+          },
+          {
+            "level": 3,
+            "text": "Government Workforce"
+          },
+          {
+            "level": 3,
+            "text": "Hiring Timeline"
+          },
+          {
+            "level": 3,
+            "text": "Federal IT Gap"
+          },
+          {
+            "level": 3,
+            "text": "Retirement Wave"
+          },
+          {
+            "level": 3,
+            "text": "Industry Overview"
+          },
+          {
+            "level": 3,
+            "text": "Ready to transform your public sector recruiting?"
+          },
+          {
+            "level": 2,
+            "text": "How we hire for Public Sector"
+          },
+          {
+            "level": 3,
+            "text": "Agency Requirements Intake"
+          },
+          {
+            "level": 3,
+            "text": "Background Pre-Screening"
+          },
+          {
+            "level": 3,
+            "text": "Compliance Documentation"
+          },
+          {
+            "level": 3,
+            "text": "Grant-Aligned Placement"
+          },
+          {
+            "level": 2,
+            "text": "The Public Sector Hiring Challenge"
+          },
+          {
+            "level": 3,
+            "text": "The TaasFlow Solution"
+          },
+          {
+            "level": 2,
+            "text": "Why Public Sector companies choose TaasFlow"
+          },
+          {
+            "level": 3,
+            "text": "Skip the Red Tape"
+          },
+          {
+            "level": 3,
+            "text": "Compliance-Ready"
+          },
+          {
+            "level": 3,
+            "text": "Mission-Aligned Talent"
+          },
+          {
+            "level": 3,
+            "text": "Budget Flexibility"
+          },
+          {
+            "level": 2,
+            "text": "Positions we fill for Public Sector"
+          },
+          {
+            "level": 2,
+            "text": "Real results for Public Sector teams"
+          },
+          {
+            "level": 2,
+            "text": "Public Sector Salary Explorer"
+          },
+          {
+            "level": 2,
+            "text": "Public Sector Career Path"
+          },
+          {
+            "level": 3,
+            "text": "Senior"
+          },
+          {
+            "level": 4,
+            "text": "Key Skills at This Level"
+          },
+          {
+            "level": 2,
+            "text": "Public Sector Hiring Trends"
+          },
+          {
+            "level": 2,
+            "text": "Interactive Hiring Guide"
+          },
+          {
+            "level": 3,
+            "text": "Define Your Ideal Candidate"
+          },
+          {
+            "level": 3,
+            "text": "Optimize Your Job Posting"
+          },
+          {
+            "level": 3,
+            "text": "Source Beyond Job Boards"
+          },
+          {
+            "level": 3,
+            "text": "Structure Your Interview Process"
+          },
+          {
+            "level": 3,
+            "text": "Close & Onboard Effectively"
+          },
+          {
+            "level": 2,
+            "text": "Public Sector Recruiting Insights"
+          },
+          {
+            "level": 3,
+            "text": "Modernizing Public Sector Hiring: How Government Agencies Can Compete for Top Talent"
+          },
+          {
+            "level": 3,
+            "text": "Modernizing Government Hiring: Attracting Talent to the Public Sector"
+          },
+          {
+            "level": 3,
+            "text": "Public Sector Hiring Guide 2026: How Government Agencies Can Win the Talent War"
+          },
+          {
+            "level": 2,
+            "text": "Frequently Asked Questions"
+          },
+          {
+            "level": 3,
+            "text": "Can candidates pass background checks?"
+          },
+          {
+            "level": 3,
+            "text": "Do you understand government procurement rules?"
+          },
+          {
+            "level": 3,
+            "text": "How do you handle grant-funded positions?"
+          },
+          {
+            "level": 2,
+            "text": "Discover related industries"
+          },
+          {
+            "level": 2,
+            "text": "Ready to build your Public Sector team?"
+          },
+          {
+            "level": 2,
+            "text": "Public Sector Recruiting"
+          },
+          {
+            "level": 3,
+            "text": "Hub Page"
+          },
+          {
+            "level": 3,
+            "text": "Related Articles"
+          },
+          {
+            "level": 3,
+            "text": "Get Started"
+          },
+          {
+            "level": 4,
+            "text": "Newsletter"
+          },
+          {
+            "level": 4,
+            "text": "For candidates"
+          },
+          {
+            "level": 4,
+            "text": "For companies"
+          },
+          {
+            "level": 4,
+            "text": "Industries"
+          },
+          {
+            "level": 4,
+            "text": "Company"
+          }
+        ],
+        "sections": [
+          "SECTION",
+          "Agile Talent Solutions for Government & Public Agencies",
+          "SECTION",
+          "Public Sector Industry Insights",
+          "Ready to transform your public sector recruiting?",
+          "How we hire for Public Sector",
+          "The Public Sector Hiring Challenge",
+          "Why Public Sector companies choose TaasFlow",
+          "Positions we fill for Public Sector",
+          "Real results for Public Sector teams",
+          "Public Sector Salary Explorer",
+          "Public Sector Career Path",
+          "Public Sector Hiring Trends",
+          "Interactive Hiring Guide",
+          "Public Sector Recruiting Insights",
+          "Frequently Asked Questions",
+          "Discover related industries",
+          "SECTION",
+          "Ready to build your Public Sector team?",
+          "Public Sector Recruiting"
+        ],
+        "textBlocks": [
+          "Solutions",
+          "Industries",
+          "Resources",
+          "Home",
+          "Industries",
+          "Public Sector",
+          "Bypass bureaucratic hiring delays with screened professionals who understand public sector requirements, compliance, and mission-driven work.",
+          "Key market data and trends shaping talent demand in your industry. (Hover for details)",
+          "Total state and local government employees in the US",
+          "Average time to complete traditional government hiring process",
+          "Estimated shortage of IT professionals across federal agencies",
+          "Of government workforce eligible to retire within 5 years",
+          "Start a risk-free pilot and receive qualified candidates in 14 days.",
+          "A tailored workflow for the challenges of public sector settings.",
+          "We map your project needs, clearance levels, and compliance requirements.",
+          "Candidates pre-screened for background check readiness and public sector experience.",
+          "All transparency, FOIA, and public accountability standards verified.",
+          "Professionals placed on flexible terms matching your budget cycles and grant periods.",
+          "Government hiring processes can take 6-12 months. By the time you've navigated civil service requirements, the project deadline has passed or the budget cycle has shifted.",
+          "Grant-funded initiatives and special projects require immediate staffing, but permanent headcount additions require lengthy approval chains and budget negotiations.",
+          "You need professionals who understand public sector culture: transparency requirements, stakeholder management, and mission-driven outcomes over profit metrics.",
+          "Professionals experienced in government and public sector environments",
+          "Background check-ready candidates who can meet security clearance timelines",
+          "Understanding of FOIA, ADA compliance, and public accountability standards",
+          "Flexible engagements that align with grant periods and budget cycles",
+          "No long-term commitments. Scale with project funding",
+          "We understand the unique challenges of your industry and deliver matching talent.",
+          "Get qualified professionals in weeks, not the 6-12 months of traditional government hiring.",
+          "Candidates familiar with public sector requirements, background checks, and accountability standards.",
+          "Professionals who thrive in public service environments and understand stakeholder dynamics.",
+          "Align staffing with grant periods and fiscal cycles. Scale up or down as funding allows.",
+          "Pre-vetted professionals, delivered weekly, ready to start.",
+          "- State Health & Human Services Agency",
+          "Explore current compensation ranges for top roles. Data updated quarterly from industry benchmarks.",
+          "* Based on industry benchmarks from SHRM, Glassdoor, LinkedIn Salary, and BLS data. Actual compensation may vary.",
+          "Click any level to explore typical progression, salary ranges, and key skills.",
+          "Key metrics shaping the talent landscape. Stay ahead of market shifts.",
+          "Steady growth in hiring demand across this sector.",
+          "Increasing adoption of remote and hybrid work models.",
+          "Unfilled positions due to skills shortage in this industry.",
+          "Industry average continues to improve with modern sourcing.",
+          "Follow these proven steps to hire smarter. Track your progress and get actionable tips at every stage.",
+          "Create a detailed candidate persona with must-have vs nice-to-have skills, cultural fit criteria, and realistic salary expectations.",
+          "Write a compelling job description that sells the opportunity, not just lists requirements. Include salary range, growth path, and team culture.",
+          "Reach passive candidates through targeted outreach, employee referrals, and talent communities. 70% of top talent is not actively looking.",
+          "Design a consistent 3-4 stage process that evaluates skills, culture fit, and potential. Include take-home assessments where appropriate.",
+          "Move fast with competitive offers and start onboarding before day one. The first 90 days determine long-term retention.",
+          "Expert articles on recruiting and talent acquisition for public sector.",
+          "Government agencies are losing the talent war to private sector speed and compensation. Here is how to modernize public hiring.",
+          "Modernizing Government Hiring: Attracting Talent to the Public Sector",
+          "Government agencies face a talent crisis as they compete with private sector compensation and speed. Here is how to modernize public sector recruiting.",
+          "Public Sector Hiring Guide 2026: How Government Agencies Can Win the Talent War",
+          "Government agencies lose 73% of tech candidates to private sector offers. Proven strategies for public sector recruiting that leverage mission, stability, and total compensation.",
+          "Common questions about TaasFlow for public sector.",
+          "Learn how we serve similar sectors with subscription recruiting.",
+          "Receive qualified public sector professionals weekly. No agency fees, no long-term contracts.",
+          "Related Industries",
+          "Talent as a Service",
+          "A global hiring system for teams that need consistent recruiting.",
+          "Weekly insights into talent acquisition. No spam.",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Book call",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "No recruitment agency fees. No placement charges. Subscription-based hiring system.",
+          "Copyright 2026 TaaSFlow. All rights reserved."
+        ],
+        "buttons": [
+          "Solutions",
+          "Industries",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Solutions",
+          "How it works",
+          "Pilot",
+          "Enterprise",
+          "Case studies",
+          "Jobs",
+          "Journey",
+          "Industries",
+          "Tech",
+          "SaaS & Cloud",
+          "Cybersecurity",
+          "Data & Analytics",
+          "Finance",
+          "Insurance",
+          "PE & VC",
+          "Accounting",
+          "Legal",
+          "Consulting",
+          "HR & Recruiting",
+          "Staffing Agencies",
+          "Sales",
+          "Marketing",
+          "E-commerce",
+          "Media",
+          "Real Estate",
+          "Construction",
+          "Hospitality",
+          "Healthcare",
+          "Public Sector",
+          "Non-Profit",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Success Stories",
+          "Talent Marketplace",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Start Public Sector Pilot Program",
+          "Book call",
+          "Book call",
+          "1Entry-Level",
+          "2Mid-Level",
+          "3Senior",
+          "4Director / Lead",
+          "5VP / C-Suite",
+          "Next: Director / Lead",
+          "1Define Your Ideal Candidate1-2 days",
+          "1",
+          "Mark Complete",
+          "2Optimize Your Job PostingWrite a compelling job description that sells the opportunity, not just lists requirements. Include salary range, growth path, and team culture.1 day",
+          "2",
+          "3Source Beyond Job BoardsReach passive candidates through targeted outreach, employee referrals, and talent communities. 70% of top talent is not actively looking.Ongoing",
+          "3",
+          "4Structure Your Interview ProcessDesign a consistent 3-4 stage process that evaluates skills, culture fit, and potential. Include take-home assessments where appropriate.2-3 days setup",
+          "4",
+          "5Close & Onboard EffectivelyMove fast with competitive offers and start onboarding before day one. The first 90 days determine long-term retention.1-2 weeks",
+          "5",
+          "Can candidates pass background checks?",
+          "Do you understand government procurement rules?",
+          "How do you handle grant-funded positions?",
+          "Start Public Sector Pilot",
+          "Contact",
+          "Subscribe",
+          "Book call"
+        ],
+        "links": [
+          {
+            "text": "Skip to main content",
+            "href": "https://taasflow.com/industries/public-sector#main-content"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "Browse jobs",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Join the network",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Browse open roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Home",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "Industries",
+            "href": "https://taasflow.com/industries"
+          },
+          {
+            "text": "View all articles",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "Industry Hiring GuidesPublic SectorModernizing Public Sector Hiring: How Government Agencies Can Compete for Top TalentG",
+            "href": "https://taasflow.com/blog/public-sector-hiring-modernization"
+          },
+          {
+            "text": "📋Modernizing Government Hiring: Attracting Talent to the Public SectorIndustry Hiring GuidesIndustry Hiring GuidesPubli",
+            "href": "https://taasflow.com/blog/government-hiring-modernization"
+          },
+          {
+            "text": "🔍Public Sector Hiring Guide 2026: How Government Agencies Can Win the Talent WarIndustry SpotlightIndustry SpotlightPub",
+            "href": "https://taasflow.com/blog/public-sector-talent-acquisition"
+          },
+          {
+            "text": "View all articles",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "Technology",
+            "href": "https://taasflow.com/industries/tech"
+          },
+          {
+            "text": "Legal",
+            "href": "https://taasflow.com/industries/legal"
+          },
+          {
+            "text": "Finance & Banking",
+            "href": "https://taasflow.com/industries/finance"
+          },
+          {
+            "text": "Staffing Agencies",
+            "href": "https://taasflow.com/industries/staffing-agencies"
+          },
+          {
+            "text": "Healthcare",
+            "href": "https://taasflow.com/industries/healthcare"
+          },
+          {
+            "text": "Sales",
+            "href": "https://taasflow.com/industries/sales"
+          },
+          {
+            "text": "Marketing & Advertising",
+            "href": "https://taasflow.com/industries/marketing"
+          },
+          {
+            "text": "Human Resources",
+            "href": "https://taasflow.com/industries/human-resources"
+          },
+          {
+            "text": "Compare all industries",
+            "href": "https://taasflow.com/industries/compare"
+          },
+          {
+            "text": "How it works",
+            "href": "https://taasflow.com/how-it-works"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "Start Pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "Jobs",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Blog",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "About",
+            "href": "https://taasflow.com/about"
+          },
+          {
+            "text": "Enterprise",
+            "href": "https://taasflow.com/enterprise"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://taasflow.com/faq"
+          },
+          {
+            "text": "Contact",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Looking for a job in public sector? Browse open positions",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Public Sector Recruiting",
+            "href": "https://taasflow.com/industries/public-sector"
+          },
+          {
+            "text": "Public Sector Hiring Guide",
+            "href": "https://taasflow.com/blog/public-sector-hiring"
+          },
+          {
+            "text": "DEI Hiring Practices",
+            "href": "https://taasflow.com/blog/diversity-inclusion-hiring"
+          },
+          {
+            "text": "Start a Pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "Talk to Us",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Healthcare Recruiting",
+            "href": "https://taasflow.com/industries/healthcare"
+          },
+          {
+            "text": "Onboarding Best Practices",
+            "href": "https://taasflow.com/blog/onboarding-best-practices"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "LinkedIn",
+            "href": "https://www.linkedin.com/company/taasflow/"
+          },
+          {
+            "text": "Browse roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Talent network",
+            "href": "https://taasflow.com/global-talent"
+          },
+          {
+            "text": "Member stories",
+            "href": "https://taasflow.com/candidate-success"
+          },
+          {
+            "text": "Start pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "Employer onboarding",
+            "href": "https://taasflow.com/employer-onboarding"
+          },
+          {
+            "text": "Case studies",
+            "href": "https://taasflow.com/case-studies"
+          },
+          {
+            "text": "Healthcare",
+            "href": "https://taasflow.com/industries/healthcare"
+          },
+          {
+            "text": "Technology",
+            "href": "https://taasflow.com/industries/tech"
+          },
+          {
+            "text": "Finance",
+            "href": "https://taasflow.com/industries/finance"
+          },
+          {
+            "text": "Legal",
+            "href": "https://taasflow.com/industries/legal"
+          },
+          {
+            "text": "All →",
+            "href": "https://taasflow.com/industries"
+          },
+          {
+            "text": "About us",
+            "href": "https://taasflow.com/about"
+          },
+          {
+            "text": "Blog",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://taasflow.com/faq"
+          },
+          {
+            "text": "Knowledge Base",
+            "href": "https://taasflow.com/knowledge-base"
+          },
+          {
+            "text": "Contact us",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Privacy Policy",
+            "href": "https://taasflow.com/privacy"
+          },
+          {
+            "text": "Terms of Service",
+            "href": "https://taasflow.com/terms"
+          }
+        ],
+        "images": [
+          {
+            "src": "https://taasflow.com/assets/logo-on-white-Dk9DIcMP.png",
+            "alt": "TaaSFlow logo"
+          },
+          {
+            "src": "https://taasflow.com/assets/public-sector-BKXoE7Wi.jpg",
+            "alt": ""
+          },
+          {
+            "src": "https://taasflow.com/assets/public-sector-BKXoE7Wi.jpg",
+            "alt": ""
+          },
+          {
+            "src": "https://taasflow.com/assets/public-sector-BKXoE7Wi.jpg",
+            "alt": ""
+          },
+          {
+            "src": "https://taasflow.com/assets/public-sector-hiring-BxE3P7QN.jpg",
+            "alt": "Modernizing Public Sector Hiring: How Government Agencies Can Compete for Top Talent"
+          },
+          {
+            "src": "https://taasflow.com/assets/logo-on-blue-CX6jlwjg.png",
+            "alt": "TaaSFlow logo"
+          }
+        ],
+        "forms": [
+          {
+            "action": "https://taasflow.com/industries/public-sector",
+            "fields": [
+              "input"
+            ]
+          }
+        ],
+        "navLinks": [
+          "Browse jobs",
+          "Join the network",
+          "Browse open roles",
+          "Home",
+          "Industries",
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us"
+        ],
+        "footerLinks": [
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "Privacy Policy",
+          "Terms of Service"
+        ],
+        "horizontalOverflow": false,
+        "documentWidth": 375,
+        "viewportWidth": 375
+      },
+      "destination": {
+        "url": "https://clear-path-hubs.lovable.app/industries/public-sector",
+        "finalUrl": "https://clear-path-hubs.lovable.app/industries/public-sector",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [],
+        "title": "Public sector hiring — TaaSFlow",
+        "description": "Structured sourcing for public agencies, government contractors and civic-tech teams. Ranked shortlists with evidence of programme, policy and delivery experience.",
+        "canonical": "https://clear-path-hubs.lovable.app/industries/public-sector",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "twitter:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "og:title": "Public sector hiring — TaaSFlow",
+          "og:description": "Structured sourcing for public agencies, government contractors and civic-tech teams. Ranked shortlists with evidence of programme, policy and delivery experience.",
+          "og:url": "https://clear-path-hubs.lovable.app/industries/public-sector",
+          "og:type": "website",
+          "twitter:card": "summary_large_image",
+          "twitter:title": "Public sector hiring — TaaSFlow",
+          "twitter:description": "Structured sourcing for public agencies, government contractors and civic-tech teams. Ranked shortlists with evidence of programme, policy and delivery experience."
+        },
+        "structuredData": [],
+        "h1": [
+          "Public sector hiring with evidence tied to programme."
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "Public sector hiring with evidence tied to programme."
+          },
+          {
+            "level": 2,
+            "text": "What we hear from Public Sector teams"
+          },
+          {
+            "level": 3,
+            "text": "Programme and mission context"
+          },
+          {
+            "level": 3,
+            "text": "Delivery model fit"
+          },
+          {
+            "level": 3,
+            "text": "Clearance and eligibility signals"
+          },
+          {
+            "level": 2,
+            "text": "Roles we source in Public Sector"
+          },
+          {
+            "level": 3,
+            "text": "Submit the role"
+          },
+          {
+            "level": 3,
+            "text": "We source and score"
+          },
+          {
+            "level": 3,
+            "text": "Review in your workspace"
+          },
+          {
+            "level": 2,
+            "text": "Building a public sector team?"
+          }
+        ],
+        "sections": [
+          "Public sector hiring with evidence tied to programme.",
+          "What we hear from Public Sector teams",
+          "Roles we source in Public Sector",
+          "Submit the role",
+          "Building a public sector team?",
+          "SECTION"
+        ],
+        "textBlocks": [
+          "Home",
+          "Industries",
+          "Public Sector",
+          "Public Sector",
+          "TaaSFlow gives agency and contractor leaders a workspace for every hire — programme, policy, delivery, technology — with rubrics tuned to the programme context and outcome.",
+          "Programme and outcome evidence",
+          "Delivery model captured in intake",
+          "Human review before publication",
+          "Public sector CVs often blur across programmes. Our rubric captures the specific programmes, missions and outcomes the candidate contributed to.",
+          "In-house, contractor and vendor-side experience shape the role differently. We capture the delivery model so shortlists match how your team actually works.",
+          "Where a role has clearance or eligibility requirements, we capture what the CV states as structured signals. We do not attest to clearance status — your team verifies through the appropriate channel.",
+          "We calibrate the rubric to the seniority and specialisation you actually need.",
+          "Programme and project managers",
+          "Policy analysts and advisors",
+          "Delivery managers",
+          "Service designers",
+          "Public-sector product managers",
+          "Data and analytics specialists",
+          "Digital transformation leads",
+          "Contract and procurement specialists",
+          "01",
+          "A guided intake captures everything the search needs, in one flow.",
+          "02",
+          "Multi-channel sourcing, role-specific rubric, evidence extracted from every CV.",
+          "03",
+          "Ranked shortlist, evidence side-by-side, Kanban pipeline, direct messaging.",
+          "See the full process on how it works.",
+          "Public Sector",
+          "Submit the role — one workspace, one rubric, one reviewed shortlist."
+        ],
+        "buttons": [],
+        "links": [
+          {
+            "text": "Home",
+            "href": "https://clear-path-hubs.lovable.app/"
+          },
+          {
+            "text": "Industries",
+            "href": "https://clear-path-hubs.lovable.app/industries"
+          },
+          {
+            "text": "Start hiring",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "Talk to us",
+            "href": "https://clear-path-hubs.lovable.app/contact"
+          },
+          {
+            "text": "how it works",
+            "href": "https://clear-path-hubs.lovable.app/how-it-works"
+          },
+          {
+            "text": "Start intake",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "See other industries",
+            "href": "https://clear-path-hubs.lovable.app/industries"
+          },
+          {
+            "text": "Edit with",
+            "href": "https://lovable.dev/projects/1dc5ee7e-1294-441c-8288-850e79e443f6?utm_source=lovable-badge"
+          }
+        ],
+        "images": [],
+        "forms": [],
+        "navLinks": [
+          "Home",
+          "Industries"
+        ],
+        "footerLinks": [],
+        "horizontalOverflow": false,
+        "documentWidth": 375,
+        "viewportWidth": 375
+      },
+      "screenshots": {
+        "sourceFull": "reports/public-parity/screenshots/source/industries_public-sector__mobile__full.png",
+        "sourceVisible": "reports/public-parity/screenshots/source/industries_public-sector__mobile__visible.png",
+        "destinationFull": "reports/public-parity/screenshots/destination/industries_public-sector__mobile__full.png",
+        "destinationVisible": "reports/public-parity/screenshots/destination/industries_public-sector__mobile__visible.png"
+      },
+      "differences": [
+        "title: \"Public Sector Talent | TaaSFlow - Talent as a Service\" vs \"Public sector hiring — TaaSFlow\"",
+        "meta description mismatch",
+        "H1 differs: [Agile Talent Solutions for Government & Public Agencies] vs [Public sector hiring with evidence tied to programme.]",
+        "heading overlap 0% (0/30)",
+        "section count 20 vs 6",
+        "form count 1 vs 0"
+      ]
+    },
+    {
+      "viewport": "tablet",
+      "source": {
+        "url": "https://taasflow.com/industries/public-sector",
+        "finalUrl": "https://taasflow.com/industries/public-sector",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [
+          {
+            "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HJ2ECKCNK4&gtm=45je67l1v9245339446za200zd9245339446&_p=1784774130558&gcd=13l3l3l3l1l1&npa=0&_ng=1&dma=0&are=1&cid=1704066174.1784774131&frm=0&ngs=1&pscdl=noapi&rcb=17&sr=768x1024&uaa=x86&uab=64&uafvl=Not-A.Brand%3B24.0.0.0%7CChromium%3B146.0.7680.80&uam=&uamb=0&uap=Windows&uapv=&uaw=0&ul=en-us&_s=1&tag_exp=115616986~115938466~115938469~118897920~118897930~119896803&dp=%2Findustries%2Fpublic-sector&dt=TaaSFlow%20%7C%20Talent%20as%20a%20Service%20%7C%20Subscription%20Recruiting&dl=https%3A%2F%2Ftaasflow.com%2Findustries%2Fpublic-sector&sid=1784774130&sct=1&seg=0&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&ep.role_type=public&ep.is_authenticated=false&tfd=502",
+            "status": null,
+            "failure": "net::ERR_ABORTED"
+          },
+          {
+            "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HJ2ECKCNK4&gtm=45je67l1v9245339446za200zd9245339446&_p=1784774130558&gcd=13l3l3l3l1l1&npa=0&_ng=1&dma=0&_eu=AEAAAAQ&ae=a&are=1&cid=1704066174.1784774131&frm=0&ngs=1&pscdl=noapi&rcb=17&sr=768x1024&uaa=x86&uab=64&uafvl=Not-A.Brand%3B24.0.0.0%7CChromium%3B146.0.7680.80&uam=&uamb=0&uap=Windows&uapv=&uaw=0&ul=en-us&_s=2&tag_exp=115616986~115938466~115938469~118897920~118897930~119896803&sid=1784774130&sct=1&seg=0&dl=https%3A%2F%2Ftaasflow.com%2Findustries%2Fpublic-sector&dt=TaaSFlow%20%7C%20Talent%20as%20a%20Service%20%7C%20Subscription%20Recruiting&en=scroll&epn.percent_scrolled=90&_et=20&tfd=818",
+            "status": null,
+            "failure": "net::ERR_ABORTED"
+          }
+        ],
+        "title": "Public Sector Talent | TaaSFlow - Talent as a Service",
+        "description": "On-demand professionals for government agencies and public sector organizations. Meet project deadlines without lengthy hiring processes.",
+        "canonical": "https://taasflow.com/industries/public-sector",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:type": "website",
+          "og:url": "https://taasflow.com/industries/public-sector",
+          "og:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "og:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "og:image": "https://taasflow.com/og-image.png",
+          "og:image:width": "1200",
+          "og:image:height": "630",
+          "og:locale": "en_US",
+          "twitter:card": "summary_large_image",
+          "twitter:site": "@TaasFlow",
+          "twitter:creator": "@TaasFlow",
+          "twitter:url": "https://taasflow.com/industries/public-sector",
+          "twitter:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "twitter:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "twitter:image": "https://taasflow.com/og-image.png"
+        },
+        "structuredData": [
+          {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "@id": "https://taasflow.com/#organization",
+            "name": "TaaSFlow",
+            "legalName": "TaaSFlow",
+            "url": "https://taasflow.com/",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://taasflow.com/favicon.png",
+              "width": 512,
+              "height": 512
+            },
+            "image": "https://taasflow.com/og-image.png",
+            "description": "Talent as a Service — subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+            "slogan": "Your hiring team. On demand.",
+            "foundingDate": "2024",
+            "areaServed": [
+              {
+                "@type": "Country",
+                "name": "United States"
+              },
+              {
+                "@type": "Country",
+                "name": "United Arab Emirates"
+              },
+              {
+                "@type": "Country",
+                "name": "United Kingdom"
+              },
+              {
+                "@type": "Country",
+                "name": "Brazil"
+              }
+            ],
+            "knowsAbout": [
+              "Subscription recruiting",
+              "Talent as a Service",
+              "Candidate sourcing",
+              "Pre-screened candidates",
+              "Recruitment process outsourcing"
+            ],
+            "contactPoint": [
+              {
+                "@type": "ContactPoint",
+                "contactType": "sales",
+                "email": "hello@taasflow.com",
+                "url": "https://taasflow.com/contact",
+                "availableLanguage": [
+                  "English",
+                  "Portuguese",
+                  "Spanish"
+                ]
+              }
+            ],
+            "sameAs": [
+              "https://www.linkedin.com/company/taasflow",
+              "https://twitter.com/TaasFlow"
+            ]
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "@id": "https://taasflow.com/#website",
+            "name": "TaaSFlow",
+            "alternateName": "Talent as a Service",
+            "url": "https://taasflow.com/",
+            "description": "Subscription recruiting that delivers pre-screened, ranked candidates in 14 days.",
+            "inLanguage": "en-US",
+            "publisher": {
+              "@id": "https://taasflow.com/#organization"
+            },
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": {
+                "@type": "EntryPoint",
+                "urlTemplate": "https://taasflow.com/jobs?q={search_term_string}"
+              },
+              "query-input": "required name=search_term_string"
+            }
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "Service",
+            "name": "Public Sector Talent Sourcing",
+            "description": "On-demand professionals for government agencies and public sector organizations. Meet project deadlines without lengthy hiring processes.",
+            "provider": {
+              "@type": "Organization",
+              "name": "TaasFlow",
+              "url": "https://taasflow.com"
+            },
+            "serviceType": "Talent Acquisition",
+            "areaServed": "United States",
+            "hasOfferCatalog": {
+              "@type": "OfferCatalog",
+              "name": "Public Sector Recruiting Services",
+              "itemListElement": [
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "IT Specialists Recruiting"
+                  },
+                  "position": 1
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Project Managers Recruiting"
+                  },
+                  "position": 2
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Policy Analysts Recruiting"
+                  },
+                  "position": 3
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Program Coordinators Recruiting"
+                  },
+                  "position": 4
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Administrative Staff Recruiting"
+                  },
+                  "position": 5
+                }
+              ]
+            }
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "https://taasflow.com"
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Industries",
+                "item": "https://taasflow.com/industries"
+              },
+              {
+                "@type": "ListItem",
+                "position": 3,
+                "name": "Public Sector",
+                "item": "https://taasflow.com/industries//industries/public-sector"
+              }
+            ]
+          }
+        ],
+        "h1": [
+          "Agile Talent Solutions for Government & Public Agencies"
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "Agile Talent Solutions for Government & Public Agencies"
+          },
+          {
+            "level": 2,
+            "text": "Public Sector Industry Insights"
+          },
+          {
+            "level": 3,
+            "text": "Government Workforce"
+          },
+          {
+            "level": 3,
+            "text": "Hiring Timeline"
+          },
+          {
+            "level": 3,
+            "text": "Federal IT Gap"
+          },
+          {
+            "level": 3,
+            "text": "Retirement Wave"
+          },
+          {
+            "level": 3,
+            "text": "Industry Overview"
+          },
+          {
+            "level": 3,
+            "text": "Ready to transform your public sector recruiting?"
+          },
+          {
+            "level": 2,
+            "text": "How we hire for Public Sector"
+          },
+          {
+            "level": 3,
+            "text": "Agency Requirements Intake"
+          },
+          {
+            "level": 3,
+            "text": "Background Pre-Screening"
+          },
+          {
+            "level": 3,
+            "text": "Compliance Documentation"
+          },
+          {
+            "level": 3,
+            "text": "Grant-Aligned Placement"
+          },
+          {
+            "level": 2,
+            "text": "The Public Sector Hiring Challenge"
+          },
+          {
+            "level": 3,
+            "text": "The TaasFlow Solution"
+          },
+          {
+            "level": 2,
+            "text": "Why Public Sector companies choose TaasFlow"
+          },
+          {
+            "level": 3,
+            "text": "Skip the Red Tape"
+          },
+          {
+            "level": 3,
+            "text": "Compliance-Ready"
+          },
+          {
+            "level": 3,
+            "text": "Mission-Aligned Talent"
+          },
+          {
+            "level": 3,
+            "text": "Budget Flexibility"
+          },
+          {
+            "level": 2,
+            "text": "Positions we fill for Public Sector"
+          },
+          {
+            "level": 2,
+            "text": "Real results for Public Sector teams"
+          },
+          {
+            "level": 2,
+            "text": "Public Sector Salary Explorer"
+          },
+          {
+            "level": 2,
+            "text": "Public Sector Career Path"
+          },
+          {
+            "level": 3,
+            "text": "Senior"
+          },
+          {
+            "level": 4,
+            "text": "Key Skills at This Level"
+          },
+          {
+            "level": 2,
+            "text": "Public Sector Hiring Trends"
+          },
+          {
+            "level": 2,
+            "text": "Interactive Hiring Guide"
+          },
+          {
+            "level": 3,
+            "text": "Define Your Ideal Candidate"
+          },
+          {
+            "level": 3,
+            "text": "Optimize Your Job Posting"
+          },
+          {
+            "level": 3,
+            "text": "Source Beyond Job Boards"
+          },
+          {
+            "level": 3,
+            "text": "Structure Your Interview Process"
+          },
+          {
+            "level": 3,
+            "text": "Close & Onboard Effectively"
+          },
+          {
+            "level": 2,
+            "text": "Public Sector Recruiting Insights"
+          },
+          {
+            "level": 3,
+            "text": "Modernizing Public Sector Hiring: How Government Agencies Can Compete for Top Talent"
+          },
+          {
+            "level": 3,
+            "text": "Modernizing Government Hiring: Attracting Talent to the Public Sector"
+          },
+          {
+            "level": 3,
+            "text": "Public Sector Hiring Guide 2026: How Government Agencies Can Win the Talent War"
+          },
+          {
+            "level": 2,
+            "text": "Frequently Asked Questions"
+          },
+          {
+            "level": 3,
+            "text": "Can candidates pass background checks?"
+          },
+          {
+            "level": 3,
+            "text": "Do you understand government procurement rules?"
+          },
+          {
+            "level": 3,
+            "text": "How do you handle grant-funded positions?"
+          },
+          {
+            "level": 2,
+            "text": "Discover related industries"
+          },
+          {
+            "level": 2,
+            "text": "Ready to build your Public Sector team?"
+          },
+          {
+            "level": 2,
+            "text": "Public Sector Recruiting"
+          },
+          {
+            "level": 3,
+            "text": "Hub Page"
+          },
+          {
+            "level": 3,
+            "text": "Related Articles"
+          },
+          {
+            "level": 3,
+            "text": "Get Started"
+          },
+          {
+            "level": 4,
+            "text": "Newsletter"
+          },
+          {
+            "level": 4,
+            "text": "For candidates"
+          },
+          {
+            "level": 4,
+            "text": "For companies"
+          },
+          {
+            "level": 4,
+            "text": "Industries"
+          },
+          {
+            "level": 4,
+            "text": "Company"
+          },
+          {
+            "level": 3,
+            "text": "Cookie Preferences"
+          }
+        ],
+        "sections": [
+          "SECTION",
+          "Agile Talent Solutions for Government & Public Agencies",
+          "SECTION",
+          "Public Sector Industry Insights",
+          "Ready to transform your public sector recruiting?",
+          "How we hire for Public Sector",
+          "The Public Sector Hiring Challenge",
+          "Why Public Sector companies choose TaasFlow",
+          "Positions we fill for Public Sector",
+          "Real results for Public Sector teams",
+          "Public Sector Salary Explorer",
+          "Public Sector Career Path",
+          "Public Sector Hiring Trends",
+          "Interactive Hiring Guide",
+          "Public Sector Recruiting Insights",
+          "Frequently Asked Questions",
+          "Discover related industries",
+          "SECTION",
+          "Ready to build your Public Sector team?",
+          "Public Sector Recruiting"
+        ],
+        "textBlocks": [
+          "Solutions",
+          "Industries",
+          "Resources",
+          "Home",
+          "Industries",
+          "Public Sector",
+          "Bypass bureaucratic hiring delays with screened professionals who understand public sector requirements, compliance, and mission-driven work.",
+          "Key market data and trends shaping talent demand in your industry. (Hover for details)",
+          "Total state and local government employees in the US",
+          "Average time to complete traditional government hiring process",
+          "Estimated shortage of IT professionals across federal agencies",
+          "Of government workforce eligible to retire within 5 years",
+          "Start a risk-free pilot and receive qualified candidates in 14 days.",
+          "A tailored workflow for the challenges of public sector settings.",
+          "We map your project needs, clearance levels, and compliance requirements.",
+          "Candidates pre-screened for background check readiness and public sector experience.",
+          "All transparency, FOIA, and public accountability standards verified.",
+          "Professionals placed on flexible terms matching your budget cycles and grant periods.",
+          "Government hiring processes can take 6-12 months. By the time you've navigated civil service requirements, the project deadline has passed or the budget cycle has shifted.",
+          "Grant-funded initiatives and special projects require immediate staffing, but permanent headcount additions require lengthy approval chains and budget negotiations.",
+          "You need professionals who understand public sector culture: transparency requirements, stakeholder management, and mission-driven outcomes over profit metrics.",
+          "Professionals experienced in government and public sector environments",
+          "Background check-ready candidates who can meet security clearance timelines",
+          "Understanding of FOIA, ADA compliance, and public accountability standards",
+          "Flexible engagements that align with grant periods and budget cycles",
+          "No long-term commitments. Scale with project funding",
+          "We understand the unique challenges of your industry and deliver matching talent.",
+          "Get qualified professionals in weeks, not the 6-12 months of traditional government hiring.",
+          "Candidates familiar with public sector requirements, background checks, and accountability standards.",
+          "Professionals who thrive in public service environments and understand stakeholder dynamics.",
+          "Align staffing with grant periods and fiscal cycles. Scale up or down as funding allows.",
+          "Pre-vetted professionals, delivered weekly, ready to start.",
+          "- State Health & Human Services Agency",
+          "Explore current compensation ranges for top roles. Data updated quarterly from industry benchmarks.",
+          "* Based on industry benchmarks from SHRM, Glassdoor, LinkedIn Salary, and BLS data. Actual compensation may vary.",
+          "Click any level to explore typical progression, salary ranges, and key skills.",
+          "Key metrics shaping the talent landscape. Stay ahead of market shifts.",
+          "Steady growth in hiring demand across this sector.",
+          "Increasing adoption of remote and hybrid work models.",
+          "Unfilled positions due to skills shortage in this industry.",
+          "Industry average continues to improve with modern sourcing.",
+          "Follow these proven steps to hire smarter. Track your progress and get actionable tips at every stage.",
+          "Create a detailed candidate persona with must-have vs nice-to-have skills, cultural fit criteria, and realistic salary expectations.",
+          "Write a compelling job description that sells the opportunity, not just lists requirements. Include salary range, growth path, and team culture.",
+          "Reach passive candidates through targeted outreach, employee referrals, and talent communities. 70% of top talent is not actively looking.",
+          "Design a consistent 3-4 stage process that evaluates skills, culture fit, and potential. Include take-home assessments where appropriate.",
+          "Move fast with competitive offers and start onboarding before day one. The first 90 days determine long-term retention.",
+          "Expert articles on recruiting and talent acquisition for public sector.",
+          "Government agencies are losing the talent war to private sector speed and compensation. Here is how to modernize public hiring.",
+          "Modernizing Government Hiring: Attracting Talent to the Public Sector",
+          "Government agencies face a talent crisis as they compete with private sector compensation and speed. Here is how to modernize public sector recruiting.",
+          "Public Sector Hiring Guide 2026: How Government Agencies Can Win the Talent War",
+          "Government agencies lose 73% of tech candidates to private sector offers. Proven strategies for public sector recruiting that leverage mission, stability, and total compensation.",
+          "Common questions about TaasFlow for public sector.",
+          "Learn how we serve similar sectors with subscription recruiting.",
+          "Receive qualified public sector professionals weekly. No agency fees, no long-term contracts.",
+          "Related Industries",
+          "Talent as a Service",
+          "A global hiring system for teams that need consistent recruiting.",
+          "Weekly insights into talent acquisition. No spam.",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Book call",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "No recruitment agency fees. No placement charges. Subscription-based hiring system.",
+          "Copyright 2026 TaaSFlow. All rights reserved.",
+          "We use essential cookies for core functionality. With your consent, we use analytics (Google Analytics) and marketing technologies (Meta Pixel, Apollo, Retention.com/RB2B) to understand website performance, improve campaigns, and measure conversions safely. Your data is processed in accordance with GDPR and our Privacy Notice. You can change your preferences at any time."
+        ],
+        "buttons": [
+          "Solutions",
+          "Industries",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Solutions",
+          "How it works",
+          "Pilot",
+          "Enterprise",
+          "Case studies",
+          "Jobs",
+          "Journey",
+          "Industries",
+          "Tech",
+          "SaaS & Cloud",
+          "Cybersecurity",
+          "Data & Analytics",
+          "Finance",
+          "Insurance",
+          "PE & VC",
+          "Accounting",
+          "Legal",
+          "Consulting",
+          "HR & Recruiting",
+          "Staffing Agencies",
+          "Sales",
+          "Marketing",
+          "E-commerce",
+          "Media",
+          "Real Estate",
+          "Construction",
+          "Hospitality",
+          "Healthcare",
+          "Public Sector",
+          "Non-Profit",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Success Stories",
+          "Talent Marketplace",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Start Public Sector Pilot Program",
+          "Book call",
+          "Book call",
+          "1Entry-Level",
+          "2Mid-Level",
+          "3Senior",
+          "4Director / Lead",
+          "5VP / C-Suite",
+          "Next: Director / Lead",
+          "1Define Your Ideal Candidate1-2 days",
+          "1",
+          "Mark Complete",
+          "2Optimize Your Job PostingWrite a compelling job description that sells the opportunity, not just lists requirements. Include salary range, growth path, and team culture.1 day",
+          "2",
+          "3Source Beyond Job BoardsReach passive candidates through targeted outreach, employee referrals, and talent communities. 70% of top talent is not actively looking.Ongoing",
+          "3",
+          "4Structure Your Interview ProcessDesign a consistent 3-4 stage process that evaluates skills, culture fit, and potential. Include take-home assessments where appropriate.2-3 days setup",
+          "4",
+          "5Close & Onboard EffectivelyMove fast with competitive offers and start onboarding before day one. The first 90 days determine long-term retention.1-2 weeks",
+          "5",
+          "Can candidates pass background checks?",
+          "Do you understand government procurement rules?",
+          "How do you handle grant-funded positions?",
+          "Start Public Sector Pilot",
+          "Contact",
+          "Subscribe",
+          "Book call"
+        ],
+        "links": [
+          {
+            "text": "Skip to main content",
+            "href": "https://taasflow.com/industries/public-sector#main-content"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "Browse jobs",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Join the network",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Browse open roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Home",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "Industries",
+            "href": "https://taasflow.com/industries"
+          },
+          {
+            "text": "View all articles",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "Industry Hiring GuidesPublic SectorModernizing Public Sector Hiring: How Government Agencies Can Compete for Top TalentG",
+            "href": "https://taasflow.com/blog/public-sector-hiring-modernization"
+          },
+          {
+            "text": "📋Modernizing Government Hiring: Attracting Talent to the Public SectorIndustry Hiring GuidesIndustry Hiring GuidesPubli",
+            "href": "https://taasflow.com/blog/government-hiring-modernization"
+          },
+          {
+            "text": "🔍Public Sector Hiring Guide 2026: How Government Agencies Can Win the Talent WarIndustry SpotlightIndustry SpotlightPub",
+            "href": "https://taasflow.com/blog/public-sector-talent-acquisition"
+          },
+          {
+            "text": "View all articles",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "Technology",
+            "href": "https://taasflow.com/industries/tech"
+          },
+          {
+            "text": "Legal",
+            "href": "https://taasflow.com/industries/legal"
+          },
+          {
+            "text": "Finance & Banking",
+            "href": "https://taasflow.com/industries/finance"
+          },
+          {
+            "text": "Staffing Agencies",
+            "href": "https://taasflow.com/industries/staffing-agencies"
+          },
+          {
+            "text": "Healthcare",
+            "href": "https://taasflow.com/industries/healthcare"
+          },
+          {
+            "text": "Sales",
+            "href": "https://taasflow.com/industries/sales"
+          },
+          {
+            "text": "Marketing & Advertising",
+            "href": "https://taasflow.com/industries/marketing"
+          },
+          {
+            "text": "Human Resources",
+            "href": "https://taasflow.com/industries/human-resources"
+          },
+          {
+            "text": "Compare all industries",
+            "href": "https://taasflow.com/industries/compare"
+          },
+          {
+            "text": "How it works",
+            "href": "https://taasflow.com/how-it-works"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "Start Pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "Jobs",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Blog",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "About",
+            "href": "https://taasflow.com/about"
+          },
+          {
+            "text": "Enterprise",
+            "href": "https://taasflow.com/enterprise"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://taasflow.com/faq"
+          },
+          {
+            "text": "Contact",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Looking for a job in public sector? Browse open positions",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Public Sector Recruiting",
+            "href": "https://taasflow.com/industries/public-sector"
+          },
+          {
+            "text": "Public Sector Hiring Guide",
+            "href": "https://taasflow.com/blog/public-sector-hiring"
+          },
+          {
+            "text": "DEI Hiring Practices",
+            "href": "https://taasflow.com/blog/diversity-inclusion-hiring"
+          },
+          {
+            "text": "Start a Pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "Talk to Us",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Healthcare Recruiting",
+            "href": "https://taasflow.com/industries/healthcare"
+          },
+          {
+            "text": "Onboarding Best Practices",
+            "href": "https://taasflow.com/blog/onboarding-best-practices"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "LinkedIn",
+            "href": "https://www.linkedin.com/company/taasflow/"
+          },
+          {
+            "text": "Browse roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Talent network",
+            "href": "https://taasflow.com/global-talent"
+          },
+          {
+            "text": "Member stories",
+            "href": "https://taasflow.com/candidate-success"
+          },
+          {
+            "text": "Start pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "Employer onboarding",
+            "href": "https://taasflow.com/employer-onboarding"
+          },
+          {
+            "text": "Case studies",
+            "href": "https://taasflow.com/case-studies"
+          },
+          {
+            "text": "Healthcare",
+            "href": "https://taasflow.com/industries/healthcare"
+          },
+          {
+            "text": "Technology",
+            "href": "https://taasflow.com/industries/tech"
+          },
+          {
+            "text": "Finance",
+            "href": "https://taasflow.com/industries/finance"
+          },
+          {
+            "text": "Legal",
+            "href": "https://taasflow.com/industries/legal"
+          },
+          {
+            "text": "All →",
+            "href": "https://taasflow.com/industries"
+          },
+          {
+            "text": "About us",
+            "href": "https://taasflow.com/about"
+          },
+          {
+            "text": "Blog",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://taasflow.com/faq"
+          },
+          {
+            "text": "Knowledge Base",
+            "href": "https://taasflow.com/knowledge-base"
+          },
+          {
+            "text": "Contact us",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Privacy Policy",
+            "href": "https://taasflow.com/privacy"
+          },
+          {
+            "text": "Terms of Service",
+            "href": "https://taasflow.com/terms"
+          },
+          {
+            "text": "Privacy Notice",
+            "href": "https://taasflow.com/privacy"
+          }
+        ],
+        "images": [
+          {
+            "src": "https://taasflow.com/assets/logo-on-white-Dk9DIcMP.png",
+            "alt": "TaaSFlow logo"
+          },
+          {
+            "src": "https://taasflow.com/assets/public-sector-BKXoE7Wi.jpg",
+            "alt": ""
+          },
+          {
+            "src": "https://taasflow.com/assets/public-sector-BKXoE7Wi.jpg",
+            "alt": ""
+          },
+          {
+            "src": "https://taasflow.com/assets/public-sector-BKXoE7Wi.jpg",
+            "alt": ""
+          },
+          {
+            "src": "https://taasflow.com/assets/public-sector-hiring-BxE3P7QN.jpg",
+            "alt": "Modernizing Public Sector Hiring: How Government Agencies Can Compete for Top Talent"
+          },
+          {
+            "src": "https://taasflow.com/assets/logo-on-blue-CX6jlwjg.png",
+            "alt": "TaaSFlow logo"
+          }
+        ],
+        "forms": [
+          {
+            "action": "https://taasflow.com/industries/public-sector",
+            "fields": [
+              "input"
+            ]
+          }
+        ],
+        "navLinks": [
+          "Browse jobs",
+          "Join the network",
+          "Browse open roles",
+          "Home",
+          "Industries",
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us"
+        ],
+        "footerLinks": [
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "Privacy Policy",
+          "Terms of Service"
+        ],
+        "horizontalOverflow": false,
+        "documentWidth": 768,
+        "viewportWidth": 768
+      },
+      "destination": {
+        "url": "https://clear-path-hubs.lovable.app/industries/public-sector",
+        "finalUrl": "https://clear-path-hubs.lovable.app/industries/public-sector",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [],
+        "title": "Public sector hiring — TaaSFlow",
+        "description": "Structured sourcing for public agencies, government contractors and civic-tech teams. Ranked shortlists with evidence of programme, policy and delivery experience.",
+        "canonical": "https://clear-path-hubs.lovable.app/industries/public-sector",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "twitter:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "og:title": "Public sector hiring — TaaSFlow",
+          "og:description": "Structured sourcing for public agencies, government contractors and civic-tech teams. Ranked shortlists with evidence of programme, policy and delivery experience.",
+          "og:url": "https://clear-path-hubs.lovable.app/industries/public-sector",
+          "og:type": "website",
+          "twitter:card": "summary_large_image",
+          "twitter:title": "Public sector hiring — TaaSFlow",
+          "twitter:description": "Structured sourcing for public agencies, government contractors and civic-tech teams. Ranked shortlists with evidence of programme, policy and delivery experience."
+        },
+        "structuredData": [],
+        "h1": [
+          "Public sector hiring with evidence tied to programme."
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "Public sector hiring with evidence tied to programme."
+          },
+          {
+            "level": 2,
+            "text": "What we hear from Public Sector teams"
+          },
+          {
+            "level": 3,
+            "text": "Programme and mission context"
+          },
+          {
+            "level": 3,
+            "text": "Delivery model fit"
+          },
+          {
+            "level": 3,
+            "text": "Clearance and eligibility signals"
+          },
+          {
+            "level": 2,
+            "text": "Roles we source in Public Sector"
+          },
+          {
+            "level": 3,
+            "text": "Submit the role"
+          },
+          {
+            "level": 3,
+            "text": "We source and score"
+          },
+          {
+            "level": 3,
+            "text": "Review in your workspace"
+          },
+          {
+            "level": 2,
+            "text": "Building a public sector team?"
+          }
+        ],
+        "sections": [
+          "Public sector hiring with evidence tied to programme.",
+          "What we hear from Public Sector teams",
+          "Roles we source in Public Sector",
+          "Submit the role",
+          "Building a public sector team?",
+          "SECTION"
+        ],
+        "textBlocks": [
+          "Home",
+          "Industries",
+          "Public Sector",
+          "Public Sector",
+          "TaaSFlow gives agency and contractor leaders a workspace for every hire — programme, policy, delivery, technology — with rubrics tuned to the programme context and outcome.",
+          "Programme and outcome evidence",
+          "Delivery model captured in intake",
+          "Human review before publication",
+          "Public sector CVs often blur across programmes. Our rubric captures the specific programmes, missions and outcomes the candidate contributed to.",
+          "In-house, contractor and vendor-side experience shape the role differently. We capture the delivery model so shortlists match how your team actually works.",
+          "Where a role has clearance or eligibility requirements, we capture what the CV states as structured signals. We do not attest to clearance status — your team verifies through the appropriate channel.",
+          "We calibrate the rubric to the seniority and specialisation you actually need.",
+          "Programme and project managers",
+          "Policy analysts and advisors",
+          "Delivery managers",
+          "Service designers",
+          "Public-sector product managers",
+          "Data and analytics specialists",
+          "Digital transformation leads",
+          "Contract and procurement specialists",
+          "01",
+          "A guided intake captures everything the search needs, in one flow.",
+          "02",
+          "Multi-channel sourcing, role-specific rubric, evidence extracted from every CV.",
+          "03",
+          "Ranked shortlist, evidence side-by-side, Kanban pipeline, direct messaging.",
+          "See the full process on how it works.",
+          "Public Sector",
+          "Submit the role — one workspace, one rubric, one reviewed shortlist."
+        ],
+        "buttons": [],
+        "links": [
+          {
+            "text": "Home",
+            "href": "https://clear-path-hubs.lovable.app/"
+          },
+          {
+            "text": "Industries",
+            "href": "https://clear-path-hubs.lovable.app/industries"
+          },
+          {
+            "text": "Start hiring",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "Talk to us",
+            "href": "https://clear-path-hubs.lovable.app/contact"
+          },
+          {
+            "text": "how it works",
+            "href": "https://clear-path-hubs.lovable.app/how-it-works"
+          },
+          {
+            "text": "Start intake",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "See other industries",
+            "href": "https://clear-path-hubs.lovable.app/industries"
+          },
+          {
+            "text": "Edit with",
+            "href": "https://lovable.dev/projects/1dc5ee7e-1294-441c-8288-850e79e443f6?utm_source=lovable-badge"
+          }
+        ],
+        "images": [],
+        "forms": [],
+        "navLinks": [
+          "Home",
+          "Industries"
+        ],
+        "footerLinks": [],
+        "horizontalOverflow": false,
+        "documentWidth": 768,
+        "viewportWidth": 768
+      },
+      "screenshots": {
+        "sourceFull": "reports/public-parity/screenshots/source/industries_public-sector__tablet__full.png",
+        "sourceVisible": "reports/public-parity/screenshots/source/industries_public-sector__tablet__visible.png",
+        "destinationFull": "reports/public-parity/screenshots/destination/industries_public-sector__tablet__full.png",
+        "destinationVisible": "reports/public-parity/screenshots/destination/industries_public-sector__tablet__visible.png"
+      },
+      "differences": [
+        "title: \"Public Sector Talent | TaaSFlow - Talent as a Service\" vs \"Public sector hiring — TaaSFlow\"",
+        "meta description mismatch",
+        "H1 differs: [Agile Talent Solutions for Government & Public Agencies] vs [Public sector hiring with evidence tied to programme.]",
+        "heading overlap 0% (0/30)",
+        "section count 20 vs 6",
+        "form count 1 vs 0"
+      ]
+    },
+    {
+      "viewport": "desktop",
+      "source": {
+        "url": "https://taasflow.com/industries/public-sector",
+        "finalUrl": "https://taasflow.com/industries/public-sector",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [
+          {
+            "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HJ2ECKCNK4&gtm=45je67l1v9245339446za200zd9245339446&_p=1784774134560&gcd=13l3l3l3l1l1&npa=0&_ng=1&dma=0&are=1&cid=1740955508.1784774135&frm=0&ngs=1&pscdl=noapi&rcb=14&sr=1440x900&uaa=x86&uab=64&uafvl=Not-A.Brand%3B24.0.0.0%7CChromium%3B146.0.7680.80&uam=&uamb=0&uap=Windows&uapv=&uaw=0&ul=en-us&_s=1&tag_exp=115616985~115938466~115938469~118395335~118897920~118897930~119896803&dp=%2Findustries%2Fpublic-sector&dt=TaaSFlow%20%7C%20Talent%20as%20a%20Service%20%7C%20Subscription%20Recruiting&dl=https%3A%2F%2Ftaasflow.com%2Findustries%2Fpublic-sector&sid=1784774134&sct=1&seg=0&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&ep.role_type=public&ep.is_authenticated=false&tfd=575",
+            "status": null,
+            "failure": "net::ERR_ABORTED"
+          },
+          {
+            "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HJ2ECKCNK4&gtm=45je67l1v9245339446za200zd9245339446&_p=1784774134560&gcd=13l3l3l3l1l1&npa=0&_ng=1&dma=0&_eu=AEAAAAQ&ae=a&are=1&cid=1740955508.1784774135&frm=0&ngs=1&pscdl=noapi&rcb=14&sr=1440x900&uaa=x86&uab=64&uafvl=Not-A.Brand%3B24.0.0.0%7CChromium%3B146.0.7680.80&uam=&uamb=0&uap=Windows&uapv=&uaw=0&ul=en-us&_s=2&tag_exp=115616985~115938466~115938469~118395335~118897920~118897930~119896803&sid=1784774134&sct=1&seg=0&dl=https%3A%2F%2Ftaasflow.com%2Findustries%2Fpublic-sector&dt=TaaSFlow%20%7C%20Talent%20as%20a%20Service%20%7C%20Subscription%20Recruiting&en=scroll&epn.percent_scrolled=90&_et=14&tfd=986",
+            "status": null,
+            "failure": "net::ERR_ABORTED"
+          }
+        ],
+        "title": "Public Sector Talent | TaaSFlow - Talent as a Service",
+        "description": "On-demand professionals for government agencies and public sector organizations. Meet project deadlines without lengthy hiring processes.",
+        "canonical": "https://taasflow.com/industries/public-sector",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:type": "website",
+          "og:url": "https://taasflow.com/industries/public-sector",
+          "og:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "og:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "og:image": "https://taasflow.com/og-image.png",
+          "og:image:width": "1200",
+          "og:image:height": "630",
+          "og:locale": "en_US",
+          "twitter:card": "summary_large_image",
+          "twitter:site": "@TaasFlow",
+          "twitter:creator": "@TaasFlow",
+          "twitter:url": "https://taasflow.com/industries/public-sector",
+          "twitter:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "twitter:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "twitter:image": "https://taasflow.com/og-image.png"
+        },
+        "structuredData": [
+          {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "@id": "https://taasflow.com/#organization",
+            "name": "TaaSFlow",
+            "legalName": "TaaSFlow",
+            "url": "https://taasflow.com/",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://taasflow.com/favicon.png",
+              "width": 512,
+              "height": 512
+            },
+            "image": "https://taasflow.com/og-image.png",
+            "description": "Talent as a Service — subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+            "slogan": "Your hiring team. On demand.",
+            "foundingDate": "2024",
+            "areaServed": [
+              {
+                "@type": "Country",
+                "name": "United States"
+              },
+              {
+                "@type": "Country",
+                "name": "United Arab Emirates"
+              },
+              {
+                "@type": "Country",
+                "name": "United Kingdom"
+              },
+              {
+                "@type": "Country",
+                "name": "Brazil"
+              }
+            ],
+            "knowsAbout": [
+              "Subscription recruiting",
+              "Talent as a Service",
+              "Candidate sourcing",
+              "Pre-screened candidates",
+              "Recruitment process outsourcing"
+            ],
+            "contactPoint": [
+              {
+                "@type": "ContactPoint",
+                "contactType": "sales",
+                "email": "hello@taasflow.com",
+                "url": "https://taasflow.com/contact",
+                "availableLanguage": [
+                  "English",
+                  "Portuguese",
+                  "Spanish"
+                ]
+              }
+            ],
+            "sameAs": [
+              "https://www.linkedin.com/company/taasflow",
+              "https://twitter.com/TaasFlow"
+            ]
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "@id": "https://taasflow.com/#website",
+            "name": "TaaSFlow",
+            "alternateName": "Talent as a Service",
+            "url": "https://taasflow.com/",
+            "description": "Subscription recruiting that delivers pre-screened, ranked candidates in 14 days.",
+            "inLanguage": "en-US",
+            "publisher": {
+              "@id": "https://taasflow.com/#organization"
+            },
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": {
+                "@type": "EntryPoint",
+                "urlTemplate": "https://taasflow.com/jobs?q={search_term_string}"
+              },
+              "query-input": "required name=search_term_string"
+            }
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "Service",
+            "name": "Public Sector Talent Sourcing",
+            "description": "On-demand professionals for government agencies and public sector organizations. Meet project deadlines without lengthy hiring processes.",
+            "provider": {
+              "@type": "Organization",
+              "name": "TaasFlow",
+              "url": "https://taasflow.com"
+            },
+            "serviceType": "Talent Acquisition",
+            "areaServed": "United States",
+            "hasOfferCatalog": {
+              "@type": "OfferCatalog",
+              "name": "Public Sector Recruiting Services",
+              "itemListElement": [
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "IT Specialists Recruiting"
+                  },
+                  "position": 1
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Project Managers Recruiting"
+                  },
+                  "position": 2
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Policy Analysts Recruiting"
+                  },
+                  "position": 3
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Program Coordinators Recruiting"
+                  },
+                  "position": 4
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Administrative Staff Recruiting"
+                  },
+                  "position": 5
+                }
+              ]
+            }
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "https://taasflow.com"
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Industries",
+                "item": "https://taasflow.com/industries"
+              },
+              {
+                "@type": "ListItem",
+                "position": 3,
+                "name": "Public Sector",
+                "item": "https://taasflow.com/industries//industries/public-sector"
+              }
+            ]
+          }
+        ],
+        "h1": [
+          "Agile Talent Solutions for Government & Public Agencies"
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "Agile Talent Solutions for Government & Public Agencies"
+          },
+          {
+            "level": 2,
+            "text": "Public Sector Industry Insights"
+          },
+          {
+            "level": 3,
+            "text": "Government Workforce"
+          },
+          {
+            "level": 3,
+            "text": "Hiring Timeline"
+          },
+          {
+            "level": 3,
+            "text": "Federal IT Gap"
+          },
+          {
+            "level": 3,
+            "text": "Retirement Wave"
+          },
+          {
+            "level": 3,
+            "text": "Industry Overview"
+          },
+          {
+            "level": 3,
+            "text": "Ready to transform your public sector recruiting?"
+          },
+          {
+            "level": 2,
+            "text": "How we hire for Public Sector"
+          },
+          {
+            "level": 3,
+            "text": "Agency Requirements Intake"
+          },
+          {
+            "level": 3,
+            "text": "Background Pre-Screening"
+          },
+          {
+            "level": 3,
+            "text": "Compliance Documentation"
+          },
+          {
+            "level": 3,
+            "text": "Grant-Aligned Placement"
+          },
+          {
+            "level": 2,
+            "text": "The Public Sector Hiring Challenge"
+          },
+          {
+            "level": 3,
+            "text": "The TaasFlow Solution"
+          },
+          {
+            "level": 2,
+            "text": "Why Public Sector companies choose TaasFlow"
+          },
+          {
+            "level": 3,
+            "text": "Skip the Red Tape"
+          },
+          {
+            "level": 3,
+            "text": "Compliance-Ready"
+          },
+          {
+            "level": 3,
+            "text": "Mission-Aligned Talent"
+          },
+          {
+            "level": 3,
+            "text": "Budget Flexibility"
+          },
+          {
+            "level": 2,
+            "text": "Positions we fill for Public Sector"
+          },
+          {
+            "level": 2,
+            "text": "Real results for Public Sector teams"
+          },
+          {
+            "level": 2,
+            "text": "Public Sector Salary Explorer"
+          },
+          {
+            "level": 2,
+            "text": "Public Sector Career Path"
+          },
+          {
+            "level": 3,
+            "text": "Senior"
+          },
+          {
+            "level": 4,
+            "text": "Key Skills at This Level"
+          },
+          {
+            "level": 2,
+            "text": "Public Sector Hiring Trends"
+          },
+          {
+            "level": 2,
+            "text": "Interactive Hiring Guide"
+          },
+          {
+            "level": 3,
+            "text": "Define Your Ideal Candidate"
+          },
+          {
+            "level": 3,
+            "text": "Optimize Your Job Posting"
+          },
+          {
+            "level": 3,
+            "text": "Source Beyond Job Boards"
+          },
+          {
+            "level": 3,
+            "text": "Structure Your Interview Process"
+          },
+          {
+            "level": 3,
+            "text": "Close & Onboard Effectively"
+          },
+          {
+            "level": 2,
+            "text": "Public Sector Recruiting Insights"
+          },
+          {
+            "level": 3,
+            "text": "Modernizing Public Sector Hiring: How Government Agencies Can Compete for Top Talent"
+          },
+          {
+            "level": 3,
+            "text": "Modernizing Government Hiring: Attracting Talent to the Public Sector"
+          },
+          {
+            "level": 3,
+            "text": "Public Sector Hiring Guide 2026: How Government Agencies Can Win the Talent War"
+          },
+          {
+            "level": 2,
+            "text": "Frequently Asked Questions"
+          },
+          {
+            "level": 3,
+            "text": "Can candidates pass background checks?"
+          },
+          {
+            "level": 3,
+            "text": "Do you understand government procurement rules?"
+          },
+          {
+            "level": 3,
+            "text": "How do you handle grant-funded positions?"
+          },
+          {
+            "level": 2,
+            "text": "Discover related industries"
+          },
+          {
+            "level": 2,
+            "text": "Ready to build your Public Sector team?"
+          },
+          {
+            "level": 2,
+            "text": "Public Sector Recruiting"
+          },
+          {
+            "level": 3,
+            "text": "Hub Page"
+          },
+          {
+            "level": 3,
+            "text": "Related Articles"
+          },
+          {
+            "level": 3,
+            "text": "Get Started"
+          },
+          {
+            "level": 4,
+            "text": "Newsletter"
+          },
+          {
+            "level": 4,
+            "text": "For candidates"
+          },
+          {
+            "level": 4,
+            "text": "For companies"
+          },
+          {
+            "level": 4,
+            "text": "Industries"
+          },
+          {
+            "level": 4,
+            "text": "Company"
+          },
+          {
+            "level": 3,
+            "text": "Cookie Preferences"
+          }
+        ],
+        "sections": [
+          "SECTION",
+          "Agile Talent Solutions for Government & Public Agencies",
+          "SECTION",
+          "Public Sector Industry Insights",
+          "Ready to transform your public sector recruiting?",
+          "How we hire for Public Sector",
+          "The Public Sector Hiring Challenge",
+          "Why Public Sector companies choose TaasFlow",
+          "Positions we fill for Public Sector",
+          "Real results for Public Sector teams",
+          "Public Sector Salary Explorer",
+          "Public Sector Career Path",
+          "Public Sector Hiring Trends",
+          "Interactive Hiring Guide",
+          "Public Sector Recruiting Insights",
+          "Frequently Asked Questions",
+          "Discover related industries",
+          "SECTION",
+          "Ready to build your Public Sector team?",
+          "Public Sector Recruiting"
+        ],
+        "textBlocks": [
+          "Solutions",
+          "Industries",
+          "Resources",
+          "Home",
+          "Industries",
+          "Public Sector",
+          "Bypass bureaucratic hiring delays with screened professionals who understand public sector requirements, compliance, and mission-driven work.",
+          "Key market data and trends shaping talent demand in your industry. (Hover for details)",
+          "Total state and local government employees in the US",
+          "Average time to complete traditional government hiring process",
+          "Estimated shortage of IT professionals across federal agencies",
+          "Of government workforce eligible to retire within 5 years",
+          "Start a risk-free pilot and receive qualified candidates in 14 days.",
+          "A tailored workflow for the challenges of public sector settings.",
+          "We map your project needs, clearance levels, and compliance requirements.",
+          "Candidates pre-screened for background check readiness and public sector experience.",
+          "All transparency, FOIA, and public accountability standards verified.",
+          "Professionals placed on flexible terms matching your budget cycles and grant periods.",
+          "Government hiring processes can take 6-12 months. By the time you've navigated civil service requirements, the project deadline has passed or the budget cycle has shifted.",
+          "Grant-funded initiatives and special projects require immediate staffing, but permanent headcount additions require lengthy approval chains and budget negotiations.",
+          "You need professionals who understand public sector culture: transparency requirements, stakeholder management, and mission-driven outcomes over profit metrics.",
+          "Professionals experienced in government and public sector environments",
+          "Background check-ready candidates who can meet security clearance timelines",
+          "Understanding of FOIA, ADA compliance, and public accountability standards",
+          "Flexible engagements that align with grant periods and budget cycles",
+          "No long-term commitments. Scale with project funding",
+          "We understand the unique challenges of your industry and deliver matching talent.",
+          "Get qualified professionals in weeks, not the 6-12 months of traditional government hiring.",
+          "Candidates familiar with public sector requirements, background checks, and accountability standards.",
+          "Professionals who thrive in public service environments and understand stakeholder dynamics.",
+          "Align staffing with grant periods and fiscal cycles. Scale up or down as funding allows.",
+          "Pre-vetted professionals, delivered weekly, ready to start.",
+          "- State Health & Human Services Agency",
+          "Explore current compensation ranges for top roles. Data updated quarterly from industry benchmarks.",
+          "* Based on industry benchmarks from SHRM, Glassdoor, LinkedIn Salary, and BLS data. Actual compensation may vary.",
+          "Click any level to explore typical progression, salary ranges, and key skills.",
+          "Key metrics shaping the talent landscape. Stay ahead of market shifts.",
+          "Steady growth in hiring demand across this sector.",
+          "Increasing adoption of remote and hybrid work models.",
+          "Unfilled positions due to skills shortage in this industry.",
+          "Industry average continues to improve with modern sourcing.",
+          "Follow these proven steps to hire smarter. Track your progress and get actionable tips at every stage.",
+          "Create a detailed candidate persona with must-have vs nice-to-have skills, cultural fit criteria, and realistic salary expectations.",
+          "Write a compelling job description that sells the opportunity, not just lists requirements. Include salary range, growth path, and team culture.",
+          "Reach passive candidates through targeted outreach, employee referrals, and talent communities. 70% of top talent is not actively looking.",
+          "Design a consistent 3-4 stage process that evaluates skills, culture fit, and potential. Include take-home assessments where appropriate.",
+          "Move fast with competitive offers and start onboarding before day one. The first 90 days determine long-term retention.",
+          "Expert articles on recruiting and talent acquisition for public sector.",
+          "Government agencies are losing the talent war to private sector speed and compensation. Here is how to modernize public hiring.",
+          "Modernizing Government Hiring: Attracting Talent to the Public Sector",
+          "Government agencies face a talent crisis as they compete with private sector compensation and speed. Here is how to modernize public sector recruiting.",
+          "Public Sector Hiring Guide 2026: How Government Agencies Can Win the Talent War",
+          "Government agencies lose 73% of tech candidates to private sector offers. Proven strategies for public sector recruiting that leverage mission, stability, and total compensation.",
+          "Common questions about TaasFlow for public sector.",
+          "Learn how we serve similar sectors with subscription recruiting.",
+          "Receive qualified public sector professionals weekly. No agency fees, no long-term contracts.",
+          "Related Industries",
+          "Talent as a Service",
+          "A global hiring system for teams that need consistent recruiting.",
+          "Weekly insights into talent acquisition. No spam.",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Book call",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "No recruitment agency fees. No placement charges. Subscription-based hiring system.",
+          "Copyright 2026 TaaSFlow. All rights reserved.",
+          "We use essential cookies for core functionality. With your consent, we use analytics (Google Analytics) and marketing technologies (Meta Pixel, Apollo, Retention.com/RB2B) to understand website performance, improve campaigns, and measure conversions safely. Your data is processed in accordance with GDPR and our Privacy Notice. You can change your preferences at any time."
+        ],
+        "buttons": [
+          "Solutions",
+          "Industries",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Solutions",
+          "How it works",
+          "Pilot",
+          "Enterprise",
+          "Case studies",
+          "Jobs",
+          "Journey",
+          "Industries",
+          "Tech",
+          "SaaS & Cloud",
+          "Cybersecurity",
+          "Data & Analytics",
+          "Finance",
+          "Insurance",
+          "PE & VC",
+          "Accounting",
+          "Legal",
+          "Consulting",
+          "HR & Recruiting",
+          "Staffing Agencies",
+          "Sales",
+          "Marketing",
+          "E-commerce",
+          "Media",
+          "Real Estate",
+          "Construction",
+          "Hospitality",
+          "Healthcare",
+          "Public Sector",
+          "Non-Profit",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Success Stories",
+          "Talent Marketplace",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Start Public Sector Pilot Program",
+          "Book call",
+          "Book call",
+          "1Entry-Level",
+          "2Mid-Level",
+          "3Senior",
+          "4Director / Lead",
+          "5VP / C-Suite",
+          "Next: Director / Lead",
+          "1Define Your Ideal Candidate1-2 days",
+          "1",
+          "Mark Complete",
+          "2Optimize Your Job PostingWrite a compelling job description that sells the opportunity, not just lists requirements. Include salary range, growth path, and team culture.1 day",
+          "2",
+          "3Source Beyond Job BoardsReach passive candidates through targeted outreach, employee referrals, and talent communities. 70% of top talent is not actively looking.Ongoing",
+          "3",
+          "4Structure Your Interview ProcessDesign a consistent 3-4 stage process that evaluates skills, culture fit, and potential. Include take-home assessments where appropriate.2-3 days setup",
+          "4",
+          "5Close & Onboard EffectivelyMove fast with competitive offers and start onboarding before day one. The first 90 days determine long-term retention.1-2 weeks",
+          "5",
+          "Can candidates pass background checks?",
+          "Do you understand government procurement rules?",
+          "How do you handle grant-funded positions?",
+          "Start Public Sector Pilot",
+          "Contact",
+          "Subscribe",
+          "Book call"
+        ],
+        "links": [
+          {
+            "text": "Skip to main content",
+            "href": "https://taasflow.com/industries/public-sector#main-content"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "Browse jobs",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Join the network",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Browse open roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Home",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "Industries",
+            "href": "https://taasflow.com/industries"
+          },
+          {
+            "text": "View all articles",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "Industry Hiring GuidesPublic SectorModernizing Public Sector Hiring: How Government Agencies Can Compete for Top TalentG",
+            "href": "https://taasflow.com/blog/public-sector-hiring-modernization"
+          },
+          {
+            "text": "📋Modernizing Government Hiring: Attracting Talent to the Public SectorIndustry Hiring GuidesIndustry Hiring GuidesPubli",
+            "href": "https://taasflow.com/blog/government-hiring-modernization"
+          },
+          {
+            "text": "🔍Public Sector Hiring Guide 2026: How Government Agencies Can Win the Talent WarIndustry SpotlightIndustry SpotlightPub",
+            "href": "https://taasflow.com/blog/public-sector-talent-acquisition"
+          },
+          {
+            "text": "View all articles",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "Technology",
+            "href": "https://taasflow.com/industries/tech"
+          },
+          {
+            "text": "Legal",
+            "href": "https://taasflow.com/industries/legal"
+          },
+          {
+            "text": "Finance & Banking",
+            "href": "https://taasflow.com/industries/finance"
+          },
+          {
+            "text": "Staffing Agencies",
+            "href": "https://taasflow.com/industries/staffing-agencies"
+          },
+          {
+            "text": "Healthcare",
+            "href": "https://taasflow.com/industries/healthcare"
+          },
+          {
+            "text": "Sales",
+            "href": "https://taasflow.com/industries/sales"
+          },
+          {
+            "text": "Marketing & Advertising",
+            "href": "https://taasflow.com/industries/marketing"
+          },
+          {
+            "text": "Human Resources",
+            "href": "https://taasflow.com/industries/human-resources"
+          },
+          {
+            "text": "Compare all industries",
+            "href": "https://taasflow.com/industries/compare"
+          },
+          {
+            "text": "How it works",
+            "href": "https://taasflow.com/how-it-works"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "Start Pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "Jobs",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Blog",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "About",
+            "href": "https://taasflow.com/about"
+          },
+          {
+            "text": "Enterprise",
+            "href": "https://taasflow.com/enterprise"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://taasflow.com/faq"
+          },
+          {
+            "text": "Contact",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Looking for a job in public sector? Browse open positions",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Public Sector Recruiting",
+            "href": "https://taasflow.com/industries/public-sector"
+          },
+          {
+            "text": "Public Sector Hiring Guide",
+            "href": "https://taasflow.com/blog/public-sector-hiring"
+          },
+          {
+            "text": "DEI Hiring Practices",
+            "href": "https://taasflow.com/blog/diversity-inclusion-hiring"
+          },
+          {
+            "text": "Start a Pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "Talk to Us",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Healthcare Recruiting",
+            "href": "https://taasflow.com/industries/healthcare"
+          },
+          {
+            "text": "Onboarding Best Practices",
+            "href": "https://taasflow.com/blog/onboarding-best-practices"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "LinkedIn",
+            "href": "https://www.linkedin.com/company/taasflow/"
+          },
+          {
+            "text": "Browse roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Talent network",
+            "href": "https://taasflow.com/global-talent"
+          },
+          {
+            "text": "Member stories",
+            "href": "https://taasflow.com/candidate-success"
+          },
+          {
+            "text": "Start pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "Employer onboarding",
+            "href": "https://taasflow.com/employer-onboarding"
+          },
+          {
+            "text": "Case studies",
+            "href": "https://taasflow.com/case-studies"
+          },
+          {
+            "text": "Healthcare",
+            "href": "https://taasflow.com/industries/healthcare"
+          },
+          {
+            "text": "Technology",
+            "href": "https://taasflow.com/industries/tech"
+          },
+          {
+            "text": "Finance",
+            "href": "https://taasflow.com/industries/finance"
+          },
+          {
+            "text": "Legal",
+            "href": "https://taasflow.com/industries/legal"
+          },
+          {
+            "text": "All →",
+            "href": "https://taasflow.com/industries"
+          },
+          {
+            "text": "About us",
+            "href": "https://taasflow.com/about"
+          },
+          {
+            "text": "Blog",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://taasflow.com/faq"
+          },
+          {
+            "text": "Knowledge Base",
+            "href": "https://taasflow.com/knowledge-base"
+          },
+          {
+            "text": "Contact us",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Privacy Policy",
+            "href": "https://taasflow.com/privacy"
+          },
+          {
+            "text": "Terms of Service",
+            "href": "https://taasflow.com/terms"
+          },
+          {
+            "text": "Privacy Notice",
+            "href": "https://taasflow.com/privacy"
+          }
+        ],
+        "images": [
+          {
+            "src": "https://taasflow.com/assets/logo-on-white-Dk9DIcMP.png",
+            "alt": "TaaSFlow logo"
+          },
+          {
+            "src": "https://taasflow.com/assets/public-sector-BKXoE7Wi.jpg",
+            "alt": ""
+          },
+          {
+            "src": "https://taasflow.com/assets/public-sector-BKXoE7Wi.jpg",
+            "alt": ""
+          },
+          {
+            "src": "https://taasflow.com/assets/public-sector-BKXoE7Wi.jpg",
+            "alt": ""
+          },
+          {
+            "src": "https://taasflow.com/assets/public-sector-hiring-BxE3P7QN.jpg",
+            "alt": "Modernizing Public Sector Hiring: How Government Agencies Can Compete for Top Talent"
+          },
+          {
+            "src": "https://taasflow.com/assets/logo-on-blue-CX6jlwjg.png",
+            "alt": "TaaSFlow logo"
+          }
+        ],
+        "forms": [
+          {
+            "action": "https://taasflow.com/industries/public-sector",
+            "fields": [
+              "input"
+            ]
+          }
+        ],
+        "navLinks": [
+          "Browse jobs",
+          "Join the network",
+          "Browse open roles",
+          "Home",
+          "Industries",
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us"
+        ],
+        "footerLinks": [
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "Privacy Policy",
+          "Terms of Service"
+        ],
+        "horizontalOverflow": false,
+        "documentWidth": 1440,
+        "viewportWidth": 1440
+      },
+      "destination": {
+        "url": "https://clear-path-hubs.lovable.app/industries/public-sector",
+        "finalUrl": "https://clear-path-hubs.lovable.app/industries/public-sector",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [],
+        "title": "Public sector hiring — TaaSFlow",
+        "description": "Structured sourcing for public agencies, government contractors and civic-tech teams. Ranked shortlists with evidence of programme, policy and delivery experience.",
+        "canonical": "https://clear-path-hubs.lovable.app/industries/public-sector",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "twitter:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "og:title": "Public sector hiring — TaaSFlow",
+          "og:description": "Structured sourcing for public agencies, government contractors and civic-tech teams. Ranked shortlists with evidence of programme, policy and delivery experience.",
+          "og:url": "https://clear-path-hubs.lovable.app/industries/public-sector",
+          "og:type": "website",
+          "twitter:card": "summary_large_image",
+          "twitter:title": "Public sector hiring — TaaSFlow",
+          "twitter:description": "Structured sourcing for public agencies, government contractors and civic-tech teams. Ranked shortlists with evidence of programme, policy and delivery experience."
+        },
+        "structuredData": [],
+        "h1": [
+          "Public sector hiring with evidence tied to programme."
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "Public sector hiring with evidence tied to programme."
+          },
+          {
+            "level": 2,
+            "text": "What we hear from Public Sector teams"
+          },
+          {
+            "level": 3,
+            "text": "Programme and mission context"
+          },
+          {
+            "level": 3,
+            "text": "Delivery model fit"
+          },
+          {
+            "level": 3,
+            "text": "Clearance and eligibility signals"
+          },
+          {
+            "level": 2,
+            "text": "Roles we source in Public Sector"
+          },
+          {
+            "level": 3,
+            "text": "Submit the role"
+          },
+          {
+            "level": 3,
+            "text": "We source and score"
+          },
+          {
+            "level": 3,
+            "text": "Review in your workspace"
+          },
+          {
+            "level": 2,
+            "text": "Building a public sector team?"
+          }
+        ],
+        "sections": [
+          "Public sector hiring with evidence tied to programme.",
+          "What we hear from Public Sector teams",
+          "Roles we source in Public Sector",
+          "Submit the role",
+          "Building a public sector team?",
+          "SECTION"
+        ],
+        "textBlocks": [
+          "Home",
+          "Industries",
+          "Public Sector",
+          "Public Sector",
+          "TaaSFlow gives agency and contractor leaders a workspace for every hire — programme, policy, delivery, technology — with rubrics tuned to the programme context and outcome.",
+          "Programme and outcome evidence",
+          "Delivery model captured in intake",
+          "Human review before publication",
+          "Public sector CVs often blur across programmes. Our rubric captures the specific programmes, missions and outcomes the candidate contributed to.",
+          "In-house, contractor and vendor-side experience shape the role differently. We capture the delivery model so shortlists match how your team actually works.",
+          "Where a role has clearance or eligibility requirements, we capture what the CV states as structured signals. We do not attest to clearance status — your team verifies through the appropriate channel.",
+          "We calibrate the rubric to the seniority and specialisation you actually need.",
+          "Programme and project managers",
+          "Policy analysts and advisors",
+          "Delivery managers",
+          "Service designers",
+          "Public-sector product managers",
+          "Data and analytics specialists",
+          "Digital transformation leads",
+          "Contract and procurement specialists",
+          "01",
+          "A guided intake captures everything the search needs, in one flow.",
+          "02",
+          "Multi-channel sourcing, role-specific rubric, evidence extracted from every CV.",
+          "03",
+          "Ranked shortlist, evidence side-by-side, Kanban pipeline, direct messaging.",
+          "See the full process on how it works.",
+          "Public Sector",
+          "Submit the role — one workspace, one rubric, one reviewed shortlist."
+        ],
+        "buttons": [],
+        "links": [
+          {
+            "text": "Home",
+            "href": "https://clear-path-hubs.lovable.app/"
+          },
+          {
+            "text": "Industries",
+            "href": "https://clear-path-hubs.lovable.app/industries"
+          },
+          {
+            "text": "Start hiring",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "Talk to us",
+            "href": "https://clear-path-hubs.lovable.app/contact"
+          },
+          {
+            "text": "how it works",
+            "href": "https://clear-path-hubs.lovable.app/how-it-works"
+          },
+          {
+            "text": "Start intake",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "See other industries",
+            "href": "https://clear-path-hubs.lovable.app/industries"
+          },
+          {
+            "text": "Edit with",
+            "href": "https://lovable.dev/projects/1dc5ee7e-1294-441c-8288-850e79e443f6?utm_source=lovable-badge"
+          }
+        ],
+        "images": [],
+        "forms": [],
+        "navLinks": [
+          "Home",
+          "Industries"
+        ],
+        "footerLinks": [],
+        "horizontalOverflow": false,
+        "documentWidth": 1440,
+        "viewportWidth": 1440
+      },
+      "screenshots": {
+        "sourceFull": "reports/public-parity/screenshots/source/industries_public-sector__desktop__full.png",
+        "sourceVisible": "reports/public-parity/screenshots/source/industries_public-sector__desktop__visible.png",
+        "destinationFull": "reports/public-parity/screenshots/destination/industries_public-sector__desktop__full.png",
+        "destinationVisible": "reports/public-parity/screenshots/destination/industries_public-sector__desktop__visible.png"
+      },
+      "differences": [
+        "title: \"Public Sector Talent | TaaSFlow - Talent as a Service\" vs \"Public sector hiring — TaaSFlow\"",
+        "meta description mismatch",
+        "H1 differs: [Agile Talent Solutions for Government & Public Agencies] vs [Public sector hiring with evidence tied to programme.]",
+        "heading overlap 0% (0/30)",
+        "section count 20 vs 6",
+        "form count 1 vs 0"
+      ]
+    }
+  ],
+  "summary": "18 differences detected",
+  "exclusions": []
+}

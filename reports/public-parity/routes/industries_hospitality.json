@@ -1,0 +1,3356 @@
+{
+  "sourcePath": "/industries/hospitality",
+  "destinationPath": "/industries/hospitality",
+  "pageType": "industry_page",
+  "protected": false,
+  "verdict": "MAJOR_DIFFERENCE",
+  "severity": "HIGH",
+  "viewports": [
+    {
+      "viewport": "mobile",
+      "source": {
+        "url": "https://taasflow.com/industries/hospitality",
+        "finalUrl": "https://taasflow.com/industries/hospitality",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [
+          {
+            "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HJ2ECKCNK4&gtm=45je67l1v9245339446za200zd9245339446&_p=1784774295404&gcd=13l3l3l3l1l1&npa=0&_ng=1&dma=0&are=1&cid=2084522209.1784774296&frm=0&ngs=1&pscdl=noapi&rcb=12&sr=375x812&uaa=x86&uab=64&uafvl=Not-A.Brand%3B24.0.0.0%7CChromium%3B146.0.7680.80&uam=&uamb=0&uap=Windows&uapv=&uaw=0&ul=en-us&_s=1&tag_exp=115616985~115938465~115938469~118897920~118897930~119896802&dp=%2Findustries%2Fhospitality&dt=TaaSFlow%20%7C%20Talent%20as%20a%20Service%20%7C%20Subscription%20Recruiting&dl=https%3A%2F%2Ftaasflow.com%2Findustries%2Fhospitality&sid=1784774295&sct=1&seg=0&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&ep.role_type=public&ep.is_authenticated=false&tfd=607",
+            "status": null,
+            "failure": "net::ERR_ABORTED"
+          }
+        ],
+        "title": "Hospitality & Events Talent | TaaSFlow - Talent as a Service",
+        "description": "On-demand hospitality professionals for hotels, restaurants, resorts, and event venues. Seasonal hiring, shift scheduling, and frontline workforce talent.",
+        "canonical": "https://taasflow.com/industries/hospitality",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:type": "website",
+          "og:url": "https://taasflow.com/industries/hospitality",
+          "og:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "og:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "og:image": "https://taasflow.com/og-image.png",
+          "og:image:width": "1200",
+          "og:image:height": "630",
+          "og:locale": "en_US",
+          "twitter:card": "summary_large_image",
+          "twitter:site": "@TaasFlow",
+          "twitter:creator": "@TaasFlow",
+          "twitter:url": "https://taasflow.com/industries/hospitality",
+          "twitter:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "twitter:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "twitter:image": "https://taasflow.com/og-image.png"
+        },
+        "structuredData": [
+          {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "@id": "https://taasflow.com/#organization",
+            "name": "TaaSFlow",
+            "legalName": "TaaSFlow",
+            "url": "https://taasflow.com/",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://taasflow.com/favicon.png",
+              "width": 512,
+              "height": 512
+            },
+            "image": "https://taasflow.com/og-image.png",
+            "description": "Talent as a Service — subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+            "slogan": "Your hiring team. On demand.",
+            "foundingDate": "2024",
+            "areaServed": [
+              {
+                "@type": "Country",
+                "name": "United States"
+              },
+              {
+                "@type": "Country",
+                "name": "United Arab Emirates"
+              },
+              {
+                "@type": "Country",
+                "name": "United Kingdom"
+              },
+              {
+                "@type": "Country",
+                "name": "Brazil"
+              }
+            ],
+            "knowsAbout": [
+              "Subscription recruiting",
+              "Talent as a Service",
+              "Candidate sourcing",
+              "Pre-screened candidates",
+              "Recruitment process outsourcing"
+            ],
+            "contactPoint": [
+              {
+                "@type": "ContactPoint",
+                "contactType": "sales",
+                "email": "hello@taasflow.com",
+                "url": "https://taasflow.com/contact",
+                "availableLanguage": [
+                  "English",
+                  "Portuguese",
+                  "Spanish"
+                ]
+              }
+            ],
+            "sameAs": [
+              "https://www.linkedin.com/company/taasflow",
+              "https://twitter.com/TaasFlow"
+            ]
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "@id": "https://taasflow.com/#website",
+            "name": "TaaSFlow",
+            "alternateName": "Talent as a Service",
+            "url": "https://taasflow.com/",
+            "description": "Subscription recruiting that delivers pre-screened, ranked candidates in 14 days.",
+            "inLanguage": "en-US",
+            "publisher": {
+              "@id": "https://taasflow.com/#organization"
+            },
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": {
+                "@type": "EntryPoint",
+                "urlTemplate": "https://taasflow.com/jobs?q={search_term_string}"
+              },
+              "query-input": "required name=search_term_string"
+            }
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "Service",
+            "name": "Hospitality & Events Talent Sourcing",
+            "description": "On-demand hospitality professionals for hotels, restaurants, resorts, and event venues. Seasonal hiring, shift scheduling, and frontline workforce talent.",
+            "provider": {
+              "@type": "Organization",
+              "name": "TaasFlow",
+              "url": "https://taasflow.com"
+            },
+            "serviceType": "Talent Acquisition",
+            "areaServed": "United States",
+            "hasOfferCatalog": {
+              "@type": "OfferCatalog",
+              "name": "Hospitality & Events Recruiting Services",
+              "itemListElement": [
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Hotel General Managers Recruiting"
+                  },
+                  "position": 1
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Front Desk Managers Recruiting"
+                  },
+                  "position": 2
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Restaurant Managers Recruiting"
+                  },
+                  "position": 3
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "F&B Directors Recruiting"
+                  },
+                  "position": 4
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Event Coordinators Recruiting"
+                  },
+                  "position": 5
+                }
+              ]
+            }
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "https://taasflow.com"
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Industries",
+                "item": "https://taasflow.com/industries"
+              },
+              {
+                "@type": "ListItem",
+                "position": 3,
+                "name": "Hospitality & Events",
+                "item": "https://taasflow.com/industries//industries/hospitality"
+              }
+            ]
+          }
+        ],
+        "h1": [
+          "Hospitality Talent for Hotels, Restaurants, Resorts & Event Venues"
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "Hospitality Talent for Hotels, Restaurants, Resorts & Event Venues"
+          },
+          {
+            "level": 2,
+            "text": "Hospitality & Events Industry Insights"
+          },
+          {
+            "level": 3,
+            "text": "Hospitality Market"
+          },
+          {
+            "level": 3,
+            "text": "Turnover Rate"
+          },
+          {
+            "level": 3,
+            "text": "Labor Shortage"
+          },
+          {
+            "level": 3,
+            "text": "Seasonal Surge"
+          },
+          {
+            "level": 3,
+            "text": "Industry Overview"
+          },
+          {
+            "level": 3,
+            "text": "Ready to transform your hospitality & events recruiting?"
+          },
+          {
+            "level": 2,
+            "text": "How we hire for Hospitality & Events"
+          },
+          {
+            "level": 3,
+            "text": "Property & Season Briefing"
+          },
+          {
+            "level": 3,
+            "text": "Hospitality Culture Screening"
+          },
+          {
+            "level": 3,
+            "text": "Shift & Schedule Matching"
+          },
+          {
+            "level": 3,
+            "text": "Guest-Ready Deployment"
+          },
+          {
+            "level": 2,
+            "text": "The Hospitality Staffing Reality"
+          },
+          {
+            "level": 3,
+            "text": "The TaasFlow Solution"
+          },
+          {
+            "level": 2,
+            "text": "Why Hospitality & Events companies choose TaasFlow"
+          },
+          {
+            "level": 3,
+            "text": "Guest Experience First"
+          },
+          {
+            "level": 3,
+            "text": "24-Hour Shift Coverage"
+          },
+          {
+            "level": 3,
+            "text": "Seasonal Scale 3x"
+          },
+          {
+            "level": 3,
+            "text": "Full Property Support"
+          },
+          {
+            "level": 2,
+            "text": "Positions we fill for Hospitality & Events"
+          },
+          {
+            "level": 2,
+            "text": "Real results for Hospitality & Events teams"
+          },
+          {
+            "level": 2,
+            "text": "Hospitality & Events Salary Explorer"
+          },
+          {
+            "level": 2,
+            "text": "Hospitality & Events Career Path"
+          },
+          {
+            "level": 3,
+            "text": "Senior"
+          },
+          {
+            "level": 4,
+            "text": "Key Skills at This Level"
+          },
+          {
+            "level": 2,
+            "text": "Hospitality & Events Hiring Trends"
+          },
+          {
+            "level": 2,
+            "text": "Interactive Hiring Guide"
+          },
+          {
+            "level": 3,
+            "text": "Define Your Ideal Candidate"
+          },
+          {
+            "level": 3,
+            "text": "Optimize Your Job Posting"
+          },
+          {
+            "level": 3,
+            "text": "Source Beyond Job Boards"
+          },
+          {
+            "level": 3,
+            "text": "Structure Your Interview Process"
+          },
+          {
+            "level": 3,
+            "text": "Close & Onboard Effectively"
+          },
+          {
+            "level": 2,
+            "text": "Hospitality & Events Recruiting Insights"
+          },
+          {
+            "level": 3,
+            "text": "Talent Acquisition vs. TaaS: Which Hiring Model Wins in 2026?"
+          },
+          {
+            "level": 3,
+            "text": "The Four-Day Work Week: How It Is Reshaping Hiring Competitiveness"
+          },
+          {
+            "level": 3,
+            "text": "What Gen Z Actually Wants from Employers: 2026 Workforce Expectations Report"
+          },
+          {
+            "level": 2,
+            "text": "Frequently Asked Questions"
+          },
+          {
+            "level": 3,
+            "text": "Can you staff for both hotels and restaurants?"
+          },
+          {
+            "level": 3,
+            "text": "How do you handle seasonal hiring surges?"
+          },
+          {
+            "level": 3,
+            "text": "Do your staff understand shift scheduling?"
+          },
+          {
+            "level": 3,
+            "text": "Can you respond to last-minute staffing emergencies?"
+          },
+          {
+            "level": 2,
+            "text": "Discover related industries"
+          },
+          {
+            "level": 2,
+            "text": "Ready to build your Hospitality & Events team?"
+          },
+          {
+            "level": 2,
+            "text": "Hospitality Recruiting"
+          },
+          {
+            "level": 3,
+            "text": "Hub Page"
+          },
+          {
+            "level": 3,
+            "text": "Related Articles"
+          },
+          {
+            "level": 3,
+            "text": "Get Started"
+          },
+          {
+            "level": 4,
+            "text": "Newsletter"
+          },
+          {
+            "level": 4,
+            "text": "For candidates"
+          },
+          {
+            "level": 4,
+            "text": "For companies"
+          },
+          {
+            "level": 4,
+            "text": "Industries"
+          },
+          {
+            "level": 4,
+            "text": "Company"
+          }
+        ],
+        "sections": [
+          "SECTION",
+          "Hospitality Talent for Hotels, Restaurants, Resorts & Event Venues",
+          "SECTION",
+          "Hospitality & Events Industry Insights",
+          "Ready to transform your hospitality & events recruiting?",
+          "How we hire for Hospitality & Events",
+          "The Hospitality Staffing Reality",
+          "Why Hospitality & Events companies choose TaasFlow",
+          "Positions we fill for Hospitality & Events",
+          "Real results for Hospitality & Events teams",
+          "Hospitality & Events Salary Explorer",
+          "Hospitality & Events Career Path",
+          "Hospitality & Events Hiring Trends",
+          "Interactive Hiring Guide",
+          "Hospitality & Events Recruiting Insights",
+          "Frequently Asked Questions",
+          "Discover related industries",
+          "SECTION",
+          "Ready to build your Hospitality & Events team?",
+          "Hospitality Recruiting"
+        ],
+        "textBlocks": [
+          "Solutions",
+          "Industries",
+          "Resources",
+          "Home",
+          "Industries",
+          "Hospitality & Events",
+          "Access guest-services professionals, shift managers, and operations talent who understand seasonal surges, frontline workforce management, and the art of creating exceptional guest experiences.",
+          "Key market data and trends shaping talent demand in your industry. (Hover for details)",
+          "US hospitality industry revenue including hotels, restaurants, and events",
+          "Annual employee turnover in hospitality, highest of any industry",
+          "Unfilled hospitality positions across hotels, restaurants, and venues",
+          "Peak-to-trough staffing fluctuation during holiday and wedding seasons",
+          "Start a risk-free pilot and receive qualified candidates in 14 days.",
+          "A tailored workflow for the challenges of hospitality & events settings.",
+          "We assess your property type, seasonal peaks, and service standards.",
+          "Candidates evaluated for guest experience orientation, not just task completion.",
+          "Availability confirmed for weekends, holidays, split shifts, and overnight coverage.",
+          "Service-minded professionals placed and ready to deliver exceptional guest experiences.",
+          "Hotels, restaurants, and resorts face the highest turnover rate of any industry at 73%. Every departure means retraining, service gaps, and guest complaints. You need reliable professionals who can step in and deliver from the first shift.",
+          "Seasonal demand is extreme. Summer resort bookings, holiday restaurant surges, wedding season at venues, and conference hotel blocks all demand 2-3x your base staffing. Year-round headcount does not solve seasonal peaks.",
+          "Frontline hospitality is not task completion. It is guest experience. You need shift managers who can run a floor, front desk staff who can upsell, event coordinators who can handle crises, and kitchen managers who can maintain quality under pressure.",
+          "Hotel operations: front desk, housekeeping management, revenue management, and guest relations",
+          "Restaurant management: FOH managers, kitchen coordinators, and F&B directors with high-volume experience",
+          "Resort staffing: activities coordinators, spa managers, and concierge professionals",
+          "Event staffing: planners, day-of coordinators, catering managers, and venue operations",
+          "Shift-ready professionals who can cover weekends, holidays, and overnight schedules",
+          "We understand the unique challenges of your industry and deliver matching talent.",
+          "Every professional understands hospitality means creating memories, not just filling shifts.",
+          "Last-minute call-out? Event emergency? We mobilize experienced hospitality talent within hours.",
+          "Ramp from base to peak staffing for holidays, wedding season, or conference blocks without permanent overhead.",
+          "From lobby to kitchen to ballroom: front desk, F&B, events, housekeeping, and management roles.",
+          "Pre-vetted professionals, delivered weekly, ready to start.",
+          "- Luxury Resort Hotel, 250 rooms",
+          "Explore current compensation ranges for top roles. Data updated quarterly from industry benchmarks.",
+          "* Based on industry benchmarks from SHRM, Glassdoor, LinkedIn Salary, and BLS data. Actual compensation may vary.",
+          "Click any level to explore typical progression, salary ranges, and key skills.",
+          "Key metrics shaping the talent landscape. Stay ahead of market shifts.",
+          "Steady growth in hiring demand across this sector.",
+          "Increasing adoption of remote and hybrid work models.",
+          "Unfilled positions due to skills shortage in this industry.",
+          "Industry average continues to improve with modern sourcing.",
+          "Follow these proven steps to hire smarter. Track your progress and get actionable tips at every stage.",
+          "Create a detailed candidate persona with must-have vs nice-to-have skills, cultural fit criteria, and realistic salary expectations.",
+          "Write a compelling job description that sells the opportunity, not just lists requirements. Include salary range, growth path, and team culture.",
+          "Reach passive candidates through targeted outreach, employee referrals, and talent communities. 70% of top talent is not actively looking.",
+          "Design a consistent 3-4 stage process that evaluates skills, culture fit, and potential. Include take-home assessments where appropriate.",
+          "Move fast with competitive offers and start onboarding before day one. The first 90 days determine long-term retention.",
+          "Expert articles on recruiting and talent acquisition for hospitality & events.",
+          "A direct comparison of traditional talent acquisition and Talent-as-a-Service (TaaS). See where each model wins on cost, speed, quality, and flexibility.",
+          "Companies offering four-day weeks see 60% more applicants. Data from 200 pilot programs reveals the productivity truth behind compressed schedules.",
+          "What Gen Z Actually Wants from Employers: 2026 Workforce Expectations Report",
+          "Forget the stereotypes. New survey data from 15,000 Gen Z professionals reveals their true priorities — and most companies are getting it wrong.",
+          "Common questions about TaasFlow for hospitality & events.",
+          "Learn how we serve similar sectors with subscription recruiting.",
+          "Receive qualified hospitality & events professionals weekly. No agency fees, no long-term contracts.",
+          "Related Industries",
+          "Talent as a Service",
+          "A global hiring system for teams that need consistent recruiting.",
+          "Weekly insights into talent acquisition. No spam.",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Book call",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "No recruitment agency fees. No placement charges. Subscription-based hiring system.",
+          "Copyright 2026 TaaSFlow. All rights reserved."
+        ],
+        "buttons": [
+          "Solutions",
+          "Industries",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Solutions",
+          "How it works",
+          "Pilot",
+          "Enterprise",
+          "Case studies",
+          "Jobs",
+          "Journey",
+          "Industries",
+          "Tech",
+          "SaaS & Cloud",
+          "Cybersecurity",
+          "Data & Analytics",
+          "Finance",
+          "Insurance",
+          "PE & VC",
+          "Accounting",
+          "Legal",
+          "Consulting",
+          "HR & Recruiting",
+          "Staffing Agencies",
+          "Sales",
+          "Marketing",
+          "E-commerce",
+          "Media",
+          "Real Estate",
+          "Construction",
+          "Hospitality",
+          "Healthcare",
+          "Public Sector",
+          "Non-Profit",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Success Stories",
+          "Talent Marketplace",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Start Hospitality & Events Pilot Program",
+          "Book call",
+          "Book call",
+          "1Entry-Level",
+          "2Mid-Level",
+          "3Senior",
+          "4Director / Lead",
+          "5VP / C-Suite",
+          "Next: Director / Lead",
+          "1Define Your Ideal Candidate1-2 days",
+          "1",
+          "Mark Complete",
+          "2Optimize Your Job PostingWrite a compelling job description that sells the opportunity, not just lists requirements. Include salary range, growth path, and team culture.1 day",
+          "2",
+          "3Source Beyond Job BoardsReach passive candidates through targeted outreach, employee referrals, and talent communities. 70% of top talent is not actively looking.Ongoing",
+          "3",
+          "4Structure Your Interview ProcessDesign a consistent 3-4 stage process that evaluates skills, culture fit, and potential. Include take-home assessments where appropriate.2-3 days setup",
+          "4",
+          "5Close & Onboard EffectivelyMove fast with competitive offers and start onboarding before day one. The first 90 days determine long-term retention.1-2 weeks",
+          "5",
+          "Can you staff for both hotels and restaurants?",
+          "How do you handle seasonal hiring surges?",
+          "Do your staff understand shift scheduling?",
+          "Can you respond to last-minute staffing emergencies?",
+          "Start Hospitality & Events Pilot",
+          "Contact",
+          "Subscribe"
+        ],
+        "links": [
+          {
+            "text": "Skip to main content",
+            "href": "https://taasflow.com/industries/hospitality#main-content"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "Browse jobs",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Join the network",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Browse open roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Home",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "Industries",
+            "href": "https://taasflow.com/industries"
+          },
+          {
+            "text": "View all articles",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "Hiring StrategyTalent Acquisition vs. TaaS: Which Hiring Model Wins in 2026?A direct comparison of traditional talent ac",
+            "href": "https://taasflow.com/blog/talent-acquisition-vs-taas"
+          },
+          {
+            "text": "Workforce TrendsThe Four-Day Work Week: How It Is Reshaping Hiring CompetitivenessCompanies offering four-day weeks see ",
+            "href": "https://taasflow.com/blog/four-day-work-week-impact-hiring"
+          },
+          {
+            "text": "🌐What Gen Z Actually Wants from Employers: 2026 Workforce Expectations ReportWorkforce TrendsWorkforce TrendsWhat Gen Z",
+            "href": "https://taasflow.com/blog/gen-z-workforce-expectations-2026"
+          },
+          {
+            "text": "View all articles",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "Technology",
+            "href": "https://taasflow.com/industries/tech"
+          },
+          {
+            "text": "Legal",
+            "href": "https://taasflow.com/industries/legal"
+          },
+          {
+            "text": "Public Sector",
+            "href": "https://taasflow.com/industries/public-sector"
+          },
+          {
+            "text": "Finance & Banking",
+            "href": "https://taasflow.com/industries/finance"
+          },
+          {
+            "text": "Staffing Agencies",
+            "href": "https://taasflow.com/industries/staffing-agencies"
+          },
+          {
+            "text": "Healthcare",
+            "href": "https://taasflow.com/industries/healthcare"
+          },
+          {
+            "text": "Sales",
+            "href": "https://taasflow.com/industries/sales"
+          },
+          {
+            "text": "Marketing & Advertising",
+            "href": "https://taasflow.com/industries/marketing"
+          },
+          {
+            "text": "Compare all industries",
+            "href": "https://taasflow.com/industries/compare"
+          },
+          {
+            "text": "How it works",
+            "href": "https://taasflow.com/how-it-works"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "Start Pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "Jobs",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Blog",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "About",
+            "href": "https://taasflow.com/about"
+          },
+          {
+            "text": "Enterprise",
+            "href": "https://taasflow.com/enterprise"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://taasflow.com/faq"
+          },
+          {
+            "text": "Contact",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Looking for a job in hospitality & events? Browse open positions",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Hospitality Recruiting",
+            "href": "https://taasflow.com/industries/hospitality"
+          },
+          {
+            "text": "Gig Economy Workforce",
+            "href": "https://taasflow.com/blog/gig-economy-workforce"
+          },
+          {
+            "text": "Reduce Time-to-Hire",
+            "href": "https://taasflow.com/blog/reduce-time-to-hire"
+          },
+          {
+            "text": "Start a Pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "Talk to Us",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Legal Recruiting",
+            "href": "https://taasflow.com/industries/legal"
+          },
+          {
+            "text": "E-commerce Recruiting",
+            "href": "https://taasflow.com/industries/ecommerce"
+          },
+          {
+            "text": "Onboarding Best Practices",
+            "href": "https://taasflow.com/blog/onboarding-best-practices"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "LinkedIn",
+            "href": "https://www.linkedin.com/company/taasflow/"
+          },
+          {
+            "text": "Browse roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Talent network",
+            "href": "https://taasflow.com/global-talent"
+          },
+          {
+            "text": "Member stories",
+            "href": "https://taasflow.com/candidate-success"
+          },
+          {
+            "text": "Start pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "Employer onboarding",
+            "href": "https://taasflow.com/employer-onboarding"
+          },
+          {
+            "text": "Case studies",
+            "href": "https://taasflow.com/case-studies"
+          },
+          {
+            "text": "Healthcare",
+            "href": "https://taasflow.com/industries/healthcare"
+          },
+          {
+            "text": "Technology",
+            "href": "https://taasflow.com/industries/tech"
+          },
+          {
+            "text": "Finance",
+            "href": "https://taasflow.com/industries/finance"
+          },
+          {
+            "text": "Legal",
+            "href": "https://taasflow.com/industries/legal"
+          },
+          {
+            "text": "All →",
+            "href": "https://taasflow.com/industries"
+          },
+          {
+            "text": "About us",
+            "href": "https://taasflow.com/about"
+          },
+          {
+            "text": "Blog",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://taasflow.com/faq"
+          },
+          {
+            "text": "Knowledge Base",
+            "href": "https://taasflow.com/knowledge-base"
+          },
+          {
+            "text": "Contact us",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Privacy Policy",
+            "href": "https://taasflow.com/privacy"
+          },
+          {
+            "text": "Terms of Service",
+            "href": "https://taasflow.com/terms"
+          }
+        ],
+        "images": [
+          {
+            "src": "https://taasflow.com/assets/logo-on-white-Dk9DIcMP.png",
+            "alt": "TaaSFlow logo"
+          },
+          {
+            "src": "https://taasflow.com/assets/hospitality-DdGxwA11.jpg",
+            "alt": ""
+          },
+          {
+            "src": "https://taasflow.com/assets/hospitality-DdGxwA11.jpg",
+            "alt": ""
+          },
+          {
+            "src": "https://taasflow.com/assets/hospitality-DdGxwA11.jpg",
+            "alt": ""
+          },
+          {
+            "src": "https://taasflow.com/assets/subscription-vs-agency-_yT15noF.jpg",
+            "alt": "Talent Acquisition vs. TaaS: Which Hiring Model Wins in 2026?"
+          },
+          {
+            "src": "https://taasflow.com/assets/remote-hiring-B0XZA3Om.jpg",
+            "alt": "The Four-Day Work Week: How It Is Reshaping Hiring Competitiveness"
+          },
+          {
+            "src": "https://taasflow.com/assets/logo-on-blue-CX6jlwjg.png",
+            "alt": "TaaSFlow logo"
+          }
+        ],
+        "forms": [
+          {
+            "action": "https://taasflow.com/industries/hospitality",
+            "fields": [
+              "input"
+            ]
+          }
+        ],
+        "navLinks": [
+          "Browse jobs",
+          "Join the network",
+          "Browse open roles",
+          "Home",
+          "Industries",
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us"
+        ],
+        "footerLinks": [
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "Privacy Policy",
+          "Terms of Service"
+        ],
+        "horizontalOverflow": false,
+        "documentWidth": 375,
+        "viewportWidth": 375
+      },
+      "destination": {
+        "url": "https://clear-path-hubs.lovable.app/industries/hospitality",
+        "finalUrl": "https://clear-path-hubs.lovable.app/industries/hospitality",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [],
+        "title": "Hospitality hiring — TaaSFlow",
+        "description": "Structured sourcing for hotels, restaurants and hospitality groups. Ranked shortlists with evidence of property type, service level and operating model.",
+        "canonical": "https://clear-path-hubs.lovable.app/industries/hospitality",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "twitter:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "og:title": "Hospitality hiring — TaaSFlow",
+          "og:description": "Structured sourcing for hotels, restaurants and hospitality groups. Ranked shortlists with evidence of property type, service level and operating model.",
+          "og:url": "https://clear-path-hubs.lovable.app/industries/hospitality",
+          "og:type": "website",
+          "twitter:card": "summary_large_image",
+          "twitter:title": "Hospitality hiring — TaaSFlow",
+          "twitter:description": "Structured sourcing for hotels, restaurants and hospitality groups. Ranked shortlists with evidence of property type, service level and operating model."
+        },
+        "structuredData": [],
+        "h1": [
+          "Hospitality hiring, calibrated per property and service level."
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "Hospitality hiring, calibrated per property and service level."
+          },
+          {
+            "level": 2,
+            "text": "What we hear from Hospitality teams"
+          },
+          {
+            "level": 3,
+            "text": "Property and segment fit"
+          },
+          {
+            "level": 3,
+            "text": "Service level and standards"
+          },
+          {
+            "level": 3,
+            "text": "Multi-unit and single-unit context"
+          },
+          {
+            "level": 2,
+            "text": "Roles we source in Hospitality"
+          },
+          {
+            "level": 3,
+            "text": "Submit the role"
+          },
+          {
+            "level": 3,
+            "text": "We source and score"
+          },
+          {
+            "level": 3,
+            "text": "Review in your workspace"
+          },
+          {
+            "level": 2,
+            "text": "Hiring for a hospitality role?"
+          }
+        ],
+        "sections": [
+          "Hospitality hiring, calibrated per property and service level.",
+          "What we hear from Hospitality teams",
+          "Roles we source in Hospitality",
+          "Submit the role",
+          "Hiring for a hospitality role?",
+          "SECTION"
+        ],
+        "textBlocks": [
+          "Home",
+          "Industries",
+          "Hospitality",
+          "Hospitality",
+          "TaaSFlow gives hospitality leaders a workspace for every hire — property leadership, F&B, guest experience, operations — with rubrics tuned to property type, service level and operating model.",
+          "Property type and segment rubric",
+          "Service level captured in intake",
+          "Scope of ownership evidence from the CV",
+          "Luxury, lifestyle, select-service and F&B-led operations each need distinct signal. Our rubric captures the property types the candidate has actually operated in.",
+          "Service standards, cover counts and guest-experience expectations vary widely. We capture them in intake so shortlists reflect the operating reality of the property.",
+          "Multi-unit leadership rewards different signal than single-property GM work. Rubrics per seat surface the actual scope of ownership on the CV.",
+          "We calibrate the rubric to the seniority and specialisation you actually need.",
+          "General managers and assistant GMs",
+          "Executive chefs and F&B directors",
+          "Rooms division and front-office leaders",
+          "Revenue managers",
+          "Sales and catering leaders",
+          "Guest experience and brand leaders",
+          "Multi-unit operations directors",
+          "Hospitality HR and training leads",
+          "01",
+          "A guided intake captures everything the search needs, in one flow.",
+          "02",
+          "Multi-channel sourcing, role-specific rubric, evidence extracted from every CV.",
+          "03",
+          "Ranked shortlist, evidence side-by-side, Kanban pipeline, direct messaging.",
+          "See the full process on how it works.",
+          "Hospitality",
+          "Submit the role — one workspace, one rubric, one reviewed shortlist."
+        ],
+        "buttons": [],
+        "links": [
+          {
+            "text": "Home",
+            "href": "https://clear-path-hubs.lovable.app/"
+          },
+          {
+            "text": "Industries",
+            "href": "https://clear-path-hubs.lovable.app/industries"
+          },
+          {
+            "text": "Start hiring",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "Talk to us",
+            "href": "https://clear-path-hubs.lovable.app/contact"
+          },
+          {
+            "text": "how it works",
+            "href": "https://clear-path-hubs.lovable.app/how-it-works"
+          },
+          {
+            "text": "Start intake",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "See other industries",
+            "href": "https://clear-path-hubs.lovable.app/industries"
+          },
+          {
+            "text": "Edit with",
+            "href": "https://lovable.dev/projects/1dc5ee7e-1294-441c-8288-850e79e443f6?utm_source=lovable-badge"
+          }
+        ],
+        "images": [],
+        "forms": [],
+        "navLinks": [
+          "Home",
+          "Industries"
+        ],
+        "footerLinks": [],
+        "horizontalOverflow": false,
+        "documentWidth": 375,
+        "viewportWidth": 375
+      },
+      "screenshots": {
+        "sourceFull": "reports/public-parity/screenshots/source/industries_hospitality__mobile__full.png",
+        "sourceVisible": "reports/public-parity/screenshots/source/industries_hospitality__mobile__visible.png",
+        "destinationFull": "reports/public-parity/screenshots/destination/industries_hospitality__mobile__full.png",
+        "destinationVisible": "reports/public-parity/screenshots/destination/industries_hospitality__mobile__visible.png"
+      },
+      "differences": [
+        "title: \"Hospitality & Events Talent | TaaSFlow - Talent as a Service\" vs \"Hospitality hiring — TaaSFlow\"",
+        "meta description mismatch",
+        "H1 differs: [Hospitality Talent for Hotels, Restaurants, Resorts & Event Venues] vs [Hospitality hiring, calibrated per property and service level.]",
+        "heading overlap 0% (0/30)",
+        "section count 20 vs 6",
+        "form count 1 vs 0"
+      ]
+    },
+    {
+      "viewport": "tablet",
+      "source": {
+        "url": "https://taasflow.com/industries/hospitality",
+        "finalUrl": "https://taasflow.com/industries/hospitality",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [
+          {
+            "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HJ2ECKCNK4&gtm=45je67l1v9245339446za200zd9245339446&_p=1784774299108&gcd=13l3l3l3l1l1&npa=0&_ng=1&dma=0&are=1&cid=52456196.1784774300&frm=0&ngs=1&pscdl=noapi&rcb=12&sr=768x1024&uaa=x86&uab=64&uafvl=Not-A.Brand%3B24.0.0.0%7CChromium%3B146.0.7680.80&uam=&uamb=0&uap=Windows&uapv=&uaw=0&ul=en-us&_s=1&tag_exp=115616985~115938466~115938468~118897920~118897930~119896803&dp=%2Findustries%2Fhospitality&dt=TaaSFlow%20%7C%20Talent%20as%20a%20Service%20%7C%20Subscription%20Recruiting&dl=https%3A%2F%2Ftaasflow.com%2Findustries%2Fhospitality&sid=1784774299&sct=1&seg=0&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&ep.role_type=public&ep.is_authenticated=false&tfd=978",
+            "status": null,
+            "failure": "net::ERR_ABORTED"
+          }
+        ],
+        "title": "Hospitality & Events Talent | TaaSFlow - Talent as a Service",
+        "description": "On-demand hospitality professionals for hotels, restaurants, resorts, and event venues. Seasonal hiring, shift scheduling, and frontline workforce talent.",
+        "canonical": "https://taasflow.com/industries/hospitality",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:type": "website",
+          "og:url": "https://taasflow.com/industries/hospitality",
+          "og:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "og:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "og:image": "https://taasflow.com/og-image.png",
+          "og:image:width": "1200",
+          "og:image:height": "630",
+          "og:locale": "en_US",
+          "twitter:card": "summary_large_image",
+          "twitter:site": "@TaasFlow",
+          "twitter:creator": "@TaasFlow",
+          "twitter:url": "https://taasflow.com/industries/hospitality",
+          "twitter:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "twitter:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "twitter:image": "https://taasflow.com/og-image.png"
+        },
+        "structuredData": [
+          {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "@id": "https://taasflow.com/#organization",
+            "name": "TaaSFlow",
+            "legalName": "TaaSFlow",
+            "url": "https://taasflow.com/",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://taasflow.com/favicon.png",
+              "width": 512,
+              "height": 512
+            },
+            "image": "https://taasflow.com/og-image.png",
+            "description": "Talent as a Service — subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+            "slogan": "Your hiring team. On demand.",
+            "foundingDate": "2024",
+            "areaServed": [
+              {
+                "@type": "Country",
+                "name": "United States"
+              },
+              {
+                "@type": "Country",
+                "name": "United Arab Emirates"
+              },
+              {
+                "@type": "Country",
+                "name": "United Kingdom"
+              },
+              {
+                "@type": "Country",
+                "name": "Brazil"
+              }
+            ],
+            "knowsAbout": [
+              "Subscription recruiting",
+              "Talent as a Service",
+              "Candidate sourcing",
+              "Pre-screened candidates",
+              "Recruitment process outsourcing"
+            ],
+            "contactPoint": [
+              {
+                "@type": "ContactPoint",
+                "contactType": "sales",
+                "email": "hello@taasflow.com",
+                "url": "https://taasflow.com/contact",
+                "availableLanguage": [
+                  "English",
+                  "Portuguese",
+                  "Spanish"
+                ]
+              }
+            ],
+            "sameAs": [
+              "https://www.linkedin.com/company/taasflow",
+              "https://twitter.com/TaasFlow"
+            ]
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "@id": "https://taasflow.com/#website",
+            "name": "TaaSFlow",
+            "alternateName": "Talent as a Service",
+            "url": "https://taasflow.com/",
+            "description": "Subscription recruiting that delivers pre-screened, ranked candidates in 14 days.",
+            "inLanguage": "en-US",
+            "publisher": {
+              "@id": "https://taasflow.com/#organization"
+            },
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": {
+                "@type": "EntryPoint",
+                "urlTemplate": "https://taasflow.com/jobs?q={search_term_string}"
+              },
+              "query-input": "required name=search_term_string"
+            }
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "Service",
+            "name": "Hospitality & Events Talent Sourcing",
+            "description": "On-demand hospitality professionals for hotels, restaurants, resorts, and event venues. Seasonal hiring, shift scheduling, and frontline workforce talent.",
+            "provider": {
+              "@type": "Organization",
+              "name": "TaasFlow",
+              "url": "https://taasflow.com"
+            },
+            "serviceType": "Talent Acquisition",
+            "areaServed": "United States",
+            "hasOfferCatalog": {
+              "@type": "OfferCatalog",
+              "name": "Hospitality & Events Recruiting Services",
+              "itemListElement": [
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Hotel General Managers Recruiting"
+                  },
+                  "position": 1
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Front Desk Managers Recruiting"
+                  },
+                  "position": 2
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Restaurant Managers Recruiting"
+                  },
+                  "position": 3
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "F&B Directors Recruiting"
+                  },
+                  "position": 4
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Event Coordinators Recruiting"
+                  },
+                  "position": 5
+                }
+              ]
+            }
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "https://taasflow.com"
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Industries",
+                "item": "https://taasflow.com/industries"
+              },
+              {
+                "@type": "ListItem",
+                "position": 3,
+                "name": "Hospitality & Events",
+                "item": "https://taasflow.com/industries//industries/hospitality"
+              }
+            ]
+          }
+        ],
+        "h1": [
+          "Hospitality Talent for Hotels, Restaurants, Resorts & Event Venues"
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "Hospitality Talent for Hotels, Restaurants, Resorts & Event Venues"
+          },
+          {
+            "level": 2,
+            "text": "Hospitality & Events Industry Insights"
+          },
+          {
+            "level": 3,
+            "text": "Hospitality Market"
+          },
+          {
+            "level": 3,
+            "text": "Turnover Rate"
+          },
+          {
+            "level": 3,
+            "text": "Labor Shortage"
+          },
+          {
+            "level": 3,
+            "text": "Seasonal Surge"
+          },
+          {
+            "level": 3,
+            "text": "Industry Overview"
+          },
+          {
+            "level": 3,
+            "text": "Ready to transform your hospitality & events recruiting?"
+          },
+          {
+            "level": 2,
+            "text": "How we hire for Hospitality & Events"
+          },
+          {
+            "level": 3,
+            "text": "Property & Season Briefing"
+          },
+          {
+            "level": 3,
+            "text": "Hospitality Culture Screening"
+          },
+          {
+            "level": 3,
+            "text": "Shift & Schedule Matching"
+          },
+          {
+            "level": 3,
+            "text": "Guest-Ready Deployment"
+          },
+          {
+            "level": 2,
+            "text": "The Hospitality Staffing Reality"
+          },
+          {
+            "level": 3,
+            "text": "The TaasFlow Solution"
+          },
+          {
+            "level": 2,
+            "text": "Why Hospitality & Events companies choose TaasFlow"
+          },
+          {
+            "level": 3,
+            "text": "Guest Experience First"
+          },
+          {
+            "level": 3,
+            "text": "24-Hour Shift Coverage"
+          },
+          {
+            "level": 3,
+            "text": "Seasonal Scale 3x"
+          },
+          {
+            "level": 3,
+            "text": "Full Property Support"
+          },
+          {
+            "level": 2,
+            "text": "Positions we fill for Hospitality & Events"
+          },
+          {
+            "level": 2,
+            "text": "Real results for Hospitality & Events teams"
+          },
+          {
+            "level": 2,
+            "text": "Hospitality & Events Salary Explorer"
+          },
+          {
+            "level": 2,
+            "text": "Hospitality & Events Career Path"
+          },
+          {
+            "level": 3,
+            "text": "Senior"
+          },
+          {
+            "level": 4,
+            "text": "Key Skills at This Level"
+          },
+          {
+            "level": 2,
+            "text": "Hospitality & Events Hiring Trends"
+          },
+          {
+            "level": 2,
+            "text": "Interactive Hiring Guide"
+          },
+          {
+            "level": 3,
+            "text": "Define Your Ideal Candidate"
+          },
+          {
+            "level": 3,
+            "text": "Optimize Your Job Posting"
+          },
+          {
+            "level": 3,
+            "text": "Source Beyond Job Boards"
+          },
+          {
+            "level": 3,
+            "text": "Structure Your Interview Process"
+          },
+          {
+            "level": 3,
+            "text": "Close & Onboard Effectively"
+          },
+          {
+            "level": 2,
+            "text": "Hospitality & Events Recruiting Insights"
+          },
+          {
+            "level": 3,
+            "text": "Talent Acquisition vs. TaaS: Which Hiring Model Wins in 2026?"
+          },
+          {
+            "level": 3,
+            "text": "The Four-Day Work Week: How It Is Reshaping Hiring Competitiveness"
+          },
+          {
+            "level": 3,
+            "text": "What Gen Z Actually Wants from Employers: 2026 Workforce Expectations Report"
+          },
+          {
+            "level": 2,
+            "text": "Frequently Asked Questions"
+          },
+          {
+            "level": 3,
+            "text": "Can you staff for both hotels and restaurants?"
+          },
+          {
+            "level": 3,
+            "text": "How do you handle seasonal hiring surges?"
+          },
+          {
+            "level": 3,
+            "text": "Do your staff understand shift scheduling?"
+          },
+          {
+            "level": 3,
+            "text": "Can you respond to last-minute staffing emergencies?"
+          },
+          {
+            "level": 2,
+            "text": "Discover related industries"
+          },
+          {
+            "level": 2,
+            "text": "Ready to build your Hospitality & Events team?"
+          },
+          {
+            "level": 2,
+            "text": "Hospitality Recruiting"
+          },
+          {
+            "level": 3,
+            "text": "Hub Page"
+          },
+          {
+            "level": 3,
+            "text": "Related Articles"
+          },
+          {
+            "level": 3,
+            "text": "Get Started"
+          },
+          {
+            "level": 4,
+            "text": "Newsletter"
+          },
+          {
+            "level": 4,
+            "text": "For candidates"
+          },
+          {
+            "level": 4,
+            "text": "For companies"
+          },
+          {
+            "level": 4,
+            "text": "Industries"
+          },
+          {
+            "level": 4,
+            "text": "Company"
+          },
+          {
+            "level": 3,
+            "text": "Cookie Preferences"
+          }
+        ],
+        "sections": [
+          "SECTION",
+          "Hospitality Talent for Hotels, Restaurants, Resorts & Event Venues",
+          "SECTION",
+          "Hospitality & Events Industry Insights",
+          "Ready to transform your hospitality & events recruiting?",
+          "How we hire for Hospitality & Events",
+          "The Hospitality Staffing Reality",
+          "Why Hospitality & Events companies choose TaasFlow",
+          "Positions we fill for Hospitality & Events",
+          "Real results for Hospitality & Events teams",
+          "Hospitality & Events Salary Explorer",
+          "Hospitality & Events Career Path",
+          "Hospitality & Events Hiring Trends",
+          "Interactive Hiring Guide",
+          "Hospitality & Events Recruiting Insights",
+          "Frequently Asked Questions",
+          "Discover related industries",
+          "SECTION",
+          "Ready to build your Hospitality & Events team?",
+          "Hospitality Recruiting"
+        ],
+        "textBlocks": [
+          "Solutions",
+          "Industries",
+          "Resources",
+          "Home",
+          "Industries",
+          "Hospitality & Events",
+          "Access guest-services professionals, shift managers, and operations talent who understand seasonal surges, frontline workforce management, and the art of creating exceptional guest experiences.",
+          "Key market data and trends shaping talent demand in your industry. (Hover for details)",
+          "US hospitality industry revenue including hotels, restaurants, and events",
+          "Annual employee turnover in hospitality, highest of any industry",
+          "Unfilled hospitality positions across hotels, restaurants, and venues",
+          "Peak-to-trough staffing fluctuation during holiday and wedding seasons",
+          "Start a risk-free pilot and receive qualified candidates in 14 days.",
+          "A tailored workflow for the challenges of hospitality & events settings.",
+          "We assess your property type, seasonal peaks, and service standards.",
+          "Candidates evaluated for guest experience orientation, not just task completion.",
+          "Availability confirmed for weekends, holidays, split shifts, and overnight coverage.",
+          "Service-minded professionals placed and ready to deliver exceptional guest experiences.",
+          "Hotels, restaurants, and resorts face the highest turnover rate of any industry at 73%. Every departure means retraining, service gaps, and guest complaints. You need reliable professionals who can step in and deliver from the first shift.",
+          "Seasonal demand is extreme. Summer resort bookings, holiday restaurant surges, wedding season at venues, and conference hotel blocks all demand 2-3x your base staffing. Year-round headcount does not solve seasonal peaks.",
+          "Frontline hospitality is not task completion. It is guest experience. You need shift managers who can run a floor, front desk staff who can upsell, event coordinators who can handle crises, and kitchen managers who can maintain quality under pressure.",
+          "Hotel operations: front desk, housekeeping management, revenue management, and guest relations",
+          "Restaurant management: FOH managers, kitchen coordinators, and F&B directors with high-volume experience",
+          "Resort staffing: activities coordinators, spa managers, and concierge professionals",
+          "Event staffing: planners, day-of coordinators, catering managers, and venue operations",
+          "Shift-ready professionals who can cover weekends, holidays, and overnight schedules",
+          "We understand the unique challenges of your industry and deliver matching talent.",
+          "Every professional understands hospitality means creating memories, not just filling shifts.",
+          "Last-minute call-out? Event emergency? We mobilize experienced hospitality talent within hours.",
+          "Ramp from base to peak staffing for holidays, wedding season, or conference blocks without permanent overhead.",
+          "From lobby to kitchen to ballroom: front desk, F&B, events, housekeeping, and management roles.",
+          "Pre-vetted professionals, delivered weekly, ready to start.",
+          "- Luxury Resort Hotel, 250 rooms",
+          "Explore current compensation ranges for top roles. Data updated quarterly from industry benchmarks.",
+          "* Based on industry benchmarks from SHRM, Glassdoor, LinkedIn Salary, and BLS data. Actual compensation may vary.",
+          "Click any level to explore typical progression, salary ranges, and key skills.",
+          "Key metrics shaping the talent landscape. Stay ahead of market shifts.",
+          "Steady growth in hiring demand across this sector.",
+          "Increasing adoption of remote and hybrid work models.",
+          "Unfilled positions due to skills shortage in this industry.",
+          "Industry average continues to improve with modern sourcing.",
+          "Follow these proven steps to hire smarter. Track your progress and get actionable tips at every stage.",
+          "Create a detailed candidate persona with must-have vs nice-to-have skills, cultural fit criteria, and realistic salary expectations.",
+          "Write a compelling job description that sells the opportunity, not just lists requirements. Include salary range, growth path, and team culture.",
+          "Reach passive candidates through targeted outreach, employee referrals, and talent communities. 70% of top talent is not actively looking.",
+          "Design a consistent 3-4 stage process that evaluates skills, culture fit, and potential. Include take-home assessments where appropriate.",
+          "Move fast with competitive offers and start onboarding before day one. The first 90 days determine long-term retention.",
+          "Expert articles on recruiting and talent acquisition for hospitality & events.",
+          "A direct comparison of traditional talent acquisition and Talent-as-a-Service (TaaS). See where each model wins on cost, speed, quality, and flexibility.",
+          "Companies offering four-day weeks see 60% more applicants. Data from 200 pilot programs reveals the productivity truth behind compressed schedules.",
+          "What Gen Z Actually Wants from Employers: 2026 Workforce Expectations Report",
+          "Forget the stereotypes. New survey data from 15,000 Gen Z professionals reveals their true priorities — and most companies are getting it wrong.",
+          "Common questions about TaasFlow for hospitality & events.",
+          "Learn how we serve similar sectors with subscription recruiting.",
+          "Receive qualified hospitality & events professionals weekly. No agency fees, no long-term contracts.",
+          "Related Industries",
+          "Talent as a Service",
+          "A global hiring system for teams that need consistent recruiting.",
+          "Weekly insights into talent acquisition. No spam.",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Book call",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "No recruitment agency fees. No placement charges. Subscription-based hiring system.",
+          "Copyright 2026 TaaSFlow. All rights reserved.",
+          "We use essential cookies for core functionality. With your consent, we use analytics (Google Analytics) and marketing technologies (Meta Pixel, Apollo, Retention.com/RB2B) to understand website performance, improve campaigns, and measure conversions safely. Your data is processed in accordance with GDPR and our Privacy Notice. You can change your preferences at any time."
+        ],
+        "buttons": [
+          "Solutions",
+          "Industries",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Solutions",
+          "How it works",
+          "Pilot",
+          "Enterprise",
+          "Case studies",
+          "Jobs",
+          "Journey",
+          "Industries",
+          "Tech",
+          "SaaS & Cloud",
+          "Cybersecurity",
+          "Data & Analytics",
+          "Finance",
+          "Insurance",
+          "PE & VC",
+          "Accounting",
+          "Legal",
+          "Consulting",
+          "HR & Recruiting",
+          "Staffing Agencies",
+          "Sales",
+          "Marketing",
+          "E-commerce",
+          "Media",
+          "Real Estate",
+          "Construction",
+          "Hospitality",
+          "Healthcare",
+          "Public Sector",
+          "Non-Profit",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Success Stories",
+          "Talent Marketplace",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Start Hospitality & Events Pilot Program",
+          "Book call",
+          "Book call",
+          "1Entry-Level",
+          "2Mid-Level",
+          "3Senior",
+          "4Director / Lead",
+          "5VP / C-Suite",
+          "Next: Director / Lead",
+          "1Define Your Ideal Candidate1-2 days",
+          "1",
+          "Mark Complete",
+          "2Optimize Your Job PostingWrite a compelling job description that sells the opportunity, not just lists requirements. Include salary range, growth path, and team culture.1 day",
+          "2",
+          "3Source Beyond Job BoardsReach passive candidates through targeted outreach, employee referrals, and talent communities. 70% of top talent is not actively looking.Ongoing",
+          "3",
+          "4Structure Your Interview ProcessDesign a consistent 3-4 stage process that evaluates skills, culture fit, and potential. Include take-home assessments where appropriate.2-3 days setup",
+          "4",
+          "5Close & Onboard EffectivelyMove fast with competitive offers and start onboarding before day one. The first 90 days determine long-term retention.1-2 weeks",
+          "5",
+          "Can you staff for both hotels and restaurants?",
+          "How do you handle seasonal hiring surges?",
+          "Do your staff understand shift scheduling?",
+          "Can you respond to last-minute staffing emergencies?",
+          "Start Hospitality & Events Pilot",
+          "Contact",
+          "Subscribe"
+        ],
+        "links": [
+          {
+            "text": "Skip to main content",
+            "href": "https://taasflow.com/industries/hospitality#main-content"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "Browse jobs",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Join the network",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Browse open roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Home",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "Industries",
+            "href": "https://taasflow.com/industries"
+          },
+          {
+            "text": "View all articles",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "Hiring StrategyTalent Acquisition vs. TaaS: Which Hiring Model Wins in 2026?A direct comparison of traditional talent ac",
+            "href": "https://taasflow.com/blog/talent-acquisition-vs-taas"
+          },
+          {
+            "text": "Workforce TrendsThe Four-Day Work Week: How It Is Reshaping Hiring CompetitivenessCompanies offering four-day weeks see ",
+            "href": "https://taasflow.com/blog/four-day-work-week-impact-hiring"
+          },
+          {
+            "text": "🌐What Gen Z Actually Wants from Employers: 2026 Workforce Expectations ReportWorkforce TrendsWorkforce TrendsWhat Gen Z",
+            "href": "https://taasflow.com/blog/gen-z-workforce-expectations-2026"
+          },
+          {
+            "text": "View all articles",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "Technology",
+            "href": "https://taasflow.com/industries/tech"
+          },
+          {
+            "text": "Legal",
+            "href": "https://taasflow.com/industries/legal"
+          },
+          {
+            "text": "Public Sector",
+            "href": "https://taasflow.com/industries/public-sector"
+          },
+          {
+            "text": "Finance & Banking",
+            "href": "https://taasflow.com/industries/finance"
+          },
+          {
+            "text": "Staffing Agencies",
+            "href": "https://taasflow.com/industries/staffing-agencies"
+          },
+          {
+            "text": "Healthcare",
+            "href": "https://taasflow.com/industries/healthcare"
+          },
+          {
+            "text": "Sales",
+            "href": "https://taasflow.com/industries/sales"
+          },
+          {
+            "text": "Marketing & Advertising",
+            "href": "https://taasflow.com/industries/marketing"
+          },
+          {
+            "text": "Compare all industries",
+            "href": "https://taasflow.com/industries/compare"
+          },
+          {
+            "text": "How it works",
+            "href": "https://taasflow.com/how-it-works"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "Start Pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "Jobs",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Blog",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "About",
+            "href": "https://taasflow.com/about"
+          },
+          {
+            "text": "Enterprise",
+            "href": "https://taasflow.com/enterprise"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://taasflow.com/faq"
+          },
+          {
+            "text": "Contact",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Looking for a job in hospitality & events? Browse open positions",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Hospitality Recruiting",
+            "href": "https://taasflow.com/industries/hospitality"
+          },
+          {
+            "text": "Gig Economy Workforce",
+            "href": "https://taasflow.com/blog/gig-economy-workforce"
+          },
+          {
+            "text": "Reduce Time-to-Hire",
+            "href": "https://taasflow.com/blog/reduce-time-to-hire"
+          },
+          {
+            "text": "Start a Pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "Talk to Us",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Legal Recruiting",
+            "href": "https://taasflow.com/industries/legal"
+          },
+          {
+            "text": "E-commerce Recruiting",
+            "href": "https://taasflow.com/industries/ecommerce"
+          },
+          {
+            "text": "Onboarding Best Practices",
+            "href": "https://taasflow.com/blog/onboarding-best-practices"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "LinkedIn",
+            "href": "https://www.linkedin.com/company/taasflow/"
+          },
+          {
+            "text": "Browse roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Talent network",
+            "href": "https://taasflow.com/global-talent"
+          },
+          {
+            "text": "Member stories",
+            "href": "https://taasflow.com/candidate-success"
+          },
+          {
+            "text": "Start pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "Employer onboarding",
+            "href": "https://taasflow.com/employer-onboarding"
+          },
+          {
+            "text": "Case studies",
+            "href": "https://taasflow.com/case-studies"
+          },
+          {
+            "text": "Healthcare",
+            "href": "https://taasflow.com/industries/healthcare"
+          },
+          {
+            "text": "Technology",
+            "href": "https://taasflow.com/industries/tech"
+          },
+          {
+            "text": "Finance",
+            "href": "https://taasflow.com/industries/finance"
+          },
+          {
+            "text": "Legal",
+            "href": "https://taasflow.com/industries/legal"
+          },
+          {
+            "text": "All →",
+            "href": "https://taasflow.com/industries"
+          },
+          {
+            "text": "About us",
+            "href": "https://taasflow.com/about"
+          },
+          {
+            "text": "Blog",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://taasflow.com/faq"
+          },
+          {
+            "text": "Knowledge Base",
+            "href": "https://taasflow.com/knowledge-base"
+          },
+          {
+            "text": "Contact us",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Privacy Policy",
+            "href": "https://taasflow.com/privacy"
+          },
+          {
+            "text": "Terms of Service",
+            "href": "https://taasflow.com/terms"
+          },
+          {
+            "text": "Privacy Notice",
+            "href": "https://taasflow.com/privacy"
+          }
+        ],
+        "images": [
+          {
+            "src": "https://taasflow.com/assets/logo-on-white-Dk9DIcMP.png",
+            "alt": "TaaSFlow logo"
+          },
+          {
+            "src": "https://taasflow.com/assets/hospitality-DdGxwA11.jpg",
+            "alt": ""
+          },
+          {
+            "src": "https://taasflow.com/assets/hospitality-DdGxwA11.jpg",
+            "alt": ""
+          },
+          {
+            "src": "https://taasflow.com/assets/hospitality-DdGxwA11.jpg",
+            "alt": ""
+          },
+          {
+            "src": "https://taasflow.com/assets/subscription-vs-agency-_yT15noF.jpg",
+            "alt": "Talent Acquisition vs. TaaS: Which Hiring Model Wins in 2026?"
+          },
+          {
+            "src": "https://taasflow.com/assets/remote-hiring-B0XZA3Om.jpg",
+            "alt": "The Four-Day Work Week: How It Is Reshaping Hiring Competitiveness"
+          },
+          {
+            "src": "https://taasflow.com/assets/logo-on-blue-CX6jlwjg.png",
+            "alt": "TaaSFlow logo"
+          }
+        ],
+        "forms": [
+          {
+            "action": "https://taasflow.com/industries/hospitality",
+            "fields": [
+              "input"
+            ]
+          }
+        ],
+        "navLinks": [
+          "Browse jobs",
+          "Join the network",
+          "Browse open roles",
+          "Home",
+          "Industries",
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us"
+        ],
+        "footerLinks": [
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "Privacy Policy",
+          "Terms of Service"
+        ],
+        "horizontalOverflow": false,
+        "documentWidth": 768,
+        "viewportWidth": 768
+      },
+      "destination": {
+        "url": "https://clear-path-hubs.lovable.app/industries/hospitality",
+        "finalUrl": "https://clear-path-hubs.lovable.app/industries/hospitality",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [],
+        "title": "Hospitality hiring — TaaSFlow",
+        "description": "Structured sourcing for hotels, restaurants and hospitality groups. Ranked shortlists with evidence of property type, service level and operating model.",
+        "canonical": "https://clear-path-hubs.lovable.app/industries/hospitality",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "twitter:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "og:title": "Hospitality hiring — TaaSFlow",
+          "og:description": "Structured sourcing for hotels, restaurants and hospitality groups. Ranked shortlists with evidence of property type, service level and operating model.",
+          "og:url": "https://clear-path-hubs.lovable.app/industries/hospitality",
+          "og:type": "website",
+          "twitter:card": "summary_large_image",
+          "twitter:title": "Hospitality hiring — TaaSFlow",
+          "twitter:description": "Structured sourcing for hotels, restaurants and hospitality groups. Ranked shortlists with evidence of property type, service level and operating model."
+        },
+        "structuredData": [],
+        "h1": [
+          "Hospitality hiring, calibrated per property and service level."
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "Hospitality hiring, calibrated per property and service level."
+          },
+          {
+            "level": 2,
+            "text": "What we hear from Hospitality teams"
+          },
+          {
+            "level": 3,
+            "text": "Property and segment fit"
+          },
+          {
+            "level": 3,
+            "text": "Service level and standards"
+          },
+          {
+            "level": 3,
+            "text": "Multi-unit and single-unit context"
+          },
+          {
+            "level": 2,
+            "text": "Roles we source in Hospitality"
+          },
+          {
+            "level": 3,
+            "text": "Submit the role"
+          },
+          {
+            "level": 3,
+            "text": "We source and score"
+          },
+          {
+            "level": 3,
+            "text": "Review in your workspace"
+          },
+          {
+            "level": 2,
+            "text": "Hiring for a hospitality role?"
+          }
+        ],
+        "sections": [
+          "Hospitality hiring, calibrated per property and service level.",
+          "What we hear from Hospitality teams",
+          "Roles we source in Hospitality",
+          "Submit the role",
+          "Hiring for a hospitality role?",
+          "SECTION"
+        ],
+        "textBlocks": [
+          "Home",
+          "Industries",
+          "Hospitality",
+          "Hospitality",
+          "TaaSFlow gives hospitality leaders a workspace for every hire — property leadership, F&B, guest experience, operations — with rubrics tuned to property type, service level and operating model.",
+          "Property type and segment rubric",
+          "Service level captured in intake",
+          "Scope of ownership evidence from the CV",
+          "Luxury, lifestyle, select-service and F&B-led operations each need distinct signal. Our rubric captures the property types the candidate has actually operated in.",
+          "Service standards, cover counts and guest-experience expectations vary widely. We capture them in intake so shortlists reflect the operating reality of the property.",
+          "Multi-unit leadership rewards different signal than single-property GM work. Rubrics per seat surface the actual scope of ownership on the CV.",
+          "We calibrate the rubric to the seniority and specialisation you actually need.",
+          "General managers and assistant GMs",
+          "Executive chefs and F&B directors",
+          "Rooms division and front-office leaders",
+          "Revenue managers",
+          "Sales and catering leaders",
+          "Guest experience and brand leaders",
+          "Multi-unit operations directors",
+          "Hospitality HR and training leads",
+          "01",
+          "A guided intake captures everything the search needs, in one flow.",
+          "02",
+          "Multi-channel sourcing, role-specific rubric, evidence extracted from every CV.",
+          "03",
+          "Ranked shortlist, evidence side-by-side, Kanban pipeline, direct messaging.",
+          "See the full process on how it works.",
+          "Hospitality",
+          "Submit the role — one workspace, one rubric, one reviewed shortlist."
+        ],
+        "buttons": [],
+        "links": [
+          {
+            "text": "Home",
+            "href": "https://clear-path-hubs.lovable.app/"
+          },
+          {
+            "text": "Industries",
+            "href": "https://clear-path-hubs.lovable.app/industries"
+          },
+          {
+            "text": "Start hiring",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "Talk to us",
+            "href": "https://clear-path-hubs.lovable.app/contact"
+          },
+          {
+            "text": "how it works",
+            "href": "https://clear-path-hubs.lovable.app/how-it-works"
+          },
+          {
+            "text": "Start intake",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "See other industries",
+            "href": "https://clear-path-hubs.lovable.app/industries"
+          },
+          {
+            "text": "Edit with",
+            "href": "https://lovable.dev/projects/1dc5ee7e-1294-441c-8288-850e79e443f6?utm_source=lovable-badge"
+          }
+        ],
+        "images": [],
+        "forms": [],
+        "navLinks": [
+          "Home",
+          "Industries"
+        ],
+        "footerLinks": [],
+        "horizontalOverflow": false,
+        "documentWidth": 768,
+        "viewportWidth": 768
+      },
+      "screenshots": {
+        "sourceFull": "reports/public-parity/screenshots/source/industries_hospitality__tablet__full.png",
+        "sourceVisible": "reports/public-parity/screenshots/source/industries_hospitality__tablet__visible.png",
+        "destinationFull": "reports/public-parity/screenshots/destination/industries_hospitality__tablet__full.png",
+        "destinationVisible": "reports/public-parity/screenshots/destination/industries_hospitality__tablet__visible.png"
+      },
+      "differences": [
+        "title: \"Hospitality & Events Talent | TaaSFlow - Talent as a Service\" vs \"Hospitality hiring — TaaSFlow\"",
+        "meta description mismatch",
+        "H1 differs: [Hospitality Talent for Hotels, Restaurants, Resorts & Event Venues] vs [Hospitality hiring, calibrated per property and service level.]",
+        "heading overlap 0% (0/30)",
+        "section count 20 vs 6",
+        "form count 1 vs 0"
+      ]
+    },
+    {
+      "viewport": "desktop",
+      "source": {
+        "url": "https://taasflow.com/industries/hospitality",
+        "finalUrl": "https://taasflow.com/industries/hospitality",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [
+          {
+            "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HJ2ECKCNK4&gtm=45je67l1v9245339446za200zd9245339446&_p=1784774302990&gcd=13l3l3l3l1l1&npa=0&_ng=1&dma=0&are=1&cid=1373669987.1784774303&frm=0&ngs=1&pscdl=noapi&rcb=0&sr=1440x900&uaa=x86&uab=64&uafvl=Not-A.Brand%3B24.0.0.0%7CChromium%3B146.0.7680.80&uam=&uamb=0&uap=Windows&uapv=&uaw=0&ul=en-us&_s=1&tag_exp=115938465~115938468~118897920~118897930~119896802&dp=%2Findustries%2Fhospitality&dt=TaaSFlow%20%7C%20Talent%20as%20a%20Service%20%7C%20Subscription%20Recruiting&dl=https%3A%2F%2Ftaasflow.com%2Findustries%2Fhospitality&sid=1784774303&sct=1&seg=0&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&ep.role_type=public&ep.is_authenticated=false&tfd=502",
+            "status": null,
+            "failure": "net::ERR_ABORTED"
+          },
+          {
+            "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HJ2ECKCNK4&gtm=45je67l1v9245339446za200zd9245339446&_p=1784774302990&gcd=13l3l3l3l1l1&npa=0&_ng=1&dma=0&_eu=AEAAAAQ&ae=a&are=1&cid=1373669987.1784774303&frm=0&ngs=1&pscdl=noapi&rcb=0&sr=1440x900&uaa=x86&uab=64&uafvl=Not-A.Brand%3B24.0.0.0%7CChromium%3B146.0.7680.80&uam=&uamb=0&uap=Windows&uapv=&uaw=0&ul=en-us&_s=2&tag_exp=115938465~115938468~118897920~118897930~119896802&sid=1784774303&sct=1&seg=0&dl=https%3A%2F%2Ftaasflow.com%2Findustries%2Fhospitality&dt=TaaSFlow%20%7C%20Talent%20as%20a%20Service%20%7C%20Subscription%20Recruiting&en=scroll&epn.percent_scrolled=90&_et=13&tfd=829",
+            "status": null,
+            "failure": "net::ERR_ABORTED"
+          }
+        ],
+        "title": "Hospitality & Events Talent | TaaSFlow - Talent as a Service",
+        "description": "On-demand hospitality professionals for hotels, restaurants, resorts, and event venues. Seasonal hiring, shift scheduling, and frontline workforce talent.",
+        "canonical": "https://taasflow.com/industries/hospitality",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:type": "website",
+          "og:url": "https://taasflow.com/industries/hospitality",
+          "og:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "og:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "og:image": "https://taasflow.com/og-image.png",
+          "og:image:width": "1200",
+          "og:image:height": "630",
+          "og:locale": "en_US",
+          "twitter:card": "summary_large_image",
+          "twitter:site": "@TaasFlow",
+          "twitter:creator": "@TaasFlow",
+          "twitter:url": "https://taasflow.com/industries/hospitality",
+          "twitter:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "twitter:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "twitter:image": "https://taasflow.com/og-image.png"
+        },
+        "structuredData": [
+          {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "@id": "https://taasflow.com/#organization",
+            "name": "TaaSFlow",
+            "legalName": "TaaSFlow",
+            "url": "https://taasflow.com/",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://taasflow.com/favicon.png",
+              "width": 512,
+              "height": 512
+            },
+            "image": "https://taasflow.com/og-image.png",
+            "description": "Talent as a Service — subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+            "slogan": "Your hiring team. On demand.",
+            "foundingDate": "2024",
+            "areaServed": [
+              {
+                "@type": "Country",
+                "name": "United States"
+              },
+              {
+                "@type": "Country",
+                "name": "United Arab Emirates"
+              },
+              {
+                "@type": "Country",
+                "name": "United Kingdom"
+              },
+              {
+                "@type": "Country",
+                "name": "Brazil"
+              }
+            ],
+            "knowsAbout": [
+              "Subscription recruiting",
+              "Talent as a Service",
+              "Candidate sourcing",
+              "Pre-screened candidates",
+              "Recruitment process outsourcing"
+            ],
+            "contactPoint": [
+              {
+                "@type": "ContactPoint",
+                "contactType": "sales",
+                "email": "hello@taasflow.com",
+                "url": "https://taasflow.com/contact",
+                "availableLanguage": [
+                  "English",
+                  "Portuguese",
+                  "Spanish"
+                ]
+              }
+            ],
+            "sameAs": [
+              "https://www.linkedin.com/company/taasflow",
+              "https://twitter.com/TaasFlow"
+            ]
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "@id": "https://taasflow.com/#website",
+            "name": "TaaSFlow",
+            "alternateName": "Talent as a Service",
+            "url": "https://taasflow.com/",
+            "description": "Subscription recruiting that delivers pre-screened, ranked candidates in 14 days.",
+            "inLanguage": "en-US",
+            "publisher": {
+              "@id": "https://taasflow.com/#organization"
+            },
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": {
+                "@type": "EntryPoint",
+                "urlTemplate": "https://taasflow.com/jobs?q={search_term_string}"
+              },
+              "query-input": "required name=search_term_string"
+            }
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "Service",
+            "name": "Hospitality & Events Talent Sourcing",
+            "description": "On-demand hospitality professionals for hotels, restaurants, resorts, and event venues. Seasonal hiring, shift scheduling, and frontline workforce talent.",
+            "provider": {
+              "@type": "Organization",
+              "name": "TaasFlow",
+              "url": "https://taasflow.com"
+            },
+            "serviceType": "Talent Acquisition",
+            "areaServed": "United States",
+            "hasOfferCatalog": {
+              "@type": "OfferCatalog",
+              "name": "Hospitality & Events Recruiting Services",
+              "itemListElement": [
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Hotel General Managers Recruiting"
+                  },
+                  "position": 1
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Front Desk Managers Recruiting"
+                  },
+                  "position": 2
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Restaurant Managers Recruiting"
+                  },
+                  "position": 3
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "F&B Directors Recruiting"
+                  },
+                  "position": 4
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Event Coordinators Recruiting"
+                  },
+                  "position": 5
+                }
+              ]
+            }
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "https://taasflow.com"
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Industries",
+                "item": "https://taasflow.com/industries"
+              },
+              {
+                "@type": "ListItem",
+                "position": 3,
+                "name": "Hospitality & Events",
+                "item": "https://taasflow.com/industries//industries/hospitality"
+              }
+            ]
+          }
+        ],
+        "h1": [
+          "Hospitality Talent for Hotels, Restaurants, Resorts & Event Venues"
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "Hospitality Talent for Hotels, Restaurants, Resorts & Event Venues"
+          },
+          {
+            "level": 2,
+            "text": "Hospitality & Events Industry Insights"
+          },
+          {
+            "level": 3,
+            "text": "Hospitality Market"
+          },
+          {
+            "level": 3,
+            "text": "Turnover Rate"
+          },
+          {
+            "level": 3,
+            "text": "Labor Shortage"
+          },
+          {
+            "level": 3,
+            "text": "Seasonal Surge"
+          },
+          {
+            "level": 3,
+            "text": "Industry Overview"
+          },
+          {
+            "level": 3,
+            "text": "Ready to transform your hospitality & events recruiting?"
+          },
+          {
+            "level": 2,
+            "text": "How we hire for Hospitality & Events"
+          },
+          {
+            "level": 3,
+            "text": "Property & Season Briefing"
+          },
+          {
+            "level": 3,
+            "text": "Hospitality Culture Screening"
+          },
+          {
+            "level": 3,
+            "text": "Shift & Schedule Matching"
+          },
+          {
+            "level": 3,
+            "text": "Guest-Ready Deployment"
+          },
+          {
+            "level": 2,
+            "text": "The Hospitality Staffing Reality"
+          },
+          {
+            "level": 3,
+            "text": "The TaasFlow Solution"
+          },
+          {
+            "level": 2,
+            "text": "Why Hospitality & Events companies choose TaasFlow"
+          },
+          {
+            "level": 3,
+            "text": "Guest Experience First"
+          },
+          {
+            "level": 3,
+            "text": "24-Hour Shift Coverage"
+          },
+          {
+            "level": 3,
+            "text": "Seasonal Scale 3x"
+          },
+          {
+            "level": 3,
+            "text": "Full Property Support"
+          },
+          {
+            "level": 2,
+            "text": "Positions we fill for Hospitality & Events"
+          },
+          {
+            "level": 2,
+            "text": "Real results for Hospitality & Events teams"
+          },
+          {
+            "level": 2,
+            "text": "Hospitality & Events Salary Explorer"
+          },
+          {
+            "level": 2,
+            "text": "Hospitality & Events Career Path"
+          },
+          {
+            "level": 3,
+            "text": "Senior"
+          },
+          {
+            "level": 4,
+            "text": "Key Skills at This Level"
+          },
+          {
+            "level": 2,
+            "text": "Hospitality & Events Hiring Trends"
+          },
+          {
+            "level": 2,
+            "text": "Interactive Hiring Guide"
+          },
+          {
+            "level": 3,
+            "text": "Define Your Ideal Candidate"
+          },
+          {
+            "level": 3,
+            "text": "Optimize Your Job Posting"
+          },
+          {
+            "level": 3,
+            "text": "Source Beyond Job Boards"
+          },
+          {
+            "level": 3,
+            "text": "Structure Your Interview Process"
+          },
+          {
+            "level": 3,
+            "text": "Close & Onboard Effectively"
+          },
+          {
+            "level": 2,
+            "text": "Hospitality & Events Recruiting Insights"
+          },
+          {
+            "level": 3,
+            "text": "Talent Acquisition vs. TaaS: Which Hiring Model Wins in 2026?"
+          },
+          {
+            "level": 3,
+            "text": "The Four-Day Work Week: How It Is Reshaping Hiring Competitiveness"
+          },
+          {
+            "level": 3,
+            "text": "What Gen Z Actually Wants from Employers: 2026 Workforce Expectations Report"
+          },
+          {
+            "level": 2,
+            "text": "Frequently Asked Questions"
+          },
+          {
+            "level": 3,
+            "text": "Can you staff for both hotels and restaurants?"
+          },
+          {
+            "level": 3,
+            "text": "How do you handle seasonal hiring surges?"
+          },
+          {
+            "level": 3,
+            "text": "Do your staff understand shift scheduling?"
+          },
+          {
+            "level": 3,
+            "text": "Can you respond to last-minute staffing emergencies?"
+          },
+          {
+            "level": 2,
+            "text": "Discover related industries"
+          },
+          {
+            "level": 2,
+            "text": "Ready to build your Hospitality & Events team?"
+          },
+          {
+            "level": 2,
+            "text": "Hospitality Recruiting"
+          },
+          {
+            "level": 3,
+            "text": "Hub Page"
+          },
+          {
+            "level": 3,
+            "text": "Related Articles"
+          },
+          {
+            "level": 3,
+            "text": "Get Started"
+          },
+          {
+            "level": 4,
+            "text": "Newsletter"
+          },
+          {
+            "level": 4,
+            "text": "For candidates"
+          },
+          {
+            "level": 4,
+            "text": "For companies"
+          },
+          {
+            "level": 4,
+            "text": "Industries"
+          },
+          {
+            "level": 4,
+            "text": "Company"
+          },
+          {
+            "level": 3,
+            "text": "Cookie Preferences"
+          }
+        ],
+        "sections": [
+          "SECTION",
+          "Hospitality Talent for Hotels, Restaurants, Resorts & Event Venues",
+          "SECTION",
+          "Hospitality & Events Industry Insights",
+          "Ready to transform your hospitality & events recruiting?",
+          "How we hire for Hospitality & Events",
+          "The Hospitality Staffing Reality",
+          "Why Hospitality & Events companies choose TaasFlow",
+          "Positions we fill for Hospitality & Events",
+          "Real results for Hospitality & Events teams",
+          "Hospitality & Events Salary Explorer",
+          "Hospitality & Events Career Path",
+          "Hospitality & Events Hiring Trends",
+          "Interactive Hiring Guide",
+          "Hospitality & Events Recruiting Insights",
+          "Frequently Asked Questions",
+          "Discover related industries",
+          "SECTION",
+          "Ready to build your Hospitality & Events team?",
+          "Hospitality Recruiting"
+        ],
+        "textBlocks": [
+          "Solutions",
+          "Industries",
+          "Resources",
+          "Home",
+          "Industries",
+          "Hospitality & Events",
+          "Access guest-services professionals, shift managers, and operations talent who understand seasonal surges, frontline workforce management, and the art of creating exceptional guest experiences.",
+          "Key market data and trends shaping talent demand in your industry. (Hover for details)",
+          "US hospitality industry revenue including hotels, restaurants, and events",
+          "Annual employee turnover in hospitality, highest of any industry",
+          "Unfilled hospitality positions across hotels, restaurants, and venues",
+          "Peak-to-trough staffing fluctuation during holiday and wedding seasons",
+          "Start a risk-free pilot and receive qualified candidates in 14 days.",
+          "A tailored workflow for the challenges of hospitality & events settings.",
+          "We assess your property type, seasonal peaks, and service standards.",
+          "Candidates evaluated for guest experience orientation, not just task completion.",
+          "Availability confirmed for weekends, holidays, split shifts, and overnight coverage.",
+          "Service-minded professionals placed and ready to deliver exceptional guest experiences.",
+          "Hotels, restaurants, and resorts face the highest turnover rate of any industry at 73%. Every departure means retraining, service gaps, and guest complaints. You need reliable professionals who can step in and deliver from the first shift.",
+          "Seasonal demand is extreme. Summer resort bookings, holiday restaurant surges, wedding season at venues, and conference hotel blocks all demand 2-3x your base staffing. Year-round headcount does not solve seasonal peaks.",
+          "Frontline hospitality is not task completion. It is guest experience. You need shift managers who can run a floor, front desk staff who can upsell, event coordinators who can handle crises, and kitchen managers who can maintain quality under pressure.",
+          "Hotel operations: front desk, housekeeping management, revenue management, and guest relations",
+          "Restaurant management: FOH managers, kitchen coordinators, and F&B directors with high-volume experience",
+          "Resort staffing: activities coordinators, spa managers, and concierge professionals",
+          "Event staffing: planners, day-of coordinators, catering managers, and venue operations",
+          "Shift-ready professionals who can cover weekends, holidays, and overnight schedules",
+          "We understand the unique challenges of your industry and deliver matching talent.",
+          "Every professional understands hospitality means creating memories, not just filling shifts.",
+          "Last-minute call-out? Event emergency? We mobilize experienced hospitality talent within hours.",
+          "Ramp from base to peak staffing for holidays, wedding season, or conference blocks without permanent overhead.",
+          "From lobby to kitchen to ballroom: front desk, F&B, events, housekeeping, and management roles.",
+          "Pre-vetted professionals, delivered weekly, ready to start.",
+          "- Luxury Resort Hotel, 250 rooms",
+          "Explore current compensation ranges for top roles. Data updated quarterly from industry benchmarks.",
+          "* Based on industry benchmarks from SHRM, Glassdoor, LinkedIn Salary, and BLS data. Actual compensation may vary.",
+          "Click any level to explore typical progression, salary ranges, and key skills.",
+          "Key metrics shaping the talent landscape. Stay ahead of market shifts.",
+          "Steady growth in hiring demand across this sector.",
+          "Increasing adoption of remote and hybrid work models.",
+          "Unfilled positions due to skills shortage in this industry.",
+          "Industry average continues to improve with modern sourcing.",
+          "Follow these proven steps to hire smarter. Track your progress and get actionable tips at every stage.",
+          "Create a detailed candidate persona with must-have vs nice-to-have skills, cultural fit criteria, and realistic salary expectations.",
+          "Write a compelling job description that sells the opportunity, not just lists requirements. Include salary range, growth path, and team culture.",
+          "Reach passive candidates through targeted outreach, employee referrals, and talent communities. 70% of top talent is not actively looking.",
+          "Design a consistent 3-4 stage process that evaluates skills, culture fit, and potential. Include take-home assessments where appropriate.",
+          "Move fast with competitive offers and start onboarding before day one. The first 90 days determine long-term retention.",
+          "Expert articles on recruiting and talent acquisition for hospitality & events.",
+          "A direct comparison of traditional talent acquisition and Talent-as-a-Service (TaaS). See where each model wins on cost, speed, quality, and flexibility.",
+          "Companies offering four-day weeks see 60% more applicants. Data from 200 pilot programs reveals the productivity truth behind compressed schedules.",
+          "What Gen Z Actually Wants from Employers: 2026 Workforce Expectations Report",
+          "Forget the stereotypes. New survey data from 15,000 Gen Z professionals reveals their true priorities — and most companies are getting it wrong.",
+          "Common questions about TaasFlow for hospitality & events.",
+          "Learn how we serve similar sectors with subscription recruiting.",
+          "Receive qualified hospitality & events professionals weekly. No agency fees, no long-term contracts.",
+          "Related Industries",
+          "Talent as a Service",
+          "A global hiring system for teams that need consistent recruiting.",
+          "Weekly insights into talent acquisition. No spam.",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Book call",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "No recruitment agency fees. No placement charges. Subscription-based hiring system.",
+          "Copyright 2026 TaaSFlow. All rights reserved.",
+          "We use essential cookies for core functionality. With your consent, we use analytics (Google Analytics) and marketing technologies (Meta Pixel, Apollo, Retention.com/RB2B) to understand website performance, improve campaigns, and measure conversions safely. Your data is processed in accordance with GDPR and our Privacy Notice. You can change your preferences at any time."
+        ],
+        "buttons": [
+          "Solutions",
+          "Industries",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Solutions",
+          "How it works",
+          "Pilot",
+          "Enterprise",
+          "Case studies",
+          "Jobs",
+          "Journey",
+          "Industries",
+          "Tech",
+          "SaaS & Cloud",
+          "Cybersecurity",
+          "Data & Analytics",
+          "Finance",
+          "Insurance",
+          "PE & VC",
+          "Accounting",
+          "Legal",
+          "Consulting",
+          "HR & Recruiting",
+          "Staffing Agencies",
+          "Sales",
+          "Marketing",
+          "E-commerce",
+          "Media",
+          "Real Estate",
+          "Construction",
+          "Hospitality",
+          "Healthcare",
+          "Public Sector",
+          "Non-Profit",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Success Stories",
+          "Talent Marketplace",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Start Hospitality & Events Pilot Program",
+          "Book call",
+          "Book call",
+          "1Entry-Level",
+          "2Mid-Level",
+          "3Senior",
+          "4Director / Lead",
+          "5VP / C-Suite",
+          "Next: Director / Lead",
+          "1Define Your Ideal Candidate1-2 days",
+          "1",
+          "Mark Complete",
+          "2Optimize Your Job PostingWrite a compelling job description that sells the opportunity, not just lists requirements. Include salary range, growth path, and team culture.1 day",
+          "2",
+          "3Source Beyond Job BoardsReach passive candidates through targeted outreach, employee referrals, and talent communities. 70% of top talent is not actively looking.Ongoing",
+          "3",
+          "4Structure Your Interview ProcessDesign a consistent 3-4 stage process that evaluates skills, culture fit, and potential. Include take-home assessments where appropriate.2-3 days setup",
+          "4",
+          "5Close & Onboard EffectivelyMove fast with competitive offers and start onboarding before day one. The first 90 days determine long-term retention.1-2 weeks",
+          "5",
+          "Can you staff for both hotels and restaurants?",
+          "How do you handle seasonal hiring surges?",
+          "Do your staff understand shift scheduling?",
+          "Can you respond to last-minute staffing emergencies?",
+          "Start Hospitality & Events Pilot",
+          "Contact",
+          "Subscribe"
+        ],
+        "links": [
+          {
+            "text": "Skip to main content",
+            "href": "https://taasflow.com/industries/hospitality#main-content"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "Browse jobs",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Join the network",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Browse open roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Home",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "Industries",
+            "href": "https://taasflow.com/industries"
+          },
+          {
+            "text": "View all articles",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "Hiring StrategyTalent Acquisition vs. TaaS: Which Hiring Model Wins in 2026?A direct comparison of traditional talent ac",
+            "href": "https://taasflow.com/blog/talent-acquisition-vs-taas"
+          },
+          {
+            "text": "Workforce TrendsThe Four-Day Work Week: How It Is Reshaping Hiring CompetitivenessCompanies offering four-day weeks see ",
+            "href": "https://taasflow.com/blog/four-day-work-week-impact-hiring"
+          },
+          {
+            "text": "🌐What Gen Z Actually Wants from Employers: 2026 Workforce Expectations ReportWorkforce TrendsWorkforce TrendsWhat Gen Z",
+            "href": "https://taasflow.com/blog/gen-z-workforce-expectations-2026"
+          },
+          {
+            "text": "View all articles",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "Technology",
+            "href": "https://taasflow.com/industries/tech"
+          },
+          {
+            "text": "Legal",
+            "href": "https://taasflow.com/industries/legal"
+          },
+          {
+            "text": "Public Sector",
+            "href": "https://taasflow.com/industries/public-sector"
+          },
+          {
+            "text": "Finance & Banking",
+            "href": "https://taasflow.com/industries/finance"
+          },
+          {
+            "text": "Staffing Agencies",
+            "href": "https://taasflow.com/industries/staffing-agencies"
+          },
+          {
+            "text": "Healthcare",
+            "href": "https://taasflow.com/industries/healthcare"
+          },
+          {
+            "text": "Sales",
+            "href": "https://taasflow.com/industries/sales"
+          },
+          {
+            "text": "Marketing & Advertising",
+            "href": "https://taasflow.com/industries/marketing"
+          },
+          {
+            "text": "Compare all industries",
+            "href": "https://taasflow.com/industries/compare"
+          },
+          {
+            "text": "How it works",
+            "href": "https://taasflow.com/how-it-works"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "Start Pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "Jobs",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Blog",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "About",
+            "href": "https://taasflow.com/about"
+          },
+          {
+            "text": "Enterprise",
+            "href": "https://taasflow.com/enterprise"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://taasflow.com/faq"
+          },
+          {
+            "text": "Contact",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Looking for a job in hospitality & events? Browse open positions",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Hospitality Recruiting",
+            "href": "https://taasflow.com/industries/hospitality"
+          },
+          {
+            "text": "Gig Economy Workforce",
+            "href": "https://taasflow.com/blog/gig-economy-workforce"
+          },
+          {
+            "text": "Reduce Time-to-Hire",
+            "href": "https://taasflow.com/blog/reduce-time-to-hire"
+          },
+          {
+            "text": "Start a Pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "Talk to Us",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Legal Recruiting",
+            "href": "https://taasflow.com/industries/legal"
+          },
+          {
+            "text": "E-commerce Recruiting",
+            "href": "https://taasflow.com/industries/ecommerce"
+          },
+          {
+            "text": "Onboarding Best Practices",
+            "href": "https://taasflow.com/blog/onboarding-best-practices"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "LinkedIn",
+            "href": "https://www.linkedin.com/company/taasflow/"
+          },
+          {
+            "text": "Browse roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Talent network",
+            "href": "https://taasflow.com/global-talent"
+          },
+          {
+            "text": "Member stories",
+            "href": "https://taasflow.com/candidate-success"
+          },
+          {
+            "text": "Start pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "Employer onboarding",
+            "href": "https://taasflow.com/employer-onboarding"
+          },
+          {
+            "text": "Case studies",
+            "href": "https://taasflow.com/case-studies"
+          },
+          {
+            "text": "Healthcare",
+            "href": "https://taasflow.com/industries/healthcare"
+          },
+          {
+            "text": "Technology",
+            "href": "https://taasflow.com/industries/tech"
+          },
+          {
+            "text": "Finance",
+            "href": "https://taasflow.com/industries/finance"
+          },
+          {
+            "text": "Legal",
+            "href": "https://taasflow.com/industries/legal"
+          },
+          {
+            "text": "All →",
+            "href": "https://taasflow.com/industries"
+          },
+          {
+            "text": "About us",
+            "href": "https://taasflow.com/about"
+          },
+          {
+            "text": "Blog",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://taasflow.com/faq"
+          },
+          {
+            "text": "Knowledge Base",
+            "href": "https://taasflow.com/knowledge-base"
+          },
+          {
+            "text": "Contact us",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Privacy Policy",
+            "href": "https://taasflow.com/privacy"
+          },
+          {
+            "text": "Terms of Service",
+            "href": "https://taasflow.com/terms"
+          },
+          {
+            "text": "Privacy Notice",
+            "href": "https://taasflow.com/privacy"
+          }
+        ],
+        "images": [
+          {
+            "src": "https://taasflow.com/assets/logo-on-white-Dk9DIcMP.png",
+            "alt": "TaaSFlow logo"
+          },
+          {
+            "src": "https://taasflow.com/assets/hospitality-DdGxwA11.jpg",
+            "alt": ""
+          },
+          {
+            "src": "https://taasflow.com/assets/hospitality-DdGxwA11.jpg",
+            "alt": ""
+          },
+          {
+            "src": "https://taasflow.com/assets/hospitality-DdGxwA11.jpg",
+            "alt": ""
+          },
+          {
+            "src": "https://taasflow.com/assets/subscription-vs-agency-_yT15noF.jpg",
+            "alt": "Talent Acquisition vs. TaaS: Which Hiring Model Wins in 2026?"
+          },
+          {
+            "src": "https://taasflow.com/assets/remote-hiring-B0XZA3Om.jpg",
+            "alt": "The Four-Day Work Week: How It Is Reshaping Hiring Competitiveness"
+          },
+          {
+            "src": "https://taasflow.com/assets/logo-on-blue-CX6jlwjg.png",
+            "alt": "TaaSFlow logo"
+          }
+        ],
+        "forms": [
+          {
+            "action": "https://taasflow.com/industries/hospitality",
+            "fields": [
+              "input"
+            ]
+          }
+        ],
+        "navLinks": [
+          "Browse jobs",
+          "Join the network",
+          "Browse open roles",
+          "Home",
+          "Industries",
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us"
+        ],
+        "footerLinks": [
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "Privacy Policy",
+          "Terms of Service"
+        ],
+        "horizontalOverflow": false,
+        "documentWidth": 1440,
+        "viewportWidth": 1440
+      },
+      "destination": {
+        "url": "https://clear-path-hubs.lovable.app/industries/hospitality",
+        "finalUrl": "https://clear-path-hubs.lovable.app/industries/hospitality",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [],
+        "title": "Hospitality hiring — TaaSFlow",
+        "description": "Structured sourcing for hotels, restaurants and hospitality groups. Ranked shortlists with evidence of property type, service level and operating model.",
+        "canonical": "https://clear-path-hubs.lovable.app/industries/hospitality",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "twitter:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "og:title": "Hospitality hiring — TaaSFlow",
+          "og:description": "Structured sourcing for hotels, restaurants and hospitality groups. Ranked shortlists with evidence of property type, service level and operating model.",
+          "og:url": "https://clear-path-hubs.lovable.app/industries/hospitality",
+          "og:type": "website",
+          "twitter:card": "summary_large_image",
+          "twitter:title": "Hospitality hiring — TaaSFlow",
+          "twitter:description": "Structured sourcing for hotels, restaurants and hospitality groups. Ranked shortlists with evidence of property type, service level and operating model."
+        },
+        "structuredData": [],
+        "h1": [
+          "Hospitality hiring, calibrated per property and service level."
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "Hospitality hiring, calibrated per property and service level."
+          },
+          {
+            "level": 2,
+            "text": "What we hear from Hospitality teams"
+          },
+          {
+            "level": 3,
+            "text": "Property and segment fit"
+          },
+          {
+            "level": 3,
+            "text": "Service level and standards"
+          },
+          {
+            "level": 3,
+            "text": "Multi-unit and single-unit context"
+          },
+          {
+            "level": 2,
+            "text": "Roles we source in Hospitality"
+          },
+          {
+            "level": 3,
+            "text": "Submit the role"
+          },
+          {
+            "level": 3,
+            "text": "We source and score"
+          },
+          {
+            "level": 3,
+            "text": "Review in your workspace"
+          },
+          {
+            "level": 2,
+            "text": "Hiring for a hospitality role?"
+          }
+        ],
+        "sections": [
+          "Hospitality hiring, calibrated per property and service level.",
+          "What we hear from Hospitality teams",
+          "Roles we source in Hospitality",
+          "Submit the role",
+          "Hiring for a hospitality role?",
+          "SECTION"
+        ],
+        "textBlocks": [
+          "Home",
+          "Industries",
+          "Hospitality",
+          "Hospitality",
+          "TaaSFlow gives hospitality leaders a workspace for every hire — property leadership, F&B, guest experience, operations — with rubrics tuned to property type, service level and operating model.",
+          "Property type and segment rubric",
+          "Service level captured in intake",
+          "Scope of ownership evidence from the CV",
+          "Luxury, lifestyle, select-service and F&B-led operations each need distinct signal. Our rubric captures the property types the candidate has actually operated in.",
+          "Service standards, cover counts and guest-experience expectations vary widely. We capture them in intake so shortlists reflect the operating reality of the property.",
+          "Multi-unit leadership rewards different signal than single-property GM work. Rubrics per seat surface the actual scope of ownership on the CV.",
+          "We calibrate the rubric to the seniority and specialisation you actually need.",
+          "General managers and assistant GMs",
+          "Executive chefs and F&B directors",
+          "Rooms division and front-office leaders",
+          "Revenue managers",
+          "Sales and catering leaders",
+          "Guest experience and brand leaders",
+          "Multi-unit operations directors",
+          "Hospitality HR and training leads",
+          "01",
+          "A guided intake captures everything the search needs, in one flow.",
+          "02",
+          "Multi-channel sourcing, role-specific rubric, evidence extracted from every CV.",
+          "03",
+          "Ranked shortlist, evidence side-by-side, Kanban pipeline, direct messaging.",
+          "See the full process on how it works.",
+          "Hospitality",
+          "Submit the role — one workspace, one rubric, one reviewed shortlist."
+        ],
+        "buttons": [],
+        "links": [
+          {
+            "text": "Home",
+            "href": "https://clear-path-hubs.lovable.app/"
+          },
+          {
+            "text": "Industries",
+            "href": "https://clear-path-hubs.lovable.app/industries"
+          },
+          {
+            "text": "Start hiring",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "Talk to us",
+            "href": "https://clear-path-hubs.lovable.app/contact"
+          },
+          {
+            "text": "how it works",
+            "href": "https://clear-path-hubs.lovable.app/how-it-works"
+          },
+          {
+            "text": "Start intake",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "See other industries",
+            "href": "https://clear-path-hubs.lovable.app/industries"
+          },
+          {
+            "text": "Edit with",
+            "href": "https://lovable.dev/projects/1dc5ee7e-1294-441c-8288-850e79e443f6?utm_source=lovable-badge"
+          }
+        ],
+        "images": [],
+        "forms": [],
+        "navLinks": [
+          "Home",
+          "Industries"
+        ],
+        "footerLinks": [],
+        "horizontalOverflow": false,
+        "documentWidth": 1440,
+        "viewportWidth": 1440
+      },
+      "screenshots": {
+        "sourceFull": "reports/public-parity/screenshots/source/industries_hospitality__desktop__full.png",
+        "sourceVisible": "reports/public-parity/screenshots/source/industries_hospitality__desktop__visible.png",
+        "destinationFull": "reports/public-parity/screenshots/destination/industries_hospitality__desktop__full.png",
+        "destinationVisible": "reports/public-parity/screenshots/destination/industries_hospitality__desktop__visible.png"
+      },
+      "differences": [
+        "title: \"Hospitality & Events Talent | TaaSFlow - Talent as a Service\" vs \"Hospitality hiring — TaaSFlow\"",
+        "meta description mismatch",
+        "H1 differs: [Hospitality Talent for Hotels, Restaurants, Resorts & Event Venues] vs [Hospitality hiring, calibrated per property and service level.]",
+        "heading overlap 0% (0/30)",
+        "section count 20 vs 6",
+        "form count 1 vs 0"
+      ]
+    }
+  ],
+  "summary": "18 differences detected",
+  "exclusions": []
+}

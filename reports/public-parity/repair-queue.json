@@ -1,0 +1,833 @@
+{
+  "generatedAt": "2026-07-23T02:41:11.014012Z",
+  "orderedBuckets": [
+    "1. Missing routes",
+    "2. Broken routes",
+    "3. Missing major sections",
+    "4. Broken navigation and CTAs",
+    "5. Incorrect content",
+    "6. Missing assets",
+    "7. Responsive failures",
+    "8. SEO failures",
+    "9. Accessibility failures",
+    "10. Minor visual differences"
+  ],
+  "queue": [
+    {
+      "priority": 1,
+      "bucket": "1. Missing routes",
+      "sourcePath": "/blog/category/*",
+      "destinationPath": "/blog/category/$slug",
+      "severity": "CRITICAL",
+      "repairRecommendation": "Create destination route /blog/category/$slug mirroring source content and metadata.",
+      "evidence": {
+        "missingSectionsCount": 9,
+        "missingContentCount": 15,
+        "missingAssetsCount": 2,
+        "seoIssuesCount": 4,
+        "responsiveIssuesCount": 0,
+        "consoleErrorCount": 1,
+        "diffCount": 27
+      }
+    },
+    {
+      "priority": 2,
+      "bucket": "3. Missing major sections",
+      "sourcePath": "/",
+      "destinationPath": "/",
+      "severity": "CRITICAL",
+      "repairRecommendation": "Add missing sections to destination: Your hiring team.On demand., DIV, Cut your cost-per-hire. See the math., You found the perfect candidate. Now comes the invoice., A repeatable operating system, role by role",
+      "evidence": {
+        "missingSectionsCount": 17,
+        "missingContentCount": 15,
+        "missingAssetsCount": 6,
+        "seoIssuesCount": 1,
+        "responsiveIssuesCount": 0,
+        "consoleErrorCount": 0,
+        "diffCount": 12
+      }
+    },
+    {
+      "priority": 3,
+      "bucket": "3. Missing major sections",
+      "sourcePath": "/about",
+      "destinationPath": "/about",
+      "severity": "CRITICAL",
+      "repairRecommendation": "Add missing sections to destination: We built the hiring system that hire., DIV, From HR Frustration to Recruiting Innovation, From a broken model to a hiring throughput system, The Win-Win-Win Mentality",
+      "evidence": {
+        "missingSectionsCount": 14,
+        "missingContentCount": 15,
+        "missingAssetsCount": 3,
+        "seoIssuesCount": 3,
+        "responsiveIssuesCount": 0,
+        "consoleErrorCount": 0,
+        "diffCount": 21
+      }
+    },
+    {
+      "priority": 4,
+      "bucket": "3. Missing major sections",
+      "sourcePath": "/blog",
+      "destinationPath": "/blog",
+      "severity": "CRITICAL",
+      "repairRecommendation": "Add missing sections to destination: The TaaSFlow Journal, Data-Driven Recruiting: How Analytics Reduce Time-to-Hire by 40% in 2026, Editorial Sections, Latest Articles, Data-Driven Recruiting: How Analytics Reduce Time-to-Hire by 40% in 2026",
+      "evidence": {
+        "missingSectionsCount": 9,
+        "missingContentCount": 15,
+        "missingAssetsCount": 2,
+        "seoIssuesCount": 1,
+        "responsiveIssuesCount": 0,
+        "consoleErrorCount": 0,
+        "diffCount": 15
+      }
+    },
+    {
+      "priority": 5,
+      "bucket": "3. Missing major sections",
+      "sourcePath": "/candidate-success",
+      "destinationPath": "/candidate-success",
+      "severity": "CRITICAL",
+      "repairRecommendation": "Add missing sections to destination: Hero Title, Sarah M., Footer Heading",
+      "evidence": {
+        "missingSectionsCount": 3,
+        "missingContentCount": 15,
+        "missingAssetsCount": 1,
+        "seoIssuesCount": 3,
+        "responsiveIssuesCount": 0,
+        "consoleErrorCount": 0,
+        "diffCount": 18
+      }
+    },
+    {
+      "priority": 6,
+      "bucket": "3. Missing major sections",
+      "sourcePath": "/candidate/join",
+      "destinationPath": "/candidate-join",
+      "severity": "CRITICAL",
+      "repairRecommendation": "Add missing sections to destination: Join the TaaSFlow Network",
+      "evidence": {
+        "missingSectionsCount": 1,
+        "missingContentCount": 2,
+        "missingAssetsCount": 1,
+        "seoIssuesCount": 4,
+        "responsiveIssuesCount": 0,
+        "consoleErrorCount": 0,
+        "diffCount": 24
+      }
+    },
+    {
+      "priority": 7,
+      "bucket": "3. Missing major sections",
+      "sourcePath": "/case-studies",
+      "destinationPath": "/case-studies",
+      "severity": "CRITICAL",
+      "repairRecommendation": "Add missing sections to destination: Success Stories, SafiTech: Scaling a Development Team in 4 Weeks, Your success story could be next",
+      "evidence": {
+        "missingSectionsCount": 3,
+        "missingContentCount": 10,
+        "missingAssetsCount": 1,
+        "seoIssuesCount": 3,
+        "responsiveIssuesCount": 0,
+        "consoleErrorCount": 0,
+        "diffCount": 18
+      }
+    },
+    {
+      "priority": 8,
+      "bucket": "3. Missing major sections",
+      "sourcePath": "/contact",
+      "destinationPath": "/contact",
+      "severity": "CRITICAL",
+      "repairRecommendation": "Add missing sections to destination: Contact us",
+      "evidence": {
+        "missingSectionsCount": 1,
+        "missingContentCount": 3,
+        "missingAssetsCount": 1,
+        "seoIssuesCount": 3,
+        "responsiveIssuesCount": 0,
+        "consoleErrorCount": 0,
+        "diffCount": 15
+      }
+    },
+    {
+      "priority": 9,
+      "bucket": "3. Missing major sections",
+      "sourcePath": "/employer-onboarding",
+      "destinationPath": "/employer-onboarding",
+      "severity": "CRITICAL",
+      "repairRecommendation": "Add missing sections to destination: Hero Title Hero Title Accent, Journey Title, Expectations Title, Checklist Title, Cta Title",
+      "evidence": {
+        "missingSectionsCount": 5,
+        "missingContentCount": 2,
+        "missingAssetsCount": 2,
+        "seoIssuesCount": 3,
+        "responsiveIssuesCount": 0,
+        "consoleErrorCount": 0,
+        "diffCount": 15
+      }
+    },
+    {
+      "priority": 10,
+      "bucket": "3. Missing major sections",
+      "sourcePath": "/enterprise",
+      "destinationPath": "/enterprise",
+      "severity": "CRITICAL",
+      "repairRecommendation": "Add missing sections to destination: Scale Your Workforce. Globally., Built for High-Volume, Global Operations, Purpose-Built for Volume Hiring Industries, Hiring Across Borders, Without the Barriers, Agency Fees vs. TaaSFlow Subscription",
+      "evidence": {
+        "missingSectionsCount": 11,
+        "missingContentCount": 15,
+        "missingAssetsCount": 6,
+        "seoIssuesCount": 3,
+        "responsiveIssuesCount": 0,
+        "consoleErrorCount": 0,
+        "diffCount": 18
+      }
+    },
+    {
+      "priority": 11,
+      "bucket": "3. Missing major sections",
+      "sourcePath": "/faq",
+      "destinationPath": "/faq",
+      "severity": "CRITICAL",
+      "repairRecommendation": "Add missing sections to destination: Common questions, Related topics, Still have questions?",
+      "evidence": {
+        "missingSectionsCount": 3,
+        "missingContentCount": 7,
+        "missingAssetsCount": 1,
+        "seoIssuesCount": 2,
+        "responsiveIssuesCount": 0,
+        "consoleErrorCount": 0,
+        "diffCount": 15
+      }
+    },
+    {
+      "priority": 12,
+      "bucket": "3. Missing major sections",
+      "sourcePath": "/global-talent",
+      "destinationPath": "/global-talent",
+      "severity": "CRITICAL",
+      "repairRecommendation": "Add missing sections to destination: A quieter way to be consideredfor the right work., Built for people who don\u2019t need another job board., Three ways to be considered., Fewer roles. Higher signal.Considered work for considered people., Your career, on your terms.",
+      "evidence": {
+        "missingSectionsCount": 9,
+        "missingContentCount": 15,
+        "missingAssetsCount": 1,
+        "seoIssuesCount": 3,
+        "responsiveIssuesCount": 0,
+        "consoleErrorCount": 0,
+        "diffCount": 18
+      }
+    },
+    {
+      "priority": 13,
+      "bucket": "3. Missing major sections",
+      "sourcePath": "/how-it-works",
+      "destinationPath": "/how-it-works",
+      "severity": "CRITICAL",
+      "repairRecommendation": "Add missing sections to destination: Built by Industry Leaders on 10 Years of Data, DIV, From HR Frustration to Recruiting Innovation, Traditional Recruiting Is Broken by Design, Five Pillars of Precision",
+      "evidence": {
+        "missingSectionsCount": 15,
+        "missingContentCount": 15,
+        "missingAssetsCount": 4,
+        "seoIssuesCount": 1,
+        "responsiveIssuesCount": 0,
+        "consoleErrorCount": 0,
+        "diffCount": 12
+      }
+    },
+    {
+      "priority": 14,
+      "bucket": "3. Missing major sections",
+      "sourcePath": "/industries",
+      "destinationPath": "/industries",
+      "severity": "CRITICAL",
+      "repairRecommendation": "Add missing sections to destination: Title, Technology, Cta Title",
+      "evidence": {
+        "missingSectionsCount": 3,
+        "missingContentCount": 2,
+        "missingAssetsCount": 1,
+        "seoIssuesCount": 3,
+        "responsiveIssuesCount": 0,
+        "consoleErrorCount": 0,
+        "diffCount": 18
+      }
+    },
+    {
+      "priority": 15,
+      "bucket": "3. Missing major sections",
+      "sourcePath": "/industries/accounting",
+      "destinationPath": "/industries/accounting",
+      "severity": "CRITICAL",
+      "repairRecommendation": "Add missing sections to destination: Accounting Talent for Firms & Corporate Finance, Accounting & Audit Industry Insights, Ready to transform your accounting & audit recruiting?, How we hire for Accounting & Audit, The Accounting Capacity Challenge",
+      "evidence": {
+        "missingSectionsCount": 16,
+        "missingContentCount": 15,
+        "missingAssetsCount": 5,
+        "seoIssuesCount": 3,
+        "responsiveIssuesCount": 0,
+        "consoleErrorCount": 0,
+        "diffCount": 18
+      }
+    },
+    {
+      "priority": 16,
+      "bucket": "3. Missing major sections",
+      "sourcePath": "/industries/compare",
+      "destinationPath": "/industries/compare",
+      "severity": "CRITICAL",
+      "repairRecommendation": "Add missing sections to destination: Industry Comparison, Filter and compare industries",
+      "evidence": {
+        "missingSectionsCount": 2,
+        "missingContentCount": 2,
+        "missingAssetsCount": 1,
+        "seoIssuesCount": 3,
+        "responsiveIssuesCount": 0,
+        "consoleErrorCount": 0,
+        "diffCount": 15
+      }
+    },
+    {
+      "priority": 17,
+      "bucket": "3. Missing major sections",
+      "sourcePath": "/industries/construction",
+      "destinationPath": "/industries/construction",
+      "severity": "CRITICAL",
+      "repairRecommendation": "Add missing sections to destination: Construction Talent for Contractors & Design Firms, Construction & Architecture Industry Insights, Ready to transform your construction & architecture recruiting?, How we hire for Construction & Architecture, The Construction Staffing Challenge",
+      "evidence": {
+        "missingSectionsCount": 17,
+        "missingContentCount": 15,
+        "missingAssetsCount": 5,
+        "seoIssuesCount": 3,
+        "responsiveIssuesCount": 0,
+        "consoleErrorCount": 0,
+        "diffCount": 18
+      }
+    },
+    {
+      "priority": 18,
+      "bucket": "3. Missing major sections",
+      "sourcePath": "/industries/consulting",
+      "destinationPath": "/industries/consulting",
+      "severity": "CRITICAL",
+      "repairRecommendation": "Add missing sections to destination: Consulting Talent for Firms & Advisory Practices, Consulting Industry Insights, Ready to transform your consulting recruiting?, How we hire for Consulting, The Consulting Capacity Challenge",
+      "evidence": {
+        "missingSectionsCount": 17,
+        "missingContentCount": 15,
+        "missingAssetsCount": 4,
+        "seoIssuesCount": 3,
+        "responsiveIssuesCount": 0,
+        "consoleErrorCount": 0,
+        "diffCount": 18
+      }
+    },
+    {
+      "priority": 19,
+      "bucket": "3. Missing major sections",
+      "sourcePath": "/industries/cybersecurity",
+      "destinationPath": "/industries/cybersecurity",
+      "severity": "CRITICAL",
+      "repairRecommendation": "Add missing sections to destination: Cybersecurity Talent for Protection & Compliance, Cybersecurity Industry Insights, Ready to transform your cybersecurity recruiting?, How we hire for Cybersecurity, The Cybersecurity Talent Challenge",
+      "evidence": {
+        "missingSectionsCount": 17,
+        "missingContentCount": 15,
+        "missingAssetsCount": 4,
+        "seoIssuesCount": 3,
+        "responsiveIssuesCount": 0,
+        "consoleErrorCount": 0,
+        "diffCount": 18
+      }
+    },
+    {
+      "priority": 20,
+      "bucket": "3. Missing major sections",
+      "sourcePath": "/industries/data-analytics",
+      "destinationPath": "/industries/data-analytics",
+      "severity": "CRITICAL",
+      "repairRecommendation": "Add missing sections to destination: Data Talent for Analytics-Driven Organizations, Data & Analytics Industry Insights, Ready to transform your data & analytics recruiting?, How we hire for Data & Analytics, The Data Talent Challenge",
+      "evidence": {
+        "missingSectionsCount": 16,
+        "missingContentCount": 15,
+        "missingAssetsCount": 5,
+        "seoIssuesCount": 3,
+        "responsiveIssuesCount": 0,
+        "consoleErrorCount": 0,
+        "diffCount": 18
+      }
+    },
+    {
+      "priority": 21,
+      "bucket": "3. Missing major sections",
+      "sourcePath": "/industries/ecommerce",
+      "destinationPath": "/industries/ecommerce",
+      "severity": "CRITICAL",
+      "repairRecommendation": "Add missing sections to destination: E-commerce Talent for DTC Brands & Retailers, E-commerce & Retail Industry Insights, Ready to transform your e-commerce & retail recruiting?, How we hire for E-commerce & Retail, The E-commerce Staffing Challenge",
+      "evidence": {
+        "missingSectionsCount": 17,
+        "missingContentCount": 15,
+        "missingAssetsCount": 5,
+        "seoIssuesCount": 3,
+        "responsiveIssuesCount": 0,
+        "consoleErrorCount": 0,
+        "diffCount": 18
+      }
+    },
+    {
+      "priority": 22,
+      "bucket": "3. Missing major sections",
+      "sourcePath": "/industries/finance",
+      "destinationPath": "/industries/finance",
+      "severity": "CRITICAL",
+      "repairRecommendation": "Add missing sections to destination: Financial Professionals for Banks, Funds & Corporations, Finance & Banking Industry Insights, Ready to transform your finance & banking recruiting?, How we hire for Finance & Banking, The Finance Hiring Challenge",
+      "evidence": {
+        "missingSectionsCount": 17,
+        "missingContentCount": 15,
+        "missingAssetsCount": 5,
+        "seoIssuesCount": 3,
+        "responsiveIssuesCount": 0,
+        "consoleErrorCount": 0,
+        "diffCount": 18
+      }
+    },
+    {
+      "priority": 23,
+      "bucket": "3. Missing major sections",
+      "sourcePath": "/industries/healthcare",
+      "destinationPath": "/industries/healthcare",
+      "severity": "CRITICAL",
+      "repairRecommendation": "Add missing sections to destination: Healthcare Talent Built for Compliance, Credentials & Patient Care, Healthcare Industry Insights, Ready to transform your healthcare recruiting?, How we hire for Healthcare, The Healthcare Staffing Challenge",
+      "evidence": {
+        "missingSectionsCount": 17,
+        "missingContentCount": 15,
+        "missingAssetsCount": 4,
+        "seoIssuesCount": 3,
+        "responsiveIssuesCount": 0,
+        "consoleErrorCount": 0,
+        "diffCount": 18
+      }
+    },
+    {
+      "priority": 24,
+      "bucket": "3. Missing major sections",
+      "sourcePath": "/industries/hospitality",
+      "destinationPath": "/industries/hospitality",
+      "severity": "CRITICAL",
+      "repairRecommendation": "Add missing sections to destination: Hospitality Talent for Hotels, Restaurants, Resorts & Event Venues, Hospitality & Events Industry Insights, Ready to transform your hospitality & events recruiting?, How we hire for Hospitality & Events, The Hospitality Staffing Reality",
+      "evidence": {
+        "missingSectionsCount": 17,
+        "missingContentCount": 15,
+        "missingAssetsCount": 5,
+        "seoIssuesCount": 3,
+        "responsiveIssuesCount": 0,
+        "consoleErrorCount": 0,
+        "diffCount": 18
+      }
+    },
+    {
+      "priority": 25,
+      "bucket": "3. Missing major sections",
+      "sourcePath": "/industries/human-resources",
+      "destinationPath": "/industries/human-resources",
+      "severity": "CRITICAL",
+      "repairRecommendation": "Add missing sections to destination: HR Talent for Scaling Organizations, Human Resources Industry Insights, Ready to transform your human resources recruiting?, How we hire for Human Resources, The HR Scaling Challenge",
+      "evidence": {
+        "missingSectionsCount": 16,
+        "missingContentCount": 15,
+        "missingAssetsCount": 4,
+        "seoIssuesCount": 3,
+        "responsiveIssuesCount": 0,
+        "consoleErrorCount": 0,
+        "diffCount": 18
+      }
+    },
+    {
+      "priority": 26,
+      "bucket": "3. Missing major sections",
+      "sourcePath": "/industries/insurance",
+      "destinationPath": "/industries/insurance",
+      "severity": "CRITICAL",
+      "repairRecommendation": "Add missing sections to destination: Insurance Talent for Carriers, Agencies & MGAs, Insurance Industry Insights, Ready to transform your insurance recruiting?, How we hire for Insurance, The Insurance Staffing Challenge",
+      "evidence": {
+        "missingSectionsCount": 17,
+        "missingContentCount": 15,
+        "missingAssetsCount": 4,
+        "seoIssuesCount": 3,
+        "responsiveIssuesCount": 0,
+        "consoleErrorCount": 0,
+        "diffCount": 18
+      }
+    },
+    {
+      "priority": 27,
+      "bucket": "3. Missing major sections",
+      "sourcePath": "/industries/legal",
+      "destinationPath": "/industries/legal",
+      "severity": "CRITICAL",
+      "repairRecommendation": "Add missing sections to destination: Flexible Legal Talent for Firms & Departments, Legal Industry Insights, Ready to transform your legal recruiting?, How we hire for Legal, The Legal Staffing Challenge",
+      "evidence": {
+        "missingSectionsCount": 17,
+        "missingContentCount": 15,
+        "missingAssetsCount": 4,
+        "seoIssuesCount": 3,
+        "responsiveIssuesCount": 0,
+        "consoleErrorCount": 0,
+        "diffCount": 18
+      }
+    },
+    {
+      "priority": 28,
+      "bucket": "3. Missing major sections",
+      "sourcePath": "/industries/marketing",
+      "destinationPath": "/industries/marketing",
+      "severity": "CRITICAL",
+      "repairRecommendation": "Add missing sections to destination: Marketing Talent That Drives Growth & Brand Impact, Marketing & Advertising Industry Insights, Ready to transform your marketing & advertising recruiting?, How we hire for Marketing & Advertising, The Marketing Hiring Challenge",
+      "evidence": {
+        "missingSectionsCount": 17,
+        "missingContentCount": 15,
+        "missingAssetsCount": 5,
+        "seoIssuesCount": 3,
+        "responsiveIssuesCount": 0,
+        "consoleErrorCount": 0,
+        "diffCount": 18
+      }
+    },
+    {
+      "priority": 29,
+      "bucket": "3. Missing major sections",
+      "sourcePath": "/industries/media",
+      "destinationPath": "/industries/media",
+      "severity": "CRITICAL",
+      "repairRecommendation": "Add missing sections to destination: Media Talent for Production & Content Companies, Media & Entertainment Industry Insights, Ready to transform your media & entertainment recruiting?, How we hire for Media & Entertainment, The Media Hiring Challenge",
+      "evidence": {
+        "missingSectionsCount": 16,
+        "missingContentCount": 15,
+        "missingAssetsCount": 5,
+        "seoIssuesCount": 3,
+        "responsiveIssuesCount": 0,
+        "consoleErrorCount": 0,
+        "diffCount": 18
+      }
+    },
+    {
+      "priority": 30,
+      "bucket": "3. Missing major sections",
+      "sourcePath": "/industries/non-profit",
+      "destinationPath": "/industries/non-profit",
+      "severity": "CRITICAL",
+      "repairRecommendation": "Add missing sections to destination: Non-Profit Talent for Mission-Driven Organizations, Non-Profit Industry Insights, Ready to transform your non-profit recruiting?, How we hire for Non-Profit, The Non-Profit Hiring Challenge",
+      "evidence": {
+        "missingSectionsCount": 16,
+        "missingContentCount": 8,
+        "missingAssetsCount": 2,
+        "seoIssuesCount": 3,
+        "responsiveIssuesCount": 0,
+        "consoleErrorCount": 1,
+        "diffCount": 21
+      }
+    },
+    {
+      "priority": 31,
+      "bucket": "3. Missing major sections",
+      "sourcePath": "/industries/private-equity",
+      "destinationPath": "/industries/private-equity",
+      "severity": "CRITICAL",
+      "repairRecommendation": "Add missing sections to destination: PE/VC Talent for Funds & Portfolio Companies, Private Equity & VC Industry Insights, Ready to transform your private equity & vc recruiting?, How we hire for Private Equity & VC, The PE/VC Talent Challenge",
+      "evidence": {
+        "missingSectionsCount": 17,
+        "missingContentCount": 15,
+        "missingAssetsCount": 5,
+        "seoIssuesCount": 3,
+        "responsiveIssuesCount": 0,
+        "consoleErrorCount": 0,
+        "diffCount": 18
+      }
+    },
+    {
+      "priority": 32,
+      "bucket": "3. Missing major sections",
+      "sourcePath": "/industries/public-sector",
+      "destinationPath": "/industries/public-sector",
+      "severity": "CRITICAL",
+      "repairRecommendation": "Add missing sections to destination: Agile Talent Solutions for Government & Public Agencies, Public Sector Industry Insights, Ready to transform your public sector recruiting?, How we hire for Public Sector, The Public Sector Hiring Challenge",
+      "evidence": {
+        "missingSectionsCount": 17,
+        "missingContentCount": 15,
+        "missingAssetsCount": 4,
+        "seoIssuesCount": 3,
+        "responsiveIssuesCount": 0,
+        "consoleErrorCount": 0,
+        "diffCount": 18
+      }
+    },
+    {
+      "priority": 33,
+      "bucket": "3. Missing major sections",
+      "sourcePath": "/industries/real-estate",
+      "destinationPath": "/industries/real-estate",
+      "severity": "CRITICAL",
+      "repairRecommendation": "Add missing sections to destination: Real Estate Professionals for Brokerages & Property Management, Real Estate Industry Insights, Ready to transform your real estate recruiting?, How we hire for Real Estate, The Real Estate Staffing Challenge",
+      "evidence": {
+        "missingSectionsCount": 17,
+        "missingContentCount": 15,
+        "missingAssetsCount": 4,
+        "seoIssuesCount": 3,
+        "responsiveIssuesCount": 0,
+        "consoleErrorCount": 0,
+        "diffCount": 18
+      }
+    },
+    {
+      "priority": 34,
+      "bucket": "3. Missing major sections",
+      "sourcePath": "/industries/saas",
+      "destinationPath": "/industries/saas",
+      "severity": "CRITICAL",
+      "repairRecommendation": "Add missing sections to destination: SaaS Talent for Product-Led Growth Companies, SaaS & Cloud Industry Insights, Ready to transform your saas & cloud recruiting?, How we hire for SaaS & Cloud, The SaaS Talent Challenge",
+      "evidence": {
+        "missingSectionsCount": 17,
+        "missingContentCount": 15,
+        "missingAssetsCount": 5,
+        "seoIssuesCount": 3,
+        "responsiveIssuesCount": 0,
+        "consoleErrorCount": 0,
+        "diffCount": 18
+      }
+    },
+    {
+      "priority": 35,
+      "bucket": "3. Missing major sections",
+      "sourcePath": "/industries/sales",
+      "destinationPath": "/industries/sales",
+      "severity": "CRITICAL",
+      "repairRecommendation": "Add missing sections to destination: Sales Professionals Who Drive Revenue Growth, Sales Industry Insights, Ready to transform your sales recruiting?, How we hire for Sales, The Sales Hiring Challenge",
+      "evidence": {
+        "missingSectionsCount": 17,
+        "missingContentCount": 15,
+        "missingAssetsCount": 4,
+        "seoIssuesCount": 3,
+        "responsiveIssuesCount": 0,
+        "consoleErrorCount": 0,
+        "diffCount": 18
+      }
+    },
+    {
+      "priority": 36,
+      "bucket": "3. Missing major sections",
+      "sourcePath": "/industries/staffing-agencies",
+      "destinationPath": "/industries/staffing-agencies",
+      "severity": "CRITICAL",
+      "repairRecommendation": "Add missing sections to destination: White-Label Recruiting for Staffing & Recruiting Firms, Staffing Agencies Industry Insights, Ready to transform your staffing agencies recruiting?, How we hire for Staffing Agencies, The Staffing Agency Challenge",
+      "evidence": {
+        "missingSectionsCount": 16,
+        "missingContentCount": 15,
+        "missingAssetsCount": 5,
+        "seoIssuesCount": 3,
+        "responsiveIssuesCount": 0,
+        "consoleErrorCount": 0,
+        "diffCount": 18
+      }
+    },
+    {
+      "priority": 37,
+      "bucket": "3. Missing major sections",
+      "sourcePath": "/industries/tech",
+      "destinationPath": "/industries/tech",
+      "severity": "CRITICAL",
+      "repairRecommendation": "Add missing sections to destination: Engineering Talent On-Demand for Tech Companies, Technology Industry Insights, Ready to transform your technology recruiting?, How we hire for Technology, The Tech Hiring Challenge",
+      "evidence": {
+        "missingSectionsCount": 17,
+        "missingContentCount": 15,
+        "missingAssetsCount": 4,
+        "seoIssuesCount": 3,
+        "responsiveIssuesCount": 0,
+        "consoleErrorCount": 0,
+        "diffCount": 18
+      }
+    },
+    {
+      "priority": 38,
+      "bucket": "3. Missing major sections",
+      "sourcePath": "/knowledge-base",
+      "destinationPath": "/knowledge-base",
+      "severity": "CRITICAL",
+      "repairRecommendation": "Add missing sections to destination: How Can We Help?, What is Talent-as-a-Service?, Still have questions?",
+      "evidence": {
+        "missingSectionsCount": 3,
+        "missingContentCount": 15,
+        "missingAssetsCount": 1,
+        "seoIssuesCount": 3,
+        "responsiveIssuesCount": 0,
+        "consoleErrorCount": 0,
+        "diffCount": 18
+      }
+    },
+    {
+      "priority": 39,
+      "bucket": "3. Missing major sections",
+      "sourcePath": "/partnerships/staffing",
+      "destinationPath": "/partnerships/staffing",
+      "severity": "CRITICAL",
+      "repairRecommendation": "Add missing sections to destination: Everybody Wins When You Partner with TaaS, A Partnership Where Everyone Wins, More Affordable Than Contingency. Better Results., What Our Agency Partners Say, Choose Your Partnership Level",
+      "evidence": {
+        "missingSectionsCount": 7,
+        "missingContentCount": 13,
+        "missingAssetsCount": 2,
+        "seoIssuesCount": 3,
+        "responsiveIssuesCount": 0,
+        "consoleErrorCount": 0,
+        "diffCount": 18
+      }
+    },
+    {
+      "priority": 40,
+      "bucket": "3. Missing major sections",
+      "sourcePath": "/pilot",
+      "destinationPath": "/pilot",
+      "severity": "CRITICAL",
+      "repairRecommendation": "Add missing sections to destination: What the Pilot Is, What Happens Next, Ready to Start?",
+      "evidence": {
+        "missingSectionsCount": 3,
+        "missingContentCount": 6,
+        "missingAssetsCount": 2,
+        "seoIssuesCount": 3,
+        "responsiveIssuesCount": 0,
+        "consoleErrorCount": 0,
+        "diffCount": 15
+      }
+    },
+    {
+      "priority": 41,
+      "bucket": "3. Missing major sections",
+      "sourcePath": "/pricing",
+      "destinationPath": "/pricing",
+      "severity": "CRITICAL",
+      "repairRecommendation": "Add missing sections to destination: Plans that scale with volume, DIV, Pilot \u2014 Single Position, Included Title, After Title",
+      "evidence": {
+        "missingSectionsCount": 11,
+        "missingContentCount": 6,
+        "missingAssetsCount": 2,
+        "seoIssuesCount": 1,
+        "responsiveIssuesCount": 0,
+        "consoleErrorCount": 0,
+        "diffCount": 12
+      }
+    },
+    {
+      "priority": 42,
+      "bucket": "3. Missing major sections",
+      "sourcePath": "/privacy",
+      "destinationPath": "/privacy",
+      "severity": "CRITICAL",
+      "repairRecommendation": "Add missing sections to destination: Global Recruitment Privacy Notice, 1. Who We Are, 2. Personal Data We Collect, 3. How We Collect Personal Data, 4. Purposes of Processing",
+      "evidence": {
+        "missingSectionsCount": 17,
+        "missingContentCount": 7,
+        "missingAssetsCount": 1,
+        "seoIssuesCount": 3,
+        "responsiveIssuesCount": 0,
+        "consoleErrorCount": 0,
+        "diffCount": 18
+      }
+    },
+    {
+      "priority": 43,
+      "bucket": "3. Missing major sections",
+      "sourcePath": "/resources",
+      "destinationPath": "/resources",
+      "severity": "CRITICAL",
+      "repairRecommendation": "Add missing sections to destination: Recruiting resources for talent leaders, Recruiting playbooks and guides, How to use these resources",
+      "evidence": {
+        "missingSectionsCount": 3,
+        "missingContentCount": 10,
+        "missingAssetsCount": 1,
+        "seoIssuesCount": 3,
+        "responsiveIssuesCount": 0,
+        "consoleErrorCount": 0,
+        "diffCount": 18
+      }
+    },
+    {
+      "priority": 44,
+      "bucket": "3. Missing major sections",
+      "sourcePath": "/taasflow-journey",
+      "destinationPath": "/journey",
+      "severity": "CRITICAL",
+      "repairRecommendation": "Add missing sections to destination: Recruitment,rebuilt to flow.",
+      "evidence": {
+        "missingSectionsCount": 1,
+        "missingContentCount": 1,
+        "missingAssetsCount": 0,
+        "seoIssuesCount": 4,
+        "responsiveIssuesCount": 0,
+        "consoleErrorCount": 0,
+        "diffCount": 18
+      }
+    },
+    {
+      "priority": 45,
+      "bucket": "3. Missing major sections",
+      "sourcePath": "/talent",
+      "destinationPath": "/talent-marketplace",
+      "severity": "CRITICAL",
+      "repairRecommendation": "Add missing sections to destination: A window into the TaaSFlow talent network, A window into the TaaSFlow talent network, No profiles match your filters, Ready to hire from this network?",
+      "evidence": {
+        "missingSectionsCount": 4,
+        "missingContentCount": 10,
+        "missingAssetsCount": 1,
+        "seoIssuesCount": 4,
+        "responsiveIssuesCount": 0,
+        "consoleErrorCount": 0,
+        "diffCount": 21
+      }
+    },
+    {
+      "priority": 46,
+      "bucket": "3. Missing major sections",
+      "sourcePath": "/talent-network",
+      "destinationPath": "/talent-network",
+      "severity": "CRITICAL",
+      "repairRecommendation": "Add missing sections to destination: Headline, Heading, Heading, Heading",
+      "evidence": {
+        "missingSectionsCount": 4,
+        "missingContentCount": 2,
+        "missingAssetsCount": 1,
+        "seoIssuesCount": 3,
+        "responsiveIssuesCount": 0,
+        "consoleErrorCount": 0,
+        "diffCount": 18
+      }
+    },
+    {
+      "priority": 47,
+      "bucket": "3. Missing major sections",
+      "sourcePath": "/terms",
+      "destinationPath": "/terms",
+      "severity": "CRITICAL",
+      "repairRecommendation": "Add missing sections to destination: Terms of Service, 1. Acceptance of Terms, 2. Description of Services, 3. Account Registration, 4. Subscriptions, Pricing, and Payment",
+      "evidence": {
+        "missingSectionsCount": 16,
+        "missingContentCount": 2,
+        "missingAssetsCount": 1,
+        "seoIssuesCount": 3,
+        "responsiveIssuesCount": 0,
+        "consoleErrorCount": 0,
+        "diffCount": 18
+      }
+    },
+    {
+      "priority": 48,
+      "bucket": "7. Responsive failures",
+      "sourcePath": "/sitemap.xml",
+      "destinationPath": "/sitemap.xml",
+      "severity": "HIGH",
+      "repairRecommendation": "Eliminate horizontal overflow on: mobile",
+      "evidence": {
+        "missingSectionsCount": 0,
+        "missingContentCount": 0,
+        "missingAssetsCount": 0,
+        "seoIssuesCount": 3,
+        "responsiveIssuesCount": 1,
+        "consoleErrorCount": 0,
+        "diffCount": 0
+      }
+    }
+  ]
+}

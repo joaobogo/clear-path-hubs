@@ -1,0 +1,3308 @@
+{
+  "sourcePath": "/industries/consulting",
+  "destinationPath": "/industries/consulting",
+  "pageType": "industry_page",
+  "protected": false,
+  "verdict": "MAJOR_DIFFERENCE",
+  "severity": "HIGH",
+  "viewports": [
+    {
+      "viewport": "mobile",
+      "source": {
+        "url": "https://taasflow.com/industries/consulting",
+        "finalUrl": "https://taasflow.com/industries/consulting",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [
+          {
+            "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HJ2ECKCNK4&gtm=45je67l1v9245339446za200zd9245339446&_p=1784774371245&gcd=13l3l3l3l1l1&npa=0&_ng=1&dma=0&are=1&cid=555470698.1784774372&frm=0&ngs=1&pscdl=noapi&rcb=15&sr=375x812&uaa=x86&uab=64&uafvl=Not-A.Brand%3B24.0.0.0%7CChromium%3B146.0.7680.80&uam=&uamb=0&uap=Windows&uapv=&uaw=0&ul=en-us&_s=1&tag_exp=115616985~115938466~115938469~118897920~118897930~119724322~119896802&dp=%2Findustries%2Fconsulting&dt=TaaSFlow%20%7C%20Talent%20as%20a%20Service%20%7C%20Subscription%20Recruiting&dl=https%3A%2F%2Ftaasflow.com%2Findustries%2Fconsulting&sid=1784774371&sct=1&seg=0&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&ep.role_type=public&ep.is_authenticated=false&tfd=647",
+            "status": null,
+            "failure": "net::ERR_ABORTED"
+          }
+        ],
+        "title": "Consulting Talent | TaaSFlow - Talent as a Service",
+        "description": "On-demand consulting professionals including analysts, associates, and project managers. Extend your delivery capacity for more engagements.",
+        "canonical": "https://taasflow.com/industries/consulting",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:type": "website",
+          "og:url": "https://taasflow.com/industries/consulting",
+          "og:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "og:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "og:image": "https://taasflow.com/og-image.png",
+          "og:image:width": "1200",
+          "og:image:height": "630",
+          "og:locale": "en_US",
+          "twitter:card": "summary_large_image",
+          "twitter:site": "@TaasFlow",
+          "twitter:creator": "@TaasFlow",
+          "twitter:url": "https://taasflow.com/industries/consulting",
+          "twitter:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "twitter:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "twitter:image": "https://taasflow.com/og-image.png"
+        },
+        "structuredData": [
+          {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "@id": "https://taasflow.com/#organization",
+            "name": "TaaSFlow",
+            "legalName": "TaaSFlow",
+            "url": "https://taasflow.com/",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://taasflow.com/favicon.png",
+              "width": 512,
+              "height": 512
+            },
+            "image": "https://taasflow.com/og-image.png",
+            "description": "Talent as a Service — subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+            "slogan": "Your hiring team. On demand.",
+            "foundingDate": "2024",
+            "areaServed": [
+              {
+                "@type": "Country",
+                "name": "United States"
+              },
+              {
+                "@type": "Country",
+                "name": "United Arab Emirates"
+              },
+              {
+                "@type": "Country",
+                "name": "United Kingdom"
+              },
+              {
+                "@type": "Country",
+                "name": "Brazil"
+              }
+            ],
+            "knowsAbout": [
+              "Subscription recruiting",
+              "Talent as a Service",
+              "Candidate sourcing",
+              "Pre-screened candidates",
+              "Recruitment process outsourcing"
+            ],
+            "contactPoint": [
+              {
+                "@type": "ContactPoint",
+                "contactType": "sales",
+                "email": "hello@taasflow.com",
+                "url": "https://taasflow.com/contact",
+                "availableLanguage": [
+                  "English",
+                  "Portuguese",
+                  "Spanish"
+                ]
+              }
+            ],
+            "sameAs": [
+              "https://www.linkedin.com/company/taasflow",
+              "https://twitter.com/TaasFlow"
+            ]
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "@id": "https://taasflow.com/#website",
+            "name": "TaaSFlow",
+            "alternateName": "Talent as a Service",
+            "url": "https://taasflow.com/",
+            "description": "Subscription recruiting that delivers pre-screened, ranked candidates in 14 days.",
+            "inLanguage": "en-US",
+            "publisher": {
+              "@id": "https://taasflow.com/#organization"
+            },
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": {
+                "@type": "EntryPoint",
+                "urlTemplate": "https://taasflow.com/jobs?q={search_term_string}"
+              },
+              "query-input": "required name=search_term_string"
+            }
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "Service",
+            "name": "Consulting Talent Sourcing",
+            "description": "On-demand consulting professionals including analysts, associates, and project managers. Extend your delivery capacity for more engagements.",
+            "provider": {
+              "@type": "Organization",
+              "name": "TaasFlow",
+              "url": "https://taasflow.com"
+            },
+            "serviceType": "Talent Acquisition",
+            "areaServed": "United States",
+            "hasOfferCatalog": {
+              "@type": "OfferCatalog",
+              "name": "Consulting Recruiting Services",
+              "itemListElement": [
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Consultants Recruiting"
+                  },
+                  "position": 1
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Analysts Recruiting"
+                  },
+                  "position": 2
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Associates Recruiting"
+                  },
+                  "position": 3
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Senior Consultants Recruiting"
+                  },
+                  "position": 4
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Project Managers Recruiting"
+                  },
+                  "position": 5
+                }
+              ]
+            }
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "https://taasflow.com"
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Industries",
+                "item": "https://taasflow.com/industries"
+              },
+              {
+                "@type": "ListItem",
+                "position": 3,
+                "name": "Consulting",
+                "item": "https://taasflow.com/industries//industries/consulting"
+              }
+            ]
+          }
+        ],
+        "h1": [
+          "Consulting Talent for Firms & Advisory Practices"
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "Consulting Talent for Firms & Advisory Practices"
+          },
+          {
+            "level": 2,
+            "text": "Consulting Industry Insights"
+          },
+          {
+            "level": 3,
+            "text": "Consulting Market"
+          },
+          {
+            "level": 3,
+            "text": "Utilization Target"
+          },
+          {
+            "level": 3,
+            "text": "Bench Cost"
+          },
+          {
+            "level": 3,
+            "text": "Subcontract Premium"
+          },
+          {
+            "level": 3,
+            "text": "Industry Overview"
+          },
+          {
+            "level": 3,
+            "text": "Ready to transform your consulting recruiting?"
+          },
+          {
+            "level": 2,
+            "text": "How we hire for Consulting"
+          },
+          {
+            "level": 3,
+            "text": "Engagement Scoping"
+          },
+          {
+            "level": 3,
+            "text": "Consulting Background Screen"
+          },
+          {
+            "level": 3,
+            "text": "White-Label Branding"
+          },
+          {
+            "level": 3,
+            "text": "Engagement-Ready Delivery"
+          },
+          {
+            "level": 2,
+            "text": "The Consulting Capacity Challenge"
+          },
+          {
+            "level": 3,
+            "text": "The TaasFlow Solution"
+          },
+          {
+            "level": 2,
+            "text": "Why Consulting companies choose TaasFlow"
+          },
+          {
+            "level": 3,
+            "text": "Consulting-Native Talent"
+          },
+          {
+            "level": 3,
+            "text": "Invisible Partnership"
+          },
+          {
+            "level": 3,
+            "text": "40% Cost Savings"
+          },
+          {
+            "level": 3,
+            "text": "Rapid Deployment"
+          },
+          {
+            "level": 2,
+            "text": "Positions we fill for Consulting"
+          },
+          {
+            "level": 2,
+            "text": "Real results for Consulting teams"
+          },
+          {
+            "level": 2,
+            "text": "Consulting Salary Explorer"
+          },
+          {
+            "level": 2,
+            "text": "Consulting Career Path"
+          },
+          {
+            "level": 3,
+            "text": "Senior"
+          },
+          {
+            "level": 4,
+            "text": "Key Skills at This Level"
+          },
+          {
+            "level": 2,
+            "text": "Consulting Hiring Trends"
+          },
+          {
+            "level": 2,
+            "text": "Interactive Hiring Guide"
+          },
+          {
+            "level": 3,
+            "text": "Define Your Ideal Candidate"
+          },
+          {
+            "level": 3,
+            "text": "Optimize Your Job Posting"
+          },
+          {
+            "level": 3,
+            "text": "Source Beyond Job Boards"
+          },
+          {
+            "level": 3,
+            "text": "Structure Your Interview Process"
+          },
+          {
+            "level": 3,
+            "text": "Close & Onboard Effectively"
+          },
+          {
+            "level": 2,
+            "text": "Consulting Recruiting Insights"
+          },
+          {
+            "level": 3,
+            "text": "Consulting Firm Hiring: How Top Firms Build and Retain Their Talent Pipeline"
+          },
+          {
+            "level": 3,
+            "text": "Consulting Firm Recruiting: Competing for Top Talent Beyond the Big Four"
+          },
+          {
+            "level": 3,
+            "text": "Recruiting for Consulting Firms: Attracting Top-Tier Talent"
+          },
+          {
+            "level": 2,
+            "text": "Frequently Asked Questions"
+          },
+          {
+            "level": 3,
+            "text": "Do your consultants have Big 4 experience?"
+          },
+          {
+            "level": 3,
+            "text": "Can you support proposal development?"
+          },
+          {
+            "level": 3,
+            "text": "How quickly can you staff an engagement?"
+          },
+          {
+            "level": 2,
+            "text": "Discover related industries"
+          },
+          {
+            "level": 2,
+            "text": "Ready to build your Consulting team?"
+          },
+          {
+            "level": 2,
+            "text": "Consulting Recruiting"
+          },
+          {
+            "level": 3,
+            "text": "Hub Page"
+          },
+          {
+            "level": 3,
+            "text": "Related Articles"
+          },
+          {
+            "level": 3,
+            "text": "Get Started"
+          },
+          {
+            "level": 4,
+            "text": "Newsletter"
+          },
+          {
+            "level": 4,
+            "text": "For candidates"
+          },
+          {
+            "level": 4,
+            "text": "For companies"
+          },
+          {
+            "level": 4,
+            "text": "Industries"
+          },
+          {
+            "level": 4,
+            "text": "Company"
+          }
+        ],
+        "sections": [
+          "SECTION",
+          "Consulting Talent for Firms & Advisory Practices",
+          "SECTION",
+          "Consulting Industry Insights",
+          "Ready to transform your consulting recruiting?",
+          "How we hire for Consulting",
+          "The Consulting Capacity Challenge",
+          "Why Consulting companies choose TaasFlow",
+          "Positions we fill for Consulting",
+          "Real results for Consulting teams",
+          "Consulting Salary Explorer",
+          "Consulting Career Path",
+          "Consulting Hiring Trends",
+          "Interactive Hiring Guide",
+          "Consulting Recruiting Insights",
+          "Frequently Asked Questions",
+          "Discover related industries",
+          "SECTION",
+          "Ready to build your Consulting team?",
+          "Consulting Recruiting"
+        ],
+        "textBlocks": [
+          "Solutions",
+          "Industries",
+          "Resources",
+          "Home",
+          "Industries",
+          "Consulting",
+          "Access consultants, analysts, and project managers to extend your delivery capacity. Handle more engagements without permanent headcount.",
+          "Key market data and trends shaping talent demand in your industry. (Hover for details)",
+          "US management consulting market size",
+          "Typical consultant utilization rate target",
+          "Annual cost per unbilled senior consultant",
+          "Markup when subcontracting to other consulting firms",
+          "Start a risk-free pilot and receive qualified candidates in 14 days.",
+          "A tailored workflow for the challenges of consulting settings.",
+          "We understand your methodology, client culture, and quality standards.",
+          "Candidates verified for Big 4 or boutique consulting backgrounds.",
+          "All materials and communications configured under your firm branding.",
+          "Consultants deployed within 1 week of confirmed SOW.",
+          "Consulting is project-based, but staffing is fixed. You win engagements that require immediate capacity, but permanent hires become bench cost between projects.",
+          "Subcontracting to other firms is expensive and risks client relationships. You want to keep work in-house but lack the bodies.",
+          "Finding consultants who can adapt to your methodology, client culture, and quality standards quickly is challenging.",
+          "Analysts and associates with Big 4 or boutique consulting backgrounds",
+          "Project managers experienced in consulting delivery methodologies",
+          "Subject matter experts across industries and functional areas",
+          "Research and analysis support for proposal development",
+          "White-label capacity that's invisible to your clients",
+          "We understand the unique challenges of your industry and deliver matching talent.",
+          "Professionals with genuine consulting backgrounds who understand the model.",
+          "White-label support—your branding, your client relationship.",
+          "More cost-effective than subcontracting to other firms.",
+          "Staff engagements within 1 week of confirmed SOW.",
+          "Pre-vetted professionals, delivered weekly, ready to start.",
+          "- Boutique Strategy Firm, 25 partners",
+          "Explore current compensation ranges for top roles. Data updated quarterly from industry benchmarks.",
+          "* Based on industry benchmarks from SHRM, Glassdoor, LinkedIn Salary, and BLS data. Actual compensation may vary.",
+          "Click any level to explore typical progression, salary ranges, and key skills.",
+          "Key metrics shaping the talent landscape. Stay ahead of market shifts.",
+          "Steady growth in hiring demand across this sector.",
+          "Increasing adoption of remote and hybrid work models.",
+          "Unfilled positions due to skills shortage in this industry.",
+          "Industry average continues to improve with modern sourcing.",
+          "Follow these proven steps to hire smarter. Track your progress and get actionable tips at every stage.",
+          "Create a detailed candidate persona with must-have vs nice-to-have skills, cultural fit criteria, and realistic salary expectations.",
+          "Write a compelling job description that sells the opportunity, not just lists requirements. Include salary range, growth path, and team culture.",
+          "Reach passive candidates through targeted outreach, employee referrals, and talent communities. 70% of top talent is not actively looking.",
+          "Design a consistent 3-4 stage process that evaluates skills, culture fit, and potential. Include take-home assessments where appropriate.",
+          "Move fast with competitive offers and start onboarding before day one. The first 90 days determine long-term retention.",
+          "Expert articles on recruiting and talent acquisition for consulting.",
+          "Consulting firms live and die by their talent. Here is how McKinsey, BCG, Deloitte, and boutiques source and develop consultants.",
+          "Consulting Firm Recruiting: Competing for Top Talent Beyond the Big Four",
+          "Boutique and mid-tier consulting firms struggle to compete with MBB and Big Four for talent. Here is how to differentiate.",
+          "Recruiting for Consulting Firms: Attracting Top-Tier Talent",
+          "Consulting firms compete for the same elite candidates as tech and finance. Learn strategies to win talent in this competitive landscape.",
+          "Common questions about TaasFlow for consulting.",
+          "Learn how we serve similar sectors with subscription recruiting.",
+          "Receive qualified consulting professionals weekly. No agency fees, no long-term contracts.",
+          "Talent as a Service",
+          "A global hiring system for teams that need consistent recruiting.",
+          "Weekly insights into talent acquisition. No spam.",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Book call",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "No recruitment agency fees. No placement charges. Subscription-based hiring system.",
+          "Copyright 2026 TaaSFlow. All rights reserved."
+        ],
+        "buttons": [
+          "Solutions",
+          "Industries",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Solutions",
+          "How it works",
+          "Pilot",
+          "Enterprise",
+          "Case studies",
+          "Jobs",
+          "Journey",
+          "Industries",
+          "Tech",
+          "SaaS & Cloud",
+          "Cybersecurity",
+          "Data & Analytics",
+          "Finance",
+          "Insurance",
+          "PE & VC",
+          "Accounting",
+          "Legal",
+          "Consulting",
+          "HR & Recruiting",
+          "Staffing Agencies",
+          "Sales",
+          "Marketing",
+          "E-commerce",
+          "Media",
+          "Real Estate",
+          "Construction",
+          "Hospitality",
+          "Healthcare",
+          "Public Sector",
+          "Non-Profit",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Success Stories",
+          "Talent Marketplace",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Start Consulting Pilot Program",
+          "Book call",
+          "Book call",
+          "1Entry-Level",
+          "2Mid-Level",
+          "3Senior",
+          "4Director / Lead",
+          "5VP / C-Suite",
+          "Next: Director / Lead",
+          "1Define Your Ideal Candidate1-2 days",
+          "1",
+          "Mark Complete",
+          "2Optimize Your Job PostingWrite a compelling job description that sells the opportunity, not just lists requirements. Include salary range, growth path, and team culture.1 day",
+          "2",
+          "3Source Beyond Job BoardsReach passive candidates through targeted outreach, employee referrals, and talent communities. 70% of top talent is not actively looking.Ongoing",
+          "3",
+          "4Structure Your Interview ProcessDesign a consistent 3-4 stage process that evaluates skills, culture fit, and potential. Include take-home assessments where appropriate.2-3 days setup",
+          "4",
+          "5Close & Onboard EffectivelyMove fast with competitive offers and start onboarding before day one. The first 90 days determine long-term retention.1-2 weeks",
+          "5",
+          "Do your consultants have Big 4 experience?",
+          "Can you support proposal development?",
+          "How quickly can you staff an engagement?",
+          "Start Consulting Pilot",
+          "Contact",
+          "Subscribe",
+          "Book call"
+        ],
+        "links": [
+          {
+            "text": "Skip to main content",
+            "href": "https://taasflow.com/industries/consulting#main-content"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "Browse jobs",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Join the network",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Browse open roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Home",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "Industries",
+            "href": "https://taasflow.com/industries"
+          },
+          {
+            "text": "View all articles",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "Industry Hiring GuidesConsultingConsulting Firm Hiring: How Top Firms Build and Retain Their Talent PipelineConsulting f",
+            "href": "https://taasflow.com/blog/consulting-firm-hiring-strategies"
+          },
+          {
+            "text": "📋Consulting Firm Recruiting: Competing for Top Talent Beyond the Big FourIndustry Hiring GuidesIndustry Hiring GuidesCo",
+            "href": "https://taasflow.com/blog/management-consulting-recruiting-strategies"
+          },
+          {
+            "text": "🔍Recruiting for Consulting Firms: Attracting Top-Tier TalentIndustry SpotlightIndustry SpotlightConsultingRecruiting fo",
+            "href": "https://taasflow.com/blog/consulting-recruitment-strategies"
+          },
+          {
+            "text": "View all articles",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "Technology",
+            "href": "https://taasflow.com/industries/tech"
+          },
+          {
+            "text": "Legal",
+            "href": "https://taasflow.com/industries/legal"
+          },
+          {
+            "text": "Public Sector",
+            "href": "https://taasflow.com/industries/public-sector"
+          },
+          {
+            "text": "Finance & Banking",
+            "href": "https://taasflow.com/industries/finance"
+          },
+          {
+            "text": "Staffing Agencies",
+            "href": "https://taasflow.com/industries/staffing-agencies"
+          },
+          {
+            "text": "Healthcare",
+            "href": "https://taasflow.com/industries/healthcare"
+          },
+          {
+            "text": "Sales",
+            "href": "https://taasflow.com/industries/sales"
+          },
+          {
+            "text": "Marketing & Advertising",
+            "href": "https://taasflow.com/industries/marketing"
+          },
+          {
+            "text": "Compare all industries",
+            "href": "https://taasflow.com/industries/compare"
+          },
+          {
+            "text": "How it works",
+            "href": "https://taasflow.com/how-it-works"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "Start Pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "Jobs",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Blog",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "About",
+            "href": "https://taasflow.com/about"
+          },
+          {
+            "text": "Enterprise",
+            "href": "https://taasflow.com/enterprise"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://taasflow.com/faq"
+          },
+          {
+            "text": "Contact",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Looking for a job in consulting? Browse open positions",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Consulting Recruiting",
+            "href": "https://taasflow.com/industries/consulting"
+          },
+          {
+            "text": "Consulting Firm Hiring",
+            "href": "https://taasflow.com/blog/consulting-firm-hiring"
+          },
+          {
+            "text": "Talent Sourcing Strategies",
+            "href": "https://taasflow.com/blog/talent-sourcing-strategies"
+          },
+          {
+            "text": "Cost-per-Hire Optimization",
+            "href": "https://taasflow.com/blog/cost-per-hire-optimization"
+          },
+          {
+            "text": "Start a Pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "View Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "LinkedIn",
+            "href": "https://www.linkedin.com/company/taasflow/"
+          },
+          {
+            "text": "Browse roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Talent network",
+            "href": "https://taasflow.com/global-talent"
+          },
+          {
+            "text": "Member stories",
+            "href": "https://taasflow.com/candidate-success"
+          },
+          {
+            "text": "Start pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "Employer onboarding",
+            "href": "https://taasflow.com/employer-onboarding"
+          },
+          {
+            "text": "Case studies",
+            "href": "https://taasflow.com/case-studies"
+          },
+          {
+            "text": "Healthcare",
+            "href": "https://taasflow.com/industries/healthcare"
+          },
+          {
+            "text": "Technology",
+            "href": "https://taasflow.com/industries/tech"
+          },
+          {
+            "text": "Finance",
+            "href": "https://taasflow.com/industries/finance"
+          },
+          {
+            "text": "Legal",
+            "href": "https://taasflow.com/industries/legal"
+          },
+          {
+            "text": "All →",
+            "href": "https://taasflow.com/industries"
+          },
+          {
+            "text": "About us",
+            "href": "https://taasflow.com/about"
+          },
+          {
+            "text": "Blog",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://taasflow.com/faq"
+          },
+          {
+            "text": "Knowledge Base",
+            "href": "https://taasflow.com/knowledge-base"
+          },
+          {
+            "text": "Contact us",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Privacy Policy",
+            "href": "https://taasflow.com/privacy"
+          },
+          {
+            "text": "Terms of Service",
+            "href": "https://taasflow.com/terms"
+          }
+        ],
+        "images": [
+          {
+            "src": "https://taasflow.com/assets/logo-on-white-Dk9DIcMP.png",
+            "alt": "TaaSFlow logo"
+          },
+          {
+            "src": "https://taasflow.com/assets/consulting-BJHEQnFp.jpg",
+            "alt": ""
+          },
+          {
+            "src": "https://taasflow.com/assets/consulting-BJHEQnFp.jpg",
+            "alt": ""
+          },
+          {
+            "src": "https://taasflow.com/assets/consulting-BJHEQnFp.jpg",
+            "alt": ""
+          },
+          {
+            "src": "https://taasflow.com/assets/consulting-hiring-CdIfJnSU.jpg",
+            "alt": "Consulting Firm Hiring: How Top Firms Build and Retain Their Talent Pipeline"
+          },
+          {
+            "src": "https://taasflow.com/assets/logo-on-blue-CX6jlwjg.png",
+            "alt": "TaaSFlow logo"
+          }
+        ],
+        "forms": [
+          {
+            "action": "https://taasflow.com/industries/consulting",
+            "fields": [
+              "input"
+            ]
+          }
+        ],
+        "navLinks": [
+          "Browse jobs",
+          "Join the network",
+          "Browse open roles",
+          "Home",
+          "Industries",
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us"
+        ],
+        "footerLinks": [
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "Privacy Policy",
+          "Terms of Service"
+        ],
+        "horizontalOverflow": false,
+        "documentWidth": 375,
+        "viewportWidth": 375
+      },
+      "destination": {
+        "url": "https://clear-path-hubs.lovable.app/industries/consulting",
+        "finalUrl": "https://clear-path-hubs.lovable.app/industries/consulting",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [],
+        "title": "Consulting hiring — TaaSFlow",
+        "description": "Consultants, analysts, and delivery specialists for firms and advisory practices — sourced through structured rubrics and evidence-based scoring.",
+        "canonical": "https://clear-path-hubs.lovable.app/industries/consulting",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "twitter:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "og:title": "Consulting hiring — TaaSFlow",
+          "og:description": "Consultants, analysts, and delivery specialists for firms and advisory practices — sourced through structured rubrics and evidence-based scoring.",
+          "og:url": "https://clear-path-hubs.lovable.app/industries/consulting",
+          "og:type": "website",
+          "twitter:card": "summary_large_image",
+          "twitter:title": "Consulting hiring — TaaSFlow",
+          "twitter:description": "Consultants, analysts, and delivery specialists for firms and advisory practices — sourced through structured rubrics and evidence-based scoring."
+        },
+        "structuredData": [],
+        "h1": [
+          "Extend your delivery capacity without diluting your standard."
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "Extend your delivery capacity without diluting your standard."
+          },
+          {
+            "level": 2,
+            "text": "What we hear from Consulting teams"
+          },
+          {
+            "level": 3,
+            "text": "Every engagement type wants a different profile"
+          },
+          {
+            "level": 3,
+            "text": "Consulting CVs read alike"
+          },
+          {
+            "level": 3,
+            "text": "Leverage without losing quality"
+          },
+          {
+            "level": 2,
+            "text": "Roles we source in Consulting"
+          },
+          {
+            "level": 3,
+            "text": "Submit the role"
+          },
+          {
+            "level": 3,
+            "text": "We source and score"
+          },
+          {
+            "level": 3,
+            "text": "Review in your workspace"
+          },
+          {
+            "level": 2,
+            "text": "Scaling a consulting practice?"
+          }
+        ],
+        "sections": [
+          "Extend your delivery capacity without diluting your standard.",
+          "What we hear from Consulting teams",
+          "Roles we source in Consulting",
+          "Submit the role",
+          "Scaling a consulting practice?",
+          "SECTION"
+        ],
+        "textBlocks": [
+          "Home",
+          "Industries",
+          "Consulting",
+          "Consulting",
+          "TaaSFlow helps consulting firms and advisory practices scale delivery: structured intake per engagement type, rubrics per level, and evidence of the outcomes each candidate has actually delivered.",
+          "Rubric per practice and level",
+          "Outcome evidence from the CV",
+          "Human review before publication",
+          "Strategy, operations, technology and change work each favour different backgrounds. We calibrate rubrics per practice so the shortlist matches the engagement, not just the title.",
+          "Case-count and firm names look similar on paper. Our scoring extracts specific evidence: the industries served, the problems owned, the outcomes delivered.",
+          "The whole point is more capacity at your standard. Every candidate we surface has been reviewed against your rubric before publication — no unranked pipes.",
+          "We calibrate the rubric to the seniority and specialisation you actually need.",
+          "Management consultants",
+          "Strategy advisors",
+          "Operations consultants",
+          "Technology consultants",
+          "Change & transformation leads",
+          "Project & programme managers",
+          "Implementation consultants",
+          "Practice & engagement leads",
+          "01",
+          "A guided intake captures everything the search needs, in one flow.",
+          "02",
+          "Multi-channel sourcing, role-specific rubric, evidence extracted from every CV.",
+          "03",
+          "Ranked shortlist, evidence side-by-side, Kanban pipeline, direct messaging.",
+          "See the full process on how it works.",
+          "Consulting",
+          "Submit the role — one workspace, one rubric, one accountable delivery team."
+        ],
+        "buttons": [],
+        "links": [
+          {
+            "text": "Home",
+            "href": "https://clear-path-hubs.lovable.app/"
+          },
+          {
+            "text": "Industries",
+            "href": "https://clear-path-hubs.lovable.app/industries"
+          },
+          {
+            "text": "Start hiring",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "Talk to us",
+            "href": "https://clear-path-hubs.lovable.app/contact"
+          },
+          {
+            "text": "how it works",
+            "href": "https://clear-path-hubs.lovable.app/how-it-works"
+          },
+          {
+            "text": "Start intake",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "See other industries",
+            "href": "https://clear-path-hubs.lovable.app/industries"
+          },
+          {
+            "text": "Edit with",
+            "href": "https://lovable.dev/projects/1dc5ee7e-1294-441c-8288-850e79e443f6?utm_source=lovable-badge"
+          }
+        ],
+        "images": [],
+        "forms": [],
+        "navLinks": [
+          "Home",
+          "Industries"
+        ],
+        "footerLinks": [],
+        "horizontalOverflow": false,
+        "documentWidth": 375,
+        "viewportWidth": 375
+      },
+      "screenshots": {
+        "sourceFull": "reports/public-parity/screenshots/source/industries_consulting__mobile__full.png",
+        "sourceVisible": "reports/public-parity/screenshots/source/industries_consulting__mobile__visible.png",
+        "destinationFull": "reports/public-parity/screenshots/destination/industries_consulting__mobile__full.png",
+        "destinationVisible": "reports/public-parity/screenshots/destination/industries_consulting__mobile__visible.png"
+      },
+      "differences": [
+        "title: \"Consulting Talent | TaaSFlow - Talent as a Service\" vs \"Consulting hiring — TaaSFlow\"",
+        "meta description mismatch",
+        "H1 differs: [Consulting Talent for Firms & Advisory Practices] vs [Extend your delivery capacity without diluting your standard.]",
+        "heading overlap 0% (0/30)",
+        "section count 20 vs 6",
+        "form count 1 vs 0"
+      ]
+    },
+    {
+      "viewport": "tablet",
+      "source": {
+        "url": "https://taasflow.com/industries/consulting",
+        "finalUrl": "https://taasflow.com/industries/consulting",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [
+          {
+            "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HJ2ECKCNK4&gtm=45je67l1v9245339446za200zd9245339446&_p=1784774374790&gcd=13l3l3l3l1l1&npa=0&_ng=1&dma=0&are=1&cid=148100318.1784774376&frm=0&ngs=1&pscdl=noapi&rcb=0&sr=768x1024&uaa=x86&uab=64&uafvl=Not-A.Brand%3B24.0.0.0%7CChromium%3B146.0.7680.80&uam=&uamb=0&uap=Windows&uapv=&uaw=0&ul=en-us&_s=1&tag_exp=115938465~115938468~118897920~118897930~119793974~119896802&dp=%2Findustries%2Fconsulting&dt=TaaSFlow%20%7C%20Talent%20as%20a%20Service%20%7C%20Subscription%20Recruiting&dl=https%3A%2F%2Ftaasflow.com%2Findustries%2Fconsulting&sid=1784774375&sct=1&seg=0&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&ep.role_type=public&ep.is_authenticated=false&tfd=1089",
+            "status": null,
+            "failure": "net::ERR_ABORTED"
+          }
+        ],
+        "title": "Consulting Talent | TaaSFlow - Talent as a Service",
+        "description": "On-demand consulting professionals including analysts, associates, and project managers. Extend your delivery capacity for more engagements.",
+        "canonical": "https://taasflow.com/industries/consulting",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:type": "website",
+          "og:url": "https://taasflow.com/industries/consulting",
+          "og:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "og:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "og:image": "https://taasflow.com/og-image.png",
+          "og:image:width": "1200",
+          "og:image:height": "630",
+          "og:locale": "en_US",
+          "twitter:card": "summary_large_image",
+          "twitter:site": "@TaasFlow",
+          "twitter:creator": "@TaasFlow",
+          "twitter:url": "https://taasflow.com/industries/consulting",
+          "twitter:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "twitter:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "twitter:image": "https://taasflow.com/og-image.png"
+        },
+        "structuredData": [
+          {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "@id": "https://taasflow.com/#organization",
+            "name": "TaaSFlow",
+            "legalName": "TaaSFlow",
+            "url": "https://taasflow.com/",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://taasflow.com/favicon.png",
+              "width": 512,
+              "height": 512
+            },
+            "image": "https://taasflow.com/og-image.png",
+            "description": "Talent as a Service — subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+            "slogan": "Your hiring team. On demand.",
+            "foundingDate": "2024",
+            "areaServed": [
+              {
+                "@type": "Country",
+                "name": "United States"
+              },
+              {
+                "@type": "Country",
+                "name": "United Arab Emirates"
+              },
+              {
+                "@type": "Country",
+                "name": "United Kingdom"
+              },
+              {
+                "@type": "Country",
+                "name": "Brazil"
+              }
+            ],
+            "knowsAbout": [
+              "Subscription recruiting",
+              "Talent as a Service",
+              "Candidate sourcing",
+              "Pre-screened candidates",
+              "Recruitment process outsourcing"
+            ],
+            "contactPoint": [
+              {
+                "@type": "ContactPoint",
+                "contactType": "sales",
+                "email": "hello@taasflow.com",
+                "url": "https://taasflow.com/contact",
+                "availableLanguage": [
+                  "English",
+                  "Portuguese",
+                  "Spanish"
+                ]
+              }
+            ],
+            "sameAs": [
+              "https://www.linkedin.com/company/taasflow",
+              "https://twitter.com/TaasFlow"
+            ]
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "@id": "https://taasflow.com/#website",
+            "name": "TaaSFlow",
+            "alternateName": "Talent as a Service",
+            "url": "https://taasflow.com/",
+            "description": "Subscription recruiting that delivers pre-screened, ranked candidates in 14 days.",
+            "inLanguage": "en-US",
+            "publisher": {
+              "@id": "https://taasflow.com/#organization"
+            },
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": {
+                "@type": "EntryPoint",
+                "urlTemplate": "https://taasflow.com/jobs?q={search_term_string}"
+              },
+              "query-input": "required name=search_term_string"
+            }
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "Service",
+            "name": "Consulting Talent Sourcing",
+            "description": "On-demand consulting professionals including analysts, associates, and project managers. Extend your delivery capacity for more engagements.",
+            "provider": {
+              "@type": "Organization",
+              "name": "TaasFlow",
+              "url": "https://taasflow.com"
+            },
+            "serviceType": "Talent Acquisition",
+            "areaServed": "United States",
+            "hasOfferCatalog": {
+              "@type": "OfferCatalog",
+              "name": "Consulting Recruiting Services",
+              "itemListElement": [
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Consultants Recruiting"
+                  },
+                  "position": 1
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Analysts Recruiting"
+                  },
+                  "position": 2
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Associates Recruiting"
+                  },
+                  "position": 3
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Senior Consultants Recruiting"
+                  },
+                  "position": 4
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Project Managers Recruiting"
+                  },
+                  "position": 5
+                }
+              ]
+            }
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "https://taasflow.com"
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Industries",
+                "item": "https://taasflow.com/industries"
+              },
+              {
+                "@type": "ListItem",
+                "position": 3,
+                "name": "Consulting",
+                "item": "https://taasflow.com/industries//industries/consulting"
+              }
+            ]
+          }
+        ],
+        "h1": [
+          "Consulting Talent for Firms & Advisory Practices"
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "Consulting Talent for Firms & Advisory Practices"
+          },
+          {
+            "level": 2,
+            "text": "Consulting Industry Insights"
+          },
+          {
+            "level": 3,
+            "text": "Consulting Market"
+          },
+          {
+            "level": 3,
+            "text": "Utilization Target"
+          },
+          {
+            "level": 3,
+            "text": "Bench Cost"
+          },
+          {
+            "level": 3,
+            "text": "Subcontract Premium"
+          },
+          {
+            "level": 3,
+            "text": "Industry Overview"
+          },
+          {
+            "level": 3,
+            "text": "Ready to transform your consulting recruiting?"
+          },
+          {
+            "level": 2,
+            "text": "How we hire for Consulting"
+          },
+          {
+            "level": 3,
+            "text": "Engagement Scoping"
+          },
+          {
+            "level": 3,
+            "text": "Consulting Background Screen"
+          },
+          {
+            "level": 3,
+            "text": "White-Label Branding"
+          },
+          {
+            "level": 3,
+            "text": "Engagement-Ready Delivery"
+          },
+          {
+            "level": 2,
+            "text": "The Consulting Capacity Challenge"
+          },
+          {
+            "level": 3,
+            "text": "The TaasFlow Solution"
+          },
+          {
+            "level": 2,
+            "text": "Why Consulting companies choose TaasFlow"
+          },
+          {
+            "level": 3,
+            "text": "Consulting-Native Talent"
+          },
+          {
+            "level": 3,
+            "text": "Invisible Partnership"
+          },
+          {
+            "level": 3,
+            "text": "40% Cost Savings"
+          },
+          {
+            "level": 3,
+            "text": "Rapid Deployment"
+          },
+          {
+            "level": 2,
+            "text": "Positions we fill for Consulting"
+          },
+          {
+            "level": 2,
+            "text": "Real results for Consulting teams"
+          },
+          {
+            "level": 2,
+            "text": "Consulting Salary Explorer"
+          },
+          {
+            "level": 2,
+            "text": "Consulting Career Path"
+          },
+          {
+            "level": 3,
+            "text": "Senior"
+          },
+          {
+            "level": 4,
+            "text": "Key Skills at This Level"
+          },
+          {
+            "level": 2,
+            "text": "Consulting Hiring Trends"
+          },
+          {
+            "level": 2,
+            "text": "Interactive Hiring Guide"
+          },
+          {
+            "level": 3,
+            "text": "Define Your Ideal Candidate"
+          },
+          {
+            "level": 3,
+            "text": "Optimize Your Job Posting"
+          },
+          {
+            "level": 3,
+            "text": "Source Beyond Job Boards"
+          },
+          {
+            "level": 3,
+            "text": "Structure Your Interview Process"
+          },
+          {
+            "level": 3,
+            "text": "Close & Onboard Effectively"
+          },
+          {
+            "level": 2,
+            "text": "Consulting Recruiting Insights"
+          },
+          {
+            "level": 3,
+            "text": "Consulting Firm Hiring: How Top Firms Build and Retain Their Talent Pipeline"
+          },
+          {
+            "level": 3,
+            "text": "Consulting Firm Recruiting: Competing for Top Talent Beyond the Big Four"
+          },
+          {
+            "level": 3,
+            "text": "Recruiting for Consulting Firms: Attracting Top-Tier Talent"
+          },
+          {
+            "level": 2,
+            "text": "Frequently Asked Questions"
+          },
+          {
+            "level": 3,
+            "text": "Do your consultants have Big 4 experience?"
+          },
+          {
+            "level": 3,
+            "text": "Can you support proposal development?"
+          },
+          {
+            "level": 3,
+            "text": "How quickly can you staff an engagement?"
+          },
+          {
+            "level": 2,
+            "text": "Discover related industries"
+          },
+          {
+            "level": 2,
+            "text": "Ready to build your Consulting team?"
+          },
+          {
+            "level": 2,
+            "text": "Consulting Recruiting"
+          },
+          {
+            "level": 3,
+            "text": "Hub Page"
+          },
+          {
+            "level": 3,
+            "text": "Related Articles"
+          },
+          {
+            "level": 3,
+            "text": "Get Started"
+          },
+          {
+            "level": 4,
+            "text": "Newsletter"
+          },
+          {
+            "level": 4,
+            "text": "For candidates"
+          },
+          {
+            "level": 4,
+            "text": "For companies"
+          },
+          {
+            "level": 4,
+            "text": "Industries"
+          },
+          {
+            "level": 4,
+            "text": "Company"
+          },
+          {
+            "level": 3,
+            "text": "Cookie Preferences"
+          }
+        ],
+        "sections": [
+          "SECTION",
+          "Consulting Talent for Firms & Advisory Practices",
+          "SECTION",
+          "Consulting Industry Insights",
+          "Ready to transform your consulting recruiting?",
+          "How we hire for Consulting",
+          "The Consulting Capacity Challenge",
+          "Why Consulting companies choose TaasFlow",
+          "Positions we fill for Consulting",
+          "Real results for Consulting teams",
+          "Consulting Salary Explorer",
+          "Consulting Career Path",
+          "Consulting Hiring Trends",
+          "Interactive Hiring Guide",
+          "Consulting Recruiting Insights",
+          "Frequently Asked Questions",
+          "Discover related industries",
+          "SECTION",
+          "Ready to build your Consulting team?",
+          "Consulting Recruiting"
+        ],
+        "textBlocks": [
+          "Solutions",
+          "Industries",
+          "Resources",
+          "Home",
+          "Industries",
+          "Consulting",
+          "Access consultants, analysts, and project managers to extend your delivery capacity. Handle more engagements without permanent headcount.",
+          "Key market data and trends shaping talent demand in your industry. (Hover for details)",
+          "US management consulting market size",
+          "Typical consultant utilization rate target",
+          "Annual cost per unbilled senior consultant",
+          "Markup when subcontracting to other consulting firms",
+          "Start a risk-free pilot and receive qualified candidates in 14 days.",
+          "A tailored workflow for the challenges of consulting settings.",
+          "We understand your methodology, client culture, and quality standards.",
+          "Candidates verified for Big 4 or boutique consulting backgrounds.",
+          "All materials and communications configured under your firm branding.",
+          "Consultants deployed within 1 week of confirmed SOW.",
+          "Consulting is project-based, but staffing is fixed. You win engagements that require immediate capacity, but permanent hires become bench cost between projects.",
+          "Subcontracting to other firms is expensive and risks client relationships. You want to keep work in-house but lack the bodies.",
+          "Finding consultants who can adapt to your methodology, client culture, and quality standards quickly is challenging.",
+          "Analysts and associates with Big 4 or boutique consulting backgrounds",
+          "Project managers experienced in consulting delivery methodologies",
+          "Subject matter experts across industries and functional areas",
+          "Research and analysis support for proposal development",
+          "White-label capacity that's invisible to your clients",
+          "We understand the unique challenges of your industry and deliver matching talent.",
+          "Professionals with genuine consulting backgrounds who understand the model.",
+          "White-label support—your branding, your client relationship.",
+          "More cost-effective than subcontracting to other firms.",
+          "Staff engagements within 1 week of confirmed SOW.",
+          "Pre-vetted professionals, delivered weekly, ready to start.",
+          "- Boutique Strategy Firm, 25 partners",
+          "Explore current compensation ranges for top roles. Data updated quarterly from industry benchmarks.",
+          "* Based on industry benchmarks from SHRM, Glassdoor, LinkedIn Salary, and BLS data. Actual compensation may vary.",
+          "Click any level to explore typical progression, salary ranges, and key skills.",
+          "Key metrics shaping the talent landscape. Stay ahead of market shifts.",
+          "Steady growth in hiring demand across this sector.",
+          "Increasing adoption of remote and hybrid work models.",
+          "Unfilled positions due to skills shortage in this industry.",
+          "Industry average continues to improve with modern sourcing.",
+          "Follow these proven steps to hire smarter. Track your progress and get actionable tips at every stage.",
+          "Create a detailed candidate persona with must-have vs nice-to-have skills, cultural fit criteria, and realistic salary expectations.",
+          "Write a compelling job description that sells the opportunity, not just lists requirements. Include salary range, growth path, and team culture.",
+          "Reach passive candidates through targeted outreach, employee referrals, and talent communities. 70% of top talent is not actively looking.",
+          "Design a consistent 3-4 stage process that evaluates skills, culture fit, and potential. Include take-home assessments where appropriate.",
+          "Move fast with competitive offers and start onboarding before day one. The first 90 days determine long-term retention.",
+          "Expert articles on recruiting and talent acquisition for consulting.",
+          "Consulting firms live and die by their talent. Here is how McKinsey, BCG, Deloitte, and boutiques source and develop consultants.",
+          "Consulting Firm Recruiting: Competing for Top Talent Beyond the Big Four",
+          "Boutique and mid-tier consulting firms struggle to compete with MBB and Big Four for talent. Here is how to differentiate.",
+          "Recruiting for Consulting Firms: Attracting Top-Tier Talent",
+          "Consulting firms compete for the same elite candidates as tech and finance. Learn strategies to win talent in this competitive landscape.",
+          "Common questions about TaasFlow for consulting.",
+          "Learn how we serve similar sectors with subscription recruiting.",
+          "Receive qualified consulting professionals weekly. No agency fees, no long-term contracts.",
+          "Talent as a Service",
+          "A global hiring system for teams that need consistent recruiting.",
+          "Weekly insights into talent acquisition. No spam.",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Book call",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "No recruitment agency fees. No placement charges. Subscription-based hiring system.",
+          "Copyright 2026 TaaSFlow. All rights reserved.",
+          "We use essential cookies for core functionality. With your consent, we use analytics (Google Analytics) and marketing technologies (Meta Pixel, Apollo, Retention.com/RB2B) to understand website performance, improve campaigns, and measure conversions safely. Your data is processed in accordance with GDPR and our Privacy Notice. You can change your preferences at any time."
+        ],
+        "buttons": [
+          "Solutions",
+          "Industries",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Solutions",
+          "How it works",
+          "Pilot",
+          "Enterprise",
+          "Case studies",
+          "Jobs",
+          "Journey",
+          "Industries",
+          "Tech",
+          "SaaS & Cloud",
+          "Cybersecurity",
+          "Data & Analytics",
+          "Finance",
+          "Insurance",
+          "PE & VC",
+          "Accounting",
+          "Legal",
+          "Consulting",
+          "HR & Recruiting",
+          "Staffing Agencies",
+          "Sales",
+          "Marketing",
+          "E-commerce",
+          "Media",
+          "Real Estate",
+          "Construction",
+          "Hospitality",
+          "Healthcare",
+          "Public Sector",
+          "Non-Profit",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Success Stories",
+          "Talent Marketplace",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Start Consulting Pilot Program",
+          "Book call",
+          "Book call",
+          "1Entry-Level",
+          "2Mid-Level",
+          "3Senior",
+          "4Director / Lead",
+          "5VP / C-Suite",
+          "Next: Director / Lead",
+          "1Define Your Ideal Candidate1-2 days",
+          "1",
+          "Mark Complete",
+          "2Optimize Your Job PostingWrite a compelling job description that sells the opportunity, not just lists requirements. Include salary range, growth path, and team culture.1 day",
+          "2",
+          "3Source Beyond Job BoardsReach passive candidates through targeted outreach, employee referrals, and talent communities. 70% of top talent is not actively looking.Ongoing",
+          "3",
+          "4Structure Your Interview ProcessDesign a consistent 3-4 stage process that evaluates skills, culture fit, and potential. Include take-home assessments where appropriate.2-3 days setup",
+          "4",
+          "5Close & Onboard EffectivelyMove fast with competitive offers and start onboarding before day one. The first 90 days determine long-term retention.1-2 weeks",
+          "5",
+          "Do your consultants have Big 4 experience?",
+          "Can you support proposal development?",
+          "How quickly can you staff an engagement?",
+          "Start Consulting Pilot",
+          "Contact",
+          "Subscribe",
+          "Book call"
+        ],
+        "links": [
+          {
+            "text": "Skip to main content",
+            "href": "https://taasflow.com/industries/consulting#main-content"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "Browse jobs",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Join the network",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Browse open roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Home",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "Industries",
+            "href": "https://taasflow.com/industries"
+          },
+          {
+            "text": "View all articles",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "Industry Hiring GuidesConsultingConsulting Firm Hiring: How Top Firms Build and Retain Their Talent PipelineConsulting f",
+            "href": "https://taasflow.com/blog/consulting-firm-hiring-strategies"
+          },
+          {
+            "text": "📋Consulting Firm Recruiting: Competing for Top Talent Beyond the Big FourIndustry Hiring GuidesIndustry Hiring GuidesCo",
+            "href": "https://taasflow.com/blog/management-consulting-recruiting-strategies"
+          },
+          {
+            "text": "🔍Recruiting for Consulting Firms: Attracting Top-Tier TalentIndustry SpotlightIndustry SpotlightConsultingRecruiting fo",
+            "href": "https://taasflow.com/blog/consulting-recruitment-strategies"
+          },
+          {
+            "text": "View all articles",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "Technology",
+            "href": "https://taasflow.com/industries/tech"
+          },
+          {
+            "text": "Legal",
+            "href": "https://taasflow.com/industries/legal"
+          },
+          {
+            "text": "Public Sector",
+            "href": "https://taasflow.com/industries/public-sector"
+          },
+          {
+            "text": "Finance & Banking",
+            "href": "https://taasflow.com/industries/finance"
+          },
+          {
+            "text": "Staffing Agencies",
+            "href": "https://taasflow.com/industries/staffing-agencies"
+          },
+          {
+            "text": "Healthcare",
+            "href": "https://taasflow.com/industries/healthcare"
+          },
+          {
+            "text": "Sales",
+            "href": "https://taasflow.com/industries/sales"
+          },
+          {
+            "text": "Marketing & Advertising",
+            "href": "https://taasflow.com/industries/marketing"
+          },
+          {
+            "text": "Compare all industries",
+            "href": "https://taasflow.com/industries/compare"
+          },
+          {
+            "text": "How it works",
+            "href": "https://taasflow.com/how-it-works"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "Start Pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "Jobs",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Blog",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "About",
+            "href": "https://taasflow.com/about"
+          },
+          {
+            "text": "Enterprise",
+            "href": "https://taasflow.com/enterprise"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://taasflow.com/faq"
+          },
+          {
+            "text": "Contact",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Looking for a job in consulting? Browse open positions",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Consulting Recruiting",
+            "href": "https://taasflow.com/industries/consulting"
+          },
+          {
+            "text": "Consulting Firm Hiring",
+            "href": "https://taasflow.com/blog/consulting-firm-hiring"
+          },
+          {
+            "text": "Talent Sourcing Strategies",
+            "href": "https://taasflow.com/blog/talent-sourcing-strategies"
+          },
+          {
+            "text": "Cost-per-Hire Optimization",
+            "href": "https://taasflow.com/blog/cost-per-hire-optimization"
+          },
+          {
+            "text": "Start a Pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "View Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "LinkedIn",
+            "href": "https://www.linkedin.com/company/taasflow/"
+          },
+          {
+            "text": "Browse roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Talent network",
+            "href": "https://taasflow.com/global-talent"
+          },
+          {
+            "text": "Member stories",
+            "href": "https://taasflow.com/candidate-success"
+          },
+          {
+            "text": "Start pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "Employer onboarding",
+            "href": "https://taasflow.com/employer-onboarding"
+          },
+          {
+            "text": "Case studies",
+            "href": "https://taasflow.com/case-studies"
+          },
+          {
+            "text": "Healthcare",
+            "href": "https://taasflow.com/industries/healthcare"
+          },
+          {
+            "text": "Technology",
+            "href": "https://taasflow.com/industries/tech"
+          },
+          {
+            "text": "Finance",
+            "href": "https://taasflow.com/industries/finance"
+          },
+          {
+            "text": "Legal",
+            "href": "https://taasflow.com/industries/legal"
+          },
+          {
+            "text": "All →",
+            "href": "https://taasflow.com/industries"
+          },
+          {
+            "text": "About us",
+            "href": "https://taasflow.com/about"
+          },
+          {
+            "text": "Blog",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://taasflow.com/faq"
+          },
+          {
+            "text": "Knowledge Base",
+            "href": "https://taasflow.com/knowledge-base"
+          },
+          {
+            "text": "Contact us",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Privacy Policy",
+            "href": "https://taasflow.com/privacy"
+          },
+          {
+            "text": "Terms of Service",
+            "href": "https://taasflow.com/terms"
+          },
+          {
+            "text": "Privacy Notice",
+            "href": "https://taasflow.com/privacy"
+          }
+        ],
+        "images": [
+          {
+            "src": "https://taasflow.com/assets/logo-on-white-Dk9DIcMP.png",
+            "alt": "TaaSFlow logo"
+          },
+          {
+            "src": "https://taasflow.com/assets/consulting-BJHEQnFp.jpg",
+            "alt": ""
+          },
+          {
+            "src": "https://taasflow.com/assets/consulting-BJHEQnFp.jpg",
+            "alt": ""
+          },
+          {
+            "src": "https://taasflow.com/assets/consulting-BJHEQnFp.jpg",
+            "alt": ""
+          },
+          {
+            "src": "https://taasflow.com/assets/consulting-hiring-CdIfJnSU.jpg",
+            "alt": "Consulting Firm Hiring: How Top Firms Build and Retain Their Talent Pipeline"
+          },
+          {
+            "src": "https://taasflow.com/assets/logo-on-blue-CX6jlwjg.png",
+            "alt": "TaaSFlow logo"
+          }
+        ],
+        "forms": [
+          {
+            "action": "https://taasflow.com/industries/consulting",
+            "fields": [
+              "input"
+            ]
+          }
+        ],
+        "navLinks": [
+          "Browse jobs",
+          "Join the network",
+          "Browse open roles",
+          "Home",
+          "Industries",
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us"
+        ],
+        "footerLinks": [
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "Privacy Policy",
+          "Terms of Service"
+        ],
+        "horizontalOverflow": false,
+        "documentWidth": 768,
+        "viewportWidth": 768
+      },
+      "destination": {
+        "url": "https://clear-path-hubs.lovable.app/industries/consulting",
+        "finalUrl": "https://clear-path-hubs.lovable.app/industries/consulting",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [],
+        "title": "Consulting hiring — TaaSFlow",
+        "description": "Consultants, analysts, and delivery specialists for firms and advisory practices — sourced through structured rubrics and evidence-based scoring.",
+        "canonical": "https://clear-path-hubs.lovable.app/industries/consulting",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "twitter:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "og:title": "Consulting hiring — TaaSFlow",
+          "og:description": "Consultants, analysts, and delivery specialists for firms and advisory practices — sourced through structured rubrics and evidence-based scoring.",
+          "og:url": "https://clear-path-hubs.lovable.app/industries/consulting",
+          "og:type": "website",
+          "twitter:card": "summary_large_image",
+          "twitter:title": "Consulting hiring — TaaSFlow",
+          "twitter:description": "Consultants, analysts, and delivery specialists for firms and advisory practices — sourced through structured rubrics and evidence-based scoring."
+        },
+        "structuredData": [],
+        "h1": [
+          "Extend your delivery capacity without diluting your standard."
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "Extend your delivery capacity without diluting your standard."
+          },
+          {
+            "level": 2,
+            "text": "What we hear from Consulting teams"
+          },
+          {
+            "level": 3,
+            "text": "Every engagement type wants a different profile"
+          },
+          {
+            "level": 3,
+            "text": "Consulting CVs read alike"
+          },
+          {
+            "level": 3,
+            "text": "Leverage without losing quality"
+          },
+          {
+            "level": 2,
+            "text": "Roles we source in Consulting"
+          },
+          {
+            "level": 3,
+            "text": "Submit the role"
+          },
+          {
+            "level": 3,
+            "text": "We source and score"
+          },
+          {
+            "level": 3,
+            "text": "Review in your workspace"
+          },
+          {
+            "level": 2,
+            "text": "Scaling a consulting practice?"
+          }
+        ],
+        "sections": [
+          "Extend your delivery capacity without diluting your standard.",
+          "What we hear from Consulting teams",
+          "Roles we source in Consulting",
+          "Submit the role",
+          "Scaling a consulting practice?",
+          "SECTION"
+        ],
+        "textBlocks": [
+          "Home",
+          "Industries",
+          "Consulting",
+          "Consulting",
+          "TaaSFlow helps consulting firms and advisory practices scale delivery: structured intake per engagement type, rubrics per level, and evidence of the outcomes each candidate has actually delivered.",
+          "Rubric per practice and level",
+          "Outcome evidence from the CV",
+          "Human review before publication",
+          "Strategy, operations, technology and change work each favour different backgrounds. We calibrate rubrics per practice so the shortlist matches the engagement, not just the title.",
+          "Case-count and firm names look similar on paper. Our scoring extracts specific evidence: the industries served, the problems owned, the outcomes delivered.",
+          "The whole point is more capacity at your standard. Every candidate we surface has been reviewed against your rubric before publication — no unranked pipes.",
+          "We calibrate the rubric to the seniority and specialisation you actually need.",
+          "Management consultants",
+          "Strategy advisors",
+          "Operations consultants",
+          "Technology consultants",
+          "Change & transformation leads",
+          "Project & programme managers",
+          "Implementation consultants",
+          "Practice & engagement leads",
+          "01",
+          "A guided intake captures everything the search needs, in one flow.",
+          "02",
+          "Multi-channel sourcing, role-specific rubric, evidence extracted from every CV.",
+          "03",
+          "Ranked shortlist, evidence side-by-side, Kanban pipeline, direct messaging.",
+          "See the full process on how it works.",
+          "Consulting",
+          "Submit the role — one workspace, one rubric, one accountable delivery team."
+        ],
+        "buttons": [],
+        "links": [
+          {
+            "text": "Home",
+            "href": "https://clear-path-hubs.lovable.app/"
+          },
+          {
+            "text": "Industries",
+            "href": "https://clear-path-hubs.lovable.app/industries"
+          },
+          {
+            "text": "Start hiring",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "Talk to us",
+            "href": "https://clear-path-hubs.lovable.app/contact"
+          },
+          {
+            "text": "how it works",
+            "href": "https://clear-path-hubs.lovable.app/how-it-works"
+          },
+          {
+            "text": "Start intake",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "See other industries",
+            "href": "https://clear-path-hubs.lovable.app/industries"
+          },
+          {
+            "text": "Edit with",
+            "href": "https://lovable.dev/projects/1dc5ee7e-1294-441c-8288-850e79e443f6?utm_source=lovable-badge"
+          }
+        ],
+        "images": [],
+        "forms": [],
+        "navLinks": [
+          "Home",
+          "Industries"
+        ],
+        "footerLinks": [],
+        "horizontalOverflow": false,
+        "documentWidth": 768,
+        "viewportWidth": 768
+      },
+      "screenshots": {
+        "sourceFull": "reports/public-parity/screenshots/source/industries_consulting__tablet__full.png",
+        "sourceVisible": "reports/public-parity/screenshots/source/industries_consulting__tablet__visible.png",
+        "destinationFull": "reports/public-parity/screenshots/destination/industries_consulting__tablet__full.png",
+        "destinationVisible": "reports/public-parity/screenshots/destination/industries_consulting__tablet__visible.png"
+      },
+      "differences": [
+        "title: \"Consulting Talent | TaaSFlow - Talent as a Service\" vs \"Consulting hiring — TaaSFlow\"",
+        "meta description mismatch",
+        "H1 differs: [Consulting Talent for Firms & Advisory Practices] vs [Extend your delivery capacity without diluting your standard.]",
+        "heading overlap 0% (0/30)",
+        "section count 20 vs 6",
+        "form count 1 vs 0"
+      ]
+    },
+    {
+      "viewport": "desktop",
+      "source": {
+        "url": "https://taasflow.com/industries/consulting",
+        "finalUrl": "https://taasflow.com/industries/consulting",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [
+          {
+            "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HJ2ECKCNK4&gtm=45je67l1v9245339446za200zd9245339446&_p=1784774378874&gcd=13l3l3l3l1l1&npa=0&_ng=1&dma=0&are=1&cid=673047684.1784774379&frm=0&ngs=1&pscdl=noapi&rcb=8&sr=1440x900&uaa=x86&uab=64&uafvl=Not-A.Brand%3B24.0.0.0%7CChromium%3B146.0.7680.80&uam=&uamb=0&uap=Windows&uapv=&uaw=0&ul=en-us&_s=1&tag_exp=115938465~115938468~118897920~118897930~119527020~119896802&dp=%2Findustries%2Fconsulting&dt=TaaSFlow%20%7C%20Talent%20as%20a%20Service%20%7C%20Subscription%20Recruiting&dl=https%3A%2F%2Ftaasflow.com%2Findustries%2Fconsulting&sid=1784774379&sct=1&seg=0&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&ep.role_type=public&ep.is_authenticated=false&tfd=514",
+            "status": null,
+            "failure": "net::ERR_ABORTED"
+          },
+          {
+            "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HJ2ECKCNK4&gtm=45je67l1v9245339446za200zd9245339446&_p=1784774378874&gcd=13l3l3l3l1l1&npa=0&_ng=1&dma=0&_eu=AEAAAAQ&ae=a&are=1&cid=673047684.1784774379&frm=0&ngs=1&pscdl=noapi&rcb=8&sr=1440x900&uaa=x86&uab=64&uafvl=Not-A.Brand%3B24.0.0.0%7CChromium%3B146.0.7680.80&uam=&uamb=0&uap=Windows&uapv=&uaw=0&ul=en-us&_s=2&tag_exp=115938465~115938468~118897920~118897930~119527020~119896802&sid=1784774379&sct=1&seg=0&dl=https%3A%2F%2Ftaasflow.com%2Findustries%2Fconsulting&dt=TaaSFlow%20%7C%20Talent%20as%20a%20Service%20%7C%20Subscription%20Recruiting&en=scroll&epn.percent_scrolled=90&_et=11&tfd=851",
+            "status": null,
+            "failure": "net::ERR_ABORTED"
+          }
+        ],
+        "title": "Consulting Talent | TaaSFlow - Talent as a Service",
+        "description": "On-demand consulting professionals including analysts, associates, and project managers. Extend your delivery capacity for more engagements.",
+        "canonical": "https://taasflow.com/industries/consulting",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:type": "website",
+          "og:url": "https://taasflow.com/industries/consulting",
+          "og:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "og:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "og:image": "https://taasflow.com/og-image.png",
+          "og:image:width": "1200",
+          "og:image:height": "630",
+          "og:locale": "en_US",
+          "twitter:card": "summary_large_image",
+          "twitter:site": "@TaasFlow",
+          "twitter:creator": "@TaasFlow",
+          "twitter:url": "https://taasflow.com/industries/consulting",
+          "twitter:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "twitter:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "twitter:image": "https://taasflow.com/og-image.png"
+        },
+        "structuredData": [
+          {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "@id": "https://taasflow.com/#organization",
+            "name": "TaaSFlow",
+            "legalName": "TaaSFlow",
+            "url": "https://taasflow.com/",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://taasflow.com/favicon.png",
+              "width": 512,
+              "height": 512
+            },
+            "image": "https://taasflow.com/og-image.png",
+            "description": "Talent as a Service — subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+            "slogan": "Your hiring team. On demand.",
+            "foundingDate": "2024",
+            "areaServed": [
+              {
+                "@type": "Country",
+                "name": "United States"
+              },
+              {
+                "@type": "Country",
+                "name": "United Arab Emirates"
+              },
+              {
+                "@type": "Country",
+                "name": "United Kingdom"
+              },
+              {
+                "@type": "Country",
+                "name": "Brazil"
+              }
+            ],
+            "knowsAbout": [
+              "Subscription recruiting",
+              "Talent as a Service",
+              "Candidate sourcing",
+              "Pre-screened candidates",
+              "Recruitment process outsourcing"
+            ],
+            "contactPoint": [
+              {
+                "@type": "ContactPoint",
+                "contactType": "sales",
+                "email": "hello@taasflow.com",
+                "url": "https://taasflow.com/contact",
+                "availableLanguage": [
+                  "English",
+                  "Portuguese",
+                  "Spanish"
+                ]
+              }
+            ],
+            "sameAs": [
+              "https://www.linkedin.com/company/taasflow",
+              "https://twitter.com/TaasFlow"
+            ]
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "@id": "https://taasflow.com/#website",
+            "name": "TaaSFlow",
+            "alternateName": "Talent as a Service",
+            "url": "https://taasflow.com/",
+            "description": "Subscription recruiting that delivers pre-screened, ranked candidates in 14 days.",
+            "inLanguage": "en-US",
+            "publisher": {
+              "@id": "https://taasflow.com/#organization"
+            },
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": {
+                "@type": "EntryPoint",
+                "urlTemplate": "https://taasflow.com/jobs?q={search_term_string}"
+              },
+              "query-input": "required name=search_term_string"
+            }
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "Service",
+            "name": "Consulting Talent Sourcing",
+            "description": "On-demand consulting professionals including analysts, associates, and project managers. Extend your delivery capacity for more engagements.",
+            "provider": {
+              "@type": "Organization",
+              "name": "TaasFlow",
+              "url": "https://taasflow.com"
+            },
+            "serviceType": "Talent Acquisition",
+            "areaServed": "United States",
+            "hasOfferCatalog": {
+              "@type": "OfferCatalog",
+              "name": "Consulting Recruiting Services",
+              "itemListElement": [
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Consultants Recruiting"
+                  },
+                  "position": 1
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Analysts Recruiting"
+                  },
+                  "position": 2
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Associates Recruiting"
+                  },
+                  "position": 3
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Senior Consultants Recruiting"
+                  },
+                  "position": 4
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Project Managers Recruiting"
+                  },
+                  "position": 5
+                }
+              ]
+            }
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "https://taasflow.com"
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Industries",
+                "item": "https://taasflow.com/industries"
+              },
+              {
+                "@type": "ListItem",
+                "position": 3,
+                "name": "Consulting",
+                "item": "https://taasflow.com/industries//industries/consulting"
+              }
+            ]
+          }
+        ],
+        "h1": [
+          "Consulting Talent for Firms & Advisory Practices"
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "Consulting Talent for Firms & Advisory Practices"
+          },
+          {
+            "level": 2,
+            "text": "Consulting Industry Insights"
+          },
+          {
+            "level": 3,
+            "text": "Consulting Market"
+          },
+          {
+            "level": 3,
+            "text": "Utilization Target"
+          },
+          {
+            "level": 3,
+            "text": "Bench Cost"
+          },
+          {
+            "level": 3,
+            "text": "Subcontract Premium"
+          },
+          {
+            "level": 3,
+            "text": "Industry Overview"
+          },
+          {
+            "level": 3,
+            "text": "Ready to transform your consulting recruiting?"
+          },
+          {
+            "level": 2,
+            "text": "How we hire for Consulting"
+          },
+          {
+            "level": 3,
+            "text": "Engagement Scoping"
+          },
+          {
+            "level": 3,
+            "text": "Consulting Background Screen"
+          },
+          {
+            "level": 3,
+            "text": "White-Label Branding"
+          },
+          {
+            "level": 3,
+            "text": "Engagement-Ready Delivery"
+          },
+          {
+            "level": 2,
+            "text": "The Consulting Capacity Challenge"
+          },
+          {
+            "level": 3,
+            "text": "The TaasFlow Solution"
+          },
+          {
+            "level": 2,
+            "text": "Why Consulting companies choose TaasFlow"
+          },
+          {
+            "level": 3,
+            "text": "Consulting-Native Talent"
+          },
+          {
+            "level": 3,
+            "text": "Invisible Partnership"
+          },
+          {
+            "level": 3,
+            "text": "40% Cost Savings"
+          },
+          {
+            "level": 3,
+            "text": "Rapid Deployment"
+          },
+          {
+            "level": 2,
+            "text": "Positions we fill for Consulting"
+          },
+          {
+            "level": 2,
+            "text": "Real results for Consulting teams"
+          },
+          {
+            "level": 2,
+            "text": "Consulting Salary Explorer"
+          },
+          {
+            "level": 2,
+            "text": "Consulting Career Path"
+          },
+          {
+            "level": 3,
+            "text": "Senior"
+          },
+          {
+            "level": 4,
+            "text": "Key Skills at This Level"
+          },
+          {
+            "level": 2,
+            "text": "Consulting Hiring Trends"
+          },
+          {
+            "level": 2,
+            "text": "Interactive Hiring Guide"
+          },
+          {
+            "level": 3,
+            "text": "Define Your Ideal Candidate"
+          },
+          {
+            "level": 3,
+            "text": "Optimize Your Job Posting"
+          },
+          {
+            "level": 3,
+            "text": "Source Beyond Job Boards"
+          },
+          {
+            "level": 3,
+            "text": "Structure Your Interview Process"
+          },
+          {
+            "level": 3,
+            "text": "Close & Onboard Effectively"
+          },
+          {
+            "level": 2,
+            "text": "Consulting Recruiting Insights"
+          },
+          {
+            "level": 3,
+            "text": "Consulting Firm Hiring: How Top Firms Build and Retain Their Talent Pipeline"
+          },
+          {
+            "level": 3,
+            "text": "Consulting Firm Recruiting: Competing for Top Talent Beyond the Big Four"
+          },
+          {
+            "level": 3,
+            "text": "Recruiting for Consulting Firms: Attracting Top-Tier Talent"
+          },
+          {
+            "level": 2,
+            "text": "Frequently Asked Questions"
+          },
+          {
+            "level": 3,
+            "text": "Do your consultants have Big 4 experience?"
+          },
+          {
+            "level": 3,
+            "text": "Can you support proposal development?"
+          },
+          {
+            "level": 3,
+            "text": "How quickly can you staff an engagement?"
+          },
+          {
+            "level": 2,
+            "text": "Discover related industries"
+          },
+          {
+            "level": 2,
+            "text": "Ready to build your Consulting team?"
+          },
+          {
+            "level": 2,
+            "text": "Consulting Recruiting"
+          },
+          {
+            "level": 3,
+            "text": "Hub Page"
+          },
+          {
+            "level": 3,
+            "text": "Related Articles"
+          },
+          {
+            "level": 3,
+            "text": "Get Started"
+          },
+          {
+            "level": 4,
+            "text": "Newsletter"
+          },
+          {
+            "level": 4,
+            "text": "For candidates"
+          },
+          {
+            "level": 4,
+            "text": "For companies"
+          },
+          {
+            "level": 4,
+            "text": "Industries"
+          },
+          {
+            "level": 4,
+            "text": "Company"
+          },
+          {
+            "level": 3,
+            "text": "Cookie Preferences"
+          }
+        ],
+        "sections": [
+          "SECTION",
+          "Consulting Talent for Firms & Advisory Practices",
+          "SECTION",
+          "Consulting Industry Insights",
+          "Ready to transform your consulting recruiting?",
+          "How we hire for Consulting",
+          "The Consulting Capacity Challenge",
+          "Why Consulting companies choose TaasFlow",
+          "Positions we fill for Consulting",
+          "Real results for Consulting teams",
+          "Consulting Salary Explorer",
+          "Consulting Career Path",
+          "Consulting Hiring Trends",
+          "Interactive Hiring Guide",
+          "Consulting Recruiting Insights",
+          "Frequently Asked Questions",
+          "Discover related industries",
+          "SECTION",
+          "Ready to build your Consulting team?",
+          "Consulting Recruiting"
+        ],
+        "textBlocks": [
+          "Solutions",
+          "Industries",
+          "Resources",
+          "Home",
+          "Industries",
+          "Consulting",
+          "Access consultants, analysts, and project managers to extend your delivery capacity. Handle more engagements without permanent headcount.",
+          "Key market data and trends shaping talent demand in your industry. (Hover for details)",
+          "US management consulting market size",
+          "Typical consultant utilization rate target",
+          "Annual cost per unbilled senior consultant",
+          "Markup when subcontracting to other consulting firms",
+          "Start a risk-free pilot and receive qualified candidates in 14 days.",
+          "A tailored workflow for the challenges of consulting settings.",
+          "We understand your methodology, client culture, and quality standards.",
+          "Candidates verified for Big 4 or boutique consulting backgrounds.",
+          "All materials and communications configured under your firm branding.",
+          "Consultants deployed within 1 week of confirmed SOW.",
+          "Consulting is project-based, but staffing is fixed. You win engagements that require immediate capacity, but permanent hires become bench cost between projects.",
+          "Subcontracting to other firms is expensive and risks client relationships. You want to keep work in-house but lack the bodies.",
+          "Finding consultants who can adapt to your methodology, client culture, and quality standards quickly is challenging.",
+          "Analysts and associates with Big 4 or boutique consulting backgrounds",
+          "Project managers experienced in consulting delivery methodologies",
+          "Subject matter experts across industries and functional areas",
+          "Research and analysis support for proposal development",
+          "White-label capacity that's invisible to your clients",
+          "We understand the unique challenges of your industry and deliver matching talent.",
+          "Professionals with genuine consulting backgrounds who understand the model.",
+          "White-label support—your branding, your client relationship.",
+          "More cost-effective than subcontracting to other firms.",
+          "Staff engagements within 1 week of confirmed SOW.",
+          "Pre-vetted professionals, delivered weekly, ready to start.",
+          "- Boutique Strategy Firm, 25 partners",
+          "Explore current compensation ranges for top roles. Data updated quarterly from industry benchmarks.",
+          "* Based on industry benchmarks from SHRM, Glassdoor, LinkedIn Salary, and BLS data. Actual compensation may vary.",
+          "Click any level to explore typical progression, salary ranges, and key skills.",
+          "Key metrics shaping the talent landscape. Stay ahead of market shifts.",
+          "Steady growth in hiring demand across this sector.",
+          "Increasing adoption of remote and hybrid work models.",
+          "Unfilled positions due to skills shortage in this industry.",
+          "Industry average continues to improve with modern sourcing.",
+          "Follow these proven steps to hire smarter. Track your progress and get actionable tips at every stage.",
+          "Create a detailed candidate persona with must-have vs nice-to-have skills, cultural fit criteria, and realistic salary expectations.",
+          "Write a compelling job description that sells the opportunity, not just lists requirements. Include salary range, growth path, and team culture.",
+          "Reach passive candidates through targeted outreach, employee referrals, and talent communities. 70% of top talent is not actively looking.",
+          "Design a consistent 3-4 stage process that evaluates skills, culture fit, and potential. Include take-home assessments where appropriate.",
+          "Move fast with competitive offers and start onboarding before day one. The first 90 days determine long-term retention.",
+          "Expert articles on recruiting and talent acquisition for consulting.",
+          "Consulting firms live and die by their talent. Here is how McKinsey, BCG, Deloitte, and boutiques source and develop consultants.",
+          "Consulting Firm Recruiting: Competing for Top Talent Beyond the Big Four",
+          "Boutique and mid-tier consulting firms struggle to compete with MBB and Big Four for talent. Here is how to differentiate.",
+          "Recruiting for Consulting Firms: Attracting Top-Tier Talent",
+          "Consulting firms compete for the same elite candidates as tech and finance. Learn strategies to win talent in this competitive landscape.",
+          "Common questions about TaasFlow for consulting.",
+          "Learn how we serve similar sectors with subscription recruiting.",
+          "Receive qualified consulting professionals weekly. No agency fees, no long-term contracts.",
+          "Talent as a Service",
+          "A global hiring system for teams that need consistent recruiting.",
+          "Weekly insights into talent acquisition. No spam.",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Book call",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "No recruitment agency fees. No placement charges. Subscription-based hiring system.",
+          "Copyright 2026 TaaSFlow. All rights reserved.",
+          "We use essential cookies for core functionality. With your consent, we use analytics (Google Analytics) and marketing technologies (Meta Pixel, Apollo, Retention.com/RB2B) to understand website performance, improve campaigns, and measure conversions safely. Your data is processed in accordance with GDPR and our Privacy Notice. You can change your preferences at any time."
+        ],
+        "buttons": [
+          "Solutions",
+          "Industries",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Solutions",
+          "How it works",
+          "Pilot",
+          "Enterprise",
+          "Case studies",
+          "Jobs",
+          "Journey",
+          "Industries",
+          "Tech",
+          "SaaS & Cloud",
+          "Cybersecurity",
+          "Data & Analytics",
+          "Finance",
+          "Insurance",
+          "PE & VC",
+          "Accounting",
+          "Legal",
+          "Consulting",
+          "HR & Recruiting",
+          "Staffing Agencies",
+          "Sales",
+          "Marketing",
+          "E-commerce",
+          "Media",
+          "Real Estate",
+          "Construction",
+          "Hospitality",
+          "Healthcare",
+          "Public Sector",
+          "Non-Profit",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Success Stories",
+          "Talent Marketplace",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Start Consulting Pilot Program",
+          "Book call",
+          "Book call",
+          "1Entry-Level",
+          "2Mid-Level",
+          "3Senior",
+          "4Director / Lead",
+          "5VP / C-Suite",
+          "Next: Director / Lead",
+          "1Define Your Ideal Candidate1-2 days",
+          "1",
+          "Mark Complete",
+          "2Optimize Your Job PostingWrite a compelling job description that sells the opportunity, not just lists requirements. Include salary range, growth path, and team culture.1 day",
+          "2",
+          "3Source Beyond Job BoardsReach passive candidates through targeted outreach, employee referrals, and talent communities. 70% of top talent is not actively looking.Ongoing",
+          "3",
+          "4Structure Your Interview ProcessDesign a consistent 3-4 stage process that evaluates skills, culture fit, and potential. Include take-home assessments where appropriate.2-3 days setup",
+          "4",
+          "5Close & Onboard EffectivelyMove fast with competitive offers and start onboarding before day one. The first 90 days determine long-term retention.1-2 weeks",
+          "5",
+          "Do your consultants have Big 4 experience?",
+          "Can you support proposal development?",
+          "How quickly can you staff an engagement?",
+          "Start Consulting Pilot",
+          "Contact",
+          "Subscribe",
+          "Book call"
+        ],
+        "links": [
+          {
+            "text": "Skip to main content",
+            "href": "https://taasflow.com/industries/consulting#main-content"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "Browse jobs",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Join the network",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Browse open roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Home",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "Industries",
+            "href": "https://taasflow.com/industries"
+          },
+          {
+            "text": "View all articles",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "Industry Hiring GuidesConsultingConsulting Firm Hiring: How Top Firms Build and Retain Their Talent PipelineConsulting f",
+            "href": "https://taasflow.com/blog/consulting-firm-hiring-strategies"
+          },
+          {
+            "text": "📋Consulting Firm Recruiting: Competing for Top Talent Beyond the Big FourIndustry Hiring GuidesIndustry Hiring GuidesCo",
+            "href": "https://taasflow.com/blog/management-consulting-recruiting-strategies"
+          },
+          {
+            "text": "🔍Recruiting for Consulting Firms: Attracting Top-Tier TalentIndustry SpotlightIndustry SpotlightConsultingRecruiting fo",
+            "href": "https://taasflow.com/blog/consulting-recruitment-strategies"
+          },
+          {
+            "text": "View all articles",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "Technology",
+            "href": "https://taasflow.com/industries/tech"
+          },
+          {
+            "text": "Legal",
+            "href": "https://taasflow.com/industries/legal"
+          },
+          {
+            "text": "Public Sector",
+            "href": "https://taasflow.com/industries/public-sector"
+          },
+          {
+            "text": "Finance & Banking",
+            "href": "https://taasflow.com/industries/finance"
+          },
+          {
+            "text": "Staffing Agencies",
+            "href": "https://taasflow.com/industries/staffing-agencies"
+          },
+          {
+            "text": "Healthcare",
+            "href": "https://taasflow.com/industries/healthcare"
+          },
+          {
+            "text": "Sales",
+            "href": "https://taasflow.com/industries/sales"
+          },
+          {
+            "text": "Marketing & Advertising",
+            "href": "https://taasflow.com/industries/marketing"
+          },
+          {
+            "text": "Compare all industries",
+            "href": "https://taasflow.com/industries/compare"
+          },
+          {
+            "text": "How it works",
+            "href": "https://taasflow.com/how-it-works"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "Start Pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "Jobs",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Blog",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "About",
+            "href": "https://taasflow.com/about"
+          },
+          {
+            "text": "Enterprise",
+            "href": "https://taasflow.com/enterprise"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://taasflow.com/faq"
+          },
+          {
+            "text": "Contact",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Looking for a job in consulting? Browse open positions",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Consulting Recruiting",
+            "href": "https://taasflow.com/industries/consulting"
+          },
+          {
+            "text": "Consulting Firm Hiring",
+            "href": "https://taasflow.com/blog/consulting-firm-hiring"
+          },
+          {
+            "text": "Talent Sourcing Strategies",
+            "href": "https://taasflow.com/blog/talent-sourcing-strategies"
+          },
+          {
+            "text": "Cost-per-Hire Optimization",
+            "href": "https://taasflow.com/blog/cost-per-hire-optimization"
+          },
+          {
+            "text": "Start a Pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "View Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "LinkedIn",
+            "href": "https://www.linkedin.com/company/taasflow/"
+          },
+          {
+            "text": "Browse roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Talent network",
+            "href": "https://taasflow.com/global-talent"
+          },
+          {
+            "text": "Member stories",
+            "href": "https://taasflow.com/candidate-success"
+          },
+          {
+            "text": "Start pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "Employer onboarding",
+            "href": "https://taasflow.com/employer-onboarding"
+          },
+          {
+            "text": "Case studies",
+            "href": "https://taasflow.com/case-studies"
+          },
+          {
+            "text": "Healthcare",
+            "href": "https://taasflow.com/industries/healthcare"
+          },
+          {
+            "text": "Technology",
+            "href": "https://taasflow.com/industries/tech"
+          },
+          {
+            "text": "Finance",
+            "href": "https://taasflow.com/industries/finance"
+          },
+          {
+            "text": "Legal",
+            "href": "https://taasflow.com/industries/legal"
+          },
+          {
+            "text": "All →",
+            "href": "https://taasflow.com/industries"
+          },
+          {
+            "text": "About us",
+            "href": "https://taasflow.com/about"
+          },
+          {
+            "text": "Blog",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://taasflow.com/faq"
+          },
+          {
+            "text": "Knowledge Base",
+            "href": "https://taasflow.com/knowledge-base"
+          },
+          {
+            "text": "Contact us",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Privacy Policy",
+            "href": "https://taasflow.com/privacy"
+          },
+          {
+            "text": "Terms of Service",
+            "href": "https://taasflow.com/terms"
+          },
+          {
+            "text": "Privacy Notice",
+            "href": "https://taasflow.com/privacy"
+          }
+        ],
+        "images": [
+          {
+            "src": "https://taasflow.com/assets/logo-on-white-Dk9DIcMP.png",
+            "alt": "TaaSFlow logo"
+          },
+          {
+            "src": "https://taasflow.com/assets/consulting-BJHEQnFp.jpg",
+            "alt": ""
+          },
+          {
+            "src": "https://taasflow.com/assets/consulting-BJHEQnFp.jpg",
+            "alt": ""
+          },
+          {
+            "src": "https://taasflow.com/assets/consulting-BJHEQnFp.jpg",
+            "alt": ""
+          },
+          {
+            "src": "https://taasflow.com/assets/consulting-hiring-CdIfJnSU.jpg",
+            "alt": "Consulting Firm Hiring: How Top Firms Build and Retain Their Talent Pipeline"
+          },
+          {
+            "src": "https://taasflow.com/assets/logo-on-blue-CX6jlwjg.png",
+            "alt": "TaaSFlow logo"
+          }
+        ],
+        "forms": [
+          {
+            "action": "https://taasflow.com/industries/consulting",
+            "fields": [
+              "input"
+            ]
+          }
+        ],
+        "navLinks": [
+          "Browse jobs",
+          "Join the network",
+          "Browse open roles",
+          "Home",
+          "Industries",
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us"
+        ],
+        "footerLinks": [
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "Privacy Policy",
+          "Terms of Service"
+        ],
+        "horizontalOverflow": false,
+        "documentWidth": 1440,
+        "viewportWidth": 1440
+      },
+      "destination": {
+        "url": "https://clear-path-hubs.lovable.app/industries/consulting",
+        "finalUrl": "https://clear-path-hubs.lovable.app/industries/consulting",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [],
+        "title": "Consulting hiring — TaaSFlow",
+        "description": "Consultants, analysts, and delivery specialists for firms and advisory practices — sourced through structured rubrics and evidence-based scoring.",
+        "canonical": "https://clear-path-hubs.lovable.app/industries/consulting",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "twitter:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "og:title": "Consulting hiring — TaaSFlow",
+          "og:description": "Consultants, analysts, and delivery specialists for firms and advisory practices — sourced through structured rubrics and evidence-based scoring.",
+          "og:url": "https://clear-path-hubs.lovable.app/industries/consulting",
+          "og:type": "website",
+          "twitter:card": "summary_large_image",
+          "twitter:title": "Consulting hiring — TaaSFlow",
+          "twitter:description": "Consultants, analysts, and delivery specialists for firms and advisory practices — sourced through structured rubrics and evidence-based scoring."
+        },
+        "structuredData": [],
+        "h1": [
+          "Extend your delivery capacity without diluting your standard."
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "Extend your delivery capacity without diluting your standard."
+          },
+          {
+            "level": 2,
+            "text": "What we hear from Consulting teams"
+          },
+          {
+            "level": 3,
+            "text": "Every engagement type wants a different profile"
+          },
+          {
+            "level": 3,
+            "text": "Consulting CVs read alike"
+          },
+          {
+            "level": 3,
+            "text": "Leverage without losing quality"
+          },
+          {
+            "level": 2,
+            "text": "Roles we source in Consulting"
+          },
+          {
+            "level": 3,
+            "text": "Submit the role"
+          },
+          {
+            "level": 3,
+            "text": "We source and score"
+          },
+          {
+            "level": 3,
+            "text": "Review in your workspace"
+          },
+          {
+            "level": 2,
+            "text": "Scaling a consulting practice?"
+          }
+        ],
+        "sections": [
+          "Extend your delivery capacity without diluting your standard.",
+          "What we hear from Consulting teams",
+          "Roles we source in Consulting",
+          "Submit the role",
+          "Scaling a consulting practice?",
+          "SECTION"
+        ],
+        "textBlocks": [
+          "Home",
+          "Industries",
+          "Consulting",
+          "Consulting",
+          "TaaSFlow helps consulting firms and advisory practices scale delivery: structured intake per engagement type, rubrics per level, and evidence of the outcomes each candidate has actually delivered.",
+          "Rubric per practice and level",
+          "Outcome evidence from the CV",
+          "Human review before publication",
+          "Strategy, operations, technology and change work each favour different backgrounds. We calibrate rubrics per practice so the shortlist matches the engagement, not just the title.",
+          "Case-count and firm names look similar on paper. Our scoring extracts specific evidence: the industries served, the problems owned, the outcomes delivered.",
+          "The whole point is more capacity at your standard. Every candidate we surface has been reviewed against your rubric before publication — no unranked pipes.",
+          "We calibrate the rubric to the seniority and specialisation you actually need.",
+          "Management consultants",
+          "Strategy advisors",
+          "Operations consultants",
+          "Technology consultants",
+          "Change & transformation leads",
+          "Project & programme managers",
+          "Implementation consultants",
+          "Practice & engagement leads",
+          "01",
+          "A guided intake captures everything the search needs, in one flow.",
+          "02",
+          "Multi-channel sourcing, role-specific rubric, evidence extracted from every CV.",
+          "03",
+          "Ranked shortlist, evidence side-by-side, Kanban pipeline, direct messaging.",
+          "See the full process on how it works.",
+          "Consulting",
+          "Submit the role — one workspace, one rubric, one accountable delivery team."
+        ],
+        "buttons": [],
+        "links": [
+          {
+            "text": "Home",
+            "href": "https://clear-path-hubs.lovable.app/"
+          },
+          {
+            "text": "Industries",
+            "href": "https://clear-path-hubs.lovable.app/industries"
+          },
+          {
+            "text": "Start hiring",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "Talk to us",
+            "href": "https://clear-path-hubs.lovable.app/contact"
+          },
+          {
+            "text": "how it works",
+            "href": "https://clear-path-hubs.lovable.app/how-it-works"
+          },
+          {
+            "text": "Start intake",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "See other industries",
+            "href": "https://clear-path-hubs.lovable.app/industries"
+          },
+          {
+            "text": "Edit with",
+            "href": "https://lovable.dev/projects/1dc5ee7e-1294-441c-8288-850e79e443f6?utm_source=lovable-badge"
+          }
+        ],
+        "images": [],
+        "forms": [],
+        "navLinks": [
+          "Home",
+          "Industries"
+        ],
+        "footerLinks": [],
+        "horizontalOverflow": false,
+        "documentWidth": 1440,
+        "viewportWidth": 1440
+      },
+      "screenshots": {
+        "sourceFull": "reports/public-parity/screenshots/source/industries_consulting__desktop__full.png",
+        "sourceVisible": "reports/public-parity/screenshots/source/industries_consulting__desktop__visible.png",
+        "destinationFull": "reports/public-parity/screenshots/destination/industries_consulting__desktop__full.png",
+        "destinationVisible": "reports/public-parity/screenshots/destination/industries_consulting__desktop__visible.png"
+      },
+      "differences": [
+        "title: \"Consulting Talent | TaaSFlow - Talent as a Service\" vs \"Consulting hiring — TaaSFlow\"",
+        "meta description mismatch",
+        "H1 differs: [Consulting Talent for Firms & Advisory Practices] vs [Extend your delivery capacity without diluting your standard.]",
+        "heading overlap 0% (0/30)",
+        "section count 20 vs 6",
+        "form count 1 vs 0"
+      ]
+    }
+  ],
+  "summary": "18 differences detected",
+  "exclusions": []
+}

@@ -1,0 +1,3349 @@
+{
+  "sourcePath": "/industries/cybersecurity",
+  "destinationPath": "/industries/cybersecurity",
+  "pageType": "industry_page",
+  "protected": false,
+  "verdict": "MAJOR_DIFFERENCE",
+  "severity": "HIGH",
+  "viewports": [
+    {
+      "viewport": "mobile",
+      "source": {
+        "url": "https://taasflow.com/industries/cybersecurity",
+        "finalUrl": "https://taasflow.com/industries/cybersecurity",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [
+          {
+            "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HJ2ECKCNK4&gtm=45je67l1v9245339446za200zd9245339446&_p=1784774346150&gcd=13l3l3l3l1l1&npa=0&_ng=1&dma=0&are=1&cid=1435729217.1784774346&frm=0&ngs=1&pscdl=noapi&rcb=7&sr=375x812&uaa=x86&uab=64&uafvl=Not-A.Brand%3B24.0.0.0%7CChromium%3B146.0.7680.80&uam=&uamb=0&uap=Windows&uapv=&uaw=0&ul=en-us&_s=1&tag_exp=115616986~115938465~115938468~118395334~118897920~118897930~119896803&dp=%2Findustries%2Fcybersecurity&dt=TaaSFlow%20%7C%20Talent%20as%20a%20Service%20%7C%20Subscription%20Recruiting&dl=https%3A%2F%2Ftaasflow.com%2Findustries%2Fcybersecurity&sid=1784774346&sct=1&seg=0&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&ep.role_type=public&ep.is_authenticated=false&tfd=815",
+            "status": null,
+            "failure": "net::ERR_ABORTED"
+          }
+        ],
+        "title": "Cybersecurity Talent | TaaSFlow - Talent as a Service",
+        "description": "On-demand cybersecurity professionals including security analysts, compliance specialists, and incident responders. Certification-verified talent.",
+        "canonical": "https://taasflow.com/industries/cybersecurity",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:type": "website",
+          "og:url": "https://taasflow.com/industries/cybersecurity",
+          "og:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "og:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "og:image": "https://taasflow.com/og-image.png",
+          "og:image:width": "1200",
+          "og:image:height": "630",
+          "og:locale": "en_US",
+          "twitter:card": "summary_large_image",
+          "twitter:site": "@TaasFlow",
+          "twitter:creator": "@TaasFlow",
+          "twitter:url": "https://taasflow.com/industries/cybersecurity",
+          "twitter:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "twitter:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "twitter:image": "https://taasflow.com/og-image.png"
+        },
+        "structuredData": [
+          {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "@id": "https://taasflow.com/#organization",
+            "name": "TaaSFlow",
+            "legalName": "TaaSFlow",
+            "url": "https://taasflow.com/",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://taasflow.com/favicon.png",
+              "width": 512,
+              "height": 512
+            },
+            "image": "https://taasflow.com/og-image.png",
+            "description": "Talent as a Service — subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+            "slogan": "Your hiring team. On demand.",
+            "foundingDate": "2024",
+            "areaServed": [
+              {
+                "@type": "Country",
+                "name": "United States"
+              },
+              {
+                "@type": "Country",
+                "name": "United Arab Emirates"
+              },
+              {
+                "@type": "Country",
+                "name": "United Kingdom"
+              },
+              {
+                "@type": "Country",
+                "name": "Brazil"
+              }
+            ],
+            "knowsAbout": [
+              "Subscription recruiting",
+              "Talent as a Service",
+              "Candidate sourcing",
+              "Pre-screened candidates",
+              "Recruitment process outsourcing"
+            ],
+            "contactPoint": [
+              {
+                "@type": "ContactPoint",
+                "contactType": "sales",
+                "email": "hello@taasflow.com",
+                "url": "https://taasflow.com/contact",
+                "availableLanguage": [
+                  "English",
+                  "Portuguese",
+                  "Spanish"
+                ]
+              }
+            ],
+            "sameAs": [
+              "https://www.linkedin.com/company/taasflow",
+              "https://twitter.com/TaasFlow"
+            ]
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "@id": "https://taasflow.com/#website",
+            "name": "TaaSFlow",
+            "alternateName": "Talent as a Service",
+            "url": "https://taasflow.com/",
+            "description": "Subscription recruiting that delivers pre-screened, ranked candidates in 14 days.",
+            "inLanguage": "en-US",
+            "publisher": {
+              "@id": "https://taasflow.com/#organization"
+            },
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": {
+                "@type": "EntryPoint",
+                "urlTemplate": "https://taasflow.com/jobs?q={search_term_string}"
+              },
+              "query-input": "required name=search_term_string"
+            }
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "Service",
+            "name": "Cybersecurity Talent Sourcing",
+            "description": "On-demand cybersecurity professionals including security analysts, compliance specialists, and incident responders. Certification-verified talent.",
+            "provider": {
+              "@type": "Organization",
+              "name": "TaasFlow",
+              "url": "https://taasflow.com"
+            },
+            "serviceType": "Talent Acquisition",
+            "areaServed": "United States",
+            "hasOfferCatalog": {
+              "@type": "OfferCatalog",
+              "name": "Cybersecurity Recruiting Services",
+              "itemListElement": [
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Security Analysts Recruiting"
+                  },
+                  "position": 1
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Security Engineers Recruiting"
+                  },
+                  "position": 2
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Compliance Analysts Recruiting"
+                  },
+                  "position": 3
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Incident Responders Recruiting"
+                  },
+                  "position": 4
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Penetration Testers Recruiting"
+                  },
+                  "position": 5
+                }
+              ]
+            }
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "https://taasflow.com"
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Industries",
+                "item": "https://taasflow.com/industries"
+              },
+              {
+                "@type": "ListItem",
+                "position": 3,
+                "name": "Cybersecurity",
+                "item": "https://taasflow.com/industries//industries/cybersecurity"
+              }
+            ]
+          }
+        ],
+        "h1": [
+          "Cybersecurity Talent for Protection & Compliance"
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "Cybersecurity Talent for Protection & Compliance"
+          },
+          {
+            "level": 2,
+            "text": "Cybersecurity Industry Insights"
+          },
+          {
+            "level": 3,
+            "text": "Cybercrime Cost"
+          },
+          {
+            "level": 3,
+            "text": "Talent Gap"
+          },
+          {
+            "level": 3,
+            "text": "Avg Salary"
+          },
+          {
+            "level": 3,
+            "text": "Breach Cost"
+          },
+          {
+            "level": 3,
+            "text": "Industry Overview"
+          },
+          {
+            "level": 3,
+            "text": "Ready to transform your cybersecurity recruiting?"
+          },
+          {
+            "level": 2,
+            "text": "How we hire for Cybersecurity"
+          },
+          {
+            "level": 3,
+            "text": "Threat Landscape Briefing"
+          },
+          {
+            "level": 3,
+            "text": "Certification Verification"
+          },
+          {
+            "level": 3,
+            "text": "Framework Expertise Match"
+          },
+          {
+            "level": 3,
+            "text": "Security-Cleared Delivery"
+          },
+          {
+            "level": 2,
+            "text": "The Cybersecurity Talent Challenge"
+          },
+          {
+            "level": 3,
+            "text": "The TaasFlow Solution"
+          },
+          {
+            "level": 2,
+            "text": "Why Cybersecurity companies choose TaasFlow"
+          },
+          {
+            "level": 3,
+            "text": "Certifications Verified"
+          },
+          {
+            "level": 3,
+            "text": "24-Hour Incident Response"
+          },
+          {
+            "level": 3,
+            "text": "Compliance Expertise"
+          },
+          {
+            "level": 3,
+            "text": "40% Cost Savings"
+          },
+          {
+            "level": 2,
+            "text": "Positions we fill for Cybersecurity"
+          },
+          {
+            "level": 2,
+            "text": "Real results for Cybersecurity teams"
+          },
+          {
+            "level": 2,
+            "text": "Cybersecurity Salary Explorer"
+          },
+          {
+            "level": 2,
+            "text": "Cybersecurity Career Path"
+          },
+          {
+            "level": 3,
+            "text": "Senior"
+          },
+          {
+            "level": 4,
+            "text": "Key Skills at This Level"
+          },
+          {
+            "level": 2,
+            "text": "Cybersecurity Hiring Trends"
+          },
+          {
+            "level": 2,
+            "text": "Interactive Hiring Guide"
+          },
+          {
+            "level": 3,
+            "text": "Define Your Ideal Candidate"
+          },
+          {
+            "level": 3,
+            "text": "Optimize Your Job Posting"
+          },
+          {
+            "level": 3,
+            "text": "Source Beyond Job Boards"
+          },
+          {
+            "level": 3,
+            "text": "Structure Your Interview Process"
+          },
+          {
+            "level": 3,
+            "text": "Close & Onboard Effectively"
+          },
+          {
+            "level": 2,
+            "text": "Cybersecurity Recruiting Insights"
+          },
+          {
+            "level": 3,
+            "text": "The Cybersecurity Talent Shortage: 3.5 Million Unfilled Roles and How to Compete"
+          },
+          {
+            "level": 3,
+            "text": "Closing the Cybersecurity Talent Gap: Hiring Strategies for 2026"
+          },
+          {
+            "level": 3,
+            "text": "Closing the Cybersecurity Talent Gap: Strategies for 2026"
+          },
+          {
+            "level": 2,
+            "text": "Frequently Asked Questions"
+          },
+          {
+            "level": 3,
+            "text": "How do you verify security certifications?"
+          },
+          {
+            "level": 3,
+            "text": "Can you help with SOC 2 certification?"
+          },
+          {
+            "level": 3,
+            "text": "Do you have incident response capabilities?"
+          },
+          {
+            "level": 2,
+            "text": "Discover related industries"
+          },
+          {
+            "level": 2,
+            "text": "Ready to build your Cybersecurity team?"
+          },
+          {
+            "level": 2,
+            "text": "Cybersecurity Recruiting"
+          },
+          {
+            "level": 3,
+            "text": "Hub Page"
+          },
+          {
+            "level": 3,
+            "text": "Related Articles"
+          },
+          {
+            "level": 3,
+            "text": "Get Started"
+          },
+          {
+            "level": 4,
+            "text": "Newsletter"
+          },
+          {
+            "level": 4,
+            "text": "For candidates"
+          },
+          {
+            "level": 4,
+            "text": "For companies"
+          },
+          {
+            "level": 4,
+            "text": "Industries"
+          },
+          {
+            "level": 4,
+            "text": "Company"
+          },
+          {
+            "level": 3,
+            "text": "Cookie Preferences"
+          }
+        ],
+        "sections": [
+          "SECTION",
+          "Cybersecurity Talent for Protection & Compliance",
+          "SECTION",
+          "Cybersecurity Industry Insights",
+          "Ready to transform your cybersecurity recruiting?",
+          "How we hire for Cybersecurity",
+          "The Cybersecurity Talent Challenge",
+          "Why Cybersecurity companies choose TaasFlow",
+          "Positions we fill for Cybersecurity",
+          "Real results for Cybersecurity teams",
+          "Cybersecurity Salary Explorer",
+          "Cybersecurity Career Path",
+          "Cybersecurity Hiring Trends",
+          "Interactive Hiring Guide",
+          "Cybersecurity Recruiting Insights",
+          "Frequently Asked Questions",
+          "Discover related industries",
+          "SECTION",
+          "Ready to build your Cybersecurity team?",
+          "Cybersecurity Recruiting"
+        ],
+        "textBlocks": [
+          "Solutions",
+          "Industries",
+          "Resources",
+          "Home",
+          "Industries",
+          "Cybersecurity",
+          "Access security analysts, compliance specialists, and incident responders with verified certifications. Protect your organization and meet regulatory requirements.",
+          "Key market data and trends shaping talent demand in your industry. (Hover for details)",
+          "Projected global cybercrime costs by 2025",
+          "Global unfilled cybersecurity positions",
+          "Average US cybersecurity professional salary",
+          "Average cost of a data breach in 2023",
+          "Start a risk-free pilot and receive qualified candidates in 14 days.",
+          "A tailored workflow for the challenges of cybersecurity settings.",
+          "We assess your security posture, compliance frameworks, and certification needs.",
+          "CISSP, CISM, CEH, OSCP verified with issuing organizations.",
+          "Candidates matched to SOC 2, HIPAA, PCI-DSS, or your specific requirements.",
+          "Certified professionals deployed for projects, audits, or incident response.",
+          "The cybersecurity talent gap is real. Qualified professionals are expensive and in high demand—your job postings compete with Fortune 500 offers.",
+          "Compliance projects (SOC 2, HIPAA, PCI-DSS) have deadlines, but you may not need full-time security staff after certification.",
+          "Incident response requires immediate expertise. You can't wait for recruiting when you're actively responding to a breach.",
+          "Security analysts with CISSP, CISM, CEH, and other certifications verified",
+          "Compliance specialists for SOC 2, HIPAA, PCI-DSS, and ISO 27001 projects",
+          "Incident responders available for rapid deployment during security events",
+          "Penetration testers and vulnerability assessors for security audits",
+          "Flexible engagements for projects, audits, or ongoing security operations",
+          "We understand the unique challenges of your industry and deliver matching talent.",
+          "CISSP, CISM, CEH, OSCP, and other certifications verified before placement.",
+          "Rapid deployment of IR specialists during active security events.",
+          "Specialists in SOC 2, HIPAA, PCI-DSS, ISO 27001, and other frameworks.",
+          "Qualified security professionals at fraction of consulting firm rates.",
+          "Pre-vetted professionals, delivered weekly, ready to start.",
+          "- B2B SaaS Platform, Series B",
+          "Explore current compensation ranges for top roles. Data updated quarterly from industry benchmarks.",
+          "* Based on industry benchmarks from SHRM, Glassdoor, LinkedIn Salary, and BLS data. Actual compensation may vary.",
+          "Click any level to explore typical progression, salary ranges, and key skills.",
+          "Key metrics shaping the talent landscape. Stay ahead of market shifts.",
+          "Steady growth in hiring demand across this sector.",
+          "Increasing adoption of remote and hybrid work models.",
+          "Unfilled positions due to skills shortage in this industry.",
+          "Industry average continues to improve with modern sourcing.",
+          "Follow these proven steps to hire smarter. Track your progress and get actionable tips at every stage.",
+          "Create a detailed candidate persona with must-have vs nice-to-have skills, cultural fit criteria, and realistic salary expectations.",
+          "Write a compelling job description that sells the opportunity, not just lists requirements. Include salary range, growth path, and team culture.",
+          "Reach passive candidates through targeted outreach, employee referrals, and talent communities. 70% of top talent is not actively looking.",
+          "Design a consistent 3-4 stage process that evaluates skills, culture fit, and potential. Include take-home assessments where appropriate.",
+          "Move fast with competitive offers and start onboarding before day one. The first 90 days determine long-term retention.",
+          "Expert articles on recruiting and talent acquisition for cybersecurity.",
+          "With 3.5 million cybersecurity positions unfilled globally, organizations must get creative to attract and retain security talent.",
+          "Closing the Cybersecurity Talent Gap: Hiring Strategies for 2026",
+          "The cybersecurity workforce gap is 3.5 million globally. Here is how organizations are competing for this critical talent.",
+          "Closing the Cybersecurity Talent Gap: Strategies for 2026",
+          "With 3.4 million unfilled cybersecurity jobs globally, learn how organizations are building security teams despite fierce competition.",
+          "Common questions about TaasFlow for cybersecurity.",
+          "Learn how we serve similar sectors with subscription recruiting.",
+          "Receive qualified cybersecurity professionals weekly. No agency fees, no long-term contracts.",
+          "Related Industries",
+          "Talent as a Service",
+          "A global hiring system for teams that need consistent recruiting.",
+          "Weekly insights into talent acquisition. No spam.",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Book call",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "No recruitment agency fees. No placement charges. Subscription-based hiring system.",
+          "Copyright 2026 TaaSFlow. All rights reserved.",
+          "We use essential cookies for core functionality. With your consent, we use analytics (Google Analytics) and marketing technologies (Meta Pixel, Apollo, Retention.com/RB2B) to understand website performance, improve campaigns, and measure conversions safely. Your data is processed in accordance with GDPR and our Privacy Notice. You can change your preferences at any time."
+        ],
+        "buttons": [
+          "Solutions",
+          "Industries",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Solutions",
+          "How it works",
+          "Pilot",
+          "Enterprise",
+          "Case studies",
+          "Jobs",
+          "Journey",
+          "Industries",
+          "Tech",
+          "SaaS & Cloud",
+          "Cybersecurity",
+          "Data & Analytics",
+          "Finance",
+          "Insurance",
+          "PE & VC",
+          "Accounting",
+          "Legal",
+          "Consulting",
+          "HR & Recruiting",
+          "Staffing Agencies",
+          "Sales",
+          "Marketing",
+          "E-commerce",
+          "Media",
+          "Real Estate",
+          "Construction",
+          "Hospitality",
+          "Healthcare",
+          "Public Sector",
+          "Non-Profit",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Success Stories",
+          "Talent Marketplace",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Start Cybersecurity Pilot Program",
+          "Book call",
+          "Book call",
+          "1Entry-Level",
+          "2Mid-Level",
+          "3Senior",
+          "4Director / Lead",
+          "5VP / C-Suite",
+          "Next: Director / Lead",
+          "1Define Your Ideal Candidate1-2 days",
+          "1",
+          "Mark Complete",
+          "2Optimize Your Job PostingWrite a compelling job description that sells the opportunity, not just lists requirements. Include salary range, growth path, and team culture.1 day",
+          "2",
+          "3Source Beyond Job BoardsReach passive candidates through targeted outreach, employee referrals, and talent communities. 70% of top talent is not actively looking.Ongoing",
+          "3",
+          "4Structure Your Interview ProcessDesign a consistent 3-4 stage process that evaluates skills, culture fit, and potential. Include take-home assessments where appropriate.2-3 days setup",
+          "4",
+          "5Close & Onboard EffectivelyMove fast with competitive offers and start onboarding before day one. The first 90 days determine long-term retention.1-2 weeks",
+          "5",
+          "How do you verify security certifications?",
+          "Can you help with SOC 2 certification?",
+          "Do you have incident response capabilities?",
+          "Start Cybersecurity Pilot",
+          "Contact",
+          "Subscribe",
+          "Book call"
+        ],
+        "links": [
+          {
+            "text": "Skip to main content",
+            "href": "https://taasflow.com/industries/cybersecurity#main-content"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "Browse jobs",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Join the network",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Browse open roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Home",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "Industries",
+            "href": "https://taasflow.com/industries"
+          },
+          {
+            "text": "View all articles",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "Industry Hiring GuidesCybersecurityThe Cybersecurity Talent Shortage: 3.5 Million Unfilled Roles and How to CompeteWith ",
+            "href": "https://taasflow.com/blog/cybersecurity-talent-shortage-2026"
+          },
+          {
+            "text": "📋Closing the Cybersecurity Talent Gap: Hiring Strategies for 2026Industry Hiring GuidesIndustry Hiring GuidesCybersecur",
+            "href": "https://taasflow.com/blog/cybersecurity-talent-gap-solutions"
+          },
+          {
+            "text": "🔍Closing the Cybersecurity Talent Gap: Strategies for 2026Industry SpotlightIndustry SpotlightCybersecurityClosing the ",
+            "href": "https://taasflow.com/blog/cybersecurity-talent-gap"
+          },
+          {
+            "text": "View all articles",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "Technology",
+            "href": "https://taasflow.com/industries/tech"
+          },
+          {
+            "text": "Legal",
+            "href": "https://taasflow.com/industries/legal"
+          },
+          {
+            "text": "Public Sector",
+            "href": "https://taasflow.com/industries/public-sector"
+          },
+          {
+            "text": "Finance & Banking",
+            "href": "https://taasflow.com/industries/finance"
+          },
+          {
+            "text": "Staffing Agencies",
+            "href": "https://taasflow.com/industries/staffing-agencies"
+          },
+          {
+            "text": "Healthcare",
+            "href": "https://taasflow.com/industries/healthcare"
+          },
+          {
+            "text": "Sales",
+            "href": "https://taasflow.com/industries/sales"
+          },
+          {
+            "text": "Marketing & Advertising",
+            "href": "https://taasflow.com/industries/marketing"
+          },
+          {
+            "text": "Compare all industries",
+            "href": "https://taasflow.com/industries/compare"
+          },
+          {
+            "text": "How it works",
+            "href": "https://taasflow.com/how-it-works"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "Start Pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "Jobs",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Blog",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "About",
+            "href": "https://taasflow.com/about"
+          },
+          {
+            "text": "Enterprise",
+            "href": "https://taasflow.com/enterprise"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://taasflow.com/faq"
+          },
+          {
+            "text": "Contact",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Looking for a job in cybersecurity? Browse open positions",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Cybersecurity Recruiting",
+            "href": "https://taasflow.com/industries/cybersecurity"
+          },
+          {
+            "text": "Cybersecurity Hiring Guide",
+            "href": "https://taasflow.com/blog/cybersecurity-hiring-guide"
+          },
+          {
+            "text": "Tech Hiring Trends",
+            "href": "https://taasflow.com/blog/tech-hiring-trends-2025"
+          },
+          {
+            "text": "Skills-Based Hiring",
+            "href": "https://taasflow.com/blog/skills-based-hiring"
+          },
+          {
+            "text": "Start a Pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "View Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "Technology Recruiting",
+            "href": "https://taasflow.com/industries/tech"
+          },
+          {
+            "text": "Open Positions",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "LinkedIn",
+            "href": "https://www.linkedin.com/company/taasflow/"
+          },
+          {
+            "text": "Browse roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Talent network",
+            "href": "https://taasflow.com/global-talent"
+          },
+          {
+            "text": "Member stories",
+            "href": "https://taasflow.com/candidate-success"
+          },
+          {
+            "text": "Start pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "Employer onboarding",
+            "href": "https://taasflow.com/employer-onboarding"
+          },
+          {
+            "text": "Case studies",
+            "href": "https://taasflow.com/case-studies"
+          },
+          {
+            "text": "Healthcare",
+            "href": "https://taasflow.com/industries/healthcare"
+          },
+          {
+            "text": "Technology",
+            "href": "https://taasflow.com/industries/tech"
+          },
+          {
+            "text": "Finance",
+            "href": "https://taasflow.com/industries/finance"
+          },
+          {
+            "text": "Legal",
+            "href": "https://taasflow.com/industries/legal"
+          },
+          {
+            "text": "All →",
+            "href": "https://taasflow.com/industries"
+          },
+          {
+            "text": "About us",
+            "href": "https://taasflow.com/about"
+          },
+          {
+            "text": "Blog",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://taasflow.com/faq"
+          },
+          {
+            "text": "Knowledge Base",
+            "href": "https://taasflow.com/knowledge-base"
+          },
+          {
+            "text": "Contact us",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Privacy Policy",
+            "href": "https://taasflow.com/privacy"
+          },
+          {
+            "text": "Terms of Service",
+            "href": "https://taasflow.com/terms"
+          },
+          {
+            "text": "Privacy Notice",
+            "href": "https://taasflow.com/privacy"
+          }
+        ],
+        "images": [
+          {
+            "src": "https://taasflow.com/assets/logo-on-white-Dk9DIcMP.png",
+            "alt": "TaaSFlow logo"
+          },
+          {
+            "src": "https://taasflow.com/assets/cybersecurity-BptAmnip.jpg",
+            "alt": ""
+          },
+          {
+            "src": "https://taasflow.com/assets/cybersecurity-BptAmnip.jpg",
+            "alt": ""
+          },
+          {
+            "src": "https://taasflow.com/assets/cybersecurity-BptAmnip.jpg",
+            "alt": ""
+          },
+          {
+            "src": "https://taasflow.com/assets/cybersecurity-hiring-DdueVgjl.jpg",
+            "alt": "The Cybersecurity Talent Shortage: 3.5 Million Unfilled Roles and How to Compete"
+          },
+          {
+            "src": "https://taasflow.com/assets/logo-on-blue-CX6jlwjg.png",
+            "alt": "TaaSFlow logo"
+          }
+        ],
+        "forms": [
+          {
+            "action": "https://taasflow.com/industries/cybersecurity",
+            "fields": [
+              "input"
+            ]
+          }
+        ],
+        "navLinks": [
+          "Browse jobs",
+          "Join the network",
+          "Browse open roles",
+          "Home",
+          "Industries",
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us"
+        ],
+        "footerLinks": [
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "Privacy Policy",
+          "Terms of Service"
+        ],
+        "horizontalOverflow": false,
+        "documentWidth": 375,
+        "viewportWidth": 375
+      },
+      "destination": {
+        "url": "https://clear-path-hubs.lovable.app/industries/cybersecurity",
+        "finalUrl": "https://clear-path-hubs.lovable.app/industries/cybersecurity",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [],
+        "title": "Cybersecurity hiring — TaaSFlow",
+        "description": "Security engineers, GRC leads, SOC analysts and cloud security specialists — sourced with structured rubrics and evidence-based scoring in one workspace.",
+        "canonical": "https://clear-path-hubs.lovable.app/industries/cybersecurity",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "twitter:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "og:title": "Cybersecurity hiring — TaaSFlow",
+          "og:description": "Security engineers, GRC leads, SOC analysts and cloud security specialists — sourced with structured rubrics and evidence-based scoring in one workspace.",
+          "og:url": "https://clear-path-hubs.lovable.app/industries/cybersecurity",
+          "og:type": "website",
+          "twitter:card": "summary_large_image",
+          "twitter:title": "Cybersecurity hiring — TaaSFlow",
+          "twitter:description": "Security engineers, GRC leads, SOC analysts and cloud security specialists — sourced with structured rubrics and evidence-based scoring in one workspace."
+        },
+        "structuredData": [],
+        "h1": [
+          "Security hiring that actually verifies the security part."
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "Security hiring that actually verifies the security part."
+          },
+          {
+            "level": 2,
+            "text": "What we hear from Cybersecurity teams"
+          },
+          {
+            "level": 3,
+            "text": "Certifications aren’t the same as capability"
+          },
+          {
+            "level": 3,
+            "text": "Security roles are highly specialised"
+          },
+          {
+            "level": 3,
+            "text": "Trust and discretion matter"
+          },
+          {
+            "level": 2,
+            "text": "Roles we source in Cybersecurity"
+          },
+          {
+            "level": 3,
+            "text": "Submit the role"
+          },
+          {
+            "level": 3,
+            "text": "We source and score"
+          },
+          {
+            "level": 3,
+            "text": "Review in your workspace"
+          },
+          {
+            "level": 2,
+            "text": "Hiring a security specialist?"
+          }
+        ],
+        "sections": [
+          "Security hiring that actually verifies the security part.",
+          "What we hear from Cybersecurity teams",
+          "Roles we source in Cybersecurity",
+          "Submit the role",
+          "Hiring a security specialist?",
+          "SECTION"
+        ],
+        "textBlocks": [
+          "Home",
+          "Industries",
+          "Cybersecurity",
+          "Cybersecurity",
+          "TaaSFlow builds role-specific rubrics for every security domain — offensive, defensive, cloud, GRC and application security — and captures evidence from the CV so you can trust the shortlist you review.",
+          "Domain-specific rubric",
+          "Evidence quotes from the CV",
+          "Private, tenant-isolated workspace",
+          "Certifications are a floor, not a ceiling. We score against real evidence — incidents handled, controls implemented, tooling owned — rather than treating a certificate as a substitute for it.",
+          "AppSec, cloud security, detection engineering and GRC are different disciplines. Our rubrics are per-role so a generalist doesn’t get short-listed for a specialist opening.",
+          "Security hiring processes deserve tight access controls. TaaSFlow runs on row-level tenant isolation and private CV storage with short-lived signed URLs.",
+          "We calibrate the rubric to the seniority and specialisation you actually need.",
+          "Security engineers",
+          "Cloud & infrastructure security",
+          "Application security",
+          "Detection & response (SOC)",
+          "Offensive security & red team",
+          "Governance, risk & compliance",
+          "Security architects",
+          "CISOs & security leaders",
+          "01",
+          "A guided intake captures everything the search needs, in one flow.",
+          "02",
+          "Multi-channel sourcing, role-specific rubric, evidence extracted from every CV.",
+          "03",
+          "Ranked shortlist, evidence side-by-side, Kanban pipeline, direct messaging.",
+          "See the full process on how it works.",
+          "Cybersecurity",
+          "Submit the role and receive a discreetly reviewed, evidence-backed shortlist."
+        ],
+        "buttons": [],
+        "links": [
+          {
+            "text": "Home",
+            "href": "https://clear-path-hubs.lovable.app/"
+          },
+          {
+            "text": "Industries",
+            "href": "https://clear-path-hubs.lovable.app/industries"
+          },
+          {
+            "text": "Start hiring",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "Talk to us",
+            "href": "https://clear-path-hubs.lovable.app/contact"
+          },
+          {
+            "text": "how it works",
+            "href": "https://clear-path-hubs.lovable.app/how-it-works"
+          },
+          {
+            "text": "Start intake",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "See other industries",
+            "href": "https://clear-path-hubs.lovable.app/industries"
+          },
+          {
+            "text": "Edit with",
+            "href": "https://lovable.dev/projects/1dc5ee7e-1294-441c-8288-850e79e443f6?utm_source=lovable-badge"
+          }
+        ],
+        "images": [],
+        "forms": [],
+        "navLinks": [
+          "Home",
+          "Industries"
+        ],
+        "footerLinks": [],
+        "horizontalOverflow": false,
+        "documentWidth": 375,
+        "viewportWidth": 375
+      },
+      "screenshots": {
+        "sourceFull": "reports/public-parity/screenshots/source/industries_cybersecurity__mobile__full.png",
+        "sourceVisible": "reports/public-parity/screenshots/source/industries_cybersecurity__mobile__visible.png",
+        "destinationFull": "reports/public-parity/screenshots/destination/industries_cybersecurity__mobile__full.png",
+        "destinationVisible": "reports/public-parity/screenshots/destination/industries_cybersecurity__mobile__visible.png"
+      },
+      "differences": [
+        "title: \"Cybersecurity Talent | TaaSFlow - Talent as a Service\" vs \"Cybersecurity hiring — TaaSFlow\"",
+        "meta description mismatch",
+        "H1 differs: [Cybersecurity Talent for Protection & Compliance] vs [Security hiring that actually verifies the security part.]",
+        "heading overlap 0% (0/30)",
+        "section count 20 vs 6",
+        "form count 1 vs 0"
+      ]
+    },
+    {
+      "viewport": "tablet",
+      "source": {
+        "url": "https://taasflow.com/industries/cybersecurity",
+        "finalUrl": "https://taasflow.com/industries/cybersecurity",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [
+          {
+            "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HJ2ECKCNK4&gtm=45je67l1v9245339446za200zd9245339446&_p=1784774349881&gcd=13l3l3l3l1l1&npa=0&_ng=1&dma=0&are=1&cid=1848192259.1784774350&frm=0&ngs=1&pscdl=noapi&rcb=1&sr=768x1024&uaa=x86&uab=64&uafvl=Not-A.Brand%3B24.0.0.0%7CChromium%3B146.0.7680.80&uam=&uamb=0&uap=Windows&uapv=&uaw=0&ul=en-us&_s=1&tag_exp=115938466~115938469~118897920~118897930~119724321~119896802&dp=%2Findustries%2Fcybersecurity&dt=TaaSFlow%20%7C%20Talent%20as%20a%20Service%20%7C%20Subscription%20Recruiting&dl=https%3A%2F%2Ftaasflow.com%2Findustries%2Fcybersecurity&sid=1784774350&sct=1&seg=0&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&ep.role_type=public&ep.is_authenticated=false&tfd=557",
+            "status": null,
+            "failure": "net::ERR_ABORTED"
+          },
+          {
+            "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HJ2ECKCNK4&gtm=45je67l1v9245339446za200zd9245339446&_p=1784774349881&gcd=13l3l3l3l1l1&npa=0&_ng=1&dma=0&_eu=AEAAAAQ&ae=a&are=1&cid=1848192259.1784774350&frm=0&ngs=1&pscdl=noapi&rcb=1&sr=768x1024&uaa=x86&uab=64&uafvl=Not-A.Brand%3B24.0.0.0%7CChromium%3B146.0.7680.80&uam=&uamb=0&uap=Windows&uapv=&uaw=0&ul=en-us&_s=2&tag_exp=115938466~115938469~118897920~118897930~119724321~119896802&sid=1784774350&sct=1&seg=0&dl=https%3A%2F%2Ftaasflow.com%2Findustries%2Fcybersecurity&dt=TaaSFlow%20%7C%20Talent%20as%20a%20Service%20%7C%20Subscription%20Recruiting&en=scroll&epn.percent_scrolled=90&_et=15&tfd=996",
+            "status": null,
+            "failure": "net::ERR_ABORTED"
+          }
+        ],
+        "title": "Cybersecurity Talent | TaaSFlow - Talent as a Service",
+        "description": "On-demand cybersecurity professionals including security analysts, compliance specialists, and incident responders. Certification-verified talent.",
+        "canonical": "https://taasflow.com/industries/cybersecurity",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:type": "website",
+          "og:url": "https://taasflow.com/industries/cybersecurity",
+          "og:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "og:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "og:image": "https://taasflow.com/og-image.png",
+          "og:image:width": "1200",
+          "og:image:height": "630",
+          "og:locale": "en_US",
+          "twitter:card": "summary_large_image",
+          "twitter:site": "@TaasFlow",
+          "twitter:creator": "@TaasFlow",
+          "twitter:url": "https://taasflow.com/industries/cybersecurity",
+          "twitter:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "twitter:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "twitter:image": "https://taasflow.com/og-image.png"
+        },
+        "structuredData": [
+          {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "@id": "https://taasflow.com/#organization",
+            "name": "TaaSFlow",
+            "legalName": "TaaSFlow",
+            "url": "https://taasflow.com/",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://taasflow.com/favicon.png",
+              "width": 512,
+              "height": 512
+            },
+            "image": "https://taasflow.com/og-image.png",
+            "description": "Talent as a Service — subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+            "slogan": "Your hiring team. On demand.",
+            "foundingDate": "2024",
+            "areaServed": [
+              {
+                "@type": "Country",
+                "name": "United States"
+              },
+              {
+                "@type": "Country",
+                "name": "United Arab Emirates"
+              },
+              {
+                "@type": "Country",
+                "name": "United Kingdom"
+              },
+              {
+                "@type": "Country",
+                "name": "Brazil"
+              }
+            ],
+            "knowsAbout": [
+              "Subscription recruiting",
+              "Talent as a Service",
+              "Candidate sourcing",
+              "Pre-screened candidates",
+              "Recruitment process outsourcing"
+            ],
+            "contactPoint": [
+              {
+                "@type": "ContactPoint",
+                "contactType": "sales",
+                "email": "hello@taasflow.com",
+                "url": "https://taasflow.com/contact",
+                "availableLanguage": [
+                  "English",
+                  "Portuguese",
+                  "Spanish"
+                ]
+              }
+            ],
+            "sameAs": [
+              "https://www.linkedin.com/company/taasflow",
+              "https://twitter.com/TaasFlow"
+            ]
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "@id": "https://taasflow.com/#website",
+            "name": "TaaSFlow",
+            "alternateName": "Talent as a Service",
+            "url": "https://taasflow.com/",
+            "description": "Subscription recruiting that delivers pre-screened, ranked candidates in 14 days.",
+            "inLanguage": "en-US",
+            "publisher": {
+              "@id": "https://taasflow.com/#organization"
+            },
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": {
+                "@type": "EntryPoint",
+                "urlTemplate": "https://taasflow.com/jobs?q={search_term_string}"
+              },
+              "query-input": "required name=search_term_string"
+            }
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "Service",
+            "name": "Cybersecurity Talent Sourcing",
+            "description": "On-demand cybersecurity professionals including security analysts, compliance specialists, and incident responders. Certification-verified talent.",
+            "provider": {
+              "@type": "Organization",
+              "name": "TaasFlow",
+              "url": "https://taasflow.com"
+            },
+            "serviceType": "Talent Acquisition",
+            "areaServed": "United States",
+            "hasOfferCatalog": {
+              "@type": "OfferCatalog",
+              "name": "Cybersecurity Recruiting Services",
+              "itemListElement": [
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Security Analysts Recruiting"
+                  },
+                  "position": 1
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Security Engineers Recruiting"
+                  },
+                  "position": 2
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Compliance Analysts Recruiting"
+                  },
+                  "position": 3
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Incident Responders Recruiting"
+                  },
+                  "position": 4
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Penetration Testers Recruiting"
+                  },
+                  "position": 5
+                }
+              ]
+            }
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "https://taasflow.com"
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Industries",
+                "item": "https://taasflow.com/industries"
+              },
+              {
+                "@type": "ListItem",
+                "position": 3,
+                "name": "Cybersecurity",
+                "item": "https://taasflow.com/industries//industries/cybersecurity"
+              }
+            ]
+          }
+        ],
+        "h1": [
+          "Cybersecurity Talent for Protection & Compliance"
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "Cybersecurity Talent for Protection & Compliance"
+          },
+          {
+            "level": 2,
+            "text": "Cybersecurity Industry Insights"
+          },
+          {
+            "level": 3,
+            "text": "Cybercrime Cost"
+          },
+          {
+            "level": 3,
+            "text": "Talent Gap"
+          },
+          {
+            "level": 3,
+            "text": "Avg Salary"
+          },
+          {
+            "level": 3,
+            "text": "Breach Cost"
+          },
+          {
+            "level": 3,
+            "text": "Industry Overview"
+          },
+          {
+            "level": 3,
+            "text": "Ready to transform your cybersecurity recruiting?"
+          },
+          {
+            "level": 2,
+            "text": "How we hire for Cybersecurity"
+          },
+          {
+            "level": 3,
+            "text": "Threat Landscape Briefing"
+          },
+          {
+            "level": 3,
+            "text": "Certification Verification"
+          },
+          {
+            "level": 3,
+            "text": "Framework Expertise Match"
+          },
+          {
+            "level": 3,
+            "text": "Security-Cleared Delivery"
+          },
+          {
+            "level": 2,
+            "text": "The Cybersecurity Talent Challenge"
+          },
+          {
+            "level": 3,
+            "text": "The TaasFlow Solution"
+          },
+          {
+            "level": 2,
+            "text": "Why Cybersecurity companies choose TaasFlow"
+          },
+          {
+            "level": 3,
+            "text": "Certifications Verified"
+          },
+          {
+            "level": 3,
+            "text": "24-Hour Incident Response"
+          },
+          {
+            "level": 3,
+            "text": "Compliance Expertise"
+          },
+          {
+            "level": 3,
+            "text": "40% Cost Savings"
+          },
+          {
+            "level": 2,
+            "text": "Positions we fill for Cybersecurity"
+          },
+          {
+            "level": 2,
+            "text": "Real results for Cybersecurity teams"
+          },
+          {
+            "level": 2,
+            "text": "Cybersecurity Salary Explorer"
+          },
+          {
+            "level": 2,
+            "text": "Cybersecurity Career Path"
+          },
+          {
+            "level": 3,
+            "text": "Senior"
+          },
+          {
+            "level": 4,
+            "text": "Key Skills at This Level"
+          },
+          {
+            "level": 2,
+            "text": "Cybersecurity Hiring Trends"
+          },
+          {
+            "level": 2,
+            "text": "Interactive Hiring Guide"
+          },
+          {
+            "level": 3,
+            "text": "Define Your Ideal Candidate"
+          },
+          {
+            "level": 3,
+            "text": "Optimize Your Job Posting"
+          },
+          {
+            "level": 3,
+            "text": "Source Beyond Job Boards"
+          },
+          {
+            "level": 3,
+            "text": "Structure Your Interview Process"
+          },
+          {
+            "level": 3,
+            "text": "Close & Onboard Effectively"
+          },
+          {
+            "level": 2,
+            "text": "Cybersecurity Recruiting Insights"
+          },
+          {
+            "level": 3,
+            "text": "The Cybersecurity Talent Shortage: 3.5 Million Unfilled Roles and How to Compete"
+          },
+          {
+            "level": 3,
+            "text": "Closing the Cybersecurity Talent Gap: Hiring Strategies for 2026"
+          },
+          {
+            "level": 3,
+            "text": "Closing the Cybersecurity Talent Gap: Strategies for 2026"
+          },
+          {
+            "level": 2,
+            "text": "Frequently Asked Questions"
+          },
+          {
+            "level": 3,
+            "text": "How do you verify security certifications?"
+          },
+          {
+            "level": 3,
+            "text": "Can you help with SOC 2 certification?"
+          },
+          {
+            "level": 3,
+            "text": "Do you have incident response capabilities?"
+          },
+          {
+            "level": 2,
+            "text": "Discover related industries"
+          },
+          {
+            "level": 2,
+            "text": "Ready to build your Cybersecurity team?"
+          },
+          {
+            "level": 2,
+            "text": "Cybersecurity Recruiting"
+          },
+          {
+            "level": 3,
+            "text": "Hub Page"
+          },
+          {
+            "level": 3,
+            "text": "Related Articles"
+          },
+          {
+            "level": 3,
+            "text": "Get Started"
+          },
+          {
+            "level": 4,
+            "text": "Newsletter"
+          },
+          {
+            "level": 4,
+            "text": "For candidates"
+          },
+          {
+            "level": 4,
+            "text": "For companies"
+          },
+          {
+            "level": 4,
+            "text": "Industries"
+          },
+          {
+            "level": 4,
+            "text": "Company"
+          },
+          {
+            "level": 3,
+            "text": "Cookie Preferences"
+          }
+        ],
+        "sections": [
+          "SECTION",
+          "Cybersecurity Talent for Protection & Compliance",
+          "SECTION",
+          "Cybersecurity Industry Insights",
+          "Ready to transform your cybersecurity recruiting?",
+          "How we hire for Cybersecurity",
+          "The Cybersecurity Talent Challenge",
+          "Why Cybersecurity companies choose TaasFlow",
+          "Positions we fill for Cybersecurity",
+          "Real results for Cybersecurity teams",
+          "Cybersecurity Salary Explorer",
+          "Cybersecurity Career Path",
+          "Cybersecurity Hiring Trends",
+          "Interactive Hiring Guide",
+          "Cybersecurity Recruiting Insights",
+          "Frequently Asked Questions",
+          "Discover related industries",
+          "SECTION",
+          "Ready to build your Cybersecurity team?",
+          "Cybersecurity Recruiting"
+        ],
+        "textBlocks": [
+          "Solutions",
+          "Industries",
+          "Resources",
+          "Home",
+          "Industries",
+          "Cybersecurity",
+          "Access security analysts, compliance specialists, and incident responders with verified certifications. Protect your organization and meet regulatory requirements.",
+          "Key market data and trends shaping talent demand in your industry. (Hover for details)",
+          "Projected global cybercrime costs by 2025",
+          "Global unfilled cybersecurity positions",
+          "Average US cybersecurity professional salary",
+          "Average cost of a data breach in 2023",
+          "Start a risk-free pilot and receive qualified candidates in 14 days.",
+          "A tailored workflow for the challenges of cybersecurity settings.",
+          "We assess your security posture, compliance frameworks, and certification needs.",
+          "CISSP, CISM, CEH, OSCP verified with issuing organizations.",
+          "Candidates matched to SOC 2, HIPAA, PCI-DSS, or your specific requirements.",
+          "Certified professionals deployed for projects, audits, or incident response.",
+          "The cybersecurity talent gap is real. Qualified professionals are expensive and in high demand—your job postings compete with Fortune 500 offers.",
+          "Compliance projects (SOC 2, HIPAA, PCI-DSS) have deadlines, but you may not need full-time security staff after certification.",
+          "Incident response requires immediate expertise. You can't wait for recruiting when you're actively responding to a breach.",
+          "Security analysts with CISSP, CISM, CEH, and other certifications verified",
+          "Compliance specialists for SOC 2, HIPAA, PCI-DSS, and ISO 27001 projects",
+          "Incident responders available for rapid deployment during security events",
+          "Penetration testers and vulnerability assessors for security audits",
+          "Flexible engagements for projects, audits, or ongoing security operations",
+          "We understand the unique challenges of your industry and deliver matching talent.",
+          "CISSP, CISM, CEH, OSCP, and other certifications verified before placement.",
+          "Rapid deployment of IR specialists during active security events.",
+          "Specialists in SOC 2, HIPAA, PCI-DSS, ISO 27001, and other frameworks.",
+          "Qualified security professionals at fraction of consulting firm rates.",
+          "Pre-vetted professionals, delivered weekly, ready to start.",
+          "- B2B SaaS Platform, Series B",
+          "Explore current compensation ranges for top roles. Data updated quarterly from industry benchmarks.",
+          "* Based on industry benchmarks from SHRM, Glassdoor, LinkedIn Salary, and BLS data. Actual compensation may vary.",
+          "Click any level to explore typical progression, salary ranges, and key skills.",
+          "Key metrics shaping the talent landscape. Stay ahead of market shifts.",
+          "Steady growth in hiring demand across this sector.",
+          "Increasing adoption of remote and hybrid work models.",
+          "Unfilled positions due to skills shortage in this industry.",
+          "Industry average continues to improve with modern sourcing.",
+          "Follow these proven steps to hire smarter. Track your progress and get actionable tips at every stage.",
+          "Create a detailed candidate persona with must-have vs nice-to-have skills, cultural fit criteria, and realistic salary expectations.",
+          "Write a compelling job description that sells the opportunity, not just lists requirements. Include salary range, growth path, and team culture.",
+          "Reach passive candidates through targeted outreach, employee referrals, and talent communities. 70% of top talent is not actively looking.",
+          "Design a consistent 3-4 stage process that evaluates skills, culture fit, and potential. Include take-home assessments where appropriate.",
+          "Move fast with competitive offers and start onboarding before day one. The first 90 days determine long-term retention.",
+          "Expert articles on recruiting and talent acquisition for cybersecurity.",
+          "With 3.5 million cybersecurity positions unfilled globally, organizations must get creative to attract and retain security talent.",
+          "Closing the Cybersecurity Talent Gap: Hiring Strategies for 2026",
+          "The cybersecurity workforce gap is 3.5 million globally. Here is how organizations are competing for this critical talent.",
+          "Closing the Cybersecurity Talent Gap: Strategies for 2026",
+          "With 3.4 million unfilled cybersecurity jobs globally, learn how organizations are building security teams despite fierce competition.",
+          "Common questions about TaasFlow for cybersecurity.",
+          "Learn how we serve similar sectors with subscription recruiting.",
+          "Receive qualified cybersecurity professionals weekly. No agency fees, no long-term contracts.",
+          "Related Industries",
+          "Talent as a Service",
+          "A global hiring system for teams that need consistent recruiting.",
+          "Weekly insights into talent acquisition. No spam.",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Book call",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "No recruitment agency fees. No placement charges. Subscription-based hiring system.",
+          "Copyright 2026 TaaSFlow. All rights reserved.",
+          "We use essential cookies for core functionality. With your consent, we use analytics (Google Analytics) and marketing technologies (Meta Pixel, Apollo, Retention.com/RB2B) to understand website performance, improve campaigns, and measure conversions safely. Your data is processed in accordance with GDPR and our Privacy Notice. You can change your preferences at any time."
+        ],
+        "buttons": [
+          "Solutions",
+          "Industries",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Solutions",
+          "How it works",
+          "Pilot",
+          "Enterprise",
+          "Case studies",
+          "Jobs",
+          "Journey",
+          "Industries",
+          "Tech",
+          "SaaS & Cloud",
+          "Cybersecurity",
+          "Data & Analytics",
+          "Finance",
+          "Insurance",
+          "PE & VC",
+          "Accounting",
+          "Legal",
+          "Consulting",
+          "HR & Recruiting",
+          "Staffing Agencies",
+          "Sales",
+          "Marketing",
+          "E-commerce",
+          "Media",
+          "Real Estate",
+          "Construction",
+          "Hospitality",
+          "Healthcare",
+          "Public Sector",
+          "Non-Profit",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Success Stories",
+          "Talent Marketplace",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Start Cybersecurity Pilot Program",
+          "Book call",
+          "Book call",
+          "1Entry-Level",
+          "2Mid-Level",
+          "3Senior",
+          "4Director / Lead",
+          "5VP / C-Suite",
+          "Next: Director / Lead",
+          "1Define Your Ideal Candidate1-2 days",
+          "1",
+          "Mark Complete",
+          "2Optimize Your Job PostingWrite a compelling job description that sells the opportunity, not just lists requirements. Include salary range, growth path, and team culture.1 day",
+          "2",
+          "3Source Beyond Job BoardsReach passive candidates through targeted outreach, employee referrals, and talent communities. 70% of top talent is not actively looking.Ongoing",
+          "3",
+          "4Structure Your Interview ProcessDesign a consistent 3-4 stage process that evaluates skills, culture fit, and potential. Include take-home assessments where appropriate.2-3 days setup",
+          "4",
+          "5Close & Onboard EffectivelyMove fast with competitive offers and start onboarding before day one. The first 90 days determine long-term retention.1-2 weeks",
+          "5",
+          "How do you verify security certifications?",
+          "Can you help with SOC 2 certification?",
+          "Do you have incident response capabilities?",
+          "Start Cybersecurity Pilot",
+          "Contact",
+          "Subscribe",
+          "Book call"
+        ],
+        "links": [
+          {
+            "text": "Skip to main content",
+            "href": "https://taasflow.com/industries/cybersecurity#main-content"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "Browse jobs",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Join the network",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Browse open roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Home",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "Industries",
+            "href": "https://taasflow.com/industries"
+          },
+          {
+            "text": "View all articles",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "Industry Hiring GuidesCybersecurityThe Cybersecurity Talent Shortage: 3.5 Million Unfilled Roles and How to CompeteWith ",
+            "href": "https://taasflow.com/blog/cybersecurity-talent-shortage-2026"
+          },
+          {
+            "text": "📋Closing the Cybersecurity Talent Gap: Hiring Strategies for 2026Industry Hiring GuidesIndustry Hiring GuidesCybersecur",
+            "href": "https://taasflow.com/blog/cybersecurity-talent-gap-solutions"
+          },
+          {
+            "text": "🔍Closing the Cybersecurity Talent Gap: Strategies for 2026Industry SpotlightIndustry SpotlightCybersecurityClosing the ",
+            "href": "https://taasflow.com/blog/cybersecurity-talent-gap"
+          },
+          {
+            "text": "View all articles",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "Technology",
+            "href": "https://taasflow.com/industries/tech"
+          },
+          {
+            "text": "Legal",
+            "href": "https://taasflow.com/industries/legal"
+          },
+          {
+            "text": "Public Sector",
+            "href": "https://taasflow.com/industries/public-sector"
+          },
+          {
+            "text": "Finance & Banking",
+            "href": "https://taasflow.com/industries/finance"
+          },
+          {
+            "text": "Staffing Agencies",
+            "href": "https://taasflow.com/industries/staffing-agencies"
+          },
+          {
+            "text": "Healthcare",
+            "href": "https://taasflow.com/industries/healthcare"
+          },
+          {
+            "text": "Sales",
+            "href": "https://taasflow.com/industries/sales"
+          },
+          {
+            "text": "Marketing & Advertising",
+            "href": "https://taasflow.com/industries/marketing"
+          },
+          {
+            "text": "Compare all industries",
+            "href": "https://taasflow.com/industries/compare"
+          },
+          {
+            "text": "How it works",
+            "href": "https://taasflow.com/how-it-works"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "Start Pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "Jobs",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Blog",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "About",
+            "href": "https://taasflow.com/about"
+          },
+          {
+            "text": "Enterprise",
+            "href": "https://taasflow.com/enterprise"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://taasflow.com/faq"
+          },
+          {
+            "text": "Contact",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Looking for a job in cybersecurity? Browse open positions",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Cybersecurity Recruiting",
+            "href": "https://taasflow.com/industries/cybersecurity"
+          },
+          {
+            "text": "Cybersecurity Hiring Guide",
+            "href": "https://taasflow.com/blog/cybersecurity-hiring-guide"
+          },
+          {
+            "text": "Tech Hiring Trends",
+            "href": "https://taasflow.com/blog/tech-hiring-trends-2025"
+          },
+          {
+            "text": "Skills-Based Hiring",
+            "href": "https://taasflow.com/blog/skills-based-hiring"
+          },
+          {
+            "text": "Start a Pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "View Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "Technology Recruiting",
+            "href": "https://taasflow.com/industries/tech"
+          },
+          {
+            "text": "Open Positions",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "LinkedIn",
+            "href": "https://www.linkedin.com/company/taasflow/"
+          },
+          {
+            "text": "Browse roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Talent network",
+            "href": "https://taasflow.com/global-talent"
+          },
+          {
+            "text": "Member stories",
+            "href": "https://taasflow.com/candidate-success"
+          },
+          {
+            "text": "Start pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "Employer onboarding",
+            "href": "https://taasflow.com/employer-onboarding"
+          },
+          {
+            "text": "Case studies",
+            "href": "https://taasflow.com/case-studies"
+          },
+          {
+            "text": "Healthcare",
+            "href": "https://taasflow.com/industries/healthcare"
+          },
+          {
+            "text": "Technology",
+            "href": "https://taasflow.com/industries/tech"
+          },
+          {
+            "text": "Finance",
+            "href": "https://taasflow.com/industries/finance"
+          },
+          {
+            "text": "Legal",
+            "href": "https://taasflow.com/industries/legal"
+          },
+          {
+            "text": "All →",
+            "href": "https://taasflow.com/industries"
+          },
+          {
+            "text": "About us",
+            "href": "https://taasflow.com/about"
+          },
+          {
+            "text": "Blog",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://taasflow.com/faq"
+          },
+          {
+            "text": "Knowledge Base",
+            "href": "https://taasflow.com/knowledge-base"
+          },
+          {
+            "text": "Contact us",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Privacy Policy",
+            "href": "https://taasflow.com/privacy"
+          },
+          {
+            "text": "Terms of Service",
+            "href": "https://taasflow.com/terms"
+          },
+          {
+            "text": "Privacy Notice",
+            "href": "https://taasflow.com/privacy"
+          }
+        ],
+        "images": [
+          {
+            "src": "https://taasflow.com/assets/logo-on-white-Dk9DIcMP.png",
+            "alt": "TaaSFlow logo"
+          },
+          {
+            "src": "https://taasflow.com/assets/cybersecurity-BptAmnip.jpg",
+            "alt": ""
+          },
+          {
+            "src": "https://taasflow.com/assets/cybersecurity-BptAmnip.jpg",
+            "alt": ""
+          },
+          {
+            "src": "https://taasflow.com/assets/cybersecurity-BptAmnip.jpg",
+            "alt": ""
+          },
+          {
+            "src": "https://taasflow.com/assets/cybersecurity-hiring-DdueVgjl.jpg",
+            "alt": "The Cybersecurity Talent Shortage: 3.5 Million Unfilled Roles and How to Compete"
+          },
+          {
+            "src": "https://taasflow.com/assets/logo-on-blue-CX6jlwjg.png",
+            "alt": "TaaSFlow logo"
+          }
+        ],
+        "forms": [
+          {
+            "action": "https://taasflow.com/industries/cybersecurity",
+            "fields": [
+              "input"
+            ]
+          }
+        ],
+        "navLinks": [
+          "Browse jobs",
+          "Join the network",
+          "Browse open roles",
+          "Home",
+          "Industries",
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us"
+        ],
+        "footerLinks": [
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "Privacy Policy",
+          "Terms of Service"
+        ],
+        "horizontalOverflow": false,
+        "documentWidth": 768,
+        "viewportWidth": 768
+      },
+      "destination": {
+        "url": "https://clear-path-hubs.lovable.app/industries/cybersecurity",
+        "finalUrl": "https://clear-path-hubs.lovable.app/industries/cybersecurity",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [],
+        "title": "Cybersecurity hiring — TaaSFlow",
+        "description": "Security engineers, GRC leads, SOC analysts and cloud security specialists — sourced with structured rubrics and evidence-based scoring in one workspace.",
+        "canonical": "https://clear-path-hubs.lovable.app/industries/cybersecurity",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "twitter:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "og:title": "Cybersecurity hiring — TaaSFlow",
+          "og:description": "Security engineers, GRC leads, SOC analysts and cloud security specialists — sourced with structured rubrics and evidence-based scoring in one workspace.",
+          "og:url": "https://clear-path-hubs.lovable.app/industries/cybersecurity",
+          "og:type": "website",
+          "twitter:card": "summary_large_image",
+          "twitter:title": "Cybersecurity hiring — TaaSFlow",
+          "twitter:description": "Security engineers, GRC leads, SOC analysts and cloud security specialists — sourced with structured rubrics and evidence-based scoring in one workspace."
+        },
+        "structuredData": [],
+        "h1": [
+          "Security hiring that actually verifies the security part."
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "Security hiring that actually verifies the security part."
+          },
+          {
+            "level": 2,
+            "text": "What we hear from Cybersecurity teams"
+          },
+          {
+            "level": 3,
+            "text": "Certifications aren’t the same as capability"
+          },
+          {
+            "level": 3,
+            "text": "Security roles are highly specialised"
+          },
+          {
+            "level": 3,
+            "text": "Trust and discretion matter"
+          },
+          {
+            "level": 2,
+            "text": "Roles we source in Cybersecurity"
+          },
+          {
+            "level": 3,
+            "text": "Submit the role"
+          },
+          {
+            "level": 3,
+            "text": "We source and score"
+          },
+          {
+            "level": 3,
+            "text": "Review in your workspace"
+          },
+          {
+            "level": 2,
+            "text": "Hiring a security specialist?"
+          }
+        ],
+        "sections": [
+          "Security hiring that actually verifies the security part.",
+          "What we hear from Cybersecurity teams",
+          "Roles we source in Cybersecurity",
+          "Submit the role",
+          "Hiring a security specialist?",
+          "SECTION"
+        ],
+        "textBlocks": [
+          "Home",
+          "Industries",
+          "Cybersecurity",
+          "Cybersecurity",
+          "TaaSFlow builds role-specific rubrics for every security domain — offensive, defensive, cloud, GRC and application security — and captures evidence from the CV so you can trust the shortlist you review.",
+          "Domain-specific rubric",
+          "Evidence quotes from the CV",
+          "Private, tenant-isolated workspace",
+          "Certifications are a floor, not a ceiling. We score against real evidence — incidents handled, controls implemented, tooling owned — rather than treating a certificate as a substitute for it.",
+          "AppSec, cloud security, detection engineering and GRC are different disciplines. Our rubrics are per-role so a generalist doesn’t get short-listed for a specialist opening.",
+          "Security hiring processes deserve tight access controls. TaaSFlow runs on row-level tenant isolation and private CV storage with short-lived signed URLs.",
+          "We calibrate the rubric to the seniority and specialisation you actually need.",
+          "Security engineers",
+          "Cloud & infrastructure security",
+          "Application security",
+          "Detection & response (SOC)",
+          "Offensive security & red team",
+          "Governance, risk & compliance",
+          "Security architects",
+          "CISOs & security leaders",
+          "01",
+          "A guided intake captures everything the search needs, in one flow.",
+          "02",
+          "Multi-channel sourcing, role-specific rubric, evidence extracted from every CV.",
+          "03",
+          "Ranked shortlist, evidence side-by-side, Kanban pipeline, direct messaging.",
+          "See the full process on how it works.",
+          "Cybersecurity",
+          "Submit the role and receive a discreetly reviewed, evidence-backed shortlist."
+        ],
+        "buttons": [],
+        "links": [
+          {
+            "text": "Home",
+            "href": "https://clear-path-hubs.lovable.app/"
+          },
+          {
+            "text": "Industries",
+            "href": "https://clear-path-hubs.lovable.app/industries"
+          },
+          {
+            "text": "Start hiring",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "Talk to us",
+            "href": "https://clear-path-hubs.lovable.app/contact"
+          },
+          {
+            "text": "how it works",
+            "href": "https://clear-path-hubs.lovable.app/how-it-works"
+          },
+          {
+            "text": "Start intake",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "See other industries",
+            "href": "https://clear-path-hubs.lovable.app/industries"
+          },
+          {
+            "text": "Edit with",
+            "href": "https://lovable.dev/projects/1dc5ee7e-1294-441c-8288-850e79e443f6?utm_source=lovable-badge"
+          }
+        ],
+        "images": [],
+        "forms": [],
+        "navLinks": [
+          "Home",
+          "Industries"
+        ],
+        "footerLinks": [],
+        "horizontalOverflow": false,
+        "documentWidth": 768,
+        "viewportWidth": 768
+      },
+      "screenshots": {
+        "sourceFull": "reports/public-parity/screenshots/source/industries_cybersecurity__tablet__full.png",
+        "sourceVisible": "reports/public-parity/screenshots/source/industries_cybersecurity__tablet__visible.png",
+        "destinationFull": "reports/public-parity/screenshots/destination/industries_cybersecurity__tablet__full.png",
+        "destinationVisible": "reports/public-parity/screenshots/destination/industries_cybersecurity__tablet__visible.png"
+      },
+      "differences": [
+        "title: \"Cybersecurity Talent | TaaSFlow - Talent as a Service\" vs \"Cybersecurity hiring — TaaSFlow\"",
+        "meta description mismatch",
+        "H1 differs: [Cybersecurity Talent for Protection & Compliance] vs [Security hiring that actually verifies the security part.]",
+        "heading overlap 0% (0/30)",
+        "section count 20 vs 6",
+        "form count 1 vs 0"
+      ]
+    },
+    {
+      "viewport": "desktop",
+      "source": {
+        "url": "https://taasflow.com/industries/cybersecurity",
+        "finalUrl": "https://taasflow.com/industries/cybersecurity",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [
+          {
+            "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HJ2ECKCNK4&gtm=45je67l1v9245339446za200zd9245339446&_p=1784774354084&gcd=13l3l3l3l1l1&npa=0&_ng=1&dma=0&are=1&cid=1690422011.1784774354&frm=0&ngs=1&pscdl=noapi&rcb=3&sr=1440x900&uaa=x86&uab=64&uafvl=Not-A.Brand%3B24.0.0.0%7CChromium%3B146.0.7680.80&uam=&uamb=0&uap=Windows&uapv=&uaw=0&ul=en-us&_s=1&tag_exp=115616986~115938465~115938468~118897920~118897930~119896803&dp=%2Findustries%2Fcybersecurity&dt=TaaSFlow%20%7C%20Talent%20as%20a%20Service%20%7C%20Subscription%20Recruiting&dl=https%3A%2F%2Ftaasflow.com%2Findustries%2Fcybersecurity&sid=1784774354&sct=1&seg=0&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&ep.role_type=public&ep.is_authenticated=false&tfd=494",
+            "status": null,
+            "failure": "net::ERR_ABORTED"
+          },
+          {
+            "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HJ2ECKCNK4&gtm=45je67l1v9245339446za200zd9245339446&_p=1784774354084&gcd=13l3l3l3l1l1&npa=0&_ng=1&dma=0&_eu=AEAAAAQ&ae=a&are=1&cid=1690422011.1784774354&frm=0&ngs=1&pscdl=noapi&rcb=3&sr=1440x900&uaa=x86&uab=64&uafvl=Not-A.Brand%3B24.0.0.0%7CChromium%3B146.0.7680.80&uam=&uamb=0&uap=Windows&uapv=&uaw=0&ul=en-us&_s=2&tag_exp=115616986~115938465~115938468~118897920~118897930~119896803&sid=1784774354&sct=1&seg=0&dl=https%3A%2F%2Ftaasflow.com%2Findustries%2Fcybersecurity&dt=TaaSFlow%20%7C%20Talent%20as%20a%20Service%20%7C%20Subscription%20Recruiting&en=scroll&epn.percent_scrolled=90&_et=13&tfd=825",
+            "status": null,
+            "failure": "net::ERR_ABORTED"
+          }
+        ],
+        "title": "Cybersecurity Talent | TaaSFlow - Talent as a Service",
+        "description": "On-demand cybersecurity professionals including security analysts, compliance specialists, and incident responders. Certification-verified talent.",
+        "canonical": "https://taasflow.com/industries/cybersecurity",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:type": "website",
+          "og:url": "https://taasflow.com/industries/cybersecurity",
+          "og:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "og:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "og:image": "https://taasflow.com/og-image.png",
+          "og:image:width": "1200",
+          "og:image:height": "630",
+          "og:locale": "en_US",
+          "twitter:card": "summary_large_image",
+          "twitter:site": "@TaasFlow",
+          "twitter:creator": "@TaasFlow",
+          "twitter:url": "https://taasflow.com/industries/cybersecurity",
+          "twitter:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "twitter:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "twitter:image": "https://taasflow.com/og-image.png"
+        },
+        "structuredData": [
+          {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "@id": "https://taasflow.com/#organization",
+            "name": "TaaSFlow",
+            "legalName": "TaaSFlow",
+            "url": "https://taasflow.com/",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://taasflow.com/favicon.png",
+              "width": 512,
+              "height": 512
+            },
+            "image": "https://taasflow.com/og-image.png",
+            "description": "Talent as a Service — subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+            "slogan": "Your hiring team. On demand.",
+            "foundingDate": "2024",
+            "areaServed": [
+              {
+                "@type": "Country",
+                "name": "United States"
+              },
+              {
+                "@type": "Country",
+                "name": "United Arab Emirates"
+              },
+              {
+                "@type": "Country",
+                "name": "United Kingdom"
+              },
+              {
+                "@type": "Country",
+                "name": "Brazil"
+              }
+            ],
+            "knowsAbout": [
+              "Subscription recruiting",
+              "Talent as a Service",
+              "Candidate sourcing",
+              "Pre-screened candidates",
+              "Recruitment process outsourcing"
+            ],
+            "contactPoint": [
+              {
+                "@type": "ContactPoint",
+                "contactType": "sales",
+                "email": "hello@taasflow.com",
+                "url": "https://taasflow.com/contact",
+                "availableLanguage": [
+                  "English",
+                  "Portuguese",
+                  "Spanish"
+                ]
+              }
+            ],
+            "sameAs": [
+              "https://www.linkedin.com/company/taasflow",
+              "https://twitter.com/TaasFlow"
+            ]
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "@id": "https://taasflow.com/#website",
+            "name": "TaaSFlow",
+            "alternateName": "Talent as a Service",
+            "url": "https://taasflow.com/",
+            "description": "Subscription recruiting that delivers pre-screened, ranked candidates in 14 days.",
+            "inLanguage": "en-US",
+            "publisher": {
+              "@id": "https://taasflow.com/#organization"
+            },
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": {
+                "@type": "EntryPoint",
+                "urlTemplate": "https://taasflow.com/jobs?q={search_term_string}"
+              },
+              "query-input": "required name=search_term_string"
+            }
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "Service",
+            "name": "Cybersecurity Talent Sourcing",
+            "description": "On-demand cybersecurity professionals including security analysts, compliance specialists, and incident responders. Certification-verified talent.",
+            "provider": {
+              "@type": "Organization",
+              "name": "TaasFlow",
+              "url": "https://taasflow.com"
+            },
+            "serviceType": "Talent Acquisition",
+            "areaServed": "United States",
+            "hasOfferCatalog": {
+              "@type": "OfferCatalog",
+              "name": "Cybersecurity Recruiting Services",
+              "itemListElement": [
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Security Analysts Recruiting"
+                  },
+                  "position": 1
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Security Engineers Recruiting"
+                  },
+                  "position": 2
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Compliance Analysts Recruiting"
+                  },
+                  "position": 3
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Incident Responders Recruiting"
+                  },
+                  "position": 4
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Penetration Testers Recruiting"
+                  },
+                  "position": 5
+                }
+              ]
+            }
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "https://taasflow.com"
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Industries",
+                "item": "https://taasflow.com/industries"
+              },
+              {
+                "@type": "ListItem",
+                "position": 3,
+                "name": "Cybersecurity",
+                "item": "https://taasflow.com/industries//industries/cybersecurity"
+              }
+            ]
+          }
+        ],
+        "h1": [
+          "Cybersecurity Talent for Protection & Compliance"
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "Cybersecurity Talent for Protection & Compliance"
+          },
+          {
+            "level": 2,
+            "text": "Cybersecurity Industry Insights"
+          },
+          {
+            "level": 3,
+            "text": "Cybercrime Cost"
+          },
+          {
+            "level": 3,
+            "text": "Talent Gap"
+          },
+          {
+            "level": 3,
+            "text": "Avg Salary"
+          },
+          {
+            "level": 3,
+            "text": "Breach Cost"
+          },
+          {
+            "level": 3,
+            "text": "Industry Overview"
+          },
+          {
+            "level": 3,
+            "text": "Ready to transform your cybersecurity recruiting?"
+          },
+          {
+            "level": 2,
+            "text": "How we hire for Cybersecurity"
+          },
+          {
+            "level": 3,
+            "text": "Threat Landscape Briefing"
+          },
+          {
+            "level": 3,
+            "text": "Certification Verification"
+          },
+          {
+            "level": 3,
+            "text": "Framework Expertise Match"
+          },
+          {
+            "level": 3,
+            "text": "Security-Cleared Delivery"
+          },
+          {
+            "level": 2,
+            "text": "The Cybersecurity Talent Challenge"
+          },
+          {
+            "level": 3,
+            "text": "The TaasFlow Solution"
+          },
+          {
+            "level": 2,
+            "text": "Why Cybersecurity companies choose TaasFlow"
+          },
+          {
+            "level": 3,
+            "text": "Certifications Verified"
+          },
+          {
+            "level": 3,
+            "text": "24-Hour Incident Response"
+          },
+          {
+            "level": 3,
+            "text": "Compliance Expertise"
+          },
+          {
+            "level": 3,
+            "text": "40% Cost Savings"
+          },
+          {
+            "level": 2,
+            "text": "Positions we fill for Cybersecurity"
+          },
+          {
+            "level": 2,
+            "text": "Real results for Cybersecurity teams"
+          },
+          {
+            "level": 2,
+            "text": "Cybersecurity Salary Explorer"
+          },
+          {
+            "level": 2,
+            "text": "Cybersecurity Career Path"
+          },
+          {
+            "level": 3,
+            "text": "Senior"
+          },
+          {
+            "level": 4,
+            "text": "Key Skills at This Level"
+          },
+          {
+            "level": 2,
+            "text": "Cybersecurity Hiring Trends"
+          },
+          {
+            "level": 2,
+            "text": "Interactive Hiring Guide"
+          },
+          {
+            "level": 3,
+            "text": "Define Your Ideal Candidate"
+          },
+          {
+            "level": 3,
+            "text": "Optimize Your Job Posting"
+          },
+          {
+            "level": 3,
+            "text": "Source Beyond Job Boards"
+          },
+          {
+            "level": 3,
+            "text": "Structure Your Interview Process"
+          },
+          {
+            "level": 3,
+            "text": "Close & Onboard Effectively"
+          },
+          {
+            "level": 2,
+            "text": "Cybersecurity Recruiting Insights"
+          },
+          {
+            "level": 3,
+            "text": "The Cybersecurity Talent Shortage: 3.5 Million Unfilled Roles and How to Compete"
+          },
+          {
+            "level": 3,
+            "text": "Closing the Cybersecurity Talent Gap: Hiring Strategies for 2026"
+          },
+          {
+            "level": 3,
+            "text": "Closing the Cybersecurity Talent Gap: Strategies for 2026"
+          },
+          {
+            "level": 2,
+            "text": "Frequently Asked Questions"
+          },
+          {
+            "level": 3,
+            "text": "How do you verify security certifications?"
+          },
+          {
+            "level": 3,
+            "text": "Can you help with SOC 2 certification?"
+          },
+          {
+            "level": 3,
+            "text": "Do you have incident response capabilities?"
+          },
+          {
+            "level": 2,
+            "text": "Discover related industries"
+          },
+          {
+            "level": 2,
+            "text": "Ready to build your Cybersecurity team?"
+          },
+          {
+            "level": 2,
+            "text": "Cybersecurity Recruiting"
+          },
+          {
+            "level": 3,
+            "text": "Hub Page"
+          },
+          {
+            "level": 3,
+            "text": "Related Articles"
+          },
+          {
+            "level": 3,
+            "text": "Get Started"
+          },
+          {
+            "level": 4,
+            "text": "Newsletter"
+          },
+          {
+            "level": 4,
+            "text": "For candidates"
+          },
+          {
+            "level": 4,
+            "text": "For companies"
+          },
+          {
+            "level": 4,
+            "text": "Industries"
+          },
+          {
+            "level": 4,
+            "text": "Company"
+          },
+          {
+            "level": 3,
+            "text": "Cookie Preferences"
+          }
+        ],
+        "sections": [
+          "SECTION",
+          "Cybersecurity Talent for Protection & Compliance",
+          "SECTION",
+          "Cybersecurity Industry Insights",
+          "Ready to transform your cybersecurity recruiting?",
+          "How we hire for Cybersecurity",
+          "The Cybersecurity Talent Challenge",
+          "Why Cybersecurity companies choose TaasFlow",
+          "Positions we fill for Cybersecurity",
+          "Real results for Cybersecurity teams",
+          "Cybersecurity Salary Explorer",
+          "Cybersecurity Career Path",
+          "Cybersecurity Hiring Trends",
+          "Interactive Hiring Guide",
+          "Cybersecurity Recruiting Insights",
+          "Frequently Asked Questions",
+          "Discover related industries",
+          "SECTION",
+          "Ready to build your Cybersecurity team?",
+          "Cybersecurity Recruiting"
+        ],
+        "textBlocks": [
+          "Solutions",
+          "Industries",
+          "Resources",
+          "Home",
+          "Industries",
+          "Cybersecurity",
+          "Access security analysts, compliance specialists, and incident responders with verified certifications. Protect your organization and meet regulatory requirements.",
+          "Key market data and trends shaping talent demand in your industry. (Hover for details)",
+          "Projected global cybercrime costs by 2025",
+          "Global unfilled cybersecurity positions",
+          "Average US cybersecurity professional salary",
+          "Average cost of a data breach in 2023",
+          "Start a risk-free pilot and receive qualified candidates in 14 days.",
+          "A tailored workflow for the challenges of cybersecurity settings.",
+          "We assess your security posture, compliance frameworks, and certification needs.",
+          "CISSP, CISM, CEH, OSCP verified with issuing organizations.",
+          "Candidates matched to SOC 2, HIPAA, PCI-DSS, or your specific requirements.",
+          "Certified professionals deployed for projects, audits, or incident response.",
+          "The cybersecurity talent gap is real. Qualified professionals are expensive and in high demand—your job postings compete with Fortune 500 offers.",
+          "Compliance projects (SOC 2, HIPAA, PCI-DSS) have deadlines, but you may not need full-time security staff after certification.",
+          "Incident response requires immediate expertise. You can't wait for recruiting when you're actively responding to a breach.",
+          "Security analysts with CISSP, CISM, CEH, and other certifications verified",
+          "Compliance specialists for SOC 2, HIPAA, PCI-DSS, and ISO 27001 projects",
+          "Incident responders available for rapid deployment during security events",
+          "Penetration testers and vulnerability assessors for security audits",
+          "Flexible engagements for projects, audits, or ongoing security operations",
+          "We understand the unique challenges of your industry and deliver matching talent.",
+          "CISSP, CISM, CEH, OSCP, and other certifications verified before placement.",
+          "Rapid deployment of IR specialists during active security events.",
+          "Specialists in SOC 2, HIPAA, PCI-DSS, ISO 27001, and other frameworks.",
+          "Qualified security professionals at fraction of consulting firm rates.",
+          "Pre-vetted professionals, delivered weekly, ready to start.",
+          "- B2B SaaS Platform, Series B",
+          "Explore current compensation ranges for top roles. Data updated quarterly from industry benchmarks.",
+          "* Based on industry benchmarks from SHRM, Glassdoor, LinkedIn Salary, and BLS data. Actual compensation may vary.",
+          "Click any level to explore typical progression, salary ranges, and key skills.",
+          "Key metrics shaping the talent landscape. Stay ahead of market shifts.",
+          "Steady growth in hiring demand across this sector.",
+          "Increasing adoption of remote and hybrid work models.",
+          "Unfilled positions due to skills shortage in this industry.",
+          "Industry average continues to improve with modern sourcing.",
+          "Follow these proven steps to hire smarter. Track your progress and get actionable tips at every stage.",
+          "Create a detailed candidate persona with must-have vs nice-to-have skills, cultural fit criteria, and realistic salary expectations.",
+          "Write a compelling job description that sells the opportunity, not just lists requirements. Include salary range, growth path, and team culture.",
+          "Reach passive candidates through targeted outreach, employee referrals, and talent communities. 70% of top talent is not actively looking.",
+          "Design a consistent 3-4 stage process that evaluates skills, culture fit, and potential. Include take-home assessments where appropriate.",
+          "Move fast with competitive offers and start onboarding before day one. The first 90 days determine long-term retention.",
+          "Expert articles on recruiting and talent acquisition for cybersecurity.",
+          "With 3.5 million cybersecurity positions unfilled globally, organizations must get creative to attract and retain security talent.",
+          "Closing the Cybersecurity Talent Gap: Hiring Strategies for 2026",
+          "The cybersecurity workforce gap is 3.5 million globally. Here is how organizations are competing for this critical talent.",
+          "Closing the Cybersecurity Talent Gap: Strategies for 2026",
+          "With 3.4 million unfilled cybersecurity jobs globally, learn how organizations are building security teams despite fierce competition.",
+          "Common questions about TaasFlow for cybersecurity.",
+          "Learn how we serve similar sectors with subscription recruiting.",
+          "Receive qualified cybersecurity professionals weekly. No agency fees, no long-term contracts.",
+          "Related Industries",
+          "Talent as a Service",
+          "A global hiring system for teams that need consistent recruiting.",
+          "Weekly insights into talent acquisition. No spam.",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Book call",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "No recruitment agency fees. No placement charges. Subscription-based hiring system.",
+          "Copyright 2026 TaaSFlow. All rights reserved.",
+          "We use essential cookies for core functionality. With your consent, we use analytics (Google Analytics) and marketing technologies (Meta Pixel, Apollo, Retention.com/RB2B) to understand website performance, improve campaigns, and measure conversions safely. Your data is processed in accordance with GDPR and our Privacy Notice. You can change your preferences at any time."
+        ],
+        "buttons": [
+          "Solutions",
+          "Industries",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Solutions",
+          "How it works",
+          "Pilot",
+          "Enterprise",
+          "Case studies",
+          "Jobs",
+          "Journey",
+          "Industries",
+          "Tech",
+          "SaaS & Cloud",
+          "Cybersecurity",
+          "Data & Analytics",
+          "Finance",
+          "Insurance",
+          "PE & VC",
+          "Accounting",
+          "Legal",
+          "Consulting",
+          "HR & Recruiting",
+          "Staffing Agencies",
+          "Sales",
+          "Marketing",
+          "E-commerce",
+          "Media",
+          "Real Estate",
+          "Construction",
+          "Hospitality",
+          "Healthcare",
+          "Public Sector",
+          "Non-Profit",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Success Stories",
+          "Talent Marketplace",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Start Cybersecurity Pilot Program",
+          "Book call",
+          "Book call",
+          "1Entry-Level",
+          "2Mid-Level",
+          "3Senior",
+          "4Director / Lead",
+          "5VP / C-Suite",
+          "Next: Director / Lead",
+          "1Define Your Ideal Candidate1-2 days",
+          "1",
+          "Mark Complete",
+          "2Optimize Your Job PostingWrite a compelling job description that sells the opportunity, not just lists requirements. Include salary range, growth path, and team culture.1 day",
+          "2",
+          "3Source Beyond Job BoardsReach passive candidates through targeted outreach, employee referrals, and talent communities. 70% of top talent is not actively looking.Ongoing",
+          "3",
+          "4Structure Your Interview ProcessDesign a consistent 3-4 stage process that evaluates skills, culture fit, and potential. Include take-home assessments where appropriate.2-3 days setup",
+          "4",
+          "5Close & Onboard EffectivelyMove fast with competitive offers and start onboarding before day one. The first 90 days determine long-term retention.1-2 weeks",
+          "5",
+          "How do you verify security certifications?",
+          "Can you help with SOC 2 certification?",
+          "Do you have incident response capabilities?",
+          "Start Cybersecurity Pilot",
+          "Contact",
+          "Subscribe",
+          "Book call"
+        ],
+        "links": [
+          {
+            "text": "Skip to main content",
+            "href": "https://taasflow.com/industries/cybersecurity#main-content"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "Browse jobs",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Join the network",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Browse open roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Home",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "Industries",
+            "href": "https://taasflow.com/industries"
+          },
+          {
+            "text": "View all articles",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "Industry Hiring GuidesCybersecurityThe Cybersecurity Talent Shortage: 3.5 Million Unfilled Roles and How to CompeteWith ",
+            "href": "https://taasflow.com/blog/cybersecurity-talent-shortage-2026"
+          },
+          {
+            "text": "📋Closing the Cybersecurity Talent Gap: Hiring Strategies for 2026Industry Hiring GuidesIndustry Hiring GuidesCybersecur",
+            "href": "https://taasflow.com/blog/cybersecurity-talent-gap-solutions"
+          },
+          {
+            "text": "🔍Closing the Cybersecurity Talent Gap: Strategies for 2026Industry SpotlightIndustry SpotlightCybersecurityClosing the ",
+            "href": "https://taasflow.com/blog/cybersecurity-talent-gap"
+          },
+          {
+            "text": "View all articles",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "Technology",
+            "href": "https://taasflow.com/industries/tech"
+          },
+          {
+            "text": "Legal",
+            "href": "https://taasflow.com/industries/legal"
+          },
+          {
+            "text": "Public Sector",
+            "href": "https://taasflow.com/industries/public-sector"
+          },
+          {
+            "text": "Finance & Banking",
+            "href": "https://taasflow.com/industries/finance"
+          },
+          {
+            "text": "Staffing Agencies",
+            "href": "https://taasflow.com/industries/staffing-agencies"
+          },
+          {
+            "text": "Healthcare",
+            "href": "https://taasflow.com/industries/healthcare"
+          },
+          {
+            "text": "Sales",
+            "href": "https://taasflow.com/industries/sales"
+          },
+          {
+            "text": "Marketing & Advertising",
+            "href": "https://taasflow.com/industries/marketing"
+          },
+          {
+            "text": "Compare all industries",
+            "href": "https://taasflow.com/industries/compare"
+          },
+          {
+            "text": "How it works",
+            "href": "https://taasflow.com/how-it-works"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "Start Pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "Jobs",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Blog",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "About",
+            "href": "https://taasflow.com/about"
+          },
+          {
+            "text": "Enterprise",
+            "href": "https://taasflow.com/enterprise"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://taasflow.com/faq"
+          },
+          {
+            "text": "Contact",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Looking for a job in cybersecurity? Browse open positions",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Cybersecurity Recruiting",
+            "href": "https://taasflow.com/industries/cybersecurity"
+          },
+          {
+            "text": "Cybersecurity Hiring Guide",
+            "href": "https://taasflow.com/blog/cybersecurity-hiring-guide"
+          },
+          {
+            "text": "Tech Hiring Trends",
+            "href": "https://taasflow.com/blog/tech-hiring-trends-2025"
+          },
+          {
+            "text": "Skills-Based Hiring",
+            "href": "https://taasflow.com/blog/skills-based-hiring"
+          },
+          {
+            "text": "Start a Pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "View Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "Technology Recruiting",
+            "href": "https://taasflow.com/industries/tech"
+          },
+          {
+            "text": "Open Positions",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "LinkedIn",
+            "href": "https://www.linkedin.com/company/taasflow/"
+          },
+          {
+            "text": "Browse roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Talent network",
+            "href": "https://taasflow.com/global-talent"
+          },
+          {
+            "text": "Member stories",
+            "href": "https://taasflow.com/candidate-success"
+          },
+          {
+            "text": "Start pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "Employer onboarding",
+            "href": "https://taasflow.com/employer-onboarding"
+          },
+          {
+            "text": "Case studies",
+            "href": "https://taasflow.com/case-studies"
+          },
+          {
+            "text": "Healthcare",
+            "href": "https://taasflow.com/industries/healthcare"
+          },
+          {
+            "text": "Technology",
+            "href": "https://taasflow.com/industries/tech"
+          },
+          {
+            "text": "Finance",
+            "href": "https://taasflow.com/industries/finance"
+          },
+          {
+            "text": "Legal",
+            "href": "https://taasflow.com/industries/legal"
+          },
+          {
+            "text": "All →",
+            "href": "https://taasflow.com/industries"
+          },
+          {
+            "text": "About us",
+            "href": "https://taasflow.com/about"
+          },
+          {
+            "text": "Blog",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://taasflow.com/faq"
+          },
+          {
+            "text": "Knowledge Base",
+            "href": "https://taasflow.com/knowledge-base"
+          },
+          {
+            "text": "Contact us",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Privacy Policy",
+            "href": "https://taasflow.com/privacy"
+          },
+          {
+            "text": "Terms of Service",
+            "href": "https://taasflow.com/terms"
+          },
+          {
+            "text": "Privacy Notice",
+            "href": "https://taasflow.com/privacy"
+          }
+        ],
+        "images": [
+          {
+            "src": "https://taasflow.com/assets/logo-on-white-Dk9DIcMP.png",
+            "alt": "TaaSFlow logo"
+          },
+          {
+            "src": "https://taasflow.com/assets/cybersecurity-BptAmnip.jpg",
+            "alt": ""
+          },
+          {
+            "src": "https://taasflow.com/assets/cybersecurity-BptAmnip.jpg",
+            "alt": ""
+          },
+          {
+            "src": "https://taasflow.com/assets/cybersecurity-BptAmnip.jpg",
+            "alt": ""
+          },
+          {
+            "src": "https://taasflow.com/assets/cybersecurity-hiring-DdueVgjl.jpg",
+            "alt": "The Cybersecurity Talent Shortage: 3.5 Million Unfilled Roles and How to Compete"
+          },
+          {
+            "src": "https://taasflow.com/assets/logo-on-blue-CX6jlwjg.png",
+            "alt": "TaaSFlow logo"
+          }
+        ],
+        "forms": [
+          {
+            "action": "https://taasflow.com/industries/cybersecurity",
+            "fields": [
+              "input"
+            ]
+          }
+        ],
+        "navLinks": [
+          "Browse jobs",
+          "Join the network",
+          "Browse open roles",
+          "Home",
+          "Industries",
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us"
+        ],
+        "footerLinks": [
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "Privacy Policy",
+          "Terms of Service"
+        ],
+        "horizontalOverflow": false,
+        "documentWidth": 1440,
+        "viewportWidth": 1440
+      },
+      "destination": {
+        "url": "https://clear-path-hubs.lovable.app/industries/cybersecurity",
+        "finalUrl": "https://clear-path-hubs.lovable.app/industries/cybersecurity",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [],
+        "title": "Cybersecurity hiring — TaaSFlow",
+        "description": "Security engineers, GRC leads, SOC analysts and cloud security specialists — sourced with structured rubrics and evidence-based scoring in one workspace.",
+        "canonical": "https://clear-path-hubs.lovable.app/industries/cybersecurity",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "twitter:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "og:title": "Cybersecurity hiring — TaaSFlow",
+          "og:description": "Security engineers, GRC leads, SOC analysts and cloud security specialists — sourced with structured rubrics and evidence-based scoring in one workspace.",
+          "og:url": "https://clear-path-hubs.lovable.app/industries/cybersecurity",
+          "og:type": "website",
+          "twitter:card": "summary_large_image",
+          "twitter:title": "Cybersecurity hiring — TaaSFlow",
+          "twitter:description": "Security engineers, GRC leads, SOC analysts and cloud security specialists — sourced with structured rubrics and evidence-based scoring in one workspace."
+        },
+        "structuredData": [],
+        "h1": [
+          "Security hiring that actually verifies the security part."
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "Security hiring that actually verifies the security part."
+          },
+          {
+            "level": 2,
+            "text": "What we hear from Cybersecurity teams"
+          },
+          {
+            "level": 3,
+            "text": "Certifications aren’t the same as capability"
+          },
+          {
+            "level": 3,
+            "text": "Security roles are highly specialised"
+          },
+          {
+            "level": 3,
+            "text": "Trust and discretion matter"
+          },
+          {
+            "level": 2,
+            "text": "Roles we source in Cybersecurity"
+          },
+          {
+            "level": 3,
+            "text": "Submit the role"
+          },
+          {
+            "level": 3,
+            "text": "We source and score"
+          },
+          {
+            "level": 3,
+            "text": "Review in your workspace"
+          },
+          {
+            "level": 2,
+            "text": "Hiring a security specialist?"
+          }
+        ],
+        "sections": [
+          "Security hiring that actually verifies the security part.",
+          "What we hear from Cybersecurity teams",
+          "Roles we source in Cybersecurity",
+          "Submit the role",
+          "Hiring a security specialist?",
+          "SECTION"
+        ],
+        "textBlocks": [
+          "Home",
+          "Industries",
+          "Cybersecurity",
+          "Cybersecurity",
+          "TaaSFlow builds role-specific rubrics for every security domain — offensive, defensive, cloud, GRC and application security — and captures evidence from the CV so you can trust the shortlist you review.",
+          "Domain-specific rubric",
+          "Evidence quotes from the CV",
+          "Private, tenant-isolated workspace",
+          "Certifications are a floor, not a ceiling. We score against real evidence — incidents handled, controls implemented, tooling owned — rather than treating a certificate as a substitute for it.",
+          "AppSec, cloud security, detection engineering and GRC are different disciplines. Our rubrics are per-role so a generalist doesn’t get short-listed for a specialist opening.",
+          "Security hiring processes deserve tight access controls. TaaSFlow runs on row-level tenant isolation and private CV storage with short-lived signed URLs.",
+          "We calibrate the rubric to the seniority and specialisation you actually need.",
+          "Security engineers",
+          "Cloud & infrastructure security",
+          "Application security",
+          "Detection & response (SOC)",
+          "Offensive security & red team",
+          "Governance, risk & compliance",
+          "Security architects",
+          "CISOs & security leaders",
+          "01",
+          "A guided intake captures everything the search needs, in one flow.",
+          "02",
+          "Multi-channel sourcing, role-specific rubric, evidence extracted from every CV.",
+          "03",
+          "Ranked shortlist, evidence side-by-side, Kanban pipeline, direct messaging.",
+          "See the full process on how it works.",
+          "Cybersecurity",
+          "Submit the role and receive a discreetly reviewed, evidence-backed shortlist."
+        ],
+        "buttons": [],
+        "links": [
+          {
+            "text": "Home",
+            "href": "https://clear-path-hubs.lovable.app/"
+          },
+          {
+            "text": "Industries",
+            "href": "https://clear-path-hubs.lovable.app/industries"
+          },
+          {
+            "text": "Start hiring",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "Talk to us",
+            "href": "https://clear-path-hubs.lovable.app/contact"
+          },
+          {
+            "text": "how it works",
+            "href": "https://clear-path-hubs.lovable.app/how-it-works"
+          },
+          {
+            "text": "Start intake",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "See other industries",
+            "href": "https://clear-path-hubs.lovable.app/industries"
+          },
+          {
+            "text": "Edit with",
+            "href": "https://lovable.dev/projects/1dc5ee7e-1294-441c-8288-850e79e443f6?utm_source=lovable-badge"
+          }
+        ],
+        "images": [],
+        "forms": [],
+        "navLinks": [
+          "Home",
+          "Industries"
+        ],
+        "footerLinks": [],
+        "horizontalOverflow": false,
+        "documentWidth": 1440,
+        "viewportWidth": 1440
+      },
+      "screenshots": {
+        "sourceFull": "reports/public-parity/screenshots/source/industries_cybersecurity__desktop__full.png",
+        "sourceVisible": "reports/public-parity/screenshots/source/industries_cybersecurity__desktop__visible.png",
+        "destinationFull": "reports/public-parity/screenshots/destination/industries_cybersecurity__desktop__full.png",
+        "destinationVisible": "reports/public-parity/screenshots/destination/industries_cybersecurity__desktop__visible.png"
+      },
+      "differences": [
+        "title: \"Cybersecurity Talent | TaaSFlow - Talent as a Service\" vs \"Cybersecurity hiring — TaaSFlow\"",
+        "meta description mismatch",
+        "H1 differs: [Cybersecurity Talent for Protection & Compliance] vs [Security hiring that actually verifies the security part.]",
+        "heading overlap 0% (0/30)",
+        "section count 20 vs 6",
+        "form count 1 vs 0"
+      ]
+    }
+  ],
+  "summary": "18 differences detected",
+  "exclusions": []
+}

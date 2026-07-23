@@ -1,0 +1,3352 @@
+{
+  "sourcePath": "/industries/healthcare",
+  "destinationPath": "/industries/healthcare",
+  "pageType": "industry_page",
+  "protected": false,
+  "verdict": "MAJOR_DIFFERENCE",
+  "severity": "HIGH",
+  "viewports": [
+    {
+      "viewport": "mobile",
+      "source": {
+        "url": "https://taasflow.com/industries/healthcare",
+        "finalUrl": "https://taasflow.com/industries/healthcare",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [
+          {
+            "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HJ2ECKCNK4&gtm=45je67l1v9245339446za200zd9245339446&_p=1784774165879&gcd=13l3l3l3l1l1&npa=0&_ng=1&dma=0&are=1&cid=1326199393.1784774166&frm=0&ngs=1&pscdl=noapi&rcb=3&sr=375x812&uaa=x86&uab=64&uafvl=Not-A.Brand%3B24.0.0.0%7CChromium%3B146.0.7680.80&uam=&uamb=0&uap=Windows&uapv=&uaw=0&ul=en-us&_s=1&tag_exp=115938465~115938468~118897920~118897930~119896803&dp=%2Findustries%2Fhealthcare&dt=TaaSFlow%20%7C%20Talent%20as%20a%20Service%20%7C%20Subscription%20Recruiting&dl=https%3A%2F%2Ftaasflow.com%2Findustries%2Fhealthcare&sid=1784774166&sct=1&seg=0&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&ep.role_type=public&ep.is_authenticated=false&tfd=608",
+            "status": null,
+            "failure": "net::ERR_ABORTED"
+          }
+        ],
+        "title": "Healthcare Talent | TaaSFlow - Talent as a Service",
+        "description": "On-demand healthcare professionals including medical coders, billers, and operations staff. HIPAA-compliant talent with credential verification.",
+        "canonical": "https://taasflow.com/industries/healthcare",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:type": "website",
+          "og:url": "https://taasflow.com/industries/healthcare",
+          "og:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "og:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "og:image": "https://taasflow.com/og-image.png",
+          "og:image:width": "1200",
+          "og:image:height": "630",
+          "og:locale": "en_US",
+          "twitter:card": "summary_large_image",
+          "twitter:site": "@TaasFlow",
+          "twitter:creator": "@TaasFlow",
+          "twitter:url": "https://taasflow.com/industries/healthcare",
+          "twitter:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "twitter:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "twitter:image": "https://taasflow.com/og-image.png"
+        },
+        "structuredData": [
+          {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "@id": "https://taasflow.com/#organization",
+            "name": "TaaSFlow",
+            "legalName": "TaaSFlow",
+            "url": "https://taasflow.com/",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://taasflow.com/favicon.png",
+              "width": 512,
+              "height": 512
+            },
+            "image": "https://taasflow.com/og-image.png",
+            "description": "Talent as a Service — subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+            "slogan": "Your hiring team. On demand.",
+            "foundingDate": "2024",
+            "areaServed": [
+              {
+                "@type": "Country",
+                "name": "United States"
+              },
+              {
+                "@type": "Country",
+                "name": "United Arab Emirates"
+              },
+              {
+                "@type": "Country",
+                "name": "United Kingdom"
+              },
+              {
+                "@type": "Country",
+                "name": "Brazil"
+              }
+            ],
+            "knowsAbout": [
+              "Subscription recruiting",
+              "Talent as a Service",
+              "Candidate sourcing",
+              "Pre-screened candidates",
+              "Recruitment process outsourcing"
+            ],
+            "contactPoint": [
+              {
+                "@type": "ContactPoint",
+                "contactType": "sales",
+                "email": "hello@taasflow.com",
+                "url": "https://taasflow.com/contact",
+                "availableLanguage": [
+                  "English",
+                  "Portuguese",
+                  "Spanish"
+                ]
+              }
+            ],
+            "sameAs": [
+              "https://www.linkedin.com/company/taasflow",
+              "https://twitter.com/TaasFlow"
+            ]
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "@id": "https://taasflow.com/#website",
+            "name": "TaaSFlow",
+            "alternateName": "Talent as a Service",
+            "url": "https://taasflow.com/",
+            "description": "Subscription recruiting that delivers pre-screened, ranked candidates in 14 days.",
+            "inLanguage": "en-US",
+            "publisher": {
+              "@id": "https://taasflow.com/#organization"
+            },
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": {
+                "@type": "EntryPoint",
+                "urlTemplate": "https://taasflow.com/jobs?q={search_term_string}"
+              },
+              "query-input": "required name=search_term_string"
+            }
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "Service",
+            "name": "Healthcare Talent Sourcing",
+            "description": "On-demand healthcare professionals including medical coders, billers, and operations staff. HIPAA-compliant talent with credential verification.",
+            "provider": {
+              "@type": "Organization",
+              "name": "TaasFlow",
+              "url": "https://taasflow.com"
+            },
+            "serviceType": "Talent Acquisition",
+            "areaServed": "United States",
+            "hasOfferCatalog": {
+              "@type": "OfferCatalog",
+              "name": "Healthcare Recruiting Services",
+              "itemListElement": [
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Medical Coders (CPC, CCS) Recruiting"
+                  },
+                  "position": 1
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Medical Billers Recruiting"
+                  },
+                  "position": 2
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Practice Managers Recruiting"
+                  },
+                  "position": 3
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Healthcare Administrators Recruiting"
+                  },
+                  "position": 4
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Revenue Cycle Analysts Recruiting"
+                  },
+                  "position": 5
+                }
+              ]
+            }
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "https://taasflow.com"
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Industries",
+                "item": "https://taasflow.com/industries"
+              },
+              {
+                "@type": "ListItem",
+                "position": 3,
+                "name": "Healthcare",
+                "item": "https://taasflow.com/industries//industries/healthcare"
+              }
+            ]
+          }
+        ],
+        "h1": [
+          "Healthcare Talent Built for Compliance, Credentials & Patient Care"
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "Healthcare Talent Built for Compliance, Credentials & Patient Care"
+          },
+          {
+            "level": 2,
+            "text": "Healthcare Industry Insights"
+          },
+          {
+            "level": 3,
+            "text": "Healthcare Spending"
+          },
+          {
+            "level": 3,
+            "text": "Worker Shortage"
+          },
+          {
+            "level": 3,
+            "text": "Revenue Cycle"
+          },
+          {
+            "level": 3,
+            "text": "Denial Rates"
+          },
+          {
+            "level": 3,
+            "text": "Industry Overview"
+          },
+          {
+            "level": 3,
+            "text": "Ready to transform your healthcare recruiting?"
+          },
+          {
+            "level": 2,
+            "text": "How we hire for Healthcare"
+          },
+          {
+            "level": 3,
+            "text": "Compliance Mapping"
+          },
+          {
+            "level": 3,
+            "text": "Credential Verification"
+          },
+          {
+            "level": 3,
+            "text": "EHR System Matching"
+          },
+          {
+            "level": 3,
+            "text": "HIPAA-Ready Placement"
+          },
+          {
+            "level": 2,
+            "text": "The Healthcare Staffing Challenge"
+          },
+          {
+            "level": 3,
+            "text": "The TaasFlow Solution"
+          },
+          {
+            "level": 2,
+            "text": "Why Healthcare companies choose TaasFlow"
+          },
+          {
+            "level": 3,
+            "text": "HIPAA Compliant"
+          },
+          {
+            "level": 3,
+            "text": "Credentials Verified"
+          },
+          {
+            "level": 3,
+            "text": "Patient-Centric Culture"
+          },
+          {
+            "level": 3,
+            "text": "72-Hour Urgent Staffing"
+          },
+          {
+            "level": 2,
+            "text": "Positions we fill for Healthcare"
+          },
+          {
+            "level": 2,
+            "text": "Real results for Healthcare teams"
+          },
+          {
+            "level": 2,
+            "text": "Healthcare Salary Explorer"
+          },
+          {
+            "level": 2,
+            "text": "Healthcare Career Path"
+          },
+          {
+            "level": 3,
+            "text": "Clinical Lead / Supervisor"
+          },
+          {
+            "level": 4,
+            "text": "Key Skills at This Level"
+          },
+          {
+            "level": 2,
+            "text": "Healthcare Hiring Trends"
+          },
+          {
+            "level": 2,
+            "text": "Interactive Hiring Guide"
+          },
+          {
+            "level": 3,
+            "text": "Define Your Ideal Candidate"
+          },
+          {
+            "level": 3,
+            "text": "Optimize Your Job Posting"
+          },
+          {
+            "level": 3,
+            "text": "Source Beyond Job Boards"
+          },
+          {
+            "level": 3,
+            "text": "Structure Your Interview Process"
+          },
+          {
+            "level": 3,
+            "text": "Close & Onboard Effectively"
+          },
+          {
+            "level": 2,
+            "text": "Healthcare Recruiting Insights"
+          },
+          {
+            "level": 3,
+            "text": "Pharma and Biotech Hiring: The Regulatory Talent Shortage Nobody Talks About"
+          },
+          {
+            "level": 3,
+            "text": "Healthcare Staffing Crisis 2026: Solutions for Hospitals and Health Systems"
+          },
+          {
+            "level": 3,
+            "text": "Nurse Recruitment in 2026: Solving the Global Shortage"
+          },
+          {
+            "level": 2,
+            "text": "Frequently Asked Questions"
+          },
+          {
+            "level": 3,
+            "text": "Are your medical coders certified?"
+          },
+          {
+            "level": 3,
+            "text": "Do candidates understand EHR systems?"
+          },
+          {
+            "level": 3,
+            "text": "How do you handle HIPAA compliance?"
+          },
+          {
+            "level": 2,
+            "text": "Discover related industries"
+          },
+          {
+            "level": 2,
+            "text": "Ready to build your Healthcare team?"
+          },
+          {
+            "level": 2,
+            "text": "Healthcare Recruiting"
+          },
+          {
+            "level": 3,
+            "text": "Hub Page"
+          },
+          {
+            "level": 3,
+            "text": "Related Articles"
+          },
+          {
+            "level": 3,
+            "text": "Get Started"
+          },
+          {
+            "level": 4,
+            "text": "Newsletter"
+          },
+          {
+            "level": 4,
+            "text": "For candidates"
+          },
+          {
+            "level": 4,
+            "text": "For companies"
+          },
+          {
+            "level": 4,
+            "text": "Industries"
+          },
+          {
+            "level": 4,
+            "text": "Company"
+          }
+        ],
+        "sections": [
+          "SECTION",
+          "Healthcare Talent Built for Compliance, Credentials & Patient Care",
+          "SECTION",
+          "Healthcare Industry Insights",
+          "Ready to transform your healthcare recruiting?",
+          "How we hire for Healthcare",
+          "The Healthcare Staffing Challenge",
+          "Why Healthcare companies choose TaasFlow",
+          "Positions we fill for Healthcare",
+          "Real results for Healthcare teams",
+          "Healthcare Salary Explorer",
+          "Healthcare Career Path",
+          "Healthcare Hiring Trends",
+          "Interactive Hiring Guide",
+          "Healthcare Recruiting Insights",
+          "Frequently Asked Questions",
+          "Discover related industries",
+          "SECTION",
+          "Ready to build your Healthcare team?",
+          "Healthcare Recruiting"
+        ],
+        "textBlocks": [
+          "Solutions",
+          "Industries",
+          "Resources",
+          "Home",
+          "Industries",
+          "Healthcare",
+          "Access credential-verified medical coders, billing specialists, and healthcare operations professionals who understand HIPAA, EHR systems, shift staffing, and licensing requirements from day one.",
+          "Key market data and trends shaping talent demand in your industry. (Hover for details)",
+          "Total US healthcare expenditure annually",
+          "Projected healthcare worker shortage by 2026",
+          "US medical coding and billing market size",
+          "Average claim denial rate due to coding errors",
+          "Start a risk-free pilot and receive qualified candidates in 14 days.",
+          "A tailored workflow for the challenges of healthcare settings.",
+          "We assess HIPAA requirements, EHR systems, and credentialing needs for your organization.",
+          "CPC, CCS, RHIA certifications verified with issuing bodies. Background checks initiated.",
+          "Candidates matched to your specific Epic, Cerner, or Meditech environment.",
+          "Trained, credentialed professionals delivered ready for patient-facing environments.",
+          "Healthcare staffing agencies focus on clinical roles, but you also need qualified administrative and revenue cycle professionals who understand healthcare operations.",
+          "HIPAA compliance, credentialing verification, and healthcare-specific background checks are non-negotiable—but they slow down traditional hiring processes.",
+          "Seasonal volume fluctuations, new service line launches, and regulatory changes create staffing needs that don't fit permanent headcount planning.",
+          "Medical coders, billers, and revenue cycle specialists with certification verification",
+          "Practice managers and healthcare administrators with health system experience",
+          "All candidates HIPAA-trained and background check-ready",
+          "Understanding of Epic, Cerner, and other major EHR/EMR systems",
+          "Flexible engagements for seasonal volume, new programs, or temporary coverage",
+          "We understand the unique challenges of your industry and deliver matching talent.",
+          "Every professional completes HIPAA training. Compliance documentation available.",
+          "CPC, CCS, RHIA, and other certifications verified before placement.",
+          "Professionals who understand healthcare operations and patient experience.",
+          "Critical role? We can mobilize qualified healthcare talent fast.",
+          "Pre-vetted professionals, delivered weekly, ready to start.",
+          "- Regional Health System, 12 locations",
+          "Explore current compensation ranges for top roles. Data updated quarterly from industry benchmarks.",
+          "* Based on industry benchmarks from SHRM, Glassdoor, LinkedIn Salary, and BLS data. Actual compensation may vary.",
+          "Click any level to explore typical progression, salary ranges, and key skills.",
+          "Key metrics shaping the talent landscape. Stay ahead of market shifts.",
+          "Projected nursing shortfall in the US by 2030.",
+          "Telehealth-related positions growing faster than any other healthcare segment.",
+          "Healthcare workers reporting symptoms of burnout, driving turnover.",
+          "EMR specialists and health informatics roles surging.",
+          "Follow these proven steps to hire smarter. Track your progress and get actionable tips at every stage.",
+          "Create a detailed candidate persona with must-have vs nice-to-have skills, cultural fit criteria, and realistic salary expectations.",
+          "Write a compelling job description that sells the opportunity, not just lists requirements. Include salary range, growth path, and team culture.",
+          "Reach passive candidates through targeted outreach, employee referrals, and talent communities. 70% of top talent is not actively looking.",
+          "Design a consistent 3-4 stage process that evaluates skills, culture fit, and potential. Include take-home assessments where appropriate.",
+          "Move fast with competitive offers and start onboarding before day one. The first 90 days determine long-term retention.",
+          "Expert articles on recruiting and talent acquisition for healthcare.",
+          "Regulatory affairs professionals are the most undervalued bottleneck in pharma hiring. Here is what companies must change to attract this critical talent.",
+          "Healthcare Staffing Crisis 2026: Solutions for Hospitals and Health Systems",
+          "The healthcare staffing shortage will reach 3.2 million by 2026. Here are evidence-based solutions for health systems.",
+          "Nurse Recruitment in 2026: Solving the Global Shortage",
+          "A data-driven analysis of the global nursing shortage with actionable sourcing strategies, international pipelines, and retention frameworks.",
+          "Common questions about TaasFlow for healthcare.",
+          "Learn how we serve similar sectors with subscription recruiting.",
+          "Receive qualified healthcare professionals weekly. No agency fees, no long-term contracts.",
+          "Related Industries",
+          "Talent as a Service",
+          "A global hiring system for teams that need consistent recruiting.",
+          "Weekly insights into talent acquisition. No spam.",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Book call",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "No recruitment agency fees. No placement charges. Subscription-based hiring system.",
+          "Copyright 2026 TaaSFlow. All rights reserved."
+        ],
+        "buttons": [
+          "Solutions",
+          "Industries",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Solutions",
+          "How it works",
+          "Pilot",
+          "Enterprise",
+          "Case studies",
+          "Jobs",
+          "Journey",
+          "Industries",
+          "Tech",
+          "SaaS & Cloud",
+          "Cybersecurity",
+          "Data & Analytics",
+          "Finance",
+          "Insurance",
+          "PE & VC",
+          "Accounting",
+          "Legal",
+          "Consulting",
+          "HR & Recruiting",
+          "Staffing Agencies",
+          "Sales",
+          "Marketing",
+          "E-commerce",
+          "Media",
+          "Real Estate",
+          "Construction",
+          "Hospitality",
+          "Healthcare",
+          "Public Sector",
+          "Non-Profit",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Success Stories",
+          "Talent Marketplace",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Start Healthcare Pilot Program",
+          "Book call",
+          "Book call",
+          "1Clinical Staff",
+          "2Senior Clinician",
+          "3Clinical Lead / Supervisor",
+          "4Director of Nursing / Dept Head",
+          "5VP Clinical Ops / CNO",
+          "Next: Director of Nursing / Dept Head",
+          "1Define Your Ideal Candidate1-2 days",
+          "1",
+          "Mark Complete",
+          "2Optimize Your Job PostingWrite a compelling job description that sells the opportunity, not just lists requirements. Include salary range, growth path, and team culture.1 day",
+          "2",
+          "3Source Beyond Job BoardsReach passive candidates through targeted outreach, employee referrals, and talent communities. 70% of top talent is not actively looking.Ongoing",
+          "3",
+          "4Structure Your Interview ProcessDesign a consistent 3-4 stage process that evaluates skills, culture fit, and potential. Include take-home assessments where appropriate.2-3 days setup",
+          "4",
+          "5Close & Onboard EffectivelyMove fast with competitive offers and start onboarding before day one. The first 90 days determine long-term retention.1-2 weeks",
+          "5",
+          "Are your medical coders certified?",
+          "Do candidates understand EHR systems?",
+          "How do you handle HIPAA compliance?",
+          "Start Healthcare Pilot",
+          "Contact",
+          "Subscribe",
+          "Book call"
+        ],
+        "links": [
+          {
+            "text": "Skip to main content",
+            "href": "https://taasflow.com/industries/healthcare#main-content"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "Browse jobs",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Join the network",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Browse open roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Home",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "Industries",
+            "href": "https://taasflow.com/industries"
+          },
+          {
+            "text": "View all articles",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "Industry Hiring GuidesHealthcarePharma and Biotech Hiring: The Regulatory Talent Shortage Nobody Talks AboutRegulatory a",
+            "href": "https://taasflow.com/blog/pharma-biotech-hiring-regulatory-talent"
+          },
+          {
+            "text": "📋Healthcare Staffing Crisis 2026: Solutions for Hospitals and Health SystemsIndustry Hiring GuidesIndustry Hiring Guide",
+            "href": "https://taasflow.com/blog/healthcare-staffing-crisis-solutions"
+          },
+          {
+            "text": "📋Nurse Recruitment in 2026: Solving the Global ShortageIndustry Hiring GuidesIndustry Hiring GuidesHealthcareNurse Recr",
+            "href": "https://taasflow.com/blog/nurse-recruitment-global-shortage-2026"
+          },
+          {
+            "text": "View all articles",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "Technology",
+            "href": "https://taasflow.com/industries/tech"
+          },
+          {
+            "text": "Legal",
+            "href": "https://taasflow.com/industries/legal"
+          },
+          {
+            "text": "Public Sector",
+            "href": "https://taasflow.com/industries/public-sector"
+          },
+          {
+            "text": "Finance & Banking",
+            "href": "https://taasflow.com/industries/finance"
+          },
+          {
+            "text": "Staffing Agencies",
+            "href": "https://taasflow.com/industries/staffing-agencies"
+          },
+          {
+            "text": "Sales",
+            "href": "https://taasflow.com/industries/sales"
+          },
+          {
+            "text": "Marketing & Advertising",
+            "href": "https://taasflow.com/industries/marketing"
+          },
+          {
+            "text": "Human Resources",
+            "href": "https://taasflow.com/industries/human-resources"
+          },
+          {
+            "text": "Compare all industries",
+            "href": "https://taasflow.com/industries/compare"
+          },
+          {
+            "text": "How it works",
+            "href": "https://taasflow.com/how-it-works"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "Start Pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "Jobs",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Blog",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "About",
+            "href": "https://taasflow.com/about"
+          },
+          {
+            "text": "Enterprise",
+            "href": "https://taasflow.com/enterprise"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://taasflow.com/faq"
+          },
+          {
+            "text": "Contact",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Looking for a job in healthcare? Browse open positions",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Healthcare Recruiting",
+            "href": "https://taasflow.com/industries/healthcare"
+          },
+          {
+            "text": "Healthcare Staffing Crisis",
+            "href": "https://taasflow.com/blog/healthcare-staffing-crisis"
+          },
+          {
+            "text": "Diversity in Healthcare Hiring",
+            "href": "https://taasflow.com/blog/diversity-inclusion-hiring"
+          },
+          {
+            "text": "Global Healthcare Compliance",
+            "href": "https://taasflow.com/blog/global-hiring-compliance"
+          },
+          {
+            "text": "All Industry Guides",
+            "href": "https://taasflow.com/blog/category/industry-spotlights"
+          },
+          {
+            "text": "Start a Pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "View Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "Public Sector Recruiting",
+            "href": "https://taasflow.com/industries/public-sector"
+          },
+          {
+            "text": "Onboarding Best Practices",
+            "href": "https://taasflow.com/blog/onboarding-best-practices"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "LinkedIn",
+            "href": "https://www.linkedin.com/company/taasflow/"
+          },
+          {
+            "text": "Browse roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Talent network",
+            "href": "https://taasflow.com/global-talent"
+          },
+          {
+            "text": "Member stories",
+            "href": "https://taasflow.com/candidate-success"
+          },
+          {
+            "text": "Start pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "Employer onboarding",
+            "href": "https://taasflow.com/employer-onboarding"
+          },
+          {
+            "text": "Case studies",
+            "href": "https://taasflow.com/case-studies"
+          },
+          {
+            "text": "Healthcare",
+            "href": "https://taasflow.com/industries/healthcare"
+          },
+          {
+            "text": "Technology",
+            "href": "https://taasflow.com/industries/tech"
+          },
+          {
+            "text": "Finance",
+            "href": "https://taasflow.com/industries/finance"
+          },
+          {
+            "text": "Legal",
+            "href": "https://taasflow.com/industries/legal"
+          },
+          {
+            "text": "All →",
+            "href": "https://taasflow.com/industries"
+          },
+          {
+            "text": "About us",
+            "href": "https://taasflow.com/about"
+          },
+          {
+            "text": "Blog",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://taasflow.com/faq"
+          },
+          {
+            "text": "Knowledge Base",
+            "href": "https://taasflow.com/knowledge-base"
+          },
+          {
+            "text": "Contact us",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Privacy Policy",
+            "href": "https://taasflow.com/privacy"
+          },
+          {
+            "text": "Terms of Service",
+            "href": "https://taasflow.com/terms"
+          }
+        ],
+        "images": [
+          {
+            "src": "https://taasflow.com/assets/logo-on-white-Dk9DIcMP.png",
+            "alt": "TaaSFlow logo"
+          },
+          {
+            "src": "https://taasflow.com/assets/healthcare-zBwovZK5.jpg",
+            "alt": ""
+          },
+          {
+            "src": "https://taasflow.com/assets/healthcare-zBwovZK5.jpg",
+            "alt": ""
+          },
+          {
+            "src": "https://taasflow.com/assets/healthcare-zBwovZK5.jpg",
+            "alt": ""
+          },
+          {
+            "src": "https://taasflow.com/assets/healthcare-hiring-CRpQ-xuO.jpg",
+            "alt": "Pharma and Biotech Hiring: The Regulatory Talent Shortage Nobody Talks About"
+          },
+          {
+            "src": "https://taasflow.com/assets/logo-on-blue-CX6jlwjg.png",
+            "alt": "TaaSFlow logo"
+          }
+        ],
+        "forms": [
+          {
+            "action": "https://taasflow.com/industries/healthcare",
+            "fields": [
+              "input"
+            ]
+          }
+        ],
+        "navLinks": [
+          "Browse jobs",
+          "Join the network",
+          "Browse open roles",
+          "Home",
+          "Industries",
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us"
+        ],
+        "footerLinks": [
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "Privacy Policy",
+          "Terms of Service"
+        ],
+        "horizontalOverflow": false,
+        "documentWidth": 375,
+        "viewportWidth": 375
+      },
+      "destination": {
+        "url": "https://clear-path-hubs.lovable.app/industries/healthcare",
+        "finalUrl": "https://clear-path-hubs.lovable.app/industries/healthcare",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [],
+        "title": "Healthcare hiring — TaaSFlow",
+        "description": "Structured sourcing for healthcare providers, payers and health-tech teams. Ranked shortlists with evidence of the settings, systems and populations worked with.",
+        "canonical": "https://clear-path-hubs.lovable.app/industries/healthcare",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "twitter:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "og:title": "Healthcare hiring — TaaSFlow",
+          "og:description": "Structured sourcing for healthcare providers, payers and health-tech teams. Ranked shortlists with evidence of the settings, systems and populations worked with.",
+          "og:url": "https://clear-path-hubs.lovable.app/industries/healthcare",
+          "og:type": "website",
+          "twitter:card": "summary_large_image",
+          "twitter:title": "Healthcare hiring — TaaSFlow",
+          "twitter:description": "Structured sourcing for healthcare providers, payers and health-tech teams. Ranked shortlists with evidence of the settings, systems and populations worked with."
+        },
+        "structuredData": [],
+        "h1": [
+          "Healthcare hiring, calibrated per setting and specialty."
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "Healthcare hiring, calibrated per setting and specialty."
+          },
+          {
+            "level": 2,
+            "text": "What we hear from Healthcare teams"
+          },
+          {
+            "level": 3,
+            "text": "Setting and specialty fit"
+          },
+          {
+            "level": 3,
+            "text": "Systems and workflow context"
+          },
+          {
+            "level": 3,
+            "text": "Licensure and role scope"
+          },
+          {
+            "level": 2,
+            "text": "Roles we source in Healthcare"
+          },
+          {
+            "level": 3,
+            "text": "Submit the role"
+          },
+          {
+            "level": 3,
+            "text": "We source and score"
+          },
+          {
+            "level": 3,
+            "text": "Review in your workspace"
+          },
+          {
+            "level": 2,
+            "text": "Hiring in healthcare?"
+          }
+        ],
+        "sections": [
+          "Healthcare hiring, calibrated per setting and specialty.",
+          "What we hear from Healthcare teams",
+          "Roles we source in Healthcare",
+          "Submit the role",
+          "Hiring in healthcare?",
+          "SECTION"
+        ],
+        "textBlocks": [
+          "Home",
+          "Industries",
+          "Healthcare",
+          "Healthcare",
+          "TaaSFlow gives healthcare leaders a workspace for every hire — clinical, operational, technical — with rubrics tuned to the care setting, specialty and systems the role actually touches.",
+          "Setting and specialty rubric per role",
+          "Systems and workflow captured in intake",
+          "Human review before publication",
+          "Acute, ambulatory, primary care and health-tech each need distinct evidence. Our rubric captures the settings and specialties the candidate has worked in — not generic 'healthcare experience'.",
+          "EHR platforms, coding systems and clinical workflows are captured in intake so shortlists reflect the operating environment the hire will actually work in.",
+          "Where a role requires specific licensure or scope of practice, we capture it as a first-class filter. We do not assert compliance on behalf of a candidate — we surface what the CV states so your team can verify.",
+          "We calibrate the rubric to the seniority and specialisation you actually need.",
+          "Healthcare operations leads",
+          "Practice and clinic managers",
+          "Revenue cycle and billing specialists",
+          "Health informatics and EHR analysts",
+          "Health-tech product and engineering",
+          "Payer operations and claims specialists",
+          "Quality and clinical operations analysts",
+          "Population health and care coordination",
+          "01",
+          "A guided intake captures everything the search needs, in one flow.",
+          "02",
+          "Multi-channel sourcing, role-specific rubric, evidence extracted from every CV.",
+          "03",
+          "Ranked shortlist, evidence side-by-side, Kanban pipeline, direct messaging.",
+          "See the full process on how it works.",
+          "Healthcare",
+          "Submit the role — one workspace per requisition, ranked and reviewed."
+        ],
+        "buttons": [],
+        "links": [
+          {
+            "text": "Home",
+            "href": "https://clear-path-hubs.lovable.app/"
+          },
+          {
+            "text": "Industries",
+            "href": "https://clear-path-hubs.lovable.app/industries"
+          },
+          {
+            "text": "Start hiring",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "Talk to us",
+            "href": "https://clear-path-hubs.lovable.app/contact"
+          },
+          {
+            "text": "how it works",
+            "href": "https://clear-path-hubs.lovable.app/how-it-works"
+          },
+          {
+            "text": "Start intake",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "See other industries",
+            "href": "https://clear-path-hubs.lovable.app/industries"
+          },
+          {
+            "text": "Edit with",
+            "href": "https://lovable.dev/projects/1dc5ee7e-1294-441c-8288-850e79e443f6?utm_source=lovable-badge"
+          }
+        ],
+        "images": [],
+        "forms": [],
+        "navLinks": [
+          "Home",
+          "Industries"
+        ],
+        "footerLinks": [],
+        "horizontalOverflow": false,
+        "documentWidth": 375,
+        "viewportWidth": 375
+      },
+      "screenshots": {
+        "sourceFull": "reports/public-parity/screenshots/source/industries_healthcare__mobile__full.png",
+        "sourceVisible": "reports/public-parity/screenshots/source/industries_healthcare__mobile__visible.png",
+        "destinationFull": "reports/public-parity/screenshots/destination/industries_healthcare__mobile__full.png",
+        "destinationVisible": "reports/public-parity/screenshots/destination/industries_healthcare__mobile__visible.png"
+      },
+      "differences": [
+        "title: \"Healthcare Talent | TaaSFlow - Talent as a Service\" vs \"Healthcare hiring — TaaSFlow\"",
+        "meta description mismatch",
+        "H1 differs: [Healthcare Talent Built for Compliance, Credentials & Patient Care] vs [Healthcare hiring, calibrated per setting and specialty.]",
+        "heading overlap 0% (0/30)",
+        "section count 20 vs 6",
+        "form count 1 vs 0"
+      ]
+    },
+    {
+      "viewport": "tablet",
+      "source": {
+        "url": "https://taasflow.com/industries/healthcare",
+        "finalUrl": "https://taasflow.com/industries/healthcare",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [
+          {
+            "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HJ2ECKCNK4&gtm=45je67l1v9245339446za200zd9245339446&_p=1784774169571&gcd=13l3l3l3l1l1&npa=0&_ng=1&dma=0&are=1&cid=1677044002.1784774170&frm=0&ngs=1&pscdl=noapi&rcb=5&sr=768x1024&uaa=x86&uab=64&uafvl=Not-A.Brand%3B24.0.0.0%7CChromium%3B146.0.7680.80&uam=&uamb=0&uap=Windows&uapv=&uaw=0&ul=en-us&_s=1&tag_exp=115938465~115938468~118897920~118897930~119896803&dp=%2Findustries%2Fhealthcare&dt=TaaSFlow%20%7C%20Talent%20as%20a%20Service%20%7C%20Subscription%20Recruiting&dl=https%3A%2F%2Ftaasflow.com%2Findustries%2Fhealthcare&sid=1784774169&sct=1&seg=0&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&ep.role_type=public&ep.is_authenticated=false&tfd=479",
+            "status": null,
+            "failure": "net::ERR_ABORTED"
+          },
+          {
+            "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HJ2ECKCNK4&gtm=45je67l1v9245339446za200zd9245339446&_p=1784774169571&gcd=13l3l3l3l1l1&npa=0&_ng=1&dma=0&_eu=AEAAAAQ&ae=a&are=1&cid=1677044002.1784774170&frm=0&ngs=1&pscdl=noapi&rcb=5&sr=768x1024&uaa=x86&uab=64&uafvl=Not-A.Brand%3B24.0.0.0%7CChromium%3B146.0.7680.80&uam=&uamb=0&uap=Windows&uapv=&uaw=0&ul=en-us&_s=2&tag_exp=115938465~115938468~118897920~118897930~119896803&sid=1784774169&sct=1&seg=0&dl=https%3A%2F%2Ftaasflow.com%2Findustries%2Fhealthcare&dt=TaaSFlow%20%7C%20Talent%20as%20a%20Service%20%7C%20Subscription%20Recruiting&en=scroll&epn.percent_scrolled=90&_et=15&tfd=866",
+            "status": null,
+            "failure": "net::ERR_ABORTED"
+          }
+        ],
+        "title": "Healthcare Talent | TaaSFlow - Talent as a Service",
+        "description": "On-demand healthcare professionals including medical coders, billers, and operations staff. HIPAA-compliant talent with credential verification.",
+        "canonical": "https://taasflow.com/industries/healthcare",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:type": "website",
+          "og:url": "https://taasflow.com/industries/healthcare",
+          "og:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "og:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "og:image": "https://taasflow.com/og-image.png",
+          "og:image:width": "1200",
+          "og:image:height": "630",
+          "og:locale": "en_US",
+          "twitter:card": "summary_large_image",
+          "twitter:site": "@TaasFlow",
+          "twitter:creator": "@TaasFlow",
+          "twitter:url": "https://taasflow.com/industries/healthcare",
+          "twitter:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "twitter:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "twitter:image": "https://taasflow.com/og-image.png"
+        },
+        "structuredData": [
+          {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "@id": "https://taasflow.com/#organization",
+            "name": "TaaSFlow",
+            "legalName": "TaaSFlow",
+            "url": "https://taasflow.com/",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://taasflow.com/favicon.png",
+              "width": 512,
+              "height": 512
+            },
+            "image": "https://taasflow.com/og-image.png",
+            "description": "Talent as a Service — subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+            "slogan": "Your hiring team. On demand.",
+            "foundingDate": "2024",
+            "areaServed": [
+              {
+                "@type": "Country",
+                "name": "United States"
+              },
+              {
+                "@type": "Country",
+                "name": "United Arab Emirates"
+              },
+              {
+                "@type": "Country",
+                "name": "United Kingdom"
+              },
+              {
+                "@type": "Country",
+                "name": "Brazil"
+              }
+            ],
+            "knowsAbout": [
+              "Subscription recruiting",
+              "Talent as a Service",
+              "Candidate sourcing",
+              "Pre-screened candidates",
+              "Recruitment process outsourcing"
+            ],
+            "contactPoint": [
+              {
+                "@type": "ContactPoint",
+                "contactType": "sales",
+                "email": "hello@taasflow.com",
+                "url": "https://taasflow.com/contact",
+                "availableLanguage": [
+                  "English",
+                  "Portuguese",
+                  "Spanish"
+                ]
+              }
+            ],
+            "sameAs": [
+              "https://www.linkedin.com/company/taasflow",
+              "https://twitter.com/TaasFlow"
+            ]
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "@id": "https://taasflow.com/#website",
+            "name": "TaaSFlow",
+            "alternateName": "Talent as a Service",
+            "url": "https://taasflow.com/",
+            "description": "Subscription recruiting that delivers pre-screened, ranked candidates in 14 days.",
+            "inLanguage": "en-US",
+            "publisher": {
+              "@id": "https://taasflow.com/#organization"
+            },
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": {
+                "@type": "EntryPoint",
+                "urlTemplate": "https://taasflow.com/jobs?q={search_term_string}"
+              },
+              "query-input": "required name=search_term_string"
+            }
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "Service",
+            "name": "Healthcare Talent Sourcing",
+            "description": "On-demand healthcare professionals including medical coders, billers, and operations staff. HIPAA-compliant talent with credential verification.",
+            "provider": {
+              "@type": "Organization",
+              "name": "TaasFlow",
+              "url": "https://taasflow.com"
+            },
+            "serviceType": "Talent Acquisition",
+            "areaServed": "United States",
+            "hasOfferCatalog": {
+              "@type": "OfferCatalog",
+              "name": "Healthcare Recruiting Services",
+              "itemListElement": [
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Medical Coders (CPC, CCS) Recruiting"
+                  },
+                  "position": 1
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Medical Billers Recruiting"
+                  },
+                  "position": 2
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Practice Managers Recruiting"
+                  },
+                  "position": 3
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Healthcare Administrators Recruiting"
+                  },
+                  "position": 4
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Revenue Cycle Analysts Recruiting"
+                  },
+                  "position": 5
+                }
+              ]
+            }
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "https://taasflow.com"
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Industries",
+                "item": "https://taasflow.com/industries"
+              },
+              {
+                "@type": "ListItem",
+                "position": 3,
+                "name": "Healthcare",
+                "item": "https://taasflow.com/industries//industries/healthcare"
+              }
+            ]
+          }
+        ],
+        "h1": [
+          "Healthcare Talent Built for Compliance, Credentials & Patient Care"
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "Healthcare Talent Built for Compliance, Credentials & Patient Care"
+          },
+          {
+            "level": 2,
+            "text": "Healthcare Industry Insights"
+          },
+          {
+            "level": 3,
+            "text": "Healthcare Spending"
+          },
+          {
+            "level": 3,
+            "text": "Worker Shortage"
+          },
+          {
+            "level": 3,
+            "text": "Revenue Cycle"
+          },
+          {
+            "level": 3,
+            "text": "Denial Rates"
+          },
+          {
+            "level": 3,
+            "text": "Industry Overview"
+          },
+          {
+            "level": 3,
+            "text": "Ready to transform your healthcare recruiting?"
+          },
+          {
+            "level": 2,
+            "text": "How we hire for Healthcare"
+          },
+          {
+            "level": 3,
+            "text": "Compliance Mapping"
+          },
+          {
+            "level": 3,
+            "text": "Credential Verification"
+          },
+          {
+            "level": 3,
+            "text": "EHR System Matching"
+          },
+          {
+            "level": 3,
+            "text": "HIPAA-Ready Placement"
+          },
+          {
+            "level": 2,
+            "text": "The Healthcare Staffing Challenge"
+          },
+          {
+            "level": 3,
+            "text": "The TaasFlow Solution"
+          },
+          {
+            "level": 2,
+            "text": "Why Healthcare companies choose TaasFlow"
+          },
+          {
+            "level": 3,
+            "text": "HIPAA Compliant"
+          },
+          {
+            "level": 3,
+            "text": "Credentials Verified"
+          },
+          {
+            "level": 3,
+            "text": "Patient-Centric Culture"
+          },
+          {
+            "level": 3,
+            "text": "72-Hour Urgent Staffing"
+          },
+          {
+            "level": 2,
+            "text": "Positions we fill for Healthcare"
+          },
+          {
+            "level": 2,
+            "text": "Real results for Healthcare teams"
+          },
+          {
+            "level": 2,
+            "text": "Healthcare Salary Explorer"
+          },
+          {
+            "level": 2,
+            "text": "Healthcare Career Path"
+          },
+          {
+            "level": 3,
+            "text": "Clinical Lead / Supervisor"
+          },
+          {
+            "level": 4,
+            "text": "Key Skills at This Level"
+          },
+          {
+            "level": 2,
+            "text": "Healthcare Hiring Trends"
+          },
+          {
+            "level": 2,
+            "text": "Interactive Hiring Guide"
+          },
+          {
+            "level": 3,
+            "text": "Define Your Ideal Candidate"
+          },
+          {
+            "level": 3,
+            "text": "Optimize Your Job Posting"
+          },
+          {
+            "level": 3,
+            "text": "Source Beyond Job Boards"
+          },
+          {
+            "level": 3,
+            "text": "Structure Your Interview Process"
+          },
+          {
+            "level": 3,
+            "text": "Close & Onboard Effectively"
+          },
+          {
+            "level": 2,
+            "text": "Healthcare Recruiting Insights"
+          },
+          {
+            "level": 3,
+            "text": "Pharma and Biotech Hiring: The Regulatory Talent Shortage Nobody Talks About"
+          },
+          {
+            "level": 3,
+            "text": "Healthcare Staffing Crisis 2026: Solutions for Hospitals and Health Systems"
+          },
+          {
+            "level": 3,
+            "text": "Nurse Recruitment in 2026: Solving the Global Shortage"
+          },
+          {
+            "level": 2,
+            "text": "Frequently Asked Questions"
+          },
+          {
+            "level": 3,
+            "text": "Are your medical coders certified?"
+          },
+          {
+            "level": 3,
+            "text": "Do candidates understand EHR systems?"
+          },
+          {
+            "level": 3,
+            "text": "How do you handle HIPAA compliance?"
+          },
+          {
+            "level": 2,
+            "text": "Discover related industries"
+          },
+          {
+            "level": 2,
+            "text": "Ready to build your Healthcare team?"
+          },
+          {
+            "level": 2,
+            "text": "Healthcare Recruiting"
+          },
+          {
+            "level": 3,
+            "text": "Hub Page"
+          },
+          {
+            "level": 3,
+            "text": "Related Articles"
+          },
+          {
+            "level": 3,
+            "text": "Get Started"
+          },
+          {
+            "level": 4,
+            "text": "Newsletter"
+          },
+          {
+            "level": 4,
+            "text": "For candidates"
+          },
+          {
+            "level": 4,
+            "text": "For companies"
+          },
+          {
+            "level": 4,
+            "text": "Industries"
+          },
+          {
+            "level": 4,
+            "text": "Company"
+          },
+          {
+            "level": 3,
+            "text": "Cookie Preferences"
+          }
+        ],
+        "sections": [
+          "SECTION",
+          "Healthcare Talent Built for Compliance, Credentials & Patient Care",
+          "SECTION",
+          "Healthcare Industry Insights",
+          "Ready to transform your healthcare recruiting?",
+          "How we hire for Healthcare",
+          "The Healthcare Staffing Challenge",
+          "Why Healthcare companies choose TaasFlow",
+          "Positions we fill for Healthcare",
+          "Real results for Healthcare teams",
+          "Healthcare Salary Explorer",
+          "Healthcare Career Path",
+          "Healthcare Hiring Trends",
+          "Interactive Hiring Guide",
+          "Healthcare Recruiting Insights",
+          "Frequently Asked Questions",
+          "Discover related industries",
+          "SECTION",
+          "Ready to build your Healthcare team?",
+          "Healthcare Recruiting"
+        ],
+        "textBlocks": [
+          "Solutions",
+          "Industries",
+          "Resources",
+          "Home",
+          "Industries",
+          "Healthcare",
+          "Access credential-verified medical coders, billing specialists, and healthcare operations professionals who understand HIPAA, EHR systems, shift staffing, and licensing requirements from day one.",
+          "Key market data and trends shaping talent demand in your industry. (Hover for details)",
+          "Total US healthcare expenditure annually",
+          "Projected healthcare worker shortage by 2026",
+          "US medical coding and billing market size",
+          "Average claim denial rate due to coding errors",
+          "Start a risk-free pilot and receive qualified candidates in 14 days.",
+          "A tailored workflow for the challenges of healthcare settings.",
+          "We assess HIPAA requirements, EHR systems, and credentialing needs for your organization.",
+          "CPC, CCS, RHIA certifications verified with issuing bodies. Background checks initiated.",
+          "Candidates matched to your specific Epic, Cerner, or Meditech environment.",
+          "Trained, credentialed professionals delivered ready for patient-facing environments.",
+          "Healthcare staffing agencies focus on clinical roles, but you also need qualified administrative and revenue cycle professionals who understand healthcare operations.",
+          "HIPAA compliance, credentialing verification, and healthcare-specific background checks are non-negotiable—but they slow down traditional hiring processes.",
+          "Seasonal volume fluctuations, new service line launches, and regulatory changes create staffing needs that don't fit permanent headcount planning.",
+          "Medical coders, billers, and revenue cycle specialists with certification verification",
+          "Practice managers and healthcare administrators with health system experience",
+          "All candidates HIPAA-trained and background check-ready",
+          "Understanding of Epic, Cerner, and other major EHR/EMR systems",
+          "Flexible engagements for seasonal volume, new programs, or temporary coverage",
+          "We understand the unique challenges of your industry and deliver matching talent.",
+          "Every professional completes HIPAA training. Compliance documentation available.",
+          "CPC, CCS, RHIA, and other certifications verified before placement.",
+          "Professionals who understand healthcare operations and patient experience.",
+          "Critical role? We can mobilize qualified healthcare talent fast.",
+          "Pre-vetted professionals, delivered weekly, ready to start.",
+          "- Regional Health System, 12 locations",
+          "Explore current compensation ranges for top roles. Data updated quarterly from industry benchmarks.",
+          "* Based on industry benchmarks from SHRM, Glassdoor, LinkedIn Salary, and BLS data. Actual compensation may vary.",
+          "Click any level to explore typical progression, salary ranges, and key skills.",
+          "Key metrics shaping the talent landscape. Stay ahead of market shifts.",
+          "Projected nursing shortfall in the US by 2030.",
+          "Telehealth-related positions growing faster than any other healthcare segment.",
+          "Healthcare workers reporting symptoms of burnout, driving turnover.",
+          "EMR specialists and health informatics roles surging.",
+          "Follow these proven steps to hire smarter. Track your progress and get actionable tips at every stage.",
+          "Create a detailed candidate persona with must-have vs nice-to-have skills, cultural fit criteria, and realistic salary expectations.",
+          "Write a compelling job description that sells the opportunity, not just lists requirements. Include salary range, growth path, and team culture.",
+          "Reach passive candidates through targeted outreach, employee referrals, and talent communities. 70% of top talent is not actively looking.",
+          "Design a consistent 3-4 stage process that evaluates skills, culture fit, and potential. Include take-home assessments where appropriate.",
+          "Move fast with competitive offers and start onboarding before day one. The first 90 days determine long-term retention.",
+          "Expert articles on recruiting and talent acquisition for healthcare.",
+          "Regulatory affairs professionals are the most undervalued bottleneck in pharma hiring. Here is what companies must change to attract this critical talent.",
+          "Healthcare Staffing Crisis 2026: Solutions for Hospitals and Health Systems",
+          "The healthcare staffing shortage will reach 3.2 million by 2026. Here are evidence-based solutions for health systems.",
+          "Nurse Recruitment in 2026: Solving the Global Shortage",
+          "A data-driven analysis of the global nursing shortage with actionable sourcing strategies, international pipelines, and retention frameworks.",
+          "Common questions about TaasFlow for healthcare.",
+          "Learn how we serve similar sectors with subscription recruiting.",
+          "Receive qualified healthcare professionals weekly. No agency fees, no long-term contracts.",
+          "Related Industries",
+          "Talent as a Service",
+          "A global hiring system for teams that need consistent recruiting.",
+          "Weekly insights into talent acquisition. No spam.",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Book call",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "No recruitment agency fees. No placement charges. Subscription-based hiring system.",
+          "Copyright 2026 TaaSFlow. All rights reserved.",
+          "We use essential cookies for core functionality. With your consent, we use analytics (Google Analytics) and marketing technologies (Meta Pixel, Apollo, Retention.com/RB2B) to understand website performance, improve campaigns, and measure conversions safely. Your data is processed in accordance with GDPR and our Privacy Notice. You can change your preferences at any time."
+        ],
+        "buttons": [
+          "Solutions",
+          "Industries",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Solutions",
+          "How it works",
+          "Pilot",
+          "Enterprise",
+          "Case studies",
+          "Jobs",
+          "Journey",
+          "Industries",
+          "Tech",
+          "SaaS & Cloud",
+          "Cybersecurity",
+          "Data & Analytics",
+          "Finance",
+          "Insurance",
+          "PE & VC",
+          "Accounting",
+          "Legal",
+          "Consulting",
+          "HR & Recruiting",
+          "Staffing Agencies",
+          "Sales",
+          "Marketing",
+          "E-commerce",
+          "Media",
+          "Real Estate",
+          "Construction",
+          "Hospitality",
+          "Healthcare",
+          "Public Sector",
+          "Non-Profit",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Success Stories",
+          "Talent Marketplace",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Start Healthcare Pilot Program",
+          "Book call",
+          "Book call",
+          "1Clinical Staff",
+          "2Senior Clinician",
+          "3Clinical Lead / Supervisor",
+          "4Director of Nursing / Dept Head",
+          "5VP Clinical Ops / CNO",
+          "Next: Director of Nursing / Dept Head",
+          "1Define Your Ideal Candidate1-2 days",
+          "1",
+          "Mark Complete",
+          "2Optimize Your Job PostingWrite a compelling job description that sells the opportunity, not just lists requirements. Include salary range, growth path, and team culture.1 day",
+          "2",
+          "3Source Beyond Job BoardsReach passive candidates through targeted outreach, employee referrals, and talent communities. 70% of top talent is not actively looking.Ongoing",
+          "3",
+          "4Structure Your Interview ProcessDesign a consistent 3-4 stage process that evaluates skills, culture fit, and potential. Include take-home assessments where appropriate.2-3 days setup",
+          "4",
+          "5Close & Onboard EffectivelyMove fast with competitive offers and start onboarding before day one. The first 90 days determine long-term retention.1-2 weeks",
+          "5",
+          "Are your medical coders certified?",
+          "Do candidates understand EHR systems?",
+          "How do you handle HIPAA compliance?",
+          "Start Healthcare Pilot",
+          "Contact",
+          "Subscribe",
+          "Book call"
+        ],
+        "links": [
+          {
+            "text": "Skip to main content",
+            "href": "https://taasflow.com/industries/healthcare#main-content"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "Browse jobs",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Join the network",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Browse open roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Home",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "Industries",
+            "href": "https://taasflow.com/industries"
+          },
+          {
+            "text": "View all articles",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "Industry Hiring GuidesHealthcarePharma and Biotech Hiring: The Regulatory Talent Shortage Nobody Talks AboutRegulatory a",
+            "href": "https://taasflow.com/blog/pharma-biotech-hiring-regulatory-talent"
+          },
+          {
+            "text": "📋Healthcare Staffing Crisis 2026: Solutions for Hospitals and Health SystemsIndustry Hiring GuidesIndustry Hiring Guide",
+            "href": "https://taasflow.com/blog/healthcare-staffing-crisis-solutions"
+          },
+          {
+            "text": "📋Nurse Recruitment in 2026: Solving the Global ShortageIndustry Hiring GuidesIndustry Hiring GuidesHealthcareNurse Recr",
+            "href": "https://taasflow.com/blog/nurse-recruitment-global-shortage-2026"
+          },
+          {
+            "text": "View all articles",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "Technology",
+            "href": "https://taasflow.com/industries/tech"
+          },
+          {
+            "text": "Legal",
+            "href": "https://taasflow.com/industries/legal"
+          },
+          {
+            "text": "Public Sector",
+            "href": "https://taasflow.com/industries/public-sector"
+          },
+          {
+            "text": "Finance & Banking",
+            "href": "https://taasflow.com/industries/finance"
+          },
+          {
+            "text": "Staffing Agencies",
+            "href": "https://taasflow.com/industries/staffing-agencies"
+          },
+          {
+            "text": "Sales",
+            "href": "https://taasflow.com/industries/sales"
+          },
+          {
+            "text": "Marketing & Advertising",
+            "href": "https://taasflow.com/industries/marketing"
+          },
+          {
+            "text": "Human Resources",
+            "href": "https://taasflow.com/industries/human-resources"
+          },
+          {
+            "text": "Compare all industries",
+            "href": "https://taasflow.com/industries/compare"
+          },
+          {
+            "text": "How it works",
+            "href": "https://taasflow.com/how-it-works"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "Start Pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "Jobs",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Blog",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "About",
+            "href": "https://taasflow.com/about"
+          },
+          {
+            "text": "Enterprise",
+            "href": "https://taasflow.com/enterprise"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://taasflow.com/faq"
+          },
+          {
+            "text": "Contact",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Looking for a job in healthcare? Browse open positions",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Healthcare Recruiting",
+            "href": "https://taasflow.com/industries/healthcare"
+          },
+          {
+            "text": "Healthcare Staffing Crisis",
+            "href": "https://taasflow.com/blog/healthcare-staffing-crisis"
+          },
+          {
+            "text": "Diversity in Healthcare Hiring",
+            "href": "https://taasflow.com/blog/diversity-inclusion-hiring"
+          },
+          {
+            "text": "Global Healthcare Compliance",
+            "href": "https://taasflow.com/blog/global-hiring-compliance"
+          },
+          {
+            "text": "All Industry Guides",
+            "href": "https://taasflow.com/blog/category/industry-spotlights"
+          },
+          {
+            "text": "Start a Pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "View Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "Public Sector Recruiting",
+            "href": "https://taasflow.com/industries/public-sector"
+          },
+          {
+            "text": "Onboarding Best Practices",
+            "href": "https://taasflow.com/blog/onboarding-best-practices"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "LinkedIn",
+            "href": "https://www.linkedin.com/company/taasflow/"
+          },
+          {
+            "text": "Browse roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Talent network",
+            "href": "https://taasflow.com/global-talent"
+          },
+          {
+            "text": "Member stories",
+            "href": "https://taasflow.com/candidate-success"
+          },
+          {
+            "text": "Start pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "Employer onboarding",
+            "href": "https://taasflow.com/employer-onboarding"
+          },
+          {
+            "text": "Case studies",
+            "href": "https://taasflow.com/case-studies"
+          },
+          {
+            "text": "Healthcare",
+            "href": "https://taasflow.com/industries/healthcare"
+          },
+          {
+            "text": "Technology",
+            "href": "https://taasflow.com/industries/tech"
+          },
+          {
+            "text": "Finance",
+            "href": "https://taasflow.com/industries/finance"
+          },
+          {
+            "text": "Legal",
+            "href": "https://taasflow.com/industries/legal"
+          },
+          {
+            "text": "All →",
+            "href": "https://taasflow.com/industries"
+          },
+          {
+            "text": "About us",
+            "href": "https://taasflow.com/about"
+          },
+          {
+            "text": "Blog",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://taasflow.com/faq"
+          },
+          {
+            "text": "Knowledge Base",
+            "href": "https://taasflow.com/knowledge-base"
+          },
+          {
+            "text": "Contact us",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Privacy Policy",
+            "href": "https://taasflow.com/privacy"
+          },
+          {
+            "text": "Terms of Service",
+            "href": "https://taasflow.com/terms"
+          },
+          {
+            "text": "Privacy Notice",
+            "href": "https://taasflow.com/privacy"
+          }
+        ],
+        "images": [
+          {
+            "src": "https://taasflow.com/assets/logo-on-white-Dk9DIcMP.png",
+            "alt": "TaaSFlow logo"
+          },
+          {
+            "src": "https://taasflow.com/assets/healthcare-zBwovZK5.jpg",
+            "alt": ""
+          },
+          {
+            "src": "https://taasflow.com/assets/healthcare-zBwovZK5.jpg",
+            "alt": ""
+          },
+          {
+            "src": "https://taasflow.com/assets/healthcare-zBwovZK5.jpg",
+            "alt": ""
+          },
+          {
+            "src": "https://taasflow.com/assets/healthcare-hiring-CRpQ-xuO.jpg",
+            "alt": "Pharma and Biotech Hiring: The Regulatory Talent Shortage Nobody Talks About"
+          },
+          {
+            "src": "https://taasflow.com/assets/logo-on-blue-CX6jlwjg.png",
+            "alt": "TaaSFlow logo"
+          }
+        ],
+        "forms": [
+          {
+            "action": "https://taasflow.com/industries/healthcare",
+            "fields": [
+              "input"
+            ]
+          }
+        ],
+        "navLinks": [
+          "Browse jobs",
+          "Join the network",
+          "Browse open roles",
+          "Home",
+          "Industries",
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us"
+        ],
+        "footerLinks": [
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "Privacy Policy",
+          "Terms of Service"
+        ],
+        "horizontalOverflow": false,
+        "documentWidth": 768,
+        "viewportWidth": 768
+      },
+      "destination": {
+        "url": "https://clear-path-hubs.lovable.app/industries/healthcare",
+        "finalUrl": "https://clear-path-hubs.lovable.app/industries/healthcare",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [],
+        "title": "Healthcare hiring — TaaSFlow",
+        "description": "Structured sourcing for healthcare providers, payers and health-tech teams. Ranked shortlists with evidence of the settings, systems and populations worked with.",
+        "canonical": "https://clear-path-hubs.lovable.app/industries/healthcare",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "twitter:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "og:title": "Healthcare hiring — TaaSFlow",
+          "og:description": "Structured sourcing for healthcare providers, payers and health-tech teams. Ranked shortlists with evidence of the settings, systems and populations worked with.",
+          "og:url": "https://clear-path-hubs.lovable.app/industries/healthcare",
+          "og:type": "website",
+          "twitter:card": "summary_large_image",
+          "twitter:title": "Healthcare hiring — TaaSFlow",
+          "twitter:description": "Structured sourcing for healthcare providers, payers and health-tech teams. Ranked shortlists with evidence of the settings, systems and populations worked with."
+        },
+        "structuredData": [],
+        "h1": [
+          "Healthcare hiring, calibrated per setting and specialty."
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "Healthcare hiring, calibrated per setting and specialty."
+          },
+          {
+            "level": 2,
+            "text": "What we hear from Healthcare teams"
+          },
+          {
+            "level": 3,
+            "text": "Setting and specialty fit"
+          },
+          {
+            "level": 3,
+            "text": "Systems and workflow context"
+          },
+          {
+            "level": 3,
+            "text": "Licensure and role scope"
+          },
+          {
+            "level": 2,
+            "text": "Roles we source in Healthcare"
+          },
+          {
+            "level": 3,
+            "text": "Submit the role"
+          },
+          {
+            "level": 3,
+            "text": "We source and score"
+          },
+          {
+            "level": 3,
+            "text": "Review in your workspace"
+          },
+          {
+            "level": 2,
+            "text": "Hiring in healthcare?"
+          }
+        ],
+        "sections": [
+          "Healthcare hiring, calibrated per setting and specialty.",
+          "What we hear from Healthcare teams",
+          "Roles we source in Healthcare",
+          "Submit the role",
+          "Hiring in healthcare?",
+          "SECTION"
+        ],
+        "textBlocks": [
+          "Home",
+          "Industries",
+          "Healthcare",
+          "Healthcare",
+          "TaaSFlow gives healthcare leaders a workspace for every hire — clinical, operational, technical — with rubrics tuned to the care setting, specialty and systems the role actually touches.",
+          "Setting and specialty rubric per role",
+          "Systems and workflow captured in intake",
+          "Human review before publication",
+          "Acute, ambulatory, primary care and health-tech each need distinct evidence. Our rubric captures the settings and specialties the candidate has worked in — not generic 'healthcare experience'.",
+          "EHR platforms, coding systems and clinical workflows are captured in intake so shortlists reflect the operating environment the hire will actually work in.",
+          "Where a role requires specific licensure or scope of practice, we capture it as a first-class filter. We do not assert compliance on behalf of a candidate — we surface what the CV states so your team can verify.",
+          "We calibrate the rubric to the seniority and specialisation you actually need.",
+          "Healthcare operations leads",
+          "Practice and clinic managers",
+          "Revenue cycle and billing specialists",
+          "Health informatics and EHR analysts",
+          "Health-tech product and engineering",
+          "Payer operations and claims specialists",
+          "Quality and clinical operations analysts",
+          "Population health and care coordination",
+          "01",
+          "A guided intake captures everything the search needs, in one flow.",
+          "02",
+          "Multi-channel sourcing, role-specific rubric, evidence extracted from every CV.",
+          "03",
+          "Ranked shortlist, evidence side-by-side, Kanban pipeline, direct messaging.",
+          "See the full process on how it works.",
+          "Healthcare",
+          "Submit the role — one workspace per requisition, ranked and reviewed."
+        ],
+        "buttons": [],
+        "links": [
+          {
+            "text": "Home",
+            "href": "https://clear-path-hubs.lovable.app/"
+          },
+          {
+            "text": "Industries",
+            "href": "https://clear-path-hubs.lovable.app/industries"
+          },
+          {
+            "text": "Start hiring",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "Talk to us",
+            "href": "https://clear-path-hubs.lovable.app/contact"
+          },
+          {
+            "text": "how it works",
+            "href": "https://clear-path-hubs.lovable.app/how-it-works"
+          },
+          {
+            "text": "Start intake",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "See other industries",
+            "href": "https://clear-path-hubs.lovable.app/industries"
+          },
+          {
+            "text": "Edit with",
+            "href": "https://lovable.dev/projects/1dc5ee7e-1294-441c-8288-850e79e443f6?utm_source=lovable-badge"
+          }
+        ],
+        "images": [],
+        "forms": [],
+        "navLinks": [
+          "Home",
+          "Industries"
+        ],
+        "footerLinks": [],
+        "horizontalOverflow": false,
+        "documentWidth": 768,
+        "viewportWidth": 768
+      },
+      "screenshots": {
+        "sourceFull": "reports/public-parity/screenshots/source/industries_healthcare__tablet__full.png",
+        "sourceVisible": "reports/public-parity/screenshots/source/industries_healthcare__tablet__visible.png",
+        "destinationFull": "reports/public-parity/screenshots/destination/industries_healthcare__tablet__full.png",
+        "destinationVisible": "reports/public-parity/screenshots/destination/industries_healthcare__tablet__visible.png"
+      },
+      "differences": [
+        "title: \"Healthcare Talent | TaaSFlow - Talent as a Service\" vs \"Healthcare hiring — TaaSFlow\"",
+        "meta description mismatch",
+        "H1 differs: [Healthcare Talent Built for Compliance, Credentials & Patient Care] vs [Healthcare hiring, calibrated per setting and specialty.]",
+        "heading overlap 0% (0/30)",
+        "section count 20 vs 6",
+        "form count 1 vs 0"
+      ]
+    },
+    {
+      "viewport": "desktop",
+      "source": {
+        "url": "https://taasflow.com/industries/healthcare",
+        "finalUrl": "https://taasflow.com/industries/healthcare",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [
+          {
+            "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HJ2ECKCNK4&gtm=45je67l1h1v9245339446za200zd9245339446&_p=1784774173867&gcd=13l3l3l3l1l1&npa=0&_ng=1&dma=0&are=1&cid=2134252460.1784774174&frm=0&ngs=1&pscdl=noapi&rcb=14&sr=1440x900&uaa=x86&uab=64&uafvl=Not-A.Brand%3B24.0.0.0%7CChromium%3B146.0.7680.80&uam=&uamb=0&uap=Windows&uapv=&uaw=0&ul=en-us&_s=1&tag_exp=115938466~115938468~118897920~118897930~119724321~119896803&dp=%2Findustries%2Fhealthcare&dt=TaaSFlow%20%7C%20Talent%20as%20a%20Service%20%7C%20Subscription%20Recruiting&dl=https%3A%2F%2Ftaasflow.com%2Findustries%2Fhealthcare&sid=1784774174&sct=1&seg=0&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&ep.role_type=public&ep.is_authenticated=false&tfd=569",
+            "status": null,
+            "failure": "net::ERR_ABORTED"
+          },
+          {
+            "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HJ2ECKCNK4&gtm=45je67l1h1v9245339446za200zd9245339446&_p=1784774173867&gcd=13l3l3l3l1l1&npa=0&_ng=1&dma=0&_eu=AEAAAAQ&ae=a&are=1&cid=2134252460.1784774174&frm=0&ngs=1&pscdl=noapi&rcb=14&sr=1440x900&uaa=x86&uab=64&uafvl=Not-A.Brand%3B24.0.0.0%7CChromium%3B146.0.7680.80&uam=&uamb=0&uap=Windows&uapv=&uaw=0&ul=en-us&_s=2&tag_exp=115938466~115938468~118897920~118897930~119724321~119896803&sid=1784774174&sct=1&seg=0&dl=https%3A%2F%2Ftaasflow.com%2Findustries%2Fhealthcare&dt=TaaSFlow%20%7C%20Talent%20as%20a%20Service%20%7C%20Subscription%20Recruiting&en=scroll&epn.percent_scrolled=90&_et=13&tfd=954",
+            "status": null,
+            "failure": "net::ERR_ABORTED"
+          }
+        ],
+        "title": "Healthcare Talent | TaaSFlow - Talent as a Service",
+        "description": "On-demand healthcare professionals including medical coders, billers, and operations staff. HIPAA-compliant talent with credential verification.",
+        "canonical": "https://taasflow.com/industries/healthcare",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:type": "website",
+          "og:url": "https://taasflow.com/industries/healthcare",
+          "og:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "og:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "og:image": "https://taasflow.com/og-image.png",
+          "og:image:width": "1200",
+          "og:image:height": "630",
+          "og:locale": "en_US",
+          "twitter:card": "summary_large_image",
+          "twitter:site": "@TaasFlow",
+          "twitter:creator": "@TaasFlow",
+          "twitter:url": "https://taasflow.com/industries/healthcare",
+          "twitter:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "twitter:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "twitter:image": "https://taasflow.com/og-image.png"
+        },
+        "structuredData": [
+          {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "@id": "https://taasflow.com/#organization",
+            "name": "TaaSFlow",
+            "legalName": "TaaSFlow",
+            "url": "https://taasflow.com/",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://taasflow.com/favicon.png",
+              "width": 512,
+              "height": 512
+            },
+            "image": "https://taasflow.com/og-image.png",
+            "description": "Talent as a Service — subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+            "slogan": "Your hiring team. On demand.",
+            "foundingDate": "2024",
+            "areaServed": [
+              {
+                "@type": "Country",
+                "name": "United States"
+              },
+              {
+                "@type": "Country",
+                "name": "United Arab Emirates"
+              },
+              {
+                "@type": "Country",
+                "name": "United Kingdom"
+              },
+              {
+                "@type": "Country",
+                "name": "Brazil"
+              }
+            ],
+            "knowsAbout": [
+              "Subscription recruiting",
+              "Talent as a Service",
+              "Candidate sourcing",
+              "Pre-screened candidates",
+              "Recruitment process outsourcing"
+            ],
+            "contactPoint": [
+              {
+                "@type": "ContactPoint",
+                "contactType": "sales",
+                "email": "hello@taasflow.com",
+                "url": "https://taasflow.com/contact",
+                "availableLanguage": [
+                  "English",
+                  "Portuguese",
+                  "Spanish"
+                ]
+              }
+            ],
+            "sameAs": [
+              "https://www.linkedin.com/company/taasflow",
+              "https://twitter.com/TaasFlow"
+            ]
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "@id": "https://taasflow.com/#website",
+            "name": "TaaSFlow",
+            "alternateName": "Talent as a Service",
+            "url": "https://taasflow.com/",
+            "description": "Subscription recruiting that delivers pre-screened, ranked candidates in 14 days.",
+            "inLanguage": "en-US",
+            "publisher": {
+              "@id": "https://taasflow.com/#organization"
+            },
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": {
+                "@type": "EntryPoint",
+                "urlTemplate": "https://taasflow.com/jobs?q={search_term_string}"
+              },
+              "query-input": "required name=search_term_string"
+            }
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "Service",
+            "name": "Healthcare Talent Sourcing",
+            "description": "On-demand healthcare professionals including medical coders, billers, and operations staff. HIPAA-compliant talent with credential verification.",
+            "provider": {
+              "@type": "Organization",
+              "name": "TaasFlow",
+              "url": "https://taasflow.com"
+            },
+            "serviceType": "Talent Acquisition",
+            "areaServed": "United States",
+            "hasOfferCatalog": {
+              "@type": "OfferCatalog",
+              "name": "Healthcare Recruiting Services",
+              "itemListElement": [
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Medical Coders (CPC, CCS) Recruiting"
+                  },
+                  "position": 1
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Medical Billers Recruiting"
+                  },
+                  "position": 2
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Practice Managers Recruiting"
+                  },
+                  "position": 3
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Healthcare Administrators Recruiting"
+                  },
+                  "position": 4
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Revenue Cycle Analysts Recruiting"
+                  },
+                  "position": 5
+                }
+              ]
+            }
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "https://taasflow.com"
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Industries",
+                "item": "https://taasflow.com/industries"
+              },
+              {
+                "@type": "ListItem",
+                "position": 3,
+                "name": "Healthcare",
+                "item": "https://taasflow.com/industries//industries/healthcare"
+              }
+            ]
+          }
+        ],
+        "h1": [
+          "Healthcare Talent Built for Compliance, Credentials & Patient Care"
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "Healthcare Talent Built for Compliance, Credentials & Patient Care"
+          },
+          {
+            "level": 2,
+            "text": "Healthcare Industry Insights"
+          },
+          {
+            "level": 3,
+            "text": "Healthcare Spending"
+          },
+          {
+            "level": 3,
+            "text": "Worker Shortage"
+          },
+          {
+            "level": 3,
+            "text": "Revenue Cycle"
+          },
+          {
+            "level": 3,
+            "text": "Denial Rates"
+          },
+          {
+            "level": 3,
+            "text": "Industry Overview"
+          },
+          {
+            "level": 3,
+            "text": "Ready to transform your healthcare recruiting?"
+          },
+          {
+            "level": 2,
+            "text": "How we hire for Healthcare"
+          },
+          {
+            "level": 3,
+            "text": "Compliance Mapping"
+          },
+          {
+            "level": 3,
+            "text": "Credential Verification"
+          },
+          {
+            "level": 3,
+            "text": "EHR System Matching"
+          },
+          {
+            "level": 3,
+            "text": "HIPAA-Ready Placement"
+          },
+          {
+            "level": 2,
+            "text": "The Healthcare Staffing Challenge"
+          },
+          {
+            "level": 3,
+            "text": "The TaasFlow Solution"
+          },
+          {
+            "level": 2,
+            "text": "Why Healthcare companies choose TaasFlow"
+          },
+          {
+            "level": 3,
+            "text": "HIPAA Compliant"
+          },
+          {
+            "level": 3,
+            "text": "Credentials Verified"
+          },
+          {
+            "level": 3,
+            "text": "Patient-Centric Culture"
+          },
+          {
+            "level": 3,
+            "text": "72-Hour Urgent Staffing"
+          },
+          {
+            "level": 2,
+            "text": "Positions we fill for Healthcare"
+          },
+          {
+            "level": 2,
+            "text": "Real results for Healthcare teams"
+          },
+          {
+            "level": 2,
+            "text": "Healthcare Salary Explorer"
+          },
+          {
+            "level": 2,
+            "text": "Healthcare Career Path"
+          },
+          {
+            "level": 3,
+            "text": "Clinical Lead / Supervisor"
+          },
+          {
+            "level": 4,
+            "text": "Key Skills at This Level"
+          },
+          {
+            "level": 2,
+            "text": "Healthcare Hiring Trends"
+          },
+          {
+            "level": 2,
+            "text": "Interactive Hiring Guide"
+          },
+          {
+            "level": 3,
+            "text": "Define Your Ideal Candidate"
+          },
+          {
+            "level": 3,
+            "text": "Optimize Your Job Posting"
+          },
+          {
+            "level": 3,
+            "text": "Source Beyond Job Boards"
+          },
+          {
+            "level": 3,
+            "text": "Structure Your Interview Process"
+          },
+          {
+            "level": 3,
+            "text": "Close & Onboard Effectively"
+          },
+          {
+            "level": 2,
+            "text": "Healthcare Recruiting Insights"
+          },
+          {
+            "level": 3,
+            "text": "Pharma and Biotech Hiring: The Regulatory Talent Shortage Nobody Talks About"
+          },
+          {
+            "level": 3,
+            "text": "Healthcare Staffing Crisis 2026: Solutions for Hospitals and Health Systems"
+          },
+          {
+            "level": 3,
+            "text": "Nurse Recruitment in 2026: Solving the Global Shortage"
+          },
+          {
+            "level": 2,
+            "text": "Frequently Asked Questions"
+          },
+          {
+            "level": 3,
+            "text": "Are your medical coders certified?"
+          },
+          {
+            "level": 3,
+            "text": "Do candidates understand EHR systems?"
+          },
+          {
+            "level": 3,
+            "text": "How do you handle HIPAA compliance?"
+          },
+          {
+            "level": 2,
+            "text": "Discover related industries"
+          },
+          {
+            "level": 2,
+            "text": "Ready to build your Healthcare team?"
+          },
+          {
+            "level": 2,
+            "text": "Healthcare Recruiting"
+          },
+          {
+            "level": 3,
+            "text": "Hub Page"
+          },
+          {
+            "level": 3,
+            "text": "Related Articles"
+          },
+          {
+            "level": 3,
+            "text": "Get Started"
+          },
+          {
+            "level": 4,
+            "text": "Newsletter"
+          },
+          {
+            "level": 4,
+            "text": "For candidates"
+          },
+          {
+            "level": 4,
+            "text": "For companies"
+          },
+          {
+            "level": 4,
+            "text": "Industries"
+          },
+          {
+            "level": 4,
+            "text": "Company"
+          },
+          {
+            "level": 3,
+            "text": "Cookie Preferences"
+          }
+        ],
+        "sections": [
+          "SECTION",
+          "Healthcare Talent Built for Compliance, Credentials & Patient Care",
+          "SECTION",
+          "Healthcare Industry Insights",
+          "Ready to transform your healthcare recruiting?",
+          "How we hire for Healthcare",
+          "The Healthcare Staffing Challenge",
+          "Why Healthcare companies choose TaasFlow",
+          "Positions we fill for Healthcare",
+          "Real results for Healthcare teams",
+          "Healthcare Salary Explorer",
+          "Healthcare Career Path",
+          "Healthcare Hiring Trends",
+          "Interactive Hiring Guide",
+          "Healthcare Recruiting Insights",
+          "Frequently Asked Questions",
+          "Discover related industries",
+          "SECTION",
+          "Ready to build your Healthcare team?",
+          "Healthcare Recruiting"
+        ],
+        "textBlocks": [
+          "Solutions",
+          "Industries",
+          "Resources",
+          "Home",
+          "Industries",
+          "Healthcare",
+          "Access credential-verified medical coders, billing specialists, and healthcare operations professionals who understand HIPAA, EHR systems, shift staffing, and licensing requirements from day one.",
+          "Key market data and trends shaping talent demand in your industry. (Hover for details)",
+          "Total US healthcare expenditure annually",
+          "Projected healthcare worker shortage by 2026",
+          "US medical coding and billing market size",
+          "Average claim denial rate due to coding errors",
+          "Start a risk-free pilot and receive qualified candidates in 14 days.",
+          "A tailored workflow for the challenges of healthcare settings.",
+          "We assess HIPAA requirements, EHR systems, and credentialing needs for your organization.",
+          "CPC, CCS, RHIA certifications verified with issuing bodies. Background checks initiated.",
+          "Candidates matched to your specific Epic, Cerner, or Meditech environment.",
+          "Trained, credentialed professionals delivered ready for patient-facing environments.",
+          "Healthcare staffing agencies focus on clinical roles, but you also need qualified administrative and revenue cycle professionals who understand healthcare operations.",
+          "HIPAA compliance, credentialing verification, and healthcare-specific background checks are non-negotiable—but they slow down traditional hiring processes.",
+          "Seasonal volume fluctuations, new service line launches, and regulatory changes create staffing needs that don't fit permanent headcount planning.",
+          "Medical coders, billers, and revenue cycle specialists with certification verification",
+          "Practice managers and healthcare administrators with health system experience",
+          "All candidates HIPAA-trained and background check-ready",
+          "Understanding of Epic, Cerner, and other major EHR/EMR systems",
+          "Flexible engagements for seasonal volume, new programs, or temporary coverage",
+          "We understand the unique challenges of your industry and deliver matching talent.",
+          "Every professional completes HIPAA training. Compliance documentation available.",
+          "CPC, CCS, RHIA, and other certifications verified before placement.",
+          "Professionals who understand healthcare operations and patient experience.",
+          "Critical role? We can mobilize qualified healthcare talent fast.",
+          "Pre-vetted professionals, delivered weekly, ready to start.",
+          "- Regional Health System, 12 locations",
+          "Explore current compensation ranges for top roles. Data updated quarterly from industry benchmarks.",
+          "* Based on industry benchmarks from SHRM, Glassdoor, LinkedIn Salary, and BLS data. Actual compensation may vary.",
+          "Click any level to explore typical progression, salary ranges, and key skills.",
+          "Key metrics shaping the talent landscape. Stay ahead of market shifts.",
+          "Projected nursing shortfall in the US by 2030.",
+          "Telehealth-related positions growing faster than any other healthcare segment.",
+          "Healthcare workers reporting symptoms of burnout, driving turnover.",
+          "EMR specialists and health informatics roles surging.",
+          "Follow these proven steps to hire smarter. Track your progress and get actionable tips at every stage.",
+          "Create a detailed candidate persona with must-have vs nice-to-have skills, cultural fit criteria, and realistic salary expectations.",
+          "Write a compelling job description that sells the opportunity, not just lists requirements. Include salary range, growth path, and team culture.",
+          "Reach passive candidates through targeted outreach, employee referrals, and talent communities. 70% of top talent is not actively looking.",
+          "Design a consistent 3-4 stage process that evaluates skills, culture fit, and potential. Include take-home assessments where appropriate.",
+          "Move fast with competitive offers and start onboarding before day one. The first 90 days determine long-term retention.",
+          "Expert articles on recruiting and talent acquisition for healthcare.",
+          "Regulatory affairs professionals are the most undervalued bottleneck in pharma hiring. Here is what companies must change to attract this critical talent.",
+          "Healthcare Staffing Crisis 2026: Solutions for Hospitals and Health Systems",
+          "The healthcare staffing shortage will reach 3.2 million by 2026. Here are evidence-based solutions for health systems.",
+          "Nurse Recruitment in 2026: Solving the Global Shortage",
+          "A data-driven analysis of the global nursing shortage with actionable sourcing strategies, international pipelines, and retention frameworks.",
+          "Common questions about TaasFlow for healthcare.",
+          "Learn how we serve similar sectors with subscription recruiting.",
+          "Receive qualified healthcare professionals weekly. No agency fees, no long-term contracts.",
+          "Related Industries",
+          "Talent as a Service",
+          "A global hiring system for teams that need consistent recruiting.",
+          "Weekly insights into talent acquisition. No spam.",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Book call",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "No recruitment agency fees. No placement charges. Subscription-based hiring system.",
+          "Copyright 2026 TaaSFlow. All rights reserved.",
+          "We use essential cookies for core functionality. With your consent, we use analytics (Google Analytics) and marketing technologies (Meta Pixel, Apollo, Retention.com/RB2B) to understand website performance, improve campaigns, and measure conversions safely. Your data is processed in accordance with GDPR and our Privacy Notice. You can change your preferences at any time."
+        ],
+        "buttons": [
+          "Solutions",
+          "Industries",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Solutions",
+          "How it works",
+          "Pilot",
+          "Enterprise",
+          "Case studies",
+          "Jobs",
+          "Journey",
+          "Industries",
+          "Tech",
+          "SaaS & Cloud",
+          "Cybersecurity",
+          "Data & Analytics",
+          "Finance",
+          "Insurance",
+          "PE & VC",
+          "Accounting",
+          "Legal",
+          "Consulting",
+          "HR & Recruiting",
+          "Staffing Agencies",
+          "Sales",
+          "Marketing",
+          "E-commerce",
+          "Media",
+          "Real Estate",
+          "Construction",
+          "Hospitality",
+          "Healthcare",
+          "Public Sector",
+          "Non-Profit",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Success Stories",
+          "Talent Marketplace",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Start Healthcare Pilot Program",
+          "Book call",
+          "Book call",
+          "1Clinical Staff",
+          "2Senior Clinician",
+          "3Clinical Lead / Supervisor",
+          "4Director of Nursing / Dept Head",
+          "5VP Clinical Ops / CNO",
+          "Next: Director of Nursing / Dept Head",
+          "1Define Your Ideal Candidate1-2 days",
+          "1",
+          "Mark Complete",
+          "2Optimize Your Job PostingWrite a compelling job description that sells the opportunity, not just lists requirements. Include salary range, growth path, and team culture.1 day",
+          "2",
+          "3Source Beyond Job BoardsReach passive candidates through targeted outreach, employee referrals, and talent communities. 70% of top talent is not actively looking.Ongoing",
+          "3",
+          "4Structure Your Interview ProcessDesign a consistent 3-4 stage process that evaluates skills, culture fit, and potential. Include take-home assessments where appropriate.2-3 days setup",
+          "4",
+          "5Close & Onboard EffectivelyMove fast with competitive offers and start onboarding before day one. The first 90 days determine long-term retention.1-2 weeks",
+          "5",
+          "Are your medical coders certified?",
+          "Do candidates understand EHR systems?",
+          "How do you handle HIPAA compliance?",
+          "Start Healthcare Pilot",
+          "Contact",
+          "Subscribe",
+          "Book call"
+        ],
+        "links": [
+          {
+            "text": "Skip to main content",
+            "href": "https://taasflow.com/industries/healthcare#main-content"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "Browse jobs",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Join the network",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Browse open roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Home",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "Industries",
+            "href": "https://taasflow.com/industries"
+          },
+          {
+            "text": "View all articles",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "Industry Hiring GuidesHealthcarePharma and Biotech Hiring: The Regulatory Talent Shortage Nobody Talks AboutRegulatory a",
+            "href": "https://taasflow.com/blog/pharma-biotech-hiring-regulatory-talent"
+          },
+          {
+            "text": "📋Healthcare Staffing Crisis 2026: Solutions for Hospitals and Health SystemsIndustry Hiring GuidesIndustry Hiring Guide",
+            "href": "https://taasflow.com/blog/healthcare-staffing-crisis-solutions"
+          },
+          {
+            "text": "📋Nurse Recruitment in 2026: Solving the Global ShortageIndustry Hiring GuidesIndustry Hiring GuidesHealthcareNurse Recr",
+            "href": "https://taasflow.com/blog/nurse-recruitment-global-shortage-2026"
+          },
+          {
+            "text": "View all articles",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "Technology",
+            "href": "https://taasflow.com/industries/tech"
+          },
+          {
+            "text": "Legal",
+            "href": "https://taasflow.com/industries/legal"
+          },
+          {
+            "text": "Public Sector",
+            "href": "https://taasflow.com/industries/public-sector"
+          },
+          {
+            "text": "Finance & Banking",
+            "href": "https://taasflow.com/industries/finance"
+          },
+          {
+            "text": "Staffing Agencies",
+            "href": "https://taasflow.com/industries/staffing-agencies"
+          },
+          {
+            "text": "Sales",
+            "href": "https://taasflow.com/industries/sales"
+          },
+          {
+            "text": "Marketing & Advertising",
+            "href": "https://taasflow.com/industries/marketing"
+          },
+          {
+            "text": "Human Resources",
+            "href": "https://taasflow.com/industries/human-resources"
+          },
+          {
+            "text": "Compare all industries",
+            "href": "https://taasflow.com/industries/compare"
+          },
+          {
+            "text": "How it works",
+            "href": "https://taasflow.com/how-it-works"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "Start Pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "Jobs",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Blog",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "About",
+            "href": "https://taasflow.com/about"
+          },
+          {
+            "text": "Enterprise",
+            "href": "https://taasflow.com/enterprise"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://taasflow.com/faq"
+          },
+          {
+            "text": "Contact",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Looking for a job in healthcare? Browse open positions",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Healthcare Recruiting",
+            "href": "https://taasflow.com/industries/healthcare"
+          },
+          {
+            "text": "Healthcare Staffing Crisis",
+            "href": "https://taasflow.com/blog/healthcare-staffing-crisis"
+          },
+          {
+            "text": "Diversity in Healthcare Hiring",
+            "href": "https://taasflow.com/blog/diversity-inclusion-hiring"
+          },
+          {
+            "text": "Global Healthcare Compliance",
+            "href": "https://taasflow.com/blog/global-hiring-compliance"
+          },
+          {
+            "text": "All Industry Guides",
+            "href": "https://taasflow.com/blog/category/industry-spotlights"
+          },
+          {
+            "text": "Start a Pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "View Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "Public Sector Recruiting",
+            "href": "https://taasflow.com/industries/public-sector"
+          },
+          {
+            "text": "Onboarding Best Practices",
+            "href": "https://taasflow.com/blog/onboarding-best-practices"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "LinkedIn",
+            "href": "https://www.linkedin.com/company/taasflow/"
+          },
+          {
+            "text": "Browse roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Talent network",
+            "href": "https://taasflow.com/global-talent"
+          },
+          {
+            "text": "Member stories",
+            "href": "https://taasflow.com/candidate-success"
+          },
+          {
+            "text": "Start pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "Employer onboarding",
+            "href": "https://taasflow.com/employer-onboarding"
+          },
+          {
+            "text": "Case studies",
+            "href": "https://taasflow.com/case-studies"
+          },
+          {
+            "text": "Healthcare",
+            "href": "https://taasflow.com/industries/healthcare"
+          },
+          {
+            "text": "Technology",
+            "href": "https://taasflow.com/industries/tech"
+          },
+          {
+            "text": "Finance",
+            "href": "https://taasflow.com/industries/finance"
+          },
+          {
+            "text": "Legal",
+            "href": "https://taasflow.com/industries/legal"
+          },
+          {
+            "text": "All →",
+            "href": "https://taasflow.com/industries"
+          },
+          {
+            "text": "About us",
+            "href": "https://taasflow.com/about"
+          },
+          {
+            "text": "Blog",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://taasflow.com/faq"
+          },
+          {
+            "text": "Knowledge Base",
+            "href": "https://taasflow.com/knowledge-base"
+          },
+          {
+            "text": "Contact us",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Privacy Policy",
+            "href": "https://taasflow.com/privacy"
+          },
+          {
+            "text": "Terms of Service",
+            "href": "https://taasflow.com/terms"
+          },
+          {
+            "text": "Privacy Notice",
+            "href": "https://taasflow.com/privacy"
+          }
+        ],
+        "images": [
+          {
+            "src": "https://taasflow.com/assets/logo-on-white-Dk9DIcMP.png",
+            "alt": "TaaSFlow logo"
+          },
+          {
+            "src": "https://taasflow.com/assets/healthcare-zBwovZK5.jpg",
+            "alt": ""
+          },
+          {
+            "src": "https://taasflow.com/assets/healthcare-zBwovZK5.jpg",
+            "alt": ""
+          },
+          {
+            "src": "https://taasflow.com/assets/healthcare-zBwovZK5.jpg",
+            "alt": ""
+          },
+          {
+            "src": "https://taasflow.com/assets/healthcare-hiring-CRpQ-xuO.jpg",
+            "alt": "Pharma and Biotech Hiring: The Regulatory Talent Shortage Nobody Talks About"
+          },
+          {
+            "src": "https://taasflow.com/assets/logo-on-blue-CX6jlwjg.png",
+            "alt": "TaaSFlow logo"
+          }
+        ],
+        "forms": [
+          {
+            "action": "https://taasflow.com/industries/healthcare",
+            "fields": [
+              "input"
+            ]
+          }
+        ],
+        "navLinks": [
+          "Browse jobs",
+          "Join the network",
+          "Browse open roles",
+          "Home",
+          "Industries",
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us"
+        ],
+        "footerLinks": [
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "Privacy Policy",
+          "Terms of Service"
+        ],
+        "horizontalOverflow": false,
+        "documentWidth": 1440,
+        "viewportWidth": 1440
+      },
+      "destination": {
+        "url": "https://clear-path-hubs.lovable.app/industries/healthcare",
+        "finalUrl": "https://clear-path-hubs.lovable.app/industries/healthcare",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [],
+        "title": "Healthcare hiring — TaaSFlow",
+        "description": "Structured sourcing for healthcare providers, payers and health-tech teams. Ranked shortlists with evidence of the settings, systems and populations worked with.",
+        "canonical": "https://clear-path-hubs.lovable.app/industries/healthcare",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "twitter:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "og:title": "Healthcare hiring — TaaSFlow",
+          "og:description": "Structured sourcing for healthcare providers, payers and health-tech teams. Ranked shortlists with evidence of the settings, systems and populations worked with.",
+          "og:url": "https://clear-path-hubs.lovable.app/industries/healthcare",
+          "og:type": "website",
+          "twitter:card": "summary_large_image",
+          "twitter:title": "Healthcare hiring — TaaSFlow",
+          "twitter:description": "Structured sourcing for healthcare providers, payers and health-tech teams. Ranked shortlists with evidence of the settings, systems and populations worked with."
+        },
+        "structuredData": [],
+        "h1": [
+          "Healthcare hiring, calibrated per setting and specialty."
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "Healthcare hiring, calibrated per setting and specialty."
+          },
+          {
+            "level": 2,
+            "text": "What we hear from Healthcare teams"
+          },
+          {
+            "level": 3,
+            "text": "Setting and specialty fit"
+          },
+          {
+            "level": 3,
+            "text": "Systems and workflow context"
+          },
+          {
+            "level": 3,
+            "text": "Licensure and role scope"
+          },
+          {
+            "level": 2,
+            "text": "Roles we source in Healthcare"
+          },
+          {
+            "level": 3,
+            "text": "Submit the role"
+          },
+          {
+            "level": 3,
+            "text": "We source and score"
+          },
+          {
+            "level": 3,
+            "text": "Review in your workspace"
+          },
+          {
+            "level": 2,
+            "text": "Hiring in healthcare?"
+          }
+        ],
+        "sections": [
+          "Healthcare hiring, calibrated per setting and specialty.",
+          "What we hear from Healthcare teams",
+          "Roles we source in Healthcare",
+          "Submit the role",
+          "Hiring in healthcare?",
+          "SECTION"
+        ],
+        "textBlocks": [
+          "Home",
+          "Industries",
+          "Healthcare",
+          "Healthcare",
+          "TaaSFlow gives healthcare leaders a workspace for every hire — clinical, operational, technical — with rubrics tuned to the care setting, specialty and systems the role actually touches.",
+          "Setting and specialty rubric per role",
+          "Systems and workflow captured in intake",
+          "Human review before publication",
+          "Acute, ambulatory, primary care and health-tech each need distinct evidence. Our rubric captures the settings and specialties the candidate has worked in — not generic 'healthcare experience'.",
+          "EHR platforms, coding systems and clinical workflows are captured in intake so shortlists reflect the operating environment the hire will actually work in.",
+          "Where a role requires specific licensure or scope of practice, we capture it as a first-class filter. We do not assert compliance on behalf of a candidate — we surface what the CV states so your team can verify.",
+          "We calibrate the rubric to the seniority and specialisation you actually need.",
+          "Healthcare operations leads",
+          "Practice and clinic managers",
+          "Revenue cycle and billing specialists",
+          "Health informatics and EHR analysts",
+          "Health-tech product and engineering",
+          "Payer operations and claims specialists",
+          "Quality and clinical operations analysts",
+          "Population health and care coordination",
+          "01",
+          "A guided intake captures everything the search needs, in one flow.",
+          "02",
+          "Multi-channel sourcing, role-specific rubric, evidence extracted from every CV.",
+          "03",
+          "Ranked shortlist, evidence side-by-side, Kanban pipeline, direct messaging.",
+          "See the full process on how it works.",
+          "Healthcare",
+          "Submit the role — one workspace per requisition, ranked and reviewed."
+        ],
+        "buttons": [],
+        "links": [
+          {
+            "text": "Home",
+            "href": "https://clear-path-hubs.lovable.app/"
+          },
+          {
+            "text": "Industries",
+            "href": "https://clear-path-hubs.lovable.app/industries"
+          },
+          {
+            "text": "Start hiring",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "Talk to us",
+            "href": "https://clear-path-hubs.lovable.app/contact"
+          },
+          {
+            "text": "how it works",
+            "href": "https://clear-path-hubs.lovable.app/how-it-works"
+          },
+          {
+            "text": "Start intake",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "See other industries",
+            "href": "https://clear-path-hubs.lovable.app/industries"
+          },
+          {
+            "text": "Edit with",
+            "href": "https://lovable.dev/projects/1dc5ee7e-1294-441c-8288-850e79e443f6?utm_source=lovable-badge"
+          }
+        ],
+        "images": [],
+        "forms": [],
+        "navLinks": [
+          "Home",
+          "Industries"
+        ],
+        "footerLinks": [],
+        "horizontalOverflow": false,
+        "documentWidth": 1440,
+        "viewportWidth": 1440
+      },
+      "screenshots": {
+        "sourceFull": "reports/public-parity/screenshots/source/industries_healthcare__desktop__full.png",
+        "sourceVisible": "reports/public-parity/screenshots/source/industries_healthcare__desktop__visible.png",
+        "destinationFull": "reports/public-parity/screenshots/destination/industries_healthcare__desktop__full.png",
+        "destinationVisible": "reports/public-parity/screenshots/destination/industries_healthcare__desktop__visible.png"
+      },
+      "differences": [
+        "title: \"Healthcare Talent | TaaSFlow - Talent as a Service\" vs \"Healthcare hiring — TaaSFlow\"",
+        "meta description mismatch",
+        "H1 differs: [Healthcare Talent Built for Compliance, Credentials & Patient Care] vs [Healthcare hiring, calibrated per setting and specialty.]",
+        "heading overlap 0% (0/30)",
+        "section count 20 vs 6",
+        "form count 1 vs 0"
+      ]
+    }
+  ],
+  "summary": "18 differences detected",
+  "exclusions": []
+}

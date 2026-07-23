@@ -1,0 +1,3307 @@
+{
+  "sourcePath": "/industries/insurance",
+  "destinationPath": "/industries/insurance",
+  "pageType": "industry_page",
+  "protected": false,
+  "verdict": "MAJOR_DIFFERENCE",
+  "severity": "HIGH",
+  "viewports": [
+    {
+      "viewport": "mobile",
+      "source": {
+        "url": "https://taasflow.com/industries/insurance",
+        "finalUrl": "https://taasflow.com/industries/insurance",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [
+          {
+            "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HJ2ECKCNK4&gtm=45je67l1h1v9245339446za200zd9245339446&_p=1784774270489&gcd=13l3l3l3l1l1&npa=0&_ng=1&dma=0&are=1&cid=1436639578.1784774271&frm=0&ngs=1&pscdl=noapi&rcb=2&sr=375x812&uaa=x86&uab=64&uafvl=Not-A.Brand%3B24.0.0.0%7CChromium%3B146.0.7680.80&uam=&uamb=0&uap=Windows&uapv=&uaw=0&ul=en-us&_s=1&tag_exp=115616985~115938466~115938468~118897920~118897930~119896803&dp=%2Findustries%2Finsurance&dt=TaaSFlow%20%7C%20Talent%20as%20a%20Service%20%7C%20Subscription%20Recruiting&dl=https%3A%2F%2Ftaasflow.com%2Findustries%2Finsurance&sid=1784774270&sct=1&seg=0&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&ep.role_type=public&ep.is_authenticated=false&tfd=712",
+            "status": null,
+            "failure": "net::ERR_ABORTED"
+          }
+        ],
+        "title": "Insurance Talent | TaaSFlow - Talent as a Service",
+        "description": "On-demand insurance professionals including licensed agents, claims adjusters, and underwriters. License-verified talent for carriers and agencies.",
+        "canonical": "https://taasflow.com/industries/insurance",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:type": "website",
+          "og:url": "https://taasflow.com/industries/insurance",
+          "og:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "og:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "og:image": "https://taasflow.com/og-image.png",
+          "og:image:width": "1200",
+          "og:image:height": "630",
+          "og:locale": "en_US",
+          "twitter:card": "summary_large_image",
+          "twitter:site": "@TaasFlow",
+          "twitter:creator": "@TaasFlow",
+          "twitter:url": "https://taasflow.com/industries/insurance",
+          "twitter:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "twitter:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "twitter:image": "https://taasflow.com/og-image.png"
+        },
+        "structuredData": [
+          {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "@id": "https://taasflow.com/#organization",
+            "name": "TaaSFlow",
+            "legalName": "TaaSFlow",
+            "url": "https://taasflow.com/",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://taasflow.com/favicon.png",
+              "width": 512,
+              "height": 512
+            },
+            "image": "https://taasflow.com/og-image.png",
+            "description": "Talent as a Service — subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+            "slogan": "Your hiring team. On demand.",
+            "foundingDate": "2024",
+            "areaServed": [
+              {
+                "@type": "Country",
+                "name": "United States"
+              },
+              {
+                "@type": "Country",
+                "name": "United Arab Emirates"
+              },
+              {
+                "@type": "Country",
+                "name": "United Kingdom"
+              },
+              {
+                "@type": "Country",
+                "name": "Brazil"
+              }
+            ],
+            "knowsAbout": [
+              "Subscription recruiting",
+              "Talent as a Service",
+              "Candidate sourcing",
+              "Pre-screened candidates",
+              "Recruitment process outsourcing"
+            ],
+            "contactPoint": [
+              {
+                "@type": "ContactPoint",
+                "contactType": "sales",
+                "email": "hello@taasflow.com",
+                "url": "https://taasflow.com/contact",
+                "availableLanguage": [
+                  "English",
+                  "Portuguese",
+                  "Spanish"
+                ]
+              }
+            ],
+            "sameAs": [
+              "https://www.linkedin.com/company/taasflow",
+              "https://twitter.com/TaasFlow"
+            ]
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "@id": "https://taasflow.com/#website",
+            "name": "TaaSFlow",
+            "alternateName": "Talent as a Service",
+            "url": "https://taasflow.com/",
+            "description": "Subscription recruiting that delivers pre-screened, ranked candidates in 14 days.",
+            "inLanguage": "en-US",
+            "publisher": {
+              "@id": "https://taasflow.com/#organization"
+            },
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": {
+                "@type": "EntryPoint",
+                "urlTemplate": "https://taasflow.com/jobs?q={search_term_string}"
+              },
+              "query-input": "required name=search_term_string"
+            }
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "Service",
+            "name": "Insurance Talent Sourcing",
+            "description": "On-demand insurance professionals including licensed agents, claims adjusters, and underwriters. License-verified talent for carriers and agencies.",
+            "provider": {
+              "@type": "Organization",
+              "name": "TaasFlow",
+              "url": "https://taasflow.com"
+            },
+            "serviceType": "Talent Acquisition",
+            "areaServed": "United States",
+            "hasOfferCatalog": {
+              "@type": "OfferCatalog",
+              "name": "Insurance Recruiting Services",
+              "itemListElement": [
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Licensed Producers Recruiting"
+                  },
+                  "position": 1
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Claims Adjusters Recruiting"
+                  },
+                  "position": 2
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Underwriters Recruiting"
+                  },
+                  "position": 3
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Customer Service Reps Recruiting"
+                  },
+                  "position": 4
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Policy Processors Recruiting"
+                  },
+                  "position": 5
+                }
+              ]
+            }
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "https://taasflow.com"
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Industries",
+                "item": "https://taasflow.com/industries"
+              },
+              {
+                "@type": "ListItem",
+                "position": 3,
+                "name": "Insurance",
+                "item": "https://taasflow.com/industries//industries/insurance"
+              }
+            ]
+          }
+        ],
+        "h1": [
+          "Insurance Talent for Carriers, Agencies & MGAs"
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "Insurance Talent for Carriers, Agencies & MGAs"
+          },
+          {
+            "level": 2,
+            "text": "Insurance Industry Insights"
+          },
+          {
+            "level": 3,
+            "text": "Insurance Market"
+          },
+          {
+            "level": 3,
+            "text": "Agent Shortage"
+          },
+          {
+            "level": 3,
+            "text": "CAT Losses"
+          },
+          {
+            "level": 3,
+            "text": "Insurtech Disruption"
+          },
+          {
+            "level": 3,
+            "text": "Industry Overview"
+          },
+          {
+            "level": 3,
+            "text": "Ready to transform your insurance recruiting?"
+          },
+          {
+            "level": 2,
+            "text": "How we hire for Insurance"
+          },
+          {
+            "level": 3,
+            "text": "Lines & License Mapping"
+          },
+          {
+            "level": 3,
+            "text": "License Verification"
+          },
+          {
+            "level": 3,
+            "text": "CAT Readiness Check"
+          },
+          {
+            "level": 3,
+            "text": "Licensed & Deployed"
+          },
+          {
+            "level": 2,
+            "text": "The Insurance Staffing Challenge"
+          },
+          {
+            "level": 3,
+            "text": "The TaasFlow Solution"
+          },
+          {
+            "level": 2,
+            "text": "Why Insurance companies choose TaasFlow"
+          },
+          {
+            "level": 3,
+            "text": "License Verified"
+          },
+          {
+            "level": 3,
+            "text": "CAT Response Ready"
+          },
+          {
+            "level": 3,
+            "text": "Lines of Business"
+          },
+          {
+            "level": 3,
+            "text": "Full Insurance Support"
+          },
+          {
+            "level": 2,
+            "text": "Positions we fill for Insurance"
+          },
+          {
+            "level": 2,
+            "text": "Real results for Insurance teams"
+          },
+          {
+            "level": 2,
+            "text": "Insurance Salary Explorer"
+          },
+          {
+            "level": 2,
+            "text": "Insurance Career Path"
+          },
+          {
+            "level": 3,
+            "text": "Senior"
+          },
+          {
+            "level": 4,
+            "text": "Key Skills at This Level"
+          },
+          {
+            "level": 2,
+            "text": "Insurance Hiring Trends"
+          },
+          {
+            "level": 2,
+            "text": "Interactive Hiring Guide"
+          },
+          {
+            "level": 3,
+            "text": "Define Your Ideal Candidate"
+          },
+          {
+            "level": 3,
+            "text": "Optimize Your Job Posting"
+          },
+          {
+            "level": 3,
+            "text": "Source Beyond Job Boards"
+          },
+          {
+            "level": 3,
+            "text": "Structure Your Interview Process"
+          },
+          {
+            "level": 3,
+            "text": "Close & Onboard Effectively"
+          },
+          {
+            "level": 2,
+            "text": "Insurance Recruiting Insights"
+          },
+          {
+            "level": 3,
+            "text": "Insurance Industry Hiring 2026: Talent Strategies for Carriers, Brokers, and InsurTech"
+          },
+          {
+            "level": 3,
+            "text": "InsurTech Hiring: Finding Innovation Talent in a Traditional Industry"
+          },
+          {
+            "level": 3,
+            "text": "Insurance Hiring 2026: How to Recruit Underwriters, Actuaries, and InsurTech Talent"
+          },
+          {
+            "level": 2,
+            "text": "Frequently Asked Questions"
+          },
+          {
+            "level": 3,
+            "text": "How do you verify insurance licenses?"
+          },
+          {
+            "level": 3,
+            "text": "Can you deploy adjusters for CAT events?"
+          },
+          {
+            "level": 3,
+            "text": "Do you have commercial lines specialists?"
+          },
+          {
+            "level": 2,
+            "text": "Discover related industries"
+          },
+          {
+            "level": 2,
+            "text": "Ready to build your Insurance team?"
+          },
+          {
+            "level": 2,
+            "text": "Insurance Recruiting"
+          },
+          {
+            "level": 3,
+            "text": "Hub Page"
+          },
+          {
+            "level": 3,
+            "text": "Related Articles"
+          },
+          {
+            "level": 3,
+            "text": "Get Started"
+          },
+          {
+            "level": 4,
+            "text": "Newsletter"
+          },
+          {
+            "level": 4,
+            "text": "For candidates"
+          },
+          {
+            "level": 4,
+            "text": "For companies"
+          },
+          {
+            "level": 4,
+            "text": "Industries"
+          },
+          {
+            "level": 4,
+            "text": "Company"
+          }
+        ],
+        "sections": [
+          "SECTION",
+          "Insurance Talent for Carriers, Agencies & MGAs",
+          "SECTION",
+          "Insurance Industry Insights",
+          "Ready to transform your insurance recruiting?",
+          "How we hire for Insurance",
+          "The Insurance Staffing Challenge",
+          "Why Insurance companies choose TaasFlow",
+          "Positions we fill for Insurance",
+          "Real results for Insurance teams",
+          "Insurance Salary Explorer",
+          "Insurance Career Path",
+          "Insurance Hiring Trends",
+          "Interactive Hiring Guide",
+          "Insurance Recruiting Insights",
+          "Frequently Asked Questions",
+          "Discover related industries",
+          "SECTION",
+          "Ready to build your Insurance team?",
+          "Insurance Recruiting"
+        ],
+        "textBlocks": [
+          "Solutions",
+          "Industries",
+          "Resources",
+          "Home",
+          "Industries",
+          "Insurance",
+          "Access licensed producers, claims adjusters, and underwriters with state license verification. Scale your insurance operations for growth and peak periods.",
+          "Key market data and trends shaping talent demand in your industry. (Hover for details)",
+          "US insurance industry direct premiums written",
+          "Projected insurance workforce gap by 2026",
+          "Annual US insured catastrophe losses",
+          "Annual investment in insurtech startups",
+          "Start a risk-free pilot and receive qualified candidates in 14 days.",
+          "A tailored workflow for the challenges of insurance settings.",
+          "We identify your lines of business, state requirements, and license types needed.",
+          "Producer and adjuster licenses verified with state insurance departments and NIPR.",
+          "For adjusters, deployment readiness and catastrophe experience verified.",
+          "Verified insurance professionals placed with full license documentation.",
+          "Insurance requires licensed professionals, but license verification across states is time-consuming. You need producers who can sell in your markets immediately.",
+          "Catastrophe events create sudden claims surges. You need adjusters who can be deployed quickly and understand your claim handling procedures.",
+          "The industry is competing for talent with insurtech startups offering equity and flexibility. Traditional insurance roles need to offer competitive arrangements.",
+          "Licensed producers with multi-state licensure verified",
+          "Claims adjusters with CAT experience and deployment readiness",
+          "Underwriters with commercial and personal lines expertise",
+          "Operations and customer service professionals with insurance backgrounds",
+          "Flexible engagements for growth periods, CAT events, and special projects",
+          "We understand the unique challenges of your industry and deliver matching talent.",
+          "All producer licenses verified with state insurance departments before placement.",
+          "Pre-screened adjusters available for rapid deployment during catastrophe events.",
+          "Specialists in P&C, life, health, commercial, and specialty lines.",
+          "Sales, underwriting, claims, and operations professionals available.",
+          "Pre-vetted professionals, delivered weekly, ready to start.",
+          "- Regional P&C Carrier, 5-state footprint",
+          "Explore current compensation ranges for top roles. Data updated quarterly from industry benchmarks.",
+          "* Based on industry benchmarks from SHRM, Glassdoor, LinkedIn Salary, and BLS data. Actual compensation may vary.",
+          "Click any level to explore typical progression, salary ranges, and key skills.",
+          "Key metrics shaping the talent landscape. Stay ahead of market shifts.",
+          "Steady growth in hiring demand across this sector.",
+          "Increasing adoption of remote and hybrid work models.",
+          "Unfilled positions due to skills shortage in this industry.",
+          "Industry average continues to improve with modern sourcing.",
+          "Follow these proven steps to hire smarter. Track your progress and get actionable tips at every stage.",
+          "Create a detailed candidate persona with must-have vs nice-to-have skills, cultural fit criteria, and realistic salary expectations.",
+          "Write a compelling job description that sells the opportunity, not just lists requirements. Include salary range, growth path, and team culture.",
+          "Reach passive candidates through targeted outreach, employee referrals, and talent communities. 70% of top talent is not actively looking.",
+          "Design a consistent 3-4 stage process that evaluates skills, culture fit, and potential. Include take-home assessments where appropriate.",
+          "Move fast with competitive offers and start onboarding before day one. The first 90 days determine long-term retention.",
+          "Expert articles on recruiting and talent acquisition for insurance.",
+          "Half the insurance workforce will retire in the next decade. Here is how the industry is preparing for the talent transition.",
+          "InsurTech Hiring: Finding Innovation Talent in a Traditional Industry",
+          "InsurTech is transforming insurance, but finding candidates who bridge traditional insurance knowledge and modern technology is challenging.",
+          "Insurance Hiring 2026: How to Recruit Underwriters, Actuaries, and InsurTech Talent",
+          "The insurance industry faces a dual challenge: 50% of its workforce retiring by 2028 while InsurTech demands new capabilities. A complete hiring guide with salary data.",
+          "Common questions about TaasFlow for insurance.",
+          "Learn how we serve similar sectors with subscription recruiting.",
+          "Receive qualified insurance professionals weekly. No agency fees, no long-term contracts.",
+          "Related Industries",
+          "Talent as a Service",
+          "A global hiring system for teams that need consistent recruiting.",
+          "Weekly insights into talent acquisition. No spam.",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Book call",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "No recruitment agency fees. No placement charges. Subscription-based hiring system.",
+          "Copyright 2026 TaaSFlow. All rights reserved."
+        ],
+        "buttons": [
+          "Solutions",
+          "Industries",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Solutions",
+          "How it works",
+          "Pilot",
+          "Enterprise",
+          "Case studies",
+          "Jobs",
+          "Journey",
+          "Industries",
+          "Tech",
+          "SaaS & Cloud",
+          "Cybersecurity",
+          "Data & Analytics",
+          "Finance",
+          "Insurance",
+          "PE & VC",
+          "Accounting",
+          "Legal",
+          "Consulting",
+          "HR & Recruiting",
+          "Staffing Agencies",
+          "Sales",
+          "Marketing",
+          "E-commerce",
+          "Media",
+          "Real Estate",
+          "Construction",
+          "Hospitality",
+          "Healthcare",
+          "Public Sector",
+          "Non-Profit",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Success Stories",
+          "Talent Marketplace",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Start Insurance Pilot Program",
+          "Book call",
+          "Book call",
+          "1Entry-Level",
+          "2Mid-Level",
+          "3Senior",
+          "4Director / Lead",
+          "5VP / C-Suite",
+          "Next: Director / Lead",
+          "1Define Your Ideal Candidate1-2 days",
+          "1",
+          "Mark Complete",
+          "2Optimize Your Job PostingWrite a compelling job description that sells the opportunity, not just lists requirements. Include salary range, growth path, and team culture.1 day",
+          "2",
+          "3Source Beyond Job BoardsReach passive candidates through targeted outreach, employee referrals, and talent communities. 70% of top talent is not actively looking.Ongoing",
+          "3",
+          "4Structure Your Interview ProcessDesign a consistent 3-4 stage process that evaluates skills, culture fit, and potential. Include take-home assessments where appropriate.2-3 days setup",
+          "4",
+          "5Close & Onboard EffectivelyMove fast with competitive offers and start onboarding before day one. The first 90 days determine long-term retention.1-2 weeks",
+          "5",
+          "How do you verify insurance licenses?",
+          "Can you deploy adjusters for CAT events?",
+          "Do you have commercial lines specialists?",
+          "Start Insurance Pilot",
+          "Contact",
+          "Subscribe",
+          "Book call"
+        ],
+        "links": [
+          {
+            "text": "Skip to main content",
+            "href": "https://taasflow.com/industries/insurance#main-content"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "Browse jobs",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Join the network",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Browse open roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Home",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "Industries",
+            "href": "https://taasflow.com/industries"
+          },
+          {
+            "text": "View all articles",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "Industry Hiring GuidesInsuranceInsurance Industry Hiring 2026: Talent Strategies for Carriers, Brokers, and InsurTechHal",
+            "href": "https://taasflow.com/blog/insurance-industry-hiring-2026"
+          },
+          {
+            "text": "📋InsurTech Hiring: Finding Innovation Talent in a Traditional IndustryIndustry Hiring GuidesIndustry Hiring GuidesInsur",
+            "href": "https://taasflow.com/blog/insurtech-talent-acquisition"
+          },
+          {
+            "text": "🔍Insurance Hiring 2026: How to Recruit Underwriters, Actuaries, and InsurTech TalentIndustry SpotlightIndustry Spotligh",
+            "href": "https://taasflow.com/blog/insurance-hiring-modernization"
+          },
+          {
+            "text": "View all articles",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "Technology",
+            "href": "https://taasflow.com/industries/tech"
+          },
+          {
+            "text": "Legal",
+            "href": "https://taasflow.com/industries/legal"
+          },
+          {
+            "text": "Public Sector",
+            "href": "https://taasflow.com/industries/public-sector"
+          },
+          {
+            "text": "Finance & Banking",
+            "href": "https://taasflow.com/industries/finance"
+          },
+          {
+            "text": "Staffing Agencies",
+            "href": "https://taasflow.com/industries/staffing-agencies"
+          },
+          {
+            "text": "Healthcare",
+            "href": "https://taasflow.com/industries/healthcare"
+          },
+          {
+            "text": "Sales",
+            "href": "https://taasflow.com/industries/sales"
+          },
+          {
+            "text": "Marketing & Advertising",
+            "href": "https://taasflow.com/industries/marketing"
+          },
+          {
+            "text": "Compare all industries",
+            "href": "https://taasflow.com/industries/compare"
+          },
+          {
+            "text": "How it works",
+            "href": "https://taasflow.com/how-it-works"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "Start Pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "Jobs",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Blog",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "About",
+            "href": "https://taasflow.com/about"
+          },
+          {
+            "text": "Enterprise",
+            "href": "https://taasflow.com/enterprise"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://taasflow.com/faq"
+          },
+          {
+            "text": "Contact",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Looking for a job in insurance? Browse open positions",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Insurance Recruiting",
+            "href": "https://taasflow.com/industries/insurance"
+          },
+          {
+            "text": "Insurance Talent Gap",
+            "href": "https://taasflow.com/blog/insurance-talent-gap"
+          },
+          {
+            "text": "Recruiter Burnout Prevention",
+            "href": "https://taasflow.com/blog/recruiter-burnout-prevention"
+          },
+          {
+            "text": "Start a Pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "View Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "Onboarding Best Practices",
+            "href": "https://taasflow.com/blog/onboarding-best-practices"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "LinkedIn",
+            "href": "https://www.linkedin.com/company/taasflow/"
+          },
+          {
+            "text": "Browse roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Talent network",
+            "href": "https://taasflow.com/global-talent"
+          },
+          {
+            "text": "Member stories",
+            "href": "https://taasflow.com/candidate-success"
+          },
+          {
+            "text": "Start pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "Employer onboarding",
+            "href": "https://taasflow.com/employer-onboarding"
+          },
+          {
+            "text": "Case studies",
+            "href": "https://taasflow.com/case-studies"
+          },
+          {
+            "text": "Healthcare",
+            "href": "https://taasflow.com/industries/healthcare"
+          },
+          {
+            "text": "Technology",
+            "href": "https://taasflow.com/industries/tech"
+          },
+          {
+            "text": "Finance",
+            "href": "https://taasflow.com/industries/finance"
+          },
+          {
+            "text": "Legal",
+            "href": "https://taasflow.com/industries/legal"
+          },
+          {
+            "text": "All →",
+            "href": "https://taasflow.com/industries"
+          },
+          {
+            "text": "About us",
+            "href": "https://taasflow.com/about"
+          },
+          {
+            "text": "Blog",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://taasflow.com/faq"
+          },
+          {
+            "text": "Knowledge Base",
+            "href": "https://taasflow.com/knowledge-base"
+          },
+          {
+            "text": "Contact us",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Privacy Policy",
+            "href": "https://taasflow.com/privacy"
+          },
+          {
+            "text": "Terms of Service",
+            "href": "https://taasflow.com/terms"
+          }
+        ],
+        "images": [
+          {
+            "src": "https://taasflow.com/assets/logo-on-white-Dk9DIcMP.png",
+            "alt": "TaaSFlow logo"
+          },
+          {
+            "src": "https://taasflow.com/assets/insurance-B6J_8kEs.jpg",
+            "alt": ""
+          },
+          {
+            "src": "https://taasflow.com/assets/insurance-B6J_8kEs.jpg",
+            "alt": ""
+          },
+          {
+            "src": "https://taasflow.com/assets/insurance-B6J_8kEs.jpg",
+            "alt": ""
+          },
+          {
+            "src": "https://taasflow.com/assets/insurance-hiring-Bb4PTq5t.jpg",
+            "alt": "Insurance Industry Hiring 2026: Talent Strategies for Carriers, Brokers, and InsurTech"
+          },
+          {
+            "src": "https://taasflow.com/assets/logo-on-blue-CX6jlwjg.png",
+            "alt": "TaaSFlow logo"
+          }
+        ],
+        "forms": [
+          {
+            "action": "https://taasflow.com/industries/insurance",
+            "fields": [
+              "input"
+            ]
+          }
+        ],
+        "navLinks": [
+          "Browse jobs",
+          "Join the network",
+          "Browse open roles",
+          "Home",
+          "Industries",
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us"
+        ],
+        "footerLinks": [
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "Privacy Policy",
+          "Terms of Service"
+        ],
+        "horizontalOverflow": false,
+        "documentWidth": 375,
+        "viewportWidth": 375
+      },
+      "destination": {
+        "url": "https://clear-path-hubs.lovable.app/industries/insurance",
+        "finalUrl": "https://clear-path-hubs.lovable.app/industries/insurance",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [],
+        "title": "Insurance hiring — TaaSFlow",
+        "description": "Structured sourcing for carriers, brokers and MGAs. Ranked shortlists with evidence of the lines of business, product and distribution experience.",
+        "canonical": "https://clear-path-hubs.lovable.app/industries/insurance",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "twitter:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "og:title": "Insurance hiring — TaaSFlow",
+          "og:description": "Structured sourcing for carriers, brokers and MGAs. Ranked shortlists with evidence of the lines of business, product and distribution experience.",
+          "og:url": "https://clear-path-hubs.lovable.app/industries/insurance",
+          "og:type": "website",
+          "twitter:card": "summary_large_image",
+          "twitter:title": "Insurance hiring — TaaSFlow",
+          "twitter:description": "Structured sourcing for carriers, brokers and MGAs. Ranked shortlists with evidence of the lines of business, product and distribution experience."
+        },
+        "structuredData": [],
+        "h1": [
+          "Insurance hiring, calibrated per line of business."
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "Insurance hiring, calibrated per line of business."
+          },
+          {
+            "level": 2,
+            "text": "What we hear from Insurance teams"
+          },
+          {
+            "level": 3,
+            "text": "Line-of-business precision"
+          },
+          {
+            "level": 3,
+            "text": "Distribution and channel context"
+          },
+          {
+            "level": 3,
+            "text": "Technical and quantitative depth"
+          },
+          {
+            "level": 2,
+            "text": "Roles we source in Insurance"
+          },
+          {
+            "level": 3,
+            "text": "Submit the role"
+          },
+          {
+            "level": 3,
+            "text": "We source and score"
+          },
+          {
+            "level": 3,
+            "text": "Review in your workspace"
+          },
+          {
+            "level": 2,
+            "text": "Hiring in insurance?"
+          }
+        ],
+        "sections": [
+          "Insurance hiring, calibrated per line of business.",
+          "What we hear from Insurance teams",
+          "Roles we source in Insurance",
+          "Submit the role",
+          "Hiring in insurance?",
+          "SECTION"
+        ],
+        "textBlocks": [
+          "Home",
+          "Industries",
+          "Insurance",
+          "Insurance",
+          "TaaSFlow gives insurance leaders a workspace for every hire — underwriting, claims, actuarial, distribution — with rubrics tuned to the line of business and product.",
+          "Line-of-business rubric per requisition",
+          "Channel and distribution captured",
+          "Human review before publication",
+          "P&C, life, specialty and reinsurance each need distinct signal. Our rubric captures the lines and products actually handled instead of generic 'insurance experience'.",
+          "Direct, broker, MGA and bancassurance change the shape of the role. We capture the channel in intake so shortlists reflect it.",
+          "Underwriting authority, reserving methods and pricing exposure are captured as structured signals — not searched for in prose.",
+          "We calibrate the rubric to the seniority and specialisation you actually need.",
+          "Underwriters and senior underwriters",
+          "Claims managers and adjusters",
+          "Actuaries and pricing analysts",
+          "Product managers and portfolio leads",
+          "Broking and distribution leads",
+          "Risk and compliance officers",
+          "Operations and transformation leads",
+          "Reinsurance specialists",
+          "01",
+          "A guided intake captures everything the search needs, in one flow.",
+          "02",
+          "Multi-channel sourcing, role-specific rubric, evidence extracted from every CV.",
+          "03",
+          "Ranked shortlist, evidence side-by-side, Kanban pipeline, direct messaging.",
+          "See the full process on how it works.",
+          "Insurance",
+          "Submit the role — one workspace per requisition, ranked and reviewed."
+        ],
+        "buttons": [],
+        "links": [
+          {
+            "text": "Home",
+            "href": "https://clear-path-hubs.lovable.app/"
+          },
+          {
+            "text": "Industries",
+            "href": "https://clear-path-hubs.lovable.app/industries"
+          },
+          {
+            "text": "Start hiring",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "Talk to us",
+            "href": "https://clear-path-hubs.lovable.app/contact"
+          },
+          {
+            "text": "how it works",
+            "href": "https://clear-path-hubs.lovable.app/how-it-works"
+          },
+          {
+            "text": "Start intake",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "See other industries",
+            "href": "https://clear-path-hubs.lovable.app/industries"
+          },
+          {
+            "text": "Edit with",
+            "href": "https://lovable.dev/projects/1dc5ee7e-1294-441c-8288-850e79e443f6?utm_source=lovable-badge"
+          }
+        ],
+        "images": [],
+        "forms": [],
+        "navLinks": [
+          "Home",
+          "Industries"
+        ],
+        "footerLinks": [],
+        "horizontalOverflow": false,
+        "documentWidth": 375,
+        "viewportWidth": 375
+      },
+      "screenshots": {
+        "sourceFull": "reports/public-parity/screenshots/source/industries_insurance__mobile__full.png",
+        "sourceVisible": "reports/public-parity/screenshots/source/industries_insurance__mobile__visible.png",
+        "destinationFull": "reports/public-parity/screenshots/destination/industries_insurance__mobile__full.png",
+        "destinationVisible": "reports/public-parity/screenshots/destination/industries_insurance__mobile__visible.png"
+      },
+      "differences": [
+        "title: \"Insurance Talent | TaaSFlow - Talent as a Service\" vs \"Insurance hiring — TaaSFlow\"",
+        "meta description mismatch",
+        "H1 differs: [Insurance Talent for Carriers, Agencies & MGAs] vs [Insurance hiring, calibrated per line of business.]",
+        "heading overlap 0% (0/30)",
+        "section count 20 vs 6",
+        "form count 1 vs 0"
+      ]
+    },
+    {
+      "viewport": "tablet",
+      "source": {
+        "url": "https://taasflow.com/industries/insurance",
+        "finalUrl": "https://taasflow.com/industries/insurance",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [
+          {
+            "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HJ2ECKCNK4&gtm=45je67l1v9245339446za200zd9245339446&_p=1784774274077&gcd=13l3l3l3l1l1&npa=0&_ng=1&dma=0&are=1&cid=2103988158.1784774274&frm=0&ngs=1&pscdl=noapi&rcb=5&sr=768x1024&uaa=x86&uab=64&uafvl=Not-A.Brand%3B24.0.0.0%7CChromium%3B146.0.7680.80&uam=&uamb=0&uap=Windows&uapv=&uaw=0&ul=en-us&_s=1&tag_exp=115938466~115938468~118897920~118897930~119527019~119896802&dp=%2Findustries%2Finsurance&dt=TaaSFlow%20%7C%20Talent%20as%20a%20Service%20%7C%20Subscription%20Recruiting&dl=https%3A%2F%2Ftaasflow.com%2Findustries%2Finsurance&sid=1784774274&sct=1&seg=0&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&ep.role_type=public&ep.is_authenticated=false&tfd=503",
+            "status": null,
+            "failure": "net::ERR_ABORTED"
+          },
+          {
+            "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HJ2ECKCNK4&gtm=45je67l1v9245339446za200zd9245339446&_p=1784774274077&gcd=13l3l3l3l1l1&npa=0&_ng=1&dma=0&_eu=AEAAAAQ&ae=a&are=1&cid=2103988158.1784774274&frm=0&ngs=1&pscdl=noapi&rcb=5&sr=768x1024&uaa=x86&uab=64&uafvl=Not-A.Brand%3B24.0.0.0%7CChromium%3B146.0.7680.80&uam=&uamb=0&uap=Windows&uapv=&uaw=0&ul=en-us&_s=2&tag_exp=115938466~115938468~118897920~118897930~119527019~119896802&sid=1784774274&sct=1&seg=0&dl=https%3A%2F%2Ftaasflow.com%2Findustries%2Finsurance&dt=TaaSFlow%20%7C%20Talent%20as%20a%20Service%20%7C%20Subscription%20Recruiting&en=scroll&epn.percent_scrolled=90&_et=11&tfd=819",
+            "status": null,
+            "failure": "net::ERR_ABORTED"
+          }
+        ],
+        "title": "Insurance Talent | TaaSFlow - Talent as a Service",
+        "description": "On-demand insurance professionals including licensed agents, claims adjusters, and underwriters. License-verified talent for carriers and agencies.",
+        "canonical": "https://taasflow.com/industries/insurance",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:type": "website",
+          "og:url": "https://taasflow.com/industries/insurance",
+          "og:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "og:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "og:image": "https://taasflow.com/og-image.png",
+          "og:image:width": "1200",
+          "og:image:height": "630",
+          "og:locale": "en_US",
+          "twitter:card": "summary_large_image",
+          "twitter:site": "@TaasFlow",
+          "twitter:creator": "@TaasFlow",
+          "twitter:url": "https://taasflow.com/industries/insurance",
+          "twitter:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "twitter:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "twitter:image": "https://taasflow.com/og-image.png"
+        },
+        "structuredData": [
+          {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "@id": "https://taasflow.com/#organization",
+            "name": "TaaSFlow",
+            "legalName": "TaaSFlow",
+            "url": "https://taasflow.com/",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://taasflow.com/favicon.png",
+              "width": 512,
+              "height": 512
+            },
+            "image": "https://taasflow.com/og-image.png",
+            "description": "Talent as a Service — subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+            "slogan": "Your hiring team. On demand.",
+            "foundingDate": "2024",
+            "areaServed": [
+              {
+                "@type": "Country",
+                "name": "United States"
+              },
+              {
+                "@type": "Country",
+                "name": "United Arab Emirates"
+              },
+              {
+                "@type": "Country",
+                "name": "United Kingdom"
+              },
+              {
+                "@type": "Country",
+                "name": "Brazil"
+              }
+            ],
+            "knowsAbout": [
+              "Subscription recruiting",
+              "Talent as a Service",
+              "Candidate sourcing",
+              "Pre-screened candidates",
+              "Recruitment process outsourcing"
+            ],
+            "contactPoint": [
+              {
+                "@type": "ContactPoint",
+                "contactType": "sales",
+                "email": "hello@taasflow.com",
+                "url": "https://taasflow.com/contact",
+                "availableLanguage": [
+                  "English",
+                  "Portuguese",
+                  "Spanish"
+                ]
+              }
+            ],
+            "sameAs": [
+              "https://www.linkedin.com/company/taasflow",
+              "https://twitter.com/TaasFlow"
+            ]
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "@id": "https://taasflow.com/#website",
+            "name": "TaaSFlow",
+            "alternateName": "Talent as a Service",
+            "url": "https://taasflow.com/",
+            "description": "Subscription recruiting that delivers pre-screened, ranked candidates in 14 days.",
+            "inLanguage": "en-US",
+            "publisher": {
+              "@id": "https://taasflow.com/#organization"
+            },
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": {
+                "@type": "EntryPoint",
+                "urlTemplate": "https://taasflow.com/jobs?q={search_term_string}"
+              },
+              "query-input": "required name=search_term_string"
+            }
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "Service",
+            "name": "Insurance Talent Sourcing",
+            "description": "On-demand insurance professionals including licensed agents, claims adjusters, and underwriters. License-verified talent for carriers and agencies.",
+            "provider": {
+              "@type": "Organization",
+              "name": "TaasFlow",
+              "url": "https://taasflow.com"
+            },
+            "serviceType": "Talent Acquisition",
+            "areaServed": "United States",
+            "hasOfferCatalog": {
+              "@type": "OfferCatalog",
+              "name": "Insurance Recruiting Services",
+              "itemListElement": [
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Licensed Producers Recruiting"
+                  },
+                  "position": 1
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Claims Adjusters Recruiting"
+                  },
+                  "position": 2
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Underwriters Recruiting"
+                  },
+                  "position": 3
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Customer Service Reps Recruiting"
+                  },
+                  "position": 4
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Policy Processors Recruiting"
+                  },
+                  "position": 5
+                }
+              ]
+            }
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "https://taasflow.com"
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Industries",
+                "item": "https://taasflow.com/industries"
+              },
+              {
+                "@type": "ListItem",
+                "position": 3,
+                "name": "Insurance",
+                "item": "https://taasflow.com/industries//industries/insurance"
+              }
+            ]
+          }
+        ],
+        "h1": [
+          "Insurance Talent for Carriers, Agencies & MGAs"
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "Insurance Talent for Carriers, Agencies & MGAs"
+          },
+          {
+            "level": 2,
+            "text": "Insurance Industry Insights"
+          },
+          {
+            "level": 3,
+            "text": "Insurance Market"
+          },
+          {
+            "level": 3,
+            "text": "Agent Shortage"
+          },
+          {
+            "level": 3,
+            "text": "CAT Losses"
+          },
+          {
+            "level": 3,
+            "text": "Insurtech Disruption"
+          },
+          {
+            "level": 3,
+            "text": "Industry Overview"
+          },
+          {
+            "level": 3,
+            "text": "Ready to transform your insurance recruiting?"
+          },
+          {
+            "level": 2,
+            "text": "How we hire for Insurance"
+          },
+          {
+            "level": 3,
+            "text": "Lines & License Mapping"
+          },
+          {
+            "level": 3,
+            "text": "License Verification"
+          },
+          {
+            "level": 3,
+            "text": "CAT Readiness Check"
+          },
+          {
+            "level": 3,
+            "text": "Licensed & Deployed"
+          },
+          {
+            "level": 2,
+            "text": "The Insurance Staffing Challenge"
+          },
+          {
+            "level": 3,
+            "text": "The TaasFlow Solution"
+          },
+          {
+            "level": 2,
+            "text": "Why Insurance companies choose TaasFlow"
+          },
+          {
+            "level": 3,
+            "text": "License Verified"
+          },
+          {
+            "level": 3,
+            "text": "CAT Response Ready"
+          },
+          {
+            "level": 3,
+            "text": "Lines of Business"
+          },
+          {
+            "level": 3,
+            "text": "Full Insurance Support"
+          },
+          {
+            "level": 2,
+            "text": "Positions we fill for Insurance"
+          },
+          {
+            "level": 2,
+            "text": "Real results for Insurance teams"
+          },
+          {
+            "level": 2,
+            "text": "Insurance Salary Explorer"
+          },
+          {
+            "level": 2,
+            "text": "Insurance Career Path"
+          },
+          {
+            "level": 3,
+            "text": "Senior"
+          },
+          {
+            "level": 4,
+            "text": "Key Skills at This Level"
+          },
+          {
+            "level": 2,
+            "text": "Insurance Hiring Trends"
+          },
+          {
+            "level": 2,
+            "text": "Interactive Hiring Guide"
+          },
+          {
+            "level": 3,
+            "text": "Define Your Ideal Candidate"
+          },
+          {
+            "level": 3,
+            "text": "Optimize Your Job Posting"
+          },
+          {
+            "level": 3,
+            "text": "Source Beyond Job Boards"
+          },
+          {
+            "level": 3,
+            "text": "Structure Your Interview Process"
+          },
+          {
+            "level": 3,
+            "text": "Close & Onboard Effectively"
+          },
+          {
+            "level": 2,
+            "text": "Insurance Recruiting Insights"
+          },
+          {
+            "level": 3,
+            "text": "Insurance Industry Hiring 2026: Talent Strategies for Carriers, Brokers, and InsurTech"
+          },
+          {
+            "level": 3,
+            "text": "InsurTech Hiring: Finding Innovation Talent in a Traditional Industry"
+          },
+          {
+            "level": 3,
+            "text": "Insurance Hiring 2026: How to Recruit Underwriters, Actuaries, and InsurTech Talent"
+          },
+          {
+            "level": 2,
+            "text": "Frequently Asked Questions"
+          },
+          {
+            "level": 3,
+            "text": "How do you verify insurance licenses?"
+          },
+          {
+            "level": 3,
+            "text": "Can you deploy adjusters for CAT events?"
+          },
+          {
+            "level": 3,
+            "text": "Do you have commercial lines specialists?"
+          },
+          {
+            "level": 2,
+            "text": "Discover related industries"
+          },
+          {
+            "level": 2,
+            "text": "Ready to build your Insurance team?"
+          },
+          {
+            "level": 2,
+            "text": "Insurance Recruiting"
+          },
+          {
+            "level": 3,
+            "text": "Hub Page"
+          },
+          {
+            "level": 3,
+            "text": "Related Articles"
+          },
+          {
+            "level": 3,
+            "text": "Get Started"
+          },
+          {
+            "level": 4,
+            "text": "Newsletter"
+          },
+          {
+            "level": 4,
+            "text": "For candidates"
+          },
+          {
+            "level": 4,
+            "text": "For companies"
+          },
+          {
+            "level": 4,
+            "text": "Industries"
+          },
+          {
+            "level": 4,
+            "text": "Company"
+          },
+          {
+            "level": 3,
+            "text": "Cookie Preferences"
+          }
+        ],
+        "sections": [
+          "SECTION",
+          "Insurance Talent for Carriers, Agencies & MGAs",
+          "SECTION",
+          "Insurance Industry Insights",
+          "Ready to transform your insurance recruiting?",
+          "How we hire for Insurance",
+          "The Insurance Staffing Challenge",
+          "Why Insurance companies choose TaasFlow",
+          "Positions we fill for Insurance",
+          "Real results for Insurance teams",
+          "Insurance Salary Explorer",
+          "Insurance Career Path",
+          "Insurance Hiring Trends",
+          "Interactive Hiring Guide",
+          "Insurance Recruiting Insights",
+          "Frequently Asked Questions",
+          "Discover related industries",
+          "SECTION",
+          "Ready to build your Insurance team?",
+          "Insurance Recruiting"
+        ],
+        "textBlocks": [
+          "Solutions",
+          "Industries",
+          "Resources",
+          "Home",
+          "Industries",
+          "Insurance",
+          "Access licensed producers, claims adjusters, and underwriters with state license verification. Scale your insurance operations for growth and peak periods.",
+          "Key market data and trends shaping talent demand in your industry. (Hover for details)",
+          "US insurance industry direct premiums written",
+          "Projected insurance workforce gap by 2026",
+          "Annual US insured catastrophe losses",
+          "Annual investment in insurtech startups",
+          "Start a risk-free pilot and receive qualified candidates in 14 days.",
+          "A tailored workflow for the challenges of insurance settings.",
+          "We identify your lines of business, state requirements, and license types needed.",
+          "Producer and adjuster licenses verified with state insurance departments and NIPR.",
+          "For adjusters, deployment readiness and catastrophe experience verified.",
+          "Verified insurance professionals placed with full license documentation.",
+          "Insurance requires licensed professionals, but license verification across states is time-consuming. You need producers who can sell in your markets immediately.",
+          "Catastrophe events create sudden claims surges. You need adjusters who can be deployed quickly and understand your claim handling procedures.",
+          "The industry is competing for talent with insurtech startups offering equity and flexibility. Traditional insurance roles need to offer competitive arrangements.",
+          "Licensed producers with multi-state licensure verified",
+          "Claims adjusters with CAT experience and deployment readiness",
+          "Underwriters with commercial and personal lines expertise",
+          "Operations and customer service professionals with insurance backgrounds",
+          "Flexible engagements for growth periods, CAT events, and special projects",
+          "We understand the unique challenges of your industry and deliver matching talent.",
+          "All producer licenses verified with state insurance departments before placement.",
+          "Pre-screened adjusters available for rapid deployment during catastrophe events.",
+          "Specialists in P&C, life, health, commercial, and specialty lines.",
+          "Sales, underwriting, claims, and operations professionals available.",
+          "Pre-vetted professionals, delivered weekly, ready to start.",
+          "- Regional P&C Carrier, 5-state footprint",
+          "Explore current compensation ranges for top roles. Data updated quarterly from industry benchmarks.",
+          "* Based on industry benchmarks from SHRM, Glassdoor, LinkedIn Salary, and BLS data. Actual compensation may vary.",
+          "Click any level to explore typical progression, salary ranges, and key skills.",
+          "Key metrics shaping the talent landscape. Stay ahead of market shifts.",
+          "Steady growth in hiring demand across this sector.",
+          "Increasing adoption of remote and hybrid work models.",
+          "Unfilled positions due to skills shortage in this industry.",
+          "Industry average continues to improve with modern sourcing.",
+          "Follow these proven steps to hire smarter. Track your progress and get actionable tips at every stage.",
+          "Create a detailed candidate persona with must-have vs nice-to-have skills, cultural fit criteria, and realistic salary expectations.",
+          "Write a compelling job description that sells the opportunity, not just lists requirements. Include salary range, growth path, and team culture.",
+          "Reach passive candidates through targeted outreach, employee referrals, and talent communities. 70% of top talent is not actively looking.",
+          "Design a consistent 3-4 stage process that evaluates skills, culture fit, and potential. Include take-home assessments where appropriate.",
+          "Move fast with competitive offers and start onboarding before day one. The first 90 days determine long-term retention.",
+          "Expert articles on recruiting and talent acquisition for insurance.",
+          "Half the insurance workforce will retire in the next decade. Here is how the industry is preparing for the talent transition.",
+          "InsurTech Hiring: Finding Innovation Talent in a Traditional Industry",
+          "InsurTech is transforming insurance, but finding candidates who bridge traditional insurance knowledge and modern technology is challenging.",
+          "Insurance Hiring 2026: How to Recruit Underwriters, Actuaries, and InsurTech Talent",
+          "The insurance industry faces a dual challenge: 50% of its workforce retiring by 2028 while InsurTech demands new capabilities. A complete hiring guide with salary data.",
+          "Common questions about TaasFlow for insurance.",
+          "Learn how we serve similar sectors with subscription recruiting.",
+          "Receive qualified insurance professionals weekly. No agency fees, no long-term contracts.",
+          "Related Industries",
+          "Talent as a Service",
+          "A global hiring system for teams that need consistent recruiting.",
+          "Weekly insights into talent acquisition. No spam.",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Book call",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "No recruitment agency fees. No placement charges. Subscription-based hiring system.",
+          "Copyright 2026 TaaSFlow. All rights reserved.",
+          "We use essential cookies for core functionality. With your consent, we use analytics (Google Analytics) and marketing technologies (Meta Pixel, Apollo, Retention.com/RB2B) to understand website performance, improve campaigns, and measure conversions safely. Your data is processed in accordance with GDPR and our Privacy Notice. You can change your preferences at any time."
+        ],
+        "buttons": [
+          "Solutions",
+          "Industries",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Solutions",
+          "How it works",
+          "Pilot",
+          "Enterprise",
+          "Case studies",
+          "Jobs",
+          "Journey",
+          "Industries",
+          "Tech",
+          "SaaS & Cloud",
+          "Cybersecurity",
+          "Data & Analytics",
+          "Finance",
+          "Insurance",
+          "PE & VC",
+          "Accounting",
+          "Legal",
+          "Consulting",
+          "HR & Recruiting",
+          "Staffing Agencies",
+          "Sales",
+          "Marketing",
+          "E-commerce",
+          "Media",
+          "Real Estate",
+          "Construction",
+          "Hospitality",
+          "Healthcare",
+          "Public Sector",
+          "Non-Profit",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Success Stories",
+          "Talent Marketplace",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Start Insurance Pilot Program",
+          "Book call",
+          "Book call",
+          "1Entry-Level",
+          "2Mid-Level",
+          "3Senior",
+          "4Director / Lead",
+          "5VP / C-Suite",
+          "Next: Director / Lead",
+          "1Define Your Ideal Candidate1-2 days",
+          "1",
+          "Mark Complete",
+          "2Optimize Your Job PostingWrite a compelling job description that sells the opportunity, not just lists requirements. Include salary range, growth path, and team culture.1 day",
+          "2",
+          "3Source Beyond Job BoardsReach passive candidates through targeted outreach, employee referrals, and talent communities. 70% of top talent is not actively looking.Ongoing",
+          "3",
+          "4Structure Your Interview ProcessDesign a consistent 3-4 stage process that evaluates skills, culture fit, and potential. Include take-home assessments where appropriate.2-3 days setup",
+          "4",
+          "5Close & Onboard EffectivelyMove fast with competitive offers and start onboarding before day one. The first 90 days determine long-term retention.1-2 weeks",
+          "5",
+          "How do you verify insurance licenses?",
+          "Can you deploy adjusters for CAT events?",
+          "Do you have commercial lines specialists?",
+          "Start Insurance Pilot",
+          "Contact",
+          "Subscribe",
+          "Book call"
+        ],
+        "links": [
+          {
+            "text": "Skip to main content",
+            "href": "https://taasflow.com/industries/insurance#main-content"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "Browse jobs",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Join the network",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Browse open roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Home",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "Industries",
+            "href": "https://taasflow.com/industries"
+          },
+          {
+            "text": "View all articles",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "Industry Hiring GuidesInsuranceInsurance Industry Hiring 2026: Talent Strategies for Carriers, Brokers, and InsurTechHal",
+            "href": "https://taasflow.com/blog/insurance-industry-hiring-2026"
+          },
+          {
+            "text": "📋InsurTech Hiring: Finding Innovation Talent in a Traditional IndustryIndustry Hiring GuidesIndustry Hiring GuidesInsur",
+            "href": "https://taasflow.com/blog/insurtech-talent-acquisition"
+          },
+          {
+            "text": "🔍Insurance Hiring 2026: How to Recruit Underwriters, Actuaries, and InsurTech TalentIndustry SpotlightIndustry Spotligh",
+            "href": "https://taasflow.com/blog/insurance-hiring-modernization"
+          },
+          {
+            "text": "View all articles",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "Technology",
+            "href": "https://taasflow.com/industries/tech"
+          },
+          {
+            "text": "Legal",
+            "href": "https://taasflow.com/industries/legal"
+          },
+          {
+            "text": "Public Sector",
+            "href": "https://taasflow.com/industries/public-sector"
+          },
+          {
+            "text": "Finance & Banking",
+            "href": "https://taasflow.com/industries/finance"
+          },
+          {
+            "text": "Staffing Agencies",
+            "href": "https://taasflow.com/industries/staffing-agencies"
+          },
+          {
+            "text": "Healthcare",
+            "href": "https://taasflow.com/industries/healthcare"
+          },
+          {
+            "text": "Sales",
+            "href": "https://taasflow.com/industries/sales"
+          },
+          {
+            "text": "Marketing & Advertising",
+            "href": "https://taasflow.com/industries/marketing"
+          },
+          {
+            "text": "Compare all industries",
+            "href": "https://taasflow.com/industries/compare"
+          },
+          {
+            "text": "How it works",
+            "href": "https://taasflow.com/how-it-works"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "Start Pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "Jobs",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Blog",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "About",
+            "href": "https://taasflow.com/about"
+          },
+          {
+            "text": "Enterprise",
+            "href": "https://taasflow.com/enterprise"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://taasflow.com/faq"
+          },
+          {
+            "text": "Contact",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Looking for a job in insurance? Browse open positions",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Insurance Recruiting",
+            "href": "https://taasflow.com/industries/insurance"
+          },
+          {
+            "text": "Insurance Talent Gap",
+            "href": "https://taasflow.com/blog/insurance-talent-gap"
+          },
+          {
+            "text": "Recruiter Burnout Prevention",
+            "href": "https://taasflow.com/blog/recruiter-burnout-prevention"
+          },
+          {
+            "text": "Start a Pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "View Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "Onboarding Best Practices",
+            "href": "https://taasflow.com/blog/onboarding-best-practices"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "LinkedIn",
+            "href": "https://www.linkedin.com/company/taasflow/"
+          },
+          {
+            "text": "Browse roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Talent network",
+            "href": "https://taasflow.com/global-talent"
+          },
+          {
+            "text": "Member stories",
+            "href": "https://taasflow.com/candidate-success"
+          },
+          {
+            "text": "Start pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "Employer onboarding",
+            "href": "https://taasflow.com/employer-onboarding"
+          },
+          {
+            "text": "Case studies",
+            "href": "https://taasflow.com/case-studies"
+          },
+          {
+            "text": "Healthcare",
+            "href": "https://taasflow.com/industries/healthcare"
+          },
+          {
+            "text": "Technology",
+            "href": "https://taasflow.com/industries/tech"
+          },
+          {
+            "text": "Finance",
+            "href": "https://taasflow.com/industries/finance"
+          },
+          {
+            "text": "Legal",
+            "href": "https://taasflow.com/industries/legal"
+          },
+          {
+            "text": "All →",
+            "href": "https://taasflow.com/industries"
+          },
+          {
+            "text": "About us",
+            "href": "https://taasflow.com/about"
+          },
+          {
+            "text": "Blog",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://taasflow.com/faq"
+          },
+          {
+            "text": "Knowledge Base",
+            "href": "https://taasflow.com/knowledge-base"
+          },
+          {
+            "text": "Contact us",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Privacy Policy",
+            "href": "https://taasflow.com/privacy"
+          },
+          {
+            "text": "Terms of Service",
+            "href": "https://taasflow.com/terms"
+          },
+          {
+            "text": "Privacy Notice",
+            "href": "https://taasflow.com/privacy"
+          }
+        ],
+        "images": [
+          {
+            "src": "https://taasflow.com/assets/logo-on-white-Dk9DIcMP.png",
+            "alt": "TaaSFlow logo"
+          },
+          {
+            "src": "https://taasflow.com/assets/insurance-B6J_8kEs.jpg",
+            "alt": ""
+          },
+          {
+            "src": "https://taasflow.com/assets/insurance-B6J_8kEs.jpg",
+            "alt": ""
+          },
+          {
+            "src": "https://taasflow.com/assets/insurance-B6J_8kEs.jpg",
+            "alt": ""
+          },
+          {
+            "src": "https://taasflow.com/assets/insurance-hiring-Bb4PTq5t.jpg",
+            "alt": "Insurance Industry Hiring 2026: Talent Strategies for Carriers, Brokers, and InsurTech"
+          },
+          {
+            "src": "https://taasflow.com/assets/logo-on-blue-CX6jlwjg.png",
+            "alt": "TaaSFlow logo"
+          }
+        ],
+        "forms": [
+          {
+            "action": "https://taasflow.com/industries/insurance",
+            "fields": [
+              "input"
+            ]
+          }
+        ],
+        "navLinks": [
+          "Browse jobs",
+          "Join the network",
+          "Browse open roles",
+          "Home",
+          "Industries",
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us"
+        ],
+        "footerLinks": [
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "Privacy Policy",
+          "Terms of Service"
+        ],
+        "horizontalOverflow": false,
+        "documentWidth": 768,
+        "viewportWidth": 768
+      },
+      "destination": {
+        "url": "https://clear-path-hubs.lovable.app/industries/insurance",
+        "finalUrl": "https://clear-path-hubs.lovable.app/industries/insurance",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [],
+        "title": "Insurance hiring — TaaSFlow",
+        "description": "Structured sourcing for carriers, brokers and MGAs. Ranked shortlists with evidence of the lines of business, product and distribution experience.",
+        "canonical": "https://clear-path-hubs.lovable.app/industries/insurance",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "twitter:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "og:title": "Insurance hiring — TaaSFlow",
+          "og:description": "Structured sourcing for carriers, brokers and MGAs. Ranked shortlists with evidence of the lines of business, product and distribution experience.",
+          "og:url": "https://clear-path-hubs.lovable.app/industries/insurance",
+          "og:type": "website",
+          "twitter:card": "summary_large_image",
+          "twitter:title": "Insurance hiring — TaaSFlow",
+          "twitter:description": "Structured sourcing for carriers, brokers and MGAs. Ranked shortlists with evidence of the lines of business, product and distribution experience."
+        },
+        "structuredData": [],
+        "h1": [
+          "Insurance hiring, calibrated per line of business."
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "Insurance hiring, calibrated per line of business."
+          },
+          {
+            "level": 2,
+            "text": "What we hear from Insurance teams"
+          },
+          {
+            "level": 3,
+            "text": "Line-of-business precision"
+          },
+          {
+            "level": 3,
+            "text": "Distribution and channel context"
+          },
+          {
+            "level": 3,
+            "text": "Technical and quantitative depth"
+          },
+          {
+            "level": 2,
+            "text": "Roles we source in Insurance"
+          },
+          {
+            "level": 3,
+            "text": "Submit the role"
+          },
+          {
+            "level": 3,
+            "text": "We source and score"
+          },
+          {
+            "level": 3,
+            "text": "Review in your workspace"
+          },
+          {
+            "level": 2,
+            "text": "Hiring in insurance?"
+          }
+        ],
+        "sections": [
+          "Insurance hiring, calibrated per line of business.",
+          "What we hear from Insurance teams",
+          "Roles we source in Insurance",
+          "Submit the role",
+          "Hiring in insurance?",
+          "SECTION"
+        ],
+        "textBlocks": [
+          "Home",
+          "Industries",
+          "Insurance",
+          "Insurance",
+          "TaaSFlow gives insurance leaders a workspace for every hire — underwriting, claims, actuarial, distribution — with rubrics tuned to the line of business and product.",
+          "Line-of-business rubric per requisition",
+          "Channel and distribution captured",
+          "Human review before publication",
+          "P&C, life, specialty and reinsurance each need distinct signal. Our rubric captures the lines and products actually handled instead of generic 'insurance experience'.",
+          "Direct, broker, MGA and bancassurance change the shape of the role. We capture the channel in intake so shortlists reflect it.",
+          "Underwriting authority, reserving methods and pricing exposure are captured as structured signals — not searched for in prose.",
+          "We calibrate the rubric to the seniority and specialisation you actually need.",
+          "Underwriters and senior underwriters",
+          "Claims managers and adjusters",
+          "Actuaries and pricing analysts",
+          "Product managers and portfolio leads",
+          "Broking and distribution leads",
+          "Risk and compliance officers",
+          "Operations and transformation leads",
+          "Reinsurance specialists",
+          "01",
+          "A guided intake captures everything the search needs, in one flow.",
+          "02",
+          "Multi-channel sourcing, role-specific rubric, evidence extracted from every CV.",
+          "03",
+          "Ranked shortlist, evidence side-by-side, Kanban pipeline, direct messaging.",
+          "See the full process on how it works.",
+          "Insurance",
+          "Submit the role — one workspace per requisition, ranked and reviewed."
+        ],
+        "buttons": [],
+        "links": [
+          {
+            "text": "Home",
+            "href": "https://clear-path-hubs.lovable.app/"
+          },
+          {
+            "text": "Industries",
+            "href": "https://clear-path-hubs.lovable.app/industries"
+          },
+          {
+            "text": "Start hiring",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "Talk to us",
+            "href": "https://clear-path-hubs.lovable.app/contact"
+          },
+          {
+            "text": "how it works",
+            "href": "https://clear-path-hubs.lovable.app/how-it-works"
+          },
+          {
+            "text": "Start intake",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "See other industries",
+            "href": "https://clear-path-hubs.lovable.app/industries"
+          },
+          {
+            "text": "Edit with",
+            "href": "https://lovable.dev/projects/1dc5ee7e-1294-441c-8288-850e79e443f6?utm_source=lovable-badge"
+          }
+        ],
+        "images": [],
+        "forms": [],
+        "navLinks": [
+          "Home",
+          "Industries"
+        ],
+        "footerLinks": [],
+        "horizontalOverflow": false,
+        "documentWidth": 768,
+        "viewportWidth": 768
+      },
+      "screenshots": {
+        "sourceFull": "reports/public-parity/screenshots/source/industries_insurance__tablet__full.png",
+        "sourceVisible": "reports/public-parity/screenshots/source/industries_insurance__tablet__visible.png",
+        "destinationFull": "reports/public-parity/screenshots/destination/industries_insurance__tablet__full.png",
+        "destinationVisible": "reports/public-parity/screenshots/destination/industries_insurance__tablet__visible.png"
+      },
+      "differences": [
+        "title: \"Insurance Talent | TaaSFlow - Talent as a Service\" vs \"Insurance hiring — TaaSFlow\"",
+        "meta description mismatch",
+        "H1 differs: [Insurance Talent for Carriers, Agencies & MGAs] vs [Insurance hiring, calibrated per line of business.]",
+        "heading overlap 0% (0/30)",
+        "section count 20 vs 6",
+        "form count 1 vs 0"
+      ]
+    },
+    {
+      "viewport": "desktop",
+      "source": {
+        "url": "https://taasflow.com/industries/insurance",
+        "finalUrl": "https://taasflow.com/industries/insurance",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [
+          {
+            "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HJ2ECKCNK4&gtm=45je67l1v9245339446za200zd9245339446&_p=1784774278077&gcd=13l3l3l3l1l1&npa=0&_ng=1&dma=0&are=1&cid=80665688.1784774278&frm=0&ngs=1&pscdl=noapi&rcb=1&sr=1440x900&uaa=x86&uab=64&uafvl=Not-A.Brand%3B24.0.0.0%7CChromium%3B146.0.7680.80&uam=&uamb=0&uap=Windows&uapv=&uaw=0&ul=en-us&_s=1&tag_exp=115938466~115938469~118395335~118897920~118897930~119791748~119793972~119896803&dp=%2Findustries%2Finsurance&dt=TaaSFlow%20%7C%20Talent%20as%20a%20Service%20%7C%20Subscription%20Recruiting&dl=https%3A%2F%2Ftaasflow.com%2Findustries%2Finsurance&sid=1784774278&sct=1&seg=0&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&ep.role_type=public&ep.is_authenticated=false&tfd=529",
+            "status": null,
+            "failure": "net::ERR_ABORTED"
+          },
+          {
+            "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HJ2ECKCNK4&gtm=45je67l1v9245339446za200zd9245339446&_p=1784774278077&gcd=13l3l3l3l1l1&npa=0&_ng=1&dma=0&_eu=AEAAAAQ&ae=a&are=1&cid=80665688.1784774278&frm=0&ngs=1&pscdl=noapi&rcb=1&sr=1440x900&uaa=x86&uab=64&uafvl=Not-A.Brand%3B24.0.0.0%7CChromium%3B146.0.7680.80&uam=&uamb=0&uap=Windows&uapv=&uaw=0&ul=en-us&_s=2&tag_exp=115938466~115938469~118395335~118897920~118897930~119791748~119793972~119896803&sid=1784774278&sct=1&seg=0&dl=https%3A%2F%2Ftaasflow.com%2Findustries%2Finsurance&dt=TaaSFlow%20%7C%20Talent%20as%20a%20Service%20%7C%20Subscription%20Recruiting&en=scroll&epn.percent_scrolled=90&_et=13&tfd=942",
+            "status": null,
+            "failure": "net::ERR_ABORTED"
+          }
+        ],
+        "title": "Insurance Talent | TaaSFlow - Talent as a Service",
+        "description": "On-demand insurance professionals including licensed agents, claims adjusters, and underwriters. License-verified talent for carriers and agencies.",
+        "canonical": "https://taasflow.com/industries/insurance",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:type": "website",
+          "og:url": "https://taasflow.com/industries/insurance",
+          "og:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "og:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "og:image": "https://taasflow.com/og-image.png",
+          "og:image:width": "1200",
+          "og:image:height": "630",
+          "og:locale": "en_US",
+          "twitter:card": "summary_large_image",
+          "twitter:site": "@TaasFlow",
+          "twitter:creator": "@TaasFlow",
+          "twitter:url": "https://taasflow.com/industries/insurance",
+          "twitter:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "twitter:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "twitter:image": "https://taasflow.com/og-image.png"
+        },
+        "structuredData": [
+          {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "@id": "https://taasflow.com/#organization",
+            "name": "TaaSFlow",
+            "legalName": "TaaSFlow",
+            "url": "https://taasflow.com/",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://taasflow.com/favicon.png",
+              "width": 512,
+              "height": 512
+            },
+            "image": "https://taasflow.com/og-image.png",
+            "description": "Talent as a Service — subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+            "slogan": "Your hiring team. On demand.",
+            "foundingDate": "2024",
+            "areaServed": [
+              {
+                "@type": "Country",
+                "name": "United States"
+              },
+              {
+                "@type": "Country",
+                "name": "United Arab Emirates"
+              },
+              {
+                "@type": "Country",
+                "name": "United Kingdom"
+              },
+              {
+                "@type": "Country",
+                "name": "Brazil"
+              }
+            ],
+            "knowsAbout": [
+              "Subscription recruiting",
+              "Talent as a Service",
+              "Candidate sourcing",
+              "Pre-screened candidates",
+              "Recruitment process outsourcing"
+            ],
+            "contactPoint": [
+              {
+                "@type": "ContactPoint",
+                "contactType": "sales",
+                "email": "hello@taasflow.com",
+                "url": "https://taasflow.com/contact",
+                "availableLanguage": [
+                  "English",
+                  "Portuguese",
+                  "Spanish"
+                ]
+              }
+            ],
+            "sameAs": [
+              "https://www.linkedin.com/company/taasflow",
+              "https://twitter.com/TaasFlow"
+            ]
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "@id": "https://taasflow.com/#website",
+            "name": "TaaSFlow",
+            "alternateName": "Talent as a Service",
+            "url": "https://taasflow.com/",
+            "description": "Subscription recruiting that delivers pre-screened, ranked candidates in 14 days.",
+            "inLanguage": "en-US",
+            "publisher": {
+              "@id": "https://taasflow.com/#organization"
+            },
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": {
+                "@type": "EntryPoint",
+                "urlTemplate": "https://taasflow.com/jobs?q={search_term_string}"
+              },
+              "query-input": "required name=search_term_string"
+            }
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "Service",
+            "name": "Insurance Talent Sourcing",
+            "description": "On-demand insurance professionals including licensed agents, claims adjusters, and underwriters. License-verified talent for carriers and agencies.",
+            "provider": {
+              "@type": "Organization",
+              "name": "TaasFlow",
+              "url": "https://taasflow.com"
+            },
+            "serviceType": "Talent Acquisition",
+            "areaServed": "United States",
+            "hasOfferCatalog": {
+              "@type": "OfferCatalog",
+              "name": "Insurance Recruiting Services",
+              "itemListElement": [
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Licensed Producers Recruiting"
+                  },
+                  "position": 1
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Claims Adjusters Recruiting"
+                  },
+                  "position": 2
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Underwriters Recruiting"
+                  },
+                  "position": 3
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Customer Service Reps Recruiting"
+                  },
+                  "position": 4
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Policy Processors Recruiting"
+                  },
+                  "position": 5
+                }
+              ]
+            }
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "https://taasflow.com"
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Industries",
+                "item": "https://taasflow.com/industries"
+              },
+              {
+                "@type": "ListItem",
+                "position": 3,
+                "name": "Insurance",
+                "item": "https://taasflow.com/industries//industries/insurance"
+              }
+            ]
+          }
+        ],
+        "h1": [
+          "Insurance Talent for Carriers, Agencies & MGAs"
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "Insurance Talent for Carriers, Agencies & MGAs"
+          },
+          {
+            "level": 2,
+            "text": "Insurance Industry Insights"
+          },
+          {
+            "level": 3,
+            "text": "Insurance Market"
+          },
+          {
+            "level": 3,
+            "text": "Agent Shortage"
+          },
+          {
+            "level": 3,
+            "text": "CAT Losses"
+          },
+          {
+            "level": 3,
+            "text": "Insurtech Disruption"
+          },
+          {
+            "level": 3,
+            "text": "Industry Overview"
+          },
+          {
+            "level": 3,
+            "text": "Ready to transform your insurance recruiting?"
+          },
+          {
+            "level": 2,
+            "text": "How we hire for Insurance"
+          },
+          {
+            "level": 3,
+            "text": "Lines & License Mapping"
+          },
+          {
+            "level": 3,
+            "text": "License Verification"
+          },
+          {
+            "level": 3,
+            "text": "CAT Readiness Check"
+          },
+          {
+            "level": 3,
+            "text": "Licensed & Deployed"
+          },
+          {
+            "level": 2,
+            "text": "The Insurance Staffing Challenge"
+          },
+          {
+            "level": 3,
+            "text": "The TaasFlow Solution"
+          },
+          {
+            "level": 2,
+            "text": "Why Insurance companies choose TaasFlow"
+          },
+          {
+            "level": 3,
+            "text": "License Verified"
+          },
+          {
+            "level": 3,
+            "text": "CAT Response Ready"
+          },
+          {
+            "level": 3,
+            "text": "Lines of Business"
+          },
+          {
+            "level": 3,
+            "text": "Full Insurance Support"
+          },
+          {
+            "level": 2,
+            "text": "Positions we fill for Insurance"
+          },
+          {
+            "level": 2,
+            "text": "Real results for Insurance teams"
+          },
+          {
+            "level": 2,
+            "text": "Insurance Salary Explorer"
+          },
+          {
+            "level": 2,
+            "text": "Insurance Career Path"
+          },
+          {
+            "level": 3,
+            "text": "Senior"
+          },
+          {
+            "level": 4,
+            "text": "Key Skills at This Level"
+          },
+          {
+            "level": 2,
+            "text": "Insurance Hiring Trends"
+          },
+          {
+            "level": 2,
+            "text": "Interactive Hiring Guide"
+          },
+          {
+            "level": 3,
+            "text": "Define Your Ideal Candidate"
+          },
+          {
+            "level": 3,
+            "text": "Optimize Your Job Posting"
+          },
+          {
+            "level": 3,
+            "text": "Source Beyond Job Boards"
+          },
+          {
+            "level": 3,
+            "text": "Structure Your Interview Process"
+          },
+          {
+            "level": 3,
+            "text": "Close & Onboard Effectively"
+          },
+          {
+            "level": 2,
+            "text": "Insurance Recruiting Insights"
+          },
+          {
+            "level": 3,
+            "text": "Insurance Industry Hiring 2026: Talent Strategies for Carriers, Brokers, and InsurTech"
+          },
+          {
+            "level": 3,
+            "text": "InsurTech Hiring: Finding Innovation Talent in a Traditional Industry"
+          },
+          {
+            "level": 3,
+            "text": "Insurance Hiring 2026: How to Recruit Underwriters, Actuaries, and InsurTech Talent"
+          },
+          {
+            "level": 2,
+            "text": "Frequently Asked Questions"
+          },
+          {
+            "level": 3,
+            "text": "How do you verify insurance licenses?"
+          },
+          {
+            "level": 3,
+            "text": "Can you deploy adjusters for CAT events?"
+          },
+          {
+            "level": 3,
+            "text": "Do you have commercial lines specialists?"
+          },
+          {
+            "level": 2,
+            "text": "Discover related industries"
+          },
+          {
+            "level": 2,
+            "text": "Ready to build your Insurance team?"
+          },
+          {
+            "level": 2,
+            "text": "Insurance Recruiting"
+          },
+          {
+            "level": 3,
+            "text": "Hub Page"
+          },
+          {
+            "level": 3,
+            "text": "Related Articles"
+          },
+          {
+            "level": 3,
+            "text": "Get Started"
+          },
+          {
+            "level": 4,
+            "text": "Newsletter"
+          },
+          {
+            "level": 4,
+            "text": "For candidates"
+          },
+          {
+            "level": 4,
+            "text": "For companies"
+          },
+          {
+            "level": 4,
+            "text": "Industries"
+          },
+          {
+            "level": 4,
+            "text": "Company"
+          }
+        ],
+        "sections": [
+          "SECTION",
+          "Insurance Talent for Carriers, Agencies & MGAs",
+          "SECTION",
+          "Insurance Industry Insights",
+          "Ready to transform your insurance recruiting?",
+          "How we hire for Insurance",
+          "The Insurance Staffing Challenge",
+          "Why Insurance companies choose TaasFlow",
+          "Positions we fill for Insurance",
+          "Real results for Insurance teams",
+          "Insurance Salary Explorer",
+          "Insurance Career Path",
+          "Insurance Hiring Trends",
+          "Interactive Hiring Guide",
+          "Insurance Recruiting Insights",
+          "Frequently Asked Questions",
+          "Discover related industries",
+          "SECTION",
+          "Ready to build your Insurance team?",
+          "Insurance Recruiting"
+        ],
+        "textBlocks": [
+          "Solutions",
+          "Industries",
+          "Resources",
+          "Home",
+          "Industries",
+          "Insurance",
+          "Access licensed producers, claims adjusters, and underwriters with state license verification. Scale your insurance operations for growth and peak periods.",
+          "Key market data and trends shaping talent demand in your industry. (Hover for details)",
+          "US insurance industry direct premiums written",
+          "Projected insurance workforce gap by 2026",
+          "Annual US insured catastrophe losses",
+          "Annual investment in insurtech startups",
+          "Start a risk-free pilot and receive qualified candidates in 14 days.",
+          "A tailored workflow for the challenges of insurance settings.",
+          "We identify your lines of business, state requirements, and license types needed.",
+          "Producer and adjuster licenses verified with state insurance departments and NIPR.",
+          "For adjusters, deployment readiness and catastrophe experience verified.",
+          "Verified insurance professionals placed with full license documentation.",
+          "Insurance requires licensed professionals, but license verification across states is time-consuming. You need producers who can sell in your markets immediately.",
+          "Catastrophe events create sudden claims surges. You need adjusters who can be deployed quickly and understand your claim handling procedures.",
+          "The industry is competing for talent with insurtech startups offering equity and flexibility. Traditional insurance roles need to offer competitive arrangements.",
+          "Licensed producers with multi-state licensure verified",
+          "Claims adjusters with CAT experience and deployment readiness",
+          "Underwriters with commercial and personal lines expertise",
+          "Operations and customer service professionals with insurance backgrounds",
+          "Flexible engagements for growth periods, CAT events, and special projects",
+          "We understand the unique challenges of your industry and deliver matching talent.",
+          "All producer licenses verified with state insurance departments before placement.",
+          "Pre-screened adjusters available for rapid deployment during catastrophe events.",
+          "Specialists in P&C, life, health, commercial, and specialty lines.",
+          "Sales, underwriting, claims, and operations professionals available.",
+          "Pre-vetted professionals, delivered weekly, ready to start.",
+          "- Regional P&C Carrier, 5-state footprint",
+          "Explore current compensation ranges for top roles. Data updated quarterly from industry benchmarks.",
+          "* Based on industry benchmarks from SHRM, Glassdoor, LinkedIn Salary, and BLS data. Actual compensation may vary.",
+          "Click any level to explore typical progression, salary ranges, and key skills.",
+          "Key metrics shaping the talent landscape. Stay ahead of market shifts.",
+          "Steady growth in hiring demand across this sector.",
+          "Increasing adoption of remote and hybrid work models.",
+          "Unfilled positions due to skills shortage in this industry.",
+          "Industry average continues to improve with modern sourcing.",
+          "Follow these proven steps to hire smarter. Track your progress and get actionable tips at every stage.",
+          "Create a detailed candidate persona with must-have vs nice-to-have skills, cultural fit criteria, and realistic salary expectations.",
+          "Write a compelling job description that sells the opportunity, not just lists requirements. Include salary range, growth path, and team culture.",
+          "Reach passive candidates through targeted outreach, employee referrals, and talent communities. 70% of top talent is not actively looking.",
+          "Design a consistent 3-4 stage process that evaluates skills, culture fit, and potential. Include take-home assessments where appropriate.",
+          "Move fast with competitive offers and start onboarding before day one. The first 90 days determine long-term retention.",
+          "Expert articles on recruiting and talent acquisition for insurance.",
+          "Half the insurance workforce will retire in the next decade. Here is how the industry is preparing for the talent transition.",
+          "InsurTech Hiring: Finding Innovation Talent in a Traditional Industry",
+          "InsurTech is transforming insurance, but finding candidates who bridge traditional insurance knowledge and modern technology is challenging.",
+          "Insurance Hiring 2026: How to Recruit Underwriters, Actuaries, and InsurTech Talent",
+          "The insurance industry faces a dual challenge: 50% of its workforce retiring by 2028 while InsurTech demands new capabilities. A complete hiring guide with salary data.",
+          "Common questions about TaasFlow for insurance.",
+          "Learn how we serve similar sectors with subscription recruiting.",
+          "Receive qualified insurance professionals weekly. No agency fees, no long-term contracts.",
+          "Related Industries",
+          "Talent as a Service",
+          "A global hiring system for teams that need consistent recruiting.",
+          "Weekly insights into talent acquisition. No spam.",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Book call",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "No recruitment agency fees. No placement charges. Subscription-based hiring system.",
+          "Copyright 2026 TaaSFlow. All rights reserved."
+        ],
+        "buttons": [
+          "Solutions",
+          "Industries",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Solutions",
+          "How it works",
+          "Pilot",
+          "Enterprise",
+          "Case studies",
+          "Jobs",
+          "Journey",
+          "Industries",
+          "Tech",
+          "SaaS & Cloud",
+          "Cybersecurity",
+          "Data & Analytics",
+          "Finance",
+          "Insurance",
+          "PE & VC",
+          "Accounting",
+          "Legal",
+          "Consulting",
+          "HR & Recruiting",
+          "Staffing Agencies",
+          "Sales",
+          "Marketing",
+          "E-commerce",
+          "Media",
+          "Real Estate",
+          "Construction",
+          "Hospitality",
+          "Healthcare",
+          "Public Sector",
+          "Non-Profit",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Success Stories",
+          "Talent Marketplace",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Start Insurance Pilot Program",
+          "Book call",
+          "Book call",
+          "1Entry-Level",
+          "2Mid-Level",
+          "3Senior",
+          "4Director / Lead",
+          "5VP / C-Suite",
+          "Next: Director / Lead",
+          "1Define Your Ideal Candidate1-2 days",
+          "1",
+          "Mark Complete",
+          "2Optimize Your Job PostingWrite a compelling job description that sells the opportunity, not just lists requirements. Include salary range, growth path, and team culture.1 day",
+          "2",
+          "3Source Beyond Job BoardsReach passive candidates through targeted outreach, employee referrals, and talent communities. 70% of top talent is not actively looking.Ongoing",
+          "3",
+          "4Structure Your Interview ProcessDesign a consistent 3-4 stage process that evaluates skills, culture fit, and potential. Include take-home assessments where appropriate.2-3 days setup",
+          "4",
+          "5Close & Onboard EffectivelyMove fast with competitive offers and start onboarding before day one. The first 90 days determine long-term retention.1-2 weeks",
+          "5",
+          "How do you verify insurance licenses?",
+          "Can you deploy adjusters for CAT events?",
+          "Do you have commercial lines specialists?",
+          "Start Insurance Pilot",
+          "Contact",
+          "Subscribe",
+          "Book call"
+        ],
+        "links": [
+          {
+            "text": "Skip to main content",
+            "href": "https://taasflow.com/industries/insurance#main-content"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "Browse jobs",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Join the network",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Browse open roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Home",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "Industries",
+            "href": "https://taasflow.com/industries"
+          },
+          {
+            "text": "View all articles",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "Industry Hiring GuidesInsuranceInsurance Industry Hiring 2026: Talent Strategies for Carriers, Brokers, and InsurTechHal",
+            "href": "https://taasflow.com/blog/insurance-industry-hiring-2026"
+          },
+          {
+            "text": "📋InsurTech Hiring: Finding Innovation Talent in a Traditional IndustryIndustry Hiring GuidesIndustry Hiring GuidesInsur",
+            "href": "https://taasflow.com/blog/insurtech-talent-acquisition"
+          },
+          {
+            "text": "🔍Insurance Hiring 2026: How to Recruit Underwriters, Actuaries, and InsurTech TalentIndustry SpotlightIndustry Spotligh",
+            "href": "https://taasflow.com/blog/insurance-hiring-modernization"
+          },
+          {
+            "text": "View all articles",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "Technology",
+            "href": "https://taasflow.com/industries/tech"
+          },
+          {
+            "text": "Legal",
+            "href": "https://taasflow.com/industries/legal"
+          },
+          {
+            "text": "Public Sector",
+            "href": "https://taasflow.com/industries/public-sector"
+          },
+          {
+            "text": "Finance & Banking",
+            "href": "https://taasflow.com/industries/finance"
+          },
+          {
+            "text": "Staffing Agencies",
+            "href": "https://taasflow.com/industries/staffing-agencies"
+          },
+          {
+            "text": "Healthcare",
+            "href": "https://taasflow.com/industries/healthcare"
+          },
+          {
+            "text": "Sales",
+            "href": "https://taasflow.com/industries/sales"
+          },
+          {
+            "text": "Marketing & Advertising",
+            "href": "https://taasflow.com/industries/marketing"
+          },
+          {
+            "text": "Compare all industries",
+            "href": "https://taasflow.com/industries/compare"
+          },
+          {
+            "text": "How it works",
+            "href": "https://taasflow.com/how-it-works"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "Start Pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "Jobs",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Blog",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "About",
+            "href": "https://taasflow.com/about"
+          },
+          {
+            "text": "Enterprise",
+            "href": "https://taasflow.com/enterprise"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://taasflow.com/faq"
+          },
+          {
+            "text": "Contact",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Looking for a job in insurance? Browse open positions",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Insurance Recruiting",
+            "href": "https://taasflow.com/industries/insurance"
+          },
+          {
+            "text": "Insurance Talent Gap",
+            "href": "https://taasflow.com/blog/insurance-talent-gap"
+          },
+          {
+            "text": "Recruiter Burnout Prevention",
+            "href": "https://taasflow.com/blog/recruiter-burnout-prevention"
+          },
+          {
+            "text": "Start a Pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "View Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "Onboarding Best Practices",
+            "href": "https://taasflow.com/blog/onboarding-best-practices"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "LinkedIn",
+            "href": "https://www.linkedin.com/company/taasflow/"
+          },
+          {
+            "text": "Browse roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Talent network",
+            "href": "https://taasflow.com/global-talent"
+          },
+          {
+            "text": "Member stories",
+            "href": "https://taasflow.com/candidate-success"
+          },
+          {
+            "text": "Start pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "Employer onboarding",
+            "href": "https://taasflow.com/employer-onboarding"
+          },
+          {
+            "text": "Case studies",
+            "href": "https://taasflow.com/case-studies"
+          },
+          {
+            "text": "Healthcare",
+            "href": "https://taasflow.com/industries/healthcare"
+          },
+          {
+            "text": "Technology",
+            "href": "https://taasflow.com/industries/tech"
+          },
+          {
+            "text": "Finance",
+            "href": "https://taasflow.com/industries/finance"
+          },
+          {
+            "text": "Legal",
+            "href": "https://taasflow.com/industries/legal"
+          },
+          {
+            "text": "All →",
+            "href": "https://taasflow.com/industries"
+          },
+          {
+            "text": "About us",
+            "href": "https://taasflow.com/about"
+          },
+          {
+            "text": "Blog",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://taasflow.com/faq"
+          },
+          {
+            "text": "Knowledge Base",
+            "href": "https://taasflow.com/knowledge-base"
+          },
+          {
+            "text": "Contact us",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Privacy Policy",
+            "href": "https://taasflow.com/privacy"
+          },
+          {
+            "text": "Terms of Service",
+            "href": "https://taasflow.com/terms"
+          }
+        ],
+        "images": [
+          {
+            "src": "https://taasflow.com/assets/logo-on-white-Dk9DIcMP.png",
+            "alt": "TaaSFlow logo"
+          },
+          {
+            "src": "https://taasflow.com/assets/insurance-B6J_8kEs.jpg",
+            "alt": ""
+          },
+          {
+            "src": "https://taasflow.com/assets/insurance-B6J_8kEs.jpg",
+            "alt": ""
+          },
+          {
+            "src": "https://taasflow.com/assets/insurance-B6J_8kEs.jpg",
+            "alt": ""
+          },
+          {
+            "src": "https://taasflow.com/assets/insurance-hiring-Bb4PTq5t.jpg",
+            "alt": "Insurance Industry Hiring 2026: Talent Strategies for Carriers, Brokers, and InsurTech"
+          },
+          {
+            "src": "https://taasflow.com/assets/logo-on-blue-CX6jlwjg.png",
+            "alt": "TaaSFlow logo"
+          }
+        ],
+        "forms": [
+          {
+            "action": "https://taasflow.com/industries/insurance",
+            "fields": [
+              "input"
+            ]
+          }
+        ],
+        "navLinks": [
+          "Browse jobs",
+          "Join the network",
+          "Browse open roles",
+          "Home",
+          "Industries",
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us"
+        ],
+        "footerLinks": [
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "Privacy Policy",
+          "Terms of Service"
+        ],
+        "horizontalOverflow": false,
+        "documentWidth": 1440,
+        "viewportWidth": 1440
+      },
+      "destination": {
+        "url": "https://clear-path-hubs.lovable.app/industries/insurance",
+        "finalUrl": "https://clear-path-hubs.lovable.app/industries/insurance",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [],
+        "title": "Insurance hiring — TaaSFlow",
+        "description": "Structured sourcing for carriers, brokers and MGAs. Ranked shortlists with evidence of the lines of business, product and distribution experience.",
+        "canonical": "https://clear-path-hubs.lovable.app/industries/insurance",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "twitter:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "og:title": "Insurance hiring — TaaSFlow",
+          "og:description": "Structured sourcing for carriers, brokers and MGAs. Ranked shortlists with evidence of the lines of business, product and distribution experience.",
+          "og:url": "https://clear-path-hubs.lovable.app/industries/insurance",
+          "og:type": "website",
+          "twitter:card": "summary_large_image",
+          "twitter:title": "Insurance hiring — TaaSFlow",
+          "twitter:description": "Structured sourcing for carriers, brokers and MGAs. Ranked shortlists with evidence of the lines of business, product and distribution experience."
+        },
+        "structuredData": [],
+        "h1": [
+          "Insurance hiring, calibrated per line of business."
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "Insurance hiring, calibrated per line of business."
+          },
+          {
+            "level": 2,
+            "text": "What we hear from Insurance teams"
+          },
+          {
+            "level": 3,
+            "text": "Line-of-business precision"
+          },
+          {
+            "level": 3,
+            "text": "Distribution and channel context"
+          },
+          {
+            "level": 3,
+            "text": "Technical and quantitative depth"
+          },
+          {
+            "level": 2,
+            "text": "Roles we source in Insurance"
+          },
+          {
+            "level": 3,
+            "text": "Submit the role"
+          },
+          {
+            "level": 3,
+            "text": "We source and score"
+          },
+          {
+            "level": 3,
+            "text": "Review in your workspace"
+          },
+          {
+            "level": 2,
+            "text": "Hiring in insurance?"
+          }
+        ],
+        "sections": [
+          "Insurance hiring, calibrated per line of business.",
+          "What we hear from Insurance teams",
+          "Roles we source in Insurance",
+          "Submit the role",
+          "Hiring in insurance?",
+          "SECTION"
+        ],
+        "textBlocks": [
+          "Home",
+          "Industries",
+          "Insurance",
+          "Insurance",
+          "TaaSFlow gives insurance leaders a workspace for every hire — underwriting, claims, actuarial, distribution — with rubrics tuned to the line of business and product.",
+          "Line-of-business rubric per requisition",
+          "Channel and distribution captured",
+          "Human review before publication",
+          "P&C, life, specialty and reinsurance each need distinct signal. Our rubric captures the lines and products actually handled instead of generic 'insurance experience'.",
+          "Direct, broker, MGA and bancassurance change the shape of the role. We capture the channel in intake so shortlists reflect it.",
+          "Underwriting authority, reserving methods and pricing exposure are captured as structured signals — not searched for in prose.",
+          "We calibrate the rubric to the seniority and specialisation you actually need.",
+          "Underwriters and senior underwriters",
+          "Claims managers and adjusters",
+          "Actuaries and pricing analysts",
+          "Product managers and portfolio leads",
+          "Broking and distribution leads",
+          "Risk and compliance officers",
+          "Operations and transformation leads",
+          "Reinsurance specialists",
+          "01",
+          "A guided intake captures everything the search needs, in one flow.",
+          "02",
+          "Multi-channel sourcing, role-specific rubric, evidence extracted from every CV.",
+          "03",
+          "Ranked shortlist, evidence side-by-side, Kanban pipeline, direct messaging.",
+          "See the full process on how it works.",
+          "Insurance",
+          "Submit the role — one workspace per requisition, ranked and reviewed."
+        ],
+        "buttons": [],
+        "links": [
+          {
+            "text": "Home",
+            "href": "https://clear-path-hubs.lovable.app/"
+          },
+          {
+            "text": "Industries",
+            "href": "https://clear-path-hubs.lovable.app/industries"
+          },
+          {
+            "text": "Start hiring",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "Talk to us",
+            "href": "https://clear-path-hubs.lovable.app/contact"
+          },
+          {
+            "text": "how it works",
+            "href": "https://clear-path-hubs.lovable.app/how-it-works"
+          },
+          {
+            "text": "Start intake",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "See other industries",
+            "href": "https://clear-path-hubs.lovable.app/industries"
+          },
+          {
+            "text": "Edit with",
+            "href": "https://lovable.dev/projects/1dc5ee7e-1294-441c-8288-850e79e443f6?utm_source=lovable-badge"
+          }
+        ],
+        "images": [],
+        "forms": [],
+        "navLinks": [
+          "Home",
+          "Industries"
+        ],
+        "footerLinks": [],
+        "horizontalOverflow": false,
+        "documentWidth": 1440,
+        "viewportWidth": 1440
+      },
+      "screenshots": {
+        "sourceFull": "reports/public-parity/screenshots/source/industries_insurance__desktop__full.png",
+        "sourceVisible": "reports/public-parity/screenshots/source/industries_insurance__desktop__visible.png",
+        "destinationFull": "reports/public-parity/screenshots/destination/industries_insurance__desktop__full.png",
+        "destinationVisible": "reports/public-parity/screenshots/destination/industries_insurance__desktop__visible.png"
+      },
+      "differences": [
+        "title: \"Insurance Talent | TaaSFlow - Talent as a Service\" vs \"Insurance hiring — TaaSFlow\"",
+        "meta description mismatch",
+        "H1 differs: [Insurance Talent for Carriers, Agencies & MGAs] vs [Insurance hiring, calibrated per line of business.]",
+        "heading overlap 0% (0/30)",
+        "section count 20 vs 6",
+        "form count 1 vs 0"
+      ]
+    }
+  ],
+  "summary": "18 differences detected",
+  "exclusions": []
+}

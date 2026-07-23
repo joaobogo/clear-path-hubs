@@ -17,7 +17,7 @@
         "consoleErrors": [],
         "failedRequests": [
           {
-            "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HJ2ECKCNK4&gtm=45je67l1v9245339446za200zd9245339446&_p=1784773830745&gcd=13l3l3l3l1l1&npa=0&_ng=1&dma=0&are=1&cid=2103567752.1784773831&frm=0&ngs=1&pscdl=noapi&rcb=11&sr=375x812&uaa=x86&uab=64&uafvl=Not-A.Brand%3B24.0.0.0%7CChromium%3B146.0.7680.80&uam=&uamb=0&uap=Windows&uapv=&uaw=0&ul=en-us&_s=1&tag_exp=115938465~115938469~118897920~118897930~119896803&dp=%2F&dt=TaaSFlow%20%7C%20Talent%20as%20a%20Service%20%7C%20Subscription%20Recruiting&dl=https%3A%2F%2Ftaasflow.com%2F&sid=1784773830&sct=1&seg=0&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&ep.role_type=public&ep.is_authenticated=false&tfd=1664",
+            "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HJ2ECKCNK4&gtm=45je67l1v9245339446za200zd9245339446&_p=1784773903562&gcd=13l3l3l3l1l1&npa=0&_ng=1&dma=0&are=1&cid=219449832.1784773904&frm=0&ngs=1&pscdl=noapi&rcb=11&sr=375x812&uaa=x86&uab=64&uafvl=Not-A.Brand%3B24.0.0.0%7CChromium%3B146.0.7680.80&uam=&uamb=0&uap=Windows&uapv=&uaw=0&ul=en-us&_s=1&tag_exp=115938466~115938469~118897920~118897930~119896802&dp=%2F&dt=TaaSFlow%20%7C%20Talent%20as%20a%20Service%20%7C%20Subscription%20Recruiting&dl=https%3A%2F%2Ftaasflow.com%2F&sid=1784773903&sct=1&seg=0&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&ep.role_type=public&ep.is_authenticated=false&tfd=661",
             "status": null,
             "failure": "net::ERR_ABORTED"
           }
@@ -1400,7 +1400,17 @@
         "consoleErrors": [],
         "failedRequests": [
           {
-            "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HJ2ECKCNK4&gtm=45je67l1v9245339446za200zd9245339446&_p=1784773835052&gcd=13l3l3l3l1l1&npa=0&_ng=1&dma=0&are=1&cid=435009285.1784773836&frm=0&ngs=1&pscdl=noapi&rcb=4&sr=768x1024&uaa=x86&uab=64&uafvl=Not-A.Brand%3B24.0.0.0%7CChromium%3B146.0.7680.80&uam=&uamb=0&uap=Windows&uapv=&uaw=0&ul=en-us&_s=1&tag_exp=115938465~115938468~118897920~118897930~119724321~119896803&dp=%2F&dt=TaaSFlow%20%7C%20Talent%20as%20a%20Service%20%7C%20Subscription%20Recruiting&dl=https%3A%2F%2Ftaasflow.com%2F&sid=1784773836&sct=1&seg=0&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&ep.role_type=public&ep.is_authenticated=false&tfd=1405",
+            "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HJ2ECKCNK4&gtm=45je67l1v9245339446za200zd9245339446&_p=1784773907267&gcd=13l3l3l3l1l1&npa=0&_ng=1&dma=0&are=1&cid=1829030098.1784773907&frm=0&ngs=1&pscdl=noapi&rcb=14&sr=768x1024&uaa=x86&uab=64&uafvl=Not-A.Brand%3B24.0.0.0%7CChromium%3B146.0.7680.80&uam=&uamb=0&uap=Windows&uapv=&uaw=0&ul=en-us&_s=1&tag_exp=115938466~115938468~118395333~118897920~118897930~119896803&dp=%2F&dt=TaaSFlow%20%7C%20Talent%20as%20a%20Service%20%7C%20Subscription%20Recruiting&dl=https%3A%2F%2Ftaasflow.com%2F&sid=1784773907&sct=1&seg=0&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&ep.role_type=public&ep.is_authenticated=false&tfd=447",
+            "status": null,
+            "failure": "net::ERR_ABORTED"
+          },
+          {
+            "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HJ2ECKCNK4&gtm=45je67l1v9245339446za200zd9245339446&_p=1784773907267&gcd=13l3l3l3l1l1&npa=0&_ng=1&dma=0&_eu=AAAAAAQ&are=1&cid=1829030098.1784773907&frm=0&ngs=1&pscdl=noapi&rcb=14&sr=768x1024&uaa=x86&uab=64&uafvl=Not-A.Brand%3B24.0.0.0%7CChromium%3B146.0.7680.80&uam=&uamb=0&uap=Windows&uapv=&uaw=0&ul=en-us&tag_exp=115938466~115938468~118395333~118897920~118897930~119896803&dp=%2F&dt=TaaSFlow%20%7C%20Talent%20as%20a%20Service%20%7C%20Subscription%20Recruiting&dl=https%3A%2F%2Ftaasflow.com%2F&sid=1784773907&sct=1&seg=0&_s=2&tfd=478",
+            "status": null,
+            "failure": "net::ERR_ABORTED"
+          },
+          {
+            "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HJ2ECKCNK4&gtm=45je67l1v9245339446za200zd9245339446&_p=1784773907267&gcd=13l3l3l3l1l1&npa=0&_ng=1&dma=0&_eu=AEAAAAQ&ae=a&are=1&cid=1829030098.1784773907&frm=0&ngs=1&pscdl=noapi&rcb=14&sr=768x1024&uaa=x86&uab=64&uafvl=Not-A.Brand%3B24.0.0.0%7CChromium%3B146.0.7680.80&uam=&uamb=0&uap=Windows&uapv=&uaw=0&ul=en-us&_s=3&tag_exp=115938466~115938468~118395333~118897920~118897930~119896803&sid=1784773907&sct=1&seg=0&dl=https%3A%2F%2Ftaasflow.com%2F&dt=TaaSFlow%20%7C%20Talent%20as%20a%20Service%20%7C%20Subscription%20Recruiting&en=scroll&epn.percent_scrolled=90&_et=9&tfd=927",
             "status": null,
             "failure": "net::ERR_ABORTED"
           }
@@ -2783,17 +2793,7 @@
         "consoleErrors": [],
         "failedRequests": [
           {
-            "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HJ2ECKCNK4&gtm=45je67l1v9245339446za200zd9245339446&_p=1784773838867&gcd=13l3l3l3l1l1&npa=0&_ng=1&dma=0&are=1&cid=351254612.1784773839&frm=0&ngs=1&pscdl=noapi&rcb=6&sr=1440x900&uaa=x86&uab=64&uafvl=Not-A.Brand%3B24.0.0.0%7CChromium%3B146.0.7680.80&uam=&uamb=0&uap=Windows&uapv=&uaw=0&ul=en-us&_s=1&tag_exp=115938466~115938469~118897920~118897930~119724321~119896803&dp=%2F&dt=TaaSFlow%20%7C%20Talent%20as%20a%20Service%20%7C%20Subscription%20Recruiting&dl=https%3A%2F%2Ftaasflow.com%2F&sid=1784773839&sct=1&seg=0&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&ep.role_type=public&ep.is_authenticated=false&tfd=572",
-            "status": null,
-            "failure": "net::ERR_ABORTED"
-          },
-          {
-            "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HJ2ECKCNK4&gtm=45je67l1v9245339446za200zd9245339446&_p=1784773838867&gcd=13l3l3l3l1l1&npa=0&_ng=1&dma=0&_eu=AAAAAAQ&are=1&cid=351254612.1784773839&frm=0&ngs=1&pscdl=noapi&rcb=6&sr=1440x900&uaa=x86&uab=64&uafvl=Not-A.Brand%3B24.0.0.0%7CChromium%3B146.0.7680.80&uam=&uamb=0&uap=Windows&uapv=&uaw=0&ul=en-us&tag_exp=115938466~115938469~118897920~118897930~119724321~119896803&dp=%2F&dt=TaaSFlow%20%7C%20Talent%20as%20a%20Service%20%7C%20Subscription%20Recruiting&dl=https%3A%2F%2Ftaasflow.com%2F&sid=1784773839&sct=1&seg=0&_s=2&tfd=608",
-            "status": null,
-            "failure": "net::ERR_ABORTED"
-          },
-          {
-            "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HJ2ECKCNK4&gtm=45je67l1v9245339446za200zd9245339446&_p=1784773838867&gcd=13l3l3l3l1l1&npa=0&_ng=1&dma=0&_eu=AEAAAAQ&ae=a&are=1&cid=351254612.1784773839&frm=0&ngs=1&pscdl=noapi&rcb=6&sr=1440x900&uaa=x86&uab=64&uafvl=Not-A.Brand%3B24.0.0.0%7CChromium%3B146.0.7680.80&uam=&uamb=0&uap=Windows&uapv=&uaw=0&ul=en-us&_s=3&tag_exp=115938466~115938469~118897920~118897930~119724321~119896803&sid=1784773839&sct=1&seg=0&dl=https%3A%2F%2Ftaasflow.com%2F&dt=TaaSFlow%20%E2%80%94%20Your%20hiring%20team%2C%20on%20demand&en=scroll&epn.percent_scrolled=90&_et=12&tfd=1023",
+            "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HJ2ECKCNK4&gtm=45je67l1v9245339446za200zd9245339446&_p=1784773911115&gcd=13l3l3l3l1l1&npa=0&_ng=1&dma=0&are=1&cid=2143479910.1784773912&frm=0&ngs=1&pscdl=noapi&rcb=17&sr=1440x900&uaa=x86&uab=64&uafvl=Not-A.Brand%3B24.0.0.0%7CChromium%3B146.0.7680.80&uam=&uamb=0&uap=Windows&uapv=&uaw=0&ul=en-us&_s=1&tag_exp=115938466~115938468~118897920~118897930~119527020~119896803&dp=%2F&dt=TaaSFlow%20%7C%20Talent%20as%20a%20Service%20%7C%20Subscription%20Recruiting&dl=https%3A%2F%2Ftaasflow.com%2F&sid=1784773912&sct=1&seg=0&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&ep.role_type=public&ep.is_authenticated=false&tfd=1301",
             "status": null,
             "failure": "net::ERR_ABORTED"
           }

@@ -1,0 +1,3325 @@
+{
+  "sourcePath": "/industries/real-estate",
+  "destinationPath": "/industries/real-estate",
+  "pageType": "industry_page",
+  "protected": false,
+  "verdict": "MAJOR_DIFFERENCE",
+  "severity": "HIGH",
+  "viewports": [
+    {
+      "viewport": "mobile",
+      "source": {
+        "url": "https://taasflow.com/industries/real-estate",
+        "finalUrl": "https://taasflow.com/industries/real-estate",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [
+          {
+            "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HJ2ECKCNK4&gtm=45je67l1h1v9245339446za200zd9245339446&_p=1784774231280&gcd=13l3l3l3l1l1&npa=0&_ng=1&dma=0&are=1&cid=1675439984.1784774232&frm=0&ngs=1&pscdl=noapi&rcb=16&sr=375x812&uaa=x86&uab=64&uafvl=Not-A.Brand%3B24.0.0.0%7CChromium%3B146.0.7680.80&uam=&uamb=0&uap=Windows&uapv=&uaw=0&ul=en-us&_s=1&tag_exp=115938465~115938468~118012009~118897920~118897930~119724320~119896803&dp=%2Findustries%2Freal-estate&dt=TaaSFlow%20%7C%20Talent%20as%20a%20Service%20%7C%20Subscription%20Recruiting&dl=https%3A%2F%2Ftaasflow.com%2Findustries%2Freal-estate&sid=1784774231&sct=1&seg=0&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&ep.role_type=public&ep.is_authenticated=false&tfd=721",
+            "status": null,
+            "failure": "net::ERR_ABORTED"
+          }
+        ],
+        "title": "Real Estate Talent | TaaSFlow - Talent as a Service",
+        "description": "On-demand real estate professionals including licensed agents, property managers, and transaction coordinators. Scale for market opportunities.",
+        "canonical": "https://taasflow.com/industries/real-estate",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:type": "website",
+          "og:url": "https://taasflow.com/industries/real-estate",
+          "og:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "og:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "og:image": "https://taasflow.com/og-image.png",
+          "og:image:width": "1200",
+          "og:image:height": "630",
+          "og:locale": "en_US",
+          "twitter:card": "summary_large_image",
+          "twitter:site": "@TaasFlow",
+          "twitter:creator": "@TaasFlow",
+          "twitter:url": "https://taasflow.com/industries/real-estate",
+          "twitter:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "twitter:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "twitter:image": "https://taasflow.com/og-image.png"
+        },
+        "structuredData": [
+          {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "@id": "https://taasflow.com/#organization",
+            "name": "TaaSFlow",
+            "legalName": "TaaSFlow",
+            "url": "https://taasflow.com/",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://taasflow.com/favicon.png",
+              "width": 512,
+              "height": 512
+            },
+            "image": "https://taasflow.com/og-image.png",
+            "description": "Talent as a Service — subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+            "slogan": "Your hiring team. On demand.",
+            "foundingDate": "2024",
+            "areaServed": [
+              {
+                "@type": "Country",
+                "name": "United States"
+              },
+              {
+                "@type": "Country",
+                "name": "United Arab Emirates"
+              },
+              {
+                "@type": "Country",
+                "name": "United Kingdom"
+              },
+              {
+                "@type": "Country",
+                "name": "Brazil"
+              }
+            ],
+            "knowsAbout": [
+              "Subscription recruiting",
+              "Talent as a Service",
+              "Candidate sourcing",
+              "Pre-screened candidates",
+              "Recruitment process outsourcing"
+            ],
+            "contactPoint": [
+              {
+                "@type": "ContactPoint",
+                "contactType": "sales",
+                "email": "hello@taasflow.com",
+                "url": "https://taasflow.com/contact",
+                "availableLanguage": [
+                  "English",
+                  "Portuguese",
+                  "Spanish"
+                ]
+              }
+            ],
+            "sameAs": [
+              "https://www.linkedin.com/company/taasflow",
+              "https://twitter.com/TaasFlow"
+            ]
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "@id": "https://taasflow.com/#website",
+            "name": "TaaSFlow",
+            "alternateName": "Talent as a Service",
+            "url": "https://taasflow.com/",
+            "description": "Subscription recruiting that delivers pre-screened, ranked candidates in 14 days.",
+            "inLanguage": "en-US",
+            "publisher": {
+              "@id": "https://taasflow.com/#organization"
+            },
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": {
+                "@type": "EntryPoint",
+                "urlTemplate": "https://taasflow.com/jobs?q={search_term_string}"
+              },
+              "query-input": "required name=search_term_string"
+            }
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "Service",
+            "name": "Real Estate Talent Sourcing",
+            "description": "On-demand real estate professionals including licensed agents, property managers, and transaction coordinators. Scale for market opportunities.",
+            "provider": {
+              "@type": "Organization",
+              "name": "TaasFlow",
+              "url": "https://taasflow.com"
+            },
+            "serviceType": "Talent Acquisition",
+            "areaServed": "United States",
+            "hasOfferCatalog": {
+              "@type": "OfferCatalog",
+              "name": "Real Estate Recruiting Services",
+              "itemListElement": [
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Real Estate Agents Recruiting"
+                  },
+                  "position": 1
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Transaction Coordinators Recruiting"
+                  },
+                  "position": 2
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Property Managers Recruiting"
+                  },
+                  "position": 3
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Leasing Agents Recruiting"
+                  },
+                  "position": 4
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Real Estate Analysts Recruiting"
+                  },
+                  "position": 5
+                }
+              ]
+            }
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "https://taasflow.com"
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Industries",
+                "item": "https://taasflow.com/industries"
+              },
+              {
+                "@type": "ListItem",
+                "position": 3,
+                "name": "Real Estate",
+                "item": "https://taasflow.com/industries//industries/real-estate"
+              }
+            ]
+          }
+        ],
+        "h1": [
+          "Real Estate Professionals for Brokerages & Property Management"
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "Real Estate Professionals for Brokerages & Property Management"
+          },
+          {
+            "level": 2,
+            "text": "Real Estate Industry Insights"
+          },
+          {
+            "level": 3,
+            "text": "Transaction Volume"
+          },
+          {
+            "level": 3,
+            "text": "Agent Count"
+          },
+          {
+            "level": 3,
+            "text": "Commission Pressure"
+          },
+          {
+            "level": 3,
+            "text": "TC Market"
+          },
+          {
+            "level": 3,
+            "text": "Industry Overview"
+          },
+          {
+            "level": 3,
+            "text": "Ready to transform your real estate recruiting?"
+          },
+          {
+            "level": 2,
+            "text": "How we hire for Real Estate"
+          },
+          {
+            "level": 3,
+            "text": "Market & License Mapping"
+          },
+          {
+            "level": 3,
+            "text": "License Verification"
+          },
+          {
+            "level": 3,
+            "text": "Segment Experience Match"
+          },
+          {
+            "level": 3,
+            "text": "Transaction-Ready Placement"
+          },
+          {
+            "level": 2,
+            "text": "The Real Estate Staffing Challenge"
+          },
+          {
+            "level": 3,
+            "text": "The TaasFlow Solution"
+          },
+          {
+            "level": 2,
+            "text": "Why Real Estate companies choose TaasFlow"
+          },
+          {
+            "level": 3,
+            "text": "License Verified"
+          },
+          {
+            "level": 3,
+            "text": "Cycle-Aligned Staffing"
+          },
+          {
+            "level": 3,
+            "text": "Market Expertise"
+          },
+          {
+            "level": 3,
+            "text": "Fast Transaction Support"
+          },
+          {
+            "level": 2,
+            "text": "Positions we fill for Real Estate"
+          },
+          {
+            "level": 2,
+            "text": "Real results for Real Estate teams"
+          },
+          {
+            "level": 2,
+            "text": "Real Estate Salary Explorer"
+          },
+          {
+            "level": 2,
+            "text": "Real Estate Career Path"
+          },
+          {
+            "level": 3,
+            "text": "Senior"
+          },
+          {
+            "level": 4,
+            "text": "Key Skills at This Level"
+          },
+          {
+            "level": 2,
+            "text": "Real Estate Hiring Trends"
+          },
+          {
+            "level": 2,
+            "text": "Interactive Hiring Guide"
+          },
+          {
+            "level": 3,
+            "text": "Define Your Ideal Candidate"
+          },
+          {
+            "level": 3,
+            "text": "Optimize Your Job Posting"
+          },
+          {
+            "level": 3,
+            "text": "Source Beyond Job Boards"
+          },
+          {
+            "level": 3,
+            "text": "Structure Your Interview Process"
+          },
+          {
+            "level": 3,
+            "text": "Close & Onboard Effectively"
+          },
+          {
+            "level": 2,
+            "text": "Real Estate Recruiting Insights"
+          },
+          {
+            "level": 3,
+            "text": "Real Estate Talent Acquisition: Hiring for Commercial, Residential, and PropTech"
+          },
+          {
+            "level": 3,
+            "text": "PropTech Hiring: Building Teams at the Intersection of Real Estate and Technology"
+          },
+          {
+            "level": 3,
+            "text": "Real Estate Hiring Trends 2026: How to Build High-Performing Teams from Brokerage to PropTech"
+          },
+          {
+            "level": 2,
+            "text": "Frequently Asked Questions"
+          },
+          {
+            "level": 3,
+            "text": "Do you verify real estate licenses?"
+          },
+          {
+            "level": 3,
+            "text": "Do you have commercial real estate professionals?"
+          },
+          {
+            "level": 3,
+            "text": "Can you help with property management staffing?"
+          },
+          {
+            "level": 2,
+            "text": "Discover related industries"
+          },
+          {
+            "level": 2,
+            "text": "Ready to build your Real Estate team?"
+          },
+          {
+            "level": 2,
+            "text": "Real Estate Recruiting"
+          },
+          {
+            "level": 3,
+            "text": "Hub Page"
+          },
+          {
+            "level": 3,
+            "text": "Related Articles"
+          },
+          {
+            "level": 3,
+            "text": "Get Started"
+          },
+          {
+            "level": 4,
+            "text": "Newsletter"
+          },
+          {
+            "level": 4,
+            "text": "For candidates"
+          },
+          {
+            "level": 4,
+            "text": "For companies"
+          },
+          {
+            "level": 4,
+            "text": "Industries"
+          },
+          {
+            "level": 4,
+            "text": "Company"
+          },
+          {
+            "level": 3,
+            "text": "Cookie Preferences"
+          }
+        ],
+        "sections": [
+          "SECTION",
+          "Real Estate Professionals for Brokerages & Property Management",
+          "SECTION",
+          "Real Estate Industry Insights",
+          "Ready to transform your real estate recruiting?",
+          "How we hire for Real Estate",
+          "The Real Estate Staffing Challenge",
+          "Why Real Estate companies choose TaasFlow",
+          "Positions we fill for Real Estate",
+          "Real results for Real Estate teams",
+          "Real Estate Salary Explorer",
+          "Real Estate Career Path",
+          "Real Estate Hiring Trends",
+          "Interactive Hiring Guide",
+          "Real Estate Recruiting Insights",
+          "Frequently Asked Questions",
+          "Discover related industries",
+          "SECTION",
+          "Ready to build your Real Estate team?",
+          "Real Estate Recruiting"
+        ],
+        "textBlocks": [
+          "Solutions",
+          "Industries",
+          "Resources",
+          "Home",
+          "Industries",
+          "Real Estate",
+          "Access licensed agents, property managers, and transaction coordinators. Scale your real estate operations for market cycles and portfolio growth.",
+          "Key market data and trends shaping talent demand in your industry. (Hover for details)",
+          "Annual home sales in the US market",
+          "Licensed real estate agents in the US",
+          "Average reduction in commission rates since 2020",
+          "Transaction coordination services market size",
+          "Start a risk-free pilot and receive qualified candidates in 14 days.",
+          "A tailored workflow for the challenges of real estate settings.",
+          "We identify your market segment, state licensing requirements, and transaction volume.",
+          "Agent and broker licenses verified with state real estate commissions.",
+          "Candidates matched to your specific segment: residential, commercial, multifamily, etc.",
+          "Licensed professionals delivered ready to handle your deal flow immediately.",
+          "Real estate is cyclical. Hot markets require immediate capacity, but permanent hires become overhead when markets cool.",
+          "Transaction volume fluctuates unpredictably. You need coordinators and support staff who can scale with your deal flow.",
+          "Finding licensed professionals who understand your market and can represent your brand properly is challenging and time-consuming.",
+          "Licensed agents and brokers with state license verification",
+          "Transaction coordinators experienced with high-volume deal flow",
+          "Property managers with residential and commercial portfolio experience",
+          "Administrative support familiar with real estate operations and software",
+          "Market-specific experience: residential, commercial, multifamily, industrial",
+          "We understand the unique challenges of your industry and deliver matching talent.",
+          "All agent and broker licenses verified with state real estate commissions.",
+          "Scale up for hot markets, scale back when volume decreases.",
+          "Professionals with experience in your specific real estate segment.",
+          "Coordinators who can handle high-volume deal flow immediately.",
+          "Pre-vetted professionals, delivered weekly, ready to start.",
+          "- Residential Brokerage, 3 offices",
+          "Explore current compensation ranges for top roles. Data updated quarterly from industry benchmarks.",
+          "* Based on industry benchmarks from SHRM, Glassdoor, LinkedIn Salary, and BLS data. Actual compensation may vary.",
+          "Click any level to explore typical progression, salary ranges, and key skills.",
+          "Key metrics shaping the talent landscape. Stay ahead of market shifts.",
+          "Steady growth in hiring demand across this sector.",
+          "Increasing adoption of remote and hybrid work models.",
+          "Unfilled positions due to skills shortage in this industry.",
+          "Industry average continues to improve with modern sourcing.",
+          "Follow these proven steps to hire smarter. Track your progress and get actionable tips at every stage.",
+          "Create a detailed candidate persona with must-have vs nice-to-have skills, cultural fit criteria, and realistic salary expectations.",
+          "Write a compelling job description that sells the opportunity, not just lists requirements. Include salary range, growth path, and team culture.",
+          "Reach passive candidates through targeted outreach, employee referrals, and talent communities. 70% of top talent is not actively looking.",
+          "Design a consistent 3-4 stage process that evaluates skills, culture fit, and potential. Include take-home assessments where appropriate.",
+          "Move fast with competitive offers and start onboarding before day one. The first 90 days determine long-term retention.",
+          "Expert articles on recruiting and talent acquisition for real estate.",
+          "The real estate industry is bifurcating between traditional and tech-enabled models. Here is how to hire for both.",
+          "PropTech Hiring: Building Teams at the Intersection of Real Estate and Technology",
+          "PropTech is transforming real estate with AI, IoT, and data analytics. Here is how to hire for this rapidly growing sector.",
+          "Real Estate Hiring Trends 2026: How to Build High-Performing Teams from Brokerage to PropTech",
+          "The real estate industry spans traditional brokerage to cutting-edge PropTech. Learn how to recruit across all segments with salary benchmarks and proven strategies.",
+          "Common questions about TaasFlow for real estate.",
+          "Learn how we serve similar sectors with subscription recruiting.",
+          "Receive qualified real estate professionals weekly. No agency fees, no long-term contracts.",
+          "Related Industries",
+          "Talent as a Service",
+          "A global hiring system for teams that need consistent recruiting.",
+          "Weekly insights into talent acquisition. No spam.",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Book call",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "No recruitment agency fees. No placement charges. Subscription-based hiring system.",
+          "Copyright 2026 TaaSFlow. All rights reserved.",
+          "We use essential cookies for core functionality. With your consent, we use analytics (Google Analytics) and marketing technologies (Meta Pixel, Apollo, Retention.com/RB2B) to understand website performance, improve campaigns, and measure conversions safely. Your data is processed in accordance with GDPR and our Privacy Notice. You can change your preferences at any time."
+        ],
+        "buttons": [
+          "Solutions",
+          "Industries",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Solutions",
+          "How it works",
+          "Pilot",
+          "Enterprise",
+          "Case studies",
+          "Jobs",
+          "Journey",
+          "Industries",
+          "Tech",
+          "SaaS & Cloud",
+          "Cybersecurity",
+          "Data & Analytics",
+          "Finance",
+          "Insurance",
+          "PE & VC",
+          "Accounting",
+          "Legal",
+          "Consulting",
+          "HR & Recruiting",
+          "Staffing Agencies",
+          "Sales",
+          "Marketing",
+          "E-commerce",
+          "Media",
+          "Real Estate",
+          "Construction",
+          "Hospitality",
+          "Healthcare",
+          "Public Sector",
+          "Non-Profit",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Success Stories",
+          "Talent Marketplace",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Start Real Estate Pilot Program",
+          "Book call",
+          "Book call",
+          "1Entry-Level",
+          "2Mid-Level",
+          "3Senior",
+          "4Director / Lead",
+          "5VP / C-Suite",
+          "Next: Director / Lead",
+          "1Define Your Ideal Candidate1-2 days",
+          "1",
+          "Mark Complete",
+          "2Optimize Your Job PostingWrite a compelling job description that sells the opportunity, not just lists requirements. Include salary range, growth path, and team culture.1 day",
+          "2",
+          "3Source Beyond Job BoardsReach passive candidates through targeted outreach, employee referrals, and talent communities. 70% of top talent is not actively looking.Ongoing",
+          "3",
+          "4Structure Your Interview ProcessDesign a consistent 3-4 stage process that evaluates skills, culture fit, and potential. Include take-home assessments where appropriate.2-3 days setup",
+          "4",
+          "5Close & Onboard EffectivelyMove fast with competitive offers and start onboarding before day one. The first 90 days determine long-term retention.1-2 weeks",
+          "5",
+          "Do you verify real estate licenses?",
+          "Do you have commercial real estate professionals?",
+          "Can you help with property management staffing?",
+          "Start Real Estate Pilot",
+          "Contact",
+          "Subscribe",
+          "Book call"
+        ],
+        "links": [
+          {
+            "text": "Skip to main content",
+            "href": "https://taasflow.com/industries/real-estate#main-content"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "Browse jobs",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Join the network",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Browse open roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Home",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "Industries",
+            "href": "https://taasflow.com/industries"
+          },
+          {
+            "text": "View all articles",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "Industry Hiring GuidesReal EstateReal Estate Talent Acquisition: Hiring for Commercial, Residential, and PropTechThe rea",
+            "href": "https://taasflow.com/blog/real-estate-talent-acquisition-guide"
+          },
+          {
+            "text": "📋PropTech Hiring: Building Teams at the Intersection of Real Estate and TechnologyIndustry Hiring GuidesIndustry Hiring",
+            "href": "https://taasflow.com/blog/proptech-talent-acquisition"
+          },
+          {
+            "text": "🔍Real Estate Hiring Trends 2026: How to Build High-Performing Teams from Brokerage to PropTechIndustry SpotlightIndustr",
+            "href": "https://taasflow.com/blog/real-estate-hiring-trends"
+          },
+          {
+            "text": "View all articles",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "Technology",
+            "href": "https://taasflow.com/industries/tech"
+          },
+          {
+            "text": "Legal",
+            "href": "https://taasflow.com/industries/legal"
+          },
+          {
+            "text": "Public Sector",
+            "href": "https://taasflow.com/industries/public-sector"
+          },
+          {
+            "text": "Finance & Banking",
+            "href": "https://taasflow.com/industries/finance"
+          },
+          {
+            "text": "Staffing Agencies",
+            "href": "https://taasflow.com/industries/staffing-agencies"
+          },
+          {
+            "text": "Healthcare",
+            "href": "https://taasflow.com/industries/healthcare"
+          },
+          {
+            "text": "Sales",
+            "href": "https://taasflow.com/industries/sales"
+          },
+          {
+            "text": "Marketing & Advertising",
+            "href": "https://taasflow.com/industries/marketing"
+          },
+          {
+            "text": "Compare all industries",
+            "href": "https://taasflow.com/industries/compare"
+          },
+          {
+            "text": "How it works",
+            "href": "https://taasflow.com/how-it-works"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "Start Pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "Jobs",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Blog",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "About",
+            "href": "https://taasflow.com/about"
+          },
+          {
+            "text": "Enterprise",
+            "href": "https://taasflow.com/enterprise"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://taasflow.com/faq"
+          },
+          {
+            "text": "Contact",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Looking for a job in real estate? Browse open positions",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Real Estate Recruiting",
+            "href": "https://taasflow.com/industries/real-estate"
+          },
+          {
+            "text": "Real Estate Hiring Guide",
+            "href": "https://taasflow.com/blog/real-estate-hiring-guide"
+          },
+          {
+            "text": "Remote Hiring Practices",
+            "href": "https://taasflow.com/blog/remote-hiring-best-practices"
+          },
+          {
+            "text": "Start a Pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "Talk to Us",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Technology Recruiting",
+            "href": "https://taasflow.com/industries/tech"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "LinkedIn",
+            "href": "https://www.linkedin.com/company/taasflow/"
+          },
+          {
+            "text": "Browse roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Talent network",
+            "href": "https://taasflow.com/global-talent"
+          },
+          {
+            "text": "Member stories",
+            "href": "https://taasflow.com/candidate-success"
+          },
+          {
+            "text": "Start pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "Employer onboarding",
+            "href": "https://taasflow.com/employer-onboarding"
+          },
+          {
+            "text": "Case studies",
+            "href": "https://taasflow.com/case-studies"
+          },
+          {
+            "text": "Healthcare",
+            "href": "https://taasflow.com/industries/healthcare"
+          },
+          {
+            "text": "Technology",
+            "href": "https://taasflow.com/industries/tech"
+          },
+          {
+            "text": "Finance",
+            "href": "https://taasflow.com/industries/finance"
+          },
+          {
+            "text": "Legal",
+            "href": "https://taasflow.com/industries/legal"
+          },
+          {
+            "text": "All →",
+            "href": "https://taasflow.com/industries"
+          },
+          {
+            "text": "About us",
+            "href": "https://taasflow.com/about"
+          },
+          {
+            "text": "Blog",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://taasflow.com/faq"
+          },
+          {
+            "text": "Knowledge Base",
+            "href": "https://taasflow.com/knowledge-base"
+          },
+          {
+            "text": "Contact us",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Privacy Policy",
+            "href": "https://taasflow.com/privacy"
+          },
+          {
+            "text": "Terms of Service",
+            "href": "https://taasflow.com/terms"
+          },
+          {
+            "text": "Privacy Notice",
+            "href": "https://taasflow.com/privacy"
+          }
+        ],
+        "images": [
+          {
+            "src": "https://taasflow.com/assets/logo-on-white-Dk9DIcMP.png",
+            "alt": "TaaSFlow logo"
+          },
+          {
+            "src": "https://taasflow.com/assets/real-estate-Dpu59h1G.jpg",
+            "alt": ""
+          },
+          {
+            "src": "https://taasflow.com/assets/real-estate-Dpu59h1G.jpg",
+            "alt": ""
+          },
+          {
+            "src": "https://taasflow.com/assets/real-estate-Dpu59h1G.jpg",
+            "alt": ""
+          },
+          {
+            "src": "https://taasflow.com/assets/real-estate-hiring-BsVESjoE.jpg",
+            "alt": "Real Estate Talent Acquisition: Hiring for Commercial, Residential, and PropTech"
+          },
+          {
+            "src": "https://taasflow.com/assets/logo-on-blue-CX6jlwjg.png",
+            "alt": "TaaSFlow logo"
+          }
+        ],
+        "forms": [
+          {
+            "action": "https://taasflow.com/industries/real-estate",
+            "fields": [
+              "input"
+            ]
+          }
+        ],
+        "navLinks": [
+          "Browse jobs",
+          "Join the network",
+          "Browse open roles",
+          "Home",
+          "Industries",
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us"
+        ],
+        "footerLinks": [
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "Privacy Policy",
+          "Terms of Service"
+        ],
+        "horizontalOverflow": false,
+        "documentWidth": 375,
+        "viewportWidth": 375
+      },
+      "destination": {
+        "url": "https://clear-path-hubs.lovable.app/industries/real-estate",
+        "finalUrl": "https://clear-path-hubs.lovable.app/industries/real-estate",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [],
+        "title": "Real estate hiring — TaaSFlow",
+        "description": "Structured sourcing for owners, developers, operators and real-estate services firms. Ranked shortlists with evidence of asset class, market and lifecycle experience.",
+        "canonical": "https://clear-path-hubs.lovable.app/industries/real-estate",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "twitter:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "og:title": "Real estate hiring — TaaSFlow",
+          "og:description": "Structured sourcing for owners, developers, operators and real-estate services firms. Ranked shortlists with evidence of asset class, market and lifecycle experience.",
+          "og:url": "https://clear-path-hubs.lovable.app/industries/real-estate",
+          "og:type": "website",
+          "twitter:card": "summary_large_image",
+          "twitter:title": "Real estate hiring — TaaSFlow",
+          "twitter:description": "Structured sourcing for owners, developers, operators and real-estate services firms. Ranked shortlists with evidence of asset class, market and lifecycle experience."
+        },
+        "structuredData": [],
+        "h1": [
+          "Real estate hiring, calibrated per asset class and market."
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "Real estate hiring, calibrated per asset class and market."
+          },
+          {
+            "level": 2,
+            "text": "What we hear from Real Estate teams"
+          },
+          {
+            "level": 3,
+            "text": "Asset-class precision"
+          },
+          {
+            "level": 3,
+            "text": "Lifecycle-stage fit"
+          },
+          {
+            "level": 3,
+            "text": "Market and geography"
+          },
+          {
+            "level": 2,
+            "text": "Roles we source in Real Estate"
+          },
+          {
+            "level": 3,
+            "text": "Submit the role"
+          },
+          {
+            "level": 3,
+            "text": "We source and score"
+          },
+          {
+            "level": 3,
+            "text": "Review in your workspace"
+          },
+          {
+            "level": 2,
+            "text": "Hiring in real estate?"
+          }
+        ],
+        "sections": [
+          "Real estate hiring, calibrated per asset class and market.",
+          "What we hear from Real Estate teams",
+          "Roles we source in Real Estate",
+          "Submit the role",
+          "Hiring in real estate?",
+          "SECTION"
+        ],
+        "textBlocks": [
+          "Home",
+          "Industries",
+          "Real Estate",
+          "Real Estate",
+          "TaaSFlow gives real-estate leaders a workspace for every hire — investment, development, operations, asset management — with rubrics tuned per asset class and lifecycle stage.",
+          "Asset-class rubric per requisition",
+          "Lifecycle stage captured in intake",
+          "Human review before publication",
+          "Office, industrial, multifamily, retail and specialty each need distinct signal. Our rubric captures the asset classes actually worked on and the size of the portfolios owned.",
+          "Acquisitions, development, operations and dispositions reward different skills. We capture the lifecycle stage in intake so shortlists reflect it.",
+          "Real estate is local. Market coverage is captured as a first-class filter rather than a free-text note.",
+          "We calibrate the rubric to the seniority and specialisation you actually need.",
+          "Acquisitions and investments",
+          "Development and construction management",
+          "Asset managers",
+          "Property and facilities managers",
+          "Portfolio finance and analysts",
+          "Leasing and brokerage",
+          "Real-estate operations leads",
+          "Capital markets and debt specialists",
+          "01",
+          "A guided intake captures everything the search needs, in one flow.",
+          "02",
+          "Multi-channel sourcing, role-specific rubric, evidence extracted from every CV.",
+          "03",
+          "Ranked shortlist, evidence side-by-side, Kanban pipeline, direct messaging.",
+          "See the full process on how it works.",
+          "Real Estate",
+          "Submit the role — one workspace per requisition, ranked and reviewed."
+        ],
+        "buttons": [],
+        "links": [
+          {
+            "text": "Home",
+            "href": "https://clear-path-hubs.lovable.app/"
+          },
+          {
+            "text": "Industries",
+            "href": "https://clear-path-hubs.lovable.app/industries"
+          },
+          {
+            "text": "Start hiring",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "Talk to us",
+            "href": "https://clear-path-hubs.lovable.app/contact"
+          },
+          {
+            "text": "how it works",
+            "href": "https://clear-path-hubs.lovable.app/how-it-works"
+          },
+          {
+            "text": "Start intake",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "See other industries",
+            "href": "https://clear-path-hubs.lovable.app/industries"
+          },
+          {
+            "text": "Edit with",
+            "href": "https://lovable.dev/projects/1dc5ee7e-1294-441c-8288-850e79e443f6?utm_source=lovable-badge"
+          }
+        ],
+        "images": [],
+        "forms": [],
+        "navLinks": [
+          "Home",
+          "Industries"
+        ],
+        "footerLinks": [],
+        "horizontalOverflow": false,
+        "documentWidth": 375,
+        "viewportWidth": 375
+      },
+      "screenshots": {
+        "sourceFull": "reports/public-parity/screenshots/source/industries_real-estate__mobile__full.png",
+        "sourceVisible": "reports/public-parity/screenshots/source/industries_real-estate__mobile__visible.png",
+        "destinationFull": "reports/public-parity/screenshots/destination/industries_real-estate__mobile__full.png",
+        "destinationVisible": "reports/public-parity/screenshots/destination/industries_real-estate__mobile__visible.png"
+      },
+      "differences": [
+        "title: \"Real Estate Talent | TaaSFlow - Talent as a Service\" vs \"Real estate hiring — TaaSFlow\"",
+        "meta description mismatch",
+        "H1 differs: [Real Estate Professionals for Brokerages & Property Management] vs [Real estate hiring, calibrated per asset class and market.]",
+        "heading overlap 0% (0/30)",
+        "section count 20 vs 6",
+        "form count 1 vs 0"
+      ]
+    },
+    {
+      "viewport": "tablet",
+      "source": {
+        "url": "https://taasflow.com/industries/real-estate",
+        "finalUrl": "https://taasflow.com/industries/real-estate",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [
+          {
+            "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HJ2ECKCNK4&gtm=45je67l1v9245339446za200zd9245339446&_p=1784774235025&gcd=13l3l3l3l1l1&npa=0&_ng=1&dma=0&are=1&cid=1150627302.1784774235&frm=0&ngs=1&pscdl=noapi&rcb=14&sr=768x1024&uaa=x86&uab=64&uafvl=Not-A.Brand%3B24.0.0.0%7CChromium%3B146.0.7680.80&uam=&uamb=0&uap=Windows&uapv=&uaw=0&ul=en-us&_s=1&tag_exp=115616986~115938465~115938469~118395335~118897920~118897930~119724321~119896803&dp=%2Findustries%2Freal-estate&dt=TaaSFlow%20%7C%20Talent%20as%20a%20Service%20%7C%20Subscription%20Recruiting&dl=https%3A%2F%2Ftaasflow.com%2Findustries%2Freal-estate&sid=1784774235&sct=1&seg=0&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&ep.role_type=public&ep.is_authenticated=false&tfd=545",
+            "status": null,
+            "failure": "net::ERR_ABORTED"
+          },
+          {
+            "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HJ2ECKCNK4&gtm=45je67l1v9245339446za200zd9245339446&_p=1784774235025&gcd=13l3l3l3l1l1&npa=0&_ng=1&dma=0&_eu=AEAAAAQ&ae=a&are=1&cid=1150627302.1784774235&frm=0&ngs=1&pscdl=noapi&rcb=14&sr=768x1024&uaa=x86&uab=64&uafvl=Not-A.Brand%3B24.0.0.0%7CChromium%3B146.0.7680.80&uam=&uamb=0&uap=Windows&uapv=&uaw=0&ul=en-us&_s=2&tag_exp=115616986~115938465~115938469~118395335~118897920~118897930~119724321~119896803&sid=1784774235&sct=1&seg=0&dl=https%3A%2F%2Ftaasflow.com%2Findustries%2Freal-estate&dt=TaaSFlow%20%7C%20Talent%20as%20a%20Service%20%7C%20Subscription%20Recruiting&en=scroll&epn.percent_scrolled=90&_et=18&tfd=999",
+            "status": null,
+            "failure": "net::ERR_ABORTED"
+          }
+        ],
+        "title": "Real Estate Talent | TaaSFlow - Talent as a Service",
+        "description": "On-demand real estate professionals including licensed agents, property managers, and transaction coordinators. Scale for market opportunities.",
+        "canonical": "https://taasflow.com/industries/real-estate",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:type": "website",
+          "og:url": "https://taasflow.com/industries/real-estate",
+          "og:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "og:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "og:image": "https://taasflow.com/og-image.png",
+          "og:image:width": "1200",
+          "og:image:height": "630",
+          "og:locale": "en_US",
+          "twitter:card": "summary_large_image",
+          "twitter:site": "@TaasFlow",
+          "twitter:creator": "@TaasFlow",
+          "twitter:url": "https://taasflow.com/industries/real-estate",
+          "twitter:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "twitter:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "twitter:image": "https://taasflow.com/og-image.png"
+        },
+        "structuredData": [
+          {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "@id": "https://taasflow.com/#organization",
+            "name": "TaaSFlow",
+            "legalName": "TaaSFlow",
+            "url": "https://taasflow.com/",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://taasflow.com/favicon.png",
+              "width": 512,
+              "height": 512
+            },
+            "image": "https://taasflow.com/og-image.png",
+            "description": "Talent as a Service — subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+            "slogan": "Your hiring team. On demand.",
+            "foundingDate": "2024",
+            "areaServed": [
+              {
+                "@type": "Country",
+                "name": "United States"
+              },
+              {
+                "@type": "Country",
+                "name": "United Arab Emirates"
+              },
+              {
+                "@type": "Country",
+                "name": "United Kingdom"
+              },
+              {
+                "@type": "Country",
+                "name": "Brazil"
+              }
+            ],
+            "knowsAbout": [
+              "Subscription recruiting",
+              "Talent as a Service",
+              "Candidate sourcing",
+              "Pre-screened candidates",
+              "Recruitment process outsourcing"
+            ],
+            "contactPoint": [
+              {
+                "@type": "ContactPoint",
+                "contactType": "sales",
+                "email": "hello@taasflow.com",
+                "url": "https://taasflow.com/contact",
+                "availableLanguage": [
+                  "English",
+                  "Portuguese",
+                  "Spanish"
+                ]
+              }
+            ],
+            "sameAs": [
+              "https://www.linkedin.com/company/taasflow",
+              "https://twitter.com/TaasFlow"
+            ]
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "@id": "https://taasflow.com/#website",
+            "name": "TaaSFlow",
+            "alternateName": "Talent as a Service",
+            "url": "https://taasflow.com/",
+            "description": "Subscription recruiting that delivers pre-screened, ranked candidates in 14 days.",
+            "inLanguage": "en-US",
+            "publisher": {
+              "@id": "https://taasflow.com/#organization"
+            },
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": {
+                "@type": "EntryPoint",
+                "urlTemplate": "https://taasflow.com/jobs?q={search_term_string}"
+              },
+              "query-input": "required name=search_term_string"
+            }
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "Service",
+            "name": "Real Estate Talent Sourcing",
+            "description": "On-demand real estate professionals including licensed agents, property managers, and transaction coordinators. Scale for market opportunities.",
+            "provider": {
+              "@type": "Organization",
+              "name": "TaasFlow",
+              "url": "https://taasflow.com"
+            },
+            "serviceType": "Talent Acquisition",
+            "areaServed": "United States",
+            "hasOfferCatalog": {
+              "@type": "OfferCatalog",
+              "name": "Real Estate Recruiting Services",
+              "itemListElement": [
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Real Estate Agents Recruiting"
+                  },
+                  "position": 1
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Transaction Coordinators Recruiting"
+                  },
+                  "position": 2
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Property Managers Recruiting"
+                  },
+                  "position": 3
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Leasing Agents Recruiting"
+                  },
+                  "position": 4
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Real Estate Analysts Recruiting"
+                  },
+                  "position": 5
+                }
+              ]
+            }
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "https://taasflow.com"
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Industries",
+                "item": "https://taasflow.com/industries"
+              },
+              {
+                "@type": "ListItem",
+                "position": 3,
+                "name": "Real Estate",
+                "item": "https://taasflow.com/industries//industries/real-estate"
+              }
+            ]
+          }
+        ],
+        "h1": [
+          "Real Estate Professionals for Brokerages & Property Management"
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "Real Estate Professionals for Brokerages & Property Management"
+          },
+          {
+            "level": 2,
+            "text": "Real Estate Industry Insights"
+          },
+          {
+            "level": 3,
+            "text": "Transaction Volume"
+          },
+          {
+            "level": 3,
+            "text": "Agent Count"
+          },
+          {
+            "level": 3,
+            "text": "Commission Pressure"
+          },
+          {
+            "level": 3,
+            "text": "TC Market"
+          },
+          {
+            "level": 3,
+            "text": "Industry Overview"
+          },
+          {
+            "level": 3,
+            "text": "Ready to transform your real estate recruiting?"
+          },
+          {
+            "level": 2,
+            "text": "How we hire for Real Estate"
+          },
+          {
+            "level": 3,
+            "text": "Market & License Mapping"
+          },
+          {
+            "level": 3,
+            "text": "License Verification"
+          },
+          {
+            "level": 3,
+            "text": "Segment Experience Match"
+          },
+          {
+            "level": 3,
+            "text": "Transaction-Ready Placement"
+          },
+          {
+            "level": 2,
+            "text": "The Real Estate Staffing Challenge"
+          },
+          {
+            "level": 3,
+            "text": "The TaasFlow Solution"
+          },
+          {
+            "level": 2,
+            "text": "Why Real Estate companies choose TaasFlow"
+          },
+          {
+            "level": 3,
+            "text": "License Verified"
+          },
+          {
+            "level": 3,
+            "text": "Cycle-Aligned Staffing"
+          },
+          {
+            "level": 3,
+            "text": "Market Expertise"
+          },
+          {
+            "level": 3,
+            "text": "Fast Transaction Support"
+          },
+          {
+            "level": 2,
+            "text": "Positions we fill for Real Estate"
+          },
+          {
+            "level": 2,
+            "text": "Real results for Real Estate teams"
+          },
+          {
+            "level": 2,
+            "text": "Real Estate Salary Explorer"
+          },
+          {
+            "level": 2,
+            "text": "Real Estate Career Path"
+          },
+          {
+            "level": 3,
+            "text": "Senior"
+          },
+          {
+            "level": 4,
+            "text": "Key Skills at This Level"
+          },
+          {
+            "level": 2,
+            "text": "Real Estate Hiring Trends"
+          },
+          {
+            "level": 2,
+            "text": "Interactive Hiring Guide"
+          },
+          {
+            "level": 3,
+            "text": "Define Your Ideal Candidate"
+          },
+          {
+            "level": 3,
+            "text": "Optimize Your Job Posting"
+          },
+          {
+            "level": 3,
+            "text": "Source Beyond Job Boards"
+          },
+          {
+            "level": 3,
+            "text": "Structure Your Interview Process"
+          },
+          {
+            "level": 3,
+            "text": "Close & Onboard Effectively"
+          },
+          {
+            "level": 2,
+            "text": "Real Estate Recruiting Insights"
+          },
+          {
+            "level": 3,
+            "text": "Real Estate Talent Acquisition: Hiring for Commercial, Residential, and PropTech"
+          },
+          {
+            "level": 3,
+            "text": "PropTech Hiring: Building Teams at the Intersection of Real Estate and Technology"
+          },
+          {
+            "level": 3,
+            "text": "Real Estate Hiring Trends 2026: How to Build High-Performing Teams from Brokerage to PropTech"
+          },
+          {
+            "level": 2,
+            "text": "Frequently Asked Questions"
+          },
+          {
+            "level": 3,
+            "text": "Do you verify real estate licenses?"
+          },
+          {
+            "level": 3,
+            "text": "Do you have commercial real estate professionals?"
+          },
+          {
+            "level": 3,
+            "text": "Can you help with property management staffing?"
+          },
+          {
+            "level": 2,
+            "text": "Discover related industries"
+          },
+          {
+            "level": 2,
+            "text": "Ready to build your Real Estate team?"
+          },
+          {
+            "level": 2,
+            "text": "Real Estate Recruiting"
+          },
+          {
+            "level": 3,
+            "text": "Hub Page"
+          },
+          {
+            "level": 3,
+            "text": "Related Articles"
+          },
+          {
+            "level": 3,
+            "text": "Get Started"
+          },
+          {
+            "level": 4,
+            "text": "Newsletter"
+          },
+          {
+            "level": 4,
+            "text": "For candidates"
+          },
+          {
+            "level": 4,
+            "text": "For companies"
+          },
+          {
+            "level": 4,
+            "text": "Industries"
+          },
+          {
+            "level": 4,
+            "text": "Company"
+          },
+          {
+            "level": 3,
+            "text": "Cookie Preferences"
+          }
+        ],
+        "sections": [
+          "SECTION",
+          "Real Estate Professionals for Brokerages & Property Management",
+          "SECTION",
+          "Real Estate Industry Insights",
+          "Ready to transform your real estate recruiting?",
+          "How we hire for Real Estate",
+          "The Real Estate Staffing Challenge",
+          "Why Real Estate companies choose TaasFlow",
+          "Positions we fill for Real Estate",
+          "Real results for Real Estate teams",
+          "Real Estate Salary Explorer",
+          "Real Estate Career Path",
+          "Real Estate Hiring Trends",
+          "Interactive Hiring Guide",
+          "Real Estate Recruiting Insights",
+          "Frequently Asked Questions",
+          "Discover related industries",
+          "SECTION",
+          "Ready to build your Real Estate team?",
+          "Real Estate Recruiting"
+        ],
+        "textBlocks": [
+          "Solutions",
+          "Industries",
+          "Resources",
+          "Home",
+          "Industries",
+          "Real Estate",
+          "Access licensed agents, property managers, and transaction coordinators. Scale your real estate operations for market cycles and portfolio growth.",
+          "Key market data and trends shaping talent demand in your industry. (Hover for details)",
+          "Annual home sales in the US market",
+          "Licensed real estate agents in the US",
+          "Average reduction in commission rates since 2020",
+          "Transaction coordination services market size",
+          "Start a risk-free pilot and receive qualified candidates in 14 days.",
+          "A tailored workflow for the challenges of real estate settings.",
+          "We identify your market segment, state licensing requirements, and transaction volume.",
+          "Agent and broker licenses verified with state real estate commissions.",
+          "Candidates matched to your specific segment: residential, commercial, multifamily, etc.",
+          "Licensed professionals delivered ready to handle your deal flow immediately.",
+          "Real estate is cyclical. Hot markets require immediate capacity, but permanent hires become overhead when markets cool.",
+          "Transaction volume fluctuates unpredictably. You need coordinators and support staff who can scale with your deal flow.",
+          "Finding licensed professionals who understand your market and can represent your brand properly is challenging and time-consuming.",
+          "Licensed agents and brokers with state license verification",
+          "Transaction coordinators experienced with high-volume deal flow",
+          "Property managers with residential and commercial portfolio experience",
+          "Administrative support familiar with real estate operations and software",
+          "Market-specific experience: residential, commercial, multifamily, industrial",
+          "We understand the unique challenges of your industry and deliver matching talent.",
+          "All agent and broker licenses verified with state real estate commissions.",
+          "Scale up for hot markets, scale back when volume decreases.",
+          "Professionals with experience in your specific real estate segment.",
+          "Coordinators who can handle high-volume deal flow immediately.",
+          "Pre-vetted professionals, delivered weekly, ready to start.",
+          "- Residential Brokerage, 3 offices",
+          "Explore current compensation ranges for top roles. Data updated quarterly from industry benchmarks.",
+          "* Based on industry benchmarks from SHRM, Glassdoor, LinkedIn Salary, and BLS data. Actual compensation may vary.",
+          "Click any level to explore typical progression, salary ranges, and key skills.",
+          "Key metrics shaping the talent landscape. Stay ahead of market shifts.",
+          "Steady growth in hiring demand across this sector.",
+          "Increasing adoption of remote and hybrid work models.",
+          "Unfilled positions due to skills shortage in this industry.",
+          "Industry average continues to improve with modern sourcing.",
+          "Follow these proven steps to hire smarter. Track your progress and get actionable tips at every stage.",
+          "Create a detailed candidate persona with must-have vs nice-to-have skills, cultural fit criteria, and realistic salary expectations.",
+          "Write a compelling job description that sells the opportunity, not just lists requirements. Include salary range, growth path, and team culture.",
+          "Reach passive candidates through targeted outreach, employee referrals, and talent communities. 70% of top talent is not actively looking.",
+          "Design a consistent 3-4 stage process that evaluates skills, culture fit, and potential. Include take-home assessments where appropriate.",
+          "Move fast with competitive offers and start onboarding before day one. The first 90 days determine long-term retention.",
+          "Expert articles on recruiting and talent acquisition for real estate.",
+          "The real estate industry is bifurcating between traditional and tech-enabled models. Here is how to hire for both.",
+          "PropTech Hiring: Building Teams at the Intersection of Real Estate and Technology",
+          "PropTech is transforming real estate with AI, IoT, and data analytics. Here is how to hire for this rapidly growing sector.",
+          "Real Estate Hiring Trends 2026: How to Build High-Performing Teams from Brokerage to PropTech",
+          "The real estate industry spans traditional brokerage to cutting-edge PropTech. Learn how to recruit across all segments with salary benchmarks and proven strategies.",
+          "Common questions about TaasFlow for real estate.",
+          "Learn how we serve similar sectors with subscription recruiting.",
+          "Receive qualified real estate professionals weekly. No agency fees, no long-term contracts.",
+          "Related Industries",
+          "Talent as a Service",
+          "A global hiring system for teams that need consistent recruiting.",
+          "Weekly insights into talent acquisition. No spam.",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Book call",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "No recruitment agency fees. No placement charges. Subscription-based hiring system.",
+          "Copyright 2026 TaaSFlow. All rights reserved.",
+          "We use essential cookies for core functionality. With your consent, we use analytics (Google Analytics) and marketing technologies (Meta Pixel, Apollo, Retention.com/RB2B) to understand website performance, improve campaigns, and measure conversions safely. Your data is processed in accordance with GDPR and our Privacy Notice. You can change your preferences at any time."
+        ],
+        "buttons": [
+          "Solutions",
+          "Industries",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Solutions",
+          "How it works",
+          "Pilot",
+          "Enterprise",
+          "Case studies",
+          "Jobs",
+          "Journey",
+          "Industries",
+          "Tech",
+          "SaaS & Cloud",
+          "Cybersecurity",
+          "Data & Analytics",
+          "Finance",
+          "Insurance",
+          "PE & VC",
+          "Accounting",
+          "Legal",
+          "Consulting",
+          "HR & Recruiting",
+          "Staffing Agencies",
+          "Sales",
+          "Marketing",
+          "E-commerce",
+          "Media",
+          "Real Estate",
+          "Construction",
+          "Hospitality",
+          "Healthcare",
+          "Public Sector",
+          "Non-Profit",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Success Stories",
+          "Talent Marketplace",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Start Real Estate Pilot Program",
+          "Book call",
+          "Book call",
+          "1Entry-Level",
+          "2Mid-Level",
+          "3Senior",
+          "4Director / Lead",
+          "5VP / C-Suite",
+          "Next: Director / Lead",
+          "1Define Your Ideal Candidate1-2 days",
+          "1",
+          "Mark Complete",
+          "2Optimize Your Job PostingWrite a compelling job description that sells the opportunity, not just lists requirements. Include salary range, growth path, and team culture.1 day",
+          "2",
+          "3Source Beyond Job BoardsReach passive candidates through targeted outreach, employee referrals, and talent communities. 70% of top talent is not actively looking.Ongoing",
+          "3",
+          "4Structure Your Interview ProcessDesign a consistent 3-4 stage process that evaluates skills, culture fit, and potential. Include take-home assessments where appropriate.2-3 days setup",
+          "4",
+          "5Close & Onboard EffectivelyMove fast with competitive offers and start onboarding before day one. The first 90 days determine long-term retention.1-2 weeks",
+          "5",
+          "Do you verify real estate licenses?",
+          "Do you have commercial real estate professionals?",
+          "Can you help with property management staffing?",
+          "Start Real Estate Pilot",
+          "Contact",
+          "Subscribe",
+          "Book call"
+        ],
+        "links": [
+          {
+            "text": "Skip to main content",
+            "href": "https://taasflow.com/industries/real-estate#main-content"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "Browse jobs",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Join the network",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Browse open roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Home",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "Industries",
+            "href": "https://taasflow.com/industries"
+          },
+          {
+            "text": "View all articles",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "Industry Hiring GuidesReal EstateReal Estate Talent Acquisition: Hiring for Commercial, Residential, and PropTechThe rea",
+            "href": "https://taasflow.com/blog/real-estate-talent-acquisition-guide"
+          },
+          {
+            "text": "📋PropTech Hiring: Building Teams at the Intersection of Real Estate and TechnologyIndustry Hiring GuidesIndustry Hiring",
+            "href": "https://taasflow.com/blog/proptech-talent-acquisition"
+          },
+          {
+            "text": "🔍Real Estate Hiring Trends 2026: How to Build High-Performing Teams from Brokerage to PropTechIndustry SpotlightIndustr",
+            "href": "https://taasflow.com/blog/real-estate-hiring-trends"
+          },
+          {
+            "text": "View all articles",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "Technology",
+            "href": "https://taasflow.com/industries/tech"
+          },
+          {
+            "text": "Legal",
+            "href": "https://taasflow.com/industries/legal"
+          },
+          {
+            "text": "Public Sector",
+            "href": "https://taasflow.com/industries/public-sector"
+          },
+          {
+            "text": "Finance & Banking",
+            "href": "https://taasflow.com/industries/finance"
+          },
+          {
+            "text": "Staffing Agencies",
+            "href": "https://taasflow.com/industries/staffing-agencies"
+          },
+          {
+            "text": "Healthcare",
+            "href": "https://taasflow.com/industries/healthcare"
+          },
+          {
+            "text": "Sales",
+            "href": "https://taasflow.com/industries/sales"
+          },
+          {
+            "text": "Marketing & Advertising",
+            "href": "https://taasflow.com/industries/marketing"
+          },
+          {
+            "text": "Compare all industries",
+            "href": "https://taasflow.com/industries/compare"
+          },
+          {
+            "text": "How it works",
+            "href": "https://taasflow.com/how-it-works"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "Start Pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "Jobs",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Blog",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "About",
+            "href": "https://taasflow.com/about"
+          },
+          {
+            "text": "Enterprise",
+            "href": "https://taasflow.com/enterprise"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://taasflow.com/faq"
+          },
+          {
+            "text": "Contact",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Looking for a job in real estate? Browse open positions",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Real Estate Recruiting",
+            "href": "https://taasflow.com/industries/real-estate"
+          },
+          {
+            "text": "Real Estate Hiring Guide",
+            "href": "https://taasflow.com/blog/real-estate-hiring-guide"
+          },
+          {
+            "text": "Remote Hiring Practices",
+            "href": "https://taasflow.com/blog/remote-hiring-best-practices"
+          },
+          {
+            "text": "Start a Pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "Talk to Us",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Technology Recruiting",
+            "href": "https://taasflow.com/industries/tech"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "LinkedIn",
+            "href": "https://www.linkedin.com/company/taasflow/"
+          },
+          {
+            "text": "Browse roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Talent network",
+            "href": "https://taasflow.com/global-talent"
+          },
+          {
+            "text": "Member stories",
+            "href": "https://taasflow.com/candidate-success"
+          },
+          {
+            "text": "Start pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "Employer onboarding",
+            "href": "https://taasflow.com/employer-onboarding"
+          },
+          {
+            "text": "Case studies",
+            "href": "https://taasflow.com/case-studies"
+          },
+          {
+            "text": "Healthcare",
+            "href": "https://taasflow.com/industries/healthcare"
+          },
+          {
+            "text": "Technology",
+            "href": "https://taasflow.com/industries/tech"
+          },
+          {
+            "text": "Finance",
+            "href": "https://taasflow.com/industries/finance"
+          },
+          {
+            "text": "Legal",
+            "href": "https://taasflow.com/industries/legal"
+          },
+          {
+            "text": "All →",
+            "href": "https://taasflow.com/industries"
+          },
+          {
+            "text": "About us",
+            "href": "https://taasflow.com/about"
+          },
+          {
+            "text": "Blog",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://taasflow.com/faq"
+          },
+          {
+            "text": "Knowledge Base",
+            "href": "https://taasflow.com/knowledge-base"
+          },
+          {
+            "text": "Contact us",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Privacy Policy",
+            "href": "https://taasflow.com/privacy"
+          },
+          {
+            "text": "Terms of Service",
+            "href": "https://taasflow.com/terms"
+          },
+          {
+            "text": "Privacy Notice",
+            "href": "https://taasflow.com/privacy"
+          }
+        ],
+        "images": [
+          {
+            "src": "https://taasflow.com/assets/logo-on-white-Dk9DIcMP.png",
+            "alt": "TaaSFlow logo"
+          },
+          {
+            "src": "https://taasflow.com/assets/real-estate-Dpu59h1G.jpg",
+            "alt": ""
+          },
+          {
+            "src": "https://taasflow.com/assets/real-estate-Dpu59h1G.jpg",
+            "alt": ""
+          },
+          {
+            "src": "https://taasflow.com/assets/real-estate-Dpu59h1G.jpg",
+            "alt": ""
+          },
+          {
+            "src": "https://taasflow.com/assets/real-estate-hiring-BsVESjoE.jpg",
+            "alt": "Real Estate Talent Acquisition: Hiring for Commercial, Residential, and PropTech"
+          },
+          {
+            "src": "https://taasflow.com/assets/logo-on-blue-CX6jlwjg.png",
+            "alt": "TaaSFlow logo"
+          }
+        ],
+        "forms": [
+          {
+            "action": "https://taasflow.com/industries/real-estate",
+            "fields": [
+              "input"
+            ]
+          }
+        ],
+        "navLinks": [
+          "Browse jobs",
+          "Join the network",
+          "Browse open roles",
+          "Home",
+          "Industries",
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us"
+        ],
+        "footerLinks": [
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "Privacy Policy",
+          "Terms of Service"
+        ],
+        "horizontalOverflow": false,
+        "documentWidth": 768,
+        "viewportWidth": 768
+      },
+      "destination": {
+        "url": "https://clear-path-hubs.lovable.app/industries/real-estate",
+        "finalUrl": "https://clear-path-hubs.lovable.app/industries/real-estate",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [],
+        "title": "Real estate hiring — TaaSFlow",
+        "description": "Structured sourcing for owners, developers, operators and real-estate services firms. Ranked shortlists with evidence of asset class, market and lifecycle experience.",
+        "canonical": "https://clear-path-hubs.lovable.app/industries/real-estate",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "twitter:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "og:title": "Real estate hiring — TaaSFlow",
+          "og:description": "Structured sourcing for owners, developers, operators and real-estate services firms. Ranked shortlists with evidence of asset class, market and lifecycle experience.",
+          "og:url": "https://clear-path-hubs.lovable.app/industries/real-estate",
+          "og:type": "website",
+          "twitter:card": "summary_large_image",
+          "twitter:title": "Real estate hiring — TaaSFlow",
+          "twitter:description": "Structured sourcing for owners, developers, operators and real-estate services firms. Ranked shortlists with evidence of asset class, market and lifecycle experience."
+        },
+        "structuredData": [],
+        "h1": [
+          "Real estate hiring, calibrated per asset class and market."
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "Real estate hiring, calibrated per asset class and market."
+          },
+          {
+            "level": 2,
+            "text": "What we hear from Real Estate teams"
+          },
+          {
+            "level": 3,
+            "text": "Asset-class precision"
+          },
+          {
+            "level": 3,
+            "text": "Lifecycle-stage fit"
+          },
+          {
+            "level": 3,
+            "text": "Market and geography"
+          },
+          {
+            "level": 2,
+            "text": "Roles we source in Real Estate"
+          },
+          {
+            "level": 3,
+            "text": "Submit the role"
+          },
+          {
+            "level": 3,
+            "text": "We source and score"
+          },
+          {
+            "level": 3,
+            "text": "Review in your workspace"
+          },
+          {
+            "level": 2,
+            "text": "Hiring in real estate?"
+          }
+        ],
+        "sections": [
+          "Real estate hiring, calibrated per asset class and market.",
+          "What we hear from Real Estate teams",
+          "Roles we source in Real Estate",
+          "Submit the role",
+          "Hiring in real estate?",
+          "SECTION"
+        ],
+        "textBlocks": [
+          "Home",
+          "Industries",
+          "Real Estate",
+          "Real Estate",
+          "TaaSFlow gives real-estate leaders a workspace for every hire — investment, development, operations, asset management — with rubrics tuned per asset class and lifecycle stage.",
+          "Asset-class rubric per requisition",
+          "Lifecycle stage captured in intake",
+          "Human review before publication",
+          "Office, industrial, multifamily, retail and specialty each need distinct signal. Our rubric captures the asset classes actually worked on and the size of the portfolios owned.",
+          "Acquisitions, development, operations and dispositions reward different skills. We capture the lifecycle stage in intake so shortlists reflect it.",
+          "Real estate is local. Market coverage is captured as a first-class filter rather than a free-text note.",
+          "We calibrate the rubric to the seniority and specialisation you actually need.",
+          "Acquisitions and investments",
+          "Development and construction management",
+          "Asset managers",
+          "Property and facilities managers",
+          "Portfolio finance and analysts",
+          "Leasing and brokerage",
+          "Real-estate operations leads",
+          "Capital markets and debt specialists",
+          "01",
+          "A guided intake captures everything the search needs, in one flow.",
+          "02",
+          "Multi-channel sourcing, role-specific rubric, evidence extracted from every CV.",
+          "03",
+          "Ranked shortlist, evidence side-by-side, Kanban pipeline, direct messaging.",
+          "See the full process on how it works.",
+          "Real Estate",
+          "Submit the role — one workspace per requisition, ranked and reviewed."
+        ],
+        "buttons": [],
+        "links": [
+          {
+            "text": "Home",
+            "href": "https://clear-path-hubs.lovable.app/"
+          },
+          {
+            "text": "Industries",
+            "href": "https://clear-path-hubs.lovable.app/industries"
+          },
+          {
+            "text": "Start hiring",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "Talk to us",
+            "href": "https://clear-path-hubs.lovable.app/contact"
+          },
+          {
+            "text": "how it works",
+            "href": "https://clear-path-hubs.lovable.app/how-it-works"
+          },
+          {
+            "text": "Start intake",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "See other industries",
+            "href": "https://clear-path-hubs.lovable.app/industries"
+          },
+          {
+            "text": "Edit with",
+            "href": "https://lovable.dev/projects/1dc5ee7e-1294-441c-8288-850e79e443f6?utm_source=lovable-badge"
+          }
+        ],
+        "images": [],
+        "forms": [],
+        "navLinks": [
+          "Home",
+          "Industries"
+        ],
+        "footerLinks": [],
+        "horizontalOverflow": false,
+        "documentWidth": 768,
+        "viewportWidth": 768
+      },
+      "screenshots": {
+        "sourceFull": "reports/public-parity/screenshots/source/industries_real-estate__tablet__full.png",
+        "sourceVisible": "reports/public-parity/screenshots/source/industries_real-estate__tablet__visible.png",
+        "destinationFull": "reports/public-parity/screenshots/destination/industries_real-estate__tablet__full.png",
+        "destinationVisible": "reports/public-parity/screenshots/destination/industries_real-estate__tablet__visible.png"
+      },
+      "differences": [
+        "title: \"Real Estate Talent | TaaSFlow - Talent as a Service\" vs \"Real estate hiring — TaaSFlow\"",
+        "meta description mismatch",
+        "H1 differs: [Real Estate Professionals for Brokerages & Property Management] vs [Real estate hiring, calibrated per asset class and market.]",
+        "heading overlap 0% (0/30)",
+        "section count 20 vs 6",
+        "form count 1 vs 0"
+      ]
+    },
+    {
+      "viewport": "desktop",
+      "source": {
+        "url": "https://taasflow.com/industries/real-estate",
+        "finalUrl": "https://taasflow.com/industries/real-estate",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [
+          {
+            "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HJ2ECKCNK4&gtm=45je67l1v9245339446za200zd9245339446&_p=1784774239477&gcd=13l3l3l3l1l1&npa=0&_ng=1&dma=0&are=1&cid=865852738.1784774240&frm=0&ngs=1&pscdl=noapi&rcb=15&sr=1440x900&uaa=x86&uab=64&uafvl=Not-A.Brand%3B24.0.0.0%7CChromium%3B146.0.7680.80&uam=&uamb=0&uap=Windows&uapv=&uaw=0&ul=en-us&_s=1&tag_exp=115938466~115938469~118897920~118897930~119896802&dp=%2Findustries%2Freal-estate&dt=TaaSFlow%20%7C%20Talent%20as%20a%20Service%20%7C%20Subscription%20Recruiting&dl=https%3A%2F%2Ftaasflow.com%2Findustries%2Freal-estate&sid=1784774239&sct=1&seg=0&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&ep.role_type=public&ep.is_authenticated=false&tfd=572",
+            "status": null,
+            "failure": "net::ERR_ABORTED"
+          },
+          {
+            "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HJ2ECKCNK4&gtm=45je67l1v9245339446za200zd9245339446&_p=1784774239477&gcd=13l3l3l3l1l1&npa=0&_ng=1&dma=0&_eu=AEAAAAQ&ae=a&are=1&cid=865852738.1784774240&frm=0&ngs=1&pscdl=noapi&rcb=15&sr=1440x900&uaa=x86&uab=64&uafvl=Not-A.Brand%3B24.0.0.0%7CChromium%3B146.0.7680.80&uam=&uamb=0&uap=Windows&uapv=&uaw=0&ul=en-us&_s=2&tag_exp=115938466~115938469~118897920~118897930~119896802&sid=1784774239&sct=1&seg=0&dl=https%3A%2F%2Ftaasflow.com%2Findustries%2Freal-estate&dt=TaaSFlow%20%7C%20Talent%20as%20a%20Service%20%7C%20Subscription%20Recruiting&en=scroll&epn.percent_scrolled=90&_et=16&tfd=1008",
+            "status": null,
+            "failure": "net::ERR_ABORTED"
+          }
+        ],
+        "title": "Real Estate Talent | TaaSFlow - Talent as a Service",
+        "description": "On-demand real estate professionals including licensed agents, property managers, and transaction coordinators. Scale for market opportunities.",
+        "canonical": "https://taasflow.com/industries/real-estate",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:type": "website",
+          "og:url": "https://taasflow.com/industries/real-estate",
+          "og:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "og:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "og:image": "https://taasflow.com/og-image.png",
+          "og:image:width": "1200",
+          "og:image:height": "630",
+          "og:locale": "en_US",
+          "twitter:card": "summary_large_image",
+          "twitter:site": "@TaasFlow",
+          "twitter:creator": "@TaasFlow",
+          "twitter:url": "https://taasflow.com/industries/real-estate",
+          "twitter:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "twitter:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "twitter:image": "https://taasflow.com/og-image.png"
+        },
+        "structuredData": [
+          {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "@id": "https://taasflow.com/#organization",
+            "name": "TaaSFlow",
+            "legalName": "TaaSFlow",
+            "url": "https://taasflow.com/",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://taasflow.com/favicon.png",
+              "width": 512,
+              "height": 512
+            },
+            "image": "https://taasflow.com/og-image.png",
+            "description": "Talent as a Service — subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+            "slogan": "Your hiring team. On demand.",
+            "foundingDate": "2024",
+            "areaServed": [
+              {
+                "@type": "Country",
+                "name": "United States"
+              },
+              {
+                "@type": "Country",
+                "name": "United Arab Emirates"
+              },
+              {
+                "@type": "Country",
+                "name": "United Kingdom"
+              },
+              {
+                "@type": "Country",
+                "name": "Brazil"
+              }
+            ],
+            "knowsAbout": [
+              "Subscription recruiting",
+              "Talent as a Service",
+              "Candidate sourcing",
+              "Pre-screened candidates",
+              "Recruitment process outsourcing"
+            ],
+            "contactPoint": [
+              {
+                "@type": "ContactPoint",
+                "contactType": "sales",
+                "email": "hello@taasflow.com",
+                "url": "https://taasflow.com/contact",
+                "availableLanguage": [
+                  "English",
+                  "Portuguese",
+                  "Spanish"
+                ]
+              }
+            ],
+            "sameAs": [
+              "https://www.linkedin.com/company/taasflow",
+              "https://twitter.com/TaasFlow"
+            ]
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "@id": "https://taasflow.com/#website",
+            "name": "TaaSFlow",
+            "alternateName": "Talent as a Service",
+            "url": "https://taasflow.com/",
+            "description": "Subscription recruiting that delivers pre-screened, ranked candidates in 14 days.",
+            "inLanguage": "en-US",
+            "publisher": {
+              "@id": "https://taasflow.com/#organization"
+            },
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": {
+                "@type": "EntryPoint",
+                "urlTemplate": "https://taasflow.com/jobs?q={search_term_string}"
+              },
+              "query-input": "required name=search_term_string"
+            }
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "Service",
+            "name": "Real Estate Talent Sourcing",
+            "description": "On-demand real estate professionals including licensed agents, property managers, and transaction coordinators. Scale for market opportunities.",
+            "provider": {
+              "@type": "Organization",
+              "name": "TaasFlow",
+              "url": "https://taasflow.com"
+            },
+            "serviceType": "Talent Acquisition",
+            "areaServed": "United States",
+            "hasOfferCatalog": {
+              "@type": "OfferCatalog",
+              "name": "Real Estate Recruiting Services",
+              "itemListElement": [
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Real Estate Agents Recruiting"
+                  },
+                  "position": 1
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Transaction Coordinators Recruiting"
+                  },
+                  "position": 2
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Property Managers Recruiting"
+                  },
+                  "position": 3
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Leasing Agents Recruiting"
+                  },
+                  "position": 4
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Real Estate Analysts Recruiting"
+                  },
+                  "position": 5
+                }
+              ]
+            }
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "https://taasflow.com"
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Industries",
+                "item": "https://taasflow.com/industries"
+              },
+              {
+                "@type": "ListItem",
+                "position": 3,
+                "name": "Real Estate",
+                "item": "https://taasflow.com/industries//industries/real-estate"
+              }
+            ]
+          }
+        ],
+        "h1": [
+          "Real Estate Professionals for Brokerages & Property Management"
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "Real Estate Professionals for Brokerages & Property Management"
+          },
+          {
+            "level": 2,
+            "text": "Real Estate Industry Insights"
+          },
+          {
+            "level": 3,
+            "text": "Transaction Volume"
+          },
+          {
+            "level": 3,
+            "text": "Agent Count"
+          },
+          {
+            "level": 3,
+            "text": "Commission Pressure"
+          },
+          {
+            "level": 3,
+            "text": "TC Market"
+          },
+          {
+            "level": 3,
+            "text": "Industry Overview"
+          },
+          {
+            "level": 3,
+            "text": "Ready to transform your real estate recruiting?"
+          },
+          {
+            "level": 2,
+            "text": "How we hire for Real Estate"
+          },
+          {
+            "level": 3,
+            "text": "Market & License Mapping"
+          },
+          {
+            "level": 3,
+            "text": "License Verification"
+          },
+          {
+            "level": 3,
+            "text": "Segment Experience Match"
+          },
+          {
+            "level": 3,
+            "text": "Transaction-Ready Placement"
+          },
+          {
+            "level": 2,
+            "text": "The Real Estate Staffing Challenge"
+          },
+          {
+            "level": 3,
+            "text": "The TaasFlow Solution"
+          },
+          {
+            "level": 2,
+            "text": "Why Real Estate companies choose TaasFlow"
+          },
+          {
+            "level": 3,
+            "text": "License Verified"
+          },
+          {
+            "level": 3,
+            "text": "Cycle-Aligned Staffing"
+          },
+          {
+            "level": 3,
+            "text": "Market Expertise"
+          },
+          {
+            "level": 3,
+            "text": "Fast Transaction Support"
+          },
+          {
+            "level": 2,
+            "text": "Positions we fill for Real Estate"
+          },
+          {
+            "level": 2,
+            "text": "Real results for Real Estate teams"
+          },
+          {
+            "level": 2,
+            "text": "Real Estate Salary Explorer"
+          },
+          {
+            "level": 2,
+            "text": "Real Estate Career Path"
+          },
+          {
+            "level": 3,
+            "text": "Senior"
+          },
+          {
+            "level": 4,
+            "text": "Key Skills at This Level"
+          },
+          {
+            "level": 2,
+            "text": "Real Estate Hiring Trends"
+          },
+          {
+            "level": 2,
+            "text": "Interactive Hiring Guide"
+          },
+          {
+            "level": 3,
+            "text": "Define Your Ideal Candidate"
+          },
+          {
+            "level": 3,
+            "text": "Optimize Your Job Posting"
+          },
+          {
+            "level": 3,
+            "text": "Source Beyond Job Boards"
+          },
+          {
+            "level": 3,
+            "text": "Structure Your Interview Process"
+          },
+          {
+            "level": 3,
+            "text": "Close & Onboard Effectively"
+          },
+          {
+            "level": 2,
+            "text": "Real Estate Recruiting Insights"
+          },
+          {
+            "level": 3,
+            "text": "Real Estate Talent Acquisition: Hiring for Commercial, Residential, and PropTech"
+          },
+          {
+            "level": 3,
+            "text": "PropTech Hiring: Building Teams at the Intersection of Real Estate and Technology"
+          },
+          {
+            "level": 3,
+            "text": "Real Estate Hiring Trends 2026: How to Build High-Performing Teams from Brokerage to PropTech"
+          },
+          {
+            "level": 2,
+            "text": "Frequently Asked Questions"
+          },
+          {
+            "level": 3,
+            "text": "Do you verify real estate licenses?"
+          },
+          {
+            "level": 3,
+            "text": "Do you have commercial real estate professionals?"
+          },
+          {
+            "level": 3,
+            "text": "Can you help with property management staffing?"
+          },
+          {
+            "level": 2,
+            "text": "Discover related industries"
+          },
+          {
+            "level": 2,
+            "text": "Ready to build your Real Estate team?"
+          },
+          {
+            "level": 2,
+            "text": "Real Estate Recruiting"
+          },
+          {
+            "level": 3,
+            "text": "Hub Page"
+          },
+          {
+            "level": 3,
+            "text": "Related Articles"
+          },
+          {
+            "level": 3,
+            "text": "Get Started"
+          },
+          {
+            "level": 4,
+            "text": "Newsletter"
+          },
+          {
+            "level": 4,
+            "text": "For candidates"
+          },
+          {
+            "level": 4,
+            "text": "For companies"
+          },
+          {
+            "level": 4,
+            "text": "Industries"
+          },
+          {
+            "level": 4,
+            "text": "Company"
+          },
+          {
+            "level": 3,
+            "text": "Cookie Preferences"
+          }
+        ],
+        "sections": [
+          "SECTION",
+          "Real Estate Professionals for Brokerages & Property Management",
+          "SECTION",
+          "Real Estate Industry Insights",
+          "Ready to transform your real estate recruiting?",
+          "How we hire for Real Estate",
+          "The Real Estate Staffing Challenge",
+          "Why Real Estate companies choose TaasFlow",
+          "Positions we fill for Real Estate",
+          "Real results for Real Estate teams",
+          "Real Estate Salary Explorer",
+          "Real Estate Career Path",
+          "Real Estate Hiring Trends",
+          "Interactive Hiring Guide",
+          "Real Estate Recruiting Insights",
+          "Frequently Asked Questions",
+          "Discover related industries",
+          "SECTION",
+          "Ready to build your Real Estate team?",
+          "Real Estate Recruiting"
+        ],
+        "textBlocks": [
+          "Solutions",
+          "Industries",
+          "Resources",
+          "Home",
+          "Industries",
+          "Real Estate",
+          "Access licensed agents, property managers, and transaction coordinators. Scale your real estate operations for market cycles and portfolio growth.",
+          "Key market data and trends shaping talent demand in your industry. (Hover for details)",
+          "Annual home sales in the US market",
+          "Licensed real estate agents in the US",
+          "Average reduction in commission rates since 2020",
+          "Transaction coordination services market size",
+          "Start a risk-free pilot and receive qualified candidates in 14 days.",
+          "A tailored workflow for the challenges of real estate settings.",
+          "We identify your market segment, state licensing requirements, and transaction volume.",
+          "Agent and broker licenses verified with state real estate commissions.",
+          "Candidates matched to your specific segment: residential, commercial, multifamily, etc.",
+          "Licensed professionals delivered ready to handle your deal flow immediately.",
+          "Real estate is cyclical. Hot markets require immediate capacity, but permanent hires become overhead when markets cool.",
+          "Transaction volume fluctuates unpredictably. You need coordinators and support staff who can scale with your deal flow.",
+          "Finding licensed professionals who understand your market and can represent your brand properly is challenging and time-consuming.",
+          "Licensed agents and brokers with state license verification",
+          "Transaction coordinators experienced with high-volume deal flow",
+          "Property managers with residential and commercial portfolio experience",
+          "Administrative support familiar with real estate operations and software",
+          "Market-specific experience: residential, commercial, multifamily, industrial",
+          "We understand the unique challenges of your industry and deliver matching talent.",
+          "All agent and broker licenses verified with state real estate commissions.",
+          "Scale up for hot markets, scale back when volume decreases.",
+          "Professionals with experience in your specific real estate segment.",
+          "Coordinators who can handle high-volume deal flow immediately.",
+          "Pre-vetted professionals, delivered weekly, ready to start.",
+          "- Residential Brokerage, 3 offices",
+          "Explore current compensation ranges for top roles. Data updated quarterly from industry benchmarks.",
+          "* Based on industry benchmarks from SHRM, Glassdoor, LinkedIn Salary, and BLS data. Actual compensation may vary.",
+          "Click any level to explore typical progression, salary ranges, and key skills.",
+          "Key metrics shaping the talent landscape. Stay ahead of market shifts.",
+          "Steady growth in hiring demand across this sector.",
+          "Increasing adoption of remote and hybrid work models.",
+          "Unfilled positions due to skills shortage in this industry.",
+          "Industry average continues to improve with modern sourcing.",
+          "Follow these proven steps to hire smarter. Track your progress and get actionable tips at every stage.",
+          "Create a detailed candidate persona with must-have vs nice-to-have skills, cultural fit criteria, and realistic salary expectations.",
+          "Write a compelling job description that sells the opportunity, not just lists requirements. Include salary range, growth path, and team culture.",
+          "Reach passive candidates through targeted outreach, employee referrals, and talent communities. 70% of top talent is not actively looking.",
+          "Design a consistent 3-4 stage process that evaluates skills, culture fit, and potential. Include take-home assessments where appropriate.",
+          "Move fast with competitive offers and start onboarding before day one. The first 90 days determine long-term retention.",
+          "Expert articles on recruiting and talent acquisition for real estate.",
+          "The real estate industry is bifurcating between traditional and tech-enabled models. Here is how to hire for both.",
+          "PropTech Hiring: Building Teams at the Intersection of Real Estate and Technology",
+          "PropTech is transforming real estate with AI, IoT, and data analytics. Here is how to hire for this rapidly growing sector.",
+          "Real Estate Hiring Trends 2026: How to Build High-Performing Teams from Brokerage to PropTech",
+          "The real estate industry spans traditional brokerage to cutting-edge PropTech. Learn how to recruit across all segments with salary benchmarks and proven strategies.",
+          "Common questions about TaasFlow for real estate.",
+          "Learn how we serve similar sectors with subscription recruiting.",
+          "Receive qualified real estate professionals weekly. No agency fees, no long-term contracts.",
+          "Related Industries",
+          "Talent as a Service",
+          "A global hiring system for teams that need consistent recruiting.",
+          "Weekly insights into talent acquisition. No spam.",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Book call",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "No recruitment agency fees. No placement charges. Subscription-based hiring system.",
+          "Copyright 2026 TaaSFlow. All rights reserved.",
+          "We use essential cookies for core functionality. With your consent, we use analytics (Google Analytics) and marketing technologies (Meta Pixel, Apollo, Retention.com/RB2B) to understand website performance, improve campaigns, and measure conversions safely. Your data is processed in accordance with GDPR and our Privacy Notice. You can change your preferences at any time."
+        ],
+        "buttons": [
+          "Solutions",
+          "Industries",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Solutions",
+          "How it works",
+          "Pilot",
+          "Enterprise",
+          "Case studies",
+          "Jobs",
+          "Journey",
+          "Industries",
+          "Tech",
+          "SaaS & Cloud",
+          "Cybersecurity",
+          "Data & Analytics",
+          "Finance",
+          "Insurance",
+          "PE & VC",
+          "Accounting",
+          "Legal",
+          "Consulting",
+          "HR & Recruiting",
+          "Staffing Agencies",
+          "Sales",
+          "Marketing",
+          "E-commerce",
+          "Media",
+          "Real Estate",
+          "Construction",
+          "Hospitality",
+          "Healthcare",
+          "Public Sector",
+          "Non-Profit",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Success Stories",
+          "Talent Marketplace",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Start Real Estate Pilot Program",
+          "Book call",
+          "Book call",
+          "1Entry-Level",
+          "2Mid-Level",
+          "3Senior",
+          "4Director / Lead",
+          "5VP / C-Suite",
+          "Next: Director / Lead",
+          "1Define Your Ideal Candidate1-2 days",
+          "1",
+          "Mark Complete",
+          "2Optimize Your Job PostingWrite a compelling job description that sells the opportunity, not just lists requirements. Include salary range, growth path, and team culture.1 day",
+          "2",
+          "3Source Beyond Job BoardsReach passive candidates through targeted outreach, employee referrals, and talent communities. 70% of top talent is not actively looking.Ongoing",
+          "3",
+          "4Structure Your Interview ProcessDesign a consistent 3-4 stage process that evaluates skills, culture fit, and potential. Include take-home assessments where appropriate.2-3 days setup",
+          "4",
+          "5Close & Onboard EffectivelyMove fast with competitive offers and start onboarding before day one. The first 90 days determine long-term retention.1-2 weeks",
+          "5",
+          "Do you verify real estate licenses?",
+          "Do you have commercial real estate professionals?",
+          "Can you help with property management staffing?",
+          "Start Real Estate Pilot",
+          "Contact",
+          "Subscribe",
+          "Book call"
+        ],
+        "links": [
+          {
+            "text": "Skip to main content",
+            "href": "https://taasflow.com/industries/real-estate#main-content"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "Browse jobs",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Join the network",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Browse open roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Home",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "Industries",
+            "href": "https://taasflow.com/industries"
+          },
+          {
+            "text": "View all articles",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "Industry Hiring GuidesReal EstateReal Estate Talent Acquisition: Hiring for Commercial, Residential, and PropTechThe rea",
+            "href": "https://taasflow.com/blog/real-estate-talent-acquisition-guide"
+          },
+          {
+            "text": "📋PropTech Hiring: Building Teams at the Intersection of Real Estate and TechnologyIndustry Hiring GuidesIndustry Hiring",
+            "href": "https://taasflow.com/blog/proptech-talent-acquisition"
+          },
+          {
+            "text": "🔍Real Estate Hiring Trends 2026: How to Build High-Performing Teams from Brokerage to PropTechIndustry SpotlightIndustr",
+            "href": "https://taasflow.com/blog/real-estate-hiring-trends"
+          },
+          {
+            "text": "View all articles",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "Technology",
+            "href": "https://taasflow.com/industries/tech"
+          },
+          {
+            "text": "Legal",
+            "href": "https://taasflow.com/industries/legal"
+          },
+          {
+            "text": "Public Sector",
+            "href": "https://taasflow.com/industries/public-sector"
+          },
+          {
+            "text": "Finance & Banking",
+            "href": "https://taasflow.com/industries/finance"
+          },
+          {
+            "text": "Staffing Agencies",
+            "href": "https://taasflow.com/industries/staffing-agencies"
+          },
+          {
+            "text": "Healthcare",
+            "href": "https://taasflow.com/industries/healthcare"
+          },
+          {
+            "text": "Sales",
+            "href": "https://taasflow.com/industries/sales"
+          },
+          {
+            "text": "Marketing & Advertising",
+            "href": "https://taasflow.com/industries/marketing"
+          },
+          {
+            "text": "Compare all industries",
+            "href": "https://taasflow.com/industries/compare"
+          },
+          {
+            "text": "How it works",
+            "href": "https://taasflow.com/how-it-works"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "Start Pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "Jobs",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Blog",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "About",
+            "href": "https://taasflow.com/about"
+          },
+          {
+            "text": "Enterprise",
+            "href": "https://taasflow.com/enterprise"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://taasflow.com/faq"
+          },
+          {
+            "text": "Contact",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Looking for a job in real estate? Browse open positions",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Real Estate Recruiting",
+            "href": "https://taasflow.com/industries/real-estate"
+          },
+          {
+            "text": "Real Estate Hiring Guide",
+            "href": "https://taasflow.com/blog/real-estate-hiring-guide"
+          },
+          {
+            "text": "Remote Hiring Practices",
+            "href": "https://taasflow.com/blog/remote-hiring-best-practices"
+          },
+          {
+            "text": "Start a Pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "Talk to Us",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Technology Recruiting",
+            "href": "https://taasflow.com/industries/tech"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "LinkedIn",
+            "href": "https://www.linkedin.com/company/taasflow/"
+          },
+          {
+            "text": "Browse roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Talent network",
+            "href": "https://taasflow.com/global-talent"
+          },
+          {
+            "text": "Member stories",
+            "href": "https://taasflow.com/candidate-success"
+          },
+          {
+            "text": "Start pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "Employer onboarding",
+            "href": "https://taasflow.com/employer-onboarding"
+          },
+          {
+            "text": "Case studies",
+            "href": "https://taasflow.com/case-studies"
+          },
+          {
+            "text": "Healthcare",
+            "href": "https://taasflow.com/industries/healthcare"
+          },
+          {
+            "text": "Technology",
+            "href": "https://taasflow.com/industries/tech"
+          },
+          {
+            "text": "Finance",
+            "href": "https://taasflow.com/industries/finance"
+          },
+          {
+            "text": "Legal",
+            "href": "https://taasflow.com/industries/legal"
+          },
+          {
+            "text": "All →",
+            "href": "https://taasflow.com/industries"
+          },
+          {
+            "text": "About us",
+            "href": "https://taasflow.com/about"
+          },
+          {
+            "text": "Blog",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://taasflow.com/faq"
+          },
+          {
+            "text": "Knowledge Base",
+            "href": "https://taasflow.com/knowledge-base"
+          },
+          {
+            "text": "Contact us",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Privacy Policy",
+            "href": "https://taasflow.com/privacy"
+          },
+          {
+            "text": "Terms of Service",
+            "href": "https://taasflow.com/terms"
+          },
+          {
+            "text": "Privacy Notice",
+            "href": "https://taasflow.com/privacy"
+          }
+        ],
+        "images": [
+          {
+            "src": "https://taasflow.com/assets/logo-on-white-Dk9DIcMP.png",
+            "alt": "TaaSFlow logo"
+          },
+          {
+            "src": "https://taasflow.com/assets/real-estate-Dpu59h1G.jpg",
+            "alt": ""
+          },
+          {
+            "src": "https://taasflow.com/assets/real-estate-Dpu59h1G.jpg",
+            "alt": ""
+          },
+          {
+            "src": "https://taasflow.com/assets/real-estate-Dpu59h1G.jpg",
+            "alt": ""
+          },
+          {
+            "src": "https://taasflow.com/assets/real-estate-hiring-BsVESjoE.jpg",
+            "alt": "Real Estate Talent Acquisition: Hiring for Commercial, Residential, and PropTech"
+          },
+          {
+            "src": "https://taasflow.com/assets/logo-on-blue-CX6jlwjg.png",
+            "alt": "TaaSFlow logo"
+          }
+        ],
+        "forms": [
+          {
+            "action": "https://taasflow.com/industries/real-estate",
+            "fields": [
+              "input"
+            ]
+          }
+        ],
+        "navLinks": [
+          "Browse jobs",
+          "Join the network",
+          "Browse open roles",
+          "Home",
+          "Industries",
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us"
+        ],
+        "footerLinks": [
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "Privacy Policy",
+          "Terms of Service"
+        ],
+        "horizontalOverflow": false,
+        "documentWidth": 1440,
+        "viewportWidth": 1440
+      },
+      "destination": {
+        "url": "https://clear-path-hubs.lovable.app/industries/real-estate",
+        "finalUrl": "https://clear-path-hubs.lovable.app/industries/real-estate",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [],
+        "title": "Real estate hiring — TaaSFlow",
+        "description": "Structured sourcing for owners, developers, operators and real-estate services firms. Ranked shortlists with evidence of asset class, market and lifecycle experience.",
+        "canonical": "https://clear-path-hubs.lovable.app/industries/real-estate",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "twitter:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "og:title": "Real estate hiring — TaaSFlow",
+          "og:description": "Structured sourcing for owners, developers, operators and real-estate services firms. Ranked shortlists with evidence of asset class, market and lifecycle experience.",
+          "og:url": "https://clear-path-hubs.lovable.app/industries/real-estate",
+          "og:type": "website",
+          "twitter:card": "summary_large_image",
+          "twitter:title": "Real estate hiring — TaaSFlow",
+          "twitter:description": "Structured sourcing for owners, developers, operators and real-estate services firms. Ranked shortlists with evidence of asset class, market and lifecycle experience."
+        },
+        "structuredData": [],
+        "h1": [
+          "Real estate hiring, calibrated per asset class and market."
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "Real estate hiring, calibrated per asset class and market."
+          },
+          {
+            "level": 2,
+            "text": "What we hear from Real Estate teams"
+          },
+          {
+            "level": 3,
+            "text": "Asset-class precision"
+          },
+          {
+            "level": 3,
+            "text": "Lifecycle-stage fit"
+          },
+          {
+            "level": 3,
+            "text": "Market and geography"
+          },
+          {
+            "level": 2,
+            "text": "Roles we source in Real Estate"
+          },
+          {
+            "level": 3,
+            "text": "Submit the role"
+          },
+          {
+            "level": 3,
+            "text": "We source and score"
+          },
+          {
+            "level": 3,
+            "text": "Review in your workspace"
+          },
+          {
+            "level": 2,
+            "text": "Hiring in real estate?"
+          }
+        ],
+        "sections": [
+          "Real estate hiring, calibrated per asset class and market.",
+          "What we hear from Real Estate teams",
+          "Roles we source in Real Estate",
+          "Submit the role",
+          "Hiring in real estate?",
+          "SECTION"
+        ],
+        "textBlocks": [
+          "Home",
+          "Industries",
+          "Real Estate",
+          "Real Estate",
+          "TaaSFlow gives real-estate leaders a workspace for every hire — investment, development, operations, asset management — with rubrics tuned per asset class and lifecycle stage.",
+          "Asset-class rubric per requisition",
+          "Lifecycle stage captured in intake",
+          "Human review before publication",
+          "Office, industrial, multifamily, retail and specialty each need distinct signal. Our rubric captures the asset classes actually worked on and the size of the portfolios owned.",
+          "Acquisitions, development, operations and dispositions reward different skills. We capture the lifecycle stage in intake so shortlists reflect it.",
+          "Real estate is local. Market coverage is captured as a first-class filter rather than a free-text note.",
+          "We calibrate the rubric to the seniority and specialisation you actually need.",
+          "Acquisitions and investments",
+          "Development and construction management",
+          "Asset managers",
+          "Property and facilities managers",
+          "Portfolio finance and analysts",
+          "Leasing and brokerage",
+          "Real-estate operations leads",
+          "Capital markets and debt specialists",
+          "01",
+          "A guided intake captures everything the search needs, in one flow.",
+          "02",
+          "Multi-channel sourcing, role-specific rubric, evidence extracted from every CV.",
+          "03",
+          "Ranked shortlist, evidence side-by-side, Kanban pipeline, direct messaging.",
+          "See the full process on how it works.",
+          "Real Estate",
+          "Submit the role — one workspace per requisition, ranked and reviewed."
+        ],
+        "buttons": [],
+        "links": [
+          {
+            "text": "Home",
+            "href": "https://clear-path-hubs.lovable.app/"
+          },
+          {
+            "text": "Industries",
+            "href": "https://clear-path-hubs.lovable.app/industries"
+          },
+          {
+            "text": "Start hiring",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "Talk to us",
+            "href": "https://clear-path-hubs.lovable.app/contact"
+          },
+          {
+            "text": "how it works",
+            "href": "https://clear-path-hubs.lovable.app/how-it-works"
+          },
+          {
+            "text": "Start intake",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "See other industries",
+            "href": "https://clear-path-hubs.lovable.app/industries"
+          },
+          {
+            "text": "Edit with",
+            "href": "https://lovable.dev/projects/1dc5ee7e-1294-441c-8288-850e79e443f6?utm_source=lovable-badge"
+          }
+        ],
+        "images": [],
+        "forms": [],
+        "navLinks": [
+          "Home",
+          "Industries"
+        ],
+        "footerLinks": [],
+        "horizontalOverflow": false,
+        "documentWidth": 1440,
+        "viewportWidth": 1440
+      },
+      "screenshots": {
+        "sourceFull": "reports/public-parity/screenshots/source/industries_real-estate__desktop__full.png",
+        "sourceVisible": "reports/public-parity/screenshots/source/industries_real-estate__desktop__visible.png",
+        "destinationFull": "reports/public-parity/screenshots/destination/industries_real-estate__desktop__full.png",
+        "destinationVisible": "reports/public-parity/screenshots/destination/industries_real-estate__desktop__visible.png"
+      },
+      "differences": [
+        "title: \"Real Estate Talent | TaaSFlow - Talent as a Service\" vs \"Real estate hiring — TaaSFlow\"",
+        "meta description mismatch",
+        "H1 differs: [Real Estate Professionals for Brokerages & Property Management] vs [Real estate hiring, calibrated per asset class and market.]",
+        "heading overlap 0% (0/30)",
+        "section count 20 vs 6",
+        "form count 1 vs 0"
+      ]
+    }
+  ],
+  "summary": "18 differences detected",
+  "exclusions": []
+}
