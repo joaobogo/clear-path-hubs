@@ -915,6 +915,38 @@ function IntakePage() {
                 <div>Screening questions: {state.screeningQuestions.length}</div>
               </ReviewBlock>
 
+              <div className="rounded-md border p-4 space-y-3 bg-muted/30">
+                <div>
+                  <div className="text-sm font-medium">Create your client account</div>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    We'll set up your workspace at <span className="font-medium text-foreground">{state.workEmail || "your work email"}</span>. Choose a password to sign in and track your shortlist.
+                  </p>
+                </div>
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  <Field label="Password" error={errors.password} required>
+                    <Input
+                      data-field="password"
+                      type="password"
+                      autoComplete="new-password"
+                      value={state.password}
+                      onChange={(e) => set("password", e.target.value)}
+                      placeholder="At least 8 characters"
+                    />
+                  </Field>
+                  <Field label="Confirm password" error={errors.passwordConfirm} required>
+                    <Input
+                      data-field="passwordConfirm"
+                      type="password"
+                      autoComplete="new-password"
+                      value={state.passwordConfirm}
+                      onChange={(e) => set("passwordConfirm", e.target.value)}
+                      placeholder="Repeat password"
+                    />
+                  </Field>
+                </div>
+              </div>
+
+
               <Field label="" error={errors.consent}>
                 <label className="flex items-start gap-2">
                   <Checkbox
