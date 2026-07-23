@@ -318,6 +318,9 @@ function WorkspaceHeader({
             )}
           </div>
         </div>
+        <div className="shrink-0">
+          <DownloadCvButton matchId={m.id} />
+        </div>
       </div>
       {m.processing_error_message && (
         <Alert variant="destructive">
