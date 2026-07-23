@@ -1543,6 +1543,11 @@ export const getPositionActivity = createServerFn({ method: "GET" })
   });
 
 // ─── Publish Desk — grouped, single source of truth ─────────────────────────
+// Publication readiness mirrors DB trigger `tg_candidate_matches_publish_gate`:
+//   approved_score_run_id set; run: status=completed, non-empty evidence,
+//   final_score <= applied_cap and <= raw_score; identity matches parent match
+// Plus admin-facing checks: no critical contradictions, complete Client-safe
+// DTO, admin approval, and no fatal processing state.
 export const getPublishDeskGroups = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
@@ -1551,33 +1556,134 @@ export const getPublishDeskGroups = createServerFn({ method: "GET" })
     const { data } = await s
       .from("candidate_matches")
       .select(
-        "id,updated_at,admin_status,client_visibility,processing_state,current_score_run_id,candidate_profiles(full_name,email),positions(id,title,organizations(id,name)),score_runs!candidate_matches_current_score_run_id_fkey(score,fit_label,contradiction_status,must_have_coverage)",
+        [
+          "id,updated_at,admin_status,client_visibility,processing_state,processing_error_code",
+          "organization_id,position_id,application_id,candidate_profile_id",
+          "current_score_run_id,approved_score_run_id",
+          "candidate_profiles(id,full_name,email)",
+          "positions(id,title,status,organization_id,organizations(id,name))",
+          "current_run:score_runs!candidate_matches_current_score_run_id_fkey(id,status,score,fit_label,contradiction_status,must_have_coverage,position_id,candidate_profile_id,organization_id,application_id)",
+          "approved_run:score_runs!candidate_matches_approved_score_run_id_fkey(id,status,score,fit_label,contradiction_status,must_have_coverage,evidence,raw_score,applied_cap,final_score,position_id,candidate_profile_id,organization_id,application_id)",
+        ].join(","),
       )
       .order("updated_at", { ascending: false })
       .limit(500);
     const rows = (data ?? []) as AnyRow[];
-    const needs_review: AnyRow[] = [];
-    const blocked: AnyRow[] = [];
-    const ready: AnyRow[] = [];
-    const published: AnyRow[] = [];
-    const held: AnyRow[] = [];
+
+    type Group = "needs_review" | "blocked" | "ready" | "published" | "held";
+    const buckets: Record<Group, AnyRow[]> = {
+      needs_review: [], blocked: [], ready: [], published: [], held: [],
+    };
+    const FATAL_STATES = new Set(["failed", "provider_blocked", "ocr_required"]);
+
     for (const r of rows) {
-      if (r.client_visibility === "visible") published.push(r);
-      else if (r.admin_status === "on_hold") held.push(r);
-      else if (["failed", "provider_blocked", "ocr_required"].includes(r.processing_state))
-        blocked.push(r);
-      else if (
-        r.processing_state === "scored" &&
-        r.admin_status === "approved"
-      )
-        ready.push(r);
-      else if (
-        r.processing_state === "manual_review_required" ||
-        (r.processing_state === "scored" && r.admin_status === "pending")
-      )
-        needs_review.push(r);
+      const approved = (r.approved_run ?? null) as AnyRow | null;
+      const current = (r.current_run ?? null) as AnyRow | null;
+      const pos = (r.positions ?? null) as AnyRow | null;
+      const cp = (r.candidate_profiles ?? null) as AnyRow | null;
+      const reasons: string[] = [];
+
+      // Fatal processing states
+      if (FATAL_STATES.has(r.processing_state)) {
+        reasons.push(
+          r.processing_state === "ocr_required"
+            ? "OCR required on CV — request OCR from the workspace"
+            : r.processing_state === "provider_blocked"
+            ? "AI provider blocked — resolve in Operations"
+            : `Processing failed (${r.processing_error_code ?? "unknown"}) — retry from workspace`,
+        );
+      }
+
+      // Score presence
+      const hasCurrentScore = current?.status === "completed" && current?.score != null;
+      const hasApprovedRun = !!approved && approved.status === "completed";
+      if (!hasCurrentScore && !hasApprovedRun) reasons.push("Score incomplete — run scoring");
+
+      // Approved-run evidence
+      const evidenceArr = Array.isArray(approved?.evidence) ? approved!.evidence : [];
+      const evidenceOk = hasApprovedRun && evidenceArr.length > 0;
+      if (hasCurrentScore && !approved) reasons.push("Score not approved — review evidence and approve");
+      if (hasApprovedRun && !evidenceOk) reasons.push("Approved run has no evidence array");
+
+      // Contradictions
+      const contradictionStatus = String(
+        approved?.contradiction_status ?? current?.contradiction_status ?? "none",
+      );
+      const contradictionOk = ["none", "resolved", "cleared"].includes(contradictionStatus);
+      if (!contradictionOk) reasons.push(`Contradiction unresolved (${contradictionStatus})`);
+
+      // Client-safe DTO
+      const missing: string[] = [];
+      if (!cp?.full_name) missing.push("candidate name");
+      if (!pos?.title) missing.push("position title");
+      if (!pos?.organizations?.name) missing.push("client organization");
+      if (missing.length) reasons.push(`Client-safe data incomplete: ${missing.join(", ")}`);
+
+      // Admin approval
+      const adminApproved = r.admin_status === "approved";
+      if (!adminApproved && r.admin_status !== "on_hold")
+        reasons.push(`Admin review ${r.admin_status ?? "pending"}`);
+
+      // Organization / position / identity bindings
+      const orgMismatch =
+        (pos?.organization_id && pos.organization_id !== r.organization_id) ||
+        (approved && approved.organization_id !== r.organization_id);
+      if (orgMismatch) reasons.push("Organization binding mismatch");
+      const posMismatch = approved && approved.position_id !== r.position_id;
+      if (posMismatch) reasons.push("Position binding mismatch");
+      const identityMismatch =
+        approved &&
+        (approved.candidate_profile_id !== r.candidate_profile_id ||
+          approved.application_id !== r.application_id);
+      if (identityMismatch) reasons.push("Approved run identity mismatch");
+
+      // Position status
+      if (!pos?.id) reasons.push("Position missing");
+      else if (pos.status === "archived") reasons.push("Position archived");
+
+      // Math invariants (mirror DB gate)
+      if (
+        approved &&
+        (Number(approved.final_score) > Number(approved.applied_cap) ||
+          Number(approved.final_score) > Number(approved.raw_score))
+      ) {
+        reasons.push("Score math invariant broken");
+      }
+
+      const canPublish =
+        adminApproved &&
+        hasApprovedRun &&
+        evidenceOk &&
+        contradictionOk &&
+        !missing.length &&
+        !orgMismatch &&
+        !posMismatch &&
+        !identityMismatch &&
+        !FATAL_STATES.has(r.processing_state) &&
+        pos?.status !== "archived";
+
+      const readiness = {
+        hasScore: hasCurrentScore || hasApprovedRun,
+        evidenceOk,
+        contradictionOk,
+        clientSafeOk: !missing.length,
+        adminApproved,
+        orgOk: !orgMismatch && !posMismatch && !identityMismatch,
+        canPublish,
+        blockedReasons: reasons,
+      };
+      const enriched: AnyRow = { ...r, _readiness: readiness, score_runs: approved ?? current };
+
+      let group: Group;
+      if (r.client_visibility === "visible") group = "published";
+      else if (r.admin_status === "on_hold") group = "held";
+      else if (canPublish) group = "ready";
+      else if (reasons.length > 0) group = "blocked";
+      else group = "needs_review";
+      buckets[group].push(enriched);
     }
-    return { needs_review, blocked, ready, published, held };
+
+    return buckets;
   });
 
 // ─── Operations: enriched incidents + resolve ────────────────────────────────
