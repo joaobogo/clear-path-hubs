@@ -180,7 +180,7 @@ function OverviewPage() {
           <ActionRequired actions={actions} isViewer={!!isViewer} loading={!data && isFetching} />
 
           {/* ─────────────── 3. HIRING SNAPSHOT ─────────────── */}
-          <HiringSnapshot kpis={kpis} deliveredPending={deliveredPending} offers={offersCount} />
+          <HiringSnapshot kpis={kpis} deliveredPending={deliveredPending} offers={kpis?.offers ?? offersCount} />
 
           {/* ─────────────── 4. ACTIVE POSITIONS ─────────────── */}
           <section aria-labelledby="active-heading" className="space-y-3">
@@ -405,15 +405,14 @@ function HiringSnapshot({
       <div className="grid gap-3 sm:grid-cols-3">
         <PrimaryKpi
           label="Active positions"
-          value={kpis?.active_positions ?? 0}
+          value={kpis?.active_positions}
           href="/client/positions"
           icon={<Briefcase className="h-4 w-4" />}
         />
         <PrimaryKpi
           label="Candidates delivered"
-          value={kpis?.delivered ?? 0}
+          value={kpis?.delivered}
           href="/client/candidates"
-          hrefSearch={{ filter: "all" }}
           icon={<Users className="h-4 w-4" />}
           hint={deliveredPending > 0 ? `${deliveredPending} waiting for your review` : "All reviewed"}
         />
@@ -421,19 +420,19 @@ function HiringSnapshot({
           label="Awaiting your review"
           value={deliveredPending}
           href="/client/candidates"
-          hrefSearch={{ filter: "new" }}
+          hrefSearch={{ stage: "delivered" }}
           icon={<AlertTriangle className="h-4 w-4" />}
           tone="amber"
         />
       </div>
       {/* Secondary tiles */}
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6">
-        <SecondaryKpi label="Top matches" value={kpis?.top ?? 0} href="/client/candidates" hrefSearch={{ filter: "top" }} icon={<Star className="h-3 w-3" />} />
-        <SecondaryKpi label="Shortlisted" value={kpis?.shortlisted ?? 0} href="/client/candidates" hrefSearch={{ filter: "shortlisted" }} />
-        <SecondaryKpi label="Interview process" value={kpis?.interviewing ?? 0} href="/client/candidates" hrefSearch={{ filter: "interview" }} />
-        <SecondaryKpi label="Scheduled interviews" value={kpis?.interview_scheduled ?? 0} href="/client/candidates" hrefSearch={{ filter: "interview" }} />
-        <SecondaryKpi label="Offers" value={offers} href="/client/candidates" hrefSearch={{ filter: "interview" }} />
-        <SecondaryKpi label="Hires" value={kpis?.hires ?? 0} href="/client/candidates" hrefSearch={{ filter: "hired" }} tone="emerald" />
+        <SecondaryKpi label="Top matches" value={kpis?.top} href="/client/candidates" hrefSearch={{ filter: "top" }} icon={<Star className="h-3 w-3" />} />
+        <SecondaryKpi label="Shortlisted" value={kpis?.shortlisted} href="/client/candidates" hrefSearch={{ stage: "shortlisted" }} />
+        <SecondaryKpi label="Interview process" value={kpis?.interviewing} href="/client/candidates" hrefSearch={{ filter: "interview_pipeline" }} />
+        <SecondaryKpi label="Scheduled interviews" value={kpis?.interview_scheduled} href="/client/interviews" hrefSearch={{ status: "scheduled" }} />
+        <SecondaryKpi label="Offers" value={kpis?.offers ?? offers} href="/client/candidates" hrefSearch={{ stage: "offer" }} />
+        <SecondaryKpi label="Hires" value={kpis?.hires} href="/client/candidates" hrefSearch={{ stage: "hired" }} tone="emerald" />
       </div>
     </section>
   );
@@ -580,15 +579,16 @@ function PrimaryKpi({
   tone,
 }: {
   label: string;
-  value: number;
+  value: number | undefined;
   href: string;
   hrefSearch?: Record<string, string>;
   icon?: React.ReactNode;
   hint?: string;
   tone?: "amber";
 }) {
+  const display = typeof value === "number" ? value.toLocaleString() : "—";
   const toneCls =
-    tone === "amber" && value > 0
+    tone === "amber" && (value ?? 0) > 0
       ? "border-amber-500/30 bg-amber-500/[0.04] hover:border-amber-500/50"
       : "hover:border-primary/50 hover:shadow-sm";
   return (
@@ -598,12 +598,13 @@ function PrimaryKpi({
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       search={hrefSearch as any}
       className={`group block rounded-xl border bg-card p-4 transition ${toneCls}`}
+      aria-label={`${label}: ${display}`}
     >
       <div className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide text-muted-foreground">
         {icon}
         <span>{label}</span>
       </div>
-      <div className="mt-2 text-3xl font-semibold tabular-nums">{value}</div>
+      <div className="mt-2 text-3xl font-semibold tabular-nums">{display}</div>
       {hint && <div className="mt-1 text-xs text-muted-foreground">{hint}</div>}
     </Link>
   );
@@ -618,14 +619,15 @@ function SecondaryKpi({
   tone,
 }: {
   label: string;
-  value: number;
+  value: number | undefined;
   href: string;
   hrefSearch?: Record<string, string>;
   icon?: React.ReactNode;
   tone?: "emerald";
 }) {
+  const display = typeof value === "number" ? value.toLocaleString() : "—";
   const emphasis =
-    tone === "emerald" && value > 0
+    tone === "emerald" && (value ?? 0) > 0
       ? "text-emerald-700 dark:text-emerald-300"
       : "text-foreground";
   return (
@@ -635,12 +637,13 @@ function SecondaryKpi({
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       search={hrefSearch as any}
       className="group block rounded-lg border bg-card px-3 py-2.5 transition hover:border-primary/40 hover:bg-muted/40"
+      aria-label={`${label}: ${display}`}
     >
       <div className="flex items-center gap-1 text-[10.5px] font-medium uppercase tracking-wide text-muted-foreground">
         {icon}
         <span className="truncate">{label}</span>
       </div>
-      <div className={`mt-1 text-xl font-semibold tabular-nums ${emphasis}`}>{value}</div>
+      <div className={`mt-1 text-xl font-semibold tabular-nums ${emphasis}`}>{display}</div>
     </Link>
   );
 }

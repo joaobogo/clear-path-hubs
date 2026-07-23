@@ -50,6 +50,7 @@ export type ClientKpis = {
   shortlisted: number;
   interviewing: number;
   interview_scheduled: number;
+  offers: number;
   hires: number;
   active_positions: number;
 };
@@ -125,6 +126,7 @@ export function computeKpis(rows: KpiRow[], activePositions = 0): ClientKpis {
     shortlisted: rows.filter((r) => r.stage === "shortlisted").length,
     interviewing: rows.filter(isInInterview).length,
     interview_scheduled: rows.filter((r) => r.interview_scheduled).length,
+    offers: rows.filter((r) => r.stage === "offer").length,
     hires: rows.filter((r) => r.stage === "hired").length,
     active_positions: activePositions,
   };
