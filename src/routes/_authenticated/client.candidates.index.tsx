@@ -199,6 +199,19 @@ function CandidatesPage() {
     return rows;
   }, [rowsRaw, search.q, search.location, search.stage, search.fit, search.sort, search.filter]);
 
+  // Bounded pagination — clamp render to a fixed page size so no unbounded lists ship.
+  const PAGE_SIZE = 24;
+  const [page, setPage] = useState(1);
+  useEffect(() => {
+    setPage(1);
+  }, [search.q, search.position, search.stage, search.fit, search.location, search.sort, search.filter, orgId]);
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const currentPage = Math.min(page, totalPages);
+  const paged = filtered.slice(
+    (currentPage - 1) * PAGE_SIZE,
+    currentPage * PAGE_SIZE,
+  );
+
   // Comparison state
   const [compareIds, setCompareIds] = useState<string[]>([]);
   const [compareOpen, setCompareOpen] = useState(false);
