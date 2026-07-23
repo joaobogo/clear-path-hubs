@@ -225,7 +225,23 @@ const saveInput = z.object({
       }),
     )
     .max(30),
+  responsibilities: z.string().max(6000).default(""),
+  experience: z.string().trim().max(200).default(""),
+  education: z.string().trim().max(400).default(""),
+  certifications: z.string().trim().max(400).default(""),
+  languages: z.string().trim().max(400).default(""),
+  industry_experience: z.string().trim().max(400).default(""),
+  hiring_timeline: z.string().trim().max(200).default(""),
+  timezone_requirements: z.string().trim().max(160).default(""),
+  reason_for_hiring: z
+    .enum(["replacement", "growth", "backfill", "new_team", ""])
+    .default(""),
+  hiring_challenges: z.string().max(2000).default(""),
+  interview_process: z.string().max(2000).default(""),
+  decision_makers: z.string().trim().max(400).default(""),
+  additional_context: z.string().max(4000).default(""),
 });
+
 
 export const savePositionEdit = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
