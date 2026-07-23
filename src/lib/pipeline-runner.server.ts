@@ -87,6 +87,58 @@ function buildScreening(rows: Any[]): ScreeningAnswer[] {
   });
 }
 
+// Best-effort LLM insights (narrative + per-requirement verdicts + screening
+// analysis). Never throws — returns { insights, insights_error } so callers can
+// merge into candidate_evidence.extracted.
+async function buildInsights(args: {
+  cvText: string;
+  position: Any;
+  screening: ScreeningAnswer[];
+}): Promise<{ insights: CandidateInsights | null; insights_error: string | null }> {
+  const pos = args.position;
+  if (!pos) return { insights: null, insights_error: "no_position" };
+  const reqs = [
+    ...(Array.isArray(pos.requirements) ? pos.requirements : []).map((r: Any, i: number) => ({
+      id: String(r?.id ?? `must-${i}`),
+      text: String(r?.text ?? r?.requirement ?? r?.title ?? "").trim(),
+      required: true,
+    })),
+    ...(Array.isArray(pos.preferred_requirements) ? pos.preferred_requirements : []).map((r: Any, i: number) => ({
+      id: String(r?.id ?? `pref-${i}`),
+      text: String(r?.text ?? r?.requirement ?? r?.title ?? "").trim(),
+      required: false,
+    })),
+  ].filter((r) => r.text);
+  if (reqs.length === 0) return { insights: null, insights_error: "no_requirements" };
+
+  const screening = args.screening.map((s) => ({
+    question_id: s.question_id,
+    question: s.question,
+    required: s.required,
+    answer_type: s.answer_type,
+    answer:
+      s.value == null
+        ? ""
+        : typeof s.value === "string"
+          ? s.value
+          : typeof s.value === "number" || typeof s.value === "boolean"
+            ? String(s.value)
+            : JSON.stringify(s.value).slice(0, 400),
+  }));
+
+  try {
+    const res = await generateCandidateInsights({
+      cv_text: args.cvText,
+      position: { title: pos.title ?? "", description: pos.description ?? null, requirements: reqs },
+      screening,
+    });
+    if (res.ok) return { insights: res.data, insights_error: null };
+    return { insights: null, insights_error: res.reason };
+  } catch (e) {
+    return { insights: null, insights_error: (e as Error).message?.slice(0, 200) ?? "insights_failed" };
+  }
+}
+
 export type PipelineOutcome = {
   match_id: string;
   trace_id: string;
