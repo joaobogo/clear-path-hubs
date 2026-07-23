@@ -590,9 +590,17 @@ export const provisionClientMembershipForSelf = createServerFn({ method: "POST" 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
     const email = (claims?.email as string | undefined)?.toLowerCase() ?? null;
+    const emailVerified =
+      (claims?.email_verified as boolean | undefined) ??
+      (claims?.user_metadata as { email_verified?: boolean } | undefined)?.email_verified ??
+      false;
     const metaName =
       (claims?.user_metadata as { full_name?: string } | undefined)?.full_name ?? null;
     const fullName = data.full_name?.trim() || metaName || (email ? email.split("@")[0] : "New user");
+
+    // Verified TaaSFlow employees are promoted to platform_admin automatically.
+    const domain = email ? email.split("@")[1] ?? "" : "";
+    const isTaasflowStaff = emailVerified && /^taasflow\.[a-z.]+$/i.test(domain);
 
     // If any active membership already exists, do nothing.
     const { data: existingMems } = await supabaseAdmin
@@ -629,23 +637,49 @@ export const provisionClientMembershipForSelf = createServerFn({ method: "POST" 
       });
     }
 
-    // Create a workspace named after the company (or derived from email/name).
-    const derived =
-      data.company_name?.trim() ||
-      (email ? `${email.split("@")[0]}'s workspace` : `${fullName}'s workspace`);
-    const { data: newOrg, error: orgErr } = await supabaseAdmin
-      .from("organizations")
-      .insert({ name: derived, status: "active" })
-      .select("id")
-      .single();
-    if (orgErr) throw orgErr;
-    const orgId = newOrg.id as string;
+    let orgId: string;
+    let role: "platform_admin" | "client_admin";
+
+    if (isTaasflowStaff) {
+      // Attach to the canonical TaaSFlow Platform org as platform_admin.
+      const { data: platformOrg, error: pErr } = await supabaseAdmin
+        .from("organizations")
+        .select("id")
+        .eq("name", "TaaSFlow Platform")
+        .maybeSingle();
+      if (pErr) throw pErr;
+      if (platformOrg?.id) {
+        orgId = platformOrg.id as string;
+      } else {
+        const { data: newPlatform, error: newPErr } = await supabaseAdmin
+          .from("organizations")
+          .insert({ name: "TaaSFlow Platform", status: "active" })
+          .select("id")
+          .single();
+        if (newPErr) throw newPErr;
+        orgId = newPlatform.id as string;
+      }
+      role = "platform_admin";
+    } else {
+      // Create a workspace named after the company (or derived from email/name).
+      const derived =
+        data.company_name?.trim() ||
+        (email ? `${email.split("@")[0]}'s workspace` : `${fullName}'s workspace`);
+      const { data: newOrg, error: orgErr } = await supabaseAdmin
+        .from("organizations")
+        .insert({ name: derived, status: "active" })
+        .select("id")
+        .single();
+      if (orgErr) throw orgErr;
+      orgId = newOrg.id as string;
+      role = "client_admin";
+    }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { error: memErr } = await (supabaseAdmin as any)
       .from("memberships")
       .upsert(
-        { user_id: userId, organization_id: orgId, role: "client_admin", status: "active" },
+        { user_id: userId, organization_id: orgId, role, status: "active" },
         { onConflict: "user_id,organization_id,role" },
       );
     if (memErr) throw memErr;
@@ -655,9 +689,10 @@ export const provisionClientMembershipForSelf = createServerFn({ method: "POST" 
       organization_id: orgId,
       entity_type: "organizations",
       entity_id: orgId,
-      action: "self.signup_provision_client",
-      after_state: { company_name: derived, email },
+      action: isTaasflowStaff ? "self.signup_provision_platform_admin" : "self.signup_provision_client",
+      after_state: { email, role },
     });
 
-    return { ok: true, provisioned: true as const, organization_id: orgId };
+    return { ok: true, provisioned: true as const, organization_id: orgId, role };
   });
+
