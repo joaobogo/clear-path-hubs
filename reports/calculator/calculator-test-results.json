@@ -1,0 +1,574 @@
+[
+  {
+    "label": "1 position",
+    "inputs": {
+      "positions": 1,
+      "averageSalaryUsd": 85000,
+      "agencyFeePct": 0.2,
+      "recruiterHourlyUsd": 40,
+      "sourcingHoursPerRole": 25
+    },
+    "agency": 17000,
+    "sourcing": 1000,
+    "traditional": 18000,
+    "taasflow": null,
+    "package": "Pilot — Single Position",
+    "savings": null,
+    "reductionPct": null,
+    "isCustom": true,
+    "negative": false,
+    "formatted": {
+      "agency": "$17K",
+      "sourcing": "$1K",
+      "traditional": "$18K",
+      "taasflow": "Custom",
+      "savings": "—"
+    }
+  },
+  {
+    "label": "2 positions",
+    "inputs": {
+      "positions": 2,
+      "averageSalaryUsd": 85000,
+      "agencyFeePct": 0.2,
+      "recruiterHourlyUsd": 40,
+      "sourcingHoursPerRole": 25
+    },
+    "agency": 34000,
+    "sourcing": 2000,
+    "traditional": 36000,
+    "taasflow": null,
+    "package": "Multi Position",
+    "savings": null,
+    "reductionPct": null,
+    "isCustom": true,
+    "negative": false,
+    "formatted": {
+      "agency": "$34K",
+      "sourcing": "$2K",
+      "traditional": "$36K",
+      "taasflow": "Custom",
+      "savings": "—"
+    }
+  },
+  {
+    "label": "5 positions (default)",
+    "inputs": {
+      "positions": 5,
+      "averageSalaryUsd": 85000,
+      "agencyFeePct": 0.2,
+      "recruiterHourlyUsd": 40,
+      "sourcingHoursPerRole": 25
+    },
+    "agency": 85000,
+    "sourcing": 5000,
+    "traditional": 90000,
+    "taasflow": null,
+    "package": "Multi Position",
+    "savings": null,
+    "reductionPct": null,
+    "isCustom": true,
+    "negative": false,
+    "formatted": {
+      "agency": "$85K",
+      "sourcing": "$5K",
+      "traditional": "$90K",
+      "taasflow": "Custom",
+      "savings": "—"
+    }
+  },
+  {
+    "label": "6 positions",
+    "inputs": {
+      "positions": 6,
+      "averageSalaryUsd": 85000,
+      "agencyFeePct": 0.2,
+      "recruiterHourlyUsd": 40,
+      "sourcingHoursPerRole": 25
+    },
+    "agency": 102000,
+    "sourcing": 6000,
+    "traditional": 108000,
+    "taasflow": null,
+    "package": "Hiring Sprint",
+    "savings": null,
+    "reductionPct": null,
+    "isCustom": true,
+    "negative": false,
+    "formatted": {
+      "agency": "$102K",
+      "sourcing": "$6K",
+      "traditional": "$108K",
+      "taasflow": "Custom",
+      "savings": "—"
+    }
+  },
+  {
+    "label": "10 positions",
+    "inputs": {
+      "positions": 10,
+      "averageSalaryUsd": 85000,
+      "agencyFeePct": 0.2,
+      "recruiterHourlyUsd": 40,
+      "sourcingHoursPerRole": 25
+    },
+    "agency": 170000,
+    "sourcing": 10000,
+    "traditional": 180000,
+    "taasflow": null,
+    "package": "Hiring Sprint",
+    "savings": null,
+    "reductionPct": null,
+    "isCustom": true,
+    "negative": false,
+    "formatted": {
+      "agency": "$170K",
+      "sourcing": "$10K",
+      "traditional": "$180K",
+      "taasflow": "Custom",
+      "savings": "—"
+    }
+  },
+  {
+    "label": "11 positions (subscription)",
+    "inputs": {
+      "positions": 11,
+      "averageSalaryUsd": 85000,
+      "agencyFeePct": 0.2,
+      "recruiterHourlyUsd": 40,
+      "sourcingHoursPerRole": 25
+    },
+    "agency": 187000,
+    "sourcing": 11000,
+    "traditional": 198000,
+    "taasflow": null,
+    "package": "Subscription",
+    "savings": null,
+    "reductionPct": null,
+    "isCustom": true,
+    "negative": false,
+    "formatted": {
+      "agency": "$187K",
+      "sourcing": "$11K",
+      "traditional": "$198K",
+      "taasflow": "Custom",
+      "savings": "—"
+    }
+  },
+  {
+    "label": "50 positions (out-of-limit; clamped to 20 in UI)",
+    "inputs": {
+      "positions": 50,
+      "averageSalaryUsd": 85000,
+      "agencyFeePct": 0.2,
+      "recruiterHourlyUsd": 40,
+      "sourcingHoursPerRole": 25
+    },
+    "agency": 850000,
+    "sourcing": 50000,
+    "traditional": 900000,
+    "taasflow": null,
+    "package": "Subscription",
+    "savings": null,
+    "reductionPct": null,
+    "isCustom": true,
+    "negative": false,
+    "formatted": {
+      "agency": "$850K",
+      "sourcing": "$50K",
+      "traditional": "$900K",
+      "taasflow": "Custom",
+      "savings": "—"
+    }
+  },
+  {
+    "label": "min agency fee 10%",
+    "inputs": {
+      "positions": 5,
+      "averageSalaryUsd": 85000,
+      "agencyFeePct": 0.1,
+      "recruiterHourlyUsd": 40,
+      "sourcingHoursPerRole": 25
+    },
+    "agency": 42500,
+    "sourcing": 5000,
+    "traditional": 47500,
+    "taasflow": null,
+    "package": "Multi Position",
+    "savings": null,
+    "reductionPct": null,
+    "isCustom": true,
+    "negative": false,
+    "formatted": {
+      "agency": "$42.5K",
+      "sourcing": "$5K",
+      "traditional": "$47.5K",
+      "taasflow": "Custom",
+      "savings": "—"
+    }
+  },
+  {
+    "label": "max agency fee 30%",
+    "inputs": {
+      "positions": 5,
+      "averageSalaryUsd": 85000,
+      "agencyFeePct": 0.3,
+      "recruiterHourlyUsd": 40,
+      "sourcingHoursPerRole": 25
+    },
+    "agency": 127500,
+    "sourcing": 5000,
+    "traditional": 132500,
+    "taasflow": null,
+    "package": "Multi Position",
+    "savings": null,
+    "reductionPct": null,
+    "isCustom": true,
+    "negative": false,
+    "formatted": {
+      "agency": "$127.5K",
+      "sourcing": "$5K",
+      "traditional": "$132.5K",
+      "taasflow": "Custom",
+      "savings": "—"
+    }
+  },
+  {
+    "label": "zero salary",
+    "inputs": {
+      "positions": 5,
+      "averageSalaryUsd": 0,
+      "agencyFeePct": 0.2,
+      "recruiterHourlyUsd": 40,
+      "sourcingHoursPerRole": 25
+    },
+    "agency": 0,
+    "sourcing": 5000,
+    "traditional": 5000,
+    "taasflow": null,
+    "package": "Multi Position",
+    "savings": null,
+    "reductionPct": null,
+    "isCustom": true,
+    "negative": false,
+    "formatted": {
+      "agency": "$0",
+      "sourcing": "$5K",
+      "traditional": "$5K",
+      "taasflow": "Custom",
+      "savings": "—"
+    }
+  },
+  {
+    "label": "typical salary $85K",
+    "inputs": {
+      "positions": 5,
+      "averageSalaryUsd": 85000,
+      "agencyFeePct": 0.2,
+      "recruiterHourlyUsd": 40,
+      "sourcingHoursPerRole": 25
+    },
+    "agency": 85000,
+    "sourcing": 5000,
+    "traditional": 90000,
+    "taasflow": null,
+    "package": "Multi Position",
+    "savings": null,
+    "reductionPct": null,
+    "isCustom": true,
+    "negative": false,
+    "formatted": {
+      "agency": "$85K",
+      "sourcing": "$5K",
+      "traditional": "$90K",
+      "taasflow": "Custom",
+      "savings": "—"
+    }
+  },
+  {
+    "label": "max salary $250K",
+    "inputs": {
+      "positions": 5,
+      "averageSalaryUsd": 250000,
+      "agencyFeePct": 0.2,
+      "recruiterHourlyUsd": 40,
+      "sourcingHoursPerRole": 25
+    },
+    "agency": 250000,
+    "sourcing": 5000,
+    "traditional": 255000,
+    "taasflow": null,
+    "package": "Multi Position",
+    "savings": null,
+    "reductionPct": null,
+    "isCustom": true,
+    "negative": false,
+    "formatted": {
+      "agency": "$250K",
+      "sourcing": "$5K",
+      "traditional": "$255K",
+      "taasflow": "Custom",
+      "savings": "—"
+    }
+  },
+  {
+    "label": "min recruiter hourly $20",
+    "inputs": {
+      "positions": 5,
+      "averageSalaryUsd": 85000,
+      "agencyFeePct": 0.2,
+      "recruiterHourlyUsd": 20,
+      "sourcingHoursPerRole": 25
+    },
+    "agency": 85000,
+    "sourcing": 2500,
+    "traditional": 87500,
+    "taasflow": null,
+    "package": "Multi Position",
+    "savings": null,
+    "reductionPct": null,
+    "isCustom": true,
+    "negative": false,
+    "formatted": {
+      "agency": "$85K",
+      "sourcing": "$2.5K",
+      "traditional": "$87.5K",
+      "taasflow": "Custom",
+      "savings": "—"
+    }
+  },
+  {
+    "label": "max recruiter hourly $150",
+    "inputs": {
+      "positions": 5,
+      "averageSalaryUsd": 85000,
+      "agencyFeePct": 0.2,
+      "recruiterHourlyUsd": 150,
+      "sourcingHoursPerRole": 25
+    },
+    "agency": 85000,
+    "sourcing": 18750,
+    "traditional": 103750,
+    "taasflow": null,
+    "package": "Multi Position",
+    "savings": null,
+    "reductionPct": null,
+    "isCustom": true,
+    "negative": false,
+    "formatted": {
+      "agency": "$85K",
+      "sourcing": "$18.8K",
+      "traditional": "$103.8K",
+      "taasflow": "Custom",
+      "savings": "—"
+    }
+  },
+  {
+    "label": "min sourcing hours 5h",
+    "inputs": {
+      "positions": 5,
+      "averageSalaryUsd": 85000,
+      "agencyFeePct": 0.2,
+      "recruiterHourlyUsd": 40,
+      "sourcingHoursPerRole": 5
+    },
+    "agency": 85000,
+    "sourcing": 1000,
+    "traditional": 86000,
+    "taasflow": null,
+    "package": "Multi Position",
+    "savings": null,
+    "reductionPct": null,
+    "isCustom": true,
+    "negative": false,
+    "formatted": {
+      "agency": "$85K",
+      "sourcing": "$1K",
+      "traditional": "$86K",
+      "taasflow": "Custom",
+      "savings": "—"
+    }
+  },
+  {
+    "label": "max sourcing hours 80h",
+    "inputs": {
+      "positions": 5,
+      "averageSalaryUsd": 85000,
+      "agencyFeePct": 0.2,
+      "recruiterHourlyUsd": 40,
+      "sourcingHoursPerRole": 80
+    },
+    "agency": 85000,
+    "sourcing": 16000,
+    "traditional": 101000,
+    "taasflow": null,
+    "package": "Multi Position",
+    "savings": null,
+    "reductionPct": null,
+    "isCustom": true,
+    "negative": false,
+    "formatted": {
+      "agency": "$85K",
+      "sourcing": "$16K",
+      "traditional": "$101K",
+      "taasflow": "Custom",
+      "savings": "—"
+    }
+  },
+  {
+    "label": "negative-savings synth (tiny traditional)",
+    "inputs": {
+      "positions": 5,
+      "averageSalaryUsd": 0,
+      "agencyFeePct": 0.1,
+      "recruiterHourlyUsd": 20,
+      "sourcingHoursPerRole": 5
+    },
+    "agency": 0,
+    "sourcing": 500,
+    "traditional": 500,
+    "taasflow": null,
+    "package": "Multi Position",
+    "savings": null,
+    "reductionPct": null,
+    "isCustom": true,
+    "negative": false,
+    "formatted": {
+      "agency": "$0",
+      "sourcing": "$500",
+      "traditional": "$500",
+      "taasflow": "Custom",
+      "savings": "—"
+    }
+  },
+  {
+    "label": "zero-savings synth (all zeros)",
+    "inputs": {
+      "positions": 5,
+      "averageSalaryUsd": 0,
+      "agencyFeePct": 0.2,
+      "recruiterHourlyUsd": 0,
+      "sourcingHoursPerRole": 25
+    },
+    "agency": 0,
+    "sourcing": 0,
+    "traditional": 0,
+    "taasflow": null,
+    "package": "Multi Position",
+    "savings": null,
+    "reductionPct": null,
+    "isCustom": true,
+    "negative": false,
+    "formatted": {
+      "agency": "$0",
+      "sourcing": "$0",
+      "traditional": "$0",
+      "taasflow": "Custom",
+      "savings": "—"
+    }
+  },
+  {
+    "label": "positive-savings synth (defaults)",
+    "inputs": {
+      "positions": 5,
+      "averageSalaryUsd": 85000,
+      "agencyFeePct": 0.2,
+      "recruiterHourlyUsd": 40,
+      "sourcingHoursPerRole": 25
+    },
+    "agency": 85000,
+    "sourcing": 5000,
+    "traditional": 90000,
+    "taasflow": null,
+    "package": "Multi Position",
+    "savings": null,
+    "reductionPct": null,
+    "isCustom": true,
+    "negative": false,
+    "formatted": {
+      "agency": "$85K",
+      "sourcing": "$5K",
+      "traditional": "$90K",
+      "taasflow": "Custom",
+      "savings": "—"
+    }
+  },
+  {
+    "label": "custom-pricing scenario 15 positions",
+    "inputs": {
+      "positions": 15,
+      "averageSalaryUsd": 85000,
+      "agencyFeePct": 0.2,
+      "recruiterHourlyUsd": 40,
+      "sourcingHoursPerRole": 25
+    },
+    "agency": 255000,
+    "sourcing": 15000,
+    "traditional": 270000,
+    "taasflow": null,
+    "package": "Subscription",
+    "savings": null,
+    "reductionPct": null,
+    "isCustom": true,
+    "negative": false,
+    "formatted": {
+      "agency": "$255K",
+      "sourcing": "$15K",
+      "traditional": "$270K",
+      "taasflow": "Custom",
+      "savings": "—"
+    }
+  },
+  {
+    "label": "invalid numeric (NaN salary)",
+    "inputs": {
+      "positions": 5,
+      "averageSalaryUsd": null,
+      "agencyFeePct": 0.2,
+      "recruiterHourlyUsd": 40,
+      "sourcingHoursPerRole": 25
+    },
+    "agency": null,
+    "sourcing": 5000,
+    "traditional": null,
+    "taasflow": null,
+    "package": "Multi Position",
+    "savings": null,
+    "reductionPct": null,
+    "isCustom": true,
+    "negative": false,
+    "formatted": {
+      "agency": "—",
+      "sourcing": "$5K",
+      "traditional": "—",
+      "taasflow": "Custom",
+      "savings": "—"
+    }
+  },
+  {
+    "label": "empty numeric (undefined salary → default treated as 0 by clamp)",
+    "inputs": {
+      "positions": 5,
+      "averageSalaryUsd": 0,
+      "agencyFeePct": 0.2,
+      "recruiterHourlyUsd": 40,
+      "sourcingHoursPerRole": 25
+    },
+    "agency": 0,
+    "sourcing": 5000,
+    "traditional": 5000,
+    "taasflow": null,
+    "package": "Multi Position",
+    "savings": null,
+    "reductionPct": null,
+    "isCustom": true,
+    "negative": false,
+    "formatted": {
+      "agency": "$0",
+      "sourcing": "$5K",
+      "traditional": "$5K",
+      "taasflow": "Custom",
+      "savings": "—"
+    }
+  }
+]
