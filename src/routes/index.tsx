@@ -42,28 +42,6 @@ export const Route = createFileRoute("/")({
 
 /* ---------- Content constants (no unverified numeric claims) ---------- */
 
-const WORKSPACE_VALUE = [
-  {
-    icon: LayoutDashboard,
-    title: "One live workspace",
-    body: "Positions, candidates, and decisions in a single place — updated the moment things change.",
-  },
-  {
-    icon: BarChart3,
-    title: "Ranked candidate delivery",
-    body: "Every candidate arrives with a role-specific score and side-by-side comparison in the workspace.",
-  },
-  {
-    icon: Sparkles,
-    title: "Evidence you can read",
-    body: "Actual quotes from the CV mapped to the requirements you approved — not generic keywords.",
-  },
-  {
-    icon: ClipboardCheck,
-    title: "Transparent status",
-    body: "Applied · Under review · Shortlisted · Interview · Offer — your team and every candidate see the same status.",
-  },
-] as const;
 
 const STEPS = [
   {
