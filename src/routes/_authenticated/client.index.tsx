@@ -172,137 +172,108 @@ function OverviewPage() {
  </div>
  )}
 
- {showOnboarding ? (
- <EmptyWelcome canSubmit={canSubmit} />
- ) : (
- <>
- {/* ─────────────── 2. ACTION REQUIRED ─────────────── */}
- <ActionRequired actions={actions} isViewer={!!isViewer} loading={!data && isFetching} />
+      {showOnboarding ? (
+        <EmptyWelcome canSubmit={canSubmit} />
+      ) : (
+        <>
+          {/* ─────────────── 1. ACTION REQUIRED ─────────────── */}
+          <ActionRequired actions={actions} isViewer={!!isViewer} loading={!data && isFetching} />
 
- {/* ─────────────── 3. HIRING SNAPSHOT ─────────────── */}
- <HiringSnapshot kpis={kpis} deliveredPending={deliveredPending} offers={kpis?.offers ?? offersCount} />
+          {/* ─────────────── 2. HIRING SNAPSHOT ─────────────── */}
+          <HiringSnapshot kpis={kpis} deliveredPending={deliveredPending} offers={kpis?.offers ?? offersCount} />
 
- {/* ─────────────── 4. ACTIVE POSITIONS ─────────────── */}
- <section aria-labelledby="active-heading" className="space-y-3">
- <SectionHeader
- id="active-heading"
- icon={<Briefcase className="h-4 w-4" />}
- title="Active positions"
- action={
- <Link to="/client/positions" className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline">
- View all positions <ChevronRight className="h-3.5 w-3.5" />
- </Link>
- }
- />
- {whatsNext.length === 0 ? (
- <EmptyBlock text={canSubmit ? "Submit your first position to start building your pipeline." : "No active searches yet."} />
- ) : (
- <div className="grid gap-3 md:grid-cols-2">
- {whatsNext.slice(0, 4).map((p) => (
- <PositionCard key={p.position_id} p={p} />
- ))}
- </div>
- )}
- </section>
+          {/* ─────────────── 3. NEWEST RANKED CANDIDATES ─────────────── */}
+          <section aria-labelledby="delivered-heading" className="space-y-3">
+            <SectionHeader
+              id="delivered-heading"
+              icon={<Sparkles className="h-4 w-4 text-primary" />}
+              title="Newest ranked candidates"
+              action={
+                <Link to="/client/candidates" className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline">
+                  View all candidates <ChevronRight className="h-3.5 w-3.5" />
+                </Link>
+              }
+            />
+            {latest.length === 0 ? (
+              <EmptyBlock text="Reviewed candidates will appear here when they are ready." />
+            ) : (
+              <div className="grid gap-3">
+                {latest.slice(0, 6).map((c) => (
+                  <CandidateCard key={c.match_id} candidate={c} />
+                ))}
+              </div>
+            )}
+          </section>
 
- {/* ─────────────── 5. NEWLY DELIVERED CANDIDATES ─────────────── */}
- <section aria-labelledby="delivered-heading" className="space-y-3">
- <SectionHeader
- id="delivered-heading"
- icon={<Sparkles className="h-4 w-4 text-primary" />}
- title="Newly delivered candidates"
- action={
- <Link to="/client/candidates" className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline">
- View all candidates <ChevronRight className="h-3.5 w-3.5" />
- </Link>
- }
- />
- {latest.length === 0 ? (
- <EmptyBlock text="Reviewed candidates will appear here when they are ready." />
- ) : (
- <div className="grid gap-3">
- {latest.slice(0, 6).map((c) => (
- <CandidateCard key={c.match_id} candidate={c} />
- ))}
- </div>
- )}
- </section>
+          {/* ─────────────── 4. ROLE PROGRESS ─────────────── */}
+          <section aria-labelledby="role-progress-heading" className="space-y-3">
+            <SectionHeader
+              id="role-progress-heading"
+              icon={<Briefcase className="h-4 w-4" />}
+              title="Role progress"
+              action={
+                <Link to="/client/positions" className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline">
+                  All positions <ChevronRight className="h-3.5 w-3.5" />
+                </Link>
+              }
+            />
+            {whatsNext.length === 0 ? (
+              <EmptyBlock text={canSubmit ? "Submit your first position to start building your pipeline." : "No active searches yet."} />
+            ) : (
+              <div className="grid gap-3 md:grid-cols-2">
+                {whatsNext.slice(0, 4).map((p) => (
+                  <PositionCard key={p.position_id} p={p} />
+                ))}
+              </div>
+            )}
+          </section>
 
- {/* ─────────────── 6. INTERVIEWS & UPCOMING MILESTONES ─────────────── */}
- {upcoming.length > 0 && (
- <section aria-labelledby="upcoming-heading" className="space-y-3">
- <SectionHeader
- id="upcoming-heading"
- icon={<CalendarClock className="h-4 w-4" />}
- title="Interviews & upcoming milestones"
- />
- <div className="grid gap-2 sm:grid-cols-2">
- {upcoming.map((u, i) => (
- <Link
- key={i}
- // eslint-disable-next-line @typescript-eslint/no-explicit-any
- to={u.href as any}
- className={`group flex items-center gap-3 rounded-lg border p-3 transition hover:border-primary/60 hover:bg-muted/40 ${
- u.tone === "amber"
- ? "taas-bd-warning taas-bg-warning-solid/[0.03]"
- : "taas-bd-info taas-bg-info-solid/[0.03]"
- }`}
- >
- <span className={u.tone === "amber" ? "taas-fg-warning" : "taas-fg-info"}>{u.icon}</span>
- <span className="flex-1 text-sm">{u.label}</span>
- <ChevronRight className="h-4 w-4 text-muted-foreground transition group-hover:translate-x-0.5 group-hover:text-primary" />
- </Link>
- ))}
- </div>
- </section>
- )}
+          {/* ─────────────── 5. UPCOMING INTERVIEWS ─────────────── */}
+          {upcoming.length > 0 && (
+            <section aria-labelledby="upcoming-heading" className="space-y-3">
+              <SectionHeader
+                id="upcoming-heading"
+                icon={<CalendarClock className="h-4 w-4" />}
+                title="Upcoming interviews"
+              />
+              <div className="grid gap-2 sm:grid-cols-2">
+                {upcoming.map((u, i) => (
+                  <Link
+                    key={i}
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    to={u.href as any}
+                    className={`group flex items-center gap-3 rounded-lg border p-3 transition hover:border-primary/60 hover:bg-muted/40 ${
+                      u.tone === "amber"
+                        ? "taas-bd-warning taas-bg-warning-solid/[0.03]"
+                        : "taas-bd-info taas-bg-info-solid/[0.03]"
+                    }`}
+                  >
+                    <span className={u.tone === "amber" ? "taas-fg-warning" : "taas-fg-info"}>{u.icon}</span>
+                    <span className="flex-1 text-sm">{u.label}</span>
+                    <ChevronRight className="h-4 w-4 text-muted-foreground transition group-hover:translate-x-0.5 group-hover:text-primary" />
+                  </Link>
+                ))}
+              </div>
+            </section>
+          )}
 
- {/* ─────────────── 7 & 8. ACTIVITY + MESSAGES ─────────────── */}
- <section className="grid gap-4 lg:grid-cols-2">
- <RecentActivity events={activity} />
- <RecentMessages messages={messages} />
- </section>
+          {/* ─────────────── 6. CANDIDATE MOVEMENT + LIVE ACTIVITY ─────────────── */}
+          <section className="grid gap-4 lg:grid-cols-5">
+            <div className="lg:col-span-3">
+              <RecentActivity events={activity} />
+            </div>
+            <div className="lg:col-span-2">
+              <RecentMessages messages={messages} />
+            </div>
+          </section>
 
- {/* ─────────────── 9. TAASFLOW PROGRESS SUMMARY ─────────────── */}
- {whatsNext.length > 0 && (
- <section aria-labelledby="progress-heading" className="space-y-3">
- <SectionHeader
- id="progress-heading"
- icon={<ClipboardCheck className="h-4 w-4" />}
- title="What TaaSFlow is working on"
- />
- <div className="rounded-lg border bg-card divide-y">
- {whatsNext.slice(0, 4).map((p) => (
- <Link
- key={p.position_id}
- to="/client/positions/$id"
- params={{ id: p.position_id }}
- className="flex items-center gap-3 p-3 sm:p-4 transition hover:bg-muted/40"
- >
- <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-primary/10 text-primary">
- <Briefcase className="h-4 w-4" />
- </span>
- <div className="min-w-0 flex-1">
- <div className="truncate text-sm font-medium">{p.title}</div>
- <div className="text-xs text-muted-foreground">{progressPhrase(p)}</div>
- </div>
- <div className="hidden shrink-0 text-xs text-muted-foreground sm:block">
- Next: <span className="text-foreground">{p.next}</span>
- </div>
- <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground" />
- </Link>
- ))}
- </div>
- </section>
- )}
-
- {data?.last_updated && (
- <p className="pt-2 text-xs text-muted-foreground">
- Last updated {relTime(data.last_updated)} · {new Date(data.last_updated).toLocaleString()}
- </p>
- )}
- </>
- )}
+          {data?.last_updated && (
+            <p className="pt-2 text-xs text-muted-foreground">
+              Last updated {relTime(data.last_updated)} · {new Date(data.last_updated).toLocaleString()}
+            </p>
+          )}
+        </>
+      )}
  </main>
  );
 }
