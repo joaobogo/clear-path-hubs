@@ -62,7 +62,15 @@ function LoginPage() {
       const { data } = await supabase.auth.getSession();
       if (!data.session) return;
       try {
-        const ctx = await runSession();
+        let ctx = await runSession();
+        // Newly-confirmed signup landing here with no memberships and no
+        // candidate profile → auto-provision as client_admin of a new workspace.
+        if (!ctx.primary_role && ctx.memberships.length === 0) {
+          try {
+            await runProvision({ data: {} });
+            ctx = await runSession();
+          } catch { /* fall through to routing */ }
+        }
         if (cancelled) return;
         routeToDest(ctx.memberships, ctx.primary_role);
       } catch {
