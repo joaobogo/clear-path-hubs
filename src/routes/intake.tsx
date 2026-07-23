@@ -89,6 +89,8 @@ type FormState = {
   decisionMakers: string;
   additionalContext: string;
   screeningQuestions: ScreeningQ[];
+  password: string;
+  passwordConfirm: string;
   consent: boolean;
 };
 
@@ -132,6 +134,8 @@ const EMPTY: FormState = {
   decisionMakers: "",
   additionalContext: "",
   screeningQuestions: [],
+  password: "",
+  passwordConfirm: "",
   consent: false,
 };
 
@@ -179,6 +183,8 @@ function validateStep(step: number, s: FormState): Record<string, string> {
     }
   }
   if (step === 5) {
+    if (!s.password || s.password.length < 8) e.password = "Choose a password with at least 8 characters";
+    if (s.password !== s.passwordConfirm) e.passwordConfirm = "Passwords do not match";
     if (!s.consent) e.consent = "You must accept the terms to submit";
   }
   return e;
@@ -269,7 +275,7 @@ function IntakePage() {
       if (["firstName", "lastName", "workEmail", "companyName"].includes(firstKey)) setStep(1);
       else if (["roleTitle", "workModel"].includes(firstKey)) setStep(2);
       else if (["mustHaveSkills", "jobDescription"].includes(firstKey)) setStep(3);
-      else if (firstKey === "consent") setStep(5);
+      else if (["password", "passwordConfirm", "consent"].includes(firstKey)) setStep(5);
       toast.error("Please fix the highlighted fields");
       return;
     }
@@ -304,6 +310,7 @@ function IntakePage() {
         timezoneRequirements: state.timezoneRequirements.trim(),
         screeningQuestions: state.screeningQuestions.filter((q) => q.question.trim().length >= 3),
         consent: state.consent,
+        password: state.password,
         source: "public_form",
         submittedAt: new Date().toISOString(),
       };
@@ -907,6 +914,38 @@ function IntakePage() {
                 <div>Countries: {state.targetCountries.join(", ") || "—"}</div>
                 <div>Screening questions: {state.screeningQuestions.length}</div>
               </ReviewBlock>
+
+              <div className="rounded-md border p-4 space-y-3 bg-muted/30">
+                <div>
+                  <div className="text-sm font-medium">Create your client account</div>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    We'll set up your workspace at <span className="font-medium text-foreground">{state.workEmail || "your work email"}</span>. Choose a password to sign in and track your shortlist.
+                  </p>
+                </div>
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  <Field label="Password" error={errors.password} required>
+                    <Input
+                      data-field="password"
+                      type="password"
+                      autoComplete="new-password"
+                      value={state.password}
+                      onChange={(e) => set("password", e.target.value)}
+                      placeholder="At least 8 characters"
+                    />
+                  </Field>
+                  <Field label="Confirm password" error={errors.passwordConfirm} required>
+                    <Input
+                      data-field="passwordConfirm"
+                      type="password"
+                      autoComplete="new-password"
+                      value={state.passwordConfirm}
+                      onChange={(e) => set("passwordConfirm", e.target.value)}
+                      placeholder="Repeat password"
+                    />
+                  </Field>
+                </div>
+              </div>
+
 
               <Field label="" error={errors.consent}>
                 <label className="flex items-start gap-2">
