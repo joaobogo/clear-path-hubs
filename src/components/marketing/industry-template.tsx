@@ -6,6 +6,10 @@ import {
   Breadcrumbs,
 } from "@/components/marketing/site-shell";
 import type { IndustryEntry } from "@/content/industries-v2";
+import { getIndustryHeroImage } from "@/content/industry-hero-images";
+import { IndustryRoleExplorer } from "@/components/marketing/industry-role-explorer";
+import { IndustrySignalExplorer } from "@/components/marketing/industry-signal-explorer";
+
 
 /**
  * Reusable industry detail template. All industry pages render through this
