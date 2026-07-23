@@ -359,18 +359,23 @@ export function WorkspaceShell(props: WorkspaceShellProps) {
           <button
             type="button"
             className="hidden h-9 items-center gap-2 rounded-md border bg-card px-3 text-xs text-muted-foreground shadow-sm hover:text-foreground md:inline-flex"
-            onClick={() => {
-              /* Global search entry point — hook up when search index ships. */
-              const el = document.getElementById("workspace-search");
-              el?.focus();
-            }}
-            aria-label="Search"
+            onClick={() => setSearchOpen(true)}
+            aria-label="Open global search"
+            aria-keyshortcuts="Meta+K Control+K"
           >
             <Search className="h-3.5 w-3.5" />
             <span>Search</span>
             <kbd className="ml-4 rounded border bg-muted px-1.5 py-0.5 font-mono text-[10px]">
               ⌘K
             </kbd>
+          </button>
+          <button
+            type="button"
+            className="rounded-md p-2 text-muted-foreground hover:bg-muted md:hidden"
+            onClick={() => setSearchOpen(true)}
+            aria-label="Open global search"
+          >
+            <Search className="h-4 w-4" />
           </button>
 
           <a
