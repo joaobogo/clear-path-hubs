@@ -214,6 +214,7 @@ export function RoiCalculator({
   heading = DEFAULT_HEADING,
   supportingCopy = DEFAULT_COPY,
   showCtas = true,
+  onResultChange,
   className,
 }: RoiCalculatorProps) {
   const [inputs, setInputs] = React.useState<CalculatorInputs>({
@@ -223,8 +224,14 @@ export function RoiCalculator({
     recruiterHourlyUsd: CALCULATOR_DEFAULTS.recruiterHourlyUsd,
     sourcingHoursPerRole: CALCULATOR_DEFAULTS.sourcingHoursPerRole,
   });
+  const [showHelper, setShowHelper] = React.useState(false);
 
   const result = React.useMemo(() => computeRoi(inputs), [inputs]);
+
+  React.useEffect(() => {
+    onResultChange?.(result);
+  }, [result, onResultChange]);
+
 
   const patch = <K extends keyof CalculatorInputs>(key: K, v: number) =>
     setInputs((prev) => ({ ...prev, [key]: v }));
