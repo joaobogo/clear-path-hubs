@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { marketingHead } from "@/lib/marketing/head";
-import { PublicPage, PublicSection, CtaSection } from "@/components/marketing/site-shell";
+import { PublicPage, PublicSection } from "@/components/marketing/site-shell";
 import {
   Handshake,
   Layers,
