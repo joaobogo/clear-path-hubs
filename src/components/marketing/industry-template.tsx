@@ -13,6 +13,7 @@ import { IndustryInsights } from "@/components/marketing/industry-insights";
 import { getIndustryVisualIdentity } from "@/content/industry-visual-identity";
 import { SubtleCta } from "@/components/marketing/subtle-cta";
 import { getIndustryRelationships } from "@/lib/marketing/industry-relationships";
+import { IndustryMetricsBand } from "@/components/marketing/industry-metrics-band";
 import {
   BookACallDialog,
   BookACallSection,
@@ -114,7 +115,7 @@ export function IndustryTemplate({ entry }: { entry: IndustryEntry }) {
             {heroImage ? (
               <figure
                 data-industry-motif={entry.slug}
-                className="relative overflow-hidden rounded-2xl border border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-mist)]/40 shadow-sm motion-safe:animate-[taas-reveal-up_520ms_var(--taas-ease-emphasized)_both]"
+                className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl border border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-mist)]/40 shadow-[0_30px_80px_-30px_rgba(10,20,50,0.55)] motion-safe:animate-[taas-reveal-up_520ms_var(--taas-ease-emphasized)_both] sm:aspect-[16/10] lg:aspect-[16/11]"
               >
                 <img
                   src={heroImage.src}
@@ -125,8 +126,58 @@ export function IndustryTemplate({ entry }: { entry: IndustryEntry }) {
                   fetchPriority="high"
                   decoding="async"
                   style={{ objectPosition: heroImage.focal ?? "50% 40%" }}
-                  className="relative z-0 aspect-[4/3] h-auto w-full object-cover sm:aspect-[16/10] lg:aspect-[16/9]"
+                  className="relative z-0 h-full w-full object-cover"
                 />
+                {/* Gradient wash for readability */}
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-tr from-[color:var(--brand-navy)]/70 via-[color:var(--brand-navy)]/25 to-transparent" />
+                <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_15%_10%,rgba(255,255,255,0.18),transparent_55%)]" />
+
+                {/* Live indicator */}
+                <div className="absolute right-4 top-4 flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-3 py-1 backdrop-blur-md">
+                  <span className="relative inline-flex h-2 w-2">
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-300 opacity-70" />
+                    <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" />
+                  </span>
+                  <span className="text-[10px] font-semibold uppercase tracking-widest text-white">
+                    Sourcing live
+                  </span>
+                </div>
+
+                {/* Floating candidate delivery card */}
+                <div className="absolute bottom-4 left-4 right-4 rounded-xl border border-white/25 bg-white/15 p-4 shadow-2xl backdrop-blur-xl sm:right-auto sm:max-w-[340px]">
+                  <div className="flex items-center gap-3">
+                    <div className="grid h-9 w-9 place-items-center rounded-full bg-white/30 text-xs font-semibold text-white ring-1 ring-white/40">
+                      {entry.name
+                        .split(/\s+/)
+                        .map((w) => w[0])
+                        .filter(Boolean)
+                        .slice(0, 2)
+                        .join("")
+                        .toUpperCase()}
+                    </div>
+                    <div className="min-w-0">
+                      <p className="truncate text-xs font-medium text-white/95">
+                        {entry.name} shortlist
+                      </p>
+                      <p className="truncate text-[11px] text-white/70">
+                        Ranked · evidence-quoted
+                      </p>
+                    </div>
+                    <span className="ml-auto rounded-md bg-emerald-400/25 px-2 py-0.5 text-[10px] font-semibold text-emerald-50 ring-1 ring-emerald-300/40">
+                      Fit 92
+                    </span>
+                  </div>
+                  <div className="mt-3 flex flex-wrap gap-1.5">
+                    {entry.signals.slice(0, 3).map((s) => (
+                      <span
+                        key={s}
+                        className="rounded-full border border-white/25 bg-white/10 px-2 py-0.5 text-[10px] font-medium text-white/90"
+                      >
+                        {s}
+                      </span>
+                    ))}
+                  </div>
+                </div>
               </figure>
             ) : (
               <IndustryHeroBackdrop
@@ -140,6 +191,9 @@ export function IndustryTemplate({ entry }: { entry: IndustryEntry }) {
           </div>
         </PublicPage>
       </PublicSection>
+
+      {/* 1a. Animated impact metrics band */}
+      <IndustryMetricsBand entry={entry} />
 
       {/* 1b. Keyword-anchored intro links — SEO internal-link density */}
       <PublicSection className="py-4">

@@ -36,6 +36,28 @@
   from { stroke-dashoffset: 240; }
   to   { stroke-dashoffset: 0; }
 }
+@keyframes taas-orb-drift-a {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50%      { transform: translate3d(20px, 14px, 0) scale(1.08); }
+}
+@keyframes taas-orb-drift-b {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50%      { transform: translate3d(-18px, -12px, 0) scale(1.1); }
+}
+@keyframes taas-orb-drift-c {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); opacity: 0.7; }
+  50%      { transform: translate3d(-10px, 16px, 0) scale(0.92); opacity: 1; }
+}
+@keyframes taas-float {
+  0%, 100% { transform: translateY(-50%) translateX(0); }
+  50%      { transform: translateY(calc(-50% - 6px)) translateX(2px); }
+}
+@keyframes taas-count-up {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+
 
 /* ------------------ Base motif container ------------------ */
 [data-industry-motif] {
