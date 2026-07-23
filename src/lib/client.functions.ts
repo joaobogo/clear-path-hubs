@@ -784,8 +784,11 @@ export const clientAction = createServerFn({ method: "POST" })
       await context.supabase.from("interviews").insert({
         candidate_match_id: data.matchId,
         organization_id: data.orgId,
+        position_id: match.position_id as string,
+        candidate_submission_id: (match.application_id as string) ?? null,
         status: "requested",
         requested_at: new Date().toISOString(),
+        created_by: context.userId,
       });
     }
 
