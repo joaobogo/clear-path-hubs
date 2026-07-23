@@ -44,7 +44,7 @@ import {
 
 import { getPage } from "@/lib/marketing/content";
 import { marketingHead } from "@/lib/marketing/head";
-import { RoiCalculator } from "@/components/marketing/roi-calculator";
+import { AgencyComparator } from "@/components/marketing/agency-comparator";
 import { ModelComparison } from "@/components/marketing/model-comparison";
 import { OperatingSystem } from "@/components/marketing/operating-system";
 import { WorkspaceTour } from "@/components/marketing/workspace-tour";
@@ -52,8 +52,6 @@ import { AudienceSelector } from "@/components/marketing/audience-selector";
 import { TrustStrip } from "@/components/marketing/trust-strip";
 import { StraightAnswers } from "@/components/marketing/straight-answers";
 import { HiddenCostOfWaiting } from "@/components/marketing/hidden-cost-of-waiting";
-import { CalculatorCtaBridge } from "@/components/marketing/calculator-cta-bridge";
-import type { CalculatorResult } from "@/lib/roi-calculator";
 import { WhySwitchMatrix } from "@/components/marketing/why-switch-matrix";
 import { ProofSystem } from "@/components/marketing/proof-system";
 import { PageConnections } from "@/components/marketing/page-connections";
@@ -1309,20 +1307,7 @@ function ClientCandidateDelivery() {
 /* ---------- Calculator + adaptive CTA bridge (Prompt 13) ---------- */
 
 function HomeCalculator() {
-  const [result, setResult] = React.useState<CalculatorResult | null>(null);
-  return (
-    <>
-      <RoiCalculator
-        variant="homepage"
-        supportingCopy="Adjust the assumptions to compare traditional agency and internal sourcing costs with the TaaSFlow model."
-        showCtas={false}
-        onResultChange={setResult}
-      />
-      <div className="mt-6">
-        <CalculatorCtaBridge result={result} />
-      </div>
-    </>
-  );
+  return <AgencyComparator />;
 }
 
 /* ---------- Component ---------- */
