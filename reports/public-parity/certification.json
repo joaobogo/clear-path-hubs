@@ -1,0 +1,38 @@
+{
+  "generatedAt": "2026-07-23T02:43:21.871722+00:00",
+  "source": "https://taasflow.com",
+  "destination": "https://clear-path-hubs.lovable.app",
+  "auditReference": "reports/public-parity/full-audit.json",
+  "repairQueueReference": "reports/public-parity/repair-queue.md",
+  "gates": {
+    "unexplained_missing_routes": 1,
+    "broken_public_routes": 0,
+    "unexplained_missing_sections": 47,
+    "unexplained_missing_assets": 46,
+    "broken_primary_CTAs": 0,
+    "broken_internal_links": 0,
+    "critical_visual_differences": 47,
+    "high_visual_differences": 1,
+    "critical_accessibility_failures": 1,
+    "serious_accessibility_failures": 21,
+    "horizontal_overflow_failures": 1,
+    "protected_operational_regressions": "NOT_MEASURED_THIS_PASS",
+    "production_build_failures": "NOT_MEASURED_THIS_PASS",
+    "blog_articles_audited": "0 of 304 (deferred; not certifiable)",
+    "operational_regression_suite_executed": false,
+    "approved_rewrites_ledger_present": false,
+    "approved_replacements_ledger_present": false,
+    "documented_exclusions_ledger_present": true
+  },
+  "blockingReasons": [
+    "1 missing route(s) without documented approval",
+    "47 routes with missing sections and no approved-rewrites ledger",
+    "46 routes with missing assets and no approved-replacements ledger",
+    "47 critical + 1 high visual differences unresolved",
+    "1 horizontal-overflow failure(s) at mobile",
+    "operational regression suite (admin/client/candidate/intake/jobs/apply/auth/scoring/publication) not executed in this pass",
+    "304 blog articles not audited (deferred)",
+    "no approved-rewrites ledger to satisfy reconciliation identities"
+  ],
+  "verdict": "TAASFLOW_PUBLIC_MIGRATION_NOT_CERTIFIED"
+}
