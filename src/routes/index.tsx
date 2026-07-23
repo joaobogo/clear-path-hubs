@@ -359,6 +359,82 @@ const PROCESS_STEPS = [
   },
 ] as const;
 
+const FEATURED_INDUSTRIES = [
+  {
+    name: "Technology",
+    slug: "tech",
+    context: "Engineering, product, and platform hiring where technical depth has to be verified, not assumed.",
+    roles: "Senior Backend Engineer · Staff Platform Engineer",
+  },
+  {
+    name: "SaaS",
+    slug: "saas",
+    context: "Go-to-market and product roles for subscription businesses balancing growth and retention.",
+    roles: "Product Manager · Customer Success Lead",
+  },
+  {
+    name: "Finance",
+    slug: "finance",
+    context: "Regulated hiring where domain knowledge, licenses, and risk experience are non-negotiable.",
+    roles: "FP&A Manager · Risk Analyst",
+  },
+  {
+    name: "Healthcare",
+    slug: "healthcare",
+    context: "Clinical, operations, and healthtech roles where credentials and compliance matter as much as skills.",
+    roles: "Clinical Operations Lead · Healthtech Product Manager",
+  },
+  {
+    name: "Legal",
+    slug: "legal",
+    context: "In-house counsel and legal operations hiring with jurisdiction, matter type, and seniority scoped up front.",
+    roles: "In-house Counsel · Legal Operations Manager",
+  },
+  {
+    name: "Sales",
+    slug: "sales",
+    context: "Quota-carrying roles evaluated against segment, cycle length, and demonstrated attainment.",
+    roles: "Enterprise Account Executive · Sales Development Lead",
+  },
+  {
+    name: "Human Resources",
+    slug: "human-resources",
+    context: "HR, People, and Talent hires assessed on the operating model behind their previous programs.",
+    roles: "Head of People · Talent Partner",
+  },
+  {
+    name: "Consulting",
+    slug: "consulting",
+    context: "Strategy, operations, and delivery consultants scoped to industry, function, and engagement scale.",
+    roles: "Management Consultant · Delivery Manager",
+  },
+  {
+    name: "Construction",
+    slug: "construction",
+    context: "Site, project, and engineering roles evaluated on project scale, safety record, and delivery history.",
+    roles: "Project Manager · Site Engineer",
+  },
+  {
+    name: "Real Estate",
+    slug: "real-estate",
+    context: "Investment, development, and asset management hires scoped to sector, geography, and deal size.",
+    roles: "Investment Associate · Asset Manager",
+  },
+  {
+    name: "Hospitality",
+    slug: "hospitality",
+    context: "Operations and guest-experience leaders assessed on property type, brand standards, and P&L scope.",
+    roles: "General Manager · Director of Operations",
+  },
+  {
+    name: "Staffing Agencies",
+    slug: "staffing-agencies",
+    context: "Recruiting capacity for agencies that need overflow sourcing without losing client ownership.",
+    roles: "Recruiter · Sourcing Partner",
+  },
+] as const;
+
+
 
 
 /* ---------- Small building blocks ---------- */
@@ -1082,27 +1158,93 @@ function Home() {
         </PublicSection>
       </section>
 
-      {/* 4 — WHY SUBSCRIPTION RECRUITING */}
+      {/* 4 — SUBSCRIPTION MODEL */}
       <PublicSection>
         <PublicPage>
           <SectionHead
-            eyebrow="Why subscription recruiting"
-            title="A different economic model — and a different working relationship."
-            lead="Placement fees create incentives to close the deal. A subscription creates incentives to keep delivering."
+            eyebrow="The subscription model"
+            title="A recruiting function, not another placement fee."
+            lead="TaaSFlow replaces one-off agency transactions with a recurring recruiting function — predictable cost, continuous pipeline, and candidates you keep."
           />
-          <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
-            {SUBSCRIPTION_REASONS.map((r) => (
-              <Card key={r.t}>
-                <r.icon className="h-6 w-6 text-[color:var(--brand-ocean)]" aria-hidden />
-                <h3 className="mt-4 text-base font-semibold text-[color:var(--brand-navy)]">
-                  {r.t}
-                </h3>
-                <p className="mt-2 text-sm text-[color:var(--brand-navy)]/70">{r.d}</p>
-              </Card>
-            ))}
+
+          <div className="mt-10 grid grid-cols-1 gap-5 lg:grid-cols-2">
+            {/* Traditional agency card */}
+            <div className="relative flex flex-col rounded-2xl border border-[color:var(--brand-navy)]/12 bg-[color:var(--brand-navy)]/[0.03] p-6 sm:p-7">
+              <div className="flex items-center gap-2 text-[color:var(--brand-navy)]/70">
+                <XCircle className="h-4 w-4" aria-hidden />
+                <span className="text-xs font-semibold uppercase tracking-wide">
+                  Traditional agency transaction
+                </span>
+              </div>
+              <h3 className="mt-3 text-xl font-semibold text-[color:var(--brand-navy)]">
+                Paid per hire, resets every role.
+              </h3>
+              <ul className="mt-5 space-y-3 text-sm text-[color:var(--brand-navy)]/80">
+                {[
+                  "Percentage-of-salary placement fee on every hire.",
+                  "Cost is unpredictable and scales with each new hire.",
+                  "Sourcing restarts from zero for each new engagement.",
+                  "Candidate context leaves with the agency at the end.",
+                  "Structured as isolated transactions, not ongoing hiring support.",
+                ].map((line) => (
+                  <li key={line} className="flex items-start gap-2">
+                    <XCircle
+                      className="mt-0.5 h-4 w-4 shrink-0 text-[color:var(--brand-navy)]/45"
+                      aria-hidden
+                    />
+                    <span>{line}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* TaaSFlow subscription card */}
+            <div className="relative flex flex-col overflow-hidden rounded-2xl border border-[color:var(--brand-ocean)]/30 bg-[color:var(--brand-ocean)]/8 p-6 shadow-[var(--brand-shadow-sm)] sm:p-7">
+              <span
+                className="absolute inset-x-0 top-0 h-1 bg-[color:var(--brand-ocean)]"
+                aria-hidden
+              />
+              <div className="flex items-center gap-2 text-[color:var(--brand-ocean)]">
+                <CheckCircle2 className="h-4 w-4" aria-hidden />
+                <span className="text-xs font-semibold uppercase tracking-wide">
+                  TaaSFlow continuous subscription
+                </span>
+              </div>
+              <h3 className="mt-3 text-xl font-semibold text-[color:var(--brand-navy)]">
+                One recurring cost. Continuous recruiting.
+              </h3>
+              <ul className="mt-5 space-y-3 text-sm text-[color:var(--brand-navy)]">
+                {[
+                  "Predictable recurring cost for the recruiting function.",
+                  "No percentage-of-salary placement fee.",
+                  "Continuous candidate pipeline instead of one-off searches.",
+                  "You own the delivered candidate information in your workspace.",
+                  "No extra placement fee when a delivered candidate is hired.",
+                  "Built to support ongoing hiring, not isolated transactions.",
+                ].map((line) => (
+                  <li key={line} className="flex items-start gap-2">
+                    <CheckCircle2
+                      className="mt-0.5 h-4 w-4 shrink-0 text-[color:var(--brand-ocean)]"
+                      aria-hidden
+                    />
+                    <span>{line}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          <div className="mt-8">
+            <Link
+              to="/pricing"
+              className="inline-flex min-h-11 items-center gap-2 rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-[color:var(--brand-navy-dark)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+            >
+              View Pricing <ArrowRight className="h-4 w-4" aria-hidden />
+            </Link>
           </div>
         </PublicPage>
       </PublicSection>
+
 
       {/* 5 — LIVE WORKSPACE SHOWCASE */}
       <section className="border-y border-[color:var(--brand-navy)]/8 bg-[color:var(--brand-paper)]">
@@ -1149,6 +1291,62 @@ function Home() {
           </PublicPage>
         </PublicSection>
       </section>
+
+      {/* 5.5 — INDUSTRIES PREVIEW */}
+      <PublicSection>
+        <PublicPage>
+          <SectionHead
+            eyebrow="Industries"
+            title="Recruiting tuned to the industry you actually hire in."
+            lead="Every intake, evidence file, and shortlist is scoped to the hiring reality of the industry — not a generic recruiter template."
+          />
+
+          <ul className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {FEATURED_INDUSTRIES.map((ind) => (
+              <li key={ind.slug} className="min-w-0">
+                <Link
+                  to="/industries/$slug"
+                  params={{ slug: ind.slug }}
+                  className="group flex h-full flex-col rounded-2xl border border-[color:var(--brand-navy)]/12 bg-white p-5 shadow-[var(--brand-shadow-sm)] transition-shadow hover:shadow-[var(--brand-shadow-lg)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+                >
+                  <div className="flex items-center gap-2">
+                    <Building2
+                      className="h-4 w-4 text-[color:var(--brand-ocean)]"
+                      aria-hidden
+                    />
+                    <h3 className="text-base font-semibold text-[color:var(--brand-navy)]">
+                      {ind.name}
+                    </h3>
+                  </div>
+                  <p className="mt-3 text-sm text-[color:var(--brand-navy)]/75">
+                    {ind.context}
+                  </p>
+                  <div className="mt-4 border-t border-[color:var(--brand-navy)]/8 pt-3">
+                    <div className="text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/55">
+                      Example roles
+                    </div>
+                    <div className="mt-1 text-sm text-[color:var(--brand-navy)]/85">
+                      {ind.roles}
+                    </div>
+                  </div>
+                  <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-[color:var(--brand-ocean)] group-hover:text-[color:var(--brand-navy)]">
+                    View industry <ArrowRight className="h-4 w-4" aria-hidden />
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+
+          <div className="mt-8">
+            <Link
+              to="/industries"
+              className="inline-flex min-h-11 items-center gap-2 rounded-md border border-[color:var(--brand-navy)]/15 bg-white px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+            >
+              View All Industries <ArrowRight className="h-4 w-4" aria-hidden />
+            </Link>
+          </div>
+        </PublicPage>
+      </PublicSection>
 
       {/* 6 — WHAT CLIENTS RECEIVE (deliverable + candidate detail visual) */}
       <PublicSection>
