@@ -50,6 +50,8 @@ import { OperatingSystem } from "@/components/marketing/operating-system";
 import { WorkspaceTour } from "@/components/marketing/workspace-tour";
 import { AudienceSelector } from "@/components/marketing/audience-selector";
 import { TrustStrip } from "@/components/marketing/trust-strip";
+import { StraightAnswers } from "@/components/marketing/straight-answers";
+import { HiddenCostOfWaiting } from "@/components/marketing/hidden-cost-of-waiting";
 import { WhySwitchMatrix } from "@/components/marketing/why-switch-matrix";
 import { ProofSystem } from "@/components/marketing/proof-system";
 
@@ -1372,6 +1374,11 @@ function Home() {
       {/* 2 — TRUST */}
       <TrustStrip />
 
+      {/* 2b — STRAIGHT ANSWERS (sales-risk removal) */}
+      <StraightAnswers />
+
+
+
       {/* 3 — WHAT YOU RECEIVE */}
       <PublicSection>
         <PublicPage>
@@ -1453,6 +1460,9 @@ function Home() {
           </div>
         </PublicPage>
       </PublicSection>
+
+      {/* 5b — WHAT YOU KEEP MISSING (status-quo tax) */}
+      <HiddenCostOfWaiting />
 
       {/* 6 — HOW IT WORKS */}
       <section className="border-y border-[color:var(--brand-navy)]/8 bg-white">
