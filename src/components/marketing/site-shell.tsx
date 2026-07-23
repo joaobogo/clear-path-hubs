@@ -125,7 +125,7 @@ function GroupTrigger({ label }: { label: string }) {
 function GroupContent({ links }: { links: NavLink[] }) {
   const visible = links.filter((l) => !l.hidden);
   return (
-    <NavigationMenuPrimitive.Content className="absolute left-0 top-0 w-full data-[motion=from-start]:animate-in data-[motion=to-start]:animate-out data-[motion^=from-]:fade-in data-[motion^=to-]:fade-out">
+    <NavigationMenuPrimitive.Content className="absolute left-0 top-0 data-[motion=from-start]:animate-in data-[motion=to-start]:animate-out data-[motion^=from-]:fade-in data-[motion^=to-]:fade-out">
       <ul className="grid w-[min(560px,90vw)] gap-1 p-3 sm:grid-cols-2">
         {visible.map((l) => (
           <li key={`${l.to}-${l.label}`}>
