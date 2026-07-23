@@ -182,10 +182,10 @@ export const Route = createFileRoute("/api/public/intake")({
         {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const admin = supabaseAdmin as any;
-          const tempPassword = cryptoRandomPassword(20);
+          const chosenPassword = data.password && data.password.length >= 8 ? data.password : cryptoRandomPassword(20);
           const { data: created, error: createErr } = await admin.auth.admin.createUser({
             email: data.workEmail,
-            password: tempPassword,
+            password: chosenPassword,
             email_confirm: true,
             user_metadata: { full_name: `${data.firstName} ${data.lastName}`.trim() },
           });
@@ -202,6 +202,10 @@ export const Route = createFileRoute("/api/public/intake")({
               );
             }
             authUserId = found.id;
+            // Update password for the existing user so they can sign in with what they just chose.
+            if (data.password && data.password.length >= 8) {
+              await admin.auth.admin.updateUserById(found.id, { password: data.password });
+            }
           } else {
             authUserId = created?.user?.id ?? null;
           }
