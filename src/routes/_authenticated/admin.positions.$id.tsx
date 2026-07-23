@@ -37,7 +37,16 @@ import {
   Users,
   History,
   Settings2,
+  ShieldCheck,
+  MoreHorizontal,
 } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export const Route = createFileRoute("/_authenticated/admin/positions/$id")({
   loader: async ({ context, params }) => {
