@@ -30,11 +30,13 @@ import {
 import { getPage } from "@/lib/marketing/content";
 import { marketingHead } from "@/lib/marketing/head";
 
-const entry = getPage("index");
+// Homepage metadata is authored inline (guardrail: legacy JSON entry contains
+// unapproved "14 days" and totals claims). Do not pass the legacy entry here.
+void getPage;
 
 export const Route = createFileRoute("/")({
   head: () =>
-    marketingHead(entry, "/", {
+    marketingHead(undefined, "/", {
       title: "TaaSFlow — Ranked candidates in a live hiring workspace",
       description:
         "TaaSFlow is subscription recruiting with a live workspace. Ranked candidates, recruiter-written evidence, transparent pipeline, and direct handover after shortlist — no placement fees.",
