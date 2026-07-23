@@ -199,6 +199,19 @@ function CandidatesPage() {
     return rows;
   }, [rowsRaw, search.q, search.location, search.stage, search.fit, search.sort, search.filter]);
 
+  // Bounded pagination — clamp render to a fixed page size so no unbounded lists ship.
+  const PAGE_SIZE = 24;
+  const [page, setPage] = useState(1);
+  useEffect(() => {
+    setPage(1);
+  }, [search.q, search.position, search.stage, search.fit, search.location, search.sort, search.filter, orgId]);
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const currentPage = Math.min(page, totalPages);
+  const paged = filtered.slice(
+    (currentPage - 1) * PAGE_SIZE,
+    currentPage * PAGE_SIZE,
+  );
+
   // Comparison state
   const [compareIds, setCompareIds] = useState<string[]>([]);
   const [compareOpen, setCompareOpen] = useState(false);
@@ -452,16 +465,18 @@ function CandidatesPage() {
         </div>
       ) : filtered.length === 0 ? (
         <EmptyState hasCandidates={(rowsRaw as ClientCandidateDTO[]).length > 0} onClear={clearFilters} />
+      ) : filtered.length === 0 ? (
+        <EmptyState hasCandidates={(rowsRaw as ClientCandidateDTO[]).length > 0} onClear={clearFilters} />
       ) : search.view === "list" ? (
         <CompactList
-          rows={filtered}
+          rows={paged}
           orgSearch={orgSearch}
           compareIds={compareIds}
           onToggleCompare={(id) => toggleCompare(setCompareIds, id)}
         />
       ) : (
         <div className="grid gap-4 md:grid-cols-2">
-          {filtered.map((c) => (
+          {paged.map((c) => (
             <CandidateCard
               key={c.match_id}
               candidate={c}
@@ -471,6 +486,41 @@ function CandidatesPage() {
             />
           ))}
         </div>
+      )}
+
+      {/* Bounded pagination */}
+      {filtered.length > PAGE_SIZE && (
+        <nav
+          aria-label="Candidates pagination"
+          className="mt-4 flex items-center justify-between gap-3 text-sm"
+        >
+          <div className="text-xs text-muted-foreground tabular-nums">
+            Showing {(currentPage - 1) * PAGE_SIZE + 1}–
+            {Math.min(currentPage * PAGE_SIZE, filtered.length)} of{" "}
+            {filtered.length}
+          </div>
+          <div className="flex items-center gap-2">
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              disabled={currentPage <= 1}
+            >
+              Previous
+            </Button>
+            <span className="text-xs text-muted-foreground tabular-nums">
+              Page {currentPage} of {totalPages}
+            </span>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+              disabled={currentPage >= totalPages}
+            >
+              Next
+            </Button>
+          </div>
+        </nav>
       )}
 
       {isFetching && (rowsRaw as ClientCandidateDTO[]).length > 0 && (
