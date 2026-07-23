@@ -513,7 +513,7 @@ function PositionCard({ p }: { p: Row }) {
   ];
   return (
     <Link
-      to="/client/positions/$id"
+      to="/client/positions/$id/edit"
       params={{ id: p.id }}
       className="group flex flex-col gap-3 rounded-xl border bg-card p-5 transition-all hover:border-primary hover:shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
     >
