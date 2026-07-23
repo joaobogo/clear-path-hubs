@@ -6,17 +6,19 @@ import {
   Building2,
   CheckCircle2,
   ClipboardCheck,
+  Compass,
   Eye,
-  Globe2,
   Handshake,
   LayoutDashboard,
   MessageSquare,
   Quote,
-  Search,
-  
+  Rocket,
+  ShieldCheck,
+  Sparkles,
   Users,
+  Wallet,
+  Zap,
 } from "lucide-react";
-
 
 import {
   CtaSection,
@@ -28,66 +30,90 @@ import {
 import { getPage } from "@/lib/marketing/content";
 import { marketingHead } from "@/lib/marketing/head";
 
-const entry = getPage("index");
+// Homepage metadata is authored inline (guardrail: legacy JSON entry contains
+// unapproved "14 days" and totals claims). Do not pass the legacy entry here.
+void getPage;
 
 export const Route = createFileRoute("/")({
   head: () =>
-    marketingHead(entry, "/", {
-      title: "TaaSFlow — A live recruiting workspace for modern teams",
+    marketingHead(undefined, "/", {
+      title: "TaaSFlow — Ranked candidates in a live hiring workspace",
       description:
-        "TaaSFlow gives hiring teams a live workspace with ranked, evidence-backed candidates, transparent pipeline status, and predictable subscription pricing.",
+        "TaaSFlow is subscription recruiting with a live workspace. Ranked candidates, recruiter-written evidence, transparent pipeline, and direct handover after shortlist — no placement fees.",
     }),
   component: Home,
 });
 
-/* ---------- Content constants (no unverified numeric claims) ---------- */
+/* ---------- Content constants (guardrail-safe: no pricing, no timing, no totals) ---------- */
 
-
-const STEPS = [
+const WEEKLY_DELIVERABLES = [
   {
-    n: "01",
-    icon: ClipboardCheck,
-    t: "Submit the role",
-    d: "Five guided steps capture the requirements, seniority, and hiring context — no long forms.",
-    visual: "form",
-  },
-  {
-    n: "02",
-    icon: Search,
-    t: "TaaSFlow builds the search",
-    d: "Your recruiter turns the intake into a structured search plan with must-haves and nice-to-haves.",
-    visual: "search",
-  },
-  {
-    n: "03",
-    icon: Users,
-    t: "Candidates are sourced and evaluated",
-    d: "We source across our network and evaluate each candidate against your approved requirements.",
-    visual: "sourcing",
-  },
-  {
-    n: "04",
     icon: BarChart3,
-    t: "Ranked candidates enter the workspace",
-    d: "Each candidate arrives ranked, with CV evidence mapped to every requirement.",
-    visual: "ranked",
+    t: "A ranked shortlist",
+    d: "Candidates scored against the requirements your team approved — highest fit first, with the reasoning in view.",
   },
   {
-    n: "05",
-    icon: CheckCircle2,
-    t: "You review and advance candidates",
-    d: "Shortlist, interview, or pass in one click — your team and the recruiter see the same status.",
-    visual: "decide",
+    icon: Eye,
+    t: "Evidence per requirement",
+    d: "Recruiter-written notes and CV quotes mapped to every must-have, so decisions are grounded in what the CV actually says.",
   },
   {
-    n: "06",
-    icon: Handshake,
-    t: "TaaSFlow supports the process through hire",
-    d: "Interviews, feedback, and offer coordination stay in the workspace until the role is closed.",
-    visual: "hire",
+    icon: Activity,
+    t: "A live pipeline update",
+    d: "Every stage — Applied, Under review, Shortlisted, Interview, Offer — reflects the current state, not a weekly snapshot.",
+  },
+  {
+    icon: MessageSquare,
+    t: "Direct recruiter contact",
+    d: "Message your recruiter in the workspace. Same thread, same context, no forwarded emails.",
   },
 ] as const;
 
+const AUDIENCES = [
+  {
+    icon: Rocket,
+    t: "Growing startups",
+    d: "Founders and Heads of People hiring in bursts who need pipeline without hiring a full in-house recruiting team.",
+  },
+  {
+    icon: Building2,
+    t: "Scale-ups & mid-market",
+    d: "Talent teams filling several roles in parallel that want a single workspace instead of juggling agencies and spreadsheets.",
+  },
+  {
+    icon: LayoutDashboard,
+    t: "In-house recruiting teams",
+    d: "Recruiters who want an on-demand sourcing pod that plugs in beside their ATS and shares the same status with hiring managers.",
+  },
+  {
+    icon: Handshake,
+    t: "Hiring managers",
+    d: "Owners of a role who want ranked candidates with evidence — not 40 CVs to skim — and one click to shortlist, interview, or pass.",
+  },
+] as const;
+
+const SUBSCRIPTION_REASONS = [
+  {
+    icon: Wallet,
+    t: "Predictable pricing",
+    d: "A flat monthly fee per active role instead of a percentage of salary owed at hire.",
+  },
+  {
+    icon: Zap,
+    t: "Continuous delivery",
+    d: "Sourcing keeps running week after week — the pipeline doesn't stop when the first shortlist lands.",
+  },
+  {
+    icon: Compass,
+    t: "Aligned incentives",
+    d: "We win when your team hires and stays hired. Not when an invoice ships.",
+  },
+  {
+    icon: ShieldCheck,
+    t: "Yours to keep",
+    d: "Every candidate, every note, every message stays in your workspace — even between roles.",
+  },
+] as const;
 
 const DELIVERY_EVIDENCE = [
   ["Design systems", 96],
@@ -96,44 +122,94 @@ const DELIVERY_EVIDENCE = [
   ["Timezone overlap", 100],
 ] as const;
 
-const ACTIVITY = [
-  ["Priya S. moved to Interview", "just now"],
-  ["New candidate ranked · Alex R.", "12 min ago"],
-  ["Evidence updated on Marco V.", "1 hr ago"],
-  ["Client shortlisted Yuki T.", "3 hr ago"],
-  ["Position approved · Senior Designer", "yesterday"],
-] as const;
-
-const WORKSPACE_TABS = [
+const WORKSPACES = [
   {
-    title: "Admin workspace",
+    icon: LayoutDashboard,
     who: "For operations",
-    body: "Publish desk, action items, live pipeline across every client — one dashboard for the entire delivery team.",
-    bullets: ["Publish desk", "Prioritized action items", "Cross-client pipeline", "Full audit trail"],
+    title: "Admin workspace",
+    body: "Publish desk, action items, and pipeline health across every client — one dashboard for the delivery team.",
+    bullets: [
+      "Publish desk",
+      "Prioritized action items",
+      "Cross-client pipeline",
+      "Full audit trail",
+    ],
   },
   {
-    title: "Client workspace",
+    icon: Eye,
     who: "For hiring teams",
-    body: "Ranked candidates with evidence, Kanban pipeline, and one-click shortlist / interview / offer decisions.",
-    bullets: ["Ranked delivery", "Evidence per requirement", "Kanban pipeline", "Direct messaging"],
+    title: "Client workspace",
+    body: "Ranked candidates, evidence per requirement, Kanban pipeline, and one-click shortlist / interview / offer.",
+    bullets: [
+      "Ranked delivery",
+      "Evidence per requirement",
+      "Kanban pipeline",
+      "Direct messaging",
+    ],
   },
   {
+    icon: MessageSquare,
+    who: "For candidates",
     title: "Candidate workspace",
-    who: "For applicants",
-    body: "Application status, CV versions, messages, and next steps — always in sync with the hiring team.",
-    bullets: ["Transparent status", "CV versioning", "Direct messages", "Interview scheduling"],
+    body: "Application status, CV versions, and messages — always in sync with the hiring team on the other side.",
+    bullets: [
+      "Transparent status",
+      "CV versioning",
+      "Direct messages",
+      "Interview scheduling",
+    ],
   },
 ] as const;
 
-const INDUSTRIES = [
-  ["saas", "SaaS"],
-  ["finance", "Finance"],
-  ["healthcare", "Healthcare"],
-  ["consulting", "Consulting"],
-  ["accounting", "Accounting"],
-  ["tech", "Tech"],
-  ["private-equity", "Private Equity"],
-  ["legal", "Legal"],
+const AGENCY_COMPARE = [
+  {
+    axis: "Pricing model",
+    taasflow: "Flat monthly subscription per active role",
+    agency: "Percentage of first-year salary at placement",
+  },
+  {
+    axis: "Where you see the pipeline",
+    taasflow: "A live workspace shared with your team",
+    agency: "Recruiter's inbox and weekly status emails",
+  },
+  {
+    axis: "Candidate presentation",
+    taasflow: "Ranked candidates with evidence per requirement",
+    agency: "Attached CVs with a short cover email",
+  },
+  {
+    axis: "Ownership after shortlist",
+    taasflow: "Your team owns interviews, offer, and hire",
+    agency: "Agency stays in the loop through placement",
+  },
+  {
+    axis: "Data & candidate history",
+    taasflow: "Stays in your workspace between roles",
+    agency: "Leaves with the agency",
+  },
+] as const;
+
+const HOMEPAGE_FAQ = [
+  {
+    q: "Is TaaSFlow a recruiting agency?",
+    a: "No. TaaSFlow is a subscription recruiting service delivered through a live workspace. You pay for the service, not per hire.",
+  },
+  {
+    q: "Do you charge placement fees?",
+    a: "No placement fees, ever. You pay a flat monthly subscription per active role.",
+  },
+  {
+    q: "What happens after the shortlist?",
+    a: "Your team runs the interview and offer process directly with the candidate — all inside the same workspace. We stay available to support, we don't gate access.",
+  },
+  {
+    q: "Do we keep the candidates and data?",
+    a: "Yes. Every candidate, every note, and every message stays in your workspace so you can revisit past pipelines when new roles open.",
+  },
+  {
+    q: "How is candidate scoring done?",
+    a: "Each candidate is scored against the requirements you approved in the intake, with evidence and CV quotes attached. See the scoring section on How It Works for the full methodology.",
+  },
 ] as const;
 
 /* ---------- Small building blocks ---------- */
@@ -150,13 +226,15 @@ function SectionHead({
   eyebrow,
   title,
   lead,
+  align = "left",
 }: {
   eyebrow: string;
   title: string;
   lead?: string;
+  align?: "left" | "center";
 }) {
   return (
-    <div className="max-w-2xl">
+    <div className={align === "center" ? "mx-auto max-w-2xl text-center" : "max-w-2xl"}>
       <Eyebrow>{eyebrow}</Eyebrow>
       <h2 className="mt-3 font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight text-[color:var(--brand-navy)] sm:text-4xl">
         {title}
@@ -184,112 +262,115 @@ function Card({
   );
 }
 
-/* ---------- Accurate workspace visual (no invented data) -----------------
- * Uses the workspace's real language:
- *  - Canonical client pipeline stages
- *  - Real fit-band tokens (Strong / Good / Consider)
- *  - Real KPI labels
- * No candidate names, no invented scores, no claim of counts.
- * Renders as a stylized panel — it is a diagram, not a screenshot.
- */
+/* ---------- Hero workspace visual (destination product, not the legacy dashboard) ---------- */
 
-const PIPELINE_STAGES = [
-  { label: "Applied", tone: "var(--brand-navy)" },
-  { label: "Under review", tone: "var(--brand-ocean)" },
-  { label: "Shortlisted", tone: "var(--brand-ocean)" },
-  { label: "Interview", tone: "var(--brand-navy)" },
-  { label: "Offer", tone: "var(--brand-navy)" },
-] as const;
-
-function WorkspacePreview() {
+function HeroWorkspacePreview() {
   return (
     <div
       role="img"
-      aria-label="Diagram of the TaaSFlow hiring workspace showing the pipeline stages, fit bands, and live activity."
+      aria-label="A preview of the TaaSFlow client workspace showing ranked candidates, evidence per requirement, and a live pipeline."
       className="rounded-2xl border border-[color:var(--brand-navy)]/12 bg-white p-4 shadow-[var(--brand-shadow-lg)]"
     >
-      {/* window chrome */}
-      <div className="flex items-center gap-2 border-b border-[color:var(--brand-navy)]/8 pb-3">
-        <div className="flex gap-1.5" aria-hidden>
-          <span className="h-2.5 w-2.5 rounded-full bg-[#ff5f57]" />
-          <span className="h-2.5 w-2.5 rounded-full bg-[#febc2e]" />
-          <span className="h-2.5 w-2.5 rounded-full bg-[#28c840]" />
+      <div className="flex items-center justify-between gap-3 border-b border-[color:var(--brand-navy)]/8 pb-3">
+        <div className="flex items-center gap-2">
+          <div className="flex gap-1.5" aria-hidden>
+            <span className="h-2.5 w-2.5 rounded-full bg-[#ff5f57]" />
+            <span className="h-2.5 w-2.5 rounded-full bg-[#febc2e]" />
+            <span className="h-2.5 w-2.5 rounded-full bg-[#28c840]" />
+          </div>
+          <span className="text-xs font-medium text-[color:var(--brand-navy)]/60">
+            client workspace · Senior Product Designer
+          </span>
         </div>
-        <span className="text-xs font-medium text-[color:var(--brand-navy)]/60">
-          workspace · hiring pipeline
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-[color:var(--brand-ocean)]/10 px-2.5 py-1 text-[11px] font-semibold text-[color:var(--brand-ocean)]">
+          <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[color:var(--brand-ocean)]" aria-hidden />
+          Live
         </span>
       </div>
 
-      {/* Pipeline stages — canonical labels, abstract markers */}
       <div className="mt-4">
-        <div className="flex items-center justify-between text-[11px] font-medium uppercase tracking-wide text-[color:var(--brand-navy)]/50">
-          <span>Pipeline</span>
-          <span className="inline-flex items-center gap-1 text-[color:var(--brand-ocean)]">
-            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[color:var(--brand-ocean)]" aria-hidden />
-            Live
-          </span>
+        <div className="text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/55">
+          Ranked candidate · evidence
         </div>
-        <div className="mt-2 grid grid-cols-5 gap-1.5">
-          {PIPELINE_STAGES.map((stage, i) => (
-            <div key={stage.label} className="min-w-0">
-              <div
-                className="h-1.5 w-full rounded-full"
-                style={{
-                  background: `color-mix(in oklab, ${stage.tone} ${90 - i * 15}%, transparent)`,
-                }}
-                aria-hidden
-              />
-              <div className="mt-1.5 truncate text-[10px] font-medium text-[color:var(--brand-navy)]/70">
-                {stage.label}
+        <div className="mt-2 rounded-xl border border-[color:var(--brand-navy)]/10 bg-white p-3">
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0">
+              <div className="truncate text-sm font-semibold text-[color:var(--brand-navy)]">
+                Candidate #A-1042
+              </div>
+              <div className="truncate text-[11px] text-[color:var(--brand-navy)]/60">
+                Senior Product Designer · Remote · EU
               </div>
             </div>
-          ))}
+            <div className="shrink-0 rounded-md bg-[color:var(--brand-ocean)]/12 px-2.5 py-1 text-sm font-semibold tabular-nums text-[color:var(--brand-ocean)]">
+              94
+            </div>
+          </div>
+          <div className="mt-3 space-y-1.5">
+            {DELIVERY_EVIDENCE.map(([k, v]) => (
+              <div key={String(k)} className="flex items-center gap-3 text-[11px]">
+                <span className="w-24 shrink-0 truncate text-[color:var(--brand-navy)]/65">
+                  {k}
+                </span>
+                <div className="h-1.5 min-w-0 flex-1 overflow-hidden rounded-full bg-[color:var(--brand-navy)]/8">
+                  <div
+                    className="h-full rounded-full bg-[color:var(--brand-ocean)]"
+                    style={{ width: `${v}%` }}
+                    aria-hidden
+                  />
+                </div>
+                <span className="w-7 shrink-0 text-right font-semibold tabular-nums text-[color:var(--brand-navy)]">
+                  {v}
+                </span>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
-      {/* Fit-band legend — real workspace bands, no fake scores */}
-      <div className="mt-5">
-        <div className="text-[11px] font-medium uppercase tracking-wide text-[color:var(--brand-navy)]/50">
-          Ranked by fit to your requirements
+      <div className="mt-4">
+        <div className="text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/55">
+          Pipeline
         </div>
-        <div className="mt-2 space-y-1.5">
+        <div className="mt-2 grid grid-cols-5 gap-1.5">
           {[
-            { label: "Strong match", width: "92%", tone: "var(--brand-ocean)" },
-            { label: "Good match", width: "78%", tone: "var(--brand-ocean)" },
-            { label: "Consider", width: "58%", tone: "var(--brand-navy)" },
-          ].map((band) => (
-            <div key={band.label} className="flex items-center gap-3">
-              <span className="w-24 shrink-0 text-xs text-[color:var(--brand-navy)]/75">
-                {band.label}
-              </span>
-              <div className="h-2 flex-1 overflow-hidden rounded-full bg-[color:var(--brand-navy)]/8">
+            { label: "Applied", pct: 100 },
+            { label: "Under review", pct: 80 },
+            { label: "Shortlisted", pct: 55 },
+            { label: "Interview", pct: 30 },
+            { label: "Offer", pct: 12 },
+          ].map((s) => (
+            <div key={s.label} className="min-w-0">
+              <div className="h-1.5 w-full overflow-hidden rounded-full bg-[color:var(--brand-navy)]/8">
                 <div
-                  className="h-full rounded-full"
-                  style={{
-                    width: band.width,
-                    background: `color-mix(in oklab, ${band.tone} 70%, transparent)`,
-                  }}
+                  className="h-full rounded-full bg-[color:var(--brand-ocean)]"
+                  style={{ width: `${s.pct}%` }}
                   aria-hidden
                 />
               </div>
+              <div className="mt-1.5 truncate text-[10px] font-medium text-[color:var(--brand-navy)]/70">
+                {s.label}
+              </div>
             </div>
           ))}
         </div>
       </div>
 
-      {/* Decisions strip — real workspace actions */}
-      <div className="mt-5 grid grid-cols-3 gap-2 border-t border-[color:var(--brand-navy)]/8 pt-3 text-center">
+      <div className="mt-4 grid grid-cols-3 gap-2 border-t border-[color:var(--brand-navy)]/8 pt-3">
         {[
-          ["Ranked", <BarChart3 key="i" className="h-3.5 w-3.5" aria-hidden />],
-          ["Evidence", <Eye key="i" className="h-3.5 w-3.5" aria-hidden />],
-          ["Decide", <CheckCircle2 key="i" className="h-3.5 w-3.5" aria-hidden />],
-        ].map(([label, icon]) => (
+          { label: "Shortlist", solid: true },
+          { label: "Interview", solid: false },
+          { label: "Pass", solid: false },
+        ].map((a) => (
           <div
-            key={label as string}
-            className="flex items-center justify-center gap-1.5 rounded-md bg-[color:var(--brand-paper)]/60 py-1.5 text-[11px] font-medium text-[color:var(--brand-navy)]/80"
+            key={a.label}
+            className={
+              a.solid
+                ? "rounded-md bg-[color:var(--brand-navy)] px-2 py-1.5 text-center text-[11px] font-semibold text-white"
+                : "rounded-md border border-[color:var(--brand-navy)]/15 bg-white px-2 py-1.5 text-center text-[11px] font-semibold text-[color:var(--brand-navy)]"
+            }
           >
-            {icon}
-            {label}
+            {a.label}
           </div>
         ))}
       </div>
@@ -311,360 +392,203 @@ function Home() {
           <div className="grid grid-cols-1 gap-12 py-16 sm:py-20 lg:grid-cols-[1.05fr_1fr] lg:py-24">
             <div className="flex min-w-0 flex-col justify-center gap-6">
               <span className="inline-flex w-fit items-center gap-2 rounded-full border border-[color:var(--brand-navy)]/12 bg-white/70 px-3 py-1 text-xs font-semibold text-[color:var(--brand-navy)]/75 backdrop-blur">
-                <span className="h-1.5 w-1.5 rounded-full bg-[color:var(--brand-ocean)]" aria-hidden />
-                A modern alternative to traditional recruiting agencies
+                <Sparkles className="h-3.5 w-3.5 text-[color:var(--brand-ocean)]" aria-hidden />
+                Subscription recruiting — with a live workspace
               </span>
               <h1
                 id="home-hero-heading"
                 className="font-[family-name:var(--brand-font-display)] text-4xl font-semibold leading-tight tracking-tight text-[color:var(--brand-navy)] sm:text-5xl lg:text-[3.5rem]"
               >
                 Ranked candidates.
-                <br className="hidden sm:block" />{" "}
-                Live hiring workspace.
+                <br className="hidden sm:block" /> Live hiring workspace.
               </h1>
               <p className="max-w-xl text-lg text-[color:var(--brand-navy)]/75">
-                See every candidate ranked to your requirements, follow progress
-                as it happens, and make faster decisions — your team, your
-                recruiter, and every candidate looking at the same live workspace.
+                See every candidate ranked to your requirements. Watch the pipeline
+                move as it happens. Own the handover after shortlist — no placement
+                fees, no black box.
               </p>
               <div className="flex flex-wrap items-center gap-3 pt-1">
                 <Link
                   to="/intake"
                   className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-[color:var(--brand-navy-dark)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
                 >
-                  Start hiring <ArrowRight className="h-4 w-4" aria-hidden />
+                  Start Hiring <ArrowRight className="h-4 w-4" aria-hidden />
                 </Link>
                 <Link
                   to="/how-it-works"
                   className="inline-flex min-h-11 items-center justify-center rounded-md border border-[color:var(--brand-navy)]/15 bg-white px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
                 >
-                  Explore the workspace
+                  See How It Works
+                </Link>
+                <Link
+                  to="/pricing"
+                  className="inline-flex min-h-11 items-center rounded-md px-2 py-2.5 text-sm font-medium text-[color:var(--brand-navy)]/70 underline-offset-4 hover:text-[color:var(--brand-navy)] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+                >
+                  View Pricing
                 </Link>
               </div>
-              <ul className="flex flex-wrap gap-x-5 gap-y-1.5 text-xs text-[color:var(--brand-navy)]/60">
-                <li className="inline-flex items-center gap-1.5">
-                  <CheckCircle2 className="h-3.5 w-3.5 text-[color:var(--brand-ocean)]" aria-hidden />
-                  Ranked delivery
-                </li>
-                <li className="inline-flex items-center gap-1.5">
-                  <CheckCircle2 className="h-3.5 w-3.5 text-[color:var(--brand-ocean)]" aria-hidden />
-                  Evidence per requirement
-                </li>
-                <li className="inline-flex items-center gap-1.5">
-                  <CheckCircle2 className="h-3.5 w-3.5 text-[color:var(--brand-ocean)]" aria-hidden />
-                  Transparent progress
-                </li>
-                <li className="inline-flex items-center gap-1.5">
-                  <CheckCircle2 className="h-3.5 w-3.5 text-[color:var(--brand-ocean)]" aria-hidden />
-                  Subscription pricing
-                </li>
+              <ul className="flex flex-wrap gap-x-5 gap-y-1.5 text-xs text-[color:var(--brand-navy)]/65">
+                {[
+                  "Ranked delivery",
+                  "Evidence per requirement",
+                  "Live pipeline",
+                  "Direct handover after shortlist",
+                  "No placement fees",
+                ].map((t) => (
+                  <li key={t} className="inline-flex items-center gap-1.5">
+                    <CheckCircle2 className="h-3.5 w-3.5 text-[color:var(--brand-ocean)]" aria-hidden />
+                    {t}
+                  </li>
+                ))}
               </ul>
             </div>
             <div className="min-w-0">
-              <WorkspacePreview />
+              <HeroWorkspacePreview />
             </div>
           </div>
         </PublicPage>
       </section>
 
-
-      {/* 2 — WORKSPACE SHOWCASE */}
-      <PublicSection as="section" className="scroll-mt-16">
-        <span id="workspace" className="sr-only" aria-hidden />
+      {/* 2 — WHAT YOU GET EVERY WEEK */}
+      <PublicSection>
         <PublicPage>
           <SectionHead
-            eyebrow="Inside the workspace"
-            title="Everything a hiring team needs. On one screen. In real time."
-            lead="Positions, ranked candidates, evidence, pipeline, and messages — the client workspace shows what matters and updates the moment anything changes."
+            eyebrow="What you get every week"
+            title="A ranked shortlist, evidence, and a live pipeline."
+            lead="Every week the workspace refreshes with the work that actually moves a role forward — nothing you have to chase in email."
           />
-
-          {/* Composite showcase panel */}
-          <div className="mt-10 overflow-hidden rounded-3xl border border-[color:var(--brand-navy)]/10 bg-gradient-to-br from-white via-[color:var(--brand-paper)]/50 to-[color:var(--brand-sky)]/20 p-4 shadow-[var(--brand-shadow-lg)] sm:p-6">
-            {/* window chrome */}
-            <div className="flex items-center justify-between gap-3 border-b border-[color:var(--brand-navy)]/8 pb-3">
-              <div className="flex items-center gap-2">
-                <div className="flex gap-1.5" aria-hidden>
-                  <span className="h-2.5 w-2.5 rounded-full bg-[#ff5f57]" />
-                  <span className="h-2.5 w-2.5 rounded-full bg-[#febc2e]" />
-                  <span className="h-2.5 w-2.5 rounded-full bg-[#28c840]" />
-                </div>
-                <span className="text-xs font-medium text-[color:var(--brand-navy)]/60">
-                  client workspace · overview
-                </span>
-              </div>
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-[color:var(--brand-ocean)]/10 px-2.5 py-1 text-[11px] font-semibold text-[color:var(--brand-ocean)]">
-                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[color:var(--brand-ocean)]" aria-hidden />
-                Live · synchronized
-              </span>
-            </div>
-
-            <div className="mt-5 grid gap-4 lg:grid-cols-12">
-              {/* Active positions column */}
-              <div className="lg:col-span-4">
-                <div className="mb-2 flex items-center justify-between text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/55">
-                  <span>Active positions</span>
-                  <span className="tabular-nums text-[color:var(--brand-navy)]/50">3</span>
-                </div>
-                <ul className="space-y-2.5">
-                  {[
-                    { role: "Senior Product Designer", loc: "Remote · EU", stage: "Shortlist ready", pct: 80 },
-                    { role: "Backend Engineer", loc: "Lisbon · Hybrid", stage: "Under review", pct: 55 },
-                    { role: "Finance Manager", loc: "London", stage: "Sourcing", pct: 25 },
-                  ].map((p) => (
-                    <li
-                      key={p.role}
-                      className="rounded-xl border border-[color:var(--brand-navy)]/8 bg-white p-3 shadow-[var(--brand-shadow-xs)]"
-                    >
-                      <div className="truncate text-sm font-semibold text-[color:var(--brand-navy)]">
-                        {p.role}
-                      </div>
-                      <div className="truncate text-[11px] text-[color:var(--brand-navy)]/60">
-                        {p.loc}
-                      </div>
-                      <div className="mt-2 h-1 w-full overflow-hidden rounded-full bg-[color:var(--brand-navy)]/8">
-                        <div
-                          className="h-full rounded-full bg-[color:var(--brand-ocean)]"
-                          style={{ width: `${p.pct}%` }}
-                          aria-hidden
-                        />
-                      </div>
-                      <div className="mt-1.5 text-[11px] font-medium text-[color:var(--brand-navy)]/70">
-                        {p.stage}
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              {/* Ranked candidate with evidence */}
-              <div className="lg:col-span-5">
-                <div className="mb-2 flex items-center justify-between text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/55">
-                  <span>Ranked candidate · evidence</span>
-                  <span className="rounded-full bg-[color:var(--brand-ocean)]/12 px-2 py-0.5 text-[10px] font-semibold text-[color:var(--brand-ocean)]">
-                    Strong match
-                  </span>
-                </div>
-                <div className="rounded-xl border border-[color:var(--brand-navy)]/10 bg-white p-4 shadow-[var(--brand-shadow-xs)]">
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="min-w-0">
-                      <div className="truncate text-sm font-semibold text-[color:var(--brand-navy)]">
-                        Candidate #A-1042
-                      </div>
-                      <div className="truncate text-[11px] text-[color:var(--brand-navy)]/60">
-                        Senior Product Designer · Remote
-                      </div>
-                    </div>
-                    <div className="shrink-0 rounded-md bg-[color:var(--brand-ocean)]/12 px-2.5 py-1 text-sm font-semibold tabular-nums text-[color:var(--brand-ocean)]">
-                      94
-                    </div>
-                  </div>
-                  <div className="mt-4 space-y-2">
-                    {DELIVERY_EVIDENCE.map(([k, v]) => (
-                      <div key={String(k)} className="flex items-center gap-3 text-[11px]">
-                        <span className="w-28 shrink-0 truncate text-[color:var(--brand-navy)]/65">
-                          {k}
-                        </span>
-                        <div className="h-1.5 min-w-0 flex-1 overflow-hidden rounded-full bg-[color:var(--brand-navy)]/8">
-                          <div
-                            className="h-full rounded-full bg-[color:var(--brand-ocean)]"
-                            style={{ width: `${v}%` }}
-                            aria-hidden
-                          />
-                        </div>
-                        <span className="w-7 shrink-0 text-right font-semibold tabular-nums text-[color:var(--brand-navy)]">
-                          {v}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                  <blockquote className="mt-4 flex gap-2 border-t border-[color:var(--brand-navy)]/8 pt-3 text-[11px] text-[color:var(--brand-navy)]/70">
-                    <Quote className="mt-0.5 h-3 w-3 shrink-0 text-[color:var(--brand-navy)]/40" aria-hidden />
-                    <span>
-                      "Led design system rollout, reducing component debt by ~40%."
-                      <span className="ml-1 text-[color:var(--brand-navy)]/50">— CV, page 2</span>
-                    </span>
-                  </blockquote>
-
-                  {/* Client actions */}
-                  <div className="mt-4 grid grid-cols-3 gap-2">
-                    {[
-                      { label: "Shortlist", solid: true },
-                      { label: "Interview", solid: false },
-                      { label: "Pass", solid: false },
-                    ].map((a) => (
-                      <div
-                        key={a.label}
-                        className={
-                          a.solid
-                            ? "rounded-md bg-[color:var(--brand-navy)] px-2 py-1.5 text-center text-[11px] font-semibold text-white"
-                            : "rounded-md border border-[color:var(--brand-navy)]/15 bg-white px-2 py-1.5 text-center text-[11px] font-semibold text-[color:var(--brand-navy)]"
-                        }
-                      >
-                        {a.label}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              {/* Pipeline + activity */}
-              <div className="space-y-4 lg:col-span-3">
-                {/* Pipeline */}
-                <div>
-                  <div className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/55">
-                    Hiring pipeline
-                  </div>
-                  <div className="rounded-xl border border-[color:var(--brand-navy)]/10 bg-white p-3 shadow-[var(--brand-shadow-xs)]">
-                    <ul className="space-y-2">
-                      {[
-                        ["Applied", 24],
-                        ["Under review", 12],
-                        ["Shortlisted", 6],
-                        ["Interview", 3],
-                        ["Offer", 1],
-                      ].map(([label, n]) => (
-                        <li key={String(label)} className="flex items-center justify-between gap-2 text-[11px]">
-                          <span className="truncate text-[color:var(--brand-navy)]/70">{label}</span>
-                          <span className="tabular-nums font-semibold text-[color:var(--brand-navy)]">
-                            {n}
-                          </span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-
-                {/* Live activity */}
-                <div>
-                  <div className="mb-2 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/55">
-                    <Activity className="h-3 w-3 text-[color:var(--brand-ocean)]" aria-hidden />
-                    Activity
-                  </div>
-                  <ul className="space-y-2 rounded-xl border border-[color:var(--brand-navy)]/10 bg-white p-3 shadow-[var(--brand-shadow-xs)]">
-                    {[
-                      ["New candidate ranked", "just now"],
-                      ["Evidence updated", "12m"],
-                      ["Interview confirmed", "1h"],
-                    ].map(([t, w]) => (
-                      <li key={String(t)} className="flex items-center justify-between gap-2 text-[11px]">
-                        <span className="min-w-0 truncate text-[color:var(--brand-navy)]/75">{t}</span>
-                        <span className="shrink-0 text-[color:var(--brand-navy)]/50">{w}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Explanations */}
           <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
-            {[
-              {
-                icon: Eye,
-                t: "What you see",
-                d: "Every active position, every ranked candidate, and the evidence behind each score — no PDFs to chase.",
-              },
-              {
-                icon: BarChart3,
-                t: "Better decisions",
-                d: "Compare candidates against the requirements your team approved, side by side, with the CV quotes in front of you.",
-              },
-              {
-                icon: Activity,
-                t: "Always synchronized",
-                d: "When a candidate moves, a score updates, or a message arrives, the workspace refreshes for everyone at once.",
-              },
-              {
-                icon: ClipboardCheck,
-                t: "Full visibility",
-                d: "Pipeline, activity, and status stay in one place so you can check progress in seconds — not follow-up emails.",
-              },
-            ].map((v) => (
-              <Card key={v.t}>
-                <v.icon className="h-6 w-6 text-[color:var(--brand-ocean)]" aria-hidden />
+            {WEEKLY_DELIVERABLES.map((w) => (
+              <Card key={w.t}>
+                <w.icon className="h-6 w-6 text-[color:var(--brand-ocean)]" aria-hidden />
                 <h3 className="mt-4 text-base font-semibold text-[color:var(--brand-navy)]">
-                  {v.t}
+                  {w.t}
                 </h3>
-                <p className="mt-2 text-sm text-[color:var(--brand-navy)]/70">{v.d}</p>
+                <p className="mt-2 text-sm text-[color:var(--brand-navy)]/70">{w.d}</p>
               </Card>
             ))}
-          </div>
-
-          <div className="mt-8">
-            <Link
-              to="/how-it-works"
-              className="inline-flex min-h-11 items-center gap-2 rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-[color:var(--brand-navy-dark)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
-            >
-              Explore How It Works <ArrowRight className="h-4 w-4" aria-hidden />
-            </Link>
           </div>
         </PublicPage>
       </PublicSection>
 
-      {/* 3 — HOW IT WORKS · 6 STEPS */}
+      {/* 3 — WHO TAASFLOW IS FOR */}
       <section className="border-y border-[color:var(--brand-navy)]/8 bg-white">
         <PublicSection>
           <PublicPage>
             <SectionHead
-              eyebrow="How it works"
-              title="From intake to hire in six clear steps."
-              lead="A guided process that keeps everyone — hiring team, recruiter, and candidates — moving at the same pace."
+              eyebrow="Who TaaSFlow is for"
+              title="Teams that would rather hire than manage recruiters."
+              lead="TaaSFlow is built for hiring teams that want an on-demand recruiting function without the friction of traditional agency work."
             />
-            <ol className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-              {STEPS.map((s) => (
-                <li
-                  key={s.n}
-                  className="group relative flex flex-col rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6 shadow-[var(--brand-shadow-xs)] transition hover:border-[color:var(--brand-ocean)]/30 hover:shadow-[var(--brand-shadow-sm)]"
-                >
-                  <div className="flex items-center justify-between">
-                    <span className="font-[family-name:var(--brand-font-display)] text-2xl font-semibold tabular-nums text-[color:var(--brand-ocean)]">
-                      {s.n}
-                    </span>
-                    <span className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-[color:var(--brand-ocean)]/10 text-[color:var(--brand-ocean)]">
-                      <s.icon className="h-4 w-4" aria-hidden />
-                    </span>
-                  </div>
+            <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
+              {AUDIENCES.map((a) => (
+                <Card key={a.t}>
+                  <a.icon className="h-6 w-6 text-[color:var(--brand-ocean)]" aria-hidden />
                   <h3 className="mt-4 text-base font-semibold text-[color:var(--brand-navy)]">
-                    {s.t}
+                    {a.t}
                   </h3>
-                  <p className="mt-2 text-sm text-[color:var(--brand-navy)]/70">
-                    {s.d}
-                  </p>
-                </li>
+                  <p className="mt-2 text-sm text-[color:var(--brand-navy)]/70">{a.d}</p>
+                </Card>
               ))}
-            </ol>
-            <div className="mt-10">
+            </div>
+          </PublicPage>
+        </PublicSection>
+      </section>
+
+      {/* 4 — WHY SUBSCRIPTION RECRUITING */}
+      <PublicSection>
+        <PublicPage>
+          <SectionHead
+            eyebrow="Why subscription recruiting"
+            title="A different economic model — and a different working relationship."
+            lead="Placement fees create incentives to close the deal. A subscription creates incentives to keep delivering."
+          />
+          <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
+            {SUBSCRIPTION_REASONS.map((r) => (
+              <Card key={r.t}>
+                <r.icon className="h-6 w-6 text-[color:var(--brand-ocean)]" aria-hidden />
+                <h3 className="mt-4 text-base font-semibold text-[color:var(--brand-navy)]">
+                  {r.t}
+                </h3>
+                <p className="mt-2 text-sm text-[color:var(--brand-navy)]/70">{r.d}</p>
+              </Card>
+            ))}
+          </div>
+        </PublicPage>
+      </PublicSection>
+
+      {/* 5 — LIVE WORKSPACE SHOWCASE */}
+      <section className="border-y border-[color:var(--brand-navy)]/8 bg-[color:var(--brand-paper)]">
+        <PublicSection>
+          <PublicPage>
+            <SectionHead
+              eyebrow="Inside the workspace"
+              title="One product. Three purpose-built views."
+              lead="Admin operations, hiring teams, and candidates each get a workspace tailored to what they need to do — synchronized in realtime."
+            />
+            <div className="mt-10 grid gap-5 lg:grid-cols-3">
+              {WORKSPACES.map((w) => (
+                <Card key={w.title} className="flex flex-col">
+                  <div className="flex items-center gap-2">
+                    <w.icon className="h-5 w-5 text-[color:var(--brand-ocean)]" aria-hidden />
+                    <Eyebrow>{w.who}</Eyebrow>
+                  </div>
+                  <h3 className="mt-3 text-lg font-semibold text-[color:var(--brand-navy)]">
+                    {w.title}
+                  </h3>
+                  <p className="mt-2 text-sm text-[color:var(--brand-navy)]/70">{w.body}</p>
+                  <ul className="mt-4 space-y-2 text-sm text-[color:var(--brand-navy)]">
+                    {w.bullets.map((b) => (
+                      <li key={b} className="flex items-start gap-2">
+                        <CheckCircle2
+                          className="mt-0.5 h-4 w-4 shrink-0 text-[color:var(--brand-ocean)]/70"
+                          aria-hidden
+                        />
+                        <span>{b}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </Card>
+              ))}
+            </div>
+            <div className="mt-8">
               <Link
                 to="/how-it-works"
-                className="inline-flex min-h-11 items-center gap-2 rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-[color:var(--brand-navy-dark)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+                className="inline-flex items-center gap-1 text-sm font-semibold text-[color:var(--brand-ocean)] hover:text-[color:var(--brand-navy)]"
               >
-                See How TaaSFlow Works <ArrowRight className="h-4 w-4" aria-hidden />
+                See how the workspace works <ArrowRight className="h-4 w-4" aria-hidden />
               </Link>
             </div>
           </PublicPage>
         </PublicSection>
       </section>
 
-
-      {/* 4 — CANDIDATE DELIVERY & RANKING */}
+      {/* 6 — CANDIDATE DELIVERY & EVIDENCE */}
       <PublicSection>
         <PublicPage>
           <div className="grid grid-cols-1 gap-10 lg:grid-cols-2 lg:items-center">
             <div>
               <SectionHead
-                eyebrow="Candidate delivery"
-                title="Ranked candidates with evidence, not attached PDFs."
-                lead="Each candidate arrives in your workspace with a role-specific score and the exact CV quotes behind every requirement."
+                eyebrow="Candidate delivery & evidence"
+                title="Recruiter-written fit narratives — not attached PDFs."
+                lead="Each candidate arrives in your workspace with a role-specific score and the exact CV quotes behind every requirement. Debate the requirement, not the candidate."
               />
-              <div className="mt-6">
-                <Link
-                  to="/solutions"
-                  className="inline-flex items-center gap-1 text-sm font-semibold text-[color:var(--brand-ocean)] hover:text-[color:var(--brand-navy)]"
-                >
-                  See a sample delivery <ArrowRight className="h-4 w-4" aria-hidden />
-                </Link>
-              </div>
+              <ul className="mt-6 space-y-3 text-sm text-[color:var(--brand-navy)]">
+                {[
+                  "Ranked delivery with a composite score per candidate",
+                  "Evidence and CV quotes mapped to every must-have",
+                  "Recruiter-written fit narrative attached to the profile",
+                  "One-click shortlist, interview, or pass",
+                ].map((t) => (
+                  <li key={t} className="flex items-start gap-2">
+                    <CheckCircle2
+                      className="mt-0.5 h-4 w-4 shrink-0 text-[color:var(--brand-ocean)]"
+                      aria-hidden
+                    />
+                    <span>{t}</span>
+                  </li>
+                ))}
+              </ul>
             </div>
             <Card className="p-6 sm:p-7">
               <div className="flex items-start justify-between gap-4">
@@ -690,6 +614,7 @@ function Home() {
                       <div
                         className="h-full rounded-full bg-[color:var(--brand-ocean)]"
                         style={{ width: `${v}%` }}
+                        aria-hidden
                       />
                     </div>
                     <span className="w-8 shrink-0 text-right font-semibold tabular-nums text-[color:var(--brand-navy)]">
@@ -710,252 +635,95 @@ function Home() {
         </PublicPage>
       </PublicSection>
 
-      {/* 5 — TRANSPARENCY & LIVE PIPELINE */}
-      <section className="border-y border-[color:var(--brand-navy)]/8 bg-[color:var(--brand-paper)]">
-        <PublicSection>
-          <PublicPage>
-            <div className="grid grid-cols-1 gap-10 lg:grid-cols-2 lg:items-center">
-              <Card className="order-2 p-6 sm:p-7 lg:order-1">
-                <div className="flex items-center gap-2">
-                  <Activity className="h-4 w-4 text-[color:var(--brand-ocean)]" aria-hidden />
-                  <span className="text-sm font-semibold text-[color:var(--brand-navy)]">
-                    Live activity
-                  </span>
-                </div>
-                <ul className="mt-4 space-y-3 text-sm">
-                  {ACTIVITY.map(([t, w]) => (
-                    <li
-                      key={t}
-                      className="flex items-center justify-between gap-4 border-b border-[color:var(--brand-navy)]/8 pb-3 last:border-0 last:pb-0"
-                    >
-                      <span className="min-w-0 truncate text-[color:var(--brand-navy)]">
-                        {t}
-                      </span>
-                      <span className="shrink-0 text-xs text-[color:var(--brand-navy)]/60">
-                        {w}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </Card>
-              <div className="order-1 lg:order-2">
-                <SectionHead
-                  eyebrow="Transparency"
-                  title="A pipeline you can watch — not chase."
-                  lead="When a candidate is ranked, your team sees it. When a client shortlists, the candidate sees it. Same status, same moment — no email chains."
-                />
-                <ul className="mt-6 space-y-3 text-sm text-[color:var(--brand-navy)]">
-                  {[
-                    "Realtime ranking and evidence",
-                    "One-click shortlist, interview, reject",
-                    "Full audit trail of every decision",
-                    "Direct messaging with recruiter and candidates",
-                  ].map((t) => (
-                    <li key={t} className="flex items-start gap-2">
-                      <CheckCircle2
-                        className="mt-0.5 h-4 w-4 shrink-0 text-[color:var(--brand-ocean)]"
-                        aria-hidden
-                      />
-                      <span>{t}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          </PublicPage>
-        </PublicSection>
-      </section>
-
-      {/* 6 — ADMIN / CLIENT / CANDIDATE WORKSPACES */}
-      <PublicSection>
-        <PublicPage>
-          <SectionHead
-            eyebrow="Workspaces"
-            title="One product. Three purpose-built views."
-            lead="Admin operations, hiring teams, and candidates each get a workspace tailored to what they need to do — synchronized in realtime."
-          />
-          <div className="mt-10 grid gap-5 lg:grid-cols-3">
-            {WORKSPACE_TABS.map((w, i) => {
-              const Icon = [LayoutDashboard, Eye, MessageSquare][i];
-              return (
-                <Card key={w.title} className="flex flex-col">
-                  <div className="flex items-center gap-2">
-                    <Icon
-                      className="h-5 w-5 text-[color:var(--brand-ocean)]"
-                      aria-hidden
-                    />
-                    <Eyebrow>{w.who}</Eyebrow>
-                  </div>
-                  <h3 className="mt-3 text-lg font-semibold text-[color:var(--brand-navy)]">
-                    {w.title}
-                  </h3>
-                  <p className="mt-2 text-sm text-[color:var(--brand-navy)]/70">
-                    {w.body}
-                  </p>
-                  <ul className="mt-4 space-y-2 text-sm text-[color:var(--brand-navy)]">
-                    {w.bullets.map((b) => (
-                      <li key={b} className="flex items-start gap-2">
-                        <CheckCircle2
-                          className="mt-0.5 h-4 w-4 shrink-0 text-[color:var(--brand-ocean)]/70"
-                          aria-hidden
-                        />
-                        <span>{b}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </Card>
-              );
-            })}
-          </div>
-        </PublicPage>
-      </PublicSection>
-
-      {/* 7 — SPEED & PREDICTABLE RECRUITING */}
+      {/* 7 — TAASFLOW VS AGENCY MODEL */}
       <section className="border-y border-[color:var(--brand-navy)]/8 bg-white">
         <PublicSection>
           <PublicPage>
             <SectionHead
-              eyebrow="Speed & predictability"
-              title="Move faster. Budget with confidence."
+              eyebrow="TaaSFlow vs the agency model"
+              title="Same objective. A different way of getting there."
+              lead="A side-by-side view of how a subscription recruiting workspace compares to a traditional contingent agency."
             />
-            <div className="mt-10 grid gap-5 md:grid-cols-3">
-              {[
-                {
-                  t: "Ranked in days, not months",
-                  d: "Structured intake and continuous sourcing keep your pipeline moving as soon as the role is approved.",
-                },
-                {
-                  t: "Decisions in the workspace",
-                  d: "Compare candidates side by side and decide without exporting spreadsheets or scheduling review calls.",
-                },
-                {
-                  t: "Subscription pricing",
-                  d: "A flat monthly fee — no per-hire placement commissions and no surprise invoices.",
-                },
-              ].map((c) => (
-                <Card key={c.t}>
-                  <h3 className="text-base font-semibold text-[color:var(--brand-navy)]">
-                    {c.t}
-                  </h3>
-                  <p className="mt-2 text-sm text-[color:var(--brand-navy)]/70">
-                    {c.d}
-                  </p>
-                </Card>
-              ))}
+            <div className="mt-10 overflow-hidden rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white shadow-[var(--brand-shadow-sm)]">
+              <div className="hidden grid-cols-[1.1fr_1.4fr_1.4fr] items-center gap-4 border-b border-[color:var(--brand-navy)]/8 bg-[color:var(--brand-paper)] px-5 py-3 text-xs font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/60 md:grid">
+                <span>Dimension</span>
+                <span className="text-[color:var(--brand-navy)]">TaaSFlow</span>
+                <span>Traditional agency</span>
+              </div>
+              <ul>
+                {AGENCY_COMPARE.map((row) => (
+                  <li
+                    key={row.axis}
+                    className="grid grid-cols-1 gap-2 border-b border-[color:var(--brand-navy)]/8 px-5 py-4 last:border-0 md:grid-cols-[1.1fr_1.4fr_1.4fr] md:items-start md:gap-4"
+                  >
+                    <div className="text-sm font-semibold text-[color:var(--brand-navy)]">
+                      {row.axis}
+                    </div>
+                    <div className="flex items-start gap-2 text-sm text-[color:var(--brand-navy)]">
+                      <CheckCircle2
+                        className="mt-0.5 h-4 w-4 shrink-0 text-[color:var(--brand-ocean)]"
+                        aria-hidden
+                      />
+                      <span>{row.taasflow}</span>
+                    </div>
+                    <div className="text-sm text-[color:var(--brand-navy)]/60">
+                      {row.agency}
+                    </div>
+                  </li>
+                ))}
+              </ul>
             </div>
           </PublicPage>
         </PublicSection>
       </section>
 
-      {/* 8 — ENTERPRISE & GLOBAL */}
-      <PublicSection>
-        <PublicPage>
-          <div className="grid gap-5 md:grid-cols-2">
-            <Card className="p-7 sm:p-8">
-              <Users className="h-6 w-6 text-[color:var(--brand-ocean)]" aria-hidden />
-              <h3 className="mt-4 text-xl font-semibold text-[color:var(--brand-navy)]">
-                Enterprise-ready
-              </h3>
-              <p className="mt-2 text-sm text-[color:var(--brand-navy)]/70">
-                Multi-team programs, role-based access, audit trails, and dedicated
-                delivery pods. Keep your ATS — we work alongside it.
-              </p>
-              <Link
-                to="/enterprise"
-                className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-[color:var(--brand-ocean)] hover:text-[color:var(--brand-navy)]"
-              >
-                Enterprise details <ArrowRight className="h-4 w-4" aria-hidden />
-              </Link>
-            </Card>
-            <Card className="p-7 sm:p-8">
-              <Globe2 className="h-6 w-6 text-[color:var(--brand-ocean)]" aria-hidden />
-              <h3 className="mt-4 text-xl font-semibold text-[color:var(--brand-navy)]">
-                Global reach
-              </h3>
-              <p className="mt-2 text-sm text-[color:var(--brand-navy)]/70">
-                Timezone-aware ranking, distributed sourcing, and work-authorization
-                screening built into the workspace.
-              </p>
-              <Link
-                to="/global-talent"
-                className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-[color:var(--brand-ocean)] hover:text-[color:var(--brand-navy)]"
-              >
-                Global talent <ArrowRight className="h-4 w-4" aria-hidden />
-              </Link>
-            </Card>
-          </div>
-        </PublicPage>
-      </PublicSection>
-
-      {/* 9 — INDUSTRIES */}
-      <section className="border-y border-[color:var(--brand-navy)]/8 bg-[color:var(--brand-paper)]">
-        <PublicSection>
-          <PublicPage>
-            <SectionHead
-              eyebrow="Industries"
-              title="Built for the roles you actually hire."
-            />
-            <div className="mt-8 flex flex-wrap gap-2">
-              {INDUSTRIES.map(([slug, label]) => (
-                <Link
-                  key={slug}
-                  to="/industries/$slug"
-                  params={{ slug }}
-                  className="rounded-full border border-[color:var(--brand-navy)]/12 bg-white px-4 py-2 text-sm font-medium text-[color:var(--brand-navy)] hover:border-[color:var(--brand-navy)]/25 hover:bg-[color:var(--brand-navy)]/5"
-                >
-                  {label}
-                </Link>
-              ))}
-              <Link
-                to="/industries"
-                className="inline-flex items-center gap-1 rounded-full border border-[color:var(--brand-ocean)]/40 bg-[color:var(--brand-ocean)]/8 px-4 py-2 text-sm font-semibold text-[color:var(--brand-ocean)] hover:bg-[color:var(--brand-ocean)]/14"
-              >
-                All industries <ArrowRight className="h-4 w-4" aria-hidden />
-              </Link>
-            </div>
-          </PublicPage>
-        </PublicSection>
-      </section>
-
-      {/* 10 — PROOF / CUSTOMER OUTCOME */}
+      {/* 8 — SOCIAL PROOF / TRUST */}
       <PublicSection>
         <PublicPage>
           <SectionHead
-            eyebrow="Proof"
+            eyebrow="What hiring teams say"
             title="Teams hiring differently."
             lead="Hiring managers use TaaSFlow because it changes how their team decides — evidence in front of everyone, in the same workspace, at the same time."
           />
-          <div className="mt-8 grid gap-5 md:grid-cols-3">
-            <Card>
-              <Building2 className="h-5 w-5 text-[color:var(--brand-ocean)]" aria-hidden />
-              <blockquote className="mt-4 text-sm leading-relaxed text-[color:var(--brand-navy)]">
-                "We stopped comparing PDFs. The workspace tells us which candidates
-                fit the requirements we actually agreed on."
-              </blockquote>
-              <p className="mt-4 text-xs font-medium text-[color:var(--brand-navy)]/60">
-                Head of Talent · SaaS scale-up
-              </p>
-            </Card>
-            <Card>
-              <Building2 className="h-5 w-5 text-[color:var(--brand-ocean)]" aria-hidden />
-              <blockquote className="mt-4 text-sm leading-relaxed text-[color:var(--brand-navy)]">
-                "Evidence quotes changed the conversation with our hiring managers.
-                We debate the requirement, not the candidate."
-              </blockquote>
-              <p className="mt-4 text-xs font-medium text-[color:var(--brand-navy)]/60">
-                Recruiting Lead · Fintech
-              </p>
-            </Card>
-            <Card>
-              <Building2 className="h-5 w-5 text-[color:var(--brand-ocean)]" aria-hidden />
-              <blockquote className="mt-4 text-sm leading-relaxed text-[color:var(--brand-navy)]">
-                "Predictable pricing and a single workspace let us open three roles
-                at once without adding vendors."
-              </blockquote>
-              <p className="mt-4 text-xs font-medium text-[color:var(--brand-navy)]/60">
-                People Ops · Healthcare
-              </p>
-            </Card>
+          <div className="mt-10 grid gap-5 md:grid-cols-3">
+            {[
+              {
+                q: "We stopped comparing PDFs. The workspace tells us which candidates fit the requirements we actually agreed on.",
+                who: "Head of Talent · SaaS scale-up",
+              },
+              {
+                q: "Evidence quotes changed the conversation with our hiring managers. We debate the requirement, not the candidate.",
+                who: "Recruiting Lead · Fintech",
+              },
+              {
+                q: "Predictable pricing and a single workspace let us open three roles at once without adding more vendors.",
+                who: "People Ops · Healthcare",
+              },
+            ].map((t) => (
+              <Card key={t.who}>
+                <Building2 className="h-5 w-5 text-[color:var(--brand-ocean)]" aria-hidden />
+                <blockquote className="mt-4 text-sm leading-relaxed text-[color:var(--brand-navy)]">
+                  "{t.q}"
+                </blockquote>
+                <p className="mt-4 text-xs font-medium text-[color:var(--brand-navy)]/60">
+                  {t.who}
+                </p>
+              </Card>
+            ))}
+          </div>
+          <div className="mt-8 flex flex-wrap items-center gap-4 text-xs text-[color:var(--brand-navy)]/60">
+            <span className="inline-flex items-center gap-1.5">
+              <ShieldCheck className="h-4 w-4 text-[color:var(--brand-ocean)]" aria-hidden />
+              Evidence-first candidate delivery
+            </span>
+            <span className="inline-flex items-center gap-1.5">
+              <ClipboardCheck className="h-4 w-4 text-[color:var(--brand-ocean)]" aria-hidden />
+              Full audit trail on every decision
+            </span>
+            <span className="inline-flex items-center gap-1.5">
+              <Users className="h-4 w-4 text-[color:var(--brand-ocean)]" aria-hidden />
+              Role-based access for your team
+            </span>
           </div>
           <div className="mt-6">
             <Link
@@ -968,16 +736,46 @@ function Home() {
         </PublicPage>
       </PublicSection>
 
-      {/* 11 — FINAL CTA */}
+      {/* 9 — FAQ PREVIEW */}
+      <section className="border-y border-[color:var(--brand-navy)]/8 bg-[color:var(--brand-paper)]">
+        <PublicSection>
+          <PublicPage>
+            <SectionHead
+              eyebrow="Quick answers"
+              title="Common questions about TaaSFlow."
+            />
+            <dl className="mt-10 grid gap-5 md:grid-cols-2">
+              {HOMEPAGE_FAQ.map((item) => (
+                <Card key={item.q}>
+                  <dt className="text-base font-semibold text-[color:var(--brand-navy)]">
+                    {item.q}
+                  </dt>
+                  <dd className="mt-2 text-sm text-[color:var(--brand-navy)]/70">
+                    {item.a}
+                  </dd>
+                </Card>
+              ))}
+            </dl>
+            <div className="mt-8">
+              <Link
+                to="/faq"
+                className="inline-flex items-center gap-1 text-sm font-semibold text-[color:var(--brand-ocean)] hover:text-[color:var(--brand-navy)]"
+              >
+                View all FAQs <ArrowRight className="h-4 w-4" aria-hidden />
+              </Link>
+            </div>
+          </PublicPage>
+        </PublicSection>
+      </section>
+
+      {/* 10 — FINAL CTA */}
       <CtaSection
         eyebrow="Get started"
         title="A faster, clearer, more transparent way to recruit."
         description="Give your hiring team ranked candidates, evidence per requirement, and a live workspace everyone can see."
         primary={{ to: "/intake", label: "Start Hiring" }}
-        secondary={{ to: "/jobs", label: "Browse Jobs" }}
+        secondary={{ to: "/how-it-works", label: "See How It Works" }}
       />
-
     </SiteShell>
   );
 }
-
