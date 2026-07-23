@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { SiteShell } from "@/components/marketing/site-shell";
 import { marketingHead } from "@/lib/marketing/head";
+import { PRICING_PACKAGES, isTierPricePublic, formatUsdCompact } from "@/config/public-pricing";
 import {
   Users,
   Building2,
@@ -9,6 +10,12 @@ import {
   ClipboardList,
   ShieldCheck,
 } from "lucide-react";
+
+const PILOT = PRICING_PACKAGES.find((p) => p.id === "pilot");
+const PILOT_PRICE_LABEL =
+  PILOT && isTierPricePublic(PILOT) && PILOT.priceUsd !== null
+    ? ` for ${formatUsdCompact(PILOT.priceUsd)}`
+    : "";
 
 export const Route = createFileRoute("/solutions")({
   head: () =>
@@ -24,7 +31,7 @@ const SOLUTIONS = [
   {
     icon: Rocket,
     title: "Pilot a single hire",
-    body: "Test TaaSFlow on one role for $399. Ranked shortlist in 14 days. If it isn't the best hiring experience you've had, you don't renew.",
+    body: `Test TaaSFlow on one role${PILOT_PRICE_LABEL}. Ranked shortlist delivered fast. If it isn't the best hiring experience you've had, you don't renew.`,
     cta: { to: "/pilot", label: "Start a pilot" },
   },
   {
