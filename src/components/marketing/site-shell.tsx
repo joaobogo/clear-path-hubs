@@ -39,15 +39,11 @@ function BrandMark({ compact = false }: { compact?: boolean }) {
     <Link to="/" className="inline-flex items-center gap-2 rounded-md" aria-label="TaaSFlow — Home">
       <img
         src={brand.logos.primary}
-        alt=""
-        aria-hidden
+        alt="TaaSFlow"
         width={compact ? 28 : 32}
         height={compact ? 28 : 32}
         className="h-8 w-auto shrink-0"
       />
-      <span className="text-lg font-semibold tracking-tight text-[color:var(--brand-navy)]">
-        TaaSFlow
-      </span>
     </Link>
   );
 }
