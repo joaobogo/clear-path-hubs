@@ -1,0 +1,285 @@
+{
+  "components": [
+    {
+      "component_id": "CMP-001",
+      "name": "Header/SiteShell",
+      "source_path": "src/components/Header/SiteShell.tsx",
+      "purpose": "Header/SiteShell",
+      "pages_using_it": "all_public",
+      "kind": "presentation",
+      "source_dependencies": [
+        "react",
+        "tailwind"
+      ],
+      "backend_dependencies": [],
+      "dashboard_dependencies": [],
+      "destination_equivalent": "src/components/marketing/site-shell.tsx",
+      "migration_classification": "MIGRATE_AS_IS",
+      "adaptation_required": false,
+      "accessibility_risk": "medium",
+      "responsive_risk": "low",
+      "implementation_status": "IMPLEMENTED"
+    },
+    {
+      "component_id": "CMP-002",
+      "name": "Footer",
+      "source_path": "src/components/Footer.tsx",
+      "purpose": "Footer",
+      "pages_using_it": "all_public",
+      "kind": "presentation",
+      "source_dependencies": [
+        "react",
+        "tailwind"
+      ],
+      "backend_dependencies": [],
+      "dashboard_dependencies": [],
+      "destination_equivalent": "src/components/marketing/site-shell.tsx",
+      "migration_classification": "MIGRATE_AS_IS",
+      "adaptation_required": false,
+      "accessibility_risk": "medium",
+      "responsive_risk": "low",
+      "implementation_status": "IMPLEMENTED"
+    },
+    {
+      "component_id": "CMP-003",
+      "name": "MobileNav",
+      "source_path": "src/components/MobileNav.tsx",
+      "purpose": "MobileNav",
+      "pages_using_it": "all_public",
+      "kind": "presentation",
+      "source_dependencies": [
+        "react",
+        "tailwind"
+      ],
+      "backend_dependencies": [],
+      "dashboard_dependencies": [],
+      "destination_equivalent": "src/components/marketing/mobile-nav.tsx",
+      "migration_classification": "MIGRATE_AS_IS",
+      "adaptation_required": false,
+      "accessibility_risk": "medium",
+      "responsive_risk": "low",
+      "implementation_status": "IMPLEMENTED"
+    },
+    {
+      "component_id": "CMP-004",
+      "name": "HeroSection",
+      "source_path": "src/components/HeroSection.tsx",
+      "purpose": "HeroSection",
+      "pages_using_it": "most_public",
+      "kind": "presentation",
+      "source_dependencies": [
+        "react",
+        "tailwind"
+      ],
+      "backend_dependencies": [],
+      "dashboard_dependencies": [],
+      "destination_equivalent": "src/components/marketing/hero.tsx",
+      "migration_classification": "MIGRATE_AS_IS",
+      "adaptation_required": false,
+      "accessibility_risk": "medium",
+      "responsive_risk": "low",
+      "implementation_status": "IMPLEMENTED"
+    },
+    {
+      "component_id": "CMP-005",
+      "name": "CTASection",
+      "source_path": "src/components/CTASection.tsx",
+      "purpose": "CTASection",
+      "pages_using_it": "most_public",
+      "kind": "presentation",
+      "source_dependencies": [
+        "react",
+        "tailwind"
+      ],
+      "backend_dependencies": [],
+      "dashboard_dependencies": [],
+      "destination_equivalent": "src/components/marketing/cta.tsx",
+      "migration_classification": "MIGRATE_AS_IS",
+      "adaptation_required": false,
+      "accessibility_risk": "medium",
+      "responsive_risk": "low",
+      "implementation_status": "IMPLEMENTED"
+    },
+    {
+      "component_id": "CMP-006",
+      "name": "BlogCard",
+      "source_path": "src/components/BlogCard.tsx",
+      "purpose": "BlogCard",
+      "pages_using_it": "/blog",
+      "kind": "presentation",
+      "source_dependencies": [
+        "react",
+        "tailwind"
+      ],
+      "backend_dependencies": [],
+      "dashboard_dependencies": [],
+      "destination_equivalent": "src/components/marketing/blog-card.tsx",
+      "migration_classification": "MIGRATE_AS_IS",
+      "adaptation_required": false,
+      "accessibility_risk": "medium",
+      "responsive_risk": "low",
+      "implementation_status": "IMPLEMENTED"
+    },
+    {
+      "component_id": "CMP-007",
+      "name": "IndustryCard",
+      "source_path": "src/components/IndustryCard.tsx",
+      "purpose": "IndustryCard",
+      "pages_using_it": "/industries",
+      "kind": "presentation",
+      "source_dependencies": [
+        "react",
+        "tailwind"
+      ],
+      "backend_dependencies": [],
+      "dashboard_dependencies": [],
+      "destination_equivalent": "src/components/marketing/industry-card.tsx",
+      "migration_classification": "MIGRATE_AS_IS",
+      "adaptation_required": false,
+      "accessibility_risk": "medium",
+      "responsive_risk": "low",
+      "implementation_status": "IMPLEMENTED"
+    },
+    {
+      "component_id": "CMP-008",
+      "name": "FAQAccordion",
+      "source_path": "src/components/FAQAccordion.tsx",
+      "purpose": "FAQAccordion",
+      "pages_using_it": "/faq",
+      "kind": "presentation",
+      "source_dependencies": [
+        "react",
+        "tailwind"
+      ],
+      "backend_dependencies": [],
+      "dashboard_dependencies": [],
+      "destination_equivalent": "src/components/marketing/faq.tsx",
+      "migration_classification": "MIGRATE_AS_IS",
+      "adaptation_required": false,
+      "accessibility_risk": "medium",
+      "responsive_risk": "low",
+      "implementation_status": "IMPLEMENTED"
+    },
+    {
+      "component_id": "CMP-009",
+      "name": "ContactForm",
+      "source_path": "src/components/ContactForm.tsx",
+      "purpose": "ContactForm",
+      "pages_using_it": "/contact",
+      "kind": "presentation",
+      "source_dependencies": [
+        "react",
+        "tailwind"
+      ],
+      "backend_dependencies": [],
+      "dashboard_dependencies": [],
+      "destination_equivalent": "src/components/marketing/contact-form.tsx",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "adaptation_required": true,
+      "accessibility_risk": "medium",
+      "responsive_risk": "low",
+      "implementation_status": "IMPLEMENTED"
+    },
+    {
+      "component_id": "CMP-010",
+      "name": "PricingTable",
+      "source_path": "src/components/PricingTable.tsx",
+      "purpose": "PricingTable",
+      "pages_using_it": "/pricing",
+      "kind": "presentation",
+      "source_dependencies": [
+        "react",
+        "tailwind"
+      ],
+      "backend_dependencies": [],
+      "dashboard_dependencies": [],
+      "destination_equivalent": "src/components/marketing/pricing.tsx",
+      "migration_classification": "MIGRATE_AS_IS",
+      "adaptation_required": false,
+      "accessibility_risk": "medium",
+      "responsive_risk": "low",
+      "implementation_status": "IMPLEMENTED"
+    },
+    {
+      "component_id": "CMP-011",
+      "name": "ComparisonMatrix",
+      "source_path": "src/components/ComparisonMatrix.tsx",
+      "purpose": "ComparisonMatrix",
+      "pages_using_it": "/industries/compare",
+      "kind": "presentation",
+      "source_dependencies": [
+        "react",
+        "tailwind"
+      ],
+      "backend_dependencies": [],
+      "dashboard_dependencies": [],
+      "destination_equivalent": "src/components/marketing/comparison.tsx",
+      "migration_classification": "REBUILD_FROM_REFERENCE",
+      "adaptation_required": true,
+      "accessibility_risk": "medium",
+      "responsive_risk": "low",
+      "implementation_status": "IMPLEMENTED"
+    },
+    {
+      "component_id": "CMP-012",
+      "name": "Breadcrumbs",
+      "source_path": "src/components/Breadcrumbs.tsx",
+      "purpose": "Breadcrumbs",
+      "pages_using_it": "content_pages",
+      "kind": "presentation",
+      "source_dependencies": [
+        "react",
+        "tailwind"
+      ],
+      "backend_dependencies": [],
+      "dashboard_dependencies": [],
+      "destination_equivalent": "src/components/marketing/breadcrumbs.tsx",
+      "migration_classification": "MIGRATE_AS_IS",
+      "adaptation_required": false,
+      "accessibility_risk": "medium",
+      "responsive_risk": "low",
+      "implementation_status": "IMPLEMENTED"
+    },
+    {
+      "component_id": "CMP-013",
+      "name": "Testimonial",
+      "source_path": "src/components/Testimonial.tsx",
+      "purpose": "Testimonial",
+      "pages_using_it": "home+case",
+      "kind": "presentation",
+      "source_dependencies": [
+        "react",
+        "tailwind"
+      ],
+      "backend_dependencies": [],
+      "dashboard_dependencies": [],
+      "destination_equivalent": "src/components/marketing/testimonial.tsx",
+      "migration_classification": "MIGRATE_AS_IS",
+      "adaptation_required": false,
+      "accessibility_risk": "medium",
+      "responsive_risk": "low",
+      "implementation_status": "IMPLEMENTED"
+    },
+    {
+      "component_id": "CMP-014",
+      "name": "Timeline",
+      "source_path": "src/components/Timeline.tsx",
+      "purpose": "Timeline",
+      "pages_using_it": "/journey /how-it-works",
+      "kind": "presentation",
+      "source_dependencies": [
+        "react",
+        "tailwind"
+      ],
+      "backend_dependencies": [],
+      "dashboard_dependencies": [],
+      "destination_equivalent": "src/components/marketing/timeline.tsx",
+      "migration_classification": "MIGRATE_AS_IS",
+      "adaptation_required": false,
+      "accessibility_risk": "medium",
+      "responsive_risk": "low",
+      "implementation_status": "IMPLEMENTED"
+    }
+  ],
+  "total": 14
+}
