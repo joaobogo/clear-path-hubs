@@ -113,12 +113,53 @@ function DesktopNavLink({ to, label }: { to: string; label: string }) {
   );
 }
 
+function GroupTrigger({ label }: { label: string }) {
+  return (
+    <NavigationMenuPrimitive.Trigger
+      className="group inline-flex h-9 items-center gap-1 rounded-md px-3 py-1.5 text-sm text-[color:var(--brand-navy)]/80 outline-none transition-colors hover:text-[color:var(--brand-navy)] focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)] data-[state=open]:text-[color:var(--brand-navy)]"
+    >
+      {label}
+      <ChevronDown className="h-3.5 w-3.5 transition-transform group-data-[state=open]:rotate-180" aria-hidden />
+    </NavigationMenuPrimitive.Trigger>
+  );
+}
+
+function GroupContent({ links }: { links: NavLink[] }) {
+  const visible = links.filter((l) => !l.hidden);
+  return (
+    <NavigationMenuPrimitive.Content className="absolute left-0 top-0 w-full data-[motion=from-start]:animate-in data-[motion=to-start]:animate-out data-[motion^=from-]:fade-in data-[motion^=to-]:fade-out">
+      <ul className="grid w-[min(560px,90vw)] gap-1 p-3 sm:grid-cols-2">
+        {visible.map((l) => (
+          <li key={`${l.to}-${l.label}`}>
+            <NavigationMenuPrimitive.Link asChild>
+              <Link
+                to={l.to}
+                className="block rounded-md px-3 py-2.5 text-sm text-[color:var(--brand-navy)]/85 hover:bg-[color:var(--brand-navy)]/5 hover:text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+              >
+                <span className="block font-medium">{l.label}</span>
+                {l.description ? (
+                  <span className="mt-0.5 block text-xs text-[color:var(--brand-navy)]/55">
+                    {l.description}
+                  </span>
+                ) : null}
+              </Link>
+            </NavigationMenuPrimitive.Link>
+          </li>
+        ))}
+      </ul>
+    </NavigationMenuPrimitive.Content>
+  );
+}
+
 function Header() {
   const [open, setOpen] = useState(false);
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
   // Close mobile sheet when route changes.
   useEffect(() => { setOpen(false); }, [pathname]);
+
+  const signIn = SECONDARY_CTAS.find((c) => c.label === "Sign in") ?? { to: "/login", label: "Sign in" };
+  const browseJobs = SECONDARY_CTAS.find((c) => c.label === "Browse jobs") ?? { to: "/jobs", label: "Browse jobs" };
 
   return (
     <>
@@ -127,30 +168,48 @@ function Header() {
         <div className="mx-auto flex h-16 max-w-[1200px] items-center gap-4 px-4 sm:px-6 lg:px-8">
           <BrandMark />
 
-          <nav aria-label="Primary" className="hidden flex-1 items-center justify-center gap-1 lg:flex">
-            {PRIMARY_NAV.map((n) => (
-              <DesktopNavLink key={n.to} to={n.to} label={n.label} />
-            ))}
-          </nav>
+          <NavigationMenuPrimitive.Root
+            aria-label="Primary"
+            className="relative hidden flex-1 items-center justify-center lg:flex"
+          >
+            <NavigationMenuPrimitive.List className="flex items-center gap-1">
+              {NAV_GROUPS.map((group) => (
+                <NavigationMenuPrimitive.Item key={group.label}>
+                  <GroupTrigger label={group.label} />
+                  <GroupContent links={group.links} />
+                </NavigationMenuPrimitive.Item>
+              ))}
+              {CONFIG_PRIMARY_NAV.filter((n) => !n.hidden).map((n) => (
+                <NavigationMenuPrimitive.Item key={n.to}>
+                  <NavigationMenuPrimitive.Link asChild>
+                    <DesktopNavLink to={n.to} label={n.label} />
+                  </NavigationMenuPrimitive.Link>
+                </NavigationMenuPrimitive.Item>
+              ))}
+            </NavigationMenuPrimitive.List>
+            <div className="absolute left-0 top-full flex w-full justify-center">
+              <NavigationMenuPrimitive.Viewport className="origin-top-center relative mt-2 h-[var(--radix-navigation-menu-viewport-height)] w-full overflow-hidden rounded-xl border border-[color:var(--brand-navy)]/10 bg-white text-[color:var(--brand-navy)] shadow-lg data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-90 md:w-[var(--radix-navigation-menu-viewport-width)]" />
+            </div>
+          </NavigationMenuPrimitive.Root>
 
           <div className="ml-auto hidden items-center gap-2 lg:flex">
             <Link
-              to="/auth"
+              to={signIn.to}
               className="rounded-md px-3 py-1.5 text-sm font-medium text-[color:var(--brand-navy)]/80 hover:text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
             >
-              Sign in
+              {signIn.label}
             </Link>
             <Link
-              to="/jobs"
+              to={browseJobs.to}
               className="rounded-md border border-[color:var(--brand-navy)]/15 bg-white px-3 py-1.5 text-sm font-medium text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
             >
-              Browse jobs
+              {browseJobs.label}
             </Link>
             <Link
-              to="/intake"
+              to={PRIMARY_CTA.to}
               className="rounded-md bg-[color:var(--brand-navy)] px-4 py-1.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-[color:var(--brand-navy-dark)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
             >
-              Start hiring
+              {PRIMARY_CTA.label}
             </Link>
           </div>
 
@@ -166,7 +225,7 @@ function Header() {
                 <Menu className="h-5 w-5" aria-hidden />
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-full max-w-sm bg-white p-0">
+            <SheetContent side="right" className="flex w-full max-w-sm flex-col bg-white p-0">
               <SheetHeader className="border-b border-[color:var(--brand-navy)]/10 px-5 py-4 text-left">
                 <SheetTitle className="text-base font-semibold text-[color:var(--brand-navy)]">
                   Menu
@@ -175,37 +234,63 @@ function Header() {
                   Primary site navigation
                 </SheetDescription>
               </SheetHeader>
-              <nav aria-label="Mobile primary" className="flex flex-col gap-1 px-3 py-4">
-                {PRIMARY_NAV.map((n) => (
-                  <Link
-                    key={n.to}
-                    to={n.to}
-                    className="min-h-11 rounded-md px-3 py-2.5 text-base text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
-                    activeProps={{ className: "bg-[color:var(--brand-navy)]/5 font-semibold" }}
-                  >
-                    {n.label}
-                  </Link>
-                ))}
-              </nav>
-              <div className="mt-auto space-y-2 border-t border-[color:var(--brand-navy)]/10 p-4">
+              <div className="flex-1 overflow-y-auto">
+                <nav aria-label="Mobile primary" className="flex flex-col gap-1 px-3 py-4">
+                  {CONFIG_PRIMARY_NAV.filter((n) => !n.hidden).map((n) => (
+                    <Link
+                      key={n.to}
+                      to={n.to}
+                      className="min-h-11 rounded-md px-3 py-2.5 text-base text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+                      activeProps={{ className: "bg-[color:var(--brand-navy)]/5 font-semibold" }}
+                    >
+                      {n.label}
+                    </Link>
+                  ))}
+                </nav>
+                <Accordion type="multiple" className="px-3 pb-4">
+                  {NAV_GROUPS.map((group) => (
+                    <AccordionItem key={group.label} value={group.label} className="border-b-0">
+                      <AccordionTrigger className="min-h-11 rounded-md px-3 py-2.5 text-base font-medium text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5 hover:no-underline">
+                        {group.label}
+                      </AccordionTrigger>
+                      <AccordionContent className="pb-1">
+                        <ul className="flex flex-col">
+                          {group.links.filter((l) => !l.hidden).map((l) => (
+                            <li key={`${l.to}-${l.label}`}>
+                              <Link
+                                to={l.to}
+                                className="block min-h-11 rounded-md px-6 py-2.5 text-sm text-[color:var(--brand-navy)]/85 hover:bg-[color:var(--brand-navy)]/5 hover:text-[color:var(--brand-navy)]"
+                                activeProps={{ className: "font-semibold text-[color:var(--brand-navy)]" }}
+                              >
+                                {l.label}
+                              </Link>
+                            </li>
+                          ))}
+                        </ul>
+                      </AccordionContent>
+                    </AccordionItem>
+                  ))}
+                </Accordion>
+              </div>
+              <div className="space-y-2 border-t border-[color:var(--brand-navy)]/10 p-4">
                 <Link
-                  to="/intake"
+                  to={PRIMARY_CTA.to}
                   className="flex min-h-11 items-center justify-center rounded-md bg-[color:var(--brand-navy)] px-4 py-2.5 text-sm font-semibold text-white"
                 >
-                  Start hiring
+                  {PRIMARY_CTA.label}
                 </Link>
                 <div className="grid grid-cols-2 gap-2">
                   <Link
-                    to="/jobs"
+                    to={browseJobs.to}
                     className="flex min-h-11 items-center justify-center rounded-md border border-[color:var(--brand-navy)]/15 px-3 py-2 text-sm font-medium text-[color:var(--brand-navy)]"
                   >
-                    Browse jobs
+                    {browseJobs.label}
                   </Link>
                   <Link
-                    to="/auth"
+                    to={signIn.to}
                     className="flex min-h-11 items-center justify-center rounded-md border border-[color:var(--brand-navy)]/15 px-3 py-2 text-sm font-medium text-[color:var(--brand-navy)]"
                   >
-                    Sign in
+                    {signIn.label}
                   </Link>
                 </div>
               </div>
@@ -219,31 +304,30 @@ function Header() {
 
 /* ---------------------------------------------------------------- Footer */
 
-type FooterLink = { to?: string; href?: string; label: string };
-
-function FooterCol({ title, links }: { title: string; links: FooterLink[] }) {
+function FooterCol({ title, links }: { title: string; links: NavLink[] }) {
+  const visible = links.filter((l) => !l.hidden);
   return (
     <div>
       <h3 className="text-xs font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/60">
         {title}
       </h3>
       <ul className="mt-4 space-y-2.5">
-        {links.map((l) => (
-          <li key={l.label}>
-            {l.to ? (
+        {visible.map((l) => (
+          <li key={`${l.to}-${l.label}`}>
+            {l.external ? (
+              <a
+                href={l.to}
+                className="text-sm text-[color:var(--brand-navy)]/80 hover:text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+              >
+                {l.label}
+              </a>
+            ) : (
               <Link
                 to={l.to}
                 className="text-sm text-[color:var(--brand-navy)]/80 hover:text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
               >
                 {l.label}
               </Link>
-            ) : (
-              <a
-                href={l.href}
-                className="text-sm text-[color:var(--brand-navy)]/80 hover:text-[color:var(--brand-navy)]"
-              >
-                {l.label}
-              </a>
             )}
           </li>
         ))}
@@ -253,6 +337,9 @@ function FooterCol({ title, links }: { title: string; links: FooterLink[] }) {
 }
 
 function Footer() {
+  const legalGroup = FOOTER_GROUPS.find((g) => g.label === "Legal");
+  const columnGroups = FOOTER_GROUPS.filter((g) => g.label !== "Legal");
+
   return (
     <footer className="border-t border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-paper)]">
       <div className="mx-auto max-w-[1200px] px-4 py-14 sm:px-6 lg:px-8">
@@ -263,77 +350,55 @@ function Footer() {
               A live recruiting workspace with ranked, evidence-backed candidate delivery.
             </p>
             <div className="mt-5 flex items-center gap-3">
-              {SOCIAL.map(({ href, label, Icon }) => (
-                <a
-                  key={label}
-                  href={href}
-                  aria-label={label}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-[color:var(--brand-navy)]/10 text-[color:var(--brand-navy)]/70 hover:border-[color:var(--brand-navy)]/30 hover:text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
-                >
-                  <Icon className="h-4 w-4" aria-hidden />
-                </a>
-              ))}
+              {SOCIAL_LINKS.map(({ href, label }) => {
+                const Icon = SOCIAL_ICONS[label] ?? Mail;
+                return (
+                  <a
+                    key={label}
+                    href={href}
+                    aria-label={label}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-[color:var(--brand-navy)]/10 text-[color:var(--brand-navy)]/70 hover:border-[color:var(--brand-navy)]/30 hover:text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+                  >
+                    <Icon className="h-4 w-4" aria-hidden />
+                  </a>
+                );
+              })}
             </div>
           </div>
 
-          <FooterCol
-            title="Solutions"
-            links={[
-              { to: "/solutions",   label: "Solutions" },
-              { to: "/industries",  label: "Industries" },
-              { to: "/enterprise",  label: "Enterprise" },
-              { to: "/how-it-works", label: "How it works" },
-              { to: "/pricing",     label: "Pricing" },
-            ]}
-          />
-          <FooterCol
-            title="Employers"
-            links={[
-              { to: "/intake",              label: "Start hiring" },
-              { to: "/pilot",               label: "Pilot" },
-              { to: "/employer-onboarding", label: "Onboarding" },
-              { to: "/contact",             label: "Talk to us" },
-            ]}
-          />
-          <FooterCol
-            title="Candidates"
-            links={[
-              { to: "/jobs",           label: "Browse jobs" },
-              { to: "/journey",        label: "Candidate journey" },
-              { to: "/talent-network", label: "Talent network" },
-              { to: "/auth",           label: "Candidate login" },
-            ]}
-          />
-          <FooterCol
-            title="Resources"
-            links={[
-              { to: "/resources",       label: "Resources" },
-              { to: "/knowledge-base",  label: "Knowledge base" },
-              { to: "/blog",            label: "Blog" },
-              { to: "/case-studies",    label: "Case studies" },
-              { to: "/faq",             label: "FAQ" },
-              { to: "/about",           label: "About" },
-            ]}
-          />
+          {columnGroups.map((group) => (
+            <FooterCol key={group.label} title={group.label} links={group.links} />
+          ))}
         </div>
 
         <div className="mt-12 flex flex-col gap-4 border-t border-[color:var(--brand-navy)]/10 pt-6 text-sm text-[color:var(--brand-navy)]/60 sm:flex-row sm:items-center sm:justify-between">
           <p>© {new Date().getFullYear()} TaaSFlow. All rights reserved.</p>
-          <nav aria-label="Legal" className="flex flex-wrap items-center gap-x-5 gap-y-2">
-            <Link to="/privacy" className="hover:text-[color:var(--brand-navy)]">Privacy</Link>
-            <Link to="/terms" className="hover:text-[color:var(--brand-navy)]">Terms</Link>
-            <Link to="/contact" className="hover:text-[color:var(--brand-navy)]">Contact</Link>
-            <a href="mailto:hello@taasflow.com" className="hover:text-[color:var(--brand-navy)]">
-              hello@taasflow.com
-            </a>
-          </nav>
+          {legalGroup ? (
+            <nav aria-label="Legal" className="flex flex-wrap items-center gap-x-5 gap-y-2">
+              {legalGroup.links.filter((l) => !l.hidden).map((l) =>
+                l.external ? (
+                  <a key={l.label} href={l.to} className="hover:text-[color:var(--brand-navy)]">
+                    {l.label}
+                  </a>
+                ) : (
+                  <Link key={l.label} to={l.to} className="hover:text-[color:var(--brand-navy)]">
+                    {l.label}
+                  </Link>
+                ),
+              )}
+              <a href="mailto:hello@taasflow.com" className="hover:text-[color:var(--brand-navy)]">
+                hello@taasflow.com
+              </a>
+            </nav>
+          ) : null}
         </div>
       </div>
     </footer>
   );
 }
+
 
 /* ---------------------------------------------------------------- Shell */
 
