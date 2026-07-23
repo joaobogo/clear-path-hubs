@@ -44,6 +44,7 @@ import {
 
 import { getPage } from "@/lib/marketing/content";
 import { marketingHead } from "@/lib/marketing/head";
+import { RoiCalculator } from "@/components/marketing/roi-calculator";
 
 // Homepage metadata is authored inline (guardrail: legacy JSON entry contains
 // unapproved "14 days" and totals claims). Do not pass the legacy entry here.
@@ -1056,6 +1057,16 @@ function Home() {
         </PublicSection>
       </section>
 
+
+      {/* 3.25 — ROI CALCULATOR (reusable, canonical config) */}
+      <PublicSection>
+        <PublicPage>
+          <RoiCalculator
+            variant="homepage"
+            supportingCopy="Adjust the assumptions to compare traditional agency and internal sourcing costs with the TaaSFlow model."
+          />
+        </PublicPage>
+      </PublicSection>
 
       {/* 3.5 — THE RECRUITING PROBLEM (old model vs TaaSFlow model) */}
       <PublicSection>
