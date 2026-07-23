@@ -140,11 +140,12 @@ const EMPTY: FormState = {
 };
 
 const STEPS = [
-  { id: 1, label: "Contact & company" },
-  { id: 2, label: "Role overview" },
-  { id: 3, label: "Requirements" },
-  { id: 4, label: "Hiring context" },
-  { id: 5, label: "Review & submit" },
+  { id: 1, label: "Role Definition" },
+  { id: 2, label: "Hiring Contact" },
+  { id: 3, label: "Candidate Profile" },
+  { id: 4, label: "Compensation" },
+  { id: 5, label: "Search Criteria" },
+  { id: 6, label: "Review & Submit" },
 ];
 
 function emailIsValid(v: string) {
@@ -165,14 +166,14 @@ function uniqueLower(arr: string[]) {
 function validateStep(step: number, s: FormState): Record<string, string> {
   const e: Record<string, string> = {};
   if (step === 1) {
+    if (!s.roleTitle.trim()) e.roleTitle = "Role title is required";
+    if (!s.workModel) e.workModel = "Select a work model";
+  }
+  if (step === 2) {
     if (!s.firstName.trim()) e.firstName = "First name is required";
     if (!s.lastName.trim()) e.lastName = "Last name is required";
     if (!emailIsValid(s.workEmail)) e.workEmail = "Enter a valid work email";
     if (!s.companyName.trim()) e.companyName = "Company name is required";
-  }
-  if (step === 2) {
-    if (!s.roleTitle.trim()) e.roleTitle = "Role title is required";
-    if (!s.workModel) e.workModel = "Select a work model";
   }
   if (step === 3) {
     const skills = uniqueLower(s.mustHaveSkills);
@@ -182,7 +183,7 @@ function validateStep(step: number, s: FormState): Record<string, string> {
         "Provide at least 3 must-have skills or a job description of at least 40 characters";
     }
   }
-  if (step === 5) {
+  if (step === 6) {
     if (!s.password || s.password.length < 8) e.password = "Choose a password with at least 8 characters";
     if (s.password !== s.passwordConfirm) e.passwordConfirm = "Passwords do not match";
     if (!s.consent) e.consent = "You must accept the terms to submit";
@@ -247,7 +248,7 @@ function IntakePage() {
   const next = () => {
     const stepErrs = validateStep(step, state);
     setErrors(stepErrs);
-    if (Object.keys(stepErrs).length === 0) setStep((n) => Math.min(5, n + 1));
+    if (Object.keys(stepErrs).length === 0) setStep((n) => Math.min(6, n + 1));
   };
   const back = () => setStep((n) => Math.max(1, n - 1));
 
@@ -266,16 +267,16 @@ function IntakePage() {
       ...validateStep(1, state),
       ...validateStep(2, state),
       ...validateStep(3, state),
-      ...validateStep(5, state),
+      ...validateStep(6, state),
     };
     setErrors(allErrs);
     if (Object.keys(allErrs).length > 0) {
       // jump back to first step containing an error
       const firstKey = Object.keys(allErrs)[0];
-      if (["firstName", "lastName", "workEmail", "companyName"].includes(firstKey)) setStep(1);
-      else if (["roleTitle", "workModel"].includes(firstKey)) setStep(2);
+      if (["roleTitle", "workModel"].includes(firstKey)) setStep(1);
+      else if (["firstName", "lastName", "workEmail", "companyName"].includes(firstKey)) setStep(2);
       else if (["mustHaveSkills", "jobDescription"].includes(firstKey)) setStep(3);
-      else if (["password", "passwordConfirm", "consent"].includes(firstKey)) setStep(5);
+      else if (["password", "passwordConfirm", "consent"].includes(firstKey)) setStep(6);
       toast.error("Please fix the highlighted fields");
       return;
     }
@@ -378,7 +379,7 @@ function IntakePage() {
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-5">
-          {step === 1 && (
+          {step === 2 && (
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <Field label="First name" error={errors.firstName} required>
                 <Input
@@ -464,7 +465,7 @@ function IntakePage() {
             </div>
           )}
 
-          {step === 2 && (
+          {step === 1 && (
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <Field label="Role title" error={errors.roleTitle} required className="sm:col-span-2">
                 <Input
@@ -703,7 +704,13 @@ function IntakePage() {
                   </SelectContent>
                 </Select>
               </Field>
+            </div>
+          )}
+
+          {step === 5 && (
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <Field label="Work authorization">
+
                 <Input
                   value={state.workAuthorization}
                   onChange={(e) => set("workAuthorization", e.target.value)}
@@ -882,7 +889,7 @@ function IntakePage() {
             </div>
           )}
 
-          {step === 5 && (
+          {step === 6 && (
             <div className="space-y-4 text-sm">
               <ReviewBlock title="Contact">
                 <div>
@@ -978,7 +985,7 @@ function IntakePage() {
           <a href="mailto:hello@taasflow.com" className="text-sm text-muted-foreground underline">
             Talk to TaaSFlow
           </a>
-          {step < 5 ? (
+          {step < 6 ? (
             <Button type="button" onClick={next}>
               Continue
             </Button>
