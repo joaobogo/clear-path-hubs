@@ -32,6 +32,7 @@ import {
   WorkspaceShell,
   type WorkspaceNavItem,
 } from "@/components/workspace/workspace-shell";
+import { OrgSwitcher } from "@/components/workspace/org-switcher";
 
 const searchSchema = z.object({
   org: z.string().uuid().optional(),
@@ -201,6 +202,14 @@ function ClientLayout() {
         navItems={navItems}
         linkSearch={linkSearch}
         topBanner={topBanner}
+        aboveNav={
+          data && data.organizations.length > 1 ? (
+            <OrgSwitcher
+              activeOrgId={active.organization_id}
+              organizations={data.organizations}
+            />
+          ) : undefined
+        }
       >
         <Outlet />
       </WorkspaceShell>
