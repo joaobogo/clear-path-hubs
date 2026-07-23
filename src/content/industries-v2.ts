@@ -40,7 +40,7 @@ export type IndustryEntry = {
 const DEFAULT_RESOURCES: IndustryResource[] = [
   { title: "How TaaSFlow works", kind: "Product", to: "/how-it-works", description: "The full workflow, end to end." },
   { title: "Pricing", kind: "Pricing", to: "/pricing", description: "Subscription pricing without placement fees." },
-  { title: "Submit a role", kind: "Get started", to: "/submit", description: "Guided intake with draft saving." },
+  { title: "Submit a role", kind: "Get started", to: "/intake", description: "Guided intake with draft saving." },
 ];
 
 export const INDUSTRY_ENTRIES: IndustryEntry[] = [
@@ -1334,7 +1334,7 @@ export const INDUSTRY_ENTRIES: IndustryEntry[] = [
       { slug: "tech", name: "Technology", blurb: "Tech-vertical staffing desks." },
     ],
     resources: [
-      { title: "Staffing Partnership programme", kind: "Programme", to: "/staffing-partnership", description: "The strategic partnership for agencies — TaaSFlow as delivery layer plus commercial alignment." },
+      { title: "Staffing Partnership programme", kind: "Programme", to: "/partnerships/staffing", description: "The strategic partnership for agencies — TaaSFlow as delivery layer plus commercial alignment." },
       { title: "How TaaSFlow works", kind: "Product", to: "/how-it-works", description: "The full workflow, end to end." },
       { title: "Pricing", kind: "Pricing", to: "/pricing" },
     ],

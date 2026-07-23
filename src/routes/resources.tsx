@@ -73,7 +73,7 @@ const FEATURED_RESEARCH: Insight[] = [
     headline: "Where the days actually go.",
     takeaway:
       "The invisible waits — intake, scheduling, decision-making — that stretch hiring cycles.",
-    href: "/blog/reduce-time-to-hire-strategies",
+    href: "/blog/reducing-time-to-hire-without-sacrificing-quality",
     hrefLabel: "See the breakdown",
     icon: LineChart,
   },
@@ -136,12 +136,12 @@ const BENCHMARKS: Benchmark[] = [
   {
     label: "Compensation",
     claim: "Salary ranges vary widely across markets, seniorities, and stacks.",
-    href: "/blog/compensation-benchmarking",
+    href: "/blog/salary-trends-2026-comprehensive",
   },
   {
     label: "HR productivity",
     claim: "Recruiter capacity depends on requisition mix, not headcount.",
-    href: "/blog/recruiter-productivity-tips",
+    href: "/blog/ai-replacing-vs-augmenting-recruiters",
   },
   {
     label: "Industry hiring",
@@ -199,7 +199,7 @@ const CASE_STUDIES: Card[] = [
     title: "Agency comparison",
     description:
       "How TaaSFlow differs from traditional agency and RPO delivery.",
-    href: "/blog/subscription-sourcing-vs-agencies",
+    href: "/pricing",
     cta: "Read the comparison",
     icon: LineChart,
   },
