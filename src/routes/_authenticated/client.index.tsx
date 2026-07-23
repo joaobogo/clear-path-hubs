@@ -180,7 +180,7 @@ function OverviewPage() {
           <ActionRequired actions={actions} isViewer={!!isViewer} loading={!data && isFetching} />
 
           {/* ─────────────── 3. HIRING SNAPSHOT ─────────────── */}
-          <HiringSnapshot kpis={kpis} deliveredPending={deliveredPending} offers={offersCount} />
+          <HiringSnapshot kpis={kpis} deliveredPending={deliveredPending} offers={kpis?.offers ?? offersCount} />
 
           {/* ─────────────── 4. ACTIVE POSITIONS ─────────────── */}
           <section aria-labelledby="active-heading" className="space-y-3">
