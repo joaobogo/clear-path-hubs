@@ -12,14 +12,14 @@ import { marketingHead } from "@/lib/marketing/head";
 import {
   BLOG_CATEGORY_SLUGS,
   BLOG_METADATA,
-  INCLUDED_BLOG_SLUGS,
 } from "@/lib/marketing/blog-manifest";
+import { isPublishedBlogSlug, listAllBlogRows } from "@/lib/marketing/blog-catalog";
 
 export const Route = createFileRoute("/blog/$slug")({
   loader: ({ params }) => {
     const entry = getBlogPost(params.slug);
     if (!entry) throw notFound();
-    if (!INCLUDED_BLOG_SLUGS.includes(params.slug)) throw notFound();
+    if (!isPublishedBlogSlug(params.slug)) throw notFound();
     return { entry };
   },
   head: ({ params, loaderData }) => {
@@ -75,25 +75,22 @@ function BlogPost() {
   const published = meta["article:published_time"];
   const updated = meta["article:modified_time"] || published;
   const author = meta.author || "TaaSFlow";
-  const category = BLOG_METADATA[slug]?.category ?? "General";
-  const tags = BLOG_METADATA[slug]?.tags ?? [];
+  const entryAny = entry as unknown as { category?: string; tags?: string[] };
+  const category =
+    BLOG_METADATA[slug]?.category ?? entryAny.category ?? "General";
+  const tags = BLOG_METADATA[slug]?.tags ?? entryAny.tags ?? [];
+  const heroImage = meta["og:image"];
   const progress = useReadingProgress();
 
   const related = useMemo(() => {
-    return INCLUDED_BLOG_SLUGS.filter(
-      (s) => s !== slug && BLOG_METADATA[s]?.category === category,
-    )
+    return listAllBlogRows()
+      .filter((r) => r.slug !== slug && r.category === category)
       .slice(0, 3)
-      .map((s) => {
-        const b = blog[s];
-        const m = b.meta as Record<string, string | undefined>;
-        return {
-          slug: s,
-          title: m.h1 || m.title || s,
-          description:
-            m.description || m["og:description"] || extractExcerpt(b.markdown),
-        };
-      });
+      .map((r) => ({
+        slug: r.slug,
+        title: r.title,
+        description: r.description,
+      }));
   }, [slug, category]);
 
   const jsonLd = {
@@ -144,6 +141,18 @@ function BlogPost() {
           {title}
         </h1>
         <p className="mt-3 text-sm text-muted-foreground">By {author}</p>
+
+        {heroImage && (
+          <figure className="mt-8 overflow-hidden rounded-2xl border border-border/60 bg-muted/20">
+            <img
+              src={heroImage}
+              alt=""
+              loading="eager"
+              decoding="async"
+              className="aspect-[16/9] w-full object-cover"
+            />
+          </figure>
+        )}
 
         <div className="mt-10">
           <Markdown>{entry.markdown}</Markdown>

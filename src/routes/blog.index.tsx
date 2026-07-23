@@ -1,20 +1,14 @@
 import { useMemo, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Search, Tag } from "lucide-react";
+import { Search } from "lucide-react";
 import { SiteShell } from "@/components/marketing/site-shell";
-import {
-  blog,
-  estimateReadMinutes,
-  extractExcerpt,
-  getPage,
-} from "@/lib/marketing/content";
+import { getPage } from "@/lib/marketing/content";
 import { marketingHead } from "@/lib/marketing/head";
 import {
   BLOG_CATEGORIES,
   BLOG_CATEGORY_SLUGS,
-  BLOG_METADATA,
-  INCLUDED_BLOG_SLUGS,
 } from "@/lib/marketing/blog-manifest";
+import { listAllBlogRows } from "@/lib/marketing/blog-catalog";
 
 const entry = getPage("blog");
 
@@ -30,43 +24,19 @@ export const Route = createFileRoute("/blog/")({
 
 const PAGE_SIZE = 24;
 
-type Row = {
-  slug: string;
-  title: string;
-  description: string;
-  category: string;
-  tags: string[];
-  publishedAt?: string;
-  readMinutes: number;
-};
-
 function BlogIndex() {
   const [q, setQ] = useState("");
   const [cat, setCat] = useState<string>("");
   const [page, setPage] = useState(1);
 
-  const all: Row[] = useMemo(() => {
-    return INCLUDED_BLOG_SLUGS.map((slug) => {
-      const b = blog[slug];
-      const meta = b.meta as Record<string, string | undefined>;
-      const title =
-        meta.h1 ||
-        meta.title?.split("|")[0].trim() ||
-        slug.replace(/-/g, " ");
-      return {
-        slug,
-        title,
-        description:
-          meta.description ||
-          meta["og:description"] ||
-          extractExcerpt(b.markdown),
-        category: BLOG_METADATA[slug]?.category ?? "General",
-        tags: BLOG_METADATA[slug]?.tags ?? [],
-        publishedAt: meta["article:published_time"],
-        readMinutes: estimateReadMinutes(b.markdown),
-      };
-    }).sort((a, b) => (b.publishedAt || "").localeCompare(a.publishedAt || ""));
-  }, []);
+  const all = useMemo(() => listAllBlogRows(), []);
+
+  const dynamicCategories = useMemo(() => {
+    const known = new Set(BLOG_CATEGORIES);
+    const extras = new Set<string>();
+    for (const r of all) if (!known.has(r.category)) extras.add(r.category);
+    return [...BLOG_CATEGORIES, ...Array.from(extras).sort()];
+  }, [all]);
 
   const filtered = useMemo(() => {
     const needle = q.trim().toLowerCase();
@@ -82,6 +52,8 @@ function BlogIndex() {
       );
     });
   }, [q, cat, all]);
+
+  const categoriesToShow = dynamicCategories;
 
   const total = filtered.length;
   const pages = Math.max(1, Math.ceil(total / PAGE_SIZE));
