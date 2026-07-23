@@ -1292,6 +1292,62 @@ function Home() {
         </PublicSection>
       </section>
 
+      {/* 5.5 — INDUSTRIES PREVIEW */}
+      <PublicSection>
+        <PublicPage>
+          <SectionHead
+            eyebrow="Industries"
+            title="Recruiting tuned to the industry you actually hire in."
+            lead="Every intake, evidence file, and shortlist is scoped to the hiring reality of the industry — not a generic recruiter template."
+          />
+
+          <ul className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {FEATURED_INDUSTRIES.map((ind) => (
+              <li key={ind.slug} className="min-w-0">
+                <Link
+                  to="/industries/$slug"
+                  params={{ slug: ind.slug }}
+                  className="group flex h-full flex-col rounded-2xl border border-[color:var(--brand-navy)]/12 bg-white p-5 shadow-[var(--brand-shadow-sm)] transition-shadow hover:shadow-[var(--brand-shadow-lg)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+                >
+                  <div className="flex items-center gap-2">
+                    <Building2
+                      className="h-4 w-4 text-[color:var(--brand-ocean)]"
+                      aria-hidden
+                    />
+                    <h3 className="text-base font-semibold text-[color:var(--brand-navy)]">
+                      {ind.name}
+                    </h3>
+                  </div>
+                  <p className="mt-3 text-sm text-[color:var(--brand-navy)]/75">
+                    {ind.context}
+                  </p>
+                  <div className="mt-4 border-t border-[color:var(--brand-navy)]/8 pt-3">
+                    <div className="text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/55">
+                      Example roles
+                    </div>
+                    <div className="mt-1 text-sm text-[color:var(--brand-navy)]/85">
+                      {ind.roles}
+                    </div>
+                  </div>
+                  <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-[color:var(--brand-ocean)] group-hover:text-[color:var(--brand-navy)]">
+                    View industry <ArrowRight className="h-4 w-4" aria-hidden />
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+
+          <div className="mt-8">
+            <Link
+              to="/industries"
+              className="inline-flex min-h-11 items-center gap-2 rounded-md border border-[color:var(--brand-navy)]/15 bg-white px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+            >
+              View All Industries <ArrowRight className="h-4 w-4" aria-hidden />
+            </Link>
+          </div>
+        </PublicPage>
+      </PublicSection>
+
       {/* 6 — WHAT CLIENTS RECEIVE (deliverable + candidate detail visual) */}
       <PublicSection>
         <PublicPage>
