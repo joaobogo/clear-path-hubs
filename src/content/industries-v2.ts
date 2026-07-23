@@ -54,28 +54,28 @@ export const INDUSTRY_ENTRIES: IndustryEntry[] = [
     category: "Tech & Data",
     aliases: ["Tech", "Software", "Engineering", "IT", "Developers"],
     summary:
-      "Software engineering, product, cloud, cybersecurity and IT leadership hiring on one transparent workflow, with technical-evidence validation drawn straight from the CV.",
+      "Software, cloud, security and IT-leadership hiring on one transparent workflow, with technical evidence pulled straight from the CV.",
     meta: {
       title: "Technology hiring — TaaSFlow",
       description:
-        "Structured, evidence-based sourcing for software engineering, product, cloud, cybersecurity and IT leadership. Ranked shortlists with technical-evidence validation tied to the CV.",
+        "Structured, evidence-based sourcing for software engineering, product, cloud, cybersecurity and IT leadership. Ranked shortlists with technical evidence tied to the CV.",
     },
     hero: {
       title: "Engineering, product and infrastructure hiring, on one transparent workflow.",
       subtitle:
-        "TaaSFlow gives technology leaders a single workspace for every engineering, product, cloud, cybersecurity and IT leadership search — with role-specific rubrics, technical-evidence validation extracted from the CV, and a ranked shortlist reviewed before it reaches you.",
+        "One workspace for every engineering, product, cloud and IT search — with role-specific rubrics, technical evidence extracted from the CV, and a reviewed shortlist.",
     },
     challenges: [
-      { title: "Signal is buried in the CV", body: "Great engineers describe impact in prose, not keywords. Our rubric extracts specific evidence — architecture decisions, systems owned, scale handled — instead of matching buzzwords." },
-      { title: "Stack fit vs transferable skill", body: "Every stack looks similar on paper. We calibrate the rubric to the languages, frameworks, clouds and databases the role actually needs, and flag transferable adjacencies explicitly." },
-      { title: "Volume vs precision at every level", body: "Junior funnels flood inboxes while senior and staff searches stall. We tune rubrics per level so the shortlist is calibrated to the seniority and specialisation you are hiring for." },
-      { title: "Remote, hybrid and on-site trade-offs", body: "Every tech role has a location model. We capture it in intake and use it as a first-class filter so time-zone and location mismatches never reach the shortlist." },
+      { title: "Signal is buried in the CV", body: "Great engineers describe impact in prose, not keywords. The rubric extracts architecture calls, systems owned and scale handled." },
+      { title: "Stack fit vs transferable skill", body: "Stacks look similar on paper. We calibrate to the exact languages, frameworks and clouds the role needs, and flag adjacencies." },
+      { title: "Volume vs precision at every level", body: "Junior funnels flood inboxes; senior searches stall. Rubrics tuned per level surface the seniority and specialisation you're hiring for." },
+      { title: "Remote, hybrid and on-site trade-offs", body: "Every tech role has a location model. It becomes a first-class filter so time-zone mismatches never reach shortlist." },
     ],
     solutions: [
-      { title: "Technical-evidence validation, not keyword matching", body: "Every CV is parsed for the specific technical claims the role requires — services owned, incidents led, systems scaled — and each claim is quoted back with its source line for review." },
-      { title: "Role rubrics per specialisation", body: "Separate rubrics for backend, frontend, full-stack, platform/SRE, mobile, security, product and engineering management — scoring is comparable within a role, never across unrelated ones." },
-      { title: "Stack-aware scoring", body: "Node, Go, Python, Java, .NET, Rust, Swift, Kotlin, React, Next.js, TypeScript, AWS, GCP, Azure, Kubernetes, Terraform, Postgres, Kafka, Snowflake — the rubric maps to the exact stack the role needs and shows evidence of production use, not just exposure." },
-      { title: "One workspace per role", body: "Ranked shortlist, evidence side-by-side, Kanban pipeline, direct messaging, audit trail. Your team owns the workspace and the data." },
+      { title: "Technical-evidence validation, not keyword matching", body: "Every CV is parsed for services owned, incidents led and systems scaled — each claim quoted with its source line." },
+      { title: "Role rubrics per specialisation", body: "Separate rubrics for backend, frontend, platform/SRE, mobile, security, product and engineering management — scoring stays within a role." },
+      { title: "Stack-aware scoring", body: "Node, Go, Python, Java, .NET, Rust, React, Next.js, AWS, GCP, Azure, Kubernetes, Postgres, Kafka, Snowflake — production use, not exposure." },
+      { title: "One workspace per role", body: "Ranked shortlist, evidence side-by-side, Kanban pipeline, direct messaging and audit trail — your team owns the data." },
     ],
     roleFamilies: [
       { name: "Software engineering", blurb: "Backend, frontend, full-stack, mobile and embedded engineers across all levels.", roles: ["Backend engineers (Go, Node, Java, Python)", "Frontend engineers (React, Next.js, TypeScript)", "Full-stack engineers", "Mobile engineers (iOS, Android, React Native)", "Staff and principal engineers"] },
@@ -99,7 +99,7 @@ export const INDUSTRY_ENTRIES: IndustryEntry[] = [
     ],
     candidateSignals: [
       { title: "Systems owned end-to-end", body: "Named services with production ownership, on-call responsibility and measurable scale (RPS, data volume, users)." },
-      { title: "Architecture decisions", body: "Trade-offs documented in the CV — chosen technology, rejected alternatives, and the reason behind the choice." },
+      { title: "Architecture decisions", body: "Trade-offs documented on the CV — chosen technology, rejected alternatives and the reason behind the choice." },
       { title: "Scale and reliability", body: "Concrete numbers on latency, availability, incident response and cost impact — not adjectives." },
       { title: "Stack depth vs breadth", body: "Years of production use per language, framework, cloud and database — separated from tools merely listed." },
       { title: "Delivery evidence", body: "Shipped features, migrations completed, teams led — with dates, scope and outcomes." },
@@ -119,14 +119,16 @@ export const INDUSTRY_ENTRIES: IndustryEntry[] = [
       { slug: "saas", name: "SaaS", blurb: "Product, CS and RevOps for software companies." },
       { slug: "cybersecurity", name: "Cybersecurity", blurb: "Security engineers, GRC and compliance." },
       { slug: "data-analytics", name: "Data & Analytics", blurb: "Data engineering, analytics and ML." },
+      { slug: "ai-ml", name: "AI & ML", blurb: "Applied AI, ML engineering and MLOps." },
+      { slug: "devops", name: "DevOps & Platform", blurb: "SRE and platform engineering specialists." },
     ],
     resources: DEFAULT_RESOURCES,
     faqs: [
-      { q: "How is technical fit evaluated?", a: "We calibrate a rubric per role — backend, frontend, platform, mobile, security, product — and score each candidate against it. Every point in the score has an evidence quote from the CV, so review is fast and defensible." },
-      { q: "Do you handle senior and staff-level roles?", a: "Yes. Staff, principal and engineering leadership searches are our largest single category. Rubrics for those levels weight architecture, scope and cross-team delivery over tooling breadth." },
-      { q: "Can you match a specific stack?", a: "We map the exact stack the role needs in intake — languages, frameworks, cloud, data — and score for production use, not exposure. Adjacent stacks are flagged separately so they are never scored as an exact match." },
+      { q: "How is technical fit evaluated?", a: "A rubric is calibrated per role — backend, frontend, platform, mobile, security, product. Every score point cites a CV quote for defensible review." },
+      { q: "Do you handle senior and staff-level roles?", a: "Yes. Staff, principal and engineering leadership rubrics weight architecture, scope and cross-team delivery over tooling breadth." },
+      { q: "Can you match a specific stack?", a: "The exact stack is mapped in intake — languages, frameworks, cloud, data — and scored for production use. Adjacent stacks are flagged separately." },
       { q: "How do you handle remote vs hybrid vs on-site?", a: "Location model is a first-class intake field and a hard filter on the shortlist. Time-zone requirements are captured explicitly." },
-      { q: "How does technical-evidence validation work?", a: "Every CV is parsed for the technical claims the role requires — services owned, scale handled, incidents led — and the specific line from the CV supporting each claim is quoted back for review." },
+      { q: "How does evidence validation work?", a: "Every CV is parsed for the role's technical claims. The exact CV line supporting each claim is quoted back for review." },
     ],
     cta: { title: "Hiring for a tech team?", description: "Submit the role in our guided intake — draft saving is on, and your workspace is ready as soon as you finish." },
   },
@@ -147,18 +149,18 @@ export const INDUSTRY_ENTRIES: IndustryEntry[] = [
     hero: {
       title: "Talent for SaaS teams who live and breathe recurring revenue.",
       subtitle:
-        "TaaSFlow helps SaaS operators hire people who genuinely understand recurring-revenue mechanics — from PLG activation to enterprise expansion — with evidence tied to what they actually did in prior roles.",
+        "Hire people who genuinely understand recurring-revenue mechanics — from PLG activation to enterprise expansion — with evidence tied to what they actually did.",
     },
     challenges: [
-      { title: "SaaS titles hide very different jobs", body: "A ‘Customer Success Manager’ at a self-serve tool is a different job to one at an enterprise platform. We calibrate the rubric to the motion (PLG, mid-market, enterprise) so shortlists reflect the reality of your business." },
-      { title: "Metrics fluency matters", body: "We evaluate evidence of working with the metrics that matter — ARR, NRR, activation, expansion, payback — instead of accepting words on a CV at face value." },
-      { title: "GTM specialisation is fragmenting", body: "RevOps, sales engineering, lifecycle, product marketing and partnerships are increasingly distinct crafts. Role-specific rubrics stop the wrong specialist landing on your shortlist." },
-      { title: "Stage-fit is under-priced", body: "Seed, Series B and post-IPO SaaS operators are optimising for different problems. Stage and headcount context is captured in intake and used as a first-class filter." },
+      { title: "SaaS titles hide very different jobs", body: "A CSM at a self-serve tool is a different job to one at an enterprise platform. The rubric follows your motion, not the title." },
+      { title: "Metrics fluency matters", body: "We evaluate evidence of working with ARR, NRR, activation, expansion and payback — instead of accepting CV words at face value." },
+      { title: "GTM specialisation is fragmenting", body: "RevOps, sales engineering, lifecycle and partnerships are now distinct crafts. Role-specific rubrics stop the wrong specialist reaching shortlist." },
+      { title: "Stage-fit is under-priced", body: "Seed, Series B and post-IPO operators optimise for different problems. Stage and headcount are captured in intake as first-class filters." },
     ],
     solutions: [
-      { title: "Motion-aware scoring", body: "PLG, mid-market and enterprise rubrics grade candidates on the mechanics that actually apply — self-serve activation loops, sales-assist plays, and enterprise deal architecture." },
-      { title: "Metric evidence from the CV", body: "We surface the ARR moved, NRR expanded, cohort activation lifted or payback shortened — with the exact CV line for review." },
-      { title: "Cross-functional coverage", body: "Product, CS, RevOps, sales, sales engineering, implementation and lifecycle covered by one workspace, one rubric family and one delivery team." },
+      { title: "Motion-aware scoring", body: "PLG, mid-market and enterprise rubrics grade candidates on the mechanics that apply — activation loops, sales-assist or enterprise deal architecture." },
+      { title: "Metric evidence from the CV", body: "We surface ARR moved, NRR expanded, activation lifted or payback shortened — with the exact CV line for review." },
+      { title: "Cross-functional coverage", body: "Product, CS, RevOps, sales, sales engineering, implementation and lifecycle — one workspace, one rubric family, one delivery team." },
       { title: "Ready-to-hire packaging", body: "Every profile arrives with role fit, motion fit, metrics evidence and reference-check prompts pre-drafted." },
     ],
     roleFamilies: [
@@ -184,7 +186,7 @@ export const INDUSTRY_ENTRIES: IndustryEntry[] = [
       { title: "Motion fit", body: "Named products, ACVs and buying committees so we can validate PLG, mid-market or enterprise experience." },
       { title: "ARR & NRR movement", body: "Book of business owned with revenue moved, expansion won and churn reduced — with the CV line to prove it." },
       { title: "Systems footprint", body: "Salesforce, HubSpot, Gainsight, Outreach, Amplitude, Mixpanel — years of hands-on use, not just tool lists." },
-      { title: "Cross-functional influence", body: "PMs shipping with growth; CS partnering with product; RevOps changing comp plans that stuck." },
+      { title: "Cross-functional influence", body: "PMs shipping with growth, CS partnering with product, RevOps changing comp plans that stuck." },
       { title: "Stage-appropriate scope", body: "Pre-PMF vs post-PMF vs scale — surfaced explicitly." },
       { title: "Renewal & expansion evidence", body: "Retention rates, expansion multiples and net revenue outcomes." },
     ],
@@ -196,14 +198,16 @@ export const INDUSTRY_ENTRIES: IndustryEntry[] = [
       { slug: "tech", name: "Technology", blurb: "Engineering, platform and product for software companies." },
       { slug: "data-analytics", name: "Data & Analytics", blurb: "Analytics engineering and product analytics." },
       { slug: "sales", name: "Sales", blurb: "AE, AM, SDR and sales leadership hiring." },
+      { slug: "customer-success", name: "Customer Success", blurb: "Post-sale ownership, retention and expansion." },
+      { slug: "product-management", name: "Product Management", blurb: "PMs for SaaS and cloud products." },
     ],
     resources: DEFAULT_RESOURCES,
     faqs: [
-      { q: "Do you handle PLG and enterprise motions the same way?", a: "No — they get separate rubrics. PLG hires are graded on activation, self-serve funnels and lifecycle experiments; enterprise hires on procurement cycles, buying committees and ACV." },
-      { q: "How do you validate CS candidates when metrics vary widely?", a: "We anchor the rubric on your definitions — NRR, GRR, expansion, health — and score candidates against comparable ownership at prior companies, with CV evidence for each." },
-      { q: "Can you hire for a pre-PMF startup?", a: "Yes. Stage is captured in intake and rubrics tilt toward zero-to-one evidence — closing without scripts, building playbooks from scratch, and shipping without a full stack." },
+      { q: "Do you handle PLG and enterprise motions the same way?", a: "No — separate rubrics. PLG hires are graded on activation and lifecycle experiments; enterprise hires on procurement cycles, buying committees and ACV." },
+      { q: "How do you validate CS candidates when metrics vary widely?", a: "We anchor the rubric on your definitions — NRR, GRR, expansion, health — and score comparable ownership at prior companies, with CV evidence for each." },
+      { q: "Can you hire for a pre-PMF startup?", a: "Yes. Stage is captured in intake and rubrics tilt toward zero-to-one evidence — closing without scripts, building playbooks and shipping without a full stack." },
       { q: "Do you support US, UK and EU SaaS hiring?", a: "Yes. Time-zone and jurisdiction are captured in intake and applied as filters before shortlist review." },
-      { q: "What tools do you assume familiarity with?", a: "Depends on the role. The rubric maps to your actual stack — Salesforce, HubSpot, Gainsight, Amplitude, Mixpanel and so on — and rewards years of production use over surface exposure." },
+      { q: "What tools do you assume familiarity with?", a: "The rubric maps to your actual stack — Salesforce, HubSpot, Gainsight, Amplitude and so on — and rewards years of production use over surface exposure." },
     ],
     cta: { title: "Growing a SaaS team?", description: "Submit the role and we'll return a ranked, evidence-backed shortlist in your workspace." },
   },
@@ -224,19 +228,19 @@ export const INDUSTRY_ENTRIES: IndustryEntry[] = [
     hero: {
       title: "Data hires you can actually evaluate before the interview.",
       subtitle:
-        "TaaSFlow builds a rubric for every data role — pipeline builders, analytics engineers, BI developers, scientists, ML engineers, governance leads — and captures evidence of the modelling, tooling and business outcomes each candidate has delivered.",
+        "A rubric per data role — pipelines, analytics engineering, BI, science, ML, governance — with evidence of modelling, tooling and business outcomes each candidate has delivered.",
     },
     challenges: [
-      { title: "The data stack keeps changing", body: "Warehouses, orchestration, BI and ML tools shift constantly. We rebuild the rubric per search to reflect your actual stack — not last year's." },
-      { title: "Analyst, engineer, or scientist?", body: "Titles blur between analytics engineering, data science and BI. We calibrate the rubric to the outcomes you need so the right specialist reaches your shortlist." },
-      { title: "Business fluency is the differentiator", body: "The best data hires move a business metric, not just a dashboard. We evaluate evidence of decisions influenced and metrics moved — not model choice trivia." },
-      { title: "Governance is a first-class hire now", body: "Privacy, data contracts and lineage matter. We treat governance and platform hires as their own discipline with a distinct rubric — not a footnote to engineering." },
+      { title: "The data stack keeps changing", body: "Warehouses, orchestration, BI and ML tools shift constantly. The rubric rebuilds per search to reflect your actual stack." },
+      { title: "Analyst, engineer, or scientist?", body: "Titles blur between analytics engineering, data science and BI. We calibrate to the outcomes you need so the right specialist reaches shortlist." },
+      { title: "Business fluency is the differentiator", body: "The best data hires move a business metric, not just a dashboard. We evaluate decisions influenced — not model-choice trivia." },
+      { title: "Governance is a first-class hire now", body: "Privacy, data contracts and lineage matter. Governance and platform hires get their own rubric, not a footnote to engineering." },
     ],
     solutions: [
-      { title: "Stack-mapped rubrics", body: "The rubric maps to your warehouse, orchestrator, transformation layer, BI tool and ML platform — so scoring reflects the exact environment the hire will land in." },
-      { title: "Business-outcome evidence", body: "We extract the decisions influenced, metrics moved and revenue or cost impact from the CV, with the source line quoted for review." },
-      { title: "Role-specific scoring", body: "Analytics engineers scored on modelling and dbt discipline; data scientists on experimental rigour; ML engineers on production ownership; BI developers on stakeholder outcomes." },
-      { title: "Governance and platform coverage", body: "Data governance, catalog, privacy and platform hires get a distinct rubric focused on data contracts, lineage and access-control history." },
+      { title: "Stack-mapped rubrics", body: "The rubric maps to your warehouse, orchestrator, transformation layer, BI tool and ML platform — scoring reflects the actual environment." },
+      { title: "Business-outcome evidence", body: "We extract decisions influenced, metrics moved and revenue or cost impact from the CV, with the source line quoted for review." },
+      { title: "Role-specific scoring", body: "Analytics engineers on dbt discipline; scientists on experimental rigour; ML engineers on production ownership; BI developers on stakeholder outcomes." },
+      { title: "Governance and platform coverage", body: "Governance, catalog, privacy and platform hires get a distinct rubric focused on contracts, lineage and access history." },
     ],
     roleFamilies: [
       { name: "Data engineering", blurb: "Batch, streaming and warehouse-native pipeline builders.", roles: ["Data engineers", "Senior and staff data engineers", "Streaming engineers", "Platform engineers"] },
@@ -279,20 +283,22 @@ export const INDUSTRY_ENTRIES: IndustryEntry[] = [
       { slug: "tech", name: "Technology", blurb: "Engineering and platform teams." },
       { slug: "saas", name: "SaaS", blurb: "Product analytics for recurring-revenue businesses." },
       { slug: "finance", name: "Finance", blurb: "Analytics leaders for FP&A and finance data." },
+      { slug: "ai-ml", name: "AI & ML", blurb: "Applied ML and MLOps hiring." },
+      { slug: "fintech", name: "Fintech", blurb: "Data platforms for payments and financial products." },
     ],
     resources: DEFAULT_RESOURCES,
     faqs: [
-      { q: "Do you separate analytics engineers from data engineers?", a: "Yes. They get different rubrics — analytics engineering weights modelling, dbt discipline and stakeholder outcomes; data engineering weights pipeline reliability, scale and platform ownership." },
-      { q: "How do you score data scientists when many CVs look alike?", a: "We look for evidence of experiment design, causal reasoning and decisions influenced — not model-name trivia. Every point in the score has a CV line to justify it." },
+      { q: "Do you separate analytics engineers from data engineers?", a: "Yes. Analytics engineering weights dbt discipline and stakeholder outcomes; data engineering weights pipeline reliability, scale and platform ownership." },
+      { q: "How do you score data scientists when CVs look alike?", a: "We look for evidence of experiment design, causal reasoning and decisions influenced — not model-name trivia. Every point cites a CV line." },
       { q: "Can you hire for a specific warehouse or BI tool?", a: "Yes. Warehouse and BI tool are intake fields and mapped into the rubric. Production years matter more than certificates." },
-      { q: "How do you handle privacy-sensitive data domains?", a: "Governance and privacy exposure — GDPR, HIPAA, PCI-DSS — is captured as a structured signal and reviewed by a human before shortlist publication." },
+      { q: "How do you handle privacy-sensitive data domains?", a: "Governance and privacy exposure — GDPR, HIPAA, PCI-DSS — is captured as a structured signal and reviewed by a human before shortlist." },
       { q: "Do you cover data governance separately?", a: "Yes. Governance, catalog, contracts and platform roles have their own rubric family, distinct from engineering and analytics." },
     ],
     cta: { title: "Building a data team?", description: "Submit the role and we'll return a ranked, evidence-backed shortlist calibrated to your stack." },
   },
 
   // ============================================================
-  // Cybersecurity (kept as-is)
+  // Cybersecurity
   // ============================================================
   {
     slug: "cybersecurity",
@@ -300,20 +306,37 @@ export const INDUSTRY_ENTRIES: IndustryEntry[] = [
     name: "Cybersecurity",
     category: "Tech & Data",
     aliases: ["Security", "InfoSec", "AppSec", "CloudSec", "GRC"],
+    summary:
+      "Offensive, defensive, cloud, application and GRC security hiring — with domain-specific rubrics, structured evidence and a private, auditable workspace.",
     meta: {
       title: "Cybersecurity hiring — TaaSFlow",
       description:
-        "Security engineers, GRC leads, SOC analysts and cloud security specialists — sourced with structured rubrics and evidence-based scoring in one workspace.",
+        "Security engineers, GRC leads, SOC analysts, cloud and application security specialists — sourced with per-domain rubrics, CV-quoted evidence and tenant-isolated delivery.",
     },
     hero: {
       title: "Security hiring that actually verifies the security part.",
       subtitle:
-        "TaaSFlow builds role-specific rubrics for every security domain — offensive, defensive, cloud, GRC and application security — and captures evidence from the CV so you can trust the shortlist you review.",
+        "Role-specific rubrics per security domain — offensive, defensive, cloud, GRC and application — with evidence captured from the CV before shortlist reaches you.",
     },
     challenges: [
-      { title: "Certifications aren't the same as capability", body: "Certifications are a floor, not a ceiling. We score against real evidence — incidents handled, controls implemented, tooling owned — rather than treating a certificate as a substitute for it." },
-      { title: "Security roles are highly specialised", body: "AppSec, cloud security, detection engineering and GRC are different disciplines. Our rubrics are per-role so a generalist doesn't get shortlisted for a specialist opening." },
-      { title: "Trust and discretion matter", body: "Security hiring processes deserve tight access controls. TaaSFlow runs on row-level tenant isolation and private CV storage with short-lived signed URLs." },
+      { title: "Certifications aren't the same as capability", body: "Certifications are a floor, not a ceiling. Scoring runs on incidents handled, controls implemented and tooling owned — not certificates alone." },
+      { title: "Security is highly specialised", body: "AppSec, cloud security, detection engineering and GRC are different disciplines. Per-role rubrics stop generalists reaching a specialist shortlist." },
+      { title: "Trust and discretion matter", body: "Security hiring deserves tight access controls. TaaSFlow runs row-level tenant isolation and short-lived signed URLs for every CV." },
+      { title: "Signal from noise in the SOC funnel", body: "SOC hiring drowns in overlapping CVs. The rubric weights tuning, false-positive reduction and incident narrative — not tool bingo." },
+    ],
+    solutions: [
+      { title: "Per-domain rubrics", body: "Separate rubrics for AppSec, cloud security, detection engineering, offensive security, GRC and security leadership — never cross-scored." },
+      { title: "Evidence over acronyms", body: "The rubric quotes the CV line for each score point — incidents led, controls deployed, vulnerabilities validated, regulator interactions owned." },
+      { title: "Cloud-stack awareness", body: "AWS, GCP, Azure security posture experience is mapped to the exact platform and services the seat will own." },
+      { title: "Private, audit-ready delivery", body: "Every mandate lives in a workspace with row-level isolation, audit trail and access-scoped file storage." },
+    ],
+    roleFamilies: [
+      { name: "Application security", blurb: "Product, SDLC and code-facing security engineers.", roles: ["Application security engineers", "Product security engineers", "AppSec architects", "Secure code reviewers"] },
+      { name: "Cloud & infrastructure security", blurb: "Cloud posture, identity and workload defence.", roles: ["Cloud security engineers", "IAM specialists", "Kubernetes security engineers", "Cloud security architects"] },
+      { name: "Detection & response", blurb: "SOC, threat detection and incident response.", roles: ["SOC analysts (L1–L3)", "Detection engineers", "Incident responders", "Threat hunters"] },
+      { name: "Offensive security", blurb: "Red team, penetration testing and adversary emulation.", roles: ["Penetration testers", "Red team operators", "Purple team engineers", "Vulnerability researchers"] },
+      { name: "GRC & compliance", blurb: "Governance, risk, controls and audit.", roles: ["GRC analysts and leads", "Compliance managers (SOC 2, ISO 27001)", "Third-party risk managers", "Privacy engineers"] },
+      { name: "Security leadership", blurb: "Heads of security, BISOs and CISOs.", roles: ["Security engineering managers", "Heads of security", "BISOs", "CISOs and deputy CISOs"] },
     ],
     roles: [
       "Security engineers",
@@ -325,9 +348,44 @@ export const INDUSTRY_ENTRIES: IndustryEntry[] = [
       "Security architects",
       "CISOs & security leaders",
     ],
+    candidateSignals: [
+      { title: "Incident ownership", body: "Incidents led end-to-end with scope, blast radius, response actions and lessons learned — quoted from the CV." },
+      { title: "Controls implemented", body: "Named controls deployed — MFA, EDR tuning, SIEM detections, IAM baselines — with scale and outcome." },
+      { title: "Cloud posture experience", body: "AWS, GCP, Azure posture programmes owned — services, findings closed and time-to-remediate." },
+      { title: "Offensive evidence", body: "CVEs disclosed, engagements delivered, findings quantified and publications where present." },
+      { title: "Framework fluency", body: "SOC 2, ISO 27001, NIST CSF, PCI-DSS, HIPAA programmes led — not just referenced." },
+      { title: "Leadership footprint", body: "Team size grown, budget owned, board-level reporting delivered and cross-functional programmes led." },
+    ],
+    skills: ["Threat modelling", "Detection engineering", "IAM design", "Cryptography basics", "Cloud security architecture", "Vulnerability management", "Secure code review", "Incident response"],
+    tools: ["Splunk", "Elastic", "Chronicle", "CrowdStrike", "SentinelOne", "Wiz", "Prisma Cloud", "AWS GuardDuty", "Snyk", "Semgrep", "Burp Suite", "Metasploit", "Okta", "HashiCorp Vault"],
+    certifications: ["OSCP", "OSEP", "CISSP", "CCSP", "GCIH", "GPEN", "AWS Security Specialty", "ISO 27001 Lead Implementer", "SOC 2 auditor"],
+    regulatedRequirements: [
+      "SOC 2 programme experience",
+      "ISO 27001 implementation ownership",
+      "PCI-DSS scope experience for payments teams",
+      "HIPAA-aware handling for health-related products",
+      "GDPR / UK-GDPR privacy exposure",
+    ],
     signals: ["Domain-specific rubric", "Evidence quotes from the CV", "Private, tenant-isolated workspace"],
-    cta: { title: "Hiring a security specialist?", description: "Submit the role and receive a discreetly reviewed, evidence-backed shortlist." },
+    relatedIndustries: [
+      { slug: "tech", name: "Technology", blurb: "Engineering and platform teams that build the systems security defends." },
+      { slug: "devops", name: "DevOps & Platform", blurb: "SRE and platform engineers who own posture together." },
+      { slug: "fintech", name: "Fintech", blurb: "Regulated financial products with high security stakes." },
+      { slug: "healthtech", name: "Healthtech", blurb: "PHI-handling products with HIPAA obligations." },
+      { slug: "defense", name: "Defense", blurb: "Clearance-heavy security and mission systems." },
+    ],
+    resources: DEFAULT_RESOURCES,
+    faqs: [
+      { q: "How do you evaluate SOC candidates?", a: "By evidence of detection tuning, incident narrative and false-positive reduction — not tool lists. Every score point cites a CV quote." },
+      { q: "Can you find security leaders (CISO, BISO)?", a: "Yes. Leadership rubrics weight programme scope, board reporting, budget owned and cross-functional influence over tooling breadth." },
+      { q: "Do you cover GRC separately from engineering?", a: "Yes. GRC has its own rubric focused on SOC 2, ISO 27001, third-party risk and privacy — never mixed with engineering scoring." },
+      { q: "How is candidate data protected?", a: "Row-level tenant isolation, short-lived signed URLs for CV files and an audit trail on every access." },
+      { q: "Do you support cleared or regulated searches?", a: "Yes. Clearance level, jurisdiction and regulatory obligations are structured intake fields and applied as hard filters before shortlist." },
+    ],
+    cta: { title: "Hiring a security specialist?", description: "Submit the role and receive a discreetly reviewed, evidence-backed shortlist in a private workspace." },
   },
+
+
 
   // ============================================================
   // BATCH 2 — Finance, Accounting, Insurance
