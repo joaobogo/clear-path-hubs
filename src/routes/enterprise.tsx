@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { marketingHead } from "@/lib/marketing/head";
 import { SiteShell, PublicPage, PublicSection, CtaSection } from "@/components/marketing/site-shell";
+import { EnterpriseStakeholderSelector } from "@/components/marketing/enterprise-stakeholder-selector";
 import {
   Building2,
   Layers,
@@ -134,7 +135,28 @@ function EnterprisePage() {
         </PublicPage>
       </PublicSection>
 
+      {/* ── Stakeholder selector ─────────────────────────────────── */}
+      <PublicSection className="py-10">
+        <PublicPage>
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">
+            Stakeholder view
+          </p>
+          <h2 className="mt-3 max-w-3xl font-[family-name:var(--brand-font-display)] text-3xl font-semibold sm:text-4xl">
+            Pick your seat at the table.
+          </h2>
+          <p className="mt-4 max-w-2xl text-[color:var(--brand-navy)]/75">
+            The same account looks different depending on who is signed in.
+            Choose your role to see what the workspace shows you, what matters
+            to you, and why it holds up in review.
+          </p>
+          <div className="mt-8">
+            <EnterpriseStakeholderSelector />
+          </div>
+        </PublicPage>
+      </PublicSection>
+
       {/* ── Multi-role & multi-stakeholder visibility ────────────── */}
+
       <PublicSection className="py-10 bg-[color:var(--brand-cream)]">
         <PublicPage>
           <div className="grid gap-10 lg:grid-cols-[1fr_1.05fr] lg:items-center">
