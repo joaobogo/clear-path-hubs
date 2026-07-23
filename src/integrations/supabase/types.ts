@@ -1454,14 +1454,22 @@ export type Database = {
       }
       interviews: {
         Row: {
+          cancel_reason: string | null
           cancelled_at: string | null
           candidate_match_id: string
+          candidate_submission_id: string | null
           completed_at: string | null
           created_at: string
+          created_by: string | null
+          duration_minutes: number | null
+          feedback: string | null
           id: string
+          interview_type: string | null
           legacy_source_id: string | null
           legacy_source_system: string | null
           legacy_source_table: string | null
+          location: string | null
+          meeting_url: string | null
           migrated_at: string | null
           migration_run_id: string | null
           migration_status:
@@ -1470,20 +1478,33 @@ export type Database = {
           migration_version: string | null
           notes: string | null
           organization_id: string
+          participants: Json
+          position_id: string
+          proposed_times: Json
           requested_at: string
           scheduled_at: string | null
           status: Database["public"]["Enums"]["interview_status"]
+          timezone: string | null
           updated_at: string
+          updated_by: string | null
         }
         Insert: {
+          cancel_reason?: string | null
           cancelled_at?: string | null
           candidate_match_id: string
+          candidate_submission_id?: string | null
           completed_at?: string | null
           created_at?: string
+          created_by?: string | null
+          duration_minutes?: number | null
+          feedback?: string | null
           id?: string
+          interview_type?: string | null
           legacy_source_id?: string | null
           legacy_source_system?: string | null
           legacy_source_table?: string | null
+          location?: string | null
+          meeting_url?: string | null
           migrated_at?: string | null
           migration_run_id?: string | null
           migration_status?:
@@ -1492,20 +1513,33 @@ export type Database = {
           migration_version?: string | null
           notes?: string | null
           organization_id: string
+          participants?: Json
+          position_id: string
+          proposed_times?: Json
           requested_at?: string
           scheduled_at?: string | null
           status?: Database["public"]["Enums"]["interview_status"]
+          timezone?: string | null
           updated_at?: string
+          updated_by?: string | null
         }
         Update: {
+          cancel_reason?: string | null
           cancelled_at?: string | null
           candidate_match_id?: string
+          candidate_submission_id?: string | null
           completed_at?: string | null
           created_at?: string
+          created_by?: string | null
+          duration_minutes?: number | null
+          feedback?: string | null
           id?: string
+          interview_type?: string | null
           legacy_source_id?: string | null
           legacy_source_system?: string | null
           legacy_source_table?: string | null
+          location?: string | null
+          meeting_url?: string | null
           migrated_at?: string | null
           migration_run_id?: string | null
           migration_status?:
@@ -1514,10 +1548,15 @@ export type Database = {
           migration_version?: string | null
           notes?: string | null
           organization_id?: string
+          participants?: Json
+          position_id?: string
+          proposed_times?: Json
           requested_at?: string
           scheduled_at?: string | null
           status?: Database["public"]["Enums"]["interview_status"]
+          timezone?: string | null
           updated_at?: string
+          updated_by?: string | null
         }
         Relationships: [
           {
@@ -1556,6 +1595,20 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "interviews_candidate_submission_id_fkey"
+            columns: ["candidate_submission_id"]
+            isOneToOne: false
+            referencedRelation: "applications"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "interviews_candidate_submission_id_fkey"
+            columns: ["candidate_submission_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_my_applications"
+            referencedColumns: ["application_id"]
+          },
+          {
             foreignKeyName: "interviews_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
@@ -1567,6 +1620,41 @@ export type Database = {
             columns: ["organization_id"]
             isOneToOne: false
             referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "interviews_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "admin_pipeline_health"
+            referencedColumns: ["position_id"]
+          },
+          {
+            foreignKeyName: "interviews_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "admin_positions_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "interviews_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_my_applications"
+            referencedColumns: ["position_id"]
+          },
+          {
+            foreignKeyName: "interviews_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "client_positions_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "interviews_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "positions"
             referencedColumns: ["id"]
           },
         ]
