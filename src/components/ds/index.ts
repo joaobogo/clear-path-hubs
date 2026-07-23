@@ -5,3 +5,12 @@ export { EmptyState } from "./empty-state";
 export { ErrorState } from "./error-state";
 export { Skeleton, TableSkeleton, KpiRowSkeleton } from "./loading-skeleton";
 export { Section } from "./section";
+export {
+  DashboardCard,
+  CardHeader,
+  CardTitle,
+  CardEyebrow,
+  CardBody,
+  CardFooter,
+  CardChevron,
+} from "./dashboard-card";
