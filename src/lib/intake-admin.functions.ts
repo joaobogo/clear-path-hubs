@@ -103,10 +103,12 @@ export const listIntakeInbox = createServerFn({ method: "GET" })
     }
     switch (data.filter) {
       case "pending":
-        q = q.or("requisition_pending.eq.true,status.eq.submitted");
+        q = q
+          .is("position_id", null)
+          .not("status", "in", "(approved,rejected)");
         break;
       case "needs_conversion":
-        q = q.eq("requisition_pending", true);
+        q = q.eq("requisition_pending", true).is("position_id", null);
         break;
       case "approved":
         q = q.eq("status", "approved");
