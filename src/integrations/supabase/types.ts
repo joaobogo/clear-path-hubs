@@ -3110,6 +3110,7 @@ export type Database = {
       profiles: {
         Row: {
           auth_user_id: string
+          client_onboarding_dismissed_at: string | null
           created_at: string
           created_by_audit: boolean | null
           email: string
@@ -3135,6 +3136,7 @@ export type Database = {
         }
         Insert: {
           auth_user_id: string
+          client_onboarding_dismissed_at?: string | null
           created_at?: string
           created_by_audit?: boolean | null
           email: string
@@ -3160,6 +3162,7 @@ export type Database = {
         }
         Update: {
           auth_user_id?: string
+          client_onboarding_dismissed_at?: string | null
           created_at?: string
           created_by_audit?: boolean | null
           email?: string
