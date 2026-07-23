@@ -168,11 +168,19 @@ function ContextHeader({
 }) {
   if (collapsed) {
     return (
-      <div className="flex h-14 items-center justify-center border-b">
+      <div
+        className="flex h-16 items-center justify-center border-b"
+        style={{ borderColor: "var(--taas-shell-sidebar-border)" }}
+      >
         <Link
           to="/"
           aria-label="TaaSFlow home"
-          className="grid h-8 w-8 place-items-center rounded-md bg-primary text-primary-foreground font-bold text-sm"
+          className="grid h-9 w-9 place-items-center rounded-lg font-bold text-sm text-white"
+          style={{
+            background: "var(--taas-shell-logo-gradient)",
+            boxShadow: "var(--taas-shell-logo-shadow)",
+            fontFamily: "var(--taas-font-display)",
+          }}
         >
           T
         </Link>
@@ -180,21 +188,34 @@ function ContextHeader({
     );
   }
   return (
-    <div className="flex h-14 items-center gap-2 border-b px-4">
+    <div
+      className="flex h-16 items-center gap-3 border-b px-4"
+      style={{ borderColor: "var(--taas-shell-sidebar-border)" }}
+    >
       <Link
         to="/"
-        className="grid h-8 w-8 shrink-0 place-items-center rounded-md bg-primary text-primary-foreground font-bold text-sm"
+        className="grid h-9 w-9 shrink-0 place-items-center rounded-lg font-bold text-sm text-white"
+        style={{
+          background: "var(--taas-shell-logo-gradient)",
+          boxShadow: "var(--taas-shell-logo-shadow)",
+          fontFamily: "var(--taas-font-display)",
+        }}
         aria-label="TaaSFlow home"
       >
         T
       </Link>
       <div className="min-w-0 flex-1">
         {kicker && (
-          <div className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+          <div className="text-[10px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
             {kicker}
           </div>
         )}
-        <div className="truncate text-sm font-semibold leading-tight">{label}</div>
+        <div
+          className="truncate text-sm font-semibold leading-tight"
+          style={{ color: "var(--taas-text-primary)" }}
+        >
+          {label}
+        </div>
         {sub && <div className="truncate text-[11px] text-muted-foreground">{sub}</div>}
       </div>
     </div>
