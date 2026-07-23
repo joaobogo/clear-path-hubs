@@ -74,7 +74,10 @@ function Overview() {
     L.candidates_pending_review.length +
     L.candidates_ready_to_publish.length +
     L.positions_review.length +
-    L.processing_issues.length;
+    L.processing_issues.length +
+    (L.urgent_interviews?.length ?? 0) +
+    (L.intake_inbox?.length ?? 0) +
+    L.client_requests.length;
 
   // Prioritized Action Required — one panel that surfaces the top items
   // waiting on the platform team, in urgency order. Every row deep-links
@@ -106,11 +109,45 @@ function Overview() {
       time: top.processing_updated_at,
     });
   }
-  // 2. Candidates ready to publish — approved, blocking delivery.
+  // 2. Urgent interviews — requested / imminent, blocking client trust.
+  for (const iv of (L.urgent_interviews ?? []).slice(0, 3) as Row[]) {
+    const cand = iv.candidate_matches?.candidate_profiles?.full_name ?? "Candidate";
+    const pos = iv.candidate_matches?.positions?.title ?? "—";
+    const org = iv.candidate_matches?.positions?.organizations?.name ?? "—";
+    actions.push({
+      key: `iv:${iv.id}`,
+      priority: 2,
+      label:
+        iv.status === "requested"
+          ? `Schedule interview — ${cand}`
+          : `Interview soon — ${cand}`,
+      detail: `${pos} · ${org}`,
+      to: "/admin/candidates/$id",
+      params: { id: iv.candidate_match_id },
+      tone: iv.status === "requested" ? "warn" : "danger",
+      time: iv.scheduled_at ?? iv.requested_at,
+    });
+  }
+  // 3. Intake inbox — submissions that still need conversion / review.
+  for (const it of (L.intake_inbox ?? []).slice(0, 3) as Row[]) {
+    actions.push({
+      key: `intake:${it.id}`,
+      priority: 3,
+      label: it.requisition_pending
+        ? `Convert intake — ${it.company_name}`
+        : `Review intake — ${it.company_name}`,
+      detail: it.role_title,
+      to: "/admin/intake/$id",
+      params: { id: it.id },
+      tone: it.requisition_pending ? "warn" : "info",
+      time: it.created_at,
+    });
+  }
+  // 4. Candidates ready to publish — approved, blocking delivery.
   for (const m of L.candidates_ready_to_publish.slice(0, 3) as Row[]) {
     actions.push({
       key: `publish:${m.id}`,
-      priority: 2,
+      priority: 4,
       label: `Publish ${m.candidate_profiles?.full_name ?? "candidate"}`,
       detail: `${m.positions?.title ?? "—"} · ${m.positions?.organizations?.name ?? "—"}`,
       to: "/admin/candidates/$id",
@@ -119,11 +156,11 @@ function Overview() {
       time: m.updated_at,
     });
   }
-  // 3. Candidates pending review — blocking client delivery.
+  // 5. Candidates pending review — blocking client delivery.
   for (const m of L.candidates_pending_review.slice(0, 3) as Row[]) {
     actions.push({
       key: `review:${m.id}`,
-      priority: 3,
+      priority: 5,
       label: `Review ${m.candidate_profiles?.full_name ?? "candidate"}`,
       detail: `${m.positions?.title ?? "—"} · ${m.positions?.organizations?.name ?? "—"}`,
       to: "/admin/candidates/$id",
@@ -132,11 +169,11 @@ function Overview() {
       time: m.updated_at,
     });
   }
-  // 4. Positions awaiting approval.
+  // 6. Positions awaiting approval.
   for (const p of L.positions_review.slice(0, 2) as Row[]) {
     actions.push({
       key: `pos:${p.id}`,
-      priority: 4,
+      priority: 6,
       label: `Approve position — ${p.title}`,
       detail: p.organizations?.name ?? "—",
       to: "/admin/positions/$id",
@@ -145,8 +182,22 @@ function Overview() {
       time: p.created_at,
     });
   }
+  // 7. Client-initiated recompute / feedback.
+  for (const d of L.client_requests.slice(0, 2) as Row[]) {
+    actions.push({
+      key: `req:${d.id}`,
+      priority: 7,
+      label: `Client decision — ${d.candidate_matches?.candidate_profiles?.full_name ?? "Candidate"}`,
+      detail: `${String(d.decision_type).replace(/_/g, " ")} · ${d.candidate_matches?.positions?.title ?? "—"}`,
+      to: "/admin/candidates/$id",
+      params: { id: d.candidate_match_id },
+      tone: "info",
+      time: d.created_at,
+    });
+  }
   actions.sort((a, b) => a.priority - b.priority);
-  const topActions = actions.slice(0, 8);
+  const topActions = actions.slice(0, 10);
+
 
   return (
     <div className="space-y-6">
