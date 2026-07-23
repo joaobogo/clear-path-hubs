@@ -192,7 +192,18 @@ function PositionWorkspace() {
               {p.seniority && <span>· {p.seniority}</span>}
             </div>
           </div>
-          <LifecycleBar position={p} onDone={invalidate} />
+          <div className="flex flex-wrap items-center gap-2">
+            <Button asChild variant="outline" size="sm">
+              <Link
+                to="/admin/positions/$id/edit"
+                params={{ id: p.id }}
+                data-qa-action="edit-position-wizard"
+              >
+                Edit position
+              </Link>
+            </Button>
+            <LifecycleBar position={p} onDone={invalidate} />
+          </div>
         </div>
       </header>
 

@@ -260,6 +260,17 @@ function PositionDetailPage() {
           ) : null}
         </div>
         <div className="flex items-center gap-2">
+          {canEdit && !support.readOnly && (
+            <Button asChild variant="outline" size="sm">
+              <Link
+                to="/client/positions/$id/edit"
+                params={{ id: position.id }}
+                data-qa-action="edit-position-wizard"
+              >
+                Edit position
+              </Link>
+            </Button>
+          )}
           <Button asChild variant="outline" size="sm">
             <Link to="/client/messages" search={{ position: position.id } as never}>
               <MessageSquare className="mr-1.5 h-4 w-4" /> Message TaaSFlow
