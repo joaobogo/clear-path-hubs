@@ -105,9 +105,12 @@ function ResetPasswordPage() {
       <Card className="w-full p-6 space-y-4">
         <div>
           <h1 className="text-xl font-semibold">Set a new password</h1>
-          {!hasRecoverySession && (
-            <p className="text-xs text-destructive mt-1">
-              Open this page from the reset email link.
+          {errorMsg && (
+            <p className="text-xs text-destructive mt-1">{errorMsg}</p>
+          )}
+          {!errorMsg && !hasRecoverySession && (
+            <p className="text-xs text-muted-foreground mt-1">
+              Verifying reset link…
             </p>
           )}
         </div>
