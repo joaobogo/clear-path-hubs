@@ -1321,9 +1321,8 @@ function Home() {
                 <br className="hidden sm:block" /> On demand.
               </h1>
               <p className="max-w-xl text-lg text-[color:var(--brand-navy)]/75">
-                TaaSFlow gives growing companies an always-on recruiting function that
-                sources, evaluates, ranks, and delivers qualified candidates through one
-                transparent workspace.
+                TaaSFlow sources, evaluates, and ranks qualified candidates — then
+                delivers them through one transparent hiring workspace.
               </p>
               <div className="flex flex-wrap items-center gap-3 pt-1">
                 <Link
@@ -1338,12 +1337,12 @@ function Home() {
                 >
                   See How It Works
                 </Link>
-                <Link
-                  to="/pricing"
+                <a
+                  href="#roi-calculator"
                   className="inline-flex min-h-11 items-center rounded-md px-2 py-2.5 text-sm font-medium text-[color:var(--brand-navy)]/70 underline-offset-4 hover:text-[color:var(--brand-navy)] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
                 >
-                  View Pricing
-                </Link>
+                  Calculate Your Savings
+                </a>
               </div>
               <ul className="flex flex-wrap gap-x-5 gap-y-1.5 text-xs text-[color:var(--brand-navy)]/65">
                 {[
