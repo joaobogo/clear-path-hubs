@@ -100,6 +100,8 @@ import { Route as AuthenticatedAdminPositionsIdRouteImport } from './routes/_aut
 import { Route as AuthenticatedAdminIntakeIdRouteImport } from './routes/_authenticated/admin.intake.$id'
 import { Route as AuthenticatedAdminClientsIdRouteImport } from './routes/_authenticated/admin.clients.$id'
 import { Route as AuthenticatedAdminCandidatesIdRouteImport } from './routes/_authenticated/admin.candidates.$id'
+import { Route as AuthenticatedClientPositionsIdEditRouteImport } from './routes/_authenticated/client.positions.$id.edit'
+import { Route as AuthenticatedAdminPositionsIdEditRouteImport } from './routes/_authenticated/admin.positions.$id.edit'
 
 const UnauthorizedRoute = UnauthorizedRouteImport.update({
   id: '/unauthorized',
@@ -588,6 +590,18 @@ const AuthenticatedAdminCandidatesIdRoute =
     path: '/$id',
     getParentRoute: () => AuthenticatedAdminCandidatesRoute,
   } as any)
+const AuthenticatedClientPositionsIdEditRoute =
+  AuthenticatedClientPositionsIdEditRouteImport.update({
+    id: '/edit',
+    path: '/edit',
+    getParentRoute: () => AuthenticatedClientPositionsIdRoute,
+  } as any)
+const AuthenticatedAdminPositionsIdEditRoute =
+  AuthenticatedAdminPositionsIdEditRouteImport.update({
+    id: '/edit',
+    path: '/edit',
+    getParentRoute: () => AuthenticatedAdminPositionsIdRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -667,9 +681,9 @@ export interface FileRoutesByFullPath {
   '/admin/candidates/$id': typeof AuthenticatedAdminCandidatesIdRoute
   '/admin/clients/$id': typeof AuthenticatedAdminClientsIdRoute
   '/admin/intake/$id': typeof AuthenticatedAdminIntakeIdRoute
-  '/admin/positions/$id': typeof AuthenticatedAdminPositionsIdRoute
+  '/admin/positions/$id': typeof AuthenticatedAdminPositionsIdRouteWithChildren
   '/client/candidates/$id': typeof AuthenticatedClientCandidatesIdRoute
-  '/client/positions/$id': typeof AuthenticatedClientPositionsIdRoute
+  '/client/positions/$id': typeof AuthenticatedClientPositionsIdRouteWithChildren
   '/me/applications/$id': typeof AuthenticatedMeApplicationsIdRoute
   '/api/public/intake-status/$id': typeof ApiPublicIntakeStatusIdRoute
   '/api/public/pipeline/run': typeof ApiPublicPipelineRunRoute
@@ -680,6 +694,8 @@ export interface FileRoutesByFullPath {
   '/client/candidates/': typeof AuthenticatedClientCandidatesIndexRoute
   '/client/positions/': typeof AuthenticatedClientPositionsIndexRoute
   '/me/applications/': typeof AuthenticatedMeApplicationsIndexRoute
+  '/admin/positions/$id/edit': typeof AuthenticatedAdminPositionsIdEditRoute
+  '/client/positions/$id/edit': typeof AuthenticatedClientPositionsIdEditRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -749,9 +765,9 @@ export interface FileRoutesByTo {
   '/admin/candidates/$id': typeof AuthenticatedAdminCandidatesIdRoute
   '/admin/clients/$id': typeof AuthenticatedAdminClientsIdRoute
   '/admin/intake/$id': typeof AuthenticatedAdminIntakeIdRoute
-  '/admin/positions/$id': typeof AuthenticatedAdminPositionsIdRoute
+  '/admin/positions/$id': typeof AuthenticatedAdminPositionsIdRouteWithChildren
   '/client/candidates/$id': typeof AuthenticatedClientCandidatesIdRoute
-  '/client/positions/$id': typeof AuthenticatedClientPositionsIdRoute
+  '/client/positions/$id': typeof AuthenticatedClientPositionsIdRouteWithChildren
   '/me/applications/$id': typeof AuthenticatedMeApplicationsIdRoute
   '/api/public/intake-status/$id': typeof ApiPublicIntakeStatusIdRoute
   '/api/public/pipeline/run': typeof ApiPublicPipelineRunRoute
@@ -762,6 +778,8 @@ export interface FileRoutesByTo {
   '/client/candidates': typeof AuthenticatedClientCandidatesIndexRoute
   '/client/positions': typeof AuthenticatedClientPositionsIndexRoute
   '/me/applications': typeof AuthenticatedMeApplicationsIndexRoute
+  '/admin/positions/$id/edit': typeof AuthenticatedAdminPositionsIdEditRoute
+  '/client/positions/$id/edit': typeof AuthenticatedClientPositionsIdEditRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -843,9 +861,9 @@ export interface FileRoutesById {
   '/_authenticated/admin/candidates/$id': typeof AuthenticatedAdminCandidatesIdRoute
   '/_authenticated/admin/clients/$id': typeof AuthenticatedAdminClientsIdRoute
   '/_authenticated/admin/intake/$id': typeof AuthenticatedAdminIntakeIdRoute
-  '/_authenticated/admin/positions/$id': typeof AuthenticatedAdminPositionsIdRoute
+  '/_authenticated/admin/positions/$id': typeof AuthenticatedAdminPositionsIdRouteWithChildren
   '/_authenticated/client/candidates/$id': typeof AuthenticatedClientCandidatesIdRoute
-  '/_authenticated/client/positions/$id': typeof AuthenticatedClientPositionsIdRoute
+  '/_authenticated/client/positions/$id': typeof AuthenticatedClientPositionsIdRouteWithChildren
   '/_authenticated/me/applications/$id': typeof AuthenticatedMeApplicationsIdRoute
   '/api/public/intake-status/$id': typeof ApiPublicIntakeStatusIdRoute
   '/api/public/pipeline/run': typeof ApiPublicPipelineRunRoute
@@ -856,6 +874,8 @@ export interface FileRoutesById {
   '/_authenticated/client/candidates/': typeof AuthenticatedClientCandidatesIndexRoute
   '/_authenticated/client/positions/': typeof AuthenticatedClientPositionsIndexRoute
   '/_authenticated/me/applications/': typeof AuthenticatedMeApplicationsIndexRoute
+  '/_authenticated/admin/positions/$id/edit': typeof AuthenticatedAdminPositionsIdEditRoute
+  '/_authenticated/client/positions/$id/edit': typeof AuthenticatedClientPositionsIdEditRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -950,6 +970,8 @@ export interface FileRouteTypes {
     | '/client/candidates/'
     | '/client/positions/'
     | '/me/applications/'
+    | '/admin/positions/$id/edit'
+    | '/client/positions/$id/edit'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -1032,6 +1054,8 @@ export interface FileRouteTypes {
     | '/client/candidates'
     | '/client/positions'
     | '/me/applications'
+    | '/admin/positions/$id/edit'
+    | '/client/positions/$id/edit'
   id:
     | '__root__'
     | '/'
@@ -1125,6 +1149,8 @@ export interface FileRouteTypes {
     | '/_authenticated/client/candidates/'
     | '/_authenticated/client/positions/'
     | '/_authenticated/me/applications/'
+    | '/_authenticated/admin/positions/$id/edit'
+    | '/_authenticated/client/positions/$id/edit'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -1817,6 +1843,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminCandidatesIdRouteImport
       parentRoute: typeof AuthenticatedAdminCandidatesRoute
     }
+    '/_authenticated/client/positions/$id/edit': {
+      id: '/_authenticated/client/positions/$id/edit'
+      path: '/edit'
+      fullPath: '/client/positions/$id/edit'
+      preLoaderRoute: typeof AuthenticatedClientPositionsIdEditRouteImport
+      parentRoute: typeof AuthenticatedClientPositionsIdRoute
+    }
+    '/_authenticated/admin/positions/$id/edit': {
+      id: '/_authenticated/admin/positions/$id/edit'
+      path: '/edit'
+      fullPath: '/admin/positions/$id/edit'
+      preLoaderRoute: typeof AuthenticatedAdminPositionsIdEditRouteImport
+      parentRoute: typeof AuthenticatedAdminPositionsIdRoute
+    }
   }
 }
 
@@ -1869,14 +1909,30 @@ const AuthenticatedAdminIntakeRouteWithChildren =
     AuthenticatedAdminIntakeRouteChildren,
   )
 
+interface AuthenticatedAdminPositionsIdRouteChildren {
+  AuthenticatedAdminPositionsIdEditRoute: typeof AuthenticatedAdminPositionsIdEditRoute
+}
+
+const AuthenticatedAdminPositionsIdRouteChildren: AuthenticatedAdminPositionsIdRouteChildren =
+  {
+    AuthenticatedAdminPositionsIdEditRoute:
+      AuthenticatedAdminPositionsIdEditRoute,
+  }
+
+const AuthenticatedAdminPositionsIdRouteWithChildren =
+  AuthenticatedAdminPositionsIdRoute._addFileChildren(
+    AuthenticatedAdminPositionsIdRouteChildren,
+  )
+
 interface AuthenticatedAdminPositionsRouteChildren {
-  AuthenticatedAdminPositionsIdRoute: typeof AuthenticatedAdminPositionsIdRoute
+  AuthenticatedAdminPositionsIdRoute: typeof AuthenticatedAdminPositionsIdRouteWithChildren
   AuthenticatedAdminPositionsIndexRoute: typeof AuthenticatedAdminPositionsIndexRoute
 }
 
 const AuthenticatedAdminPositionsRouteChildren: AuthenticatedAdminPositionsRouteChildren =
   {
-    AuthenticatedAdminPositionsIdRoute: AuthenticatedAdminPositionsIdRoute,
+    AuthenticatedAdminPositionsIdRoute:
+      AuthenticatedAdminPositionsIdRouteWithChildren,
     AuthenticatedAdminPositionsIndexRoute:
       AuthenticatedAdminPositionsIndexRoute,
   }
@@ -1940,14 +1996,30 @@ const AuthenticatedClientCandidatesRouteWithChildren =
     AuthenticatedClientCandidatesRouteChildren,
   )
 
+interface AuthenticatedClientPositionsIdRouteChildren {
+  AuthenticatedClientPositionsIdEditRoute: typeof AuthenticatedClientPositionsIdEditRoute
+}
+
+const AuthenticatedClientPositionsIdRouteChildren: AuthenticatedClientPositionsIdRouteChildren =
+  {
+    AuthenticatedClientPositionsIdEditRoute:
+      AuthenticatedClientPositionsIdEditRoute,
+  }
+
+const AuthenticatedClientPositionsIdRouteWithChildren =
+  AuthenticatedClientPositionsIdRoute._addFileChildren(
+    AuthenticatedClientPositionsIdRouteChildren,
+  )
+
 interface AuthenticatedClientPositionsRouteChildren {
-  AuthenticatedClientPositionsIdRoute: typeof AuthenticatedClientPositionsIdRoute
+  AuthenticatedClientPositionsIdRoute: typeof AuthenticatedClientPositionsIdRouteWithChildren
   AuthenticatedClientPositionsIndexRoute: typeof AuthenticatedClientPositionsIndexRoute
 }
 
 const AuthenticatedClientPositionsRouteChildren: AuthenticatedClientPositionsRouteChildren =
   {
-    AuthenticatedClientPositionsIdRoute: AuthenticatedClientPositionsIdRoute,
+    AuthenticatedClientPositionsIdRoute:
+      AuthenticatedClientPositionsIdRouteWithChildren,
     AuthenticatedClientPositionsIndexRoute:
       AuthenticatedClientPositionsIndexRoute,
   }
