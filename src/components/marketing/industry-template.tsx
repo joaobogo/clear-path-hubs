@@ -13,6 +13,7 @@ import { IndustryInsights } from "@/components/marketing/industry-insights";
 import { getIndustryVisualIdentity } from "@/content/industry-visual-identity";
 import { SubtleCta } from "@/components/marketing/subtle-cta";
 import { getIndustryRelationships } from "@/lib/marketing/industry-relationships";
+import { IndustryMetricsBand } from "@/components/marketing/industry-metrics-band";
 import {
   BookACallDialog,
   BookACallSection,
