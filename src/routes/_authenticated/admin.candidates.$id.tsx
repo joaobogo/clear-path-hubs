@@ -48,6 +48,7 @@ import {
   MoreHorizontal,
 } from "lucide-react";
 import { DownloadCvButton } from "@/components/download-cv-button";
+import { ScoreExplainability } from "@/components/candidate/score-explainability";
 
 
 
@@ -1040,6 +1041,15 @@ function ScoreTab({
           Score runs are immutable. Rescoring writes a new row and keeps every prior score.
         </p>
       </aside>
+
+      <div className="lg:col-span-2">
+        <ScoreExplainability
+          runs={runs ?? []}
+          decisions={decisions ?? []}
+          result={result}
+          evidence={evidence}
+        />
+      </div>
     </div>
   );
 }
