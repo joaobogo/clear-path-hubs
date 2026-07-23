@@ -297,54 +297,76 @@ function LifecycleBar({ position, onDone }: { position: Any; onDone: () => Promi
   const v = position.visibility as string;
   const isPublic = v === "public";
 
-  const buttons: Array<{ key: string; label: string; onClick: () => Promise<void>; variant?: Any }> = [];
+  type Action = { key: string; label: string; onClick: () => Promise<void>; variant?: Any };
+  let primary: Action | null = null;
+  const secondary: Action[] = [];
 
   if (s === "submitted") {
-    buttons.push({ key: "clar", label: "Request clarification", variant: "outline", onClick: () => doStatus("request_clarification", "Clarification requested") });
-    buttons.push({ key: "approve", label: "Approve", onClick: () => doStatus("approve", "Approved") });
+    primary = { key: "approve", label: "Approve", onClick: () => doStatus("approve", "Approved") };
+    secondary.push({ key: "clar", label: "Request clarification", onClick: () => doStatus("request_clarification", "Clarification requested") });
+  } else if (s === "needs_clarification") {
+    primary = { key: "approve", label: "Approve", onClick: () => doStatus("approve", "Approved") };
+  } else if (s === "approved") {
+    primary = { key: "activate", label: "Activate", onClick: () => doStatus("activate", "Activated") };
+  } else if (s === "active") {
+    primary = isPublic
+      ? { key: "unpublish", label: "Unpublish", variant: "outline", onClick: () => doVis("private", "Removed from job board") }
+      : { key: "publish", label: "Publish", onClick: () => doVis("public", "Live on job board") };
+    secondary.push({ key: "pause", label: "Pause", onClick: () => doStatus("pause", "Paused") });
+    secondary.push({ key: "close", label: "Close", onClick: () => doStatus("close", "Closed") });
+  } else if (s === "paused") {
+    primary = { key: "resume", label: "Resume", onClick: () => doStatus("activate", "Resumed") };
+    secondary.push({ key: "close", label: "Close", onClick: () => doStatus("close", "Closed") });
+  } else if (s === "closed") {
+    primary = { key: "reopen", label: "Reopen", onClick: () => doStatus("reopen", "Reopened") });
+    secondary.push({ key: "archive", label: "Archive", onClick: () => doStatus("archive", "Archived") });
+  } else if (s === "draft") {
+    primary = { key: "submit", label: "No action available", onClick: async () => {} };
   }
-  if (s === "needs_clarification") {
-    buttons.push({ key: "approve", label: "Approve", onClick: () => doStatus("approve", "Approved") });
-  }
-  if (s === "approved") {
-    buttons.push({ key: "activate", label: "Activate", onClick: () => doStatus("activate", "Activated") });
-  }
-  if (s === "active") {
-    buttons.push({
-      key: "publish",
-      label: isPublic ? "Unpublish" : "Publish",
-      variant: isPublic ? "outline" : "default",
-      onClick: () => doVis(isPublic ? "private" : "public", isPublic ? "Removed from job board" : "Live on job board"),
-    });
-    buttons.push({ key: "pause", label: "Pause", variant: "outline", onClick: () => doStatus("pause", "Paused") });
-    buttons.push({ key: "close", label: "Close", variant: "outline", onClick: () => doStatus("close", "Closed") });
-  }
-  if (s === "paused") {
-    buttons.push({ key: "resume", label: "Resume", onClick: () => doStatus("activate", "Resumed") });
-    buttons.push({ key: "close", label: "Close", variant: "outline", onClick: () => doStatus("close", "Closed") });
-  }
-  if (s === "closed") {
-    buttons.push({ key: "reopen", label: "Reopen", onClick: () => doStatus("reopen", "Reopened") });
-    buttons.push({ key: "archive", label: "Archive", variant: "outline", onClick: () => doStatus("archive", "Archived") });
-  }
+
   if (s !== "archived" && s !== "closed") {
-    buttons.push({ key: "archive", label: "Archive", variant: "ghost", onClick: () => doStatus("archive", "Archived") });
+    if (!secondary.some((b) => b.key === "archive")) {
+      secondary.push({ key: "archive", label: "Archive", onClick: () => doStatus("archive", "Archived") });
+    }
   }
 
   return (
-    <div className="flex flex-wrap items-center gap-2">
-      {buttons.map((b) => (
+    <div className="flex items-center gap-2">
+      {primary && (
         <Button
-          key={b.key}
           size="sm"
-          variant={b.variant}
-          disabled={busy}
-          onClick={b.onClick}
-          data-qa-action={`position-${b.key}`}
+          variant={primary.variant}
+          disabled={busy || primary.key === "submit"}
+          onClick={primary.onClick}
+          data-qa-action={`position-${primary.key}`}
         >
-          {b.label}
+          {primary.label}
         </Button>
-      ))}
+      )}
+      {secondary.length > 0 && (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button size="sm" variant="outline" disabled={busy} aria-label="More actions" data-qa-action="position-actions-menu">
+              <MoreHorizontal className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            {secondary.map((b, i) => (
+              <>
+                {i > 0 && b.key === "archive" && <DropdownMenuSeparator key={`sep-${i}`} />}
+                <DropdownMenuItem
+                  key={b.key}
+                  onClick={b.onClick}
+                  data-qa-action={`position-${b.key}`}
+                  className={b.key === "archive" ? "text-destructive" : undefined}
+                >
+                  {b.label}
+                </DropdownMenuItem>
+              </>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      )}
     </div>
   );
 }
