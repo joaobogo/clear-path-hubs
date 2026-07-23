@@ -579,15 +579,16 @@ function PrimaryKpi({
   tone,
 }: {
   label: string;
-  value: number;
+  value: number | undefined;
   href: string;
   hrefSearch?: Record<string, string>;
   icon?: React.ReactNode;
   hint?: string;
   tone?: "amber";
 }) {
+  const display = typeof value === "number" ? value.toLocaleString() : "—";
   const toneCls =
-    tone === "amber" && value > 0
+    tone === "amber" && (value ?? 0) > 0
       ? "border-amber-500/30 bg-amber-500/[0.04] hover:border-amber-500/50"
       : "hover:border-primary/50 hover:shadow-sm";
   return (
@@ -597,12 +598,13 @@ function PrimaryKpi({
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       search={hrefSearch as any}
       className={`group block rounded-xl border bg-card p-4 transition ${toneCls}`}
+      aria-label={`${label}: ${display}`}
     >
       <div className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide text-muted-foreground">
         {icon}
         <span>{label}</span>
       </div>
-      <div className="mt-2 text-3xl font-semibold tabular-nums">{value}</div>
+      <div className="mt-2 text-3xl font-semibold tabular-nums">{display}</div>
       {hint && <div className="mt-1 text-xs text-muted-foreground">{hint}</div>}
     </Link>
   );
@@ -617,14 +619,15 @@ function SecondaryKpi({
   tone,
 }: {
   label: string;
-  value: number;
+  value: number | undefined;
   href: string;
   hrefSearch?: Record<string, string>;
   icon?: React.ReactNode;
   tone?: "emerald";
 }) {
+  const display = typeof value === "number" ? value.toLocaleString() : "—";
   const emphasis =
-    tone === "emerald" && value > 0
+    tone === "emerald" && (value ?? 0) > 0
       ? "text-emerald-700 dark:text-emerald-300"
       : "text-foreground";
   return (
@@ -634,12 +637,13 @@ function SecondaryKpi({
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       search={hrefSearch as any}
       className="group block rounded-lg border bg-card px-3 py-2.5 transition hover:border-primary/40 hover:bg-muted/40"
+      aria-label={`${label}: ${display}`}
     >
       <div className="flex items-center gap-1 text-[10.5px] font-medium uppercase tracking-wide text-muted-foreground">
         {icon}
         <span className="truncate">{label}</span>
       </div>
-      <div className={`mt-1 text-xl font-semibold tabular-nums ${emphasis}`}>{value}</div>
+      <div className={`mt-1 text-xl font-semibold tabular-nums ${emphasis}`}>{display}</div>
     </Link>
   );
 }
