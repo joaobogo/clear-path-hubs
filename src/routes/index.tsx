@@ -1505,104 +1505,144 @@ function Home() {
         </PublicSection>
       </section>
 
-      {/* 8 — SOCIAL PROOF / TRUST */}
+      {/* 8 — APPROVED PROOF (process credibility) */}
       <PublicSection>
         <PublicPage>
           <SectionHead
-            eyebrow="What hiring teams say"
-            title="Teams hiring differently."
-            lead="Hiring managers use TaaSFlow because it changes how their team decides — evidence in front of everyone, in the same workspace, at the same time."
+            eyebrow="Why teams trust the process"
+            title="Proof lives in how the work is done."
+            lead="We don't publish testimonials we can't verify. What we can show you is the discipline behind every candidate we deliver — the same evaluation, workspace, and audit trail on every role."
           />
-          <div className="mt-10 grid gap-5 md:grid-cols-3">
-            {[
-              {
-                q: "We stopped comparing PDFs. The workspace tells us which candidates fit the requirements we actually agreed on.",
-                who: "Head of Talent · SaaS scale-up",
-              },
-              {
-                q: "Evidence quotes changed the conversation with our hiring managers. We debate the requirement, not the candidate.",
-                who: "Recruiting Lead · Fintech",
-              },
-              {
-                q: "Predictable pricing and a single workspace let us open three roles at once without adding more vendors.",
-                who: "People Ops · Healthcare",
-              },
-            ].map((t) => (
-              <Card key={t.who}>
-                <Building2 className="h-5 w-5 text-[color:var(--brand-ocean)]" aria-hidden />
-                <blockquote className="mt-4 text-sm leading-relaxed text-[color:var(--brand-navy)]">
-                  "{t.q}"
-                </blockquote>
-                <p className="mt-4 text-xs font-medium text-[color:var(--brand-navy)]/60">
-                  {t.who}
-                </p>
-              </Card>
-            ))}
+          <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+            {APPROVED_PROOF.map((item) => {
+              const Icon = item.icon;
+              return (
+                <Card key={item.t}>
+                  <div className="inline-flex h-10 w-10 items-center justify-center rounded-md bg-[color:var(--brand-ocean)]/10 text-[color:var(--brand-ocean)]">
+                    <Icon className="h-5 w-5" aria-hidden />
+                  </div>
+                  <h3 className="mt-4 text-base font-semibold text-[color:var(--brand-navy)]">
+                    {item.t}
+                  </h3>
+                  <p className="mt-2 text-sm leading-relaxed text-[color:var(--brand-navy)]/70">
+                    {item.d}
+                  </p>
+                </Card>
+              );
+            })}
           </div>
           <div className="mt-8 flex flex-wrap items-center gap-4 text-xs text-[color:var(--brand-navy)]/60">
-            <span className="inline-flex items-center gap-1.5">
-              <ShieldCheck className="h-4 w-4 text-[color:var(--brand-ocean)]" aria-hidden />
-              Evidence-first candidate delivery
-            </span>
-            <span className="inline-flex items-center gap-1.5">
-              <ClipboardCheck className="h-4 w-4 text-[color:var(--brand-ocean)]" aria-hidden />
-              Full audit trail on every decision
-            </span>
-            <span className="inline-flex items-center gap-1.5">
-              <Users className="h-4 w-4 text-[color:var(--brand-ocean)]" aria-hidden />
-              Role-based access for your team
-            </span>
-          </div>
-          <div className="mt-6">
             <Link
-              to="/case-studies"
+              to="/how-it-works"
               className="inline-flex items-center gap-1 text-sm font-semibold text-[color:var(--brand-ocean)] hover:text-[color:var(--brand-navy)]"
             >
-              Read case studies <ArrowRight className="h-4 w-4" aria-hidden />
+              See the full process <ArrowRight className="h-4 w-4" aria-hidden />
+            </Link>
+            <Link
+              to="/case-studies"
+              className="inline-flex items-center gap-1 text-sm font-semibold text-[color:var(--brand-navy)]/70 hover:text-[color:var(--brand-navy)]"
+            >
+              Case studies <ArrowRight className="h-4 w-4" aria-hidden />
             </Link>
           </div>
         </PublicPage>
       </PublicSection>
 
-      {/* 9 — FAQ PREVIEW */}
+      {/* 9 — RESOURCES PREVIEW */}
       <section className="border-y border-[color:var(--brand-navy)]/8 bg-[color:var(--brand-paper)]">
         <PublicSection>
           <PublicPage>
             <SectionHead
-              eyebrow="Quick answers"
-              title="Common questions about TaaSFlow."
+              eyebrow="Resources"
+              title="Reading for hiring teams."
+              lead="Practical guides and analysis on how hiring is actually changing — written for the people running the process."
             />
-            <dl className="mt-10 grid gap-5 md:grid-cols-2">
-              {HOMEPAGE_FAQ.map((item) => (
-                <Card key={item.q}>
-                  <dt className="text-base font-semibold text-[color:var(--brand-navy)]">
-                    {item.q}
-                  </dt>
-                  <dd className="mt-2 text-sm text-[color:var(--brand-navy)]/70">
-                    {item.a}
-                  </dd>
-                </Card>
-              ))}
-            </dl>
+            <div className="mt-10 grid gap-5 md:grid-cols-3">
+              {HOMEPAGE_RESOURCES.map((r) => {
+                const Icon = r.icon;
+                return (
+                  <Link
+                    key={r.slug}
+                    to="/blog/$slug"
+                    params={{ slug: r.slug }}
+                    className="group flex h-full flex-col overflow-hidden rounded-xl border border-[color:var(--brand-navy)]/10 bg-white transition hover:border-[color:var(--brand-ocean)]/40 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-ocean)]"
+                  >
+                    <div
+                      className={`relative flex h-40 items-center justify-center ${
+                        r.tone === "navy"
+                          ? "bg-gradient-to-br from-[color:var(--brand-navy)] to-[color:var(--brand-ocean)]"
+                          : "bg-gradient-to-br from-[color:var(--brand-ocean)]/90 to-[color:var(--brand-navy)]/80"
+                      }`}
+                    >
+                      <Icon className="h-12 w-12 text-white/90" aria-hidden />
+                      <span className="absolute left-3 top-3 rounded-full bg-white/95 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]">
+                        {r.type}
+                      </span>
+                    </div>
+                    <div className="flex flex-1 flex-col p-5">
+                      <h3 className="text-base font-semibold leading-snug text-[color:var(--brand-navy)] group-hover:text-[color:var(--brand-ocean)]">
+                        {r.title}
+                      </h3>
+                      <p className="mt-2 flex-1 text-sm leading-relaxed text-[color:var(--brand-navy)]/70">
+                        {r.description}
+                      </p>
+                      <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-[color:var(--brand-ocean)]">
+                        Read {r.type.toLowerCase()} <ArrowRight className="h-4 w-4" aria-hidden />
+                      </span>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
             <div className="mt-8">
               <Link
-                to="/faq"
+                to="/resources"
                 className="inline-flex items-center gap-1 text-sm font-semibold text-[color:var(--brand-ocean)] hover:text-[color:var(--brand-navy)]"
               >
-                View all FAQs <ArrowRight className="h-4 w-4" aria-hidden />
+                Browse all resources <ArrowRight className="h-4 w-4" aria-hidden />
               </Link>
             </div>
           </PublicPage>
         </PublicSection>
       </section>
 
-      {/* 10 — FINAL CTA */}
+      {/* 10 — FAQ */}
+      <PublicSection>
+        <PublicPage>
+          <SectionHead
+            eyebrow="Quick answers"
+            title="Common questions about TaaSFlow."
+          />
+          <dl className="mt-10 grid gap-5 md:grid-cols-2">
+            {HOMEPAGE_FAQ.map((item) => (
+              <Card key={item.q}>
+                <dt className="text-base font-semibold text-[color:var(--brand-navy)]">
+                  {item.q}
+                </dt>
+                <dd className="mt-2 text-sm leading-relaxed text-[color:var(--brand-navy)]/70">
+                  {item.a}
+                </dd>
+              </Card>
+            ))}
+          </dl>
+          <div className="mt-8">
+            <Link
+              to="/faq"
+              className="inline-flex items-center gap-1 text-sm font-semibold text-[color:var(--brand-ocean)] hover:text-[color:var(--brand-navy)]"
+            >
+              View all FAQs <ArrowRight className="h-4 w-4" aria-hidden />
+            </Link>
+          </div>
+        </PublicPage>
+      </PublicSection>
+
+      {/* 11 — FINAL CTA */}
       <CtaSection
         eyebrow="Get started"
-        title="A faster, clearer, more transparent way to recruit."
-        description="Give your hiring team ranked candidates, evidence per requirement, and a live workspace everyone can see."
+        title="Build your next candidate pipeline with TaaSFlow."
+        description="Open a role and get a ranked shortlist, evidence per requirement, and a live workspace your whole hiring team can see."
         primary={{ to: "/intake", label: "Start Hiring" }}
-        secondary={{ to: "/how-it-works", label: "See How It Works" }}
+        secondary={{ to: "/contact", label: "Book a Conversation" }}
       />
     </SiteShell>
   );
