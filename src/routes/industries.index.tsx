@@ -5,7 +5,7 @@ import {
   PublicSection,
   CtaSection,
 } from "@/components/marketing/site-shell";
-import { IndustryExplorer } from "@/components/marketing/industry-explorer";
+import { IndustryGallery } from "@/components/marketing/industry-gallery";
 import { marketingHead } from "@/lib/marketing/head";
 
 export const Route = createFileRoute("/industries/")({
@@ -56,7 +56,7 @@ function IndustriesIndex() {
       {/* Explorer */}
       <PublicSection>
         <PublicPage>
-          <IndustryExplorer />
+          <IndustryGallery />
         </PublicPage>
       </PublicSection>
 
