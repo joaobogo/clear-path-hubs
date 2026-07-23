@@ -13,7 +13,7 @@ export function SupportViewBanner() {
   if (!support.active) return null;
   const color =
     support.mode === "interactive"
-      ? "bg-amber-500/15 border-amber-500/50 text-amber-950 dark:text-amber-100"
+      ? "bg-warning/15 border-warning/50 text-warning-foreground dark:text-warning-foreground"
       : "bg-primary/10 border-primary/40 text-foreground";
   return (
     <div

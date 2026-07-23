@@ -56,12 +56,12 @@ function Field({
   source?: "candidate" | "cv_parsed" | "enriched" | "admin_corrected" | "inferred" | "legacy";
 }) {
   const color: Record<string, string> = {
-    candidate: "bg-blue-500/10 text-blue-700 dark:text-blue-300",
-    cv_parsed: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300",
-    enriched: "bg-purple-500/10 text-purple-700 dark:text-purple-300",
-    admin_corrected: "bg-amber-500/10 text-amber-700 dark:text-amber-300",
+    candidate: "bg-info/10 text-info dark:text-info",
+    cv_parsed: "bg-success/10 text-success dark:text-success",
+    enriched: "bg-info/10 text-info dark:text-info",
+    admin_corrected: "bg-warning/10 text-warning-foreground dark:text-warning-foreground",
     inferred: "bg-muted text-muted-foreground",
-    legacy: "bg-orange-500/10 text-orange-700 dark:text-orange-300",
+    legacy: "bg-warning/10 text-warning-foreground dark:text-warning-foreground",
   };
   return (
     <div className="grid grid-cols-3 gap-2 py-1.5 text-sm border-b border-border/60">
@@ -226,11 +226,11 @@ export function CandidateDetailDrawer({
   const stateColor = useMemo(() => {
     const state = match?.processing_state ?? "";
     const map: Record<string, string> = {
-      scored: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300",
-      manual_review_required: "bg-amber-500/10 text-amber-700 dark:text-amber-300",
+      scored: "bg-success/10 text-success dark:text-success",
+      manual_review_required: "bg-warning/10 text-warning-foreground dark:text-warning-foreground",
       failed: "bg-destructive/10 text-destructive",
       provider_blocked: "bg-destructive/10 text-destructive",
-      ocr_required: "bg-amber-500/10 text-amber-700 dark:text-amber-300",
+      ocr_required: "bg-warning/10 text-warning-foreground dark:text-warning-foreground",
     };
     return map[state] ?? "bg-muted text-muted-foreground";
   }, [match?.processing_state]);

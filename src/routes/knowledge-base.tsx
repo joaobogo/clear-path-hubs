@@ -362,7 +362,7 @@ function KnowledgeBasePage() {
                             <span
                               className={
                                 isSupport
-                                  ? "rounded-full bg-amber-500/15 px-2 py-0.5 text-amber-600 dark:text-amber-400"
+                                  ? "rounded-full bg-warning/15 px-2 py-0.5 text-warning-foreground dark:text-warning-foreground"
                                   : "rounded-full bg-primary/10 px-2 py-0.5 text-primary"
                               }
                             >
