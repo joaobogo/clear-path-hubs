@@ -848,6 +848,63 @@ export type Database = {
           },
         ]
       }
+      client_notification_preferences: {
+        Row: {
+          candidate_delivered: boolean
+          created_at: string
+          digest: string
+          email_enabled: boolean
+          hire_update: boolean
+          interview_request: boolean
+          new_message: boolean
+          offer_update: boolean
+          organization_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          candidate_delivered?: boolean
+          created_at?: string
+          digest?: string
+          email_enabled?: boolean
+          hire_update?: boolean
+          interview_request?: boolean
+          new_message?: boolean
+          offer_update?: boolean
+          organization_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          candidate_delivered?: boolean
+          created_at?: string
+          digest?: string
+          email_enabled?: boolean
+          hire_update?: boolean
+          interview_request?: boolean
+          new_message?: boolean
+          offer_update?: boolean
+          organization_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_notification_preferences_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "admin_clients_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_notification_preferences_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       consent_records: {
         Row: {
           candidate_profile_id: string | null
