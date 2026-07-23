@@ -127,13 +127,21 @@ export const getClientOverview = createServerFn({ method: "GET" })
       .eq("organization_id", data.orgId)
       .in("status", ["active", "paused", "approved"])
       .order("updated_at", { ascending: false });
-    const activePositions = (positions as AnyRow[])?.length ?? 0;
+    const activePositionsList = (positions as AnyRow[]) ?? [];
+    const activePositions = activePositionsList.length;
     const kpis = computeKpis(rows, activePositions);
 
+    // "What's new" — matches delivered in the past 7 days.
+    const sevenDaysAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
+    const new_this_week = rows.filter(
+      (r) =>
+        r.stage === "delivered" &&
+        r.delivered_at != null &&
+        new Date(r.delivered_at).getTime() >= sevenDaysAgo,
+    ).length;
+
     // Action-required list — items requiring the client's attention.
-    const positionsById = new Map<string, AnyRow>(
-      (positions as AnyRow[] | undefined ?? []).map((p) => [p.id, p]),
-    );
+    const positionsById = new Map<string, AnyRow>(activePositionsList.map((p) => [p.id, p]));
     const positionCounts = new Map<string, number>();
     for (const r of rows) {
       if (r.stage === "delivered") {
@@ -159,8 +167,40 @@ export const getClientOverview = createServerFn({ method: "GET" })
         count: offerCount,
       });
     }
+    const interviewScheduledCount = rows.filter((r) => r.interview_scheduled).length;
+    if (interviewScheduledCount > 0) {
+      action_required.push({
+        type: "interview_scheduled",
+        label: `${interviewScheduledCount} interview${interviewScheduledCount === 1 ? "" : "s"} scheduled — leave feedback after`,
+        href: `/client/candidates?filter=interview`,
+        count: interviewScheduledCount,
+      });
+    }
 
-    // Latest delivered candidates (top 5).
+    // "What happens next" — per-position next milestone, only active positions.
+    const rowsByPosition = new Map<string, KpiRow[]>();
+    for (const r of rows) {
+      if (!rowsByPosition.has(r.position_id)) rowsByPosition.set(r.position_id, []);
+      rowsByPosition.get(r.position_id)!.push(r);
+    }
+    const whats_next = activePositionsList.slice(0, 6).map((p) => {
+      const posRows = rowsByPosition.get(p.id) ?? [];
+      let next = "Awaiting first candidates";
+      if (posRows.some((r) => r.stage === "offer")) next = "Offer response";
+      else if (posRows.some((r) => r.interview_active || r.stage === "interview_process"))
+        next = "Interview outcome";
+      else if (posRows.some((r) => r.stage === "shortlisted")) next = "Send interview requests";
+      else if (posRows.some((r) => r.stage === "delivered")) next = "Review new candidates";
+      return {
+        position_id: p.id as string,
+        title: p.title as string,
+        status: p.status as string,
+        next,
+        delivered_pending: posRows.filter((r) => r.stage === "delivered").length,
+      };
+    });
+
+    // Latest delivered candidates (top 4 — kept concise).
     const { data: latestMatches } = await context.supabase
       .from("candidate_matches")
       .select(
@@ -172,7 +212,7 @@ export const getClientOverview = createServerFn({ method: "GET" })
       .eq("organization_id", data.orgId)
       .eq("client_visibility", "visible")
       .order("delivered_at", { ascending: false })
-      .limit(5);
+      .limit(4);
     const latest_candidates = ((latestMatches as AnyRow[]) ?? []).map(toClientCandidateDTO);
 
     // Recent messages (last 3).
@@ -183,28 +223,45 @@ export const getClientOverview = createServerFn({ method: "GET" })
       .order("created_at", { ascending: false })
       .limit(3);
 
-    // Recent activity from audit events.
+    // "What changed" — filter to client-relevant events only (never internal
+    // processing chatter). Whitelist the actions we surface.
+    const CLIENT_RELEVANT_ACTIONS = [
+      "candidate_match.stage_changed",
+      "client.shortlist",
+      "client.request_interview",
+      "client.offer",
+      "client.hire",
+      "client.not_moving_forward",
+      "client.submit_feedback",
+      "position.approved",
+      "position.activated",
+      "position.paused",
+    ];
     const { data: events } = await context.supabase
       .from("audit_events")
       .select("id, action, entity_type, created_at")
       .eq("organization_id", data.orgId)
+      .in("action", CLIENT_RELEVANT_ACTIONS)
       .order("created_at", { ascending: false })
       .limit(6);
 
     const lastEvent = (events as AnyRow[] | undefined)?.[0];
     const last_updated: string | null =
-      lastEvent?.created_at ?? (positions as AnyRow[] | undefined)?.[0]?.updated_at ?? null;
+      lastEvent?.created_at ?? activePositionsList[0]?.updated_at ?? null;
 
     return {
       kpis,
       active_positions: activePositions,
+      new_this_week,
       action_required,
+      whats_next,
       latest_candidates,
       recent_messages: (recentMessages as AnyRow[]) ?? [],
       recent_activity: (events as AnyRow[]) ?? [],
       last_updated,
     };
   });
+
 
 
 // ─── Positions ──────────────────────────────────────────────────────────────
