@@ -66,12 +66,12 @@ export const PRICING_TIERS: PricingTier[] = [
     id: "multi",
     name: "Multi Position",
     eyebrow: "2–5 active roles",
-    oneTime: 2100,
+    oneTime: PRICE_MULTI_USD,
     priceDisplay: "$2.1K",
     pricePer: "≈ $600 per position",
     bestFor: "Run parallel searches with shared intake context.",
     rolesIncluded: "2–5 active roles",
-    turnaround: "14-day turnaround",
+    turnaround: TURNAROUND_LABEL,
     included: [
       "Delivered weekly",
       "Top 10 candidates per position",
@@ -89,12 +89,12 @@ export const PRICING_TIERS: PricingTier[] = [
     id: "sprint",
     name: "Hiring Sprint",
     eyebrow: "6–10 active roles",
-    oneTime: 4500,
+    oneTime: PRICE_SPRINT_USD,
     priceDisplay: "$4.5K",
     pricePer: "≈ $562 per position",
     bestFor: "Concurrent hiring across functions with priority support.",
     rolesIncluded: "6–10 active roles",
-    turnaround: "14-day turnaround",
+    turnaround: TURNAROUND_LABEL,
     included: [
       "Delivered weekly",
       "Top 10 candidates per position",
@@ -151,8 +151,8 @@ export const NEVER_CHARGED: string[] = [
 ];
 
 /** Reference package price used by ROI calculator (Multi Position). */
-export const ROI_REFERENCE_PACKAGE = 2100;
-export const ROI_REFERENCE_PACKAGE_LABEL = "Multi Position one-off package (2–5 roles)";
+export const ROI_REFERENCE_PACKAGE = ROI_REFERENCE_PACKAGE_USD;
+export const ROI_REFERENCE_PACKAGE_LABEL = CORE_ROI_LABEL;
 
 export function formatPrice(tier: PricingTier): string {
   return tier.priceDisplay;
