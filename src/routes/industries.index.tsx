@@ -37,12 +37,22 @@ const CATEGORIES: Category[] = [
 ];
 
 const CATEGORY_BY_SLUG: Record<string, Exclude<Category, "All">> = {
+  // Tech & Data
   tech: "Tech & Data",
   saas: "Tech & Data",
   cybersecurity: "Tech & Data",
   "data-analytics": "Tech & Data",
   media: "Tech & Data",
   ecommerce: "Tech & Data",
+  "ai-ml": "Tech & Data",
+  fintech: "Tech & Data",
+  healthtech: "Tech & Data",
+  edtech: "Tech & Data",
+  proptech: "Tech & Data",
+  gaming: "Tech & Data",
+  web3: "Tech & Data",
+  devops: "Tech & Data",
+  // Professional Services
   consulting: "Professional Services",
   legal: "Professional Services",
   finance: "Professional Services",
@@ -50,15 +60,45 @@ const CATEGORY_BY_SLUG: Record<string, Exclude<Category, "All">> = {
   insurance: "Professional Services",
   "private-equity": "Professional Services",
   "staffing-agencies": "Professional Services",
+  "investment-banking": "Professional Services",
+  "wealth-management": "Professional Services",
+  "venture-capital": "Professional Services",
+  architecture: "Professional Services",
+  // Regulated & Public
   healthcare: "Regulated & Public",
   "public-sector": "Regulated & Public",
   nonprofit: "Regulated & Public",
+  pharmaceuticals: "Regulated & Public",
+  biotech: "Regulated & Public",
+  "medical-devices": "Regulated & Public",
+  defense: "Regulated & Public",
+  education: "Regulated & Public",
+  "higher-education": "Regulated & Public",
+  // People & GTM
   sales: "People & GTM",
   marketing: "People & GTM",
   "human-resources": "People & GTM",
+  "customer-success": "People & GTM",
+  "product-management": "People & GTM",
+  design: "People & GTM",
+  // Operations & Services
   "real-estate": "Operations & Services",
   construction: "Operations & Services",
   hospitality: "Operations & Services",
+  retail: "Operations & Services",
+  logistics: "Operations & Services",
+  manufacturing: "Operations & Services",
+  automotive: "Operations & Services",
+  energy: "Operations & Services",
+  "renewable-energy": "Operations & Services",
+  "oil-gas": "Operations & Services",
+  agriculture: "Operations & Services",
+  "food-beverage": "Operations & Services",
+  telecom: "Operations & Services",
+  aviation: "Operations & Services",
+  travel: "Operations & Services",
+  sports: "Operations & Services",
+  fashion: "Operations & Services",
 };
 
 const CONTEXT_REASONS = [
