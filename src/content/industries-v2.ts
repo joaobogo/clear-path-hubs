@@ -1880,6 +1880,10 @@ export const INDUSTRY_ENTRIES: IndustryEntry[] = [
   },
 ];
 
+// Batch 2 — 32 additional industries (2026-07 expansion to 57 total).
+import { INDUSTRY_ENTRIES_BATCH2 } from "./industries-batch2";
+INDUSTRY_ENTRIES.push(...INDUSTRY_ENTRIES_BATCH2);
+
 export function getIndustryEntry(slug: string): IndustryEntry | undefined {
   return INDUSTRY_ENTRIES.find((e) => e.slug === slug);
 }
