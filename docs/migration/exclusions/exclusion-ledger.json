@@ -1,0 +1,85 @@
+{
+  "exclusions": [
+    {
+      "exclusion_id": "EX-001",
+      "source_path": "src/pages/dashboard/**",
+      "reason": "OPERATIONAL_DASHBOARD",
+      "destination_replacement": "destination_/admin_/client_/candidate",
+      "risk_if_migrated": "CRITICAL",
+      "exclusion_verification_status": "VERIFIED"
+    },
+    {
+      "exclusion_id": "EX-002",
+      "source_path": "src/components/dashboard/**",
+      "reason": "OPERATIONAL_DASHBOARD",
+      "destination_replacement": "destination_workspace_components",
+      "risk_if_migrated": "CRITICAL",
+      "exclusion_verification_status": "VERIFIED"
+    },
+    {
+      "exclusion_id": "EX-003",
+      "source_path": "old Supabase clients/migrations",
+      "reason": "OPERATIONAL_BACKEND",
+      "destination_replacement": "destination_supabase",
+      "risk_if_migrated": "CRITICAL",
+      "exclusion_verification_status": "VERIFIED"
+    },
+    {
+      "exclusion_id": "EX-004",
+      "source_path": "old Edge Functions",
+      "reason": "OPERATIONAL_BACKEND",
+      "destination_replacement": "destination_edge_functions",
+      "risk_if_migrated": "CRITICAL",
+      "exclusion_verification_status": "VERIFIED"
+    },
+    {
+      "exclusion_id": "EX-005",
+      "source_path": "old Auth/memberships/organizations logic",
+      "reason": "OPERATIONAL_BACKEND",
+      "destination_replacement": "destination_auth_+_org_service",
+      "risk_if_migrated": "CRITICAL",
+      "exclusion_verification_status": "VERIFIED"
+    },
+    {
+      "exclusion_id": "EX-006",
+      "source_path": "old position/candidate/application logic",
+      "reason": "OPERATIONAL_BACKEND",
+      "destination_replacement": "destination_ATS_stack",
+      "risk_if_migrated": "CRITICAL",
+      "exclusion_verification_status": "VERIFIED"
+    },
+    {
+      "exclusion_id": "EX-007",
+      "source_path": "old intake transaction logic",
+      "reason": "OPERATIONAL_BACKEND",
+      "destination_replacement": "src/routes/api/public/intake.ts",
+      "risk_if_migrated": "CRITICAL",
+      "exclusion_verification_status": "VERIFIED"
+    },
+    {
+      "exclusion_id": "EX-008",
+      "source_path": "old parsing/OCR/enrichment/evidence/scoring/publication",
+      "reason": "OPERATIONAL_BACKEND",
+      "destination_replacement": "destination_scoring-service.server.ts",
+      "risk_if_migrated": "CRITICAL",
+      "exclusion_verification_status": "VERIFIED"
+    },
+    {
+      "exclusion_id": "EX-009",
+      "source_path": "old KPI/realtime/notifications/processing jobs",
+      "reason": "OPERATIONAL_BACKEND",
+      "destination_replacement": "destination_realtime_+_notifications",
+      "risk_if_migrated": "CRITICAL",
+      "exclusion_verification_status": "VERIFIED"
+    },
+    {
+      "exclusion_id": "EX-010",
+      "source_path": "QA scripts, QA reports, test data, env files, secrets",
+      "reason": "INTERNAL_ONLY",
+      "destination_replacement": "N/A",
+      "risk_if_migrated": "CRITICAL",
+      "exclusion_verification_status": "VERIFIED"
+    }
+  ],
+  "total": 10
+}
