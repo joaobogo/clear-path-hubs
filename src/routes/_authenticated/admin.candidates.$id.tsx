@@ -432,6 +432,26 @@ function InsightsBriefing({ insights }: { insights: Any }) {
       {insights?.headline_suggested && (
         <p className="mt-2 text-sm font-medium text-foreground">{insights.headline_suggested}</p>
       )}
+      {insights?.pitch_summary && (
+        <div
+          className={`mt-3 rounded-md border-l-4 p-3 text-sm leading-relaxed ${
+            insights.pitch_tone === "sell"
+              ? "border-emerald-500 bg-emerald-500/10 text-foreground"
+              : insights.pitch_tone === "cautious"
+                ? "border-destructive bg-destructive/10 text-foreground"
+                : "border-amber-500 bg-amber-500/10 text-foreground"
+          }`}
+        >
+          <div className="mb-1 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+            {insights.pitch_tone === "sell"
+              ? "Recruiter pitch"
+              : insights.pitch_tone === "cautious"
+                ? "Honest read"
+                : "Balanced view"}
+          </div>
+          {insights.pitch_summary}
+        </div>
+      )}
       {insights?.narrative && (
         <div className="mt-3 whitespace-pre-wrap text-sm leading-relaxed text-foreground/90">
           {insights.narrative}
