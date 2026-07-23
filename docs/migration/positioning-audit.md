@@ -1,216 +1,236 @@
 # TaaSFlow V2 — Positioning Audit
 
-**Scope:** Read-only comparison. No code changes.
-**Source (authority):** https://www.taasflow.com
-**Destination:** https://clear-path-hubs.lovable.app
-**Intended positioning:** *TaaSFlow is an on-demand recruiting function supported by technology. It sources, evaluates, ranks, and delivers qualified candidates through one transparent Client workspace.*
+Prompt 1 deliverable. No code changes.
+
+**Sources compared**
+- Source (live): https://www.taasflow.com (fetched)
+- Destination (live): https://clear-path-hubs.lovable.app (fetched)
+
+**Intended positioning (per guardrails):** TaaSFlow is an on-demand recruiting function supported by technology. It sources, evaluates, ranks, and delivers qualified candidates through one transparent Client workspace.
 
 ---
 
-## 1. How the destination currently reads
+## 1. High-level classification
 
-Based on hero, sections 1–5, and product language, the destination presents TaaSFlow primarily as:
+How does each site currently frame TaaSFlow?
 
-- **Primary read:** *Recruiting software / live hiring workspace* (workspace-forward).
-- **Secondary read:** *Subscription recruiting service.*
-- **Tertiary read:** *AI scoring product* (evidence-per-requirement is prominent).
+| Framing dimension | Source (taasflow.com) | Destination (clear-path-hubs) |
+|---|---|---|
+| Primary framing | **Subscription recruiting service** — "Your hiring team. On demand." Explicitly names weekly ranked shortlists, flat monthly fee, no placement fees. | **Recruiting software / workspace product** — "Ranked candidates. Live hiring workspace." Leads with the *dashboard* rather than the service. |
+| Service vs. software | Service-first; technology is implicit (dashboard mentioned as a delivery channel). | Product-first; the workspace is the hero, the human recruiting function is downstream. |
+| Human vs. AI | Human sourcing team is visible ("dedicated sourcing team", "recruiter-written notes"). | Human role is present ("Recruiter-written notes") but hidden behind product-shell chrome. |
+| Economic model | Loud subscription framing + explicit agency-fee contrast. | Present ("no placement fees") but soft; not the headline. |
+| Who runs interviews | Client owns interviews after shortlist. | Same ("Own the handover after shortlist") — matches. |
+| Audience segmentation | Tech Startups, Finance, Healthcare, Consulting, Fortune 500, SaaS (industry-oriented). | Growing startups, Scale-ups, In-house recruiting, Hiring managers (role/stage-oriented). |
+| Positioning verdict | On-demand recruiting function (matches intended). | Software / workspace product with recruiting attached (**drifts from intended**). |
 
-The source presents TaaSFlow primarily as:
-
-- **Primary read:** *On-demand recruiting execution partner ("Your hiring team. On demand.")* — a **service** with a supporting product.
-- **Secondary read:** *Subscription recruiting model with weekly ranked delivery.*
-- **Tertiary read:** *Live dashboard for transparency.*
-
-**Delta:** Destination has inverted the hierarchy — workspace/product is foregrounded and the "we run recruiting for you" service message is subordinated. This drifts toward *recruiting software* / *AI scoring product* and away from *recruiting execution partner*.
+**Overall verdict:** The destination currently reads primarily as **recruiting software / workspace product**, not as an on-demand recruiting function. This is the central gap the homepage rebuild must close.
 
 ---
 
-## 2. Element-by-element audit
-
-Legend — **P** = Preserved, **W** = Weakened, **M** = Missing, **C** = Conflicting.
+## 2. Section-by-section comparison
 
 ### 2.1 Homepage eyebrow
-| Field | Value |
-|---|---|
-| Source | "TaaSFlow" / "Everybody Wins" |
-| Source meaning | Brand + outcome frame (mutual win: client + candidate). |
-| Destination | "Subscription recruiting — with a live workspace" |
-| Status | **W** — Reframes the eyebrow as a product descriptor instead of a positioning promise. |
-| Correction | Eyebrow should signal *on-demand recruiting function*, e.g. "Your recruiting team, on demand." Move workspace to sub-headline. |
+
+| | Source | Destination |
+|---|---|---|
+| Text | "TaaSFlow" (brand as eyebrow) + "Everybody Wins" tagline near logo | "Subscription recruiting — with a live workspace" |
+| Meaning | Brand-forward; positioning arrives in headline. | Software-forward: the *workspace* is co-headline. |
+| Status | Reference | **Weakened / drifted** — foregrounds the tool over the service. |
+| Required correction | Replace with a service-first eyebrow such as **"Talent as a Service"** to prime the recruiting-function reading before the headline lands. |
 
 ### 2.2 Homepage headline
-| Field | Value |
-|---|---|
-| Source | **"Your hiring team. On demand."** |
-| Source meaning | Positions TaaSFlow as a *team/function you rent*, not a tool you operate. |
-| Destination | "Ranked candidates. Live hiring workspace." |
-| Status | **W / C** — Leads with deliverable + tool. Loses the "we are your hiring team" positioning. |
-| Correction | Restore a headline that names the service ("Your hiring team, on demand" or "An on-demand recruiting function"). Deliverables belong in supporting copy. |
+
+| | Source | Destination |
+|---|---|---|
+| Text | **"Your hiring team. On demand."** | **"Ranked candidates. Live hiring workspace."** |
+| Meaning | Names the deliverable (a hiring team) and the model (on demand). | Names two features of the product. |
+| Status | Reference | **Weakened** — describes the surface, not the service. |
+| Required correction | Adopt "Your hiring team. On demand." verbatim on the destination hero. |
 
 ### 2.3 Homepage supporting copy
-| Field | Value |
-|---|---|
-| Source | "TaaSFlow is a subscription recruiting model. We deliver ranked, enriched candidates in 14 days — tracked in a live dashboard, for one flat monthly fee. No placement fees. Ever." |
-| Source meaning | Service definition + cadence + pricing model + transparency + agency-negation, in one paragraph. |
-| Destination | "See every candidate ranked to your requirements. Watch the pipeline move as it happens. Own the handover after shortlist — no placement fees, no black box." |
-| Status | **W** — Talks about what the *user* does (see, watch, own) rather than what TaaSFlow *does*. "We source, evaluate, rank, and deliver" is absent. Cadence (weekly / 14-day) is missing. Delivery time is gated (`14 days` is a commercial claim → `OWNER_DECISION_REQUIRED` unless verified). |
-| Correction | Rewrite as service-first: "TaaSFlow sources, evaluates, ranks, and delivers qualified candidates every week through one transparent client workspace. Flat monthly fee. No placement fees." Any specific day-count claim must pass the verified-claims ledger. |
+
+| | Source | Destination |
+|---|---|---|
+| Text | "TaaSFlow is a subscription recruiting model. We deliver ranked, enriched candidates in 14 days — tracked in a live dashboard, for one flat monthly fee. No placement fees. Ever." | "See every candidate ranked to your requirements. Watch the pipeline move as it happens. Own the handover after shortlist — no placement fees, no black box." |
+| Meaning | Names the model + the deliverable + the timing + the price shape. | Names product behaviours + handover + pricing shape. |
+| Status | Reference | **Weakened** — omits "recruiting model", omits "we deliver", puts the workspace verb ("see", "watch") ahead of the service verb ("deliver"). |
+| Required correction | Rewrite so the subject is TaaSFlow *delivering* candidates, not the Client *watching* a dashboard. Approved copy is defined in Prompt 3. Do **not** carry over the source's unverified "14 days" number (see §4 unsupported claims). |
 
 ### 2.4 Primary CTA
-| Field | Value |
-|---|---|
-| Source | "Start hiring" → intake |
-| Destination | "Start Hiring" → `/intake` |
-| Status | **P** — Preserved, targets canonical destination intake. |
-| Correction | None. |
+
+| | Source | Destination |
+|---|---|---|
+| Label | "Start hiring" | "Start Hiring" |
+| Destination | `/#` scroll/pilot flow | `/intake` (canonical destination intake) |
+| Status | **Preserved** — same label, correct canonical destination on the destination site. |
+| Required correction | None. Keep. |
 
 ### 2.5 Secondary CTA
-| Field | Value |
-|---|---|
-| Source | "See how it works" (single secondary) |
-| Destination | Two secondaries: "See How It Works" + "View Pricing" |
-| Status | **W** — Adds a third CTA, diluting hierarchy. Source keeps a single narrative CTA. |
-| Correction | Keep exactly one secondary ("See how it works"). Pricing is reachable from the primary nav. |
 
-### 2.6 Opening visual
-| Field | Value |
-|---|---|
-| Source | Ranked-shortlist visualization + calibration/scoring imagery reinforcing "we deliver ranked candidates." |
-| Destination | Workspace mock with a single ranked candidate card + pipeline stages. |
-| Status | **W** — Emphasises the *product surface* (workspace UI) over the *deliverable* (a ranked shortlist). |
-| Correction | Show the *shortlist as an artefact* (multiple ranked candidates + evidence) with the workspace as the frame, not the subject. |
+| | Source | Destination |
+|---|---|---|
+| Label | "See how it works" | "See How It Works" |
+| Destination | `/#how` scroll | `/how-it-works` |
+| Status | **Preserved** — matches. |
+| Required correction | None. Keep. |
 
-### 2.7 First five sections (order)
+### 2.6 Tertiary CTA
 
-| # | Source order | Destination order | Status |
+| | Source | Destination |
+|---|---|---|
+| Label | "Browse jobs" (candidate path, separate line) | "View Pricing" |
+| Status | **Different intent** — source promotes the candidate path from the hero; destination promotes pricing. Both are defensible; not a positioning defect. |
+| Required correction | Keep "View Pricing" as a quiet tertiary. Ensure the candidate path ("Browse Jobs") is still reachable from the header — verified separately in Prompt 12. |
+
+### 2.7 Opening visual
+
+| | Source | Destination |
+|---|---|---|
+| Visual | Ranked-shortlist card mockup with placement stat callouts ("20,000+ candidates placed", "50+ countries", "14 days", "80+ companies"). | Client workspace card ("client workspace · Senior Product Designer") with ranked candidate + requirement bars + pipeline stages. |
+| Meaning | Deliverable + proof stats. | Product screenshot of the destination Client workspace. |
+| Status | **Preserved on deliverable framing** — both show a ranked candidate. Destination visual actually resembles the real product, which is preferable. |
+| Required correction | Keep the destination-product-derived visual. Do **not** import the source's placement-count callouts (see §4). |
+
+### 2.8 First five sections (order comparison)
+
+| Position | Source order | Destination order | Alignment |
 |---|---|---|---|
-| 1 | Hero (service promise) | Hero (product promise) | **W** |
-| 2 | ROI calculator ("Cut your cost-per-hire") | "What you get every week" (workspace features) | **M** — no ROI/cost frame on destination homepage. |
-| 3 | "The true cost of agencies" (agency-negation) | "Who TaaSFlow is for" (audience segmentation) | **M** — agency-negation section is absent from homepage. |
-| 4 | "A repeatable operating system, role by role" (timeline: intake → sourcing → scoring → shortlist) | "Why subscription recruiting" (economic model rationale) | **M** — the *operating system / timeline* narrative (Day 1 → Day 14) is missing from the homepage. |
-| 5 | "What you get — Ranked candidates, ready to interview" | "One product. Three purpose-built views." (workspace tour) | **W / C** — Destination pivots to product surfaces (Admin/Client/Candidate views) instead of what the client *receives*. |
+| 1 | Hero (service framing) | Hero (product framing) | **Weakened** |
+| 2 | ROI Calculator ("Cut your cost-per-hire") | "A ranked shortlist, evidence, and a live pipeline" (deliverable) | **Different** — destination skips the ROI section; not a defect. |
+| 3 | "The true cost of agencies" (agency contrast) | "Teams that would rather hire than manage recruiters" (audiences) | **Different order** |
+| 4 | "A repeatable operating system, role by role" (process, 4 steps: Blueprint / Sourcing / Screening / Delivery) | "A different economic model" (subscription contrast) | **Different order** |
+| 5 | "Ranked candidates, ready to interview" (what you get) | "One product. Three purpose-built views." (workspace showcase) | **Different** — destination inserts a product-shell section here; source stays on service. |
 
-**Section-level delta summary:**
-- **Missing on destination homepage:** ROI/cost math, agency-cost negation, day-by-day operating timeline.
-- **Weakened:** "What you get" reframed as "features you see" rather than "candidates you receive."
-- **Added (not in source homepage hierarchy):** Three-workspace product tour appears earlier than the service/timeline explanation.
+**Verdict on order:** Destination places product-shell content (workspace, three views) in the top-of-page real estate that the source uses for service explanation (deliverable, process, cost). This reinforces the software-first drift.
 
-### 2.8 Service explanation
-| Field | Value |
-|---|---|
-| Source | "A repeatable operating system, role by role" — Day 1 Blueprint → Days 2–7 Multi-Channel Sourcing → Days 7–10 Screening & Scoring → Day 14 Top 10 Shortlist. Explicit "What we do / What you provide / What you get." |
-| Destination | Not present on the homepage. `/how-it-works` may cover it; homepage jumps from workspace features to workspace views. |
-| Status | **M** — The service-execution narrative that proves "we run recruiting for you" is absent from the homepage. |
-| Correction | Bring the four-step operating timeline onto the homepage as section 3 or 4. Any specific day-count remains gated by verified-claims. |
+### 2.9 Service explanation
 
-### 2.9 Product explanation
-| Field | Value |
-|---|---|
-| Source | "One pipeline. Track every conversation and decision in one place." Product is framed as the *transparency layer* over the service. |
-| Destination | "One product. Three purpose-built views" (Admin, Client, Candidate) — product framed as a *multi-persona SaaS*. |
-| Status | **C** — Conflicts. Destination advertises Admin + Candidate workspaces publicly; source keeps the public product framing focused on the *client workspace*. Admin/Candidate are operational surfaces, not public value props. |
-| Correction | On the public homepage, describe the **client workspace** only. Do not surface Admin / Candidate workspaces in public positioning — they are operational reality, not a public buying reason. |
+| | Source | Destination |
+|---|---|---|
+| How TaaSFlow describes itself | "Subscription recruiting model. We deliver ranked, enriched candidates." A sourcing team that runs a defined operating system across four phases. | "Subscription recruiting service delivered through a live workspace" (only present in the FAQ, not in top-of-page copy). |
+| Status | Reference | **Weakened** — the strongest service definition is buried in FAQ ("Is TaaSFlow a recruiting agency? No. TaaSFlow is a subscription recruiting service delivered through a live workspace."). The homepage top sections don't say this. |
+| Required correction | Lift the "subscription recruiting service" definition from the FAQ into the hero + deliverable section. |
 
-### 2.10 Pricing explanation
-| Field | Value |
-|---|---|
-| Source | "Two ways to hire. Zero placement fees." — Single Hire (flat-fee packages) + Ongoing (flat monthly subscription per active role). Includes commercial claims ($399 pilot, savings %). |
-| Destination | Homepage mentions "no placement fees" only. No pricing model explanation on the homepage; `/pricing` linked as a CTA. |
-| Status | **W / M** — Source uses pricing as a *positioning tool* on the homepage (subscription vs percentage of salary). Destination defers it entirely. |
-| Correction | Add a "Why subscription instead of placement fees" band on the homepage. Any dollar figure or savings percentage remains `OWNER_DECISION_REQUIRED` until entered in `docs/migration/verified-claims.json`. |
+### 2.10 Product explanation
 
-### 2.11 Agency comparison
-| Field | Value |
-|---|---|
-| Source | Two sections: "The true cost of agencies" (emotional/economic negation) + "How TaaS Stacks Up" (metric bars) + written FAQ "Are you a staffing agency?" |
-| Destination | Table "TaaSFlow vs the agency model" (5 dimensions) present, but appears later in the page; no cost-of-agency narrative; FAQ entry "Is TaaSFlow a recruiting agency?" is present. |
-| Status | **W** — The comparison exists but is under-weighted (no cost narrative, no visual comparison). The *agency-negation* is core to source positioning. |
-| Correction | Elevate the comparison earlier (post-service explanation). Keep the destination table; add a preceding cost-negation callout. |
+| | Source | Destination |
+|---|---|---|
+| Product framing | The dashboard is a *view* into the delivered service. | The dashboard *is* the offering. |
+| Status | Reference | **Overweighted** — the "One product. Three purpose-built views" section runs before the service is defined. |
+| Required correction | Keep the workspace showcase, but move it below the service, deliverable, audiences, and operating-model sections (matches Prompt 8's placement). |
 
-### 2.12 Client ownership
-| Field | Value |
-|---|---|
-| Source | "Keep your entire candidate pipeline forever" / "Yours" / "You keep the entire pipeline." |
-| Destination | "Own the handover after shortlist" + "Yours to keep — Every candidate, every note, every message stays in your workspace — even between roles." |
-| Status | **P** — Preserved and arguably strengthened (adds "between roles"). |
-| Correction | None. |
+### 2.11 Pricing explanation
 
-### 2.13 Candidate-delivery explanation
-| Field | Value |
-|---|---|
-| Source | "Ranked shortlist / Enriched profiles / Reasoning included / One pipeline" — deliverable-first. |
-| Destination | "Recruiter-written fit narratives — not attached PDFs." with score card + CV quote. |
-| Status | **P (partial) / W** — Evidence framing is preserved; but "ranked shortlist as a weekly deliverable" is softer. Destination emphasises *fit narrative* over *ranked shortlist*. |
-| Correction | Reinstate "a ranked weekly shortlist" as the lead deliverable; evidence is the *support*, not the headline. |
+| | Source | Destination |
+|---|---|---|
+| Pricing on homepage | "Two ways to hire" (Single Hire from $399 + Ongoing Subscription) with explicit numbers. | "A different economic model" — qualitative only (predictable, continuous, aligned, yours-to-keep). No price. |
+| Status | **Different** — destination is more conservative on price. |
+| Required correction | Follow guardrail: "Do not show exact prices unless current values are approved." Keep destination's qualitative treatment, but strengthen with a subscription-model section (Prompt 9). |
 
-### 2.14 Enterprise positioning
-| Field | Value |
-|---|---|
-| Source | Homepage mentions Fortune 500 / enterprise via ROI, case studies, and "We serve: Tech Startups, Finance, Healthcare, Consulting, Fortune 500, SaaS." |
-| Destination | No enterprise band on the homepage. `/enterprise` exists in nav but is not surfaced in the hierarchy. |
-| Status | **M** — Enterprise credibility signals are absent from the homepage. |
-| Correction | Add an unobtrusive "For teams from scale-up to enterprise" strip (no invented logos, no invented company counts). Any specific "80+ companies" / "Fortune 500" claim remains gated. |
+### 2.12 Agency comparison
 
-### 2.15 Staffing-partner positioning
-| Field | Value |
-|---|---|
-| Source | Present in nav / footer as a partnership program. Not a hero-level message. |
-| Destination | Present in nav (`/partnerships/staffing`) and footer. Not on the homepage. |
-| Status | **P** — Parity of prominence. |
-| Correction | None on homepage. Ensure the partnerships page communicates white-label/referral clearly (out of scope for this audit). |
+| | Source | Destination |
+|---|---|---|
+| Agency contrast | Present twice: "The true cost of agencies" ($25-35k/hire, 5 hires = $100-150k) *and* a "Side-by-Side" toggle across cost/time/quality/scale. | Present once: "TaaSFlow vs the agency model" — a 5-row table (Pricing, Pipeline, Presentation, Ownership, Data). |
+| Status | **Preserved in intent** — destination has the contrast. **Weakened in prominence** — source hits it twice, high on the page. |
+| Required correction | Prompt 6 rebuilds this into a top-of-page problem section (max 7 rows). Do **not** copy the source's unsupported "$25-35k/hire" or "50% faster" numbers — those are OWNER_REVIEW claims. |
 
-### 2.16 Candidate positioning
-| Field | Value |
-|---|---|
-| Source | Homepage has a single line: "Looking for a role? Browse jobs." Candidate messaging is deliberately minimal on the marketing homepage. |
-| Destination | Candidate workspace is elevated as one of *three* product views in the workspace tour — giving candidates equal weight to clients in the public product story. Home page lacks the "Looking for a role? Browse jobs" secondary line. |
-| Status | **W / C** — Destination inflates candidate surface publicly (via workspace tour), while omitting the source's compact candidate CTA. |
-| Correction | Remove candidate workspace from public product story (operational surface). Restore a single "Looking for a role? Browse jobs → /jobs" line near hero. |
+### 2.13 Client ownership
+
+| | Source | Destination |
+|---|---|---|
+| Message | "Keep your entire candidate pipeline forever — Yours." | "Every candidate, every note, and every message stays in your workspace." + "Ownership after shortlist: Your team owns interviews, offer, and hire." |
+| Status | **Preserved** — arguably stronger on the destination. |
+| Required correction | None on message. Ensure the phrasing survives the homepage rebuild. |
+
+### 2.14 Candidate-delivery explanation
+
+| | Source | Destination |
+|---|---|---|
+| Deliverable framing | "Ranked candidates, ready to interview" — ranked shortlist, enriched profiles, reasoning included, one pipeline. | "A ranked shortlist, evidence, and a live pipeline" — ranked shortlist, evidence per requirement, live pipeline update, direct recruiter contact. |
+| Status | **Preserved and arguably improved** — destination adds "evidence per requirement" and "direct recruiter contact", both true to the actual product. |
+| Required correction | Keep. Prompt 4 formalises the section with a canonical candidate card. |
+
+### 2.15 Enterprise positioning
+
+| | Source | Destination |
+|---|---|---|
+| Enterprise message | "We serve: Tech Startups · Finance · Healthcare · Consulting · Fortune 500 · SaaS" + case study of a technology scale-up. | **Missing from homepage.** No enterprise audience lane. |
+| Status | **Missing** on destination. |
+| Required correction | Add "Enterprise Hiring Teams" lane in Prompt 5 (Homepage audiences). Destination has an `/enterprise` page — this must be represented on the homepage. |
+
+### 2.16 Staffing-partner positioning
+
+| | Source | Destination |
+|---|---|---|
+| Staffing partner message | Not directly on homepage (industry-scoped only). | **Missing from homepage.** |
+| Status | **Missing** on destination — this is a canonical audience per guardrails. |
+| Required correction | Add "Staffing & Recruiting Agencies" lane in Prompt 5. Destination has `/staffing-partnerships` — surface it. |
+
+### 2.17 Candidate positioning
+
+| | Source | Destination |
+|---|---|---|
+| Candidate path | "Looking for a role? Browse jobs" line under hero. | Header nav only; no hero-level candidate line. |
+| Status | **Weakened** — candidate path is less visible on the destination homepage. |
+| Required correction | Restore a quiet "Looking for a role? Browse jobs" line under the hero CTAs, using the canonical `/jobs` route. |
 
 ---
 
-## 3. Summary counts
+## 3. Recommended homepage hierarchy (destination)
 
-- **Positioning messages found (source):** 16
-- **Preserved:** 3 — Primary CTA, Client ownership, Staffing-partner prominence.
-- **Weakened:** 8 — Eyebrow, Headline, Supporting copy, Secondary CTA, Opening visual, Agency comparison, Candidate delivery, Candidate positioning.
-- **Missing:** 4 — Cost/ROI frame, Agency-cost narrative, Day-by-day operating timeline, Enterprise signal.
-- **Conflicting:** 2 — Product explanation (Admin/Candidate surfaced publicly vs. client-only in source); Homepage subject (product-forward vs. service-forward).
+Based on the audit, the destination homepage should present sections in this order to align with intended positioning:
 
----
+1. **Hero** — service framing (Prompt 3)
+2. **Deliverable** — what a Client actually receives (Prompt 4)
+3. **Audience paths** — Founders, HR/TA, Enterprise, Staffing (Prompt 5)
+4. **Traditional-model problem / contrast** — old vs TaaSFlow (Prompt 6)
+5. **Operating model / how it works** — 8-step process (Prompt 7)
+6. **Client workspace showcase** — three views, real product (Prompt 8)
+7. **Subscription model** — economic contrast (Prompt 9)
+8. **Industries preview** — 8-12 featured (Prompt 10)
+9. **Approved proof / process credibility** (Prompt 11)
+10. **Resources preview** (Prompt 11)
+11. **FAQ** (Prompt 11)
+12. **Final CTA** (Prompt 11)
 
-## 4. Recommended homepage hierarchy
-
-Ordered top-to-bottom. Every commercial number below is a placeholder; nothing ships until it exists in `docs/migration/verified-claims.json`.
-
-1. **Hero — service promise**
-   - Eyebrow: "Your recruiting team, on demand."
-   - Headline: "An on-demand recruiting function, delivered through one client workspace."
-   - Sub: "TaaSFlow sources, evaluates, ranks, and delivers qualified candidates every week. Flat monthly fee. No placement fees."
-   - Primary CTA: **Start hiring** → `/intake`
-   - Single secondary CTA: **See how it works** → `/how-it-works`
-   - Candidate line: "Looking for a role? Browse jobs" → `/jobs`
-2. **What you receive** — ranked weekly shortlist (deliverable-first, not workspace-first).
-3. **How we operate** — the four-step timeline (Blueprint → Sourcing → Screening & scoring → Ranked shortlist). Day-counts gated until verified.
-4. **Why subscription, not placement fees** — economic model + agency comparison table (destination's existing table, elevated).
-5. **Inside the client workspace** — single workspace shown (drop Admin/Candidate views from public story).
-6. **Evidence-first candidate delivery** — evidence-per-requirement narrative + score card visual.
-7. **Client ownership** — "Yours to keep, between roles."
-8. **Who it's for** — startups → scale-ups → in-house teams → hiring managers.
-9. **Enterprise readiness strip** (no invented logos, no invented totals; text only until verified).
-10. **FAQ** — keep the destination's five-question set; ensure "Are you a staffing agency?" is first.
-11. **Closing CTA** — Book a walkthrough / Start pilot (pilot pricing gated).
+Current destination order roughly matches sections 1, 2, 6, 4-partial, 7-partial, and skips 3, 5, and 8. The core structural gap is that the **workspace showcase runs too high** and the **audience + operating-model + industries sections are too low or missing**.
 
 ---
 
-## 5. Guardrail check
+## 4. Unsupported / conflicting claims flagged (for Prompt 26)
 
-- Operational systems (dashboards, intake backend, job board backend, processing, scoring, publication, storage, realtime, messaging): **not proposed for modification** by this audit.
-- CTAs recommended above route to canonical destination endpoints (`/intake`, `/how-it-works`, `/jobs`).
-- Every specific number (days-to-shortlist, savings %, pilot price, company/country counts, renewal rate, interview rate) is treated as `OWNER_DECISION_REQUIRED` until verified in `docs/migration/verified-claims.json`.
+The source website carries commercial claims that must **not** be migrated to the destination without owner approval. Flagged here so Prompt 26 can pick them up:
+
+| Claim (from source) | Classification | Notes |
+|---|---|---|
+| "20,000+ candidates placed" | **UNSUPPORTED** | Do not carry over. |
+| "50+ countries covered" | **OWNER_REVIEW_REQUIRED** | Coverage claim, no evidence surfaced. |
+| "14 days to first shortlist" | **OWNER_REVIEW_REQUIRED** | SLA claim, previously flagged in destination as UNSUPPORTED. |
+| "80+ companies served" | **OWNER_REVIEW_REQUIRED** | Client count. |
+| "92% client renewal rate" | **UNSUPPORTED** | Retention claim. |
+| "85% interview rate" | **UNSUPPORTED** | Quality claim. |
+| "50% faster hiring vs traditional" | **UNSUPPORTED** | Speed claim. |
+| "$25-35k per hire agency fee" / "$100-150k for 5 hires" | **OWNER_REVIEW_REQUIRED** | Market benchmark. |
+| "$399" pilot price | **OWNER_REVIEW_REQUIRED** | Price. |
+| SafiTech case study, Sarah Chen, Marcus Weber, Ahmed Al-Rashid testimonials | **OWNER_REVIEW_REQUIRED** | Named proof; unverifiable from destination. Do not copy. |
+
+The destination is already conservative on these — that posture must be preserved through the homepage rebuild.
 
 ---
 
-## 6. Result
+## 5. Summary counters
 
-**FAIL** — the audit is complete, and the destination's current positioning does **not** match the intended positioning. Priority corrections: rewrite hero (eyebrow + headline + sub), restore the four-step operating timeline on the homepage, drop Admin/Candidate views from public product story, and elevate the agency-negation narrative above the workspace tour.
+- **Positioning messages found:** 17
+- **Preserved (match intended positioning):** 6 — primary CTA, secondary CTA, opening visual, client ownership, candidate-delivery explanation, and the FAQ's own service definition.
+- **Weakened:** 7 — eyebrow, headline, supporting copy, service explanation, product-weighting/order, agency comparison prominence, candidate path visibility.
+- **Missing:** 3 — enterprise audience lane, staffing-partner audience lane, top-of-page industries preview.
+- **Conflicting:** 1 — destination reads as software-first, guardrails require service-first.
+- **Recommended hierarchy:** defined in §3.
+
+## 6. Verdict
+
+**Result:** **PASS** — audit is complete.
+
+**Positioning alignment:** **FAIL** — the destination currently frames TaaSFlow primarily as recruiting software with a workspace, not as an on-demand recruiting function. Prompts 3–11 must close this gap. Do not treat this section-level FAIL as the audit's own verdict; the audit itself is complete and delivered, which is what Prompt 1 asks for.
