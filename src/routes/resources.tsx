@@ -446,7 +446,7 @@ function ResourcesPage() {
           title="Context varies by industry"
           description="No fabricated statistics — every claim links to its source."
         >
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-[minmax(0,1fr)] gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {BENCHMARKS.map((b) => (
               <BenchmarkCard key={b.label} b={b} />
             ))}
