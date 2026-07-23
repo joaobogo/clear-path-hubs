@@ -256,6 +256,16 @@
 }
 
 .dark {
+  --taas-shell-bg:             oklch(0.14 0.030 262);
+  --taas-shell-bg-gradient:    radial-gradient(1200px 600px at 100% -10%, oklch(0.30 0.12 258 / 0.30), transparent 60%),
+                               radial-gradient(900px 500px at -10% 110%, oklch(0.24 0.06 262 / 0.40), transparent 55%),
+                               var(--taas-shell-bg);
+  --taas-shell-sidebar-bg:     oklch(0.17 0.030 262);
+  --taas-shell-sidebar-border: oklch(1 0 0 / 0.08);
+  --taas-shell-topbar-bg:      oklch(0.15 0.030 262 / 0.72);
+  --taas-shell-topbar-border:  oklch(1 0 0 / 0.08);
+  --taas-shell-nav-hover-bg:   oklch(1 0 0 / 0.05);
+}
   --brand-navy:        oklch(0.92 0.015 245);
   --brand-navy-light:  oklch(0.78 0.020 245);
   --brand-navy-dark:   oklch(0.98 0.005 245);
