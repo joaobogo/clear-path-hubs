@@ -1055,3 +1055,57 @@ export const getClientCandidatesForOrg = createServerFn({ method: "GET" })
       .limit(data.limit);
     return (rows ?? []) as AnyRow[];
   });
+
+export const getClientDocuments = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: unknown) =>
+    z
+      .object({
+        id: z.string().uuid(),
+        limit: z.number().int().min(1).max(200).optional().default(100),
+      })
+      .parse(i),
+  )
+  .handler(async ({ data, context }) => {
+    await requireStaff(context.userId);
+    const s = await getAdmin();
+    // Documents attached to candidates matched to any position in this org
+    const { data: matches } = await s
+      .from("candidate_matches")
+      .select("candidate_profile_id")
+      .eq("organization_id", data.id);
+    const profileIds = Array.from(
+      new Set(((matches ?? []) as AnyRow[]).map((m) => m.candidate_profile_id).filter(Boolean)),
+    );
+    if (profileIds.length === 0) return [] as AnyRow[];
+    const { data: files } = await s
+      .from("files")
+      .select(
+        "id,filename,mime_type,size,file_status,created_at,candidate_profile_id,candidate_profiles(id,full_name)",
+      )
+      .in("candidate_profile_id", profileIds)
+      .order("created_at", { ascending: false })
+      .limit(data.limit);
+    return (files ?? []) as AnyRow[];
+  });
+
+export const updateClientNotes = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: unknown) =>
+    z
+      .object({
+        id: z.string().uuid(),
+        internal_notes: z.string().max(20000),
+      })
+      .parse(i),
+  )
+  .handler(async ({ data, context }) => {
+    await requireStaff(context.userId);
+    const s = await getAdmin();
+    const { error } = await s
+      .from("organizations")
+      .update({ internal_notes: data.internal_notes, updated_at: new Date().toISOString() })
+      .eq("id", data.id);
+    if (error) throw new Error(error.message);
+    return { ok: true, trace_id: crypto.randomUUID() };
+  });
