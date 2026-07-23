@@ -156,99 +156,49 @@ export function IndustryTemplate({ entry }: { entry: IndustryEntry }) {
         </PublicSection>
       ) : null}
 
-      {/* 4. Common role families */}
-      {entry.roleFamilies && entry.roleFamilies.length > 0 ? (
-        <PublicSection className="py-12">
-          <PublicPage>
-            <h2 className="font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight">
-              Common role families in {entry.name}
-            </h2>
-            <p className="mt-2 max-w-2xl text-[color:var(--brand-navy)]/70">
-              Grouped by specialisation. Each family has its own scoring rubric.
+      {/* 4. Interactive role explorer */}
+      <PublicSection id="role-explorer" className="py-12">
+        <PublicPage>
+          <div className="max-w-3xl">
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean)]">
+              Role explorer
             </p>
-            <div className="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-              {entry.roleFamilies.map((fam) => (
-                <div
-                  key={fam.name}
-                  className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6"
-                >
-                  <h3 className="text-lg font-semibold text-[color:var(--brand-navy)]">
-                    {fam.name}
-                  </h3>
-                  {fam.blurb ? (
-                    <p className="mt-2 text-sm text-[color:var(--brand-navy)]/70">
-                      {fam.blurb}
-                    </p>
-                  ) : null}
-                  <ul className="mt-3 space-y-1.5 text-sm text-[color:var(--brand-navy)]/85">
-                    {fam.roles.map((r) => (
-                      <li key={r} className="flex gap-2">
-                        <span
-                          aria-hidden
-                          className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-[color:var(--brand-navy)]"
-                        />
-                        {r}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
-            </div>
-          </PublicPage>
-        </PublicSection>
-      ) : (
-        // Fallback: flat roles list
-        <PublicSection className="py-8">
-          <PublicPage>
-            <div className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6 sm:p-8">
-              <h2 className="font-[family-name:var(--brand-font-display)] text-2xl font-semibold">
-                Roles we source in {entry.name}
-              </h2>
-              <ul className="mt-5 grid gap-2 text-sm text-[color:var(--brand-navy)]/85 sm:grid-cols-2 lg:grid-cols-3">
-                {entry.roles.map((r) => (
-                  <li key={r} className="flex gap-2">
-                    <span
-                      aria-hidden
-                      className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-[color:var(--brand-navy)]"
-                    />
-                    {r}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </PublicPage>
-        </PublicSection>
-      )}
+            <h2 className="mt-2 font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight">
+              Explore {entry.name} roles TaaSFlow sources
+            </h2>
+            <p className="mt-2 text-[color:var(--brand-navy)]/70">
+              Select a family to see typical roles, common requirements, the
+              signals we evaluate, and a sample of the evidence we quote back.
+            </p>
+          </div>
+          <div className="mt-8">
+            <IndustryRoleExplorer entry={entry} />
+          </div>
+        </PublicPage>
+      </PublicSection>
 
-      {/* 5. Candidate signals evaluated */}
-      {entry.candidateSignals && entry.candidateSignals.length > 0 ? (
-        <PublicSection className="border-t border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-mist)]/40 py-12">
-          <PublicPage>
-            <h2 className="font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight">
-              Candidate signals we evaluate
-            </h2>
-            <p className="mt-2 max-w-2xl text-[color:var(--brand-navy)]/70">
-              Every point of the score maps to a specific evidence quote from
-              the CV — no keyword matching.
+      {/* 5. Interactive candidate-signal explorer */}
+      <PublicSection className="border-t border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-mist)]/40 py-12">
+        <PublicPage>
+          <div className="max-w-3xl">
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean)]">
+              Candidate signals
             </p>
-            <div className="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-              {entry.candidateSignals.map((s) => (
-                <div
-                  key={s.title}
-                  className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6"
-                >
-                  <h3 className="text-base font-semibold text-[color:var(--brand-navy)]">
-                    {s.title}
-                  </h3>
-                  <p className="mt-2 text-sm text-[color:var(--brand-navy)]/75">
-                    {s.body}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </PublicPage>
-        </PublicSection>
-      ) : null}
+            <h2 className="mt-2 font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight">
+              What TaaSFlow evaluates for {entry.name}
+            </h2>
+            <p className="mt-2 text-[color:var(--brand-navy)]/70">
+              Every point of the score maps to a specific evidence quote from
+              the CV. Tap a signal to see what it means and how we validate it.
+            </p>
+          </div>
+          <div className="mt-8">
+            <IndustrySignalExplorer entry={entry} />
+          </div>
+        </PublicPage>
+      </PublicSection>
+
+
 
       {/* 6. Skills, tools, certifications */}
       {entry.skills || entry.tools || entry.certifications || entry.regulatedRequirements ? (
