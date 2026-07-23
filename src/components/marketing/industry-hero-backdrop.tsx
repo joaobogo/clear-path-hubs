@@ -1,3 +1,4 @@
+import type { ReactElement } from "react";
 import type { IndustryPattern } from "@/content/industry-visual-identity";
 
 /**
