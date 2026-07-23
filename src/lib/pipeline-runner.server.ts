@@ -164,8 +164,10 @@ export async function runPipelineForMatch(matchId: string, opts: { force?: boole
 
     // ─── PARSE ────────────────────────────────────────────────────────────────
     if (!ctx.file) {
+      // No CV on file — nothing to retry. Mark for manual review and skip
+      // recording a failed job (a new failed row on every retry pollutes the
+      // Pipeline Health feed with the same unrecoverable error).
       await setState(s, matchId, "manual_review_required", { trace_id, code: "missing_usable_cv", message: "No CV on file — manual review required." });
-      await recordJob(s, matchId, "parse", "failed", trace_id, { code: "missing_usable_cv", message: "no_cv" });
       return { match_id: matchId, trace_id, final_state: "manual_review_required", steps: [{ step: "parse", ok: false, note: "no_cv" }] };
     }
 
