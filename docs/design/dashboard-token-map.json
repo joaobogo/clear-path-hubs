@@ -1,0 +1,156 @@
+{
+  "$schema": "https://taasflow.local/schemas/design-tokens.v1.json",
+  "meta": {
+    "name": "TaaSFlow Dashboard Tokens",
+    "version": "2.0.0",
+    "authoritySource": "src/styles/brand-tokens.css + src/styles.css",
+    "colorSpace": "oklch"
+  },
+  "color": {
+    "brand": {
+      "navy":        { "value": "oklch(0.29 0.055 262)",  "cssVar": "--brand-navy" },
+      "navyLight":   { "value": "oklch(0.45 0.055 262)",  "cssVar": "--brand-navy-light" },
+      "navyDark":    { "value": "oklch(0.22 0.055 262)",  "cssVar": "--brand-navy-dark" },
+      "ocean":       { "value": "oklch(0.60 0.19 258)",   "cssVar": "--brand-ocean" },
+      "oceanLight":  { "value": "oklch(0.68 0.16 258)",   "cssVar": "--brand-ocean-light" },
+      "sky":         { "value": "oklch(0.92 0.017 245)",  "cssVar": "--brand-sky" },
+      "skyDark":     { "value": "oklch(0.87 0.020 245)",  "cssVar": "--brand-sky-dark" },
+      "ink":         { "value": "oklch(0.18 0.03 262)",   "cssVar": "--brand-ink" },
+      "paper":       { "value": "oklch(0.985 0.003 245)", "cssVar": "--brand-paper" }
+    },
+    "semantic": {
+      "background":       { "cssVar": "--color-background" },
+      "foreground":       { "cssVar": "--color-foreground" },
+      "card":             { "cssVar": "--color-card" },
+      "cardForeground":   { "cssVar": "--color-card-foreground" },
+      "border":           { "cssVar": "--color-border" },
+      "input":            { "cssVar": "--color-input" },
+      "primary":          { "cssVar": "--color-primary" },
+      "primaryForeground":{ "cssVar": "--color-primary-foreground" },
+      "muted":            { "cssVar": "--color-muted" },
+      "mutedForeground":  { "cssVar": "--color-muted-foreground" },
+      "accent":           { "cssVar": "--color-accent" },
+      "ring":             { "cssVar": "--color-ring" }
+    },
+    "status": {
+      "success":       { "cssVar": "--color-success" },
+      "successSoft":   { "cssVar": "--color-success-soft" },
+      "warning":       { "cssVar": "--color-warning" },
+      "warningSoft":   { "cssVar": "--color-warning-soft" },
+      "info":          { "cssVar": "--color-info" },
+      "infoSoft":      { "cssVar": "--color-info-soft" },
+      "danger":        { "cssVar": "--color-destructive" },
+      "dangerSoft":    { "cssVar": "--color-danger-soft" }
+    },
+    "chart": {
+      "1": { "cssVar": "--chart-1" },
+      "2": { "cssVar": "--chart-2" },
+      "3": { "cssVar": "--chart-3" },
+      "4": { "cssVar": "--chart-4" },
+      "5": { "cssVar": "--chart-5" }
+    }
+  },
+  "typography": {
+    "family": {
+      "sans": "Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif",
+      "mono": "ui-monospace, SFMono-Regular, Menlo, Consolas, monospace"
+    },
+    "size": {
+      "xs": "0.75rem",
+      "sm": "0.875rem",
+      "base": "1rem",
+      "lg": "1.125rem",
+      "xl": "1.25rem",
+      "2xl": "1.5rem",
+      "3xl": "1.875rem",
+      "4xl": "2.25rem",
+      "5xl": "2.5rem"
+    },
+    "weight": { "regular": 400, "medium": 500, "semibold": 600, "bold": 700 },
+    "lineHeight": { "tight": 1.2, "normal": 1.5, "relaxed": 1.6 },
+    "tracking": { "tight": "-0.01em", "normal": "0", "wide": "0.02em" }
+  },
+  "spacing": {
+    "1":  "4px",  "2":  "8px",  "3":  "12px", "4":  "16px",
+    "5":  "20px", "6":  "24px", "8":  "32px", "10": "40px",
+    "12": "48px", "16": "64px", "20": "80px", "24": "96px"
+  },
+  "radius": {
+    "xs":   { "value": "4px",  "cssVar": "--brand-radius-xs" },
+    "sm":   { "value": "6px",  "cssVar": "--brand-radius-sm" },
+    "md":   { "value": "8px",  "cssVar": "--brand-radius-md" },
+    "lg":   { "value": "12px", "cssVar": "--brand-radius-lg" },
+    "xl":   { "value": "16px", "cssVar": "--brand-radius-xl" },
+    "2xl":  { "value": "24px", "cssVar": "--brand-radius-2xl" },
+    "pill": { "value": "999px","cssVar": "--brand-radius-pill" }
+  },
+  "shadow": {
+    "elevation1": { "cssVar": "--shadow-elevation-1" },
+    "elevation2": { "cssVar": "--shadow-elevation-2" },
+    "elevation3": { "cssVar": "--shadow-elevation-3" },
+    "brandXs":    { "cssVar": "--brand-shadow-xs" },
+    "brandSm":    { "cssVar": "--brand-shadow-sm" },
+    "brandMd":    { "cssVar": "--brand-shadow-md" },
+    "brandLg":    { "cssVar": "--brand-shadow-lg" },
+    "brandGlow":  { "cssVar": "--brand-shadow-glow" }
+  },
+  "motion": {
+    "duration": {
+      "fast": { "cssVar": "--motion-fast", "value": "120ms" },
+      "base": { "cssVar": "--motion-base", "value": "180ms" },
+      "slow": { "cssVar": "--motion-slow", "value": "280ms" }
+    },
+    "easing": {
+      "standard": { "cssVar": "--ease-standard", "value": "cubic-bezier(0.2, 0, 0, 1)" }
+    }
+  },
+  "focus": {
+    "ring":      { "cssVar": "--brand-focus-ring" },
+    "ringInset": { "cssVar": "--brand-focus-ring-inset" }
+  },
+  "breakpoints": {
+    "sm":  "640px",
+    "md":  "768px",
+    "lg":  "1024px",
+    "xl":  "1280px",
+    "2xl": "1536px",
+    "workspaceMin": "1024px"
+  },
+  "layout": {
+    "pageMaxWidth":      { "cssVar": "--page-max-w",  "value": "1400px" },
+    "pageGutter":        { "cssVar": "--page-gutter", "value": "1.5rem" },
+    "contentMaxWidth":   { "cssVar": "--content-max-w", "value": "72rem" },
+    "publicWidth":       { "cssVar": "--brand-public-width",    "value": "1200px" },
+    "workspaceWidth":    { "cssVar": "--brand-workspace-width", "value": "1440px" },
+    "proseWidth":        { "cssVar": "--brand-prose-width",     "value": "720px" }
+  },
+  "statusMapping": {
+    "candidateMatch": {
+      "new":         "info",
+      "reviewing":   "info",
+      "shortlisted": "info",
+      "interview":   "warning",
+      "offered":     "success",
+      "hired":       "success",
+      "rejected":    "danger",
+      "on_hold":     "warning"
+    },
+    "position": {
+      "draft":               "muted",
+      "submitted":           "info",
+      "under_review":        "info",
+      "needs_clarification": "warning",
+      "approved":            "success",
+      "active":              "success",
+      "paused":              "warning",
+      "filled":              "success",
+      "closed":              "muted",
+      "archived":            "muted"
+    },
+    "scoreBand": {
+      "high":   { "min": 80, "role": "success" },
+      "medium": { "min": 60, "role": "warning" },
+      "low":    { "min": 0,  "role": "muted"   }
+    }
+  }
+}
