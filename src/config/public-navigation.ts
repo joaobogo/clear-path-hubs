@@ -57,7 +57,6 @@ export const NAV_GROUPS: NavGroup[] = [
       { to: "/industries/legal",        label: "Legal" },
       { to: "/industries/healthcare",   label: "Healthcare" },
       { to: "/industries/sales-marketing", label: "Sales & marketing" },
-      { to: "/industries",              label: "View all industries" },
     ],
   },
   {
