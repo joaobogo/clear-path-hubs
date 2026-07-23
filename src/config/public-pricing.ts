@@ -123,6 +123,51 @@ export const CALCULATOR_LIMITS = {
 export const CALCULATOR_DISCLAIMER =
   "Estimates are directional and depend on role volume, salary, package, hiring complexity, and client context. Based on SHRM & Ashby 2025 benchmarks.";
 
+/**
+ * Calculator presets — one-click assumption bundles.
+ * Presets only change input assumptions; math still runs against approved
+ * pricing. No fabricated results, no fake savings.
+ */
+export interface CalculatorPreset {
+  id: "one-critical" | "growing-team" | "hiring-sprint" | "high-volume";
+  label: string;
+  description: string;
+  inputs: {
+    positions: number;
+    averageSalaryUsd: number;
+    agencyFeePct: number;
+    recruiterHourlyUsd: number;
+    sourcingHoursPerRole: number;
+  };
+}
+
+export const CALCULATOR_PRESETS: readonly CalculatorPreset[] = [
+  {
+    id: "one-critical",
+    label: "One Critical Hire",
+    description: "A single senior role you can't afford to get wrong.",
+    inputs: { positions: 1, averageSalaryUsd: 120_000, agencyFeePct: 0.22, recruiterHourlyUsd: 50, sourcingHoursPerRole: 35 },
+  },
+  {
+    id: "growing-team",
+    label: "Growing Team",
+    description: "A handful of roles as the team scales.",
+    inputs: { positions: 3, averageSalaryUsd: 90_000, agencyFeePct: 0.20, recruiterHourlyUsd: 40, sourcingHoursPerRole: 25 },
+  },
+  {
+    id: "hiring-sprint",
+    label: "Hiring Sprint",
+    description: "Several roles running in parallel.",
+    inputs: { positions: 8, averageSalaryUsd: 85_000, agencyFeePct: 0.20, recruiterHourlyUsd: 40, sourcingHoursPerRole: 25 },
+  },
+  {
+    id: "high-volume",
+    label: "High Volume",
+    description: "Continuous hiring across teams.",
+    inputs: { positions: 15, averageSalaryUsd: 80_000, agencyFeePct: 0.18, recruiterHourlyUsd: 40, sourcingHoursPerRole: 20 },
+  },
+] as const;
+
 /** Return the package that covers `positions`, or null when out of range. */
 export function selectPackage(positions: number): PricingPackage | null {
   if (!Number.isFinite(positions) || positions < 1) return null;
