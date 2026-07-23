@@ -13,6 +13,7 @@ import { IndustryHeroBackdrop } from "@/components/marketing/industry-hero-backd
 import { IndustryInsights } from "@/components/marketing/industry-insights";
 import { getIndustryVisualIdentity } from "@/content/industry-visual-identity";
 import { SubtleCta } from "@/components/marketing/subtle-cta";
+import { getIndustryRelationships } from "@/lib/marketing/industry-relationships";
 
 
 /**
