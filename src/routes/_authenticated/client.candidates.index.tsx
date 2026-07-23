@@ -197,7 +197,7 @@ function CandidatesPage() {
       }
     });
     return rows;
-  }, [rowsRaw, search.q, search.location, search.stage, search.fit, search.sort]);
+  }, [rowsRaw, search.q, search.location, search.stage, search.fit, search.sort, search.filter]);
 
   // Comparison state
   const [compareIds, setCompareIds] = useState<string[]>([]);
