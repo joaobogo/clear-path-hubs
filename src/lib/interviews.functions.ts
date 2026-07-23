@@ -1,0 +1,579 @@
+// Interview service — canonical server functions for the Client interviews
+// workspace. Every action is tenant-scoped via requireSupabaseAuth + explicit
+// organization_id checks. Client Viewers and read-only Admin support views are
+// denied mutation paths.
+import { createServerFn } from "@tanstack/react-start";
+import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { z } from "zod";
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type AnyRow = any;
+
+const traceId = () =>
+  `iv_${Math.random().toString(36).slice(2, 10)}${Date.now().toString(36)}`;
+
+export type InterviewStatus =
+  | "requested"
+  | "scheduling"
+  | "scheduled"
+  | "completed"
+  | "cancelled";
+
+const INTERVIEW_TYPES = [
+  "phone_screen",
+  "video_call",
+  "onsite",
+  "technical",
+  "panel",
+  "final",
+  "other",
+] as const;
+export type InterviewType = (typeof INTERVIEW_TYPES)[number];
+
+const participantSchema = z.object({
+  name: z.string().trim().min(1).max(120),
+  email: z.string().trim().email().max(255).optional(),
+  role: z.string().trim().max(80).optional(),
+});
+export type InterviewParticipant = z.infer<typeof participantSchema>;
+
+// ─── Guards ─────────────────────────────────────────────────────────────────
+
+async function assertEditor(supabase: AnyRow, userId: string, orgId: string) {
+  const { data: m, error } = await supabase
+    .from("memberships")
+    .select("role, status")
+    .eq("user_id", userId)
+    .eq("organization_id", orgId)
+    .eq("status", "active")
+    .maybeSingle();
+  if (error) throw new Error(error.message);
+  const role = (m as AnyRow)?.role as string | undefined;
+  const allowed = new Set([
+    "client_admin",
+    "client_editor",
+    "platform_admin",
+    "operations",
+  ]);
+  if (!role || !allowed.has(role)) throw new Error("forbidden");
+
+  // Deny when caller is inside a support session that's read-only.
+  const { data: session } = await supabase
+    .from("support_sessions")
+    .select("mode, expires_at, ended_at")
+    .eq("actor_user_id", userId)
+    .eq("target_organization_id", orgId)
+    .is("ended_at", null)
+    .gt("expires_at", new Date().toISOString())
+    .maybeSingle();
+  if (session && (session as AnyRow).mode !== "interactive") {
+    throw new Error("SUPPORT_VIEW_READ_ONLY");
+  }
+}
+
+async function loadMatch(supabase: AnyRow, orgId: string, matchId: string) {
+  const { data, error } = await supabase
+    .from("candidate_matches")
+    .select("id, organization_id, position_id, application_id, stage, client_visibility")
+    .eq("id", matchId)
+    .eq("organization_id", orgId)
+    .maybeSingle();
+  if (error) throw new Error(error.message);
+  if (!data) throw new Error("match_not_found");
+  if ((data as AnyRow).client_visibility !== "visible") throw new Error("match_not_visible");
+  return data as AnyRow;
+}
+
+async function loadInterview(supabase: AnyRow, orgId: string, id: string) {
+  const { data, error } = await supabase
+    .from("interviews")
+    .select("*")
+    .eq("id", id)
+    .eq("organization_id", orgId)
+    .maybeSingle();
+  if (error) throw new Error(error.message);
+  if (!data) throw new Error("interview_not_found");
+  return data as AnyRow;
+}
+
+async function writeAudit(
+  supabase: AnyRow,
+  opts: {
+    actor: string;
+    action: string;
+    entity_id: string;
+    organization_id: string;
+    before?: unknown;
+    after?: unknown;
+    trace_id: string;
+  },
+) {
+  await supabase.from("audit_events").insert({
+    actor_user_id: opts.actor,
+    action: opts.action,
+    entity_type: "interviews",
+    entity_id: opts.entity_id,
+    organization_id: opts.organization_id,
+    before_state: (opts.before ?? null) as never,
+    after_state: (opts.after ?? null) as never,
+    trace_id: opts.trace_id,
+  });
+}
+
+// ─── Read ───────────────────────────────────────────────────────────────────
+
+export type InterviewDTO = {
+  id: string;
+  organization_id: string;
+  position_id: string;
+  candidate_match_id: string;
+  candidate_submission_id: string | null;
+  status: InterviewStatus;
+  interview_type: InterviewType | null;
+  scheduled_at: string | null;
+  duration_minutes: number | null;
+  timezone: string | null;
+  meeting_url: string | null;
+  location: string | null;
+  proposed_times: string[];
+  participants: InterviewParticipant[];
+  notes: string | null;
+  feedback: string | null;
+  cancel_reason: string | null;
+  requested_at: string;
+  completed_at: string | null;
+  cancelled_at: string | null;
+  created_at: string;
+  updated_at: string;
+  next_action: string;
+  candidate: { id: string; name: string; email: string | null } | null;
+  position: { id: string; title: string; reference: string | null } | null;
+};
+
+function toDTO(row: AnyRow, candidate: AnyRow | null, position: AnyRow | null): InterviewDTO {
+  const status = row.status as InterviewStatus;
+  const nextAction =
+    status === "requested"
+      ? "Propose interview times"
+      : status === "scheduling"
+        ? "Confirm a scheduled time"
+        : status === "scheduled"
+          ? "Mark completed after interview"
+          : status === "completed"
+            ? "Add feedback or close"
+            : "Archived";
+  return {
+    id: row.id,
+    organization_id: row.organization_id,
+    position_id: row.position_id,
+    candidate_match_id: row.candidate_match_id,
+    candidate_submission_id: row.candidate_submission_id ?? null,
+    status,
+    interview_type: (row.interview_type ?? null) as InterviewType | null,
+    scheduled_at: row.scheduled_at ?? null,
+    duration_minutes: row.duration_minutes ?? null,
+    timezone: row.timezone ?? null,
+    meeting_url: row.meeting_url ?? null,
+    location: row.location ?? null,
+    proposed_times: Array.isArray(row.proposed_times) ? (row.proposed_times as string[]) : [],
+    participants: Array.isArray(row.participants) ? (row.participants as InterviewParticipant[]) : [],
+    notes: row.notes ?? null,
+    feedback: row.feedback ?? null,
+    cancel_reason: row.cancel_reason ?? null,
+    requested_at: row.requested_at,
+    completed_at: row.completed_at ?? null,
+    cancelled_at: row.cancelled_at ?? null,
+    created_at: row.created_at,
+    updated_at: row.updated_at,
+    next_action: nextAction,
+    candidate: candidate
+      ? {
+          id: candidate.id as string,
+          name: (candidate.display_name as string) ?? "Candidate",
+          email: (candidate.email as string) ?? null,
+        }
+      : null,
+    position: position
+      ? {
+          id: position.id as string,
+          title: (position.title as string) ?? "Position",
+          reference: (position.reference_code as string) ?? null,
+        }
+      : null,
+  };
+}
+
+export const listClientInterviews = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator(
+    (input: { orgId: string; status?: InterviewStatus | "all" }) =>
+      z
+        .object({
+          orgId: z.string().uuid(),
+          status: z
+            .enum(["all", "requested", "scheduling", "scheduled", "completed", "cancelled"])
+            .optional(),
+        })
+        .parse(input),
+  )
+  .handler(async ({ context, data }) => {
+    let q = context.supabase
+      .from("interviews")
+      .select("*")
+      .eq("organization_id", data.orgId)
+      .order("scheduled_at", { ascending: true, nullsFirst: false })
+      .order("requested_at", { ascending: false });
+    if (data.status && data.status !== "all") q = q.eq("status", data.status);
+    const { data: rows, error } = await q;
+    if (error) throw new Error(error.message);
+    const list = (rows as AnyRow[]) ?? [];
+    if (list.length === 0) return { interviews: [] as InterviewDTO[] };
+
+    const matchIds = Array.from(new Set(list.map((r) => r.candidate_match_id).filter(Boolean)));
+    const positionIds = Array.from(new Set(list.map((r) => r.position_id).filter(Boolean)));
+
+    const [matchesRes, positionsRes] = await Promise.all([
+      context.supabase
+        .from("candidate_matches")
+        .select("id, candidate_profile_id, candidate_profiles:candidate_profile_id(id, display_name, email)")
+        .in("id", matchIds),
+      context.supabase
+        .from("positions")
+        .select("id, title, reference_code")
+        .in("id", positionIds),
+    ]);
+    const matchMap = new Map<string, AnyRow>();
+    for (const m of ((matchesRes.data as AnyRow[]) ?? [])) {
+      const cp = (m as AnyRow).candidate_profiles;
+      matchMap.set(m.id as string, cp ?? null);
+    }
+    const posMap = new Map<string, AnyRow>();
+    for (const p of ((positionsRes.data as AnyRow[]) ?? [])) posMap.set(p.id as string, p);
+
+    return {
+      interviews: list.map((r) =>
+        toDTO(r, matchMap.get(r.candidate_match_id) ?? null, posMap.get(r.position_id) ?? null),
+      ),
+    };
+  });
+
+// ─── Mutations ──────────────────────────────────────────────────────────────
+
+const proposedTimesSchema = z
+  .array(z.string().datetime())
+  .min(1)
+  .max(10);
+
+export const requestInterview = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator(
+    (input: {
+      orgId: string;
+      matchId: string;
+      interviewType: InterviewType;
+      timezone: string;
+      durationMinutes: number;
+      proposedTimes: string[];
+      participants: InterviewParticipant[];
+      notes?: string;
+    }) =>
+      z
+        .object({
+          orgId: z.string().uuid(),
+          matchId: z.string().uuid(),
+          interviewType: z.enum(INTERVIEW_TYPES),
+          timezone: z.string().min(1).max(80),
+          durationMinutes: z.number().int().min(15).max(480),
+          proposedTimes: proposedTimesSchema,
+          participants: z.array(participantSchema).min(1).max(10),
+          notes: z.string().max(4000).optional(),
+        })
+        .parse(input),
+  )
+  .handler(async ({ context, data }) => {
+    const trace = traceId();
+    await assertEditor(context.supabase, context.userId, data.orgId);
+    const match = await loadMatch(context.supabase, data.orgId, data.matchId);
+
+    const { data: existing } = await context.supabase
+      .from("interviews")
+      .select("id")
+      .eq("candidate_match_id", data.matchId)
+      .in("status", ["requested", "scheduling", "scheduled"])
+      .maybeSingle();
+    if (existing) throw new Error("interview_already_active");
+
+    const { data: inserted, error } = await context.supabase
+      .from("interviews")
+      .insert({
+        candidate_match_id: data.matchId,
+        organization_id: data.orgId,
+        position_id: match.position_id as string,
+        candidate_submission_id: (match.application_id as string) ?? null,
+        status: "requested",
+        interview_type: data.interviewType,
+        timezone: data.timezone,
+        duration_minutes: data.durationMinutes,
+        proposed_times: data.proposedTimes as never,
+        participants: data.participants as never,
+        notes: data.notes ?? null,
+        requested_at: new Date().toISOString(),
+        created_by: context.userId,
+        updated_by: context.userId,
+      })
+      .select("id")
+      .maybeSingle();
+    if (error) {
+      if ((error as AnyRow).code === "23505") throw new Error("interview_already_active");
+      throw new Error(error.message);
+    }
+
+    await writeAudit(context.supabase, {
+      actor: context.userId,
+      action: "interview.requested",
+      entity_id: (inserted as AnyRow).id,
+      organization_id: data.orgId,
+      after: { status: "requested", type: data.interviewType },
+      trace_id: trace,
+    });
+
+    return { ok: true, id: (inserted as AnyRow).id as string, trace_id: trace };
+  });
+
+export const proposeInterviewTimes = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator(
+    (input: { orgId: string; id: string; proposedTimes: string[] }) =>
+      z
+        .object({
+          orgId: z.string().uuid(),
+          id: z.string().uuid(),
+          proposedTimes: proposedTimesSchema,
+        })
+        .parse(input),
+  )
+  .handler(async ({ context, data }) => {
+    const trace = traceId();
+    await assertEditor(context.supabase, context.userId, data.orgId);
+    const prev = await loadInterview(context.supabase, data.orgId, data.id);
+    if (!["requested", "scheduling"].includes(prev.status)) {
+      throw new Error(`invalid_transition:${prev.status}->scheduling`);
+    }
+    const { error } = await context.supabase
+      .from("interviews")
+      .update({
+        status: "scheduling",
+        proposed_times: data.proposedTimes as never,
+        updated_by: context.userId,
+      })
+      .eq("id", data.id)
+      .eq("organization_id", data.orgId);
+    if (error) throw new Error(error.message);
+
+    await writeAudit(context.supabase, {
+      actor: context.userId,
+      action: "interview.proposed",
+      entity_id: data.id,
+      organization_id: data.orgId,
+      before: { status: prev.status },
+      after: { status: "scheduling", proposed_times: data.proposedTimes },
+      trace_id: trace,
+    });
+    return { ok: true, trace_id: trace };
+  });
+
+export const confirmInterviewTime = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator(
+    (input: {
+      orgId: string;
+      id: string;
+      scheduledAt: string;
+      timezone: string;
+      durationMinutes: number;
+      meetingUrl?: string;
+      location?: string;
+    }) =>
+      z
+        .object({
+          orgId: z.string().uuid(),
+          id: z.string().uuid(),
+          scheduledAt: z.string().datetime(),
+          timezone: z.string().min(1).max(80),
+          durationMinutes: z.number().int().min(15).max(480),
+          meetingUrl: z.string().url().max(500).optional(),
+          location: z.string().max(500).optional(),
+        })
+        .parse(input),
+  )
+  .handler(async ({ context, data }) => {
+    const trace = traceId();
+    await assertEditor(context.supabase, context.userId, data.orgId);
+    const prev = await loadInterview(context.supabase, data.orgId, data.id);
+    if (!["requested", "scheduling", "scheduled"].includes(prev.status)) {
+      throw new Error(`invalid_transition:${prev.status}->scheduled`);
+    }
+    const scheduledAt = new Date(data.scheduledAt);
+    if (scheduledAt.getTime() < Date.now() - 60 * 1000) {
+      throw new Error("scheduled_in_past");
+    }
+    const { error } = await context.supabase
+      .from("interviews")
+      .update({
+        status: "scheduled",
+        scheduled_at: scheduledAt.toISOString(),
+        timezone: data.timezone,
+        duration_minutes: data.durationMinutes,
+        meeting_url: data.meetingUrl ?? null,
+        location: data.location ?? null,
+        updated_by: context.userId,
+      })
+      .eq("id", data.id)
+      .eq("organization_id", data.orgId);
+    if (error) throw new Error(error.message);
+
+    await writeAudit(context.supabase, {
+      actor: context.userId,
+      action: prev.status === "scheduled" ? "interview.rescheduled" : "interview.scheduled",
+      entity_id: data.id,
+      organization_id: data.orgId,
+      before: { status: prev.status, scheduled_at: prev.scheduled_at },
+      after: { status: "scheduled", scheduled_at: scheduledAt.toISOString() },
+      trace_id: trace,
+    });
+    return { ok: true, trace_id: trace };
+  });
+
+export const cancelInterview = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator(
+    (input: { orgId: string; id: string; reason?: string }) =>
+      z
+        .object({
+          orgId: z.string().uuid(),
+          id: z.string().uuid(),
+          reason: z.string().max(1000).optional(),
+        })
+        .parse(input),
+  )
+  .handler(async ({ context, data }) => {
+    const trace = traceId();
+    await assertEditor(context.supabase, context.userId, data.orgId);
+    const prev = await loadInterview(context.supabase, data.orgId, data.id);
+    if (prev.status === "cancelled" || prev.status === "completed") {
+      throw new Error(`invalid_transition:${prev.status}->cancelled`);
+    }
+    const { error } = await context.supabase
+      .from("interviews")
+      .update({
+        status: "cancelled",
+        cancelled_at: new Date().toISOString(),
+        cancel_reason: data.reason ?? null,
+        updated_by: context.userId,
+      })
+      .eq("id", data.id)
+      .eq("organization_id", data.orgId);
+    if (error) throw new Error(error.message);
+
+    await writeAudit(context.supabase, {
+      actor: context.userId,
+      action: "interview.cancelled",
+      entity_id: data.id,
+      organization_id: data.orgId,
+      before: { status: prev.status },
+      after: { status: "cancelled", reason: data.reason ?? null },
+      trace_id: trace,
+    });
+    return { ok: true, trace_id: trace };
+  });
+
+export const markInterviewCompleted = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator(
+    (input: { orgId: string; id: string; feedback?: string }) =>
+      z
+        .object({
+          orgId: z.string().uuid(),
+          id: z.string().uuid(),
+          feedback: z.string().max(4000).optional(),
+        })
+        .parse(input),
+  )
+  .handler(async ({ context, data }) => {
+    const trace = traceId();
+    await assertEditor(context.supabase, context.userId, data.orgId);
+    const prev = await loadInterview(context.supabase, data.orgId, data.id);
+    if (prev.status !== "scheduled") {
+      throw new Error(`invalid_transition:${prev.status}->completed`);
+    }
+    const { error } = await context.supabase
+      .from("interviews")
+      .update({
+        status: "completed",
+        completed_at: new Date().toISOString(),
+        feedback: data.feedback ?? prev.feedback ?? null,
+        updated_by: context.userId,
+      })
+      .eq("id", data.id)
+      .eq("organization_id", data.orgId);
+    if (error) throw new Error(error.message);
+
+    await writeAudit(context.supabase, {
+      actor: context.userId,
+      action: "interview.completed",
+      entity_id: data.id,
+      organization_id: data.orgId,
+      before: { status: "scheduled" },
+      after: { status: "completed" },
+      trace_id: trace,
+    });
+    return { ok: true, trace_id: trace };
+  });
+
+export type SchedulableCandidate = {
+  match_id: string;
+  candidate_id: string;
+  candidate_name: string;
+  candidate_email: string | null;
+  position_id: string;
+  position_title: string;
+  stage: string;
+  has_active_interview: boolean;
+};
+
+export const listSchedulableCandidates = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: { orgId: string }) =>
+    z.object({ orgId: z.string().uuid() }).parse(input),
+  )
+  .handler(async ({ context, data }) => {
+    const { data: rows, error } = await context.supabase
+      .from("candidate_matches")
+      .select(
+        "id, position_id, stage, client_visibility, candidate_profile_id, candidate_profiles:candidate_profile_id(id, display_name, email), positions:position_id(id, title)",
+      )
+      .eq("organization_id", data.orgId)
+      .eq("client_visibility", "visible")
+      .in("stage", ["delivered", "shortlisted", "interview_process"]);
+    if (error) throw new Error(error.message);
+    const list = (rows as AnyRow[]) ?? [];
+
+    const { data: active } = await context.supabase
+      .from("interviews")
+      .select("candidate_match_id")
+      .eq("organization_id", data.orgId)
+      .in("status", ["requested", "scheduling", "scheduled"]);
+    const activeSet = new Set((active as AnyRow[] | null)?.map((r) => r.candidate_match_id) ?? []);
+
+    const candidates: SchedulableCandidate[] = list.map((r) => ({
+      match_id: r.id as string,
+      candidate_id: (r.candidate_profiles?.id as string) ?? r.candidate_profile_id,
+      candidate_name: (r.candidate_profiles?.display_name as string) ?? "Candidate",
+      candidate_email: (r.candidate_profiles?.email as string) ?? null,
+      position_id: (r.positions?.id as string) ?? r.position_id,
+      position_title: (r.positions?.title as string) ?? "Position",
+      stage: r.stage as string,
+      has_active_interview: activeSet.has(r.id as string),
+    }));
+    return { candidates };
+  });
