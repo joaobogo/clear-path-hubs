@@ -529,6 +529,8 @@ function toReqText(v: unknown): string {
 
 function cleanLine(s: string): string {
   return s.replace(/\[object Object\]/g, "requirement").trim();
+}
+
 
 function Row({ label, v }: { label: string; v: React.ReactNode }) {
   const safe = safeNode(v);
