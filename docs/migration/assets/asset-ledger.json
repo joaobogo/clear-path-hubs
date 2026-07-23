@@ -1,0 +1,5030 @@
+{
+  "assets": [
+    {
+      "source_path": "public/logo.svg",
+      "purpose": "Primary logo",
+      "pages": [
+        "all"
+      ],
+      "file_type": "svg",
+      "destination_path": "public/logo.svg",
+      "migration_classification": "MIGRATE_AS_IS",
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "exclusion_reason": null,
+      "asset_id": "A-0001"
+    },
+    {
+      "source_path": "public/favicon.ico",
+      "purpose": "Browser favicon",
+      "pages": [
+        "all"
+      ],
+      "file_type": "ico",
+      "destination_path": "public/favicon.ico",
+      "migration_classification": "MIGRATE_AS_IS",
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "exclusion_reason": null,
+      "asset_id": "A-0002"
+    },
+    {
+      "source_path": "public/apple-touch-icon.png",
+      "purpose": "iOS home icon",
+      "pages": [
+        "all"
+      ],
+      "file_type": "png",
+      "destination_path": "public/apple-touch-icon.png",
+      "migration_classification": "MIGRATE_AS_IS",
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "exclusion_reason": null,
+      "asset_id": "A-0003"
+    },
+    {
+      "source_path": "public/og-default.png",
+      "purpose": "Default Open Graph image",
+      "pages": [
+        "all"
+      ],
+      "file_type": "png",
+      "destination_path": "public/og-default.png",
+      "migration_classification": "MIGRATE_AS_IS",
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "exclusion_reason": null,
+      "asset_id": "A-0004"
+    },
+    {
+      "source_path": "public/hero-home.jpg",
+      "purpose": "Hero image for home",
+      "pages": [
+        "/home"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/hero-home.jpg",
+      "migration_classification": "MIGRATE_AS_IS",
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "exclusion_reason": null,
+      "asset_id": "A-0005"
+    },
+    {
+      "source_path": "public/hero-how-it-works.jpg",
+      "purpose": "Hero image for how-it-works",
+      "pages": [
+        "/how/it/works"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/hero-how-it-works.jpg",
+      "migration_classification": "MIGRATE_AS_IS",
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "exclusion_reason": null,
+      "asset_id": "A-0006"
+    },
+    {
+      "source_path": "public/hero-industries.jpg",
+      "purpose": "Hero image for industries",
+      "pages": [
+        "/industries"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/hero-industries.jpg",
+      "migration_classification": "MIGRATE_AS_IS",
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "exclusion_reason": null,
+      "asset_id": "A-0007"
+    },
+    {
+      "source_path": "public/industries/accounting.jpg",
+      "purpose": "Industry hero: accounting",
+      "pages": [
+        "/industries/accounting"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/industries/accounting.jpg",
+      "migration_classification": "MIGRATE_AS_IS",
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "exclusion_reason": null,
+      "asset_id": "A-0008"
+    },
+    {
+      "source_path": "public/industries/compare.jpg",
+      "purpose": "Industry hero: compare",
+      "pages": [
+        "/industries/compare"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/industries/compare.jpg",
+      "migration_classification": "MIGRATE_AS_IS",
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "exclusion_reason": null,
+      "asset_id": "A-0009"
+    },
+    {
+      "source_path": "public/industries/construction.jpg",
+      "purpose": "Industry hero: construction",
+      "pages": [
+        "/industries/construction"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/industries/construction.jpg",
+      "migration_classification": "MIGRATE_AS_IS",
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "exclusion_reason": null,
+      "asset_id": "A-0010"
+    },
+    {
+      "source_path": "public/industries/consulting.jpg",
+      "purpose": "Industry hero: consulting",
+      "pages": [
+        "/industries/consulting"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/industries/consulting.jpg",
+      "migration_classification": "MIGRATE_AS_IS",
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "exclusion_reason": null,
+      "asset_id": "A-0011"
+    },
+    {
+      "source_path": "public/industries/cybersecurity.jpg",
+      "purpose": "Industry hero: cybersecurity",
+      "pages": [
+        "/industries/cybersecurity"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/industries/cybersecurity.jpg",
+      "migration_classification": "MIGRATE_AS_IS",
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "exclusion_reason": null,
+      "asset_id": "A-0012"
+    },
+    {
+      "source_path": "public/industries/data-analytics.jpg",
+      "purpose": "Industry hero: data-analytics",
+      "pages": [
+        "/industries/data-analytics"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/industries/data-analytics.jpg",
+      "migration_classification": "MIGRATE_AS_IS",
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "exclusion_reason": null,
+      "asset_id": "A-0013"
+    },
+    {
+      "source_path": "public/industries/ecommerce.jpg",
+      "purpose": "Industry hero: ecommerce",
+      "pages": [
+        "/industries/ecommerce"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/industries/ecommerce.jpg",
+      "migration_classification": "MIGRATE_AS_IS",
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "exclusion_reason": null,
+      "asset_id": "A-0014"
+    },
+    {
+      "source_path": "public/industries/finance.jpg",
+      "purpose": "Industry hero: finance",
+      "pages": [
+        "/industries/finance"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/industries/finance.jpg",
+      "migration_classification": "MIGRATE_AS_IS",
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "exclusion_reason": null,
+      "asset_id": "A-0015"
+    },
+    {
+      "source_path": "public/industries/healthcare.jpg",
+      "purpose": "Industry hero: healthcare",
+      "pages": [
+        "/industries/healthcare"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/industries/healthcare.jpg",
+      "migration_classification": "MIGRATE_AS_IS",
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "exclusion_reason": null,
+      "asset_id": "A-0016"
+    },
+    {
+      "source_path": "public/industries/hospitality.jpg",
+      "purpose": "Industry hero: hospitality",
+      "pages": [
+        "/industries/hospitality"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/industries/hospitality.jpg",
+      "migration_classification": "MIGRATE_AS_IS",
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "exclusion_reason": null,
+      "asset_id": "A-0017"
+    },
+    {
+      "source_path": "public/industries/human-resources.jpg",
+      "purpose": "Industry hero: human-resources",
+      "pages": [
+        "/industries/human-resources"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/industries/human-resources.jpg",
+      "migration_classification": "MIGRATE_AS_IS",
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "exclusion_reason": null,
+      "asset_id": "A-0018"
+    },
+    {
+      "source_path": "public/industries/index.jpg",
+      "purpose": "Industry hero: index",
+      "pages": [
+        "/industries/index"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/industries/index.jpg",
+      "migration_classification": "MIGRATE_AS_IS",
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "exclusion_reason": null,
+      "asset_id": "A-0019"
+    },
+    {
+      "source_path": "public/industries/insurance.jpg",
+      "purpose": "Industry hero: insurance",
+      "pages": [
+        "/industries/insurance"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/industries/insurance.jpg",
+      "migration_classification": "MIGRATE_AS_IS",
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "exclusion_reason": null,
+      "asset_id": "A-0020"
+    },
+    {
+      "source_path": "public/industries/legal.jpg",
+      "purpose": "Industry hero: legal",
+      "pages": [
+        "/industries/legal"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/industries/legal.jpg",
+      "migration_classification": "MIGRATE_AS_IS",
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "exclusion_reason": null,
+      "asset_id": "A-0021"
+    },
+    {
+      "source_path": "public/industries/marketing.jpg",
+      "purpose": "Industry hero: marketing",
+      "pages": [
+        "/industries/marketing"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/industries/marketing.jpg",
+      "migration_classification": "MIGRATE_AS_IS",
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "exclusion_reason": null,
+      "asset_id": "A-0022"
+    },
+    {
+      "source_path": "public/industries/media.jpg",
+      "purpose": "Industry hero: media",
+      "pages": [
+        "/industries/media"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/industries/media.jpg",
+      "migration_classification": "MIGRATE_AS_IS",
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "exclusion_reason": null,
+      "asset_id": "A-0023"
+    },
+    {
+      "source_path": "public/industries/non-profit.jpg",
+      "purpose": "Industry hero: non-profit",
+      "pages": [
+        "/industries/non-profit"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/industries/non-profit.jpg",
+      "migration_classification": "MIGRATE_AS_IS",
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "exclusion_reason": null,
+      "asset_id": "A-0024"
+    },
+    {
+      "source_path": "public/industries/private-equity.jpg",
+      "purpose": "Industry hero: private-equity",
+      "pages": [
+        "/industries/private-equity"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/industries/private-equity.jpg",
+      "migration_classification": "MIGRATE_AS_IS",
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "exclusion_reason": null,
+      "asset_id": "A-0025"
+    },
+    {
+      "source_path": "public/industries/public-sector.jpg",
+      "purpose": "Industry hero: public-sector",
+      "pages": [
+        "/industries/public-sector"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/industries/public-sector.jpg",
+      "migration_classification": "MIGRATE_AS_IS",
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "exclusion_reason": null,
+      "asset_id": "A-0026"
+    },
+    {
+      "source_path": "public/industries/real-estate.jpg",
+      "purpose": "Industry hero: real-estate",
+      "pages": [
+        "/industries/real-estate"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/industries/real-estate.jpg",
+      "migration_classification": "MIGRATE_AS_IS",
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "exclusion_reason": null,
+      "asset_id": "A-0027"
+    },
+    {
+      "source_path": "public/industries/saas.jpg",
+      "purpose": "Industry hero: saas",
+      "pages": [
+        "/industries/saas"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/industries/saas.jpg",
+      "migration_classification": "MIGRATE_AS_IS",
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "exclusion_reason": null,
+      "asset_id": "A-0028"
+    },
+    {
+      "source_path": "public/industries/sales.jpg",
+      "purpose": "Industry hero: sales",
+      "pages": [
+        "/industries/sales"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/industries/sales.jpg",
+      "migration_classification": "MIGRATE_AS_IS",
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "exclusion_reason": null,
+      "asset_id": "A-0029"
+    },
+    {
+      "source_path": "public/industries/staffing-agencies.jpg",
+      "purpose": "Industry hero: staffing-agencies",
+      "pages": [
+        "/industries/staffing-agencies"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/industries/staffing-agencies.jpg",
+      "migration_classification": "MIGRATE_AS_IS",
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "exclusion_reason": null,
+      "asset_id": "A-0030"
+    },
+    {
+      "source_path": "public/industries/tech.jpg",
+      "purpose": "Industry hero: tech",
+      "pages": [
+        "/industries/tech"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/industries/tech.jpg",
+      "migration_classification": "MIGRATE_AS_IS",
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "exclusion_reason": null,
+      "asset_id": "A-0031"
+    },
+    {
+      "source_path": "public/blog/30-60-90-onboarding-plan-2026.jpg",
+      "purpose": "Blog cover: 30-60-90-onboarding-plan-2026",
+      "pages": [
+        "/blog/30-60-90-onboarding-plan-2026"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/30-60-90-onboarding-plan-2026.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0032"
+    },
+    {
+      "source_path": "public/blog/accounting-firm-recruitment-strategies.jpg",
+      "purpose": "Blog cover: accounting-firm-recruitment-strategies",
+      "pages": [
+        "/blog/accounting-firm-recruitment-strategies"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/accounting-firm-recruitment-strategies.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0033"
+    },
+    {
+      "source_path": "public/blog/accounting-talent-shortage-big-four.jpg",
+      "purpose": "Blog cover: accounting-talent-shortage-big-four",
+      "pages": [
+        "/blog/accounting-talent-shortage-big-four"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/accounting-talent-shortage-big-four.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0034"
+    },
+    {
+      "source_path": "public/blog/accounting-talent-shortage-guide.jpg",
+      "purpose": "Blog cover: accounting-talent-shortage-guide",
+      "pages": [
+        "/blog/accounting-talent-shortage-guide"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/accounting-talent-shortage-guide.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0035"
+    },
+    {
+      "source_path": "public/blog/accounting-talent-shortage-solutions.jpg",
+      "purpose": "Blog cover: accounting-talent-shortage-solutions",
+      "pages": [
+        "/blog/accounting-talent-shortage-solutions"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/accounting-talent-shortage-solutions.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0036"
+    },
+    {
+      "source_path": "public/blog/ai-impact-on-jobs-hiring.jpg",
+      "purpose": "Blog cover: ai-impact-on-jobs-hiring",
+      "pages": [
+        "/blog/ai-impact-on-jobs-hiring"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/ai-impact-on-jobs-hiring.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0037"
+    },
+    {
+      "source_path": "public/blog/ai-in-recruitment.jpg",
+      "purpose": "Blog cover: ai-in-recruitment",
+      "pages": [
+        "/blog/ai-in-recruitment"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/ai-in-recruitment.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0038"
+    },
+    {
+      "source_path": "public/blog/ai-ml-engineering-hiring-guide.jpg",
+      "purpose": "Blog cover: ai-ml-engineering-hiring-guide",
+      "pages": [
+        "/blog/ai-ml-engineering-hiring-guide"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/ai-ml-engineering-hiring-guide.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0039"
+    },
+    {
+      "source_path": "public/blog/ai-replacing-vs-augmenting-recruiters.jpg",
+      "purpose": "Blog cover: ai-replacing-vs-augmenting-recruiters",
+      "pages": [
+        "/blog/ai-replacing-vs-augmenting-recruiters"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/ai-replacing-vs-augmenting-recruiters.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0040"
+    },
+    {
+      "source_path": "public/blog/ai-reshaping-every-industry-hiring.jpg",
+      "purpose": "Blog cover: ai-reshaping-every-industry-hiring",
+      "pages": [
+        "/blog/ai-reshaping-every-industry-hiring"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/ai-reshaping-every-industry-hiring.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0041"
+    },
+    {
+      "source_path": "public/blog/ai-screening-ethics.jpg",
+      "purpose": "Blog cover: ai-screening-ethics",
+      "pages": [
+        "/blog/ai-screening-ethics"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/ai-screening-ethics.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0042"
+    },
+    {
+      "source_path": "public/blog/ai-workforce-planning-2030.jpg",
+      "purpose": "Blog cover: ai-workforce-planning-2030",
+      "pages": [
+        "/blog/ai-workforce-planning-2030"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/ai-workforce-planning-2030.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0043"
+    },
+    {
+      "source_path": "public/blog/ambient-computing-workplace-transformation.jpg",
+      "purpose": "Blog cover: ambient-computing-workplace-transformation",
+      "pages": [
+        "/blog/ambient-computing-workplace-transformation"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/ambient-computing-workplace-transformation.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0044"
+    },
+    {
+      "source_path": "public/blog/ats-implementation-guide.jpg",
+      "purpose": "Blog cover: ats-implementation-guide",
+      "pages": [
+        "/blog/ats-implementation-guide"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/ats-implementation-guide.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0045"
+    },
+    {
+      "source_path": "public/blog/ats-optimization-guide.jpg",
+      "purpose": "Blog cover: ats-optimization-guide",
+      "pages": [
+        "/blog/ats-optimization-guide"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/ats-optimization-guide.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0046"
+    },
+    {
+      "source_path": "public/blog/background-check-best-practices.jpg",
+      "purpose": "Blog cover: background-check-best-practices",
+      "pages": [
+        "/blog/background-check-best-practices"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/background-check-best-practices.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0047"
+    },
+    {
+      "source_path": "public/blog/behavioral-health-hiring-challenges.jpg",
+      "purpose": "Blog cover: behavioral-health-hiring-challenges",
+      "pages": [
+        "/blog/behavioral-health-hiring-challenges"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/behavioral-health-hiring-challenges.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0048"
+    },
+    {
+      "source_path": "public/blog/behavioral-interview-guide-employers.jpg",
+      "purpose": "Blog cover: behavioral-interview-guide-employers",
+      "pages": [
+        "/blog/behavioral-interview-guide-employers"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/behavioral-interview-guide-employers.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0049"
+    },
+    {
+      "source_path": "public/blog/biotech-startup-hiring-strategy.jpg",
+      "purpose": "Blog cover: biotech-startup-hiring-strategy",
+      "pages": [
+        "/blog/biotech-startup-hiring-strategy"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/biotech-startup-hiring-strategy.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0050"
+    },
+    {
+      "source_path": "public/blog/blockchain-credentials-hiring.jpg",
+      "purpose": "Blog cover: blockchain-credentials-hiring",
+      "pages": [
+        "/blog/blockchain-credentials-hiring"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/blockchain-credentials-hiring.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0051"
+    },
+    {
+      "source_path": "public/blog/boomerang-employees.jpg",
+      "purpose": "Blog cover: boomerang-employees",
+      "pages": [
+        "/blog/boomerang-employees"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/boomerang-employees.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0052"
+    },
+    {
+      "source_path": "public/blog/building-high-performance-culture-remotely.jpg",
+      "purpose": "Blog cover: building-high-performance-culture-remotely",
+      "pages": [
+        "/blog/building-high-performance-culture-remotely"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/building-high-performance-culture-remotely.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0053"
+    },
+    {
+      "source_path": "public/blog/building-high-performance-teams.jpg",
+      "purpose": "Blog cover: building-high-performance-teams",
+      "pages": [
+        "/blog/building-high-performance-teams"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/building-high-performance-teams.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0054"
+    },
+    {
+      "source_path": "public/blog/building-talent-pipeline.jpg",
+      "purpose": "Blog cover: building-talent-pipeline",
+      "pages": [
+        "/blog/building-talent-pipeline"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/building-talent-pipeline.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0055"
+    },
+    {
+      "source_path": "public/blog/candidate-communication-cadence.jpg",
+      "purpose": "Blog cover: candidate-communication-cadence",
+      "pages": [
+        "/blog/candidate-communication-cadence"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/candidate-communication-cadence.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0056"
+    },
+    {
+      "source_path": "public/blog/candidate-experience-audit-checklist.jpg",
+      "purpose": "Blog cover: candidate-experience-audit-checklist",
+      "pages": [
+        "/blog/candidate-experience-audit-checklist"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/candidate-experience-audit-checklist.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0057"
+    },
+    {
+      "source_path": "public/blog/candidate-experience-competitive-weapon.jpg",
+      "purpose": "Blog cover: candidate-experience-competitive-weapon",
+      "pages": [
+        "/blog/candidate-experience-competitive-weapon"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/candidate-experience-competitive-weapon.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0058"
+    },
+    {
+      "source_path": "public/blog/candidate-experience-matters.jpg",
+      "purpose": "Blog cover: candidate-experience-matters",
+      "pages": [
+        "/blog/candidate-experience-matters"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/candidate-experience-matters.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0059"
+    },
+    {
+      "source_path": "public/blog/candidate-experience-optimization.jpg",
+      "purpose": "Blog cover: candidate-experience-optimization",
+      "pages": [
+        "/blog/candidate-experience-optimization"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/candidate-experience-optimization.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0060"
+    },
+    {
+      "source_path": "public/blog/candidate-ghosting-prevention.jpg",
+      "purpose": "Blog cover: candidate-ghosting-prevention",
+      "pages": [
+        "/blog/candidate-ghosting-prevention"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/candidate-ghosting-prevention.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0061"
+    },
+    {
+      "source_path": "public/blog/career-change-guide-professionals.jpg",
+      "purpose": "Blog cover: career-change-guide-professionals",
+      "pages": [
+        "/blog/career-change-guide-professionals"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/career-change-guide-professionals.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0062"
+    },
+    {
+      "source_path": "public/blog/career-pathing-employee-retention.jpg",
+      "purpose": "Blog cover: career-pathing-employee-retention",
+      "pages": [
+        "/blog/career-pathing-employee-retention"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/career-pathing-employee-retention.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0063"
+    },
+    {
+      "source_path": "public/blog/career-pivot-guide-professionals.jpg",
+      "purpose": "Blog cover: career-pivot-guide-professionals",
+      "pages": [
+        "/blog/career-pivot-guide-professionals"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/career-pivot-guide-professionals.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0064"
+    },
+    {
+      "source_path": "public/blog/ceo-guide-talent-strategy.jpg",
+      "purpose": "Blog cover: ceo-guide-talent-strategy",
+      "pages": [
+        "/blog/ceo-guide-talent-strategy"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/ceo-guide-talent-strategy.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0065"
+    },
+    {
+      "source_path": "public/blog/chief-of-staff-role-guide.jpg",
+      "purpose": "Blog cover: chief-of-staff-role-guide",
+      "pages": [
+        "/blog/chief-of-staff-role-guide"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/chief-of-staff-role-guide.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0066"
+    },
+    {
+      "source_path": "public/blog/chief-people-officer-evolution.jpg",
+      "purpose": "Blog cover: chief-people-officer-evolution",
+      "pages": [
+        "/blog/chief-people-officer-evolution"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/chief-people-officer-evolution.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0067"
+    },
+    {
+      "source_path": "public/blog/chro-role-evolution-2026.jpg",
+      "purpose": "Blog cover: chro-role-evolution-2026",
+      "pages": [
+        "/blog/chro-role-evolution-2026"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/chro-role-evolution-2026.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0068"
+    },
+    {
+      "source_path": "public/blog/climate-tech-startup-hiring.jpg",
+      "purpose": "Blog cover: climate-tech-startup-hiring",
+      "pages": [
+        "/blog/climate-tech-startup-hiring"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/climate-tech-startup-hiring.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0069"
+    },
+    {
+      "source_path": "public/blog/closing-top-sales-talent.jpg",
+      "purpose": "Blog cover: closing-top-sales-talent",
+      "pages": [
+        "/blog/closing-top-sales-talent"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/closing-top-sales-talent.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0070"
+    },
+    {
+      "source_path": "public/blog/cold-chain-logistics-hiring-guide.jpg",
+      "purpose": "Blog cover: cold-chain-logistics-hiring-guide",
+      "pages": [
+        "/blog/cold-chain-logistics-hiring-guide"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/cold-chain-logistics-hiring-guide.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0071"
+    },
+    {
+      "source_path": "public/blog/compensation-benchmarking.jpg",
+      "purpose": "Blog cover: compensation-benchmarking",
+      "pages": [
+        "/blog/compensation-benchmarking"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/compensation-benchmarking.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0072"
+    },
+    {
+      "source_path": "public/blog/competency-based-hiring-framework.jpg",
+      "purpose": "Blog cover: competency-based-hiring-framework",
+      "pages": [
+        "/blog/competency-based-hiring-framework"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/competency-based-hiring-framework.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0073"
+    },
+    {
+      "source_path": "public/blog/compliance-officer-hiring-guide.jpg",
+      "purpose": "Blog cover: compliance-officer-hiring-guide",
+      "pages": [
+        "/blog/compliance-officer-hiring-guide"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/compliance-officer-hiring-guide.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0074"
+    },
+    {
+      "source_path": "public/blog/construction-workforce-development.jpg",
+      "purpose": "Blog cover: construction-workforce-development",
+      "pages": [
+        "/blog/construction-workforce-development"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/construction-workforce-development.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0075"
+    },
+    {
+      "source_path": "public/blog/construction-workforce-strategies.jpg",
+      "purpose": "Blog cover: construction-workforce-strategies",
+      "pages": [
+        "/blog/construction-workforce-strategies"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/construction-workforce-strategies.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0076"
+    },
+    {
+      "source_path": "public/blog/consulting-firm-hiring-strategies.jpg",
+      "purpose": "Blog cover: consulting-firm-hiring-strategies",
+      "pages": [
+        "/blog/consulting-firm-hiring-strategies"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/consulting-firm-hiring-strategies.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0077"
+    },
+    {
+      "source_path": "public/blog/consulting-recruitment-strategies.jpg",
+      "purpose": "Blog cover: consulting-recruitment-strategies",
+      "pages": [
+        "/blog/consulting-recruitment-strategies"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/consulting-recruitment-strategies.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0078"
+    },
+    {
+      "source_path": "public/blog/consulting-talent-pipeline.jpg",
+      "purpose": "Blog cover: consulting-talent-pipeline",
+      "pages": [
+        "/blog/consulting-talent-pipeline"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/consulting-talent-pipeline.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0079"
+    },
+    {
+      "source_path": "public/blog/content-marketing-team-hiring.jpg",
+      "purpose": "Blog cover: content-marketing-team-hiring",
+      "pages": [
+        "/blog/content-marketing-team-hiring"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/content-marketing-team-hiring.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0080"
+    },
+    {
+      "source_path": "public/blog/contingent-workforce-management.jpg",
+      "purpose": "Blog cover: contingent-workforce-management",
+      "pages": [
+        "/blog/contingent-workforce-management"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/contingent-workforce-management.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0081"
+    },
+    {
+      "source_path": "public/blog/contractor-to-fulltime-conversion.jpg",
+      "purpose": "Blog cover: contractor-to-fulltime-conversion",
+      "pages": [
+        "/blog/contractor-to-fulltime-conversion"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/contractor-to-fulltime-conversion.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0082"
+    },
+    {
+      "source_path": "public/blog/cost-per-hire-reduction-strategies.jpg",
+      "purpose": "Blog cover: cost-per-hire-reduction-strategies",
+      "pages": [
+        "/blog/cost-per-hire-reduction-strategies"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/cost-per-hire-reduction-strategies.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0083"
+    },
+    {
+      "source_path": "public/blog/counter-offer-strategy.jpg",
+      "purpose": "Blog cover: counter-offer-strategy",
+      "pages": [
+        "/blog/counter-offer-strategy"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/counter-offer-strategy.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0084"
+    },
+    {
+      "source_path": "public/blog/counteroffer-strategy.jpg",
+      "purpose": "Blog cover: counteroffer-strategy",
+      "pages": [
+        "/blog/counteroffer-strategy"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/counteroffer-strategy.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0085"
+    },
+    {
+      "source_path": "public/blog/customer-success-team-building.jpg",
+      "purpose": "Blog cover: customer-success-team-building",
+      "pages": [
+        "/blog/customer-success-team-building"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/customer-success-team-building.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0086"
+    },
+    {
+      "source_path": "public/blog/customs-compliance-careers.jpg",
+      "purpose": "Blog cover: customs-compliance-careers",
+      "pages": [
+        "/blog/customs-compliance-careers"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/customs-compliance-careers.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0087"
+    },
+    {
+      "source_path": "public/blog/cybersecurity-talent-gap-solutions.jpg",
+      "purpose": "Blog cover: cybersecurity-talent-gap-solutions",
+      "pages": [
+        "/blog/cybersecurity-talent-gap-solutions"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/cybersecurity-talent-gap-solutions.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0088"
+    },
+    {
+      "source_path": "public/blog/cybersecurity-talent-gap.jpg",
+      "purpose": "Blog cover: cybersecurity-talent-gap",
+      "pages": [
+        "/blog/cybersecurity-talent-gap"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/cybersecurity-talent-gap.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0089"
+    },
+    {
+      "source_path": "public/blog/cybersecurity-talent-shortage-2026.jpg",
+      "purpose": "Blog cover: cybersecurity-talent-shortage-2026",
+      "pages": [
+        "/blog/cybersecurity-talent-shortage-2026"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/cybersecurity-talent-shortage-2026.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0090"
+    },
+    {
+      "source_path": "public/blog/cybersecurity-talent-shortage.jpg",
+      "purpose": "Blog cover: cybersecurity-talent-shortage",
+      "pages": [
+        "/blog/cybersecurity-talent-shortage"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/cybersecurity-talent-shortage.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0091"
+    },
+    {
+      "source_path": "public/blog/data-analytics-team-hiring-guide.jpg",
+      "purpose": "Blog cover: data-analytics-team-hiring-guide",
+      "pages": [
+        "/blog/data-analytics-team-hiring-guide"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/data-analytics-team-hiring-guide.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0092"
+    },
+    {
+      "source_path": "public/blog/data-driven-recruiting-2025.jpg",
+      "purpose": "Blog cover: data-driven-recruiting-2025",
+      "pages": [
+        "/blog/data-driven-recruiting-2025"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/data-driven-recruiting-2025.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0093"
+    },
+    {
+      "source_path": "public/blog/data-engineering-hiring-guide.jpg",
+      "purpose": "Blog cover: data-engineering-hiring-guide",
+      "pages": [
+        "/blog/data-engineering-hiring-guide"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/data-engineering-hiring-guide.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0094"
+    },
+    {
+      "source_path": "public/blog/data-scientist-salary-guide-2026.jpg",
+      "purpose": "Blog cover: data-scientist-salary-guide-2026",
+      "pages": [
+        "/blog/data-scientist-salary-guide-2026"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/data-scientist-salary-guide-2026.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0095"
+    },
+    {
+      "source_path": "public/blog/defense-industry-hiring-clearances.jpg",
+      "purpose": "Blog cover: defense-industry-hiring-clearances",
+      "pages": [
+        "/blog/defense-industry-hiring-clearances"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/defense-industry-hiring-clearances.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0096"
+    },
+    {
+      "source_path": "public/blog/dei-hiring-metrics-that-matter.jpg",
+      "purpose": "Blog cover: dei-hiring-metrics-that-matter",
+      "pages": [
+        "/blog/dei-hiring-metrics-that-matter"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/dei-hiring-metrics-that-matter.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0097"
+    },
+    {
+      "source_path": "public/blog/developer-relations-role-guide.jpg",
+      "purpose": "Blog cover: developer-relations-role-guide",
+      "pages": [
+        "/blog/developer-relations-role-guide"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/developer-relations-role-guide.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0098"
+    },
+    {
+      "source_path": "public/blog/devops-platform-engineering-hiring.jpg",
+      "purpose": "Blog cover: devops-platform-engineering-hiring",
+      "pages": [
+        "/blog/devops-platform-engineering-hiring"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/devops-platform-engineering-hiring.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0099"
+    },
+    {
+      "source_path": "public/blog/diversity-hiring-playbook.jpg",
+      "purpose": "Blog cover: diversity-hiring-playbook",
+      "pages": [
+        "/blog/diversity-hiring-playbook"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/diversity-hiring-playbook.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0100"
+    },
+    {
+      "source_path": "public/blog/diversity-metrics-matter.jpg",
+      "purpose": "Blog cover: diversity-metrics-matter",
+      "pages": [
+        "/blog/diversity-metrics-matter"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/diversity-metrics-matter.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0101"
+    },
+    {
+      "source_path": "public/blog/diversity-recruiting-strategy-guide.jpg",
+      "purpose": "Blog cover: diversity-recruiting-strategy-guide",
+      "pages": [
+        "/blog/diversity-recruiting-strategy-guide"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/diversity-recruiting-strategy-guide.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0102"
+    },
+    {
+      "source_path": "public/blog/diversity-sourcing-strategies.jpg",
+      "purpose": "Blog cover: diversity-sourcing-strategies",
+      "pages": [
+        "/blog/diversity-sourcing-strategies"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/diversity-sourcing-strategies.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0103"
+    },
+    {
+      "source_path": "public/blog/ecommerce-operations-hiring-guide.jpg",
+      "purpose": "Blog cover: ecommerce-operations-hiring-guide",
+      "pages": [
+        "/blog/ecommerce-operations-hiring-guide"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/ecommerce-operations-hiring-guide.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0104"
+    },
+    {
+      "source_path": "public/blog/ecommerce-team-building-guide.jpg",
+      "purpose": "Blog cover: ecommerce-team-building-guide",
+      "pages": [
+        "/blog/ecommerce-team-building-guide"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/ecommerce-team-building-guide.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0105"
+    },
+    {
+      "source_path": "public/blog/ecommerce-team-building.jpg",
+      "purpose": "Blog cover: ecommerce-team-building",
+      "pages": [
+        "/blog/ecommerce-team-building"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/ecommerce-team-building.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0106"
+    },
+    {
+      "source_path": "public/blog/education-technology-hiring.jpg",
+      "purpose": "Blog cover: education-technology-hiring",
+      "pages": [
+        "/blog/education-technology-hiring"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/education-technology-hiring.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0107"
+    },
+    {
+      "source_path": "public/blog/employee-engagement-strategies.jpg",
+      "purpose": "Blog cover: employee-engagement-strategies",
+      "pages": [
+        "/blog/employee-engagement-strategies"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/employee-engagement-strategies.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0108"
+    },
+    {
+      "source_path": "public/blog/employee-experience-platform-guide.jpg",
+      "purpose": "Blog cover: employee-experience-platform-guide",
+      "pages": [
+        "/blog/employee-experience-platform-guide"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/employee-experience-platform-guide.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0109"
+    },
+    {
+      "source_path": "public/blog/employee-referral-program-best-practices.jpg",
+      "purpose": "Blog cover: employee-referral-program-best-practices",
+      "pages": [
+        "/blog/employee-referral-program-best-practices"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/employee-referral-program-best-practices.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0110"
+    },
+    {
+      "source_path": "public/blog/employee-referral-program-guide.jpg",
+      "purpose": "Blog cover: employee-referral-program-guide",
+      "pages": [
+        "/blog/employee-referral-program-guide"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/employee-referral-program-guide.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0111"
+    },
+    {
+      "source_path": "public/blog/employer-brand-audit-checklist.jpg",
+      "purpose": "Blog cover: employer-brand-audit-checklist",
+      "pages": [
+        "/blog/employer-brand-audit-checklist"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/employer-brand-audit-checklist.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0112"
+    },
+    {
+      "source_path": "public/blog/employer-branding-2026.jpg",
+      "purpose": "Blog cover: employer-branding-2026",
+      "pages": [
+        "/blog/employer-branding-2026"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/employer-branding-2026.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0113"
+    },
+    {
+      "source_path": "public/blog/employer-branding-on-a-budget.jpg",
+      "purpose": "Blog cover: employer-branding-on-a-budget",
+      "pages": [
+        "/blog/employer-branding-on-a-budget"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/employer-branding-on-a-budget.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0114"
+    },
+    {
+      "source_path": "public/blog/employer-branding-playbook.jpg",
+      "purpose": "Blog cover: employer-branding-playbook",
+      "pages": [
+        "/blog/employer-branding-playbook"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/employer-branding-playbook.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0115"
+    },
+    {
+      "source_path": "public/blog/employer-branding-roi-framework.jpg",
+      "purpose": "Blog cover: employer-branding-roi-framework",
+      "pages": [
+        "/blog/employer-branding-roi-framework"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/employer-branding-roi-framework.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0116"
+    },
+    {
+      "source_path": "public/blog/employer-of-record-guide.jpg",
+      "purpose": "Blog cover: employer-of-record-guide",
+      "pages": [
+        "/blog/employer-of-record-guide"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/employer-of-record-guide.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0117"
+    },
+    {
+      "source_path": "public/blog/employer-value-proposition-guide.jpg",
+      "purpose": "Blog cover: employer-value-proposition-guide",
+      "pages": [
+        "/blog/employer-value-proposition-guide"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/employer-value-proposition-guide.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0118"
+    },
+    {
+      "source_path": "public/blog/energy-transition-talent-war.jpg",
+      "purpose": "Blog cover: energy-transition-talent-war",
+      "pages": [
+        "/blog/energy-transition-talent-war"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/energy-transition-talent-war.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0119"
+    },
+    {
+      "source_path": "public/blog/executive-hiring-playbook.jpg",
+      "purpose": "Blog cover: executive-hiring-playbook",
+      "pages": [
+        "/blog/executive-hiring-playbook"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/executive-hiring-playbook.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0120"
+    },
+    {
+      "source_path": "public/blog/executive-interview-framework.jpg",
+      "purpose": "Blog cover: executive-interview-framework",
+      "pages": [
+        "/blog/executive-interview-framework"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/executive-interview-framework.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0121"
+    },
+    {
+      "source_path": "public/blog/executive-presence-remote-world.jpg",
+      "purpose": "Blog cover: executive-presence-remote-world",
+      "pages": [
+        "/blog/executive-presence-remote-world"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/executive-presence-remote-world.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0122"
+    },
+    {
+      "source_path": "public/blog/executive-search-process.jpg",
+      "purpose": "Blog cover: executive-search-process",
+      "pages": [
+        "/blog/executive-search-process"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/executive-search-process.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0123"
+    },
+    {
+      "source_path": "public/blog/executive-search-vs-subscription-sourcing.jpg",
+      "purpose": "Blog cover: executive-search-vs-subscription-sourcing",
+      "pages": [
+        "/blog/executive-search-vs-subscription-sourcing"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/executive-search-vs-subscription-sourcing.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0124"
+    },
+    {
+      "source_path": "public/blog/exit-interview-insights-guide.jpg",
+      "purpose": "Blog cover: exit-interview-insights-guide",
+      "pages": [
+        "/blog/exit-interview-insights-guide"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/exit-interview-insights-guide.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0125"
+    },
+    {
+      "source_path": "public/blog/finance-accounting-salary-guide.jpg",
+      "purpose": "Blog cover: finance-accounting-salary-guide",
+      "pages": [
+        "/blog/finance-accounting-salary-guide"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/finance-accounting-salary-guide.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0126"
+    },
+    {
+      "source_path": "public/blog/finance-hiring-regulatory-environment.jpg",
+      "purpose": "Blog cover: finance-hiring-regulatory-environment",
+      "pages": [
+        "/blog/finance-hiring-regulatory-environment"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/finance-hiring-regulatory-environment.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0127"
+    },
+    {
+      "source_path": "public/blog/finance-talent-trends-2026.jpg",
+      "purpose": "Blog cover: finance-talent-trends-2026",
+      "pages": [
+        "/blog/finance-talent-trends-2026"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/finance-talent-trends-2026.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0128"
+    },
+    {
+      "source_path": "public/blog/fintech-hiring-landscape-2026.jpg",
+      "purpose": "Blog cover: fintech-hiring-landscape-2026",
+      "pages": [
+        "/blog/fintech-hiring-landscape-2026"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/fintech-hiring-landscape-2026.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0129"
+    },
+    {
+      "source_path": "public/blog/fintech-talent-wars.jpg",
+      "purpose": "Blog cover: fintech-talent-wars",
+      "pages": [
+        "/blog/fintech-talent-wars"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/fintech-talent-wars.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0130"
+    },
+    {
+      "source_path": "public/blog/fintech-vs-traditional-finance-careers.jpg",
+      "purpose": "Blog cover: fintech-vs-traditional-finance-careers",
+      "pages": [
+        "/blog/fintech-vs-traditional-finance-careers"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/fintech-vs-traditional-finance-careers.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0131"
+    },
+    {
+      "source_path": "public/blog/four-day-work-week-impact-hiring.jpg",
+      "purpose": "Blog cover: four-day-work-week-impact-hiring",
+      "pages": [
+        "/blog/four-day-work-week-impact-hiring"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/four-day-work-week-impact-hiring.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0132"
+    },
+    {
+      "source_path": "public/blog/four-day-work-week-implementation.jpg",
+      "purpose": "Blog cover: four-day-work-week-implementation",
+      "pages": [
+        "/blog/four-day-work-week-implementation"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/four-day-work-week-implementation.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0133"
+    },
+    {
+      "source_path": "public/blog/fractional-executive-hiring-guide.jpg",
+      "purpose": "Blog cover: fractional-executive-hiring-guide",
+      "pages": [
+        "/blog/fractional-executive-hiring-guide"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/fractional-executive-hiring-guide.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0134"
+    },
+    {
+      "source_path": "public/blog/fractional-executives-guide.jpg",
+      "purpose": "Blog cover: fractional-executives-guide",
+      "pages": [
+        "/blog/fractional-executives-guide"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/fractional-executives-guide.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0135"
+    },
+    {
+      "source_path": "public/blog/freight-forwarding-digital-transformation.jpg",
+      "purpose": "Blog cover: freight-forwarding-digital-transformation",
+      "pages": [
+        "/blog/freight-forwarding-digital-transformation"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/freight-forwarding-digital-transformation.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0136"
+    },
+    {
+      "source_path": "public/blog/future-of-contingent-workforce-2026.jpg",
+      "purpose": "Blog cover: future-of-contingent-workforce-2026",
+      "pages": [
+        "/blog/future-of-contingent-workforce-2026"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/future-of-contingent-workforce-2026.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0137"
+    },
+    {
+      "source_path": "public/blog/future-of-work-2030-predictions.jpg",
+      "purpose": "Blog cover: future-of-work-2030-predictions",
+      "pages": [
+        "/blog/future-of-work-2030-predictions"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/future-of-work-2030-predictions.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0138"
+    },
+    {
+      "source_path": "public/blog/gaming-industry-talent-acquisition.jpg",
+      "purpose": "Blog cover: gaming-industry-talent-acquisition",
+      "pages": [
+        "/blog/gaming-industry-talent-acquisition"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/gaming-industry-talent-acquisition.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0139"
+    },
+    {
+      "source_path": "public/blog/gen-z-workforce-expectations-2026.jpg",
+      "purpose": "Blog cover: gen-z-workforce-expectations-2026",
+      "pages": [
+        "/blog/gen-z-workforce-expectations-2026"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/gen-z-workforce-expectations-2026.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0140"
+    },
+    {
+      "source_path": "public/blog/gen-z-workforce-expectations.jpg",
+      "purpose": "Blog cover: gen-z-workforce-expectations",
+      "pages": [
+        "/blog/gen-z-workforce-expectations"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/gen-z-workforce-expectations.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0141"
+    },
+    {
+      "source_path": "public/blog/generation-z-hiring.jpg",
+      "purpose": "Blog cover: generation-z-hiring",
+      "pages": [
+        "/blog/generation-z-hiring"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/generation-z-hiring.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0142"
+    },
+    {
+      "source_path": "public/blog/gig-economy-talent-strategy.jpg",
+      "purpose": "Blog cover: gig-economy-talent-strategy",
+      "pages": [
+        "/blog/gig-economy-talent-strategy"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/gig-economy-talent-strategy.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0143"
+    },
+    {
+      "source_path": "public/blog/global-supply-chain-talent-shortage.jpg",
+      "purpose": "Blog cover: global-supply-chain-talent-shortage",
+      "pages": [
+        "/blog/global-supply-chain-talent-shortage"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/global-supply-chain-talent-shortage.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0144"
+    },
+    {
+      "source_path": "public/blog/global-talent-arbitrage-strategy.jpg",
+      "purpose": "Blog cover: global-talent-arbitrage-strategy",
+      "pages": [
+        "/blog/global-talent-arbitrage-strategy"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/global-talent-arbitrage-strategy.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0145"
+    },
+    {
+      "source_path": "public/blog/global-talent-mobility-2026.jpg",
+      "purpose": "Blog cover: global-talent-mobility-2026",
+      "pages": [
+        "/blog/global-talent-mobility-2026"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/global-talent-mobility-2026.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0146"
+    },
+    {
+      "source_path": "public/blog/global-trade-routes-talent-strategy.jpg",
+      "purpose": "Blog cover: global-trade-routes-talent-strategy",
+      "pages": [
+        "/blog/global-trade-routes-talent-strategy"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/global-trade-routes-talent-strategy.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0147"
+    },
+    {
+      "source_path": "public/blog/government-hiring-modernization.jpg",
+      "purpose": "Blog cover: government-hiring-modernization",
+      "pages": [
+        "/blog/government-hiring-modernization"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/government-hiring-modernization.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0148"
+    },
+    {
+      "source_path": "public/blog/great-resignation-aftermath-2026.jpg",
+      "purpose": "Blog cover: great-resignation-aftermath-2026",
+      "pages": [
+        "/blog/great-resignation-aftermath-2026"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/great-resignation-aftermath-2026.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0149"
+    },
+    {
+      "source_path": "public/blog/growth-marketing-hiring-guide.jpg",
+      "purpose": "Blog cover: growth-marketing-hiring-guide",
+      "pages": [
+        "/blog/growth-marketing-hiring-guide"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/growth-marketing-hiring-guide.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0150"
+    },
+    {
+      "source_path": "public/blog/head-of-design-role-guide.jpg",
+      "purpose": "Blog cover: head-of-design-role-guide",
+      "pages": [
+        "/blog/head-of-design-role-guide"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/head-of-design-role-guide.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0151"
+    },
+    {
+      "source_path": "public/blog/healthcare-hiring-crisis.jpg",
+      "purpose": "Blog cover: healthcare-hiring-crisis",
+      "pages": [
+        "/blog/healthcare-hiring-crisis"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/healthcare-hiring-crisis.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0152"
+    },
+    {
+      "source_path": "public/blog/healthcare-it-hiring-guide.jpg",
+      "purpose": "Blog cover: healthcare-it-hiring-guide",
+      "pages": [
+        "/blog/healthcare-it-hiring-guide"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/healthcare-it-hiring-guide.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0153"
+    },
+    {
+      "source_path": "public/blog/healthcare-recruiting-challenges.jpg",
+      "purpose": "Blog cover: healthcare-recruiting-challenges",
+      "pages": [
+        "/blog/healthcare-recruiting-challenges"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/healthcare-recruiting-challenges.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0154"
+    },
+    {
+      "source_path": "public/blog/healthcare-staffing-crisis-solutions.jpg",
+      "purpose": "Blog cover: healthcare-staffing-crisis-solutions",
+      "pages": [
+        "/blog/healthcare-staffing-crisis-solutions"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/healthcare-staffing-crisis-solutions.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0155"
+    },
+    {
+      "source_path": "public/blog/high-volume-hiring-strategies.jpg",
+      "purpose": "Blog cover: high-volume-hiring-strategies",
+      "pages": [
+        "/blog/high-volume-hiring-strategies"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/high-volume-hiring-strategies.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0156"
+    },
+    {
+      "source_path": "public/blog/high-volume-hiring-systems.jpg",
+      "purpose": "Blog cover: high-volume-hiring-systems",
+      "pages": [
+        "/blog/high-volume-hiring-systems"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/high-volume-hiring-systems.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0157"
+    },
+    {
+      "source_path": "public/blog/hire-full-stack-developer-2026.jpg",
+      "purpose": "Blog cover: hire-full-stack-developer-2026",
+      "pages": [
+        "/blog/hire-full-stack-developer-2026"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/hire-full-stack-developer-2026.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0158"
+    },
+    {
+      "source_path": "public/blog/hiring-ai-engineers-2026.jpg",
+      "purpose": "Blog cover: hiring-ai-engineers-2026",
+      "pages": [
+        "/blog/hiring-ai-engineers-2026"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/hiring-ai-engineers-2026.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0159"
+    },
+    {
+      "source_path": "public/blog/hiring-bias-reduction-techniques.jpg",
+      "purpose": "Blog cover: hiring-bias-reduction-techniques",
+      "pages": [
+        "/blog/hiring-bias-reduction-techniques"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/hiring-bias-reduction-techniques.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0160"
+    },
+    {
+      "source_path": "public/blog/hiring-cfo-board-ready.jpg",
+      "purpose": "Blog cover: hiring-cfo-board-ready",
+      "pages": [
+        "/blog/hiring-cfo-board-ready"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/hiring-cfo-board-ready.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0161"
+    },
+    {
+      "source_path": "public/blog/hiring-during-recession-playbook.jpg",
+      "purpose": "Blog cover: hiring-during-recession-playbook",
+      "pages": [
+        "/blog/hiring-during-recession-playbook"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/hiring-during-recession-playbook.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0162"
+    },
+    {
+      "source_path": "public/blog/hiring-for-culture-add-not-culture-fit.jpg",
+      "purpose": "Blog cover: hiring-for-culture-add-not-culture-fit",
+      "pages": [
+        "/blog/hiring-for-culture-add-not-culture-fit"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/hiring-for-culture-add-not-culture-fit.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0163"
+    },
+    {
+      "source_path": "public/blog/hiring-for-hypergrowth-startups.jpg",
+      "purpose": "Blog cover: hiring-for-hypergrowth-startups",
+      "pages": [
+        "/blog/hiring-for-hypergrowth-startups"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/hiring-for-hypergrowth-startups.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0164"
+    },
+    {
+      "source_path": "public/blog/hiring-for-startups-vs-enterprise.jpg",
+      "purpose": "Blog cover: hiring-for-startups-vs-enterprise",
+      "pages": [
+        "/blog/hiring-for-startups-vs-enterprise"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/hiring-for-startups-vs-enterprise.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0165"
+    },
+    {
+      "source_path": "public/blog/hiring-freeze-recovery.jpg",
+      "purpose": "Blog cover: hiring-freeze-recovery",
+      "pages": [
+        "/blog/hiring-freeze-recovery"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/hiring-freeze-recovery.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0166"
+    },
+    {
+      "source_path": "public/blog/hiring-freeze-talent-strategy.jpg",
+      "purpose": "Blog cover: hiring-freeze-talent-strategy",
+      "pages": [
+        "/blog/hiring-freeze-talent-strategy"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/hiring-freeze-talent-strategy.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0167"
+    },
+    {
+      "source_path": "public/blog/hiring-manager-kickoff-playbook.jpg",
+      "purpose": "Blog cover: hiring-manager-kickoff-playbook",
+      "pages": [
+        "/blog/hiring-manager-kickoff-playbook"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/hiring-manager-kickoff-playbook.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0168"
+    },
+    {
+      "source_path": "public/blog/hiring-manager-partnership.jpg",
+      "purpose": "Blog cover: hiring-manager-partnership",
+      "pages": [
+        "/blog/hiring-manager-partnership"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/hiring-manager-partnership.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0169"
+    },
+    {
+      "source_path": "public/blog/hiring-manager-training-guide.jpg",
+      "purpose": "Blog cover: hiring-manager-training-guide",
+      "pages": [
+        "/blog/hiring-manager-training-guide"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/hiring-manager-training-guide.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0170"
+    },
+    {
+      "source_path": "public/blog/hospitality-hiring-trends-2026.jpg",
+      "purpose": "Blog cover: hospitality-hiring-trends-2026",
+      "pages": [
+        "/blog/hospitality-hiring-trends-2026"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/hospitality-hiring-trends-2026.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0171"
+    },
+    {
+      "source_path": "public/blog/hospitality-management-hiring.jpg",
+      "purpose": "Blog cover: hospitality-management-hiring",
+      "pages": [
+        "/blog/hospitality-management-hiring"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/hospitality-management-hiring.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0172"
+    },
+    {
+      "source_path": "public/blog/hospitality-retention-playbook.jpg",
+      "purpose": "Blog cover: hospitality-retention-playbook",
+      "pages": [
+        "/blog/hospitality-retention-playbook"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/hospitality-retention-playbook.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0173"
+    },
+    {
+      "source_path": "public/blog/hospitality-retention-strategies.jpg",
+      "purpose": "Blog cover: hospitality-retention-strategies",
+      "pages": [
+        "/blog/hospitality-retention-strategies"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/hospitality-retention-strategies.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0174"
+    },
+    {
+      "source_path": "public/blog/hospitality-seasonal-hiring-guide.jpg",
+      "purpose": "Blog cover: hospitality-seasonal-hiring-guide",
+      "pages": [
+        "/blog/hospitality-seasonal-hiring-guide"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/hospitality-seasonal-hiring-guide.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0175"
+    },
+    {
+      "source_path": "public/blog/how-to-write-job-descriptions-that-convert.jpg",
+      "purpose": "Blog cover: how-to-write-job-descriptions-that-convert",
+      "pages": [
+        "/blog/how-to-write-job-descriptions-that-convert"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/how-to-write-job-descriptions-that-convert.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0176"
+    },
+    {
+      "source_path": "public/blog/hr-people-ops-salary-guide.jpg",
+      "purpose": "Blog cover: hr-people-ops-salary-guide",
+      "pages": [
+        "/blog/hr-people-ops-salary-guide"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/hr-people-ops-salary-guide.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0177"
+    },
+    {
+      "source_path": "public/blog/hr-team-building-guide-2026.jpg",
+      "purpose": "Blog cover: hr-team-building-guide-2026",
+      "pages": [
+        "/blog/hr-team-building-guide-2026"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/hr-team-building-guide-2026.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0178"
+    },
+    {
+      "source_path": "public/blog/hr-technology-team-building.jpg",
+      "purpose": "Blog cover: hr-technology-team-building",
+      "pages": [
+        "/blog/hr-technology-team-building"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/hr-technology-team-building.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0179"
+    },
+    {
+      "source_path": "public/blog/hr-technology-trends-2026.jpg",
+      "purpose": "Blog cover: hr-technology-trends-2026",
+      "pages": [
+        "/blog/hr-technology-trends-2026"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/hr-technology-trends-2026.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0180"
+    },
+    {
+      "source_path": "public/blog/hybrid-work-model-best-practices.jpg",
+      "purpose": "Blog cover: hybrid-work-model-best-practices",
+      "pages": [
+        "/blog/hybrid-work-model-best-practices"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/hybrid-work-model-best-practices.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0181"
+    },
+    {
+      "source_path": "public/blog/insurance-hiring-modernization.jpg",
+      "purpose": "Blog cover: insurance-hiring-modernization",
+      "pages": [
+        "/blog/insurance-hiring-modernization"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/insurance-hiring-modernization.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0182"
+    },
+    {
+      "source_path": "public/blog/insurance-industry-hiring-2026.jpg",
+      "purpose": "Blog cover: insurance-industry-hiring-2026",
+      "pages": [
+        "/blog/insurance-industry-hiring-2026"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/insurance-industry-hiring-2026.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0183"
+    },
+    {
+      "source_path": "public/blog/insurtech-talent-acquisition.jpg",
+      "purpose": "Blog cover: insurtech-talent-acquisition",
+      "pages": [
+        "/blog/insurtech-talent-acquisition"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/insurtech-talent-acquisition.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0184"
+    },
+    {
+      "source_path": "public/blog/intermodal-transportation-careers.jpg",
+      "purpose": "Blog cover: intermodal-transportation-careers",
+      "pages": [
+        "/blog/intermodal-transportation-careers"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/intermodal-transportation-careers.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0185"
+    },
+    {
+      "source_path": "public/blog/internal-mobility-program-guide.jpg",
+      "purpose": "Blog cover: internal-mobility-program-guide",
+      "pages": [
+        "/blog/internal-mobility-program-guide"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/internal-mobility-program-guide.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0186"
+    },
+    {
+      "source_path": "public/blog/internal-mobility-strategy.jpg",
+      "purpose": "Blog cover: internal-mobility-strategy",
+      "pages": [
+        "/blog/internal-mobility-strategy"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/internal-mobility-strategy.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0187"
+    },
+    {
+      "source_path": "public/blog/internal-recruiting-vs-outsourcing.jpg",
+      "purpose": "Blog cover: internal-recruiting-vs-outsourcing",
+      "pages": [
+        "/blog/internal-recruiting-vs-outsourcing"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/internal-recruiting-vs-outsourcing.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0188"
+    },
+    {
+      "source_path": "public/blog/international-hiring-compliance-guide.jpg",
+      "purpose": "Blog cover: international-hiring-compliance-guide",
+      "pages": [
+        "/blog/international-hiring-compliance-guide"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/international-hiring-compliance-guide.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0189"
+    },
+    {
+      "source_path": "public/blog/interview-feedback-best-practices.jpg",
+      "purpose": "Blog cover: interview-feedback-best-practices",
+      "pages": [
+        "/blog/interview-feedback-best-practices"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/interview-feedback-best-practices.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0190"
+    },
+    {
+      "source_path": "public/blog/interview-scheduling-nightmare.jpg",
+      "purpose": "Blog cover: interview-scheduling-nightmare",
+      "pages": [
+        "/blog/interview-scheduling-nightmare"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/interview-scheduling-nightmare.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0191"
+    },
+    {
+      "source_path": "public/blog/interview-scorecards-guide.jpg",
+      "purpose": "Blog cover: interview-scorecards-guide",
+      "pages": [
+        "/blog/interview-scorecards-guide"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/interview-scorecards-guide.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0192"
+    },
+    {
+      "source_path": "public/blog/job-description-optimization.jpg",
+      "purpose": "Blog cover: job-description-optimization",
+      "pages": [
+        "/blog/job-description-optimization"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/job-description-optimization.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0193"
+    },
+    {
+      "source_path": "public/blog/labor-market-trends-q1-2026.jpg",
+      "purpose": "Blog cover: labor-market-trends-q1-2026",
+      "pages": [
+        "/blog/labor-market-trends-q1-2026"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/labor-market-trends-q1-2026.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0194"
+    },
+    {
+      "source_path": "public/blog/legal-hiring-transformation.jpg",
+      "purpose": "Blog cover: legal-hiring-transformation",
+      "pages": [
+        "/blog/legal-hiring-transformation"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/legal-hiring-transformation.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0195"
+    },
+    {
+      "source_path": "public/blog/legal-hiring-trends-law-firms.jpg",
+      "purpose": "Blog cover: legal-hiring-trends-law-firms",
+      "pages": [
+        "/blog/legal-hiring-trends-law-firms"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/legal-hiring-trends-law-firms.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0196"
+    },
+    {
+      "source_path": "public/blog/legal-industry-hiring-guide.jpg",
+      "purpose": "Blog cover: legal-industry-hiring-guide",
+      "pages": [
+        "/blog/legal-industry-hiring-guide"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/legal-industry-hiring-guide.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0197"
+    },
+    {
+      "source_path": "public/blog/legal-tech-talent-acquisition.jpg",
+      "purpose": "Blog cover: legal-tech-talent-acquisition",
+      "pages": [
+        "/blog/legal-tech-talent-acquisition"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/legal-tech-talent-acquisition.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0198"
+    },
+    {
+      "source_path": "public/blog/logistics-supply-chain-hiring-2026.jpg",
+      "purpose": "Blog cover: logistics-supply-chain-hiring-2026",
+      "pages": [
+        "/blog/logistics-supply-chain-hiring-2026"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/logistics-supply-chain-hiring-2026.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0199"
+    },
+    {
+      "source_path": "public/blog/logistics-workforce-planning.jpg",
+      "purpose": "Blog cover: logistics-workforce-planning",
+      "pages": [
+        "/blog/logistics-workforce-planning"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/logistics-workforce-planning.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0200"
+    },
+    {
+      "source_path": "public/blog/longevity-economy-workforce-planning.jpg",
+      "purpose": "Blog cover: longevity-economy-workforce-planning",
+      "pages": [
+        "/blog/longevity-economy-workforce-planning"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/longevity-economy-workforce-planning.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0201"
+    },
+    {
+      "source_path": "public/blog/management-consulting-recruiting-strategies.jpg",
+      "purpose": "Blog cover: management-consulting-recruiting-strategies",
+      "pages": [
+        "/blog/management-consulting-recruiting-strategies"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/management-consulting-recruiting-strategies.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0202"
+    },
+    {
+      "source_path": "public/blog/manager-effectiveness-hiring-impact.jpg",
+      "purpose": "Blog cover: manager-effectiveness-hiring-impact",
+      "pages": [
+        "/blog/manager-effectiveness-hiring-impact"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/manager-effectiveness-hiring-impact.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0203"
+    },
+    {
+      "source_path": "public/blog/manager-hiring-skills-training.jpg",
+      "purpose": "Blog cover: manager-hiring-skills-training",
+      "pages": [
+        "/blog/manager-hiring-skills-training"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/manager-hiring-skills-training.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0204"
+    },
+    {
+      "source_path": "public/blog/manufacturing-skills-gap-crisis.jpg",
+      "purpose": "Blog cover: manufacturing-skills-gap-crisis",
+      "pages": [
+        "/blog/manufacturing-skills-gap-crisis"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/manufacturing-skills-gap-crisis.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0205"
+    },
+    {
+      "source_path": "public/blog/marketing-hiring-modern-stack.jpg",
+      "purpose": "Blog cover: marketing-hiring-modern-stack",
+      "pages": [
+        "/blog/marketing-hiring-modern-stack"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/marketing-hiring-modern-stack.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0206"
+    },
+    {
+      "source_path": "public/blog/marketing-salary-benchmarks-2026.jpg",
+      "purpose": "Blog cover: marketing-salary-benchmarks-2026",
+      "pages": [
+        "/blog/marketing-salary-benchmarks-2026"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/marketing-salary-benchmarks-2026.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0207"
+    },
+    {
+      "source_path": "public/blog/marketing-talent-2026.jpg",
+      "purpose": "Blog cover: marketing-talent-2026",
+      "pages": [
+        "/blog/marketing-talent-2026"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/marketing-talent-2026.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0208"
+    },
+    {
+      "source_path": "public/blog/marketing-team-structure-guide.jpg",
+      "purpose": "Blog cover: marketing-team-structure-guide",
+      "pages": [
+        "/blog/marketing-team-structure-guide"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/marketing-team-structure-guide.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0209"
+    },
+    {
+      "source_path": "public/blog/media-entertainment-hiring-guide.jpg",
+      "purpose": "Blog cover: media-entertainment-hiring-guide",
+      "pages": [
+        "/blog/media-entertainment-hiring-guide"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/media-entertainment-hiring-guide.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0210"
+    },
+    {
+      "source_path": "public/blog/media-industry-digital-hiring.jpg",
+      "purpose": "Blog cover: media-industry-digital-hiring",
+      "pages": [
+        "/blog/media-industry-digital-hiring"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/media-industry-digital-hiring.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0211"
+    },
+    {
+      "source_path": "public/blog/mobile-recruiting-strategies.jpg",
+      "purpose": "Blog cover: mobile-recruiting-strategies",
+      "pages": [
+        "/blog/mobile-recruiting-strategies"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/mobile-recruiting-strategies.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0212"
+    },
+    {
+      "source_path": "public/blog/neurodiversity-hiring-competitive-advantage.jpg",
+      "purpose": "Blog cover: neurodiversity-hiring-competitive-advantage",
+      "pages": [
+        "/blog/neurodiversity-hiring-competitive-advantage"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/neurodiversity-hiring-competitive-advantage.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0213"
+    },
+    {
+      "source_path": "public/blog/neurodiversity-hiring-guide.jpg",
+      "purpose": "Blog cover: neurodiversity-hiring-guide",
+      "pages": [
+        "/blog/neurodiversity-hiring-guide"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/neurodiversity-hiring-guide.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0214"
+    },
+    {
+      "source_path": "public/blog/nonprofit-executive-hiring-guide.jpg",
+      "purpose": "Blog cover: nonprofit-executive-hiring-guide",
+      "pages": [
+        "/blog/nonprofit-executive-hiring-guide"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/nonprofit-executive-hiring-guide.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0215"
+    },
+    {
+      "source_path": "public/blog/nonprofit-hiring-mission-driven-talent.jpg",
+      "purpose": "Blog cover: nonprofit-hiring-mission-driven-talent",
+      "pages": [
+        "/blog/nonprofit-hiring-mission-driven-talent"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/nonprofit-hiring-mission-driven-talent.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0216"
+    },
+    {
+      "source_path": "public/blog/nonprofit-hiring-strategies.jpg",
+      "purpose": "Blog cover: nonprofit-hiring-strategies",
+      "pages": [
+        "/blog/nonprofit-hiring-strategies"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/nonprofit-hiring-strategies.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0217"
+    },
+    {
+      "source_path": "public/blog/nurse-recruitment-global-shortage-2026.jpg",
+      "purpose": "Blog cover: nurse-recruitment-global-shortage-2026",
+      "pages": [
+        "/blog/nurse-recruitment-global-shortage-2026"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/nurse-recruitment-global-shortage-2026.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0218"
+    },
+    {
+      "source_path": "public/blog/nursing-recruitment-best-practices.jpg",
+      "purpose": "Blog cover: nursing-recruitment-best-practices",
+      "pages": [
+        "/blog/nursing-recruitment-best-practices"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/nursing-recruitment-best-practices.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0219"
+    },
+    {
+      "source_path": "public/blog/offer-letter-best-practices.jpg",
+      "purpose": "Blog cover: offer-letter-best-practices",
+      "pages": [
+        "/blog/offer-letter-best-practices"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/offer-letter-best-practices.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0220"
+    },
+    {
+      "source_path": "public/blog/offer-negotiation-playbook.jpg",
+      "purpose": "Blog cover: offer-negotiation-playbook",
+      "pages": [
+        "/blog/offer-negotiation-playbook"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/offer-negotiation-playbook.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0221"
+    },
+    {
+      "source_path": "public/blog/onboarding-90-day-blueprint.jpg",
+      "purpose": "Blog cover: onboarding-90-day-blueprint",
+      "pages": [
+        "/blog/onboarding-90-day-blueprint"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/onboarding-90-day-blueprint.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0222"
+    },
+    {
+      "source_path": "public/blog/onboarding-best-practices-new-hire-retention.jpg",
+      "purpose": "Blog cover: onboarding-best-practices-new-hire-retention",
+      "pages": [
+        "/blog/onboarding-best-practices-new-hire-retention"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/onboarding-best-practices-new-hire-retention.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0223"
+    },
+    {
+      "source_path": "public/blog/onboarding-playbook-first-90-days.jpg",
+      "purpose": "Blog cover: onboarding-playbook-first-90-days",
+      "pages": [
+        "/blog/onboarding-playbook-first-90-days"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/onboarding-playbook-first-90-days.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0224"
+    },
+    {
+      "source_path": "public/blog/onboarding-starts-at-offer.jpg",
+      "purpose": "Blog cover: onboarding-starts-at-offer",
+      "pages": [
+        "/blog/onboarding-starts-at-offer"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/onboarding-starts-at-offer.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0225"
+    },
+    {
+      "source_path": "public/blog/organizational-design-for-growth.jpg",
+      "purpose": "Blog cover: organizational-design-for-growth",
+      "pages": [
+        "/blog/organizational-design-for-growth"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/organizational-design-for-growth.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0226"
+    },
+    {
+      "source_path": "public/blog/passive-candidate-sourcing-strategies.jpg",
+      "purpose": "Blog cover: passive-candidate-sourcing-strategies",
+      "pages": [
+        "/blog/passive-candidate-sourcing-strategies"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/passive-candidate-sourcing-strategies.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0227"
+    },
+    {
+      "source_path": "public/blog/pay-equity-audit-guide.jpg",
+      "purpose": "Blog cover: pay-equity-audit-guide",
+      "pages": [
+        "/blog/pay-equity-audit-guide"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/pay-equity-audit-guide.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0228"
+    },
+    {
+      "source_path": "public/blog/people-analytics-getting-started.jpg",
+      "purpose": "Blog cover: people-analytics-getting-started",
+      "pages": [
+        "/blog/people-analytics-getting-started"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/people-analytics-getting-started.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0229"
+    },
+    {
+      "source_path": "public/blog/pharma-biotech-hiring-regulatory-talent.jpg",
+      "purpose": "Blog cover: pharma-biotech-hiring-regulatory-talent",
+      "pages": [
+        "/blog/pharma-biotech-hiring-regulatory-talent"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/pharma-biotech-hiring-regulatory-talent.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0230"
+    },
+    {
+      "source_path": "public/blog/pharmaceutical-hiring-challenges.jpg",
+      "purpose": "Blog cover: pharmaceutical-hiring-challenges",
+      "pages": [
+        "/blog/pharmaceutical-hiring-challenges"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/pharmaceutical-hiring-challenges.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0231"
+    },
+    {
+      "source_path": "public/blog/portfolio-career-guide.jpg",
+      "purpose": "Blog cover: portfolio-career-guide",
+      "pages": [
+        "/blog/portfolio-career-guide"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/portfolio-career-guide.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0232"
+    },
+    {
+      "source_path": "public/blog/predictive-analytics-hiring.jpg",
+      "purpose": "Blog cover: predictive-analytics-hiring",
+      "pages": [
+        "/blog/predictive-analytics-hiring"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/predictive-analytics-hiring.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0233"
+    },
+    {
+      "source_path": "public/blog/private-equity-portfolio-hiring.jpg",
+      "purpose": "Blog cover: private-equity-portfolio-hiring",
+      "pages": [
+        "/blog/private-equity-portfolio-hiring"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/private-equity-portfolio-hiring.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0234"
+    },
+    {
+      "source_path": "public/blog/private-equity-portfolio-talent.jpg",
+      "purpose": "Blog cover: private-equity-portfolio-talent",
+      "pages": [
+        "/blog/private-equity-portfolio-talent"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/private-equity-portfolio-talent.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0235"
+    },
+    {
+      "source_path": "public/blog/private-equity-talent-acquisition.jpg",
+      "purpose": "Blog cover: private-equity-talent-acquisition",
+      "pages": [
+        "/blog/private-equity-talent-acquisition"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/private-equity-talent-acquisition.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0236"
+    },
+    {
+      "source_path": "public/blog/product-management-hiring-guide.jpg",
+      "purpose": "Blog cover: product-management-hiring-guide",
+      "pages": [
+        "/blog/product-management-hiring-guide"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/product-management-hiring-guide.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0237"
+    },
+    {
+      "source_path": "public/blog/proptech-talent-acquisition.jpg",
+      "purpose": "Blog cover: proptech-talent-acquisition",
+      "pages": [
+        "/blog/proptech-talent-acquisition"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/proptech-talent-acquisition.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0238"
+    },
+    {
+      "source_path": "public/blog/public-sector-hiring-modernization.jpg",
+      "purpose": "Blog cover: public-sector-hiring-modernization",
+      "pages": [
+        "/blog/public-sector-hiring-modernization"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/public-sector-hiring-modernization.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0239"
+    },
+    {
+      "source_path": "public/blog/public-sector-talent-acquisition.jpg",
+      "purpose": "Blog cover: public-sector-talent-acquisition",
+      "pages": [
+        "/blog/public-sector-talent-acquisition"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/public-sector-talent-acquisition.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0240"
+    },
+    {
+      "source_path": "public/blog/quality-of-hire-measurement-guide.jpg",
+      "purpose": "Blog cover: quality-of-hire-measurement-guide",
+      "pages": [
+        "/blog/quality-of-hire-measurement-guide"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/quality-of-hire-measurement-guide.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0241"
+    },
+    {
+      "source_path": "public/blog/quiet-quitting-quiet-hiring.jpg",
+      "purpose": "Blog cover: quiet-quitting-quiet-hiring",
+      "pages": [
+        "/blog/quiet-quitting-quiet-hiring"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/quiet-quitting-quiet-hiring.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0242"
+    },
+    {
+      "source_path": "public/blog/real-estate-hiring-trends.jpg",
+      "purpose": "Blog cover: real-estate-hiring-trends",
+      "pages": [
+        "/blog/real-estate-hiring-trends"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/real-estate-hiring-trends.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0243"
+    },
+    {
+      "source_path": "public/blog/real-estate-talent-acquisition-guide.jpg",
+      "purpose": "Blog cover: real-estate-talent-acquisition-guide",
+      "pages": [
+        "/blog/real-estate-talent-acquisition-guide"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/real-estate-talent-acquisition-guide.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0244"
+    },
+    {
+      "source_path": "public/blog/real-estate-talent-acquisition.jpg",
+      "purpose": "Blog cover: real-estate-talent-acquisition",
+      "pages": [
+        "/blog/real-estate-talent-acquisition"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/real-estate-talent-acquisition.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0245"
+    },
+    {
+      "source_path": "public/blog/recession-proof-recruiting-strategy.jpg",
+      "purpose": "Blog cover: recession-proof-recruiting-strategy",
+      "pages": [
+        "/blog/recession-proof-recruiting-strategy"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/recession-proof-recruiting-strategy.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0246"
+    },
+    {
+      "source_path": "public/blog/recruiter-burnout-crisis.jpg",
+      "purpose": "Blog cover: recruiter-burnout-crisis",
+      "pages": [
+        "/blog/recruiter-burnout-crisis"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/recruiter-burnout-crisis.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0247"
+    },
+    {
+      "source_path": "public/blog/recruiter-productivity-tips.jpg",
+      "purpose": "Blog cover: recruiter-productivity-tips",
+      "pages": [
+        "/blog/recruiter-productivity-tips"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/recruiter-productivity-tips.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0248"
+    },
+    {
+      "source_path": "public/blog/recruiting-in-competitive-markets.jpg",
+      "purpose": "Blog cover: recruiting-in-competitive-markets",
+      "pages": [
+        "/blog/recruiting-in-competitive-markets"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/recruiting-in-competitive-markets.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0249"
+    },
+    {
+      "source_path": "public/blog/recruiting-metrics-dashboard-guide.jpg",
+      "purpose": "Blog cover: recruiting-metrics-dashboard-guide",
+      "pages": [
+        "/blog/recruiting-metrics-dashboard-guide"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/recruiting-metrics-dashboard-guide.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0250"
+    },
+    {
+      "source_path": "public/blog/recruitment-analytics-guide.jpg",
+      "purpose": "Blog cover: recruitment-analytics-guide",
+      "pages": [
+        "/blog/recruitment-analytics-guide"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/recruitment-analytics-guide.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0251"
+    },
+    {
+      "source_path": "public/blog/recruitment-automation-limits.jpg",
+      "purpose": "Blog cover: recruitment-automation-limits",
+      "pages": [
+        "/blog/recruitment-automation-limits"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/recruitment-automation-limits.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0252"
+    },
+    {
+      "source_path": "public/blog/recruitment-branding-social-media.jpg",
+      "purpose": "Blog cover: recruitment-branding-social-media",
+      "pages": [
+        "/blog/recruitment-branding-social-media"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/recruitment-branding-social-media.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0253"
+    },
+    {
+      "source_path": "public/blog/recruitment-compliance-guide-2026.jpg",
+      "purpose": "Blog cover: recruitment-compliance-guide-2026",
+      "pages": [
+        "/blog/recruitment-compliance-guide-2026"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/recruitment-compliance-guide-2026.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0254"
+    },
+    {
+      "source_path": "public/blog/recruitment-funnel-optimization.jpg",
+      "purpose": "Blog cover: recruitment-funnel-optimization",
+      "pages": [
+        "/blog/recruitment-funnel-optimization"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/recruitment-funnel-optimization.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0255"
+    },
+    {
+      "source_path": "public/blog/recruitment-marketing-content-strategy.jpg",
+      "purpose": "Blog cover: recruitment-marketing-content-strategy",
+      "pages": [
+        "/blog/recruitment-marketing-content-strategy"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/recruitment-marketing-content-strategy.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0256"
+    },
+    {
+      "source_path": "public/blog/recruitment-process-outsourcing-guide.jpg",
+      "purpose": "Blog cover: recruitment-process-outsourcing-guide",
+      "pages": [
+        "/blog/recruitment-process-outsourcing-guide"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/recruitment-process-outsourcing-guide.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0257"
+    },
+    {
+      "source_path": "public/blog/recruitment-process-outsourcing-vs-subscription.jpg",
+      "purpose": "Blog cover: recruitment-process-outsourcing-vs-subscription",
+      "pages": [
+        "/blog/recruitment-process-outsourcing-vs-subscription"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/recruitment-process-outsourcing-vs-subscription.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0258"
+    },
+    {
+      "source_path": "public/blog/recruitment-technology-stack-guide.jpg",
+      "purpose": "Blog cover: recruitment-technology-stack-guide",
+      "pages": [
+        "/blog/recruitment-technology-stack-guide"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/recruitment-technology-stack-guide.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0259"
+    },
+    {
+      "source_path": "public/blog/reduce-time-to-hire-strategies.jpg",
+      "purpose": "Blog cover: reduce-time-to-hire-strategies",
+      "pages": [
+        "/blog/reduce-time-to-hire-strategies"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/reduce-time-to-hire-strategies.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0260"
+    },
+    {
+      "source_path": "public/blog/reducing-cost-per-hire.jpg",
+      "purpose": "Blog cover: reducing-cost-per-hire",
+      "pages": [
+        "/blog/reducing-cost-per-hire"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/reducing-cost-per-hire.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0261"
+    },
+    {
+      "source_path": "public/blog/reducing-time-to-hire-without-sacrificing-quality.jpg",
+      "purpose": "Blog cover: reducing-time-to-hire-without-sacrificing-quality",
+      "pages": [
+        "/blog/reducing-time-to-hire-without-sacrificing-quality"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/reducing-time-to-hire-without-sacrificing-quality.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0262"
+    },
+    {
+      "source_path": "public/blog/reference-check-mastery.jpg",
+      "purpose": "Blog cover: reference-check-mastery",
+      "pages": [
+        "/blog/reference-check-mastery"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/reference-check-mastery.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0263"
+    },
+    {
+      "source_path": "public/blog/rejection-with-grace.jpg",
+      "purpose": "Blog cover: rejection-with-grace",
+      "pages": [
+        "/blog/rejection-with-grace"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/rejection-with-grace.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0264"
+    },
+    {
+      "source_path": "public/blog/remote-first-compensation-guide.jpg",
+      "purpose": "Blog cover: remote-first-compensation-guide",
+      "pages": [
+        "/blog/remote-first-compensation-guide"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/remote-first-compensation-guide.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0265"
+    },
+    {
+      "source_path": "public/blog/remote-hiring-best-practices-2026.jpg",
+      "purpose": "Blog cover: remote-hiring-best-practices-2026",
+      "pages": [
+        "/blog/remote-hiring-best-practices-2026"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/remote-hiring-best-practices-2026.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0266"
+    },
+    {
+      "source_path": "public/blog/remote-hiring-best-practices.jpg",
+      "purpose": "Blog cover: remote-hiring-best-practices",
+      "pages": [
+        "/blog/remote-hiring-best-practices"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/remote-hiring-best-practices.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0267"
+    },
+    {
+      "source_path": "public/blog/remote-interview-best-practices.jpg",
+      "purpose": "Blog cover: remote-interview-best-practices",
+      "pages": [
+        "/blog/remote-interview-best-practices"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/remote-interview-best-practices.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0268"
+    },
+    {
+      "source_path": "public/blog/remote-vs-hybrid-talent-strategy.jpg",
+      "purpose": "Blog cover: remote-vs-hybrid-talent-strategy",
+      "pages": [
+        "/blog/remote-vs-hybrid-talent-strategy"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/remote-vs-hybrid-talent-strategy.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0269"
+    },
+    {
+      "source_path": "public/blog/renewable-energy-talent-hiring.jpg",
+      "purpose": "Blog cover: renewable-energy-talent-hiring",
+      "pages": [
+        "/blog/renewable-energy-talent-hiring"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/renewable-energy-talent-hiring.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0270"
+    },
+    {
+      "source_path": "public/blog/retention-economics-guide.jpg",
+      "purpose": "Blog cover: retention-economics-guide",
+      "pages": [
+        "/blog/retention-economics-guide"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/retention-economics-guide.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0271"
+    },
+    {
+      "source_path": "public/blog/return-to-office-hiring.jpg",
+      "purpose": "Blog cover: return-to-office-hiring",
+      "pages": [
+        "/blog/return-to-office-hiring"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/return-to-office-hiring.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0272"
+    },
+    {
+      "source_path": "public/blog/return-to-office-talent-impact.jpg",
+      "purpose": "Blog cover: return-to-office-talent-impact",
+      "pages": [
+        "/blog/return-to-office-talent-impact"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/return-to-office-talent-impact.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0273"
+    },
+    {
+      "source_path": "public/blog/revenue-operations-role-breakdown.jpg",
+      "purpose": "Blog cover: revenue-operations-role-breakdown",
+      "pages": [
+        "/blog/revenue-operations-role-breakdown"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/revenue-operations-role-breakdown.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0274"
+    },
+    {
+      "source_path": "public/blog/saas-engineering-team-scaling.jpg",
+      "purpose": "Blog cover: saas-engineering-team-scaling",
+      "pages": [
+        "/blog/saas-engineering-team-scaling"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/saas-engineering-team-scaling.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0275"
+    },
+    {
+      "source_path": "public/blog/saas-go-to-market-hiring-guide.jpg",
+      "purpose": "Blog cover: saas-go-to-market-hiring-guide",
+      "pages": [
+        "/blog/saas-go-to-market-hiring-guide"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/saas-go-to-market-hiring-guide.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0276"
+    },
+    {
+      "source_path": "public/blog/saas-go-to-market-hiring.jpg",
+      "purpose": "Blog cover: saas-go-to-market-hiring",
+      "pages": [
+        "/blog/saas-go-to-market-hiring"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/saas-go-to-market-hiring.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0277"
+    },
+    {
+      "source_path": "public/blog/salary-compression-guide.jpg",
+      "purpose": "Blog cover: salary-compression-guide",
+      "pages": [
+        "/blog/salary-compression-guide"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/salary-compression-guide.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0278"
+    },
+    {
+      "source_path": "public/blog/salary-negotiation-from-employer-perspective.jpg",
+      "purpose": "Blog cover: salary-negotiation-from-employer-perspective",
+      "pages": [
+        "/blog/salary-negotiation-from-employer-perspective"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/salary-negotiation-from-employer-perspective.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0279"
+    },
+    {
+      "source_path": "public/blog/salary-negotiation-masterclass.jpg",
+      "purpose": "Blog cover: salary-negotiation-masterclass",
+      "pages": [
+        "/blog/salary-negotiation-masterclass"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/salary-negotiation-masterclass.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0280"
+    },
+    {
+      "source_path": "public/blog/salary-trends-2026-comprehensive.jpg",
+      "purpose": "Blog cover: salary-trends-2026-comprehensive",
+      "pages": [
+        "/blog/salary-trends-2026-comprehensive"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/salary-trends-2026-comprehensive.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0281"
+    },
+    {
+      "source_path": "public/blog/sales-hiring-playbook.jpg",
+      "purpose": "Blog cover: sales-hiring-playbook",
+      "pages": [
+        "/blog/sales-hiring-playbook"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/sales-hiring-playbook.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0282"
+    },
+    {
+      "source_path": "public/blog/sales-leadership-hiring-playbook.jpg",
+      "purpose": "Blog cover: sales-leadership-hiring-playbook",
+      "pages": [
+        "/blog/sales-leadership-hiring-playbook"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/sales-leadership-hiring-playbook.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0283"
+    },
+    {
+      "source_path": "public/blog/sales-leadership-hiring.jpg",
+      "purpose": "Blog cover: sales-leadership-hiring",
+      "pages": [
+        "/blog/sales-leadership-hiring"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/sales-leadership-hiring.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0284"
+    },
+    {
+      "source_path": "public/blog/sales-team-building-guide.jpg",
+      "purpose": "Blog cover: sales-team-building-guide",
+      "pages": [
+        "/blog/sales-team-building-guide"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/sales-team-building-guide.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0285"
+    },
+    {
+      "source_path": "public/blog/sdr-bdr-hiring-scaling-guide.jpg",
+      "purpose": "Blog cover: sdr-bdr-hiring-scaling-guide",
+      "pages": [
+        "/blog/sdr-bdr-hiring-scaling-guide"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/sdr-bdr-hiring-scaling-guide.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0286"
+    },
+    {
+      "source_path": "public/blog/sdr-hiring-at-scale-2026.jpg",
+      "purpose": "Blog cover: sdr-hiring-at-scale-2026",
+      "pages": [
+        "/blog/sdr-hiring-at-scale-2026"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/sdr-hiring-at-scale-2026.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0287"
+    },
+    {
+      "source_path": "public/blog/sdr-hiring-at-scale.jpg",
+      "purpose": "Blog cover: sdr-hiring-at-scale",
+      "pages": [
+        "/blog/sdr-hiring-at-scale"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/sdr-hiring-at-scale.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0288"
+    },
+    {
+      "source_path": "public/blog/second-chance-hiring-guide.jpg",
+      "purpose": "Blog cover: second-chance-hiring-guide",
+      "pages": [
+        "/blog/second-chance-hiring-guide"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/second-chance-hiring-guide.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0289"
+    },
+    {
+      "source_path": "public/blog/series-a-gtm-team-building.jpg",
+      "purpose": "Blog cover: series-a-gtm-team-building",
+      "pages": [
+        "/blog/series-a-gtm-team-building"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/series-a-gtm-team-building.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0290"
+    },
+    {
+      "source_path": "public/blog/skilled-trades-hiring-crisis.jpg",
+      "purpose": "Blog cover: skilled-trades-hiring-crisis",
+      "pages": [
+        "/blog/skilled-trades-hiring-crisis"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/skilled-trades-hiring-crisis.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0291"
+    },
+    {
+      "source_path": "public/blog/skills-based-hiring-implementation.jpg",
+      "purpose": "Blog cover: skills-based-hiring-implementation",
+      "pages": [
+        "/blog/skills-based-hiring-implementation"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/skills-based-hiring-implementation.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0292"
+    },
+    {
+      "source_path": "public/blog/skills-based-hiring-revolution.jpg",
+      "purpose": "Blog cover: skills-based-hiring-revolution",
+      "pages": [
+        "/blog/skills-based-hiring-revolution"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/skills-based-hiring-revolution.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0293"
+    },
+    {
+      "source_path": "public/blog/skills-based-organizations-future.jpg",
+      "purpose": "Blog cover: skills-based-organizations-future",
+      "pages": [
+        "/blog/skills-based-organizations-future"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/skills-based-organizations-future.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0294"
+    },
+    {
+      "source_path": "public/blog/skills-gap-analysis-guide.jpg",
+      "purpose": "Blog cover: skills-gap-analysis-guide",
+      "pages": [
+        "/blog/skills-gap-analysis-guide"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/skills-gap-analysis-guide.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0295"
+    },
+    {
+      "source_path": "public/blog/skills-taxonomy-building-guide.jpg",
+      "purpose": "Blog cover: skills-taxonomy-building-guide",
+      "pages": [
+        "/blog/skills-taxonomy-building-guide"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/skills-taxonomy-building-guide.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0296"
+    },
+    {
+      "source_path": "public/blog/smart-port-automation-hiring.jpg",
+      "purpose": "Blog cover: smart-port-automation-hiring",
+      "pages": [
+        "/blog/smart-port-automation-hiring"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/smart-port-automation-hiring.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0297"
+    },
+    {
+      "source_path": "public/blog/software-engineer-salary-guide-2026.jpg",
+      "purpose": "Blog cover: software-engineer-salary-guide-2026",
+      "pages": [
+        "/blog/software-engineer-salary-guide-2026"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/software-engineer-salary-guide-2026.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0298"
+    },
+    {
+      "source_path": "public/blog/solutions-engineer-role-guide.jpg",
+      "purpose": "Blog cover: solutions-engineer-role-guide",
+      "pages": [
+        "/blog/solutions-engineer-role-guide"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/solutions-engineer-role-guide.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0299"
+    },
+    {
+      "source_path": "public/blog/staffing-agency-internal-hiring.jpg",
+      "purpose": "Blog cover: staffing-agency-internal-hiring",
+      "pages": [
+        "/blog/staffing-agency-internal-hiring"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/staffing-agency-internal-hiring.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0300"
+    },
+    {
+      "source_path": "public/blog/staffing-agency-recruiter-hiring.jpg",
+      "purpose": "Blog cover: staffing-agency-recruiter-hiring",
+      "pages": [
+        "/blog/staffing-agency-recruiter-hiring"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/staffing-agency-recruiter-hiring.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0301"
+    },
+    {
+      "source_path": "public/blog/startup-hiring-playbook.jpg",
+      "purpose": "Blog cover: startup-hiring-playbook",
+      "pages": [
+        "/blog/startup-hiring-playbook"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/startup-hiring-playbook.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0302"
+    },
+    {
+      "source_path": "public/blog/strategic-workforce-planning-guide-2026.jpg",
+      "purpose": "Blog cover: strategic-workforce-planning-guide-2026",
+      "pages": [
+        "/blog/strategic-workforce-planning-guide-2026"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/strategic-workforce-planning-guide-2026.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0303"
+    },
+    {
+      "source_path": "public/blog/structured-interview-guide-2026.jpg",
+      "purpose": "Blog cover: structured-interview-guide-2026",
+      "pages": [
+        "/blog/structured-interview-guide-2026"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/structured-interview-guide-2026.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0304"
+    },
+    {
+      "source_path": "public/blog/structured-interview-implementation.jpg",
+      "purpose": "Blog cover: structured-interview-implementation",
+      "pages": [
+        "/blog/structured-interview-implementation"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/structured-interview-implementation.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0305"
+    },
+    {
+      "source_path": "public/blog/structured-interview-process-guide.jpg",
+      "purpose": "Blog cover: structured-interview-process-guide",
+      "pages": [
+        "/blog/structured-interview-process-guide"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/structured-interview-process-guide.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0306"
+    },
+    {
+      "source_path": "public/blog/subscription-sourcing-vs-agencies.jpg",
+      "purpose": "Blog cover: subscription-sourcing-vs-agencies",
+      "pages": [
+        "/blog/subscription-sourcing-vs-agencies"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/subscription-sourcing-vs-agencies.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0307"
+    },
+    {
+      "source_path": "public/blog/succession-planning-framework.jpg",
+      "purpose": "Blog cover: succession-planning-framework",
+      "pages": [
+        "/blog/succession-planning-framework"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/succession-planning-framework.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0308"
+    },
+    {
+      "source_path": "public/blog/succession-planning-guide.jpg",
+      "purpose": "Blog cover: succession-planning-guide",
+      "pages": [
+        "/blog/succession-planning-guide"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/succession-planning-guide.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0309"
+    },
+    {
+      "source_path": "public/blog/succession-planning-talent-strategy.jpg",
+      "purpose": "Blog cover: succession-planning-talent-strategy",
+      "pages": [
+        "/blog/succession-planning-talent-strategy"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/succession-planning-talent-strategy.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0310"
+    },
+    {
+      "source_path": "public/blog/supply-chain-talent-strategy.jpg",
+      "purpose": "Blog cover: supply-chain-talent-strategy",
+      "pages": [
+        "/blog/supply-chain-talent-strategy"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/supply-chain-talent-strategy.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0311"
+    },
+    {
+      "source_path": "public/blog/sustainable-hiring-practices.jpg",
+      "purpose": "Blog cover: sustainable-hiring-practices",
+      "pages": [
+        "/blog/sustainable-hiring-practices"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/sustainable-hiring-practices.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0312"
+    },
+    {
+      "source_path": "public/blog/talent-acquisition-strategy-guide-2026.jpg",
+      "purpose": "Blog cover: talent-acquisition-strategy-guide-2026",
+      "pages": [
+        "/blog/talent-acquisition-strategy-guide-2026"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/talent-acquisition-strategy-guide-2026.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0313"
+    },
+    {
+      "source_path": "public/blog/talent-acquisition-technology-stack.jpg",
+      "purpose": "Blog cover: talent-acquisition-technology-stack",
+      "pages": [
+        "/blog/talent-acquisition-technology-stack"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/talent-acquisition-technology-stack.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0314"
+    },
+    {
+      "source_path": "public/blog/talent-acquisition-vs-taas.jpg",
+      "purpose": "Blog cover: talent-acquisition-vs-taas",
+      "pages": [
+        "/blog/talent-acquisition-vs-taas"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/talent-acquisition-vs-taas.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0315"
+    },
+    {
+      "source_path": "public/blog/talent-brand-measurement.jpg",
+      "purpose": "Blog cover: talent-brand-measurement",
+      "pages": [
+        "/blog/talent-brand-measurement"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/talent-brand-measurement.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0316"
+    },
+    {
+      "source_path": "public/blog/talent-intelligence-competitive-advantage.jpg",
+      "purpose": "Blog cover: talent-intelligence-competitive-advantage",
+      "pages": [
+        "/blog/talent-intelligence-competitive-advantage"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/talent-intelligence-competitive-advantage.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0317"
+    },
+    {
+      "source_path": "public/blog/talent-market-intelligence-report-q1-2026.jpg",
+      "purpose": "Blog cover: talent-market-intelligence-report-q1-2026",
+      "pages": [
+        "/blog/talent-market-intelligence-report-q1-2026"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/talent-market-intelligence-report-q1-2026.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0318"
+    },
+    {
+      "source_path": "public/blog/talent-marketplace-internal-mobility.jpg",
+      "purpose": "Blog cover: talent-marketplace-internal-mobility",
+      "pages": [
+        "/blog/talent-marketplace-internal-mobility"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/talent-marketplace-internal-mobility.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0319"
+    },
+    {
+      "source_path": "public/blog/talent-pipeline-building-guide.jpg",
+      "purpose": "Blog cover: talent-pipeline-building-guide",
+      "pages": [
+        "/blog/talent-pipeline-building-guide"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/talent-pipeline-building-guide.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0320"
+    },
+    {
+      "source_path": "public/blog/tech-hiring-playbook-startups.jpg",
+      "purpose": "Blog cover: tech-hiring-playbook-startups",
+      "pages": [
+        "/blog/tech-hiring-playbook-startups"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/tech-hiring-playbook-startups.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0321"
+    },
+    {
+      "source_path": "public/blog/tech-talent-shortage-2026.jpg",
+      "purpose": "Blog cover: tech-talent-shortage-2026",
+      "pages": [
+        "/blog/tech-talent-shortage-2026"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/tech-talent-shortage-2026.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0322"
+    },
+    {
+      "source_path": "public/blog/technical-interview-design-guide.jpg",
+      "purpose": "Blog cover: technical-interview-design-guide",
+      "pages": [
+        "/blog/technical-interview-design-guide"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/technical-interview-design-guide.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0323"
+    },
+    {
+      "source_path": "public/blog/total-cost-of-vacancy-analysis.jpg",
+      "purpose": "Blog cover: total-cost-of-vacancy-analysis",
+      "pages": [
+        "/blog/total-cost-of-vacancy-analysis"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/total-cost-of-vacancy-analysis.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0324"
+    },
+    {
+      "source_path": "public/blog/total-rewards-strategy-beyond-salary.jpg",
+      "purpose": "Blog cover: total-rewards-strategy-beyond-salary",
+      "pages": [
+        "/blog/total-rewards-strategy-beyond-salary"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/total-rewards-strategy-beyond-salary.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0325"
+    },
+    {
+      "source_path": "public/blog/total-rewards-strategy-guide.jpg",
+      "purpose": "Blog cover: total-rewards-strategy-guide",
+      "pages": [
+        "/blog/total-rewards-strategy-guide"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/total-rewards-strategy-guide.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0326"
+    },
+    {
+      "source_path": "public/blog/upskilling-reskilling-strategy.jpg",
+      "purpose": "Blog cover: upskilling-reskilling-strategy",
+      "pages": [
+        "/blog/upskilling-reskilling-strategy"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/upskilling-reskilling-strategy.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0327"
+    },
+    {
+      "source_path": "public/blog/video-interviewing-best-practices.jpg",
+      "purpose": "Blog cover: video-interviewing-best-practices",
+      "pages": [
+        "/blog/video-interviewing-best-practices"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/video-interviewing-best-practices.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0328"
+    },
+    {
+      "source_path": "public/blog/vr-onboarding-remote-teams.jpg",
+      "purpose": "Blog cover: vr-onboarding-remote-teams",
+      "pages": [
+        "/blog/vr-onboarding-remote-teams"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/vr-onboarding-remote-teams.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0329"
+    },
+    {
+      "source_path": "public/blog/weekly-candidate-delivery.jpg",
+      "purpose": "Blog cover: weekly-candidate-delivery",
+      "pages": [
+        "/blog/weekly-candidate-delivery"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/weekly-candidate-delivery.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0330"
+    },
+    {
+      "source_path": "public/blog/workforce-analytics-maturity-model.jpg",
+      "purpose": "Blog cover: workforce-analytics-maturity-model",
+      "pages": [
+        "/blog/workforce-analytics-maturity-model"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/workforce-analytics-maturity-model.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0331"
+    },
+    {
+      "source_path": "public/blog/workforce-diversity-report-2026.jpg",
+      "purpose": "Blog cover: workforce-diversity-report-2026",
+      "pages": [
+        "/blog/workforce-diversity-report-2026"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/workforce-diversity-report-2026.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0332"
+    },
+    {
+      "source_path": "public/blog/workforce-planning-guide-2026.jpg",
+      "purpose": "Blog cover: workforce-planning-guide-2026",
+      "pages": [
+        "/blog/workforce-planning-guide-2026"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/workforce-planning-guide-2026.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0333"
+    },
+    {
+      "source_path": "public/blog/workforce-planning-guide.jpg",
+      "purpose": "Blog cover: workforce-planning-guide",
+      "pages": [
+        "/blog/workforce-planning-guide"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/workforce-planning-guide.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0334"
+    },
+    {
+      "source_path": "public/blog/workplace-mental-health-strategy.jpg",
+      "purpose": "Blog cover: workplace-mental-health-strategy",
+      "pages": [
+        "/blog/workplace-mental-health-strategy"
+      ],
+      "file_type": "jpg",
+      "destination_path": "public/blog/workplace-mental-health-strategy.jpg",
+      "migration_classification": "MIGRATE_AND_IMPROVE",
+      "exclusion_reason": null,
+      "optimization_status": "PENDING",
+      "accessibility_status": "PENDING",
+      "implementation_status": "NOT_STARTED",
+      "asset_id": "A-0335"
+    }
+  ],
+  "total": 335
+}

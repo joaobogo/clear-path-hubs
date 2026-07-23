@@ -1,0 +1,5364 @@
+{
+  "assets": [
+    {
+      "asset_id": "A-0001",
+      "path": "public/logo.svg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0002",
+      "path": "public/favicon.ico",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0003",
+      "path": "public/apple-touch-icon.png",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0004",
+      "path": "public/og-default.png",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0005",
+      "path": "public/hero-home.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0006",
+      "path": "public/hero-how-it-works.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0007",
+      "path": "public/hero-industries.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0008",
+      "path": "public/industries/accounting.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0009",
+      "path": "public/industries/compare.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0010",
+      "path": "public/industries/construction.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0011",
+      "path": "public/industries/consulting.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0012",
+      "path": "public/industries/cybersecurity.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0013",
+      "path": "public/industries/data-analytics.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0014",
+      "path": "public/industries/ecommerce.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0015",
+      "path": "public/industries/finance.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0016",
+      "path": "public/industries/healthcare.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0017",
+      "path": "public/industries/hospitality.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0018",
+      "path": "public/industries/human-resources.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0019",
+      "path": "public/industries/index.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0020",
+      "path": "public/industries/insurance.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0021",
+      "path": "public/industries/legal.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0022",
+      "path": "public/industries/marketing.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0023",
+      "path": "public/industries/media.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0024",
+      "path": "public/industries/non-profit.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0025",
+      "path": "public/industries/private-equity.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0026",
+      "path": "public/industries/public-sector.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0027",
+      "path": "public/industries/real-estate.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0028",
+      "path": "public/industries/saas.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0029",
+      "path": "public/industries/sales.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0030",
+      "path": "public/industries/staffing-agencies.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0031",
+      "path": "public/industries/tech.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0032",
+      "path": "public/blog/30-60-90-onboarding-plan-2026.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0033",
+      "path": "public/blog/accounting-firm-recruitment-strategies.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0034",
+      "path": "public/blog/accounting-talent-shortage-big-four.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0035",
+      "path": "public/blog/accounting-talent-shortage-guide.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0036",
+      "path": "public/blog/accounting-talent-shortage-solutions.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0037",
+      "path": "public/blog/ai-impact-on-jobs-hiring.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0038",
+      "path": "public/blog/ai-in-recruitment.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0039",
+      "path": "public/blog/ai-ml-engineering-hiring-guide.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0040",
+      "path": "public/blog/ai-replacing-vs-augmenting-recruiters.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0041",
+      "path": "public/blog/ai-reshaping-every-industry-hiring.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0042",
+      "path": "public/blog/ai-screening-ethics.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0043",
+      "path": "public/blog/ai-workforce-planning-2030.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0044",
+      "path": "public/blog/ambient-computing-workplace-transformation.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0045",
+      "path": "public/blog/ats-implementation-guide.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0046",
+      "path": "public/blog/ats-optimization-guide.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0047",
+      "path": "public/blog/background-check-best-practices.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0048",
+      "path": "public/blog/behavioral-health-hiring-challenges.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0049",
+      "path": "public/blog/behavioral-interview-guide-employers.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0050",
+      "path": "public/blog/biotech-startup-hiring-strategy.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0051",
+      "path": "public/blog/blockchain-credentials-hiring.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0052",
+      "path": "public/blog/boomerang-employees.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0053",
+      "path": "public/blog/building-high-performance-culture-remotely.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0054",
+      "path": "public/blog/building-high-performance-teams.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0055",
+      "path": "public/blog/building-talent-pipeline.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0056",
+      "path": "public/blog/candidate-communication-cadence.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0057",
+      "path": "public/blog/candidate-experience-audit-checklist.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0058",
+      "path": "public/blog/candidate-experience-competitive-weapon.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0059",
+      "path": "public/blog/candidate-experience-matters.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0060",
+      "path": "public/blog/candidate-experience-optimization.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0061",
+      "path": "public/blog/candidate-ghosting-prevention.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0062",
+      "path": "public/blog/career-change-guide-professionals.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0063",
+      "path": "public/blog/career-pathing-employee-retention.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0064",
+      "path": "public/blog/career-pivot-guide-professionals.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0065",
+      "path": "public/blog/ceo-guide-talent-strategy.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0066",
+      "path": "public/blog/chief-of-staff-role-guide.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0067",
+      "path": "public/blog/chief-people-officer-evolution.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0068",
+      "path": "public/blog/chro-role-evolution-2026.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0069",
+      "path": "public/blog/climate-tech-startup-hiring.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0070",
+      "path": "public/blog/closing-top-sales-talent.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0071",
+      "path": "public/blog/cold-chain-logistics-hiring-guide.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0072",
+      "path": "public/blog/compensation-benchmarking.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0073",
+      "path": "public/blog/competency-based-hiring-framework.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0074",
+      "path": "public/blog/compliance-officer-hiring-guide.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0075",
+      "path": "public/blog/construction-workforce-development.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0076",
+      "path": "public/blog/construction-workforce-strategies.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0077",
+      "path": "public/blog/consulting-firm-hiring-strategies.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0078",
+      "path": "public/blog/consulting-recruitment-strategies.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0079",
+      "path": "public/blog/consulting-talent-pipeline.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0080",
+      "path": "public/blog/content-marketing-team-hiring.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0081",
+      "path": "public/blog/contingent-workforce-management.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0082",
+      "path": "public/blog/contractor-to-fulltime-conversion.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0083",
+      "path": "public/blog/cost-per-hire-reduction-strategies.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0084",
+      "path": "public/blog/counter-offer-strategy.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0085",
+      "path": "public/blog/counteroffer-strategy.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0086",
+      "path": "public/blog/customer-success-team-building.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0087",
+      "path": "public/blog/customs-compliance-careers.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0088",
+      "path": "public/blog/cybersecurity-talent-gap-solutions.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0089",
+      "path": "public/blog/cybersecurity-talent-gap.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0090",
+      "path": "public/blog/cybersecurity-talent-shortage-2026.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0091",
+      "path": "public/blog/cybersecurity-talent-shortage.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0092",
+      "path": "public/blog/data-analytics-team-hiring-guide.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0093",
+      "path": "public/blog/data-driven-recruiting-2025.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0094",
+      "path": "public/blog/data-engineering-hiring-guide.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0095",
+      "path": "public/blog/data-scientist-salary-guide-2026.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0096",
+      "path": "public/blog/defense-industry-hiring-clearances.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0097",
+      "path": "public/blog/dei-hiring-metrics-that-matter.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0098",
+      "path": "public/blog/developer-relations-role-guide.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0099",
+      "path": "public/blog/devops-platform-engineering-hiring.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0100",
+      "path": "public/blog/diversity-hiring-playbook.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0101",
+      "path": "public/blog/diversity-metrics-matter.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0102",
+      "path": "public/blog/diversity-recruiting-strategy-guide.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0103",
+      "path": "public/blog/diversity-sourcing-strategies.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0104",
+      "path": "public/blog/ecommerce-operations-hiring-guide.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0105",
+      "path": "public/blog/ecommerce-team-building-guide.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0106",
+      "path": "public/blog/ecommerce-team-building.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0107",
+      "path": "public/blog/education-technology-hiring.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0108",
+      "path": "public/blog/employee-engagement-strategies.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0109",
+      "path": "public/blog/employee-experience-platform-guide.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0110",
+      "path": "public/blog/employee-referral-program-best-practices.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0111",
+      "path": "public/blog/employee-referral-program-guide.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0112",
+      "path": "public/blog/employer-brand-audit-checklist.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0113",
+      "path": "public/blog/employer-branding-2026.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0114",
+      "path": "public/blog/employer-branding-on-a-budget.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0115",
+      "path": "public/blog/employer-branding-playbook.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0116",
+      "path": "public/blog/employer-branding-roi-framework.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0117",
+      "path": "public/blog/employer-of-record-guide.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0118",
+      "path": "public/blog/employer-value-proposition-guide.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0119",
+      "path": "public/blog/energy-transition-talent-war.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0120",
+      "path": "public/blog/executive-hiring-playbook.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0121",
+      "path": "public/blog/executive-interview-framework.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0122",
+      "path": "public/blog/executive-presence-remote-world.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0123",
+      "path": "public/blog/executive-search-process.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0124",
+      "path": "public/blog/executive-search-vs-subscription-sourcing.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0125",
+      "path": "public/blog/exit-interview-insights-guide.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0126",
+      "path": "public/blog/finance-accounting-salary-guide.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0127",
+      "path": "public/blog/finance-hiring-regulatory-environment.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0128",
+      "path": "public/blog/finance-talent-trends-2026.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0129",
+      "path": "public/blog/fintech-hiring-landscape-2026.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0130",
+      "path": "public/blog/fintech-talent-wars.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0131",
+      "path": "public/blog/fintech-vs-traditional-finance-careers.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0132",
+      "path": "public/blog/four-day-work-week-impact-hiring.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0133",
+      "path": "public/blog/four-day-work-week-implementation.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0134",
+      "path": "public/blog/fractional-executive-hiring-guide.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0135",
+      "path": "public/blog/fractional-executives-guide.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0136",
+      "path": "public/blog/freight-forwarding-digital-transformation.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0137",
+      "path": "public/blog/future-of-contingent-workforce-2026.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0138",
+      "path": "public/blog/future-of-work-2030-predictions.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0139",
+      "path": "public/blog/gaming-industry-talent-acquisition.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0140",
+      "path": "public/blog/gen-z-workforce-expectations-2026.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0141",
+      "path": "public/blog/gen-z-workforce-expectations.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0142",
+      "path": "public/blog/generation-z-hiring.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0143",
+      "path": "public/blog/gig-economy-talent-strategy.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0144",
+      "path": "public/blog/global-supply-chain-talent-shortage.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0145",
+      "path": "public/blog/global-talent-arbitrage-strategy.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0146",
+      "path": "public/blog/global-talent-mobility-2026.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0147",
+      "path": "public/blog/global-trade-routes-talent-strategy.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0148",
+      "path": "public/blog/government-hiring-modernization.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0149",
+      "path": "public/blog/great-resignation-aftermath-2026.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0150",
+      "path": "public/blog/growth-marketing-hiring-guide.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0151",
+      "path": "public/blog/head-of-design-role-guide.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0152",
+      "path": "public/blog/healthcare-hiring-crisis.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0153",
+      "path": "public/blog/healthcare-it-hiring-guide.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0154",
+      "path": "public/blog/healthcare-recruiting-challenges.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0155",
+      "path": "public/blog/healthcare-staffing-crisis-solutions.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0156",
+      "path": "public/blog/high-volume-hiring-strategies.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0157",
+      "path": "public/blog/high-volume-hiring-systems.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0158",
+      "path": "public/blog/hire-full-stack-developer-2026.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0159",
+      "path": "public/blog/hiring-ai-engineers-2026.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0160",
+      "path": "public/blog/hiring-bias-reduction-techniques.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0161",
+      "path": "public/blog/hiring-cfo-board-ready.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0162",
+      "path": "public/blog/hiring-during-recession-playbook.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0163",
+      "path": "public/blog/hiring-for-culture-add-not-culture-fit.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0164",
+      "path": "public/blog/hiring-for-hypergrowth-startups.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0165",
+      "path": "public/blog/hiring-for-startups-vs-enterprise.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0166",
+      "path": "public/blog/hiring-freeze-recovery.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0167",
+      "path": "public/blog/hiring-freeze-talent-strategy.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0168",
+      "path": "public/blog/hiring-manager-kickoff-playbook.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0169",
+      "path": "public/blog/hiring-manager-partnership.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0170",
+      "path": "public/blog/hiring-manager-training-guide.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0171",
+      "path": "public/blog/hospitality-hiring-trends-2026.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0172",
+      "path": "public/blog/hospitality-management-hiring.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0173",
+      "path": "public/blog/hospitality-retention-playbook.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0174",
+      "path": "public/blog/hospitality-retention-strategies.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0175",
+      "path": "public/blog/hospitality-seasonal-hiring-guide.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0176",
+      "path": "public/blog/how-to-write-job-descriptions-that-convert.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0177",
+      "path": "public/blog/hr-people-ops-salary-guide.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0178",
+      "path": "public/blog/hr-team-building-guide-2026.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0179",
+      "path": "public/blog/hr-technology-team-building.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0180",
+      "path": "public/blog/hr-technology-trends-2026.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0181",
+      "path": "public/blog/hybrid-work-model-best-practices.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0182",
+      "path": "public/blog/insurance-hiring-modernization.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0183",
+      "path": "public/blog/insurance-industry-hiring-2026.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0184",
+      "path": "public/blog/insurtech-talent-acquisition.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0185",
+      "path": "public/blog/intermodal-transportation-careers.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0186",
+      "path": "public/blog/internal-mobility-program-guide.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0187",
+      "path": "public/blog/internal-mobility-strategy.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0188",
+      "path": "public/blog/internal-recruiting-vs-outsourcing.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0189",
+      "path": "public/blog/international-hiring-compliance-guide.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0190",
+      "path": "public/blog/interview-feedback-best-practices.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0191",
+      "path": "public/blog/interview-scheduling-nightmare.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0192",
+      "path": "public/blog/interview-scorecards-guide.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0193",
+      "path": "public/blog/job-description-optimization.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0194",
+      "path": "public/blog/labor-market-trends-q1-2026.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0195",
+      "path": "public/blog/legal-hiring-transformation.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0196",
+      "path": "public/blog/legal-hiring-trends-law-firms.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0197",
+      "path": "public/blog/legal-industry-hiring-guide.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0198",
+      "path": "public/blog/legal-tech-talent-acquisition.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0199",
+      "path": "public/blog/logistics-supply-chain-hiring-2026.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0200",
+      "path": "public/blog/logistics-workforce-planning.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0201",
+      "path": "public/blog/longevity-economy-workforce-planning.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0202",
+      "path": "public/blog/management-consulting-recruiting-strategies.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0203",
+      "path": "public/blog/manager-effectiveness-hiring-impact.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0204",
+      "path": "public/blog/manager-hiring-skills-training.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0205",
+      "path": "public/blog/manufacturing-skills-gap-crisis.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0206",
+      "path": "public/blog/marketing-hiring-modern-stack.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0207",
+      "path": "public/blog/marketing-salary-benchmarks-2026.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0208",
+      "path": "public/blog/marketing-talent-2026.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0209",
+      "path": "public/blog/marketing-team-structure-guide.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0210",
+      "path": "public/blog/media-entertainment-hiring-guide.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0211",
+      "path": "public/blog/media-industry-digital-hiring.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0212",
+      "path": "public/blog/mobile-recruiting-strategies.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0213",
+      "path": "public/blog/neurodiversity-hiring-competitive-advantage.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0214",
+      "path": "public/blog/neurodiversity-hiring-guide.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0215",
+      "path": "public/blog/nonprofit-executive-hiring-guide.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0216",
+      "path": "public/blog/nonprofit-hiring-mission-driven-talent.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0217",
+      "path": "public/blog/nonprofit-hiring-strategies.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0218",
+      "path": "public/blog/nurse-recruitment-global-shortage-2026.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0219",
+      "path": "public/blog/nursing-recruitment-best-practices.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0220",
+      "path": "public/blog/offer-letter-best-practices.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0221",
+      "path": "public/blog/offer-negotiation-playbook.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0222",
+      "path": "public/blog/onboarding-90-day-blueprint.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0223",
+      "path": "public/blog/onboarding-best-practices-new-hire-retention.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0224",
+      "path": "public/blog/onboarding-playbook-first-90-days.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0225",
+      "path": "public/blog/onboarding-starts-at-offer.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0226",
+      "path": "public/blog/organizational-design-for-growth.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0227",
+      "path": "public/blog/passive-candidate-sourcing-strategies.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0228",
+      "path": "public/blog/pay-equity-audit-guide.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0229",
+      "path": "public/blog/people-analytics-getting-started.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0230",
+      "path": "public/blog/pharma-biotech-hiring-regulatory-talent.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0231",
+      "path": "public/blog/pharmaceutical-hiring-challenges.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0232",
+      "path": "public/blog/portfolio-career-guide.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0233",
+      "path": "public/blog/predictive-analytics-hiring.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0234",
+      "path": "public/blog/private-equity-portfolio-hiring.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0235",
+      "path": "public/blog/private-equity-portfolio-talent.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0236",
+      "path": "public/blog/private-equity-talent-acquisition.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0237",
+      "path": "public/blog/product-management-hiring-guide.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0238",
+      "path": "public/blog/proptech-talent-acquisition.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0239",
+      "path": "public/blog/public-sector-hiring-modernization.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0240",
+      "path": "public/blog/public-sector-talent-acquisition.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0241",
+      "path": "public/blog/quality-of-hire-measurement-guide.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0242",
+      "path": "public/blog/quiet-quitting-quiet-hiring.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0243",
+      "path": "public/blog/real-estate-hiring-trends.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0244",
+      "path": "public/blog/real-estate-talent-acquisition-guide.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0245",
+      "path": "public/blog/real-estate-talent-acquisition.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0246",
+      "path": "public/blog/recession-proof-recruiting-strategy.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0247",
+      "path": "public/blog/recruiter-burnout-crisis.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0248",
+      "path": "public/blog/recruiter-productivity-tips.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0249",
+      "path": "public/blog/recruiting-in-competitive-markets.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0250",
+      "path": "public/blog/recruiting-metrics-dashboard-guide.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0251",
+      "path": "public/blog/recruitment-analytics-guide.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0252",
+      "path": "public/blog/recruitment-automation-limits.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0253",
+      "path": "public/blog/recruitment-branding-social-media.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0254",
+      "path": "public/blog/recruitment-compliance-guide-2026.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0255",
+      "path": "public/blog/recruitment-funnel-optimization.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0256",
+      "path": "public/blog/recruitment-marketing-content-strategy.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0257",
+      "path": "public/blog/recruitment-process-outsourcing-guide.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0258",
+      "path": "public/blog/recruitment-process-outsourcing-vs-subscription.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0259",
+      "path": "public/blog/recruitment-technology-stack-guide.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0260",
+      "path": "public/blog/reduce-time-to-hire-strategies.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0261",
+      "path": "public/blog/reducing-cost-per-hire.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0262",
+      "path": "public/blog/reducing-time-to-hire-without-sacrificing-quality.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0263",
+      "path": "public/blog/reference-check-mastery.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0264",
+      "path": "public/blog/rejection-with-grace.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0265",
+      "path": "public/blog/remote-first-compensation-guide.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0266",
+      "path": "public/blog/remote-hiring-best-practices-2026.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0267",
+      "path": "public/blog/remote-hiring-best-practices.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0268",
+      "path": "public/blog/remote-interview-best-practices.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0269",
+      "path": "public/blog/remote-vs-hybrid-talent-strategy.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0270",
+      "path": "public/blog/renewable-energy-talent-hiring.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0271",
+      "path": "public/blog/retention-economics-guide.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0272",
+      "path": "public/blog/return-to-office-hiring.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0273",
+      "path": "public/blog/return-to-office-talent-impact.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0274",
+      "path": "public/blog/revenue-operations-role-breakdown.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0275",
+      "path": "public/blog/saas-engineering-team-scaling.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0276",
+      "path": "public/blog/saas-go-to-market-hiring-guide.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0277",
+      "path": "public/blog/saas-go-to-market-hiring.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0278",
+      "path": "public/blog/salary-compression-guide.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0279",
+      "path": "public/blog/salary-negotiation-from-employer-perspective.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0280",
+      "path": "public/blog/salary-negotiation-masterclass.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0281",
+      "path": "public/blog/salary-trends-2026-comprehensive.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0282",
+      "path": "public/blog/sales-hiring-playbook.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0283",
+      "path": "public/blog/sales-leadership-hiring-playbook.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0284",
+      "path": "public/blog/sales-leadership-hiring.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0285",
+      "path": "public/blog/sales-team-building-guide.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0286",
+      "path": "public/blog/sdr-bdr-hiring-scaling-guide.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0287",
+      "path": "public/blog/sdr-hiring-at-scale-2026.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0288",
+      "path": "public/blog/sdr-hiring-at-scale.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0289",
+      "path": "public/blog/second-chance-hiring-guide.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0290",
+      "path": "public/blog/series-a-gtm-team-building.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0291",
+      "path": "public/blog/skilled-trades-hiring-crisis.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0292",
+      "path": "public/blog/skills-based-hiring-implementation.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0293",
+      "path": "public/blog/skills-based-hiring-revolution.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0294",
+      "path": "public/blog/skills-based-organizations-future.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0295",
+      "path": "public/blog/skills-gap-analysis-guide.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0296",
+      "path": "public/blog/skills-taxonomy-building-guide.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0297",
+      "path": "public/blog/smart-port-automation-hiring.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0298",
+      "path": "public/blog/software-engineer-salary-guide-2026.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0299",
+      "path": "public/blog/solutions-engineer-role-guide.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0300",
+      "path": "public/blog/staffing-agency-internal-hiring.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0301",
+      "path": "public/blog/staffing-agency-recruiter-hiring.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0302",
+      "path": "public/blog/startup-hiring-playbook.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0303",
+      "path": "public/blog/strategic-workforce-planning-guide-2026.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0304",
+      "path": "public/blog/structured-interview-guide-2026.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0305",
+      "path": "public/blog/structured-interview-implementation.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0306",
+      "path": "public/blog/structured-interview-process-guide.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0307",
+      "path": "public/blog/subscription-sourcing-vs-agencies.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0308",
+      "path": "public/blog/succession-planning-framework.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0309",
+      "path": "public/blog/succession-planning-guide.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0310",
+      "path": "public/blog/succession-planning-talent-strategy.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0311",
+      "path": "public/blog/supply-chain-talent-strategy.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0312",
+      "path": "public/blog/sustainable-hiring-practices.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0313",
+      "path": "public/blog/talent-acquisition-strategy-guide-2026.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0314",
+      "path": "public/blog/talent-acquisition-technology-stack.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0315",
+      "path": "public/blog/talent-acquisition-vs-taas.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0316",
+      "path": "public/blog/talent-brand-measurement.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0317",
+      "path": "public/blog/talent-intelligence-competitive-advantage.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0318",
+      "path": "public/blog/talent-market-intelligence-report-q1-2026.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0319",
+      "path": "public/blog/talent-marketplace-internal-mobility.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0320",
+      "path": "public/blog/talent-pipeline-building-guide.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0321",
+      "path": "public/blog/tech-hiring-playbook-startups.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0322",
+      "path": "public/blog/tech-talent-shortage-2026.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0323",
+      "path": "public/blog/technical-interview-design-guide.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0324",
+      "path": "public/blog/total-cost-of-vacancy-analysis.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0325",
+      "path": "public/blog/total-rewards-strategy-beyond-salary.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0326",
+      "path": "public/blog/total-rewards-strategy-guide.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0327",
+      "path": "public/blog/upskilling-reskilling-strategy.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0328",
+      "path": "public/blog/video-interviewing-best-practices.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0329",
+      "path": "public/blog/vr-onboarding-remote-teams.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0330",
+      "path": "public/blog/weekly-candidate-delivery.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0331",
+      "path": "public/blog/workforce-analytics-maturity-model.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0332",
+      "path": "public/blog/workforce-diversity-report-2026.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0333",
+      "path": "public/blog/workforce-planning-guide-2026.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0334",
+      "path": "public/blog/workforce-planning-guide.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    },
+    {
+      "asset_id": "A-0335",
+      "path": "public/blog/workplace-mental-health-strategy.jpg",
+      "criteria": {
+        "destination_file_exists": "PENDING",
+        "path_stable": "PENDING",
+        "quality_acceptable": "PENDING",
+        "optimized": "PENDING",
+        "dimensions_correct": "PENDING",
+        "alt_text_defined": "PENDING",
+        "decorative_marked": "PENDING",
+        "no_temporary_url": "PENDING",
+        "all_pages_resolve": "PENDING",
+        "no_broken_on_desktop_or_mobile": "PENDING"
+      }
+    }
+  ]
+}
