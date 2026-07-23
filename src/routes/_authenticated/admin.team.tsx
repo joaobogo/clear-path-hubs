@@ -62,7 +62,7 @@ function TeamPage() {
           <p className="mb-1 text-xs font-medium text-muted-foreground">Client organizations</p>
           <div className="max-h-72 overflow-y-auto space-y-0.5">
             {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-            {(clients.data ?? []).map((c: any) => (
+            {(clients.data?.items ?? []).map((c: any) => (
               <button
                 key={c.id}
                 className={`w-full truncate rounded px-2 py-1.5 text-left text-sm ${org === c.id ? "bg-muted font-medium" : "hover:bg-muted"}`}
