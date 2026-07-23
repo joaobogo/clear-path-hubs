@@ -1,119 +1,63 @@
-# Deep Candidate Intelligence
+# Plan: Intake Wiring + 304-Blog Content Build
 
-Turn every candidate page into a full briefing: a rich narrative, per-requirement evidence (why good / why bad), and an analysis of screening answers vs. what the CV supports. Fix the "evidence empty" root cause at the same time.
+## Part A — Intake wiring (small, ship first)
 
-## What changes for the user
+1. Extend `intakePayloadSchema` in `src/lib/intake-schema.ts` with the new optional fields the UI collects:
+   - `experience`, `education`, `certifications`, `languages`
+   - `hiringTimeline`, `reasonForHiring`
+   - `workAuth`, `timezone`, `targetCountries[]`, `targetTitles[]`, `screeningQuestions[]`
+   - `hiringChallenges`, `interviewProcess`, `decisionMakers`
+2. Update `src/routes/intake.tsx` submit payload to forward all fields (not just the current subset).
+3. Persist to `intake_submissions.payload` (already jsonb — no migration). Position-hydration logic in `src/lib/intake.functions.ts` reads `roleTitle`, `workModel`, `jd` — unchanged.
+4. Verify: submit a test intake, confirm row lands in `intake_submissions` with the full payload.
 
-For every candidate in Admin (and, where appropriate, Client):
+## Part B — 304 blog posts (long-form + unique images)
 
-- **Executive narrative** — 2–3 paragraphs describing the person's story, seniority, and fit for THIS role.
-- **Highlights** — 3–6 concrete achievements pulled from the CV.
-- **Strengths for this role** — bullets like *"12 years leading B2B SaaS sales — matches the sales manager mandate"* each backed by a verbatim CV quote.
-- **Concerns / gaps** — bullets like *"No evidence of managing a team > 5 people"*, again quoted where possible.
-- **Requirement-by-requirement verdict** — for each must-have and preferred requirement: `met / partial / missing`, one-line rationale, CV quote.
-- **Screening analysis** — every job-application answer shown alongside: what the CV supports, whether the answer is consistent, and a note.
-- **Richer profile card** — headline, seniority, current role, years, industry, work authorization, languages, education, certifications are all filled when the CV mentions them.
+**Reality check on scope.** 304 posts × ~2,000 words + 304 images is a very large generation job:
+- Text: ~304 Gemini 3.5-Flash calls (cheap, fast — likely <15 min wall-time in parallel batches).
+- Images: 304 Nano Banana 2 Lite generations (~$0.02 each ≈ $6 raw, but through credits it's ~30–60 credits total; wall-time 30–60 min).
 
-## Backend
+I will run this via **offline scripts** (`code--exec` with the ai-gateway skill), not through the app — much faster and cheaper than doing it inside a server function per post.
 
-### 1. New LLM step: `generateCandidateInsights` (`src/lib/candidate-insights.server.ts`)
+### B1. Content architecture (one-time)
+- Build `scripts/blog/manifest.ts`: for each of 304 slugs, derive `{ slug, title, category, industry?, primaryKeyword, uniqueAngle }` from the slug. The `uniqueAngle` is what prevents 304 posts from sounding identical.
+- Build `scripts/blog/generate-post.ts`: calls Gemini 3.5-Flash with a strict system prompt enforcing Premium Guardrails:
+  - Human voice, no "In today's fast-paced world…", no em-dash tics, no "unlock/leverage/robust"
+  - 1,600–2,200 words, single H1 (title), 4–7 H2s, one benchmark callout, one checklist, one FAQ section
+  - Per-post `uniqueAngle` injected so each reads distinctly
+  - Output JSON: `{ markdown, metaTitle, metaDescription, ogAlt }`
+- Writes back into `src/content/blog/{slug}.json` preserving `url`/`meta` and populating `markdown` + a new `meta` block.
 
-Uses the existing Lovable AI gateway (`google/gemini-2.5-flash`, JSON output).
+### B2. Image generation
+- `scripts/blog/generate-image.ts`: per slug, generate a unique hero using Nano Banana 2 Lite. Prompt derived from category + unique angle + brand palette (no generic AI/purple gradients).
+- Save to `src/assets/blog/{slug}.jpg`.
+- Register in `src/content/blog-hero-images.ts` (mirror of `industry-hero-images.ts` pattern).
 
-Inputs:
-- `cv_text`
-- `position`: `{ title, description, requirements, preferred_requirements }`
-- `screening`: normalized answers with question text
+### B3. Rendering
+- Update the blog post route to render `markdown` (react-markdown, already in tree if present; otherwise add) and use the hero image + meta.
+- Ensure each post's `head()` sets unique title/description/og:image/twitter:image.
 
-Returns structured JSON:
+### B4. Batch execution
+Run in 6 batches of ~50 posts each to keep AI Gateway rate-limits happy and let me stop early if quality drifts:
+- Batch 1: 50 posts — spot-check 5 for tone/length/uniqueness, adjust prompt, then continue.
+- Batches 2–6: remaining 254.
+- Images run in parallel after text passes review.
 
-```text
-{
-  narrative: string,               // 2–3 paragraphs
-  headline_suggested: string,
-  seniority: "junior" | "mid" | "senior" | "lead" | "executive" | "unknown",
-  highlights: string[],
-  strengths: [{ title, detail, cv_quote }],
-  concerns: [{ title, detail }],
-  requirement_verdicts: [{
-    requirement_id, requirement_text, required: boolean,
-    verdict: "met" | "partial" | "missing" | "contradicted",
-    rationale: string,
-    cv_quote: string | null
-  }],
-  screening_analysis: [{
-    question_id, question, candidate_answer,
-    cv_supports: "yes" | "no" | "unclear",
-    note: string
-  }],
-  overall_recommendation: "advance" | "consider" | "reject",
-  confidence: 0..1
-}
-```
-
-Fails soft: on gateway error returns `{ ok:false, reason }` — pipeline continues.
-
-### 2. Wire into pipeline (`pipeline-runner.server.ts`)
-
-After hydration, before scoring:
-
-- Call `generateCandidateInsights` with position + screening.
-- Persist to `candidate_evidence.extracted.insights` (same row that already exists).
-- Pass `requirement_verdicts` into the scoring engine.
-
-### 3. Evidence-aware scoring (`scoring-engine.server.ts`)
-
-Extend `scoreCandidate({ cv_text, requirements, screening, insight_verdicts? })`:
-
-- For each requirement, if the deterministic keyword pass returns `missing/partial` **but** the LLM verdict is `met` / `partial` with a `cv_quote`, upgrade the status one notch and add an `EvidenceRef` sourced from the LLM quote (`source: "cv"`, `location: "cv:llm"`).
-- Downgrade to `contradicted` when the LLM verdict is `contradicted`.
-- Guarantees non-empty `evidence[]` whenever the LLM produced any verdict with a quote — fixes the `publish_blocked: evidence_empty` class of failures at the source, not just the gate.
-- Deterministic keyword scoring still runs first and wins ties.
-
-### 4. Richer hydration (`cv-hydration.server.ts`)
-
-Extend the JSON schema with:
-
-- `summary` (up to 1500 chars, currently 600)
-- `seniority`
-- `key_achievements: string[]`
-- `notable_projects: [{ name, impact }]`
-
-Store the new fields in `candidate_profiles.consent.extracted` (already the sink for non-column extras).
-
-## Frontend
-
-### 5. Candidate drawer + admin candidate page
-
-`src/components/candidate-detail-drawer.tsx` and `src/routes/_authenticated/admin.candidates.$id.tsx`:
-
-- **Profile tab**: render `narrative`, `highlights`, seniority chip, work auth, languages, education, certifications when present.
-- **Evidence tab**: new "Requirement verdicts" table (requirement · verdict badge · rationale · quote) and "Screening analysis" table (question · answer · CV supports · note).
-- **Score tab**: keep the existing strengths/concerns, but source them from insights when the deterministic engine's list is empty.
-
-Read from `candidate_evidence.extracted.insights` via the existing loader — no new server function needed for read.
-
-### 6. Client-facing polish (optional, same turn)
-
-`client-fit-presentation.ts` already produces the client-safe pitch — feed `narrative` and `strengths` into it so client Kanban cards show the human-readable rationale instead of the raw score line.
+### B5. Verification
+- Script: word-count histogram, duplicate-phrase detector (n-gram overlap between posts), unique-image checksum, meta-tag presence check.
+- Run link crawler over `/blog/{slug}` for all 304.
 
 ## Technical notes
 
-- All LLM calls stay server-side; no keys ship to the client.
-- Existing `HYDRATION_PARSER_VERSION` is bumped so old snapshots are re-hydrated on next pipeline run.
-- Cost control: single Gemini flash call per pipeline run, ~4k tokens in / ~1k out. No repeated calls on view.
-- Backfill: no migration needed. Once shipped, admins hit "Retry enrichment" (or the next pipeline tick) and the new evidence appears.
-- Publish gate: the `evidence_empty` check remains removed (already shipped), but scored runs will now normally carry real evidence so the gate becomes meaningful again for the contradiction case.
+- Uses Lovable AI Gateway via `LOVABLE_API_KEY` (already provisioned). No new secret.
+- Model: `google/gemini-3.5-flash` for text (best cost/quality for long-form). `google/gemini-3.1-flash-lite-image` for images.
+- No changes to protected systems (admin/client/candidate dashboards, auth, scoring).
+- The 304 JSON files stay in-tree — no DB migration for blog storage.
 
-## Files touched
+## Risks / decisions I need from you before Part B
 
-- `src/lib/candidate-insights.server.ts` (new)
-- `src/lib/cv-hydration.server.ts` (schema expansion, version bump)
-- `src/lib/pipeline-runner.server.ts` (invoke insights, pass verdicts)
-- `src/lib/scoring-engine.server.ts` (accept `insight_verdicts`, emit evidence)
-- `src/lib/scoring-service.server.ts` (thread verdicts through)
-- `src/components/candidate-detail-drawer.tsx` (new sections)
-- `src/routes/_authenticated/admin.candidates.$id.tsx` (Evidence + Score tabs)
-- `src/lib/client-fit-presentation.ts` (optional narrative pass-through)
+1. **Credit spend.** Rough estimate: 30–80 credits total for the full run. Confirm OK, or cap at N credits.
+2. **Image style.** Photographic, editorial-illustration, or abstract-geometric? (Guardrails say no generic AI/purple gradients.)
+3. **Publish gate.** Ship all 304 as-published, or land them as drafts behind a `status: "draft"` flag for review?
 
-No DB migration required.
+Answer those three and I'll run Part A immediately, then kick Batch 1 of Part B.
