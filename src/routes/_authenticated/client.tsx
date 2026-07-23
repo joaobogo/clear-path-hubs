@@ -192,6 +192,11 @@ function ClientLayout() {
     </>
   );
 
+  const showOnboarding =
+    !supportView.active &&
+    !!data?.active &&
+    (data.onboarding?.dismissed_at ?? null) === null;
+
   return (
     <SupportViewContext.Provider value={supportView}>
       <ClientCoordinator />
@@ -212,6 +217,15 @@ function ClientLayout() {
         }
       >
         <Outlet />
+        {showOnboarding && (
+          <ClientOnboardingModal
+            orgId={active.organization_id}
+            orgName={active.name}
+            role={effectiveRole as "client_admin" | "client_editor" | "client_viewer"}
+            initialTimezone={data?.onboarding?.timezone ?? null}
+            displayName={data?.onboarding?.display_name ?? null}
+          />
+        )}
       </WorkspaceShell>
     </SupportViewContext.Provider>
   );
