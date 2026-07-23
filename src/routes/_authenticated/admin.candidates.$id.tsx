@@ -513,6 +513,23 @@ function safeNode(v: unknown): React.ReactNode {
   return null;
 }
 
+function toReqText(v: unknown): string {
+  if (v == null) return "—";
+  if (typeof v === "string") return v;
+  if (typeof v === "number" || typeof v === "boolean") return String(v);
+  if (Array.isArray(v)) return v.map(toReqText).filter((s) => s && s !== "—").join(", ") || "—";
+  if (typeof v === "object") {
+    const o = v as Record<string, unknown>;
+    const cand = o.text ?? o.label ?? o.name ?? o.requirement ?? o.requirement_text ?? o.title;
+    if (typeof cand === "string" && cand.trim()) return cand;
+    return "—";
+  }
+  return "—";
+}
+
+function cleanLine(s: string): string {
+  return s.replace(/\[object Object\]/g, "requirement").trim();
+
 function Row({ label, v }: { label: string; v: React.ReactNode }) {
   const safe = safeNode(v);
   return (
