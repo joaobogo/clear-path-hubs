@@ -1486,14 +1486,16 @@ function Home() {
 
 
       {/* 3.25 — ROI CALCULATOR (reusable, canonical config) */}
-      <PublicSection id="roi-calculator">
-        <PublicPage>
-          <RoiCalculator
-            variant="homepage"
-            supportingCopy="Adjust the assumptions to compare traditional agency and internal sourcing costs with the TaaSFlow model."
-          />
-        </PublicPage>
-      </PublicSection>
+      <div id="roi-calculator" className="scroll-mt-24">
+        <PublicSection>
+          <PublicPage>
+            <RoiCalculator
+              variant="homepage"
+              supportingCopy="Adjust the assumptions to compare traditional agency and internal sourcing costs with the TaaSFlow model."
+            />
+          </PublicPage>
+        </PublicSection>
+      </div>
 
       {/* 3.5 — THE RECRUITING PROBLEM (old model vs TaaSFlow model) */}
       <PublicSection>
