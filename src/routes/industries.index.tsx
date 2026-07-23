@@ -56,7 +56,7 @@ function IndustriesIndex() {
       {/* Explorer */}
       <PublicSection>
         <PublicPage>
-          <IndustryExplorer />
+          <IndustryGallery />
         </PublicPage>
       </PublicSection>
 
