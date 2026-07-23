@@ -147,7 +147,7 @@ function NewClientPage() {
       </Card>
 
       {result && (
-        <Card className="p-5 border-emerald-500/40 bg-emerald-500/5">
+        <Card className="p-5 border-success/40 bg-success/5">
           <h2 className="text-lg font-medium">Client ready</h2>
           <dl className="mt-3 grid gap-2 text-sm">
             <div className="flex justify-between">

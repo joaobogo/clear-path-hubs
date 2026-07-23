@@ -543,7 +543,7 @@ function Stat({ label, value, tone }: { label: string; value: number; tone?: "wa
       <div
         className={`mt-1 text-2xl font-semibold tabular-nums ${
           tone === "warn" && value > 0
-            ? "text-amber-600 dark:text-amber-400"
+            ? "text-warning-foreground dark:text-warning-foreground"
             : "text-foreground"
         }`}
       >

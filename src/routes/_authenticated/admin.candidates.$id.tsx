@@ -109,12 +109,12 @@ type TabId = (typeof TABS)[number]["id"];
 
 const STATE_TONE: Record<string, string> = {
   queued: "bg-muted text-muted-foreground",
-  parsing: "bg-blue-500/15 text-blue-800 dark:text-blue-200",
-  enriching: "bg-blue-500/15 text-blue-800 dark:text-blue-200",
-  ready_to_score: "bg-blue-500/15 text-blue-800 dark:text-blue-200",
-  scored: "bg-emerald-500/15 text-emerald-800 dark:text-emerald-200",
-  manual_review_required: "bg-amber-500/15 text-amber-800 dark:text-amber-200",
-  ocr_required: "bg-amber-500/15 text-amber-800 dark:text-amber-200",
+  parsing: "bg-info/15 text-info dark:text-info",
+  enriching: "bg-info/15 text-info dark:text-info",
+  ready_to_score: "bg-info/15 text-info dark:text-info",
+  scored: "bg-success/15 text-success dark:text-success",
+  manual_review_required: "bg-warning/15 text-warning-foreground dark:text-warning-foreground",
+  ocr_required: "bg-warning/15 text-warning-foreground dark:text-warning-foreground",
   failed: "bg-destructive/15 text-destructive",
   provider_blocked: "bg-destructive/15 text-destructive",
 };
@@ -407,9 +407,9 @@ function ProfileTab({
 function InsightsBriefing({ insights }: { insights: Any }) {
   const rec = String(insights?.overall_recommendation ?? "consider");
   const recTone =
-    rec === "advance" ? "bg-emerald-500/15 text-emerald-800 dark:text-emerald-200"
+    rec === "advance" ? "bg-success/15 text-success dark:text-success"
     : rec === "reject" ? "bg-destructive/15 text-destructive"
-    : "bg-amber-500/15 text-amber-800 dark:text-amber-200";
+    : "bg-warning/15 text-warning-foreground dark:text-warning-foreground";
   const highlights: string[] = Array.isArray(insights?.highlights) ? insights.highlights : [];
   const strengths: Any[] = Array.isArray(insights?.strengths) ? insights.strengths : [];
   const concerns: Any[] = Array.isArray(insights?.concerns) ? insights.concerns : [];
@@ -436,10 +436,10 @@ function InsightsBriefing({ insights }: { insights: Any }) {
         <div
           className={`mt-3 rounded-md border-l-4 p-3 text-sm leading-relaxed ${
             insights.pitch_tone === "sell"
-              ? "border-emerald-500 bg-emerald-500/10 text-foreground"
+              ? "border-success bg-success/10 text-foreground"
               : insights.pitch_tone === "cautious"
                 ? "border-destructive bg-destructive/10 text-foreground"
-                : "border-amber-500 bg-amber-500/10 text-foreground"
+                : "border-warning bg-warning/10 text-foreground"
           }`}
         >
           <div className="mb-1 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
@@ -470,7 +470,7 @@ function InsightsBriefing({ insights }: { insights: Any }) {
       {(strengths.length > 0 || concerns.length > 0) && (
         <div className="mt-4 grid gap-3 md:grid-cols-2">
           <div className="rounded-md border bg-background/60 p-3">
-            <h4 className="text-xs font-semibold uppercase text-emerald-700 dark:text-emerald-300">
+            <h4 className="text-xs font-semibold uppercase text-success dark:text-success">
               Why they fit
             </h4>
             <ul className="mt-2 space-y-2 text-sm">
@@ -480,7 +480,7 @@ function InsightsBriefing({ insights }: { insights: Any }) {
                   <div className="font-medium">{s.title}</div>
                   {s.detail && <div className="text-xs text-muted-foreground">{s.detail}</div>}
                   {s.cv_quote && (
-                    <div className="mt-1 border-l-2 border-emerald-500/40 pl-2 text-xs italic text-muted-foreground">
+                    <div className="mt-1 border-l-2 border-success/40 pl-2 text-xs italic text-muted-foreground">
                       "{s.cv_quote}"
                     </div>
                   )}
@@ -586,10 +586,10 @@ function CvTab({ cv, matchId, cp, insights }: { cv: Any; matchId: string; cp: An
         <div
           className={`rounded-lg border-l-4 p-4 text-sm leading-relaxed ${
             pitchTone === "sell"
-              ? "border-emerald-500 bg-emerald-500/10"
+              ? "border-success bg-success/10"
               : pitchTone === "cautious"
                 ? "border-destructive bg-destructive/10"
-                : "border-amber-500 bg-amber-500/10"
+                : "border-warning bg-warning/10"
           }`}
         >
           <div className="mb-1 flex items-center gap-2 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
@@ -983,7 +983,7 @@ function ScoreTab({ currentRun, result }: { currentRun: Any; result: Any }) {
         {(result?.strengths?.length > 0 || result?.concerns?.length > 0) && (
           <div className="mt-6 grid grid-cols-1 gap-3 md:grid-cols-2">
             <div className="rounded-md border bg-background/50 p-3">
-              <h4 className="text-xs font-semibold uppercase text-emerald-700 dark:text-emerald-300">Strengths</h4>
+              <h4 className="text-xs font-semibold uppercase text-success dark:text-success">Strengths</h4>
               <ul className="mt-1 list-disc space-y-1 pl-4 text-sm">
                 {(result?.strengths ?? []).map((s: string, i: number) => (
                   <li key={i}>{cleanLine(String(s))}</li>
@@ -1235,7 +1235,7 @@ function HistoryTab({
                       j.status === "failed"
                         ? "text-destructive"
                         : j.status === "completed"
-                          ? "text-emerald-700 dark:text-emerald-300"
+                          ? "text-success dark:text-success"
                           : "text-muted-foreground"
                     }
                   >
@@ -1745,8 +1745,8 @@ function ActionRail({
       )}
 
       {isPublished && (
-        <div className="rounded-lg border bg-emerald-500/10 p-3 text-xs">
-          <div className="flex items-center gap-1.5 font-medium text-emerald-800 dark:text-emerald-200">
+        <div className="rounded-lg border bg-success/10 p-3 text-xs">
+          <div className="flex items-center gap-1.5 font-medium text-success dark:text-success">
             <ClipboardCheck className="h-3.5 w-3.5" />
             Live for client
           </div>

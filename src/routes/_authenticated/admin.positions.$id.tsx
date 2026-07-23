@@ -100,10 +100,10 @@ type TabId = (typeof TABS)[number]["id"];
 
 const STATUS_BADGE: Record<string, string> = {
   draft: "bg-muted text-muted-foreground",
-  submitted: "bg-amber-500/15 text-amber-800 dark:text-amber-200",
-  needs_clarification: "bg-amber-500/15 text-amber-800 dark:text-amber-200",
-  approved: "bg-blue-500/15 text-blue-800 dark:text-blue-200",
-  active: "bg-emerald-500/15 text-emerald-800 dark:text-emerald-200",
+  submitted: "bg-warning/15 text-warning-foreground dark:text-warning-foreground",
+  needs_clarification: "bg-warning/15 text-warning-foreground dark:text-warning-foreground",
+  approved: "bg-info/15 text-info dark:text-info",
+  active: "bg-success/15 text-success dark:text-success",
   paused: "bg-muted text-muted-foreground",
   closed: "bg-muted text-muted-foreground",
   archived: "bg-muted text-muted-foreground",
@@ -550,7 +550,7 @@ function OverviewTab({
           </div>
         </div>
         {dirty && (
-          <p className="text-xs text-amber-700 dark:text-amber-300">Unsaved changes.</p>
+          <p className="text-xs text-warning-foreground dark:text-warning-foreground">Unsaved changes.</p>
         )}
       </div>
 
@@ -915,7 +915,7 @@ function BlueprintTab({ position, screening }: { position: Any; screening: Any[]
           <BlueprintRow label="Dealbreakers (auto-fail)" count={deals.length} weight={0} share={0} />
         </div>
         {!ready && (
-          <p className="mt-3 rounded-md border border-amber-500/40 bg-amber-500/10 p-2 text-xs text-amber-900 dark:text-amber-100">
+          <p className="mt-3 rounded-md border border-warning/40 bg-warning/10 p-2 text-xs text-warning-foreground dark:text-warning-foreground">
             Scoring is blocked until at least one must-have requirement is set.
           </p>
         )}

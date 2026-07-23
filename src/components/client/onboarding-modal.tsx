@@ -223,7 +223,7 @@ export function ClientOnboardingModal({
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-2 text-sm text-emerald-600">
+          <div className="flex items-center gap-2 text-sm text-success">
             <CheckCircle2 className="h-4 w-4" /> Timezone, notifications, and workspace
             preferences saved.
           </div>

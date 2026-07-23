@@ -307,7 +307,7 @@ function CompanyTab({ org }: { org: any }) {
       }}
     >
       {disabled && (
-        <div className="rounded border border-amber-500/40 bg-amber-500/10 p-3 text-xs text-amber-700 dark:text-amber-400">
+        <div className="rounded border border-warning/40 bg-warning/10 p-3 text-xs text-warning-foreground dark:text-warning-foreground">
           This organization is archived. Editing is disabled.
         </div>
       )}
@@ -643,8 +643,8 @@ function SettingsTab({ org }: { org: any }) {
         </dl>
       </div>
       {alreadyArchived ? (
-        <div className="rounded-lg border border-amber-500/40 bg-amber-500/5 p-4 text-sm">
-          <div className="font-medium text-amber-700 dark:text-amber-400">Restore client</div>
+        <div className="rounded-lg border border-warning/40 bg-warning/5 p-4 text-sm">
+          <div className="font-medium text-warning-foreground dark:text-warning-foreground">Restore client</div>
           <p className="mt-1 text-muted-foreground">
             This client is archived. Restoring returns it to active client lists,
             reactivates any suspended memberships, and re-enables the workspace.

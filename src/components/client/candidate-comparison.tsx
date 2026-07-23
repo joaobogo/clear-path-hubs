@@ -9,10 +9,10 @@ const STATUS_META: Record<
   RequirementRow["status"],
   { label: string; icon: string; className: string }
 > = {
-  met: { label: "Met", icon: "✓", className: "text-emerald-700 dark:text-emerald-400" },
-  partial: { label: "Partial", icon: "◐", className: "text-amber-700 dark:text-amber-400" },
+  met: { label: "Met", icon: "✓", className: "text-success dark:text-success" },
+  partial: { label: "Partial", icon: "◐", className: "text-warning-foreground dark:text-warning-foreground" },
   not_evidenced: { label: "Not evidenced", icon: "○", className: "text-muted-foreground" },
-  contradicted: { label: "Contradicted", icon: "✕", className: "text-rose-700 dark:text-rose-400" },
+  contradicted: { label: "Contradicted", icon: "✕", className: "text-destructive dark:text-destructive" },
   not_applicable: { label: "N/A", icon: "—", className: "text-muted-foreground" },
 };
 
@@ -80,7 +80,7 @@ export function CompareTray({
         </span>
       </div>
       {disabledReason && (
-        <span className="text-xs text-amber-700 dark:text-amber-400">{disabledReason}</span>
+        <span className="text-xs text-warning-foreground dark:text-warning-foreground">{disabledReason}</span>
       )}
       <Button size="sm" onClick={onOpen} disabled={selected.length < 2 || !!disabledReason}>
         Compare
@@ -138,7 +138,7 @@ export function CompareSheet({
         </SheetHeader>
 
         {!positionSafe ? (
-          <div className="mt-4 rounded-lg border border-amber-500/30 bg-amber-500/5 p-3 text-sm">
+          <div className="mt-4 rounded-lg border border-warning/30 bg-warning/5 p-3 text-sm">
             Comparison is only available for candidates on the same position.
           </div>
         ) : (
