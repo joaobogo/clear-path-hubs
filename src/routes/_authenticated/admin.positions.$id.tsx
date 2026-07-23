@@ -165,14 +165,21 @@ function PositionWorkspace() {
   return (
     <main className="mx-auto max-w-7xl space-y-6 px-6 py-6">
       <header className="space-y-3">
-        <Link
-          to="/admin/clients/$id"
-          params={{ id: p.organizations?.id ?? p.organization_id }}
-          className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:underline"
-        >
-          <Building2 className="h-3.5 w-3.5" />
-          {p.organizations?.name ?? "Client"}
-        </Link>
+        {(p.organizations?.id ?? p.organization_id) ? (
+          <Link
+            to="/admin/clients/$id"
+            params={{ id: p.organizations?.id ?? p.organization_id }}
+            className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:underline"
+          >
+            <Building2 className="h-3.5 w-3.5" />
+            {p.organizations?.name ?? "Client"}
+          </Link>
+        ) : (
+          <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground">
+            <Building2 className="h-3.5 w-3.5" />
+            {p.organizations?.name ?? "Client"}
+          </span>
+        )}
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-2">
@@ -185,8 +192,7 @@ function PositionWorkspace() {
               <Badge variant="outline">{p.visibility}</Badge>
             </div>
             <div className="mt-1 flex flex-wrap gap-3 text-xs text-muted-foreground">
-              <span className="font-mono">#{p.id.slice(0, 8)}</span>
-              {p.location && <span>· {p.location}</span>}
+              {p.location && <span>{p.location}</span>}
               {p.work_model && <span>· {p.work_model}</span>}
               {p.employment_type && <span>· {p.employment_type.replace(/_/g, " ")}</span>}
               {p.seniority && <span>· {p.seniority}</span>}

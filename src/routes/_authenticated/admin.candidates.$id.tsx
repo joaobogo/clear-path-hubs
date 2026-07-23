@@ -308,14 +308,6 @@ function WorkspaceHeader({
                 </Link>
               </>
             )}
-            <span>·</span>
-            <span className="font-mono">#{m.id.slice(0, 8)}</span>
-            {m.last_processing_trace_id && (
-              <>
-                <span>·</span>
-                <span className="font-mono">trace {m.last_processing_trace_id.slice(0, 12)}</span>
-              </>
-            )}
           </div>
         </div>
         <div className="shrink-0">
