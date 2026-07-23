@@ -2,7 +2,6 @@ import { useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { Search, ArrowRight, CheckCircle2, Sparkles, Award } from "lucide-react";
 import { INDUSTRY_ENTRIES, type IndustryEntry } from "@/content/industries-v2";
-import { INDUSTRY_ENTRIES_BATCH2 } from "@/content/industries-batch2";
 
 export type ExplorerCategory =
   | "Technology & Digital"
