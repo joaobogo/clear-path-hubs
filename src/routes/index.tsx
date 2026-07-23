@@ -234,24 +234,99 @@ const AGENCY_COMPARE = [
 
 const HOMEPAGE_FAQ = [
   {
-    q: "Is TaaSFlow a recruiting agency?",
-    a: "No. TaaSFlow is a subscription recruiting service delivered through a live workspace. You pay for the service, not per hire.",
+    q: "What is TaaSFlow?",
+    a: "TaaSFlow is an on-demand recruiting function delivered as a subscription. A recruiter runs sourcing and evaluation for your roles inside a live workspace your team can see at any time.",
   },
   {
-    q: "Do you charge placement fees?",
-    a: "No placement fees, ever. You pay a flat monthly subscription per active role.",
+    q: "How is TaaSFlow different from a recruiting agency?",
+    a: "Agencies charge a percentage of salary per hire and forward CVs by email. TaaSFlow is a flat monthly subscription with ranked candidates, evidence per requirement, and a transparent workspace — no placement fees.",
   },
   {
-    q: "What happens after the shortlist?",
-    a: "Your team runs the interview and offer process directly with the candidate — all inside the same workspace. We stay available to support, we don't gate access.",
+    q: "What does the Client actually receive?",
+    a: "A ranked shortlist, recruiter-written evidence tied to each requirement, CV quotes, a live pipeline across every stage, and one workspace thread with your recruiter — all owned by your team.",
   },
   {
-    q: "Do we keep the candidates and data?",
-    a: "Yes. Every candidate, every note, and every message stays in your workspace so you can revisit past pipelines when new roles open.",
+    q: "Who runs the interviews?",
+    a: "Your team runs interviews and the offer conversation directly with the candidate. TaaSFlow prepares the shortlist and stays available in the workspace for support — we do not gate access to candidates.",
   },
   {
-    q: "How is candidate scoring done?",
-    a: "Each candidate is scored against the requirements you approved in the intake, with evidence and CV quotes attached. See the scoring section on How It Works for the full methodology.",
+    q: "How does pricing work?",
+    a: "Flat monthly subscription per active role. No percentage-of-salary fees and no per-hire fees. Specific plans are shared on request so we can match capacity to your open roles.",
+  },
+  {
+    q: "Who owns the candidates and pipeline?",
+    a: "You do. Every candidate, note, evidence quote, and message stays in your workspace so past pipelines are reusable when new roles open.",
+  },
+  {
+    q: "What types of hiring do you support?",
+    a: "Individual contributor and manager roles across the industries listed on the Industries page — including SaaS, Tech, Finance, Healthcare, Sales, HR, Consulting, and Skilled Trades. Executive search is scoped case by case.",
+  },
+  {
+    q: "How do we start?",
+    a: "Open a role with the intake wizard or book a conversation. We confirm the requirements with you before any sourcing begins so evidence is scored against what you actually approved.",
+  },
+] as const;
+
+const APPROVED_PROOF = [
+  {
+    icon: ClipboardCheck,
+    t: "Structured evaluation",
+    d: "Every candidate is scored against the requirements you approved in the intake — same criteria, same weighting, same evidence format across roles.",
+  },
+  {
+    icon: Eye,
+    t: "Transparent workspace",
+    d: "Sourcing progress, pipeline stages, evidence, and recruiter notes are visible to your team in real time. Nothing sits in a private inbox.",
+  },
+  {
+    icon: Repeat,
+    t: "Client-controlled pipeline",
+    d: "Candidates, notes, and evidence belong to your workspace. When a role closes, the context is still there for the next one.",
+  },
+  {
+    icon: Target,
+    t: "Role-specific delivery",
+    d: "Requirements, evidence prompts, and scoring are tuned to the role — not a generic template applied to every search.",
+  },
+  {
+    icon: Users,
+    t: "Human review on every candidate",
+    d: "A recruiter reads each CV, writes the evidence, and approves it before a candidate is published to your shortlist.",
+  },
+  {
+    icon: ShieldCheck,
+    t: "Full audit trail",
+    d: "Every decision — approvals, stage moves, evidence edits — is recorded, so your team can revisit why a candidate progressed or didn't.",
+  },
+] as const;
+
+const HOMEPAGE_RESOURCES = [
+  {
+    slug: "ai-in-recruitment",
+    type: "Article",
+    title: "AI in Recruitment 2026: What Works, What Fails, and What Is Next",
+    description:
+      "An honest assessment of AI in recruiting — from resume parsing to predictive analytics — and where human judgment still decides.",
+    icon: Sparkles,
+    tone: "ocean",
+  },
+  {
+    slug: "30-60-90-onboarding-plan-2026",
+    type: "Guide",
+    title: "The 30-60-90 Onboarding Plan for 2026",
+    description:
+      "A research-backed onboarding framework with week-by-week milestones and manager checkpoints for new hires.",
+    icon: CalendarClock,
+    tone: "navy",
+  },
+  {
+    slug: "ai-impact-on-jobs-hiring",
+    type: "Analysis",
+    title: "AI's Impact on Jobs and Hiring",
+    description:
+      "Which roles are being augmented versus automated — and how hiring teams should prioritise skills as the mix shifts.",
+    icon: TrendingUp,
+    tone: "ocean",
   },
 ] as const;
 
