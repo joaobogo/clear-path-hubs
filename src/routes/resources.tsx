@@ -10,6 +10,9 @@ import {
   LineChart,
   Lightbulb,
   Users,
+  Calculator,
+  CheckCircle2,
+  Sparkles,
 } from "lucide-react";
 import { SiteShell } from "@/components/marketing/site-shell";
 import { getPage } from "@/lib/marketing/content";
@@ -22,7 +25,7 @@ export const Route = createFileRoute("/resources")({
     marketingHead(entry, "/resources", {
       title: "Resources — TaaSFlow",
       description:
-        "Hiring guides, industry insights, candidate resources, and knowledge-base links from TaaSFlow.",
+        "Hiring guides, industry insights, calculators, case studies and candidate resources — every insight links to its full source.",
     }),
   component: ResourcesPage,
 });
@@ -35,116 +38,308 @@ type Card = {
   icon: typeof BookOpen;
 };
 
-const FEATURED: Card[] = [
+/* -------- FEATURED RESEARCH (visual insight cards) -------- */
+
+type Insight = {
+  eyebrow: string;
+  headline: string;
+  takeaway: string;
+  href: string;
+  hrefLabel: string;
+  icon: typeof Lightbulb;
+};
+
+const FEATURED_RESEARCH: Insight[] = [
   {
-    title: "How TaaSFlow works",
-    description:
-      "End-to-end walkthrough of intake, sourcing, ranked shortlists, workspace visibility, and delivery cadence.",
-    href: "/how-it-works",
-    cta: "Read the guide",
-    icon: Lightbulb,
+    eyebrow: "Recruiting cost",
+    headline: "Cost-per-hire compounds across every open role.",
+    takeaway:
+      "Where the money actually goes: sourcing, screening, agency fees, and internal recruiter time.",
+    href: "/blog/reducing-cost-per-hire",
+    hrefLabel: "Read the analysis",
+    icon: Calculator,
   },
   {
-    title: "Employer onboarding",
-    description:
-      "What to expect after your first intake — what TaaSFlow prepares, what the client provides, and how workspace access begins.",
-    href: "/employer-onboarding",
-    cta: "See the journey",
-    icon: GraduationCap,
+    eyebrow: "Candidate scoring",
+    headline: "Evidence beats keyword matching.",
+    takeaway:
+      "How structured rubrics extract role-specific signal instead of surfacing buzzwords.",
+    href: "/blog/ai-screening-ethics",
+    hrefLabel: "Read the playbook",
+    icon: Sparkles,
   },
   {
-    title: "Pricing & engagement paths",
-    description:
-      "Subscription-based recruiting with no placement fees. Review the model and how engagements start.",
-    href: "/pricing",
-    cta: "Review pricing",
+    eyebrow: "Time to hire",
+    headline: "Where the days actually go.",
+    takeaway:
+      "The invisible waits — intake, scheduling, decision-making — that stretch hiring cycles.",
+    href: "/blog/reduce-time-to-hire-strategies",
+    hrefLabel: "See the breakdown",
     icon: LineChart,
   },
 ];
 
-const HIRING_GUIDES: Card[] = [
+/* -------- CHECKLISTS -------- */
+
+type Checklist = {
+  title: string;
+  items: string[];
+  href: string;
+  hrefLabel: string;
+};
+
+const CHECKLISTS: Checklist[] = [
   {
-    title: "Blog & playbooks",
-    description:
-      "Long-form articles on hiring strategy, evaluation, candidate experience, and modern talent operations.",
-    href: "/blog",
-    cta: "Browse articles",
-    icon: BookOpen,
+    title: "Interview quality checklist",
+    items: [
+      "One rubric per role, agreed before the first interview.",
+      "Behavioral evidence tied to specific questions.",
+      "Two independent scorers before hire/no-hire.",
+      "Debrief within 24 hours.",
+    ],
+    href: "/blog/behavioral-interview-guide-employers",
+    hrefLabel: "See the full guide",
   },
+  {
+    title: "Candidate experience audit",
+    items: [
+      "Every applicant gets a response within 7 days.",
+      "Reject with a reason, not silence.",
+      "Feedback on every interview stage.",
+      "Cadence set at intake — not improvised.",
+    ],
+    href: "/blog/candidate-experience-audit-checklist",
+    hrefLabel: "Open the audit",
+  },
+  {
+    title: "Talent-pipeline health",
+    items: [
+      "Track ratio of active vs passive candidates.",
+      "Refresh every 90 days.",
+      "Score every pipeline candidate on the same rubric.",
+      "Log source and last-touch on every record.",
+    ],
+    href: "/blog/building-talent-pipeline",
+    hrefLabel: "Read the guide",
+  },
+];
+
+/* -------- BENCHMARK CALLOUTS (qualitative — no fabricated stats) -------- */
+
+type Benchmark = {
+  label: string;
+  claim: string;
+  href: string;
+};
+
+const BENCHMARKS: Benchmark[] = [
+  {
+    label: "Compensation",
+    claim: "Salary ranges vary widely across markets, seniorities, and stacks.",
+    href: "/blog/compensation-benchmarking",
+  },
+  {
+    label: "HR productivity",
+    claim: "Recruiter capacity depends on requisition mix, not headcount.",
+    href: "/blog/recruiter-productivity-tips",
+  },
+  {
+    label: "Industry hiring",
+    claim: "Hiring dynamics differ by regulation, sourcing pool, and stack.",
+    href: "/industries",
+  },
+];
+
+/* -------- CALCULATORS & TOOLS -------- */
+
+const CALCULATORS: Card[] = [
+  {
+    title: "ROI calculator",
+    description: "Model cost-per-hire against your current recruiting spend.",
+    href: "/pricing#roi-calculator",
+    cta: "Run the numbers",
+    icon: Calculator,
+  },
+  {
+    title: "Industry explorer",
+    description: "Search 57 industries by role, skill, certification or alias.",
+    href: "/industries",
+    cta: "Open the explorer",
+    icon: Layers,
+  },
+  {
+    title: "Employer onboarding walkthrough",
+    description: "Every step of first intake to first shortlist, sequenced.",
+    href: "/employer-onboarding",
+    cta: "See the journey",
+    icon: GraduationCap,
+  },
+];
+
+/* -------- CASE STUDIES / DESTINATIONS -------- */
+
+const CASE_STUDIES: Card[] = [
   {
     title: "Enterprise operating model",
     description:
-      "How multi-role hiring programs run inside TaaSFlow with shared workspace visibility across teams.",
+      "How multi-role hiring programmes run with shared workspace visibility.",
     href: "/enterprise",
-    cta: "See enterprise model",
+    cta: "See the model",
     icon: Building2,
   },
   {
     title: "Staffing partnerships",
     description:
-      "How agencies use TaaSFlow to expand delivery capacity while keeping their own client relationships.",
+      "How agencies expand delivery capacity behind their own client relationships.",
     href: "/partnerships/staffing",
     cta: "Partnership overview",
     icon: Layers,
   },
+  {
+    title: "Agency comparison",
+    description:
+      "How TaaSFlow differs from traditional agency and RPO delivery.",
+    href: "/blog/subscription-sourcing-vs-agencies",
+    cta: "Read the comparison",
+    icon: LineChart,
+  },
 ];
 
-const INDUSTRY_INSIGHTS: Card[] = [
-  {
-    title: "Industry hub",
-    description:
-      "Hiring context across Technology, Healthcare, Sales, Human Resources, Consulting, Hospitality and more.",
-    href: "/industries",
-    cta: "Open the hub",
-    icon: Layers,
-  },
-  {
-    title: "Category-organized articles",
-    description:
-      "Browse insights grouped by discipline and functional area rather than a single generic feed.",
-    href: "/blog",
-    cta: "See categories",
-    icon: BookOpen,
-  },
-];
+/* -------- CANDIDATE RESOURCES -------- */
 
 const CANDIDATE_RESOURCES: Card[] = [
   {
     title: "Open roles",
-    description:
-      "Search current positions actively being sourced by TaaSFlow across every partner engagement.",
+    description: "Every position TaaSFlow is actively sourcing right now.",
     href: "/jobs",
     cta: "Browse jobs",
     icon: Users,
   },
   {
     title: "Talent network",
-    description:
-      "How the private candidate network works, how matching happens, and how candidates stay in control of visibility.",
+    description: "How candidates stay visible and in control of matching.",
     href: "/talent-network",
     cta: "Learn more",
     icon: Users,
   },
-];
-
-const KNOWLEDGE_BASE: Card[] = [
   {
     title: "Knowledge base",
-    description:
-      "Reference material and how-to guides for TaaSFlow clients and candidates.",
+    description: "Reference material for TaaSFlow clients and candidates.",
     href: "/knowledge-base",
     cta: "Open knowledge base",
     icon: FileText,
   },
+];
+
+/* -------- HIRING GUIDES -------- */
+
+const HIRING_GUIDES: Card[] = [
   {
-    title: "Frequently asked questions",
-    description:
-      "Answers on delivery, workspace access, pricing model, ownership, and support.",
+    title: "How TaaSFlow works",
+    description: "Intake, sourcing, ranked shortlists, workspace, delivery.",
+    href: "/how-it-works",
+    cta: "Read the guide",
+    icon: Lightbulb,
+  },
+  {
+    title: "Blog & playbooks",
+    description: "Long-form articles on hiring, evaluation and candidate experience.",
+    href: "/blog",
+    cta: "Browse articles",
+    icon: BookOpen,
+  },
+  {
+    title: "FAQ",
+    description: "Delivery, workspace access, pricing, ownership, support.",
     href: "/faq",
     cta: "Read the FAQ",
     icon: HelpCircle,
   },
 ];
+
+/* ---------- Components ---------- */
+
+function InsightCard({ i }: { i: Insight }) {
+  const Icon = i.icon;
+  return (
+    <article className="group flex flex-col rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6 transition hover:border-[color:var(--brand-ocean)]/40 hover:shadow-sm">
+      <div className="flex items-center gap-3">
+        <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-[color:var(--brand-ocean)]/10 text-[color:var(--brand-ocean)]">
+          <Icon className="h-5 w-5" aria-hidden />
+        </div>
+        <span className="text-[10px] font-semibold uppercase tracking-widest text-[color:var(--brand-ocean)]">
+          {i.eyebrow}
+        </span>
+      </div>
+      <h3 className="mt-4 text-lg font-semibold leading-snug text-[color:var(--brand-navy)]">
+        {i.headline}
+      </h3>
+      <p className="mt-2 flex-1 text-sm text-[color:var(--brand-navy)]/75">
+        {i.takeaway}
+      </p>
+      <Link
+        to={i.href}
+        className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-[color:var(--brand-ocean)] hover:text-[color:var(--brand-navy)]"
+      >
+        {i.hrefLabel}
+        <ArrowRight className="h-4 w-4" aria-hidden />
+      </Link>
+    </article>
+  );
+}
+
+function ChecklistCard({ c }: { c: Checklist }) {
+  return (
+    <article className="flex flex-col rounded-2xl border border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-mist)]/40 p-6">
+      <h3 className="text-base font-semibold text-[color:var(--brand-navy)]">
+        {c.title}
+      </h3>
+      <ul className="mt-4 space-y-2">
+        {c.items.map((item) => (
+          <li
+            key={item}
+            className="flex items-start gap-2 text-sm text-[color:var(--brand-navy)]/85"
+          >
+            <CheckCircle2
+              className="mt-0.5 h-4 w-4 shrink-0 text-[color:var(--brand-ocean)]"
+              aria-hidden
+            />
+            <span>{item}</span>
+          </li>
+        ))}
+      </ul>
+      <Link
+        to={c.href}
+        className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-[color:var(--brand-ocean)] hover:underline"
+      >
+        {c.hrefLabel}
+        <ArrowRight className="h-4 w-4" aria-hidden />
+      </Link>
+    </article>
+  );
+}
+
+function BenchmarkCard({ b }: { b: Benchmark }) {
+  return (
+    <Link
+      to={b.href}
+      className="group flex items-center justify-between gap-3 rounded-xl border border-[color:var(--brand-navy)]/10 bg-white px-4 py-3 transition hover:border-[color:var(--brand-ocean)]/40"
+    >
+      <div className="min-w-0">
+        <div className="text-[10px] font-semibold uppercase tracking-widest text-[color:var(--brand-ocean)]">
+          {b.label}
+        </div>
+        <div className="mt-0.5 truncate text-sm text-[color:var(--brand-navy)]/85">
+          {b.claim}
+        </div>
+      </div>
+      <ArrowRight
+        className="h-4 w-4 shrink-0 text-[color:var(--brand-navy)]/40 transition group-hover:text-[color:var(--brand-ocean)]"
+        aria-hidden
+      />
+    </Link>
+  );
+}
 
 function CardGrid({ items }: { items: Card[] }) {
   return (
@@ -154,18 +349,20 @@ function CardGrid({ items }: { items: Card[] }) {
         return (
           <article
             key={r.title}
-            className="flex flex-col rounded-2xl border border-border/60 bg-card p-6"
+            className="flex flex-col rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6 transition hover:border-[color:var(--brand-ocean)]/40"
           >
-            <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
+            <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-lg bg-[color:var(--brand-ocean)]/10 text-[color:var(--brand-ocean)]">
               <Icon className="h-5 w-5" aria-hidden />
             </div>
-            <h3 className="text-lg font-semibold tracking-tight">{r.title}</h3>
-            <p className="mt-2 flex-1 text-sm text-muted-foreground">
+            <h3 className="text-lg font-semibold tracking-tight text-[color:var(--brand-navy)]">
+              {r.title}
+            </h3>
+            <p className="mt-2 flex-1 text-sm text-[color:var(--brand-navy)]/75">
               {r.description}
             </p>
             <Link
               to={r.href}
-              className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-primary hover:underline"
+              className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-[color:var(--brand-ocean)] hover:underline"
             >
               {r.cta} <ArrowRight className="h-4 w-4" aria-hidden />
             </Link>
@@ -190,13 +387,13 @@ function Section({
   return (
     <section className="mt-20">
       <header className="max-w-3xl">
-        <p className="text-xs font-semibold uppercase tracking-widest text-primary">
+        <p className="text-xs font-semibold uppercase tracking-widest text-[color:var(--brand-ocean)]">
           {eyebrow}
         </p>
-        <h2 className="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">
+        <h2 className="mt-2 font-[family-name:var(--brand-font-display)] text-2xl font-semibold tracking-tight text-[color:var(--brand-navy)] sm:text-3xl">
           {title}
         </h2>
-        <p className="mt-2 text-muted-foreground">{description}</p>
+        <p className="mt-2 text-[color:var(--brand-navy)]/70">{description}</p>
       </header>
       <div className="mt-8">{children}</div>
     </section>
@@ -208,78 +405,115 @@ function ResourcesPage() {
     <SiteShell>
       <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         <header className="max-w-3xl">
-          <p className="text-xs font-semibold uppercase tracking-widest text-primary">
+          <p className="text-xs font-semibold uppercase tracking-widest text-[color:var(--brand-ocean)]">
             Resources
           </p>
-          <h1 className="mt-3 text-4xl font-semibold tracking-tight sm:text-5xl">
-            Guides, insights, and reference material
+          <h1 className="mt-3 font-[family-name:var(--brand-font-display)] text-4xl font-semibold tracking-tight sm:text-5xl">
+            Guides, insights, and tools
           </h1>
-          <p className="mt-4 text-lg text-muted-foreground">
-            Everything you need to evaluate TaaSFlow — how delivery works, what
-            the workspace looks like, and where to go for role-specific context.
+          <p className="mt-4 text-lg text-[color:var(--brand-navy)]/70">
+            Short, visual, and linked. Every insight leads to a full source
+            article, calculator, or industry destination.
           </p>
         </header>
 
         <Section
-          eyebrow="Featured"
-          title="Start here"
-          description="The three resources most clients open first."
+          eyebrow="Featured research"
+          title="Where hiring costs, quality, and speed collide"
+          description="Three insights every talent leader is measured on."
         >
-          <CardGrid items={FEATURED} />
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {FEATURED_RESEARCH.map((i) => (
+              <InsightCard key={i.headline} i={i} />
+            ))}
+          </div>
         </Section>
 
         <Section
           eyebrow="Hiring guides"
-          title="Playbooks for talent leaders"
-          description="Operational guides on how engagements are structured and delivered."
+          title="Short checklists, full playbooks"
+          description="Distilled from long-form articles — click through for the full version."
         >
-          <CardGrid items={HIRING_GUIDES} />
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {CHECKLISTS.map((c) => (
+              <ChecklistCard key={c.title} c={c} />
+            ))}
+          </div>
         </Section>
 
         <Section
           eyebrow="Industry insights"
-          title="Context by industry"
-          description="Hiring dynamics and role expectations across the industries TaaSFlow supports."
+          title="Context varies by industry"
+          description="No fabricated statistics — every claim links to its source."
         >
-          <CardGrid items={INDUSTRY_INSIGHTS} />
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {BENCHMARKS.map((b) => (
+              <BenchmarkCard key={b.label} b={b} />
+            ))}
+          </div>
+          <div className="mt-6">
+            <Link
+              to="/industries"
+              className="inline-flex items-center gap-1.5 text-sm font-semibold text-[color:var(--brand-ocean)] hover:underline"
+            >
+              Open the full industry explorer
+              <ArrowRight className="h-4 w-4" aria-hidden />
+            </Link>
+          </div>
+        </Section>
+
+        <Section
+          eyebrow="Calculators and tools"
+          title="Model your own numbers"
+          description="Interactive tools you can use right now."
+        >
+          <CardGrid items={CALCULATORS} />
+        </Section>
+
+        <Section
+          eyebrow="Case studies"
+          title="How different teams work with TaaSFlow"
+          description="Enterprise programmes, agency partnerships, and traditional-agency comparison."
+        >
+          <CardGrid items={CASE_STUDIES} />
         </Section>
 
         <Section
           eyebrow="Candidate resources"
           title="For candidates"
-          description="Ways to explore roles and join the private talent network."
+          description="Open roles, private network access, and reference material."
         >
           <CardGrid items={CANDIDATE_RESOURCES} />
         </Section>
 
         <Section
-          eyebrow="Knowledge base"
-          title="Reference material"
-          description="Direct links to detailed reference documentation."
+          eyebrow="Hiring guides"
+          title="Playbooks for talent leaders"
+          description="Operational reference for how engagements start and run."
         >
-          <CardGrid items={KNOWLEDGE_BASE} />
+          <CardGrid items={HIRING_GUIDES} />
         </Section>
 
-        <section className="mt-20 rounded-2xl border border-border/60 bg-muted/20 p-8 md:p-12">
-          <h2 className="text-2xl font-semibold tracking-tight">
+        <section className="mt-20 rounded-2xl border border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-mist)]/30 p-8 md:p-12">
+          <h2 className="font-[family-name:var(--brand-font-display)] text-2xl font-semibold tracking-tight text-[color:var(--brand-navy)]">
             Ready to see delivery in your own workspace?
           </h2>
-          <p className="mt-3 max-w-2xl text-muted-foreground">
+          <p className="mt-3 max-w-2xl text-[color:var(--brand-navy)]/70">
             Start hiring with TaaSFlow and get a scored, ranked shortlist
             delivered inside your dedicated workspace.
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
             <Link
               to="/intake"
-              className="rounded-md bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
+              className="rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[color:var(--brand-navy)]/90"
             >
-              Start Hiring
+              Start hiring
             </Link>
             <Link
               to="/how-it-works"
-              className="rounded-md border border-border/60 bg-background px-5 py-2.5 text-sm font-semibold hover:bg-muted"
+              className="rounded-md border border-[color:var(--brand-navy)]/15 bg-white px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-navy)] hover:border-[color:var(--brand-ocean)]/40"
             >
-              See How It Works
+              See how it works
             </Link>
           </div>
         </section>

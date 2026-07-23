@@ -1,4 +1,3 @@
-import { useMemo, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   SiteShell,
@@ -6,7 +5,7 @@ import {
   PublicSection,
   CtaSection,
 } from "@/components/marketing/site-shell";
-import { INDUSTRY_ENTRIES } from "@/content/industries-v2";
+import { IndustryExplorer } from "@/components/marketing/industry-explorer";
 import { marketingHead } from "@/lib/marketing/head";
 
 export const Route = createFileRoute("/industries/")({
@@ -14,92 +13,10 @@ export const Route = createFileRoute("/industries/")({
     marketingHead(undefined, "/industries", {
       title: "Industries we serve — TaaSFlow",
       description:
-        "Structured, evidence-based subscription recruiting across technology, healthcare, sales, HR, consulting, hospitality and more — one workspace per requisition.",
+        "Structured, evidence-based subscription recruiting across 57 industries. Interactive explorer: search roles, skills and certifications — every industry has a dedicated page.",
     }),
   component: IndustriesIndex,
 });
-
-type Category =
-  | "All"
-  | "Tech & Data"
-  | "Professional Services"
-  | "Regulated & Public"
-  | "People & GTM"
-  | "Operations & Services";
-
-const CATEGORIES: Category[] = [
-  "All",
-  "Tech & Data",
-  "Professional Services",
-  "Regulated & Public",
-  "People & GTM",
-  "Operations & Services",
-];
-
-const CATEGORY_BY_SLUG: Record<string, Exclude<Category, "All">> = {
-  // Tech & Data
-  tech: "Tech & Data",
-  saas: "Tech & Data",
-  cybersecurity: "Tech & Data",
-  "data-analytics": "Tech & Data",
-  media: "Tech & Data",
-  ecommerce: "Tech & Data",
-  "ai-ml": "Tech & Data",
-  fintech: "Tech & Data",
-  healthtech: "Tech & Data",
-  edtech: "Tech & Data",
-  proptech: "Tech & Data",
-  gaming: "Tech & Data",
-  web3: "Tech & Data",
-  devops: "Tech & Data",
-  // Professional Services
-  consulting: "Professional Services",
-  legal: "Professional Services",
-  finance: "Professional Services",
-  accounting: "Professional Services",
-  insurance: "Professional Services",
-  "private-equity": "Professional Services",
-  "staffing-agencies": "Professional Services",
-  "investment-banking": "Professional Services",
-  "wealth-management": "Professional Services",
-  "venture-capital": "Professional Services",
-  architecture: "Professional Services",
-  // Regulated & Public
-  healthcare: "Regulated & Public",
-  "public-sector": "Regulated & Public",
-  nonprofit: "Regulated & Public",
-  pharmaceuticals: "Regulated & Public",
-  biotech: "Regulated & Public",
-  "medical-devices": "Regulated & Public",
-  defense: "Regulated & Public",
-  education: "Regulated & Public",
-  "higher-education": "Regulated & Public",
-  // People & GTM
-  sales: "People & GTM",
-  marketing: "People & GTM",
-  "human-resources": "People & GTM",
-  "customer-success": "People & GTM",
-  "product-management": "People & GTM",
-  design: "People & GTM",
-  // Operations & Services
-  "real-estate": "Operations & Services",
-  construction: "Operations & Services",
-  hospitality: "Operations & Services",
-  retail: "Operations & Services",
-  logistics: "Operations & Services",
-  manufacturing: "Operations & Services",
-  automotive: "Operations & Services",
-  energy: "Operations & Services",
-  "renewable-energy": "Operations & Services",
-  "oil-gas": "Operations & Services",
-  agriculture: "Operations & Services",
-  "food-beverage": "Operations & Services",
-  telecom: "Operations & Services",
-  aviation: "Operations & Services",
-  travel: "Operations & Services",
-  sports: "Operations & Services",
-  fashion: "Operations & Services",
-};
 
 const CONTEXT_REASONS = [
   {
@@ -116,69 +33,30 @@ const CONTEXT_REASONS = [
   },
 ];
 
-const HIGHLIGHT_SLUGS = [
-  "tech",
-  "healthcare",
-  "sales",
-  "human-resources",
-  "consulting",
-  "hospitality",
-];
-
 function IndustriesIndex() {
-  const [active, setActive] = useState<Category>("All");
-  const [query, setQuery] = useState("");
-
-  const decorated = useMemo(
-    () =>
-      INDUSTRY_ENTRIES.map((e) => ({
-        ...e,
-        category: CATEGORY_BY_SLUG[e.slug] ?? "Operations & Services",
-      })),
-    [],
-  );
-
-  const cards = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    return decorated.filter((e) => {
-      if (active !== "All" && e.category !== active) return false;
-      if (!q) return true;
-      const haystack = [
-        e.name,
-        e.eyebrow,
-        e.summary ?? "",
-        (e.aliases ?? []).join(" "),
-        e.roles.join(" "),
-        (e.skills ?? []).join(" "),
-        (e.tools ?? []).join(" "),
-      ]
-        .join(" ")
-        .toLowerCase();
-      return haystack.includes(q);
-    });
-  }, [decorated, active, query]);
-
-  const highlights = HIGHLIGHT_SLUGS
-    .map((slug) => INDUSTRY_ENTRIES.find((e) => e.slug === slug))
-    .filter((e): e is (typeof INDUSTRY_ENTRIES)[number] => Boolean(e));
-
-
   return (
     <SiteShell>
       {/* Hero */}
       <PublicSection className="pt-24">
         <PublicPage className="max-w-4xl">
           <p className="text-sm font-medium uppercase tracking-widest text-[color:var(--brand-ocean)]">
-            Industries
+            Industry explorer
           </p>
           <h1 className="mt-3 font-[family-name:var(--brand-font-display)] text-4xl font-semibold tracking-tight sm:text-5xl lg:text-6xl">
             One recruiting model. Every industry, its own rubric.
           </h1>
           <p className="mt-6 max-w-2xl text-lg text-[color:var(--brand-navy)]/70">
-            TaaSFlow calibrates every search to the industry you actually hire
-            in. Same workspace, same transparent scoring — different rubrics,
-            different evidence, different roles.
+            Pick a category, search for a role, skill or certification. Every
+            industry has a dedicated page with the rubric approach, common
+            roles and how the workspace is set up.
           </p>
+        </PublicPage>
+      </PublicSection>
+
+      {/* Explorer */}
+      <PublicSection>
+        <PublicPage>
+          <IndustryExplorer />
         </PublicPage>
       </PublicSection>
 
@@ -200,155 +78,6 @@ function IndustriesIndex() {
                 <p className="mt-3 text-sm leading-relaxed text-[color:var(--brand-navy)]/70">
                   {r.body}
                 </p>
-              </div>
-            ))}
-          </div>
-        </PublicPage>
-      </PublicSection>
-
-      {/* Filters + Card grid */}
-      <PublicSection>
-        <PublicPage>
-          <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
-            <div>
-              <h2 className="font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight sm:text-4xl">
-                Industries we serve
-              </h2>
-              <p className="mt-3 max-w-xl text-[color:var(--brand-navy)]/70">
-                Browse by category. Each industry has a dedicated page with the
-                rubric approach, common roles and how the workspace is set up.
-              </p>
-            </div>
-          </div>
-
-          <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <label className="relative block w-full sm:max-w-md">
-              <span className="sr-only">Search industries</span>
-              <input
-                type="search"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search industry, role, skill or tool"
-                className="w-full rounded-full border border-[color:var(--brand-navy)]/15 bg-white px-4 py-2.5 text-sm text-[color:var(--brand-navy)] placeholder:text-[color:var(--brand-navy)]/50 focus:border-[color:var(--brand-ocean)] focus:outline-none focus:ring-2 focus:ring-[color:var(--brand-focus-ring)]"
-              />
-            </label>
-            <p className="text-xs text-[color:var(--brand-navy)]/60">
-              Showing <span className="font-semibold text-[color:var(--brand-navy)]">{cards.length}</span> of {decorated.length} industries
-            </p>
-          </div>
-
-          <div
-            role="tablist"
-            aria-label="Industry categories"
-            className="mt-4 flex flex-wrap gap-2"
-          >
-            {CATEGORIES.map((c) => {
-              const isActive = c === active;
-              const count =
-                c === "All"
-                  ? decorated.length
-                  : decorated.filter((e) => e.category === c).length;
-              return (
-                <button
-                  key={c}
-                  type="button"
-                  role="tab"
-                  aria-selected={isActive}
-                  onClick={() => setActive(c)}
-                  className={
-                    "inline-flex min-h-9 items-center gap-2 rounded-full border px-4 text-sm font-medium transition-colors " +
-                    (isActive
-                      ? "border-[color:var(--brand-navy)] bg-[color:var(--brand-navy)] text-white"
-                      : "border-[color:var(--brand-navy)]/15 bg-white text-[color:var(--brand-navy)] hover:border-[color:var(--brand-navy)]/40")
-                  }
-                >
-                  {c}
-                  <span className={"text-xs " + (isActive ? "text-white/70" : "text-[color:var(--brand-navy)]/50")}>{count}</span>
-                </button>
-              );
-            })}
-          </div>
-
-          {cards.length === 0 ? (
-            <p className="mt-10 rounded-2xl border border-dashed border-[color:var(--brand-navy)]/15 bg-white p-8 text-center text-sm text-[color:var(--brand-navy)]/60">
-              No industries match &ldquo;{query}&rdquo;. Try a role, skill or category.
-            </p>
-          ) : null}
-
-
-          <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {cards.map((c) => (
-              <Link
-                key={c.slug}
-                to="/industries/$slug"
-                params={{ slug: c.slug }}
-                className="group flex h-full flex-col rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6 transition-colors hover:border-[color:var(--brand-ocean)]/50 hover:shadow-sm"
-              >
-                <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean)]">
-                  {c.category}
-                </p>
-                <h3 className="mt-2 text-xl font-semibold text-[color:var(--brand-navy)] group-hover:text-[color:var(--brand-ocean)]">
-                  {c.name}
-                </h3>
-                <p className="mt-2 line-clamp-3 text-sm text-[color:var(--brand-navy)]/70">
-                  {c.meta.description}
-                </p>
-                <div className="mt-4">
-                  <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[color:var(--brand-navy)]/60">
-                    Example roles
-                  </p>
-                  <p className="mt-1.5 line-clamp-2 text-sm text-[color:var(--brand-navy)]/80">
-                    {c.roles.slice(0, 4).join(" · ")}
-                  </p>
-                </div>
-                <span className="mt-6 inline-flex items-center gap-1 text-sm font-semibold text-[color:var(--brand-ocean)]">
-                  Explore {c.name} →
-                </span>
-              </Link>
-            ))}
-          </div>
-        </PublicPage>
-      </PublicSection>
-
-      {/* Common role families */}
-      <PublicSection className="border-t border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-mist)]/40">
-        <PublicPage>
-          <h2 className="max-w-2xl font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight sm:text-4xl">
-            Common role families
-
-          </h2>
-          <p className="mt-3 max-w-2xl text-[color:var(--brand-navy)]/70">
-            A snapshot of the roles TaaSFlow calibrates for across the most
-            requested industries. Detail pages list the full rubric approach.
-          </p>
-          <div className="mt-10 grid gap-6 md:grid-cols-2">
-            {highlights.map((h) => (
-              <div
-                key={h.slug}
-                className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6"
-              >
-                <div className="flex items-center justify-between gap-4">
-                  <h3 className="text-lg font-semibold text-[color:var(--brand-navy)]">
-                    {h.name}
-                  </h3>
-                  <Link
-                    to="/industries/$slug"
-                    params={{ slug: h.slug }}
-                    className="text-sm font-semibold text-[color:var(--brand-ocean)] hover:underline"
-                  >
-                    View page →
-                  </Link>
-                </div>
-                <ul className="mt-4 grid grid-cols-1 gap-1.5 sm:grid-cols-2">
-                  {h.roles.slice(0, 6).map((r) => (
-                    <li
-                      key={r}
-                      className="text-sm text-[color:var(--brand-navy)]/80"
-                    >
-                      · {r}
-                    </li>
-                  ))}
-                </ul>
               </div>
             ))}
           </div>
