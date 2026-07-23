@@ -26,6 +26,7 @@ import { getIndustryRelationships } from "@/lib/marketing/industry-relationships
 export function IndustryTemplate({ entry }: { entry: IndustryEntry }) {
   const heroImage = getIndustryHeroImage(entry.slug);
   const identity = getIndustryVisualIdentity(entry.slug);
+  const relationships = getIndustryRelationships(entry);
   const jsonLd = entry.faqs
 
     ? {
