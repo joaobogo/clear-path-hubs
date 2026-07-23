@@ -560,7 +560,7 @@ async function assertEditor(supabase: AnyRow, userId: string, orgId: string) {
 async function loadMatch(supabase: AnyRow, orgId: string, matchId: string) {
   const { data, error } = await supabase
     .from("candidate_matches")
-    .select("id, stage, organization_id, position_id, candidate_profile_id, client_visibility")
+    .select("id, stage, organization_id, position_id, application_id, candidate_profile_id, client_visibility")
     .eq("id", matchId)
     .eq("organization_id", orgId)
     .maybeSingle();
@@ -652,8 +652,11 @@ export const moveMatchStage = createServerFn({ method: "POST" })
       await context.supabase.from("interviews").insert({
         candidate_match_id: data.matchId,
         organization_id: data.orgId,
+        position_id: match.position_id as string,
+        candidate_submission_id: (match.application_id as string) ?? null,
         status: "requested",
         requested_at: new Date().toISOString(),
+        created_by: context.userId,
       });
     }
 
@@ -781,8 +784,11 @@ export const clientAction = createServerFn({ method: "POST" })
       await context.supabase.from("interviews").insert({
         candidate_match_id: data.matchId,
         organization_id: data.orgId,
+        position_id: match.position_id as string,
+        candidate_submission_id: (match.application_id as string) ?? null,
         status: "requested",
         requested_at: new Date().toISOString(),
+        created_by: context.userId,
       });
     }
 

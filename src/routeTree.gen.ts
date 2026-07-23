@@ -68,6 +68,7 @@ import { Route as AuthenticatedClientTeamRouteImport } from './routes/_authentic
 import { Route as AuthenticatedClientSettingsRouteImport } from './routes/_authenticated/client.settings'
 import { Route as AuthenticatedClientPositionsRouteImport } from './routes/_authenticated/client.positions'
 import { Route as AuthenticatedClientMessagesRouteImport } from './routes/_authenticated/client.messages'
+import { Route as AuthenticatedClientInterviewsRouteImport } from './routes/_authenticated/client.interviews'
 import { Route as AuthenticatedClientCandidatesRouteImport } from './routes/_authenticated/client.candidates'
 import { Route as AuthenticatedAdminTeamRouteImport } from './routes/_authenticated/admin.team'
 import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin.settings'
@@ -395,6 +396,12 @@ const AuthenticatedClientMessagesRoute =
     path: '/messages',
     getParentRoute: () => AuthenticatedClientRoute,
   } as any)
+const AuthenticatedClientInterviewsRoute =
+  AuthenticatedClientInterviewsRouteImport.update({
+    id: '/interviews',
+    path: '/interviews',
+    getParentRoute: () => AuthenticatedClientRoute,
+  } as any)
 const AuthenticatedClientCandidatesRoute =
   AuthenticatedClientCandidatesRouteImport.update({
     id: '/candidates',
@@ -600,6 +607,7 @@ export interface FileRoutesByFullPath {
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/team': typeof AuthenticatedAdminTeamRoute
   '/client/candidates': typeof AuthenticatedClientCandidatesRouteWithChildren
+  '/client/interviews': typeof AuthenticatedClientInterviewsRoute
   '/client/messages': typeof AuthenticatedClientMessagesRoute
   '/client/positions': typeof AuthenticatedClientPositionsRouteWithChildren
   '/client/settings': typeof AuthenticatedClientSettingsRoute
@@ -679,6 +687,7 @@ export interface FileRoutesByTo {
   '/admin/publish': typeof AuthenticatedAdminPublishRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/team': typeof AuthenticatedAdminTeamRoute
+  '/client/interviews': typeof AuthenticatedClientInterviewsRoute
   '/client/messages': typeof AuthenticatedClientMessagesRoute
   '/client/settings': typeof AuthenticatedClientSettingsRoute
   '/client/team': typeof AuthenticatedClientTeamRoute
@@ -765,6 +774,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/_authenticated/admin/team': typeof AuthenticatedAdminTeamRoute
   '/_authenticated/client/candidates': typeof AuthenticatedClientCandidatesRouteWithChildren
+  '/_authenticated/client/interviews': typeof AuthenticatedClientInterviewsRoute
   '/_authenticated/client/messages': typeof AuthenticatedClientMessagesRoute
   '/_authenticated/client/positions': typeof AuthenticatedClientPositionsRouteWithChildren
   '/_authenticated/client/settings': typeof AuthenticatedClientSettingsRoute
@@ -853,6 +863,7 @@ export interface FileRouteTypes {
     | '/admin/settings'
     | '/admin/team'
     | '/client/candidates'
+    | '/client/interviews'
     | '/client/messages'
     | '/client/positions'
     | '/client/settings'
@@ -932,6 +943,7 @@ export interface FileRouteTypes {
     | '/admin/publish'
     | '/admin/settings'
     | '/admin/team'
+    | '/client/interviews'
     | '/client/messages'
     | '/client/settings'
     | '/client/team'
@@ -1017,6 +1029,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/settings'
     | '/_authenticated/admin/team'
     | '/_authenticated/client/candidates'
+    | '/_authenticated/client/interviews'
     | '/_authenticated/client/messages'
     | '/_authenticated/client/positions'
     | '/_authenticated/client/settings'
@@ -1517,6 +1530,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedClientMessagesRouteImport
       parentRoute: typeof AuthenticatedClientRoute
     }
+    '/_authenticated/client/interviews': {
+      id: '/_authenticated/client/interviews'
+      path: '/interviews'
+      fullPath: '/client/interviews'
+      preLoaderRoute: typeof AuthenticatedClientInterviewsRouteImport
+      parentRoute: typeof AuthenticatedClientRoute
+    }
     '/_authenticated/client/candidates': {
       id: '/_authenticated/client/candidates'
       path: '/candidates'
@@ -1823,6 +1843,7 @@ const AuthenticatedClientPositionsRouteWithChildren =
 
 interface AuthenticatedClientRouteChildren {
   AuthenticatedClientCandidatesRoute: typeof AuthenticatedClientCandidatesRouteWithChildren
+  AuthenticatedClientInterviewsRoute: typeof AuthenticatedClientInterviewsRoute
   AuthenticatedClientMessagesRoute: typeof AuthenticatedClientMessagesRoute
   AuthenticatedClientPositionsRoute: typeof AuthenticatedClientPositionsRouteWithChildren
   AuthenticatedClientSettingsRoute: typeof AuthenticatedClientSettingsRoute
@@ -1833,6 +1854,7 @@ interface AuthenticatedClientRouteChildren {
 const AuthenticatedClientRouteChildren: AuthenticatedClientRouteChildren = {
   AuthenticatedClientCandidatesRoute:
     AuthenticatedClientCandidatesRouteWithChildren,
+  AuthenticatedClientInterviewsRoute: AuthenticatedClientInterviewsRoute,
   AuthenticatedClientMessagesRoute: AuthenticatedClientMessagesRoute,
   AuthenticatedClientPositionsRoute:
     AuthenticatedClientPositionsRouteWithChildren,
