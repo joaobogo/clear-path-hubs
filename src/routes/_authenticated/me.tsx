@@ -6,7 +6,7 @@ import { getMyContext } from "@/lib/candidate.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { NOTIFICATIONS_QUERY_KEY } from "@/components/notification-bell";
 import { useDashboardRealtime } from "@/hooks/use-realtime-refresh";
-import { FileText, User, MessageSquare, Shield, FileUp } from "lucide-react";
+import { FileText, User, MessageSquare, Shield, FileUp, Home } from "lucide-react";
 import {
  WorkspaceShell,
  type WorkspaceNavItem,
@@ -40,11 +40,12 @@ export const Route = createFileRoute("/_authenticated/me")({
 });
 
 const NAV: WorkspaceNavItem[] = [
+ { to: "/me", label: "Home", icon: Home },
  { to: "/me/applications", label: "Applications", icon: FileText },
  { to: "/me/profile", label: "Profile", icon: User },
  { to: "/me/cv", label: "CV", icon: FileUp },
  { to: "/me/messages", label: "Messages", icon: MessageSquare },
- { to: "/me/settings", label: "Settings", icon: Shield },
+ { to: "/me/settings", label: "Privacy", icon: Shield },
 ];
 
 function MeLayout() {
