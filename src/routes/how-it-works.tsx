@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { getPage } from "@/lib/marketing/content";
 import { marketingHead } from "@/lib/marketing/head";
-import { PublicPage, PublicSection, CtaSection } from "@/components/marketing/site-shell";
+import { SiteShell, PublicPage, PublicSection, CtaSection } from "@/components/marketing/site-shell";
 
 const entry = getPage("how-it-works");
 
@@ -56,7 +56,7 @@ const STEPS = [
 
 function HowItWorksPage() {
   return (
-    <>
+    <SiteShell>
       <PublicSection className="pb-8 pt-16 sm:pt-20">
         <PublicPage>
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">
@@ -133,6 +133,6 @@ function HowItWorksPage() {
         primary={{ to: "/intake", label: "Start hiring" }}
         secondary={{ to: "/pricing", label: "See pricing model" }}
       />
-    </>
+    </SiteShell>
   );
 }

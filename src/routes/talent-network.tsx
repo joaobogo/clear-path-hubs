@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { marketingHead } from "@/lib/marketing/head";
-import { PublicPage, PublicSection } from "@/components/marketing/site-shell";
+import { SiteShell, PublicPage, PublicSection } from "@/components/marketing/site-shell";
 import {
   Search,
   UserPlus,
@@ -26,7 +26,7 @@ export const Route = createFileRoute("/talent-network")({
 
 function TalentNetworkPage() {
   return (
-    <>
+    <SiteShell>
       {/* ── Hero ─────────────────────────────────────────────────── */}
       <PublicSection className="pb-10 pt-16 sm:pt-20">
         <PublicPage>
@@ -325,6 +325,6 @@ function TalentNetworkPage() {
           </div>
         </PublicPage>
       </PublicSection>
-    </>
+    </SiteShell>
   );
 }

@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { marketingHead } from "@/lib/marketing/head";
-import { PublicPage, PublicSection } from "@/components/marketing/site-shell";
+import { SiteShell, PublicPage, PublicSection } from "@/components/marketing/site-shell";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -46,7 +46,7 @@ export const Route = createFileRoute("/contact")({
 function ContactPage() {
   const [intent, setIntent] = useState<Intent>("hire");
   return (
-    <>
+    <SiteShell>
       {/* ── Hero ─────────────────────────────────────────────────── */}
       <PublicSection className="pb-8 pt-16 sm:pt-20">
         <PublicPage>
@@ -114,7 +114,7 @@ function ContactPage() {
           </div>
         </PublicPage>
       </PublicSection>
-    </>
+    </SiteShell>
   );
 }
 

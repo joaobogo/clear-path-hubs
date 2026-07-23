@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { marketingHead } from "@/lib/marketing/head";
-import { PublicPage, PublicSection } from "@/components/marketing/site-shell";
+import { SiteShell, PublicPage, PublicSection } from "@/components/marketing/site-shell";
 import {
   Handshake,
   Layers,
@@ -26,7 +26,7 @@ export const Route = createFileRoute("/partnerships/staffing")({
 
 function PartnershipsStaffingPage() {
   return (
-    <>
+    <SiteShell>
       {/* ── Hero ─────────────────────────────────────────────────── */}
       <PublicSection className="pb-10 pt-16 sm:pt-20">
         <PublicPage>
@@ -365,6 +365,6 @@ function PartnershipsStaffingPage() {
         </PublicPage>
       </PublicSection>
 
-    </>
+    </SiteShell>
   );
 }
