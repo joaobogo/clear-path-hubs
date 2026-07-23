@@ -1,0 +1,2598 @@
+{
+  "trace": "MIG-VERIFIED-MANIFEST-2026-07-23",
+  "source_repo": "https://github.com/joaobogo/sourcing-suite-ai.git",
+  "source_repo_access": "UNRESOLVED (HTTP 404 unauthenticated); manifest reconstructed from live site + destination mirror per docs/migration/source-repository-inventory.md fallback",
+  "source_site": "https://sourcing-suite-ai.lovable.app",
+  "destination_site": "https://clear-path-hubs.lovable.app",
+  "inspection_mode": "read_only",
+  "code_changes": 0,
+  "source_public_routes": [
+    {
+      "source_path": "/",
+      "source_url": "https://sourcing-suite-ai.lovable.app/",
+      "source_component": "REBUILD_FROM_REFERENCE (source repo private; presentation reconstructed)",
+      "source_content_file": "src/content/pages/index.json",
+      "source_sections": [
+        {
+          "order": 1,
+          "level": 1,
+          "heading": "Your hiring team. On demand."
+        },
+        {
+          "order": 2,
+          "level": 2,
+          "heading": "Cut your cost-per-hire. See the math."
+        },
+        {
+          "order": 3,
+          "level": 3,
+          "heading": "Assumptions & Inputs"
+        },
+        {
+          "order": 4,
+          "level": 2,
+          "heading": "You found the perfect candidate. Now comes the invoice."
+        },
+        {
+          "order": 5,
+          "level": 3,
+          "heading": "What agencies charge"
+        },
+        {
+          "order": 6,
+          "level": 3,
+          "heading": "How TaaSFlow works"
+        },
+        {
+          "order": 7,
+          "level": 2,
+          "heading": "A repeatable operating system, role by role"
+        },
+        {
+          "order": 8,
+          "level": 3,
+          "heading": "Blueprint & Calibration"
+        },
+        {
+          "order": 9,
+          "level": 3,
+          "heading": "Multi-Channel Sourcing"
+        },
+        {
+          "order": 10,
+          "level": 3,
+          "heading": "Screening & Scoring"
+        },
+        {
+          "order": 11,
+          "level": 3,
+          "heading": "Top 10 Shortlist Delivery"
+        },
+        {
+          "order": 12,
+          "level": 2,
+          "heading": "Ranked candidates, ready to interview"
+        },
+        {
+          "order": 13,
+          "level": 3,
+          "heading": "Ranked shortlist"
+        },
+        {
+          "order": 14,
+          "level": 3,
+          "heading": "Enriched profiles"
+        },
+        {
+          "order": 15,
+          "level": 3,
+          "heading": "Reasoning included"
+        },
+        {
+          "order": 16,
+          "level": 3,
+          "heading": "One pipeline"
+        },
+        {
+          "order": 17,
+          "level": 2,
+          "heading": "Two ways to hire. Zero placement fees."
+        },
+        {
+          "order": 18,
+          "level": 3,
+          "heading": "Need to fill 1-3 roles fast?"
+        },
+        {
+          "order": 19,
+          "level": 3,
+          "heading": "Hiring for multiple positions?"
+        },
+        {
+          "order": 20,
+          "level": 2,
+          "heading": "How TaaS Stacks Up \u2014 On Every Metric"
+        },
+        {
+          "order": 21,
+          "level": 3,
+          "heading": "The TaaS Advantage"
+        },
+        {
+          "order": 22,
+          "level": 2,
+          "heading": "Recruiting without the drama"
+        },
+        {
+          "order": 23,
+          "level": 3,
+          "heading": "Source anywhere"
+        },
+        {
+          "order": 24,
+          "level": 3,
+          "heading": "Set & forget"
+        },
+        {
+          "order": 25,
+          "level": 3,
+          "heading": "Hire 1 or 10"
+        },
+        {
+          "order": 26,
+          "level": 2,
+          "heading": "Scoring that accelerates decisions"
+        },
+        {
+          "order": 27,
+          "level": 3,
+          "heading": "Role Fit"
+        },
+        {
+          "order": 28,
+          "level": 3,
+          "heading": "Scoring methodology FAQ"
+        },
+        {
+          "order": 29,
+          "level": 3,
+          "heading": "How are candidates scored?"
+        },
+        {
+          "order": 30,
+          "level": 3,
+          "heading": "What determines Role Fit (35%)?"
+        },
+        {
+          "order": 31,
+          "level": 3,
+          "heading": "How is Evidence (30%) evaluated?"
+        },
+        {
+          "order": 32,
+          "level": 3,
+          "heading": "What falls under Logistics (20%)?"
+        },
+        {
+          "order": 33,
+          "level": 3,
+          "heading": "What is Signal (15%)?"
+        },
+        {
+          "order": 34,
+          "level": 3,
+          "heading": "What are Qualifiers and Disqualifiers?"
+        },
+        {
+          "order": 35,
+          "level": 3,
+          "heading": "Why these specific weights?"
+        },
+        {
+          "order": 36,
+          "level": 3,
+          "heading": "Can weights be customised?"
+        },
+        {
+          "order": 37,
+          "level": 2,
+          "heading": "What our clients say"
+        },
+        {
+          "order": 38,
+          "level": 2,
+          "heading": "Measured Results. Not Marketing Claims."
+        },
+        {
+          "order": 39,
+          "level": 3,
+          "heading": "SafiTech: Scaling a Development Team in 4 Weeks"
+        },
+        {
+          "order": 40,
+          "level": 2,
+          "heading": "Meet the Founders"
+        }
+      ],
+      "source_section_count": 40,
+      "source_meta": {
+        "title": "TaaSFlow \u2014 Your hiring team, on demand",
+        "description": "Subscription recruiting that delivers ranked, pre-screened candidates in 14 days \u2014 with a live pipeline dashboard and zero placement fees.",
+        "og:title": "TaaSFlow \u2014 Your hiring team, on demand",
+        "og:description": "Subscription recruiting that delivers ranked, pre-screened candidates in 14 days \u2014 with a live pipeline dashboard and zero placement fees.",
+        "og:image": "https://taasflow.com/og-image.png",
+        "og:type": "website",
+        "h1": "Your hiring team. On demand."
+      },
+      "source_ctas": [],
+      "source_assets": [
+        "https://taasflow.com/og-image.png"
+      ],
+      "destination_path": "/",
+      "destination_file": "src/routes/index.tsx",
+      "destination_decision": "MIGRATE",
+      "implementation_status": "IMPLEMENTED",
+      "redirect_decision": null,
+      "exclusion_reason": null
+    },
+    {
+      "source_path": "/how-it-works",
+      "source_url": "https://sourcing-suite-ai.lovable.app/how-it-works",
+      "source_component": "REBUILD_FROM_REFERENCE (source repo private; presentation reconstructed)",
+      "source_content_file": "src/content/pages/how-it-works.json",
+      "source_sections": [
+        {
+          "order": 1,
+          "level": 1,
+          "heading": "Built by Industry Leaders on 10 Years of Data"
+        },
+        {
+          "order": 2,
+          "level": 2,
+          "heading": "From HR Frustration to Recruiting Innovation"
+        },
+        {
+          "order": 3,
+          "level": 2,
+          "heading": "Traditional Recruiting Is Broken by Design"
+        },
+        {
+          "order": 4,
+          "level": 3,
+          "heading": "Proprietary Technology Stack"
+        },
+        {
+          "order": 5,
+          "level": 3,
+          "heading": "Data-Backed Decision Making"
+        },
+        {
+          "order": 6,
+          "level": 3,
+          "heading": "Global Recruiting Intelligence"
+        },
+        {
+          "order": 7,
+          "level": 3,
+          "heading": "14-Day Execution Standard"
+        },
+        {
+          "order": 8,
+          "level": 2,
+          "heading": "Five Pillars of Precision"
+        },
+        {
+          "order": 9,
+          "level": 3,
+          "heading": "Precision Intake Engine"
+        },
+        {
+          "order": 10,
+          "level": 3,
+          "heading": "Multi-Channel Acquisition Network"
+        },
+        {
+          "order": 11,
+          "level": 3,
+          "heading": "AI-Assisted Scoring Framework"
+        },
+        {
+          "order": 12,
+          "level": 3,
+          "heading": "Weekly Delivery Cadence"
+        },
+        {
+          "order": 13,
+          "level": 3,
+          "heading": "Feedback-Driven Refinement"
+        },
+        {
+          "order": 14,
+          "level": 2,
+          "heading": "From Intake to Impact"
+        },
+        {
+          "order": 15,
+          "level": 3,
+          "heading": "Strategic Intake & Calibration"
+        },
+        {
+          "order": 16,
+          "level": 3,
+          "heading": "Targeted Candidate Acquisition"
+        },
+        {
+          "order": 17,
+          "level": 3,
+          "heading": "Qualification & Scoring"
+        },
+        {
+          "order": 18,
+          "level": 3,
+          "heading": "First Ranked Delivery"
+        },
+        {
+          "order": 19,
+          "level": 3,
+          "heading": "Continuous Optimization"
+        },
+        {
+          "order": 20,
+          "level": 2,
+          "heading": "The Win-Win-Win Mentality"
+        },
+        {
+          "order": 21,
+          "level": 3,
+          "heading": "Candidates Win"
+        },
+        {
+          "order": 22,
+          "level": 3,
+          "heading": "Companies Win"
+        },
+        {
+          "order": 23,
+          "level": 3,
+          "heading": "We All Win"
+        },
+        {
+          "order": 24,
+          "level": 2,
+          "heading": "Recruiting Across 50+ Countries"
+        },
+        {
+          "order": 25,
+          "level": 3,
+          "heading": "Middle East"
+        },
+        {
+          "order": 26,
+          "level": 3,
+          "heading": "Europe"
+        },
+        {
+          "order": 27,
+          "level": 3,
+          "heading": "North America"
+        },
+        {
+          "order": 28,
+          "level": 3,
+          "heading": "South America"
+        },
+        {
+          "order": 29,
+          "level": 3,
+          "heading": "Asia Pacific"
+        },
+        {
+          "order": 30,
+          "level": 3,
+          "heading": "Africa"
+        },
+        {
+          "order": 31,
+          "level": 2,
+          "heading": "From Startups to Enterprises"
+        },
+        {
+          "order": 32,
+          "level": 3,
+          "heading": "Startups & Scale-ups"
+        },
+        {
+          "order": 33,
+          "level": 3,
+          "heading": "Mid-Market Companies"
+        },
+        {
+          "order": 34,
+          "level": 3,
+          "heading": "Enterprise Organizations"
+        },
+        {
+          "order": 35,
+          "level": 2,
+          "heading": "Our Values"
+        },
+        {
+          "order": 36,
+          "level": 3,
+          "heading": "Systematic"
+        },
+        {
+          "order": 37,
+          "level": 3,
+          "heading": "Global"
+        },
+        {
+          "order": 38,
+          "level": 3,
+          "heading": "Data-Driven"
+        },
+        {
+          "order": 39,
+          "level": 3,
+          "heading": "Iterative"
+        },
+        {
+          "order": 40,
+          "level": 3,
+          "heading": "Transparent"
+        }
+      ],
+      "source_section_count": 40,
+      "source_meta": {
+        "title": "How it works | TaaS - Talent as a Service",
+        "description": "TaaSFlow's 5-step operating system delivers ranked, pre-screened candidates in 14 days \u2014 precision intake, multi-channel sourcing, and weekly drops.",
+        "og:title": "How it works | TaaS - Talent as a Service",
+        "og:description": "TaaSFlow's 5-step operating system delivers ranked, pre-screened candidates in 14 days \u2014 precision intake, multi-channel sourcing, and weekly drops.",
+        "og:image": "https://taasflow.com/og-image.png",
+        "og:type": "website",
+        "h1": "Built by Industry Leaders on 10 Years of Data"
+      },
+      "source_ctas": [
+        "Book a Strategy Call",
+        "Explore the System"
+      ],
+      "source_assets": [
+        "https://taasflow.com/og-image.png"
+      ],
+      "destination_path": "/how-it-works",
+      "destination_file": "src/routes/how-it-works.tsx",
+      "destination_decision": "MIGRATE",
+      "implementation_status": "IMPLEMENTED",
+      "redirect_decision": null,
+      "exclusion_reason": null
+    },
+    {
+      "source_path": "/pricing",
+      "source_url": "https://sourcing-suite-ai.lovable.app/pricing",
+      "source_component": "REBUILD_FROM_REFERENCE (source repo private; presentation reconstructed)",
+      "source_content_file": "src/content/pages/pricing.json",
+      "source_sections": [
+        {
+          "order": 1,
+          "level": 1,
+          "heading": "Plans that scale with volume"
+        },
+        {
+          "order": 2,
+          "level": 3,
+          "heading": "Pilot \u2014 Single Position"
+        },
+        {
+          "order": 3,
+          "level": 3,
+          "heading": "Multi Position"
+        },
+        {
+          "order": 4,
+          "level": 3,
+          "heading": "Hiring Sprint"
+        },
+        {
+          "order": 5,
+          "level": 2,
+          "heading": "Included Title"
+        },
+        {
+          "order": 6,
+          "level": 3,
+          "heading": "Included Title"
+        },
+        {
+          "order": 7,
+          "level": 3,
+          "heading": "Excluded Title"
+        },
+        {
+          "order": 8,
+          "level": 2,
+          "heading": "After Title"
+        },
+        {
+          "order": 9,
+          "level": 3,
+          "heading": "After Step1 Title"
+        },
+        {
+          "order": 10,
+          "level": 3,
+          "heading": "After Step2 Title"
+        },
+        {
+          "order": 11,
+          "level": 3,
+          "heading": "After Step3 Title"
+        },
+        {
+          "order": 12,
+          "level": 3,
+          "heading": "After Step4 Title"
+        },
+        {
+          "order": 13,
+          "level": 2,
+          "heading": "Compare Title"
+        },
+        {
+          "order": 14,
+          "level": 2,
+          "heading": "Cut your cost-per-hire. See the math."
+        },
+        {
+          "order": 15,
+          "level": 3,
+          "heading": "Assumptions & Inputs"
+        },
+        {
+          "order": 16,
+          "level": 2,
+          "heading": "Pricing Faq Title"
+        },
+        {
+          "order": 17,
+          "level": 3,
+          "heading": "Pricing Faq1 Q"
+        },
+        {
+          "order": 18,
+          "level": 3,
+          "heading": "Pricing Faq2 Q"
+        },
+        {
+          "order": 19,
+          "level": 3,
+          "heading": "Pricing Faq3 Q"
+        },
+        {
+          "order": 20,
+          "level": 3,
+          "heading": "Pricing Faq4 Q"
+        },
+        {
+          "order": 21,
+          "level": 3,
+          "heading": "Pricing Faq5 Q"
+        },
+        {
+          "order": 22,
+          "level": 3,
+          "heading": "Pricing Faq6 Q"
+        },
+        {
+          "order": 23,
+          "level": 3,
+          "heading": "Pricing Faq7 Q"
+        },
+        {
+          "order": 24,
+          "level": 2,
+          "heading": "Final Cta Title"
+        },
+        {
+          "order": 25,
+          "level": 2,
+          "heading": "Explore Our Solutions"
+        },
+        {
+          "order": 26,
+          "level": 3,
+          "heading": "Our Services"
+        },
+        {
+          "order": 27,
+          "level": 3,
+          "heading": "Industries"
+        }
+      ],
+      "source_section_count": 27,
+      "source_meta": {
+        "title": "Pricing \u2014 Subscription Recruiting from $6,999/mo | TaaSFlow",
+        "description": "Transparent flat-fee subscription recruiting from TaaSFlow. Ranked, pre-screened candidates in 14 days \u2014 no placement fees, no salary percentages.",
+        "og:title": "Pricing \u2014 Subscription Recruiting from $6,999/mo | TaaSFlow",
+        "og:description": "Transparent flat-fee subscription recruiting from TaaSFlow. Ranked, pre-screened candidates in 14 days \u2014 no placement fees, no salary percentages.",
+        "og:image": "https://taasflow.com/og-image.png",
+        "og:type": "website",
+        "h1": "Plans that scale with volume"
+      },
+      "source_ctas": [],
+      "source_assets": [
+        "https://taasflow.com/og-image.png"
+      ],
+      "destination_path": "/pricing",
+      "destination_file": "src/routes/pricing.tsx",
+      "destination_decision": "MIGRATE",
+      "implementation_status": "IMPLEMENTED",
+      "redirect_decision": null,
+      "exclusion_reason": null
+    },
+    {
+      "source_path": "/pilot",
+      "source_url": "https://sourcing-suite-ai.lovable.app/pilot",
+      "source_component": "REBUILD_FROM_REFERENCE (source repo private; presentation reconstructed)",
+      "source_content_file": "src/content/pages/pilot.json",
+      "source_sections": [
+        {
+          "order": 1,
+          "level": 1,
+          "heading": "What the Pilot Is"
+        },
+        {
+          "order": 2,
+          "level": 2,
+          "heading": "What Happens Next"
+        },
+        {
+          "order": 3,
+          "level": 3,
+          "heading": "Blueprint Review"
+        },
+        {
+          "order": 4,
+          "level": 3,
+          "heading": "Kickoff Call"
+        },
+        {
+          "order": 5,
+          "level": 3,
+          "heading": "Execution Begins"
+        },
+        {
+          "order": 6,
+          "level": 3,
+          "heading": "Scored Results"
+        },
+        {
+          "order": 7,
+          "level": 3,
+          "heading": "Blueprint Review"
+        },
+        {
+          "order": 8,
+          "level": 3,
+          "heading": "Kickoff Call"
+        },
+        {
+          "order": 9,
+          "level": 3,
+          "heading": "Execution Begins"
+        },
+        {
+          "order": 10,
+          "level": 3,
+          "heading": "Scored Results"
+        },
+        {
+          "order": 11,
+          "level": 2,
+          "heading": "Ready to Start?"
+        }
+      ],
+      "source_section_count": 11,
+      "source_meta": {
+        "title": "Start your $399 Pilot | TaaSFlow",
+        "description": "Start your pilot for 2 weeks. Complete our role blueprint wizard and experience systematic hiring execution.",
+        "og:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+        "og:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+        "og:image": "https://taasflow.com/og-image.png",
+        "og:type": "website",
+        "h1": "What the Pilot Is"
+      },
+      "source_ctas": [],
+      "source_assets": [
+        "https://taasflow.com/og-image.png"
+      ],
+      "destination_path": "/pilot",
+      "destination_file": "src/routes/pilot.tsx",
+      "destination_decision": "MIGRATE",
+      "implementation_status": "IMPLEMENTED",
+      "redirect_decision": null,
+      "exclusion_reason": null
+    },
+    {
+      "source_path": "/enterprise",
+      "source_url": "https://sourcing-suite-ai.lovable.app/enterprise",
+      "source_component": "REBUILD_FROM_REFERENCE (source repo private; presentation reconstructed)",
+      "source_content_file": "src/content/pages/enterprise.json",
+      "source_sections": [
+        {
+          "order": 1,
+          "level": 1,
+          "heading": "Scale Your Workforce. Globally."
+        },
+        {
+          "order": 2,
+          "level": 2,
+          "heading": "Built for High-Volume, Global Operations"
+        },
+        {
+          "order": 3,
+          "level": 3,
+          "heading": "Global Reach"
+        },
+        {
+          "order": 4,
+          "level": 3,
+          "heading": "14-Day Delivery Cycles"
+        },
+        {
+          "order": 5,
+          "level": 3,
+          "heading": "Visa & Relocation"
+        },
+        {
+          "order": 6,
+          "level": 3,
+          "heading": "Candidate Ownership"
+        },
+        {
+          "order": 7,
+          "level": 3,
+          "heading": "Pipeline Analytics"
+        },
+        {
+          "order": 8,
+          "level": 3,
+          "heading": "Dedicated Pod"
+        },
+        {
+          "order": 9,
+          "level": 2,
+          "heading": "Purpose-Built for Volume Hiring Industries"
+        },
+        {
+          "order": 10,
+          "level": 3,
+          "heading": "Hospitality & Hotels"
+        },
+        {
+          "order": 11,
+          "level": 3,
+          "heading": "Food & Beverage"
+        },
+        {
+          "order": 12,
+          "level": 3,
+          "heading": "Retail"
+        },
+        {
+          "order": 13,
+          "level": 3,
+          "heading": "Manufacturing"
+        },
+        {
+          "order": 14,
+          "level": 3,
+          "heading": "Construction"
+        },
+        {
+          "order": 15,
+          "level": 3,
+          "heading": "Logistics & Supply Chain"
+        },
+        {
+          "order": 16,
+          "level": 2,
+          "heading": "Hiring Across Borders, Without the Barriers"
+        },
+        {
+          "order": 17,
+          "level": 3,
+          "heading": "United Arab Emirates"
+        },
+        {
+          "order": 18,
+          "level": 3,
+          "heading": "United States"
+        },
+        {
+          "order": 19,
+          "level": 3,
+          "heading": "Global Markets"
+        },
+        {
+          "order": 20,
+          "level": 2,
+          "heading": "Agency Fees vs. TaaSFlow Subscription"
+        },
+        {
+          "order": 21,
+          "level": 2,
+          "heading": "Calculate Your Enterprise Savings"
+        },
+        {
+          "order": 22,
+          "level": 2,
+          "heading": "Tiered Pricing That Scales With You"
+        },
+        {
+          "order": 23,
+          "level": 3,
+          "heading": "Scale"
+        },
+        {
+          "order": 24,
+          "level": 3,
+          "heading": "Growth"
+        },
+        {
+          "order": 25,
+          "level": 3,
+          "heading": "Enterprise"
+        },
+        {
+          "order": 26,
+          "level": 2,
+          "heading": "Enterprise Results at Scale"
+        },
+        {
+          "order": 27,
+          "level": 3,
+          "heading": "Hotel Chain Expansion \u2013 UAE"
+        },
+        {
+          "order": 28,
+          "level": 3,
+          "heading": "Multi-Location Retail Rollout"
+        },
+        {
+          "order": 29,
+          "level": 3,
+          "heading": "Infrastructure Project Staffing"
+        },
+        {
+          "order": 30,
+          "level": 2,
+          "heading": "From Kickoff to Candidates in 14 Days"
+        },
+        {
+          "order": 31,
+          "level": 3,
+          "heading": "Enterprise Consultation"
+        },
+        {
+          "order": 32,
+          "level": 3,
+          "heading": "Role Matrix & Calibration"
+        },
+        {
+          "order": 33,
+          "level": 3,
+          "heading": "Multi-Channel Activation"
+        },
+        {
+          "order": 34,
+          "level": 3,
+          "heading": "Bi-Weekly Candidate Drops"
+        },
+        {
+          "order": 35,
+          "level": 3,
+          "heading": "Continuous Optimization"
+        },
+        {
+          "order": 36,
+          "level": 2,
+          "heading": "Meet the Founders"
+        },
+        {
+          "order": 37,
+          "level": 3,
+          "heading": "Christian Brogger"
+        },
+        {
+          "order": 38,
+          "level": 3,
+          "heading": "Jo\u00e3o Bogo"
+        },
+        {
+          "order": 39,
+          "level": 2,
+          "heading": "Ready to Transform Your Hiring at Scale?"
+        }
+      ],
+      "source_section_count": 39,
+      "source_meta": {
+        "title": "Enterprise Recruiting on Subscription | TaaSFlow",
+        "description": "Enterprise talent programs on a subscription: dedicated pods, embedded recruiters, SLAs, and reporting for organizations hiring at scale.",
+        "og:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+        "og:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+        "og:image": "https://taasflow.com/og-image.png",
+        "og:type": "website",
+        "h1": "Scale Your Workforce. Globally."
+      },
+      "source_ctas": [
+        "Get Started"
+      ],
+      "source_assets": [
+        "https://taasflow.com/og-image.png"
+      ],
+      "destination_path": "/enterprise",
+      "destination_file": "src/routes/enterprise.tsx",
+      "destination_decision": "MIGRATE",
+      "implementation_status": "IMPLEMENTED",
+      "redirect_decision": null,
+      "exclusion_reason": null
+    },
+    {
+      "source_path": "/faq",
+      "source_url": "https://sourcing-suite-ai.lovable.app/faq",
+      "source_component": "REBUILD_FROM_REFERENCE (source repo private; presentation reconstructed)",
+      "source_content_file": "src/content/pages/faq.json",
+      "source_sections": [
+        {
+          "order": 1,
+          "level": 1,
+          "heading": "Frequently asked questions"
+        },
+        {
+          "order": 2,
+          "level": 2,
+          "heading": "Common questions"
+        },
+        {
+          "order": 3,
+          "level": 3,
+          "heading": "Are you a staffing agency?"
+        },
+        {
+          "order": 4,
+          "level": 3,
+          "heading": "Do you charge placement fees or salary percentages?"
+        },
+        {
+          "order": 5,
+          "level": 3,
+          "heading": "What's the difference between one-off and subscription?"
+        },
+        {
+          "order": 6,
+          "level": 3,
+          "heading": "How fast do you deliver candidates?"
+        },
+        {
+          "order": 7,
+          "level": 3,
+          "heading": "What do we get in a delivery?"
+        },
+        {
+          "order": 8,
+          "level": 3,
+          "heading": "What roles and regions do you support?"
+        },
+        {
+          "order": 9,
+          "level": 3,
+          "heading": "How does candidate scoring work?"
+        },
+        {
+          "order": 10,
+          "level": 3,
+          "heading": "Can clients customize scoring weights?"
+        },
+        {
+          "order": 11,
+          "level": 3,
+          "heading": "What do you need from us to begin?"
+        },
+        {
+          "order": 12,
+          "level": 3,
+          "heading": "Can we use this alongside agencies?"
+        },
+        {
+          "order": 13,
+          "level": 3,
+          "heading": "How do you protect employer brand?"
+        },
+        {
+          "order": 14,
+          "level": 3,
+          "heading": "How do you handle data privacy and GDPR?"
+        },
+        {
+          "order": 15,
+          "level": 2,
+          "heading": "Related topics"
+        },
+        {
+          "order": 16,
+          "level": 2,
+          "heading": "Still have questions?"
+        }
+      ],
+      "source_section_count": 16,
+      "source_meta": {
+        "title": "Hiring FAQ \u2014 How TaaSFlow Subscription Recruiting Works",
+        "description": "TaaSFlow FAQ \u2014 pricing, scoring, delivery cadence, data privacy, and how subscription recruiting differs from traditional agencies.",
+        "og:title": "Hiring FAQ \u2014 How TaaSFlow Subscription Recruiting Works",
+        "og:description": "TaaSFlow FAQ \u2014 pricing, scoring, delivery cadence, data privacy, and how subscription recruiting differs from traditional agencies.",
+        "og:image": "https://taasflow.com/og-image.png",
+        "og:type": "website",
+        "h1": "Frequently asked questions"
+      },
+      "source_ctas": [],
+      "source_assets": [
+        "https://taasflow.com/og-image.png"
+      ],
+      "destination_path": "/faq",
+      "destination_file": "src/routes/faq.tsx",
+      "destination_decision": "MIGRATE",
+      "implementation_status": "IMPLEMENTED",
+      "redirect_decision": null,
+      "exclusion_reason": null
+    },
+    {
+      "source_path": "/contact",
+      "source_url": "https://sourcing-suite-ai.lovable.app/contact",
+      "source_component": "REBUILD_FROM_REFERENCE (source repo private; presentation reconstructed)",
+      "source_content_file": "src/content/pages/contact.json",
+      "source_sections": [
+        {
+          "order": 1,
+          "level": 1,
+          "heading": "Contact us"
+        },
+        {
+          "order": 2,
+          "level": 2,
+          "heading": "Book a call or send a message"
+        }
+      ],
+      "source_section_count": 2,
+      "source_meta": {
+        "title": "Contact | TaaS - Talent as a Service",
+        "description": "Talk to TaaSFlow about subscription recruiting. Book a call, start a $399 pilot, or replace agency fees with ranked candidates.",
+        "og:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+        "og:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+        "og:image": "https://taasflow.com/og-image.png",
+        "og:type": "website",
+        "h1": "Contact us"
+      },
+      "source_ctas": [],
+      "source_assets": [
+        "https://taasflow.com/og-image.png"
+      ],
+      "destination_path": "/contact",
+      "destination_file": "src/routes/contact.tsx",
+      "destination_decision": "MIGRATE",
+      "implementation_status": "IMPLEMENTED",
+      "redirect_decision": null,
+      "exclusion_reason": null
+    },
+    {
+      "source_path": "/resources",
+      "source_url": "https://sourcing-suite-ai.lovable.app/resources",
+      "source_component": "REBUILD_FROM_REFERENCE (source repo private; presentation reconstructed)",
+      "source_content_file": "src/content/pages/resources.json",
+      "source_sections": [
+        {
+          "order": 1,
+          "level": 1,
+          "heading": "Recruiting resources for talent leaders"
+        },
+        {
+          "order": 2,
+          "level": 2,
+          "heading": "Recruiting playbooks and guides"
+        },
+        {
+          "order": 3,
+          "level": 3,
+          "heading": "ROI calculator"
+        },
+        {
+          "order": 4,
+          "level": 3,
+          "heading": "Sample deliverable pack"
+        },
+        {
+          "order": 5,
+          "level": 3,
+          "heading": "How it works"
+        },
+        {
+          "order": 6,
+          "level": 3,
+          "heading": "FAQ"
+        },
+        {
+          "order": 7,
+          "level": 2,
+          "heading": "How to use these resources"
+        },
+        {
+          "order": 8,
+          "level": 3,
+          "heading": "Who they're for"
+        },
+        {
+          "order": 9,
+          "level": 3,
+          "heading": "Why the model works"
+        }
+      ],
+      "source_section_count": 9,
+      "source_meta": {
+        "title": "Recruiting Resources & Hiring Playbooks | TaaSFlow",
+        "description": "Free hiring resources from TaaSFlow: sample deliverables, ROI calculator, subscription recruiting FAQ, and step-by-step guides for talent leaders.",
+        "og:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+        "og:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+        "og:image": "https://taasflow.com/og-image.png",
+        "og:type": "website",
+        "h1": "Recruiting resources for talent leaders"
+      },
+      "source_ctas": [
+        "Learn More"
+      ],
+      "source_assets": [
+        "https://taasflow.com/og-image.png"
+      ],
+      "destination_path": "/resources",
+      "destination_file": "src/routes/resources.tsx",
+      "destination_decision": "MIGRATE",
+      "implementation_status": "IMPLEMENTED",
+      "redirect_decision": null,
+      "exclusion_reason": null
+    },
+    {
+      "source_path": "/blog",
+      "source_url": "https://sourcing-suite-ai.lovable.app/blog",
+      "source_component": "REBUILD_FROM_REFERENCE (source repo private; presentation reconstructed)",
+      "source_content_file": "src/content/pages/blog.json",
+      "source_sections": [
+        {
+          "order": 1,
+          "level": 1,
+          "heading": "The TaaSFlow Journal"
+        },
+        {
+          "order": 2,
+          "level": 2,
+          "heading": "Editorial Sections"
+        },
+        {
+          "order": 3,
+          "level": 3,
+          "heading": "Section Hiring Ops"
+        },
+        {
+          "order": 4,
+          "level": 3,
+          "heading": "Section Taa S"
+        },
+        {
+          "order": 5,
+          "level": 3,
+          "heading": "Section Industry"
+        },
+        {
+          "order": 6,
+          "level": 3,
+          "heading": "Section Playbooks"
+        },
+        {
+          "order": 7,
+          "level": 3,
+          "heading": "Section Case Studies"
+        },
+        {
+          "order": 8,
+          "level": 3,
+          "heading": "Section H R Leadership"
+        },
+        {
+          "order": 9,
+          "level": 3,
+          "heading": "Section Future Of Work"
+        },
+        {
+          "order": 10,
+          "level": 3,
+          "heading": "Section Technology"
+        },
+        {
+          "order": 11,
+          "level": 2,
+          "heading": "Latest Articles"
+        },
+        {
+          "order": 12,
+          "level": 2,
+          "heading": "Editors Picks"
+        },
+        {
+          "order": 13,
+          "level": 2,
+          "heading": "Industry Deep Dives"
+        },
+        {
+          "order": 14,
+          "level": 2,
+          "heading": "Recommended Reading"
+        },
+        {
+          "order": 15,
+          "level": 3,
+          "heading": "Hiring Strategy"
+        },
+        {
+          "order": 16,
+          "level": 3,
+          "heading": "Workforce Trends"
+        },
+        {
+          "order": 17,
+          "level": 2,
+          "heading": "Cta Headline"
+        }
+      ],
+      "source_section_count": 17,
+      "source_meta": {
+        "title": "Recruiting Insights & Hiring Strategy | TaaSFlow Journal",
+        "description": "Recruiting strategy, talent intelligence, and hiring operations insights from the TaaSFlow Journal.",
+        "og:title": "Recruiting Insights & Hiring Strategy | TaaSFlow Journal",
+        "og:description": "Recruiting strategy, talent intelligence, and hiring operations insights from the TaaSFlow Journal.",
+        "og:image": "https://taasflow.com/og-image.png",
+        "og:type": "website",
+        "h1": "The TaaSFlow Journal"
+      },
+      "source_ctas": [],
+      "source_assets": [
+        "https://taasflow.com/og-image.png"
+      ],
+      "destination_path": "/blog",
+      "destination_file": "src/routes/blog.index.tsx",
+      "destination_decision": "MIGRATE",
+      "implementation_status": "IMPLEMENTED",
+      "redirect_decision": null,
+      "exclusion_reason": null
+    },
+    {
+      "source_path": "/case-studies",
+      "source_url": "https://sourcing-suite-ai.lovable.app/case-studies",
+      "source_component": "REBUILD_FROM_REFERENCE (source repo private; presentation reconstructed)",
+      "source_content_file": "src/content/pages/case-studies.json",
+      "source_sections": [
+        {
+          "order": 1,
+          "level": 1,
+          "heading": "Success Stories"
+        },
+        {
+          "order": 2,
+          "level": 2,
+          "heading": "SafiTech: Scaling a Development Team in 4 Weeks"
+        },
+        {
+          "order": 3,
+          "level": 3,
+          "heading": "The Challenge"
+        },
+        {
+          "order": 4,
+          "level": 3,
+          "heading": "Our Solution"
+        },
+        {
+          "order": 5,
+          "level": 3,
+          "heading": "Results"
+        },
+        {
+          "order": 6,
+          "level": 2,
+          "heading": "Sterling Law Partners: Supporting a Major Litigation with Rapid Paralegal Deployment"
+        },
+        {
+          "order": 7,
+          "level": 3,
+          "heading": "The Challenge"
+        },
+        {
+          "order": 8,
+          "level": 3,
+          "heading": "Our Solution"
+        },
+        {
+          "order": 9,
+          "level": 3,
+          "heading": "Results"
+        },
+        {
+          "order": 10,
+          "level": 2,
+          "heading": "Meridian Regional Bank: Meeting Regulatory Compliance Deadline with Analyst Team"
+        },
+        {
+          "order": 11,
+          "level": 3,
+          "heading": "The Challenge"
+        },
+        {
+          "order": 12,
+          "level": 3,
+          "heading": "Our Solution"
+        },
+        {
+          "order": 13,
+          "level": 3,
+          "heading": "Results"
+        },
+        {
+          "order": 14,
+          "level": 2,
+          "heading": "Your success story could be next"
+        }
+      ],
+      "source_section_count": 14,
+      "source_meta": {
+        "title": "Case Studies & Hiring Success Stories | TaaSFlow",
+        "description": "Real hiring transformations from TaaSFlow case studies \u2014 how teams cut time-to-hire, lifted quality-of-hire, and scaled without agency fees.",
+        "og:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+        "og:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+        "og:image": "https://taasflow.com/og-image.png",
+        "og:type": "website",
+        "h1": "Success Stories"
+      },
+      "source_ctas": [],
+      "source_assets": [
+        "https://taasflow.com/og-image.png"
+      ],
+      "destination_path": "/case-studies",
+      "destination_file": "src/routes/case-studies.tsx",
+      "destination_decision": "MIGRATE",
+      "implementation_status": "IMPLEMENTED",
+      "redirect_decision": null,
+      "exclusion_reason": null
+    },
+    {
+      "source_path": "/taasflow-journey",
+      "source_url": "https://sourcing-suite-ai.lovable.app/taasflow-journey",
+      "source_component": "REBUILD_FROM_REFERENCE (source repo private; presentation reconstructed)",
+      "source_content_file": null,
+      "source_sections": [],
+      "source_section_count": 0,
+      "source_meta": {},
+      "source_ctas": [],
+      "source_assets": [],
+      "destination_path": "/journey",
+      "destination_file": "src/routes/journey.tsx",
+      "destination_decision": "REDIRECT",
+      "implementation_status": "REDIRECT_DECIDED",
+      "redirect_decision": "/journey",
+      "exclusion_reason": null
+    },
+    {
+      "source_path": "/industries",
+      "source_url": "https://sourcing-suite-ai.lovable.app/industries",
+      "source_component": "REBUILD_FROM_REFERENCE (source repo private; presentation reconstructed)",
+      "source_content_file": "src/content/industries/index.json",
+      "source_sections": [
+        {
+          "order": 1,
+          "level": 1,
+          "heading": "Title"
+        },
+        {
+          "order": 2,
+          "level": 2,
+          "heading": "Cta Title"
+        }
+      ],
+      "source_section_count": 2,
+      "source_meta": {
+        "title": "Industry Recruiting Solutions | TaaSFlow",
+        "description": "Industry-specific recruiting solutions across 22+ verticals \u2014 tech, healthcare, finance, legal, hospitality, logistics, and more. Subscription pricing.",
+        "og:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+        "og:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+        "og:image": "https://taasflow.com/og-image.png",
+        "og:type": "website",
+        "h1": "Title"
+      },
+      "source_ctas": [],
+      "source_assets": [
+        "https://taasflow.com/og-image.png"
+      ],
+      "destination_path": "/industries",
+      "destination_file": "src/routes/industries.index.tsx",
+      "destination_decision": "MIGRATE",
+      "implementation_status": "IMPLEMENTED",
+      "redirect_decision": null,
+      "exclusion_reason": null
+    },
+    {
+      "source_path": "/industries/compare",
+      "source_url": "https://sourcing-suite-ai.lovable.app/industries/compare",
+      "source_component": "REBUILD_FROM_REFERENCE (source repo private; presentation reconstructed)",
+      "source_content_file": "src/content/industries/compare.json",
+      "source_sections": [
+        {
+          "order": 1,
+          "level": 1,
+          "heading": "Industry Comparison"
+        },
+        {
+          "order": 2,
+          "level": 2,
+          "heading": "Filter and compare industries"
+        }
+      ],
+      "source_section_count": 2,
+      "source_meta": {
+        "title": "Compare Recruiting Across 24 Industries | TaaSFlow",
+        "description": "Side-by-side comparison of hiring difficulty, typical salary bands, and top in-demand roles across 24 industries TaaSFlow recruits for.",
+        "og:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+        "og:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+        "og:image": "https://taasflow.com/og-image.png",
+        "og:type": "website",
+        "h1": "Industry Comparison"
+      },
+      "source_ctas": [],
+      "source_assets": [
+        "https://taasflow.com/og-image.png"
+      ],
+      "destination_path": "/industries/compare",
+      "destination_file": null,
+      "destination_decision": "MIGRATE_AND_IMPROVE",
+      "implementation_status": "NOT_IMPLEMENTED",
+      "redirect_decision": null,
+      "exclusion_reason": null
+    },
+    {
+      "source_path": "/partnerships/staffing",
+      "source_url": "https://sourcing-suite-ai.lovable.app/partnerships/staffing",
+      "source_component": "REBUILD_FROM_REFERENCE (source repo private; presentation reconstructed)",
+      "source_content_file": "src/content/pages/partnerships-staffing.json",
+      "source_sections": [
+        {
+          "order": 1,
+          "level": 1,
+          "heading": "Everybody Wins When You Partner with TaaS"
+        },
+        {
+          "order": 2,
+          "level": 2,
+          "heading": "A Partnership Where Everyone Wins"
+        },
+        {
+          "order": 3,
+          "level": 3,
+          "heading": "Your Agency"
+        },
+        {
+          "order": 4,
+          "level": 3,
+          "heading": "Your Clients"
+        },
+        {
+          "order": 5,
+          "level": 3,
+          "heading": "TaasFlow"
+        },
+        {
+          "order": 6,
+          "level": 2,
+          "heading": "More Affordable Than Contingency. Better Results."
+        },
+        {
+          "order": 7,
+          "level": 2,
+          "heading": "What Our Agency Partners Say"
+        },
+        {
+          "order": 8,
+          "level": 2,
+          "heading": "Choose Your Partnership Level"
+        },
+        {
+          "order": 9,
+          "level": 3,
+          "heading": "Starter"
+        },
+        {
+          "order": 10,
+          "level": 3,
+          "heading": "Growth"
+        },
+        {
+          "order": 11,
+          "level": 3,
+          "heading": "Enterprise"
+        },
+        {
+          "order": 12,
+          "level": 2,
+          "heading": "Partnership FAQs"
+        },
+        {
+          "order": 13,
+          "level": 3,
+          "heading": "Will my clients know you're involved?"
+        },
+        {
+          "order": 14,
+          "level": 3,
+          "heading": "How quickly can we get started?"
+        },
+        {
+          "order": 15,
+          "level": 3,
+          "heading": "What if we only need help occasionally?"
+        },
+        {
+          "order": 16,
+          "level": 3,
+          "heading": "Can you handle specialized or niche roles?"
+        },
+        {
+          "order": 17,
+          "level": 3,
+          "heading": "What's the quality of candidates?"
+        },
+        {
+          "order": 18,
+          "level": 2,
+          "heading": "Ready to Transform Your Agency?"
+        }
+      ],
+      "source_section_count": 18,
+      "source_meta": {
+        "title": "Staffing Agency Partnership Program | TaaSFlow",
+        "description": "Partner with TaaSFlow to power your staffing agency with subscription-based candidate sourcing, ranked shortlists, and dedicated recruiter capacity.",
+        "og:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+        "og:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+        "og:image": "https://taasflow.com/og-image.png",
+        "og:type": "website",
+        "h1": "Everybody Wins When You Partner with TaaS"
+      },
+      "source_ctas": [
+        "Contact Sales"
+      ],
+      "source_assets": [
+        "https://taasflow.com/og-image.png"
+      ],
+      "destination_path": "/partnerships/staffing",
+      "destination_file": "src/routes/partnerships.staffing.tsx",
+      "destination_decision": "MIGRATE",
+      "implementation_status": "IMPLEMENTED",
+      "redirect_decision": null,
+      "exclusion_reason": null
+    },
+    {
+      "source_path": "/privacy",
+      "source_url": "https://sourcing-suite-ai.lovable.app/privacy",
+      "source_component": "REBUILD_FROM_REFERENCE (source repo private; presentation reconstructed)",
+      "source_content_file": "src/content/pages/privacy.json",
+      "source_sections": [
+        {
+          "order": 1,
+          "level": 1,
+          "heading": "Global Recruitment Privacy Notice"
+        },
+        {
+          "order": 2,
+          "level": 2,
+          "heading": "1. Who We Are"
+        },
+        {
+          "order": 3,
+          "level": 2,
+          "heading": "2. Personal Data We Collect"
+        },
+        {
+          "order": 4,
+          "level": 3,
+          "heading": "Identification & Contact Information"
+        },
+        {
+          "order": 5,
+          "level": 3,
+          "heading": "Professional Information"
+        },
+        {
+          "order": 6,
+          "level": 3,
+          "heading": "Recruitment Process Information"
+        },
+        {
+          "order": 7,
+          "level": 3,
+          "heading": "Publicly Available Information"
+        },
+        {
+          "order": 8,
+          "level": 3,
+          "heading": "Sensitive / Special Category Data (Limited)"
+        },
+        {
+          "order": 9,
+          "level": 2,
+          "heading": "3. How We Collect Personal Data"
+        },
+        {
+          "order": 10,
+          "level": 2,
+          "heading": "4. Purposes of Processing"
+        },
+        {
+          "order": 11,
+          "level": 2,
+          "heading": "5. Legal Bases for Processing"
+        },
+        {
+          "order": 12,
+          "level": 3,
+          "heading": "European Union (GDPR)"
+        },
+        {
+          "order": 13,
+          "level": 3,
+          "heading": "United States"
+        },
+        {
+          "order": 14,
+          "level": 3,
+          "heading": "United Arab Emirates (PDPL)"
+        },
+        {
+          "order": 15,
+          "level": 3,
+          "heading": "Brazil (LGPD)"
+        },
+        {
+          "order": 16,
+          "level": 2,
+          "heading": "6. Sharing of Personal Data & Sub\u2011processors"
+        },
+        {
+          "order": 17,
+          "level": 2,
+          "heading": "7. International Data Transfers & Safeguards"
+        },
+        {
+          "order": 18,
+          "level": 2,
+          "heading": "8. Data Retention & Cross\u2011Position Matching"
+        },
+        {
+          "order": 19,
+          "level": 3,
+          "heading": "Cross\u2011Position Matching"
+        },
+        {
+          "order": 20,
+          "level": 2,
+          "heading": "9. Your Rights"
+        },
+        {
+          "order": 21,
+          "level": 2,
+          "heading": "10. AI\u2011Assisted Sourcing & Scoring"
+        },
+        {
+          "order": 22,
+          "level": 2,
+          "heading": "11. Data Security"
+        },
+        {
+          "order": 23,
+          "level": 2,
+          "heading": "12. Data Breaches"
+        },
+        {
+          "order": 24,
+          "level": 2,
+          "heading": "13. Cookies & Tracking Technologies"
+        },
+        {
+          "order": 25,
+          "level": 3,
+          "heading": "Category of Cookies"
+        },
+        {
+          "order": 26,
+          "level": 2,
+          "heading": "14. Children's Privacy"
+        },
+        {
+          "order": 27,
+          "level": 2,
+          "heading": "15. Updates to This Notice"
+        },
+        {
+          "order": 28,
+          "level": 2,
+          "heading": "16. Data Protection Officer (DPO) & Contact"
+        }
+      ],
+      "source_section_count": 28,
+      "source_meta": {
+        "title": "Global Recruitment Privacy Notice | TaaSFlow",
+        "description": "How TaaSFlow collects, uses, and protects personal data under GDPR, CCPA/CPRA, UAE PDPL, and other global privacy laws.",
+        "og:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+        "og:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+        "og:image": "https://taasflow.com/og-image.png",
+        "og:type": "website",
+        "h1": "Global Recruitment Privacy Notice"
+      },
+      "source_ctas": [],
+      "source_assets": [
+        "https://taasflow.com/og-image.png"
+      ],
+      "destination_path": "/privacy",
+      "destination_file": "src/routes/privacy.tsx",
+      "destination_decision": "MIGRATE",
+      "implementation_status": "IMPLEMENTED",
+      "redirect_decision": null,
+      "exclusion_reason": null
+    },
+    {
+      "source_path": "/terms",
+      "source_url": "https://sourcing-suite-ai.lovable.app/terms",
+      "source_component": "REBUILD_FROM_REFERENCE (source repo private; presentation reconstructed)",
+      "source_content_file": "src/content/pages/terms.json",
+      "source_sections": [
+        {
+          "order": 1,
+          "level": 1,
+          "heading": "Terms of Service"
+        },
+        {
+          "order": 2,
+          "level": 2,
+          "heading": "1. Acceptance of Terms"
+        },
+        {
+          "order": 3,
+          "level": 2,
+          "heading": "2. Description of Services"
+        },
+        {
+          "order": 4,
+          "level": 2,
+          "heading": "3. Account Registration"
+        },
+        {
+          "order": 5,
+          "level": 2,
+          "heading": "4. Subscriptions, Pricing, and Payment"
+        },
+        {
+          "order": 6,
+          "level": 2,
+          "heading": "5. Client Obligations"
+        },
+        {
+          "order": 7,
+          "level": 2,
+          "heading": "6. Candidate Data and Pipeline Ownership"
+        },
+        {
+          "order": 8,
+          "level": 2,
+          "heading": "7. Intellectual Property"
+        },
+        {
+          "order": 9,
+          "level": 2,
+          "heading": "8. Prohibited Use"
+        },
+        {
+          "order": 10,
+          "level": 2,
+          "heading": "9. Disclaimers"
+        },
+        {
+          "order": 11,
+          "level": 2,
+          "heading": "10. Limitation of Liability"
+        },
+        {
+          "order": 12,
+          "level": 2,
+          "heading": "11. Indemnification"
+        },
+        {
+          "order": 13,
+          "level": 2,
+          "heading": "12. Termination"
+        },
+        {
+          "order": 14,
+          "level": 2,
+          "heading": "13. Governing Law and Disputes"
+        },
+        {
+          "order": 15,
+          "level": 2,
+          "heading": "14. Changes to These Terms"
+        },
+        {
+          "order": 16,
+          "level": 2,
+          "heading": "15. Contact"
+        }
+      ],
+      "source_section_count": 16,
+      "source_meta": {
+        "title": "Terms of Service | TaaSFlow",
+        "description": "Terms of Service for TaaSFlow. Read the terms and conditions governing your use of our subscription-based recruiting platform.",
+        "og:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+        "og:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+        "og:image": "https://taasflow.com/og-image.png",
+        "og:type": "website",
+        "h1": "Terms of Service"
+      },
+      "source_ctas": [],
+      "source_assets": [
+        "https://taasflow.com/og-image.png"
+      ],
+      "destination_path": "/terms",
+      "destination_file": "src/routes/terms.tsx",
+      "destination_decision": "MIGRATE",
+      "implementation_status": "IMPLEMENTED",
+      "redirect_decision": null,
+      "exclusion_reason": null
+    },
+    {
+      "source_path": "/talent",
+      "source_url": "https://sourcing-suite-ai.lovable.app/talent",
+      "source_component": "REBUILD_FROM_REFERENCE (source repo private; presentation reconstructed)",
+      "source_content_file": null,
+      "source_sections": [],
+      "source_section_count": 0,
+      "source_meta": {},
+      "source_ctas": [],
+      "source_assets": [],
+      "destination_path": "/talent-network",
+      "destination_file": "src/routes/talent-network.tsx",
+      "destination_decision": "REDIRECT",
+      "implementation_status": "REDIRECT_DECIDED",
+      "redirect_decision": "/talent-network",
+      "exclusion_reason": null
+    },
+    {
+      "source_path": "/candidate-success",
+      "source_url": "https://sourcing-suite-ai.lovable.app/candidate-success",
+      "source_component": "REBUILD_FROM_REFERENCE (source repo private; presentation reconstructed)",
+      "source_content_file": "src/content/pages/candidate-success.json",
+      "source_sections": [],
+      "source_section_count": 0,
+      "source_meta": {},
+      "source_ctas": [],
+      "source_assets": [],
+      "destination_path": "/candidate-success",
+      "destination_file": "src/routes/candidate-success.tsx",
+      "destination_decision": "MIGRATE_AND_IMPROVE",
+      "implementation_status": "IMPLEMENTED",
+      "redirect_decision": null,
+      "exclusion_reason": null
+    },
+    {
+      "source_path": "/employer-onboarding",
+      "source_url": "https://sourcing-suite-ai.lovable.app/employer-onboarding",
+      "source_component": "REBUILD_FROM_REFERENCE (source repo private; presentation reconstructed)",
+      "source_content_file": "src/content/pages/employer-onboarding.json",
+      "source_sections": [
+        {
+          "order": 1,
+          "level": 1,
+          "heading": "Hero Title Hero Title Accent"
+        },
+        {
+          "order": 2,
+          "level": 2,
+          "heading": "Journey Title"
+        },
+        {
+          "order": 3,
+          "level": 3,
+          "heading": "Step1 Title"
+        },
+        {
+          "order": 4,
+          "level": 3,
+          "heading": "Step2 Title"
+        },
+        {
+          "order": 5,
+          "level": 3,
+          "heading": "Step3 Title"
+        },
+        {
+          "order": 6,
+          "level": 3,
+          "heading": "Step4 Title"
+        },
+        {
+          "order": 7,
+          "level": 3,
+          "heading": "Step5 Title"
+        },
+        {
+          "order": 8,
+          "level": 3,
+          "heading": "Step6 Title"
+        },
+        {
+          "order": 9,
+          "level": 2,
+          "heading": "Expectations Title"
+        },
+        {
+          "order": 10,
+          "level": 3,
+          "heading": "Expect1 Title"
+        },
+        {
+          "order": 11,
+          "level": 3,
+          "heading": "Expect2 Title"
+        },
+        {
+          "order": 12,
+          "level": 3,
+          "heading": "Expect3 Title"
+        },
+        {
+          "order": 13,
+          "level": 3,
+          "heading": "Expect4 Title"
+        },
+        {
+          "order": 14,
+          "level": 2,
+          "heading": "Checklist Title"
+        },
+        {
+          "order": 15,
+          "level": 2,
+          "heading": "Cta Title"
+        }
+      ],
+      "source_section_count": 15,
+      "source_meta": {
+        "title": "Employer Onboarding | TaaSFlow",
+        "description": "Onboard your first pilot role in minutes: share your requirements and receive a ranked shortlist within 14 days \u2014 no placement fees, no salary %.",
+        "og:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+        "og:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+        "og:image": "https://taasflow.com/og-image.png",
+        "og:type": "website",
+        "h1": "Hero Title Hero Title Accent"
+      },
+      "source_ctas": [],
+      "source_assets": [
+        "https://taasflow.com/og-image.png"
+      ],
+      "destination_path": "/employer-onboarding",
+      "destination_file": "src/routes/employer-onboarding.tsx",
+      "destination_decision": "MIGRATE",
+      "implementation_status": "IMPLEMENTED",
+      "redirect_decision": null,
+      "exclusion_reason": null
+    },
+    {
+      "source_path": "/knowledge-base",
+      "source_url": "https://sourcing-suite-ai.lovable.app/knowledge-base",
+      "source_component": "REBUILD_FROM_REFERENCE (source repo private; presentation reconstructed)",
+      "source_content_file": "src/content/pages/knowledge-base.json",
+      "source_sections": [
+        {
+          "order": 1,
+          "level": 1,
+          "heading": "How Can We Help?"
+        },
+        {
+          "order": 2,
+          "level": 3,
+          "heading": "What is Talent-as-a-Service?"
+        },
+        {
+          "order": 3,
+          "level": 3,
+          "heading": "How Does the Process Work?"
+        },
+        {
+          "order": 4,
+          "level": 3,
+          "heading": "Getting Started as an Employer"
+        },
+        {
+          "order": 5,
+          "level": 3,
+          "heading": "Getting Started as a Candidate"
+        },
+        {
+          "order": 6,
+          "level": 3,
+          "heading": "How to Complete the Intake Blueprint"
+        },
+        {
+          "order": 7,
+          "level": 3,
+          "heading": "Understanding Candidate Scoring"
+        },
+        {
+          "order": 8,
+          "level": 3,
+          "heading": "Managing Your Hiring Pipeline"
+        },
+        {
+          "order": 9,
+          "level": 3,
+          "heading": "What Are Weekly Candidate Drops?"
+        },
+        {
+          "order": 10,
+          "level": 3,
+          "heading": "Inviting Your Team to the Dashboard"
+        },
+        {
+          "order": 11,
+          "level": 3,
+          "heading": "Creating a Standout Candidate Profile"
+        },
+        {
+          "order": 12,
+          "level": 3,
+          "heading": "The Application & Matching Process"
+        },
+        {
+          "order": 13,
+          "level": 3,
+          "heading": "Interview Preparation Guide"
+        },
+        {
+          "order": 14,
+          "level": 3,
+          "heading": "Your Public Talent Profile"
+        },
+        {
+          "order": 15,
+          "level": 3,
+          "heading": "How Pricing Works"
+        },
+        {
+          "order": 16,
+          "level": 3,
+          "heading": "Using the ROI Calculator"
+        },
+        {
+          "order": 17,
+          "level": 3,
+          "heading": "The Pilot Program"
+        },
+        {
+          "order": 18,
+          "level": 3,
+          "heading": "Dashboard Overview"
+        },
+        {
+          "order": 19,
+          "level": 3,
+          "heading": "Understanding Analytics & Reports"
+        },
+        {
+          "order": 20,
+          "level": 3,
+          "heading": "Notification Settings"
+        },
+        {
+          "order": 21,
+          "level": 3,
+          "heading": "How We Protect Your Data"
+        },
+        {
+          "order": 22,
+          "level": 3,
+          "heading": "Candidate Privacy & Anonymization"
+        },
+        {
+          "order": 23,
+          "level": 2,
+          "heading": "Still have questions?"
+        }
+      ],
+      "source_section_count": 23,
+      "source_meta": {
+        "title": "TaaSFlow Knowledge Base \u2014 Guides for Hiring Teams",
+        "description": "Searchable knowledge base for hiring teams and candidates: intake best practices, scoring criteria, delivery cadence, billing, and support.",
+        "og:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+        "og:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+        "og:image": "https://taasflow.com/og-image.png",
+        "og:type": "website",
+        "h1": "How Can We Help?"
+      },
+      "source_ctas": [],
+      "source_assets": [
+        "https://taasflow.com/og-image.png"
+      ],
+      "destination_path": "/knowledge-base",
+      "destination_file": "src/routes/knowledge-base.tsx",
+      "destination_decision": "MIGRATE",
+      "implementation_status": "IMPLEMENTED",
+      "redirect_decision": null,
+      "exclusion_reason": null
+    },
+    {
+      "source_path": "/global-talent",
+      "source_url": "https://sourcing-suite-ai.lovable.app/global-talent",
+      "source_component": "REBUILD_FROM_REFERENCE (source repo private; presentation reconstructed)",
+      "source_content_file": "src/content/pages/global-talent.json",
+      "source_sections": [
+        {
+          "order": 1,
+          "level": 1,
+          "heading": "A quieter way to be considered for the right work."
+        },
+        {
+          "order": 2,
+          "level": 2,
+          "heading": "Built for people who don\u2019t need another job board."
+        },
+        {
+          "order": 3,
+          "level": 2,
+          "heading": "Three ways to be considered."
+        },
+        {
+          "order": 4,
+          "level": 3,
+          "heading": "Express interest in a role"
+        },
+        {
+          "order": 5,
+          "level": 3,
+          "heading": "Join the network"
+        },
+        {
+          "order": 6,
+          "level": 3,
+          "heading": "Be quietly discoverable"
+        },
+        {
+          "order": 7,
+          "level": 2,
+          "heading": "Fewer roles. Higher signal. Considered work for considered people."
+        },
+        {
+          "order": 8,
+          "level": 2,
+          "heading": "Your career, on your terms."
+        },
+        {
+          "order": 9,
+          "level": 2,
+          "heading": "Work that crosses borders."
+        },
+        {
+          "order": 10,
+          "level": 3,
+          "heading": "Remote-first by default"
+        },
+        {
+          "order": 11,
+          "level": 3,
+          "heading": "Regional specialisation"
+        },
+        {
+          "order": 12,
+          "level": 3,
+          "heading": "Relocation, when offered"
+        },
+        {
+          "order": 13,
+          "level": 2,
+          "heading": "The other side of the network."
+        },
+        {
+          "order": 14,
+          "level": 3,
+          "heading": "See an open brief?"
+        },
+        {
+          "order": 15,
+          "level": 3,
+          "heading": "Not actively looking?"
+        },
+        {
+          "order": 16,
+          "level": 2,
+          "heading": "Direct answers."
+        },
+        {
+          "order": 17,
+          "level": 3,
+          "heading": "Is TaaSFlow Network free for professionals?"
+        },
+        {
+          "order": 18,
+          "level": 3,
+          "heading": "How is this different from a recruiter reaching out on LinkedIn?"
+        },
+        {
+          "order": 19,
+          "level": 3,
+          "heading": "Will my current employer see I&rsquo;m on the network?"
+        },
+        {
+          "order": 20,
+          "level": 3,
+          "heading": "Do you support relocation and visas?"
+        },
+        {
+          "order": 21,
+          "level": 3,
+          "heading": "What does &ldquo;expressing interest&rdquo; actually do?"
+        },
+        {
+          "order": 22,
+          "level": 3,
+          "heading": "Is this only for senior people?"
+        }
+      ],
+      "source_section_count": 22,
+      "source_meta": {
+        "title": "TaaSFlow Network \u2014 Private Network for Senior Talent",
+        "description": "A curated network for highly skilled professionals. Express interest in selective briefs, or stay quietly discoverable for premium opportunities worldwide.",
+        "og:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+        "og:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+        "og:image": "https://taasflow.com/og-image.png",
+        "og:type": "website",
+        "h1": "A quieter way to be considered for the right work."
+      },
+      "source_ctas": [],
+      "source_assets": [
+        "https://taasflow.com/og-image.png"
+      ],
+      "destination_path": "/global-talent",
+      "destination_file": "src/routes/global-talent.tsx",
+      "destination_decision": "MIGRATE",
+      "implementation_status": "IMPLEMENTED",
+      "redirect_decision": null,
+      "exclusion_reason": null
+    },
+    {
+      "source_path": "/candidate/join",
+      "source_url": "https://sourcing-suite-ai.lovable.app/candidate/join",
+      "source_component": "REBUILD_FROM_REFERENCE (source repo private; presentation reconstructed)",
+      "source_content_file": null,
+      "source_sections": [],
+      "source_section_count": 0,
+      "source_meta": {},
+      "source_ctas": [],
+      "source_assets": [],
+      "destination_path": "/jobs",
+      "destination_file": "src/routes/jobs.index.tsx",
+      "destination_decision": "REDIRECT",
+      "implementation_status": "REDIRECT_DECIDED",
+      "redirect_decision": "/jobs",
+      "exclusion_reason": null
+    },
+    {
+      "source_path": "/about",
+      "source_url": "https://sourcing-suite-ai.lovable.app/about",
+      "source_component": "REBUILD_FROM_REFERENCE (source repo private; presentation reconstructed)",
+      "source_content_file": "src/content/pages/about.json",
+      "source_sections": [
+        {
+          "order": 1,
+          "level": 1,
+          "heading": "We built the hiring system that hire."
+        },
+        {
+          "order": 2,
+          "level": 2,
+          "heading": "From HR Frustration to Recruiting Innovation"
+        },
+        {
+          "order": 3,
+          "level": 2,
+          "heading": "From a broken model to a hiring throughput system"
+        },
+        {
+          "order": 4,
+          "level": 3,
+          "heading": "The old model is broken"
+        },
+        {
+          "order": 5,
+          "level": 3,
+          "heading": "Why TAASFlow exists"
+        },
+        {
+          "order": 6,
+          "level": 3,
+          "heading": "Talent-as-a-Service, not agency"
+        },
+        {
+          "order": 7,
+          "level": 3,
+          "heading": "A faster, transparent delivery"
+        },
+        {
+          "order": 8,
+          "level": 3,
+          "heading": "Built for hiring throughput"
+        },
+        {
+          "order": 9,
+          "level": 3,
+          "heading": "A better model for everyone"
+        },
+        {
+          "order": 10,
+          "level": 2,
+          "heading": "The Win-Win-Win Mentality"
+        },
+        {
+          "order": 11,
+          "level": 3,
+          "heading": "Candidates Win"
+        },
+        {
+          "order": 12,
+          "level": 3,
+          "heading": "Companies Win"
+        },
+        {
+          "order": 13,
+          "level": 3,
+          "heading": "We All Win"
+        },
+        {
+          "order": 14,
+          "level": 2,
+          "heading": "Recruiting Across 50+ Countries"
+        },
+        {
+          "order": 15,
+          "level": 3,
+          "heading": "Middle East"
+        },
+        {
+          "order": 16,
+          "level": 3,
+          "heading": "Europe"
+        },
+        {
+          "order": 17,
+          "level": 3,
+          "heading": "North America"
+        },
+        {
+          "order": 18,
+          "level": 3,
+          "heading": "South America"
+        },
+        {
+          "order": 19,
+          "level": 3,
+          "heading": "Asia Pacific"
+        },
+        {
+          "order": 20,
+          "level": 3,
+          "heading": "Africa"
+        },
+        {
+          "order": 21,
+          "level": 2,
+          "heading": "8+ Years of Data-Driven Recruiting"
+        },
+        {
+          "order": 22,
+          "level": 3,
+          "heading": "Growth Trajectory"
+        },
+        {
+          "order": 23,
+          "level": 3,
+          "heading": "Placements by Industry"
+        },
+        {
+          "order": 24,
+          "level": 3,
+          "heading": "Companies by Size"
+        },
+        {
+          "order": 25,
+          "level": 3,
+          "heading": "Placements by Seniority"
+        },
+        {
+          "order": 26,
+          "level": 2,
+          "heading": "Meet the Founders"
+        },
+        {
+          "order": 27,
+          "level": 3,
+          "heading": "Christian Brogger"
+        },
+        {
+          "order": 28,
+          "level": 3,
+          "heading": "Jo\u00e3o Bogo"
+        },
+        {
+          "order": 29,
+          "level": 2,
+          "heading": "From Startups to Enterprises"
+        },
+        {
+          "order": 30,
+          "level": 3,
+          "heading": "Startups & Scale-ups"
+        },
+        {
+          "order": 31,
+          "level": 3,
+          "heading": "Mid-Market Companies"
+        },
+        {
+          "order": 32,
+          "level": 3,
+          "heading": "Enterprise Organizations"
+        },
+        {
+          "order": 33,
+          "level": 2,
+          "heading": "How we think"
+        },
+        {
+          "order": 34,
+          "level": 3,
+          "heading": "Systematic"
+        },
+        {
+          "order": 35,
+          "level": 3,
+          "heading": "Global"
+        },
+        {
+          "order": 36,
+          "level": 3,
+          "heading": "Data-Driven"
+        },
+        {
+          "order": 37,
+          "level": 3,
+          "heading": "Iterative"
+        },
+        {
+          "order": 38,
+          "level": 3,
+          "heading": "Transparent"
+        },
+        {
+          "order": 39,
+          "level": 3,
+          "heading": "Fast"
+        },
+        {
+          "order": 40,
+          "level": 2,
+          "heading": "Related Reading"
+        }
+      ],
+      "source_section_count": 40,
+      "source_meta": {
+        "title": "About TaaSFlow \u2014 Operators Rebuilding Recruiting",
+        "description": "TaaSFlow replaces the traditional agency model with subscription recruiting. Learn how we deliver ranked candidates in 14 days with no placement fees.",
+        "og:title": "About TaaSFlow \u2014 Operators Rebuilding Recruiting",
+        "og:description": "TaaSFlow replaces the traditional agency model with subscription recruiting. Learn how we deliver ranked candidates in 14 days with no placement fees.",
+        "og:image": "https://taasflow.com/og-image.png",
+        "og:type": "website",
+        "h1": "We built the hiring system that hire."
+      },
+      "source_ctas": [
+        "Book a Call"
+      ],
+      "source_assets": [
+        "https://taasflow.com/og-image.png"
+      ],
+      "destination_path": "/about",
+      "destination_file": "src/routes/about.tsx",
+      "destination_decision": "MIGRATE",
+      "implementation_status": "IMPLEMENTED",
+      "redirect_decision": null,
+      "exclusion_reason": null
+    }
+  ],
+  "destination_preserved_routes": [
+    {
+      "route": "/jobs",
+      "decision": "KEEP_NEW_DESTINATION"
+    },
+    {
+      "route": "/jobs/$id",
+      "decision": "KEEP_NEW_DESTINATION"
+    },
+    {
+      "route": "/jobs/$id/apply",
+      "decision": "KEEP_NEW_DESTINATION"
+    },
+    {
+      "route": "/intake",
+      "decision": "KEEP_NEW_DESTINATION"
+    },
+    {
+      "route": "/login",
+      "decision": "KEEP_NEW_DESTINATION"
+    },
+    {
+      "route": "/auth",
+      "decision": "KEEP_NEW_DESTINATION"
+    },
+    {
+      "route": "/reset-password",
+      "decision": "KEEP_NEW_DESTINATION"
+    },
+    {
+      "route": "/access-denied",
+      "decision": "KEEP_NEW_DESTINATION"
+    },
+    {
+      "route": "/admin/*",
+      "decision": "KEEP_NEW_DESTINATION"
+    },
+    {
+      "route": "/client/*",
+      "decision": "KEEP_NEW_DESTINATION"
+    },
+    {
+      "route": "/candidate/*",
+      "decision": "KEEP_NEW_DESTINATION"
+    },
+    {
+      "route": "/me/*",
+      "decision": "KEEP_NEW_DESTINATION"
+    }
+  ],
+  "dynamic_content": {
+    "blog_articles": {
+      "count": 304,
+      "destination": "/blog/$slug",
+      "decision": "MIGRATE"
+    },
+    "industry_pages": {
+      "count": 24,
+      "destination": "/industries/$slug",
+      "decision": "MIGRATE"
+    }
+  },
+  "reconciliation": {
+    "source_public_routes_total": 23,
+    "destination_migrated": 19,
+    "redirects": 3,
+    "exclusions": 0,
+    "not_yet_implemented": 1,
+    "formula_check": "23 = 19 + 3 + 0 + 1",
+    "balances": true
+  }
+}
