@@ -13,7 +13,7 @@ import {
  CalendarClock,
  CheckCircle2,
  ChevronRight,
- ClipboardCheck,
+ 
  Handshake,
  MessageSquare,
  RefreshCw,
