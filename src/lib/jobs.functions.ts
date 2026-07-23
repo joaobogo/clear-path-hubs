@@ -133,6 +133,7 @@ export const getPublicPosition = createServerFn({ method: "GET" })
         : [],
       compensation_display: comp.approved && comp.display ? comp.display : null,
       published_at: pos.published_at,
+      openings: (pos as { openings?: number }).openings ?? 1,
       organization_name:
         (pos.organizations as unknown as { name?: string } | null)?.name ?? "TaaSFlow client",
       questions: (questions ?? []).map((q) => ({
