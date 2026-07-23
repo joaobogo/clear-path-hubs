@@ -1,0 +1,3675 @@
+{
+  "sourcePath": "/privacy",
+  "destinationPath": "/privacy",
+  "pageType": "marketing_static",
+  "protected": false,
+  "verdict": "MAJOR_DIFFERENCE",
+  "severity": "HIGH",
+  "viewports": [
+    {
+      "viewport": "mobile",
+      "source": {
+        "url": "https://taasflow.com/privacy",
+        "finalUrl": "https://taasflow.com/privacy",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [
+          {
+            "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HJ2ECKCNK4&gtm=45je67l1h1v9245339446za200zd9245339446&_p=1784774032299&gcd=13l3l3l3l1l1&npa=0&_ng=1&dma=0&are=1&cid=1903833365.1784774033&frm=0&ngs=1&pscdl=noapi&rcb=7&sr=375x812&uaa=x86&uab=64&uafvl=Not-A.Brand%3B24.0.0.0%7CChromium%3B146.0.7680.80&uam=&uamb=0&uap=Windows&uapv=&uaw=0&ul=en-us&_s=1&tag_exp=115938465~115938469~118897920~118897930~119896802&dp=%2Fprivacy&dt=TaaSFlow%20%7C%20Talent%20as%20a%20Service%20%7C%20Subscription%20Recruiting&dl=https%3A%2F%2Ftaasflow.com%2Fprivacy&sid=1784774032&sct=1&seg=0&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&ep.role_type=public&ep.is_authenticated=false&tfd=707",
+            "status": null,
+            "failure": "net::ERR_ABORTED"
+          }
+        ],
+        "title": "Global Recruitment Privacy Notice | TaaSFlow",
+        "description": "How TaaSFlow collects, uses, and protects personal data under GDPR, CCPA/CPRA, UAE PDPL, and other global privacy laws.",
+        "canonical": "https://taasflow.com/privacy",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:type": "website",
+          "og:url": "https://taasflow.com/privacy",
+          "og:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "og:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "og:image": "https://taasflow.com/og-image.png",
+          "og:image:width": "1200",
+          "og:image:height": "630",
+          "og:locale": "en_US",
+          "twitter:card": "summary_large_image",
+          "twitter:site": "@TaasFlow",
+          "twitter:creator": "@TaasFlow",
+          "twitter:url": "https://taasflow.com/privacy",
+          "twitter:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "twitter:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "twitter:image": "https://taasflow.com/og-image.png"
+        },
+        "structuredData": [
+          {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "@id": "https://taasflow.com/#organization",
+            "name": "TaaSFlow",
+            "legalName": "TaaSFlow",
+            "url": "https://taasflow.com/",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://taasflow.com/favicon.png",
+              "width": 512,
+              "height": 512
+            },
+            "image": "https://taasflow.com/og-image.png",
+            "description": "Talent as a Service — subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+            "slogan": "Your hiring team. On demand.",
+            "foundingDate": "2024",
+            "areaServed": [
+              {
+                "@type": "Country",
+                "name": "United States"
+              },
+              {
+                "@type": "Country",
+                "name": "United Arab Emirates"
+              },
+              {
+                "@type": "Country",
+                "name": "United Kingdom"
+              },
+              {
+                "@type": "Country",
+                "name": "Brazil"
+              }
+            ],
+            "knowsAbout": [
+              "Subscription recruiting",
+              "Talent as a Service",
+              "Candidate sourcing",
+              "Pre-screened candidates",
+              "Recruitment process outsourcing"
+            ],
+            "contactPoint": [
+              {
+                "@type": "ContactPoint",
+                "contactType": "sales",
+                "email": "hello@taasflow.com",
+                "url": "https://taasflow.com/contact",
+                "availableLanguage": [
+                  "English",
+                  "Portuguese",
+                  "Spanish"
+                ]
+              }
+            ],
+            "sameAs": [
+              "https://www.linkedin.com/company/taasflow",
+              "https://twitter.com/TaasFlow"
+            ]
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "@id": "https://taasflow.com/#website",
+            "name": "TaaSFlow",
+            "alternateName": "Talent as a Service",
+            "url": "https://taasflow.com/",
+            "description": "Subscription recruiting that delivers pre-screened, ranked candidates in 14 days.",
+            "inLanguage": "en-US",
+            "publisher": {
+              "@id": "https://taasflow.com/#organization"
+            },
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": {
+                "@type": "EntryPoint",
+                "urlTemplate": "https://taasflow.com/jobs?q={search_term_string}"
+              },
+              "query-input": "required name=search_term_string"
+            }
+          }
+        ],
+        "h1": [
+          "Global Recruitment Privacy Notice"
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "Global Recruitment Privacy Notice"
+          },
+          {
+            "level": 2,
+            "text": "1. Who We Are"
+          },
+          {
+            "level": 2,
+            "text": "2. Personal Data We Collect"
+          },
+          {
+            "level": 3,
+            "text": "Identification & Contact Information"
+          },
+          {
+            "level": 3,
+            "text": "Professional Information"
+          },
+          {
+            "level": 3,
+            "text": "Recruitment Process Information"
+          },
+          {
+            "level": 3,
+            "text": "Publicly Available Information"
+          },
+          {
+            "level": 3,
+            "text": "Sensitive / Special Category Data (Limited)"
+          },
+          {
+            "level": 2,
+            "text": "3. How We Collect Personal Data"
+          },
+          {
+            "level": 2,
+            "text": "4. Purposes of Processing"
+          },
+          {
+            "level": 2,
+            "text": "5. Legal Bases for Processing"
+          },
+          {
+            "level": 3,
+            "text": "European Union (GDPR)"
+          },
+          {
+            "level": 3,
+            "text": "United States"
+          },
+          {
+            "level": 3,
+            "text": "United Arab Emirates (PDPL)"
+          },
+          {
+            "level": 3,
+            "text": "Brazil (LGPD)"
+          },
+          {
+            "level": 2,
+            "text": "6. Sharing of Personal Data & Sub‑processors"
+          },
+          {
+            "level": 2,
+            "text": "7. International Data Transfers & Safeguards"
+          },
+          {
+            "level": 2,
+            "text": "8. Data Retention & Cross‑Position Matching"
+          },
+          {
+            "level": 3,
+            "text": "Cross‑Position Matching"
+          },
+          {
+            "level": 2,
+            "text": "9. Your Rights"
+          },
+          {
+            "level": 2,
+            "text": "10. AI‑Assisted Sourcing & Scoring"
+          },
+          {
+            "level": 2,
+            "text": "11. Data Security"
+          },
+          {
+            "level": 2,
+            "text": "12. Data Breaches"
+          },
+          {
+            "level": 2,
+            "text": "13. Cookies & Tracking Technologies"
+          },
+          {
+            "level": 3,
+            "text": "Category of Cookies"
+          },
+          {
+            "level": 2,
+            "text": "14. Children's Privacy"
+          },
+          {
+            "level": 2,
+            "text": "15. Updates to This Notice"
+          },
+          {
+            "level": 2,
+            "text": "16. Data Protection Officer (DPO) & Contact"
+          },
+          {
+            "level": 4,
+            "text": "Newsletter"
+          },
+          {
+            "level": 4,
+            "text": "For candidates"
+          },
+          {
+            "level": 4,
+            "text": "For companies"
+          },
+          {
+            "level": 4,
+            "text": "Industries"
+          },
+          {
+            "level": 4,
+            "text": "Company"
+          }
+        ],
+        "sections": [
+          "SECTION",
+          "Global Recruitment Privacy Notice",
+          "SECTION",
+          "1. Who We Are",
+          "2. Personal Data We Collect",
+          "3. How We Collect Personal Data",
+          "4. Purposes of Processing",
+          "5. Legal Bases for Processing",
+          "6. Sharing of Personal Data & Sub‑processors",
+          "7. International Data Transfers & Safeguards",
+          "8. Data Retention & Cross‑Position Matching",
+          "9. Your Rights",
+          "10. AI‑Assisted Sourcing & Scoring",
+          "11. Data Security",
+          "12. Data Breaches",
+          "13. Cookies & Tracking Technologies",
+          "14. Children's Privacy",
+          "15. Updates to This Notice",
+          "16. Data Protection Officer (DPO) & Contact",
+          "SECTION",
+          "SECTION"
+        ],
+        "textBlocks": [
+          "Solutions",
+          "Industries",
+          "Resources",
+          "Last updated: May 12, 2026",
+          "This Global Recruitment Privacy Notice explains how TaaSFlow (\"TaaSFlow\", \"we\", \"us\", or \"our\") collects, uses, shares, and protects personal data relating to individuals who apply for roles, are sourced, or otherwise interact with us in connection with our recruitment and talent‑sourcing activities (collectively, \"Candidates\").",
+          "This Notice applies to Candidates located in the European Union (EU), United States (US), United Arab Emirates (UAE), and other jurisdictions where we operate or provide services.",
+          "Data Controller:TaaSFlowWebsite: https://taasflow.comEmail: privacy@taasflow.com",
+          "TaaSFlow acts as a data controller for personal data processed in connection with recruitment and sourcing activities. In some client‑engaged searches, we may act as an independent controller or, in limited cases, as a processor on behalf of a client.",
+          "We may collect and process the following categories of personal data:",
+          "Full name",
+          "Email address",
+          "Phone number",
+          "Location (city, country)",
+          "CVs, résumés, cover letters",
+          "Employment history, education, qualifications",
+          "Skills, certifications, languages",
+          "Salary expectations (where voluntarily provided)",
+          "Interview notes and assessments",
+          "References and reference feedback",
+          "Communications with us (emails, messages, calls)",
+          "Professional profiles (e.g., LinkedIn or similar platforms), where permitted by law",
+          "We do not intentionally collect sensitive personal data unless:",
+          "Required by law (e.g., right‑to‑work checks), or",
+          "Voluntarily disclosed by the Candidate",
+          "Where required, such data is handled with enhanced safeguards.",
+          "We collect personal data:",
+          "Directly from Candidates",
+          "From public professional sources",
+          "From referrals",
+          "From clients during mandated recruitment processes",
+          "Through recruitment technology platforms and assessments",
+          "We process Candidate data for the following purposes:",
+          "Talent sourcing and recruitment activities",
+          "Assessing suitability for current or future roles",
+          "Communicating with Candidates",
+          "Presenting candidate profiles to clients (with appropriate safeguards)",
+          "Managing recruitment pipelines and talent pools",
+          "Legal, compliance, and audit purposes",
+          "Improving our recruitment services and operations",
+          "Depending on location, we rely on one or more of the following legal bases:",
+          "Legitimate interests — recruitment and talent matching",
+          "Pre‑contractual steps — requested by the Candidate",
+          "Consent — where required",
+          "Legal obligations — where applicable",
+          "Notice and purpose‑limited processing under applicable state privacy laws (e.g., CCPA/CPRA).",
+          "Consent, legitimate interests, contractual necessity, or legal obligation, as applicable.",
+          "We process data of Brazilian residents in compliance with Lei Geral de Proteção de Dados (LGPD), relying on pre‑contractual steps, legitimate interest, or consent.",
+          "We may share personal data with clients and prospected employers (limited to relevant role‑related data). We also use third‑party service providers (\"Sub‑processors\") to support our platform and operations.",
+          "All sub‑processors are vetted for data security compliance and are prohibited from using your personal data for any purpose other than providing services to us.",
+          "As a global recruitment firm, we transfer personal data to jurisdictions outside your own, primarily to the United States where our core infrastructure (Supabase, AWS, Cloudflare) is hosted.",
+          "To ensure your data remains protected, we implement the following safeguards for all international transfers:",
+          "Standard Contractual Clauses (SCCs): We use the latest European Commission-approved SCCs for transfers to non-adequate countries.",
+          "Data Privacy Framework (DPF): For US-based providers certified under the EU-U.S. DPF and the UK Extension.",
+          "Technical Measures: Including end-to-end encryption in transit (TLS 1.3), encryption at rest (AES-256), and pseudonymization of analytics data.",
+          "An internal Transfer Impact Assessment (TIA) is maintained to document these safeguards and monitor the legal climate of recipient jurisdictions.",
+          "We retain personal data only for as long as necessary to fulfill the purposes for which it was collected, including for the purposes of satisfying any legal, accounting, or reporting requirements. Our typical retention periods include:",
+          "Candidate Profiles: 2 years of inactivity, after which data is deleted or anonymized unless consent is renewed.",
+          "CVs & Artifacts: Purged 90 days after the recruitment process concludes or after last use.",
+          "Job Submissions: Anonymized for statistical purposes 2 years after a position is filled or closed.",
+          "Audit & Security Logs: 12 months for security and compliance monitoring.",
+          "Marketing & Client Data: Duration of the business relationship or until consent is withdrawn.",
+          "By submitting your CV or creating a candidate account, you consent to TaaSFlow retaining your personal data (including your CV, professional history, skills, and contact information) for up to 12 months. During this period, your profile may be considered for other relevant positions that become available within our system, not only the specific role you originally applied for. This allows us to proactively match you with suitable opportunities and maximize your chances of finding the right role.",
+          "You may withdraw your consent or request deletion of your data at any time by contacting privacy@taasflow.com or through the data deletion option in your candidate profile settings.",
+          "After the retention period expires, your data will be anonymised or securely deleted unless you have given renewed consent or an active recruitment process is underway. Candidates may request deletion at any time by contacting privacy@taasflow.com.",
+          "Depending on your location, you may have the right to:",
+          "Access your personal data",
+          "Correct inaccurate data",
+          "Request deletion (\"right to be forgotten\")",
+          "Restrict or object to processing",
+          "Data portability (EU/EEA) — receive your data in a structured, machine-readable format",
+          "Withdraw consent (where applicable)",
+          "Opt‑out of certain data disclosures (US residents)",
+          "Requests can be made by contacting privacy@taasflow.com. We will respond within 30 days.",
+          "Candidates with an account on our platform can export their personal data and request account deletion directly from their profile settings.",
+          "We use AI‑powered technology to assist in candidate sourcing, CV parsing, and role‑fit scoring. These tools analyze candidate data (e.g., skills, experience, qualifications) against role requirements to provide ranked shortlists to our recruiters.",
+          "Important: TaaSFlow does not make final recruitment decisions based solely on automated processing.",
+          "All AI‑generated scores and rankings are subject to human review by our professional recruitment team. You have the right to request a human explanation of any automated assessment or to contest the result.",
+          "We implement appropriate technical and organizational measures to protect personal data, including:",
+          "Role-based access controls and progressive data disclosure",
+          "Encryption in transit (TLS) and at rest",
+          "Private storage buckets with time-limited signed URLs for sensitive documents",
+          "Message redaction to prevent unauthorized contact sharing",
+          "Comprehensive audit logging of data access",
+          "Vendor risk management and incident response procedures",
+          "In the event of a personal data breach, we will notify relevant supervisory authorities within 72 hours (as required by GDPR) and affected individuals without undue delay where the breach is likely to result in a high risk to their rights and freedoms.",
+          "We use cookies and similar technologies to ensure essential functionality, analyze platform usage, and support our marketing activities.",
+          "Essential: Required for core platform functionality (auth, security, sessions). Cannot be disabled.",
+          "Analytics: Google Analytics (anonymized) to understand user behavior and improve performance.",
+          "Marketing: Apollo.io, Retention.com, and Weglot to support sourcing, personalization, and translations.",
+          "Consent: We do not load non-essential cookies or third-party trackers (Analytics, Marketing) until you provide explicit consent through our cookie settings banner. You can change your preferences or withdraw consent at any time using the \"Cookie Preferences\" link in the footer.",
+          "Our services are not directed at individuals under 16. We do not knowingly collect data from children. If you believe we have inadvertently collected data from a minor, please contact us immediately.",
+          "We may update this Privacy Notice periodically. Material changes will be communicated via email or a notice on our website. The latest version will always be available on this page.",
+          "We have appointed a Data Protection Officer to oversee our privacy strategy and ensure compliance with global data protection laws (GDPR, LGPD, etc.).",
+          "TaaSFlow Privacy & Data Protection TeamAttn: Data Protection OfficerEmail: privacy@taasflow.comAddress: [Legal Entity Address, if available]",
+          "If you are located in the EEA, UK, or Brazil and are not satisfied with our response, you have the right to lodge a complaint with your local supervisory authority:",
+          "EU/EEA: Your local Data Protection Authority (DPA)",
+          "UK: Information Commissioner's Office (ICO)",
+          "Brazil: Autoridade Nacional de Proteção de Dados (ANPD)",
+          "See also our Terms of Service for the terms governing your use of our platform.",
+          "Internal Review Note: This privacy policy has been updated to reflect the actual sub‑processors and data processing activities identified during the May 2026 security audit. Final wording should be reviewed and approved by legal counsel to ensure alignment with current jurisdiction-specific requirements.",
+          "Talent as a Service",
+          "A global hiring system for teams that need consistent recruiting.",
+          "Weekly insights into talent acquisition. No spam.",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Book call",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "No recruitment agency fees. No placement charges. Subscription-based hiring system.",
+          "Copyright 2026 TaaSFlow. All rights reserved."
+        ],
+        "buttons": [
+          "Solutions",
+          "Industries",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Solutions",
+          "How it works",
+          "Pilot",
+          "Enterprise",
+          "Case studies",
+          "Jobs",
+          "Journey",
+          "Industries",
+          "Tech",
+          "SaaS & Cloud",
+          "Cybersecurity",
+          "Data & Analytics",
+          "Finance",
+          "Insurance",
+          "PE & VC",
+          "Accounting",
+          "Legal",
+          "Consulting",
+          "HR & Recruiting",
+          "Staffing Agencies",
+          "Sales",
+          "Marketing",
+          "E-commerce",
+          "Media",
+          "Real Estate",
+          "Construction",
+          "Hospitality",
+          "Healthcare",
+          "Public Sector",
+          "Non-Profit",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Success Stories",
+          "Talent Marketplace",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Subscribe",
+          "Book call",
+          "Cookie preferences"
+        ],
+        "links": [
+          {
+            "text": "Skip to main content",
+            "href": "https://taasflow.com/privacy#main-content"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "Browse jobs",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Join the network",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Browse open roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "https://taasflow.com",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "privacy@taasflow.com",
+            "href": "mailto:privacy@taasflow.com"
+          },
+          {
+            "text": "privacy@taasflow.com",
+            "href": "mailto:privacy@taasflow.com"
+          },
+          {
+            "text": "privacy@taasflow.com",
+            "href": "mailto:privacy@taasflow.com"
+          },
+          {
+            "text": "privacy@taasflow.com",
+            "href": "mailto:privacy@taasflow.com"
+          },
+          {
+            "text": "privacy@taasflow.com",
+            "href": "mailto:privacy@taasflow.com"
+          },
+          {
+            "text": "Terms of Service",
+            "href": "https://taasflow.com/terms"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "LinkedIn",
+            "href": "https://www.linkedin.com/company/taasflow/"
+          },
+          {
+            "text": "Browse roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Talent network",
+            "href": "https://taasflow.com/global-talent"
+          },
+          {
+            "text": "Member stories",
+            "href": "https://taasflow.com/candidate-success"
+          },
+          {
+            "text": "Start pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "Employer onboarding",
+            "href": "https://taasflow.com/employer-onboarding"
+          },
+          {
+            "text": "Case studies",
+            "href": "https://taasflow.com/case-studies"
+          },
+          {
+            "text": "Healthcare",
+            "href": "https://taasflow.com/industries/healthcare"
+          },
+          {
+            "text": "Technology",
+            "href": "https://taasflow.com/industries/tech"
+          },
+          {
+            "text": "Finance",
+            "href": "https://taasflow.com/industries/finance"
+          },
+          {
+            "text": "Legal",
+            "href": "https://taasflow.com/industries/legal"
+          },
+          {
+            "text": "All →",
+            "href": "https://taasflow.com/industries"
+          },
+          {
+            "text": "About us",
+            "href": "https://taasflow.com/about"
+          },
+          {
+            "text": "Blog",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://taasflow.com/faq"
+          },
+          {
+            "text": "Knowledge Base",
+            "href": "https://taasflow.com/knowledge-base"
+          },
+          {
+            "text": "Contact us",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Privacy Policy",
+            "href": "https://taasflow.com/privacy"
+          },
+          {
+            "text": "Terms of Service",
+            "href": "https://taasflow.com/terms"
+          }
+        ],
+        "images": [
+          {
+            "src": "https://taasflow.com/assets/logo-on-white-Dk9DIcMP.png",
+            "alt": "TaaSFlow logo"
+          },
+          {
+            "src": "https://taasflow.com/assets/logo-on-blue-CX6jlwjg.png",
+            "alt": "TaaSFlow logo"
+          }
+        ],
+        "forms": [
+          {
+            "action": "https://taasflow.com/privacy",
+            "fields": [
+              "input"
+            ]
+          }
+        ],
+        "navLinks": [
+          "Browse jobs",
+          "Join the network",
+          "Browse open roles",
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us"
+        ],
+        "footerLinks": [
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "Privacy Policy",
+          "Terms of Service"
+        ],
+        "horizontalOverflow": false,
+        "documentWidth": 375,
+        "viewportWidth": 375
+      },
+      "destination": {
+        "url": "https://clear-path-hubs.lovable.app/privacy",
+        "finalUrl": "https://clear-path-hubs.lovable.app/privacy",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [],
+        "title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+        "description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+        "canonical": "https://clear-path-hubs.lovable.app/privacy",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "twitter:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "og:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "og:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "og:url": "https://clear-path-hubs.lovable.app/privacy",
+          "og:type": "website",
+          "twitter:card": "summary_large_image",
+          "twitter:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "twitter:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages."
+        },
+        "structuredData": [],
+        "h1": [
+          "Global Recruitment Privacy Notice"
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "Global Recruitment Privacy Notice"
+          },
+          {
+            "level": 2,
+            "text": "Global Recruitment Privacy Notice"
+          },
+          {
+            "level": 3,
+            "text": "1. Who We Are"
+          },
+          {
+            "level": 3,
+            "text": "2. Personal Data We Collect"
+          },
+          {
+            "level": 4,
+            "text": "Identification & Contact Information"
+          },
+          {
+            "level": 4,
+            "text": "Professional Information"
+          },
+          {
+            "level": 4,
+            "text": "Recruitment Process Information"
+          },
+          {
+            "level": 4,
+            "text": "Publicly Available Information"
+          },
+          {
+            "level": 4,
+            "text": "Sensitive / Special Category Data (Limited)"
+          },
+          {
+            "level": 3,
+            "text": "3. How We Collect Personal Data"
+          },
+          {
+            "level": 3,
+            "text": "4. Purposes of Processing"
+          },
+          {
+            "level": 3,
+            "text": "5. Legal Bases for Processing"
+          },
+          {
+            "level": 4,
+            "text": "European Union (GDPR)"
+          },
+          {
+            "level": 4,
+            "text": "United States"
+          },
+          {
+            "level": 4,
+            "text": "United Arab Emirates (PDPL)"
+          },
+          {
+            "level": 4,
+            "text": "Brazil (LGPD)"
+          },
+          {
+            "level": 3,
+            "text": "6. Sharing of Personal Data & Sub‑processors"
+          },
+          {
+            "level": 3,
+            "text": "7. International Data Transfers & Safeguards"
+          },
+          {
+            "level": 3,
+            "text": "8. Data Retention & Cross‑Position Matching"
+          },
+          {
+            "level": 4,
+            "text": "Cross‑Position Matching"
+          },
+          {
+            "level": 3,
+            "text": "9. Your Rights"
+          },
+          {
+            "level": 3,
+            "text": "10. AI‑Assisted Sourcing & Scoring"
+          },
+          {
+            "level": 3,
+            "text": "11. Data Security"
+          },
+          {
+            "level": 3,
+            "text": "12. Data Breaches"
+          },
+          {
+            "level": 3,
+            "text": "13. Cookies & Tracking Technologies"
+          },
+          {
+            "level": 4,
+            "text": "Category of Cookies"
+          },
+          {
+            "level": 3,
+            "text": "14. Children's Privacy"
+          },
+          {
+            "level": 3,
+            "text": "15. Updates to This Notice"
+          },
+          {
+            "level": 3,
+            "text": "16. Data Protection Officer (DPO) & Contact"
+          },
+          {
+            "level": 3,
+            "text": "Company"
+          },
+          {
+            "level": 3,
+            "text": "Solutions"
+          },
+          {
+            "level": 3,
+            "text": "Employers"
+          },
+          {
+            "level": 3,
+            "text": "Candidates"
+          },
+          {
+            "level": 3,
+            "text": "Resources"
+          }
+        ],
+        "sections": [
+          "SECTION"
+        ],
+        "textBlocks": [
+          "Solutions",
+          "Industries",
+          "Resources",
+          "About",
+          "Jobs",
+          "Legal",
+          "How TaaSFlow collects, uses, and protects personal data under GDPR, CCPA/CPRA, UAE PDPL, and other global privacy laws.",
+          "Last updated: May 12, 2026",
+          "This Global Recruitment Privacy Notice explains how TaaSFlow (\"TaaSFlow\", \"we\", \"us\", or \"our\") collects, uses, shares, and protects personal data relating to individuals who apply for roles, are sourced, or otherwise interact with us in connection with our recruitment and talent‑sourcing activities (collectively, \"Candidates\").",
+          "This Notice applies to Candidates located in the European Union (EU), United States (US), United Arab Emirates (UAE), and other jurisdictions where we operate or provide services.",
+          "Data Controller: TaaSFlow Website: https://taasflow.com Email: privacy@taasflow.com",
+          "TaaSFlow acts as a data controller for personal data processed in connection with recruitment and sourcing activities. In some client‑engaged searches, we may act as an independent controller or, in limited cases, as a processor on behalf of a client.",
+          "We may collect and process the following categories of personal data:",
+          "Full name",
+          "Email address",
+          "Phone number",
+          "Location (city, country)",
+          "CVs, résumés, cover letters",
+          "Employment history, education, qualifications",
+          "Skills, certifications, languages",
+          "Salary expectations (where voluntarily provided)",
+          "Interview notes and assessments",
+          "References and reference feedback",
+          "Communications with us (emails, messages, calls)",
+          "Professional profiles (e.g., LinkedIn or similar platforms), where permitted by law",
+          "We do not intentionally collect sensitive personal data unless:",
+          "Required by law (e.g., right‑to‑work checks), or",
+          "Voluntarily disclosed by the Candidate",
+          "Where required, such data is handled with enhanced safeguards.",
+          "We collect personal data:",
+          "Directly from Candidates",
+          "From public professional sources",
+          "From referrals",
+          "From clients during mandated recruitment processes",
+          "Through recruitment technology platforms and assessments",
+          "We process Candidate data for the following purposes:",
+          "Talent sourcing and recruitment activities",
+          "Assessing suitability for current or future roles",
+          "Communicating with Candidates",
+          "Presenting candidate profiles to clients (with appropriate safeguards)",
+          "Managing recruitment pipelines and talent pools",
+          "Legal, compliance, and audit purposes",
+          "Improving our recruitment services and operations",
+          "Depending on location, we rely on one or more of the following legal bases:",
+          "Legitimate interests — recruitment and talent matching",
+          "Pre‑contractual steps — requested by the Candidate",
+          "Consent — where required",
+          "Legal obligations — where applicable",
+          "Notice and purpose‑limited processing under applicable state privacy laws (e.g., CCPA/CPRA).",
+          "Consent, legitimate interests, contractual necessity, or legal obligation, as applicable.",
+          "We process data of Brazilian residents in compliance with Lei Geral de Proteção de Dados (LGPD), relying on pre‑contractual steps, legitimate interest, or consent.",
+          "We may share personal data with clients and prospected employers (limited to relevant role‑related data). We also use third‑party service providers (\"Sub‑processors\") to support our platform and operations.",
+          "Sub-processor\nPurpose\nJurisdiction\nSafeguards\nSupabase, Inc.\nBackend, Database & Auth (via Lovable Cloud)\nUSA\nSCCs\nAWS (Amazon Web Services)\nInfrastructure, Storage & Edge Computing\nUSA / Global\nSCCs\nCloudflare, Inc.\nCDN, Security, WAF & Turnstile (Captcha)\nUSA / Global\nSCCs\nGoogle LLC\nAnalytics (GA4), Tag Manager & Web Fonts\nUSA\nSCCs / DPF\nApollo.io (ZenLeads Inc.)\nSourcing, Data Enrichment & B2B Marketing\nUSA\nSCCs\nMicrosoft Corporation\nMicrosoft 365, Productivity & Communications\nUSA / Global\nSCCs\nNetlify, Inc.\nApplication Hosting & Deployment\nUSA\nSCCs\nLocize / Weglot\ni18n Management & Localization Services\nSwitzerland / France\nAdequacy / SCCs\nResend / SendGrid\nTransactional Email & Communications\nUSA\nSCCs",
+          "All sub‑processors are vetted for data security compliance and are prohibited from using your personal data for any purpose other than providing services to us.",
+          "As a global recruitment firm, we transfer personal data to jurisdictions outside your own, primarily to the United States where our core infrastructure (Supabase, AWS, Cloudflare) is hosted.",
+          "To ensure your data remains protected, we implement the following safeguards for all international transfers:",
+          "Standard Contractual Clauses (SCCs): We use the latest European Commission-approved SCCs for transfers to non-adequate countries.",
+          "Data Privacy Framework (DPF): For US-based providers certified under the EU-U.S. DPF and the UK Extension.",
+          "Technical Measures: Including end-to-end encryption in transit (TLS 1.3), encryption at rest (AES-256), and pseudonymization of analytics data.",
+          "An internal Transfer Impact Assessment (TIA) is maintained to document these safeguards and monitor the legal climate of recipient jurisdictions.",
+          "We retain personal data only for as long as necessary to fulfill the purposes for which it was collected, including for the purposes of satisfying any legal, accounting, or reporting requirements. Our typical retention periods include:",
+          "Candidate Profiles: 2 years of inactivity, after which data is deleted or anonymized unless consent is renewed.",
+          "CVs & Artifacts: Purged 90 days after the recruitment process concludes or after last use.",
+          "Job Submissions: Anonymized for statistical purposes 2 years after a position is filled or closed.",
+          "Audit & Security Logs: 12 months for security and compliance monitoring.",
+          "Marketing & Client Data: Duration of the business relationship or until consent is withdrawn.",
+          "By submitting your CV or creating a candidate account, you consent to TaaSFlow retaining your personal data (including your CV, professional history, skills, and contact information) for up to 12 months . During this period, your profile may be considered for other relevant positions that become available within our system, not only the specific role you originally applied for. This allows us to proactively match you with suitable opportunities and maximize your chances of finding the right role.",
+          "You may withdraw your consent or request deletion of your data at any time by contacting privacy@taasflow.com or through the data deletion option in your candidate profile settings.",
+          "After the retention period expires, your data will be anonymised or securely deleted unless you have given renewed consent or an active recruitment process is underway. Candidates may request deletion at any time by contacting privacy@taasflow.com .",
+          "Depending on your location, you may have the right to:",
+          "Access your personal data",
+          "Correct inaccurate data",
+          "Request deletion (\"right to be forgotten\")",
+          "Restrict or object to processing",
+          "Data portability (EU/EEA) — receive your data in a structured, machine-readable format",
+          "Withdraw consent (where applicable)",
+          "Opt‑out of certain data disclosures (US residents)",
+          "Requests can be made by contacting privacy@taasflow.com . We will respond within 30 days.",
+          "Candidates with an account on our platform can export their personal data and request account deletion directly from their profile settings.",
+          "We use AI‑powered technology to assist in candidate sourcing, CV parsing, and role‑fit scoring. These tools analyze candidate data (e.g., skills, experience, qualifications) against role requirements to provide ranked shortlists to our recruiters.",
+          "Important: TaaSFlow does not make final recruitment decisions based solely on automated processing.",
+          "All AI‑generated scores and rankings are subject to human review by our professional recruitment team. You have the right to request a human explanation of any automated assessment or to contest the result.",
+          "We implement appropriate technical and organizational measures to protect personal data, including:",
+          "Role-based access controls and progressive data disclosure",
+          "Encryption in transit (TLS) and at rest",
+          "Private storage buckets with time-limited signed URLs for sensitive documents",
+          "Message redaction to prevent unauthorized contact sharing",
+          "Comprehensive audit logging of data access",
+          "Vendor risk management and incident response procedures",
+          "In the event of a personal data breach, we will notify relevant supervisory authorities within 72 hours (as required by GDPR) and affected individuals without undue delay where the breach is likely to result in a high risk to their rights and freedoms.",
+          "We use cookies and similar technologies to ensure essential functionality, analyze platform usage, and support our marketing activities.",
+          "Essential: Required for core platform functionality (auth, security, sessions). Cannot be disabled.",
+          "Analytics: Google Analytics (anonymized) to understand user behavior and improve performance.",
+          "Marketing: Apollo.io, Retention.com, and Weglot to support sourcing, personalization, and translations.",
+          "Consent: We do not load non-essential cookies or third-party trackers (Analytics, Marketing) until you provide explicit consent through our cookie settings banner. You can change your preferences or withdraw consent at any time using the \"Cookie Preferences\" link in the footer.",
+          "Our services are not directed at individuals under 16. We do not knowingly collect data from children. If you believe we have inadvertently collected data from a minor, please contact us immediately.",
+          "We may update this Privacy Notice periodically. Material changes will be communicated via email or a notice on our website. The latest version will always be available on this page.",
+          "We have appointed a Data Protection Officer to oversee our privacy strategy and ensure compliance with global data protection laws (GDPR, LGPD, etc.).",
+          "TaaSFlow Privacy & Data Protection Team Attn: Data Protection Officer Email: privacy@taasflow.com Address: [Legal Entity Address, if available]",
+          "If you are located in the EEA, UK, or Brazil and are not satisfied with our response, you have the right to lodge a complaint with your local supervisory authority:",
+          "EU/EEA: Your local Data Protection Authority (DPA)",
+          "UK: Information Commissioner's Office (ICO)",
+          "Brazil: Autoridade Nacional de Proteção de Dados (ANPD)",
+          "See also our Terms of Service for the terms governing your use of our platform.",
+          "Internal Review Note: This privacy policy has been updated to reflect the actual sub‑processors and data processing activities identified during the May 2026 security audit. Final wording should be reviewed and approved by legal counsel to ensure alignment with current jurisdiction-specific requirements.",
+          "A live recruiting workspace with ranked, evidence-backed candidate delivery.",
+          "About",
+          "Journey",
+          "Contact",
+          "Solutions",
+          "How it works",
+          "Enterprise",
+          "Employer onboarding",
+          "Staffing partnership",
+          "Start hiring",
+          "Pilot",
+          "Pricing",
+          "Industries",
+          "Client sign in",
+          "Browse jobs",
+          "Talent network",
+          "Candidate success",
+          "Candidate journey",
+          "Candidate sign in",
+          "Resources",
+          "Blog",
+          "Case studies",
+          "Knowledge base",
+          "FAQ",
+          "© 2026 TaaSFlow. All rights reserved."
+        ],
+        "buttons": [
+          "Solutions",
+          "Industries",
+          "Resources",
+          "About"
+        ],
+        "links": [
+          {
+            "text": "Skip to main content",
+            "href": "https://clear-path-hubs.lovable.app/privacy#main"
+          },
+          {
+            "text": "New: transparent role-specific scoring — see how it works.",
+            "href": "https://clear-path-hubs.lovable.app/how-it-works"
+          },
+          {
+            "text": "TaaSFlow",
+            "href": "https://clear-path-hubs.lovable.app/"
+          },
+          {
+            "text": "Jobs",
+            "href": "https://clear-path-hubs.lovable.app/jobs"
+          },
+          {
+            "text": "Sign in",
+            "href": "https://clear-path-hubs.lovable.app/login"
+          },
+          {
+            "text": "Browse jobs",
+            "href": "https://clear-path-hubs.lovable.app/jobs"
+          },
+          {
+            "text": "Start hiring",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "https://taasflow.com",
+            "href": "https://clear-path-hubs.lovable.app/"
+          },
+          {
+            "text": "privacy@taasflow.com",
+            "href": "mailto:privacy@taasflow.com"
+          },
+          {
+            "text": "privacy@taasflow.com",
+            "href": "mailto:privacy@taasflow.com"
+          },
+          {
+            "text": "privacy@taasflow.com",
+            "href": "mailto:privacy@taasflow.com"
+          },
+          {
+            "text": "privacy@taasflow.com",
+            "href": "mailto:privacy@taasflow.com"
+          },
+          {
+            "text": "privacy@taasflow.com",
+            "href": "mailto:privacy@taasflow.com"
+          },
+          {
+            "text": "TaaSFlow",
+            "href": "https://clear-path-hubs.lovable.app/"
+          },
+          {
+            "text": "",
+            "href": "https://www.linkedin.com/company/taasflow"
+          },
+          {
+            "text": "",
+            "href": "mailto:hello@taasflow.com"
+          },
+          {
+            "text": "About",
+            "href": "https://clear-path-hubs.lovable.app/about"
+          },
+          {
+            "text": "Journey",
+            "href": "https://clear-path-hubs.lovable.app/journey"
+          },
+          {
+            "text": "Contact",
+            "href": "https://clear-path-hubs.lovable.app/contact"
+          },
+          {
+            "text": "Solutions",
+            "href": "https://clear-path-hubs.lovable.app/solutions"
+          },
+          {
+            "text": "How it works",
+            "href": "https://clear-path-hubs.lovable.app/how-it-works"
+          },
+          {
+            "text": "Enterprise",
+            "href": "https://clear-path-hubs.lovable.app/enterprise"
+          },
+          {
+            "text": "Employer onboarding",
+            "href": "https://clear-path-hubs.lovable.app/employer-onboarding"
+          },
+          {
+            "text": "Staffing partnership",
+            "href": "https://clear-path-hubs.lovable.app/partnerships/staffing"
+          },
+          {
+            "text": "Start hiring",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "Pilot",
+            "href": "https://clear-path-hubs.lovable.app/pilot"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://clear-path-hubs.lovable.app/pricing"
+          },
+          {
+            "text": "Industries",
+            "href": "https://clear-path-hubs.lovable.app/industries"
+          },
+          {
+            "text": "Client sign in",
+            "href": "https://clear-path-hubs.lovable.app/login"
+          },
+          {
+            "text": "Browse jobs",
+            "href": "https://clear-path-hubs.lovable.app/jobs"
+          },
+          {
+            "text": "Talent network",
+            "href": "https://clear-path-hubs.lovable.app/talent-network"
+          },
+          {
+            "text": "Candidate success",
+            "href": "https://clear-path-hubs.lovable.app/candidate-success"
+          },
+          {
+            "text": "Candidate journey",
+            "href": "https://clear-path-hubs.lovable.app/journey"
+          },
+          {
+            "text": "Candidate sign in",
+            "href": "https://clear-path-hubs.lovable.app/login"
+          },
+          {
+            "text": "Resources",
+            "href": "https://clear-path-hubs.lovable.app/resources"
+          },
+          {
+            "text": "Blog",
+            "href": "https://clear-path-hubs.lovable.app/blog"
+          },
+          {
+            "text": "Case studies",
+            "href": "https://clear-path-hubs.lovable.app/case-studies"
+          },
+          {
+            "text": "Knowledge base",
+            "href": "https://clear-path-hubs.lovable.app/knowledge-base"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://clear-path-hubs.lovable.app/faq"
+          },
+          {
+            "text": "Privacy",
+            "href": "https://clear-path-hubs.lovable.app/privacy"
+          },
+          {
+            "text": "Terms",
+            "href": "https://clear-path-hubs.lovable.app/terms"
+          },
+          {
+            "text": "Sitemap",
+            "href": "https://clear-path-hubs.lovable.app/sitemap.xml"
+          },
+          {
+            "text": "hello@taasflow.com",
+            "href": "mailto:hello@taasflow.com"
+          },
+          {
+            "text": "Edit with",
+            "href": "https://lovable.dev/projects/1dc5ee7e-1294-441c-8288-850e79e443f6?utm_source=lovable-badge"
+          }
+        ],
+        "images": [
+          {
+            "src": "https://clear-path-hubs.lovable.app/assets/logo-on-white-Dk9DIcMP.png",
+            "alt": ""
+          },
+          {
+            "src": "https://clear-path-hubs.lovable.app/assets/logo-on-white-Dk9DIcMP.png",
+            "alt": ""
+          }
+        ],
+        "forms": [],
+        "navLinks": [
+          "TaaSFlow",
+          "Jobs",
+          "Sign in",
+          "Browse jobs",
+          "Start hiring",
+          "Privacy",
+          "Terms",
+          "Sitemap",
+          "hello@taasflow.com"
+        ],
+        "footerLinks": [
+          "TaaSFlow",
+          "About",
+          "Journey",
+          "Contact",
+          "Solutions",
+          "How it works",
+          "Enterprise",
+          "Employer onboarding",
+          "Staffing partnership",
+          "Start hiring",
+          "Pilot",
+          "Pricing",
+          "Industries",
+          "Client sign in",
+          "Browse jobs",
+          "Talent network",
+          "Candidate success",
+          "Candidate journey",
+          "Candidate sign in",
+          "Resources",
+          "Blog",
+          "Case studies",
+          "Knowledge base",
+          "FAQ",
+          "Privacy",
+          "Terms",
+          "Sitemap",
+          "hello@taasflow.com"
+        ],
+        "horizontalOverflow": false,
+        "documentWidth": 375,
+        "viewportWidth": 375
+      },
+      "screenshots": {
+        "sourceFull": "reports/public-parity/screenshots/source/privacy__mobile__full.png",
+        "sourceVisible": "reports/public-parity/screenshots/source/privacy__mobile__visible.png",
+        "destinationFull": "reports/public-parity/screenshots/destination/privacy__mobile__full.png",
+        "destinationVisible": "reports/public-parity/screenshots/destination/privacy__mobile__visible.png"
+      },
+      "differences": [
+        "title: \"Global Recruitment Privacy Notice | TaaSFlow\" vs \"TaaSFlow | Talent as a Service | Subscription Recruiting\"",
+        "meta description mismatch",
+        "heading overlap 3% (1/30)",
+        "section count 21 vs 1",
+        "form count 1 vs 0",
+        "destination images missing alt: 2"
+      ]
+    },
+    {
+      "viewport": "tablet",
+      "source": {
+        "url": "https://taasflow.com/privacy",
+        "finalUrl": "https://taasflow.com/privacy",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [
+          {
+            "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HJ2ECKCNK4&gtm=45je67l1v9245339446za200zd9245339446&_p=1784774034530&gcd=13l3l3l3l1l1&npa=0&_ng=1&dma=0&are=1&cid=1135863664.1784774035&frm=0&ngs=1&pscdl=noapi&rcb=15&sr=768x1024&uaa=x86&uab=64&uafvl=Not-A.Brand%3B24.0.0.0%7CChromium%3B146.0.7680.80&uam=&uamb=0&uap=Windows&uapv=&uaw=0&ul=en-us&_s=1&tag_exp=115616986~115938465~115938468~118395334~118897920~118897930~119896803&dp=%2Fprivacy&dt=TaaSFlow%20%7C%20Talent%20as%20a%20Service%20%7C%20Subscription%20Recruiting&dl=https%3A%2F%2Ftaasflow.com%2Fprivacy&sid=1784774034&sct=1&seg=0&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&ep.role_type=public&ep.is_authenticated=false&tfd=662",
+            "status": null,
+            "failure": "net::ERR_ABORTED"
+          }
+        ],
+        "title": "Global Recruitment Privacy Notice | TaaSFlow",
+        "description": "How TaaSFlow collects, uses, and protects personal data under GDPR, CCPA/CPRA, UAE PDPL, and other global privacy laws.",
+        "canonical": "https://taasflow.com/privacy",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:type": "website",
+          "og:url": "https://taasflow.com/privacy",
+          "og:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "og:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "og:image": "https://taasflow.com/og-image.png",
+          "og:image:width": "1200",
+          "og:image:height": "630",
+          "og:locale": "en_US",
+          "twitter:card": "summary_large_image",
+          "twitter:site": "@TaasFlow",
+          "twitter:creator": "@TaasFlow",
+          "twitter:url": "https://taasflow.com/privacy",
+          "twitter:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "twitter:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "twitter:image": "https://taasflow.com/og-image.png"
+        },
+        "structuredData": [
+          {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "@id": "https://taasflow.com/#organization",
+            "name": "TaaSFlow",
+            "legalName": "TaaSFlow",
+            "url": "https://taasflow.com/",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://taasflow.com/favicon.png",
+              "width": 512,
+              "height": 512
+            },
+            "image": "https://taasflow.com/og-image.png",
+            "description": "Talent as a Service — subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+            "slogan": "Your hiring team. On demand.",
+            "foundingDate": "2024",
+            "areaServed": [
+              {
+                "@type": "Country",
+                "name": "United States"
+              },
+              {
+                "@type": "Country",
+                "name": "United Arab Emirates"
+              },
+              {
+                "@type": "Country",
+                "name": "United Kingdom"
+              },
+              {
+                "@type": "Country",
+                "name": "Brazil"
+              }
+            ],
+            "knowsAbout": [
+              "Subscription recruiting",
+              "Talent as a Service",
+              "Candidate sourcing",
+              "Pre-screened candidates",
+              "Recruitment process outsourcing"
+            ],
+            "contactPoint": [
+              {
+                "@type": "ContactPoint",
+                "contactType": "sales",
+                "email": "hello@taasflow.com",
+                "url": "https://taasflow.com/contact",
+                "availableLanguage": [
+                  "English",
+                  "Portuguese",
+                  "Spanish"
+                ]
+              }
+            ],
+            "sameAs": [
+              "https://www.linkedin.com/company/taasflow",
+              "https://twitter.com/TaasFlow"
+            ]
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "@id": "https://taasflow.com/#website",
+            "name": "TaaSFlow",
+            "alternateName": "Talent as a Service",
+            "url": "https://taasflow.com/",
+            "description": "Subscription recruiting that delivers pre-screened, ranked candidates in 14 days.",
+            "inLanguage": "en-US",
+            "publisher": {
+              "@id": "https://taasflow.com/#organization"
+            },
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": {
+                "@type": "EntryPoint",
+                "urlTemplate": "https://taasflow.com/jobs?q={search_term_string}"
+              },
+              "query-input": "required name=search_term_string"
+            }
+          }
+        ],
+        "h1": [
+          "Global Recruitment Privacy Notice"
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "Global Recruitment Privacy Notice"
+          },
+          {
+            "level": 2,
+            "text": "1. Who We Are"
+          },
+          {
+            "level": 2,
+            "text": "2. Personal Data We Collect"
+          },
+          {
+            "level": 3,
+            "text": "Identification & Contact Information"
+          },
+          {
+            "level": 3,
+            "text": "Professional Information"
+          },
+          {
+            "level": 3,
+            "text": "Recruitment Process Information"
+          },
+          {
+            "level": 3,
+            "text": "Publicly Available Information"
+          },
+          {
+            "level": 3,
+            "text": "Sensitive / Special Category Data (Limited)"
+          },
+          {
+            "level": 2,
+            "text": "3. How We Collect Personal Data"
+          },
+          {
+            "level": 2,
+            "text": "4. Purposes of Processing"
+          },
+          {
+            "level": 2,
+            "text": "5. Legal Bases for Processing"
+          },
+          {
+            "level": 3,
+            "text": "European Union (GDPR)"
+          },
+          {
+            "level": 3,
+            "text": "United States"
+          },
+          {
+            "level": 3,
+            "text": "United Arab Emirates (PDPL)"
+          },
+          {
+            "level": 3,
+            "text": "Brazil (LGPD)"
+          },
+          {
+            "level": 2,
+            "text": "6. Sharing of Personal Data & Sub‑processors"
+          },
+          {
+            "level": 2,
+            "text": "7. International Data Transfers & Safeguards"
+          },
+          {
+            "level": 2,
+            "text": "8. Data Retention & Cross‑Position Matching"
+          },
+          {
+            "level": 3,
+            "text": "Cross‑Position Matching"
+          },
+          {
+            "level": 2,
+            "text": "9. Your Rights"
+          },
+          {
+            "level": 2,
+            "text": "10. AI‑Assisted Sourcing & Scoring"
+          },
+          {
+            "level": 2,
+            "text": "11. Data Security"
+          },
+          {
+            "level": 2,
+            "text": "12. Data Breaches"
+          },
+          {
+            "level": 2,
+            "text": "13. Cookies & Tracking Technologies"
+          },
+          {
+            "level": 3,
+            "text": "Category of Cookies"
+          },
+          {
+            "level": 2,
+            "text": "14. Children's Privacy"
+          },
+          {
+            "level": 2,
+            "text": "15. Updates to This Notice"
+          },
+          {
+            "level": 2,
+            "text": "16. Data Protection Officer (DPO) & Contact"
+          },
+          {
+            "level": 4,
+            "text": "Newsletter"
+          },
+          {
+            "level": 4,
+            "text": "For candidates"
+          },
+          {
+            "level": 4,
+            "text": "For companies"
+          },
+          {
+            "level": 4,
+            "text": "Industries"
+          },
+          {
+            "level": 4,
+            "text": "Company"
+          }
+        ],
+        "sections": [
+          "SECTION",
+          "Global Recruitment Privacy Notice",
+          "SECTION",
+          "1. Who We Are",
+          "2. Personal Data We Collect",
+          "3. How We Collect Personal Data",
+          "4. Purposes of Processing",
+          "5. Legal Bases for Processing",
+          "6. Sharing of Personal Data & Sub‑processors",
+          "7. International Data Transfers & Safeguards",
+          "8. Data Retention & Cross‑Position Matching",
+          "9. Your Rights",
+          "10. AI‑Assisted Sourcing & Scoring",
+          "11. Data Security",
+          "12. Data Breaches",
+          "13. Cookies & Tracking Technologies",
+          "14. Children's Privacy",
+          "15. Updates to This Notice",
+          "16. Data Protection Officer (DPO) & Contact",
+          "SECTION",
+          "SECTION"
+        ],
+        "textBlocks": [
+          "Solutions",
+          "Industries",
+          "Resources",
+          "Last updated: May 12, 2026",
+          "This Global Recruitment Privacy Notice explains how TaaSFlow (\"TaaSFlow\", \"we\", \"us\", or \"our\") collects, uses, shares, and protects personal data relating to individuals who apply for roles, are sourced, or otherwise interact with us in connection with our recruitment and talent‑sourcing activities (collectively, \"Candidates\").",
+          "This Notice applies to Candidates located in the European Union (EU), United States (US), United Arab Emirates (UAE), and other jurisdictions where we operate or provide services.",
+          "Data Controller:TaaSFlowWebsite: https://taasflow.comEmail: privacy@taasflow.com",
+          "TaaSFlow acts as a data controller for personal data processed in connection with recruitment and sourcing activities. In some client‑engaged searches, we may act as an independent controller or, in limited cases, as a processor on behalf of a client.",
+          "We may collect and process the following categories of personal data:",
+          "Full name",
+          "Email address",
+          "Phone number",
+          "Location (city, country)",
+          "CVs, résumés, cover letters",
+          "Employment history, education, qualifications",
+          "Skills, certifications, languages",
+          "Salary expectations (where voluntarily provided)",
+          "Interview notes and assessments",
+          "References and reference feedback",
+          "Communications with us (emails, messages, calls)",
+          "Professional profiles (e.g., LinkedIn or similar platforms), where permitted by law",
+          "We do not intentionally collect sensitive personal data unless:",
+          "Required by law (e.g., right‑to‑work checks), or",
+          "Voluntarily disclosed by the Candidate",
+          "Where required, such data is handled with enhanced safeguards.",
+          "We collect personal data:",
+          "Directly from Candidates",
+          "From public professional sources",
+          "From referrals",
+          "From clients during mandated recruitment processes",
+          "Through recruitment technology platforms and assessments",
+          "We process Candidate data for the following purposes:",
+          "Talent sourcing and recruitment activities",
+          "Assessing suitability for current or future roles",
+          "Communicating with Candidates",
+          "Presenting candidate profiles to clients (with appropriate safeguards)",
+          "Managing recruitment pipelines and talent pools",
+          "Legal, compliance, and audit purposes",
+          "Improving our recruitment services and operations",
+          "Depending on location, we rely on one or more of the following legal bases:",
+          "Legitimate interests — recruitment and talent matching",
+          "Pre‑contractual steps — requested by the Candidate",
+          "Consent — where required",
+          "Legal obligations — where applicable",
+          "Notice and purpose‑limited processing under applicable state privacy laws (e.g., CCPA/CPRA).",
+          "Consent, legitimate interests, contractual necessity, or legal obligation, as applicable.",
+          "We process data of Brazilian residents in compliance with Lei Geral de Proteção de Dados (LGPD), relying on pre‑contractual steps, legitimate interest, or consent.",
+          "We may share personal data with clients and prospected employers (limited to relevant role‑related data). We also use third‑party service providers (\"Sub‑processors\") to support our platform and operations.",
+          "All sub‑processors are vetted for data security compliance and are prohibited from using your personal data for any purpose other than providing services to us.",
+          "As a global recruitment firm, we transfer personal data to jurisdictions outside your own, primarily to the United States where our core infrastructure (Supabase, AWS, Cloudflare) is hosted.",
+          "To ensure your data remains protected, we implement the following safeguards for all international transfers:",
+          "Standard Contractual Clauses (SCCs): We use the latest European Commission-approved SCCs for transfers to non-adequate countries.",
+          "Data Privacy Framework (DPF): For US-based providers certified under the EU-U.S. DPF and the UK Extension.",
+          "Technical Measures: Including end-to-end encryption in transit (TLS 1.3), encryption at rest (AES-256), and pseudonymization of analytics data.",
+          "An internal Transfer Impact Assessment (TIA) is maintained to document these safeguards and monitor the legal climate of recipient jurisdictions.",
+          "We retain personal data only for as long as necessary to fulfill the purposes for which it was collected, including for the purposes of satisfying any legal, accounting, or reporting requirements. Our typical retention periods include:",
+          "Candidate Profiles: 2 years of inactivity, after which data is deleted or anonymized unless consent is renewed.",
+          "CVs & Artifacts: Purged 90 days after the recruitment process concludes or after last use.",
+          "Job Submissions: Anonymized for statistical purposes 2 years after a position is filled or closed.",
+          "Audit & Security Logs: 12 months for security and compliance monitoring.",
+          "Marketing & Client Data: Duration of the business relationship or until consent is withdrawn.",
+          "By submitting your CV or creating a candidate account, you consent to TaaSFlow retaining your personal data (including your CV, professional history, skills, and contact information) for up to 12 months. During this period, your profile may be considered for other relevant positions that become available within our system, not only the specific role you originally applied for. This allows us to proactively match you with suitable opportunities and maximize your chances of finding the right role.",
+          "You may withdraw your consent or request deletion of your data at any time by contacting privacy@taasflow.com or through the data deletion option in your candidate profile settings.",
+          "After the retention period expires, your data will be anonymised or securely deleted unless you have given renewed consent or an active recruitment process is underway. Candidates may request deletion at any time by contacting privacy@taasflow.com.",
+          "Depending on your location, you may have the right to:",
+          "Access your personal data",
+          "Correct inaccurate data",
+          "Request deletion (\"right to be forgotten\")",
+          "Restrict or object to processing",
+          "Data portability (EU/EEA) — receive your data in a structured, machine-readable format",
+          "Withdraw consent (where applicable)",
+          "Opt‑out of certain data disclosures (US residents)",
+          "Requests can be made by contacting privacy@taasflow.com. We will respond within 30 days.",
+          "Candidates with an account on our platform can export their personal data and request account deletion directly from their profile settings.",
+          "We use AI‑powered technology to assist in candidate sourcing, CV parsing, and role‑fit scoring. These tools analyze candidate data (e.g., skills, experience, qualifications) against role requirements to provide ranked shortlists to our recruiters.",
+          "Important: TaaSFlow does not make final recruitment decisions based solely on automated processing.",
+          "All AI‑generated scores and rankings are subject to human review by our professional recruitment team. You have the right to request a human explanation of any automated assessment or to contest the result.",
+          "We implement appropriate technical and organizational measures to protect personal data, including:",
+          "Role-based access controls and progressive data disclosure",
+          "Encryption in transit (TLS) and at rest",
+          "Private storage buckets with time-limited signed URLs for sensitive documents",
+          "Message redaction to prevent unauthorized contact sharing",
+          "Comprehensive audit logging of data access",
+          "Vendor risk management and incident response procedures",
+          "In the event of a personal data breach, we will notify relevant supervisory authorities within 72 hours (as required by GDPR) and affected individuals without undue delay where the breach is likely to result in a high risk to their rights and freedoms.",
+          "We use cookies and similar technologies to ensure essential functionality, analyze platform usage, and support our marketing activities.",
+          "Essential: Required for core platform functionality (auth, security, sessions). Cannot be disabled.",
+          "Analytics: Google Analytics (anonymized) to understand user behavior and improve performance.",
+          "Marketing: Apollo.io, Retention.com, and Weglot to support sourcing, personalization, and translations.",
+          "Consent: We do not load non-essential cookies or third-party trackers (Analytics, Marketing) until you provide explicit consent through our cookie settings banner. You can change your preferences or withdraw consent at any time using the \"Cookie Preferences\" link in the footer.",
+          "Our services are not directed at individuals under 16. We do not knowingly collect data from children. If you believe we have inadvertently collected data from a minor, please contact us immediately.",
+          "We may update this Privacy Notice periodically. Material changes will be communicated via email or a notice on our website. The latest version will always be available on this page.",
+          "We have appointed a Data Protection Officer to oversee our privacy strategy and ensure compliance with global data protection laws (GDPR, LGPD, etc.).",
+          "TaaSFlow Privacy & Data Protection TeamAttn: Data Protection OfficerEmail: privacy@taasflow.comAddress: [Legal Entity Address, if available]",
+          "If you are located in the EEA, UK, or Brazil and are not satisfied with our response, you have the right to lodge a complaint with your local supervisory authority:",
+          "EU/EEA: Your local Data Protection Authority (DPA)",
+          "UK: Information Commissioner's Office (ICO)",
+          "Brazil: Autoridade Nacional de Proteção de Dados (ANPD)",
+          "See also our Terms of Service for the terms governing your use of our platform.",
+          "Internal Review Note: This privacy policy has been updated to reflect the actual sub‑processors and data processing activities identified during the May 2026 security audit. Final wording should be reviewed and approved by legal counsel to ensure alignment with current jurisdiction-specific requirements.",
+          "Talent as a Service",
+          "A global hiring system for teams that need consistent recruiting.",
+          "Weekly insights into talent acquisition. No spam.",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Book call",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "No recruitment agency fees. No placement charges. Subscription-based hiring system.",
+          "Copyright 2026 TaaSFlow. All rights reserved."
+        ],
+        "buttons": [
+          "Solutions",
+          "Industries",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Solutions",
+          "How it works",
+          "Pilot",
+          "Enterprise",
+          "Case studies",
+          "Jobs",
+          "Journey",
+          "Industries",
+          "Tech",
+          "SaaS & Cloud",
+          "Cybersecurity",
+          "Data & Analytics",
+          "Finance",
+          "Insurance",
+          "PE & VC",
+          "Accounting",
+          "Legal",
+          "Consulting",
+          "HR & Recruiting",
+          "Staffing Agencies",
+          "Sales",
+          "Marketing",
+          "E-commerce",
+          "Media",
+          "Real Estate",
+          "Construction",
+          "Hospitality",
+          "Healthcare",
+          "Public Sector",
+          "Non-Profit",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Success Stories",
+          "Talent Marketplace",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Subscribe",
+          "Book call",
+          "Cookie preferences"
+        ],
+        "links": [
+          {
+            "text": "Skip to main content",
+            "href": "https://taasflow.com/privacy#main-content"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "Browse jobs",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Join the network",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Browse open roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "https://taasflow.com",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "privacy@taasflow.com",
+            "href": "mailto:privacy@taasflow.com"
+          },
+          {
+            "text": "privacy@taasflow.com",
+            "href": "mailto:privacy@taasflow.com"
+          },
+          {
+            "text": "privacy@taasflow.com",
+            "href": "mailto:privacy@taasflow.com"
+          },
+          {
+            "text": "privacy@taasflow.com",
+            "href": "mailto:privacy@taasflow.com"
+          },
+          {
+            "text": "privacy@taasflow.com",
+            "href": "mailto:privacy@taasflow.com"
+          },
+          {
+            "text": "Terms of Service",
+            "href": "https://taasflow.com/terms"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "LinkedIn",
+            "href": "https://www.linkedin.com/company/taasflow/"
+          },
+          {
+            "text": "Browse roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Talent network",
+            "href": "https://taasflow.com/global-talent"
+          },
+          {
+            "text": "Member stories",
+            "href": "https://taasflow.com/candidate-success"
+          },
+          {
+            "text": "Start pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "Employer onboarding",
+            "href": "https://taasflow.com/employer-onboarding"
+          },
+          {
+            "text": "Case studies",
+            "href": "https://taasflow.com/case-studies"
+          },
+          {
+            "text": "Healthcare",
+            "href": "https://taasflow.com/industries/healthcare"
+          },
+          {
+            "text": "Technology",
+            "href": "https://taasflow.com/industries/tech"
+          },
+          {
+            "text": "Finance",
+            "href": "https://taasflow.com/industries/finance"
+          },
+          {
+            "text": "Legal",
+            "href": "https://taasflow.com/industries/legal"
+          },
+          {
+            "text": "All →",
+            "href": "https://taasflow.com/industries"
+          },
+          {
+            "text": "About us",
+            "href": "https://taasflow.com/about"
+          },
+          {
+            "text": "Blog",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://taasflow.com/faq"
+          },
+          {
+            "text": "Knowledge Base",
+            "href": "https://taasflow.com/knowledge-base"
+          },
+          {
+            "text": "Contact us",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Privacy Policy",
+            "href": "https://taasflow.com/privacy"
+          },
+          {
+            "text": "Terms of Service",
+            "href": "https://taasflow.com/terms"
+          }
+        ],
+        "images": [
+          {
+            "src": "https://taasflow.com/assets/logo-on-white-Dk9DIcMP.png",
+            "alt": "TaaSFlow logo"
+          },
+          {
+            "src": "https://taasflow.com/assets/logo-on-blue-CX6jlwjg.png",
+            "alt": "TaaSFlow logo"
+          }
+        ],
+        "forms": [
+          {
+            "action": "https://taasflow.com/privacy",
+            "fields": [
+              "input"
+            ]
+          }
+        ],
+        "navLinks": [
+          "Browse jobs",
+          "Join the network",
+          "Browse open roles",
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us"
+        ],
+        "footerLinks": [
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "Privacy Policy",
+          "Terms of Service"
+        ],
+        "horizontalOverflow": false,
+        "documentWidth": 768,
+        "viewportWidth": 768
+      },
+      "destination": {
+        "url": "https://clear-path-hubs.lovable.app/privacy",
+        "finalUrl": "https://clear-path-hubs.lovable.app/privacy",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [],
+        "title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+        "description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+        "canonical": "https://clear-path-hubs.lovable.app/privacy",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "twitter:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "og:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "og:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "og:url": "https://clear-path-hubs.lovable.app/privacy",
+          "og:type": "website",
+          "twitter:card": "summary_large_image",
+          "twitter:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "twitter:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages."
+        },
+        "structuredData": [],
+        "h1": [
+          "Global Recruitment Privacy Notice"
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "Global Recruitment Privacy Notice"
+          },
+          {
+            "level": 2,
+            "text": "Global Recruitment Privacy Notice"
+          },
+          {
+            "level": 3,
+            "text": "1. Who We Are"
+          },
+          {
+            "level": 3,
+            "text": "2. Personal Data We Collect"
+          },
+          {
+            "level": 4,
+            "text": "Identification & Contact Information"
+          },
+          {
+            "level": 4,
+            "text": "Professional Information"
+          },
+          {
+            "level": 4,
+            "text": "Recruitment Process Information"
+          },
+          {
+            "level": 4,
+            "text": "Publicly Available Information"
+          },
+          {
+            "level": 4,
+            "text": "Sensitive / Special Category Data (Limited)"
+          },
+          {
+            "level": 3,
+            "text": "3. How We Collect Personal Data"
+          },
+          {
+            "level": 3,
+            "text": "4. Purposes of Processing"
+          },
+          {
+            "level": 3,
+            "text": "5. Legal Bases for Processing"
+          },
+          {
+            "level": 4,
+            "text": "European Union (GDPR)"
+          },
+          {
+            "level": 4,
+            "text": "United States"
+          },
+          {
+            "level": 4,
+            "text": "United Arab Emirates (PDPL)"
+          },
+          {
+            "level": 4,
+            "text": "Brazil (LGPD)"
+          },
+          {
+            "level": 3,
+            "text": "6. Sharing of Personal Data & Sub‑processors"
+          },
+          {
+            "level": 3,
+            "text": "7. International Data Transfers & Safeguards"
+          },
+          {
+            "level": 3,
+            "text": "8. Data Retention & Cross‑Position Matching"
+          },
+          {
+            "level": 4,
+            "text": "Cross‑Position Matching"
+          },
+          {
+            "level": 3,
+            "text": "9. Your Rights"
+          },
+          {
+            "level": 3,
+            "text": "10. AI‑Assisted Sourcing & Scoring"
+          },
+          {
+            "level": 3,
+            "text": "11. Data Security"
+          },
+          {
+            "level": 3,
+            "text": "12. Data Breaches"
+          },
+          {
+            "level": 3,
+            "text": "13. Cookies & Tracking Technologies"
+          },
+          {
+            "level": 4,
+            "text": "Category of Cookies"
+          },
+          {
+            "level": 3,
+            "text": "14. Children's Privacy"
+          },
+          {
+            "level": 3,
+            "text": "15. Updates to This Notice"
+          },
+          {
+            "level": 3,
+            "text": "16. Data Protection Officer (DPO) & Contact"
+          },
+          {
+            "level": 3,
+            "text": "Company"
+          },
+          {
+            "level": 3,
+            "text": "Solutions"
+          },
+          {
+            "level": 3,
+            "text": "Employers"
+          },
+          {
+            "level": 3,
+            "text": "Candidates"
+          },
+          {
+            "level": 3,
+            "text": "Resources"
+          }
+        ],
+        "sections": [
+          "SECTION"
+        ],
+        "textBlocks": [
+          "Solutions",
+          "Industries",
+          "Resources",
+          "About",
+          "Jobs",
+          "Legal",
+          "How TaaSFlow collects, uses, and protects personal data under GDPR, CCPA/CPRA, UAE PDPL, and other global privacy laws.",
+          "Last updated: May 12, 2026",
+          "This Global Recruitment Privacy Notice explains how TaaSFlow (\"TaaSFlow\", \"we\", \"us\", or \"our\") collects, uses, shares, and protects personal data relating to individuals who apply for roles, are sourced, or otherwise interact with us in connection with our recruitment and talent‑sourcing activities (collectively, \"Candidates\").",
+          "This Notice applies to Candidates located in the European Union (EU), United States (US), United Arab Emirates (UAE), and other jurisdictions where we operate or provide services.",
+          "Data Controller: TaaSFlow Website: https://taasflow.com Email: privacy@taasflow.com",
+          "TaaSFlow acts as a data controller for personal data processed in connection with recruitment and sourcing activities. In some client‑engaged searches, we may act as an independent controller or, in limited cases, as a processor on behalf of a client.",
+          "We may collect and process the following categories of personal data:",
+          "Full name",
+          "Email address",
+          "Phone number",
+          "Location (city, country)",
+          "CVs, résumés, cover letters",
+          "Employment history, education, qualifications",
+          "Skills, certifications, languages",
+          "Salary expectations (where voluntarily provided)",
+          "Interview notes and assessments",
+          "References and reference feedback",
+          "Communications with us (emails, messages, calls)",
+          "Professional profiles (e.g., LinkedIn or similar platforms), where permitted by law",
+          "We do not intentionally collect sensitive personal data unless:",
+          "Required by law (e.g., right‑to‑work checks), or",
+          "Voluntarily disclosed by the Candidate",
+          "Where required, such data is handled with enhanced safeguards.",
+          "We collect personal data:",
+          "Directly from Candidates",
+          "From public professional sources",
+          "From referrals",
+          "From clients during mandated recruitment processes",
+          "Through recruitment technology platforms and assessments",
+          "We process Candidate data for the following purposes:",
+          "Talent sourcing and recruitment activities",
+          "Assessing suitability for current or future roles",
+          "Communicating with Candidates",
+          "Presenting candidate profiles to clients (with appropriate safeguards)",
+          "Managing recruitment pipelines and talent pools",
+          "Legal, compliance, and audit purposes",
+          "Improving our recruitment services and operations",
+          "Depending on location, we rely on one or more of the following legal bases:",
+          "Legitimate interests — recruitment and talent matching",
+          "Pre‑contractual steps — requested by the Candidate",
+          "Consent — where required",
+          "Legal obligations — where applicable",
+          "Notice and purpose‑limited processing under applicable state privacy laws (e.g., CCPA/CPRA).",
+          "Consent, legitimate interests, contractual necessity, or legal obligation, as applicable.",
+          "We process data of Brazilian residents in compliance with Lei Geral de Proteção de Dados (LGPD), relying on pre‑contractual steps, legitimate interest, or consent.",
+          "We may share personal data with clients and prospected employers (limited to relevant role‑related data). We also use third‑party service providers (\"Sub‑processors\") to support our platform and operations.",
+          "Sub-processor\nPurpose\nJurisdiction\nSafeguards\nSupabase, Inc.\nBackend, Database & Auth (via Lovable Cloud)\nUSA\nSCCs\nAWS (Amazon Web Services)\nInfrastructure, Storage & Edge Computing\nUSA / Global\nSCCs\nCloudflare, Inc.\nCDN, Security, WAF & Turnstile (Captcha)\nUSA / Global\nSCCs\nGoogle LLC\nAnalytics (GA4), Tag Manager & Web Fonts\nUSA\nSCCs / DPF\nApollo.io (ZenLeads Inc.)\nSourcing, Data Enrichment & B2B Marketing\nUSA\nSCCs\nMicrosoft Corporation\nMicrosoft 365, Productivity & Communications\nUSA / Global\nSCCs\nNetlify, Inc.\nApplication Hosting & Deployment\nUSA\nSCCs\nLocize / Weglot\ni18n Management & Localization Services\nSwitzerland / France\nAdequacy / SCCs\nResend / SendGrid\nTransactional Email & Communications\nUSA\nSCCs",
+          "All sub‑processors are vetted for data security compliance and are prohibited from using your personal data for any purpose other than providing services to us.",
+          "As a global recruitment firm, we transfer personal data to jurisdictions outside your own, primarily to the United States where our core infrastructure (Supabase, AWS, Cloudflare) is hosted.",
+          "To ensure your data remains protected, we implement the following safeguards for all international transfers:",
+          "Standard Contractual Clauses (SCCs): We use the latest European Commission-approved SCCs for transfers to non-adequate countries.",
+          "Data Privacy Framework (DPF): For US-based providers certified under the EU-U.S. DPF and the UK Extension.",
+          "Technical Measures: Including end-to-end encryption in transit (TLS 1.3), encryption at rest (AES-256), and pseudonymization of analytics data.",
+          "An internal Transfer Impact Assessment (TIA) is maintained to document these safeguards and monitor the legal climate of recipient jurisdictions.",
+          "We retain personal data only for as long as necessary to fulfill the purposes for which it was collected, including for the purposes of satisfying any legal, accounting, or reporting requirements. Our typical retention periods include:",
+          "Candidate Profiles: 2 years of inactivity, after which data is deleted or anonymized unless consent is renewed.",
+          "CVs & Artifacts: Purged 90 days after the recruitment process concludes or after last use.",
+          "Job Submissions: Anonymized for statistical purposes 2 years after a position is filled or closed.",
+          "Audit & Security Logs: 12 months for security and compliance monitoring.",
+          "Marketing & Client Data: Duration of the business relationship or until consent is withdrawn.",
+          "By submitting your CV or creating a candidate account, you consent to TaaSFlow retaining your personal data (including your CV, professional history, skills, and contact information) for up to 12 months . During this period, your profile may be considered for other relevant positions that become available within our system, not only the specific role you originally applied for. This allows us to proactively match you with suitable opportunities and maximize your chances of finding the right role.",
+          "You may withdraw your consent or request deletion of your data at any time by contacting privacy@taasflow.com or through the data deletion option in your candidate profile settings.",
+          "After the retention period expires, your data will be anonymised or securely deleted unless you have given renewed consent or an active recruitment process is underway. Candidates may request deletion at any time by contacting privacy@taasflow.com .",
+          "Depending on your location, you may have the right to:",
+          "Access your personal data",
+          "Correct inaccurate data",
+          "Request deletion (\"right to be forgotten\")",
+          "Restrict or object to processing",
+          "Data portability (EU/EEA) — receive your data in a structured, machine-readable format",
+          "Withdraw consent (where applicable)",
+          "Opt‑out of certain data disclosures (US residents)",
+          "Requests can be made by contacting privacy@taasflow.com . We will respond within 30 days.",
+          "Candidates with an account on our platform can export their personal data and request account deletion directly from their profile settings.",
+          "We use AI‑powered technology to assist in candidate sourcing, CV parsing, and role‑fit scoring. These tools analyze candidate data (e.g., skills, experience, qualifications) against role requirements to provide ranked shortlists to our recruiters.",
+          "Important: TaaSFlow does not make final recruitment decisions based solely on automated processing.",
+          "All AI‑generated scores and rankings are subject to human review by our professional recruitment team. You have the right to request a human explanation of any automated assessment or to contest the result.",
+          "We implement appropriate technical and organizational measures to protect personal data, including:",
+          "Role-based access controls and progressive data disclosure",
+          "Encryption in transit (TLS) and at rest",
+          "Private storage buckets with time-limited signed URLs for sensitive documents",
+          "Message redaction to prevent unauthorized contact sharing",
+          "Comprehensive audit logging of data access",
+          "Vendor risk management and incident response procedures",
+          "In the event of a personal data breach, we will notify relevant supervisory authorities within 72 hours (as required by GDPR) and affected individuals without undue delay where the breach is likely to result in a high risk to their rights and freedoms.",
+          "We use cookies and similar technologies to ensure essential functionality, analyze platform usage, and support our marketing activities.",
+          "Essential: Required for core platform functionality (auth, security, sessions). Cannot be disabled.",
+          "Analytics: Google Analytics (anonymized) to understand user behavior and improve performance.",
+          "Marketing: Apollo.io, Retention.com, and Weglot to support sourcing, personalization, and translations.",
+          "Consent: We do not load non-essential cookies or third-party trackers (Analytics, Marketing) until you provide explicit consent through our cookie settings banner. You can change your preferences or withdraw consent at any time using the \"Cookie Preferences\" link in the footer.",
+          "Our services are not directed at individuals under 16. We do not knowingly collect data from children. If you believe we have inadvertently collected data from a minor, please contact us immediately.",
+          "We may update this Privacy Notice periodically. Material changes will be communicated via email or a notice on our website. The latest version will always be available on this page.",
+          "We have appointed a Data Protection Officer to oversee our privacy strategy and ensure compliance with global data protection laws (GDPR, LGPD, etc.).",
+          "TaaSFlow Privacy & Data Protection Team Attn: Data Protection Officer Email: privacy@taasflow.com Address: [Legal Entity Address, if available]",
+          "If you are located in the EEA, UK, or Brazil and are not satisfied with our response, you have the right to lodge a complaint with your local supervisory authority:",
+          "EU/EEA: Your local Data Protection Authority (DPA)",
+          "UK: Information Commissioner's Office (ICO)",
+          "Brazil: Autoridade Nacional de Proteção de Dados (ANPD)",
+          "See also our Terms of Service for the terms governing your use of our platform.",
+          "Internal Review Note: This privacy policy has been updated to reflect the actual sub‑processors and data processing activities identified during the May 2026 security audit. Final wording should be reviewed and approved by legal counsel to ensure alignment with current jurisdiction-specific requirements.",
+          "A live recruiting workspace with ranked, evidence-backed candidate delivery.",
+          "About",
+          "Journey",
+          "Contact",
+          "Solutions",
+          "How it works",
+          "Enterprise",
+          "Employer onboarding",
+          "Staffing partnership",
+          "Start hiring",
+          "Pilot",
+          "Pricing",
+          "Industries",
+          "Client sign in",
+          "Browse jobs",
+          "Talent network",
+          "Candidate success",
+          "Candidate journey",
+          "Candidate sign in",
+          "Resources",
+          "Blog",
+          "Case studies",
+          "Knowledge base",
+          "FAQ",
+          "© 2026 TaaSFlow. All rights reserved."
+        ],
+        "buttons": [
+          "Solutions",
+          "Industries",
+          "Resources",
+          "About"
+        ],
+        "links": [
+          {
+            "text": "Skip to main content",
+            "href": "https://clear-path-hubs.lovable.app/privacy#main"
+          },
+          {
+            "text": "New: transparent role-specific scoring — see how it works.",
+            "href": "https://clear-path-hubs.lovable.app/how-it-works"
+          },
+          {
+            "text": "TaaSFlow",
+            "href": "https://clear-path-hubs.lovable.app/"
+          },
+          {
+            "text": "Jobs",
+            "href": "https://clear-path-hubs.lovable.app/jobs"
+          },
+          {
+            "text": "Sign in",
+            "href": "https://clear-path-hubs.lovable.app/login"
+          },
+          {
+            "text": "Browse jobs",
+            "href": "https://clear-path-hubs.lovable.app/jobs"
+          },
+          {
+            "text": "Start hiring",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "https://taasflow.com",
+            "href": "https://clear-path-hubs.lovable.app/"
+          },
+          {
+            "text": "privacy@taasflow.com",
+            "href": "mailto:privacy@taasflow.com"
+          },
+          {
+            "text": "privacy@taasflow.com",
+            "href": "mailto:privacy@taasflow.com"
+          },
+          {
+            "text": "privacy@taasflow.com",
+            "href": "mailto:privacy@taasflow.com"
+          },
+          {
+            "text": "privacy@taasflow.com",
+            "href": "mailto:privacy@taasflow.com"
+          },
+          {
+            "text": "privacy@taasflow.com",
+            "href": "mailto:privacy@taasflow.com"
+          },
+          {
+            "text": "TaaSFlow",
+            "href": "https://clear-path-hubs.lovable.app/"
+          },
+          {
+            "text": "",
+            "href": "https://www.linkedin.com/company/taasflow"
+          },
+          {
+            "text": "",
+            "href": "mailto:hello@taasflow.com"
+          },
+          {
+            "text": "About",
+            "href": "https://clear-path-hubs.lovable.app/about"
+          },
+          {
+            "text": "Journey",
+            "href": "https://clear-path-hubs.lovable.app/journey"
+          },
+          {
+            "text": "Contact",
+            "href": "https://clear-path-hubs.lovable.app/contact"
+          },
+          {
+            "text": "Solutions",
+            "href": "https://clear-path-hubs.lovable.app/solutions"
+          },
+          {
+            "text": "How it works",
+            "href": "https://clear-path-hubs.lovable.app/how-it-works"
+          },
+          {
+            "text": "Enterprise",
+            "href": "https://clear-path-hubs.lovable.app/enterprise"
+          },
+          {
+            "text": "Employer onboarding",
+            "href": "https://clear-path-hubs.lovable.app/employer-onboarding"
+          },
+          {
+            "text": "Staffing partnership",
+            "href": "https://clear-path-hubs.lovable.app/partnerships/staffing"
+          },
+          {
+            "text": "Start hiring",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "Pilot",
+            "href": "https://clear-path-hubs.lovable.app/pilot"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://clear-path-hubs.lovable.app/pricing"
+          },
+          {
+            "text": "Industries",
+            "href": "https://clear-path-hubs.lovable.app/industries"
+          },
+          {
+            "text": "Client sign in",
+            "href": "https://clear-path-hubs.lovable.app/login"
+          },
+          {
+            "text": "Browse jobs",
+            "href": "https://clear-path-hubs.lovable.app/jobs"
+          },
+          {
+            "text": "Talent network",
+            "href": "https://clear-path-hubs.lovable.app/talent-network"
+          },
+          {
+            "text": "Candidate success",
+            "href": "https://clear-path-hubs.lovable.app/candidate-success"
+          },
+          {
+            "text": "Candidate journey",
+            "href": "https://clear-path-hubs.lovable.app/journey"
+          },
+          {
+            "text": "Candidate sign in",
+            "href": "https://clear-path-hubs.lovable.app/login"
+          },
+          {
+            "text": "Resources",
+            "href": "https://clear-path-hubs.lovable.app/resources"
+          },
+          {
+            "text": "Blog",
+            "href": "https://clear-path-hubs.lovable.app/blog"
+          },
+          {
+            "text": "Case studies",
+            "href": "https://clear-path-hubs.lovable.app/case-studies"
+          },
+          {
+            "text": "Knowledge base",
+            "href": "https://clear-path-hubs.lovable.app/knowledge-base"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://clear-path-hubs.lovable.app/faq"
+          },
+          {
+            "text": "Privacy",
+            "href": "https://clear-path-hubs.lovable.app/privacy"
+          },
+          {
+            "text": "Terms",
+            "href": "https://clear-path-hubs.lovable.app/terms"
+          },
+          {
+            "text": "Sitemap",
+            "href": "https://clear-path-hubs.lovable.app/sitemap.xml"
+          },
+          {
+            "text": "hello@taasflow.com",
+            "href": "mailto:hello@taasflow.com"
+          },
+          {
+            "text": "Edit with",
+            "href": "https://lovable.dev/projects/1dc5ee7e-1294-441c-8288-850e79e443f6?utm_source=lovable-badge"
+          }
+        ],
+        "images": [
+          {
+            "src": "https://clear-path-hubs.lovable.app/assets/logo-on-white-Dk9DIcMP.png",
+            "alt": ""
+          },
+          {
+            "src": "https://clear-path-hubs.lovable.app/assets/logo-on-white-Dk9DIcMP.png",
+            "alt": ""
+          }
+        ],
+        "forms": [],
+        "navLinks": [
+          "TaaSFlow",
+          "Jobs",
+          "Sign in",
+          "Browse jobs",
+          "Start hiring",
+          "Privacy",
+          "Terms",
+          "Sitemap",
+          "hello@taasflow.com"
+        ],
+        "footerLinks": [
+          "TaaSFlow",
+          "About",
+          "Journey",
+          "Contact",
+          "Solutions",
+          "How it works",
+          "Enterprise",
+          "Employer onboarding",
+          "Staffing partnership",
+          "Start hiring",
+          "Pilot",
+          "Pricing",
+          "Industries",
+          "Client sign in",
+          "Browse jobs",
+          "Talent network",
+          "Candidate success",
+          "Candidate journey",
+          "Candidate sign in",
+          "Resources",
+          "Blog",
+          "Case studies",
+          "Knowledge base",
+          "FAQ",
+          "Privacy",
+          "Terms",
+          "Sitemap",
+          "hello@taasflow.com"
+        ],
+        "horizontalOverflow": false,
+        "documentWidth": 768,
+        "viewportWidth": 768
+      },
+      "screenshots": {
+        "sourceFull": "reports/public-parity/screenshots/source/privacy__tablet__full.png",
+        "sourceVisible": "reports/public-parity/screenshots/source/privacy__tablet__visible.png",
+        "destinationFull": "reports/public-parity/screenshots/destination/privacy__tablet__full.png",
+        "destinationVisible": "reports/public-parity/screenshots/destination/privacy__tablet__visible.png"
+      },
+      "differences": [
+        "title: \"Global Recruitment Privacy Notice | TaaSFlow\" vs \"TaaSFlow | Talent as a Service | Subscription Recruiting\"",
+        "meta description mismatch",
+        "heading overlap 3% (1/30)",
+        "section count 21 vs 1",
+        "form count 1 vs 0",
+        "destination images missing alt: 2"
+      ]
+    },
+    {
+      "viewport": "desktop",
+      "source": {
+        "url": "https://taasflow.com/privacy",
+        "finalUrl": "https://taasflow.com/privacy",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [
+          {
+            "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HJ2ECKCNK4&gtm=45je67l1v9245339446za200zd9245339446&_p=1784774036946&gcd=13l3l3l3l1l1&npa=0&_ng=1&dma=0&are=1&cid=356430657.1784774037&frm=0&ngs=1&pscdl=noapi&rcb=19&sr=1440x900&uaa=x86&uab=64&uafvl=Not-A.Brand%3B24.0.0.0%7CChromium%3B146.0.7680.80&uam=&uamb=0&uap=Windows&uapv=&uaw=0&ul=en-us&_s=1&tag_exp=115616986~115938465~115938468~118897920~118897930~119896802&dp=%2Fprivacy&dt=TaaSFlow%20%7C%20Talent%20as%20a%20Service%20%7C%20Subscription%20Recruiting&dl=https%3A%2F%2Ftaasflow.com%2Fprivacy&sid=1784774037&sct=1&seg=0&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&ep.role_type=public&ep.is_authenticated=false&tfd=593",
+            "status": null,
+            "failure": "net::ERR_ABORTED"
+          }
+        ],
+        "title": "Global Recruitment Privacy Notice | TaaSFlow",
+        "description": "How TaaSFlow collects, uses, and protects personal data under GDPR, CCPA/CPRA, UAE PDPL, and other global privacy laws.",
+        "canonical": "https://taasflow.com/privacy",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:type": "website",
+          "og:url": "https://taasflow.com/privacy",
+          "og:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "og:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "og:image": "https://taasflow.com/og-image.png",
+          "og:image:width": "1200",
+          "og:image:height": "630",
+          "og:locale": "en_US",
+          "twitter:card": "summary_large_image",
+          "twitter:site": "@TaasFlow",
+          "twitter:creator": "@TaasFlow",
+          "twitter:url": "https://taasflow.com/privacy",
+          "twitter:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "twitter:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "twitter:image": "https://taasflow.com/og-image.png"
+        },
+        "structuredData": [
+          {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "@id": "https://taasflow.com/#organization",
+            "name": "TaaSFlow",
+            "legalName": "TaaSFlow",
+            "url": "https://taasflow.com/",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://taasflow.com/favicon.png",
+              "width": 512,
+              "height": 512
+            },
+            "image": "https://taasflow.com/og-image.png",
+            "description": "Talent as a Service — subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+            "slogan": "Your hiring team. On demand.",
+            "foundingDate": "2024",
+            "areaServed": [
+              {
+                "@type": "Country",
+                "name": "United States"
+              },
+              {
+                "@type": "Country",
+                "name": "United Arab Emirates"
+              },
+              {
+                "@type": "Country",
+                "name": "United Kingdom"
+              },
+              {
+                "@type": "Country",
+                "name": "Brazil"
+              }
+            ],
+            "knowsAbout": [
+              "Subscription recruiting",
+              "Talent as a Service",
+              "Candidate sourcing",
+              "Pre-screened candidates",
+              "Recruitment process outsourcing"
+            ],
+            "contactPoint": [
+              {
+                "@type": "ContactPoint",
+                "contactType": "sales",
+                "email": "hello@taasflow.com",
+                "url": "https://taasflow.com/contact",
+                "availableLanguage": [
+                  "English",
+                  "Portuguese",
+                  "Spanish"
+                ]
+              }
+            ],
+            "sameAs": [
+              "https://www.linkedin.com/company/taasflow",
+              "https://twitter.com/TaasFlow"
+            ]
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "@id": "https://taasflow.com/#website",
+            "name": "TaaSFlow",
+            "alternateName": "Talent as a Service",
+            "url": "https://taasflow.com/",
+            "description": "Subscription recruiting that delivers pre-screened, ranked candidates in 14 days.",
+            "inLanguage": "en-US",
+            "publisher": {
+              "@id": "https://taasflow.com/#organization"
+            },
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": {
+                "@type": "EntryPoint",
+                "urlTemplate": "https://taasflow.com/jobs?q={search_term_string}"
+              },
+              "query-input": "required name=search_term_string"
+            }
+          }
+        ],
+        "h1": [
+          "Global Recruitment Privacy Notice"
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "Global Recruitment Privacy Notice"
+          },
+          {
+            "level": 2,
+            "text": "1. Who We Are"
+          },
+          {
+            "level": 2,
+            "text": "2. Personal Data We Collect"
+          },
+          {
+            "level": 3,
+            "text": "Identification & Contact Information"
+          },
+          {
+            "level": 3,
+            "text": "Professional Information"
+          },
+          {
+            "level": 3,
+            "text": "Recruitment Process Information"
+          },
+          {
+            "level": 3,
+            "text": "Publicly Available Information"
+          },
+          {
+            "level": 3,
+            "text": "Sensitive / Special Category Data (Limited)"
+          },
+          {
+            "level": 2,
+            "text": "3. How We Collect Personal Data"
+          },
+          {
+            "level": 2,
+            "text": "4. Purposes of Processing"
+          },
+          {
+            "level": 2,
+            "text": "5. Legal Bases for Processing"
+          },
+          {
+            "level": 3,
+            "text": "European Union (GDPR)"
+          },
+          {
+            "level": 3,
+            "text": "United States"
+          },
+          {
+            "level": 3,
+            "text": "United Arab Emirates (PDPL)"
+          },
+          {
+            "level": 3,
+            "text": "Brazil (LGPD)"
+          },
+          {
+            "level": 2,
+            "text": "6. Sharing of Personal Data & Sub‑processors"
+          },
+          {
+            "level": 2,
+            "text": "7. International Data Transfers & Safeguards"
+          },
+          {
+            "level": 2,
+            "text": "8. Data Retention & Cross‑Position Matching"
+          },
+          {
+            "level": 3,
+            "text": "Cross‑Position Matching"
+          },
+          {
+            "level": 2,
+            "text": "9. Your Rights"
+          },
+          {
+            "level": 2,
+            "text": "10. AI‑Assisted Sourcing & Scoring"
+          },
+          {
+            "level": 2,
+            "text": "11. Data Security"
+          },
+          {
+            "level": 2,
+            "text": "12. Data Breaches"
+          },
+          {
+            "level": 2,
+            "text": "13. Cookies & Tracking Technologies"
+          },
+          {
+            "level": 3,
+            "text": "Category of Cookies"
+          },
+          {
+            "level": 2,
+            "text": "14. Children's Privacy"
+          },
+          {
+            "level": 2,
+            "text": "15. Updates to This Notice"
+          },
+          {
+            "level": 2,
+            "text": "16. Data Protection Officer (DPO) & Contact"
+          },
+          {
+            "level": 4,
+            "text": "Newsletter"
+          },
+          {
+            "level": 4,
+            "text": "For candidates"
+          },
+          {
+            "level": 4,
+            "text": "For companies"
+          },
+          {
+            "level": 4,
+            "text": "Industries"
+          },
+          {
+            "level": 4,
+            "text": "Company"
+          }
+        ],
+        "sections": [
+          "SECTION",
+          "Global Recruitment Privacy Notice",
+          "SECTION",
+          "1. Who We Are",
+          "2. Personal Data We Collect",
+          "3. How We Collect Personal Data",
+          "4. Purposes of Processing",
+          "5. Legal Bases for Processing",
+          "6. Sharing of Personal Data & Sub‑processors",
+          "7. International Data Transfers & Safeguards",
+          "8. Data Retention & Cross‑Position Matching",
+          "9. Your Rights",
+          "10. AI‑Assisted Sourcing & Scoring",
+          "11. Data Security",
+          "12. Data Breaches",
+          "13. Cookies & Tracking Technologies",
+          "14. Children's Privacy",
+          "15. Updates to This Notice",
+          "16. Data Protection Officer (DPO) & Contact",
+          "SECTION",
+          "SECTION"
+        ],
+        "textBlocks": [
+          "Solutions",
+          "Industries",
+          "Resources",
+          "Last updated: May 12, 2026",
+          "This Global Recruitment Privacy Notice explains how TaaSFlow (\"TaaSFlow\", \"we\", \"us\", or \"our\") collects, uses, shares, and protects personal data relating to individuals who apply for roles, are sourced, or otherwise interact with us in connection with our recruitment and talent‑sourcing activities (collectively, \"Candidates\").",
+          "This Notice applies to Candidates located in the European Union (EU), United States (US), United Arab Emirates (UAE), and other jurisdictions where we operate or provide services.",
+          "Data Controller:TaaSFlowWebsite: https://taasflow.comEmail: privacy@taasflow.com",
+          "TaaSFlow acts as a data controller for personal data processed in connection with recruitment and sourcing activities. In some client‑engaged searches, we may act as an independent controller or, in limited cases, as a processor on behalf of a client.",
+          "We may collect and process the following categories of personal data:",
+          "Full name",
+          "Email address",
+          "Phone number",
+          "Location (city, country)",
+          "CVs, résumés, cover letters",
+          "Employment history, education, qualifications",
+          "Skills, certifications, languages",
+          "Salary expectations (where voluntarily provided)",
+          "Interview notes and assessments",
+          "References and reference feedback",
+          "Communications with us (emails, messages, calls)",
+          "Professional profiles (e.g., LinkedIn or similar platforms), where permitted by law",
+          "We do not intentionally collect sensitive personal data unless:",
+          "Required by law (e.g., right‑to‑work checks), or",
+          "Voluntarily disclosed by the Candidate",
+          "Where required, such data is handled with enhanced safeguards.",
+          "We collect personal data:",
+          "Directly from Candidates",
+          "From public professional sources",
+          "From referrals",
+          "From clients during mandated recruitment processes",
+          "Through recruitment technology platforms and assessments",
+          "We process Candidate data for the following purposes:",
+          "Talent sourcing and recruitment activities",
+          "Assessing suitability for current or future roles",
+          "Communicating with Candidates",
+          "Presenting candidate profiles to clients (with appropriate safeguards)",
+          "Managing recruitment pipelines and talent pools",
+          "Legal, compliance, and audit purposes",
+          "Improving our recruitment services and operations",
+          "Depending on location, we rely on one or more of the following legal bases:",
+          "Legitimate interests — recruitment and talent matching",
+          "Pre‑contractual steps — requested by the Candidate",
+          "Consent — where required",
+          "Legal obligations — where applicable",
+          "Notice and purpose‑limited processing under applicable state privacy laws (e.g., CCPA/CPRA).",
+          "Consent, legitimate interests, contractual necessity, or legal obligation, as applicable.",
+          "We process data of Brazilian residents in compliance with Lei Geral de Proteção de Dados (LGPD), relying on pre‑contractual steps, legitimate interest, or consent.",
+          "We may share personal data with clients and prospected employers (limited to relevant role‑related data). We also use third‑party service providers (\"Sub‑processors\") to support our platform and operations.",
+          "All sub‑processors are vetted for data security compliance and are prohibited from using your personal data for any purpose other than providing services to us.",
+          "As a global recruitment firm, we transfer personal data to jurisdictions outside your own, primarily to the United States where our core infrastructure (Supabase, AWS, Cloudflare) is hosted.",
+          "To ensure your data remains protected, we implement the following safeguards for all international transfers:",
+          "Standard Contractual Clauses (SCCs): We use the latest European Commission-approved SCCs for transfers to non-adequate countries.",
+          "Data Privacy Framework (DPF): For US-based providers certified under the EU-U.S. DPF and the UK Extension.",
+          "Technical Measures: Including end-to-end encryption in transit (TLS 1.3), encryption at rest (AES-256), and pseudonymization of analytics data.",
+          "An internal Transfer Impact Assessment (TIA) is maintained to document these safeguards and monitor the legal climate of recipient jurisdictions.",
+          "We retain personal data only for as long as necessary to fulfill the purposes for which it was collected, including for the purposes of satisfying any legal, accounting, or reporting requirements. Our typical retention periods include:",
+          "Candidate Profiles: 2 years of inactivity, after which data is deleted or anonymized unless consent is renewed.",
+          "CVs & Artifacts: Purged 90 days after the recruitment process concludes or after last use.",
+          "Job Submissions: Anonymized for statistical purposes 2 years after a position is filled or closed.",
+          "Audit & Security Logs: 12 months for security and compliance monitoring.",
+          "Marketing & Client Data: Duration of the business relationship or until consent is withdrawn.",
+          "By submitting your CV or creating a candidate account, you consent to TaaSFlow retaining your personal data (including your CV, professional history, skills, and contact information) for up to 12 months. During this period, your profile may be considered for other relevant positions that become available within our system, not only the specific role you originally applied for. This allows us to proactively match you with suitable opportunities and maximize your chances of finding the right role.",
+          "You may withdraw your consent or request deletion of your data at any time by contacting privacy@taasflow.com or through the data deletion option in your candidate profile settings.",
+          "After the retention period expires, your data will be anonymised or securely deleted unless you have given renewed consent or an active recruitment process is underway. Candidates may request deletion at any time by contacting privacy@taasflow.com.",
+          "Depending on your location, you may have the right to:",
+          "Access your personal data",
+          "Correct inaccurate data",
+          "Request deletion (\"right to be forgotten\")",
+          "Restrict or object to processing",
+          "Data portability (EU/EEA) — receive your data in a structured, machine-readable format",
+          "Withdraw consent (where applicable)",
+          "Opt‑out of certain data disclosures (US residents)",
+          "Requests can be made by contacting privacy@taasflow.com. We will respond within 30 days.",
+          "Candidates with an account on our platform can export their personal data and request account deletion directly from their profile settings.",
+          "We use AI‑powered technology to assist in candidate sourcing, CV parsing, and role‑fit scoring. These tools analyze candidate data (e.g., skills, experience, qualifications) against role requirements to provide ranked shortlists to our recruiters.",
+          "Important: TaaSFlow does not make final recruitment decisions based solely on automated processing.",
+          "All AI‑generated scores and rankings are subject to human review by our professional recruitment team. You have the right to request a human explanation of any automated assessment or to contest the result.",
+          "We implement appropriate technical and organizational measures to protect personal data, including:",
+          "Role-based access controls and progressive data disclosure",
+          "Encryption in transit (TLS) and at rest",
+          "Private storage buckets with time-limited signed URLs for sensitive documents",
+          "Message redaction to prevent unauthorized contact sharing",
+          "Comprehensive audit logging of data access",
+          "Vendor risk management and incident response procedures",
+          "In the event of a personal data breach, we will notify relevant supervisory authorities within 72 hours (as required by GDPR) and affected individuals without undue delay where the breach is likely to result in a high risk to their rights and freedoms.",
+          "We use cookies and similar technologies to ensure essential functionality, analyze platform usage, and support our marketing activities.",
+          "Essential: Required for core platform functionality (auth, security, sessions). Cannot be disabled.",
+          "Analytics: Google Analytics (anonymized) to understand user behavior and improve performance.",
+          "Marketing: Apollo.io, Retention.com, and Weglot to support sourcing, personalization, and translations.",
+          "Consent: We do not load non-essential cookies or third-party trackers (Analytics, Marketing) until you provide explicit consent through our cookie settings banner. You can change your preferences or withdraw consent at any time using the \"Cookie Preferences\" link in the footer.",
+          "Our services are not directed at individuals under 16. We do not knowingly collect data from children. If you believe we have inadvertently collected data from a minor, please contact us immediately.",
+          "We may update this Privacy Notice periodically. Material changes will be communicated via email or a notice on our website. The latest version will always be available on this page.",
+          "We have appointed a Data Protection Officer to oversee our privacy strategy and ensure compliance with global data protection laws (GDPR, LGPD, etc.).",
+          "TaaSFlow Privacy & Data Protection TeamAttn: Data Protection OfficerEmail: privacy@taasflow.comAddress: [Legal Entity Address, if available]",
+          "If you are located in the EEA, UK, or Brazil and are not satisfied with our response, you have the right to lodge a complaint with your local supervisory authority:",
+          "EU/EEA: Your local Data Protection Authority (DPA)",
+          "UK: Information Commissioner's Office (ICO)",
+          "Brazil: Autoridade Nacional de Proteção de Dados (ANPD)",
+          "See also our Terms of Service for the terms governing your use of our platform.",
+          "Internal Review Note: This privacy policy has been updated to reflect the actual sub‑processors and data processing activities identified during the May 2026 security audit. Final wording should be reviewed and approved by legal counsel to ensure alignment with current jurisdiction-specific requirements.",
+          "Talent as a Service",
+          "A global hiring system for teams that need consistent recruiting.",
+          "Weekly insights into talent acquisition. No spam.",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Book call",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "No recruitment agency fees. No placement charges. Subscription-based hiring system.",
+          "Copyright 2026 TaaSFlow. All rights reserved."
+        ],
+        "buttons": [
+          "Solutions",
+          "Industries",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Solutions",
+          "How it works",
+          "Pilot",
+          "Enterprise",
+          "Case studies",
+          "Jobs",
+          "Journey",
+          "Industries",
+          "Tech",
+          "SaaS & Cloud",
+          "Cybersecurity",
+          "Data & Analytics",
+          "Finance",
+          "Insurance",
+          "PE & VC",
+          "Accounting",
+          "Legal",
+          "Consulting",
+          "HR & Recruiting",
+          "Staffing Agencies",
+          "Sales",
+          "Marketing",
+          "E-commerce",
+          "Media",
+          "Real Estate",
+          "Construction",
+          "Hospitality",
+          "Healthcare",
+          "Public Sector",
+          "Non-Profit",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Success Stories",
+          "Talent Marketplace",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Subscribe",
+          "Book call",
+          "Cookie preferences"
+        ],
+        "links": [
+          {
+            "text": "Skip to main content",
+            "href": "https://taasflow.com/privacy#main-content"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "Browse jobs",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Join the network",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Browse open roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "https://taasflow.com",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "privacy@taasflow.com",
+            "href": "mailto:privacy@taasflow.com"
+          },
+          {
+            "text": "privacy@taasflow.com",
+            "href": "mailto:privacy@taasflow.com"
+          },
+          {
+            "text": "privacy@taasflow.com",
+            "href": "mailto:privacy@taasflow.com"
+          },
+          {
+            "text": "privacy@taasflow.com",
+            "href": "mailto:privacy@taasflow.com"
+          },
+          {
+            "text": "privacy@taasflow.com",
+            "href": "mailto:privacy@taasflow.com"
+          },
+          {
+            "text": "Terms of Service",
+            "href": "https://taasflow.com/terms"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "LinkedIn",
+            "href": "https://www.linkedin.com/company/taasflow/"
+          },
+          {
+            "text": "Browse roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Talent network",
+            "href": "https://taasflow.com/global-talent"
+          },
+          {
+            "text": "Member stories",
+            "href": "https://taasflow.com/candidate-success"
+          },
+          {
+            "text": "Start pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "Employer onboarding",
+            "href": "https://taasflow.com/employer-onboarding"
+          },
+          {
+            "text": "Case studies",
+            "href": "https://taasflow.com/case-studies"
+          },
+          {
+            "text": "Healthcare",
+            "href": "https://taasflow.com/industries/healthcare"
+          },
+          {
+            "text": "Technology",
+            "href": "https://taasflow.com/industries/tech"
+          },
+          {
+            "text": "Finance",
+            "href": "https://taasflow.com/industries/finance"
+          },
+          {
+            "text": "Legal",
+            "href": "https://taasflow.com/industries/legal"
+          },
+          {
+            "text": "All →",
+            "href": "https://taasflow.com/industries"
+          },
+          {
+            "text": "About us",
+            "href": "https://taasflow.com/about"
+          },
+          {
+            "text": "Blog",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://taasflow.com/faq"
+          },
+          {
+            "text": "Knowledge Base",
+            "href": "https://taasflow.com/knowledge-base"
+          },
+          {
+            "text": "Contact us",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Privacy Policy",
+            "href": "https://taasflow.com/privacy"
+          },
+          {
+            "text": "Terms of Service",
+            "href": "https://taasflow.com/terms"
+          }
+        ],
+        "images": [
+          {
+            "src": "https://taasflow.com/assets/logo-on-white-Dk9DIcMP.png",
+            "alt": "TaaSFlow logo"
+          },
+          {
+            "src": "https://taasflow.com/assets/logo-on-blue-CX6jlwjg.png",
+            "alt": "TaaSFlow logo"
+          }
+        ],
+        "forms": [
+          {
+            "action": "https://taasflow.com/privacy",
+            "fields": [
+              "input"
+            ]
+          }
+        ],
+        "navLinks": [
+          "Browse jobs",
+          "Join the network",
+          "Browse open roles",
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us"
+        ],
+        "footerLinks": [
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "Privacy Policy",
+          "Terms of Service"
+        ],
+        "horizontalOverflow": false,
+        "documentWidth": 1440,
+        "viewportWidth": 1440
+      },
+      "destination": {
+        "url": "https://clear-path-hubs.lovable.app/privacy",
+        "finalUrl": "https://clear-path-hubs.lovable.app/privacy",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [],
+        "title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+        "description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+        "canonical": "https://clear-path-hubs.lovable.app/privacy",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "twitter:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "og:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "og:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "og:url": "https://clear-path-hubs.lovable.app/privacy",
+          "og:type": "website",
+          "twitter:card": "summary_large_image",
+          "twitter:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "twitter:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages."
+        },
+        "structuredData": [],
+        "h1": [
+          "Global Recruitment Privacy Notice"
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "Global Recruitment Privacy Notice"
+          },
+          {
+            "level": 2,
+            "text": "Global Recruitment Privacy Notice"
+          },
+          {
+            "level": 3,
+            "text": "1. Who We Are"
+          },
+          {
+            "level": 3,
+            "text": "2. Personal Data We Collect"
+          },
+          {
+            "level": 4,
+            "text": "Identification & Contact Information"
+          },
+          {
+            "level": 4,
+            "text": "Professional Information"
+          },
+          {
+            "level": 4,
+            "text": "Recruitment Process Information"
+          },
+          {
+            "level": 4,
+            "text": "Publicly Available Information"
+          },
+          {
+            "level": 4,
+            "text": "Sensitive / Special Category Data (Limited)"
+          },
+          {
+            "level": 3,
+            "text": "3. How We Collect Personal Data"
+          },
+          {
+            "level": 3,
+            "text": "4. Purposes of Processing"
+          },
+          {
+            "level": 3,
+            "text": "5. Legal Bases for Processing"
+          },
+          {
+            "level": 4,
+            "text": "European Union (GDPR)"
+          },
+          {
+            "level": 4,
+            "text": "United States"
+          },
+          {
+            "level": 4,
+            "text": "United Arab Emirates (PDPL)"
+          },
+          {
+            "level": 4,
+            "text": "Brazil (LGPD)"
+          },
+          {
+            "level": 3,
+            "text": "6. Sharing of Personal Data & Sub‑processors"
+          },
+          {
+            "level": 3,
+            "text": "7. International Data Transfers & Safeguards"
+          },
+          {
+            "level": 3,
+            "text": "8. Data Retention & Cross‑Position Matching"
+          },
+          {
+            "level": 4,
+            "text": "Cross‑Position Matching"
+          },
+          {
+            "level": 3,
+            "text": "9. Your Rights"
+          },
+          {
+            "level": 3,
+            "text": "10. AI‑Assisted Sourcing & Scoring"
+          },
+          {
+            "level": 3,
+            "text": "11. Data Security"
+          },
+          {
+            "level": 3,
+            "text": "12. Data Breaches"
+          },
+          {
+            "level": 3,
+            "text": "13. Cookies & Tracking Technologies"
+          },
+          {
+            "level": 4,
+            "text": "Category of Cookies"
+          },
+          {
+            "level": 3,
+            "text": "14. Children's Privacy"
+          },
+          {
+            "level": 3,
+            "text": "15. Updates to This Notice"
+          },
+          {
+            "level": 3,
+            "text": "16. Data Protection Officer (DPO) & Contact"
+          },
+          {
+            "level": 3,
+            "text": "Company"
+          },
+          {
+            "level": 3,
+            "text": "Solutions"
+          },
+          {
+            "level": 3,
+            "text": "Employers"
+          },
+          {
+            "level": 3,
+            "text": "Candidates"
+          },
+          {
+            "level": 3,
+            "text": "Resources"
+          }
+        ],
+        "sections": [
+          "SECTION"
+        ],
+        "textBlocks": [
+          "Solutions",
+          "Industries",
+          "Resources",
+          "About",
+          "Jobs",
+          "Legal",
+          "How TaaSFlow collects, uses, and protects personal data under GDPR, CCPA/CPRA, UAE PDPL, and other global privacy laws.",
+          "Last updated: May 12, 2026",
+          "This Global Recruitment Privacy Notice explains how TaaSFlow (\"TaaSFlow\", \"we\", \"us\", or \"our\") collects, uses, shares, and protects personal data relating to individuals who apply for roles, are sourced, or otherwise interact with us in connection with our recruitment and talent‑sourcing activities (collectively, \"Candidates\").",
+          "This Notice applies to Candidates located in the European Union (EU), United States (US), United Arab Emirates (UAE), and other jurisdictions where we operate or provide services.",
+          "Data Controller: TaaSFlow Website: https://taasflow.com Email: privacy@taasflow.com",
+          "TaaSFlow acts as a data controller for personal data processed in connection with recruitment and sourcing activities. In some client‑engaged searches, we may act as an independent controller or, in limited cases, as a processor on behalf of a client.",
+          "We may collect and process the following categories of personal data:",
+          "Full name",
+          "Email address",
+          "Phone number",
+          "Location (city, country)",
+          "CVs, résumés, cover letters",
+          "Employment history, education, qualifications",
+          "Skills, certifications, languages",
+          "Salary expectations (where voluntarily provided)",
+          "Interview notes and assessments",
+          "References and reference feedback",
+          "Communications with us (emails, messages, calls)",
+          "Professional profiles (e.g., LinkedIn or similar platforms), where permitted by law",
+          "We do not intentionally collect sensitive personal data unless:",
+          "Required by law (e.g., right‑to‑work checks), or",
+          "Voluntarily disclosed by the Candidate",
+          "Where required, such data is handled with enhanced safeguards.",
+          "We collect personal data:",
+          "Directly from Candidates",
+          "From public professional sources",
+          "From referrals",
+          "From clients during mandated recruitment processes",
+          "Through recruitment technology platforms and assessments",
+          "We process Candidate data for the following purposes:",
+          "Talent sourcing and recruitment activities",
+          "Assessing suitability for current or future roles",
+          "Communicating with Candidates",
+          "Presenting candidate profiles to clients (with appropriate safeguards)",
+          "Managing recruitment pipelines and talent pools",
+          "Legal, compliance, and audit purposes",
+          "Improving our recruitment services and operations",
+          "Depending on location, we rely on one or more of the following legal bases:",
+          "Legitimate interests — recruitment and talent matching",
+          "Pre‑contractual steps — requested by the Candidate",
+          "Consent — where required",
+          "Legal obligations — where applicable",
+          "Notice and purpose‑limited processing under applicable state privacy laws (e.g., CCPA/CPRA).",
+          "Consent, legitimate interests, contractual necessity, or legal obligation, as applicable.",
+          "We process data of Brazilian residents in compliance with Lei Geral de Proteção de Dados (LGPD), relying on pre‑contractual steps, legitimate interest, or consent.",
+          "We may share personal data with clients and prospected employers (limited to relevant role‑related data). We also use third‑party service providers (\"Sub‑processors\") to support our platform and operations.",
+          "Sub-processor\nPurpose\nJurisdiction\nSafeguards\nSupabase, Inc.\nBackend, Database & Auth (via Lovable Cloud)\nUSA\nSCCs\nAWS (Amazon Web Services)\nInfrastructure, Storage & Edge Computing\nUSA / Global\nSCCs\nCloudflare, Inc.\nCDN, Security, WAF & Turnstile (Captcha)\nUSA / Global\nSCCs\nGoogle LLC\nAnalytics (GA4), Tag Manager & Web Fonts\nUSA\nSCCs / DPF\nApollo.io (ZenLeads Inc.)\nSourcing, Data Enrichment & B2B Marketing\nUSA\nSCCs\nMicrosoft Corporation\nMicrosoft 365, Productivity & Communications\nUSA / Global\nSCCs\nNetlify, Inc.\nApplication Hosting & Deployment\nUSA\nSCCs\nLocize / Weglot\ni18n Management & Localization Services\nSwitzerland / France\nAdequacy / SCCs\nResend / SendGrid\nTransactional Email & Communications\nUSA\nSCCs",
+          "All sub‑processors are vetted for data security compliance and are prohibited from using your personal data for any purpose other than providing services to us.",
+          "As a global recruitment firm, we transfer personal data to jurisdictions outside your own, primarily to the United States where our core infrastructure (Supabase, AWS, Cloudflare) is hosted.",
+          "To ensure your data remains protected, we implement the following safeguards for all international transfers:",
+          "Standard Contractual Clauses (SCCs): We use the latest European Commission-approved SCCs for transfers to non-adequate countries.",
+          "Data Privacy Framework (DPF): For US-based providers certified under the EU-U.S. DPF and the UK Extension.",
+          "Technical Measures: Including end-to-end encryption in transit (TLS 1.3), encryption at rest (AES-256), and pseudonymization of analytics data.",
+          "An internal Transfer Impact Assessment (TIA) is maintained to document these safeguards and monitor the legal climate of recipient jurisdictions.",
+          "We retain personal data only for as long as necessary to fulfill the purposes for which it was collected, including for the purposes of satisfying any legal, accounting, or reporting requirements. Our typical retention periods include:",
+          "Candidate Profiles: 2 years of inactivity, after which data is deleted or anonymized unless consent is renewed.",
+          "CVs & Artifacts: Purged 90 days after the recruitment process concludes or after last use.",
+          "Job Submissions: Anonymized for statistical purposes 2 years after a position is filled or closed.",
+          "Audit & Security Logs: 12 months for security and compliance monitoring.",
+          "Marketing & Client Data: Duration of the business relationship or until consent is withdrawn.",
+          "By submitting your CV or creating a candidate account, you consent to TaaSFlow retaining your personal data (including your CV, professional history, skills, and contact information) for up to 12 months . During this period, your profile may be considered for other relevant positions that become available within our system, not only the specific role you originally applied for. This allows us to proactively match you with suitable opportunities and maximize your chances of finding the right role.",
+          "You may withdraw your consent or request deletion of your data at any time by contacting privacy@taasflow.com or through the data deletion option in your candidate profile settings.",
+          "After the retention period expires, your data will be anonymised or securely deleted unless you have given renewed consent or an active recruitment process is underway. Candidates may request deletion at any time by contacting privacy@taasflow.com .",
+          "Depending on your location, you may have the right to:",
+          "Access your personal data",
+          "Correct inaccurate data",
+          "Request deletion (\"right to be forgotten\")",
+          "Restrict or object to processing",
+          "Data portability (EU/EEA) — receive your data in a structured, machine-readable format",
+          "Withdraw consent (where applicable)",
+          "Opt‑out of certain data disclosures (US residents)",
+          "Requests can be made by contacting privacy@taasflow.com . We will respond within 30 days.",
+          "Candidates with an account on our platform can export their personal data and request account deletion directly from their profile settings.",
+          "We use AI‑powered technology to assist in candidate sourcing, CV parsing, and role‑fit scoring. These tools analyze candidate data (e.g., skills, experience, qualifications) against role requirements to provide ranked shortlists to our recruiters.",
+          "Important: TaaSFlow does not make final recruitment decisions based solely on automated processing.",
+          "All AI‑generated scores and rankings are subject to human review by our professional recruitment team. You have the right to request a human explanation of any automated assessment or to contest the result.",
+          "We implement appropriate technical and organizational measures to protect personal data, including:",
+          "Role-based access controls and progressive data disclosure",
+          "Encryption in transit (TLS) and at rest",
+          "Private storage buckets with time-limited signed URLs for sensitive documents",
+          "Message redaction to prevent unauthorized contact sharing",
+          "Comprehensive audit logging of data access",
+          "Vendor risk management and incident response procedures",
+          "In the event of a personal data breach, we will notify relevant supervisory authorities within 72 hours (as required by GDPR) and affected individuals without undue delay where the breach is likely to result in a high risk to their rights and freedoms.",
+          "We use cookies and similar technologies to ensure essential functionality, analyze platform usage, and support our marketing activities.",
+          "Essential: Required for core platform functionality (auth, security, sessions). Cannot be disabled.",
+          "Analytics: Google Analytics (anonymized) to understand user behavior and improve performance.",
+          "Marketing: Apollo.io, Retention.com, and Weglot to support sourcing, personalization, and translations.",
+          "Consent: We do not load non-essential cookies or third-party trackers (Analytics, Marketing) until you provide explicit consent through our cookie settings banner. You can change your preferences or withdraw consent at any time using the \"Cookie Preferences\" link in the footer.",
+          "Our services are not directed at individuals under 16. We do not knowingly collect data from children. If you believe we have inadvertently collected data from a minor, please contact us immediately.",
+          "We may update this Privacy Notice periodically. Material changes will be communicated via email or a notice on our website. The latest version will always be available on this page.",
+          "We have appointed a Data Protection Officer to oversee our privacy strategy and ensure compliance with global data protection laws (GDPR, LGPD, etc.).",
+          "TaaSFlow Privacy & Data Protection Team Attn: Data Protection Officer Email: privacy@taasflow.com Address: [Legal Entity Address, if available]",
+          "If you are located in the EEA, UK, or Brazil and are not satisfied with our response, you have the right to lodge a complaint with your local supervisory authority:",
+          "EU/EEA: Your local Data Protection Authority (DPA)",
+          "UK: Information Commissioner's Office (ICO)",
+          "Brazil: Autoridade Nacional de Proteção de Dados (ANPD)",
+          "See also our Terms of Service for the terms governing your use of our platform.",
+          "Internal Review Note: This privacy policy has been updated to reflect the actual sub‑processors and data processing activities identified during the May 2026 security audit. Final wording should be reviewed and approved by legal counsel to ensure alignment with current jurisdiction-specific requirements.",
+          "A live recruiting workspace with ranked, evidence-backed candidate delivery.",
+          "About",
+          "Journey",
+          "Contact",
+          "Solutions",
+          "How it works",
+          "Enterprise",
+          "Employer onboarding",
+          "Staffing partnership",
+          "Start hiring",
+          "Pilot",
+          "Pricing",
+          "Industries",
+          "Client sign in",
+          "Browse jobs",
+          "Talent network",
+          "Candidate success",
+          "Candidate journey",
+          "Candidate sign in",
+          "Resources",
+          "Blog",
+          "Case studies",
+          "Knowledge base",
+          "FAQ",
+          "© 2026 TaaSFlow. All rights reserved."
+        ],
+        "buttons": [
+          "Solutions",
+          "Industries",
+          "Resources",
+          "About"
+        ],
+        "links": [
+          {
+            "text": "Skip to main content",
+            "href": "https://clear-path-hubs.lovable.app/privacy#main"
+          },
+          {
+            "text": "New: transparent role-specific scoring — see how it works.",
+            "href": "https://clear-path-hubs.lovable.app/how-it-works"
+          },
+          {
+            "text": "TaaSFlow",
+            "href": "https://clear-path-hubs.lovable.app/"
+          },
+          {
+            "text": "Jobs",
+            "href": "https://clear-path-hubs.lovable.app/jobs"
+          },
+          {
+            "text": "Sign in",
+            "href": "https://clear-path-hubs.lovable.app/login"
+          },
+          {
+            "text": "Browse jobs",
+            "href": "https://clear-path-hubs.lovable.app/jobs"
+          },
+          {
+            "text": "Start hiring",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "https://taasflow.com",
+            "href": "https://clear-path-hubs.lovable.app/"
+          },
+          {
+            "text": "privacy@taasflow.com",
+            "href": "mailto:privacy@taasflow.com"
+          },
+          {
+            "text": "privacy@taasflow.com",
+            "href": "mailto:privacy@taasflow.com"
+          },
+          {
+            "text": "privacy@taasflow.com",
+            "href": "mailto:privacy@taasflow.com"
+          },
+          {
+            "text": "privacy@taasflow.com",
+            "href": "mailto:privacy@taasflow.com"
+          },
+          {
+            "text": "privacy@taasflow.com",
+            "href": "mailto:privacy@taasflow.com"
+          },
+          {
+            "text": "TaaSFlow",
+            "href": "https://clear-path-hubs.lovable.app/"
+          },
+          {
+            "text": "",
+            "href": "https://www.linkedin.com/company/taasflow"
+          },
+          {
+            "text": "",
+            "href": "mailto:hello@taasflow.com"
+          },
+          {
+            "text": "About",
+            "href": "https://clear-path-hubs.lovable.app/about"
+          },
+          {
+            "text": "Journey",
+            "href": "https://clear-path-hubs.lovable.app/journey"
+          },
+          {
+            "text": "Contact",
+            "href": "https://clear-path-hubs.lovable.app/contact"
+          },
+          {
+            "text": "Solutions",
+            "href": "https://clear-path-hubs.lovable.app/solutions"
+          },
+          {
+            "text": "How it works",
+            "href": "https://clear-path-hubs.lovable.app/how-it-works"
+          },
+          {
+            "text": "Enterprise",
+            "href": "https://clear-path-hubs.lovable.app/enterprise"
+          },
+          {
+            "text": "Employer onboarding",
+            "href": "https://clear-path-hubs.lovable.app/employer-onboarding"
+          },
+          {
+            "text": "Staffing partnership",
+            "href": "https://clear-path-hubs.lovable.app/partnerships/staffing"
+          },
+          {
+            "text": "Start hiring",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "Pilot",
+            "href": "https://clear-path-hubs.lovable.app/pilot"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://clear-path-hubs.lovable.app/pricing"
+          },
+          {
+            "text": "Industries",
+            "href": "https://clear-path-hubs.lovable.app/industries"
+          },
+          {
+            "text": "Client sign in",
+            "href": "https://clear-path-hubs.lovable.app/login"
+          },
+          {
+            "text": "Browse jobs",
+            "href": "https://clear-path-hubs.lovable.app/jobs"
+          },
+          {
+            "text": "Talent network",
+            "href": "https://clear-path-hubs.lovable.app/talent-network"
+          },
+          {
+            "text": "Candidate success",
+            "href": "https://clear-path-hubs.lovable.app/candidate-success"
+          },
+          {
+            "text": "Candidate journey",
+            "href": "https://clear-path-hubs.lovable.app/journey"
+          },
+          {
+            "text": "Candidate sign in",
+            "href": "https://clear-path-hubs.lovable.app/login"
+          },
+          {
+            "text": "Resources",
+            "href": "https://clear-path-hubs.lovable.app/resources"
+          },
+          {
+            "text": "Blog",
+            "href": "https://clear-path-hubs.lovable.app/blog"
+          },
+          {
+            "text": "Case studies",
+            "href": "https://clear-path-hubs.lovable.app/case-studies"
+          },
+          {
+            "text": "Knowledge base",
+            "href": "https://clear-path-hubs.lovable.app/knowledge-base"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://clear-path-hubs.lovable.app/faq"
+          },
+          {
+            "text": "Privacy",
+            "href": "https://clear-path-hubs.lovable.app/privacy"
+          },
+          {
+            "text": "Terms",
+            "href": "https://clear-path-hubs.lovable.app/terms"
+          },
+          {
+            "text": "Sitemap",
+            "href": "https://clear-path-hubs.lovable.app/sitemap.xml"
+          },
+          {
+            "text": "hello@taasflow.com",
+            "href": "mailto:hello@taasflow.com"
+          },
+          {
+            "text": "Edit with",
+            "href": "https://lovable.dev/projects/1dc5ee7e-1294-441c-8288-850e79e443f6?utm_source=lovable-badge"
+          }
+        ],
+        "images": [
+          {
+            "src": "https://clear-path-hubs.lovable.app/assets/logo-on-white-Dk9DIcMP.png",
+            "alt": ""
+          },
+          {
+            "src": "https://clear-path-hubs.lovable.app/assets/logo-on-white-Dk9DIcMP.png",
+            "alt": ""
+          }
+        ],
+        "forms": [],
+        "navLinks": [
+          "TaaSFlow",
+          "Jobs",
+          "Sign in",
+          "Browse jobs",
+          "Start hiring",
+          "Privacy",
+          "Terms",
+          "Sitemap",
+          "hello@taasflow.com"
+        ],
+        "footerLinks": [
+          "TaaSFlow",
+          "About",
+          "Journey",
+          "Contact",
+          "Solutions",
+          "How it works",
+          "Enterprise",
+          "Employer onboarding",
+          "Staffing partnership",
+          "Start hiring",
+          "Pilot",
+          "Pricing",
+          "Industries",
+          "Client sign in",
+          "Browse jobs",
+          "Talent network",
+          "Candidate success",
+          "Candidate journey",
+          "Candidate sign in",
+          "Resources",
+          "Blog",
+          "Case studies",
+          "Knowledge base",
+          "FAQ",
+          "Privacy",
+          "Terms",
+          "Sitemap",
+          "hello@taasflow.com"
+        ],
+        "horizontalOverflow": false,
+        "documentWidth": 1440,
+        "viewportWidth": 1440
+      },
+      "screenshots": {
+        "sourceFull": "reports/public-parity/screenshots/source/privacy__desktop__full.png",
+        "sourceVisible": "reports/public-parity/screenshots/source/privacy__desktop__visible.png",
+        "destinationFull": "reports/public-parity/screenshots/destination/privacy__desktop__full.png",
+        "destinationVisible": "reports/public-parity/screenshots/destination/privacy__desktop__visible.png"
+      },
+      "differences": [
+        "title: \"Global Recruitment Privacy Notice | TaaSFlow\" vs \"TaaSFlow | Talent as a Service | Subscription Recruiting\"",
+        "meta description mismatch",
+        "heading overlap 3% (1/30)",
+        "section count 21 vs 1",
+        "form count 1 vs 0",
+        "destination images missing alt: 2"
+      ]
+    }
+  ],
+  "summary": "18 differences detected",
+  "exclusions": []
+}

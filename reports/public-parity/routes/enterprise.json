@@ -1,0 +1,2577 @@
+{
+  "sourcePath": "/enterprise",
+  "destinationPath": "/enterprise",
+  "pageType": "marketing_static",
+  "protected": false,
+  "verdict": "MAJOR_DIFFERENCE",
+  "severity": "HIGH",
+  "viewports": [
+    {
+      "viewport": "mobile",
+      "source": {
+        "url": "https://taasflow.com/enterprise",
+        "finalUrl": "https://taasflow.com/enterprise",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [
+          {
+            "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HJ2ECKCNK4&gtm=45je67l1v9245339446za200zd9245339446&_p=1784773942657&gcd=13l3l3l3l1l1&npa=0&_ng=1&dma=0&are=1&cid=1871330476.1784773943&frm=0&ngs=1&pscdl=noapi&rcb=11&sr=375x812&uaa=x86&uab=64&uafvl=Not-A.Brand%3B24.0.0.0%7CChromium%3B146.0.7680.80&uam=&uamb=0&uap=Windows&uapv=&uaw=0&ul=en-us&_s=1&tag_exp=115616985~115938466~115938469~118897920~118897930~119896803&dp=%2Fenterprise&dt=TaaSFlow%20%7C%20Talent%20as%20a%20Service%20%7C%20Subscription%20Recruiting&dl=https%3A%2F%2Ftaasflow.com%2Fenterprise&sid=1784773942&sct=1&seg=0&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&ep.role_type=public&ep.is_authenticated=false&tfd=702",
+            "status": null,
+            "failure": "net::ERR_ABORTED"
+          }
+        ],
+        "title": "Enterprise Recruiting on Subscription | TaaSFlow",
+        "description": "Enterprise talent programs on a subscription: dedicated pods, embedded recruiters, SLAs, and reporting for organizations hiring at scale.",
+        "canonical": "https://taasflow.com/enterprise",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:type": "website",
+          "og:url": "https://taasflow.com/enterprise",
+          "og:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "og:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "og:image": "https://taasflow.com/og-image.png",
+          "og:image:width": "1200",
+          "og:image:height": "630",
+          "og:locale": "en_US",
+          "twitter:card": "summary_large_image",
+          "twitter:site": "@TaasFlow",
+          "twitter:creator": "@TaasFlow",
+          "twitter:url": "https://taasflow.com/enterprise",
+          "twitter:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "twitter:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "twitter:image": "https://taasflow.com/og-image.png"
+        },
+        "structuredData": [
+          {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "@id": "https://taasflow.com/#organization",
+            "name": "TaaSFlow",
+            "legalName": "TaaSFlow",
+            "url": "https://taasflow.com/",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://taasflow.com/favicon.png",
+              "width": 512,
+              "height": 512
+            },
+            "image": "https://taasflow.com/og-image.png",
+            "description": "Talent as a Service — subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+            "slogan": "Your hiring team. On demand.",
+            "foundingDate": "2024",
+            "areaServed": [
+              {
+                "@type": "Country",
+                "name": "United States"
+              },
+              {
+                "@type": "Country",
+                "name": "United Arab Emirates"
+              },
+              {
+                "@type": "Country",
+                "name": "United Kingdom"
+              },
+              {
+                "@type": "Country",
+                "name": "Brazil"
+              }
+            ],
+            "knowsAbout": [
+              "Subscription recruiting",
+              "Talent as a Service",
+              "Candidate sourcing",
+              "Pre-screened candidates",
+              "Recruitment process outsourcing"
+            ],
+            "contactPoint": [
+              {
+                "@type": "ContactPoint",
+                "contactType": "sales",
+                "email": "hello@taasflow.com",
+                "url": "https://taasflow.com/contact",
+                "availableLanguage": [
+                  "English",
+                  "Portuguese",
+                  "Spanish"
+                ]
+              }
+            ],
+            "sameAs": [
+              "https://www.linkedin.com/company/taasflow",
+              "https://twitter.com/TaasFlow"
+            ]
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "@id": "https://taasflow.com/#website",
+            "name": "TaaSFlow",
+            "alternateName": "Talent as a Service",
+            "url": "https://taasflow.com/",
+            "description": "Subscription recruiting that delivers pre-screened, ranked candidates in 14 days.",
+            "inLanguage": "en-US",
+            "publisher": {
+              "@id": "https://taasflow.com/#organization"
+            },
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": {
+                "@type": "EntryPoint",
+                "urlTemplate": "https://taasflow.com/jobs?q={search_term_string}"
+              },
+              "query-input": "required name=search_term_string"
+            }
+          }
+        ],
+        "h1": [
+          "Scale Your Workforce. Globally."
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "Scale Your Workforce. Globally."
+          },
+          {
+            "level": 2,
+            "text": "Built for High-Volume, Global Operations"
+          },
+          {
+            "level": 3,
+            "text": "Global Reach"
+          },
+          {
+            "level": 3,
+            "text": "14-Day Delivery Cycles"
+          },
+          {
+            "level": 3,
+            "text": "Visa & Relocation"
+          },
+          {
+            "level": 3,
+            "text": "Candidate Ownership"
+          },
+          {
+            "level": 3,
+            "text": "Pipeline Analytics"
+          },
+          {
+            "level": 3,
+            "text": "Dedicated Pod"
+          },
+          {
+            "level": 2,
+            "text": "Purpose-Built for Volume Hiring Industries"
+          },
+          {
+            "level": 3,
+            "text": "Hospitality & Hotels"
+          },
+          {
+            "level": 3,
+            "text": "Food & Beverage"
+          },
+          {
+            "level": 3,
+            "text": "Retail"
+          },
+          {
+            "level": 3,
+            "text": "Manufacturing"
+          },
+          {
+            "level": 3,
+            "text": "Construction"
+          },
+          {
+            "level": 3,
+            "text": "Logistics & Supply Chain"
+          },
+          {
+            "level": 2,
+            "text": "Hiring Across Borders, Without the Barriers"
+          },
+          {
+            "level": 3,
+            "text": "United Arab Emirates"
+          },
+          {
+            "level": 3,
+            "text": "United States"
+          },
+          {
+            "level": 3,
+            "text": "Global Markets"
+          },
+          {
+            "level": 2,
+            "text": "Agency Fees vs. TaaSFlow Subscription"
+          },
+          {
+            "level": 2,
+            "text": "Calculate Your Enterprise Savings"
+          },
+          {
+            "level": 2,
+            "text": "Tiered Pricing That Scales With You"
+          },
+          {
+            "level": 3,
+            "text": "Scale"
+          },
+          {
+            "level": 3,
+            "text": "Growth"
+          },
+          {
+            "level": 3,
+            "text": "Enterprise"
+          },
+          {
+            "level": 2,
+            "text": "Enterprise Results at Scale"
+          },
+          {
+            "level": 3,
+            "text": "Hotel Chain Expansion – UAE"
+          },
+          {
+            "level": 3,
+            "text": "Multi-Location Retail Rollout"
+          },
+          {
+            "level": 3,
+            "text": "Infrastructure Project Staffing"
+          },
+          {
+            "level": 2,
+            "text": "From Kickoff to Candidates in 14 Days"
+          },
+          {
+            "level": 3,
+            "text": "Enterprise Consultation"
+          },
+          {
+            "level": 3,
+            "text": "Role Matrix & Calibration"
+          },
+          {
+            "level": 3,
+            "text": "Multi-Channel Activation"
+          },
+          {
+            "level": 3,
+            "text": "Bi-Weekly Candidate Drops"
+          },
+          {
+            "level": 3,
+            "text": "Continuous Optimization"
+          },
+          {
+            "level": 2,
+            "text": "Meet the Founders"
+          },
+          {
+            "level": 3,
+            "text": "Christian Brogger"
+          },
+          {
+            "level": 3,
+            "text": "João Bogo"
+          },
+          {
+            "level": 2,
+            "text": "Ready to Transform Your Hiring at Scale?"
+          },
+          {
+            "level": 4,
+            "text": "Newsletter"
+          },
+          {
+            "level": 4,
+            "text": "For candidates"
+          },
+          {
+            "level": 4,
+            "text": "For companies"
+          },
+          {
+            "level": 4,
+            "text": "Industries"
+          },
+          {
+            "level": 4,
+            "text": "Company"
+          },
+          {
+            "level": 3,
+            "text": "Cookie Preferences"
+          }
+        ],
+        "sections": [
+          "SECTION",
+          "Scale Your Workforce. Globally.",
+          "Built for High-Volume, Global Operations",
+          "Purpose-Built for Volume Hiring Industries",
+          "Hiring Across Borders, Without the Barriers",
+          "Agency Fees vs. TaaSFlow Subscription",
+          "Calculate Your Enterprise Savings",
+          "Tiered Pricing That Scales With You",
+          "Enterprise Results at Scale",
+          "From Kickoff to Candidates in 14 Days",
+          "Meet the Founders",
+          "Ready to Transform Your Hiring at Scale?"
+        ],
+        "textBlocks": [
+          "Solutions",
+          "Industries",
+          "Resources",
+          "AI-powered recruiting infrastructure for companies hiring at scale. Top 10 ranked candidates delivered every week — remote, on-site, or willing to relocate. Visa support included for UAE and US markets. Custom billing available.",
+          "Hires/month capacity",
+          "Delivery cycles",
+          "Countries covered",
+          "Cost savings vs agencies",
+          "Traditional agencies charge 20–30% per hire. At scale, that's millions wasted. We deliver the same quality at a fraction of the cost — with full pipeline transparency.",
+          "Source talent across 30+ countries. Remote, on-site, or willing to relocate.",
+          "Bi-weekly candidate drops with ranked shortlists and fit scoring.",
+          "Full visa processing support for UAE and US markets. Relocation coordination included.",
+          "You own every candidate profile, every pipeline insight. No lock-in.",
+          "Real-time dashboards with sourcing metrics, response rates, and quality trends.",
+          "A dedicated recruiter pod assigned to your account for consistency and speed.",
+          "From hotel chains to retail rollouts, we power hiring for the world's most demanding operations.",
+          "Major hotel chains, resorts, cruise lines",
+          "Restaurant chains, catering, food service",
+          "Multi-location retail, luxury, fashion",
+          "Industrial, automotive, energy",
+          "Infrastructure, commercial, residential",
+          "Warehousing, distribution, shipping",
+          "Full visa sponsorship support",
+          "Work permit processing",
+          "Cultural fit assessment",
+          "Arabic & English sourcing",
+          "H-1B & L-1 visa support",
+          "Multi-state compliance",
+          "Remote & on-site options",
+          "Relocation coordination",
+          "Europe, APAC, LATAM coverage",
+          "Multi-language sourcing",
+          "Timezone-aligned delivery",
+          "Local market expertise",
+          "At 50 hires/month with an average salary of $80K, traditional agencies cost $800K–$1.2M/month. With TaaSFlow, you pay a flat subscription.",
+          "See exactly how much you save vs. agency fees and internal sourcing costs at enterprise scale.",
+          "Hidden Recruiter Costs",
+          "The more you hire, the less you pay per role. No placement fees, no hidden costs.",
+          "15–30 roles/month",
+          "~$233–$466/role",
+          "Top 10 ranked weekly shortlist",
+          "Multi-channel sourcing",
+          "Dedicated recruiter pod",
+          "Pipeline analytics dashboard",
+          "Scoring with fit notes",
+          "31–75 roles/month",
+          "Volume discount applied",
+          "Everything in Scale",
+          "Priority sourcing queue",
+          "Dedicated account manager",
+          "Custom scoring weights",
+          "Weekly strategy calls",
+          "Visa support (UAE & US)",
+          "75+ roles/month",
+          "Best-in-class rates",
+          "Everything in Growth",
+          "White-glove onboarding",
+          "Embedded recruiter option",
+          "Custom integrations (ATS/HRIS)",
+          "Strategic workforce planning",
+          "Global relocation coordination",
+          "SLA-backed delivery guarantees",
+          "Challenge",
+          "Needed 120+ staff across 3 new properties in 90 days",
+          "Result",
+          "Delivered 140 qualified candidates with visa processing support. All positions filled on time.",
+          "Challenge",
+          "Seasonal hiring surge: 200+ positions across 15 locations",
+          "Result",
+          "Systematic sourcing across time zones with bi-weekly drops. 95% fill rate achieved.",
+          "Challenge",
+          "Specialized roles across engineering, safety, and operations",
+          "Result",
+          "Sourced niche talent globally with relocation support. Average time-to-fill: 18 days.",
+          "Deep-dive into your workforce plan, volumes, locations, and timelines.",
+          "We map every role with scoring weights, must-haves, and targeting strategy.",
+          "AI-powered sourcing across LinkedIn, job boards, referral networks, and direct outreach.",
+          "Ranked shortlists delivered every 14 days with fit scores, availability, and visa status.",
+          "Feedback loops refine targeting. Quality improves every cycle.",
+          "Leadership",
+          "Built careers advising global enterprises. Now applying that same rigor to the world of hiring.",
+          "CEO",
+          "25 years' experience of designing and driving value creation across Fortune 500s and Private Equity. Former Director at UBS Investment Bank and has led strategic programmes for Google, Barclays, HSBC, IBM and AstraZeneca. Very pragmatic and always looking to challenge and disrupt using technology as a key enabler. Strong experience in working directly with leadership teams, enabling growth and execution of business strategy.",
+          "CMO",
+          "Former strategist for Hilton, Marriott, Four Seasons, and Philips. Represented at G20 and B20 forums. Has built and scaled talent acquisition campaigns across the US, LATAM, Europe, and the Gulf. Passionate about employer branding, global talent markets, and building real connections at scale.",
+          "Join enterprise teams that have replaced agency dependency with predictable, top 10 ranked weekly talent shortlists. Let's build your workforce plan.",
+          "No commitment required. 30-minute strategy session with our founding team.",
+          "Talent as a Service",
+          "A global hiring system for teams that need consistent recruiting.",
+          "Weekly insights into talent acquisition. No spam.",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Book call",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "No recruitment agency fees. No placement charges. Subscription-based hiring system.",
+          "Copyright 2026 TaaSFlow. All rights reserved.",
+          "We use essential cookies for core functionality. With your consent, we use analytics (Google Analytics) and marketing technologies (Meta Pixel, Apollo, Retention.com/RB2B) to understand website performance, improve campaigns, and measure conversions safely. Your data is processed in accordance with GDPR and our Privacy Notice. You can change your preferences at any time."
+        ],
+        "buttons": [
+          "Solutions",
+          "Industries",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Solutions",
+          "How it works",
+          "Pilot",
+          "Enterprise",
+          "Case studies",
+          "Jobs",
+          "Journey",
+          "Industries",
+          "Tech",
+          "SaaS & Cloud",
+          "Cybersecurity",
+          "Data & Analytics",
+          "Finance",
+          "Insurance",
+          "PE & VC",
+          "Accounting",
+          "Legal",
+          "Consulting",
+          "HR & Recruiting",
+          "Staffing Agencies",
+          "Sales",
+          "Marketing",
+          "E-commerce",
+          "Media",
+          "Real Estate",
+          "Construction",
+          "Hospitality",
+          "Healthcare",
+          "Public Sector",
+          "Non-Profit",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Success Stories",
+          "Talent Marketplace",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Book Enterprise Consultation",
+          "View Volume Pricing",
+          "Get Started",
+          "Get Custom Quote",
+          "Get Custom Quote",
+          "Schedule Enterprise Consultation",
+          "Start with a Pilot",
+          "Subscribe",
+          "Book call",
+          "Cookie preferences",
+          "Customize",
+          "Reject Non-Essential",
+          "Accept All"
+        ],
+        "links": [
+          {
+            "text": "Skip to main content",
+            "href": "https://taasflow.com/enterprise#main-content"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "Browse jobs",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Join the network",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Browse open roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Connect on LinkedIn",
+            "href": "https://www.linkedin.com/in/christian-brogger/"
+          },
+          {
+            "text": "Connect on LinkedIn",
+            "href": "https://www.linkedin.com/in/joaomarcoscsilva/"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "LinkedIn",
+            "href": "https://www.linkedin.com/company/taasflow/"
+          },
+          {
+            "text": "Browse roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Talent network",
+            "href": "https://taasflow.com/global-talent"
+          },
+          {
+            "text": "Member stories",
+            "href": "https://taasflow.com/candidate-success"
+          },
+          {
+            "text": "Start pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "Employer onboarding",
+            "href": "https://taasflow.com/employer-onboarding"
+          },
+          {
+            "text": "Case studies",
+            "href": "https://taasflow.com/case-studies"
+          },
+          {
+            "text": "Healthcare",
+            "href": "https://taasflow.com/industries/healthcare"
+          },
+          {
+            "text": "Technology",
+            "href": "https://taasflow.com/industries/tech"
+          },
+          {
+            "text": "Finance",
+            "href": "https://taasflow.com/industries/finance"
+          },
+          {
+            "text": "Legal",
+            "href": "https://taasflow.com/industries/legal"
+          },
+          {
+            "text": "All →",
+            "href": "https://taasflow.com/industries"
+          },
+          {
+            "text": "About us",
+            "href": "https://taasflow.com/about"
+          },
+          {
+            "text": "Blog",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://taasflow.com/faq"
+          },
+          {
+            "text": "Knowledge Base",
+            "href": "https://taasflow.com/knowledge-base"
+          },
+          {
+            "text": "Contact us",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Privacy Policy",
+            "href": "https://taasflow.com/privacy"
+          },
+          {
+            "text": "Terms of Service",
+            "href": "https://taasflow.com/terms"
+          },
+          {
+            "text": "Privacy Notice",
+            "href": "https://taasflow.com/privacy"
+          }
+        ],
+        "images": [
+          {
+            "src": "https://taasflow.com/assets/logo-on-white-Dk9DIcMP.png",
+            "alt": "TaaSFlow logo"
+          },
+          {
+            "src": "https://taasflow.com/assets/hero-globe-network-B6AA_1ph.jpg",
+            "alt": ""
+          },
+          {
+            "src": "https://taasflow.com/assets/hero-dashboard-cards-DPdXn-GF.jpg",
+            "alt": "Enterprise recruiting dashboard with candidate analytics and hiring metrics"
+          },
+          {
+            "src": "https://taasflow.com/assets/christian-9Ad2XECQ.jpg",
+            "alt": "Christian Brogger"
+          },
+          {
+            "src": "https://taasflow.com/assets/joao-BvCqv2_l.jpg",
+            "alt": "João Bogo"
+          },
+          {
+            "src": "https://taasflow.com/assets/logo-on-blue-CX6jlwjg.png",
+            "alt": "TaaSFlow logo"
+          }
+        ],
+        "forms": [
+          {
+            "action": "https://taasflow.com/enterprise",
+            "fields": [
+              "input"
+            ]
+          }
+        ],
+        "navLinks": [
+          "Browse jobs",
+          "Join the network",
+          "Browse open roles",
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us"
+        ],
+        "footerLinks": [
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "Privacy Policy",
+          "Terms of Service"
+        ],
+        "horizontalOverflow": false,
+        "documentWidth": 375,
+        "viewportWidth": 375
+      },
+      "destination": {
+        "url": "https://clear-path-hubs.lovable.app/enterprise",
+        "finalUrl": "https://clear-path-hubs.lovable.app/enterprise",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [],
+        "title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+        "description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+        "canonical": "https://clear-path-hubs.lovable.app/enterprise",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "twitter:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "og:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "og:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "og:url": "https://clear-path-hubs.lovable.app/enterprise",
+          "og:type": "website",
+          "twitter:card": "summary_large_image",
+          "twitter:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "twitter:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages."
+        },
+        "structuredData": [],
+        "h1": [
+          "Hire at scale on one transparent operating system."
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "Hire at scale on one transparent operating system."
+          },
+          {
+            "level": 2,
+            "text": "Volume hiring"
+          },
+          {
+            "level": 2,
+            "text": "Global sourcing"
+          },
+          {
+            "level": 2,
+            "text": "Workspace transparency"
+          },
+          {
+            "level": 2,
+            "text": "Reporting"
+          },
+          {
+            "level": 2,
+            "text": "Account structure"
+          },
+          {
+            "level": 2,
+            "text": "Tailored billing"
+          },
+          {
+            "level": 2,
+            "text": "Security and access controls"
+          },
+          {
+            "level": 2,
+            "text": "Support model"
+          },
+          {
+            "level": 2,
+            "text": "How enterprise engagements start"
+          },
+          {
+            "level": 2,
+            "text": "Let’s scope your hiring plan together."
+          }
+        ],
+        "sections": [
+          "Hire at scale on one transparent operating system.",
+          "Volume hiring",
+          "How enterprise engagements start",
+          "Let’s scope your hiring plan together.",
+          "SECTION"
+        ],
+        "textBlocks": [
+          "Enterprise",
+          "Enterprise TaaSFlow is the same product, sized for organisations running many searches in parallel across teams, geographies and business units. One workspace, one source of truth, one accountable team.",
+          "Run many searches in parallel with shared brief conventions, shared scoring standards, and one workspace per business unit.",
+          "Source across geographies and time zones. Remote, on-site, and — where approved for the role — relocation-friendly candidates.",
+          "Everyone in the account sees the same pipeline, the same evidence, the same decisions. No hidden queues, no side channels.",
+          "Roll-up views of pipeline health, stage velocity, source mix and decision outcomes across roles, teams and business units.",
+          "Multiple positions, teams and hiring managers under one organisation. Fine-grained roles: admin, editor, viewer.",
+          "Invoicing aligned to your finance process: purchase orders, consolidated billing, and multi-currency where supported.",
+          "Row-level tenant isolation, per-role permissions, private CV storage with signed short-lived URLs, and a full audit trail.",
+          "A named account contact, direct messaging inside every workspace, and joint reviews on a cadence you set.",
+          "01Scoping conversationWe map roles, teams, geographies, and success criteria for the first quarter.",
+          "01",
+          "Scoping conversation",
+          "We map roles, teams, geographies, and success criteria for the first quarter.",
+          "02Account setupOrganisation, workspaces, roles, and billing are configured before any role goes live.",
+          "02",
+          "Account setup",
+          "Organisation, workspaces, roles, and billing are configured before any role goes live.",
+          "03Rolling executionRoles are submitted through the standard intake and delivered into the shared workspace.",
+          "03",
+          "Rolling execution",
+          "Roles are submitted through the standard intake and delivered into the shared workspace.",
+          "Talk to enterprise",
+          "Book a consultation and we’ll come back with a tailored account structure and price."
+        ],
+        "buttons": [],
+        "links": [
+          {
+            "text": "Book enterprise consultation",
+            "href": "https://clear-path-hubs.lovable.app/contact"
+          },
+          {
+            "text": "Submit your first role",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "Book consultation",
+            "href": "https://clear-path-hubs.lovable.app/contact"
+          },
+          {
+            "text": "Submit a role",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "Edit with",
+            "href": "https://lovable.dev/projects/1dc5ee7e-1294-441c-8288-850e79e443f6?utm_source=lovable-badge"
+          }
+        ],
+        "images": [],
+        "forms": [],
+        "navLinks": [],
+        "footerLinks": [],
+        "horizontalOverflow": false,
+        "documentWidth": 375,
+        "viewportWidth": 375
+      },
+      "screenshots": {
+        "sourceFull": "reports/public-parity/screenshots/source/enterprise__mobile__full.png",
+        "sourceVisible": "reports/public-parity/screenshots/source/enterprise__mobile__visible.png",
+        "destinationFull": "reports/public-parity/screenshots/destination/enterprise__mobile__full.png",
+        "destinationVisible": "reports/public-parity/screenshots/destination/enterprise__mobile__visible.png"
+      },
+      "differences": [
+        "title: \"Enterprise Recruiting on Subscription | TaaSFlow\" vs \"TaaSFlow | Talent as a Service | Subscription Recruiting\"",
+        "meta description mismatch",
+        "H1 differs: [Scale Your Workforce. Globally.] vs [Hire at scale on one transparent operating system.]",
+        "heading overlap 0% (0/30)",
+        "section count 12 vs 5",
+        "form count 1 vs 0"
+      ]
+    },
+    {
+      "viewport": "tablet",
+      "source": {
+        "url": "https://taasflow.com/enterprise",
+        "finalUrl": "https://taasflow.com/enterprise",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [
+          {
+            "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HJ2ECKCNK4&gtm=45je67l1v9245339446za200zd9245339446&_p=1784773945616&gcd=13l3l3l3l1l1&npa=0&_ng=1&dma=0&are=1&cid=390887286.1784773946&frm=0&ngs=1&pscdl=noapi&rcb=15&sr=768x1024&uaa=x86&uab=64&uafvl=Not-A.Brand%3B24.0.0.0%7CChromium%3B146.0.7680.80&uam=&uamb=0&uap=Windows&uapv=&uaw=0&ul=en-us&_s=1&tag_exp=115938465~115938469~118395333~118897920~118897930~119896802&dp=%2Fenterprise&dt=TaaSFlow%20%7C%20Talent%20as%20a%20Service%20%7C%20Subscription%20Recruiting&dl=https%3A%2F%2Ftaasflow.com%2Fenterprise&sid=1784773946&sct=1&seg=0&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&ep.role_type=public&ep.is_authenticated=false&tfd=815",
+            "status": null,
+            "failure": "net::ERR_ABORTED"
+          }
+        ],
+        "title": "Enterprise Recruiting on Subscription | TaaSFlow",
+        "description": "Enterprise talent programs on a subscription: dedicated pods, embedded recruiters, SLAs, and reporting for organizations hiring at scale.",
+        "canonical": "https://taasflow.com/enterprise",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:type": "website",
+          "og:url": "https://taasflow.com/enterprise",
+          "og:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "og:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "og:image": "https://taasflow.com/og-image.png",
+          "og:image:width": "1200",
+          "og:image:height": "630",
+          "og:locale": "en_US",
+          "twitter:card": "summary_large_image",
+          "twitter:site": "@TaasFlow",
+          "twitter:creator": "@TaasFlow",
+          "twitter:url": "https://taasflow.com/enterprise",
+          "twitter:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "twitter:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "twitter:image": "https://taasflow.com/og-image.png"
+        },
+        "structuredData": [
+          {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "@id": "https://taasflow.com/#organization",
+            "name": "TaaSFlow",
+            "legalName": "TaaSFlow",
+            "url": "https://taasflow.com/",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://taasflow.com/favicon.png",
+              "width": 512,
+              "height": 512
+            },
+            "image": "https://taasflow.com/og-image.png",
+            "description": "Talent as a Service — subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+            "slogan": "Your hiring team. On demand.",
+            "foundingDate": "2024",
+            "areaServed": [
+              {
+                "@type": "Country",
+                "name": "United States"
+              },
+              {
+                "@type": "Country",
+                "name": "United Arab Emirates"
+              },
+              {
+                "@type": "Country",
+                "name": "United Kingdom"
+              },
+              {
+                "@type": "Country",
+                "name": "Brazil"
+              }
+            ],
+            "knowsAbout": [
+              "Subscription recruiting",
+              "Talent as a Service",
+              "Candidate sourcing",
+              "Pre-screened candidates",
+              "Recruitment process outsourcing"
+            ],
+            "contactPoint": [
+              {
+                "@type": "ContactPoint",
+                "contactType": "sales",
+                "email": "hello@taasflow.com",
+                "url": "https://taasflow.com/contact",
+                "availableLanguage": [
+                  "English",
+                  "Portuguese",
+                  "Spanish"
+                ]
+              }
+            ],
+            "sameAs": [
+              "https://www.linkedin.com/company/taasflow",
+              "https://twitter.com/TaasFlow"
+            ]
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "@id": "https://taasflow.com/#website",
+            "name": "TaaSFlow",
+            "alternateName": "Talent as a Service",
+            "url": "https://taasflow.com/",
+            "description": "Subscription recruiting that delivers pre-screened, ranked candidates in 14 days.",
+            "inLanguage": "en-US",
+            "publisher": {
+              "@id": "https://taasflow.com/#organization"
+            },
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": {
+                "@type": "EntryPoint",
+                "urlTemplate": "https://taasflow.com/jobs?q={search_term_string}"
+              },
+              "query-input": "required name=search_term_string"
+            }
+          }
+        ],
+        "h1": [
+          "Scale Your Workforce. Globally."
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "Scale Your Workforce. Globally."
+          },
+          {
+            "level": 2,
+            "text": "Built for High-Volume, Global Operations"
+          },
+          {
+            "level": 3,
+            "text": "Global Reach"
+          },
+          {
+            "level": 3,
+            "text": "14-Day Delivery Cycles"
+          },
+          {
+            "level": 3,
+            "text": "Visa & Relocation"
+          },
+          {
+            "level": 3,
+            "text": "Candidate Ownership"
+          },
+          {
+            "level": 3,
+            "text": "Pipeline Analytics"
+          },
+          {
+            "level": 3,
+            "text": "Dedicated Pod"
+          },
+          {
+            "level": 2,
+            "text": "Purpose-Built for Volume Hiring Industries"
+          },
+          {
+            "level": 3,
+            "text": "Hospitality & Hotels"
+          },
+          {
+            "level": 3,
+            "text": "Food & Beverage"
+          },
+          {
+            "level": 3,
+            "text": "Retail"
+          },
+          {
+            "level": 3,
+            "text": "Manufacturing"
+          },
+          {
+            "level": 3,
+            "text": "Construction"
+          },
+          {
+            "level": 3,
+            "text": "Logistics & Supply Chain"
+          },
+          {
+            "level": 2,
+            "text": "Hiring Across Borders, Without the Barriers"
+          },
+          {
+            "level": 3,
+            "text": "United Arab Emirates"
+          },
+          {
+            "level": 3,
+            "text": "United States"
+          },
+          {
+            "level": 3,
+            "text": "Global Markets"
+          },
+          {
+            "level": 2,
+            "text": "Agency Fees vs. TaaSFlow Subscription"
+          },
+          {
+            "level": 2,
+            "text": "Calculate Your Enterprise Savings"
+          },
+          {
+            "level": 2,
+            "text": "Tiered Pricing That Scales With You"
+          },
+          {
+            "level": 3,
+            "text": "Scale"
+          },
+          {
+            "level": 3,
+            "text": "Growth"
+          },
+          {
+            "level": 3,
+            "text": "Enterprise"
+          },
+          {
+            "level": 2,
+            "text": "Enterprise Results at Scale"
+          },
+          {
+            "level": 3,
+            "text": "Hotel Chain Expansion – UAE"
+          },
+          {
+            "level": 3,
+            "text": "Multi-Location Retail Rollout"
+          },
+          {
+            "level": 3,
+            "text": "Infrastructure Project Staffing"
+          },
+          {
+            "level": 2,
+            "text": "From Kickoff to Candidates in 14 Days"
+          },
+          {
+            "level": 3,
+            "text": "Enterprise Consultation"
+          },
+          {
+            "level": 3,
+            "text": "Role Matrix & Calibration"
+          },
+          {
+            "level": 3,
+            "text": "Multi-Channel Activation"
+          },
+          {
+            "level": 3,
+            "text": "Bi-Weekly Candidate Drops"
+          },
+          {
+            "level": 3,
+            "text": "Continuous Optimization"
+          },
+          {
+            "level": 2,
+            "text": "Meet the Founders"
+          },
+          {
+            "level": 3,
+            "text": "Christian Brogger"
+          },
+          {
+            "level": 3,
+            "text": "João Bogo"
+          },
+          {
+            "level": 2,
+            "text": "Ready to Transform Your Hiring at Scale?"
+          },
+          {
+            "level": 4,
+            "text": "Newsletter"
+          },
+          {
+            "level": 4,
+            "text": "For candidates"
+          },
+          {
+            "level": 4,
+            "text": "For companies"
+          },
+          {
+            "level": 4,
+            "text": "Industries"
+          },
+          {
+            "level": 4,
+            "text": "Company"
+          },
+          {
+            "level": 3,
+            "text": "Cookie Preferences"
+          }
+        ],
+        "sections": [
+          "SECTION",
+          "Scale Your Workforce. Globally.",
+          "Built for High-Volume, Global Operations",
+          "Purpose-Built for Volume Hiring Industries",
+          "Hiring Across Borders, Without the Barriers",
+          "Agency Fees vs. TaaSFlow Subscription",
+          "Calculate Your Enterprise Savings",
+          "Tiered Pricing That Scales With You",
+          "Enterprise Results at Scale",
+          "From Kickoff to Candidates in 14 Days",
+          "Meet the Founders",
+          "Ready to Transform Your Hiring at Scale?"
+        ],
+        "textBlocks": [
+          "Solutions",
+          "Industries",
+          "Resources",
+          "AI-powered recruiting infrastructure for companies hiring at scale. Top 10 ranked candidates delivered every week — remote, on-site, or willing to relocate. Visa support included for UAE and US markets. Custom billing available.",
+          "Hires/month capacity",
+          "Delivery cycles",
+          "Countries covered",
+          "Cost savings vs agencies",
+          "Traditional agencies charge 20–30% per hire. At scale, that's millions wasted. We deliver the same quality at a fraction of the cost — with full pipeline transparency.",
+          "Source talent across 30+ countries. Remote, on-site, or willing to relocate.",
+          "Bi-weekly candidate drops with ranked shortlists and fit scoring.",
+          "Full visa processing support for UAE and US markets. Relocation coordination included.",
+          "You own every candidate profile, every pipeline insight. No lock-in.",
+          "Real-time dashboards with sourcing metrics, response rates, and quality trends.",
+          "A dedicated recruiter pod assigned to your account for consistency and speed.",
+          "From hotel chains to retail rollouts, we power hiring for the world's most demanding operations.",
+          "Major hotel chains, resorts, cruise lines",
+          "Restaurant chains, catering, food service",
+          "Multi-location retail, luxury, fashion",
+          "Industrial, automotive, energy",
+          "Infrastructure, commercial, residential",
+          "Warehousing, distribution, shipping",
+          "Full visa sponsorship support",
+          "Work permit processing",
+          "Cultural fit assessment",
+          "Arabic & English sourcing",
+          "H-1B & L-1 visa support",
+          "Multi-state compliance",
+          "Remote & on-site options",
+          "Relocation coordination",
+          "Europe, APAC, LATAM coverage",
+          "Multi-language sourcing",
+          "Timezone-aligned delivery",
+          "Local market expertise",
+          "At 50 hires/month with an average salary of $80K, traditional agencies cost $800K–$1.2M/month. With TaaSFlow, you pay a flat subscription.",
+          "See exactly how much you save vs. agency fees and internal sourcing costs at enterprise scale.",
+          "Hidden Recruiter Costs",
+          "The more you hire, the less you pay per role. No placement fees, no hidden costs.",
+          "15–30 roles/month",
+          "~$233–$466/role",
+          "Top 10 ranked weekly shortlist",
+          "Multi-channel sourcing",
+          "Dedicated recruiter pod",
+          "Pipeline analytics dashboard",
+          "Scoring with fit notes",
+          "31–75 roles/month",
+          "Volume discount applied",
+          "Everything in Scale",
+          "Priority sourcing queue",
+          "Dedicated account manager",
+          "Custom scoring weights",
+          "Weekly strategy calls",
+          "Visa support (UAE & US)",
+          "75+ roles/month",
+          "Best-in-class rates",
+          "Everything in Growth",
+          "White-glove onboarding",
+          "Embedded recruiter option",
+          "Custom integrations (ATS/HRIS)",
+          "Strategic workforce planning",
+          "Global relocation coordination",
+          "SLA-backed delivery guarantees",
+          "Challenge",
+          "Needed 120+ staff across 3 new properties in 90 days",
+          "Result",
+          "Delivered 140 qualified candidates with visa processing support. All positions filled on time.",
+          "Challenge",
+          "Seasonal hiring surge: 200+ positions across 15 locations",
+          "Result",
+          "Systematic sourcing across time zones with bi-weekly drops. 95% fill rate achieved.",
+          "Challenge",
+          "Specialized roles across engineering, safety, and operations",
+          "Result",
+          "Sourced niche talent globally with relocation support. Average time-to-fill: 18 days.",
+          "Deep-dive into your workforce plan, volumes, locations, and timelines.",
+          "We map every role with scoring weights, must-haves, and targeting strategy.",
+          "AI-powered sourcing across LinkedIn, job boards, referral networks, and direct outreach.",
+          "Ranked shortlists delivered every 14 days with fit scores, availability, and visa status.",
+          "Feedback loops refine targeting. Quality improves every cycle.",
+          "Leadership",
+          "Built careers advising global enterprises. Now applying that same rigor to the world of hiring.",
+          "CEO",
+          "25 years' experience of designing and driving value creation across Fortune 500s and Private Equity. Former Director at UBS Investment Bank and has led strategic programmes for Google, Barclays, HSBC, IBM and AstraZeneca. Very pragmatic and always looking to challenge and disrupt using technology as a key enabler. Strong experience in working directly with leadership teams, enabling growth and execution of business strategy.",
+          "CMO",
+          "Former strategist for Hilton, Marriott, Four Seasons, and Philips. Represented at G20 and B20 forums. Has built and scaled talent acquisition campaigns across the US, LATAM, Europe, and the Gulf. Passionate about employer branding, global talent markets, and building real connections at scale.",
+          "Join enterprise teams that have replaced agency dependency with predictable, top 10 ranked weekly talent shortlists. Let's build your workforce plan.",
+          "No commitment required. 30-minute strategy session with our founding team.",
+          "Talent as a Service",
+          "A global hiring system for teams that need consistent recruiting.",
+          "Weekly insights into talent acquisition. No spam.",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Book call",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "No recruitment agency fees. No placement charges. Subscription-based hiring system.",
+          "Copyright 2026 TaaSFlow. All rights reserved.",
+          "We use essential cookies for core functionality. With your consent, we use analytics (Google Analytics) and marketing technologies (Meta Pixel, Apollo, Retention.com/RB2B) to understand website performance, improve campaigns, and measure conversions safely. Your data is processed in accordance with GDPR and our Privacy Notice. You can change your preferences at any time."
+        ],
+        "buttons": [
+          "Solutions",
+          "Industries",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Solutions",
+          "How it works",
+          "Pilot",
+          "Enterprise",
+          "Case studies",
+          "Jobs",
+          "Journey",
+          "Industries",
+          "Tech",
+          "SaaS & Cloud",
+          "Cybersecurity",
+          "Data & Analytics",
+          "Finance",
+          "Insurance",
+          "PE & VC",
+          "Accounting",
+          "Legal",
+          "Consulting",
+          "HR & Recruiting",
+          "Staffing Agencies",
+          "Sales",
+          "Marketing",
+          "E-commerce",
+          "Media",
+          "Real Estate",
+          "Construction",
+          "Hospitality",
+          "Healthcare",
+          "Public Sector",
+          "Non-Profit",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Success Stories",
+          "Talent Marketplace",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Book Enterprise Consultation",
+          "View Volume Pricing",
+          "Get Started",
+          "Get Custom Quote",
+          "Get Custom Quote",
+          "Schedule Enterprise Consultation",
+          "Start with a Pilot",
+          "Subscribe",
+          "Book call",
+          "Cookie preferences",
+          "Customize",
+          "Reject Non-Essential",
+          "Accept All"
+        ],
+        "links": [
+          {
+            "text": "Skip to main content",
+            "href": "https://taasflow.com/enterprise#main-content"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "Browse jobs",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Join the network",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Browse open roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Connect on LinkedIn",
+            "href": "https://www.linkedin.com/in/christian-brogger/"
+          },
+          {
+            "text": "Connect on LinkedIn",
+            "href": "https://www.linkedin.com/in/joaomarcoscsilva/"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "LinkedIn",
+            "href": "https://www.linkedin.com/company/taasflow/"
+          },
+          {
+            "text": "Browse roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Talent network",
+            "href": "https://taasflow.com/global-talent"
+          },
+          {
+            "text": "Member stories",
+            "href": "https://taasflow.com/candidate-success"
+          },
+          {
+            "text": "Start pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "Employer onboarding",
+            "href": "https://taasflow.com/employer-onboarding"
+          },
+          {
+            "text": "Case studies",
+            "href": "https://taasflow.com/case-studies"
+          },
+          {
+            "text": "Healthcare",
+            "href": "https://taasflow.com/industries/healthcare"
+          },
+          {
+            "text": "Technology",
+            "href": "https://taasflow.com/industries/tech"
+          },
+          {
+            "text": "Finance",
+            "href": "https://taasflow.com/industries/finance"
+          },
+          {
+            "text": "Legal",
+            "href": "https://taasflow.com/industries/legal"
+          },
+          {
+            "text": "All →",
+            "href": "https://taasflow.com/industries"
+          },
+          {
+            "text": "About us",
+            "href": "https://taasflow.com/about"
+          },
+          {
+            "text": "Blog",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://taasflow.com/faq"
+          },
+          {
+            "text": "Knowledge Base",
+            "href": "https://taasflow.com/knowledge-base"
+          },
+          {
+            "text": "Contact us",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Privacy Policy",
+            "href": "https://taasflow.com/privacy"
+          },
+          {
+            "text": "Terms of Service",
+            "href": "https://taasflow.com/terms"
+          },
+          {
+            "text": "Privacy Notice",
+            "href": "https://taasflow.com/privacy"
+          }
+        ],
+        "images": [
+          {
+            "src": "https://taasflow.com/assets/logo-on-white-Dk9DIcMP.png",
+            "alt": "TaaSFlow logo"
+          },
+          {
+            "src": "https://taasflow.com/assets/hero-globe-network-B6AA_1ph.jpg",
+            "alt": ""
+          },
+          {
+            "src": "https://taasflow.com/assets/hero-dashboard-cards-DPdXn-GF.jpg",
+            "alt": "Enterprise recruiting dashboard with candidate analytics and hiring metrics"
+          },
+          {
+            "src": "https://taasflow.com/assets/christian-9Ad2XECQ.jpg",
+            "alt": "Christian Brogger"
+          },
+          {
+            "src": "https://taasflow.com/assets/joao-BvCqv2_l.jpg",
+            "alt": "João Bogo"
+          },
+          {
+            "src": "https://taasflow.com/assets/logo-on-blue-CX6jlwjg.png",
+            "alt": "TaaSFlow logo"
+          }
+        ],
+        "forms": [
+          {
+            "action": "https://taasflow.com/enterprise",
+            "fields": [
+              "input"
+            ]
+          }
+        ],
+        "navLinks": [
+          "Browse jobs",
+          "Join the network",
+          "Browse open roles",
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us"
+        ],
+        "footerLinks": [
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "Privacy Policy",
+          "Terms of Service"
+        ],
+        "horizontalOverflow": false,
+        "documentWidth": 768,
+        "viewportWidth": 768
+      },
+      "destination": {
+        "url": "https://clear-path-hubs.lovable.app/enterprise",
+        "finalUrl": "https://clear-path-hubs.lovable.app/enterprise",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [],
+        "title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+        "description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+        "canonical": "https://clear-path-hubs.lovable.app/enterprise",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "twitter:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "og:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "og:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "og:url": "https://clear-path-hubs.lovable.app/enterprise",
+          "og:type": "website",
+          "twitter:card": "summary_large_image",
+          "twitter:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "twitter:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages."
+        },
+        "structuredData": [],
+        "h1": [
+          "Hire at scale on one transparent operating system."
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "Hire at scale on one transparent operating system."
+          },
+          {
+            "level": 2,
+            "text": "Volume hiring"
+          },
+          {
+            "level": 2,
+            "text": "Global sourcing"
+          },
+          {
+            "level": 2,
+            "text": "Workspace transparency"
+          },
+          {
+            "level": 2,
+            "text": "Reporting"
+          },
+          {
+            "level": 2,
+            "text": "Account structure"
+          },
+          {
+            "level": 2,
+            "text": "Tailored billing"
+          },
+          {
+            "level": 2,
+            "text": "Security and access controls"
+          },
+          {
+            "level": 2,
+            "text": "Support model"
+          },
+          {
+            "level": 2,
+            "text": "How enterprise engagements start"
+          },
+          {
+            "level": 2,
+            "text": "Let’s scope your hiring plan together."
+          }
+        ],
+        "sections": [
+          "Hire at scale on one transparent operating system.",
+          "Volume hiring",
+          "How enterprise engagements start",
+          "Let’s scope your hiring plan together.",
+          "SECTION"
+        ],
+        "textBlocks": [
+          "Enterprise",
+          "Enterprise TaaSFlow is the same product, sized for organisations running many searches in parallel across teams, geographies and business units. One workspace, one source of truth, one accountable team.",
+          "Run many searches in parallel with shared brief conventions, shared scoring standards, and one workspace per business unit.",
+          "Source across geographies and time zones. Remote, on-site, and — where approved for the role — relocation-friendly candidates.",
+          "Everyone in the account sees the same pipeline, the same evidence, the same decisions. No hidden queues, no side channels.",
+          "Roll-up views of pipeline health, stage velocity, source mix and decision outcomes across roles, teams and business units.",
+          "Multiple positions, teams and hiring managers under one organisation. Fine-grained roles: admin, editor, viewer.",
+          "Invoicing aligned to your finance process: purchase orders, consolidated billing, and multi-currency where supported.",
+          "Row-level tenant isolation, per-role permissions, private CV storage with signed short-lived URLs, and a full audit trail.",
+          "A named account contact, direct messaging inside every workspace, and joint reviews on a cadence you set.",
+          "01Scoping conversationWe map roles, teams, geographies, and success criteria for the first quarter.",
+          "01",
+          "Scoping conversation",
+          "We map roles, teams, geographies, and success criteria for the first quarter.",
+          "02Account setupOrganisation, workspaces, roles, and billing are configured before any role goes live.",
+          "02",
+          "Account setup",
+          "Organisation, workspaces, roles, and billing are configured before any role goes live.",
+          "03Rolling executionRoles are submitted through the standard intake and delivered into the shared workspace.",
+          "03",
+          "Rolling execution",
+          "Roles are submitted through the standard intake and delivered into the shared workspace.",
+          "Talk to enterprise",
+          "Book a consultation and we’ll come back with a tailored account structure and price."
+        ],
+        "buttons": [],
+        "links": [
+          {
+            "text": "Book enterprise consultation",
+            "href": "https://clear-path-hubs.lovable.app/contact"
+          },
+          {
+            "text": "Submit your first role",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "Book consultation",
+            "href": "https://clear-path-hubs.lovable.app/contact"
+          },
+          {
+            "text": "Submit a role",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "Edit with",
+            "href": "https://lovable.dev/projects/1dc5ee7e-1294-441c-8288-850e79e443f6?utm_source=lovable-badge"
+          }
+        ],
+        "images": [],
+        "forms": [],
+        "navLinks": [],
+        "footerLinks": [],
+        "horizontalOverflow": false,
+        "documentWidth": 768,
+        "viewportWidth": 768
+      },
+      "screenshots": {
+        "sourceFull": "reports/public-parity/screenshots/source/enterprise__tablet__full.png",
+        "sourceVisible": "reports/public-parity/screenshots/source/enterprise__tablet__visible.png",
+        "destinationFull": "reports/public-parity/screenshots/destination/enterprise__tablet__full.png",
+        "destinationVisible": "reports/public-parity/screenshots/destination/enterprise__tablet__visible.png"
+      },
+      "differences": [
+        "title: \"Enterprise Recruiting on Subscription | TaaSFlow\" vs \"TaaSFlow | Talent as a Service | Subscription Recruiting\"",
+        "meta description mismatch",
+        "H1 differs: [Scale Your Workforce. Globally.] vs [Hire at scale on one transparent operating system.]",
+        "heading overlap 0% (0/30)",
+        "section count 12 vs 5",
+        "form count 1 vs 0"
+      ]
+    },
+    {
+      "viewport": "desktop",
+      "source": {
+        "url": "https://taasflow.com/enterprise",
+        "finalUrl": "https://taasflow.com/enterprise",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [
+          {
+            "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HJ2ECKCNK4&gtm=45je67l1v9245339446za200zd9245339446&_p=1784773948638&gcd=13l3l3l3l1l1&npa=0&_ng=1&dma=0&are=1&cid=1201225308.1784773949&frm=0&ngs=1&pscdl=noapi&rcb=1&sr=1440x900&uaa=x86&uab=64&uafvl=Not-A.Brand%3B24.0.0.0%7CChromium%3B146.0.7680.80&uam=&uamb=0&uap=Windows&uapv=&uaw=0&ul=en-us&_s=1&tag_exp=115938465~115938468~118897920~118897930~119896802&dp=%2Fenterprise&dt=TaaSFlow%20%7C%20Talent%20as%20a%20Service%20%7C%20Subscription%20Recruiting&dl=https%3A%2F%2Ftaasflow.com%2Fenterprise&sid=1784773949&sct=1&seg=0&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&ep.role_type=public&ep.is_authenticated=false&tfd=855",
+            "status": null,
+            "failure": "net::ERR_ABORTED"
+          }
+        ],
+        "title": "Enterprise Recruiting on Subscription | TaaSFlow",
+        "description": "Enterprise talent programs on a subscription: dedicated pods, embedded recruiters, SLAs, and reporting for organizations hiring at scale.",
+        "canonical": "https://taasflow.com/enterprise",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:type": "website",
+          "og:url": "https://taasflow.com/enterprise",
+          "og:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "og:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "og:image": "https://taasflow.com/og-image.png",
+          "og:image:width": "1200",
+          "og:image:height": "630",
+          "og:locale": "en_US",
+          "twitter:card": "summary_large_image",
+          "twitter:site": "@TaasFlow",
+          "twitter:creator": "@TaasFlow",
+          "twitter:url": "https://taasflow.com/enterprise",
+          "twitter:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "twitter:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "twitter:image": "https://taasflow.com/og-image.png"
+        },
+        "structuredData": [
+          {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "@id": "https://taasflow.com/#organization",
+            "name": "TaaSFlow",
+            "legalName": "TaaSFlow",
+            "url": "https://taasflow.com/",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://taasflow.com/favicon.png",
+              "width": 512,
+              "height": 512
+            },
+            "image": "https://taasflow.com/og-image.png",
+            "description": "Talent as a Service — subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+            "slogan": "Your hiring team. On demand.",
+            "foundingDate": "2024",
+            "areaServed": [
+              {
+                "@type": "Country",
+                "name": "United States"
+              },
+              {
+                "@type": "Country",
+                "name": "United Arab Emirates"
+              },
+              {
+                "@type": "Country",
+                "name": "United Kingdom"
+              },
+              {
+                "@type": "Country",
+                "name": "Brazil"
+              }
+            ],
+            "knowsAbout": [
+              "Subscription recruiting",
+              "Talent as a Service",
+              "Candidate sourcing",
+              "Pre-screened candidates",
+              "Recruitment process outsourcing"
+            ],
+            "contactPoint": [
+              {
+                "@type": "ContactPoint",
+                "contactType": "sales",
+                "email": "hello@taasflow.com",
+                "url": "https://taasflow.com/contact",
+                "availableLanguage": [
+                  "English",
+                  "Portuguese",
+                  "Spanish"
+                ]
+              }
+            ],
+            "sameAs": [
+              "https://www.linkedin.com/company/taasflow",
+              "https://twitter.com/TaasFlow"
+            ]
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "@id": "https://taasflow.com/#website",
+            "name": "TaaSFlow",
+            "alternateName": "Talent as a Service",
+            "url": "https://taasflow.com/",
+            "description": "Subscription recruiting that delivers pre-screened, ranked candidates in 14 days.",
+            "inLanguage": "en-US",
+            "publisher": {
+              "@id": "https://taasflow.com/#organization"
+            },
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": {
+                "@type": "EntryPoint",
+                "urlTemplate": "https://taasflow.com/jobs?q={search_term_string}"
+              },
+              "query-input": "required name=search_term_string"
+            }
+          }
+        ],
+        "h1": [
+          "Scale Your Workforce. Globally."
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "Scale Your Workforce. Globally."
+          },
+          {
+            "level": 2,
+            "text": "Built for High-Volume, Global Operations"
+          },
+          {
+            "level": 3,
+            "text": "Global Reach"
+          },
+          {
+            "level": 3,
+            "text": "14-Day Delivery Cycles"
+          },
+          {
+            "level": 3,
+            "text": "Visa & Relocation"
+          },
+          {
+            "level": 3,
+            "text": "Candidate Ownership"
+          },
+          {
+            "level": 3,
+            "text": "Pipeline Analytics"
+          },
+          {
+            "level": 3,
+            "text": "Dedicated Pod"
+          },
+          {
+            "level": 2,
+            "text": "Purpose-Built for Volume Hiring Industries"
+          },
+          {
+            "level": 3,
+            "text": "Hospitality & Hotels"
+          },
+          {
+            "level": 3,
+            "text": "Food & Beverage"
+          },
+          {
+            "level": 3,
+            "text": "Retail"
+          },
+          {
+            "level": 3,
+            "text": "Manufacturing"
+          },
+          {
+            "level": 3,
+            "text": "Construction"
+          },
+          {
+            "level": 3,
+            "text": "Logistics & Supply Chain"
+          },
+          {
+            "level": 2,
+            "text": "Hiring Across Borders, Without the Barriers"
+          },
+          {
+            "level": 3,
+            "text": "United Arab Emirates"
+          },
+          {
+            "level": 3,
+            "text": "United States"
+          },
+          {
+            "level": 3,
+            "text": "Global Markets"
+          },
+          {
+            "level": 2,
+            "text": "Agency Fees vs. TaaSFlow Subscription"
+          },
+          {
+            "level": 2,
+            "text": "Calculate Your Enterprise Savings"
+          },
+          {
+            "level": 2,
+            "text": "Tiered Pricing That Scales With You"
+          },
+          {
+            "level": 3,
+            "text": "Scale"
+          },
+          {
+            "level": 3,
+            "text": "Growth"
+          },
+          {
+            "level": 3,
+            "text": "Enterprise"
+          },
+          {
+            "level": 2,
+            "text": "Enterprise Results at Scale"
+          },
+          {
+            "level": 3,
+            "text": "Hotel Chain Expansion – UAE"
+          },
+          {
+            "level": 3,
+            "text": "Multi-Location Retail Rollout"
+          },
+          {
+            "level": 3,
+            "text": "Infrastructure Project Staffing"
+          },
+          {
+            "level": 2,
+            "text": "From Kickoff to Candidates in 14 Days"
+          },
+          {
+            "level": 3,
+            "text": "Enterprise Consultation"
+          },
+          {
+            "level": 3,
+            "text": "Role Matrix & Calibration"
+          },
+          {
+            "level": 3,
+            "text": "Multi-Channel Activation"
+          },
+          {
+            "level": 3,
+            "text": "Bi-Weekly Candidate Drops"
+          },
+          {
+            "level": 3,
+            "text": "Continuous Optimization"
+          },
+          {
+            "level": 2,
+            "text": "Meet the Founders"
+          },
+          {
+            "level": 3,
+            "text": "Christian Brogger"
+          },
+          {
+            "level": 3,
+            "text": "João Bogo"
+          },
+          {
+            "level": 2,
+            "text": "Ready to Transform Your Hiring at Scale?"
+          },
+          {
+            "level": 4,
+            "text": "Newsletter"
+          },
+          {
+            "level": 4,
+            "text": "For candidates"
+          },
+          {
+            "level": 4,
+            "text": "For companies"
+          },
+          {
+            "level": 4,
+            "text": "Industries"
+          },
+          {
+            "level": 4,
+            "text": "Company"
+          },
+          {
+            "level": 3,
+            "text": "Cookie Preferences"
+          }
+        ],
+        "sections": [
+          "SECTION",
+          "Scale Your Workforce. Globally.",
+          "Built for High-Volume, Global Operations",
+          "Purpose-Built for Volume Hiring Industries",
+          "Hiring Across Borders, Without the Barriers",
+          "Agency Fees vs. TaaSFlow Subscription",
+          "Calculate Your Enterprise Savings",
+          "Tiered Pricing That Scales With You",
+          "Enterprise Results at Scale",
+          "From Kickoff to Candidates in 14 Days",
+          "Meet the Founders",
+          "Ready to Transform Your Hiring at Scale?"
+        ],
+        "textBlocks": [
+          "Solutions",
+          "Industries",
+          "Resources",
+          "AI-powered recruiting infrastructure for companies hiring at scale. Top 10 ranked candidates delivered every week — remote, on-site, or willing to relocate. Visa support included for UAE and US markets. Custom billing available.",
+          "Hires/month capacity",
+          "Delivery cycles",
+          "Countries covered",
+          "Cost savings vs agencies",
+          "Traditional agencies charge 20–30% per hire. At scale, that's millions wasted. We deliver the same quality at a fraction of the cost — with full pipeline transparency.",
+          "Source talent across 30+ countries. Remote, on-site, or willing to relocate.",
+          "Bi-weekly candidate drops with ranked shortlists and fit scoring.",
+          "Full visa processing support for UAE and US markets. Relocation coordination included.",
+          "You own every candidate profile, every pipeline insight. No lock-in.",
+          "Real-time dashboards with sourcing metrics, response rates, and quality trends.",
+          "A dedicated recruiter pod assigned to your account for consistency and speed.",
+          "From hotel chains to retail rollouts, we power hiring for the world's most demanding operations.",
+          "Major hotel chains, resorts, cruise lines",
+          "Restaurant chains, catering, food service",
+          "Multi-location retail, luxury, fashion",
+          "Industrial, automotive, energy",
+          "Infrastructure, commercial, residential",
+          "Warehousing, distribution, shipping",
+          "Full visa sponsorship support",
+          "Work permit processing",
+          "Cultural fit assessment",
+          "Arabic & English sourcing",
+          "H-1B & L-1 visa support",
+          "Multi-state compliance",
+          "Remote & on-site options",
+          "Relocation coordination",
+          "Europe, APAC, LATAM coverage",
+          "Multi-language sourcing",
+          "Timezone-aligned delivery",
+          "Local market expertise",
+          "At 50 hires/month with an average salary of $80K, traditional agencies cost $800K–$1.2M/month. With TaaSFlow, you pay a flat subscription.",
+          "See exactly how much you save vs. agency fees and internal sourcing costs at enterprise scale.",
+          "Hidden Recruiter Costs",
+          "The more you hire, the less you pay per role. No placement fees, no hidden costs.",
+          "15–30 roles/month",
+          "~$233–$466/role",
+          "Top 10 ranked weekly shortlist",
+          "Multi-channel sourcing",
+          "Dedicated recruiter pod",
+          "Pipeline analytics dashboard",
+          "Scoring with fit notes",
+          "31–75 roles/month",
+          "Volume discount applied",
+          "Everything in Scale",
+          "Priority sourcing queue",
+          "Dedicated account manager",
+          "Custom scoring weights",
+          "Weekly strategy calls",
+          "Visa support (UAE & US)",
+          "75+ roles/month",
+          "Best-in-class rates",
+          "Everything in Growth",
+          "White-glove onboarding",
+          "Embedded recruiter option",
+          "Custom integrations (ATS/HRIS)",
+          "Strategic workforce planning",
+          "Global relocation coordination",
+          "SLA-backed delivery guarantees",
+          "Challenge",
+          "Needed 120+ staff across 3 new properties in 90 days",
+          "Result",
+          "Delivered 140 qualified candidates with visa processing support. All positions filled on time.",
+          "Challenge",
+          "Seasonal hiring surge: 200+ positions across 15 locations",
+          "Result",
+          "Systematic sourcing across time zones with bi-weekly drops. 95% fill rate achieved.",
+          "Challenge",
+          "Specialized roles across engineering, safety, and operations",
+          "Result",
+          "Sourced niche talent globally with relocation support. Average time-to-fill: 18 days.",
+          "Deep-dive into your workforce plan, volumes, locations, and timelines.",
+          "We map every role with scoring weights, must-haves, and targeting strategy.",
+          "AI-powered sourcing across LinkedIn, job boards, referral networks, and direct outreach.",
+          "Ranked shortlists delivered every 14 days with fit scores, availability, and visa status.",
+          "Feedback loops refine targeting. Quality improves every cycle.",
+          "Leadership",
+          "Built careers advising global enterprises. Now applying that same rigor to the world of hiring.",
+          "CEO",
+          "25 years' experience of designing and driving value creation across Fortune 500s and Private Equity. Former Director at UBS Investment Bank and has led strategic programmes for Google, Barclays, HSBC, IBM and AstraZeneca. Very pragmatic and always looking to challenge and disrupt using technology as a key enabler. Strong experience in working directly with leadership teams, enabling growth and execution of business strategy.",
+          "CMO",
+          "Former strategist for Hilton, Marriott, Four Seasons, and Philips. Represented at G20 and B20 forums. Has built and scaled talent acquisition campaigns across the US, LATAM, Europe, and the Gulf. Passionate about employer branding, global talent markets, and building real connections at scale.",
+          "Join enterprise teams that have replaced agency dependency with predictable, top 10 ranked weekly talent shortlists. Let's build your workforce plan.",
+          "No commitment required. 30-minute strategy session with our founding team.",
+          "Talent as a Service",
+          "A global hiring system for teams that need consistent recruiting.",
+          "Weekly insights into talent acquisition. No spam.",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Book call",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "No recruitment agency fees. No placement charges. Subscription-based hiring system.",
+          "Copyright 2026 TaaSFlow. All rights reserved.",
+          "We use essential cookies for core functionality. With your consent, we use analytics (Google Analytics) and marketing technologies (Meta Pixel, Apollo, Retention.com/RB2B) to understand website performance, improve campaigns, and measure conversions safely. Your data is processed in accordance with GDPR and our Privacy Notice. You can change your preferences at any time."
+        ],
+        "buttons": [
+          "Solutions",
+          "Industries",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Solutions",
+          "How it works",
+          "Pilot",
+          "Enterprise",
+          "Case studies",
+          "Jobs",
+          "Journey",
+          "Industries",
+          "Tech",
+          "SaaS & Cloud",
+          "Cybersecurity",
+          "Data & Analytics",
+          "Finance",
+          "Insurance",
+          "PE & VC",
+          "Accounting",
+          "Legal",
+          "Consulting",
+          "HR & Recruiting",
+          "Staffing Agencies",
+          "Sales",
+          "Marketing",
+          "E-commerce",
+          "Media",
+          "Real Estate",
+          "Construction",
+          "Hospitality",
+          "Healthcare",
+          "Public Sector",
+          "Non-Profit",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Success Stories",
+          "Talent Marketplace",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Book Enterprise Consultation",
+          "View Volume Pricing",
+          "Get Started",
+          "Get Custom Quote",
+          "Get Custom Quote",
+          "Schedule Enterprise Consultation",
+          "Start with a Pilot",
+          "Subscribe",
+          "Book call",
+          "Cookie preferences",
+          "Customize",
+          "Reject Non-Essential",
+          "Accept All"
+        ],
+        "links": [
+          {
+            "text": "Skip to main content",
+            "href": "https://taasflow.com/enterprise#main-content"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "Browse jobs",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Join the network",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Browse open roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Connect on LinkedIn",
+            "href": "https://www.linkedin.com/in/christian-brogger/"
+          },
+          {
+            "text": "Connect on LinkedIn",
+            "href": "https://www.linkedin.com/in/joaomarcoscsilva/"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "LinkedIn",
+            "href": "https://www.linkedin.com/company/taasflow/"
+          },
+          {
+            "text": "Browse roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Talent network",
+            "href": "https://taasflow.com/global-talent"
+          },
+          {
+            "text": "Member stories",
+            "href": "https://taasflow.com/candidate-success"
+          },
+          {
+            "text": "Start pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "Employer onboarding",
+            "href": "https://taasflow.com/employer-onboarding"
+          },
+          {
+            "text": "Case studies",
+            "href": "https://taasflow.com/case-studies"
+          },
+          {
+            "text": "Healthcare",
+            "href": "https://taasflow.com/industries/healthcare"
+          },
+          {
+            "text": "Technology",
+            "href": "https://taasflow.com/industries/tech"
+          },
+          {
+            "text": "Finance",
+            "href": "https://taasflow.com/industries/finance"
+          },
+          {
+            "text": "Legal",
+            "href": "https://taasflow.com/industries/legal"
+          },
+          {
+            "text": "All →",
+            "href": "https://taasflow.com/industries"
+          },
+          {
+            "text": "About us",
+            "href": "https://taasflow.com/about"
+          },
+          {
+            "text": "Blog",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://taasflow.com/faq"
+          },
+          {
+            "text": "Knowledge Base",
+            "href": "https://taasflow.com/knowledge-base"
+          },
+          {
+            "text": "Contact us",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Privacy Policy",
+            "href": "https://taasflow.com/privacy"
+          },
+          {
+            "text": "Terms of Service",
+            "href": "https://taasflow.com/terms"
+          },
+          {
+            "text": "Privacy Notice",
+            "href": "https://taasflow.com/privacy"
+          }
+        ],
+        "images": [
+          {
+            "src": "https://taasflow.com/assets/logo-on-white-Dk9DIcMP.png",
+            "alt": "TaaSFlow logo"
+          },
+          {
+            "src": "https://taasflow.com/assets/hero-globe-network-B6AA_1ph.jpg",
+            "alt": ""
+          },
+          {
+            "src": "https://taasflow.com/assets/hero-dashboard-cards-DPdXn-GF.jpg",
+            "alt": "Enterprise recruiting dashboard with candidate analytics and hiring metrics"
+          },
+          {
+            "src": "https://taasflow.com/assets/christian-9Ad2XECQ.jpg",
+            "alt": "Christian Brogger"
+          },
+          {
+            "src": "https://taasflow.com/assets/joao-BvCqv2_l.jpg",
+            "alt": "João Bogo"
+          },
+          {
+            "src": "https://taasflow.com/assets/logo-on-blue-CX6jlwjg.png",
+            "alt": "TaaSFlow logo"
+          }
+        ],
+        "forms": [
+          {
+            "action": "https://taasflow.com/enterprise",
+            "fields": [
+              "input"
+            ]
+          }
+        ],
+        "navLinks": [
+          "Browse jobs",
+          "Join the network",
+          "Browse open roles",
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us"
+        ],
+        "footerLinks": [
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "Privacy Policy",
+          "Terms of Service"
+        ],
+        "horizontalOverflow": false,
+        "documentWidth": 1440,
+        "viewportWidth": 1440
+      },
+      "destination": {
+        "url": "https://clear-path-hubs.lovable.app/enterprise",
+        "finalUrl": "https://clear-path-hubs.lovable.app/enterprise",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [],
+        "title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+        "description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+        "canonical": "https://clear-path-hubs.lovable.app/enterprise",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "twitter:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "og:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "og:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "og:url": "https://clear-path-hubs.lovable.app/enterprise",
+          "og:type": "website",
+          "twitter:card": "summary_large_image",
+          "twitter:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "twitter:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages."
+        },
+        "structuredData": [],
+        "h1": [
+          "Hire at scale on one transparent operating system."
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "Hire at scale on one transparent operating system."
+          },
+          {
+            "level": 2,
+            "text": "Volume hiring"
+          },
+          {
+            "level": 2,
+            "text": "Global sourcing"
+          },
+          {
+            "level": 2,
+            "text": "Workspace transparency"
+          },
+          {
+            "level": 2,
+            "text": "Reporting"
+          },
+          {
+            "level": 2,
+            "text": "Account structure"
+          },
+          {
+            "level": 2,
+            "text": "Tailored billing"
+          },
+          {
+            "level": 2,
+            "text": "Security and access controls"
+          },
+          {
+            "level": 2,
+            "text": "Support model"
+          },
+          {
+            "level": 2,
+            "text": "How enterprise engagements start"
+          },
+          {
+            "level": 2,
+            "text": "Let’s scope your hiring plan together."
+          }
+        ],
+        "sections": [
+          "Hire at scale on one transparent operating system.",
+          "Volume hiring",
+          "How enterprise engagements start",
+          "Let’s scope your hiring plan together.",
+          "SECTION"
+        ],
+        "textBlocks": [
+          "Enterprise",
+          "Enterprise TaaSFlow is the same product, sized for organisations running many searches in parallel across teams, geographies and business units. One workspace, one source of truth, one accountable team.",
+          "Run many searches in parallel with shared brief conventions, shared scoring standards, and one workspace per business unit.",
+          "Source across geographies and time zones. Remote, on-site, and — where approved for the role — relocation-friendly candidates.",
+          "Everyone in the account sees the same pipeline, the same evidence, the same decisions. No hidden queues, no side channels.",
+          "Roll-up views of pipeline health, stage velocity, source mix and decision outcomes across roles, teams and business units.",
+          "Multiple positions, teams and hiring managers under one organisation. Fine-grained roles: admin, editor, viewer.",
+          "Invoicing aligned to your finance process: purchase orders, consolidated billing, and multi-currency where supported.",
+          "Row-level tenant isolation, per-role permissions, private CV storage with signed short-lived URLs, and a full audit trail.",
+          "A named account contact, direct messaging inside every workspace, and joint reviews on a cadence you set.",
+          "01Scoping conversationWe map roles, teams, geographies, and success criteria for the first quarter.",
+          "01",
+          "Scoping conversation",
+          "We map roles, teams, geographies, and success criteria for the first quarter.",
+          "02Account setupOrganisation, workspaces, roles, and billing are configured before any role goes live.",
+          "02",
+          "Account setup",
+          "Organisation, workspaces, roles, and billing are configured before any role goes live.",
+          "03Rolling executionRoles are submitted through the standard intake and delivered into the shared workspace.",
+          "03",
+          "Rolling execution",
+          "Roles are submitted through the standard intake and delivered into the shared workspace.",
+          "Talk to enterprise",
+          "Book a consultation and we’ll come back with a tailored account structure and price."
+        ],
+        "buttons": [],
+        "links": [
+          {
+            "text": "Book enterprise consultation",
+            "href": "https://clear-path-hubs.lovable.app/contact"
+          },
+          {
+            "text": "Submit your first role",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "Book consultation",
+            "href": "https://clear-path-hubs.lovable.app/contact"
+          },
+          {
+            "text": "Submit a role",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "Edit with",
+            "href": "https://lovable.dev/projects/1dc5ee7e-1294-441c-8288-850e79e443f6?utm_source=lovable-badge"
+          }
+        ],
+        "images": [],
+        "forms": [],
+        "navLinks": [],
+        "footerLinks": [],
+        "horizontalOverflow": false,
+        "documentWidth": 1440,
+        "viewportWidth": 1440
+      },
+      "screenshots": {
+        "sourceFull": "reports/public-parity/screenshots/source/enterprise__desktop__full.png",
+        "sourceVisible": "reports/public-parity/screenshots/source/enterprise__desktop__visible.png",
+        "destinationFull": "reports/public-parity/screenshots/destination/enterprise__desktop__full.png",
+        "destinationVisible": "reports/public-parity/screenshots/destination/enterprise__desktop__visible.png"
+      },
+      "differences": [
+        "title: \"Enterprise Recruiting on Subscription | TaaSFlow\" vs \"TaaSFlow | Talent as a Service | Subscription Recruiting\"",
+        "meta description mismatch",
+        "H1 differs: [Scale Your Workforce. Globally.] vs [Hire at scale on one transparent operating system.]",
+        "heading overlap 0% (0/30)",
+        "section count 12 vs 5",
+        "form count 1 vs 0"
+      ]
+    }
+  ],
+  "summary": "18 differences detected",
+  "exclusions": []
+}

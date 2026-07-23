@@ -1,0 +1,3199 @@
+{
+  "sourcePath": "/industries/human-resources",
+  "destinationPath": "/industries/human-resources",
+  "pageType": "industry_page",
+  "protected": false,
+  "verdict": "MAJOR_DIFFERENCE",
+  "severity": "HIGH",
+  "viewports": [
+    {
+      "viewport": "mobile",
+      "source": {
+        "url": "https://taasflow.com/industries/human-resources",
+        "finalUrl": "https://taasflow.com/industries/human-resources",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [
+          {
+            "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HJ2ECKCNK4&gtm=45je67l1v9245339446za200zd9245339446&_p=1784774205743&gcd=13l3l3l3l1l1&npa=0&_ng=1&dma=0&are=1&cid=1067262010.1784774206&frm=0&ngs=1&pscdl=noapi&rcb=0&sr=375x812&uaa=x86&uab=64&uafvl=Not-A.Brand%3B24.0.0.0%7CChromium%3B146.0.7680.80&uam=&uamb=0&uap=Windows&uapv=&uaw=0&ul=en-us&_s=1&tag_exp=115616985~115938465~115938469~118897920~118897930~119896802&dp=%2Findustries%2Fhuman-resources&dt=TaaSFlow%20%7C%20Talent%20as%20a%20Service%20%7C%20Subscription%20Recruiting&dl=https%3A%2F%2Ftaasflow.com%2Findustries%2Fhuman-resources&sid=1784774206&sct=1&seg=0&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&ep.role_type=public&ep.is_authenticated=false&tfd=750",
+            "status": null,
+            "failure": "net::ERR_ABORTED"
+          }
+        ],
+        "title": "Human Resources Talent | TaaSFlow - Talent as a Service",
+        "description": "On-demand HR professionals including generalists, recruiters, and people operations specialists. Scale your HR function without permanent headcount.",
+        "canonical": "https://taasflow.com/industries/human-resources",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:type": "website",
+          "og:url": "https://taasflow.com/industries/human-resources",
+          "og:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "og:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "og:image": "https://taasflow.com/og-image.png",
+          "og:image:width": "1200",
+          "og:image:height": "630",
+          "og:locale": "en_US",
+          "twitter:card": "summary_large_image",
+          "twitter:site": "@TaasFlow",
+          "twitter:creator": "@TaasFlow",
+          "twitter:url": "https://taasflow.com/industries/human-resources",
+          "twitter:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "twitter:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "twitter:image": "https://taasflow.com/og-image.png"
+        },
+        "structuredData": [
+          {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "@id": "https://taasflow.com/#organization",
+            "name": "TaaSFlow",
+            "legalName": "TaaSFlow",
+            "url": "https://taasflow.com/",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://taasflow.com/favicon.png",
+              "width": 512,
+              "height": 512
+            },
+            "image": "https://taasflow.com/og-image.png",
+            "description": "Talent as a Service — subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+            "slogan": "Your hiring team. On demand.",
+            "foundingDate": "2024",
+            "areaServed": [
+              {
+                "@type": "Country",
+                "name": "United States"
+              },
+              {
+                "@type": "Country",
+                "name": "United Arab Emirates"
+              },
+              {
+                "@type": "Country",
+                "name": "United Kingdom"
+              },
+              {
+                "@type": "Country",
+                "name": "Brazil"
+              }
+            ],
+            "knowsAbout": [
+              "Subscription recruiting",
+              "Talent as a Service",
+              "Candidate sourcing",
+              "Pre-screened candidates",
+              "Recruitment process outsourcing"
+            ],
+            "contactPoint": [
+              {
+                "@type": "ContactPoint",
+                "contactType": "sales",
+                "email": "hello@taasflow.com",
+                "url": "https://taasflow.com/contact",
+                "availableLanguage": [
+                  "English",
+                  "Portuguese",
+                  "Spanish"
+                ]
+              }
+            ],
+            "sameAs": [
+              "https://www.linkedin.com/company/taasflow",
+              "https://twitter.com/TaasFlow"
+            ]
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "@id": "https://taasflow.com/#website",
+            "name": "TaaSFlow",
+            "alternateName": "Talent as a Service",
+            "url": "https://taasflow.com/",
+            "description": "Subscription recruiting that delivers pre-screened, ranked candidates in 14 days.",
+            "inLanguage": "en-US",
+            "publisher": {
+              "@id": "https://taasflow.com/#organization"
+            },
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": {
+                "@type": "EntryPoint",
+                "urlTemplate": "https://taasflow.com/jobs?q={search_term_string}"
+              },
+              "query-input": "required name=search_term_string"
+            }
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "Service",
+            "name": "Human Resources Talent Sourcing",
+            "description": "On-demand HR professionals including generalists, recruiters, and people operations specialists. Scale your HR function without permanent headcount.",
+            "provider": {
+              "@type": "Organization",
+              "name": "TaasFlow",
+              "url": "https://taasflow.com"
+            },
+            "serviceType": "Talent Acquisition",
+            "areaServed": "United States",
+            "hasOfferCatalog": {
+              "@type": "OfferCatalog",
+              "name": "Human Resources Recruiting Services",
+              "itemListElement": [
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "HR Generalists Recruiting"
+                  },
+                  "position": 1
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "HR Managers Recruiting"
+                  },
+                  "position": 2
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Recruiters Recruiting"
+                  },
+                  "position": 3
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Talent Acquisition Specialists Recruiting"
+                  },
+                  "position": 4
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "HR Coordinators Recruiting"
+                  },
+                  "position": 5
+                }
+              ]
+            }
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "https://taasflow.com"
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Industries",
+                "item": "https://taasflow.com/industries"
+              },
+              {
+                "@type": "ListItem",
+                "position": 3,
+                "name": "Human Resources",
+                "item": "https://taasflow.com/industries//industries/human-resources"
+              }
+            ]
+          }
+        ],
+        "h1": [
+          "HR Talent for Scaling Organizations"
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "HR Talent for Scaling Organizations"
+          },
+          {
+            "level": 2,
+            "text": "Human Resources Industry Insights"
+          },
+          {
+            "level": 3,
+            "text": "HR Tech Market"
+          },
+          {
+            "level": 3,
+            "text": "HR-to-Employee"
+          },
+          {
+            "level": 3,
+            "text": "Onboarding Cost"
+          },
+          {
+            "level": 3,
+            "text": "Compliance Risk"
+          },
+          {
+            "level": 3,
+            "text": "Industry Overview"
+          },
+          {
+            "level": 3,
+            "text": "Ready to transform your human resources recruiting?"
+          },
+          {
+            "level": 2,
+            "text": "How we hire for Human Resources"
+          },
+          {
+            "level": 3,
+            "text": "HR Needs Assessment"
+          },
+          {
+            "level": 3,
+            "text": "Certification Verification"
+          },
+          {
+            "level": 3,
+            "text": "HRIS Platform Match"
+          },
+          {
+            "level": 3,
+            "text": "Scalable HR Support"
+          },
+          {
+            "level": 2,
+            "text": "The HR Scaling Challenge"
+          },
+          {
+            "level": 3,
+            "text": "The TaasFlow Solution"
+          },
+          {
+            "level": 2,
+            "text": "Why Human Resources companies choose TaasFlow"
+          },
+          {
+            "level": 3,
+            "text": "Full-Cycle HR Support"
+          },
+          {
+            "level": 3,
+            "text": "Certified Professionals"
+          },
+          {
+            "level": 3,
+            "text": "Compliance Expertise"
+          },
+          {
+            "level": 3,
+            "text": "48-Hour Urgent Support"
+          },
+          {
+            "level": 2,
+            "text": "Positions we fill for Human Resources"
+          },
+          {
+            "level": 2,
+            "text": "Real results for Human Resources teams"
+          },
+          {
+            "level": 2,
+            "text": "Human Resources Salary Explorer"
+          },
+          {
+            "level": 2,
+            "text": "Human Resources Career Path"
+          },
+          {
+            "level": 3,
+            "text": "Senior"
+          },
+          {
+            "level": 4,
+            "text": "Key Skills at This Level"
+          },
+          {
+            "level": 2,
+            "text": "Human Resources Hiring Trends"
+          },
+          {
+            "level": 2,
+            "text": "Interactive Hiring Guide"
+          },
+          {
+            "level": 3,
+            "text": "Define Your Ideal Candidate"
+          },
+          {
+            "level": 3,
+            "text": "Optimize Your Job Posting"
+          },
+          {
+            "level": 3,
+            "text": "Source Beyond Job Boards"
+          },
+          {
+            "level": 3,
+            "text": "Structure Your Interview Process"
+          },
+          {
+            "level": 3,
+            "text": "Close & Onboard Effectively"
+          },
+          {
+            "level": 2,
+            "text": "Human Resources Recruiting Insights"
+          },
+          {
+            "level": 3,
+            "text": "HR and People Operations Salary Guide 2026: Complete Compensation Data"
+          },
+          {
+            "level": 3,
+            "text": "Building an HR Team: From Solo HR to a Full People Function"
+          },
+          {
+            "level": 3,
+            "text": "Building an HR Technology Team: HRIS, People Analytics, and Digital HR"
+          },
+          {
+            "level": 2,
+            "text": "Frequently Asked Questions"
+          },
+          {
+            "level": 3,
+            "text": "Do you have certified HR professionals?"
+          },
+          {
+            "level": 3,
+            "text": "Can you help with M&A HR integration?"
+          },
+          {
+            "level": 3,
+            "text": "What HRIS systems do your professionals know?"
+          },
+          {
+            "level": 2,
+            "text": "Discover related industries"
+          },
+          {
+            "level": 2,
+            "text": "Ready to build your Human Resources team?"
+          },
+          {
+            "level": 4,
+            "text": "Newsletter"
+          },
+          {
+            "level": 4,
+            "text": "For candidates"
+          },
+          {
+            "level": 4,
+            "text": "For companies"
+          },
+          {
+            "level": 4,
+            "text": "Industries"
+          },
+          {
+            "level": 4,
+            "text": "Company"
+          },
+          {
+            "level": 3,
+            "text": "Cookie Preferences"
+          }
+        ],
+        "sections": [
+          "SECTION",
+          "HR Talent for Scaling Organizations",
+          "SECTION",
+          "Human Resources Industry Insights",
+          "Ready to transform your human resources recruiting?",
+          "How we hire for Human Resources",
+          "The HR Scaling Challenge",
+          "Why Human Resources companies choose TaasFlow",
+          "Positions we fill for Human Resources",
+          "Real results for Human Resources teams",
+          "Human Resources Salary Explorer",
+          "Human Resources Career Path",
+          "Human Resources Hiring Trends",
+          "Interactive Hiring Guide",
+          "Human Resources Recruiting Insights",
+          "Frequently Asked Questions",
+          "Discover related industries",
+          "SECTION",
+          "Ready to build your Human Resources team?"
+        ],
+        "textBlocks": [
+          "Solutions",
+          "Industries",
+          "Resources",
+          "Home",
+          "Industries",
+          "Human Resources",
+          "Access experienced HR generalists, recruiters, and people operations specialists. Build HR capacity for growth phases, M&A integrations, and compliance initiatives.",
+          "Key market data and trends shaping talent demand in your industry. (Hover for details)",
+          "Global HR technology market size",
+          "Recommended HR staff ratio for scaling companies",
+          "Average cost to onboard a new employee",
+          "Average cost of non-compliance with employment regulations",
+          "Start a risk-free pilot and receive qualified candidates in 14 days.",
+          "A tailored workflow for the challenges of human resources settings.",
+          "We assess your employee lifecycle gaps, HRIS environment, and compliance needs.",
+          "SHRM-CP, PHR, and SPHR certifications verified with issuing organizations.",
+          "Candidates matched to your Workday, BambooHR, ADP, or other platform stack.",
+          "Certified HR professionals placed on flexible terms aligned with your growth phase.",
+          "Rapid growth strains HR capacity. Every new hire needs onboarding, benefits enrollment, and compliance paperwork—but HR headcount rarely scales proportionally.",
+          "M&A integrations, HRIS implementations, and compliance audits create project-based HR needs that don't justify permanent hires.",
+          "HR consulting firms charge premium rates. You need experienced HR professionals at operational costs, not strategic consulting fees.",
+          "HR generalists who can handle the full employee lifecycle",
+          "Recruiters and talent acquisition specialists for hiring surges",
+          "HRIS specialists familiar with Workday, BambooHR, ADP, and other platforms",
+          "Compliance and employee relations expertise for audits and investigations",
+          "Flexible engagements that align with growth phases and project timelines",
+          "We understand the unique challenges of your industry and deliver matching talent.",
+          "Generalists who handle recruiting, onboarding, benefits, compliance, and offboarding.",
+          "SHRM-CP, SHRM-SCP, PHR, and SPHR certifications verified before placement.",
+          "Professionals who understand employment law, I-9, ADA, FMLA, and other regulations.",
+          "Critical HR gap? We can mobilize qualified professionals quickly.",
+          "Pre-vetted professionals, delivered weekly, ready to start.",
+          "- Series B Tech Company, 200 employees",
+          "Explore current compensation ranges for top roles. Data updated quarterly from industry benchmarks.",
+          "* Based on industry benchmarks from SHRM, Glassdoor, LinkedIn Salary, and BLS data. Actual compensation may vary.",
+          "Click any level to explore typical progression, salary ranges, and key skills.",
+          "Key metrics shaping the talent landscape. Stay ahead of market shifts.",
+          "Steady growth in hiring demand across this sector.",
+          "Increasing adoption of remote and hybrid work models.",
+          "Unfilled positions due to skills shortage in this industry.",
+          "Industry average continues to improve with modern sourcing.",
+          "Follow these proven steps to hire smarter. Track your progress and get actionable tips at every stage.",
+          "Create a detailed candidate persona with must-have vs nice-to-have skills, cultural fit criteria, and realistic salary expectations.",
+          "Write a compelling job description that sells the opportunity, not just lists requirements. Include salary range, growth path, and team culture.",
+          "Reach passive candidates through targeted outreach, employee referrals, and talent communities. 70% of top talent is not actively looking.",
+          "Design a consistent 3-4 stage process that evaluates skills, culture fit, and potential. Include take-home assessments where appropriate.",
+          "Move fast with competitive offers and start onboarding before day one. The first 90 days determine long-term retention.",
+          "Expert articles on recruiting and talent acquisition for human resources.",
+          "HR and People Operations Salary Guide 2026: Complete Compensation Data",
+          "From HR coordinator to CHRO, here is what people professionals earn across company sizes, industries, and specializations.",
+          "Building an HR Team: From Solo HR to a Full People Function",
+          "Every company needs HR, but when do you hire what? Here is the guide to building your people function from the ground up.",
+          "HR is undergoing digital transformation. Here is how to hire the technology professionals who will modernize your people function.",
+          "Common questions about TaasFlow for human resources.",
+          "Learn how we serve similar sectors with subscription recruiting.",
+          "Receive qualified human resources professionals weekly. No agency fees, no long-term contracts.",
+          "Talent as a Service",
+          "A global hiring system for teams that need consistent recruiting.",
+          "Weekly insights into talent acquisition. No spam.",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Book call",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "No recruitment agency fees. No placement charges. Subscription-based hiring system.",
+          "Copyright 2026 TaaSFlow. All rights reserved.",
+          "We use essential cookies for core functionality. With your consent, we use analytics (Google Analytics) and marketing technologies (Meta Pixel, Apollo, Retention.com/RB2B) to understand website performance, improve campaigns, and measure conversions safely. Your data is processed in accordance with GDPR and our Privacy Notice. You can change your preferences at any time."
+        ],
+        "buttons": [
+          "Solutions",
+          "Industries",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Solutions",
+          "How it works",
+          "Pilot",
+          "Enterprise",
+          "Case studies",
+          "Jobs",
+          "Journey",
+          "Industries",
+          "Tech",
+          "SaaS & Cloud",
+          "Cybersecurity",
+          "Data & Analytics",
+          "Finance",
+          "Insurance",
+          "PE & VC",
+          "Accounting",
+          "Legal",
+          "Consulting",
+          "HR & Recruiting",
+          "Staffing Agencies",
+          "Sales",
+          "Marketing",
+          "E-commerce",
+          "Media",
+          "Real Estate",
+          "Construction",
+          "Hospitality",
+          "Healthcare",
+          "Public Sector",
+          "Non-Profit",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Success Stories",
+          "Talent Marketplace",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Start Human Resources Pilot Program",
+          "Book call",
+          "Book call",
+          "1Entry-Level",
+          "2Mid-Level",
+          "3Senior",
+          "4Director / Lead",
+          "5VP / C-Suite",
+          "Next: Director / Lead",
+          "1Define Your Ideal Candidate1-2 days",
+          "1",
+          "Mark Complete",
+          "2Optimize Your Job PostingWrite a compelling job description that sells the opportunity, not just lists requirements. Include salary range, growth path, and team culture.1 day",
+          "2",
+          "3Source Beyond Job BoardsReach passive candidates through targeted outreach, employee referrals, and talent communities. 70% of top talent is not actively looking.Ongoing",
+          "3",
+          "4Structure Your Interview ProcessDesign a consistent 3-4 stage process that evaluates skills, culture fit, and potential. Include take-home assessments where appropriate.2-3 days setup",
+          "4",
+          "5Close & Onboard EffectivelyMove fast with competitive offers and start onboarding before day one. The first 90 days determine long-term retention.1-2 weeks",
+          "5",
+          "Do you have certified HR professionals?",
+          "Can you help with M&A HR integration?",
+          "What HRIS systems do your professionals know?",
+          "Start Human Resources Pilot",
+          "Contact",
+          "Subscribe",
+          "Book call"
+        ],
+        "links": [
+          {
+            "text": "Skip to main content",
+            "href": "https://taasflow.com/industries/human-resources#main-content"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "Browse jobs",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Join the network",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Browse open roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Home",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "Industries",
+            "href": "https://taasflow.com/industries"
+          },
+          {
+            "text": "View all articles",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "📰HR and People Operations Salary Guide 2026: Complete Compensation DataSalary InsightsSalary InsightsHuman ResourcesHR ",
+            "href": "https://taasflow.com/blog/hr-people-ops-salary-guide"
+          },
+          {
+            "text": "📋Building an HR Team: From Solo HR to a Full People FunctionIndustry Hiring GuidesIndustry Hiring GuidesHuman Resources",
+            "href": "https://taasflow.com/blog/hr-team-building-guide-2026"
+          },
+          {
+            "text": "Industry Hiring GuidesHuman ResourcesBuilding an HR Technology Team: HRIS, People Analytics, and Digital HRHR is undergo",
+            "href": "https://taasflow.com/blog/hr-technology-team-building"
+          },
+          {
+            "text": "View all articles",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "Technology",
+            "href": "https://taasflow.com/industries/tech"
+          },
+          {
+            "text": "Legal",
+            "href": "https://taasflow.com/industries/legal"
+          },
+          {
+            "text": "Public Sector",
+            "href": "https://taasflow.com/industries/public-sector"
+          },
+          {
+            "text": "Finance & Banking",
+            "href": "https://taasflow.com/industries/finance"
+          },
+          {
+            "text": "Staffing Agencies",
+            "href": "https://taasflow.com/industries/staffing-agencies"
+          },
+          {
+            "text": "Healthcare",
+            "href": "https://taasflow.com/industries/healthcare"
+          },
+          {
+            "text": "Sales",
+            "href": "https://taasflow.com/industries/sales"
+          },
+          {
+            "text": "Marketing & Advertising",
+            "href": "https://taasflow.com/industries/marketing"
+          },
+          {
+            "text": "Compare all industries",
+            "href": "https://taasflow.com/industries/compare"
+          },
+          {
+            "text": "How it works",
+            "href": "https://taasflow.com/how-it-works"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "Start Pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "Jobs",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Blog",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "About",
+            "href": "https://taasflow.com/about"
+          },
+          {
+            "text": "Enterprise",
+            "href": "https://taasflow.com/enterprise"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://taasflow.com/faq"
+          },
+          {
+            "text": "Contact",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Looking for a job in human resources? Browse open positions",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "LinkedIn",
+            "href": "https://www.linkedin.com/company/taasflow/"
+          },
+          {
+            "text": "Browse roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Talent network",
+            "href": "https://taasflow.com/global-talent"
+          },
+          {
+            "text": "Member stories",
+            "href": "https://taasflow.com/candidate-success"
+          },
+          {
+            "text": "Start pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "Employer onboarding",
+            "href": "https://taasflow.com/employer-onboarding"
+          },
+          {
+            "text": "Case studies",
+            "href": "https://taasflow.com/case-studies"
+          },
+          {
+            "text": "Healthcare",
+            "href": "https://taasflow.com/industries/healthcare"
+          },
+          {
+            "text": "Technology",
+            "href": "https://taasflow.com/industries/tech"
+          },
+          {
+            "text": "Finance",
+            "href": "https://taasflow.com/industries/finance"
+          },
+          {
+            "text": "Legal",
+            "href": "https://taasflow.com/industries/legal"
+          },
+          {
+            "text": "All →",
+            "href": "https://taasflow.com/industries"
+          },
+          {
+            "text": "About us",
+            "href": "https://taasflow.com/about"
+          },
+          {
+            "text": "Blog",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://taasflow.com/faq"
+          },
+          {
+            "text": "Knowledge Base",
+            "href": "https://taasflow.com/knowledge-base"
+          },
+          {
+            "text": "Contact us",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Privacy Policy",
+            "href": "https://taasflow.com/privacy"
+          },
+          {
+            "text": "Terms of Service",
+            "href": "https://taasflow.com/terms"
+          },
+          {
+            "text": "Privacy Notice",
+            "href": "https://taasflow.com/privacy"
+          }
+        ],
+        "images": [
+          {
+            "src": "https://taasflow.com/assets/logo-on-white-Dk9DIcMP.png",
+            "alt": "TaaSFlow logo"
+          },
+          {
+            "src": "https://taasflow.com/assets/human-resources-CXMcZvTZ.jpg",
+            "alt": ""
+          },
+          {
+            "src": "https://taasflow.com/assets/human-resources-CXMcZvTZ.jpg",
+            "alt": ""
+          },
+          {
+            "src": "https://taasflow.com/assets/human-resources-CXMcZvTZ.jpg",
+            "alt": ""
+          },
+          {
+            "src": "https://taasflow.com/blog/human-resources.jpg",
+            "alt": "Building an HR Technology Team: HRIS, People Analytics, and Digital HR"
+          },
+          {
+            "src": "https://taasflow.com/assets/logo-on-blue-CX6jlwjg.png",
+            "alt": "TaaSFlow logo"
+          }
+        ],
+        "forms": [
+          {
+            "action": "https://taasflow.com/industries/human-resources",
+            "fields": [
+              "input"
+            ]
+          }
+        ],
+        "navLinks": [
+          "Browse jobs",
+          "Join the network",
+          "Browse open roles",
+          "Home",
+          "Industries",
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us"
+        ],
+        "footerLinks": [
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "Privacy Policy",
+          "Terms of Service"
+        ],
+        "horizontalOverflow": false,
+        "documentWidth": 375,
+        "viewportWidth": 375
+      },
+      "destination": {
+        "url": "https://clear-path-hubs.lovable.app/industries/human-resources",
+        "finalUrl": "https://clear-path-hubs.lovable.app/industries/human-resources",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [],
+        "title": "Human resources hiring — TaaSFlow",
+        "description": "Structured sourcing for people teams. Ranked shortlists with evidence of function, employee-lifecycle and organisation-size experience.",
+        "canonical": "https://clear-path-hubs.lovable.app/industries/human-resources",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "twitter:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "og:title": "Human resources hiring — TaaSFlow",
+          "og:description": "Structured sourcing for people teams. Ranked shortlists with evidence of function, employee-lifecycle and organisation-size experience.",
+          "og:url": "https://clear-path-hubs.lovable.app/industries/human-resources",
+          "og:type": "website",
+          "twitter:card": "summary_large_image",
+          "twitter:title": "Human resources hiring — TaaSFlow",
+          "twitter:description": "Structured sourcing for people teams. Ranked shortlists with evidence of function, employee-lifecycle and organisation-size experience."
+        },
+        "structuredData": [],
+        "h1": [
+          "People-team hiring, calibrated per function and stage."
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "People-team hiring, calibrated per function and stage."
+          },
+          {
+            "level": 2,
+            "text": "What we hear from Human Resources teams"
+          },
+          {
+            "level": 3,
+            "text": "Function-specific evidence"
+          },
+          {
+            "level": 3,
+            "text": "Organisation stage and size"
+          },
+          {
+            "level": 3,
+            "text": "Systems and operating model"
+          },
+          {
+            "level": 2,
+            "text": "Roles we source in Human Resources"
+          },
+          {
+            "level": 3,
+            "text": "Submit the role"
+          },
+          {
+            "level": 3,
+            "text": "We source and score"
+          },
+          {
+            "level": 3,
+            "text": "Review in your workspace"
+          },
+          {
+            "level": 2,
+            "text": "Hiring for the people team?"
+          }
+        ],
+        "sections": [
+          "People-team hiring, calibrated per function and stage.",
+          "What we hear from Human Resources teams",
+          "Roles we source in Human Resources",
+          "Submit the role",
+          "Hiring for the people team?",
+          "SECTION"
+        ],
+        "textBlocks": [
+          "Home",
+          "Industries",
+          "Human Resources",
+          "Human Resources",
+          "TaaSFlow gives CPOs and HR leaders a workspace for every people hire — talent, HRBP, comp & ben, L&D, people ops — with rubrics tuned per function and organisation stage.",
+          "Function and scope rubric per role",
+          "Stage and headcount captured in intake",
+          "Systems and operating model as filters",
+          "Recruiting, HRBP, comp & ben, DEI, L&D and people ops each need distinct signal. Our rubric captures the specific function and scope the candidate actually owned.",
+          "Early-stage, scaleup and mature-enterprise people work look nothing alike. Stage and headcount context are captured in intake and used as filters.",
+          "HRIS, ATS, payroll and comp systems are captured as structured signals so shortlists reflect the stack the hire will actually operate.",
+          "We calibrate the rubric to the seniority and specialisation you actually need.",
+          "Recruiters and talent leads",
+          "HR business partners",
+          "People operations specialists",
+          "Compensation and benefits specialists",
+          "Learning and development leads",
+          "DEI and culture specialists",
+          "HR generalists",
+          "Heads of people and CPOs",
+          "01",
+          "A guided intake captures everything the search needs, in one flow.",
+          "02",
+          "Multi-channel sourcing, role-specific rubric, evidence extracted from every CV.",
+          "03",
+          "Ranked shortlist, evidence side-by-side, Kanban pipeline, direct messaging.",
+          "See the full process on how it works.",
+          "Human Resources",
+          "Submit the role — one workspace, one rubric, one reviewed shortlist."
+        ],
+        "buttons": [],
+        "links": [
+          {
+            "text": "Home",
+            "href": "https://clear-path-hubs.lovable.app/"
+          },
+          {
+            "text": "Industries",
+            "href": "https://clear-path-hubs.lovable.app/industries"
+          },
+          {
+            "text": "Start hiring",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "Talk to us",
+            "href": "https://clear-path-hubs.lovable.app/contact"
+          },
+          {
+            "text": "how it works",
+            "href": "https://clear-path-hubs.lovable.app/how-it-works"
+          },
+          {
+            "text": "Start intake",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "See other industries",
+            "href": "https://clear-path-hubs.lovable.app/industries"
+          },
+          {
+            "text": "Edit with",
+            "href": "https://lovable.dev/projects/1dc5ee7e-1294-441c-8288-850e79e443f6?utm_source=lovable-badge"
+          }
+        ],
+        "images": [],
+        "forms": [],
+        "navLinks": [
+          "Home",
+          "Industries"
+        ],
+        "footerLinks": [],
+        "horizontalOverflow": false,
+        "documentWidth": 375,
+        "viewportWidth": 375
+      },
+      "screenshots": {
+        "sourceFull": "reports/public-parity/screenshots/source/industries_human-resources__mobile__full.png",
+        "sourceVisible": "reports/public-parity/screenshots/source/industries_human-resources__mobile__visible.png",
+        "destinationFull": "reports/public-parity/screenshots/destination/industries_human-resources__mobile__full.png",
+        "destinationVisible": "reports/public-parity/screenshots/destination/industries_human-resources__mobile__visible.png"
+      },
+      "differences": [
+        "title: \"Human Resources Talent | TaaSFlow - Talent as a Service\" vs \"Human resources hiring — TaaSFlow\"",
+        "meta description mismatch",
+        "H1 differs: [HR Talent for Scaling Organizations] vs [People-team hiring, calibrated per function and stage.]",
+        "heading overlap 0% (0/30)",
+        "section count 19 vs 6",
+        "form count 1 vs 0"
+      ]
+    },
+    {
+      "viewport": "tablet",
+      "source": {
+        "url": "https://taasflow.com/industries/human-resources",
+        "finalUrl": "https://taasflow.com/industries/human-resources",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [
+          {
+            "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HJ2ECKCNK4&gtm=45je67l1v9245339446za200zd9245339446&_p=1784774209559&gcd=13l3l3l3l1l1&npa=0&_ng=1&dma=0&are=1&cid=201637897.1784774210&frm=0&ngs=1&pscdl=noapi&rcb=4&sr=768x1024&uaa=x86&uab=64&uafvl=Not-A.Brand%3B24.0.0.0%7CChromium%3B146.0.7680.80&uam=&uamb=0&uap=Windows&uapv=&uaw=0&ul=en-us&_s=1&tag_exp=115616985~115938466~115938468~118395334~118897920~118897930~119896803&dp=%2Findustries%2Fhuman-resources&dt=TaaSFlow%20%7C%20Talent%20as%20a%20Service%20%7C%20Subscription%20Recruiting&dl=https%3A%2F%2Ftaasflow.com%2Findustries%2Fhuman-resources&sid=1784774209&sct=1&seg=0&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&ep.role_type=public&ep.is_authenticated=false&tfd=479",
+            "status": null,
+            "failure": "net::ERR_ABORTED"
+          },
+          {
+            "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HJ2ECKCNK4&gtm=45je67l1v9245339446za200zd9245339446&_p=1784774209559&gcd=13l3l3l3l1l1&npa=0&_ng=1&dma=0&_eu=AEAAAAQ&ae=a&are=1&cid=201637897.1784774210&frm=0&ngs=1&pscdl=noapi&rcb=4&sr=768x1024&uaa=x86&uab=64&uafvl=Not-A.Brand%3B24.0.0.0%7CChromium%3B146.0.7680.80&uam=&uamb=0&uap=Windows&uapv=&uaw=0&ul=en-us&_s=2&tag_exp=115616985~115938466~115938468~118395334~118897920~118897930~119896803&sid=1784774209&sct=1&seg=0&dl=https%3A%2F%2Ftaasflow.com%2Findustries%2Fhuman-resources&dt=TaaSFlow%20%7C%20Talent%20as%20a%20Service%20%7C%20Subscription%20Recruiting&en=scroll&epn.percent_scrolled=90&_et=21&tfd=824",
+            "status": null,
+            "failure": "net::ERR_ABORTED"
+          }
+        ],
+        "title": "Human Resources Talent | TaaSFlow - Talent as a Service",
+        "description": "On-demand HR professionals including generalists, recruiters, and people operations specialists. Scale your HR function without permanent headcount.",
+        "canonical": "https://taasflow.com/industries/human-resources",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:type": "website",
+          "og:url": "https://taasflow.com/industries/human-resources",
+          "og:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "og:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "og:image": "https://taasflow.com/og-image.png",
+          "og:image:width": "1200",
+          "og:image:height": "630",
+          "og:locale": "en_US",
+          "twitter:card": "summary_large_image",
+          "twitter:site": "@TaasFlow",
+          "twitter:creator": "@TaasFlow",
+          "twitter:url": "https://taasflow.com/industries/human-resources",
+          "twitter:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "twitter:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "twitter:image": "https://taasflow.com/og-image.png"
+        },
+        "structuredData": [
+          {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "@id": "https://taasflow.com/#organization",
+            "name": "TaaSFlow",
+            "legalName": "TaaSFlow",
+            "url": "https://taasflow.com/",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://taasflow.com/favicon.png",
+              "width": 512,
+              "height": 512
+            },
+            "image": "https://taasflow.com/og-image.png",
+            "description": "Talent as a Service — subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+            "slogan": "Your hiring team. On demand.",
+            "foundingDate": "2024",
+            "areaServed": [
+              {
+                "@type": "Country",
+                "name": "United States"
+              },
+              {
+                "@type": "Country",
+                "name": "United Arab Emirates"
+              },
+              {
+                "@type": "Country",
+                "name": "United Kingdom"
+              },
+              {
+                "@type": "Country",
+                "name": "Brazil"
+              }
+            ],
+            "knowsAbout": [
+              "Subscription recruiting",
+              "Talent as a Service",
+              "Candidate sourcing",
+              "Pre-screened candidates",
+              "Recruitment process outsourcing"
+            ],
+            "contactPoint": [
+              {
+                "@type": "ContactPoint",
+                "contactType": "sales",
+                "email": "hello@taasflow.com",
+                "url": "https://taasflow.com/contact",
+                "availableLanguage": [
+                  "English",
+                  "Portuguese",
+                  "Spanish"
+                ]
+              }
+            ],
+            "sameAs": [
+              "https://www.linkedin.com/company/taasflow",
+              "https://twitter.com/TaasFlow"
+            ]
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "@id": "https://taasflow.com/#website",
+            "name": "TaaSFlow",
+            "alternateName": "Talent as a Service",
+            "url": "https://taasflow.com/",
+            "description": "Subscription recruiting that delivers pre-screened, ranked candidates in 14 days.",
+            "inLanguage": "en-US",
+            "publisher": {
+              "@id": "https://taasflow.com/#organization"
+            },
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": {
+                "@type": "EntryPoint",
+                "urlTemplate": "https://taasflow.com/jobs?q={search_term_string}"
+              },
+              "query-input": "required name=search_term_string"
+            }
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "Service",
+            "name": "Human Resources Talent Sourcing",
+            "description": "On-demand HR professionals including generalists, recruiters, and people operations specialists. Scale your HR function without permanent headcount.",
+            "provider": {
+              "@type": "Organization",
+              "name": "TaasFlow",
+              "url": "https://taasflow.com"
+            },
+            "serviceType": "Talent Acquisition",
+            "areaServed": "United States",
+            "hasOfferCatalog": {
+              "@type": "OfferCatalog",
+              "name": "Human Resources Recruiting Services",
+              "itemListElement": [
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "HR Generalists Recruiting"
+                  },
+                  "position": 1
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "HR Managers Recruiting"
+                  },
+                  "position": 2
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Recruiters Recruiting"
+                  },
+                  "position": 3
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Talent Acquisition Specialists Recruiting"
+                  },
+                  "position": 4
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "HR Coordinators Recruiting"
+                  },
+                  "position": 5
+                }
+              ]
+            }
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "https://taasflow.com"
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Industries",
+                "item": "https://taasflow.com/industries"
+              },
+              {
+                "@type": "ListItem",
+                "position": 3,
+                "name": "Human Resources",
+                "item": "https://taasflow.com/industries//industries/human-resources"
+              }
+            ]
+          }
+        ],
+        "h1": [
+          "HR Talent for Scaling Organizations"
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "HR Talent for Scaling Organizations"
+          },
+          {
+            "level": 2,
+            "text": "Human Resources Industry Insights"
+          },
+          {
+            "level": 3,
+            "text": "HR Tech Market"
+          },
+          {
+            "level": 3,
+            "text": "HR-to-Employee"
+          },
+          {
+            "level": 3,
+            "text": "Onboarding Cost"
+          },
+          {
+            "level": 3,
+            "text": "Compliance Risk"
+          },
+          {
+            "level": 3,
+            "text": "Industry Overview"
+          },
+          {
+            "level": 3,
+            "text": "Ready to transform your human resources recruiting?"
+          },
+          {
+            "level": 2,
+            "text": "How we hire for Human Resources"
+          },
+          {
+            "level": 3,
+            "text": "HR Needs Assessment"
+          },
+          {
+            "level": 3,
+            "text": "Certification Verification"
+          },
+          {
+            "level": 3,
+            "text": "HRIS Platform Match"
+          },
+          {
+            "level": 3,
+            "text": "Scalable HR Support"
+          },
+          {
+            "level": 2,
+            "text": "The HR Scaling Challenge"
+          },
+          {
+            "level": 3,
+            "text": "The TaasFlow Solution"
+          },
+          {
+            "level": 2,
+            "text": "Why Human Resources companies choose TaasFlow"
+          },
+          {
+            "level": 3,
+            "text": "Full-Cycle HR Support"
+          },
+          {
+            "level": 3,
+            "text": "Certified Professionals"
+          },
+          {
+            "level": 3,
+            "text": "Compliance Expertise"
+          },
+          {
+            "level": 3,
+            "text": "48-Hour Urgent Support"
+          },
+          {
+            "level": 2,
+            "text": "Positions we fill for Human Resources"
+          },
+          {
+            "level": 2,
+            "text": "Real results for Human Resources teams"
+          },
+          {
+            "level": 2,
+            "text": "Human Resources Salary Explorer"
+          },
+          {
+            "level": 2,
+            "text": "Human Resources Career Path"
+          },
+          {
+            "level": 3,
+            "text": "Senior"
+          },
+          {
+            "level": 4,
+            "text": "Key Skills at This Level"
+          },
+          {
+            "level": 2,
+            "text": "Human Resources Hiring Trends"
+          },
+          {
+            "level": 2,
+            "text": "Interactive Hiring Guide"
+          },
+          {
+            "level": 3,
+            "text": "Define Your Ideal Candidate"
+          },
+          {
+            "level": 3,
+            "text": "Optimize Your Job Posting"
+          },
+          {
+            "level": 3,
+            "text": "Source Beyond Job Boards"
+          },
+          {
+            "level": 3,
+            "text": "Structure Your Interview Process"
+          },
+          {
+            "level": 3,
+            "text": "Close & Onboard Effectively"
+          },
+          {
+            "level": 2,
+            "text": "Human Resources Recruiting Insights"
+          },
+          {
+            "level": 3,
+            "text": "HR and People Operations Salary Guide 2026: Complete Compensation Data"
+          },
+          {
+            "level": 3,
+            "text": "Building an HR Team: From Solo HR to a Full People Function"
+          },
+          {
+            "level": 3,
+            "text": "Building an HR Technology Team: HRIS, People Analytics, and Digital HR"
+          },
+          {
+            "level": 2,
+            "text": "Frequently Asked Questions"
+          },
+          {
+            "level": 3,
+            "text": "Do you have certified HR professionals?"
+          },
+          {
+            "level": 3,
+            "text": "Can you help with M&A HR integration?"
+          },
+          {
+            "level": 3,
+            "text": "What HRIS systems do your professionals know?"
+          },
+          {
+            "level": 2,
+            "text": "Discover related industries"
+          },
+          {
+            "level": 2,
+            "text": "Ready to build your Human Resources team?"
+          },
+          {
+            "level": 4,
+            "text": "Newsletter"
+          },
+          {
+            "level": 4,
+            "text": "For candidates"
+          },
+          {
+            "level": 4,
+            "text": "For companies"
+          },
+          {
+            "level": 4,
+            "text": "Industries"
+          },
+          {
+            "level": 4,
+            "text": "Company"
+          },
+          {
+            "level": 3,
+            "text": "Cookie Preferences"
+          }
+        ],
+        "sections": [
+          "SECTION",
+          "HR Talent for Scaling Organizations",
+          "SECTION",
+          "Human Resources Industry Insights",
+          "Ready to transform your human resources recruiting?",
+          "How we hire for Human Resources",
+          "The HR Scaling Challenge",
+          "Why Human Resources companies choose TaasFlow",
+          "Positions we fill for Human Resources",
+          "Real results for Human Resources teams",
+          "Human Resources Salary Explorer",
+          "Human Resources Career Path",
+          "Human Resources Hiring Trends",
+          "Interactive Hiring Guide",
+          "Human Resources Recruiting Insights",
+          "Frequently Asked Questions",
+          "Discover related industries",
+          "SECTION",
+          "Ready to build your Human Resources team?"
+        ],
+        "textBlocks": [
+          "Solutions",
+          "Industries",
+          "Resources",
+          "Home",
+          "Industries",
+          "Human Resources",
+          "Access experienced HR generalists, recruiters, and people operations specialists. Build HR capacity for growth phases, M&A integrations, and compliance initiatives.",
+          "Key market data and trends shaping talent demand in your industry. (Hover for details)",
+          "Global HR technology market size",
+          "Recommended HR staff ratio for scaling companies",
+          "Average cost to onboard a new employee",
+          "Average cost of non-compliance with employment regulations",
+          "Start a risk-free pilot and receive qualified candidates in 14 days.",
+          "A tailored workflow for the challenges of human resources settings.",
+          "We assess your employee lifecycle gaps, HRIS environment, and compliance needs.",
+          "SHRM-CP, PHR, and SPHR certifications verified with issuing organizations.",
+          "Candidates matched to your Workday, BambooHR, ADP, or other platform stack.",
+          "Certified HR professionals placed on flexible terms aligned with your growth phase.",
+          "Rapid growth strains HR capacity. Every new hire needs onboarding, benefits enrollment, and compliance paperwork—but HR headcount rarely scales proportionally.",
+          "M&A integrations, HRIS implementations, and compliance audits create project-based HR needs that don't justify permanent hires.",
+          "HR consulting firms charge premium rates. You need experienced HR professionals at operational costs, not strategic consulting fees.",
+          "HR generalists who can handle the full employee lifecycle",
+          "Recruiters and talent acquisition specialists for hiring surges",
+          "HRIS specialists familiar with Workday, BambooHR, ADP, and other platforms",
+          "Compliance and employee relations expertise for audits and investigations",
+          "Flexible engagements that align with growth phases and project timelines",
+          "We understand the unique challenges of your industry and deliver matching talent.",
+          "Generalists who handle recruiting, onboarding, benefits, compliance, and offboarding.",
+          "SHRM-CP, SHRM-SCP, PHR, and SPHR certifications verified before placement.",
+          "Professionals who understand employment law, I-9, ADA, FMLA, and other regulations.",
+          "Critical HR gap? We can mobilize qualified professionals quickly.",
+          "Pre-vetted professionals, delivered weekly, ready to start.",
+          "- Series B Tech Company, 200 employees",
+          "Explore current compensation ranges for top roles. Data updated quarterly from industry benchmarks.",
+          "* Based on industry benchmarks from SHRM, Glassdoor, LinkedIn Salary, and BLS data. Actual compensation may vary.",
+          "Click any level to explore typical progression, salary ranges, and key skills.",
+          "Key metrics shaping the talent landscape. Stay ahead of market shifts.",
+          "Steady growth in hiring demand across this sector.",
+          "Increasing adoption of remote and hybrid work models.",
+          "Unfilled positions due to skills shortage in this industry.",
+          "Industry average continues to improve with modern sourcing.",
+          "Follow these proven steps to hire smarter. Track your progress and get actionable tips at every stage.",
+          "Create a detailed candidate persona with must-have vs nice-to-have skills, cultural fit criteria, and realistic salary expectations.",
+          "Write a compelling job description that sells the opportunity, not just lists requirements. Include salary range, growth path, and team culture.",
+          "Reach passive candidates through targeted outreach, employee referrals, and talent communities. 70% of top talent is not actively looking.",
+          "Design a consistent 3-4 stage process that evaluates skills, culture fit, and potential. Include take-home assessments where appropriate.",
+          "Move fast with competitive offers and start onboarding before day one. The first 90 days determine long-term retention.",
+          "Expert articles on recruiting and talent acquisition for human resources.",
+          "HR and People Operations Salary Guide 2026: Complete Compensation Data",
+          "From HR coordinator to CHRO, here is what people professionals earn across company sizes, industries, and specializations.",
+          "Building an HR Team: From Solo HR to a Full People Function",
+          "Every company needs HR, but when do you hire what? Here is the guide to building your people function from the ground up.",
+          "HR is undergoing digital transformation. Here is how to hire the technology professionals who will modernize your people function.",
+          "Common questions about TaasFlow for human resources.",
+          "Learn how we serve similar sectors with subscription recruiting.",
+          "Receive qualified human resources professionals weekly. No agency fees, no long-term contracts.",
+          "Talent as a Service",
+          "A global hiring system for teams that need consistent recruiting.",
+          "Weekly insights into talent acquisition. No spam.",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Book call",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "No recruitment agency fees. No placement charges. Subscription-based hiring system.",
+          "Copyright 2026 TaaSFlow. All rights reserved.",
+          "We use essential cookies for core functionality. With your consent, we use analytics (Google Analytics) and marketing technologies (Meta Pixel, Apollo, Retention.com/RB2B) to understand website performance, improve campaigns, and measure conversions safely. Your data is processed in accordance with GDPR and our Privacy Notice. You can change your preferences at any time."
+        ],
+        "buttons": [
+          "Solutions",
+          "Industries",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Solutions",
+          "How it works",
+          "Pilot",
+          "Enterprise",
+          "Case studies",
+          "Jobs",
+          "Journey",
+          "Industries",
+          "Tech",
+          "SaaS & Cloud",
+          "Cybersecurity",
+          "Data & Analytics",
+          "Finance",
+          "Insurance",
+          "PE & VC",
+          "Accounting",
+          "Legal",
+          "Consulting",
+          "HR & Recruiting",
+          "Staffing Agencies",
+          "Sales",
+          "Marketing",
+          "E-commerce",
+          "Media",
+          "Real Estate",
+          "Construction",
+          "Hospitality",
+          "Healthcare",
+          "Public Sector",
+          "Non-Profit",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Success Stories",
+          "Talent Marketplace",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Start Human Resources Pilot Program",
+          "Book call",
+          "Book call",
+          "1Entry-Level",
+          "2Mid-Level",
+          "3Senior",
+          "4Director / Lead",
+          "5VP / C-Suite",
+          "Next: Director / Lead",
+          "1Define Your Ideal Candidate1-2 days",
+          "1",
+          "Mark Complete",
+          "2Optimize Your Job PostingWrite a compelling job description that sells the opportunity, not just lists requirements. Include salary range, growth path, and team culture.1 day",
+          "2",
+          "3Source Beyond Job BoardsReach passive candidates through targeted outreach, employee referrals, and talent communities. 70% of top talent is not actively looking.Ongoing",
+          "3",
+          "4Structure Your Interview ProcessDesign a consistent 3-4 stage process that evaluates skills, culture fit, and potential. Include take-home assessments where appropriate.2-3 days setup",
+          "4",
+          "5Close & Onboard EffectivelyMove fast with competitive offers and start onboarding before day one. The first 90 days determine long-term retention.1-2 weeks",
+          "5",
+          "Do you have certified HR professionals?",
+          "Can you help with M&A HR integration?",
+          "What HRIS systems do your professionals know?",
+          "Start Human Resources Pilot",
+          "Contact",
+          "Subscribe",
+          "Book call"
+        ],
+        "links": [
+          {
+            "text": "Skip to main content",
+            "href": "https://taasflow.com/industries/human-resources#main-content"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "Browse jobs",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Join the network",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Browse open roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Home",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "Industries",
+            "href": "https://taasflow.com/industries"
+          },
+          {
+            "text": "View all articles",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "📰HR and People Operations Salary Guide 2026: Complete Compensation DataSalary InsightsSalary InsightsHuman ResourcesHR ",
+            "href": "https://taasflow.com/blog/hr-people-ops-salary-guide"
+          },
+          {
+            "text": "📋Building an HR Team: From Solo HR to a Full People FunctionIndustry Hiring GuidesIndustry Hiring GuidesHuman Resources",
+            "href": "https://taasflow.com/blog/hr-team-building-guide-2026"
+          },
+          {
+            "text": "Industry Hiring GuidesHuman ResourcesBuilding an HR Technology Team: HRIS, People Analytics, and Digital HRHR is undergo",
+            "href": "https://taasflow.com/blog/hr-technology-team-building"
+          },
+          {
+            "text": "View all articles",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "Technology",
+            "href": "https://taasflow.com/industries/tech"
+          },
+          {
+            "text": "Legal",
+            "href": "https://taasflow.com/industries/legal"
+          },
+          {
+            "text": "Public Sector",
+            "href": "https://taasflow.com/industries/public-sector"
+          },
+          {
+            "text": "Finance & Banking",
+            "href": "https://taasflow.com/industries/finance"
+          },
+          {
+            "text": "Staffing Agencies",
+            "href": "https://taasflow.com/industries/staffing-agencies"
+          },
+          {
+            "text": "Healthcare",
+            "href": "https://taasflow.com/industries/healthcare"
+          },
+          {
+            "text": "Sales",
+            "href": "https://taasflow.com/industries/sales"
+          },
+          {
+            "text": "Marketing & Advertising",
+            "href": "https://taasflow.com/industries/marketing"
+          },
+          {
+            "text": "Compare all industries",
+            "href": "https://taasflow.com/industries/compare"
+          },
+          {
+            "text": "How it works",
+            "href": "https://taasflow.com/how-it-works"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "Start Pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "Jobs",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Blog",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "About",
+            "href": "https://taasflow.com/about"
+          },
+          {
+            "text": "Enterprise",
+            "href": "https://taasflow.com/enterprise"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://taasflow.com/faq"
+          },
+          {
+            "text": "Contact",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Looking for a job in human resources? Browse open positions",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "LinkedIn",
+            "href": "https://www.linkedin.com/company/taasflow/"
+          },
+          {
+            "text": "Browse roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Talent network",
+            "href": "https://taasflow.com/global-talent"
+          },
+          {
+            "text": "Member stories",
+            "href": "https://taasflow.com/candidate-success"
+          },
+          {
+            "text": "Start pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "Employer onboarding",
+            "href": "https://taasflow.com/employer-onboarding"
+          },
+          {
+            "text": "Case studies",
+            "href": "https://taasflow.com/case-studies"
+          },
+          {
+            "text": "Healthcare",
+            "href": "https://taasflow.com/industries/healthcare"
+          },
+          {
+            "text": "Technology",
+            "href": "https://taasflow.com/industries/tech"
+          },
+          {
+            "text": "Finance",
+            "href": "https://taasflow.com/industries/finance"
+          },
+          {
+            "text": "Legal",
+            "href": "https://taasflow.com/industries/legal"
+          },
+          {
+            "text": "All →",
+            "href": "https://taasflow.com/industries"
+          },
+          {
+            "text": "About us",
+            "href": "https://taasflow.com/about"
+          },
+          {
+            "text": "Blog",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://taasflow.com/faq"
+          },
+          {
+            "text": "Knowledge Base",
+            "href": "https://taasflow.com/knowledge-base"
+          },
+          {
+            "text": "Contact us",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Privacy Policy",
+            "href": "https://taasflow.com/privacy"
+          },
+          {
+            "text": "Terms of Service",
+            "href": "https://taasflow.com/terms"
+          },
+          {
+            "text": "Privacy Notice",
+            "href": "https://taasflow.com/privacy"
+          }
+        ],
+        "images": [
+          {
+            "src": "https://taasflow.com/assets/logo-on-white-Dk9DIcMP.png",
+            "alt": "TaaSFlow logo"
+          },
+          {
+            "src": "https://taasflow.com/assets/human-resources-CXMcZvTZ.jpg",
+            "alt": ""
+          },
+          {
+            "src": "https://taasflow.com/assets/human-resources-CXMcZvTZ.jpg",
+            "alt": ""
+          },
+          {
+            "src": "https://taasflow.com/assets/human-resources-CXMcZvTZ.jpg",
+            "alt": ""
+          },
+          {
+            "src": "https://taasflow.com/blog/human-resources.jpg",
+            "alt": "Building an HR Technology Team: HRIS, People Analytics, and Digital HR"
+          },
+          {
+            "src": "https://taasflow.com/assets/logo-on-blue-CX6jlwjg.png",
+            "alt": "TaaSFlow logo"
+          }
+        ],
+        "forms": [
+          {
+            "action": "https://taasflow.com/industries/human-resources",
+            "fields": [
+              "input"
+            ]
+          }
+        ],
+        "navLinks": [
+          "Browse jobs",
+          "Join the network",
+          "Browse open roles",
+          "Home",
+          "Industries",
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us"
+        ],
+        "footerLinks": [
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "Privacy Policy",
+          "Terms of Service"
+        ],
+        "horizontalOverflow": false,
+        "documentWidth": 768,
+        "viewportWidth": 768
+      },
+      "destination": {
+        "url": "https://clear-path-hubs.lovable.app/industries/human-resources",
+        "finalUrl": "https://clear-path-hubs.lovable.app/industries/human-resources",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [],
+        "title": "Human resources hiring — TaaSFlow",
+        "description": "Structured sourcing for people teams. Ranked shortlists with evidence of function, employee-lifecycle and organisation-size experience.",
+        "canonical": "https://clear-path-hubs.lovable.app/industries/human-resources",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "twitter:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "og:title": "Human resources hiring — TaaSFlow",
+          "og:description": "Structured sourcing for people teams. Ranked shortlists with evidence of function, employee-lifecycle and organisation-size experience.",
+          "og:url": "https://clear-path-hubs.lovable.app/industries/human-resources",
+          "og:type": "website",
+          "twitter:card": "summary_large_image",
+          "twitter:title": "Human resources hiring — TaaSFlow",
+          "twitter:description": "Structured sourcing for people teams. Ranked shortlists with evidence of function, employee-lifecycle and organisation-size experience."
+        },
+        "structuredData": [],
+        "h1": [
+          "People-team hiring, calibrated per function and stage."
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "People-team hiring, calibrated per function and stage."
+          },
+          {
+            "level": 2,
+            "text": "What we hear from Human Resources teams"
+          },
+          {
+            "level": 3,
+            "text": "Function-specific evidence"
+          },
+          {
+            "level": 3,
+            "text": "Organisation stage and size"
+          },
+          {
+            "level": 3,
+            "text": "Systems and operating model"
+          },
+          {
+            "level": 2,
+            "text": "Roles we source in Human Resources"
+          },
+          {
+            "level": 3,
+            "text": "Submit the role"
+          },
+          {
+            "level": 3,
+            "text": "We source and score"
+          },
+          {
+            "level": 3,
+            "text": "Review in your workspace"
+          },
+          {
+            "level": 2,
+            "text": "Hiring for the people team?"
+          }
+        ],
+        "sections": [
+          "People-team hiring, calibrated per function and stage.",
+          "What we hear from Human Resources teams",
+          "Roles we source in Human Resources",
+          "Submit the role",
+          "Hiring for the people team?",
+          "SECTION"
+        ],
+        "textBlocks": [
+          "Home",
+          "Industries",
+          "Human Resources",
+          "Human Resources",
+          "TaaSFlow gives CPOs and HR leaders a workspace for every people hire — talent, HRBP, comp & ben, L&D, people ops — with rubrics tuned per function and organisation stage.",
+          "Function and scope rubric per role",
+          "Stage and headcount captured in intake",
+          "Systems and operating model as filters",
+          "Recruiting, HRBP, comp & ben, DEI, L&D and people ops each need distinct signal. Our rubric captures the specific function and scope the candidate actually owned.",
+          "Early-stage, scaleup and mature-enterprise people work look nothing alike. Stage and headcount context are captured in intake and used as filters.",
+          "HRIS, ATS, payroll and comp systems are captured as structured signals so shortlists reflect the stack the hire will actually operate.",
+          "We calibrate the rubric to the seniority and specialisation you actually need.",
+          "Recruiters and talent leads",
+          "HR business partners",
+          "People operations specialists",
+          "Compensation and benefits specialists",
+          "Learning and development leads",
+          "DEI and culture specialists",
+          "HR generalists",
+          "Heads of people and CPOs",
+          "01",
+          "A guided intake captures everything the search needs, in one flow.",
+          "02",
+          "Multi-channel sourcing, role-specific rubric, evidence extracted from every CV.",
+          "03",
+          "Ranked shortlist, evidence side-by-side, Kanban pipeline, direct messaging.",
+          "See the full process on how it works.",
+          "Human Resources",
+          "Submit the role — one workspace, one rubric, one reviewed shortlist."
+        ],
+        "buttons": [],
+        "links": [
+          {
+            "text": "Home",
+            "href": "https://clear-path-hubs.lovable.app/"
+          },
+          {
+            "text": "Industries",
+            "href": "https://clear-path-hubs.lovable.app/industries"
+          },
+          {
+            "text": "Start hiring",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "Talk to us",
+            "href": "https://clear-path-hubs.lovable.app/contact"
+          },
+          {
+            "text": "how it works",
+            "href": "https://clear-path-hubs.lovable.app/how-it-works"
+          },
+          {
+            "text": "Start intake",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "See other industries",
+            "href": "https://clear-path-hubs.lovable.app/industries"
+          },
+          {
+            "text": "Edit with",
+            "href": "https://lovable.dev/projects/1dc5ee7e-1294-441c-8288-850e79e443f6?utm_source=lovable-badge"
+          }
+        ],
+        "images": [],
+        "forms": [],
+        "navLinks": [
+          "Home",
+          "Industries"
+        ],
+        "footerLinks": [],
+        "horizontalOverflow": false,
+        "documentWidth": 768,
+        "viewportWidth": 768
+      },
+      "screenshots": {
+        "sourceFull": "reports/public-parity/screenshots/source/industries_human-resources__tablet__full.png",
+        "sourceVisible": "reports/public-parity/screenshots/source/industries_human-resources__tablet__visible.png",
+        "destinationFull": "reports/public-parity/screenshots/destination/industries_human-resources__tablet__full.png",
+        "destinationVisible": "reports/public-parity/screenshots/destination/industries_human-resources__tablet__visible.png"
+      },
+      "differences": [
+        "title: \"Human Resources Talent | TaaSFlow - Talent as a Service\" vs \"Human resources hiring — TaaSFlow\"",
+        "meta description mismatch",
+        "H1 differs: [HR Talent for Scaling Organizations] vs [People-team hiring, calibrated per function and stage.]",
+        "heading overlap 0% (0/30)",
+        "section count 19 vs 6",
+        "form count 1 vs 0"
+      ]
+    },
+    {
+      "viewport": "desktop",
+      "source": {
+        "url": "https://taasflow.com/industries/human-resources",
+        "finalUrl": "https://taasflow.com/industries/human-resources",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [
+          {
+            "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HJ2ECKCNK4&gtm=45je67l1h1v9245339446za200zd9245339446&_p=1784774213631&gcd=13l3l3l3l1l1&npa=0&_ng=1&dma=0&are=1&cid=1155459200.1784774214&frm=0&ngs=1&pscdl=noapi&rcb=9&sr=1440x900&uaa=x86&uab=64&uafvl=Not-A.Brand%3B24.0.0.0%7CChromium%3B146.0.7680.80&uam=&uamb=0&uap=Windows&uapv=&uaw=0&ul=en-us&_s=1&tag_exp=115616985~115938466~115938469~118395334~118897920~118897930~119527020~119724321~119896803&dp=%2Findustries%2Fhuman-resources&dt=TaaSFlow%20%7C%20Talent%20as%20a%20Service%20%7C%20Subscription%20Recruiting&dl=https%3A%2F%2Ftaasflow.com%2Findustries%2Fhuman-resources&sid=1784774213&sct=1&seg=0&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&ep.role_type=public&ep.is_authenticated=false&tfd=526",
+            "status": null,
+            "failure": "net::ERR_ABORTED"
+          },
+          {
+            "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HJ2ECKCNK4&gtm=45je67l1h1v9245339446za200zd9245339446&_p=1784774213631&gcd=13l3l3l3l1l1&npa=0&_ng=1&dma=0&_eu=AEAAAAQ&ae=a&are=1&cid=1155459200.1784774214&frm=0&ngs=1&pscdl=noapi&rcb=9&sr=1440x900&uaa=x86&uab=64&uafvl=Not-A.Brand%3B24.0.0.0%7CChromium%3B146.0.7680.80&uam=&uamb=0&uap=Windows&uapv=&uaw=0&ul=en-us&_s=2&tag_exp=115616985~115938466~115938469~118395334~118897920~118897930~119527020~119724321~119896803&sid=1784774213&sct=1&seg=0&dl=https%3A%2F%2Ftaasflow.com%2Findustries%2Fhuman-resources&dt=TaaSFlow%20%7C%20Talent%20as%20a%20Service%20%7C%20Subscription%20Recruiting&en=scroll&epn.percent_scrolled=90&_et=15&tfd=929",
+            "status": null,
+            "failure": "net::ERR_ABORTED"
+          }
+        ],
+        "title": "Human Resources Talent | TaaSFlow - Talent as a Service",
+        "description": "On-demand HR professionals including generalists, recruiters, and people operations specialists. Scale your HR function without permanent headcount.",
+        "canonical": "https://taasflow.com/industries/human-resources",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:type": "website",
+          "og:url": "https://taasflow.com/industries/human-resources",
+          "og:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "og:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "og:image": "https://taasflow.com/og-image.png",
+          "og:image:width": "1200",
+          "og:image:height": "630",
+          "og:locale": "en_US",
+          "twitter:card": "summary_large_image",
+          "twitter:site": "@TaasFlow",
+          "twitter:creator": "@TaasFlow",
+          "twitter:url": "https://taasflow.com/industries/human-resources",
+          "twitter:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "twitter:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "twitter:image": "https://taasflow.com/og-image.png"
+        },
+        "structuredData": [
+          {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "@id": "https://taasflow.com/#organization",
+            "name": "TaaSFlow",
+            "legalName": "TaaSFlow",
+            "url": "https://taasflow.com/",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://taasflow.com/favicon.png",
+              "width": 512,
+              "height": 512
+            },
+            "image": "https://taasflow.com/og-image.png",
+            "description": "Talent as a Service — subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+            "slogan": "Your hiring team. On demand.",
+            "foundingDate": "2024",
+            "areaServed": [
+              {
+                "@type": "Country",
+                "name": "United States"
+              },
+              {
+                "@type": "Country",
+                "name": "United Arab Emirates"
+              },
+              {
+                "@type": "Country",
+                "name": "United Kingdom"
+              },
+              {
+                "@type": "Country",
+                "name": "Brazil"
+              }
+            ],
+            "knowsAbout": [
+              "Subscription recruiting",
+              "Talent as a Service",
+              "Candidate sourcing",
+              "Pre-screened candidates",
+              "Recruitment process outsourcing"
+            ],
+            "contactPoint": [
+              {
+                "@type": "ContactPoint",
+                "contactType": "sales",
+                "email": "hello@taasflow.com",
+                "url": "https://taasflow.com/contact",
+                "availableLanguage": [
+                  "English",
+                  "Portuguese",
+                  "Spanish"
+                ]
+              }
+            ],
+            "sameAs": [
+              "https://www.linkedin.com/company/taasflow",
+              "https://twitter.com/TaasFlow"
+            ]
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "@id": "https://taasflow.com/#website",
+            "name": "TaaSFlow",
+            "alternateName": "Talent as a Service",
+            "url": "https://taasflow.com/",
+            "description": "Subscription recruiting that delivers pre-screened, ranked candidates in 14 days.",
+            "inLanguage": "en-US",
+            "publisher": {
+              "@id": "https://taasflow.com/#organization"
+            },
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": {
+                "@type": "EntryPoint",
+                "urlTemplate": "https://taasflow.com/jobs?q={search_term_string}"
+              },
+              "query-input": "required name=search_term_string"
+            }
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "Service",
+            "name": "Human Resources Talent Sourcing",
+            "description": "On-demand HR professionals including generalists, recruiters, and people operations specialists. Scale your HR function without permanent headcount.",
+            "provider": {
+              "@type": "Organization",
+              "name": "TaasFlow",
+              "url": "https://taasflow.com"
+            },
+            "serviceType": "Talent Acquisition",
+            "areaServed": "United States",
+            "hasOfferCatalog": {
+              "@type": "OfferCatalog",
+              "name": "Human Resources Recruiting Services",
+              "itemListElement": [
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "HR Generalists Recruiting"
+                  },
+                  "position": 1
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "HR Managers Recruiting"
+                  },
+                  "position": 2
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Recruiters Recruiting"
+                  },
+                  "position": 3
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Talent Acquisition Specialists Recruiting"
+                  },
+                  "position": 4
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "HR Coordinators Recruiting"
+                  },
+                  "position": 5
+                }
+              ]
+            }
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "https://taasflow.com"
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Industries",
+                "item": "https://taasflow.com/industries"
+              },
+              {
+                "@type": "ListItem",
+                "position": 3,
+                "name": "Human Resources",
+                "item": "https://taasflow.com/industries//industries/human-resources"
+              }
+            ]
+          }
+        ],
+        "h1": [
+          "HR Talent for Scaling Organizations"
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "HR Talent for Scaling Organizations"
+          },
+          {
+            "level": 2,
+            "text": "Human Resources Industry Insights"
+          },
+          {
+            "level": 3,
+            "text": "HR Tech Market"
+          },
+          {
+            "level": 3,
+            "text": "HR-to-Employee"
+          },
+          {
+            "level": 3,
+            "text": "Onboarding Cost"
+          },
+          {
+            "level": 3,
+            "text": "Compliance Risk"
+          },
+          {
+            "level": 3,
+            "text": "Industry Overview"
+          },
+          {
+            "level": 3,
+            "text": "Ready to transform your human resources recruiting?"
+          },
+          {
+            "level": 2,
+            "text": "How we hire for Human Resources"
+          },
+          {
+            "level": 3,
+            "text": "HR Needs Assessment"
+          },
+          {
+            "level": 3,
+            "text": "Certification Verification"
+          },
+          {
+            "level": 3,
+            "text": "HRIS Platform Match"
+          },
+          {
+            "level": 3,
+            "text": "Scalable HR Support"
+          },
+          {
+            "level": 2,
+            "text": "The HR Scaling Challenge"
+          },
+          {
+            "level": 3,
+            "text": "The TaasFlow Solution"
+          },
+          {
+            "level": 2,
+            "text": "Why Human Resources companies choose TaasFlow"
+          },
+          {
+            "level": 3,
+            "text": "Full-Cycle HR Support"
+          },
+          {
+            "level": 3,
+            "text": "Certified Professionals"
+          },
+          {
+            "level": 3,
+            "text": "Compliance Expertise"
+          },
+          {
+            "level": 3,
+            "text": "48-Hour Urgent Support"
+          },
+          {
+            "level": 2,
+            "text": "Positions we fill for Human Resources"
+          },
+          {
+            "level": 2,
+            "text": "Real results for Human Resources teams"
+          },
+          {
+            "level": 2,
+            "text": "Human Resources Salary Explorer"
+          },
+          {
+            "level": 2,
+            "text": "Human Resources Career Path"
+          },
+          {
+            "level": 3,
+            "text": "Senior"
+          },
+          {
+            "level": 4,
+            "text": "Key Skills at This Level"
+          },
+          {
+            "level": 2,
+            "text": "Human Resources Hiring Trends"
+          },
+          {
+            "level": 2,
+            "text": "Interactive Hiring Guide"
+          },
+          {
+            "level": 3,
+            "text": "Define Your Ideal Candidate"
+          },
+          {
+            "level": 3,
+            "text": "Optimize Your Job Posting"
+          },
+          {
+            "level": 3,
+            "text": "Source Beyond Job Boards"
+          },
+          {
+            "level": 3,
+            "text": "Structure Your Interview Process"
+          },
+          {
+            "level": 3,
+            "text": "Close & Onboard Effectively"
+          },
+          {
+            "level": 2,
+            "text": "Human Resources Recruiting Insights"
+          },
+          {
+            "level": 3,
+            "text": "HR and People Operations Salary Guide 2026: Complete Compensation Data"
+          },
+          {
+            "level": 3,
+            "text": "Building an HR Team: From Solo HR to a Full People Function"
+          },
+          {
+            "level": 3,
+            "text": "Building an HR Technology Team: HRIS, People Analytics, and Digital HR"
+          },
+          {
+            "level": 2,
+            "text": "Frequently Asked Questions"
+          },
+          {
+            "level": 3,
+            "text": "Do you have certified HR professionals?"
+          },
+          {
+            "level": 3,
+            "text": "Can you help with M&A HR integration?"
+          },
+          {
+            "level": 3,
+            "text": "What HRIS systems do your professionals know?"
+          },
+          {
+            "level": 2,
+            "text": "Discover related industries"
+          },
+          {
+            "level": 2,
+            "text": "Ready to build your Human Resources team?"
+          },
+          {
+            "level": 4,
+            "text": "Newsletter"
+          },
+          {
+            "level": 4,
+            "text": "For candidates"
+          },
+          {
+            "level": 4,
+            "text": "For companies"
+          },
+          {
+            "level": 4,
+            "text": "Industries"
+          },
+          {
+            "level": 4,
+            "text": "Company"
+          },
+          {
+            "level": 3,
+            "text": "Cookie Preferences"
+          }
+        ],
+        "sections": [
+          "SECTION",
+          "HR Talent for Scaling Organizations",
+          "SECTION",
+          "Human Resources Industry Insights",
+          "Ready to transform your human resources recruiting?",
+          "How we hire for Human Resources",
+          "The HR Scaling Challenge",
+          "Why Human Resources companies choose TaasFlow",
+          "Positions we fill for Human Resources",
+          "Real results for Human Resources teams",
+          "Human Resources Salary Explorer",
+          "Human Resources Career Path",
+          "Human Resources Hiring Trends",
+          "Interactive Hiring Guide",
+          "Human Resources Recruiting Insights",
+          "Frequently Asked Questions",
+          "Discover related industries",
+          "SECTION",
+          "Ready to build your Human Resources team?"
+        ],
+        "textBlocks": [
+          "Solutions",
+          "Industries",
+          "Resources",
+          "Home",
+          "Industries",
+          "Human Resources",
+          "Access experienced HR generalists, recruiters, and people operations specialists. Build HR capacity for growth phases, M&A integrations, and compliance initiatives.",
+          "Key market data and trends shaping talent demand in your industry. (Hover for details)",
+          "Global HR technology market size",
+          "Recommended HR staff ratio for scaling companies",
+          "Average cost to onboard a new employee",
+          "Average cost of non-compliance with employment regulations",
+          "Start a risk-free pilot and receive qualified candidates in 14 days.",
+          "A tailored workflow for the challenges of human resources settings.",
+          "We assess your employee lifecycle gaps, HRIS environment, and compliance needs.",
+          "SHRM-CP, PHR, and SPHR certifications verified with issuing organizations.",
+          "Candidates matched to your Workday, BambooHR, ADP, or other platform stack.",
+          "Certified HR professionals placed on flexible terms aligned with your growth phase.",
+          "Rapid growth strains HR capacity. Every new hire needs onboarding, benefits enrollment, and compliance paperwork—but HR headcount rarely scales proportionally.",
+          "M&A integrations, HRIS implementations, and compliance audits create project-based HR needs that don't justify permanent hires.",
+          "HR consulting firms charge premium rates. You need experienced HR professionals at operational costs, not strategic consulting fees.",
+          "HR generalists who can handle the full employee lifecycle",
+          "Recruiters and talent acquisition specialists for hiring surges",
+          "HRIS specialists familiar with Workday, BambooHR, ADP, and other platforms",
+          "Compliance and employee relations expertise for audits and investigations",
+          "Flexible engagements that align with growth phases and project timelines",
+          "We understand the unique challenges of your industry and deliver matching talent.",
+          "Generalists who handle recruiting, onboarding, benefits, compliance, and offboarding.",
+          "SHRM-CP, SHRM-SCP, PHR, and SPHR certifications verified before placement.",
+          "Professionals who understand employment law, I-9, ADA, FMLA, and other regulations.",
+          "Critical HR gap? We can mobilize qualified professionals quickly.",
+          "Pre-vetted professionals, delivered weekly, ready to start.",
+          "- Series B Tech Company, 200 employees",
+          "Explore current compensation ranges for top roles. Data updated quarterly from industry benchmarks.",
+          "* Based on industry benchmarks from SHRM, Glassdoor, LinkedIn Salary, and BLS data. Actual compensation may vary.",
+          "Click any level to explore typical progression, salary ranges, and key skills.",
+          "Key metrics shaping the talent landscape. Stay ahead of market shifts.",
+          "Steady growth in hiring demand across this sector.",
+          "Increasing adoption of remote and hybrid work models.",
+          "Unfilled positions due to skills shortage in this industry.",
+          "Industry average continues to improve with modern sourcing.",
+          "Follow these proven steps to hire smarter. Track your progress and get actionable tips at every stage.",
+          "Create a detailed candidate persona with must-have vs nice-to-have skills, cultural fit criteria, and realistic salary expectations.",
+          "Write a compelling job description that sells the opportunity, not just lists requirements. Include salary range, growth path, and team culture.",
+          "Reach passive candidates through targeted outreach, employee referrals, and talent communities. 70% of top talent is not actively looking.",
+          "Design a consistent 3-4 stage process that evaluates skills, culture fit, and potential. Include take-home assessments where appropriate.",
+          "Move fast with competitive offers and start onboarding before day one. The first 90 days determine long-term retention.",
+          "Expert articles on recruiting and talent acquisition for human resources.",
+          "HR and People Operations Salary Guide 2026: Complete Compensation Data",
+          "From HR coordinator to CHRO, here is what people professionals earn across company sizes, industries, and specializations.",
+          "Building an HR Team: From Solo HR to a Full People Function",
+          "Every company needs HR, but when do you hire what? Here is the guide to building your people function from the ground up.",
+          "HR is undergoing digital transformation. Here is how to hire the technology professionals who will modernize your people function.",
+          "Common questions about TaasFlow for human resources.",
+          "Learn how we serve similar sectors with subscription recruiting.",
+          "Receive qualified human resources professionals weekly. No agency fees, no long-term contracts.",
+          "Talent as a Service",
+          "A global hiring system for teams that need consistent recruiting.",
+          "Weekly insights into talent acquisition. No spam.",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Book call",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "No recruitment agency fees. No placement charges. Subscription-based hiring system.",
+          "Copyright 2026 TaaSFlow. All rights reserved.",
+          "We use essential cookies for core functionality. With your consent, we use analytics (Google Analytics) and marketing technologies (Meta Pixel, Apollo, Retention.com/RB2B) to understand website performance, improve campaigns, and measure conversions safely. Your data is processed in accordance with GDPR and our Privacy Notice. You can change your preferences at any time."
+        ],
+        "buttons": [
+          "Solutions",
+          "Industries",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Solutions",
+          "How it works",
+          "Pilot",
+          "Enterprise",
+          "Case studies",
+          "Jobs",
+          "Journey",
+          "Industries",
+          "Tech",
+          "SaaS & Cloud",
+          "Cybersecurity",
+          "Data & Analytics",
+          "Finance",
+          "Insurance",
+          "PE & VC",
+          "Accounting",
+          "Legal",
+          "Consulting",
+          "HR & Recruiting",
+          "Staffing Agencies",
+          "Sales",
+          "Marketing",
+          "E-commerce",
+          "Media",
+          "Real Estate",
+          "Construction",
+          "Hospitality",
+          "Healthcare",
+          "Public Sector",
+          "Non-Profit",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Success Stories",
+          "Talent Marketplace",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Start Human Resources Pilot Program",
+          "Book call",
+          "Book call",
+          "1Entry-Level",
+          "2Mid-Level",
+          "3Senior",
+          "4Director / Lead",
+          "5VP / C-Suite",
+          "Next: Director / Lead",
+          "1Define Your Ideal Candidate1-2 days",
+          "1",
+          "Mark Complete",
+          "2Optimize Your Job PostingWrite a compelling job description that sells the opportunity, not just lists requirements. Include salary range, growth path, and team culture.1 day",
+          "2",
+          "3Source Beyond Job BoardsReach passive candidates through targeted outreach, employee referrals, and talent communities. 70% of top talent is not actively looking.Ongoing",
+          "3",
+          "4Structure Your Interview ProcessDesign a consistent 3-4 stage process that evaluates skills, culture fit, and potential. Include take-home assessments where appropriate.2-3 days setup",
+          "4",
+          "5Close & Onboard EffectivelyMove fast with competitive offers and start onboarding before day one. The first 90 days determine long-term retention.1-2 weeks",
+          "5",
+          "Do you have certified HR professionals?",
+          "Can you help with M&A HR integration?",
+          "What HRIS systems do your professionals know?",
+          "Start Human Resources Pilot",
+          "Contact",
+          "Subscribe",
+          "Book call"
+        ],
+        "links": [
+          {
+            "text": "Skip to main content",
+            "href": "https://taasflow.com/industries/human-resources#main-content"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "Browse jobs",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Join the network",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Browse open roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Home",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "Industries",
+            "href": "https://taasflow.com/industries"
+          },
+          {
+            "text": "View all articles",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "📰HR and People Operations Salary Guide 2026: Complete Compensation DataSalary InsightsSalary InsightsHuman ResourcesHR ",
+            "href": "https://taasflow.com/blog/hr-people-ops-salary-guide"
+          },
+          {
+            "text": "📋Building an HR Team: From Solo HR to a Full People FunctionIndustry Hiring GuidesIndustry Hiring GuidesHuman Resources",
+            "href": "https://taasflow.com/blog/hr-team-building-guide-2026"
+          },
+          {
+            "text": "Industry Hiring GuidesHuman ResourcesBuilding an HR Technology Team: HRIS, People Analytics, and Digital HRHR is undergo",
+            "href": "https://taasflow.com/blog/hr-technology-team-building"
+          },
+          {
+            "text": "View all articles",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "Technology",
+            "href": "https://taasflow.com/industries/tech"
+          },
+          {
+            "text": "Legal",
+            "href": "https://taasflow.com/industries/legal"
+          },
+          {
+            "text": "Public Sector",
+            "href": "https://taasflow.com/industries/public-sector"
+          },
+          {
+            "text": "Finance & Banking",
+            "href": "https://taasflow.com/industries/finance"
+          },
+          {
+            "text": "Staffing Agencies",
+            "href": "https://taasflow.com/industries/staffing-agencies"
+          },
+          {
+            "text": "Healthcare",
+            "href": "https://taasflow.com/industries/healthcare"
+          },
+          {
+            "text": "Sales",
+            "href": "https://taasflow.com/industries/sales"
+          },
+          {
+            "text": "Marketing & Advertising",
+            "href": "https://taasflow.com/industries/marketing"
+          },
+          {
+            "text": "Compare all industries",
+            "href": "https://taasflow.com/industries/compare"
+          },
+          {
+            "text": "How it works",
+            "href": "https://taasflow.com/how-it-works"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "Start Pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "Jobs",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Blog",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "About",
+            "href": "https://taasflow.com/about"
+          },
+          {
+            "text": "Enterprise",
+            "href": "https://taasflow.com/enterprise"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://taasflow.com/faq"
+          },
+          {
+            "text": "Contact",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Looking for a job in human resources? Browse open positions",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "LinkedIn",
+            "href": "https://www.linkedin.com/company/taasflow/"
+          },
+          {
+            "text": "Browse roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Talent network",
+            "href": "https://taasflow.com/global-talent"
+          },
+          {
+            "text": "Member stories",
+            "href": "https://taasflow.com/candidate-success"
+          },
+          {
+            "text": "Start pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "Employer onboarding",
+            "href": "https://taasflow.com/employer-onboarding"
+          },
+          {
+            "text": "Case studies",
+            "href": "https://taasflow.com/case-studies"
+          },
+          {
+            "text": "Healthcare",
+            "href": "https://taasflow.com/industries/healthcare"
+          },
+          {
+            "text": "Technology",
+            "href": "https://taasflow.com/industries/tech"
+          },
+          {
+            "text": "Finance",
+            "href": "https://taasflow.com/industries/finance"
+          },
+          {
+            "text": "Legal",
+            "href": "https://taasflow.com/industries/legal"
+          },
+          {
+            "text": "All →",
+            "href": "https://taasflow.com/industries"
+          },
+          {
+            "text": "About us",
+            "href": "https://taasflow.com/about"
+          },
+          {
+            "text": "Blog",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://taasflow.com/faq"
+          },
+          {
+            "text": "Knowledge Base",
+            "href": "https://taasflow.com/knowledge-base"
+          },
+          {
+            "text": "Contact us",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Privacy Policy",
+            "href": "https://taasflow.com/privacy"
+          },
+          {
+            "text": "Terms of Service",
+            "href": "https://taasflow.com/terms"
+          },
+          {
+            "text": "Privacy Notice",
+            "href": "https://taasflow.com/privacy"
+          }
+        ],
+        "images": [
+          {
+            "src": "https://taasflow.com/assets/logo-on-white-Dk9DIcMP.png",
+            "alt": "TaaSFlow logo"
+          },
+          {
+            "src": "https://taasflow.com/assets/human-resources-CXMcZvTZ.jpg",
+            "alt": ""
+          },
+          {
+            "src": "https://taasflow.com/assets/human-resources-CXMcZvTZ.jpg",
+            "alt": ""
+          },
+          {
+            "src": "https://taasflow.com/assets/human-resources-CXMcZvTZ.jpg",
+            "alt": ""
+          },
+          {
+            "src": "https://taasflow.com/blog/human-resources.jpg",
+            "alt": "Building an HR Technology Team: HRIS, People Analytics, and Digital HR"
+          },
+          {
+            "src": "https://taasflow.com/assets/logo-on-blue-CX6jlwjg.png",
+            "alt": "TaaSFlow logo"
+          }
+        ],
+        "forms": [
+          {
+            "action": "https://taasflow.com/industries/human-resources",
+            "fields": [
+              "input"
+            ]
+          }
+        ],
+        "navLinks": [
+          "Browse jobs",
+          "Join the network",
+          "Browse open roles",
+          "Home",
+          "Industries",
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us"
+        ],
+        "footerLinks": [
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "Privacy Policy",
+          "Terms of Service"
+        ],
+        "horizontalOverflow": false,
+        "documentWidth": 1440,
+        "viewportWidth": 1440
+      },
+      "destination": {
+        "url": "https://clear-path-hubs.lovable.app/industries/human-resources",
+        "finalUrl": "https://clear-path-hubs.lovable.app/industries/human-resources",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [],
+        "title": "Human resources hiring — TaaSFlow",
+        "description": "Structured sourcing for people teams. Ranked shortlists with evidence of function, employee-lifecycle and organisation-size experience.",
+        "canonical": "https://clear-path-hubs.lovable.app/industries/human-resources",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "twitter:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "og:title": "Human resources hiring — TaaSFlow",
+          "og:description": "Structured sourcing for people teams. Ranked shortlists with evidence of function, employee-lifecycle and organisation-size experience.",
+          "og:url": "https://clear-path-hubs.lovable.app/industries/human-resources",
+          "og:type": "website",
+          "twitter:card": "summary_large_image",
+          "twitter:title": "Human resources hiring — TaaSFlow",
+          "twitter:description": "Structured sourcing for people teams. Ranked shortlists with evidence of function, employee-lifecycle and organisation-size experience."
+        },
+        "structuredData": [],
+        "h1": [
+          "People-team hiring, calibrated per function and stage."
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "People-team hiring, calibrated per function and stage."
+          },
+          {
+            "level": 2,
+            "text": "What we hear from Human Resources teams"
+          },
+          {
+            "level": 3,
+            "text": "Function-specific evidence"
+          },
+          {
+            "level": 3,
+            "text": "Organisation stage and size"
+          },
+          {
+            "level": 3,
+            "text": "Systems and operating model"
+          },
+          {
+            "level": 2,
+            "text": "Roles we source in Human Resources"
+          },
+          {
+            "level": 3,
+            "text": "Submit the role"
+          },
+          {
+            "level": 3,
+            "text": "We source and score"
+          },
+          {
+            "level": 3,
+            "text": "Review in your workspace"
+          },
+          {
+            "level": 2,
+            "text": "Hiring for the people team?"
+          }
+        ],
+        "sections": [
+          "People-team hiring, calibrated per function and stage.",
+          "What we hear from Human Resources teams",
+          "Roles we source in Human Resources",
+          "Submit the role",
+          "Hiring for the people team?",
+          "SECTION"
+        ],
+        "textBlocks": [
+          "Home",
+          "Industries",
+          "Human Resources",
+          "Human Resources",
+          "TaaSFlow gives CPOs and HR leaders a workspace for every people hire — talent, HRBP, comp & ben, L&D, people ops — with rubrics tuned per function and organisation stage.",
+          "Function and scope rubric per role",
+          "Stage and headcount captured in intake",
+          "Systems and operating model as filters",
+          "Recruiting, HRBP, comp & ben, DEI, L&D and people ops each need distinct signal. Our rubric captures the specific function and scope the candidate actually owned.",
+          "Early-stage, scaleup and mature-enterprise people work look nothing alike. Stage and headcount context are captured in intake and used as filters.",
+          "HRIS, ATS, payroll and comp systems are captured as structured signals so shortlists reflect the stack the hire will actually operate.",
+          "We calibrate the rubric to the seniority and specialisation you actually need.",
+          "Recruiters and talent leads",
+          "HR business partners",
+          "People operations specialists",
+          "Compensation and benefits specialists",
+          "Learning and development leads",
+          "DEI and culture specialists",
+          "HR generalists",
+          "Heads of people and CPOs",
+          "01",
+          "A guided intake captures everything the search needs, in one flow.",
+          "02",
+          "Multi-channel sourcing, role-specific rubric, evidence extracted from every CV.",
+          "03",
+          "Ranked shortlist, evidence side-by-side, Kanban pipeline, direct messaging.",
+          "See the full process on how it works.",
+          "Human Resources",
+          "Submit the role — one workspace, one rubric, one reviewed shortlist."
+        ],
+        "buttons": [],
+        "links": [
+          {
+            "text": "Home",
+            "href": "https://clear-path-hubs.lovable.app/"
+          },
+          {
+            "text": "Industries",
+            "href": "https://clear-path-hubs.lovable.app/industries"
+          },
+          {
+            "text": "Start hiring",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "Talk to us",
+            "href": "https://clear-path-hubs.lovable.app/contact"
+          },
+          {
+            "text": "how it works",
+            "href": "https://clear-path-hubs.lovable.app/how-it-works"
+          },
+          {
+            "text": "Start intake",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "See other industries",
+            "href": "https://clear-path-hubs.lovable.app/industries"
+          },
+          {
+            "text": "Edit with",
+            "href": "https://lovable.dev/projects/1dc5ee7e-1294-441c-8288-850e79e443f6?utm_source=lovable-badge"
+          }
+        ],
+        "images": [],
+        "forms": [],
+        "navLinks": [
+          "Home",
+          "Industries"
+        ],
+        "footerLinks": [],
+        "horizontalOverflow": false,
+        "documentWidth": 1440,
+        "viewportWidth": 1440
+      },
+      "screenshots": {
+        "sourceFull": "reports/public-parity/screenshots/source/industries_human-resources__desktop__full.png",
+        "sourceVisible": "reports/public-parity/screenshots/source/industries_human-resources__desktop__visible.png",
+        "destinationFull": "reports/public-parity/screenshots/destination/industries_human-resources__desktop__full.png",
+        "destinationVisible": "reports/public-parity/screenshots/destination/industries_human-resources__desktop__visible.png"
+      },
+      "differences": [
+        "title: \"Human Resources Talent | TaaSFlow - Talent as a Service\" vs \"Human resources hiring — TaaSFlow\"",
+        "meta description mismatch",
+        "H1 differs: [HR Talent for Scaling Organizations] vs [People-team hiring, calibrated per function and stage.]",
+        "heading overlap 0% (0/30)",
+        "section count 19 vs 6",
+        "form count 1 vs 0"
+      ]
+    }
+  ],
+  "summary": "18 differences detected",
+  "exclusions": []
+}

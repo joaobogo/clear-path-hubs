@@ -1,0 +1,2907 @@
+{
+  "sourcePath": "/terms",
+  "destinationPath": "/terms",
+  "pageType": "marketing_static",
+  "protected": false,
+  "verdict": "MAJOR_DIFFERENCE",
+  "severity": "HIGH",
+  "viewports": [
+    {
+      "viewport": "mobile",
+      "source": {
+        "url": "https://taasflow.com/terms",
+        "finalUrl": "https://taasflow.com/terms",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [
+          {
+            "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HJ2ECKCNK4&gtm=45je67l1v9245339446za200zd9245339446&_p=1784774039704&gcd=13l3l3l3l1l1&npa=0&_ng=1&dma=0&are=1&cid=1703874036.1784774040&frm=0&ngs=1&pscdl=noapi&rcb=19&sr=375x812&uaa=x86&uab=64&uafvl=Not-A.Brand%3B24.0.0.0%7CChromium%3B146.0.7680.80&uam=&uamb=0&uap=Windows&uapv=&uaw=0&ul=en-us&_s=1&tag_exp=115938465~115938468~118897920~118897930~119527020~119896803&dp=%2Fterms&dt=TaaSFlow%20%7C%20Talent%20as%20a%20Service%20%7C%20Subscription%20Recruiting&dl=https%3A%2F%2Ftaasflow.com%2Fterms&sid=1784774039&sct=1&seg=0&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&ep.role_type=public&ep.is_authenticated=false&tfd=602",
+            "status": null,
+            "failure": "net::ERR_ABORTED"
+          }
+        ],
+        "title": "Terms of Service | TaaSFlow",
+        "description": "Terms of Service for TaaSFlow. Read the terms and conditions governing your use of our subscription-based recruiting platform.",
+        "canonical": "https://taasflow.com/terms",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:type": "website",
+          "og:url": "https://taasflow.com/terms",
+          "og:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "og:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "og:image": "https://taasflow.com/og-image.png",
+          "og:image:width": "1200",
+          "og:image:height": "630",
+          "og:locale": "en_US",
+          "twitter:card": "summary_large_image",
+          "twitter:site": "@TaasFlow",
+          "twitter:creator": "@TaasFlow",
+          "twitter:url": "https://taasflow.com/terms",
+          "twitter:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "twitter:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "twitter:image": "https://taasflow.com/og-image.png"
+        },
+        "structuredData": [
+          {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "@id": "https://taasflow.com/#organization",
+            "name": "TaaSFlow",
+            "legalName": "TaaSFlow",
+            "url": "https://taasflow.com/",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://taasflow.com/favicon.png",
+              "width": 512,
+              "height": 512
+            },
+            "image": "https://taasflow.com/og-image.png",
+            "description": "Talent as a Service — subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+            "slogan": "Your hiring team. On demand.",
+            "foundingDate": "2024",
+            "areaServed": [
+              {
+                "@type": "Country",
+                "name": "United States"
+              },
+              {
+                "@type": "Country",
+                "name": "United Arab Emirates"
+              },
+              {
+                "@type": "Country",
+                "name": "United Kingdom"
+              },
+              {
+                "@type": "Country",
+                "name": "Brazil"
+              }
+            ],
+            "knowsAbout": [
+              "Subscription recruiting",
+              "Talent as a Service",
+              "Candidate sourcing",
+              "Pre-screened candidates",
+              "Recruitment process outsourcing"
+            ],
+            "contactPoint": [
+              {
+                "@type": "ContactPoint",
+                "contactType": "sales",
+                "email": "hello@taasflow.com",
+                "url": "https://taasflow.com/contact",
+                "availableLanguage": [
+                  "English",
+                  "Portuguese",
+                  "Spanish"
+                ]
+              }
+            ],
+            "sameAs": [
+              "https://www.linkedin.com/company/taasflow",
+              "https://twitter.com/TaasFlow"
+            ]
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "@id": "https://taasflow.com/#website",
+            "name": "TaaSFlow",
+            "alternateName": "Talent as a Service",
+            "url": "https://taasflow.com/",
+            "description": "Subscription recruiting that delivers pre-screened, ranked candidates in 14 days.",
+            "inLanguage": "en-US",
+            "publisher": {
+              "@id": "https://taasflow.com/#organization"
+            },
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": {
+                "@type": "EntryPoint",
+                "urlTemplate": "https://taasflow.com/jobs?q={search_term_string}"
+              },
+              "query-input": "required name=search_term_string"
+            }
+          }
+        ],
+        "h1": [
+          "Terms of Service"
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "Terms of Service"
+          },
+          {
+            "level": 2,
+            "text": "1. Acceptance of Terms"
+          },
+          {
+            "level": 2,
+            "text": "2. Description of Services"
+          },
+          {
+            "level": 2,
+            "text": "3. Account Registration"
+          },
+          {
+            "level": 2,
+            "text": "4. Subscriptions, Pricing, and Payment"
+          },
+          {
+            "level": 2,
+            "text": "5. Client Obligations"
+          },
+          {
+            "level": 2,
+            "text": "6. Candidate Data and Pipeline Ownership"
+          },
+          {
+            "level": 2,
+            "text": "7. Intellectual Property"
+          },
+          {
+            "level": 2,
+            "text": "8. Prohibited Use"
+          },
+          {
+            "level": 2,
+            "text": "9. Disclaimers"
+          },
+          {
+            "level": 2,
+            "text": "10. Limitation of Liability"
+          },
+          {
+            "level": 2,
+            "text": "11. Indemnification"
+          },
+          {
+            "level": 2,
+            "text": "12. Termination"
+          },
+          {
+            "level": 2,
+            "text": "13. Governing Law and Disputes"
+          },
+          {
+            "level": 2,
+            "text": "14. Changes to These Terms"
+          },
+          {
+            "level": 2,
+            "text": "15. Contact"
+          },
+          {
+            "level": 4,
+            "text": "Newsletter"
+          },
+          {
+            "level": 4,
+            "text": "For candidates"
+          },
+          {
+            "level": 4,
+            "text": "For companies"
+          },
+          {
+            "level": 4,
+            "text": "Industries"
+          },
+          {
+            "level": 4,
+            "text": "Company"
+          }
+        ],
+        "sections": [
+          "SECTION",
+          "Terms of Service",
+          "1. Acceptance of Terms",
+          "2. Description of Services",
+          "3. Account Registration",
+          "4. Subscriptions, Pricing, and Payment",
+          "5. Client Obligations",
+          "6. Candidate Data and Pipeline Ownership",
+          "7. Intellectual Property",
+          "8. Prohibited Use",
+          "9. Disclaimers",
+          "10. Limitation of Liability",
+          "11. Indemnification",
+          "12. Termination",
+          "13. Governing Law and Disputes",
+          "14. Changes to These Terms",
+          "15. Contact",
+          "SECTION"
+        ],
+        "textBlocks": [
+          "Solutions",
+          "Industries",
+          "Resources",
+          "Last updated: March 5, 2026",
+          "By accessing or using TaaSFlow's website, platform, or services (\"Services\"), you agree to be bound by these Terms of Service (\"Terms\"). If you do not agree, do not use our Services. These Terms constitute a legally binding agreement between you (or the entity you represent) and TaaSFlow.",
+          "TaaSFlow provides a subscription-based talent sourcing and recruitment platform. Our Services include:",
+          "AI-powered candidate sourcing and screening",
+          "Ranked candidate shortlists delivered on a recurring basis",
+          "Role intake and blueprint creation tools",
+          "Client dashboards for pipeline management",
+          "One-off hiring packages and monthly subscription plans",
+          "TaaSFlow is not a staffing agency. We do not charge placement fees. Candidates sourced through our platform are introduced to you; the hiring decision and employment relationship are solely between you and the candidate.",
+          "To access certain features, you must create an account. You agree to provide accurate, current, and complete information and to keep your credentials secure. You are responsible for all activity under your account. Notify us immediately if you suspect unauthorized access.",
+          "Pricing: All prices are listed on our Pricing page. We reserve the right to update pricing with 30 days' notice.",
+          "Billing: Subscription fees are billed monthly or annually in advance. One-off packages are billed at the time of purchase.",
+          "Pilot program: The pilot is a paid engagement for a single role, subject to the terms communicated at the time of purchase.",
+          "Pausing and cancellation: You may pause or cancel your subscription at any time. Cancellation takes effect at the end of the current billing period. No refunds are issued for partial billing periods.",
+          "Taxes: Prices do not include applicable taxes. You are responsible for any taxes associated with your purchase.",
+          "As a client, you agree to:",
+          "Provide accurate and complete role requirements during the intake process",
+          "Respond to candidate submissions within a reasonable timeframe",
+          "Comply with all applicable employment and anti-discrimination laws when evaluating candidates",
+          "Not circumvent TaaSFlow by directly contacting sourced candidates outside the platform to avoid service fees",
+          "Treat candidate data confidentially and in accordance with applicable privacy laws",
+          "Candidates sourced and presented through TaaSFlow are part of your pipeline. You retain ownership of candidate information delivered to you, subject to applicable data protection laws. You agree to process candidate data only for legitimate hiring purposes and in compliance with GDPR and other applicable privacy regulations.",
+          "All content, software, algorithms, designs, and branding on the TaaSFlow platform are owned by or licensed to TaaSFlow. You may not copy, modify, distribute, or create derivative works without our written permission. Your use of the Services does not grant you any ownership rights in our intellectual property.",
+          "You agree not to:",
+          "Use the Services for unlawful purposes or in violation of any applicable laws",
+          "Attempt to gain unauthorized access to any part of the platform",
+          "Scrape, crawl, or use automated tools to extract data from the platform",
+          "Upload malicious code, viruses, or any harmful content",
+          "Misrepresent your identity or affiliation with any person or entity",
+          "Use candidate data for purposes unrelated to hiring (e.g., marketing, resale)",
+          "The Services are provided \"as is\" and \"as available.\" TaaSFlow makes no warranties, express or implied, regarding the suitability, reliability, or accuracy of candidates sourced through the platform. We do not guarantee that any candidate will be hired, will accept an offer, or will perform successfully in a role. Hiring decisions are solely your responsibility.",
+          "To the maximum extent permitted by law, TaaSFlow's total liability for any claims arising from or related to the Services is limited to the amount you paid to TaaSFlow in the 12 months preceding the claim.TaaSFlow is not liable for indirect, incidental, consequential, or punitive damages, including lost profits, data loss, or business interruption.",
+          "You agree to indemnify and hold harmless TaaSFlow, its officers, employees, and agents from any claims, damages, losses, or expenses (including legal fees) arising from your use of the Services, your violation of these Terms, or your violation of any third-party rights.",
+          "Either party may terminate the agreement at any time. We may suspend or terminate your access if you violate these Terms. Upon termination, your right to use the Services ceases. Sections that by their nature should survive termination (including intellectual property, limitation of liability, and indemnification) will continue to apply.",
+          "These Terms are governed by the laws of the State of Delaware, USA, without regard to conflict of law principles. Any disputes will be resolved through binding arbitration in accordance with the rules of the American Arbitration Association, unless you are located in the EU/EEA, in which case your local consumer protection laws may apply.",
+          "We may modify these Terms at any time. Material changes will be communicated via email or a notice on our website at least 30 days before taking effect. Continued use of the Services after changes take effect constitutes acceptance of the updated Terms.",
+          "For questions about these Terms, contact us at:",
+          "TaaSFlow LegalEmail: legal@taasflow.com",
+          "See also our Privacy Policy for details on how we handle your personal data.",
+          "Talent as a Service",
+          "A global hiring system for teams that need consistent recruiting.",
+          "Weekly insights into talent acquisition. No spam.",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Book call",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "No recruitment agency fees. No placement charges. Subscription-based hiring system.",
+          "Copyright 2026 TaaSFlow. All rights reserved."
+        ],
+        "buttons": [
+          "Solutions",
+          "Industries",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Solutions",
+          "How it works",
+          "Pilot",
+          "Enterprise",
+          "Case studies",
+          "Jobs",
+          "Journey",
+          "Industries",
+          "Tech",
+          "SaaS & Cloud",
+          "Cybersecurity",
+          "Data & Analytics",
+          "Finance",
+          "Insurance",
+          "PE & VC",
+          "Accounting",
+          "Legal",
+          "Consulting",
+          "HR & Recruiting",
+          "Staffing Agencies",
+          "Sales",
+          "Marketing",
+          "E-commerce",
+          "Media",
+          "Real Estate",
+          "Construction",
+          "Hospitality",
+          "Healthcare",
+          "Public Sector",
+          "Non-Profit",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Success Stories",
+          "Talent Marketplace",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Subscribe",
+          "Book call",
+          "Cookie preferences"
+        ],
+        "links": [
+          {
+            "text": "Skip to main content",
+            "href": "https://taasflow.com/terms#main-content"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "Browse jobs",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Join the network",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Browse open roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "legal@taasflow.com",
+            "href": "mailto:legal@taasflow.com"
+          },
+          {
+            "text": "Privacy Policy",
+            "href": "https://taasflow.com/privacy"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "LinkedIn",
+            "href": "https://www.linkedin.com/company/taasflow/"
+          },
+          {
+            "text": "Browse roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Talent network",
+            "href": "https://taasflow.com/global-talent"
+          },
+          {
+            "text": "Member stories",
+            "href": "https://taasflow.com/candidate-success"
+          },
+          {
+            "text": "Start pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "Employer onboarding",
+            "href": "https://taasflow.com/employer-onboarding"
+          },
+          {
+            "text": "Case studies",
+            "href": "https://taasflow.com/case-studies"
+          },
+          {
+            "text": "Healthcare",
+            "href": "https://taasflow.com/industries/healthcare"
+          },
+          {
+            "text": "Technology",
+            "href": "https://taasflow.com/industries/tech"
+          },
+          {
+            "text": "Finance",
+            "href": "https://taasflow.com/industries/finance"
+          },
+          {
+            "text": "Legal",
+            "href": "https://taasflow.com/industries/legal"
+          },
+          {
+            "text": "All →",
+            "href": "https://taasflow.com/industries"
+          },
+          {
+            "text": "About us",
+            "href": "https://taasflow.com/about"
+          },
+          {
+            "text": "Blog",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://taasflow.com/faq"
+          },
+          {
+            "text": "Knowledge Base",
+            "href": "https://taasflow.com/knowledge-base"
+          },
+          {
+            "text": "Contact us",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Privacy Policy",
+            "href": "https://taasflow.com/privacy"
+          },
+          {
+            "text": "Terms of Service",
+            "href": "https://taasflow.com/terms"
+          }
+        ],
+        "images": [
+          {
+            "src": "https://taasflow.com/assets/logo-on-white-Dk9DIcMP.png",
+            "alt": "TaaSFlow logo"
+          },
+          {
+            "src": "https://taasflow.com/assets/logo-on-blue-CX6jlwjg.png",
+            "alt": "TaaSFlow logo"
+          }
+        ],
+        "forms": [
+          {
+            "action": "https://taasflow.com/terms",
+            "fields": [
+              "input"
+            ]
+          }
+        ],
+        "navLinks": [
+          "Browse jobs",
+          "Join the network",
+          "Browse open roles",
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us"
+        ],
+        "footerLinks": [
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "Privacy Policy",
+          "Terms of Service"
+        ],
+        "horizontalOverflow": false,
+        "documentWidth": 375,
+        "viewportWidth": 375
+      },
+      "destination": {
+        "url": "https://clear-path-hubs.lovable.app/terms",
+        "finalUrl": "https://clear-path-hubs.lovable.app/terms",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [],
+        "title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+        "description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+        "canonical": "https://clear-path-hubs.lovable.app/terms",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "twitter:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "og:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "og:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "og:url": "https://clear-path-hubs.lovable.app/terms",
+          "og:type": "website",
+          "twitter:card": "summary_large_image",
+          "twitter:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "twitter:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages."
+        },
+        "structuredData": [],
+        "h1": [
+          "Terms of Service"
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "Terms of Service"
+          },
+          {
+            "level": 2,
+            "text": "Terms of Service"
+          },
+          {
+            "level": 3,
+            "text": "1. Acceptance of Terms"
+          },
+          {
+            "level": 3,
+            "text": "2. Description of Services"
+          },
+          {
+            "level": 3,
+            "text": "3. Account Registration"
+          },
+          {
+            "level": 3,
+            "text": "4. Subscriptions, Pricing, and Payment"
+          },
+          {
+            "level": 3,
+            "text": "5. Client Obligations"
+          },
+          {
+            "level": 3,
+            "text": "6. Candidate Data and Pipeline Ownership"
+          },
+          {
+            "level": 3,
+            "text": "7. Intellectual Property"
+          },
+          {
+            "level": 3,
+            "text": "8. Prohibited Use"
+          },
+          {
+            "level": 3,
+            "text": "9. Disclaimers"
+          },
+          {
+            "level": 3,
+            "text": "10. Limitation of Liability"
+          },
+          {
+            "level": 3,
+            "text": "11. Indemnification"
+          },
+          {
+            "level": 3,
+            "text": "12. Termination"
+          },
+          {
+            "level": 3,
+            "text": "13. Governing Law and Disputes"
+          },
+          {
+            "level": 3,
+            "text": "14. Changes to These Terms"
+          },
+          {
+            "level": 3,
+            "text": "15. Contact"
+          },
+          {
+            "level": 3,
+            "text": "Company"
+          },
+          {
+            "level": 3,
+            "text": "Solutions"
+          },
+          {
+            "level": 3,
+            "text": "Employers"
+          },
+          {
+            "level": 3,
+            "text": "Candidates"
+          },
+          {
+            "level": 3,
+            "text": "Resources"
+          }
+        ],
+        "sections": [
+          "SECTION"
+        ],
+        "textBlocks": [
+          "Solutions",
+          "Industries",
+          "Resources",
+          "About",
+          "Jobs",
+          "Legal",
+          "Terms of Service for TaaSFlow. Read the terms and conditions governing your use of our subscription-based recruiting platform.",
+          "Last updated: March 5, 2026",
+          "By accessing or using TaaSFlow's website, platform, or services (\"Services\"), you agree to be bound by these Terms of Service (\"Terms\"). If you do not agree, do not use our Services. These Terms constitute a legally binding agreement between you (or the entity you represent) and TaaSFlow.",
+          "TaaSFlow provides a subscription-based talent sourcing and recruitment platform. Our Services include:",
+          "AI-powered candidate sourcing and screening",
+          "Ranked candidate shortlists delivered on a recurring basis",
+          "Role intake and blueprint creation tools",
+          "Client dashboards for pipeline management",
+          "One-off hiring packages and monthly subscription plans",
+          "TaaSFlow is not a staffing agency. We do not charge placement fees. Candidates sourced through our platform are introduced to you; the hiring decision and employment relationship are solely between you and the candidate.",
+          "To access certain features, you must create an account. You agree to provide accurate, current, and complete information and to keep your credentials secure. You are responsible for all activity under your account. Notify us immediately if you suspect unauthorized access.",
+          "Pricing: All prices are listed on our Pricing page. We reserve the right to update pricing with 30 days' notice.",
+          "Billing: Subscription fees are billed monthly or annually in advance. One-off packages are billed at the time of purchase.",
+          "Pilot program: The pilot is a paid engagement for a single role, subject to the terms communicated at the time of purchase.",
+          "Pausing and cancellation: You may pause or cancel your subscription at any time. Cancellation takes effect at the end of the current billing period. No refunds are issued for partial billing periods.",
+          "Taxes: Prices do not include applicable taxes. You are responsible for any taxes associated with your purchase.",
+          "As a client, you agree to:",
+          "Provide accurate and complete role requirements during the intake process",
+          "Respond to candidate submissions within a reasonable timeframe",
+          "Comply with all applicable employment and anti-discrimination laws when evaluating candidates",
+          "Not circumvent TaaSFlow by directly contacting sourced candidates outside the platform to avoid service fees",
+          "Treat candidate data confidentially and in accordance with applicable privacy laws",
+          "Candidates sourced and presented through TaaSFlow are part of your pipeline. You retain ownership of candidate information delivered to you, subject to applicable data protection laws. You agree to process candidate data only for legitimate hiring purposes and in compliance with GDPR and other applicable privacy regulations.",
+          "All content, software, algorithms, designs, and branding on the TaaSFlow platform are owned by or licensed to TaaSFlow. You may not copy, modify, distribute, or create derivative works without our written permission. Your use of the Services does not grant you any ownership rights in our intellectual property.",
+          "You agree not to:",
+          "Use the Services for unlawful purposes or in violation of any applicable laws",
+          "Attempt to gain unauthorized access to any part of the platform",
+          "Scrape, crawl, or use automated tools to extract data from the platform",
+          "Upload malicious code, viruses, or any harmful content",
+          "Misrepresent your identity or affiliation with any person or entity",
+          "Use candidate data for purposes unrelated to hiring (e.g., marketing, resale)",
+          "The Services are provided \"as is\" and \"as available.\" TaaSFlow makes no warranties, express or implied, regarding the suitability, reliability, or accuracy of candidates sourced through the platform. We do not guarantee that any candidate will be hired, will accept an offer, or will perform successfully in a role. Hiring decisions are solely your responsibility.",
+          "To the maximum extent permitted by law, TaaSFlow's total liability for any claims arising from or related to the Services is limited to the amount you paid to TaaSFlow in the 12 months preceding the claim.TaaSFlow is not liable for indirect, incidental, consequential, or punitive damages, including lost profits, data loss, or business interruption.",
+          "You agree to indemnify and hold harmless TaaSFlow, its officers, employees, and agents from any claims, damages, losses, or expenses (including legal fees) arising from your use of the Services, your violation of these Terms, or your violation of any third-party rights.",
+          "Either party may terminate the agreement at any time. We may suspend or terminate your access if you violate these Terms. Upon termination, your right to use the Services ceases. Sections that by their nature should survive termination (including intellectual property, limitation of liability, and indemnification) will continue to apply.",
+          "These Terms are governed by the laws of the State of Delaware, USA, without regard to conflict of law principles. Any disputes will be resolved through binding arbitration in accordance with the rules of the American Arbitration Association, unless you are located in the EU/EEA, in which case your local consumer protection laws may apply.",
+          "We may modify these Terms at any time. Material changes will be communicated via email or a notice on our website at least 30 days before taking effect. Continued use of the Services after changes take effect constitutes acceptance of the updated Terms.",
+          "For questions about these Terms, contact us at:",
+          "TaaSFlow Legal Email: legal@taasflow.com",
+          "See also our Privacy Policy for details on how we handle your personal data.",
+          "A live recruiting workspace with ranked, evidence-backed candidate delivery.",
+          "About",
+          "Journey",
+          "Contact",
+          "Solutions",
+          "How it works",
+          "Enterprise",
+          "Employer onboarding",
+          "Staffing partnership",
+          "Start hiring",
+          "Pilot",
+          "Pricing",
+          "Industries",
+          "Client sign in",
+          "Browse jobs",
+          "Talent network",
+          "Candidate success",
+          "Candidate journey",
+          "Candidate sign in",
+          "Resources",
+          "Blog",
+          "Case studies",
+          "Knowledge base",
+          "FAQ",
+          "© 2026 TaaSFlow. All rights reserved."
+        ],
+        "buttons": [
+          "Solutions",
+          "Industries",
+          "Resources",
+          "About"
+        ],
+        "links": [
+          {
+            "text": "Skip to main content",
+            "href": "https://clear-path-hubs.lovable.app/terms#main"
+          },
+          {
+            "text": "New: transparent role-specific scoring — see how it works.",
+            "href": "https://clear-path-hubs.lovable.app/how-it-works"
+          },
+          {
+            "text": "TaaSFlow",
+            "href": "https://clear-path-hubs.lovable.app/"
+          },
+          {
+            "text": "Jobs",
+            "href": "https://clear-path-hubs.lovable.app/jobs"
+          },
+          {
+            "text": "Sign in",
+            "href": "https://clear-path-hubs.lovable.app/login"
+          },
+          {
+            "text": "Browse jobs",
+            "href": "https://clear-path-hubs.lovable.app/jobs"
+          },
+          {
+            "text": "Start hiring",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "legal@taasflow.com",
+            "href": "mailto:legal@taasflow.com"
+          },
+          {
+            "text": "TaaSFlow",
+            "href": "https://clear-path-hubs.lovable.app/"
+          },
+          {
+            "text": "",
+            "href": "https://www.linkedin.com/company/taasflow"
+          },
+          {
+            "text": "",
+            "href": "mailto:hello@taasflow.com"
+          },
+          {
+            "text": "About",
+            "href": "https://clear-path-hubs.lovable.app/about"
+          },
+          {
+            "text": "Journey",
+            "href": "https://clear-path-hubs.lovable.app/journey"
+          },
+          {
+            "text": "Contact",
+            "href": "https://clear-path-hubs.lovable.app/contact"
+          },
+          {
+            "text": "Solutions",
+            "href": "https://clear-path-hubs.lovable.app/solutions"
+          },
+          {
+            "text": "How it works",
+            "href": "https://clear-path-hubs.lovable.app/how-it-works"
+          },
+          {
+            "text": "Enterprise",
+            "href": "https://clear-path-hubs.lovable.app/enterprise"
+          },
+          {
+            "text": "Employer onboarding",
+            "href": "https://clear-path-hubs.lovable.app/employer-onboarding"
+          },
+          {
+            "text": "Staffing partnership",
+            "href": "https://clear-path-hubs.lovable.app/partnerships/staffing"
+          },
+          {
+            "text": "Start hiring",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "Pilot",
+            "href": "https://clear-path-hubs.lovable.app/pilot"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://clear-path-hubs.lovable.app/pricing"
+          },
+          {
+            "text": "Industries",
+            "href": "https://clear-path-hubs.lovable.app/industries"
+          },
+          {
+            "text": "Client sign in",
+            "href": "https://clear-path-hubs.lovable.app/login"
+          },
+          {
+            "text": "Browse jobs",
+            "href": "https://clear-path-hubs.lovable.app/jobs"
+          },
+          {
+            "text": "Talent network",
+            "href": "https://clear-path-hubs.lovable.app/talent-network"
+          },
+          {
+            "text": "Candidate success",
+            "href": "https://clear-path-hubs.lovable.app/candidate-success"
+          },
+          {
+            "text": "Candidate journey",
+            "href": "https://clear-path-hubs.lovable.app/journey"
+          },
+          {
+            "text": "Candidate sign in",
+            "href": "https://clear-path-hubs.lovable.app/login"
+          },
+          {
+            "text": "Resources",
+            "href": "https://clear-path-hubs.lovable.app/resources"
+          },
+          {
+            "text": "Blog",
+            "href": "https://clear-path-hubs.lovable.app/blog"
+          },
+          {
+            "text": "Case studies",
+            "href": "https://clear-path-hubs.lovable.app/case-studies"
+          },
+          {
+            "text": "Knowledge base",
+            "href": "https://clear-path-hubs.lovable.app/knowledge-base"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://clear-path-hubs.lovable.app/faq"
+          },
+          {
+            "text": "Privacy",
+            "href": "https://clear-path-hubs.lovable.app/privacy"
+          },
+          {
+            "text": "Terms",
+            "href": "https://clear-path-hubs.lovable.app/terms"
+          },
+          {
+            "text": "Sitemap",
+            "href": "https://clear-path-hubs.lovable.app/sitemap.xml"
+          },
+          {
+            "text": "hello@taasflow.com",
+            "href": "mailto:hello@taasflow.com"
+          },
+          {
+            "text": "Edit with",
+            "href": "https://lovable.dev/projects/1dc5ee7e-1294-441c-8288-850e79e443f6?utm_source=lovable-badge"
+          }
+        ],
+        "images": [
+          {
+            "src": "https://clear-path-hubs.lovable.app/assets/logo-on-white-Dk9DIcMP.png",
+            "alt": ""
+          },
+          {
+            "src": "https://clear-path-hubs.lovable.app/assets/logo-on-white-Dk9DIcMP.png",
+            "alt": ""
+          }
+        ],
+        "forms": [],
+        "navLinks": [
+          "TaaSFlow",
+          "Jobs",
+          "Sign in",
+          "Browse jobs",
+          "Start hiring",
+          "Privacy",
+          "Terms",
+          "Sitemap",
+          "hello@taasflow.com"
+        ],
+        "footerLinks": [
+          "TaaSFlow",
+          "About",
+          "Journey",
+          "Contact",
+          "Solutions",
+          "How it works",
+          "Enterprise",
+          "Employer onboarding",
+          "Staffing partnership",
+          "Start hiring",
+          "Pilot",
+          "Pricing",
+          "Industries",
+          "Client sign in",
+          "Browse jobs",
+          "Talent network",
+          "Candidate success",
+          "Candidate journey",
+          "Candidate sign in",
+          "Resources",
+          "Blog",
+          "Case studies",
+          "Knowledge base",
+          "FAQ",
+          "Privacy",
+          "Terms",
+          "Sitemap",
+          "hello@taasflow.com"
+        ],
+        "horizontalOverflow": false,
+        "documentWidth": 375,
+        "viewportWidth": 375
+      },
+      "screenshots": {
+        "sourceFull": "reports/public-parity/screenshots/source/terms__mobile__full.png",
+        "sourceVisible": "reports/public-parity/screenshots/source/terms__mobile__visible.png",
+        "destinationFull": "reports/public-parity/screenshots/destination/terms__mobile__full.png",
+        "destinationVisible": "reports/public-parity/screenshots/destination/terms__mobile__visible.png"
+      },
+      "differences": [
+        "title: \"Terms of Service | TaaSFlow\" vs \"TaaSFlow | Talent as a Service | Subscription Recruiting\"",
+        "meta description mismatch",
+        "heading overlap 5% (1/21)",
+        "section count 18 vs 1",
+        "form count 1 vs 0",
+        "destination images missing alt: 2"
+      ]
+    },
+    {
+      "viewport": "tablet",
+      "source": {
+        "url": "https://taasflow.com/terms",
+        "finalUrl": "https://taasflow.com/terms",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [
+          {
+            "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HJ2ECKCNK4&gtm=45je67l1v9245339446za200zd9245339446&_p=1784774041734&gcd=13l3l3l3l1l1&npa=0&_ng=1&dma=0&are=1&cid=427637540.1784774042&frm=0&ngs=1&pscdl=noapi&rcb=11&sr=768x1024&uaa=x86&uab=64&uafvl=Not-A.Brand%3B24.0.0.0%7CChromium%3B146.0.7680.80&uam=&uamb=0&uap=Windows&uapv=&uaw=0&ul=en-us&_s=1&tag_exp=115616986~115938465~115938469~118897920~118897930~119896803&dp=%2Fterms&dt=TaaSFlow%20%7C%20Talent%20as%20a%20Service%20%7C%20Subscription%20Recruiting&dl=https%3A%2F%2Ftaasflow.com%2Fterms&sid=1784774042&sct=1&seg=0&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&ep.role_type=public&ep.is_authenticated=false&tfd=635",
+            "status": null,
+            "failure": "net::ERR_ABORTED"
+          }
+        ],
+        "title": "Terms of Service | TaaSFlow",
+        "description": "Terms of Service for TaaSFlow. Read the terms and conditions governing your use of our subscription-based recruiting platform.",
+        "canonical": "https://taasflow.com/terms",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:type": "website",
+          "og:url": "https://taasflow.com/terms",
+          "og:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "og:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "og:image": "https://taasflow.com/og-image.png",
+          "og:image:width": "1200",
+          "og:image:height": "630",
+          "og:locale": "en_US",
+          "twitter:card": "summary_large_image",
+          "twitter:site": "@TaasFlow",
+          "twitter:creator": "@TaasFlow",
+          "twitter:url": "https://taasflow.com/terms",
+          "twitter:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "twitter:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "twitter:image": "https://taasflow.com/og-image.png"
+        },
+        "structuredData": [
+          {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "@id": "https://taasflow.com/#organization",
+            "name": "TaaSFlow",
+            "legalName": "TaaSFlow",
+            "url": "https://taasflow.com/",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://taasflow.com/favicon.png",
+              "width": 512,
+              "height": 512
+            },
+            "image": "https://taasflow.com/og-image.png",
+            "description": "Talent as a Service — subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+            "slogan": "Your hiring team. On demand.",
+            "foundingDate": "2024",
+            "areaServed": [
+              {
+                "@type": "Country",
+                "name": "United States"
+              },
+              {
+                "@type": "Country",
+                "name": "United Arab Emirates"
+              },
+              {
+                "@type": "Country",
+                "name": "United Kingdom"
+              },
+              {
+                "@type": "Country",
+                "name": "Brazil"
+              }
+            ],
+            "knowsAbout": [
+              "Subscription recruiting",
+              "Talent as a Service",
+              "Candidate sourcing",
+              "Pre-screened candidates",
+              "Recruitment process outsourcing"
+            ],
+            "contactPoint": [
+              {
+                "@type": "ContactPoint",
+                "contactType": "sales",
+                "email": "hello@taasflow.com",
+                "url": "https://taasflow.com/contact",
+                "availableLanguage": [
+                  "English",
+                  "Portuguese",
+                  "Spanish"
+                ]
+              }
+            ],
+            "sameAs": [
+              "https://www.linkedin.com/company/taasflow",
+              "https://twitter.com/TaasFlow"
+            ]
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "@id": "https://taasflow.com/#website",
+            "name": "TaaSFlow",
+            "alternateName": "Talent as a Service",
+            "url": "https://taasflow.com/",
+            "description": "Subscription recruiting that delivers pre-screened, ranked candidates in 14 days.",
+            "inLanguage": "en-US",
+            "publisher": {
+              "@id": "https://taasflow.com/#organization"
+            },
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": {
+                "@type": "EntryPoint",
+                "urlTemplate": "https://taasflow.com/jobs?q={search_term_string}"
+              },
+              "query-input": "required name=search_term_string"
+            }
+          }
+        ],
+        "h1": [
+          "Terms of Service"
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "Terms of Service"
+          },
+          {
+            "level": 2,
+            "text": "1. Acceptance of Terms"
+          },
+          {
+            "level": 2,
+            "text": "2. Description of Services"
+          },
+          {
+            "level": 2,
+            "text": "3. Account Registration"
+          },
+          {
+            "level": 2,
+            "text": "4. Subscriptions, Pricing, and Payment"
+          },
+          {
+            "level": 2,
+            "text": "5. Client Obligations"
+          },
+          {
+            "level": 2,
+            "text": "6. Candidate Data and Pipeline Ownership"
+          },
+          {
+            "level": 2,
+            "text": "7. Intellectual Property"
+          },
+          {
+            "level": 2,
+            "text": "8. Prohibited Use"
+          },
+          {
+            "level": 2,
+            "text": "9. Disclaimers"
+          },
+          {
+            "level": 2,
+            "text": "10. Limitation of Liability"
+          },
+          {
+            "level": 2,
+            "text": "11. Indemnification"
+          },
+          {
+            "level": 2,
+            "text": "12. Termination"
+          },
+          {
+            "level": 2,
+            "text": "13. Governing Law and Disputes"
+          },
+          {
+            "level": 2,
+            "text": "14. Changes to These Terms"
+          },
+          {
+            "level": 2,
+            "text": "15. Contact"
+          },
+          {
+            "level": 4,
+            "text": "Newsletter"
+          },
+          {
+            "level": 4,
+            "text": "For candidates"
+          },
+          {
+            "level": 4,
+            "text": "For companies"
+          },
+          {
+            "level": 4,
+            "text": "Industries"
+          },
+          {
+            "level": 4,
+            "text": "Company"
+          }
+        ],
+        "sections": [
+          "SECTION",
+          "Terms of Service",
+          "1. Acceptance of Terms",
+          "2. Description of Services",
+          "3. Account Registration",
+          "4. Subscriptions, Pricing, and Payment",
+          "5. Client Obligations",
+          "6. Candidate Data and Pipeline Ownership",
+          "7. Intellectual Property",
+          "8. Prohibited Use",
+          "9. Disclaimers",
+          "10. Limitation of Liability",
+          "11. Indemnification",
+          "12. Termination",
+          "13. Governing Law and Disputes",
+          "14. Changes to These Terms",
+          "15. Contact",
+          "SECTION"
+        ],
+        "textBlocks": [
+          "Solutions",
+          "Industries",
+          "Resources",
+          "Last updated: March 5, 2026",
+          "By accessing or using TaaSFlow's website, platform, or services (\"Services\"), you agree to be bound by these Terms of Service (\"Terms\"). If you do not agree, do not use our Services. These Terms constitute a legally binding agreement between you (or the entity you represent) and TaaSFlow.",
+          "TaaSFlow provides a subscription-based talent sourcing and recruitment platform. Our Services include:",
+          "AI-powered candidate sourcing and screening",
+          "Ranked candidate shortlists delivered on a recurring basis",
+          "Role intake and blueprint creation tools",
+          "Client dashboards for pipeline management",
+          "One-off hiring packages and monthly subscription plans",
+          "TaaSFlow is not a staffing agency. We do not charge placement fees. Candidates sourced through our platform are introduced to you; the hiring decision and employment relationship are solely between you and the candidate.",
+          "To access certain features, you must create an account. You agree to provide accurate, current, and complete information and to keep your credentials secure. You are responsible for all activity under your account. Notify us immediately if you suspect unauthorized access.",
+          "Pricing: All prices are listed on our Pricing page. We reserve the right to update pricing with 30 days' notice.",
+          "Billing: Subscription fees are billed monthly or annually in advance. One-off packages are billed at the time of purchase.",
+          "Pilot program: The pilot is a paid engagement for a single role, subject to the terms communicated at the time of purchase.",
+          "Pausing and cancellation: You may pause or cancel your subscription at any time. Cancellation takes effect at the end of the current billing period. No refunds are issued for partial billing periods.",
+          "Taxes: Prices do not include applicable taxes. You are responsible for any taxes associated with your purchase.",
+          "As a client, you agree to:",
+          "Provide accurate and complete role requirements during the intake process",
+          "Respond to candidate submissions within a reasonable timeframe",
+          "Comply with all applicable employment and anti-discrimination laws when evaluating candidates",
+          "Not circumvent TaaSFlow by directly contacting sourced candidates outside the platform to avoid service fees",
+          "Treat candidate data confidentially and in accordance with applicable privacy laws",
+          "Candidates sourced and presented through TaaSFlow are part of your pipeline. You retain ownership of candidate information delivered to you, subject to applicable data protection laws. You agree to process candidate data only for legitimate hiring purposes and in compliance with GDPR and other applicable privacy regulations.",
+          "All content, software, algorithms, designs, and branding on the TaaSFlow platform are owned by or licensed to TaaSFlow. You may not copy, modify, distribute, or create derivative works without our written permission. Your use of the Services does not grant you any ownership rights in our intellectual property.",
+          "You agree not to:",
+          "Use the Services for unlawful purposes or in violation of any applicable laws",
+          "Attempt to gain unauthorized access to any part of the platform",
+          "Scrape, crawl, or use automated tools to extract data from the platform",
+          "Upload malicious code, viruses, or any harmful content",
+          "Misrepresent your identity or affiliation with any person or entity",
+          "Use candidate data for purposes unrelated to hiring (e.g., marketing, resale)",
+          "The Services are provided \"as is\" and \"as available.\" TaaSFlow makes no warranties, express or implied, regarding the suitability, reliability, or accuracy of candidates sourced through the platform. We do not guarantee that any candidate will be hired, will accept an offer, or will perform successfully in a role. Hiring decisions are solely your responsibility.",
+          "To the maximum extent permitted by law, TaaSFlow's total liability for any claims arising from or related to the Services is limited to the amount you paid to TaaSFlow in the 12 months preceding the claim.TaaSFlow is not liable for indirect, incidental, consequential, or punitive damages, including lost profits, data loss, or business interruption.",
+          "You agree to indemnify and hold harmless TaaSFlow, its officers, employees, and agents from any claims, damages, losses, or expenses (including legal fees) arising from your use of the Services, your violation of these Terms, or your violation of any third-party rights.",
+          "Either party may terminate the agreement at any time. We may suspend or terminate your access if you violate these Terms. Upon termination, your right to use the Services ceases. Sections that by their nature should survive termination (including intellectual property, limitation of liability, and indemnification) will continue to apply.",
+          "These Terms are governed by the laws of the State of Delaware, USA, without regard to conflict of law principles. Any disputes will be resolved through binding arbitration in accordance with the rules of the American Arbitration Association, unless you are located in the EU/EEA, in which case your local consumer protection laws may apply.",
+          "We may modify these Terms at any time. Material changes will be communicated via email or a notice on our website at least 30 days before taking effect. Continued use of the Services after changes take effect constitutes acceptance of the updated Terms.",
+          "For questions about these Terms, contact us at:",
+          "TaaSFlow LegalEmail: legal@taasflow.com",
+          "See also our Privacy Policy for details on how we handle your personal data.",
+          "Talent as a Service",
+          "A global hiring system for teams that need consistent recruiting.",
+          "Weekly insights into talent acquisition. No spam.",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Book call",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "No recruitment agency fees. No placement charges. Subscription-based hiring system.",
+          "Copyright 2026 TaaSFlow. All rights reserved."
+        ],
+        "buttons": [
+          "Solutions",
+          "Industries",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Solutions",
+          "How it works",
+          "Pilot",
+          "Enterprise",
+          "Case studies",
+          "Jobs",
+          "Journey",
+          "Industries",
+          "Tech",
+          "SaaS & Cloud",
+          "Cybersecurity",
+          "Data & Analytics",
+          "Finance",
+          "Insurance",
+          "PE & VC",
+          "Accounting",
+          "Legal",
+          "Consulting",
+          "HR & Recruiting",
+          "Staffing Agencies",
+          "Sales",
+          "Marketing",
+          "E-commerce",
+          "Media",
+          "Real Estate",
+          "Construction",
+          "Hospitality",
+          "Healthcare",
+          "Public Sector",
+          "Non-Profit",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Success Stories",
+          "Talent Marketplace",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Subscribe",
+          "Book call",
+          "Cookie preferences"
+        ],
+        "links": [
+          {
+            "text": "Skip to main content",
+            "href": "https://taasflow.com/terms#main-content"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "Browse jobs",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Join the network",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Browse open roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "legal@taasflow.com",
+            "href": "mailto:legal@taasflow.com"
+          },
+          {
+            "text": "Privacy Policy",
+            "href": "https://taasflow.com/privacy"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "LinkedIn",
+            "href": "https://www.linkedin.com/company/taasflow/"
+          },
+          {
+            "text": "Browse roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Talent network",
+            "href": "https://taasflow.com/global-talent"
+          },
+          {
+            "text": "Member stories",
+            "href": "https://taasflow.com/candidate-success"
+          },
+          {
+            "text": "Start pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "Employer onboarding",
+            "href": "https://taasflow.com/employer-onboarding"
+          },
+          {
+            "text": "Case studies",
+            "href": "https://taasflow.com/case-studies"
+          },
+          {
+            "text": "Healthcare",
+            "href": "https://taasflow.com/industries/healthcare"
+          },
+          {
+            "text": "Technology",
+            "href": "https://taasflow.com/industries/tech"
+          },
+          {
+            "text": "Finance",
+            "href": "https://taasflow.com/industries/finance"
+          },
+          {
+            "text": "Legal",
+            "href": "https://taasflow.com/industries/legal"
+          },
+          {
+            "text": "All →",
+            "href": "https://taasflow.com/industries"
+          },
+          {
+            "text": "About us",
+            "href": "https://taasflow.com/about"
+          },
+          {
+            "text": "Blog",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://taasflow.com/faq"
+          },
+          {
+            "text": "Knowledge Base",
+            "href": "https://taasflow.com/knowledge-base"
+          },
+          {
+            "text": "Contact us",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Privacy Policy",
+            "href": "https://taasflow.com/privacy"
+          },
+          {
+            "text": "Terms of Service",
+            "href": "https://taasflow.com/terms"
+          }
+        ],
+        "images": [
+          {
+            "src": "https://taasflow.com/assets/logo-on-white-Dk9DIcMP.png",
+            "alt": "TaaSFlow logo"
+          },
+          {
+            "src": "https://taasflow.com/assets/logo-on-blue-CX6jlwjg.png",
+            "alt": "TaaSFlow logo"
+          }
+        ],
+        "forms": [
+          {
+            "action": "https://taasflow.com/terms",
+            "fields": [
+              "input"
+            ]
+          }
+        ],
+        "navLinks": [
+          "Browse jobs",
+          "Join the network",
+          "Browse open roles",
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us"
+        ],
+        "footerLinks": [
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "Privacy Policy",
+          "Terms of Service"
+        ],
+        "horizontalOverflow": false,
+        "documentWidth": 768,
+        "viewportWidth": 768
+      },
+      "destination": {
+        "url": "https://clear-path-hubs.lovable.app/terms",
+        "finalUrl": "https://clear-path-hubs.lovable.app/terms",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [],
+        "title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+        "description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+        "canonical": "https://clear-path-hubs.lovable.app/terms",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "twitter:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "og:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "og:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "og:url": "https://clear-path-hubs.lovable.app/terms",
+          "og:type": "website",
+          "twitter:card": "summary_large_image",
+          "twitter:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "twitter:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages."
+        },
+        "structuredData": [],
+        "h1": [
+          "Terms of Service"
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "Terms of Service"
+          },
+          {
+            "level": 2,
+            "text": "Terms of Service"
+          },
+          {
+            "level": 3,
+            "text": "1. Acceptance of Terms"
+          },
+          {
+            "level": 3,
+            "text": "2. Description of Services"
+          },
+          {
+            "level": 3,
+            "text": "3. Account Registration"
+          },
+          {
+            "level": 3,
+            "text": "4. Subscriptions, Pricing, and Payment"
+          },
+          {
+            "level": 3,
+            "text": "5. Client Obligations"
+          },
+          {
+            "level": 3,
+            "text": "6. Candidate Data and Pipeline Ownership"
+          },
+          {
+            "level": 3,
+            "text": "7. Intellectual Property"
+          },
+          {
+            "level": 3,
+            "text": "8. Prohibited Use"
+          },
+          {
+            "level": 3,
+            "text": "9. Disclaimers"
+          },
+          {
+            "level": 3,
+            "text": "10. Limitation of Liability"
+          },
+          {
+            "level": 3,
+            "text": "11. Indemnification"
+          },
+          {
+            "level": 3,
+            "text": "12. Termination"
+          },
+          {
+            "level": 3,
+            "text": "13. Governing Law and Disputes"
+          },
+          {
+            "level": 3,
+            "text": "14. Changes to These Terms"
+          },
+          {
+            "level": 3,
+            "text": "15. Contact"
+          },
+          {
+            "level": 3,
+            "text": "Company"
+          },
+          {
+            "level": 3,
+            "text": "Solutions"
+          },
+          {
+            "level": 3,
+            "text": "Employers"
+          },
+          {
+            "level": 3,
+            "text": "Candidates"
+          },
+          {
+            "level": 3,
+            "text": "Resources"
+          }
+        ],
+        "sections": [
+          "SECTION"
+        ],
+        "textBlocks": [
+          "Solutions",
+          "Industries",
+          "Resources",
+          "About",
+          "Jobs",
+          "Legal",
+          "Terms of Service for TaaSFlow. Read the terms and conditions governing your use of our subscription-based recruiting platform.",
+          "Last updated: March 5, 2026",
+          "By accessing or using TaaSFlow's website, platform, or services (\"Services\"), you agree to be bound by these Terms of Service (\"Terms\"). If you do not agree, do not use our Services. These Terms constitute a legally binding agreement between you (or the entity you represent) and TaaSFlow.",
+          "TaaSFlow provides a subscription-based talent sourcing and recruitment platform. Our Services include:",
+          "AI-powered candidate sourcing and screening",
+          "Ranked candidate shortlists delivered on a recurring basis",
+          "Role intake and blueprint creation tools",
+          "Client dashboards for pipeline management",
+          "One-off hiring packages and monthly subscription plans",
+          "TaaSFlow is not a staffing agency. We do not charge placement fees. Candidates sourced through our platform are introduced to you; the hiring decision and employment relationship are solely between you and the candidate.",
+          "To access certain features, you must create an account. You agree to provide accurate, current, and complete information and to keep your credentials secure. You are responsible for all activity under your account. Notify us immediately if you suspect unauthorized access.",
+          "Pricing: All prices are listed on our Pricing page. We reserve the right to update pricing with 30 days' notice.",
+          "Billing: Subscription fees are billed monthly or annually in advance. One-off packages are billed at the time of purchase.",
+          "Pilot program: The pilot is a paid engagement for a single role, subject to the terms communicated at the time of purchase.",
+          "Pausing and cancellation: You may pause or cancel your subscription at any time. Cancellation takes effect at the end of the current billing period. No refunds are issued for partial billing periods.",
+          "Taxes: Prices do not include applicable taxes. You are responsible for any taxes associated with your purchase.",
+          "As a client, you agree to:",
+          "Provide accurate and complete role requirements during the intake process",
+          "Respond to candidate submissions within a reasonable timeframe",
+          "Comply with all applicable employment and anti-discrimination laws when evaluating candidates",
+          "Not circumvent TaaSFlow by directly contacting sourced candidates outside the platform to avoid service fees",
+          "Treat candidate data confidentially and in accordance with applicable privacy laws",
+          "Candidates sourced and presented through TaaSFlow are part of your pipeline. You retain ownership of candidate information delivered to you, subject to applicable data protection laws. You agree to process candidate data only for legitimate hiring purposes and in compliance with GDPR and other applicable privacy regulations.",
+          "All content, software, algorithms, designs, and branding on the TaaSFlow platform are owned by or licensed to TaaSFlow. You may not copy, modify, distribute, or create derivative works without our written permission. Your use of the Services does not grant you any ownership rights in our intellectual property.",
+          "You agree not to:",
+          "Use the Services for unlawful purposes or in violation of any applicable laws",
+          "Attempt to gain unauthorized access to any part of the platform",
+          "Scrape, crawl, or use automated tools to extract data from the platform",
+          "Upload malicious code, viruses, or any harmful content",
+          "Misrepresent your identity or affiliation with any person or entity",
+          "Use candidate data for purposes unrelated to hiring (e.g., marketing, resale)",
+          "The Services are provided \"as is\" and \"as available.\" TaaSFlow makes no warranties, express or implied, regarding the suitability, reliability, or accuracy of candidates sourced through the platform. We do not guarantee that any candidate will be hired, will accept an offer, or will perform successfully in a role. Hiring decisions are solely your responsibility.",
+          "To the maximum extent permitted by law, TaaSFlow's total liability for any claims arising from or related to the Services is limited to the amount you paid to TaaSFlow in the 12 months preceding the claim.TaaSFlow is not liable for indirect, incidental, consequential, or punitive damages, including lost profits, data loss, or business interruption.",
+          "You agree to indemnify and hold harmless TaaSFlow, its officers, employees, and agents from any claims, damages, losses, or expenses (including legal fees) arising from your use of the Services, your violation of these Terms, or your violation of any third-party rights.",
+          "Either party may terminate the agreement at any time. We may suspend or terminate your access if you violate these Terms. Upon termination, your right to use the Services ceases. Sections that by their nature should survive termination (including intellectual property, limitation of liability, and indemnification) will continue to apply.",
+          "These Terms are governed by the laws of the State of Delaware, USA, without regard to conflict of law principles. Any disputes will be resolved through binding arbitration in accordance with the rules of the American Arbitration Association, unless you are located in the EU/EEA, in which case your local consumer protection laws may apply.",
+          "We may modify these Terms at any time. Material changes will be communicated via email or a notice on our website at least 30 days before taking effect. Continued use of the Services after changes take effect constitutes acceptance of the updated Terms.",
+          "For questions about these Terms, contact us at:",
+          "TaaSFlow Legal Email: legal@taasflow.com",
+          "See also our Privacy Policy for details on how we handle your personal data.",
+          "A live recruiting workspace with ranked, evidence-backed candidate delivery.",
+          "About",
+          "Journey",
+          "Contact",
+          "Solutions",
+          "How it works",
+          "Enterprise",
+          "Employer onboarding",
+          "Staffing partnership",
+          "Start hiring",
+          "Pilot",
+          "Pricing",
+          "Industries",
+          "Client sign in",
+          "Browse jobs",
+          "Talent network",
+          "Candidate success",
+          "Candidate journey",
+          "Candidate sign in",
+          "Resources",
+          "Blog",
+          "Case studies",
+          "Knowledge base",
+          "FAQ",
+          "© 2026 TaaSFlow. All rights reserved."
+        ],
+        "buttons": [
+          "Solutions",
+          "Industries",
+          "Resources",
+          "About"
+        ],
+        "links": [
+          {
+            "text": "Skip to main content",
+            "href": "https://clear-path-hubs.lovable.app/terms#main"
+          },
+          {
+            "text": "New: transparent role-specific scoring — see how it works.",
+            "href": "https://clear-path-hubs.lovable.app/how-it-works"
+          },
+          {
+            "text": "TaaSFlow",
+            "href": "https://clear-path-hubs.lovable.app/"
+          },
+          {
+            "text": "Jobs",
+            "href": "https://clear-path-hubs.lovable.app/jobs"
+          },
+          {
+            "text": "Sign in",
+            "href": "https://clear-path-hubs.lovable.app/login"
+          },
+          {
+            "text": "Browse jobs",
+            "href": "https://clear-path-hubs.lovable.app/jobs"
+          },
+          {
+            "text": "Start hiring",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "legal@taasflow.com",
+            "href": "mailto:legal@taasflow.com"
+          },
+          {
+            "text": "TaaSFlow",
+            "href": "https://clear-path-hubs.lovable.app/"
+          },
+          {
+            "text": "",
+            "href": "https://www.linkedin.com/company/taasflow"
+          },
+          {
+            "text": "",
+            "href": "mailto:hello@taasflow.com"
+          },
+          {
+            "text": "About",
+            "href": "https://clear-path-hubs.lovable.app/about"
+          },
+          {
+            "text": "Journey",
+            "href": "https://clear-path-hubs.lovable.app/journey"
+          },
+          {
+            "text": "Contact",
+            "href": "https://clear-path-hubs.lovable.app/contact"
+          },
+          {
+            "text": "Solutions",
+            "href": "https://clear-path-hubs.lovable.app/solutions"
+          },
+          {
+            "text": "How it works",
+            "href": "https://clear-path-hubs.lovable.app/how-it-works"
+          },
+          {
+            "text": "Enterprise",
+            "href": "https://clear-path-hubs.lovable.app/enterprise"
+          },
+          {
+            "text": "Employer onboarding",
+            "href": "https://clear-path-hubs.lovable.app/employer-onboarding"
+          },
+          {
+            "text": "Staffing partnership",
+            "href": "https://clear-path-hubs.lovable.app/partnerships/staffing"
+          },
+          {
+            "text": "Start hiring",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "Pilot",
+            "href": "https://clear-path-hubs.lovable.app/pilot"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://clear-path-hubs.lovable.app/pricing"
+          },
+          {
+            "text": "Industries",
+            "href": "https://clear-path-hubs.lovable.app/industries"
+          },
+          {
+            "text": "Client sign in",
+            "href": "https://clear-path-hubs.lovable.app/login"
+          },
+          {
+            "text": "Browse jobs",
+            "href": "https://clear-path-hubs.lovable.app/jobs"
+          },
+          {
+            "text": "Talent network",
+            "href": "https://clear-path-hubs.lovable.app/talent-network"
+          },
+          {
+            "text": "Candidate success",
+            "href": "https://clear-path-hubs.lovable.app/candidate-success"
+          },
+          {
+            "text": "Candidate journey",
+            "href": "https://clear-path-hubs.lovable.app/journey"
+          },
+          {
+            "text": "Candidate sign in",
+            "href": "https://clear-path-hubs.lovable.app/login"
+          },
+          {
+            "text": "Resources",
+            "href": "https://clear-path-hubs.lovable.app/resources"
+          },
+          {
+            "text": "Blog",
+            "href": "https://clear-path-hubs.lovable.app/blog"
+          },
+          {
+            "text": "Case studies",
+            "href": "https://clear-path-hubs.lovable.app/case-studies"
+          },
+          {
+            "text": "Knowledge base",
+            "href": "https://clear-path-hubs.lovable.app/knowledge-base"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://clear-path-hubs.lovable.app/faq"
+          },
+          {
+            "text": "Privacy",
+            "href": "https://clear-path-hubs.lovable.app/privacy"
+          },
+          {
+            "text": "Terms",
+            "href": "https://clear-path-hubs.lovable.app/terms"
+          },
+          {
+            "text": "Sitemap",
+            "href": "https://clear-path-hubs.lovable.app/sitemap.xml"
+          },
+          {
+            "text": "hello@taasflow.com",
+            "href": "mailto:hello@taasflow.com"
+          },
+          {
+            "text": "Edit with",
+            "href": "https://lovable.dev/projects/1dc5ee7e-1294-441c-8288-850e79e443f6?utm_source=lovable-badge"
+          }
+        ],
+        "images": [
+          {
+            "src": "https://clear-path-hubs.lovable.app/assets/logo-on-white-Dk9DIcMP.png",
+            "alt": ""
+          },
+          {
+            "src": "https://clear-path-hubs.lovable.app/assets/logo-on-white-Dk9DIcMP.png",
+            "alt": ""
+          }
+        ],
+        "forms": [],
+        "navLinks": [
+          "TaaSFlow",
+          "Jobs",
+          "Sign in",
+          "Browse jobs",
+          "Start hiring",
+          "Privacy",
+          "Terms",
+          "Sitemap",
+          "hello@taasflow.com"
+        ],
+        "footerLinks": [
+          "TaaSFlow",
+          "About",
+          "Journey",
+          "Contact",
+          "Solutions",
+          "How it works",
+          "Enterprise",
+          "Employer onboarding",
+          "Staffing partnership",
+          "Start hiring",
+          "Pilot",
+          "Pricing",
+          "Industries",
+          "Client sign in",
+          "Browse jobs",
+          "Talent network",
+          "Candidate success",
+          "Candidate journey",
+          "Candidate sign in",
+          "Resources",
+          "Blog",
+          "Case studies",
+          "Knowledge base",
+          "FAQ",
+          "Privacy",
+          "Terms",
+          "Sitemap",
+          "hello@taasflow.com"
+        ],
+        "horizontalOverflow": false,
+        "documentWidth": 768,
+        "viewportWidth": 768
+      },
+      "screenshots": {
+        "sourceFull": "reports/public-parity/screenshots/source/terms__tablet__full.png",
+        "sourceVisible": "reports/public-parity/screenshots/source/terms__tablet__visible.png",
+        "destinationFull": "reports/public-parity/screenshots/destination/terms__tablet__full.png",
+        "destinationVisible": "reports/public-parity/screenshots/destination/terms__tablet__visible.png"
+      },
+      "differences": [
+        "title: \"Terms of Service | TaaSFlow\" vs \"TaaSFlow | Talent as a Service | Subscription Recruiting\"",
+        "meta description mismatch",
+        "heading overlap 5% (1/21)",
+        "section count 18 vs 1",
+        "form count 1 vs 0",
+        "destination images missing alt: 2"
+      ]
+    },
+    {
+      "viewport": "desktop",
+      "source": {
+        "url": "https://taasflow.com/terms",
+        "finalUrl": "https://taasflow.com/terms",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [
+          {
+            "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HJ2ECKCNK4&gtm=45je67l1v9245339446za200zd9245339446&_p=1784774043931&gcd=13l3l3l3l1l1&npa=0&_ng=1&dma=0&are=1&cid=1503557977.1784774044&frm=0&ngs=1&pscdl=noapi&rcb=13&sr=1440x900&uaa=x86&uab=64&uafvl=Not-A.Brand%3B24.0.0.0%7CChromium%3B146.0.7680.80&uam=&uamb=0&uap=Windows&uapv=&uaw=0&ul=en-us&_s=1&tag_exp=115938466~115938468~118395333~118897920~118897930~119896802&dp=%2Fterms&dt=TaaSFlow%20%7C%20Talent%20as%20a%20Service%20%7C%20Subscription%20Recruiting&dl=https%3A%2F%2Ftaasflow.com%2Fterms&sid=1784774044&sct=1&seg=0&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&ep.role_type=public&ep.is_authenticated=false&tfd=598",
+            "status": null,
+            "failure": "net::ERR_ABORTED"
+          }
+        ],
+        "title": "Terms of Service | TaaSFlow",
+        "description": "Terms of Service for TaaSFlow. Read the terms and conditions governing your use of our subscription-based recruiting platform.",
+        "canonical": "https://taasflow.com/terms",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:type": "website",
+          "og:url": "https://taasflow.com/terms",
+          "og:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "og:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "og:image": "https://taasflow.com/og-image.png",
+          "og:image:width": "1200",
+          "og:image:height": "630",
+          "og:locale": "en_US",
+          "twitter:card": "summary_large_image",
+          "twitter:site": "@TaasFlow",
+          "twitter:creator": "@TaasFlow",
+          "twitter:url": "https://taasflow.com/terms",
+          "twitter:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "twitter:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "twitter:image": "https://taasflow.com/og-image.png"
+        },
+        "structuredData": [
+          {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "@id": "https://taasflow.com/#organization",
+            "name": "TaaSFlow",
+            "legalName": "TaaSFlow",
+            "url": "https://taasflow.com/",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://taasflow.com/favicon.png",
+              "width": 512,
+              "height": 512
+            },
+            "image": "https://taasflow.com/og-image.png",
+            "description": "Talent as a Service — subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+            "slogan": "Your hiring team. On demand.",
+            "foundingDate": "2024",
+            "areaServed": [
+              {
+                "@type": "Country",
+                "name": "United States"
+              },
+              {
+                "@type": "Country",
+                "name": "United Arab Emirates"
+              },
+              {
+                "@type": "Country",
+                "name": "United Kingdom"
+              },
+              {
+                "@type": "Country",
+                "name": "Brazil"
+              }
+            ],
+            "knowsAbout": [
+              "Subscription recruiting",
+              "Talent as a Service",
+              "Candidate sourcing",
+              "Pre-screened candidates",
+              "Recruitment process outsourcing"
+            ],
+            "contactPoint": [
+              {
+                "@type": "ContactPoint",
+                "contactType": "sales",
+                "email": "hello@taasflow.com",
+                "url": "https://taasflow.com/contact",
+                "availableLanguage": [
+                  "English",
+                  "Portuguese",
+                  "Spanish"
+                ]
+              }
+            ],
+            "sameAs": [
+              "https://www.linkedin.com/company/taasflow",
+              "https://twitter.com/TaasFlow"
+            ]
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "@id": "https://taasflow.com/#website",
+            "name": "TaaSFlow",
+            "alternateName": "Talent as a Service",
+            "url": "https://taasflow.com/",
+            "description": "Subscription recruiting that delivers pre-screened, ranked candidates in 14 days.",
+            "inLanguage": "en-US",
+            "publisher": {
+              "@id": "https://taasflow.com/#organization"
+            },
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": {
+                "@type": "EntryPoint",
+                "urlTemplate": "https://taasflow.com/jobs?q={search_term_string}"
+              },
+              "query-input": "required name=search_term_string"
+            }
+          }
+        ],
+        "h1": [
+          "Terms of Service"
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "Terms of Service"
+          },
+          {
+            "level": 2,
+            "text": "1. Acceptance of Terms"
+          },
+          {
+            "level": 2,
+            "text": "2. Description of Services"
+          },
+          {
+            "level": 2,
+            "text": "3. Account Registration"
+          },
+          {
+            "level": 2,
+            "text": "4. Subscriptions, Pricing, and Payment"
+          },
+          {
+            "level": 2,
+            "text": "5. Client Obligations"
+          },
+          {
+            "level": 2,
+            "text": "6. Candidate Data and Pipeline Ownership"
+          },
+          {
+            "level": 2,
+            "text": "7. Intellectual Property"
+          },
+          {
+            "level": 2,
+            "text": "8. Prohibited Use"
+          },
+          {
+            "level": 2,
+            "text": "9. Disclaimers"
+          },
+          {
+            "level": 2,
+            "text": "10. Limitation of Liability"
+          },
+          {
+            "level": 2,
+            "text": "11. Indemnification"
+          },
+          {
+            "level": 2,
+            "text": "12. Termination"
+          },
+          {
+            "level": 2,
+            "text": "13. Governing Law and Disputes"
+          },
+          {
+            "level": 2,
+            "text": "14. Changes to These Terms"
+          },
+          {
+            "level": 2,
+            "text": "15. Contact"
+          },
+          {
+            "level": 4,
+            "text": "Newsletter"
+          },
+          {
+            "level": 4,
+            "text": "For candidates"
+          },
+          {
+            "level": 4,
+            "text": "For companies"
+          },
+          {
+            "level": 4,
+            "text": "Industries"
+          },
+          {
+            "level": 4,
+            "text": "Company"
+          }
+        ],
+        "sections": [
+          "SECTION",
+          "Terms of Service",
+          "1. Acceptance of Terms",
+          "2. Description of Services",
+          "3. Account Registration",
+          "4. Subscriptions, Pricing, and Payment",
+          "5. Client Obligations",
+          "6. Candidate Data and Pipeline Ownership",
+          "7. Intellectual Property",
+          "8. Prohibited Use",
+          "9. Disclaimers",
+          "10. Limitation of Liability",
+          "11. Indemnification",
+          "12. Termination",
+          "13. Governing Law and Disputes",
+          "14. Changes to These Terms",
+          "15. Contact",
+          "SECTION"
+        ],
+        "textBlocks": [
+          "Solutions",
+          "Industries",
+          "Resources",
+          "Last updated: March 5, 2026",
+          "By accessing or using TaaSFlow's website, platform, or services (\"Services\"), you agree to be bound by these Terms of Service (\"Terms\"). If you do not agree, do not use our Services. These Terms constitute a legally binding agreement between you (or the entity you represent) and TaaSFlow.",
+          "TaaSFlow provides a subscription-based talent sourcing and recruitment platform. Our Services include:",
+          "AI-powered candidate sourcing and screening",
+          "Ranked candidate shortlists delivered on a recurring basis",
+          "Role intake and blueprint creation tools",
+          "Client dashboards for pipeline management",
+          "One-off hiring packages and monthly subscription plans",
+          "TaaSFlow is not a staffing agency. We do not charge placement fees. Candidates sourced through our platform are introduced to you; the hiring decision and employment relationship are solely between you and the candidate.",
+          "To access certain features, you must create an account. You agree to provide accurate, current, and complete information and to keep your credentials secure. You are responsible for all activity under your account. Notify us immediately if you suspect unauthorized access.",
+          "Pricing: All prices are listed on our Pricing page. We reserve the right to update pricing with 30 days' notice.",
+          "Billing: Subscription fees are billed monthly or annually in advance. One-off packages are billed at the time of purchase.",
+          "Pilot program: The pilot is a paid engagement for a single role, subject to the terms communicated at the time of purchase.",
+          "Pausing and cancellation: You may pause or cancel your subscription at any time. Cancellation takes effect at the end of the current billing period. No refunds are issued for partial billing periods.",
+          "Taxes: Prices do not include applicable taxes. You are responsible for any taxes associated with your purchase.",
+          "As a client, you agree to:",
+          "Provide accurate and complete role requirements during the intake process",
+          "Respond to candidate submissions within a reasonable timeframe",
+          "Comply with all applicable employment and anti-discrimination laws when evaluating candidates",
+          "Not circumvent TaaSFlow by directly contacting sourced candidates outside the platform to avoid service fees",
+          "Treat candidate data confidentially and in accordance with applicable privacy laws",
+          "Candidates sourced and presented through TaaSFlow are part of your pipeline. You retain ownership of candidate information delivered to you, subject to applicable data protection laws. You agree to process candidate data only for legitimate hiring purposes and in compliance with GDPR and other applicable privacy regulations.",
+          "All content, software, algorithms, designs, and branding on the TaaSFlow platform are owned by or licensed to TaaSFlow. You may not copy, modify, distribute, or create derivative works without our written permission. Your use of the Services does not grant you any ownership rights in our intellectual property.",
+          "You agree not to:",
+          "Use the Services for unlawful purposes or in violation of any applicable laws",
+          "Attempt to gain unauthorized access to any part of the platform",
+          "Scrape, crawl, or use automated tools to extract data from the platform",
+          "Upload malicious code, viruses, or any harmful content",
+          "Misrepresent your identity or affiliation with any person or entity",
+          "Use candidate data for purposes unrelated to hiring (e.g., marketing, resale)",
+          "The Services are provided \"as is\" and \"as available.\" TaaSFlow makes no warranties, express or implied, regarding the suitability, reliability, or accuracy of candidates sourced through the platform. We do not guarantee that any candidate will be hired, will accept an offer, or will perform successfully in a role. Hiring decisions are solely your responsibility.",
+          "To the maximum extent permitted by law, TaaSFlow's total liability for any claims arising from or related to the Services is limited to the amount you paid to TaaSFlow in the 12 months preceding the claim.TaaSFlow is not liable for indirect, incidental, consequential, or punitive damages, including lost profits, data loss, or business interruption.",
+          "You agree to indemnify and hold harmless TaaSFlow, its officers, employees, and agents from any claims, damages, losses, or expenses (including legal fees) arising from your use of the Services, your violation of these Terms, or your violation of any third-party rights.",
+          "Either party may terminate the agreement at any time. We may suspend or terminate your access if you violate these Terms. Upon termination, your right to use the Services ceases. Sections that by their nature should survive termination (including intellectual property, limitation of liability, and indemnification) will continue to apply.",
+          "These Terms are governed by the laws of the State of Delaware, USA, without regard to conflict of law principles. Any disputes will be resolved through binding arbitration in accordance with the rules of the American Arbitration Association, unless you are located in the EU/EEA, in which case your local consumer protection laws may apply.",
+          "We may modify these Terms at any time. Material changes will be communicated via email or a notice on our website at least 30 days before taking effect. Continued use of the Services after changes take effect constitutes acceptance of the updated Terms.",
+          "For questions about these Terms, contact us at:",
+          "TaaSFlow LegalEmail: legal@taasflow.com",
+          "See also our Privacy Policy for details on how we handle your personal data.",
+          "Talent as a Service",
+          "A global hiring system for teams that need consistent recruiting.",
+          "Weekly insights into talent acquisition. No spam.",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Book call",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "No recruitment agency fees. No placement charges. Subscription-based hiring system.",
+          "Copyright 2026 TaaSFlow. All rights reserved."
+        ],
+        "buttons": [
+          "Solutions",
+          "Industries",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Solutions",
+          "How it works",
+          "Pilot",
+          "Enterprise",
+          "Case studies",
+          "Jobs",
+          "Journey",
+          "Industries",
+          "Tech",
+          "SaaS & Cloud",
+          "Cybersecurity",
+          "Data & Analytics",
+          "Finance",
+          "Insurance",
+          "PE & VC",
+          "Accounting",
+          "Legal",
+          "Consulting",
+          "HR & Recruiting",
+          "Staffing Agencies",
+          "Sales",
+          "Marketing",
+          "E-commerce",
+          "Media",
+          "Real Estate",
+          "Construction",
+          "Hospitality",
+          "Healthcare",
+          "Public Sector",
+          "Non-Profit",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Success Stories",
+          "Talent Marketplace",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Subscribe",
+          "Book call",
+          "Cookie preferences"
+        ],
+        "links": [
+          {
+            "text": "Skip to main content",
+            "href": "https://taasflow.com/terms#main-content"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "Browse jobs",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Join the network",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Browse open roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "legal@taasflow.com",
+            "href": "mailto:legal@taasflow.com"
+          },
+          {
+            "text": "Privacy Policy",
+            "href": "https://taasflow.com/privacy"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "LinkedIn",
+            "href": "https://www.linkedin.com/company/taasflow/"
+          },
+          {
+            "text": "Browse roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Talent network",
+            "href": "https://taasflow.com/global-talent"
+          },
+          {
+            "text": "Member stories",
+            "href": "https://taasflow.com/candidate-success"
+          },
+          {
+            "text": "Start pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "Employer onboarding",
+            "href": "https://taasflow.com/employer-onboarding"
+          },
+          {
+            "text": "Case studies",
+            "href": "https://taasflow.com/case-studies"
+          },
+          {
+            "text": "Healthcare",
+            "href": "https://taasflow.com/industries/healthcare"
+          },
+          {
+            "text": "Technology",
+            "href": "https://taasflow.com/industries/tech"
+          },
+          {
+            "text": "Finance",
+            "href": "https://taasflow.com/industries/finance"
+          },
+          {
+            "text": "Legal",
+            "href": "https://taasflow.com/industries/legal"
+          },
+          {
+            "text": "All →",
+            "href": "https://taasflow.com/industries"
+          },
+          {
+            "text": "About us",
+            "href": "https://taasflow.com/about"
+          },
+          {
+            "text": "Blog",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://taasflow.com/faq"
+          },
+          {
+            "text": "Knowledge Base",
+            "href": "https://taasflow.com/knowledge-base"
+          },
+          {
+            "text": "Contact us",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Privacy Policy",
+            "href": "https://taasflow.com/privacy"
+          },
+          {
+            "text": "Terms of Service",
+            "href": "https://taasflow.com/terms"
+          }
+        ],
+        "images": [
+          {
+            "src": "https://taasflow.com/assets/logo-on-white-Dk9DIcMP.png",
+            "alt": "TaaSFlow logo"
+          },
+          {
+            "src": "https://taasflow.com/assets/logo-on-blue-CX6jlwjg.png",
+            "alt": "TaaSFlow logo"
+          }
+        ],
+        "forms": [
+          {
+            "action": "https://taasflow.com/terms",
+            "fields": [
+              "input"
+            ]
+          }
+        ],
+        "navLinks": [
+          "Browse jobs",
+          "Join the network",
+          "Browse open roles",
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us"
+        ],
+        "footerLinks": [
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "Privacy Policy",
+          "Terms of Service"
+        ],
+        "horizontalOverflow": false,
+        "documentWidth": 1440,
+        "viewportWidth": 1440
+      },
+      "destination": {
+        "url": "https://clear-path-hubs.lovable.app/terms",
+        "finalUrl": "https://clear-path-hubs.lovable.app/terms",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [],
+        "title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+        "description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+        "canonical": "https://clear-path-hubs.lovable.app/terms",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "twitter:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "og:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "og:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "og:url": "https://clear-path-hubs.lovable.app/terms",
+          "og:type": "website",
+          "twitter:card": "summary_large_image",
+          "twitter:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "twitter:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages."
+        },
+        "structuredData": [],
+        "h1": [
+          "Terms of Service"
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "Terms of Service"
+          },
+          {
+            "level": 2,
+            "text": "Terms of Service"
+          },
+          {
+            "level": 3,
+            "text": "1. Acceptance of Terms"
+          },
+          {
+            "level": 3,
+            "text": "2. Description of Services"
+          },
+          {
+            "level": 3,
+            "text": "3. Account Registration"
+          },
+          {
+            "level": 3,
+            "text": "4. Subscriptions, Pricing, and Payment"
+          },
+          {
+            "level": 3,
+            "text": "5. Client Obligations"
+          },
+          {
+            "level": 3,
+            "text": "6. Candidate Data and Pipeline Ownership"
+          },
+          {
+            "level": 3,
+            "text": "7. Intellectual Property"
+          },
+          {
+            "level": 3,
+            "text": "8. Prohibited Use"
+          },
+          {
+            "level": 3,
+            "text": "9. Disclaimers"
+          },
+          {
+            "level": 3,
+            "text": "10. Limitation of Liability"
+          },
+          {
+            "level": 3,
+            "text": "11. Indemnification"
+          },
+          {
+            "level": 3,
+            "text": "12. Termination"
+          },
+          {
+            "level": 3,
+            "text": "13. Governing Law and Disputes"
+          },
+          {
+            "level": 3,
+            "text": "14. Changes to These Terms"
+          },
+          {
+            "level": 3,
+            "text": "15. Contact"
+          },
+          {
+            "level": 3,
+            "text": "Company"
+          },
+          {
+            "level": 3,
+            "text": "Solutions"
+          },
+          {
+            "level": 3,
+            "text": "Employers"
+          },
+          {
+            "level": 3,
+            "text": "Candidates"
+          },
+          {
+            "level": 3,
+            "text": "Resources"
+          }
+        ],
+        "sections": [
+          "SECTION"
+        ],
+        "textBlocks": [
+          "Solutions",
+          "Industries",
+          "Resources",
+          "About",
+          "Jobs",
+          "Legal",
+          "Terms of Service for TaaSFlow. Read the terms and conditions governing your use of our subscription-based recruiting platform.",
+          "Last updated: March 5, 2026",
+          "By accessing or using TaaSFlow's website, platform, or services (\"Services\"), you agree to be bound by these Terms of Service (\"Terms\"). If you do not agree, do not use our Services. These Terms constitute a legally binding agreement between you (or the entity you represent) and TaaSFlow.",
+          "TaaSFlow provides a subscription-based talent sourcing and recruitment platform. Our Services include:",
+          "AI-powered candidate sourcing and screening",
+          "Ranked candidate shortlists delivered on a recurring basis",
+          "Role intake and blueprint creation tools",
+          "Client dashboards for pipeline management",
+          "One-off hiring packages and monthly subscription plans",
+          "TaaSFlow is not a staffing agency. We do not charge placement fees. Candidates sourced through our platform are introduced to you; the hiring decision and employment relationship are solely between you and the candidate.",
+          "To access certain features, you must create an account. You agree to provide accurate, current, and complete information and to keep your credentials secure. You are responsible for all activity under your account. Notify us immediately if you suspect unauthorized access.",
+          "Pricing: All prices are listed on our Pricing page. We reserve the right to update pricing with 30 days' notice.",
+          "Billing: Subscription fees are billed monthly or annually in advance. One-off packages are billed at the time of purchase.",
+          "Pilot program: The pilot is a paid engagement for a single role, subject to the terms communicated at the time of purchase.",
+          "Pausing and cancellation: You may pause or cancel your subscription at any time. Cancellation takes effect at the end of the current billing period. No refunds are issued for partial billing periods.",
+          "Taxes: Prices do not include applicable taxes. You are responsible for any taxes associated with your purchase.",
+          "As a client, you agree to:",
+          "Provide accurate and complete role requirements during the intake process",
+          "Respond to candidate submissions within a reasonable timeframe",
+          "Comply with all applicable employment and anti-discrimination laws when evaluating candidates",
+          "Not circumvent TaaSFlow by directly contacting sourced candidates outside the platform to avoid service fees",
+          "Treat candidate data confidentially and in accordance with applicable privacy laws",
+          "Candidates sourced and presented through TaaSFlow are part of your pipeline. You retain ownership of candidate information delivered to you, subject to applicable data protection laws. You agree to process candidate data only for legitimate hiring purposes and in compliance with GDPR and other applicable privacy regulations.",
+          "All content, software, algorithms, designs, and branding on the TaaSFlow platform are owned by or licensed to TaaSFlow. You may not copy, modify, distribute, or create derivative works without our written permission. Your use of the Services does not grant you any ownership rights in our intellectual property.",
+          "You agree not to:",
+          "Use the Services for unlawful purposes or in violation of any applicable laws",
+          "Attempt to gain unauthorized access to any part of the platform",
+          "Scrape, crawl, or use automated tools to extract data from the platform",
+          "Upload malicious code, viruses, or any harmful content",
+          "Misrepresent your identity or affiliation with any person or entity",
+          "Use candidate data for purposes unrelated to hiring (e.g., marketing, resale)",
+          "The Services are provided \"as is\" and \"as available.\" TaaSFlow makes no warranties, express or implied, regarding the suitability, reliability, or accuracy of candidates sourced through the platform. We do not guarantee that any candidate will be hired, will accept an offer, or will perform successfully in a role. Hiring decisions are solely your responsibility.",
+          "To the maximum extent permitted by law, TaaSFlow's total liability for any claims arising from or related to the Services is limited to the amount you paid to TaaSFlow in the 12 months preceding the claim.TaaSFlow is not liable for indirect, incidental, consequential, or punitive damages, including lost profits, data loss, or business interruption.",
+          "You agree to indemnify and hold harmless TaaSFlow, its officers, employees, and agents from any claims, damages, losses, or expenses (including legal fees) arising from your use of the Services, your violation of these Terms, or your violation of any third-party rights.",
+          "Either party may terminate the agreement at any time. We may suspend or terminate your access if you violate these Terms. Upon termination, your right to use the Services ceases. Sections that by their nature should survive termination (including intellectual property, limitation of liability, and indemnification) will continue to apply.",
+          "These Terms are governed by the laws of the State of Delaware, USA, without regard to conflict of law principles. Any disputes will be resolved through binding arbitration in accordance with the rules of the American Arbitration Association, unless you are located in the EU/EEA, in which case your local consumer protection laws may apply.",
+          "We may modify these Terms at any time. Material changes will be communicated via email or a notice on our website at least 30 days before taking effect. Continued use of the Services after changes take effect constitutes acceptance of the updated Terms.",
+          "For questions about these Terms, contact us at:",
+          "TaaSFlow Legal Email: legal@taasflow.com",
+          "See also our Privacy Policy for details on how we handle your personal data.",
+          "A live recruiting workspace with ranked, evidence-backed candidate delivery.",
+          "About",
+          "Journey",
+          "Contact",
+          "Solutions",
+          "How it works",
+          "Enterprise",
+          "Employer onboarding",
+          "Staffing partnership",
+          "Start hiring",
+          "Pilot",
+          "Pricing",
+          "Industries",
+          "Client sign in",
+          "Browse jobs",
+          "Talent network",
+          "Candidate success",
+          "Candidate journey",
+          "Candidate sign in",
+          "Resources",
+          "Blog",
+          "Case studies",
+          "Knowledge base",
+          "FAQ",
+          "© 2026 TaaSFlow. All rights reserved."
+        ],
+        "buttons": [
+          "Solutions",
+          "Industries",
+          "Resources",
+          "About"
+        ],
+        "links": [
+          {
+            "text": "Skip to main content",
+            "href": "https://clear-path-hubs.lovable.app/terms#main"
+          },
+          {
+            "text": "New: transparent role-specific scoring — see how it works.",
+            "href": "https://clear-path-hubs.lovable.app/how-it-works"
+          },
+          {
+            "text": "TaaSFlow",
+            "href": "https://clear-path-hubs.lovable.app/"
+          },
+          {
+            "text": "Jobs",
+            "href": "https://clear-path-hubs.lovable.app/jobs"
+          },
+          {
+            "text": "Sign in",
+            "href": "https://clear-path-hubs.lovable.app/login"
+          },
+          {
+            "text": "Browse jobs",
+            "href": "https://clear-path-hubs.lovable.app/jobs"
+          },
+          {
+            "text": "Start hiring",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "legal@taasflow.com",
+            "href": "mailto:legal@taasflow.com"
+          },
+          {
+            "text": "TaaSFlow",
+            "href": "https://clear-path-hubs.lovable.app/"
+          },
+          {
+            "text": "",
+            "href": "https://www.linkedin.com/company/taasflow"
+          },
+          {
+            "text": "",
+            "href": "mailto:hello@taasflow.com"
+          },
+          {
+            "text": "About",
+            "href": "https://clear-path-hubs.lovable.app/about"
+          },
+          {
+            "text": "Journey",
+            "href": "https://clear-path-hubs.lovable.app/journey"
+          },
+          {
+            "text": "Contact",
+            "href": "https://clear-path-hubs.lovable.app/contact"
+          },
+          {
+            "text": "Solutions",
+            "href": "https://clear-path-hubs.lovable.app/solutions"
+          },
+          {
+            "text": "How it works",
+            "href": "https://clear-path-hubs.lovable.app/how-it-works"
+          },
+          {
+            "text": "Enterprise",
+            "href": "https://clear-path-hubs.lovable.app/enterprise"
+          },
+          {
+            "text": "Employer onboarding",
+            "href": "https://clear-path-hubs.lovable.app/employer-onboarding"
+          },
+          {
+            "text": "Staffing partnership",
+            "href": "https://clear-path-hubs.lovable.app/partnerships/staffing"
+          },
+          {
+            "text": "Start hiring",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "Pilot",
+            "href": "https://clear-path-hubs.lovable.app/pilot"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://clear-path-hubs.lovable.app/pricing"
+          },
+          {
+            "text": "Industries",
+            "href": "https://clear-path-hubs.lovable.app/industries"
+          },
+          {
+            "text": "Client sign in",
+            "href": "https://clear-path-hubs.lovable.app/login"
+          },
+          {
+            "text": "Browse jobs",
+            "href": "https://clear-path-hubs.lovable.app/jobs"
+          },
+          {
+            "text": "Talent network",
+            "href": "https://clear-path-hubs.lovable.app/talent-network"
+          },
+          {
+            "text": "Candidate success",
+            "href": "https://clear-path-hubs.lovable.app/candidate-success"
+          },
+          {
+            "text": "Candidate journey",
+            "href": "https://clear-path-hubs.lovable.app/journey"
+          },
+          {
+            "text": "Candidate sign in",
+            "href": "https://clear-path-hubs.lovable.app/login"
+          },
+          {
+            "text": "Resources",
+            "href": "https://clear-path-hubs.lovable.app/resources"
+          },
+          {
+            "text": "Blog",
+            "href": "https://clear-path-hubs.lovable.app/blog"
+          },
+          {
+            "text": "Case studies",
+            "href": "https://clear-path-hubs.lovable.app/case-studies"
+          },
+          {
+            "text": "Knowledge base",
+            "href": "https://clear-path-hubs.lovable.app/knowledge-base"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://clear-path-hubs.lovable.app/faq"
+          },
+          {
+            "text": "Privacy",
+            "href": "https://clear-path-hubs.lovable.app/privacy"
+          },
+          {
+            "text": "Terms",
+            "href": "https://clear-path-hubs.lovable.app/terms"
+          },
+          {
+            "text": "Sitemap",
+            "href": "https://clear-path-hubs.lovable.app/sitemap.xml"
+          },
+          {
+            "text": "hello@taasflow.com",
+            "href": "mailto:hello@taasflow.com"
+          },
+          {
+            "text": "Edit with",
+            "href": "https://lovable.dev/projects/1dc5ee7e-1294-441c-8288-850e79e443f6?utm_source=lovable-badge"
+          }
+        ],
+        "images": [
+          {
+            "src": "https://clear-path-hubs.lovable.app/assets/logo-on-white-Dk9DIcMP.png",
+            "alt": ""
+          },
+          {
+            "src": "https://clear-path-hubs.lovable.app/assets/logo-on-white-Dk9DIcMP.png",
+            "alt": ""
+          }
+        ],
+        "forms": [],
+        "navLinks": [
+          "TaaSFlow",
+          "Jobs",
+          "Sign in",
+          "Browse jobs",
+          "Start hiring",
+          "Privacy",
+          "Terms",
+          "Sitemap",
+          "hello@taasflow.com"
+        ],
+        "footerLinks": [
+          "TaaSFlow",
+          "About",
+          "Journey",
+          "Contact",
+          "Solutions",
+          "How it works",
+          "Enterprise",
+          "Employer onboarding",
+          "Staffing partnership",
+          "Start hiring",
+          "Pilot",
+          "Pricing",
+          "Industries",
+          "Client sign in",
+          "Browse jobs",
+          "Talent network",
+          "Candidate success",
+          "Candidate journey",
+          "Candidate sign in",
+          "Resources",
+          "Blog",
+          "Case studies",
+          "Knowledge base",
+          "FAQ",
+          "Privacy",
+          "Terms",
+          "Sitemap",
+          "hello@taasflow.com"
+        ],
+        "horizontalOverflow": false,
+        "documentWidth": 1440,
+        "viewportWidth": 1440
+      },
+      "screenshots": {
+        "sourceFull": "reports/public-parity/screenshots/source/terms__desktop__full.png",
+        "sourceVisible": "reports/public-parity/screenshots/source/terms__desktop__visible.png",
+        "destinationFull": "reports/public-parity/screenshots/destination/terms__desktop__full.png",
+        "destinationVisible": "reports/public-parity/screenshots/destination/terms__desktop__visible.png"
+      },
+      "differences": [
+        "title: \"Terms of Service | TaaSFlow\" vs \"TaaSFlow | Talent as a Service | Subscription Recruiting\"",
+        "meta description mismatch",
+        "heading overlap 5% (1/21)",
+        "section count 18 vs 1",
+        "form count 1 vs 0",
+        "destination images missing alt: 2"
+      ]
+    }
+  ],
+  "summary": "18 differences detected",
+  "exclusions": []
+}

@@ -1,0 +1,3441 @@
+{
+  "sourcePath": "/industries",
+  "destinationPath": "/industries",
+  "pageType": "industries_index",
+  "protected": false,
+  "verdict": "MAJOR_DIFFERENCE",
+  "severity": "HIGH",
+  "viewports": [
+    {
+      "viewport": "mobile",
+      "source": {
+        "url": "https://taasflow.com/industries",
+        "finalUrl": "https://taasflow.com/industries",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [
+          {
+            "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HJ2ECKCNK4&gtm=45je67m0h2v9245339446za200zd9245339446&_p=1784774088134&gcd=13l3l3l3l1l1&npa=0&_ng=1&dma=0&are=1&cid=194355171.1784774088&frm=0&ngs=1&pscdl=noapi&rcb=1&sr=375x812&uaa=x86&uab=64&uafvl=Not-A.Brand%3B24.0.0.0%7CChromium%3B146.0.7680.80&uam=&uamb=0&uap=Windows&uapv=&uaw=0&ul=en-us&_s=1&tag_exp=115616986~115938465~115938469~118897920~118897930~119896802&dp=%2Findustries&dt=TaaSFlow%20%7C%20Talent%20as%20a%20Service%20%7C%20Subscription%20Recruiting&dl=https%3A%2F%2Ftaasflow.com%2Findustries&sid=1784774088&sct=1&seg=0&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&ep.role_type=public&ep.is_authenticated=false&tfd=695",
+            "status": null,
+            "failure": "net::ERR_ABORTED"
+          }
+        ],
+        "title": "Industry Recruiting Solutions | TaaSFlow",
+        "description": "Industry-specific recruiting solutions across 22+ verticals — tech, healthcare, finance, legal, hospitality, logistics, and more. Subscription pricing.",
+        "canonical": "https://taasflow.com/industries",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:type": "website",
+          "og:url": "https://taasflow.com/industries",
+          "og:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "og:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "og:image": "https://taasflow.com/og-image.png",
+          "og:image:width": "1200",
+          "og:image:height": "630",
+          "og:locale": "en_US",
+          "twitter:card": "summary_large_image",
+          "twitter:site": "@TaasFlow",
+          "twitter:creator": "@TaasFlow",
+          "twitter:url": "https://taasflow.com/industries",
+          "twitter:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "twitter:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "twitter:image": "https://taasflow.com/og-image.png"
+        },
+        "structuredData": [
+          {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "@id": "https://taasflow.com/#organization",
+            "name": "TaaSFlow",
+            "legalName": "TaaSFlow",
+            "url": "https://taasflow.com/",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://taasflow.com/favicon.png",
+              "width": 512,
+              "height": 512
+            },
+            "image": "https://taasflow.com/og-image.png",
+            "description": "Talent as a Service — subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+            "slogan": "Your hiring team. On demand.",
+            "foundingDate": "2024",
+            "areaServed": [
+              {
+                "@type": "Country",
+                "name": "United States"
+              },
+              {
+                "@type": "Country",
+                "name": "United Arab Emirates"
+              },
+              {
+                "@type": "Country",
+                "name": "United Kingdom"
+              },
+              {
+                "@type": "Country",
+                "name": "Brazil"
+              }
+            ],
+            "knowsAbout": [
+              "Subscription recruiting",
+              "Talent as a Service",
+              "Candidate sourcing",
+              "Pre-screened candidates",
+              "Recruitment process outsourcing"
+            ],
+            "contactPoint": [
+              {
+                "@type": "ContactPoint",
+                "contactType": "sales",
+                "email": "hello@taasflow.com",
+                "url": "https://taasflow.com/contact",
+                "availableLanguage": [
+                  "English",
+                  "Portuguese",
+                  "Spanish"
+                ]
+              }
+            ],
+            "sameAs": [
+              "https://www.linkedin.com/company/taasflow",
+              "https://twitter.com/TaasFlow"
+            ]
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "@id": "https://taasflow.com/#website",
+            "name": "TaaSFlow",
+            "alternateName": "Talent as a Service",
+            "url": "https://taasflow.com/",
+            "description": "Subscription recruiting that delivers pre-screened, ranked candidates in 14 days.",
+            "inLanguage": "en-US",
+            "publisher": {
+              "@id": "https://taasflow.com/#organization"
+            },
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": {
+                "@type": "EntryPoint",
+                "urlTemplate": "https://taasflow.com/jobs?q={search_term_string}"
+              },
+              "query-input": "required name=search_term_string"
+            }
+          }
+        ],
+        "h1": [
+          "Title"
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "Title"
+          },
+          {
+            "level": 3,
+            "text": "Technology"
+          },
+          {
+            "level": 3,
+            "text": "Legal"
+          },
+          {
+            "level": 3,
+            "text": "Public Sector"
+          },
+          {
+            "level": 3,
+            "text": "Finance & Banking"
+          },
+          {
+            "level": 3,
+            "text": "Staffing Agencies"
+          },
+          {
+            "level": 3,
+            "text": "Healthcare"
+          },
+          {
+            "level": 3,
+            "text": "Sales"
+          },
+          {
+            "level": 3,
+            "text": "Marketing & Advertising"
+          },
+          {
+            "level": 3,
+            "text": "Human Resources"
+          },
+          {
+            "level": 3,
+            "text": "Accounting & Audit"
+          },
+          {
+            "level": 3,
+            "text": "Real Estate"
+          },
+          {
+            "level": 3,
+            "text": "SaaS & Cloud"
+          },
+          {
+            "level": 3,
+            "text": "E-commerce & Retail"
+          },
+          {
+            "level": 3,
+            "text": "Insurance"
+          },
+          {
+            "level": 3,
+            "text": "Construction & Architecture"
+          },
+          {
+            "level": 3,
+            "text": "Hospitality & Events"
+          },
+          {
+            "level": 3,
+            "text": "Media & Entertainment"
+          },
+          {
+            "level": 3,
+            "text": "Non-Profit"
+          },
+          {
+            "level": 3,
+            "text": "Private Equity & VC"
+          },
+          {
+            "level": 3,
+            "text": "Cybersecurity"
+          },
+          {
+            "level": 3,
+            "text": "Data & Analytics"
+          },
+          {
+            "level": 3,
+            "text": "Consulting"
+          },
+          {
+            "level": 2,
+            "text": "Cta Title"
+          },
+          {
+            "level": 4,
+            "text": "Newsletter"
+          },
+          {
+            "level": 4,
+            "text": "For candidates"
+          },
+          {
+            "level": 4,
+            "text": "For companies"
+          },
+          {
+            "level": 4,
+            "text": "Industries"
+          },
+          {
+            "level": 4,
+            "text": "Company"
+          }
+        ],
+        "sections": [
+          "SECTION",
+          "Title",
+          "Technology",
+          "Cta Title"
+        ],
+        "textBlocks": [
+          "Solutions",
+          "Industries",
+          "Resources",
+          "Subtitle",
+          "Scale your engineering team fast with screened developers.",
+          "Quickly add paralegals & support for big cases.",
+          "Flexible staffing for government projects.",
+          "Trusted analysts and accountants on-demand.",
+          "Extend your recruiting capacity behind the scenes.",
+          "Compliant medical staffing professionals.",
+          "Revenue-focused talent that closes deals.",
+          "Creative and growth talent for campaigns.",
+          "HR professionals for growing teams.",
+          "CPAs and audit professionals when you need them.",
+          "Property management and transaction support.",
+          "Go-to-market and product talent for software companies.",
+          "Digital commerce and operations talent.",
+          "Licensed agents and claims professionals.",
+          "Project managers and office professionals.",
+          "Hotels, restaurants, resorts, and event staffing.",
+          "Content creators and production talent.",
+          "Mission-driven professionals for impact organizations.",
+          "Deal and portfolio support professionals.",
+          "Security analysts and compliance specialists.",
+          "Data scientists and BI professionals.",
+          "Project staff and delivery professionals.",
+          "Cta Desc",
+          "Talent as a Service",
+          "A global hiring system for teams that need consistent recruiting.",
+          "Weekly insights into talent acquisition. No spam.",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Book call",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "No recruitment agency fees. No placement charges. Subscription-based hiring system.",
+          "Copyright 2026 TaaSFlow. All rights reserved."
+        ],
+        "buttons": [
+          "Solutions",
+          "Industries",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Solutions",
+          "How it works",
+          "Pilot",
+          "Enterprise",
+          "Case studies",
+          "Jobs",
+          "Journey",
+          "Industries",
+          "Tech",
+          "SaaS & Cloud",
+          "Cybersecurity",
+          "Data & Analytics",
+          "Finance",
+          "Insurance",
+          "PE & VC",
+          "Accounting",
+          "Legal",
+          "Consulting",
+          "HR & Recruiting",
+          "Staffing Agencies",
+          "Sales",
+          "Marketing",
+          "E-commerce",
+          "Media",
+          "Real Estate",
+          "Construction",
+          "Hospitality",
+          "Healthcare",
+          "Public Sector",
+          "Non-Profit",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Success Stories",
+          "Talent Marketplace",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Subscribe",
+          "Book call",
+          "Cookie preferences"
+        ],
+        "links": [
+          {
+            "text": "Skip to main content",
+            "href": "https://taasflow.com/industries#main-content"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "Browse jobs",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Join the network",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Browse open roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "TechnologyScale your engineering team fast with screened developers.Software EngineersFull-Stack DevelopersFrontend Spec",
+            "href": "https://taasflow.com/industries/tech"
+          },
+          {
+            "text": "LegalQuickly add paralegals & support for big cases.ParalegalsLegal ResearchersContract Attorneys+7Explore",
+            "href": "https://taasflow.com/industries/legal"
+          },
+          {
+            "text": "Public SectorFlexible staffing for government projects.IT SpecialistsProject ManagersPolicy Analysts+7Explore",
+            "href": "https://taasflow.com/industries/public-sector"
+          },
+          {
+            "text": "Finance & BankingTrusted analysts and accountants on-demand.Financial AnalystsSenior AccountantsCPAs+7Explore",
+            "href": "https://taasflow.com/industries/finance"
+          },
+          {
+            "text": "Staffing AgenciesExtend your recruiting capacity behind the scenes.Backend Talent SourcingOverflow Recruiting SupportNic",
+            "href": "https://taasflow.com/industries/staffing-agencies"
+          },
+          {
+            "text": "HealthcareCompliant medical staffing professionals.Medical Coders (CPC, CCS)Medical BillersPractice Managers+7Explore",
+            "href": "https://taasflow.com/industries/healthcare"
+          },
+          {
+            "text": "SalesRevenue-focused talent that closes deals.SDRs/BDRsAccount ExecutivesEnterprise AEs+7Explore",
+            "href": "https://taasflow.com/industries/sales"
+          },
+          {
+            "text": "Marketing & AdvertisingCreative and growth talent for campaigns.Growth MarketersPerformance MarketersContent Strategists",
+            "href": "https://taasflow.com/industries/marketing"
+          },
+          {
+            "text": "Human ResourcesHR professionals for growing teams.HR GeneralistsHR ManagersRecruiters+7Explore",
+            "href": "https://taasflow.com/industries/human-resources"
+          },
+          {
+            "text": "Accounting & AuditCPAs and audit professionals when you need them.Staff AccountantsSenior AccountantsCPAs+7Explore",
+            "href": "https://taasflow.com/industries/accounting"
+          },
+          {
+            "text": "Real EstateProperty management and transaction support.Real Estate AgentsTransaction CoordinatorsProperty Managers+7Expl",
+            "href": "https://taasflow.com/industries/real-estate"
+          },
+          {
+            "text": "SaaS & CloudGo-to-market and product talent for software companies.Product ManagersCustomer Success ManagersCustomer Suc",
+            "href": "https://taasflow.com/industries/saas"
+          },
+          {
+            "text": "E-commerce & RetailDigital commerce and operations talent.E-commerce ManagersDigital MerchandisersMarketplace Specialist",
+            "href": "https://taasflow.com/industries/ecommerce"
+          },
+          {
+            "text": "InsuranceLicensed agents and claims professionals.Licensed ProducersClaims AdjustersUnderwriters+7Explore",
+            "href": "https://taasflow.com/industries/insurance"
+          },
+          {
+            "text": "Construction & ArchitectureProject managers and office professionals.Project ManagersAssistant Project ManagersEstimator",
+            "href": "https://taasflow.com/industries/construction"
+          },
+          {
+            "text": "Hospitality & EventsHotels, restaurants, resorts, and event staffing.Hotel General ManagersFront Desk ManagersRestaurant",
+            "href": "https://taasflow.com/industries/hospitality"
+          },
+          {
+            "text": "Media & EntertainmentContent creators and production talent.Content ProducersVideo EditorsAudio Editors+7Explore",
+            "href": "https://taasflow.com/industries/media"
+          },
+          {
+            "text": "Non-ProfitMission-driven professionals for impact organizations.Program ManagersProgram CoordinatorsGrant Writers+7Explo",
+            "href": "https://taasflow.com/industries/non-profit"
+          },
+          {
+            "text": "Private Equity & VCDeal and portfolio support professionals.Deal AnalystsAssociatesDue Diligence Specialists+7Explore",
+            "href": "https://taasflow.com/industries/private-equity"
+          },
+          {
+            "text": "CybersecuritySecurity analysts and compliance specialists.Security AnalystsSecurity EngineersCompliance Analysts+7Explor",
+            "href": "https://taasflow.com/industries/cybersecurity"
+          },
+          {
+            "text": "Data & AnalyticsData scientists and BI professionals.Data ScientistsData AnalystsBI Analysts+7Explore",
+            "href": "https://taasflow.com/industries/data-analytics"
+          },
+          {
+            "text": "ConsultingProject staff and delivery professionals.ConsultantsAnalystsAssociates+7Explore",
+            "href": "https://taasflow.com/industries/consulting"
+          },
+          {
+            "text": "Cta Button",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "LinkedIn",
+            "href": "https://www.linkedin.com/company/taasflow/"
+          },
+          {
+            "text": "Browse roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Talent network",
+            "href": "https://taasflow.com/global-talent"
+          },
+          {
+            "text": "Member stories",
+            "href": "https://taasflow.com/candidate-success"
+          },
+          {
+            "text": "Start pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "Employer onboarding",
+            "href": "https://taasflow.com/employer-onboarding"
+          },
+          {
+            "text": "Case studies",
+            "href": "https://taasflow.com/case-studies"
+          },
+          {
+            "text": "Healthcare",
+            "href": "https://taasflow.com/industries/healthcare"
+          },
+          {
+            "text": "Technology",
+            "href": "https://taasflow.com/industries/tech"
+          },
+          {
+            "text": "Finance",
+            "href": "https://taasflow.com/industries/finance"
+          },
+          {
+            "text": "Legal",
+            "href": "https://taasflow.com/industries/legal"
+          },
+          {
+            "text": "All →",
+            "href": "https://taasflow.com/industries"
+          },
+          {
+            "text": "About us",
+            "href": "https://taasflow.com/about"
+          },
+          {
+            "text": "Blog",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://taasflow.com/faq"
+          },
+          {
+            "text": "Knowledge Base",
+            "href": "https://taasflow.com/knowledge-base"
+          },
+          {
+            "text": "Contact us",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Privacy Policy",
+            "href": "https://taasflow.com/privacy"
+          },
+          {
+            "text": "Terms of Service",
+            "href": "https://taasflow.com/terms"
+          }
+        ],
+        "images": [
+          {
+            "src": "https://taasflow.com/assets/logo-on-white-Dk9DIcMP.png",
+            "alt": "TaaSFlow logo"
+          },
+          {
+            "src": "https://taasflow.com/assets/logo-on-blue-CX6jlwjg.png",
+            "alt": "TaaSFlow logo"
+          }
+        ],
+        "forms": [
+          {
+            "action": "https://taasflow.com/industries",
+            "fields": [
+              "input"
+            ]
+          }
+        ],
+        "navLinks": [
+          "Browse jobs",
+          "Join the network",
+          "Browse open roles",
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us"
+        ],
+        "footerLinks": [
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "Privacy Policy",
+          "Terms of Service"
+        ],
+        "horizontalOverflow": false,
+        "documentWidth": 375,
+        "viewportWidth": 375
+      },
+      "destination": {
+        "url": "https://clear-path-hubs.lovable.app/industries",
+        "finalUrl": "https://clear-path-hubs.lovable.app/industries",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [],
+        "title": "Industries we serve — TaaSFlow",
+        "description": "Subscription recruiting for tech, finance, healthcare, legal, consulting, SaaS, and more.",
+        "canonical": "https://clear-path-hubs.lovable.app/industries",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "twitter:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "og:title": "Industries we serve — TaaSFlow",
+          "og:description": "Subscription recruiting for tech, finance, healthcare, legal, consulting, SaaS, and more.",
+          "og:url": "https://clear-path-hubs.lovable.app/industries",
+          "og:type": "website",
+          "twitter:card": "summary_large_image",
+          "twitter:title": "Industries we serve — TaaSFlow",
+          "twitter:description": "Subscription recruiting for tech, finance, healthcare, legal, consulting, SaaS, and more."
+        },
+        "structuredData": [],
+        "h1": [
+          "Industries we serve"
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "Industries we serve"
+          },
+          {
+            "level": 2,
+            "text": "Accounting"
+          },
+          {
+            "level": 2,
+            "text": "Construction"
+          },
+          {
+            "level": 2,
+            "text": "Consulting"
+          },
+          {
+            "level": 2,
+            "text": "Cybersecurity"
+          },
+          {
+            "level": 2,
+            "text": "Data & Analytics"
+          },
+          {
+            "level": 2,
+            "text": "E-commerce"
+          },
+          {
+            "level": 2,
+            "text": "Finance"
+          },
+          {
+            "level": 2,
+            "text": "Healthcare"
+          },
+          {
+            "level": 2,
+            "text": "Hospitality"
+          },
+          {
+            "level": 2,
+            "text": "Human Resources"
+          },
+          {
+            "level": 2,
+            "text": "Insurance"
+          },
+          {
+            "level": 2,
+            "text": "Legal"
+          },
+          {
+            "level": 2,
+            "text": "Marketing"
+          },
+          {
+            "level": 2,
+            "text": "Media"
+          },
+          {
+            "level": 2,
+            "text": "Nonprofit"
+          },
+          {
+            "level": 2,
+            "text": "Private Equity"
+          },
+          {
+            "level": 2,
+            "text": "Public Sector"
+          },
+          {
+            "level": 2,
+            "text": "Real Estate"
+          },
+          {
+            "level": 2,
+            "text": "SaaS"
+          },
+          {
+            "level": 2,
+            "text": "Sales"
+          },
+          {
+            "level": 2,
+            "text": "Staffing Agencies"
+          },
+          {
+            "level": 2,
+            "text": "Technology"
+          },
+          {
+            "level": 3,
+            "text": "Company"
+          },
+          {
+            "level": 3,
+            "text": "Solutions"
+          },
+          {
+            "level": 3,
+            "text": "Employers"
+          },
+          {
+            "level": 3,
+            "text": "Candidates"
+          },
+          {
+            "level": 3,
+            "text": "Resources"
+          }
+        ],
+        "sections": [
+          "Industries we serve",
+          "SECTION"
+        ],
+        "textBlocks": [
+          "Solutions",
+          "Industries",
+          "Resources",
+          "About",
+          "Jobs",
+          "Industries",
+          "Structured sourcing for accounting firms and in-house accounting teams. Ranked shortlists with evidence of the standards, cycles and systems worked on.",
+          "Structured sourcing for general contractors, subcontractors and owner-builders. Ranked shortlists with evidence of project type, delivery method and trade experience.",
+          "Consultants, analysts, and delivery specialists for firms and advisory practices — sourced through structured rubrics and evidence-based scoring.",
+          "Security engineers, GRC leads, SOC analysts and cloud security specialists — sourced with structured rubrics and evidence-based scoring in one workspace.",
+          "Data engineers, analysts, scientists and analytics leaders — sourced with rubric-based scoring and evidence extracted directly from the CV.",
+          "Structured sourcing for online retailers and DTC brands. Ranked shortlists with evidence of channel, category and lifecycle experience.",
+          "Structured sourcing for corporate finance, FP&A, treasury and controllership teams. Ranked shortlists with evidence extracted from the CV.",
+          "Structured sourcing for healthcare providers, payers and health-tech teams. Ranked shortlists with evidence of the settings, systems and populations worked with.",
+          "Structured sourcing for hotels, restaurants and hospitality groups. Ranked shortlists with evidence of property type, service level and operating model.",
+          "Structured sourcing for people teams. Ranked shortlists with evidence of function, employee-lifecycle and organisation-size experience.",
+          "Structured sourcing for carriers, brokers and MGAs. Ranked shortlists with evidence of the lines of business, product and distribution experience.",
+          "Structured sourcing for law firms and in-house legal teams. Ranked shortlists with practice-area evidence extracted directly from the CV.",
+          "Structured sourcing for marketing teams. Ranked shortlists with evidence of channel, funnel-stage and audience experience — not tool checklists.",
+          "Structured sourcing for publishers, studios, agencies and creator businesses. Ranked shortlists with evidence of format, audience and revenue-model experience.",
+          "Structured sourcing for foundations, NGOs and mission-driven organisations. Ranked shortlists with evidence of programme, funding and community impact.",
+          "Structured sourcing for funds and portfolio companies. Ranked shortlists with evidence of deal experience, sector focus and value-creation work.",
+          "Structured sourcing for public agencies, government contractors and civic-tech teams. Ranked shortlists with evidence of programme, policy and delivery experience.",
+          "Structured sourcing for owners, developers, operators and real-estate services firms. Ranked shortlists with evidence of asset class, market and lifecycle experience.",
+          "Ranked, evidence-backed candidates for SaaS teams: product, customer success, revenue operations, GTM and implementation. One workspace, transparent scoring.",
+          "Structured sourcing for revenue teams. Ranked shortlists with evidence of quota, motion, segment and product-type experience — not job titles.",
+          "TaaSFlow as a delivery engine for staffing agencies. Ranked, evidence-based shortlists your recruiters can present under their own brand.",
+          "Structured, evidence-based sourcing for engineering, platform, product and IT teams. Ranked shortlists in your workspace, with evidence tied to the CV.",
+          "A live recruiting workspace with ranked, evidence-backed candidate delivery.",
+          "About",
+          "Journey",
+          "Contact",
+          "Solutions",
+          "How it works",
+          "Enterprise",
+          "Employer onboarding",
+          "Staffing partnership",
+          "Start hiring",
+          "Pilot",
+          "Pricing",
+          "Industries",
+          "Client sign in",
+          "Browse jobs",
+          "Talent network",
+          "Candidate success",
+          "Candidate journey",
+          "Candidate sign in",
+          "Resources",
+          "Blog",
+          "Case studies",
+          "Knowledge base",
+          "FAQ",
+          "© 2026 TaaSFlow. All rights reserved."
+        ],
+        "buttons": [
+          "Solutions",
+          "Industries",
+          "Resources",
+          "About"
+        ],
+        "links": [
+          {
+            "text": "Skip to main content",
+            "href": "https://clear-path-hubs.lovable.app/industries#main"
+          },
+          {
+            "text": "New: transparent role-specific scoring — see how it works.",
+            "href": "https://clear-path-hubs.lovable.app/how-it-works"
+          },
+          {
+            "text": "TaaSFlow",
+            "href": "https://clear-path-hubs.lovable.app/"
+          },
+          {
+            "text": "Jobs",
+            "href": "https://clear-path-hubs.lovable.app/jobs"
+          },
+          {
+            "text": "Sign in",
+            "href": "https://clear-path-hubs.lovable.app/login"
+          },
+          {
+            "text": "Browse jobs",
+            "href": "https://clear-path-hubs.lovable.app/jobs"
+          },
+          {
+            "text": "Start hiring",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "AccountingStructured sourcing for accounting firms and in-house accounting teams. Ranked shortlists with evidence of the",
+            "href": "https://clear-path-hubs.lovable.app/industries/accounting"
+          },
+          {
+            "text": "ConstructionStructured sourcing for general contractors, subcontractors and owner-builders. Ranked shortlists with evide",
+            "href": "https://clear-path-hubs.lovable.app/industries/construction"
+          },
+          {
+            "text": "ConsultingConsultants, analysts, and delivery specialists for firms and advisory practices — sourced through structured ",
+            "href": "https://clear-path-hubs.lovable.app/industries/consulting"
+          },
+          {
+            "text": "CybersecuritySecurity engineers, GRC leads, SOC analysts and cloud security specialists — sourced with structured rubric",
+            "href": "https://clear-path-hubs.lovable.app/industries/cybersecurity"
+          },
+          {
+            "text": "Data & AnalyticsData engineers, analysts, scientists and analytics leaders — sourced with rubric-based scoring and evide",
+            "href": "https://clear-path-hubs.lovable.app/industries/data-analytics"
+          },
+          {
+            "text": "E-commerceStructured sourcing for online retailers and DTC brands. Ranked shortlists with evidence of channel, category ",
+            "href": "https://clear-path-hubs.lovable.app/industries/ecommerce"
+          },
+          {
+            "text": "FinanceStructured sourcing for corporate finance, FP&A, treasury and controllership teams. Ranked shortlists with eviden",
+            "href": "https://clear-path-hubs.lovable.app/industries/finance"
+          },
+          {
+            "text": "HealthcareStructured sourcing for healthcare providers, payers and health-tech teams. Ranked shortlists with evidence of",
+            "href": "https://clear-path-hubs.lovable.app/industries/healthcare"
+          },
+          {
+            "text": "HospitalityStructured sourcing for hotels, restaurants and hospitality groups. Ranked shortlists with evidence of proper",
+            "href": "https://clear-path-hubs.lovable.app/industries/hospitality"
+          },
+          {
+            "text": "Human ResourcesStructured sourcing for people teams. Ranked shortlists with evidence of function, employee-lifecycle and",
+            "href": "https://clear-path-hubs.lovable.app/industries/human-resources"
+          },
+          {
+            "text": "InsuranceStructured sourcing for carriers, brokers and MGAs. Ranked shortlists with evidence of the lines of business, p",
+            "href": "https://clear-path-hubs.lovable.app/industries/insurance"
+          },
+          {
+            "text": "LegalStructured sourcing for law firms and in-house legal teams. Ranked shortlists with practice-area evidence extracted",
+            "href": "https://clear-path-hubs.lovable.app/industries/legal"
+          },
+          {
+            "text": "MarketingStructured sourcing for marketing teams. Ranked shortlists with evidence of channel, funnel-stage and audience ",
+            "href": "https://clear-path-hubs.lovable.app/industries/marketing"
+          },
+          {
+            "text": "MediaStructured sourcing for publishers, studios, agencies and creator businesses. Ranked shortlists with evidence of fo",
+            "href": "https://clear-path-hubs.lovable.app/industries/media"
+          },
+          {
+            "text": "NonprofitStructured sourcing for foundations, NGOs and mission-driven organisations. Ranked shortlists with evidence of ",
+            "href": "https://clear-path-hubs.lovable.app/industries/nonprofit"
+          },
+          {
+            "text": "Private EquityStructured sourcing for funds and portfolio companies. Ranked shortlists with evidence of deal experience,",
+            "href": "https://clear-path-hubs.lovable.app/industries/private-equity"
+          },
+          {
+            "text": "Public SectorStructured sourcing for public agencies, government contractors and civic-tech teams. Ranked shortlists wit",
+            "href": "https://clear-path-hubs.lovable.app/industries/public-sector"
+          },
+          {
+            "text": "Real EstateStructured sourcing for owners, developers, operators and real-estate services firms. Ranked shortlists with ",
+            "href": "https://clear-path-hubs.lovable.app/industries/real-estate"
+          },
+          {
+            "text": "SaaSRanked, evidence-backed candidates for SaaS teams: product, customer success, revenue operations, GTM and implementa",
+            "href": "https://clear-path-hubs.lovable.app/industries/saas"
+          },
+          {
+            "text": "SalesStructured sourcing for revenue teams. Ranked shortlists with evidence of quota, motion, segment and product-type e",
+            "href": "https://clear-path-hubs.lovable.app/industries/sales"
+          },
+          {
+            "text": "Staffing AgenciesTaaSFlow as a delivery engine for staffing agencies. Ranked, evidence-based shortlists your recruiters ",
+            "href": "https://clear-path-hubs.lovable.app/industries/staffing-agencies"
+          },
+          {
+            "text": "TechnologyStructured, evidence-based sourcing for engineering, platform, product and IT teams. Ranked shortlists in your",
+            "href": "https://clear-path-hubs.lovable.app/industries/tech"
+          },
+          {
+            "text": "TaaSFlow",
+            "href": "https://clear-path-hubs.lovable.app/"
+          },
+          {
+            "text": "",
+            "href": "https://www.linkedin.com/company/taasflow"
+          },
+          {
+            "text": "",
+            "href": "mailto:hello@taasflow.com"
+          },
+          {
+            "text": "About",
+            "href": "https://clear-path-hubs.lovable.app/about"
+          },
+          {
+            "text": "Journey",
+            "href": "https://clear-path-hubs.lovable.app/journey"
+          },
+          {
+            "text": "Contact",
+            "href": "https://clear-path-hubs.lovable.app/contact"
+          },
+          {
+            "text": "Solutions",
+            "href": "https://clear-path-hubs.lovable.app/solutions"
+          },
+          {
+            "text": "How it works",
+            "href": "https://clear-path-hubs.lovable.app/how-it-works"
+          },
+          {
+            "text": "Enterprise",
+            "href": "https://clear-path-hubs.lovable.app/enterprise"
+          },
+          {
+            "text": "Employer onboarding",
+            "href": "https://clear-path-hubs.lovable.app/employer-onboarding"
+          },
+          {
+            "text": "Staffing partnership",
+            "href": "https://clear-path-hubs.lovable.app/partnerships/staffing"
+          },
+          {
+            "text": "Start hiring",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "Pilot",
+            "href": "https://clear-path-hubs.lovable.app/pilot"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://clear-path-hubs.lovable.app/pricing"
+          },
+          {
+            "text": "Industries",
+            "href": "https://clear-path-hubs.lovable.app/industries"
+          },
+          {
+            "text": "Client sign in",
+            "href": "https://clear-path-hubs.lovable.app/login"
+          },
+          {
+            "text": "Browse jobs",
+            "href": "https://clear-path-hubs.lovable.app/jobs"
+          },
+          {
+            "text": "Talent network",
+            "href": "https://clear-path-hubs.lovable.app/talent-network"
+          },
+          {
+            "text": "Candidate success",
+            "href": "https://clear-path-hubs.lovable.app/candidate-success"
+          },
+          {
+            "text": "Candidate journey",
+            "href": "https://clear-path-hubs.lovable.app/journey"
+          },
+          {
+            "text": "Candidate sign in",
+            "href": "https://clear-path-hubs.lovable.app/login"
+          },
+          {
+            "text": "Resources",
+            "href": "https://clear-path-hubs.lovable.app/resources"
+          },
+          {
+            "text": "Blog",
+            "href": "https://clear-path-hubs.lovable.app/blog"
+          },
+          {
+            "text": "Case studies",
+            "href": "https://clear-path-hubs.lovable.app/case-studies"
+          },
+          {
+            "text": "Knowledge base",
+            "href": "https://clear-path-hubs.lovable.app/knowledge-base"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://clear-path-hubs.lovable.app/faq"
+          },
+          {
+            "text": "Privacy",
+            "href": "https://clear-path-hubs.lovable.app/privacy"
+          },
+          {
+            "text": "Terms",
+            "href": "https://clear-path-hubs.lovable.app/terms"
+          },
+          {
+            "text": "Sitemap",
+            "href": "https://clear-path-hubs.lovable.app/sitemap.xml"
+          },
+          {
+            "text": "hello@taasflow.com",
+            "href": "mailto:hello@taasflow.com"
+          },
+          {
+            "text": "Edit with",
+            "href": "https://lovable.dev/projects/1dc5ee7e-1294-441c-8288-850e79e443f6?utm_source=lovable-badge"
+          }
+        ],
+        "images": [
+          {
+            "src": "https://clear-path-hubs.lovable.app/assets/logo-on-white-Dk9DIcMP.png",
+            "alt": ""
+          },
+          {
+            "src": "https://clear-path-hubs.lovable.app/assets/logo-on-white-Dk9DIcMP.png",
+            "alt": ""
+          }
+        ],
+        "forms": [],
+        "navLinks": [
+          "TaaSFlow",
+          "Jobs",
+          "Sign in",
+          "Browse jobs",
+          "Start hiring",
+          "Privacy",
+          "Terms",
+          "Sitemap",
+          "hello@taasflow.com"
+        ],
+        "footerLinks": [
+          "TaaSFlow",
+          "About",
+          "Journey",
+          "Contact",
+          "Solutions",
+          "How it works",
+          "Enterprise",
+          "Employer onboarding",
+          "Staffing partnership",
+          "Start hiring",
+          "Pilot",
+          "Pricing",
+          "Industries",
+          "Client sign in",
+          "Browse jobs",
+          "Talent network",
+          "Candidate success",
+          "Candidate journey",
+          "Candidate sign in",
+          "Resources",
+          "Blog",
+          "Case studies",
+          "Knowledge base",
+          "FAQ",
+          "Privacy",
+          "Terms",
+          "Sitemap",
+          "hello@taasflow.com"
+        ],
+        "horizontalOverflow": false,
+        "documentWidth": 375,
+        "viewportWidth": 375
+      },
+      "screenshots": {
+        "sourceFull": "reports/public-parity/screenshots/source/industries__mobile__full.png",
+        "sourceVisible": "reports/public-parity/screenshots/source/industries__mobile__visible.png",
+        "destinationFull": "reports/public-parity/screenshots/destination/industries__mobile__full.png",
+        "destinationVisible": "reports/public-parity/screenshots/destination/industries__mobile__visible.png"
+      },
+      "differences": [
+        "title: \"Industry Recruiting Solutions | TaaSFlow\" vs \"Industries we serve — TaaSFlow\"",
+        "meta description mismatch",
+        "H1 differs: [Title] vs [Industries we serve]",
+        "heading overlap 0% (0/29)",
+        "form count 1 vs 0",
+        "destination images missing alt: 2"
+      ]
+    },
+    {
+      "viewport": "tablet",
+      "source": {
+        "url": "https://taasflow.com/industries",
+        "finalUrl": "https://taasflow.com/industries",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [
+          {
+            "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HJ2ECKCNK4&gtm=45je67l1v9245339446za200zd9245339446&_p=1784774090270&gcd=13l3l3l3l1l1&npa=0&_ng=1&dma=0&are=1&cid=1029138756.1784774091&frm=0&ngs=1&pscdl=noapi&rcb=12&sr=768x1024&uaa=x86&uab=64&uafvl=Not-A.Brand%3B24.0.0.0%7CChromium%3B146.0.7680.80&uam=&uamb=0&uap=Windows&uapv=&uaw=0&ul=en-us&_s=1&tag_exp=115938465~115938469~118012007~118395335~118897920~118897930~119896802&dp=%2Findustries&dt=TaaSFlow%20%7C%20Talent%20as%20a%20Service%20%7C%20Subscription%20Recruiting&dl=https%3A%2F%2Ftaasflow.com%2Findustries&sid=1784774090&sct=1&seg=0&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&ep.role_type=public&ep.is_authenticated=false&tfd=672",
+            "status": null,
+            "failure": "net::ERR_ABORTED"
+          }
+        ],
+        "title": "Industry Recruiting Solutions | TaaSFlow",
+        "description": "Industry-specific recruiting solutions across 22+ verticals — tech, healthcare, finance, legal, hospitality, logistics, and more. Subscription pricing.",
+        "canonical": "https://taasflow.com/industries",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:type": "website",
+          "og:url": "https://taasflow.com/industries",
+          "og:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "og:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "og:image": "https://taasflow.com/og-image.png",
+          "og:image:width": "1200",
+          "og:image:height": "630",
+          "og:locale": "en_US",
+          "twitter:card": "summary_large_image",
+          "twitter:site": "@TaasFlow",
+          "twitter:creator": "@TaasFlow",
+          "twitter:url": "https://taasflow.com/industries",
+          "twitter:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "twitter:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "twitter:image": "https://taasflow.com/og-image.png"
+        },
+        "structuredData": [
+          {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "@id": "https://taasflow.com/#organization",
+            "name": "TaaSFlow",
+            "legalName": "TaaSFlow",
+            "url": "https://taasflow.com/",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://taasflow.com/favicon.png",
+              "width": 512,
+              "height": 512
+            },
+            "image": "https://taasflow.com/og-image.png",
+            "description": "Talent as a Service — subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+            "slogan": "Your hiring team. On demand.",
+            "foundingDate": "2024",
+            "areaServed": [
+              {
+                "@type": "Country",
+                "name": "United States"
+              },
+              {
+                "@type": "Country",
+                "name": "United Arab Emirates"
+              },
+              {
+                "@type": "Country",
+                "name": "United Kingdom"
+              },
+              {
+                "@type": "Country",
+                "name": "Brazil"
+              }
+            ],
+            "knowsAbout": [
+              "Subscription recruiting",
+              "Talent as a Service",
+              "Candidate sourcing",
+              "Pre-screened candidates",
+              "Recruitment process outsourcing"
+            ],
+            "contactPoint": [
+              {
+                "@type": "ContactPoint",
+                "contactType": "sales",
+                "email": "hello@taasflow.com",
+                "url": "https://taasflow.com/contact",
+                "availableLanguage": [
+                  "English",
+                  "Portuguese",
+                  "Spanish"
+                ]
+              }
+            ],
+            "sameAs": [
+              "https://www.linkedin.com/company/taasflow",
+              "https://twitter.com/TaasFlow"
+            ]
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "@id": "https://taasflow.com/#website",
+            "name": "TaaSFlow",
+            "alternateName": "Talent as a Service",
+            "url": "https://taasflow.com/",
+            "description": "Subscription recruiting that delivers pre-screened, ranked candidates in 14 days.",
+            "inLanguage": "en-US",
+            "publisher": {
+              "@id": "https://taasflow.com/#organization"
+            },
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": {
+                "@type": "EntryPoint",
+                "urlTemplate": "https://taasflow.com/jobs?q={search_term_string}"
+              },
+              "query-input": "required name=search_term_string"
+            }
+          }
+        ],
+        "h1": [
+          "Title"
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "Title"
+          },
+          {
+            "level": 3,
+            "text": "Technology"
+          },
+          {
+            "level": 3,
+            "text": "Legal"
+          },
+          {
+            "level": 3,
+            "text": "Public Sector"
+          },
+          {
+            "level": 3,
+            "text": "Finance & Banking"
+          },
+          {
+            "level": 3,
+            "text": "Staffing Agencies"
+          },
+          {
+            "level": 3,
+            "text": "Healthcare"
+          },
+          {
+            "level": 3,
+            "text": "Sales"
+          },
+          {
+            "level": 3,
+            "text": "Marketing & Advertising"
+          },
+          {
+            "level": 3,
+            "text": "Human Resources"
+          },
+          {
+            "level": 3,
+            "text": "Accounting & Audit"
+          },
+          {
+            "level": 3,
+            "text": "Real Estate"
+          },
+          {
+            "level": 3,
+            "text": "SaaS & Cloud"
+          },
+          {
+            "level": 3,
+            "text": "E-commerce & Retail"
+          },
+          {
+            "level": 3,
+            "text": "Insurance"
+          },
+          {
+            "level": 3,
+            "text": "Construction & Architecture"
+          },
+          {
+            "level": 3,
+            "text": "Hospitality & Events"
+          },
+          {
+            "level": 3,
+            "text": "Media & Entertainment"
+          },
+          {
+            "level": 3,
+            "text": "Non-Profit"
+          },
+          {
+            "level": 3,
+            "text": "Private Equity & VC"
+          },
+          {
+            "level": 3,
+            "text": "Cybersecurity"
+          },
+          {
+            "level": 3,
+            "text": "Data & Analytics"
+          },
+          {
+            "level": 3,
+            "text": "Consulting"
+          },
+          {
+            "level": 2,
+            "text": "Cta Title"
+          },
+          {
+            "level": 4,
+            "text": "Newsletter"
+          },
+          {
+            "level": 4,
+            "text": "For candidates"
+          },
+          {
+            "level": 4,
+            "text": "For companies"
+          },
+          {
+            "level": 4,
+            "text": "Industries"
+          },
+          {
+            "level": 4,
+            "text": "Company"
+          }
+        ],
+        "sections": [
+          "SECTION",
+          "Title",
+          "Technology",
+          "Cta Title"
+        ],
+        "textBlocks": [
+          "Solutions",
+          "Industries",
+          "Resources",
+          "Subtitle",
+          "Scale your engineering team fast with screened developers.",
+          "Quickly add paralegals & support for big cases.",
+          "Flexible staffing for government projects.",
+          "Trusted analysts and accountants on-demand.",
+          "Extend your recruiting capacity behind the scenes.",
+          "Compliant medical staffing professionals.",
+          "Revenue-focused talent that closes deals.",
+          "Creative and growth talent for campaigns.",
+          "HR professionals for growing teams.",
+          "CPAs and audit professionals when you need them.",
+          "Property management and transaction support.",
+          "Go-to-market and product talent for software companies.",
+          "Digital commerce and operations talent.",
+          "Licensed agents and claims professionals.",
+          "Project managers and office professionals.",
+          "Hotels, restaurants, resorts, and event staffing.",
+          "Content creators and production talent.",
+          "Mission-driven professionals for impact organizations.",
+          "Deal and portfolio support professionals.",
+          "Security analysts and compliance specialists.",
+          "Data scientists and BI professionals.",
+          "Project staff and delivery professionals.",
+          "Cta Desc",
+          "Talent as a Service",
+          "A global hiring system for teams that need consistent recruiting.",
+          "Weekly insights into talent acquisition. No spam.",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Book call",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "No recruitment agency fees. No placement charges. Subscription-based hiring system.",
+          "Copyright 2026 TaaSFlow. All rights reserved."
+        ],
+        "buttons": [
+          "Solutions",
+          "Industries",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Solutions",
+          "How it works",
+          "Pilot",
+          "Enterprise",
+          "Case studies",
+          "Jobs",
+          "Journey",
+          "Industries",
+          "Tech",
+          "SaaS & Cloud",
+          "Cybersecurity",
+          "Data & Analytics",
+          "Finance",
+          "Insurance",
+          "PE & VC",
+          "Accounting",
+          "Legal",
+          "Consulting",
+          "HR & Recruiting",
+          "Staffing Agencies",
+          "Sales",
+          "Marketing",
+          "E-commerce",
+          "Media",
+          "Real Estate",
+          "Construction",
+          "Hospitality",
+          "Healthcare",
+          "Public Sector",
+          "Non-Profit",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Success Stories",
+          "Talent Marketplace",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Subscribe",
+          "Book call",
+          "Cookie preferences"
+        ],
+        "links": [
+          {
+            "text": "Skip to main content",
+            "href": "https://taasflow.com/industries#main-content"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "Browse jobs",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Join the network",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Browse open roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "TechnologyScale your engineering team fast with screened developers.Software EngineersFull-Stack DevelopersFrontend Spec",
+            "href": "https://taasflow.com/industries/tech"
+          },
+          {
+            "text": "LegalQuickly add paralegals & support for big cases.ParalegalsLegal ResearchersContract Attorneys+7Explore",
+            "href": "https://taasflow.com/industries/legal"
+          },
+          {
+            "text": "Public SectorFlexible staffing for government projects.IT SpecialistsProject ManagersPolicy Analysts+7Explore",
+            "href": "https://taasflow.com/industries/public-sector"
+          },
+          {
+            "text": "Finance & BankingTrusted analysts and accountants on-demand.Financial AnalystsSenior AccountantsCPAs+7Explore",
+            "href": "https://taasflow.com/industries/finance"
+          },
+          {
+            "text": "Staffing AgenciesExtend your recruiting capacity behind the scenes.Backend Talent SourcingOverflow Recruiting SupportNic",
+            "href": "https://taasflow.com/industries/staffing-agencies"
+          },
+          {
+            "text": "HealthcareCompliant medical staffing professionals.Medical Coders (CPC, CCS)Medical BillersPractice Managers+7Explore",
+            "href": "https://taasflow.com/industries/healthcare"
+          },
+          {
+            "text": "SalesRevenue-focused talent that closes deals.SDRs/BDRsAccount ExecutivesEnterprise AEs+7Explore",
+            "href": "https://taasflow.com/industries/sales"
+          },
+          {
+            "text": "Marketing & AdvertisingCreative and growth talent for campaigns.Growth MarketersPerformance MarketersContent Strategists",
+            "href": "https://taasflow.com/industries/marketing"
+          },
+          {
+            "text": "Human ResourcesHR professionals for growing teams.HR GeneralistsHR ManagersRecruiters+7Explore",
+            "href": "https://taasflow.com/industries/human-resources"
+          },
+          {
+            "text": "Accounting & AuditCPAs and audit professionals when you need them.Staff AccountantsSenior AccountantsCPAs+7Explore",
+            "href": "https://taasflow.com/industries/accounting"
+          },
+          {
+            "text": "Real EstateProperty management and transaction support.Real Estate AgentsTransaction CoordinatorsProperty Managers+7Expl",
+            "href": "https://taasflow.com/industries/real-estate"
+          },
+          {
+            "text": "SaaS & CloudGo-to-market and product talent for software companies.Product ManagersCustomer Success ManagersCustomer Suc",
+            "href": "https://taasflow.com/industries/saas"
+          },
+          {
+            "text": "E-commerce & RetailDigital commerce and operations talent.E-commerce ManagersDigital MerchandisersMarketplace Specialist",
+            "href": "https://taasflow.com/industries/ecommerce"
+          },
+          {
+            "text": "InsuranceLicensed agents and claims professionals.Licensed ProducersClaims AdjustersUnderwriters+7Explore",
+            "href": "https://taasflow.com/industries/insurance"
+          },
+          {
+            "text": "Construction & ArchitectureProject managers and office professionals.Project ManagersAssistant Project ManagersEstimator",
+            "href": "https://taasflow.com/industries/construction"
+          },
+          {
+            "text": "Hospitality & EventsHotels, restaurants, resorts, and event staffing.Hotel General ManagersFront Desk ManagersRestaurant",
+            "href": "https://taasflow.com/industries/hospitality"
+          },
+          {
+            "text": "Media & EntertainmentContent creators and production talent.Content ProducersVideo EditorsAudio Editors+7Explore",
+            "href": "https://taasflow.com/industries/media"
+          },
+          {
+            "text": "Non-ProfitMission-driven professionals for impact organizations.Program ManagersProgram CoordinatorsGrant Writers+7Explo",
+            "href": "https://taasflow.com/industries/non-profit"
+          },
+          {
+            "text": "Private Equity & VCDeal and portfolio support professionals.Deal AnalystsAssociatesDue Diligence Specialists+7Explore",
+            "href": "https://taasflow.com/industries/private-equity"
+          },
+          {
+            "text": "CybersecuritySecurity analysts and compliance specialists.Security AnalystsSecurity EngineersCompliance Analysts+7Explor",
+            "href": "https://taasflow.com/industries/cybersecurity"
+          },
+          {
+            "text": "Data & AnalyticsData scientists and BI professionals.Data ScientistsData AnalystsBI Analysts+7Explore",
+            "href": "https://taasflow.com/industries/data-analytics"
+          },
+          {
+            "text": "ConsultingProject staff and delivery professionals.ConsultantsAnalystsAssociates+7Explore",
+            "href": "https://taasflow.com/industries/consulting"
+          },
+          {
+            "text": "Cta Button",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "LinkedIn",
+            "href": "https://www.linkedin.com/company/taasflow/"
+          },
+          {
+            "text": "Browse roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Talent network",
+            "href": "https://taasflow.com/global-talent"
+          },
+          {
+            "text": "Member stories",
+            "href": "https://taasflow.com/candidate-success"
+          },
+          {
+            "text": "Start pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "Employer onboarding",
+            "href": "https://taasflow.com/employer-onboarding"
+          },
+          {
+            "text": "Case studies",
+            "href": "https://taasflow.com/case-studies"
+          },
+          {
+            "text": "Healthcare",
+            "href": "https://taasflow.com/industries/healthcare"
+          },
+          {
+            "text": "Technology",
+            "href": "https://taasflow.com/industries/tech"
+          },
+          {
+            "text": "Finance",
+            "href": "https://taasflow.com/industries/finance"
+          },
+          {
+            "text": "Legal",
+            "href": "https://taasflow.com/industries/legal"
+          },
+          {
+            "text": "All →",
+            "href": "https://taasflow.com/industries"
+          },
+          {
+            "text": "About us",
+            "href": "https://taasflow.com/about"
+          },
+          {
+            "text": "Blog",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://taasflow.com/faq"
+          },
+          {
+            "text": "Knowledge Base",
+            "href": "https://taasflow.com/knowledge-base"
+          },
+          {
+            "text": "Contact us",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Privacy Policy",
+            "href": "https://taasflow.com/privacy"
+          },
+          {
+            "text": "Terms of Service",
+            "href": "https://taasflow.com/terms"
+          }
+        ],
+        "images": [
+          {
+            "src": "https://taasflow.com/assets/logo-on-white-Dk9DIcMP.png",
+            "alt": "TaaSFlow logo"
+          },
+          {
+            "src": "https://taasflow.com/assets/logo-on-blue-CX6jlwjg.png",
+            "alt": "TaaSFlow logo"
+          }
+        ],
+        "forms": [
+          {
+            "action": "https://taasflow.com/industries",
+            "fields": [
+              "input"
+            ]
+          }
+        ],
+        "navLinks": [
+          "Browse jobs",
+          "Join the network",
+          "Browse open roles",
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us"
+        ],
+        "footerLinks": [
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "Privacy Policy",
+          "Terms of Service"
+        ],
+        "horizontalOverflow": false,
+        "documentWidth": 768,
+        "viewportWidth": 768
+      },
+      "destination": {
+        "url": "https://clear-path-hubs.lovable.app/industries",
+        "finalUrl": "https://clear-path-hubs.lovable.app/industries",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [],
+        "title": "Industries we serve — TaaSFlow",
+        "description": "Subscription recruiting for tech, finance, healthcare, legal, consulting, SaaS, and more.",
+        "canonical": "https://clear-path-hubs.lovable.app/industries",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "twitter:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "og:title": "Industries we serve — TaaSFlow",
+          "og:description": "Subscription recruiting for tech, finance, healthcare, legal, consulting, SaaS, and more.",
+          "og:url": "https://clear-path-hubs.lovable.app/industries",
+          "og:type": "website",
+          "twitter:card": "summary_large_image",
+          "twitter:title": "Industries we serve — TaaSFlow",
+          "twitter:description": "Subscription recruiting for tech, finance, healthcare, legal, consulting, SaaS, and more."
+        },
+        "structuredData": [],
+        "h1": [
+          "Industries we serve"
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "Industries we serve"
+          },
+          {
+            "level": 2,
+            "text": "Accounting"
+          },
+          {
+            "level": 2,
+            "text": "Construction"
+          },
+          {
+            "level": 2,
+            "text": "Consulting"
+          },
+          {
+            "level": 2,
+            "text": "Cybersecurity"
+          },
+          {
+            "level": 2,
+            "text": "Data & Analytics"
+          },
+          {
+            "level": 2,
+            "text": "E-commerce"
+          },
+          {
+            "level": 2,
+            "text": "Finance"
+          },
+          {
+            "level": 2,
+            "text": "Healthcare"
+          },
+          {
+            "level": 2,
+            "text": "Hospitality"
+          },
+          {
+            "level": 2,
+            "text": "Human Resources"
+          },
+          {
+            "level": 2,
+            "text": "Insurance"
+          },
+          {
+            "level": 2,
+            "text": "Legal"
+          },
+          {
+            "level": 2,
+            "text": "Marketing"
+          },
+          {
+            "level": 2,
+            "text": "Media"
+          },
+          {
+            "level": 2,
+            "text": "Nonprofit"
+          },
+          {
+            "level": 2,
+            "text": "Private Equity"
+          },
+          {
+            "level": 2,
+            "text": "Public Sector"
+          },
+          {
+            "level": 2,
+            "text": "Real Estate"
+          },
+          {
+            "level": 2,
+            "text": "SaaS"
+          },
+          {
+            "level": 2,
+            "text": "Sales"
+          },
+          {
+            "level": 2,
+            "text": "Staffing Agencies"
+          },
+          {
+            "level": 2,
+            "text": "Technology"
+          },
+          {
+            "level": 3,
+            "text": "Company"
+          },
+          {
+            "level": 3,
+            "text": "Solutions"
+          },
+          {
+            "level": 3,
+            "text": "Employers"
+          },
+          {
+            "level": 3,
+            "text": "Candidates"
+          },
+          {
+            "level": 3,
+            "text": "Resources"
+          }
+        ],
+        "sections": [
+          "Industries we serve",
+          "SECTION"
+        ],
+        "textBlocks": [
+          "Solutions",
+          "Industries",
+          "Resources",
+          "About",
+          "Jobs",
+          "Industries",
+          "Structured sourcing for accounting firms and in-house accounting teams. Ranked shortlists with evidence of the standards, cycles and systems worked on.",
+          "Structured sourcing for general contractors, subcontractors and owner-builders. Ranked shortlists with evidence of project type, delivery method and trade experience.",
+          "Consultants, analysts, and delivery specialists for firms and advisory practices — sourced through structured rubrics and evidence-based scoring.",
+          "Security engineers, GRC leads, SOC analysts and cloud security specialists — sourced with structured rubrics and evidence-based scoring in one workspace.",
+          "Data engineers, analysts, scientists and analytics leaders — sourced with rubric-based scoring and evidence extracted directly from the CV.",
+          "Structured sourcing for online retailers and DTC brands. Ranked shortlists with evidence of channel, category and lifecycle experience.",
+          "Structured sourcing for corporate finance, FP&A, treasury and controllership teams. Ranked shortlists with evidence extracted from the CV.",
+          "Structured sourcing for healthcare providers, payers and health-tech teams. Ranked shortlists with evidence of the settings, systems and populations worked with.",
+          "Structured sourcing for hotels, restaurants and hospitality groups. Ranked shortlists with evidence of property type, service level and operating model.",
+          "Structured sourcing for people teams. Ranked shortlists with evidence of function, employee-lifecycle and organisation-size experience.",
+          "Structured sourcing for carriers, brokers and MGAs. Ranked shortlists with evidence of the lines of business, product and distribution experience.",
+          "Structured sourcing for law firms and in-house legal teams. Ranked shortlists with practice-area evidence extracted directly from the CV.",
+          "Structured sourcing for marketing teams. Ranked shortlists with evidence of channel, funnel-stage and audience experience — not tool checklists.",
+          "Structured sourcing for publishers, studios, agencies and creator businesses. Ranked shortlists with evidence of format, audience and revenue-model experience.",
+          "Structured sourcing for foundations, NGOs and mission-driven organisations. Ranked shortlists with evidence of programme, funding and community impact.",
+          "Structured sourcing for funds and portfolio companies. Ranked shortlists with evidence of deal experience, sector focus and value-creation work.",
+          "Structured sourcing for public agencies, government contractors and civic-tech teams. Ranked shortlists with evidence of programme, policy and delivery experience.",
+          "Structured sourcing for owners, developers, operators and real-estate services firms. Ranked shortlists with evidence of asset class, market and lifecycle experience.",
+          "Ranked, evidence-backed candidates for SaaS teams: product, customer success, revenue operations, GTM and implementation. One workspace, transparent scoring.",
+          "Structured sourcing for revenue teams. Ranked shortlists with evidence of quota, motion, segment and product-type experience — not job titles.",
+          "TaaSFlow as a delivery engine for staffing agencies. Ranked, evidence-based shortlists your recruiters can present under their own brand.",
+          "Structured, evidence-based sourcing for engineering, platform, product and IT teams. Ranked shortlists in your workspace, with evidence tied to the CV.",
+          "A live recruiting workspace with ranked, evidence-backed candidate delivery.",
+          "About",
+          "Journey",
+          "Contact",
+          "Solutions",
+          "How it works",
+          "Enterprise",
+          "Employer onboarding",
+          "Staffing partnership",
+          "Start hiring",
+          "Pilot",
+          "Pricing",
+          "Industries",
+          "Client sign in",
+          "Browse jobs",
+          "Talent network",
+          "Candidate success",
+          "Candidate journey",
+          "Candidate sign in",
+          "Resources",
+          "Blog",
+          "Case studies",
+          "Knowledge base",
+          "FAQ",
+          "© 2026 TaaSFlow. All rights reserved."
+        ],
+        "buttons": [
+          "Solutions",
+          "Industries",
+          "Resources",
+          "About"
+        ],
+        "links": [
+          {
+            "text": "Skip to main content",
+            "href": "https://clear-path-hubs.lovable.app/industries#main"
+          },
+          {
+            "text": "New: transparent role-specific scoring — see how it works.",
+            "href": "https://clear-path-hubs.lovable.app/how-it-works"
+          },
+          {
+            "text": "TaaSFlow",
+            "href": "https://clear-path-hubs.lovable.app/"
+          },
+          {
+            "text": "Jobs",
+            "href": "https://clear-path-hubs.lovable.app/jobs"
+          },
+          {
+            "text": "Sign in",
+            "href": "https://clear-path-hubs.lovable.app/login"
+          },
+          {
+            "text": "Browse jobs",
+            "href": "https://clear-path-hubs.lovable.app/jobs"
+          },
+          {
+            "text": "Start hiring",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "AccountingStructured sourcing for accounting firms and in-house accounting teams. Ranked shortlists with evidence of the",
+            "href": "https://clear-path-hubs.lovable.app/industries/accounting"
+          },
+          {
+            "text": "ConstructionStructured sourcing for general contractors, subcontractors and owner-builders. Ranked shortlists with evide",
+            "href": "https://clear-path-hubs.lovable.app/industries/construction"
+          },
+          {
+            "text": "ConsultingConsultants, analysts, and delivery specialists for firms and advisory practices — sourced through structured ",
+            "href": "https://clear-path-hubs.lovable.app/industries/consulting"
+          },
+          {
+            "text": "CybersecuritySecurity engineers, GRC leads, SOC analysts and cloud security specialists — sourced with structured rubric",
+            "href": "https://clear-path-hubs.lovable.app/industries/cybersecurity"
+          },
+          {
+            "text": "Data & AnalyticsData engineers, analysts, scientists and analytics leaders — sourced with rubric-based scoring and evide",
+            "href": "https://clear-path-hubs.lovable.app/industries/data-analytics"
+          },
+          {
+            "text": "E-commerceStructured sourcing for online retailers and DTC brands. Ranked shortlists with evidence of channel, category ",
+            "href": "https://clear-path-hubs.lovable.app/industries/ecommerce"
+          },
+          {
+            "text": "FinanceStructured sourcing for corporate finance, FP&A, treasury and controllership teams. Ranked shortlists with eviden",
+            "href": "https://clear-path-hubs.lovable.app/industries/finance"
+          },
+          {
+            "text": "HealthcareStructured sourcing for healthcare providers, payers and health-tech teams. Ranked shortlists with evidence of",
+            "href": "https://clear-path-hubs.lovable.app/industries/healthcare"
+          },
+          {
+            "text": "HospitalityStructured sourcing for hotels, restaurants and hospitality groups. Ranked shortlists with evidence of proper",
+            "href": "https://clear-path-hubs.lovable.app/industries/hospitality"
+          },
+          {
+            "text": "Human ResourcesStructured sourcing for people teams. Ranked shortlists with evidence of function, employee-lifecycle and",
+            "href": "https://clear-path-hubs.lovable.app/industries/human-resources"
+          },
+          {
+            "text": "InsuranceStructured sourcing for carriers, brokers and MGAs. Ranked shortlists with evidence of the lines of business, p",
+            "href": "https://clear-path-hubs.lovable.app/industries/insurance"
+          },
+          {
+            "text": "LegalStructured sourcing for law firms and in-house legal teams. Ranked shortlists with practice-area evidence extracted",
+            "href": "https://clear-path-hubs.lovable.app/industries/legal"
+          },
+          {
+            "text": "MarketingStructured sourcing for marketing teams. Ranked shortlists with evidence of channel, funnel-stage and audience ",
+            "href": "https://clear-path-hubs.lovable.app/industries/marketing"
+          },
+          {
+            "text": "MediaStructured sourcing for publishers, studios, agencies and creator businesses. Ranked shortlists with evidence of fo",
+            "href": "https://clear-path-hubs.lovable.app/industries/media"
+          },
+          {
+            "text": "NonprofitStructured sourcing for foundations, NGOs and mission-driven organisations. Ranked shortlists with evidence of ",
+            "href": "https://clear-path-hubs.lovable.app/industries/nonprofit"
+          },
+          {
+            "text": "Private EquityStructured sourcing for funds and portfolio companies. Ranked shortlists with evidence of deal experience,",
+            "href": "https://clear-path-hubs.lovable.app/industries/private-equity"
+          },
+          {
+            "text": "Public SectorStructured sourcing for public agencies, government contractors and civic-tech teams. Ranked shortlists wit",
+            "href": "https://clear-path-hubs.lovable.app/industries/public-sector"
+          },
+          {
+            "text": "Real EstateStructured sourcing for owners, developers, operators and real-estate services firms. Ranked shortlists with ",
+            "href": "https://clear-path-hubs.lovable.app/industries/real-estate"
+          },
+          {
+            "text": "SaaSRanked, evidence-backed candidates for SaaS teams: product, customer success, revenue operations, GTM and implementa",
+            "href": "https://clear-path-hubs.lovable.app/industries/saas"
+          },
+          {
+            "text": "SalesStructured sourcing for revenue teams. Ranked shortlists with evidence of quota, motion, segment and product-type e",
+            "href": "https://clear-path-hubs.lovable.app/industries/sales"
+          },
+          {
+            "text": "Staffing AgenciesTaaSFlow as a delivery engine for staffing agencies. Ranked, evidence-based shortlists your recruiters ",
+            "href": "https://clear-path-hubs.lovable.app/industries/staffing-agencies"
+          },
+          {
+            "text": "TechnologyStructured, evidence-based sourcing for engineering, platform, product and IT teams. Ranked shortlists in your",
+            "href": "https://clear-path-hubs.lovable.app/industries/tech"
+          },
+          {
+            "text": "TaaSFlow",
+            "href": "https://clear-path-hubs.lovable.app/"
+          },
+          {
+            "text": "",
+            "href": "https://www.linkedin.com/company/taasflow"
+          },
+          {
+            "text": "",
+            "href": "mailto:hello@taasflow.com"
+          },
+          {
+            "text": "About",
+            "href": "https://clear-path-hubs.lovable.app/about"
+          },
+          {
+            "text": "Journey",
+            "href": "https://clear-path-hubs.lovable.app/journey"
+          },
+          {
+            "text": "Contact",
+            "href": "https://clear-path-hubs.lovable.app/contact"
+          },
+          {
+            "text": "Solutions",
+            "href": "https://clear-path-hubs.lovable.app/solutions"
+          },
+          {
+            "text": "How it works",
+            "href": "https://clear-path-hubs.lovable.app/how-it-works"
+          },
+          {
+            "text": "Enterprise",
+            "href": "https://clear-path-hubs.lovable.app/enterprise"
+          },
+          {
+            "text": "Employer onboarding",
+            "href": "https://clear-path-hubs.lovable.app/employer-onboarding"
+          },
+          {
+            "text": "Staffing partnership",
+            "href": "https://clear-path-hubs.lovable.app/partnerships/staffing"
+          },
+          {
+            "text": "Start hiring",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "Pilot",
+            "href": "https://clear-path-hubs.lovable.app/pilot"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://clear-path-hubs.lovable.app/pricing"
+          },
+          {
+            "text": "Industries",
+            "href": "https://clear-path-hubs.lovable.app/industries"
+          },
+          {
+            "text": "Client sign in",
+            "href": "https://clear-path-hubs.lovable.app/login"
+          },
+          {
+            "text": "Browse jobs",
+            "href": "https://clear-path-hubs.lovable.app/jobs"
+          },
+          {
+            "text": "Talent network",
+            "href": "https://clear-path-hubs.lovable.app/talent-network"
+          },
+          {
+            "text": "Candidate success",
+            "href": "https://clear-path-hubs.lovable.app/candidate-success"
+          },
+          {
+            "text": "Candidate journey",
+            "href": "https://clear-path-hubs.lovable.app/journey"
+          },
+          {
+            "text": "Candidate sign in",
+            "href": "https://clear-path-hubs.lovable.app/login"
+          },
+          {
+            "text": "Resources",
+            "href": "https://clear-path-hubs.lovable.app/resources"
+          },
+          {
+            "text": "Blog",
+            "href": "https://clear-path-hubs.lovable.app/blog"
+          },
+          {
+            "text": "Case studies",
+            "href": "https://clear-path-hubs.lovable.app/case-studies"
+          },
+          {
+            "text": "Knowledge base",
+            "href": "https://clear-path-hubs.lovable.app/knowledge-base"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://clear-path-hubs.lovable.app/faq"
+          },
+          {
+            "text": "Privacy",
+            "href": "https://clear-path-hubs.lovable.app/privacy"
+          },
+          {
+            "text": "Terms",
+            "href": "https://clear-path-hubs.lovable.app/terms"
+          },
+          {
+            "text": "Sitemap",
+            "href": "https://clear-path-hubs.lovable.app/sitemap.xml"
+          },
+          {
+            "text": "hello@taasflow.com",
+            "href": "mailto:hello@taasflow.com"
+          },
+          {
+            "text": "Edit with",
+            "href": "https://lovable.dev/projects/1dc5ee7e-1294-441c-8288-850e79e443f6?utm_source=lovable-badge"
+          }
+        ],
+        "images": [
+          {
+            "src": "https://clear-path-hubs.lovable.app/assets/logo-on-white-Dk9DIcMP.png",
+            "alt": ""
+          },
+          {
+            "src": "https://clear-path-hubs.lovable.app/assets/logo-on-white-Dk9DIcMP.png",
+            "alt": ""
+          }
+        ],
+        "forms": [],
+        "navLinks": [
+          "TaaSFlow",
+          "Jobs",
+          "Sign in",
+          "Browse jobs",
+          "Start hiring",
+          "Privacy",
+          "Terms",
+          "Sitemap",
+          "hello@taasflow.com"
+        ],
+        "footerLinks": [
+          "TaaSFlow",
+          "About",
+          "Journey",
+          "Contact",
+          "Solutions",
+          "How it works",
+          "Enterprise",
+          "Employer onboarding",
+          "Staffing partnership",
+          "Start hiring",
+          "Pilot",
+          "Pricing",
+          "Industries",
+          "Client sign in",
+          "Browse jobs",
+          "Talent network",
+          "Candidate success",
+          "Candidate journey",
+          "Candidate sign in",
+          "Resources",
+          "Blog",
+          "Case studies",
+          "Knowledge base",
+          "FAQ",
+          "Privacy",
+          "Terms",
+          "Sitemap",
+          "hello@taasflow.com"
+        ],
+        "horizontalOverflow": false,
+        "documentWidth": 768,
+        "viewportWidth": 768
+      },
+      "screenshots": {
+        "sourceFull": "reports/public-parity/screenshots/source/industries__tablet__full.png",
+        "sourceVisible": "reports/public-parity/screenshots/source/industries__tablet__visible.png",
+        "destinationFull": "reports/public-parity/screenshots/destination/industries__tablet__full.png",
+        "destinationVisible": "reports/public-parity/screenshots/destination/industries__tablet__visible.png"
+      },
+      "differences": [
+        "title: \"Industry Recruiting Solutions | TaaSFlow\" vs \"Industries we serve — TaaSFlow\"",
+        "meta description mismatch",
+        "H1 differs: [Title] vs [Industries we serve]",
+        "heading overlap 0% (0/29)",
+        "form count 1 vs 0",
+        "destination images missing alt: 2"
+      ]
+    },
+    {
+      "viewport": "desktop",
+      "source": {
+        "url": "https://taasflow.com/industries",
+        "finalUrl": "https://taasflow.com/industries",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [
+          {
+            "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HJ2ECKCNK4&gtm=45je67l1v9245339446za200zd9245339446&_p=1784774092360&gcd=13l3l3l3l1l1&npa=0&_ng=1&dma=0&are=1&cid=873933939.1784774093&frm=0&ngs=1&pscdl=noapi&rcb=16&sr=1440x900&uaa=x86&uab=64&uafvl=Not-A.Brand%3B24.0.0.0%7CChromium%3B146.0.7680.80&uam=&uamb=0&uap=Windows&uapv=&uaw=0&ul=en-us&_s=1&tag_exp=115616985~115938466~115938468~118395334~118897920~118897930~119527019~119896803&dp=%2Findustries&dt=TaaSFlow%20%7C%20Talent%20as%20a%20Service%20%7C%20Subscription%20Recruiting&dl=https%3A%2F%2Ftaasflow.com%2Findustries&sid=1784774092&sct=1&seg=0&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&ep.role_type=public&ep.is_authenticated=false&tfd=792",
+            "status": null,
+            "failure": "net::ERR_ABORTED"
+          }
+        ],
+        "title": "Industry Recruiting Solutions | TaaSFlow",
+        "description": "Industry-specific recruiting solutions across 22+ verticals — tech, healthcare, finance, legal, hospitality, logistics, and more. Subscription pricing.",
+        "canonical": "https://taasflow.com/industries",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:type": "website",
+          "og:url": "https://taasflow.com/industries",
+          "og:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "og:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "og:image": "https://taasflow.com/og-image.png",
+          "og:image:width": "1200",
+          "og:image:height": "630",
+          "og:locale": "en_US",
+          "twitter:card": "summary_large_image",
+          "twitter:site": "@TaasFlow",
+          "twitter:creator": "@TaasFlow",
+          "twitter:url": "https://taasflow.com/industries",
+          "twitter:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "twitter:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "twitter:image": "https://taasflow.com/og-image.png"
+        },
+        "structuredData": [
+          {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "@id": "https://taasflow.com/#organization",
+            "name": "TaaSFlow",
+            "legalName": "TaaSFlow",
+            "url": "https://taasflow.com/",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://taasflow.com/favicon.png",
+              "width": 512,
+              "height": 512
+            },
+            "image": "https://taasflow.com/og-image.png",
+            "description": "Talent as a Service — subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+            "slogan": "Your hiring team. On demand.",
+            "foundingDate": "2024",
+            "areaServed": [
+              {
+                "@type": "Country",
+                "name": "United States"
+              },
+              {
+                "@type": "Country",
+                "name": "United Arab Emirates"
+              },
+              {
+                "@type": "Country",
+                "name": "United Kingdom"
+              },
+              {
+                "@type": "Country",
+                "name": "Brazil"
+              }
+            ],
+            "knowsAbout": [
+              "Subscription recruiting",
+              "Talent as a Service",
+              "Candidate sourcing",
+              "Pre-screened candidates",
+              "Recruitment process outsourcing"
+            ],
+            "contactPoint": [
+              {
+                "@type": "ContactPoint",
+                "contactType": "sales",
+                "email": "hello@taasflow.com",
+                "url": "https://taasflow.com/contact",
+                "availableLanguage": [
+                  "English",
+                  "Portuguese",
+                  "Spanish"
+                ]
+              }
+            ],
+            "sameAs": [
+              "https://www.linkedin.com/company/taasflow",
+              "https://twitter.com/TaasFlow"
+            ]
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "@id": "https://taasflow.com/#website",
+            "name": "TaaSFlow",
+            "alternateName": "Talent as a Service",
+            "url": "https://taasflow.com/",
+            "description": "Subscription recruiting that delivers pre-screened, ranked candidates in 14 days.",
+            "inLanguage": "en-US",
+            "publisher": {
+              "@id": "https://taasflow.com/#organization"
+            },
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": {
+                "@type": "EntryPoint",
+                "urlTemplate": "https://taasflow.com/jobs?q={search_term_string}"
+              },
+              "query-input": "required name=search_term_string"
+            }
+          }
+        ],
+        "h1": [
+          "Title"
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "Title"
+          },
+          {
+            "level": 3,
+            "text": "Technology"
+          },
+          {
+            "level": 3,
+            "text": "Legal"
+          },
+          {
+            "level": 3,
+            "text": "Public Sector"
+          },
+          {
+            "level": 3,
+            "text": "Finance & Banking"
+          },
+          {
+            "level": 3,
+            "text": "Staffing Agencies"
+          },
+          {
+            "level": 3,
+            "text": "Healthcare"
+          },
+          {
+            "level": 3,
+            "text": "Sales"
+          },
+          {
+            "level": 3,
+            "text": "Marketing & Advertising"
+          },
+          {
+            "level": 3,
+            "text": "Human Resources"
+          },
+          {
+            "level": 3,
+            "text": "Accounting & Audit"
+          },
+          {
+            "level": 3,
+            "text": "Real Estate"
+          },
+          {
+            "level": 3,
+            "text": "SaaS & Cloud"
+          },
+          {
+            "level": 3,
+            "text": "E-commerce & Retail"
+          },
+          {
+            "level": 3,
+            "text": "Insurance"
+          },
+          {
+            "level": 3,
+            "text": "Construction & Architecture"
+          },
+          {
+            "level": 3,
+            "text": "Hospitality & Events"
+          },
+          {
+            "level": 3,
+            "text": "Media & Entertainment"
+          },
+          {
+            "level": 3,
+            "text": "Non-Profit"
+          },
+          {
+            "level": 3,
+            "text": "Private Equity & VC"
+          },
+          {
+            "level": 3,
+            "text": "Cybersecurity"
+          },
+          {
+            "level": 3,
+            "text": "Data & Analytics"
+          },
+          {
+            "level": 3,
+            "text": "Consulting"
+          },
+          {
+            "level": 2,
+            "text": "Cta Title"
+          },
+          {
+            "level": 4,
+            "text": "Newsletter"
+          },
+          {
+            "level": 4,
+            "text": "For candidates"
+          },
+          {
+            "level": 4,
+            "text": "For companies"
+          },
+          {
+            "level": 4,
+            "text": "Industries"
+          },
+          {
+            "level": 4,
+            "text": "Company"
+          }
+        ],
+        "sections": [
+          "SECTION",
+          "Title",
+          "Technology",
+          "Cta Title"
+        ],
+        "textBlocks": [
+          "Solutions",
+          "Industries",
+          "Resources",
+          "Subtitle",
+          "Scale your engineering team fast with screened developers.",
+          "Quickly add paralegals & support for big cases.",
+          "Flexible staffing for government projects.",
+          "Trusted analysts and accountants on-demand.",
+          "Extend your recruiting capacity behind the scenes.",
+          "Compliant medical staffing professionals.",
+          "Revenue-focused talent that closes deals.",
+          "Creative and growth talent for campaigns.",
+          "HR professionals for growing teams.",
+          "CPAs and audit professionals when you need them.",
+          "Property management and transaction support.",
+          "Go-to-market and product talent for software companies.",
+          "Digital commerce and operations talent.",
+          "Licensed agents and claims professionals.",
+          "Project managers and office professionals.",
+          "Hotels, restaurants, resorts, and event staffing.",
+          "Content creators and production talent.",
+          "Mission-driven professionals for impact organizations.",
+          "Deal and portfolio support professionals.",
+          "Security analysts and compliance specialists.",
+          "Data scientists and BI professionals.",
+          "Project staff and delivery professionals.",
+          "Cta Desc",
+          "Talent as a Service",
+          "A global hiring system for teams that need consistent recruiting.",
+          "Weekly insights into talent acquisition. No spam.",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Book call",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "No recruitment agency fees. No placement charges. Subscription-based hiring system.",
+          "Copyright 2026 TaaSFlow. All rights reserved."
+        ],
+        "buttons": [
+          "Solutions",
+          "Industries",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Solutions",
+          "How it works",
+          "Pilot",
+          "Enterprise",
+          "Case studies",
+          "Jobs",
+          "Journey",
+          "Industries",
+          "Tech",
+          "SaaS & Cloud",
+          "Cybersecurity",
+          "Data & Analytics",
+          "Finance",
+          "Insurance",
+          "PE & VC",
+          "Accounting",
+          "Legal",
+          "Consulting",
+          "HR & Recruiting",
+          "Staffing Agencies",
+          "Sales",
+          "Marketing",
+          "E-commerce",
+          "Media",
+          "Real Estate",
+          "Construction",
+          "Hospitality",
+          "Healthcare",
+          "Public Sector",
+          "Non-Profit",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Success Stories",
+          "Talent Marketplace",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Subscribe",
+          "Book call",
+          "Cookie preferences"
+        ],
+        "links": [
+          {
+            "text": "Skip to main content",
+            "href": "https://taasflow.com/industries#main-content"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "Browse jobs",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Join the network",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Browse open roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "TechnologyScale your engineering team fast with screened developers.Software EngineersFull-Stack DevelopersFrontend Spec",
+            "href": "https://taasflow.com/industries/tech"
+          },
+          {
+            "text": "LegalQuickly add paralegals & support for big cases.ParalegalsLegal ResearchersContract Attorneys+7Explore",
+            "href": "https://taasflow.com/industries/legal"
+          },
+          {
+            "text": "Public SectorFlexible staffing for government projects.IT SpecialistsProject ManagersPolicy Analysts+7Explore",
+            "href": "https://taasflow.com/industries/public-sector"
+          },
+          {
+            "text": "Finance & BankingTrusted analysts and accountants on-demand.Financial AnalystsSenior AccountantsCPAs+7Explore",
+            "href": "https://taasflow.com/industries/finance"
+          },
+          {
+            "text": "Staffing AgenciesExtend your recruiting capacity behind the scenes.Backend Talent SourcingOverflow Recruiting SupportNic",
+            "href": "https://taasflow.com/industries/staffing-agencies"
+          },
+          {
+            "text": "HealthcareCompliant medical staffing professionals.Medical Coders (CPC, CCS)Medical BillersPractice Managers+7Explore",
+            "href": "https://taasflow.com/industries/healthcare"
+          },
+          {
+            "text": "SalesRevenue-focused talent that closes deals.SDRs/BDRsAccount ExecutivesEnterprise AEs+7Explore",
+            "href": "https://taasflow.com/industries/sales"
+          },
+          {
+            "text": "Marketing & AdvertisingCreative and growth talent for campaigns.Growth MarketersPerformance MarketersContent Strategists",
+            "href": "https://taasflow.com/industries/marketing"
+          },
+          {
+            "text": "Human ResourcesHR professionals for growing teams.HR GeneralistsHR ManagersRecruiters+7Explore",
+            "href": "https://taasflow.com/industries/human-resources"
+          },
+          {
+            "text": "Accounting & AuditCPAs and audit professionals when you need them.Staff AccountantsSenior AccountantsCPAs+7Explore",
+            "href": "https://taasflow.com/industries/accounting"
+          },
+          {
+            "text": "Real EstateProperty management and transaction support.Real Estate AgentsTransaction CoordinatorsProperty Managers+7Expl",
+            "href": "https://taasflow.com/industries/real-estate"
+          },
+          {
+            "text": "SaaS & CloudGo-to-market and product talent for software companies.Product ManagersCustomer Success ManagersCustomer Suc",
+            "href": "https://taasflow.com/industries/saas"
+          },
+          {
+            "text": "E-commerce & RetailDigital commerce and operations talent.E-commerce ManagersDigital MerchandisersMarketplace Specialist",
+            "href": "https://taasflow.com/industries/ecommerce"
+          },
+          {
+            "text": "InsuranceLicensed agents and claims professionals.Licensed ProducersClaims AdjustersUnderwriters+7Explore",
+            "href": "https://taasflow.com/industries/insurance"
+          },
+          {
+            "text": "Construction & ArchitectureProject managers and office professionals.Project ManagersAssistant Project ManagersEstimator",
+            "href": "https://taasflow.com/industries/construction"
+          },
+          {
+            "text": "Hospitality & EventsHotels, restaurants, resorts, and event staffing.Hotel General ManagersFront Desk ManagersRestaurant",
+            "href": "https://taasflow.com/industries/hospitality"
+          },
+          {
+            "text": "Media & EntertainmentContent creators and production talent.Content ProducersVideo EditorsAudio Editors+7Explore",
+            "href": "https://taasflow.com/industries/media"
+          },
+          {
+            "text": "Non-ProfitMission-driven professionals for impact organizations.Program ManagersProgram CoordinatorsGrant Writers+7Explo",
+            "href": "https://taasflow.com/industries/non-profit"
+          },
+          {
+            "text": "Private Equity & VCDeal and portfolio support professionals.Deal AnalystsAssociatesDue Diligence Specialists+7Explore",
+            "href": "https://taasflow.com/industries/private-equity"
+          },
+          {
+            "text": "CybersecuritySecurity analysts and compliance specialists.Security AnalystsSecurity EngineersCompliance Analysts+7Explor",
+            "href": "https://taasflow.com/industries/cybersecurity"
+          },
+          {
+            "text": "Data & AnalyticsData scientists and BI professionals.Data ScientistsData AnalystsBI Analysts+7Explore",
+            "href": "https://taasflow.com/industries/data-analytics"
+          },
+          {
+            "text": "ConsultingProject staff and delivery professionals.ConsultantsAnalystsAssociates+7Explore",
+            "href": "https://taasflow.com/industries/consulting"
+          },
+          {
+            "text": "Cta Button",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "LinkedIn",
+            "href": "https://www.linkedin.com/company/taasflow/"
+          },
+          {
+            "text": "Browse roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Talent network",
+            "href": "https://taasflow.com/global-talent"
+          },
+          {
+            "text": "Member stories",
+            "href": "https://taasflow.com/candidate-success"
+          },
+          {
+            "text": "Start pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "Employer onboarding",
+            "href": "https://taasflow.com/employer-onboarding"
+          },
+          {
+            "text": "Case studies",
+            "href": "https://taasflow.com/case-studies"
+          },
+          {
+            "text": "Healthcare",
+            "href": "https://taasflow.com/industries/healthcare"
+          },
+          {
+            "text": "Technology",
+            "href": "https://taasflow.com/industries/tech"
+          },
+          {
+            "text": "Finance",
+            "href": "https://taasflow.com/industries/finance"
+          },
+          {
+            "text": "Legal",
+            "href": "https://taasflow.com/industries/legal"
+          },
+          {
+            "text": "All →",
+            "href": "https://taasflow.com/industries"
+          },
+          {
+            "text": "About us",
+            "href": "https://taasflow.com/about"
+          },
+          {
+            "text": "Blog",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://taasflow.com/faq"
+          },
+          {
+            "text": "Knowledge Base",
+            "href": "https://taasflow.com/knowledge-base"
+          },
+          {
+            "text": "Contact us",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Privacy Policy",
+            "href": "https://taasflow.com/privacy"
+          },
+          {
+            "text": "Terms of Service",
+            "href": "https://taasflow.com/terms"
+          }
+        ],
+        "images": [
+          {
+            "src": "https://taasflow.com/assets/logo-on-white-Dk9DIcMP.png",
+            "alt": "TaaSFlow logo"
+          },
+          {
+            "src": "https://taasflow.com/assets/logo-on-blue-CX6jlwjg.png",
+            "alt": "TaaSFlow logo"
+          }
+        ],
+        "forms": [
+          {
+            "action": "https://taasflow.com/industries",
+            "fields": [
+              "input"
+            ]
+          }
+        ],
+        "navLinks": [
+          "Browse jobs",
+          "Join the network",
+          "Browse open roles",
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us"
+        ],
+        "footerLinks": [
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "Privacy Policy",
+          "Terms of Service"
+        ],
+        "horizontalOverflow": false,
+        "documentWidth": 1440,
+        "viewportWidth": 1440
+      },
+      "destination": {
+        "url": "https://clear-path-hubs.lovable.app/industries",
+        "finalUrl": "https://clear-path-hubs.lovable.app/industries",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [],
+        "title": "Industries we serve — TaaSFlow",
+        "description": "Subscription recruiting for tech, finance, healthcare, legal, consulting, SaaS, and more.",
+        "canonical": "https://clear-path-hubs.lovable.app/industries",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "twitter:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "og:title": "Industries we serve — TaaSFlow",
+          "og:description": "Subscription recruiting for tech, finance, healthcare, legal, consulting, SaaS, and more.",
+          "og:url": "https://clear-path-hubs.lovable.app/industries",
+          "og:type": "website",
+          "twitter:card": "summary_large_image",
+          "twitter:title": "Industries we serve — TaaSFlow",
+          "twitter:description": "Subscription recruiting for tech, finance, healthcare, legal, consulting, SaaS, and more."
+        },
+        "structuredData": [],
+        "h1": [
+          "Industries we serve"
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "Industries we serve"
+          },
+          {
+            "level": 2,
+            "text": "Accounting"
+          },
+          {
+            "level": 2,
+            "text": "Construction"
+          },
+          {
+            "level": 2,
+            "text": "Consulting"
+          },
+          {
+            "level": 2,
+            "text": "Cybersecurity"
+          },
+          {
+            "level": 2,
+            "text": "Data & Analytics"
+          },
+          {
+            "level": 2,
+            "text": "E-commerce"
+          },
+          {
+            "level": 2,
+            "text": "Finance"
+          },
+          {
+            "level": 2,
+            "text": "Healthcare"
+          },
+          {
+            "level": 2,
+            "text": "Hospitality"
+          },
+          {
+            "level": 2,
+            "text": "Human Resources"
+          },
+          {
+            "level": 2,
+            "text": "Insurance"
+          },
+          {
+            "level": 2,
+            "text": "Legal"
+          },
+          {
+            "level": 2,
+            "text": "Marketing"
+          },
+          {
+            "level": 2,
+            "text": "Media"
+          },
+          {
+            "level": 2,
+            "text": "Nonprofit"
+          },
+          {
+            "level": 2,
+            "text": "Private Equity"
+          },
+          {
+            "level": 2,
+            "text": "Public Sector"
+          },
+          {
+            "level": 2,
+            "text": "Real Estate"
+          },
+          {
+            "level": 2,
+            "text": "SaaS"
+          },
+          {
+            "level": 2,
+            "text": "Sales"
+          },
+          {
+            "level": 2,
+            "text": "Staffing Agencies"
+          },
+          {
+            "level": 2,
+            "text": "Technology"
+          },
+          {
+            "level": 3,
+            "text": "Company"
+          },
+          {
+            "level": 3,
+            "text": "Solutions"
+          },
+          {
+            "level": 3,
+            "text": "Employers"
+          },
+          {
+            "level": 3,
+            "text": "Candidates"
+          },
+          {
+            "level": 3,
+            "text": "Resources"
+          }
+        ],
+        "sections": [
+          "Industries we serve",
+          "SECTION"
+        ],
+        "textBlocks": [
+          "Solutions",
+          "Industries",
+          "Resources",
+          "About",
+          "Jobs",
+          "Industries",
+          "Structured sourcing for accounting firms and in-house accounting teams. Ranked shortlists with evidence of the standards, cycles and systems worked on.",
+          "Structured sourcing for general contractors, subcontractors and owner-builders. Ranked shortlists with evidence of project type, delivery method and trade experience.",
+          "Consultants, analysts, and delivery specialists for firms and advisory practices — sourced through structured rubrics and evidence-based scoring.",
+          "Security engineers, GRC leads, SOC analysts and cloud security specialists — sourced with structured rubrics and evidence-based scoring in one workspace.",
+          "Data engineers, analysts, scientists and analytics leaders — sourced with rubric-based scoring and evidence extracted directly from the CV.",
+          "Structured sourcing for online retailers and DTC brands. Ranked shortlists with evidence of channel, category and lifecycle experience.",
+          "Structured sourcing for corporate finance, FP&A, treasury and controllership teams. Ranked shortlists with evidence extracted from the CV.",
+          "Structured sourcing for healthcare providers, payers and health-tech teams. Ranked shortlists with evidence of the settings, systems and populations worked with.",
+          "Structured sourcing for hotels, restaurants and hospitality groups. Ranked shortlists with evidence of property type, service level and operating model.",
+          "Structured sourcing for people teams. Ranked shortlists with evidence of function, employee-lifecycle and organisation-size experience.",
+          "Structured sourcing for carriers, brokers and MGAs. Ranked shortlists with evidence of the lines of business, product and distribution experience.",
+          "Structured sourcing for law firms and in-house legal teams. Ranked shortlists with practice-area evidence extracted directly from the CV.",
+          "Structured sourcing for marketing teams. Ranked shortlists with evidence of channel, funnel-stage and audience experience — not tool checklists.",
+          "Structured sourcing for publishers, studios, agencies and creator businesses. Ranked shortlists with evidence of format, audience and revenue-model experience.",
+          "Structured sourcing for foundations, NGOs and mission-driven organisations. Ranked shortlists with evidence of programme, funding and community impact.",
+          "Structured sourcing for funds and portfolio companies. Ranked shortlists with evidence of deal experience, sector focus and value-creation work.",
+          "Structured sourcing for public agencies, government contractors and civic-tech teams. Ranked shortlists with evidence of programme, policy and delivery experience.",
+          "Structured sourcing for owners, developers, operators and real-estate services firms. Ranked shortlists with evidence of asset class, market and lifecycle experience.",
+          "Ranked, evidence-backed candidates for SaaS teams: product, customer success, revenue operations, GTM and implementation. One workspace, transparent scoring.",
+          "Structured sourcing for revenue teams. Ranked shortlists with evidence of quota, motion, segment and product-type experience — not job titles.",
+          "TaaSFlow as a delivery engine for staffing agencies. Ranked, evidence-based shortlists your recruiters can present under their own brand.",
+          "Structured, evidence-based sourcing for engineering, platform, product and IT teams. Ranked shortlists in your workspace, with evidence tied to the CV.",
+          "A live recruiting workspace with ranked, evidence-backed candidate delivery.",
+          "About",
+          "Journey",
+          "Contact",
+          "Solutions",
+          "How it works",
+          "Enterprise",
+          "Employer onboarding",
+          "Staffing partnership",
+          "Start hiring",
+          "Pilot",
+          "Pricing",
+          "Industries",
+          "Client sign in",
+          "Browse jobs",
+          "Talent network",
+          "Candidate success",
+          "Candidate journey",
+          "Candidate sign in",
+          "Resources",
+          "Blog",
+          "Case studies",
+          "Knowledge base",
+          "FAQ",
+          "© 2026 TaaSFlow. All rights reserved."
+        ],
+        "buttons": [
+          "Solutions",
+          "Industries",
+          "Resources",
+          "About"
+        ],
+        "links": [
+          {
+            "text": "Skip to main content",
+            "href": "https://clear-path-hubs.lovable.app/industries#main"
+          },
+          {
+            "text": "New: transparent role-specific scoring — see how it works.",
+            "href": "https://clear-path-hubs.lovable.app/how-it-works"
+          },
+          {
+            "text": "TaaSFlow",
+            "href": "https://clear-path-hubs.lovable.app/"
+          },
+          {
+            "text": "Jobs",
+            "href": "https://clear-path-hubs.lovable.app/jobs"
+          },
+          {
+            "text": "Sign in",
+            "href": "https://clear-path-hubs.lovable.app/login"
+          },
+          {
+            "text": "Browse jobs",
+            "href": "https://clear-path-hubs.lovable.app/jobs"
+          },
+          {
+            "text": "Start hiring",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "AccountingStructured sourcing for accounting firms and in-house accounting teams. Ranked shortlists with evidence of the",
+            "href": "https://clear-path-hubs.lovable.app/industries/accounting"
+          },
+          {
+            "text": "ConstructionStructured sourcing for general contractors, subcontractors and owner-builders. Ranked shortlists with evide",
+            "href": "https://clear-path-hubs.lovable.app/industries/construction"
+          },
+          {
+            "text": "ConsultingConsultants, analysts, and delivery specialists for firms and advisory practices — sourced through structured ",
+            "href": "https://clear-path-hubs.lovable.app/industries/consulting"
+          },
+          {
+            "text": "CybersecuritySecurity engineers, GRC leads, SOC analysts and cloud security specialists — sourced with structured rubric",
+            "href": "https://clear-path-hubs.lovable.app/industries/cybersecurity"
+          },
+          {
+            "text": "Data & AnalyticsData engineers, analysts, scientists and analytics leaders — sourced with rubric-based scoring and evide",
+            "href": "https://clear-path-hubs.lovable.app/industries/data-analytics"
+          },
+          {
+            "text": "E-commerceStructured sourcing for online retailers and DTC brands. Ranked shortlists with evidence of channel, category ",
+            "href": "https://clear-path-hubs.lovable.app/industries/ecommerce"
+          },
+          {
+            "text": "FinanceStructured sourcing for corporate finance, FP&A, treasury and controllership teams. Ranked shortlists with eviden",
+            "href": "https://clear-path-hubs.lovable.app/industries/finance"
+          },
+          {
+            "text": "HealthcareStructured sourcing for healthcare providers, payers and health-tech teams. Ranked shortlists with evidence of",
+            "href": "https://clear-path-hubs.lovable.app/industries/healthcare"
+          },
+          {
+            "text": "HospitalityStructured sourcing for hotels, restaurants and hospitality groups. Ranked shortlists with evidence of proper",
+            "href": "https://clear-path-hubs.lovable.app/industries/hospitality"
+          },
+          {
+            "text": "Human ResourcesStructured sourcing for people teams. Ranked shortlists with evidence of function, employee-lifecycle and",
+            "href": "https://clear-path-hubs.lovable.app/industries/human-resources"
+          },
+          {
+            "text": "InsuranceStructured sourcing for carriers, brokers and MGAs. Ranked shortlists with evidence of the lines of business, p",
+            "href": "https://clear-path-hubs.lovable.app/industries/insurance"
+          },
+          {
+            "text": "LegalStructured sourcing for law firms and in-house legal teams. Ranked shortlists with practice-area evidence extracted",
+            "href": "https://clear-path-hubs.lovable.app/industries/legal"
+          },
+          {
+            "text": "MarketingStructured sourcing for marketing teams. Ranked shortlists with evidence of channel, funnel-stage and audience ",
+            "href": "https://clear-path-hubs.lovable.app/industries/marketing"
+          },
+          {
+            "text": "MediaStructured sourcing for publishers, studios, agencies and creator businesses. Ranked shortlists with evidence of fo",
+            "href": "https://clear-path-hubs.lovable.app/industries/media"
+          },
+          {
+            "text": "NonprofitStructured sourcing for foundations, NGOs and mission-driven organisations. Ranked shortlists with evidence of ",
+            "href": "https://clear-path-hubs.lovable.app/industries/nonprofit"
+          },
+          {
+            "text": "Private EquityStructured sourcing for funds and portfolio companies. Ranked shortlists with evidence of deal experience,",
+            "href": "https://clear-path-hubs.lovable.app/industries/private-equity"
+          },
+          {
+            "text": "Public SectorStructured sourcing for public agencies, government contractors and civic-tech teams. Ranked shortlists wit",
+            "href": "https://clear-path-hubs.lovable.app/industries/public-sector"
+          },
+          {
+            "text": "Real EstateStructured sourcing for owners, developers, operators and real-estate services firms. Ranked shortlists with ",
+            "href": "https://clear-path-hubs.lovable.app/industries/real-estate"
+          },
+          {
+            "text": "SaaSRanked, evidence-backed candidates for SaaS teams: product, customer success, revenue operations, GTM and implementa",
+            "href": "https://clear-path-hubs.lovable.app/industries/saas"
+          },
+          {
+            "text": "SalesStructured sourcing for revenue teams. Ranked shortlists with evidence of quota, motion, segment and product-type e",
+            "href": "https://clear-path-hubs.lovable.app/industries/sales"
+          },
+          {
+            "text": "Staffing AgenciesTaaSFlow as a delivery engine for staffing agencies. Ranked, evidence-based shortlists your recruiters ",
+            "href": "https://clear-path-hubs.lovable.app/industries/staffing-agencies"
+          },
+          {
+            "text": "TechnologyStructured, evidence-based sourcing for engineering, platform, product and IT teams. Ranked shortlists in your",
+            "href": "https://clear-path-hubs.lovable.app/industries/tech"
+          },
+          {
+            "text": "TaaSFlow",
+            "href": "https://clear-path-hubs.lovable.app/"
+          },
+          {
+            "text": "",
+            "href": "https://www.linkedin.com/company/taasflow"
+          },
+          {
+            "text": "",
+            "href": "mailto:hello@taasflow.com"
+          },
+          {
+            "text": "About",
+            "href": "https://clear-path-hubs.lovable.app/about"
+          },
+          {
+            "text": "Journey",
+            "href": "https://clear-path-hubs.lovable.app/journey"
+          },
+          {
+            "text": "Contact",
+            "href": "https://clear-path-hubs.lovable.app/contact"
+          },
+          {
+            "text": "Solutions",
+            "href": "https://clear-path-hubs.lovable.app/solutions"
+          },
+          {
+            "text": "How it works",
+            "href": "https://clear-path-hubs.lovable.app/how-it-works"
+          },
+          {
+            "text": "Enterprise",
+            "href": "https://clear-path-hubs.lovable.app/enterprise"
+          },
+          {
+            "text": "Employer onboarding",
+            "href": "https://clear-path-hubs.lovable.app/employer-onboarding"
+          },
+          {
+            "text": "Staffing partnership",
+            "href": "https://clear-path-hubs.lovable.app/partnerships/staffing"
+          },
+          {
+            "text": "Start hiring",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "Pilot",
+            "href": "https://clear-path-hubs.lovable.app/pilot"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://clear-path-hubs.lovable.app/pricing"
+          },
+          {
+            "text": "Industries",
+            "href": "https://clear-path-hubs.lovable.app/industries"
+          },
+          {
+            "text": "Client sign in",
+            "href": "https://clear-path-hubs.lovable.app/login"
+          },
+          {
+            "text": "Browse jobs",
+            "href": "https://clear-path-hubs.lovable.app/jobs"
+          },
+          {
+            "text": "Talent network",
+            "href": "https://clear-path-hubs.lovable.app/talent-network"
+          },
+          {
+            "text": "Candidate success",
+            "href": "https://clear-path-hubs.lovable.app/candidate-success"
+          },
+          {
+            "text": "Candidate journey",
+            "href": "https://clear-path-hubs.lovable.app/journey"
+          },
+          {
+            "text": "Candidate sign in",
+            "href": "https://clear-path-hubs.lovable.app/login"
+          },
+          {
+            "text": "Resources",
+            "href": "https://clear-path-hubs.lovable.app/resources"
+          },
+          {
+            "text": "Blog",
+            "href": "https://clear-path-hubs.lovable.app/blog"
+          },
+          {
+            "text": "Case studies",
+            "href": "https://clear-path-hubs.lovable.app/case-studies"
+          },
+          {
+            "text": "Knowledge base",
+            "href": "https://clear-path-hubs.lovable.app/knowledge-base"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://clear-path-hubs.lovable.app/faq"
+          },
+          {
+            "text": "Privacy",
+            "href": "https://clear-path-hubs.lovable.app/privacy"
+          },
+          {
+            "text": "Terms",
+            "href": "https://clear-path-hubs.lovable.app/terms"
+          },
+          {
+            "text": "Sitemap",
+            "href": "https://clear-path-hubs.lovable.app/sitemap.xml"
+          },
+          {
+            "text": "hello@taasflow.com",
+            "href": "mailto:hello@taasflow.com"
+          },
+          {
+            "text": "Edit with",
+            "href": "https://lovable.dev/projects/1dc5ee7e-1294-441c-8288-850e79e443f6?utm_source=lovable-badge"
+          }
+        ],
+        "images": [
+          {
+            "src": "https://clear-path-hubs.lovable.app/assets/logo-on-white-Dk9DIcMP.png",
+            "alt": ""
+          },
+          {
+            "src": "https://clear-path-hubs.lovable.app/assets/logo-on-white-Dk9DIcMP.png",
+            "alt": ""
+          }
+        ],
+        "forms": [],
+        "navLinks": [
+          "TaaSFlow",
+          "Jobs",
+          "Sign in",
+          "Browse jobs",
+          "Start hiring",
+          "Privacy",
+          "Terms",
+          "Sitemap",
+          "hello@taasflow.com"
+        ],
+        "footerLinks": [
+          "TaaSFlow",
+          "About",
+          "Journey",
+          "Contact",
+          "Solutions",
+          "How it works",
+          "Enterprise",
+          "Employer onboarding",
+          "Staffing partnership",
+          "Start hiring",
+          "Pilot",
+          "Pricing",
+          "Industries",
+          "Client sign in",
+          "Browse jobs",
+          "Talent network",
+          "Candidate success",
+          "Candidate journey",
+          "Candidate sign in",
+          "Resources",
+          "Blog",
+          "Case studies",
+          "Knowledge base",
+          "FAQ",
+          "Privacy",
+          "Terms",
+          "Sitemap",
+          "hello@taasflow.com"
+        ],
+        "horizontalOverflow": false,
+        "documentWidth": 1440,
+        "viewportWidth": 1440
+      },
+      "screenshots": {
+        "sourceFull": "reports/public-parity/screenshots/source/industries__desktop__full.png",
+        "sourceVisible": "reports/public-parity/screenshots/source/industries__desktop__visible.png",
+        "destinationFull": "reports/public-parity/screenshots/destination/industries__desktop__full.png",
+        "destinationVisible": "reports/public-parity/screenshots/destination/industries__desktop__visible.png"
+      },
+      "differences": [
+        "title: \"Industry Recruiting Solutions | TaaSFlow\" vs \"Industries we serve — TaaSFlow\"",
+        "meta description mismatch",
+        "H1 differs: [Title] vs [Industries we serve]",
+        "heading overlap 0% (0/29)",
+        "form count 1 vs 0",
+        "destination images missing alt: 2"
+      ]
+    }
+  ],
+  "summary": "18 differences detected",
+  "exclusions": []
+}

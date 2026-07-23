@@ -1,0 +1,3141 @@
+{
+  "sourcePath": "/knowledge-base",
+  "destinationPath": "/knowledge-base",
+  "pageType": "marketing_static",
+  "protected": false,
+  "verdict": "MAJOR_DIFFERENCE",
+  "severity": "HIGH",
+  "viewports": [
+    {
+      "viewport": "mobile",
+      "source": {
+        "url": "https://taasflow.com/knowledge-base",
+        "finalUrl": "https://taasflow.com/knowledge-base",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [
+          {
+            "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HJ2ECKCNK4&gtm=45je67l1v9245339446za200zd9245339446&_p=1784774017485&gcd=13l3l3l3l1l1&npa=0&_ng=1&dma=0&are=1&cid=1359273895.1784774018&frm=0&ngs=1&pscdl=noapi&rcb=6&sr=375x812&uaa=x86&uab=64&uafvl=Not-A.Brand%3B24.0.0.0%7CChromium%3B146.0.7680.80&uam=&uamb=0&uap=Windows&uapv=&uaw=0&ul=en-us&_s=1&tag_exp=115938465~115938468~118395333~118897920~118897930~119896802&dp=%2Fknowledge-base&dt=TaaSFlow%20%7C%20Talent%20as%20a%20Service%20%7C%20Subscription%20Recruiting&dl=https%3A%2F%2Ftaasflow.com%2Fknowledge-base&sid=1784774017&sct=1&seg=0&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&ep.role_type=public&ep.is_authenticated=false&tfd=616",
+            "status": null,
+            "failure": "net::ERR_ABORTED"
+          }
+        ],
+        "title": "TaaSFlow Knowledge Base — Guides for Hiring Teams",
+        "description": "Searchable knowledge base for hiring teams and candidates: intake best practices, scoring criteria, delivery cadence, billing, and support.",
+        "canonical": "https://taasflow.com/knowledge-base",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:type": "website",
+          "og:url": "https://taasflow.com/knowledge-base",
+          "og:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "og:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "og:image": "https://taasflow.com/og-image.png",
+          "og:image:width": "1200",
+          "og:image:height": "630",
+          "og:locale": "en_US",
+          "twitter:card": "summary_large_image",
+          "twitter:site": "@TaasFlow",
+          "twitter:creator": "@TaasFlow",
+          "twitter:url": "https://taasflow.com/knowledge-base",
+          "twitter:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "twitter:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "twitter:image": "https://taasflow.com/og-image.png"
+        },
+        "structuredData": [
+          {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "@id": "https://taasflow.com/#organization",
+            "name": "TaaSFlow",
+            "legalName": "TaaSFlow",
+            "url": "https://taasflow.com/",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://taasflow.com/favicon.png",
+              "width": 512,
+              "height": 512
+            },
+            "image": "https://taasflow.com/og-image.png",
+            "description": "Talent as a Service — subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+            "slogan": "Your hiring team. On demand.",
+            "foundingDate": "2024",
+            "areaServed": [
+              {
+                "@type": "Country",
+                "name": "United States"
+              },
+              {
+                "@type": "Country",
+                "name": "United Arab Emirates"
+              },
+              {
+                "@type": "Country",
+                "name": "United Kingdom"
+              },
+              {
+                "@type": "Country",
+                "name": "Brazil"
+              }
+            ],
+            "knowsAbout": [
+              "Subscription recruiting",
+              "Talent as a Service",
+              "Candidate sourcing",
+              "Pre-screened candidates",
+              "Recruitment process outsourcing"
+            ],
+            "contactPoint": [
+              {
+                "@type": "ContactPoint",
+                "contactType": "sales",
+                "email": "hello@taasflow.com",
+                "url": "https://taasflow.com/contact",
+                "availableLanguage": [
+                  "English",
+                  "Portuguese",
+                  "Spanish"
+                ]
+              }
+            ],
+            "sameAs": [
+              "https://www.linkedin.com/company/taasflow",
+              "https://twitter.com/TaasFlow"
+            ]
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "@id": "https://taasflow.com/#website",
+            "name": "TaaSFlow",
+            "alternateName": "Talent as a Service",
+            "url": "https://taasflow.com/",
+            "description": "Subscription recruiting that delivers pre-screened, ranked candidates in 14 days.",
+            "inLanguage": "en-US",
+            "publisher": {
+              "@id": "https://taasflow.com/#organization"
+            },
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": {
+                "@type": "EntryPoint",
+                "urlTemplate": "https://taasflow.com/jobs?q={search_term_string}"
+              },
+              "query-input": "required name=search_term_string"
+            }
+          }
+        ],
+        "h1": [
+          "How Can We Help?"
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "How Can We Help?"
+          },
+          {
+            "level": 3,
+            "text": "What is Talent-as-a-Service?"
+          },
+          {
+            "level": 3,
+            "text": "How Does the Process Work?"
+          },
+          {
+            "level": 3,
+            "text": "Getting Started as an Employer"
+          },
+          {
+            "level": 3,
+            "text": "Getting Started as a Candidate"
+          },
+          {
+            "level": 3,
+            "text": "How to Complete the Intake Blueprint"
+          },
+          {
+            "level": 3,
+            "text": "Understanding Candidate Scoring"
+          },
+          {
+            "level": 3,
+            "text": "Managing Your Hiring Pipeline"
+          },
+          {
+            "level": 3,
+            "text": "What Are Weekly Candidate Drops?"
+          },
+          {
+            "level": 3,
+            "text": "Inviting Your Team to the Dashboard"
+          },
+          {
+            "level": 3,
+            "text": "Creating a Standout Candidate Profile"
+          },
+          {
+            "level": 3,
+            "text": "The Application & Matching Process"
+          },
+          {
+            "level": 3,
+            "text": "Interview Preparation Guide"
+          },
+          {
+            "level": 3,
+            "text": "Your Public Talent Profile"
+          },
+          {
+            "level": 3,
+            "text": "How Pricing Works"
+          },
+          {
+            "level": 3,
+            "text": "Using the ROI Calculator"
+          },
+          {
+            "level": 3,
+            "text": "The Pilot Program"
+          },
+          {
+            "level": 3,
+            "text": "Dashboard Overview"
+          },
+          {
+            "level": 3,
+            "text": "Understanding Analytics & Reports"
+          },
+          {
+            "level": 3,
+            "text": "Notification Settings"
+          },
+          {
+            "level": 3,
+            "text": "How We Protect Your Data"
+          },
+          {
+            "level": 3,
+            "text": "Candidate Privacy & Anonymization"
+          },
+          {
+            "level": 2,
+            "text": "Still have questions?"
+          },
+          {
+            "level": 4,
+            "text": "Newsletter"
+          },
+          {
+            "level": 4,
+            "text": "For candidates"
+          },
+          {
+            "level": 4,
+            "text": "For companies"
+          },
+          {
+            "level": 4,
+            "text": "Industries"
+          },
+          {
+            "level": 4,
+            "text": "Company"
+          }
+        ],
+        "sections": [
+          "SECTION",
+          "How Can We Help?",
+          "SECTION",
+          "What is Talent-as-a-Service?",
+          "Still have questions?"
+        ],
+        "textBlocks": [
+          "Solutions",
+          "Industries",
+          "Resources",
+          "Find guides, tutorials, and answers to common questions about using TaaSFlow.",
+          "21 articles found",
+          "Learn how TaaS combines the best of agencies and in-house recruiting into a subscription model that delivers candidates weekly.",
+          "From intake blueprint to weekly candidate drops — a complete walkthrough of our 5-step operating system.",
+          "Step-by-step guide to setting up your account, completing your first intake, and receiving your first candidate drop.",
+          "How to create your profile, upload your resume, and get matched with opportunities that fit your skills.",
+          "Best practices for filling out your role intake to ensure we source the most relevant candidates.",
+          "How our weighted scoring system evaluates candidates against your requirements across 9 dimensions.",
+          "How to use the drag-and-drop pipeline board to track candidates through screening, interview, and offer stages.",
+          "Understanding the weekly delivery cadence, what each drop contains, and how to provide feedback.",
+          "How to add hiring managers and team members so they can review candidates and provide feedback.",
+          "Tips for building a profile that gets noticed: headline, skills, experience, and portfolio best practices.",
+          "How we match you with opportunities, what happens after you apply, and how to track your application status.",
+          "How to prepare for interviews with our client companies, common formats, and what to expect.",
+          "Understanding anonymized vs. public profiles, privacy settings, and how employers discover your profile.",
+          "Understanding our subscription tiers, what's included, and how it compares to agency fees.",
+          "How to calculate your potential savings compared to traditional recruitment agencies and internal sourcing.",
+          "How our risk-free pilot works: what you get, how long it lasts, and what happens after.",
+          "A tour of your client dashboard: pipeline, positions, talent search, analytics, and profile settings.",
+          "How to read your hiring funnel, track key metrics, and export data for your team.",
+          "How to configure email and Teams notifications for new candidates, status changes, and weekly drops.",
+          "Our security practices: encryption, access controls, GDPR compliance, and data retention policies.",
+          "How we protect candidate information through anonymized profiles and controlled introductions.",
+          "Can't find what you're looking for? Our team is here to help.",
+          "Talent as a Service",
+          "A global hiring system for teams that need consistent recruiting.",
+          "Weekly insights into talent acquisition. No spam.",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Book call",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "No recruitment agency fees. No placement charges. Subscription-based hiring system.",
+          "Copyright 2026 TaaSFlow. All rights reserved."
+        ],
+        "buttons": [
+          "Solutions",
+          "Industries",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Solutions",
+          "How it works",
+          "Pilot",
+          "Enterprise",
+          "Case studies",
+          "Jobs",
+          "Journey",
+          "Industries",
+          "Tech",
+          "SaaS & Cloud",
+          "Cybersecurity",
+          "Data & Analytics",
+          "Finance",
+          "Insurance",
+          "PE & VC",
+          "Accounting",
+          "Legal",
+          "Consulting",
+          "HR & Recruiting",
+          "Staffing Agencies",
+          "Sales",
+          "Marketing",
+          "E-commerce",
+          "Media",
+          "Real Estate",
+          "Construction",
+          "Hospitality",
+          "Healthcare",
+          "Public Sector",
+          "Non-Profit",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Success Stories",
+          "Talent Marketplace",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "All Topics21",
+          "Getting Started4",
+          "For Employers5",
+          "For Candidates4",
+          "Pricing & Billing3",
+          "Platform & Dashboard3",
+          "Security & Compliance2",
+          "Subscribe",
+          "Book call",
+          "Cookie preferences"
+        ],
+        "links": [
+          {
+            "text": "Skip to main content",
+            "href": "https://taasflow.com/knowledge-base#main-content"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "Browse jobs",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Join the network",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Browse open roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Contact Support",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Browse FAQ",
+            "href": "https://taasflow.com/faq"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "LinkedIn",
+            "href": "https://www.linkedin.com/company/taasflow/"
+          },
+          {
+            "text": "Browse roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Talent network",
+            "href": "https://taasflow.com/global-talent"
+          },
+          {
+            "text": "Member stories",
+            "href": "https://taasflow.com/candidate-success"
+          },
+          {
+            "text": "Start pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "Employer onboarding",
+            "href": "https://taasflow.com/employer-onboarding"
+          },
+          {
+            "text": "Case studies",
+            "href": "https://taasflow.com/case-studies"
+          },
+          {
+            "text": "Healthcare",
+            "href": "https://taasflow.com/industries/healthcare"
+          },
+          {
+            "text": "Technology",
+            "href": "https://taasflow.com/industries/tech"
+          },
+          {
+            "text": "Finance",
+            "href": "https://taasflow.com/industries/finance"
+          },
+          {
+            "text": "Legal",
+            "href": "https://taasflow.com/industries/legal"
+          },
+          {
+            "text": "All →",
+            "href": "https://taasflow.com/industries"
+          },
+          {
+            "text": "About us",
+            "href": "https://taasflow.com/about"
+          },
+          {
+            "text": "Blog",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://taasflow.com/faq"
+          },
+          {
+            "text": "Knowledge Base",
+            "href": "https://taasflow.com/knowledge-base"
+          },
+          {
+            "text": "Contact us",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Privacy Policy",
+            "href": "https://taasflow.com/privacy"
+          },
+          {
+            "text": "Terms of Service",
+            "href": "https://taasflow.com/terms"
+          }
+        ],
+        "images": [
+          {
+            "src": "https://taasflow.com/assets/logo-on-white-Dk9DIcMP.png",
+            "alt": "TaaSFlow logo"
+          },
+          {
+            "src": "https://taasflow.com/assets/logo-on-blue-CX6jlwjg.png",
+            "alt": "TaaSFlow logo"
+          }
+        ],
+        "forms": [
+          {
+            "action": "https://taasflow.com/knowledge-base",
+            "fields": [
+              "input"
+            ]
+          }
+        ],
+        "navLinks": [
+          "Browse jobs",
+          "Join the network",
+          "Browse open roles",
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us"
+        ],
+        "footerLinks": [
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "Privacy Policy",
+          "Terms of Service"
+        ],
+        "horizontalOverflow": false,
+        "documentWidth": 375,
+        "viewportWidth": 375
+      },
+      "destination": {
+        "url": "https://clear-path-hubs.lovable.app/knowledge-base",
+        "finalUrl": "https://clear-path-hubs.lovable.app/knowledge-base",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [],
+        "title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+        "description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+        "canonical": "https://clear-path-hubs.lovable.app/knowledge-base",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "twitter:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "og:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "og:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "og:url": "https://clear-path-hubs.lovable.app/knowledge-base",
+          "og:type": "website",
+          "twitter:card": "summary_large_image",
+          "twitter:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "twitter:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages."
+        },
+        "structuredData": [],
+        "h1": [
+          "How can we help?"
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "How can we help?"
+          },
+          {
+            "level": 2,
+            "text": "Getting started"
+          },
+          {
+            "level": 3,
+            "text": "What is Talent-as-a-Service?"
+          },
+          {
+            "level": 3,
+            "text": "How the process works"
+          },
+          {
+            "level": 3,
+            "text": "Getting started as an employer"
+          },
+          {
+            "level": 3,
+            "text": "Getting started as a candidate"
+          },
+          {
+            "level": 2,
+            "text": "For employers"
+          },
+          {
+            "level": 3,
+            "text": "How to complete the intake blueprint"
+          },
+          {
+            "level": 3,
+            "text": "How candidate scoring works"
+          },
+          {
+            "level": 3,
+            "text": "Managing your hiring pipeline"
+          },
+          {
+            "level": 3,
+            "text": "Weekly candidate drops"
+          },
+          {
+            "level": 3,
+            "text": "Inviting your team to the dashboard"
+          },
+          {
+            "level": 2,
+            "text": "For candidates"
+          },
+          {
+            "level": 3,
+            "text": "Building a standout candidate profile"
+          },
+          {
+            "level": 3,
+            "text": "The application and matching process"
+          },
+          {
+            "level": 3,
+            "text": "Interview preparation guide"
+          },
+          {
+            "level": 3,
+            "text": "Tracking your application status"
+          },
+          {
+            "level": 2,
+            "text": "Pricing & billing"
+          },
+          {
+            "level": 3,
+            "text": "How the paid pilot works"
+          },
+          {
+            "level": 3,
+            "text": "How subscription pricing works"
+          },
+          {
+            "level": 3,
+            "text": "Invoices and payments"
+          },
+          {
+            "level": 2,
+            "text": "Security & compliance"
+          },
+          {
+            "level": 3,
+            "text": "How TaaSFlow secures your data"
+          },
+          {
+            "level": 3,
+            "text": "Candidate privacy and CV handling"
+          },
+          {
+            "level": 2,
+            "text": "Can't find what you need?"
+          },
+          {
+            "level": 3,
+            "text": "Company"
+          },
+          {
+            "level": 3,
+            "text": "Solutions"
+          },
+          {
+            "level": 3,
+            "text": "Employers"
+          },
+          {
+            "level": 3,
+            "text": "Candidates"
+          },
+          {
+            "level": 3,
+            "text": "Resources"
+          }
+        ],
+        "sections": [
+          "How can we help?",
+          "Getting started",
+          "For employers",
+          "For candidates",
+          "Pricing & billing",
+          "Security & compliance",
+          "SECTION"
+        ],
+        "textBlocks": [
+          "Solutions",
+          "Industries",
+          "Resources",
+          "About",
+          "Jobs",
+          "Knowledge base",
+          "Guides and reference material for TaaSFlow clients and candidates. Product-support articles link into your signed-in dashboard.",
+          "What TaaSFlow is and how the process works end-to-end.",
+          "Public3 minWhat is Talent-as-a-Service?A subscription model that combines agency-quality sourcing with in-house pipeline visibility, priced per role per month.",
+          "A subscription model that combines agency-quality sourcing with in-house pipeline visibility, priced per role per month.",
+          "Public5 minHow the process worksFrom intake blueprint to ranked shortlist — the five stages every engagement runs through.",
+          "From intake blueprint to ranked shortlist — the five stages every engagement runs through.",
+          "Public4 minGetting started as an employerAccount setup, first intake, and what to expect during your first two weeks.",
+          "Account setup, first intake, and what to expect during your first two weeks.",
+          "Public3 minGetting started as a candidateHow to apply, what happens after you upload your CV, and how to track your application.",
+          "How to apply, what happens after you upload your CV, and how to track your application.",
+          "Intake, scoring, pipeline, and hiring workflow.",
+          "Public5 minHow to complete the intake blueprintThe 5-step wizard that translates a role into sourceable requirements and screening questions.",
+          "The 5-step wizard that translates a role into sourceable requirements and screening questions.",
+          "Public4 minHow candidate scoring worksThe evidence-first, role-specific scoring engine — what it measures and how to interpret results.",
+          "The evidence-first, role-specific scoring engine — what it measures and how to interpret results.",
+          "Dashboard4 minManaging your hiring pipelineUsing the Kanban board to move candidates through review, interview, decision, and offer stages.Requires a signed-in TaaSFlow account.",
+          "Using the Kanban board to move candidates through review, interview, decision, and offer stages.",
+          "Requires a signed-in TaaSFlow account.",
+          "Public3 minWeekly candidate dropsDelivery cadence, what each drop contains, and how to give feedback.",
+          "Delivery cadence, what each drop contains, and how to give feedback.",
+          "Dashboard2 minInviting your team to the dashboardAdd hiring managers and reviewers so they can score candidates and leave feedback.Requires a signed-in TaaSFlow account.",
+          "Add hiring managers and reviewers so they can score candidates and leave feedback.",
+          "Requires a signed-in TaaSFlow account.",
+          "Profile, application, and interview flow.",
+          "Public5 minBuilding a standout candidate profileHow the CV parser reads your document and what to include so the scoring engine can find you.",
+          "How the CV parser reads your document and what to include so the scoring engine can find you.",
+          "Public4 minThe application and matching processWhat happens after you apply — parsing, scoring, admin review, and client visibility.",
+          "What happens after you apply — parsing, scoring, admin review, and client visibility.",
+          "Public6 minInterview preparation guideCommon formats used by TaaSFlow clients, and how to prepare for role-specific technical rounds.",
+          "Common formats used by TaaSFlow clients, and how to prepare for role-specific technical rounds.",
+          "Dashboard3 minTracking your application statusHow to read the stages in your candidate dashboard and what each one means.Requires a signed-in TaaSFlow account.",
+          "How to read the stages in your candidate dashboard and what each one means.",
+          "Requires a signed-in TaaSFlow account.",
+          "Subscription mechanics, pilots, and invoicing.",
+          "Public3 minHow the paid pilot worksOne live role, one ranked shortlist in 7–14 days, no placement fee if you hire.",
+          "One live role, one ranked shortlist in 7–14 days, no placement fee if you hire.",
+          "Public4 minHow subscription pricing worksPer-role monthly pricing, add-ons, pausing engagements, and how billing differs from agency retainers.",
+          "Per-role monthly pricing, add-ons, pausing engagements, and how billing differs from agency retainers.",
+          "Dashboard2 minInvoices and paymentsWhere to find your invoices, supported payment methods, and how to update billing details.Requires a signed-in TaaSFlow account.",
+          "Where to find your invoices, supported payment methods, and how to update billing details.",
+          "Requires a signed-in TaaSFlow account.",
+          "Data handling, RLS, and access controls.",
+          "Public4 minHow TaaSFlow secures your dataRow-level security, tenant isolation, encryption at rest and in transit, and access-control model.",
+          "Row-level security, tenant isolation, encryption at rest and in transit, and access-control model.",
+          "Public4 minCandidate privacy and CV handlingConsent, retention windows, storage buckets, and what clients can and cannot see.",
+          "Consent, retention windows, storage buckets, and what clients can and cannot see.",
+          "Reach out and we'll answer directly — usually within one business day.",
+          "A live recruiting workspace with ranked, evidence-backed candidate delivery.",
+          "About",
+          "Journey",
+          "Contact",
+          "Solutions",
+          "How it works",
+          "Enterprise",
+          "Employer onboarding",
+          "Staffing partnership",
+          "Start hiring",
+          "Pilot",
+          "Pricing",
+          "Industries",
+          "Client sign in",
+          "Browse jobs",
+          "Talent network",
+          "Candidate success",
+          "Candidate journey",
+          "Candidate sign in",
+          "Resources",
+          "Blog",
+          "Case studies",
+          "Knowledge base",
+          "FAQ",
+          "© 2026 TaaSFlow. All rights reserved."
+        ],
+        "buttons": [
+          "Solutions",
+          "Industries",
+          "Resources",
+          "About",
+          "All (18)",
+          "Getting started (4)",
+          "For employers (5)",
+          "For candidates (4)",
+          "Pricing & billing (3)",
+          "Security & compliance (2)"
+        ],
+        "links": [
+          {
+            "text": "Skip to main content",
+            "href": "https://clear-path-hubs.lovable.app/knowledge-base#main"
+          },
+          {
+            "text": "New: transparent role-specific scoring — see how it works.",
+            "href": "https://clear-path-hubs.lovable.app/how-it-works"
+          },
+          {
+            "text": "TaaSFlow",
+            "href": "https://clear-path-hubs.lovable.app/"
+          },
+          {
+            "text": "Jobs",
+            "href": "https://clear-path-hubs.lovable.app/jobs"
+          },
+          {
+            "text": "Sign in",
+            "href": "https://clear-path-hubs.lovable.app/login"
+          },
+          {
+            "text": "Browse jobs",
+            "href": "https://clear-path-hubs.lovable.app/jobs"
+          },
+          {
+            "text": "Start hiring",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "Dashboard4 minManaging your hiring pipelineUsing the Kanban board to move candidates through review, interview, decision",
+            "href": "https://clear-path-hubs.lovable.app/login"
+          },
+          {
+            "text": "Dashboard2 minInviting your team to the dashboardAdd hiring managers and reviewers so they can score candidates and leav",
+            "href": "https://clear-path-hubs.lovable.app/login"
+          },
+          {
+            "text": "Dashboard3 minTracking your application statusHow to read the stages in your candidate dashboard and what each one means",
+            "href": "https://clear-path-hubs.lovable.app/login"
+          },
+          {
+            "text": "Dashboard2 minInvoices and paymentsWhere to find your invoices, supported payment methods, and how to update billing det",
+            "href": "https://clear-path-hubs.lovable.app/login"
+          },
+          {
+            "text": "Contact us",
+            "href": "https://clear-path-hubs.lovable.app/contact"
+          },
+          {
+            "text": "Read the FAQ",
+            "href": "https://clear-path-hubs.lovable.app/faq"
+          },
+          {
+            "text": "TaaSFlow",
+            "href": "https://clear-path-hubs.lovable.app/"
+          },
+          {
+            "text": "",
+            "href": "https://www.linkedin.com/company/taasflow"
+          },
+          {
+            "text": "",
+            "href": "mailto:hello@taasflow.com"
+          },
+          {
+            "text": "About",
+            "href": "https://clear-path-hubs.lovable.app/about"
+          },
+          {
+            "text": "Journey",
+            "href": "https://clear-path-hubs.lovable.app/journey"
+          },
+          {
+            "text": "Contact",
+            "href": "https://clear-path-hubs.lovable.app/contact"
+          },
+          {
+            "text": "Solutions",
+            "href": "https://clear-path-hubs.lovable.app/solutions"
+          },
+          {
+            "text": "How it works",
+            "href": "https://clear-path-hubs.lovable.app/how-it-works"
+          },
+          {
+            "text": "Enterprise",
+            "href": "https://clear-path-hubs.lovable.app/enterprise"
+          },
+          {
+            "text": "Employer onboarding",
+            "href": "https://clear-path-hubs.lovable.app/employer-onboarding"
+          },
+          {
+            "text": "Staffing partnership",
+            "href": "https://clear-path-hubs.lovable.app/partnerships/staffing"
+          },
+          {
+            "text": "Start hiring",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "Pilot",
+            "href": "https://clear-path-hubs.lovable.app/pilot"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://clear-path-hubs.lovable.app/pricing"
+          },
+          {
+            "text": "Industries",
+            "href": "https://clear-path-hubs.lovable.app/industries"
+          },
+          {
+            "text": "Client sign in",
+            "href": "https://clear-path-hubs.lovable.app/login"
+          },
+          {
+            "text": "Browse jobs",
+            "href": "https://clear-path-hubs.lovable.app/jobs"
+          },
+          {
+            "text": "Talent network",
+            "href": "https://clear-path-hubs.lovable.app/talent-network"
+          },
+          {
+            "text": "Candidate success",
+            "href": "https://clear-path-hubs.lovable.app/candidate-success"
+          },
+          {
+            "text": "Candidate journey",
+            "href": "https://clear-path-hubs.lovable.app/journey"
+          },
+          {
+            "text": "Candidate sign in",
+            "href": "https://clear-path-hubs.lovable.app/login"
+          },
+          {
+            "text": "Resources",
+            "href": "https://clear-path-hubs.lovable.app/resources"
+          },
+          {
+            "text": "Blog",
+            "href": "https://clear-path-hubs.lovable.app/blog"
+          },
+          {
+            "text": "Case studies",
+            "href": "https://clear-path-hubs.lovable.app/case-studies"
+          },
+          {
+            "text": "Knowledge base",
+            "href": "https://clear-path-hubs.lovable.app/knowledge-base"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://clear-path-hubs.lovable.app/faq"
+          },
+          {
+            "text": "Privacy",
+            "href": "https://clear-path-hubs.lovable.app/privacy"
+          },
+          {
+            "text": "Terms",
+            "href": "https://clear-path-hubs.lovable.app/terms"
+          },
+          {
+            "text": "Sitemap",
+            "href": "https://clear-path-hubs.lovable.app/sitemap.xml"
+          },
+          {
+            "text": "hello@taasflow.com",
+            "href": "mailto:hello@taasflow.com"
+          },
+          {
+            "text": "Edit with",
+            "href": "https://lovable.dev/projects/1dc5ee7e-1294-441c-8288-850e79e443f6?utm_source=lovable-badge"
+          }
+        ],
+        "images": [
+          {
+            "src": "https://clear-path-hubs.lovable.app/assets/logo-on-white-Dk9DIcMP.png",
+            "alt": ""
+          },
+          {
+            "src": "https://clear-path-hubs.lovable.app/assets/logo-on-white-Dk9DIcMP.png",
+            "alt": ""
+          }
+        ],
+        "forms": [],
+        "navLinks": [
+          "TaaSFlow",
+          "Jobs",
+          "Sign in",
+          "Browse jobs",
+          "Start hiring",
+          "Privacy",
+          "Terms",
+          "Sitemap",
+          "hello@taasflow.com"
+        ],
+        "footerLinks": [
+          "TaaSFlow",
+          "About",
+          "Journey",
+          "Contact",
+          "Solutions",
+          "How it works",
+          "Enterprise",
+          "Employer onboarding",
+          "Staffing partnership",
+          "Start hiring",
+          "Pilot",
+          "Pricing",
+          "Industries",
+          "Client sign in",
+          "Browse jobs",
+          "Talent network",
+          "Candidate success",
+          "Candidate journey",
+          "Candidate sign in",
+          "Resources",
+          "Blog",
+          "Case studies",
+          "Knowledge base",
+          "FAQ",
+          "Privacy",
+          "Terms",
+          "Sitemap",
+          "hello@taasflow.com"
+        ],
+        "horizontalOverflow": false,
+        "documentWidth": 375,
+        "viewportWidth": 375
+      },
+      "screenshots": {
+        "sourceFull": "reports/public-parity/screenshots/source/knowledge-base__mobile__full.png",
+        "sourceVisible": "reports/public-parity/screenshots/source/knowledge-base__mobile__visible.png",
+        "destinationFull": "reports/public-parity/screenshots/destination/knowledge-base__mobile__full.png",
+        "destinationVisible": "reports/public-parity/screenshots/destination/knowledge-base__mobile__visible.png"
+      },
+      "differences": [
+        "title: \"TaaSFlow Knowledge Base — Guides for Hiring Teams\" vs \"TaaSFlow | Talent as a Service | Subscription Recruiting\"",
+        "meta description mismatch",
+        "H1 differs: [How Can We Help?] vs [How can we help?]",
+        "heading overlap 4% (1/28)",
+        "form count 1 vs 0",
+        "destination images missing alt: 2"
+      ]
+    },
+    {
+      "viewport": "tablet",
+      "source": {
+        "url": "https://taasflow.com/knowledge-base",
+        "finalUrl": "https://taasflow.com/knowledge-base",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [
+          {
+            "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HJ2ECKCNK4&gtm=45je67l1h1v9245339446za200zd9245339446&_p=1784774019501&gcd=13l3l3l3l1l1&npa=0&_ng=1&dma=0&are=1&cid=994961735.1784774020&frm=0&ngs=1&pscdl=noapi&rcb=14&sr=768x1024&uaa=x86&uab=64&uafvl=Not-A.Brand%3B24.0.0.0%7CChromium%3B146.0.7680.80&uam=&uamb=0&uap=Windows&uapv=&uaw=0&ul=en-us&_s=1&tag_exp=115938465~115938469~118897920~118897930~119896802&dp=%2Fknowledge-base&dt=TaaSFlow%20%7C%20Talent%20as%20a%20Service%20%7C%20Subscription%20Recruiting&dl=https%3A%2F%2Ftaasflow.com%2Fknowledge-base&sid=1784774019&sct=1&seg=0&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&ep.role_type=public&ep.is_authenticated=false&tfd=717",
+            "status": null,
+            "failure": "net::ERR_ABORTED"
+          }
+        ],
+        "title": "TaaSFlow Knowledge Base — Guides for Hiring Teams",
+        "description": "Searchable knowledge base for hiring teams and candidates: intake best practices, scoring criteria, delivery cadence, billing, and support.",
+        "canonical": "https://taasflow.com/knowledge-base",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:type": "website",
+          "og:url": "https://taasflow.com/knowledge-base",
+          "og:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "og:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "og:image": "https://taasflow.com/og-image.png",
+          "og:image:width": "1200",
+          "og:image:height": "630",
+          "og:locale": "en_US",
+          "twitter:card": "summary_large_image",
+          "twitter:site": "@TaasFlow",
+          "twitter:creator": "@TaasFlow",
+          "twitter:url": "https://taasflow.com/knowledge-base",
+          "twitter:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "twitter:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "twitter:image": "https://taasflow.com/og-image.png"
+        },
+        "structuredData": [
+          {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "@id": "https://taasflow.com/#organization",
+            "name": "TaaSFlow",
+            "legalName": "TaaSFlow",
+            "url": "https://taasflow.com/",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://taasflow.com/favicon.png",
+              "width": 512,
+              "height": 512
+            },
+            "image": "https://taasflow.com/og-image.png",
+            "description": "Talent as a Service — subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+            "slogan": "Your hiring team. On demand.",
+            "foundingDate": "2024",
+            "areaServed": [
+              {
+                "@type": "Country",
+                "name": "United States"
+              },
+              {
+                "@type": "Country",
+                "name": "United Arab Emirates"
+              },
+              {
+                "@type": "Country",
+                "name": "United Kingdom"
+              },
+              {
+                "@type": "Country",
+                "name": "Brazil"
+              }
+            ],
+            "knowsAbout": [
+              "Subscription recruiting",
+              "Talent as a Service",
+              "Candidate sourcing",
+              "Pre-screened candidates",
+              "Recruitment process outsourcing"
+            ],
+            "contactPoint": [
+              {
+                "@type": "ContactPoint",
+                "contactType": "sales",
+                "email": "hello@taasflow.com",
+                "url": "https://taasflow.com/contact",
+                "availableLanguage": [
+                  "English",
+                  "Portuguese",
+                  "Spanish"
+                ]
+              }
+            ],
+            "sameAs": [
+              "https://www.linkedin.com/company/taasflow",
+              "https://twitter.com/TaasFlow"
+            ]
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "@id": "https://taasflow.com/#website",
+            "name": "TaaSFlow",
+            "alternateName": "Talent as a Service",
+            "url": "https://taasflow.com/",
+            "description": "Subscription recruiting that delivers pre-screened, ranked candidates in 14 days.",
+            "inLanguage": "en-US",
+            "publisher": {
+              "@id": "https://taasflow.com/#organization"
+            },
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": {
+                "@type": "EntryPoint",
+                "urlTemplate": "https://taasflow.com/jobs?q={search_term_string}"
+              },
+              "query-input": "required name=search_term_string"
+            }
+          }
+        ],
+        "h1": [
+          "How Can We Help?"
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "How Can We Help?"
+          },
+          {
+            "level": 3,
+            "text": "What is Talent-as-a-Service?"
+          },
+          {
+            "level": 3,
+            "text": "How Does the Process Work?"
+          },
+          {
+            "level": 3,
+            "text": "Getting Started as an Employer"
+          },
+          {
+            "level": 3,
+            "text": "Getting Started as a Candidate"
+          },
+          {
+            "level": 3,
+            "text": "How to Complete the Intake Blueprint"
+          },
+          {
+            "level": 3,
+            "text": "Understanding Candidate Scoring"
+          },
+          {
+            "level": 3,
+            "text": "Managing Your Hiring Pipeline"
+          },
+          {
+            "level": 3,
+            "text": "What Are Weekly Candidate Drops?"
+          },
+          {
+            "level": 3,
+            "text": "Inviting Your Team to the Dashboard"
+          },
+          {
+            "level": 3,
+            "text": "Creating a Standout Candidate Profile"
+          },
+          {
+            "level": 3,
+            "text": "The Application & Matching Process"
+          },
+          {
+            "level": 3,
+            "text": "Interview Preparation Guide"
+          },
+          {
+            "level": 3,
+            "text": "Your Public Talent Profile"
+          },
+          {
+            "level": 3,
+            "text": "How Pricing Works"
+          },
+          {
+            "level": 3,
+            "text": "Using the ROI Calculator"
+          },
+          {
+            "level": 3,
+            "text": "The Pilot Program"
+          },
+          {
+            "level": 3,
+            "text": "Dashboard Overview"
+          },
+          {
+            "level": 3,
+            "text": "Understanding Analytics & Reports"
+          },
+          {
+            "level": 3,
+            "text": "Notification Settings"
+          },
+          {
+            "level": 3,
+            "text": "How We Protect Your Data"
+          },
+          {
+            "level": 3,
+            "text": "Candidate Privacy & Anonymization"
+          },
+          {
+            "level": 2,
+            "text": "Still have questions?"
+          },
+          {
+            "level": 4,
+            "text": "Newsletter"
+          },
+          {
+            "level": 4,
+            "text": "For candidates"
+          },
+          {
+            "level": 4,
+            "text": "For companies"
+          },
+          {
+            "level": 4,
+            "text": "Industries"
+          },
+          {
+            "level": 4,
+            "text": "Company"
+          }
+        ],
+        "sections": [
+          "SECTION",
+          "How Can We Help?",
+          "SECTION",
+          "What is Talent-as-a-Service?",
+          "Still have questions?"
+        ],
+        "textBlocks": [
+          "Solutions",
+          "Industries",
+          "Resources",
+          "Find guides, tutorials, and answers to common questions about using TaaSFlow.",
+          "21 articles found",
+          "Learn how TaaS combines the best of agencies and in-house recruiting into a subscription model that delivers candidates weekly.",
+          "From intake blueprint to weekly candidate drops — a complete walkthrough of our 5-step operating system.",
+          "Step-by-step guide to setting up your account, completing your first intake, and receiving your first candidate drop.",
+          "How to create your profile, upload your resume, and get matched with opportunities that fit your skills.",
+          "Best practices for filling out your role intake to ensure we source the most relevant candidates.",
+          "How our weighted scoring system evaluates candidates against your requirements across 9 dimensions.",
+          "How to use the drag-and-drop pipeline board to track candidates through screening, interview, and offer stages.",
+          "Understanding the weekly delivery cadence, what each drop contains, and how to provide feedback.",
+          "How to add hiring managers and team members so they can review candidates and provide feedback.",
+          "Tips for building a profile that gets noticed: headline, skills, experience, and portfolio best practices.",
+          "How we match you with opportunities, what happens after you apply, and how to track your application status.",
+          "How to prepare for interviews with our client companies, common formats, and what to expect.",
+          "Understanding anonymized vs. public profiles, privacy settings, and how employers discover your profile.",
+          "Understanding our subscription tiers, what's included, and how it compares to agency fees.",
+          "How to calculate your potential savings compared to traditional recruitment agencies and internal sourcing.",
+          "How our risk-free pilot works: what you get, how long it lasts, and what happens after.",
+          "A tour of your client dashboard: pipeline, positions, talent search, analytics, and profile settings.",
+          "How to read your hiring funnel, track key metrics, and export data for your team.",
+          "How to configure email and Teams notifications for new candidates, status changes, and weekly drops.",
+          "Our security practices: encryption, access controls, GDPR compliance, and data retention policies.",
+          "How we protect candidate information through anonymized profiles and controlled introductions.",
+          "Can't find what you're looking for? Our team is here to help.",
+          "Talent as a Service",
+          "A global hiring system for teams that need consistent recruiting.",
+          "Weekly insights into talent acquisition. No spam.",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Book call",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "No recruitment agency fees. No placement charges. Subscription-based hiring system.",
+          "Copyright 2026 TaaSFlow. All rights reserved."
+        ],
+        "buttons": [
+          "Solutions",
+          "Industries",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Solutions",
+          "How it works",
+          "Pilot",
+          "Enterprise",
+          "Case studies",
+          "Jobs",
+          "Journey",
+          "Industries",
+          "Tech",
+          "SaaS & Cloud",
+          "Cybersecurity",
+          "Data & Analytics",
+          "Finance",
+          "Insurance",
+          "PE & VC",
+          "Accounting",
+          "Legal",
+          "Consulting",
+          "HR & Recruiting",
+          "Staffing Agencies",
+          "Sales",
+          "Marketing",
+          "E-commerce",
+          "Media",
+          "Real Estate",
+          "Construction",
+          "Hospitality",
+          "Healthcare",
+          "Public Sector",
+          "Non-Profit",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Success Stories",
+          "Talent Marketplace",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "All Topics21",
+          "Getting Started4",
+          "For Employers5",
+          "For Candidates4",
+          "Pricing & Billing3",
+          "Platform & Dashboard3",
+          "Security & Compliance2",
+          "Subscribe",
+          "Book call",
+          "Cookie preferences"
+        ],
+        "links": [
+          {
+            "text": "Skip to main content",
+            "href": "https://taasflow.com/knowledge-base#main-content"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "Browse jobs",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Join the network",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Browse open roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Contact Support",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Browse FAQ",
+            "href": "https://taasflow.com/faq"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "LinkedIn",
+            "href": "https://www.linkedin.com/company/taasflow/"
+          },
+          {
+            "text": "Browse roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Talent network",
+            "href": "https://taasflow.com/global-talent"
+          },
+          {
+            "text": "Member stories",
+            "href": "https://taasflow.com/candidate-success"
+          },
+          {
+            "text": "Start pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "Employer onboarding",
+            "href": "https://taasflow.com/employer-onboarding"
+          },
+          {
+            "text": "Case studies",
+            "href": "https://taasflow.com/case-studies"
+          },
+          {
+            "text": "Healthcare",
+            "href": "https://taasflow.com/industries/healthcare"
+          },
+          {
+            "text": "Technology",
+            "href": "https://taasflow.com/industries/tech"
+          },
+          {
+            "text": "Finance",
+            "href": "https://taasflow.com/industries/finance"
+          },
+          {
+            "text": "Legal",
+            "href": "https://taasflow.com/industries/legal"
+          },
+          {
+            "text": "All →",
+            "href": "https://taasflow.com/industries"
+          },
+          {
+            "text": "About us",
+            "href": "https://taasflow.com/about"
+          },
+          {
+            "text": "Blog",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://taasflow.com/faq"
+          },
+          {
+            "text": "Knowledge Base",
+            "href": "https://taasflow.com/knowledge-base"
+          },
+          {
+            "text": "Contact us",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Privacy Policy",
+            "href": "https://taasflow.com/privacy"
+          },
+          {
+            "text": "Terms of Service",
+            "href": "https://taasflow.com/terms"
+          }
+        ],
+        "images": [
+          {
+            "src": "https://taasflow.com/assets/logo-on-white-Dk9DIcMP.png",
+            "alt": "TaaSFlow logo"
+          },
+          {
+            "src": "https://taasflow.com/assets/logo-on-blue-CX6jlwjg.png",
+            "alt": "TaaSFlow logo"
+          }
+        ],
+        "forms": [
+          {
+            "action": "https://taasflow.com/knowledge-base",
+            "fields": [
+              "input"
+            ]
+          }
+        ],
+        "navLinks": [
+          "Browse jobs",
+          "Join the network",
+          "Browse open roles",
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us"
+        ],
+        "footerLinks": [
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "Privacy Policy",
+          "Terms of Service"
+        ],
+        "horizontalOverflow": false,
+        "documentWidth": 768,
+        "viewportWidth": 768
+      },
+      "destination": {
+        "url": "https://clear-path-hubs.lovable.app/knowledge-base",
+        "finalUrl": "https://clear-path-hubs.lovable.app/knowledge-base",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [],
+        "title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+        "description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+        "canonical": "https://clear-path-hubs.lovable.app/knowledge-base",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "twitter:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "og:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "og:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "og:url": "https://clear-path-hubs.lovable.app/knowledge-base",
+          "og:type": "website",
+          "twitter:card": "summary_large_image",
+          "twitter:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "twitter:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages."
+        },
+        "structuredData": [],
+        "h1": [
+          "How can we help?"
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "How can we help?"
+          },
+          {
+            "level": 2,
+            "text": "Getting started"
+          },
+          {
+            "level": 3,
+            "text": "What is Talent-as-a-Service?"
+          },
+          {
+            "level": 3,
+            "text": "How the process works"
+          },
+          {
+            "level": 3,
+            "text": "Getting started as an employer"
+          },
+          {
+            "level": 3,
+            "text": "Getting started as a candidate"
+          },
+          {
+            "level": 2,
+            "text": "For employers"
+          },
+          {
+            "level": 3,
+            "text": "How to complete the intake blueprint"
+          },
+          {
+            "level": 3,
+            "text": "How candidate scoring works"
+          },
+          {
+            "level": 3,
+            "text": "Managing your hiring pipeline"
+          },
+          {
+            "level": 3,
+            "text": "Weekly candidate drops"
+          },
+          {
+            "level": 3,
+            "text": "Inviting your team to the dashboard"
+          },
+          {
+            "level": 2,
+            "text": "For candidates"
+          },
+          {
+            "level": 3,
+            "text": "Building a standout candidate profile"
+          },
+          {
+            "level": 3,
+            "text": "The application and matching process"
+          },
+          {
+            "level": 3,
+            "text": "Interview preparation guide"
+          },
+          {
+            "level": 3,
+            "text": "Tracking your application status"
+          },
+          {
+            "level": 2,
+            "text": "Pricing & billing"
+          },
+          {
+            "level": 3,
+            "text": "How the paid pilot works"
+          },
+          {
+            "level": 3,
+            "text": "How subscription pricing works"
+          },
+          {
+            "level": 3,
+            "text": "Invoices and payments"
+          },
+          {
+            "level": 2,
+            "text": "Security & compliance"
+          },
+          {
+            "level": 3,
+            "text": "How TaaSFlow secures your data"
+          },
+          {
+            "level": 3,
+            "text": "Candidate privacy and CV handling"
+          },
+          {
+            "level": 2,
+            "text": "Can't find what you need?"
+          },
+          {
+            "level": 3,
+            "text": "Company"
+          },
+          {
+            "level": 3,
+            "text": "Solutions"
+          },
+          {
+            "level": 3,
+            "text": "Employers"
+          },
+          {
+            "level": 3,
+            "text": "Candidates"
+          },
+          {
+            "level": 3,
+            "text": "Resources"
+          }
+        ],
+        "sections": [
+          "How can we help?",
+          "Getting started",
+          "For employers",
+          "For candidates",
+          "Pricing & billing",
+          "Security & compliance",
+          "SECTION"
+        ],
+        "textBlocks": [
+          "Solutions",
+          "Industries",
+          "Resources",
+          "About",
+          "Jobs",
+          "Knowledge base",
+          "Guides and reference material for TaaSFlow clients and candidates. Product-support articles link into your signed-in dashboard.",
+          "What TaaSFlow is and how the process works end-to-end.",
+          "Public3 minWhat is Talent-as-a-Service?A subscription model that combines agency-quality sourcing with in-house pipeline visibility, priced per role per month.",
+          "A subscription model that combines agency-quality sourcing with in-house pipeline visibility, priced per role per month.",
+          "Public5 minHow the process worksFrom intake blueprint to ranked shortlist — the five stages every engagement runs through.",
+          "From intake blueprint to ranked shortlist — the five stages every engagement runs through.",
+          "Public4 minGetting started as an employerAccount setup, first intake, and what to expect during your first two weeks.",
+          "Account setup, first intake, and what to expect during your first two weeks.",
+          "Public3 minGetting started as a candidateHow to apply, what happens after you upload your CV, and how to track your application.",
+          "How to apply, what happens after you upload your CV, and how to track your application.",
+          "Intake, scoring, pipeline, and hiring workflow.",
+          "Public5 minHow to complete the intake blueprintThe 5-step wizard that translates a role into sourceable requirements and screening questions.",
+          "The 5-step wizard that translates a role into sourceable requirements and screening questions.",
+          "Public4 minHow candidate scoring worksThe evidence-first, role-specific scoring engine — what it measures and how to interpret results.",
+          "The evidence-first, role-specific scoring engine — what it measures and how to interpret results.",
+          "Dashboard4 minManaging your hiring pipelineUsing the Kanban board to move candidates through review, interview, decision, and offer stages.Requires a signed-in TaaSFlow account.",
+          "Using the Kanban board to move candidates through review, interview, decision, and offer stages.",
+          "Requires a signed-in TaaSFlow account.",
+          "Public3 minWeekly candidate dropsDelivery cadence, what each drop contains, and how to give feedback.",
+          "Delivery cadence, what each drop contains, and how to give feedback.",
+          "Dashboard2 minInviting your team to the dashboardAdd hiring managers and reviewers so they can score candidates and leave feedback.Requires a signed-in TaaSFlow account.",
+          "Add hiring managers and reviewers so they can score candidates and leave feedback.",
+          "Requires a signed-in TaaSFlow account.",
+          "Profile, application, and interview flow.",
+          "Public5 minBuilding a standout candidate profileHow the CV parser reads your document and what to include so the scoring engine can find you.",
+          "How the CV parser reads your document and what to include so the scoring engine can find you.",
+          "Public4 minThe application and matching processWhat happens after you apply — parsing, scoring, admin review, and client visibility.",
+          "What happens after you apply — parsing, scoring, admin review, and client visibility.",
+          "Public6 minInterview preparation guideCommon formats used by TaaSFlow clients, and how to prepare for role-specific technical rounds.",
+          "Common formats used by TaaSFlow clients, and how to prepare for role-specific technical rounds.",
+          "Dashboard3 minTracking your application statusHow to read the stages in your candidate dashboard and what each one means.Requires a signed-in TaaSFlow account.",
+          "How to read the stages in your candidate dashboard and what each one means.",
+          "Requires a signed-in TaaSFlow account.",
+          "Subscription mechanics, pilots, and invoicing.",
+          "Public3 minHow the paid pilot worksOne live role, one ranked shortlist in 7–14 days, no placement fee if you hire.",
+          "One live role, one ranked shortlist in 7–14 days, no placement fee if you hire.",
+          "Public4 minHow subscription pricing worksPer-role monthly pricing, add-ons, pausing engagements, and how billing differs from agency retainers.",
+          "Per-role monthly pricing, add-ons, pausing engagements, and how billing differs from agency retainers.",
+          "Dashboard2 minInvoices and paymentsWhere to find your invoices, supported payment methods, and how to update billing details.Requires a signed-in TaaSFlow account.",
+          "Where to find your invoices, supported payment methods, and how to update billing details.",
+          "Requires a signed-in TaaSFlow account.",
+          "Data handling, RLS, and access controls.",
+          "Public4 minHow TaaSFlow secures your dataRow-level security, tenant isolation, encryption at rest and in transit, and access-control model.",
+          "Row-level security, tenant isolation, encryption at rest and in transit, and access-control model.",
+          "Public4 minCandidate privacy and CV handlingConsent, retention windows, storage buckets, and what clients can and cannot see.",
+          "Consent, retention windows, storage buckets, and what clients can and cannot see.",
+          "Reach out and we'll answer directly — usually within one business day.",
+          "A live recruiting workspace with ranked, evidence-backed candidate delivery.",
+          "About",
+          "Journey",
+          "Contact",
+          "Solutions",
+          "How it works",
+          "Enterprise",
+          "Employer onboarding",
+          "Staffing partnership",
+          "Start hiring",
+          "Pilot",
+          "Pricing",
+          "Industries",
+          "Client sign in",
+          "Browse jobs",
+          "Talent network",
+          "Candidate success",
+          "Candidate journey",
+          "Candidate sign in",
+          "Resources",
+          "Blog",
+          "Case studies",
+          "Knowledge base",
+          "FAQ",
+          "© 2026 TaaSFlow. All rights reserved."
+        ],
+        "buttons": [
+          "Solutions",
+          "Industries",
+          "Resources",
+          "About",
+          "All (18)",
+          "Getting started (4)",
+          "For employers (5)",
+          "For candidates (4)",
+          "Pricing & billing (3)",
+          "Security & compliance (2)"
+        ],
+        "links": [
+          {
+            "text": "Skip to main content",
+            "href": "https://clear-path-hubs.lovable.app/knowledge-base#main"
+          },
+          {
+            "text": "New: transparent role-specific scoring — see how it works.",
+            "href": "https://clear-path-hubs.lovable.app/how-it-works"
+          },
+          {
+            "text": "TaaSFlow",
+            "href": "https://clear-path-hubs.lovable.app/"
+          },
+          {
+            "text": "Jobs",
+            "href": "https://clear-path-hubs.lovable.app/jobs"
+          },
+          {
+            "text": "Sign in",
+            "href": "https://clear-path-hubs.lovable.app/login"
+          },
+          {
+            "text": "Browse jobs",
+            "href": "https://clear-path-hubs.lovable.app/jobs"
+          },
+          {
+            "text": "Start hiring",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "Dashboard4 minManaging your hiring pipelineUsing the Kanban board to move candidates through review, interview, decision",
+            "href": "https://clear-path-hubs.lovable.app/login"
+          },
+          {
+            "text": "Dashboard2 minInviting your team to the dashboardAdd hiring managers and reviewers so they can score candidates and leav",
+            "href": "https://clear-path-hubs.lovable.app/login"
+          },
+          {
+            "text": "Dashboard3 minTracking your application statusHow to read the stages in your candidate dashboard and what each one means",
+            "href": "https://clear-path-hubs.lovable.app/login"
+          },
+          {
+            "text": "Dashboard2 minInvoices and paymentsWhere to find your invoices, supported payment methods, and how to update billing det",
+            "href": "https://clear-path-hubs.lovable.app/login"
+          },
+          {
+            "text": "Contact us",
+            "href": "https://clear-path-hubs.lovable.app/contact"
+          },
+          {
+            "text": "Read the FAQ",
+            "href": "https://clear-path-hubs.lovable.app/faq"
+          },
+          {
+            "text": "TaaSFlow",
+            "href": "https://clear-path-hubs.lovable.app/"
+          },
+          {
+            "text": "",
+            "href": "https://www.linkedin.com/company/taasflow"
+          },
+          {
+            "text": "",
+            "href": "mailto:hello@taasflow.com"
+          },
+          {
+            "text": "About",
+            "href": "https://clear-path-hubs.lovable.app/about"
+          },
+          {
+            "text": "Journey",
+            "href": "https://clear-path-hubs.lovable.app/journey"
+          },
+          {
+            "text": "Contact",
+            "href": "https://clear-path-hubs.lovable.app/contact"
+          },
+          {
+            "text": "Solutions",
+            "href": "https://clear-path-hubs.lovable.app/solutions"
+          },
+          {
+            "text": "How it works",
+            "href": "https://clear-path-hubs.lovable.app/how-it-works"
+          },
+          {
+            "text": "Enterprise",
+            "href": "https://clear-path-hubs.lovable.app/enterprise"
+          },
+          {
+            "text": "Employer onboarding",
+            "href": "https://clear-path-hubs.lovable.app/employer-onboarding"
+          },
+          {
+            "text": "Staffing partnership",
+            "href": "https://clear-path-hubs.lovable.app/partnerships/staffing"
+          },
+          {
+            "text": "Start hiring",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "Pilot",
+            "href": "https://clear-path-hubs.lovable.app/pilot"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://clear-path-hubs.lovable.app/pricing"
+          },
+          {
+            "text": "Industries",
+            "href": "https://clear-path-hubs.lovable.app/industries"
+          },
+          {
+            "text": "Client sign in",
+            "href": "https://clear-path-hubs.lovable.app/login"
+          },
+          {
+            "text": "Browse jobs",
+            "href": "https://clear-path-hubs.lovable.app/jobs"
+          },
+          {
+            "text": "Talent network",
+            "href": "https://clear-path-hubs.lovable.app/talent-network"
+          },
+          {
+            "text": "Candidate success",
+            "href": "https://clear-path-hubs.lovable.app/candidate-success"
+          },
+          {
+            "text": "Candidate journey",
+            "href": "https://clear-path-hubs.lovable.app/journey"
+          },
+          {
+            "text": "Candidate sign in",
+            "href": "https://clear-path-hubs.lovable.app/login"
+          },
+          {
+            "text": "Resources",
+            "href": "https://clear-path-hubs.lovable.app/resources"
+          },
+          {
+            "text": "Blog",
+            "href": "https://clear-path-hubs.lovable.app/blog"
+          },
+          {
+            "text": "Case studies",
+            "href": "https://clear-path-hubs.lovable.app/case-studies"
+          },
+          {
+            "text": "Knowledge base",
+            "href": "https://clear-path-hubs.lovable.app/knowledge-base"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://clear-path-hubs.lovable.app/faq"
+          },
+          {
+            "text": "Privacy",
+            "href": "https://clear-path-hubs.lovable.app/privacy"
+          },
+          {
+            "text": "Terms",
+            "href": "https://clear-path-hubs.lovable.app/terms"
+          },
+          {
+            "text": "Sitemap",
+            "href": "https://clear-path-hubs.lovable.app/sitemap.xml"
+          },
+          {
+            "text": "hello@taasflow.com",
+            "href": "mailto:hello@taasflow.com"
+          },
+          {
+            "text": "Edit with",
+            "href": "https://lovable.dev/projects/1dc5ee7e-1294-441c-8288-850e79e443f6?utm_source=lovable-badge"
+          }
+        ],
+        "images": [
+          {
+            "src": "https://clear-path-hubs.lovable.app/assets/logo-on-white-Dk9DIcMP.png",
+            "alt": ""
+          },
+          {
+            "src": "https://clear-path-hubs.lovable.app/assets/logo-on-white-Dk9DIcMP.png",
+            "alt": ""
+          }
+        ],
+        "forms": [],
+        "navLinks": [
+          "TaaSFlow",
+          "Jobs",
+          "Sign in",
+          "Browse jobs",
+          "Start hiring",
+          "Privacy",
+          "Terms",
+          "Sitemap",
+          "hello@taasflow.com"
+        ],
+        "footerLinks": [
+          "TaaSFlow",
+          "About",
+          "Journey",
+          "Contact",
+          "Solutions",
+          "How it works",
+          "Enterprise",
+          "Employer onboarding",
+          "Staffing partnership",
+          "Start hiring",
+          "Pilot",
+          "Pricing",
+          "Industries",
+          "Client sign in",
+          "Browse jobs",
+          "Talent network",
+          "Candidate success",
+          "Candidate journey",
+          "Candidate sign in",
+          "Resources",
+          "Blog",
+          "Case studies",
+          "Knowledge base",
+          "FAQ",
+          "Privacy",
+          "Terms",
+          "Sitemap",
+          "hello@taasflow.com"
+        ],
+        "horizontalOverflow": false,
+        "documentWidth": 768,
+        "viewportWidth": 768
+      },
+      "screenshots": {
+        "sourceFull": "reports/public-parity/screenshots/source/knowledge-base__tablet__full.png",
+        "sourceVisible": "reports/public-parity/screenshots/source/knowledge-base__tablet__visible.png",
+        "destinationFull": "reports/public-parity/screenshots/destination/knowledge-base__tablet__full.png",
+        "destinationVisible": "reports/public-parity/screenshots/destination/knowledge-base__tablet__visible.png"
+      },
+      "differences": [
+        "title: \"TaaSFlow Knowledge Base — Guides for Hiring Teams\" vs \"TaaSFlow | Talent as a Service | Subscription Recruiting\"",
+        "meta description mismatch",
+        "H1 differs: [How Can We Help?] vs [How can we help?]",
+        "heading overlap 4% (1/28)",
+        "form count 1 vs 0",
+        "destination images missing alt: 2"
+      ]
+    },
+    {
+      "viewport": "desktop",
+      "source": {
+        "url": "https://taasflow.com/knowledge-base",
+        "finalUrl": "https://taasflow.com/knowledge-base",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [
+          {
+            "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HJ2ECKCNK4&gtm=45je67l1v9245339446za200zd9245339446&_p=1784774021647&gcd=13l3l3l3l1l1&npa=0&_ng=1&dma=0&are=1&cid=1003435372.1784774022&frm=0&ngs=1&pscdl=noapi&rcb=11&sr=1440x900&uaa=x86&uab=64&uafvl=Not-A.Brand%3B24.0.0.0%7CChromium%3B146.0.7680.80&uam=&uamb=0&uap=Windows&uapv=&uaw=0&ul=en-us&_s=1&tag_exp=115616985~115938465~115938469~118897920~118897930~119724322~119896802&dp=%2Fknowledge-base&dt=TaaSFlow%20%7C%20Talent%20as%20a%20Service%20%7C%20Subscription%20Recruiting&dl=https%3A%2F%2Ftaasflow.com%2Fknowledge-base&sid=1784774022&sct=1&seg=0&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&ep.role_type=public&ep.is_authenticated=false&tfd=687",
+            "status": null,
+            "failure": "net::ERR_ABORTED"
+          }
+        ],
+        "title": "TaaSFlow Knowledge Base — Guides for Hiring Teams",
+        "description": "Searchable knowledge base for hiring teams and candidates: intake best practices, scoring criteria, delivery cadence, billing, and support.",
+        "canonical": "https://taasflow.com/knowledge-base",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:type": "website",
+          "og:url": "https://taasflow.com/knowledge-base",
+          "og:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "og:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "og:image": "https://taasflow.com/og-image.png",
+          "og:image:width": "1200",
+          "og:image:height": "630",
+          "og:locale": "en_US",
+          "twitter:card": "summary_large_image",
+          "twitter:site": "@TaasFlow",
+          "twitter:creator": "@TaasFlow",
+          "twitter:url": "https://taasflow.com/knowledge-base",
+          "twitter:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "twitter:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "twitter:image": "https://taasflow.com/og-image.png"
+        },
+        "structuredData": [
+          {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "@id": "https://taasflow.com/#organization",
+            "name": "TaaSFlow",
+            "legalName": "TaaSFlow",
+            "url": "https://taasflow.com/",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://taasflow.com/favicon.png",
+              "width": 512,
+              "height": 512
+            },
+            "image": "https://taasflow.com/og-image.png",
+            "description": "Talent as a Service — subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+            "slogan": "Your hiring team. On demand.",
+            "foundingDate": "2024",
+            "areaServed": [
+              {
+                "@type": "Country",
+                "name": "United States"
+              },
+              {
+                "@type": "Country",
+                "name": "United Arab Emirates"
+              },
+              {
+                "@type": "Country",
+                "name": "United Kingdom"
+              },
+              {
+                "@type": "Country",
+                "name": "Brazil"
+              }
+            ],
+            "knowsAbout": [
+              "Subscription recruiting",
+              "Talent as a Service",
+              "Candidate sourcing",
+              "Pre-screened candidates",
+              "Recruitment process outsourcing"
+            ],
+            "contactPoint": [
+              {
+                "@type": "ContactPoint",
+                "contactType": "sales",
+                "email": "hello@taasflow.com",
+                "url": "https://taasflow.com/contact",
+                "availableLanguage": [
+                  "English",
+                  "Portuguese",
+                  "Spanish"
+                ]
+              }
+            ],
+            "sameAs": [
+              "https://www.linkedin.com/company/taasflow",
+              "https://twitter.com/TaasFlow"
+            ]
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "@id": "https://taasflow.com/#website",
+            "name": "TaaSFlow",
+            "alternateName": "Talent as a Service",
+            "url": "https://taasflow.com/",
+            "description": "Subscription recruiting that delivers pre-screened, ranked candidates in 14 days.",
+            "inLanguage": "en-US",
+            "publisher": {
+              "@id": "https://taasflow.com/#organization"
+            },
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": {
+                "@type": "EntryPoint",
+                "urlTemplate": "https://taasflow.com/jobs?q={search_term_string}"
+              },
+              "query-input": "required name=search_term_string"
+            }
+          }
+        ],
+        "h1": [
+          "How Can We Help?"
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "How Can We Help?"
+          },
+          {
+            "level": 3,
+            "text": "What is Talent-as-a-Service?"
+          },
+          {
+            "level": 3,
+            "text": "How Does the Process Work?"
+          },
+          {
+            "level": 3,
+            "text": "Getting Started as an Employer"
+          },
+          {
+            "level": 3,
+            "text": "Getting Started as a Candidate"
+          },
+          {
+            "level": 3,
+            "text": "How to Complete the Intake Blueprint"
+          },
+          {
+            "level": 3,
+            "text": "Understanding Candidate Scoring"
+          },
+          {
+            "level": 3,
+            "text": "Managing Your Hiring Pipeline"
+          },
+          {
+            "level": 3,
+            "text": "What Are Weekly Candidate Drops?"
+          },
+          {
+            "level": 3,
+            "text": "Inviting Your Team to the Dashboard"
+          },
+          {
+            "level": 3,
+            "text": "Creating a Standout Candidate Profile"
+          },
+          {
+            "level": 3,
+            "text": "The Application & Matching Process"
+          },
+          {
+            "level": 3,
+            "text": "Interview Preparation Guide"
+          },
+          {
+            "level": 3,
+            "text": "Your Public Talent Profile"
+          },
+          {
+            "level": 3,
+            "text": "How Pricing Works"
+          },
+          {
+            "level": 3,
+            "text": "Using the ROI Calculator"
+          },
+          {
+            "level": 3,
+            "text": "The Pilot Program"
+          },
+          {
+            "level": 3,
+            "text": "Dashboard Overview"
+          },
+          {
+            "level": 3,
+            "text": "Understanding Analytics & Reports"
+          },
+          {
+            "level": 3,
+            "text": "Notification Settings"
+          },
+          {
+            "level": 3,
+            "text": "How We Protect Your Data"
+          },
+          {
+            "level": 3,
+            "text": "Candidate Privacy & Anonymization"
+          },
+          {
+            "level": 2,
+            "text": "Still have questions?"
+          },
+          {
+            "level": 4,
+            "text": "Newsletter"
+          },
+          {
+            "level": 4,
+            "text": "For candidates"
+          },
+          {
+            "level": 4,
+            "text": "For companies"
+          },
+          {
+            "level": 4,
+            "text": "Industries"
+          },
+          {
+            "level": 4,
+            "text": "Company"
+          }
+        ],
+        "sections": [
+          "SECTION",
+          "How Can We Help?",
+          "SECTION",
+          "What is Talent-as-a-Service?",
+          "Still have questions?"
+        ],
+        "textBlocks": [
+          "Solutions",
+          "Industries",
+          "Resources",
+          "Find guides, tutorials, and answers to common questions about using TaaSFlow.",
+          "21 articles found",
+          "Learn how TaaS combines the best of agencies and in-house recruiting into a subscription model that delivers candidates weekly.",
+          "From intake blueprint to weekly candidate drops — a complete walkthrough of our 5-step operating system.",
+          "Step-by-step guide to setting up your account, completing your first intake, and receiving your first candidate drop.",
+          "How to create your profile, upload your resume, and get matched with opportunities that fit your skills.",
+          "Best practices for filling out your role intake to ensure we source the most relevant candidates.",
+          "How our weighted scoring system evaluates candidates against your requirements across 9 dimensions.",
+          "How to use the drag-and-drop pipeline board to track candidates through screening, interview, and offer stages.",
+          "Understanding the weekly delivery cadence, what each drop contains, and how to provide feedback.",
+          "How to add hiring managers and team members so they can review candidates and provide feedback.",
+          "Tips for building a profile that gets noticed: headline, skills, experience, and portfolio best practices.",
+          "How we match you with opportunities, what happens after you apply, and how to track your application status.",
+          "How to prepare for interviews with our client companies, common formats, and what to expect.",
+          "Understanding anonymized vs. public profiles, privacy settings, and how employers discover your profile.",
+          "Understanding our subscription tiers, what's included, and how it compares to agency fees.",
+          "How to calculate your potential savings compared to traditional recruitment agencies and internal sourcing.",
+          "How our risk-free pilot works: what you get, how long it lasts, and what happens after.",
+          "A tour of your client dashboard: pipeline, positions, talent search, analytics, and profile settings.",
+          "How to read your hiring funnel, track key metrics, and export data for your team.",
+          "How to configure email and Teams notifications for new candidates, status changes, and weekly drops.",
+          "Our security practices: encryption, access controls, GDPR compliance, and data retention policies.",
+          "How we protect candidate information through anonymized profiles and controlled introductions.",
+          "Can't find what you're looking for? Our team is here to help.",
+          "Talent as a Service",
+          "A global hiring system for teams that need consistent recruiting.",
+          "Weekly insights into talent acquisition. No spam.",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Book call",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "No recruitment agency fees. No placement charges. Subscription-based hiring system.",
+          "Copyright 2026 TaaSFlow. All rights reserved."
+        ],
+        "buttons": [
+          "Solutions",
+          "Industries",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Solutions",
+          "How it works",
+          "Pilot",
+          "Enterprise",
+          "Case studies",
+          "Jobs",
+          "Journey",
+          "Industries",
+          "Tech",
+          "SaaS & Cloud",
+          "Cybersecurity",
+          "Data & Analytics",
+          "Finance",
+          "Insurance",
+          "PE & VC",
+          "Accounting",
+          "Legal",
+          "Consulting",
+          "HR & Recruiting",
+          "Staffing Agencies",
+          "Sales",
+          "Marketing",
+          "E-commerce",
+          "Media",
+          "Real Estate",
+          "Construction",
+          "Hospitality",
+          "Healthcare",
+          "Public Sector",
+          "Non-Profit",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Success Stories",
+          "Talent Marketplace",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "All Topics21",
+          "Getting Started4",
+          "For Employers5",
+          "For Candidates4",
+          "Pricing & Billing3",
+          "Platform & Dashboard3",
+          "Security & Compliance2",
+          "Subscribe",
+          "Book call",
+          "Cookie preferences"
+        ],
+        "links": [
+          {
+            "text": "Skip to main content",
+            "href": "https://taasflow.com/knowledge-base#main-content"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "Browse jobs",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Join the network",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Browse open roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Contact Support",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Browse FAQ",
+            "href": "https://taasflow.com/faq"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "LinkedIn",
+            "href": "https://www.linkedin.com/company/taasflow/"
+          },
+          {
+            "text": "Browse roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Talent network",
+            "href": "https://taasflow.com/global-talent"
+          },
+          {
+            "text": "Member stories",
+            "href": "https://taasflow.com/candidate-success"
+          },
+          {
+            "text": "Start pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "Employer onboarding",
+            "href": "https://taasflow.com/employer-onboarding"
+          },
+          {
+            "text": "Case studies",
+            "href": "https://taasflow.com/case-studies"
+          },
+          {
+            "text": "Healthcare",
+            "href": "https://taasflow.com/industries/healthcare"
+          },
+          {
+            "text": "Technology",
+            "href": "https://taasflow.com/industries/tech"
+          },
+          {
+            "text": "Finance",
+            "href": "https://taasflow.com/industries/finance"
+          },
+          {
+            "text": "Legal",
+            "href": "https://taasflow.com/industries/legal"
+          },
+          {
+            "text": "All →",
+            "href": "https://taasflow.com/industries"
+          },
+          {
+            "text": "About us",
+            "href": "https://taasflow.com/about"
+          },
+          {
+            "text": "Blog",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://taasflow.com/faq"
+          },
+          {
+            "text": "Knowledge Base",
+            "href": "https://taasflow.com/knowledge-base"
+          },
+          {
+            "text": "Contact us",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Privacy Policy",
+            "href": "https://taasflow.com/privacy"
+          },
+          {
+            "text": "Terms of Service",
+            "href": "https://taasflow.com/terms"
+          }
+        ],
+        "images": [
+          {
+            "src": "https://taasflow.com/assets/logo-on-white-Dk9DIcMP.png",
+            "alt": "TaaSFlow logo"
+          },
+          {
+            "src": "https://taasflow.com/assets/logo-on-blue-CX6jlwjg.png",
+            "alt": "TaaSFlow logo"
+          }
+        ],
+        "forms": [
+          {
+            "action": "https://taasflow.com/knowledge-base",
+            "fields": [
+              "input"
+            ]
+          }
+        ],
+        "navLinks": [
+          "Browse jobs",
+          "Join the network",
+          "Browse open roles",
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us"
+        ],
+        "footerLinks": [
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "Privacy Policy",
+          "Terms of Service"
+        ],
+        "horizontalOverflow": false,
+        "documentWidth": 1440,
+        "viewportWidth": 1440
+      },
+      "destination": {
+        "url": "https://clear-path-hubs.lovable.app/knowledge-base",
+        "finalUrl": "https://clear-path-hubs.lovable.app/knowledge-base",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [],
+        "title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+        "description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+        "canonical": "https://clear-path-hubs.lovable.app/knowledge-base",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "twitter:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "og:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "og:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "og:url": "https://clear-path-hubs.lovable.app/knowledge-base",
+          "og:type": "website",
+          "twitter:card": "summary_large_image",
+          "twitter:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "twitter:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages."
+        },
+        "structuredData": [],
+        "h1": [
+          "How can we help?"
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "How can we help?"
+          },
+          {
+            "level": 2,
+            "text": "Getting started"
+          },
+          {
+            "level": 3,
+            "text": "What is Talent-as-a-Service?"
+          },
+          {
+            "level": 3,
+            "text": "How the process works"
+          },
+          {
+            "level": 3,
+            "text": "Getting started as an employer"
+          },
+          {
+            "level": 3,
+            "text": "Getting started as a candidate"
+          },
+          {
+            "level": 2,
+            "text": "For employers"
+          },
+          {
+            "level": 3,
+            "text": "How to complete the intake blueprint"
+          },
+          {
+            "level": 3,
+            "text": "How candidate scoring works"
+          },
+          {
+            "level": 3,
+            "text": "Managing your hiring pipeline"
+          },
+          {
+            "level": 3,
+            "text": "Weekly candidate drops"
+          },
+          {
+            "level": 3,
+            "text": "Inviting your team to the dashboard"
+          },
+          {
+            "level": 2,
+            "text": "For candidates"
+          },
+          {
+            "level": 3,
+            "text": "Building a standout candidate profile"
+          },
+          {
+            "level": 3,
+            "text": "The application and matching process"
+          },
+          {
+            "level": 3,
+            "text": "Interview preparation guide"
+          },
+          {
+            "level": 3,
+            "text": "Tracking your application status"
+          },
+          {
+            "level": 2,
+            "text": "Pricing & billing"
+          },
+          {
+            "level": 3,
+            "text": "How the paid pilot works"
+          },
+          {
+            "level": 3,
+            "text": "How subscription pricing works"
+          },
+          {
+            "level": 3,
+            "text": "Invoices and payments"
+          },
+          {
+            "level": 2,
+            "text": "Security & compliance"
+          },
+          {
+            "level": 3,
+            "text": "How TaaSFlow secures your data"
+          },
+          {
+            "level": 3,
+            "text": "Candidate privacy and CV handling"
+          },
+          {
+            "level": 2,
+            "text": "Can't find what you need?"
+          },
+          {
+            "level": 3,
+            "text": "Company"
+          },
+          {
+            "level": 3,
+            "text": "Solutions"
+          },
+          {
+            "level": 3,
+            "text": "Employers"
+          },
+          {
+            "level": 3,
+            "text": "Candidates"
+          },
+          {
+            "level": 3,
+            "text": "Resources"
+          }
+        ],
+        "sections": [
+          "How can we help?",
+          "Getting started",
+          "For employers",
+          "For candidates",
+          "Pricing & billing",
+          "Security & compliance",
+          "SECTION"
+        ],
+        "textBlocks": [
+          "Solutions",
+          "Industries",
+          "Resources",
+          "About",
+          "Jobs",
+          "Knowledge base",
+          "Guides and reference material for TaaSFlow clients and candidates. Product-support articles link into your signed-in dashboard.",
+          "What TaaSFlow is and how the process works end-to-end.",
+          "Public3 minWhat is Talent-as-a-Service?A subscription model that combines agency-quality sourcing with in-house pipeline visibility, priced per role per month.",
+          "A subscription model that combines agency-quality sourcing with in-house pipeline visibility, priced per role per month.",
+          "Public5 minHow the process worksFrom intake blueprint to ranked shortlist — the five stages every engagement runs through.",
+          "From intake blueprint to ranked shortlist — the five stages every engagement runs through.",
+          "Public4 minGetting started as an employerAccount setup, first intake, and what to expect during your first two weeks.",
+          "Account setup, first intake, and what to expect during your first two weeks.",
+          "Public3 minGetting started as a candidateHow to apply, what happens after you upload your CV, and how to track your application.",
+          "How to apply, what happens after you upload your CV, and how to track your application.",
+          "Intake, scoring, pipeline, and hiring workflow.",
+          "Public5 minHow to complete the intake blueprintThe 5-step wizard that translates a role into sourceable requirements and screening questions.",
+          "The 5-step wizard that translates a role into sourceable requirements and screening questions.",
+          "Public4 minHow candidate scoring worksThe evidence-first, role-specific scoring engine — what it measures and how to interpret results.",
+          "The evidence-first, role-specific scoring engine — what it measures and how to interpret results.",
+          "Dashboard4 minManaging your hiring pipelineUsing the Kanban board to move candidates through review, interview, decision, and offer stages.Requires a signed-in TaaSFlow account.",
+          "Using the Kanban board to move candidates through review, interview, decision, and offer stages.",
+          "Requires a signed-in TaaSFlow account.",
+          "Public3 minWeekly candidate dropsDelivery cadence, what each drop contains, and how to give feedback.",
+          "Delivery cadence, what each drop contains, and how to give feedback.",
+          "Dashboard2 minInviting your team to the dashboardAdd hiring managers and reviewers so they can score candidates and leave feedback.Requires a signed-in TaaSFlow account.",
+          "Add hiring managers and reviewers so they can score candidates and leave feedback.",
+          "Requires a signed-in TaaSFlow account.",
+          "Profile, application, and interview flow.",
+          "Public5 minBuilding a standout candidate profileHow the CV parser reads your document and what to include so the scoring engine can find you.",
+          "How the CV parser reads your document and what to include so the scoring engine can find you.",
+          "Public4 minThe application and matching processWhat happens after you apply — parsing, scoring, admin review, and client visibility.",
+          "What happens after you apply — parsing, scoring, admin review, and client visibility.",
+          "Public6 minInterview preparation guideCommon formats used by TaaSFlow clients, and how to prepare for role-specific technical rounds.",
+          "Common formats used by TaaSFlow clients, and how to prepare for role-specific technical rounds.",
+          "Dashboard3 minTracking your application statusHow to read the stages in your candidate dashboard and what each one means.Requires a signed-in TaaSFlow account.",
+          "How to read the stages in your candidate dashboard and what each one means.",
+          "Requires a signed-in TaaSFlow account.",
+          "Subscription mechanics, pilots, and invoicing.",
+          "Public3 minHow the paid pilot worksOne live role, one ranked shortlist in 7–14 days, no placement fee if you hire.",
+          "One live role, one ranked shortlist in 7–14 days, no placement fee if you hire.",
+          "Public4 minHow subscription pricing worksPer-role monthly pricing, add-ons, pausing engagements, and how billing differs from agency retainers.",
+          "Per-role monthly pricing, add-ons, pausing engagements, and how billing differs from agency retainers.",
+          "Dashboard2 minInvoices and paymentsWhere to find your invoices, supported payment methods, and how to update billing details.Requires a signed-in TaaSFlow account.",
+          "Where to find your invoices, supported payment methods, and how to update billing details.",
+          "Requires a signed-in TaaSFlow account.",
+          "Data handling, RLS, and access controls.",
+          "Public4 minHow TaaSFlow secures your dataRow-level security, tenant isolation, encryption at rest and in transit, and access-control model.",
+          "Row-level security, tenant isolation, encryption at rest and in transit, and access-control model.",
+          "Public4 minCandidate privacy and CV handlingConsent, retention windows, storage buckets, and what clients can and cannot see.",
+          "Consent, retention windows, storage buckets, and what clients can and cannot see.",
+          "Reach out and we'll answer directly — usually within one business day.",
+          "A live recruiting workspace with ranked, evidence-backed candidate delivery.",
+          "About",
+          "Journey",
+          "Contact",
+          "Solutions",
+          "How it works",
+          "Enterprise",
+          "Employer onboarding",
+          "Staffing partnership",
+          "Start hiring",
+          "Pilot",
+          "Pricing",
+          "Industries",
+          "Client sign in",
+          "Browse jobs",
+          "Talent network",
+          "Candidate success",
+          "Candidate journey",
+          "Candidate sign in",
+          "Resources",
+          "Blog",
+          "Case studies",
+          "Knowledge base",
+          "FAQ",
+          "© 2026 TaaSFlow. All rights reserved."
+        ],
+        "buttons": [
+          "Solutions",
+          "Industries",
+          "Resources",
+          "About",
+          "All (18)",
+          "Getting started (4)",
+          "For employers (5)",
+          "For candidates (4)",
+          "Pricing & billing (3)",
+          "Security & compliance (2)"
+        ],
+        "links": [
+          {
+            "text": "Skip to main content",
+            "href": "https://clear-path-hubs.lovable.app/knowledge-base#main"
+          },
+          {
+            "text": "New: transparent role-specific scoring — see how it works.",
+            "href": "https://clear-path-hubs.lovable.app/how-it-works"
+          },
+          {
+            "text": "TaaSFlow",
+            "href": "https://clear-path-hubs.lovable.app/"
+          },
+          {
+            "text": "Jobs",
+            "href": "https://clear-path-hubs.lovable.app/jobs"
+          },
+          {
+            "text": "Sign in",
+            "href": "https://clear-path-hubs.lovable.app/login"
+          },
+          {
+            "text": "Browse jobs",
+            "href": "https://clear-path-hubs.lovable.app/jobs"
+          },
+          {
+            "text": "Start hiring",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "Dashboard4 minManaging your hiring pipelineUsing the Kanban board to move candidates through review, interview, decision",
+            "href": "https://clear-path-hubs.lovable.app/login"
+          },
+          {
+            "text": "Dashboard2 minInviting your team to the dashboardAdd hiring managers and reviewers so they can score candidates and leav",
+            "href": "https://clear-path-hubs.lovable.app/login"
+          },
+          {
+            "text": "Dashboard3 minTracking your application statusHow to read the stages in your candidate dashboard and what each one means",
+            "href": "https://clear-path-hubs.lovable.app/login"
+          },
+          {
+            "text": "Dashboard2 minInvoices and paymentsWhere to find your invoices, supported payment methods, and how to update billing det",
+            "href": "https://clear-path-hubs.lovable.app/login"
+          },
+          {
+            "text": "Contact us",
+            "href": "https://clear-path-hubs.lovable.app/contact"
+          },
+          {
+            "text": "Read the FAQ",
+            "href": "https://clear-path-hubs.lovable.app/faq"
+          },
+          {
+            "text": "TaaSFlow",
+            "href": "https://clear-path-hubs.lovable.app/"
+          },
+          {
+            "text": "",
+            "href": "https://www.linkedin.com/company/taasflow"
+          },
+          {
+            "text": "",
+            "href": "mailto:hello@taasflow.com"
+          },
+          {
+            "text": "About",
+            "href": "https://clear-path-hubs.lovable.app/about"
+          },
+          {
+            "text": "Journey",
+            "href": "https://clear-path-hubs.lovable.app/journey"
+          },
+          {
+            "text": "Contact",
+            "href": "https://clear-path-hubs.lovable.app/contact"
+          },
+          {
+            "text": "Solutions",
+            "href": "https://clear-path-hubs.lovable.app/solutions"
+          },
+          {
+            "text": "How it works",
+            "href": "https://clear-path-hubs.lovable.app/how-it-works"
+          },
+          {
+            "text": "Enterprise",
+            "href": "https://clear-path-hubs.lovable.app/enterprise"
+          },
+          {
+            "text": "Employer onboarding",
+            "href": "https://clear-path-hubs.lovable.app/employer-onboarding"
+          },
+          {
+            "text": "Staffing partnership",
+            "href": "https://clear-path-hubs.lovable.app/partnerships/staffing"
+          },
+          {
+            "text": "Start hiring",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "Pilot",
+            "href": "https://clear-path-hubs.lovable.app/pilot"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://clear-path-hubs.lovable.app/pricing"
+          },
+          {
+            "text": "Industries",
+            "href": "https://clear-path-hubs.lovable.app/industries"
+          },
+          {
+            "text": "Client sign in",
+            "href": "https://clear-path-hubs.lovable.app/login"
+          },
+          {
+            "text": "Browse jobs",
+            "href": "https://clear-path-hubs.lovable.app/jobs"
+          },
+          {
+            "text": "Talent network",
+            "href": "https://clear-path-hubs.lovable.app/talent-network"
+          },
+          {
+            "text": "Candidate success",
+            "href": "https://clear-path-hubs.lovable.app/candidate-success"
+          },
+          {
+            "text": "Candidate journey",
+            "href": "https://clear-path-hubs.lovable.app/journey"
+          },
+          {
+            "text": "Candidate sign in",
+            "href": "https://clear-path-hubs.lovable.app/login"
+          },
+          {
+            "text": "Resources",
+            "href": "https://clear-path-hubs.lovable.app/resources"
+          },
+          {
+            "text": "Blog",
+            "href": "https://clear-path-hubs.lovable.app/blog"
+          },
+          {
+            "text": "Case studies",
+            "href": "https://clear-path-hubs.lovable.app/case-studies"
+          },
+          {
+            "text": "Knowledge base",
+            "href": "https://clear-path-hubs.lovable.app/knowledge-base"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://clear-path-hubs.lovable.app/faq"
+          },
+          {
+            "text": "Privacy",
+            "href": "https://clear-path-hubs.lovable.app/privacy"
+          },
+          {
+            "text": "Terms",
+            "href": "https://clear-path-hubs.lovable.app/terms"
+          },
+          {
+            "text": "Sitemap",
+            "href": "https://clear-path-hubs.lovable.app/sitemap.xml"
+          },
+          {
+            "text": "hello@taasflow.com",
+            "href": "mailto:hello@taasflow.com"
+          },
+          {
+            "text": "Edit with",
+            "href": "https://lovable.dev/projects/1dc5ee7e-1294-441c-8288-850e79e443f6?utm_source=lovable-badge"
+          }
+        ],
+        "images": [
+          {
+            "src": "https://clear-path-hubs.lovable.app/assets/logo-on-white-Dk9DIcMP.png",
+            "alt": ""
+          },
+          {
+            "src": "https://clear-path-hubs.lovable.app/assets/logo-on-white-Dk9DIcMP.png",
+            "alt": ""
+          }
+        ],
+        "forms": [],
+        "navLinks": [
+          "TaaSFlow",
+          "Jobs",
+          "Sign in",
+          "Browse jobs",
+          "Start hiring",
+          "Privacy",
+          "Terms",
+          "Sitemap",
+          "hello@taasflow.com"
+        ],
+        "footerLinks": [
+          "TaaSFlow",
+          "About",
+          "Journey",
+          "Contact",
+          "Solutions",
+          "How it works",
+          "Enterprise",
+          "Employer onboarding",
+          "Staffing partnership",
+          "Start hiring",
+          "Pilot",
+          "Pricing",
+          "Industries",
+          "Client sign in",
+          "Browse jobs",
+          "Talent network",
+          "Candidate success",
+          "Candidate journey",
+          "Candidate sign in",
+          "Resources",
+          "Blog",
+          "Case studies",
+          "Knowledge base",
+          "FAQ",
+          "Privacy",
+          "Terms",
+          "Sitemap",
+          "hello@taasflow.com"
+        ],
+        "horizontalOverflow": false,
+        "documentWidth": 1440,
+        "viewportWidth": 1440
+      },
+      "screenshots": {
+        "sourceFull": "reports/public-parity/screenshots/source/knowledge-base__desktop__full.png",
+        "sourceVisible": "reports/public-parity/screenshots/source/knowledge-base__desktop__visible.png",
+        "destinationFull": "reports/public-parity/screenshots/destination/knowledge-base__desktop__full.png",
+        "destinationVisible": "reports/public-parity/screenshots/destination/knowledge-base__desktop__visible.png"
+      },
+      "differences": [
+        "title: \"TaaSFlow Knowledge Base — Guides for Hiring Teams\" vs \"TaaSFlow | Talent as a Service | Subscription Recruiting\"",
+        "meta description mismatch",
+        "H1 differs: [How Can We Help?] vs [How can we help?]",
+        "heading overlap 4% (1/28)",
+        "form count 1 vs 0",
+        "destination images missing alt: 2"
+      ]
+    }
+  ],
+  "summary": "18 differences detected",
+  "exclusions": []
+}

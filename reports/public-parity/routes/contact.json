@@ -1,0 +1,2430 @@
+{
+  "sourcePath": "/contact",
+  "destinationPath": "/contact",
+  "pageType": "marketing_static",
+  "protected": false,
+  "verdict": "MAJOR_DIFFERENCE",
+  "severity": "HIGH",
+  "viewports": [
+    {
+      "viewport": "mobile",
+      "source": {
+        "url": "https://taasflow.com/contact",
+        "finalUrl": "https://taasflow.com/contact",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [
+          "Failed to load resource: the server responded with a status of 404 ()"
+        ],
+        "failedRequests": [
+          {
+            "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HJ2ECKCNK4&gtm=45je67l1v9245339446za200zd9245339446&_p=1784773958801&gcd=13l3l3l3l1l1&npa=0&_ng=1&dma=0&are=1&cid=294793463.1784773959&frm=0&ngs=1&pscdl=noapi&rcb=5&sr=375x812&uaa=x86&uab=64&uafvl=Not-A.Brand%3B24.0.0.0%7CChromium%3B146.0.7680.80&uam=&uamb=0&uap=Windows&uapv=&uaw=0&ul=en-us&_s=1&tag_exp=115616986~115938466~115938469~118897920~118897930~119896802&dp=%2Fcontact&dt=TaaSFlow%20%7C%20Talent%20as%20a%20Service%20%7C%20Subscription%20Recruiting&dl=https%3A%2F%2Ftaasflow.com%2Fcontact&sid=1784773959&sct=1&seg=0&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&ep.role_type=public&ep.is_authenticated=false&tfd=821",
+            "status": null,
+            "failure": "net::ERR_ABORTED"
+          },
+          {
+            "url": "https://calendly.com/christian-brogger-taasflow?embed_domain=taasflow.com&embed_type=Inline&hide_gdpr_banner=1",
+            "status": 404,
+            "failure": null
+          }
+        ],
+        "title": "Contact | TaaS - Talent as a Service",
+        "description": "Talk to TaaSFlow about subscription recruiting. Book a call, start a $399 pilot, or replace agency fees with ranked candidates.",
+        "canonical": "https://taasflow.com/contact",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:type": "website",
+          "og:url": "https://taasflow.com/contact",
+          "og:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "og:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "og:image": "https://taasflow.com/og-image.png",
+          "og:image:width": "1200",
+          "og:image:height": "630",
+          "og:locale": "en_US",
+          "twitter:card": "summary_large_image",
+          "twitter:site": "@TaasFlow",
+          "twitter:creator": "@TaasFlow",
+          "twitter:url": "https://taasflow.com/contact",
+          "twitter:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "twitter:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "twitter:image": "https://taasflow.com/og-image.png"
+        },
+        "structuredData": [
+          {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "@id": "https://taasflow.com/#organization",
+            "name": "TaaSFlow",
+            "legalName": "TaaSFlow",
+            "url": "https://taasflow.com/",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://taasflow.com/favicon.png",
+              "width": 512,
+              "height": 512
+            },
+            "image": "https://taasflow.com/og-image.png",
+            "description": "Talent as a Service — subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+            "slogan": "Your hiring team. On demand.",
+            "foundingDate": "2024",
+            "areaServed": [
+              {
+                "@type": "Country",
+                "name": "United States"
+              },
+              {
+                "@type": "Country",
+                "name": "United Arab Emirates"
+              },
+              {
+                "@type": "Country",
+                "name": "United Kingdom"
+              },
+              {
+                "@type": "Country",
+                "name": "Brazil"
+              }
+            ],
+            "knowsAbout": [
+              "Subscription recruiting",
+              "Talent as a Service",
+              "Candidate sourcing",
+              "Pre-screened candidates",
+              "Recruitment process outsourcing"
+            ],
+            "contactPoint": [
+              {
+                "@type": "ContactPoint",
+                "contactType": "sales",
+                "email": "hello@taasflow.com",
+                "url": "https://taasflow.com/contact",
+                "availableLanguage": [
+                  "English",
+                  "Portuguese",
+                  "Spanish"
+                ]
+              }
+            ],
+            "sameAs": [
+              "https://www.linkedin.com/company/taasflow",
+              "https://twitter.com/TaasFlow"
+            ]
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "@id": "https://taasflow.com/#website",
+            "name": "TaaSFlow",
+            "alternateName": "Talent as a Service",
+            "url": "https://taasflow.com/",
+            "description": "Subscription recruiting that delivers pre-screened, ranked candidates in 14 days.",
+            "inLanguage": "en-US",
+            "publisher": {
+              "@id": "https://taasflow.com/#organization"
+            },
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": {
+                "@type": "EntryPoint",
+                "urlTemplate": "https://taasflow.com/jobs?q={search_term_string}"
+              },
+              "query-input": "required name=search_term_string"
+            }
+          }
+        ],
+        "h1": [
+          "Contact us"
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "Contact us"
+          },
+          {
+            "level": 2,
+            "text": "Book a call or send a message"
+          },
+          {
+            "level": 4,
+            "text": "Newsletter"
+          },
+          {
+            "level": 4,
+            "text": "For candidates"
+          },
+          {
+            "level": 4,
+            "text": "For companies"
+          },
+          {
+            "level": 4,
+            "text": "Industries"
+          },
+          {
+            "level": 4,
+            "text": "Company"
+          },
+          {
+            "level": 3,
+            "text": "Cookie Preferences"
+          }
+        ],
+        "sections": [
+          "SECTION",
+          "Contact us"
+        ],
+        "textBlocks": [
+          "Solutions",
+          "Industries",
+          "Resources",
+          "Have questions? Want to start a pilot? We're happy to help.",
+          "Start a pilot or brief us on the role you need to fill.",
+          "Talent as a Service",
+          "A global hiring system for teams that need consistent recruiting.",
+          "Weekly insights into talent acquisition. No spam.",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Book call",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "No recruitment agency fees. No placement charges. Subscription-based hiring system.",
+          "Copyright 2026 TaaSFlow. All rights reserved.",
+          "We use essential cookies for core functionality. With your consent, we use analytics (Google Analytics) and marketing technologies (Meta Pixel, Apollo, Retention.com/RB2B) to understand website performance, improve campaigns, and measure conversions safely. Your data is processed in accordance with GDPR and our Privacy Notice. You can change your preferences at any time."
+        ],
+        "buttons": [
+          "Solutions",
+          "Industries",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Solutions",
+          "How it works",
+          "Pilot",
+          "Enterprise",
+          "Case studies",
+          "Jobs",
+          "Journey",
+          "Industries",
+          "Tech",
+          "SaaS & Cloud",
+          "Cybersecurity",
+          "Data & Analytics",
+          "Finance",
+          "Insurance",
+          "PE & VC",
+          "Accounting",
+          "Legal",
+          "Consulting",
+          "HR & Recruiting",
+          "Staffing Agencies",
+          "Sales",
+          "Marketing",
+          "E-commerce",
+          "Media",
+          "Real Estate",
+          "Construction",
+          "Hospitality",
+          "Healthcare",
+          "Public Sector",
+          "Non-Profit",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Success Stories",
+          "Talent Marketplace",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "I want to hire talent",
+          "I am a candidate",
+          "I am an existing client",
+          "I need support",
+          "General inquiry",
+          "Start intake",
+          "Schedule a call",
+          "Send a message",
+          "Subscribe",
+          "Book call",
+          "Cookie preferences",
+          "Customize",
+          "Reject Non-Essential",
+          "Accept All"
+        ],
+        "links": [
+          {
+            "text": "Skip to main content",
+            "href": "https://taasflow.com/contact#main-content"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "Browse jobs",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Join the network",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Browse open roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "See pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "LinkedIn",
+            "href": "https://www.linkedin.com/company/taasflow/"
+          },
+          {
+            "text": "Browse roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Talent network",
+            "href": "https://taasflow.com/global-talent"
+          },
+          {
+            "text": "Member stories",
+            "href": "https://taasflow.com/candidate-success"
+          },
+          {
+            "text": "Start pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "Employer onboarding",
+            "href": "https://taasflow.com/employer-onboarding"
+          },
+          {
+            "text": "Case studies",
+            "href": "https://taasflow.com/case-studies"
+          },
+          {
+            "text": "Healthcare",
+            "href": "https://taasflow.com/industries/healthcare"
+          },
+          {
+            "text": "Technology",
+            "href": "https://taasflow.com/industries/tech"
+          },
+          {
+            "text": "Finance",
+            "href": "https://taasflow.com/industries/finance"
+          },
+          {
+            "text": "Legal",
+            "href": "https://taasflow.com/industries/legal"
+          },
+          {
+            "text": "All →",
+            "href": "https://taasflow.com/industries"
+          },
+          {
+            "text": "About us",
+            "href": "https://taasflow.com/about"
+          },
+          {
+            "text": "Blog",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://taasflow.com/faq"
+          },
+          {
+            "text": "Knowledge Base",
+            "href": "https://taasflow.com/knowledge-base"
+          },
+          {
+            "text": "Contact us",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Privacy Policy",
+            "href": "https://taasflow.com/privacy"
+          },
+          {
+            "text": "Terms of Service",
+            "href": "https://taasflow.com/terms"
+          },
+          {
+            "text": "Privacy Notice",
+            "href": "https://taasflow.com/privacy"
+          }
+        ],
+        "images": [
+          {
+            "src": "https://taasflow.com/assets/logo-on-white-Dk9DIcMP.png",
+            "alt": "TaaSFlow logo"
+          },
+          {
+            "src": "https://taasflow.com/assets/logo-on-blue-CX6jlwjg.png",
+            "alt": "TaaSFlow logo"
+          }
+        ],
+        "forms": [
+          {
+            "action": "https://taasflow.com/contact",
+            "fields": [
+              "input"
+            ]
+          }
+        ],
+        "navLinks": [
+          "Browse jobs",
+          "Join the network",
+          "Browse open roles",
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us"
+        ],
+        "footerLinks": [
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "Privacy Policy",
+          "Terms of Service"
+        ],
+        "horizontalOverflow": false,
+        "documentWidth": 375,
+        "viewportWidth": 375
+      },
+      "destination": {
+        "url": "https://clear-path-hubs.lovable.app/contact",
+        "finalUrl": "https://clear-path-hubs.lovable.app/contact",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [],
+        "title": "Contact TaaSFlow — talk to a hiring lead",
+        "description": "Get in touch with the TaaSFlow team. Ask about subscription recruiting, start a pilot, or reach support. We reply within one business day.",
+        "canonical": "https://clear-path-hubs.lovable.app/contact",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "twitter:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "og:title": "Contact TaaSFlow — talk to a hiring lead",
+          "og:description": "Get in touch with the TaaSFlow team. Ask about subscription recruiting, start a pilot, or reach support. We reply within one business day.",
+          "og:url": "https://clear-path-hubs.lovable.app/contact",
+          "og:type": "website",
+          "twitter:card": "summary_large_image",
+          "twitter:title": "Contact TaaSFlow — talk to a hiring lead",
+          "twitter:description": "Get in touch with the TaaSFlow team. Ask about subscription recruiting, start a pilot, or reach support. We reply within one business day."
+        },
+        "structuredData": [],
+        "h1": [
+          "Talk to a hiring lead."
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "Talk to a hiring lead."
+          },
+          {
+            "level": 2,
+            "text": "Send us a message"
+          },
+          {
+            "level": 3,
+            "text": "Company"
+          },
+          {
+            "level": 3,
+            "text": "Solutions"
+          },
+          {
+            "level": 3,
+            "text": "Employers"
+          },
+          {
+            "level": 3,
+            "text": "Candidates"
+          },
+          {
+            "level": 3,
+            "text": "Resources"
+          }
+        ],
+        "sections": [
+          "Talk to a hiring lead.",
+          "SECTION"
+        ],
+        "textBlocks": [
+          "Solutions",
+          "Industries",
+          "Resources",
+          "About",
+          "Jobs",
+          "Contact",
+          "Ask about subscription recruiting, start a pilot, or reach out to our support team. We reply within one business day.",
+          "Hiring teams: Share the role you're trying to fill and we'll show you what a shortlist would look like.",
+          "Candidates: Questions about an application, your profile, or your data — we're happy to help.",
+          "Existing clients: For anything urgent, use the messaging in your workspace so it lands with your recruiter directly.",
+          "We'll reply within one business day.",
+          "By sending this message you agree to be contacted about your enquiry. See our privacy policy.",
+          "A live recruiting workspace with ranked, evidence-backed candidate delivery.",
+          "About",
+          "Journey",
+          "Contact",
+          "Solutions",
+          "How it works",
+          "Enterprise",
+          "Employer onboarding",
+          "Staffing partnership",
+          "Start hiring",
+          "Pilot",
+          "Pricing",
+          "Industries",
+          "Client sign in",
+          "Browse jobs",
+          "Talent network",
+          "Candidate success",
+          "Candidate journey",
+          "Candidate sign in",
+          "Resources",
+          "Blog",
+          "Case studies",
+          "Knowledge base",
+          "FAQ",
+          "© 2026 TaaSFlow. All rights reserved."
+        ],
+        "buttons": [
+          "Solutions",
+          "Industries",
+          "Resources",
+          "About",
+          "Send message"
+        ],
+        "links": [
+          {
+            "text": "Skip to main content",
+            "href": "https://clear-path-hubs.lovable.app/contact#main"
+          },
+          {
+            "text": "New: transparent role-specific scoring — see how it works.",
+            "href": "https://clear-path-hubs.lovable.app/how-it-works"
+          },
+          {
+            "text": "TaaSFlow",
+            "href": "https://clear-path-hubs.lovable.app/"
+          },
+          {
+            "text": "Jobs",
+            "href": "https://clear-path-hubs.lovable.app/jobs"
+          },
+          {
+            "text": "Sign in",
+            "href": "https://clear-path-hubs.lovable.app/login"
+          },
+          {
+            "text": "Browse jobs",
+            "href": "https://clear-path-hubs.lovable.app/jobs"
+          },
+          {
+            "text": "Start hiring",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "Start an intake",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "Read the FAQ",
+            "href": "https://clear-path-hubs.lovable.app/faq"
+          },
+          {
+            "text": "privacy policy",
+            "href": "https://clear-path-hubs.lovable.app/privacy"
+          },
+          {
+            "text": "TaaSFlow",
+            "href": "https://clear-path-hubs.lovable.app/"
+          },
+          {
+            "text": "",
+            "href": "https://www.linkedin.com/company/taasflow"
+          },
+          {
+            "text": "",
+            "href": "mailto:hello@taasflow.com"
+          },
+          {
+            "text": "About",
+            "href": "https://clear-path-hubs.lovable.app/about"
+          },
+          {
+            "text": "Journey",
+            "href": "https://clear-path-hubs.lovable.app/journey"
+          },
+          {
+            "text": "Contact",
+            "href": "https://clear-path-hubs.lovable.app/contact"
+          },
+          {
+            "text": "Solutions",
+            "href": "https://clear-path-hubs.lovable.app/solutions"
+          },
+          {
+            "text": "How it works",
+            "href": "https://clear-path-hubs.lovable.app/how-it-works"
+          },
+          {
+            "text": "Enterprise",
+            "href": "https://clear-path-hubs.lovable.app/enterprise"
+          },
+          {
+            "text": "Employer onboarding",
+            "href": "https://clear-path-hubs.lovable.app/employer-onboarding"
+          },
+          {
+            "text": "Staffing partnership",
+            "href": "https://clear-path-hubs.lovable.app/partnerships/staffing"
+          },
+          {
+            "text": "Start hiring",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "Pilot",
+            "href": "https://clear-path-hubs.lovable.app/pilot"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://clear-path-hubs.lovable.app/pricing"
+          },
+          {
+            "text": "Industries",
+            "href": "https://clear-path-hubs.lovable.app/industries"
+          },
+          {
+            "text": "Client sign in",
+            "href": "https://clear-path-hubs.lovable.app/login"
+          },
+          {
+            "text": "Browse jobs",
+            "href": "https://clear-path-hubs.lovable.app/jobs"
+          },
+          {
+            "text": "Talent network",
+            "href": "https://clear-path-hubs.lovable.app/talent-network"
+          },
+          {
+            "text": "Candidate success",
+            "href": "https://clear-path-hubs.lovable.app/candidate-success"
+          },
+          {
+            "text": "Candidate journey",
+            "href": "https://clear-path-hubs.lovable.app/journey"
+          },
+          {
+            "text": "Candidate sign in",
+            "href": "https://clear-path-hubs.lovable.app/login"
+          },
+          {
+            "text": "Resources",
+            "href": "https://clear-path-hubs.lovable.app/resources"
+          },
+          {
+            "text": "Blog",
+            "href": "https://clear-path-hubs.lovable.app/blog"
+          },
+          {
+            "text": "Case studies",
+            "href": "https://clear-path-hubs.lovable.app/case-studies"
+          },
+          {
+            "text": "Knowledge base",
+            "href": "https://clear-path-hubs.lovable.app/knowledge-base"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://clear-path-hubs.lovable.app/faq"
+          },
+          {
+            "text": "Privacy",
+            "href": "https://clear-path-hubs.lovable.app/privacy"
+          },
+          {
+            "text": "Terms",
+            "href": "https://clear-path-hubs.lovable.app/terms"
+          },
+          {
+            "text": "Sitemap",
+            "href": "https://clear-path-hubs.lovable.app/sitemap.xml"
+          },
+          {
+            "text": "hello@taasflow.com",
+            "href": "mailto:hello@taasflow.com"
+          },
+          {
+            "text": "Edit with",
+            "href": "https://lovable.dev/projects/1dc5ee7e-1294-441c-8288-850e79e443f6?utm_source=lovable-badge"
+          }
+        ],
+        "images": [
+          {
+            "src": "https://clear-path-hubs.lovable.app/assets/logo-on-white-Dk9DIcMP.png",
+            "alt": ""
+          },
+          {
+            "src": "https://clear-path-hubs.lovable.app/assets/logo-on-white-Dk9DIcMP.png",
+            "alt": ""
+          }
+        ],
+        "forms": [
+          {
+            "action": "https://clear-path-hubs.lovable.app/contact",
+            "fields": [
+              "website",
+              "name",
+              "email",
+              "company",
+              "topic",
+              "message"
+            ]
+          }
+        ],
+        "navLinks": [
+          "TaaSFlow",
+          "Jobs",
+          "Sign in",
+          "Browse jobs",
+          "Start hiring",
+          "Privacy",
+          "Terms",
+          "Sitemap",
+          "hello@taasflow.com"
+        ],
+        "footerLinks": [
+          "TaaSFlow",
+          "About",
+          "Journey",
+          "Contact",
+          "Solutions",
+          "How it works",
+          "Enterprise",
+          "Employer onboarding",
+          "Staffing partnership",
+          "Start hiring",
+          "Pilot",
+          "Pricing",
+          "Industries",
+          "Client sign in",
+          "Browse jobs",
+          "Talent network",
+          "Candidate success",
+          "Candidate journey",
+          "Candidate sign in",
+          "Resources",
+          "Blog",
+          "Case studies",
+          "Knowledge base",
+          "FAQ",
+          "Privacy",
+          "Terms",
+          "Sitemap",
+          "hello@taasflow.com"
+        ],
+        "horizontalOverflow": false,
+        "documentWidth": 375,
+        "viewportWidth": 375
+      },
+      "screenshots": {
+        "sourceFull": "reports/public-parity/screenshots/source/contact__mobile__full.png",
+        "sourceVisible": "reports/public-parity/screenshots/source/contact__mobile__visible.png",
+        "destinationFull": "reports/public-parity/screenshots/destination/contact__mobile__full.png",
+        "destinationVisible": "reports/public-parity/screenshots/destination/contact__mobile__visible.png"
+      },
+      "differences": [
+        "title: \"Contact | TaaS - Talent as a Service\" vs \"Contact TaaSFlow — talk to a hiring lead\"",
+        "meta description mismatch",
+        "H1 differs: [Contact us] vs [Talk to a hiring lead.]",
+        "heading overlap 0% (0/8)",
+        "destination images missing alt: 2"
+      ]
+    },
+    {
+      "viewport": "tablet",
+      "source": {
+        "url": "https://taasflow.com/contact",
+        "finalUrl": "https://taasflow.com/contact",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [
+          "Failed to load resource: the server responded with a status of 404 ()"
+        ],
+        "failedRequests": [
+          {
+            "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HJ2ECKCNK4&gtm=45je67l1v9245339446za200zd9245339446&_p=1784773962089&gcd=13l3l3l3l1l1&npa=0&_ng=1&dma=0&are=1&cid=492890940.1784773963&frm=0&ngs=1&pscdl=noapi&rcb=6&sr=768x1024&uaa=x86&uab=64&uafvl=Not-A.Brand%3B24.0.0.0%7CChromium%3B146.0.7680.80&uam=&uamb=0&uap=Windows&uapv=&uaw=0&ul=en-us&_s=1&tag_exp=115938465~115938468~118897920~118897930~119896802&dp=%2Fcontact&dt=TaaSFlow%20%7C%20Talent%20as%20a%20Service%20%7C%20Subscription%20Recruiting&dl=https%3A%2F%2Ftaasflow.com%2Fcontact&sid=1784773962&sct=1&seg=0&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&ep.role_type=public&ep.is_authenticated=false&tfd=813",
+            "status": null,
+            "failure": "net::ERR_ABORTED"
+          },
+          {
+            "url": "https://calendly.com/christian-brogger-taasflow?embed_domain=taasflow.com&embed_type=Inline&hide_gdpr_banner=1",
+            "status": 404,
+            "failure": null
+          }
+        ],
+        "title": "Contact | TaaS - Talent as a Service",
+        "description": "Talk to TaaSFlow about subscription recruiting. Book a call, start a $399 pilot, or replace agency fees with ranked candidates.",
+        "canonical": "https://taasflow.com/contact",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:type": "website",
+          "og:url": "https://taasflow.com/contact",
+          "og:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "og:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "og:image": "https://taasflow.com/og-image.png",
+          "og:image:width": "1200",
+          "og:image:height": "630",
+          "og:locale": "en_US",
+          "twitter:card": "summary_large_image",
+          "twitter:site": "@TaasFlow",
+          "twitter:creator": "@TaasFlow",
+          "twitter:url": "https://taasflow.com/contact",
+          "twitter:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "twitter:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "twitter:image": "https://taasflow.com/og-image.png"
+        },
+        "structuredData": [
+          {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "@id": "https://taasflow.com/#organization",
+            "name": "TaaSFlow",
+            "legalName": "TaaSFlow",
+            "url": "https://taasflow.com/",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://taasflow.com/favicon.png",
+              "width": 512,
+              "height": 512
+            },
+            "image": "https://taasflow.com/og-image.png",
+            "description": "Talent as a Service — subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+            "slogan": "Your hiring team. On demand.",
+            "foundingDate": "2024",
+            "areaServed": [
+              {
+                "@type": "Country",
+                "name": "United States"
+              },
+              {
+                "@type": "Country",
+                "name": "United Arab Emirates"
+              },
+              {
+                "@type": "Country",
+                "name": "United Kingdom"
+              },
+              {
+                "@type": "Country",
+                "name": "Brazil"
+              }
+            ],
+            "knowsAbout": [
+              "Subscription recruiting",
+              "Talent as a Service",
+              "Candidate sourcing",
+              "Pre-screened candidates",
+              "Recruitment process outsourcing"
+            ],
+            "contactPoint": [
+              {
+                "@type": "ContactPoint",
+                "contactType": "sales",
+                "email": "hello@taasflow.com",
+                "url": "https://taasflow.com/contact",
+                "availableLanguage": [
+                  "English",
+                  "Portuguese",
+                  "Spanish"
+                ]
+              }
+            ],
+            "sameAs": [
+              "https://www.linkedin.com/company/taasflow",
+              "https://twitter.com/TaasFlow"
+            ]
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "@id": "https://taasflow.com/#website",
+            "name": "TaaSFlow",
+            "alternateName": "Talent as a Service",
+            "url": "https://taasflow.com/",
+            "description": "Subscription recruiting that delivers pre-screened, ranked candidates in 14 days.",
+            "inLanguage": "en-US",
+            "publisher": {
+              "@id": "https://taasflow.com/#organization"
+            },
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": {
+                "@type": "EntryPoint",
+                "urlTemplate": "https://taasflow.com/jobs?q={search_term_string}"
+              },
+              "query-input": "required name=search_term_string"
+            }
+          }
+        ],
+        "h1": [
+          "Contact us"
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "Contact us"
+          },
+          {
+            "level": 2,
+            "text": "Book a call or send a message"
+          },
+          {
+            "level": 4,
+            "text": "Newsletter"
+          },
+          {
+            "level": 4,
+            "text": "For candidates"
+          },
+          {
+            "level": 4,
+            "text": "For companies"
+          },
+          {
+            "level": 4,
+            "text": "Industries"
+          },
+          {
+            "level": 4,
+            "text": "Company"
+          },
+          {
+            "level": 3,
+            "text": "Cookie Preferences"
+          }
+        ],
+        "sections": [
+          "SECTION",
+          "Contact us"
+        ],
+        "textBlocks": [
+          "Solutions",
+          "Industries",
+          "Resources",
+          "Have questions? Want to start a pilot? We're happy to help.",
+          "Start a pilot or brief us on the role you need to fill.",
+          "Talent as a Service",
+          "A global hiring system for teams that need consistent recruiting.",
+          "Weekly insights into talent acquisition. No spam.",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Book call",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "No recruitment agency fees. No placement charges. Subscription-based hiring system.",
+          "Copyright 2026 TaaSFlow. All rights reserved.",
+          "We use essential cookies for core functionality. With your consent, we use analytics (Google Analytics) and marketing technologies (Meta Pixel, Apollo, Retention.com/RB2B) to understand website performance, improve campaigns, and measure conversions safely. Your data is processed in accordance with GDPR and our Privacy Notice. You can change your preferences at any time."
+        ],
+        "buttons": [
+          "Solutions",
+          "Industries",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Solutions",
+          "How it works",
+          "Pilot",
+          "Enterprise",
+          "Case studies",
+          "Jobs",
+          "Journey",
+          "Industries",
+          "Tech",
+          "SaaS & Cloud",
+          "Cybersecurity",
+          "Data & Analytics",
+          "Finance",
+          "Insurance",
+          "PE & VC",
+          "Accounting",
+          "Legal",
+          "Consulting",
+          "HR & Recruiting",
+          "Staffing Agencies",
+          "Sales",
+          "Marketing",
+          "E-commerce",
+          "Media",
+          "Real Estate",
+          "Construction",
+          "Hospitality",
+          "Healthcare",
+          "Public Sector",
+          "Non-Profit",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Success Stories",
+          "Talent Marketplace",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "I want to hire talent",
+          "I am a candidate",
+          "I am an existing client",
+          "I need support",
+          "General inquiry",
+          "Start intake",
+          "Schedule a call",
+          "Send a message",
+          "Subscribe",
+          "Book call",
+          "Cookie preferences",
+          "Customize",
+          "Reject Non-Essential",
+          "Accept All"
+        ],
+        "links": [
+          {
+            "text": "Skip to main content",
+            "href": "https://taasflow.com/contact#main-content"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "Browse jobs",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Join the network",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Browse open roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "See pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "LinkedIn",
+            "href": "https://www.linkedin.com/company/taasflow/"
+          },
+          {
+            "text": "Browse roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Talent network",
+            "href": "https://taasflow.com/global-talent"
+          },
+          {
+            "text": "Member stories",
+            "href": "https://taasflow.com/candidate-success"
+          },
+          {
+            "text": "Start pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "Employer onboarding",
+            "href": "https://taasflow.com/employer-onboarding"
+          },
+          {
+            "text": "Case studies",
+            "href": "https://taasflow.com/case-studies"
+          },
+          {
+            "text": "Healthcare",
+            "href": "https://taasflow.com/industries/healthcare"
+          },
+          {
+            "text": "Technology",
+            "href": "https://taasflow.com/industries/tech"
+          },
+          {
+            "text": "Finance",
+            "href": "https://taasflow.com/industries/finance"
+          },
+          {
+            "text": "Legal",
+            "href": "https://taasflow.com/industries/legal"
+          },
+          {
+            "text": "All →",
+            "href": "https://taasflow.com/industries"
+          },
+          {
+            "text": "About us",
+            "href": "https://taasflow.com/about"
+          },
+          {
+            "text": "Blog",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://taasflow.com/faq"
+          },
+          {
+            "text": "Knowledge Base",
+            "href": "https://taasflow.com/knowledge-base"
+          },
+          {
+            "text": "Contact us",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Privacy Policy",
+            "href": "https://taasflow.com/privacy"
+          },
+          {
+            "text": "Terms of Service",
+            "href": "https://taasflow.com/terms"
+          },
+          {
+            "text": "Privacy Notice",
+            "href": "https://taasflow.com/privacy"
+          }
+        ],
+        "images": [
+          {
+            "src": "https://taasflow.com/assets/logo-on-white-Dk9DIcMP.png",
+            "alt": "TaaSFlow logo"
+          },
+          {
+            "src": "https://taasflow.com/assets/logo-on-blue-CX6jlwjg.png",
+            "alt": "TaaSFlow logo"
+          }
+        ],
+        "forms": [
+          {
+            "action": "https://taasflow.com/contact",
+            "fields": [
+              "input"
+            ]
+          }
+        ],
+        "navLinks": [
+          "Browse jobs",
+          "Join the network",
+          "Browse open roles",
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us"
+        ],
+        "footerLinks": [
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "Privacy Policy",
+          "Terms of Service"
+        ],
+        "horizontalOverflow": false,
+        "documentWidth": 768,
+        "viewportWidth": 768
+      },
+      "destination": {
+        "url": "https://clear-path-hubs.lovable.app/contact",
+        "finalUrl": "https://clear-path-hubs.lovable.app/contact",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [],
+        "title": "Contact TaaSFlow — talk to a hiring lead",
+        "description": "Get in touch with the TaaSFlow team. Ask about subscription recruiting, start a pilot, or reach support. We reply within one business day.",
+        "canonical": "https://clear-path-hubs.lovable.app/contact",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "twitter:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "og:title": "Contact TaaSFlow — talk to a hiring lead",
+          "og:description": "Get in touch with the TaaSFlow team. Ask about subscription recruiting, start a pilot, or reach support. We reply within one business day.",
+          "og:url": "https://clear-path-hubs.lovable.app/contact",
+          "og:type": "website",
+          "twitter:card": "summary_large_image",
+          "twitter:title": "Contact TaaSFlow — talk to a hiring lead",
+          "twitter:description": "Get in touch with the TaaSFlow team. Ask about subscription recruiting, start a pilot, or reach support. We reply within one business day."
+        },
+        "structuredData": [],
+        "h1": [
+          "Talk to a hiring lead."
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "Talk to a hiring lead."
+          },
+          {
+            "level": 2,
+            "text": "Send us a message"
+          },
+          {
+            "level": 3,
+            "text": "Company"
+          },
+          {
+            "level": 3,
+            "text": "Solutions"
+          },
+          {
+            "level": 3,
+            "text": "Employers"
+          },
+          {
+            "level": 3,
+            "text": "Candidates"
+          },
+          {
+            "level": 3,
+            "text": "Resources"
+          }
+        ],
+        "sections": [
+          "Talk to a hiring lead.",
+          "SECTION"
+        ],
+        "textBlocks": [
+          "Solutions",
+          "Industries",
+          "Resources",
+          "About",
+          "Jobs",
+          "Contact",
+          "Ask about subscription recruiting, start a pilot, or reach out to our support team. We reply within one business day.",
+          "Hiring teams: Share the role you're trying to fill and we'll show you what a shortlist would look like.",
+          "Candidates: Questions about an application, your profile, or your data — we're happy to help.",
+          "Existing clients: For anything urgent, use the messaging in your workspace so it lands with your recruiter directly.",
+          "We'll reply within one business day.",
+          "By sending this message you agree to be contacted about your enquiry. See our privacy policy.",
+          "A live recruiting workspace with ranked, evidence-backed candidate delivery.",
+          "About",
+          "Journey",
+          "Contact",
+          "Solutions",
+          "How it works",
+          "Enterprise",
+          "Employer onboarding",
+          "Staffing partnership",
+          "Start hiring",
+          "Pilot",
+          "Pricing",
+          "Industries",
+          "Client sign in",
+          "Browse jobs",
+          "Talent network",
+          "Candidate success",
+          "Candidate journey",
+          "Candidate sign in",
+          "Resources",
+          "Blog",
+          "Case studies",
+          "Knowledge base",
+          "FAQ",
+          "© 2026 TaaSFlow. All rights reserved."
+        ],
+        "buttons": [
+          "Solutions",
+          "Industries",
+          "Resources",
+          "About",
+          "Send message"
+        ],
+        "links": [
+          {
+            "text": "Skip to main content",
+            "href": "https://clear-path-hubs.lovable.app/contact#main"
+          },
+          {
+            "text": "New: transparent role-specific scoring — see how it works.",
+            "href": "https://clear-path-hubs.lovable.app/how-it-works"
+          },
+          {
+            "text": "TaaSFlow",
+            "href": "https://clear-path-hubs.lovable.app/"
+          },
+          {
+            "text": "Jobs",
+            "href": "https://clear-path-hubs.lovable.app/jobs"
+          },
+          {
+            "text": "Sign in",
+            "href": "https://clear-path-hubs.lovable.app/login"
+          },
+          {
+            "text": "Browse jobs",
+            "href": "https://clear-path-hubs.lovable.app/jobs"
+          },
+          {
+            "text": "Start hiring",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "Start an intake",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "Read the FAQ",
+            "href": "https://clear-path-hubs.lovable.app/faq"
+          },
+          {
+            "text": "privacy policy",
+            "href": "https://clear-path-hubs.lovable.app/privacy"
+          },
+          {
+            "text": "TaaSFlow",
+            "href": "https://clear-path-hubs.lovable.app/"
+          },
+          {
+            "text": "",
+            "href": "https://www.linkedin.com/company/taasflow"
+          },
+          {
+            "text": "",
+            "href": "mailto:hello@taasflow.com"
+          },
+          {
+            "text": "About",
+            "href": "https://clear-path-hubs.lovable.app/about"
+          },
+          {
+            "text": "Journey",
+            "href": "https://clear-path-hubs.lovable.app/journey"
+          },
+          {
+            "text": "Contact",
+            "href": "https://clear-path-hubs.lovable.app/contact"
+          },
+          {
+            "text": "Solutions",
+            "href": "https://clear-path-hubs.lovable.app/solutions"
+          },
+          {
+            "text": "How it works",
+            "href": "https://clear-path-hubs.lovable.app/how-it-works"
+          },
+          {
+            "text": "Enterprise",
+            "href": "https://clear-path-hubs.lovable.app/enterprise"
+          },
+          {
+            "text": "Employer onboarding",
+            "href": "https://clear-path-hubs.lovable.app/employer-onboarding"
+          },
+          {
+            "text": "Staffing partnership",
+            "href": "https://clear-path-hubs.lovable.app/partnerships/staffing"
+          },
+          {
+            "text": "Start hiring",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "Pilot",
+            "href": "https://clear-path-hubs.lovable.app/pilot"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://clear-path-hubs.lovable.app/pricing"
+          },
+          {
+            "text": "Industries",
+            "href": "https://clear-path-hubs.lovable.app/industries"
+          },
+          {
+            "text": "Client sign in",
+            "href": "https://clear-path-hubs.lovable.app/login"
+          },
+          {
+            "text": "Browse jobs",
+            "href": "https://clear-path-hubs.lovable.app/jobs"
+          },
+          {
+            "text": "Talent network",
+            "href": "https://clear-path-hubs.lovable.app/talent-network"
+          },
+          {
+            "text": "Candidate success",
+            "href": "https://clear-path-hubs.lovable.app/candidate-success"
+          },
+          {
+            "text": "Candidate journey",
+            "href": "https://clear-path-hubs.lovable.app/journey"
+          },
+          {
+            "text": "Candidate sign in",
+            "href": "https://clear-path-hubs.lovable.app/login"
+          },
+          {
+            "text": "Resources",
+            "href": "https://clear-path-hubs.lovable.app/resources"
+          },
+          {
+            "text": "Blog",
+            "href": "https://clear-path-hubs.lovable.app/blog"
+          },
+          {
+            "text": "Case studies",
+            "href": "https://clear-path-hubs.lovable.app/case-studies"
+          },
+          {
+            "text": "Knowledge base",
+            "href": "https://clear-path-hubs.lovable.app/knowledge-base"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://clear-path-hubs.lovable.app/faq"
+          },
+          {
+            "text": "Privacy",
+            "href": "https://clear-path-hubs.lovable.app/privacy"
+          },
+          {
+            "text": "Terms",
+            "href": "https://clear-path-hubs.lovable.app/terms"
+          },
+          {
+            "text": "Sitemap",
+            "href": "https://clear-path-hubs.lovable.app/sitemap.xml"
+          },
+          {
+            "text": "hello@taasflow.com",
+            "href": "mailto:hello@taasflow.com"
+          },
+          {
+            "text": "Edit with",
+            "href": "https://lovable.dev/projects/1dc5ee7e-1294-441c-8288-850e79e443f6?utm_source=lovable-badge"
+          }
+        ],
+        "images": [
+          {
+            "src": "https://clear-path-hubs.lovable.app/assets/logo-on-white-Dk9DIcMP.png",
+            "alt": ""
+          },
+          {
+            "src": "https://clear-path-hubs.lovable.app/assets/logo-on-white-Dk9DIcMP.png",
+            "alt": ""
+          }
+        ],
+        "forms": [
+          {
+            "action": "https://clear-path-hubs.lovable.app/contact",
+            "fields": [
+              "website",
+              "name",
+              "email",
+              "company",
+              "topic",
+              "message"
+            ]
+          }
+        ],
+        "navLinks": [
+          "TaaSFlow",
+          "Jobs",
+          "Sign in",
+          "Browse jobs",
+          "Start hiring",
+          "Privacy",
+          "Terms",
+          "Sitemap",
+          "hello@taasflow.com"
+        ],
+        "footerLinks": [
+          "TaaSFlow",
+          "About",
+          "Journey",
+          "Contact",
+          "Solutions",
+          "How it works",
+          "Enterprise",
+          "Employer onboarding",
+          "Staffing partnership",
+          "Start hiring",
+          "Pilot",
+          "Pricing",
+          "Industries",
+          "Client sign in",
+          "Browse jobs",
+          "Talent network",
+          "Candidate success",
+          "Candidate journey",
+          "Candidate sign in",
+          "Resources",
+          "Blog",
+          "Case studies",
+          "Knowledge base",
+          "FAQ",
+          "Privacy",
+          "Terms",
+          "Sitemap",
+          "hello@taasflow.com"
+        ],
+        "horizontalOverflow": false,
+        "documentWidth": 768,
+        "viewportWidth": 768
+      },
+      "screenshots": {
+        "sourceFull": "reports/public-parity/screenshots/source/contact__tablet__full.png",
+        "sourceVisible": "reports/public-parity/screenshots/source/contact__tablet__visible.png",
+        "destinationFull": "reports/public-parity/screenshots/destination/contact__tablet__full.png",
+        "destinationVisible": "reports/public-parity/screenshots/destination/contact__tablet__visible.png"
+      },
+      "differences": [
+        "title: \"Contact | TaaS - Talent as a Service\" vs \"Contact TaaSFlow — talk to a hiring lead\"",
+        "meta description mismatch",
+        "H1 differs: [Contact us] vs [Talk to a hiring lead.]",
+        "heading overlap 0% (0/8)",
+        "destination images missing alt: 2"
+      ]
+    },
+    {
+      "viewport": "desktop",
+      "source": {
+        "url": "https://taasflow.com/contact",
+        "finalUrl": "https://taasflow.com/contact",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [
+          "Failed to load resource: the server responded with a status of 404 ()"
+        ],
+        "failedRequests": [
+          {
+            "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HJ2ECKCNK4&gtm=45je67l1v9245339446za200zd9245339446&_p=1784773965424&gcd=13l3l3l3l1l1&npa=0&_ng=1&dma=0&are=1&cid=763703182.1784773966&frm=0&ngs=1&pscdl=noapi&rcb=3&sr=1440x900&uaa=x86&uab=64&uafvl=Not-A.Brand%3B24.0.0.0%7CChromium%3B146.0.7680.80&uam=&uamb=0&uap=Windows&uapv=&uaw=0&ul=en-us&_s=1&tag_exp=115938466~115938469~118395335~118897920~118897930~119381662~119896802&dp=%2Fcontact&dt=TaaSFlow%20%7C%20Talent%20as%20a%20Service%20%7C%20Subscription%20Recruiting&dl=https%3A%2F%2Ftaasflow.com%2Fcontact&sid=1784773965&sct=1&seg=0&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&ep.role_type=public&ep.is_authenticated=false&tfd=697",
+            "status": null,
+            "failure": "net::ERR_ABORTED"
+          },
+          {
+            "url": "https://calendly.com/christian-brogger-taasflow?embed_domain=taasflow.com&embed_type=Inline&hide_gdpr_banner=1",
+            "status": 404,
+            "failure": null
+          }
+        ],
+        "title": "Contact | TaaS - Talent as a Service",
+        "description": "Talk to TaaSFlow about subscription recruiting. Book a call, start a $399 pilot, or replace agency fees with ranked candidates.",
+        "canonical": "https://taasflow.com/contact",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:type": "website",
+          "og:url": "https://taasflow.com/contact",
+          "og:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "og:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "og:image": "https://taasflow.com/og-image.png",
+          "og:image:width": "1200",
+          "og:image:height": "630",
+          "og:locale": "en_US",
+          "twitter:card": "summary_large_image",
+          "twitter:site": "@TaasFlow",
+          "twitter:creator": "@TaasFlow",
+          "twitter:url": "https://taasflow.com/contact",
+          "twitter:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "twitter:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "twitter:image": "https://taasflow.com/og-image.png"
+        },
+        "structuredData": [
+          {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "@id": "https://taasflow.com/#organization",
+            "name": "TaaSFlow",
+            "legalName": "TaaSFlow",
+            "url": "https://taasflow.com/",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://taasflow.com/favicon.png",
+              "width": 512,
+              "height": 512
+            },
+            "image": "https://taasflow.com/og-image.png",
+            "description": "Talent as a Service — subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+            "slogan": "Your hiring team. On demand.",
+            "foundingDate": "2024",
+            "areaServed": [
+              {
+                "@type": "Country",
+                "name": "United States"
+              },
+              {
+                "@type": "Country",
+                "name": "United Arab Emirates"
+              },
+              {
+                "@type": "Country",
+                "name": "United Kingdom"
+              },
+              {
+                "@type": "Country",
+                "name": "Brazil"
+              }
+            ],
+            "knowsAbout": [
+              "Subscription recruiting",
+              "Talent as a Service",
+              "Candidate sourcing",
+              "Pre-screened candidates",
+              "Recruitment process outsourcing"
+            ],
+            "contactPoint": [
+              {
+                "@type": "ContactPoint",
+                "contactType": "sales",
+                "email": "hello@taasflow.com",
+                "url": "https://taasflow.com/contact",
+                "availableLanguage": [
+                  "English",
+                  "Portuguese",
+                  "Spanish"
+                ]
+              }
+            ],
+            "sameAs": [
+              "https://www.linkedin.com/company/taasflow",
+              "https://twitter.com/TaasFlow"
+            ]
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "@id": "https://taasflow.com/#website",
+            "name": "TaaSFlow",
+            "alternateName": "Talent as a Service",
+            "url": "https://taasflow.com/",
+            "description": "Subscription recruiting that delivers pre-screened, ranked candidates in 14 days.",
+            "inLanguage": "en-US",
+            "publisher": {
+              "@id": "https://taasflow.com/#organization"
+            },
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": {
+                "@type": "EntryPoint",
+                "urlTemplate": "https://taasflow.com/jobs?q={search_term_string}"
+              },
+              "query-input": "required name=search_term_string"
+            }
+          }
+        ],
+        "h1": [
+          "Contact us"
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "Contact us"
+          },
+          {
+            "level": 2,
+            "text": "Book a call or send a message"
+          },
+          {
+            "level": 4,
+            "text": "Newsletter"
+          },
+          {
+            "level": 4,
+            "text": "For candidates"
+          },
+          {
+            "level": 4,
+            "text": "For companies"
+          },
+          {
+            "level": 4,
+            "text": "Industries"
+          },
+          {
+            "level": 4,
+            "text": "Company"
+          },
+          {
+            "level": 3,
+            "text": "Cookie Preferences"
+          }
+        ],
+        "sections": [
+          "SECTION",
+          "Contact us"
+        ],
+        "textBlocks": [
+          "Solutions",
+          "Industries",
+          "Resources",
+          "Have questions? Want to start a pilot? We're happy to help.",
+          "Start a pilot or brief us on the role you need to fill.",
+          "Talent as a Service",
+          "A global hiring system for teams that need consistent recruiting.",
+          "Weekly insights into talent acquisition. No spam.",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Book call",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "No recruitment agency fees. No placement charges. Subscription-based hiring system.",
+          "Copyright 2026 TaaSFlow. All rights reserved.",
+          "We use essential cookies for core functionality. With your consent, we use analytics (Google Analytics) and marketing technologies (Meta Pixel, Apollo, Retention.com/RB2B) to understand website performance, improve campaigns, and measure conversions safely. Your data is processed in accordance with GDPR and our Privacy Notice. You can change your preferences at any time."
+        ],
+        "buttons": [
+          "Solutions",
+          "Industries",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Solutions",
+          "How it works",
+          "Pilot",
+          "Enterprise",
+          "Case studies",
+          "Jobs",
+          "Journey",
+          "Industries",
+          "Tech",
+          "SaaS & Cloud",
+          "Cybersecurity",
+          "Data & Analytics",
+          "Finance",
+          "Insurance",
+          "PE & VC",
+          "Accounting",
+          "Legal",
+          "Consulting",
+          "HR & Recruiting",
+          "Staffing Agencies",
+          "Sales",
+          "Marketing",
+          "E-commerce",
+          "Media",
+          "Real Estate",
+          "Construction",
+          "Hospitality",
+          "Healthcare",
+          "Public Sector",
+          "Non-Profit",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Success Stories",
+          "Talent Marketplace",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "I want to hire talent",
+          "I am a candidate",
+          "I am an existing client",
+          "I need support",
+          "General inquiry",
+          "Start intake",
+          "Schedule a call",
+          "Send a message",
+          "Subscribe",
+          "Book call",
+          "Cookie preferences",
+          "Customize",
+          "Reject Non-Essential",
+          "Accept All"
+        ],
+        "links": [
+          {
+            "text": "Skip to main content",
+            "href": "https://taasflow.com/contact#main-content"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "Browse jobs",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Join the network",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Browse open roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "See pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "LinkedIn",
+            "href": "https://www.linkedin.com/company/taasflow/"
+          },
+          {
+            "text": "Browse roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Talent network",
+            "href": "https://taasflow.com/global-talent"
+          },
+          {
+            "text": "Member stories",
+            "href": "https://taasflow.com/candidate-success"
+          },
+          {
+            "text": "Start pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "Employer onboarding",
+            "href": "https://taasflow.com/employer-onboarding"
+          },
+          {
+            "text": "Case studies",
+            "href": "https://taasflow.com/case-studies"
+          },
+          {
+            "text": "Healthcare",
+            "href": "https://taasflow.com/industries/healthcare"
+          },
+          {
+            "text": "Technology",
+            "href": "https://taasflow.com/industries/tech"
+          },
+          {
+            "text": "Finance",
+            "href": "https://taasflow.com/industries/finance"
+          },
+          {
+            "text": "Legal",
+            "href": "https://taasflow.com/industries/legal"
+          },
+          {
+            "text": "All →",
+            "href": "https://taasflow.com/industries"
+          },
+          {
+            "text": "About us",
+            "href": "https://taasflow.com/about"
+          },
+          {
+            "text": "Blog",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://taasflow.com/faq"
+          },
+          {
+            "text": "Knowledge Base",
+            "href": "https://taasflow.com/knowledge-base"
+          },
+          {
+            "text": "Contact us",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Privacy Policy",
+            "href": "https://taasflow.com/privacy"
+          },
+          {
+            "text": "Terms of Service",
+            "href": "https://taasflow.com/terms"
+          },
+          {
+            "text": "Privacy Notice",
+            "href": "https://taasflow.com/privacy"
+          }
+        ],
+        "images": [
+          {
+            "src": "https://taasflow.com/assets/logo-on-white-Dk9DIcMP.png",
+            "alt": "TaaSFlow logo"
+          },
+          {
+            "src": "https://taasflow.com/assets/logo-on-blue-CX6jlwjg.png",
+            "alt": "TaaSFlow logo"
+          }
+        ],
+        "forms": [
+          {
+            "action": "https://taasflow.com/contact",
+            "fields": [
+              "input"
+            ]
+          }
+        ],
+        "navLinks": [
+          "Browse jobs",
+          "Join the network",
+          "Browse open roles",
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us"
+        ],
+        "footerLinks": [
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "Privacy Policy",
+          "Terms of Service"
+        ],
+        "horizontalOverflow": false,
+        "documentWidth": 1440,
+        "viewportWidth": 1440
+      },
+      "destination": {
+        "url": "https://clear-path-hubs.lovable.app/contact",
+        "finalUrl": "https://clear-path-hubs.lovable.app/contact",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [],
+        "title": "Contact TaaSFlow — talk to a hiring lead",
+        "description": "Get in touch with the TaaSFlow team. Ask about subscription recruiting, start a pilot, or reach support. We reply within one business day.",
+        "canonical": "https://clear-path-hubs.lovable.app/contact",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "twitter:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "og:title": "Contact TaaSFlow — talk to a hiring lead",
+          "og:description": "Get in touch with the TaaSFlow team. Ask about subscription recruiting, start a pilot, or reach support. We reply within one business day.",
+          "og:url": "https://clear-path-hubs.lovable.app/contact",
+          "og:type": "website",
+          "twitter:card": "summary_large_image",
+          "twitter:title": "Contact TaaSFlow — talk to a hiring lead",
+          "twitter:description": "Get in touch with the TaaSFlow team. Ask about subscription recruiting, start a pilot, or reach support. We reply within one business day."
+        },
+        "structuredData": [],
+        "h1": [
+          "Talk to a hiring lead."
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "Talk to a hiring lead."
+          },
+          {
+            "level": 2,
+            "text": "Send us a message"
+          },
+          {
+            "level": 3,
+            "text": "Company"
+          },
+          {
+            "level": 3,
+            "text": "Solutions"
+          },
+          {
+            "level": 3,
+            "text": "Employers"
+          },
+          {
+            "level": 3,
+            "text": "Candidates"
+          },
+          {
+            "level": 3,
+            "text": "Resources"
+          }
+        ],
+        "sections": [
+          "Talk to a hiring lead.",
+          "SECTION"
+        ],
+        "textBlocks": [
+          "Solutions",
+          "Industries",
+          "Resources",
+          "About",
+          "Jobs",
+          "Contact",
+          "Ask about subscription recruiting, start a pilot, or reach out to our support team. We reply within one business day.",
+          "Hiring teams: Share the role you're trying to fill and we'll show you what a shortlist would look like.",
+          "Candidates: Questions about an application, your profile, or your data — we're happy to help.",
+          "Existing clients: For anything urgent, use the messaging in your workspace so it lands with your recruiter directly.",
+          "We'll reply within one business day.",
+          "By sending this message you agree to be contacted about your enquiry. See our privacy policy.",
+          "A live recruiting workspace with ranked, evidence-backed candidate delivery.",
+          "About",
+          "Journey",
+          "Contact",
+          "Solutions",
+          "How it works",
+          "Enterprise",
+          "Employer onboarding",
+          "Staffing partnership",
+          "Start hiring",
+          "Pilot",
+          "Pricing",
+          "Industries",
+          "Client sign in",
+          "Browse jobs",
+          "Talent network",
+          "Candidate success",
+          "Candidate journey",
+          "Candidate sign in",
+          "Resources",
+          "Blog",
+          "Case studies",
+          "Knowledge base",
+          "FAQ",
+          "© 2026 TaaSFlow. All rights reserved."
+        ],
+        "buttons": [
+          "Solutions",
+          "Industries",
+          "Resources",
+          "About",
+          "Send message"
+        ],
+        "links": [
+          {
+            "text": "Skip to main content",
+            "href": "https://clear-path-hubs.lovable.app/contact#main"
+          },
+          {
+            "text": "New: transparent role-specific scoring — see how it works.",
+            "href": "https://clear-path-hubs.lovable.app/how-it-works"
+          },
+          {
+            "text": "TaaSFlow",
+            "href": "https://clear-path-hubs.lovable.app/"
+          },
+          {
+            "text": "Jobs",
+            "href": "https://clear-path-hubs.lovable.app/jobs"
+          },
+          {
+            "text": "Sign in",
+            "href": "https://clear-path-hubs.lovable.app/login"
+          },
+          {
+            "text": "Browse jobs",
+            "href": "https://clear-path-hubs.lovable.app/jobs"
+          },
+          {
+            "text": "Start hiring",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "Start an intake",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "Read the FAQ",
+            "href": "https://clear-path-hubs.lovable.app/faq"
+          },
+          {
+            "text": "privacy policy",
+            "href": "https://clear-path-hubs.lovable.app/privacy"
+          },
+          {
+            "text": "TaaSFlow",
+            "href": "https://clear-path-hubs.lovable.app/"
+          },
+          {
+            "text": "",
+            "href": "https://www.linkedin.com/company/taasflow"
+          },
+          {
+            "text": "",
+            "href": "mailto:hello@taasflow.com"
+          },
+          {
+            "text": "About",
+            "href": "https://clear-path-hubs.lovable.app/about"
+          },
+          {
+            "text": "Journey",
+            "href": "https://clear-path-hubs.lovable.app/journey"
+          },
+          {
+            "text": "Contact",
+            "href": "https://clear-path-hubs.lovable.app/contact"
+          },
+          {
+            "text": "Solutions",
+            "href": "https://clear-path-hubs.lovable.app/solutions"
+          },
+          {
+            "text": "How it works",
+            "href": "https://clear-path-hubs.lovable.app/how-it-works"
+          },
+          {
+            "text": "Enterprise",
+            "href": "https://clear-path-hubs.lovable.app/enterprise"
+          },
+          {
+            "text": "Employer onboarding",
+            "href": "https://clear-path-hubs.lovable.app/employer-onboarding"
+          },
+          {
+            "text": "Staffing partnership",
+            "href": "https://clear-path-hubs.lovable.app/partnerships/staffing"
+          },
+          {
+            "text": "Start hiring",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "Pilot",
+            "href": "https://clear-path-hubs.lovable.app/pilot"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://clear-path-hubs.lovable.app/pricing"
+          },
+          {
+            "text": "Industries",
+            "href": "https://clear-path-hubs.lovable.app/industries"
+          },
+          {
+            "text": "Client sign in",
+            "href": "https://clear-path-hubs.lovable.app/login"
+          },
+          {
+            "text": "Browse jobs",
+            "href": "https://clear-path-hubs.lovable.app/jobs"
+          },
+          {
+            "text": "Talent network",
+            "href": "https://clear-path-hubs.lovable.app/talent-network"
+          },
+          {
+            "text": "Candidate success",
+            "href": "https://clear-path-hubs.lovable.app/candidate-success"
+          },
+          {
+            "text": "Candidate journey",
+            "href": "https://clear-path-hubs.lovable.app/journey"
+          },
+          {
+            "text": "Candidate sign in",
+            "href": "https://clear-path-hubs.lovable.app/login"
+          },
+          {
+            "text": "Resources",
+            "href": "https://clear-path-hubs.lovable.app/resources"
+          },
+          {
+            "text": "Blog",
+            "href": "https://clear-path-hubs.lovable.app/blog"
+          },
+          {
+            "text": "Case studies",
+            "href": "https://clear-path-hubs.lovable.app/case-studies"
+          },
+          {
+            "text": "Knowledge base",
+            "href": "https://clear-path-hubs.lovable.app/knowledge-base"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://clear-path-hubs.lovable.app/faq"
+          },
+          {
+            "text": "Privacy",
+            "href": "https://clear-path-hubs.lovable.app/privacy"
+          },
+          {
+            "text": "Terms",
+            "href": "https://clear-path-hubs.lovable.app/terms"
+          },
+          {
+            "text": "Sitemap",
+            "href": "https://clear-path-hubs.lovable.app/sitemap.xml"
+          },
+          {
+            "text": "hello@taasflow.com",
+            "href": "mailto:hello@taasflow.com"
+          },
+          {
+            "text": "Edit with",
+            "href": "https://lovable.dev/projects/1dc5ee7e-1294-441c-8288-850e79e443f6?utm_source=lovable-badge"
+          }
+        ],
+        "images": [
+          {
+            "src": "https://clear-path-hubs.lovable.app/assets/logo-on-white-Dk9DIcMP.png",
+            "alt": ""
+          },
+          {
+            "src": "https://clear-path-hubs.lovable.app/assets/logo-on-white-Dk9DIcMP.png",
+            "alt": ""
+          }
+        ],
+        "forms": [
+          {
+            "action": "https://clear-path-hubs.lovable.app/contact",
+            "fields": [
+              "website",
+              "name",
+              "email",
+              "company",
+              "topic",
+              "message"
+            ]
+          }
+        ],
+        "navLinks": [
+          "TaaSFlow",
+          "Jobs",
+          "Sign in",
+          "Browse jobs",
+          "Start hiring",
+          "Privacy",
+          "Terms",
+          "Sitemap",
+          "hello@taasflow.com"
+        ],
+        "footerLinks": [
+          "TaaSFlow",
+          "About",
+          "Journey",
+          "Contact",
+          "Solutions",
+          "How it works",
+          "Enterprise",
+          "Employer onboarding",
+          "Staffing partnership",
+          "Start hiring",
+          "Pilot",
+          "Pricing",
+          "Industries",
+          "Client sign in",
+          "Browse jobs",
+          "Talent network",
+          "Candidate success",
+          "Candidate journey",
+          "Candidate sign in",
+          "Resources",
+          "Blog",
+          "Case studies",
+          "Knowledge base",
+          "FAQ",
+          "Privacy",
+          "Terms",
+          "Sitemap",
+          "hello@taasflow.com"
+        ],
+        "horizontalOverflow": false,
+        "documentWidth": 1440,
+        "viewportWidth": 1440
+      },
+      "screenshots": {
+        "sourceFull": "reports/public-parity/screenshots/source/contact__desktop__full.png",
+        "sourceVisible": "reports/public-parity/screenshots/source/contact__desktop__visible.png",
+        "destinationFull": "reports/public-parity/screenshots/destination/contact__desktop__full.png",
+        "destinationVisible": "reports/public-parity/screenshots/destination/contact__desktop__visible.png"
+      },
+      "differences": [
+        "title: \"Contact | TaaS - Talent as a Service\" vs \"Contact TaaSFlow — talk to a hiring lead\"",
+        "meta description mismatch",
+        "H1 differs: [Contact us] vs [Talk to a hiring lead.]",
+        "heading overlap 0% (0/8)",
+        "destination images missing alt: 2"
+      ]
+    }
+  ],
+  "summary": "15 differences detected",
+  "exclusions": []
+}

@@ -1,0 +1,3056 @@
+{
+  "sourcePath": "/global-talent",
+  "destinationPath": "/global-talent",
+  "pageType": "marketing_static",
+  "protected": false,
+  "verdict": "MAJOR_DIFFERENCE",
+  "severity": "HIGH",
+  "viewports": [
+    {
+      "viewport": "mobile",
+      "source": {
+        "url": "https://taasflow.com/global-talent",
+        "finalUrl": "https://taasflow.com/global-talent",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [
+          {
+            "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HJ2ECKCNK4&gtm=45je67m0h2v9245339446za200zd9245339446&_p=1784774004224&gcd=13l3l3l3l1l1&npa=0&_ng=1&dma=0&are=1&cid=1891208233.1784774004&frm=0&ngs=1&pscdl=noapi&rcb=15&sr=375x812&uaa=x86&uab=64&uafvl=Not-A.Brand%3B24.0.0.0%7CChromium%3B146.0.7680.80&uam=&uamb=0&uap=Windows&uapv=&uaw=0&ul=en-us&_s=1&tag_exp=115938465~115938469~118395333~118897920~118897930~119527020~119896802&dp=%2Fglobal-talent&dt=TaaSFlow%20%7C%20Talent%20as%20a%20Service%20%7C%20Subscription%20Recruiting&dl=https%3A%2F%2Ftaasflow.com%2Fglobal-talent&sid=1784774004&sct=1&seg=0&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&ep.role_type=public&ep.is_authenticated=false&tfd=638",
+            "status": null,
+            "failure": "net::ERR_ABORTED"
+          }
+        ],
+        "title": "TaaSFlow Network — Private Network for Senior Talent",
+        "description": "A curated network for highly skilled professionals. Express interest in selective briefs, or stay quietly discoverable for premium opportunities worldwide.",
+        "canonical": "https://taasflow.com/global-talent",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:type": "website",
+          "og:url": "https://taasflow.com/global-talent",
+          "og:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "og:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "og:image": "https://taasflow.com/og-image.png",
+          "og:image:width": "1200",
+          "og:image:height": "630",
+          "og:locale": "en_US",
+          "twitter:card": "summary_large_image",
+          "twitter:site": "@TaasFlow",
+          "twitter:creator": "@TaasFlow",
+          "twitter:url": "https://taasflow.com/global-talent",
+          "twitter:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "twitter:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "twitter:image": "https://taasflow.com/og-image.png"
+        },
+        "structuredData": [
+          {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "@id": "https://taasflow.com/#organization",
+            "name": "TaaSFlow",
+            "legalName": "TaaSFlow",
+            "url": "https://taasflow.com/",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://taasflow.com/favicon.png",
+              "width": 512,
+              "height": 512
+            },
+            "image": "https://taasflow.com/og-image.png",
+            "description": "Talent as a Service — subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+            "slogan": "Your hiring team. On demand.",
+            "foundingDate": "2024",
+            "areaServed": [
+              {
+                "@type": "Country",
+                "name": "United States"
+              },
+              {
+                "@type": "Country",
+                "name": "United Arab Emirates"
+              },
+              {
+                "@type": "Country",
+                "name": "United Kingdom"
+              },
+              {
+                "@type": "Country",
+                "name": "Brazil"
+              }
+            ],
+            "knowsAbout": [
+              "Subscription recruiting",
+              "Talent as a Service",
+              "Candidate sourcing",
+              "Pre-screened candidates",
+              "Recruitment process outsourcing"
+            ],
+            "contactPoint": [
+              {
+                "@type": "ContactPoint",
+                "contactType": "sales",
+                "email": "hello@taasflow.com",
+                "url": "https://taasflow.com/contact",
+                "availableLanguage": [
+                  "English",
+                  "Portuguese",
+                  "Spanish"
+                ]
+              }
+            ],
+            "sameAs": [
+              "https://www.linkedin.com/company/taasflow",
+              "https://twitter.com/TaasFlow"
+            ]
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "@id": "https://taasflow.com/#website",
+            "name": "TaaSFlow",
+            "alternateName": "Talent as a Service",
+            "url": "https://taasflow.com/",
+            "description": "Subscription recruiting that delivers pre-screened, ranked candidates in 14 days.",
+            "inLanguage": "en-US",
+            "publisher": {
+              "@id": "https://taasflow.com/#organization"
+            },
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": {
+                "@type": "EntryPoint",
+                "urlTemplate": "https://taasflow.com/jobs?q={search_term_string}"
+              },
+              "query-input": "required name=search_term_string"
+            }
+          }
+        ],
+        "h1": [
+          "A quieter way to be consideredfor the right work."
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "A quieter way to be consideredfor the right work."
+          },
+          {
+            "level": 2,
+            "text": "Built for people who don’t need another job board."
+          },
+          {
+            "level": 2,
+            "text": "Three ways to be considered."
+          },
+          {
+            "level": 3,
+            "text": "Express interest in a role"
+          },
+          {
+            "level": 3,
+            "text": "Join the network"
+          },
+          {
+            "level": 3,
+            "text": "Be quietly discoverable"
+          },
+          {
+            "level": 2,
+            "text": "Fewer roles. Higher signal.Considered work for considered people."
+          },
+          {
+            "level": 2,
+            "text": "Your career, on your terms."
+          },
+          {
+            "level": 2,
+            "text": "Work that crosses borders."
+          },
+          {
+            "level": 3,
+            "text": "Remote-first by default"
+          },
+          {
+            "level": 3,
+            "text": "Regional specialisation"
+          },
+          {
+            "level": 3,
+            "text": "Relocation, when offered"
+          },
+          {
+            "level": 2,
+            "text": "The other side of the network."
+          },
+          {
+            "level": 3,
+            "text": "See an open brief?"
+          },
+          {
+            "level": 3,
+            "text": "Not actively looking?"
+          },
+          {
+            "level": 2,
+            "text": "Direct answers."
+          },
+          {
+            "level": 3,
+            "text": "Is TaaSFlow Network free for professionals?"
+          },
+          {
+            "level": 3,
+            "text": "How is this different from a recruiter reaching out on LinkedIn?"
+          },
+          {
+            "level": 3,
+            "text": "Will my current employer see I&rsquo;m on the network?"
+          },
+          {
+            "level": 3,
+            "text": "Do you support relocation and visas?"
+          },
+          {
+            "level": 3,
+            "text": "What does &ldquo;expressing interest&rdquo; actually do?"
+          },
+          {
+            "level": 3,
+            "text": "Is this only for senior people?"
+          },
+          {
+            "level": 4,
+            "text": "Newsletter"
+          },
+          {
+            "level": 4,
+            "text": "For candidates"
+          },
+          {
+            "level": 4,
+            "text": "For companies"
+          },
+          {
+            "level": 4,
+            "text": "Industries"
+          },
+          {
+            "level": 4,
+            "text": "Company"
+          }
+        ],
+        "sections": [
+          "SECTION",
+          "A quieter way to be consideredfor the right work.",
+          "Built for people who don’t need another job board.",
+          "Three ways to be considered.",
+          "Fewer roles. Higher signal.Considered work for considered people.",
+          "Your career, on your terms.",
+          "Work that crosses borders.",
+          "The other side of the network.",
+          "See an open brief?",
+          "Direct answers."
+        ],
+        "textBlocks": [
+          "Solutions",
+          "Industries",
+          "Resources",
+          "TaaSFlow Network is a curated space for highly skilled people — senior operators, specialists and internationally mobile talent. Express interest in selective briefs, or stay privately discoverable for premium opportunities worldwide.",
+          "Membership is free for professionals. Your profile is never visible to clients without your consent.",
+          "TaaSFlow Network is most useful if you’re a senior operator, a deep specialist, or a professional considering an international move. The members we work best with already have options — they want fewer, better conversations.",
+          "Senior individual contributors",
+          "Founders, principals & heads of",
+          "Specialists with rare technical depth",
+          "Internationally mobile professionals",
+          "Quietly exploring, not actively searching",
+          "Open to relocation in selected markets",
+          "You decide how visible you want to be — and to whom.",
+          "Review the brief, then express interest. We review every submission individually and reply with a clear next step.",
+          "Create a member profile to be considered for future briefs that match your direction. No public listings, no algorithmic noise.",
+          "Opt in to be surfaced — privately — to selected subscription clients for premium opportunities. Always under your control.",
+          "Traditional job boards optimise for volume. We optimise for relevance. Every brief on the network has a real client behind it, a real budget, and a real timeline — and every member is reviewed by a person, not a filter.",
+          "Public listings",
+          "Auto-rejections",
+          "Mass outreach",
+          "Profile is a commodity",
+          "Curated briefs",
+          "Human review",
+          "Private introductions",
+          "Profile stays yours",
+          "Discretion is part of the product. Your profile is never indexed publicly, never sold, and never shown to a client without your consent for that specific brief.",
+          "Your profile is invisible to search engines. Members only.",
+          "We ask before sharing your details with any specific client.",
+          "Pause visibility, edit details, or leave the network at any time.",
+          "Hide your profile from named companies you don’t want to see it.",
+          "Many of our briefs are remote-first or open to international candidates. Where relocation or visa support is on the table, the brief will say so explicitly — and the client commits to it before we make the introduction.",
+          "Most briefs are open to professionals across multiple regions.",
+          "Focus on EMEA, APAC and the Americas — local context matters.",
+          "Visa and relocation support is brief-specific. Never assumed, never promised on our behalf.",
+          "TaaSFlow works with subscription clients — funded scale-ups, global enterprises, and specialist firms — who pay to access a curated network rather than scroll through CVs. When you opt in to be discoverable, you’re shown only to those clients, only for briefs that match your direction, and only with your consent at the moment of introduction.",
+          "Review live briefs and express interest in the ones that fit. We reply individually.",
+          "Join the network privately. We’ll only be in touch when something genuinely fits.",
+          "Talent as a Service",
+          "A global hiring system for teams that need consistent recruiting.",
+          "Weekly insights into talent acquisition. No spam.",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Book call",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "No recruitment agency fees. No placement charges. Subscription-based hiring system.",
+          "Copyright 2026 TaaSFlow. All rights reserved."
+        ],
+        "buttons": [
+          "Solutions",
+          "Industries",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Solutions",
+          "How it works",
+          "Pilot",
+          "Enterprise",
+          "Case studies",
+          "Jobs",
+          "Journey",
+          "Industries",
+          "Tech",
+          "SaaS & Cloud",
+          "Cybersecurity",
+          "Data & Analytics",
+          "Finance",
+          "Insurance",
+          "PE & VC",
+          "Accounting",
+          "Legal",
+          "Consulting",
+          "HR & Recruiting",
+          "Staffing Agencies",
+          "Sales",
+          "Marketing",
+          "E-commerce",
+          "Media",
+          "Real Estate",
+          "Construction",
+          "Hospitality",
+          "Healthcare",
+          "Public Sector",
+          "Non-Profit",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Success Stories",
+          "Talent Marketplace",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Is TaaSFlow Network free for professionals?",
+          "How is this different from a recruiter reaching out on LinkedIn?",
+          "Will my current employer see I&rsquo;m on the network?",
+          "Do you support relocation and visas?",
+          "What does &ldquo;expressing interest&rdquo; actually do?",
+          "Is this only for senior people?",
+          "Subscribe",
+          "Book call",
+          "Cookie preferences"
+        ],
+        "links": [
+          {
+            "text": "Skip to main content",
+            "href": "https://taasflow.com/global-talent#main-content"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "Browse jobs",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Join the network",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Browse open roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Join the network",
+            "href": "https://taasflow.com/candidate/join"
+          },
+          {
+            "text": "Browse roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Browse briefs",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Join the network",
+            "href": "https://taasflow.com/candidate/join"
+          },
+          {
+            "text": "Learn about privacy",
+            "href": "https://taasflow.com/privacy"
+          },
+          {
+            "text": "Join the network",
+            "href": "https://taasflow.com/candidate/join"
+          },
+          {
+            "text": "How it works",
+            "href": "https://taasflow.com/how-it-works"
+          },
+          {
+            "text": "Browse open briefs",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Join the network",
+            "href": "https://taasflow.com/candidate/join"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "LinkedIn",
+            "href": "https://www.linkedin.com/company/taasflow/"
+          },
+          {
+            "text": "Browse roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Talent network",
+            "href": "https://taasflow.com/global-talent"
+          },
+          {
+            "text": "Member stories",
+            "href": "https://taasflow.com/candidate-success"
+          },
+          {
+            "text": "Start pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "Employer onboarding",
+            "href": "https://taasflow.com/employer-onboarding"
+          },
+          {
+            "text": "Case studies",
+            "href": "https://taasflow.com/case-studies"
+          },
+          {
+            "text": "Healthcare",
+            "href": "https://taasflow.com/industries/healthcare"
+          },
+          {
+            "text": "Technology",
+            "href": "https://taasflow.com/industries/tech"
+          },
+          {
+            "text": "Finance",
+            "href": "https://taasflow.com/industries/finance"
+          },
+          {
+            "text": "Legal",
+            "href": "https://taasflow.com/industries/legal"
+          },
+          {
+            "text": "All →",
+            "href": "https://taasflow.com/industries"
+          },
+          {
+            "text": "About us",
+            "href": "https://taasflow.com/about"
+          },
+          {
+            "text": "Blog",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://taasflow.com/faq"
+          },
+          {
+            "text": "Knowledge Base",
+            "href": "https://taasflow.com/knowledge-base"
+          },
+          {
+            "text": "Contact us",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Privacy Policy",
+            "href": "https://taasflow.com/privacy"
+          },
+          {
+            "text": "Terms of Service",
+            "href": "https://taasflow.com/terms"
+          }
+        ],
+        "images": [
+          {
+            "src": "https://taasflow.com/assets/logo-on-white-Dk9DIcMP.png",
+            "alt": "TaaSFlow logo"
+          },
+          {
+            "src": "https://taasflow.com/assets/logo-on-blue-CX6jlwjg.png",
+            "alt": "TaaSFlow logo"
+          }
+        ],
+        "forms": [
+          {
+            "action": "https://taasflow.com/global-talent",
+            "fields": [
+              "input"
+            ]
+          }
+        ],
+        "navLinks": [
+          "Browse jobs",
+          "Join the network",
+          "Browse open roles",
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us"
+        ],
+        "footerLinks": [
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "Privacy Policy",
+          "Terms of Service"
+        ],
+        "horizontalOverflow": false,
+        "documentWidth": 375,
+        "viewportWidth": 375
+      },
+      "destination": {
+        "url": "https://clear-path-hubs.lovable.app/global-talent",
+        "finalUrl": "https://clear-path-hubs.lovable.app/global-talent",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [],
+        "title": "Global Talent — remote-first hiring with clear scope | TaaSFlow",
+        "description": "Hire globally with TaaSFlow: remote-first briefs, regional sourcing, and relocation only when the employer commits. Clear scope, no unverified promises.",
+        "canonical": "https://clear-path-hubs.lovable.app/global-talent",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "twitter:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "og:title": "Global Talent — remote-first hiring with clear scope | TaaSFlow",
+          "og:description": "Hire globally with TaaSFlow: remote-first briefs, regional sourcing, and relocation only when the employer commits. Clear scope, no unverified promises.",
+          "og:type": "website",
+          "og:url": "https://clear-path-hubs.lovable.app/global-talent",
+          "twitter:card": "summary_large_image",
+          "twitter:title": "Global Talent — remote-first hiring with clear scope | TaaSFlow",
+          "twitter:description": "Hire globally with TaaSFlow: remote-first briefs, regional sourcing, and relocation only when the employer commits. Clear scope, no unverified promises."
+        },
+        "structuredData": [],
+        "h1": [
+          "Hire globally, without vague promises."
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "Hire globally, without vague promises."
+          },
+          {
+            "level": 2,
+            "text": "Geographic coverage"
+          },
+          {
+            "level": 3,
+            "text": "EMEA"
+          },
+          {
+            "level": 3,
+            "text": "Americas"
+          },
+          {
+            "level": 3,
+            "text": "APAC"
+          },
+          {
+            "level": 2,
+            "text": "Remote hiring, done properly"
+          },
+          {
+            "level": 2,
+            "text": "International sourcing"
+          },
+          {
+            "level": 2,
+            "text": "Relocation support"
+          },
+          {
+            "level": 3,
+            "text": "Only when the employer commits"
+          },
+          {
+            "level": 3,
+            "text": "Scope is on the brief"
+          },
+          {
+            "level": 3,
+            "text": "Eligibility captured up front"
+          },
+          {
+            "level": 2,
+            "text": "Employer options"
+          },
+          {
+            "level": 3,
+            "text": "Direct hire (permanent)"
+          },
+          {
+            "level": 3,
+            "text": "Contract engagements"
+          },
+          {
+            "level": 3,
+            "text": "Employer-of-record partners"
+          },
+          {
+            "level": 2,
+            "text": "Open a role across time zones."
+          },
+          {
+            "level": 3,
+            "text": "Company"
+          },
+          {
+            "level": 3,
+            "text": "Solutions"
+          },
+          {
+            "level": 3,
+            "text": "Employers"
+          },
+          {
+            "level": 3,
+            "text": "Candidates"
+          },
+          {
+            "level": 3,
+            "text": "Resources"
+          }
+        ],
+        "sections": [
+          "Hire globally, without vague promises.",
+          "Geographic coverage",
+          "Remote hiring, done properly",
+          "Relocation support",
+          "Employer options",
+          "Open a role across time zones.",
+          "SECTION"
+        ],
+        "textBlocks": [
+          "Solutions",
+          "Industries",
+          "Resources",
+          "About",
+          "Jobs",
+          "Home",
+          "Global Talent",
+          "Global reach",
+          "Remote-first sourcing across EMEA, the Americas and APAC. Relocation and visa support are offered per brief, only when the employer has confirmed the scope in writing.",
+          "Coverage means active sourcing, screening and time-zone alignment — not country checklists.",
+          "Active sourcing across the UK, EU-27, EFTA and select MENA markets. Local time-zone screening and language filters.",
+          "North America, LATAM and Caribbean coverage with time-zone-aligned pipelines for cross-region teams.",
+          "Established reach across Australia, New Zealand, India, Singapore and Southeast Asia. Explicit local-hours filters.",
+          "Remote-first is the default working model on most briefs.",
+          "Time-zone constraints are captured at intake and enforced in scoring.",
+          "Hybrid and on-site briefs state the required city or region up front.",
+          "Working preference is a candidate-owned field — filters, not assumptions.",
+          "Structured multi-channel sourcing per brief, not blanket outreach.",
+          "Role-specific rubrics adapt to regional titles, credentials and market norms.",
+          "Language proficiency captured as a first-class attribute where the brief requires it.",
+          "Every candidate is reviewed by a human before introduction.",
+          "Relocation and visa support are brief-specific. They appear on the job details only when the client has confirmed it in writing.",
+          "If a role offers relocation, the type of support (bonus, agency, sponsorship) is stated on the job page — never implied by us.",
+          "Candidates share work authorisation and relocation openness during intake, so mismatches never reach the shortlist.",
+          "We do not publish country totals or visa outcomes. Every brief states what the employer commits to, and nothing more.",
+          "Employer of record is the client. Introductions include eligibility and location.",
+          "Fixed-term contracts where the client already has the entity or contractor framework in place.",
+          "Where an EOR is required, we introduce with the client's chosen partner — we don't act as the employer of record ourselves.",
+          "Global reach",
+          "Structured intake captures region, remote scope and any relocation commitment before sourcing starts.",
+          "A live recruiting workspace with ranked, evidence-backed candidate delivery.",
+          "About",
+          "Journey",
+          "Contact",
+          "Solutions",
+          "How it works",
+          "Enterprise",
+          "Employer onboarding",
+          "Staffing partnership",
+          "Start hiring",
+          "Pilot",
+          "Pricing",
+          "Industries",
+          "Client sign in",
+          "Browse jobs",
+          "Talent network",
+          "Candidate success",
+          "Candidate journey",
+          "Candidate sign in",
+          "Resources",
+          "Blog",
+          "Case studies",
+          "Knowledge base",
+          "FAQ",
+          "© 2026 TaaSFlow. All rights reserved."
+        ],
+        "buttons": [
+          "Solutions",
+          "Industries",
+          "Resources",
+          "About"
+        ],
+        "links": [
+          {
+            "text": "Skip to main content",
+            "href": "https://clear-path-hubs.lovable.app/global-talent#main"
+          },
+          {
+            "text": "New: transparent role-specific scoring — see how it works.",
+            "href": "https://clear-path-hubs.lovable.app/how-it-works"
+          },
+          {
+            "text": "TaaSFlow",
+            "href": "https://clear-path-hubs.lovable.app/"
+          },
+          {
+            "text": "Jobs",
+            "href": "https://clear-path-hubs.lovable.app/jobs"
+          },
+          {
+            "text": "Sign in",
+            "href": "https://clear-path-hubs.lovable.app/login"
+          },
+          {
+            "text": "Browse jobs",
+            "href": "https://clear-path-hubs.lovable.app/jobs"
+          },
+          {
+            "text": "Start hiring",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "Home",
+            "href": "https://clear-path-hubs.lovable.app/"
+          },
+          {
+            "text": "Start an international hire",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "Browse remote briefs",
+            "href": "https://clear-path-hubs.lovable.app/jobs"
+          },
+          {
+            "text": "Start hiring",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "See open briefs",
+            "href": "https://clear-path-hubs.lovable.app/jobs"
+          },
+          {
+            "text": "TaaSFlow",
+            "href": "https://clear-path-hubs.lovable.app/"
+          },
+          {
+            "text": "",
+            "href": "https://www.linkedin.com/company/taasflow"
+          },
+          {
+            "text": "",
+            "href": "mailto:hello@taasflow.com"
+          },
+          {
+            "text": "About",
+            "href": "https://clear-path-hubs.lovable.app/about"
+          },
+          {
+            "text": "Journey",
+            "href": "https://clear-path-hubs.lovable.app/journey"
+          },
+          {
+            "text": "Contact",
+            "href": "https://clear-path-hubs.lovable.app/contact"
+          },
+          {
+            "text": "Solutions",
+            "href": "https://clear-path-hubs.lovable.app/solutions"
+          },
+          {
+            "text": "How it works",
+            "href": "https://clear-path-hubs.lovable.app/how-it-works"
+          },
+          {
+            "text": "Enterprise",
+            "href": "https://clear-path-hubs.lovable.app/enterprise"
+          },
+          {
+            "text": "Employer onboarding",
+            "href": "https://clear-path-hubs.lovable.app/employer-onboarding"
+          },
+          {
+            "text": "Staffing partnership",
+            "href": "https://clear-path-hubs.lovable.app/partnerships/staffing"
+          },
+          {
+            "text": "Start hiring",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "Pilot",
+            "href": "https://clear-path-hubs.lovable.app/pilot"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://clear-path-hubs.lovable.app/pricing"
+          },
+          {
+            "text": "Industries",
+            "href": "https://clear-path-hubs.lovable.app/industries"
+          },
+          {
+            "text": "Client sign in",
+            "href": "https://clear-path-hubs.lovable.app/login"
+          },
+          {
+            "text": "Browse jobs",
+            "href": "https://clear-path-hubs.lovable.app/jobs"
+          },
+          {
+            "text": "Talent network",
+            "href": "https://clear-path-hubs.lovable.app/talent-network"
+          },
+          {
+            "text": "Candidate success",
+            "href": "https://clear-path-hubs.lovable.app/candidate-success"
+          },
+          {
+            "text": "Candidate journey",
+            "href": "https://clear-path-hubs.lovable.app/journey"
+          },
+          {
+            "text": "Candidate sign in",
+            "href": "https://clear-path-hubs.lovable.app/login"
+          },
+          {
+            "text": "Resources",
+            "href": "https://clear-path-hubs.lovable.app/resources"
+          },
+          {
+            "text": "Blog",
+            "href": "https://clear-path-hubs.lovable.app/blog"
+          },
+          {
+            "text": "Case studies",
+            "href": "https://clear-path-hubs.lovable.app/case-studies"
+          },
+          {
+            "text": "Knowledge base",
+            "href": "https://clear-path-hubs.lovable.app/knowledge-base"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://clear-path-hubs.lovable.app/faq"
+          },
+          {
+            "text": "Privacy",
+            "href": "https://clear-path-hubs.lovable.app/privacy"
+          },
+          {
+            "text": "Terms",
+            "href": "https://clear-path-hubs.lovable.app/terms"
+          },
+          {
+            "text": "Sitemap",
+            "href": "https://clear-path-hubs.lovable.app/sitemap.xml"
+          },
+          {
+            "text": "hello@taasflow.com",
+            "href": "mailto:hello@taasflow.com"
+          },
+          {
+            "text": "Edit with",
+            "href": "https://lovable.dev/projects/1dc5ee7e-1294-441c-8288-850e79e443f6?utm_source=lovable-badge"
+          }
+        ],
+        "images": [
+          {
+            "src": "https://clear-path-hubs.lovable.app/assets/logo-on-white-Dk9DIcMP.png",
+            "alt": ""
+          },
+          {
+            "src": "https://clear-path-hubs.lovable.app/assets/logo-on-white-Dk9DIcMP.png",
+            "alt": ""
+          }
+        ],
+        "forms": [],
+        "navLinks": [
+          "TaaSFlow",
+          "Jobs",
+          "Sign in",
+          "Browse jobs",
+          "Start hiring",
+          "Home",
+          "Privacy",
+          "Terms",
+          "Sitemap",
+          "hello@taasflow.com"
+        ],
+        "footerLinks": [
+          "TaaSFlow",
+          "About",
+          "Journey",
+          "Contact",
+          "Solutions",
+          "How it works",
+          "Enterprise",
+          "Employer onboarding",
+          "Staffing partnership",
+          "Start hiring",
+          "Pilot",
+          "Pricing",
+          "Industries",
+          "Client sign in",
+          "Browse jobs",
+          "Talent network",
+          "Candidate success",
+          "Candidate journey",
+          "Candidate sign in",
+          "Resources",
+          "Blog",
+          "Case studies",
+          "Knowledge base",
+          "FAQ",
+          "Privacy",
+          "Terms",
+          "Sitemap",
+          "hello@taasflow.com"
+        ],
+        "horizontalOverflow": false,
+        "documentWidth": 375,
+        "viewportWidth": 375
+      },
+      "screenshots": {
+        "sourceFull": "reports/public-parity/screenshots/source/global-talent__mobile__full.png",
+        "sourceVisible": "reports/public-parity/screenshots/source/global-talent__mobile__visible.png",
+        "destinationFull": "reports/public-parity/screenshots/destination/global-talent__mobile__full.png",
+        "destinationVisible": "reports/public-parity/screenshots/destination/global-talent__mobile__visible.png"
+      },
+      "differences": [
+        "title: \"TaaSFlow Network — Private Network for Senior Talent\" vs \"Global Talent — remote-first hiring with clear scope | TaaSFlow\"",
+        "meta description mismatch",
+        "H1 differs: [A quieter way to be consideredfor the right work.] vs [Hire globally, without vague promises.]",
+        "heading overlap 0% (0/27)",
+        "form count 1 vs 0",
+        "destination images missing alt: 2"
+      ]
+    },
+    {
+      "viewport": "tablet",
+      "source": {
+        "url": "https://taasflow.com/global-talent",
+        "finalUrl": "https://taasflow.com/global-talent",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [
+          {
+            "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HJ2ECKCNK4&gtm=45je67l1h1v9245339446za200zd9245339446&_p=1784774006199&gcd=13l3l3l3l1l1&npa=0&_ng=1&dma=0&are=1&cid=353268608.1784774007&frm=0&ngs=1&pscdl=noapi&rcb=3&sr=768x1024&uaa=x86&uab=64&uafvl=Not-A.Brand%3B24.0.0.0%7CChromium%3B146.0.7680.80&uam=&uamb=0&uap=Windows&uapv=&uaw=0&ul=en-us&_s=1&tag_exp=115938466~115938469~118897920~118897930~119896802&dp=%2Fglobal-talent&dt=TaaSFlow%20%7C%20Talent%20as%20a%20Service%20%7C%20Subscription%20Recruiting&dl=https%3A%2F%2Ftaasflow.com%2Fglobal-talent&sid=1784774006&sct=1&seg=0&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&ep.role_type=public&ep.is_authenticated=false&tfd=613",
+            "status": null,
+            "failure": "net::ERR_ABORTED"
+          }
+        ],
+        "title": "TaaSFlow Network — Private Network for Senior Talent",
+        "description": "A curated network for highly skilled professionals. Express interest in selective briefs, or stay quietly discoverable for premium opportunities worldwide.",
+        "canonical": "https://taasflow.com/global-talent",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:type": "website",
+          "og:url": "https://taasflow.com/global-talent",
+          "og:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "og:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "og:image": "https://taasflow.com/og-image.png",
+          "og:image:width": "1200",
+          "og:image:height": "630",
+          "og:locale": "en_US",
+          "twitter:card": "summary_large_image",
+          "twitter:site": "@TaasFlow",
+          "twitter:creator": "@TaasFlow",
+          "twitter:url": "https://taasflow.com/global-talent",
+          "twitter:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "twitter:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "twitter:image": "https://taasflow.com/og-image.png"
+        },
+        "structuredData": [
+          {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "@id": "https://taasflow.com/#organization",
+            "name": "TaaSFlow",
+            "legalName": "TaaSFlow",
+            "url": "https://taasflow.com/",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://taasflow.com/favicon.png",
+              "width": 512,
+              "height": 512
+            },
+            "image": "https://taasflow.com/og-image.png",
+            "description": "Talent as a Service — subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+            "slogan": "Your hiring team. On demand.",
+            "foundingDate": "2024",
+            "areaServed": [
+              {
+                "@type": "Country",
+                "name": "United States"
+              },
+              {
+                "@type": "Country",
+                "name": "United Arab Emirates"
+              },
+              {
+                "@type": "Country",
+                "name": "United Kingdom"
+              },
+              {
+                "@type": "Country",
+                "name": "Brazil"
+              }
+            ],
+            "knowsAbout": [
+              "Subscription recruiting",
+              "Talent as a Service",
+              "Candidate sourcing",
+              "Pre-screened candidates",
+              "Recruitment process outsourcing"
+            ],
+            "contactPoint": [
+              {
+                "@type": "ContactPoint",
+                "contactType": "sales",
+                "email": "hello@taasflow.com",
+                "url": "https://taasflow.com/contact",
+                "availableLanguage": [
+                  "English",
+                  "Portuguese",
+                  "Spanish"
+                ]
+              }
+            ],
+            "sameAs": [
+              "https://www.linkedin.com/company/taasflow",
+              "https://twitter.com/TaasFlow"
+            ]
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "@id": "https://taasflow.com/#website",
+            "name": "TaaSFlow",
+            "alternateName": "Talent as a Service",
+            "url": "https://taasflow.com/",
+            "description": "Subscription recruiting that delivers pre-screened, ranked candidates in 14 days.",
+            "inLanguage": "en-US",
+            "publisher": {
+              "@id": "https://taasflow.com/#organization"
+            },
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": {
+                "@type": "EntryPoint",
+                "urlTemplate": "https://taasflow.com/jobs?q={search_term_string}"
+              },
+              "query-input": "required name=search_term_string"
+            }
+          }
+        ],
+        "h1": [
+          "A quieter way to be consideredfor the right work."
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "A quieter way to be consideredfor the right work."
+          },
+          {
+            "level": 2,
+            "text": "Built for people who don’t need another job board."
+          },
+          {
+            "level": 2,
+            "text": "Three ways to be considered."
+          },
+          {
+            "level": 3,
+            "text": "Express interest in a role"
+          },
+          {
+            "level": 3,
+            "text": "Join the network"
+          },
+          {
+            "level": 3,
+            "text": "Be quietly discoverable"
+          },
+          {
+            "level": 2,
+            "text": "Fewer roles. Higher signal.Considered work for considered people."
+          },
+          {
+            "level": 2,
+            "text": "Your career, on your terms."
+          },
+          {
+            "level": 2,
+            "text": "Work that crosses borders."
+          },
+          {
+            "level": 3,
+            "text": "Remote-first by default"
+          },
+          {
+            "level": 3,
+            "text": "Regional specialisation"
+          },
+          {
+            "level": 3,
+            "text": "Relocation, when offered"
+          },
+          {
+            "level": 2,
+            "text": "The other side of the network."
+          },
+          {
+            "level": 3,
+            "text": "See an open brief?"
+          },
+          {
+            "level": 3,
+            "text": "Not actively looking?"
+          },
+          {
+            "level": 2,
+            "text": "Direct answers."
+          },
+          {
+            "level": 3,
+            "text": "Is TaaSFlow Network free for professionals?"
+          },
+          {
+            "level": 3,
+            "text": "How is this different from a recruiter reaching out on LinkedIn?"
+          },
+          {
+            "level": 3,
+            "text": "Will my current employer see I&rsquo;m on the network?"
+          },
+          {
+            "level": 3,
+            "text": "Do you support relocation and visas?"
+          },
+          {
+            "level": 3,
+            "text": "What does &ldquo;expressing interest&rdquo; actually do?"
+          },
+          {
+            "level": 3,
+            "text": "Is this only for senior people?"
+          },
+          {
+            "level": 4,
+            "text": "Newsletter"
+          },
+          {
+            "level": 4,
+            "text": "For candidates"
+          },
+          {
+            "level": 4,
+            "text": "For companies"
+          },
+          {
+            "level": 4,
+            "text": "Industries"
+          },
+          {
+            "level": 4,
+            "text": "Company"
+          }
+        ],
+        "sections": [
+          "SECTION",
+          "A quieter way to be consideredfor the right work.",
+          "Built for people who don’t need another job board.",
+          "Three ways to be considered.",
+          "Fewer roles. Higher signal.Considered work for considered people.",
+          "Your career, on your terms.",
+          "Work that crosses borders.",
+          "The other side of the network.",
+          "See an open brief?",
+          "Direct answers."
+        ],
+        "textBlocks": [
+          "Solutions",
+          "Industries",
+          "Resources",
+          "TaaSFlow Network is a curated space for highly skilled people — senior operators, specialists and internationally mobile talent. Express interest in selective briefs, or stay privately discoverable for premium opportunities worldwide.",
+          "Membership is free for professionals. Your profile is never visible to clients without your consent.",
+          "TaaSFlow Network is most useful if you’re a senior operator, a deep specialist, or a professional considering an international move. The members we work best with already have options — they want fewer, better conversations.",
+          "Senior individual contributors",
+          "Founders, principals & heads of",
+          "Specialists with rare technical depth",
+          "Internationally mobile professionals",
+          "Quietly exploring, not actively searching",
+          "Open to relocation in selected markets",
+          "You decide how visible you want to be — and to whom.",
+          "Review the brief, then express interest. We review every submission individually and reply with a clear next step.",
+          "Create a member profile to be considered for future briefs that match your direction. No public listings, no algorithmic noise.",
+          "Opt in to be surfaced — privately — to selected subscription clients for premium opportunities. Always under your control.",
+          "Traditional job boards optimise for volume. We optimise for relevance. Every brief on the network has a real client behind it, a real budget, and a real timeline — and every member is reviewed by a person, not a filter.",
+          "Public listings",
+          "Auto-rejections",
+          "Mass outreach",
+          "Profile is a commodity",
+          "Curated briefs",
+          "Human review",
+          "Private introductions",
+          "Profile stays yours",
+          "Discretion is part of the product. Your profile is never indexed publicly, never sold, and never shown to a client without your consent for that specific brief.",
+          "Your profile is invisible to search engines. Members only.",
+          "We ask before sharing your details with any specific client.",
+          "Pause visibility, edit details, or leave the network at any time.",
+          "Hide your profile from named companies you don’t want to see it.",
+          "Many of our briefs are remote-first or open to international candidates. Where relocation or visa support is on the table, the brief will say so explicitly — and the client commits to it before we make the introduction.",
+          "Most briefs are open to professionals across multiple regions.",
+          "Focus on EMEA, APAC and the Americas — local context matters.",
+          "Visa and relocation support is brief-specific. Never assumed, never promised on our behalf.",
+          "TaaSFlow works with subscription clients — funded scale-ups, global enterprises, and specialist firms — who pay to access a curated network rather than scroll through CVs. When you opt in to be discoverable, you’re shown only to those clients, only for briefs that match your direction, and only with your consent at the moment of introduction.",
+          "Review live briefs and express interest in the ones that fit. We reply individually.",
+          "Join the network privately. We’ll only be in touch when something genuinely fits.",
+          "Talent as a Service",
+          "A global hiring system for teams that need consistent recruiting.",
+          "Weekly insights into talent acquisition. No spam.",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Book call",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "No recruitment agency fees. No placement charges. Subscription-based hiring system.",
+          "Copyright 2026 TaaSFlow. All rights reserved."
+        ],
+        "buttons": [
+          "Solutions",
+          "Industries",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Solutions",
+          "How it works",
+          "Pilot",
+          "Enterprise",
+          "Case studies",
+          "Jobs",
+          "Journey",
+          "Industries",
+          "Tech",
+          "SaaS & Cloud",
+          "Cybersecurity",
+          "Data & Analytics",
+          "Finance",
+          "Insurance",
+          "PE & VC",
+          "Accounting",
+          "Legal",
+          "Consulting",
+          "HR & Recruiting",
+          "Staffing Agencies",
+          "Sales",
+          "Marketing",
+          "E-commerce",
+          "Media",
+          "Real Estate",
+          "Construction",
+          "Hospitality",
+          "Healthcare",
+          "Public Sector",
+          "Non-Profit",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Success Stories",
+          "Talent Marketplace",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Is TaaSFlow Network free for professionals?",
+          "How is this different from a recruiter reaching out on LinkedIn?",
+          "Will my current employer see I&rsquo;m on the network?",
+          "Do you support relocation and visas?",
+          "What does &ldquo;expressing interest&rdquo; actually do?",
+          "Is this only for senior people?",
+          "Subscribe",
+          "Book call",
+          "Cookie preferences"
+        ],
+        "links": [
+          {
+            "text": "Skip to main content",
+            "href": "https://taasflow.com/global-talent#main-content"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "Browse jobs",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Join the network",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Browse open roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Join the network",
+            "href": "https://taasflow.com/candidate/join"
+          },
+          {
+            "text": "Browse roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Browse briefs",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Join the network",
+            "href": "https://taasflow.com/candidate/join"
+          },
+          {
+            "text": "Learn about privacy",
+            "href": "https://taasflow.com/privacy"
+          },
+          {
+            "text": "Join the network",
+            "href": "https://taasflow.com/candidate/join"
+          },
+          {
+            "text": "How it works",
+            "href": "https://taasflow.com/how-it-works"
+          },
+          {
+            "text": "Browse open briefs",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Join the network",
+            "href": "https://taasflow.com/candidate/join"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "LinkedIn",
+            "href": "https://www.linkedin.com/company/taasflow/"
+          },
+          {
+            "text": "Browse roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Talent network",
+            "href": "https://taasflow.com/global-talent"
+          },
+          {
+            "text": "Member stories",
+            "href": "https://taasflow.com/candidate-success"
+          },
+          {
+            "text": "Start pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "Employer onboarding",
+            "href": "https://taasflow.com/employer-onboarding"
+          },
+          {
+            "text": "Case studies",
+            "href": "https://taasflow.com/case-studies"
+          },
+          {
+            "text": "Healthcare",
+            "href": "https://taasflow.com/industries/healthcare"
+          },
+          {
+            "text": "Technology",
+            "href": "https://taasflow.com/industries/tech"
+          },
+          {
+            "text": "Finance",
+            "href": "https://taasflow.com/industries/finance"
+          },
+          {
+            "text": "Legal",
+            "href": "https://taasflow.com/industries/legal"
+          },
+          {
+            "text": "All →",
+            "href": "https://taasflow.com/industries"
+          },
+          {
+            "text": "About us",
+            "href": "https://taasflow.com/about"
+          },
+          {
+            "text": "Blog",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://taasflow.com/faq"
+          },
+          {
+            "text": "Knowledge Base",
+            "href": "https://taasflow.com/knowledge-base"
+          },
+          {
+            "text": "Contact us",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Privacy Policy",
+            "href": "https://taasflow.com/privacy"
+          },
+          {
+            "text": "Terms of Service",
+            "href": "https://taasflow.com/terms"
+          }
+        ],
+        "images": [
+          {
+            "src": "https://taasflow.com/assets/logo-on-white-Dk9DIcMP.png",
+            "alt": "TaaSFlow logo"
+          },
+          {
+            "src": "https://taasflow.com/assets/logo-on-blue-CX6jlwjg.png",
+            "alt": "TaaSFlow logo"
+          }
+        ],
+        "forms": [
+          {
+            "action": "https://taasflow.com/global-talent",
+            "fields": [
+              "input"
+            ]
+          }
+        ],
+        "navLinks": [
+          "Browse jobs",
+          "Join the network",
+          "Browse open roles",
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us"
+        ],
+        "footerLinks": [
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "Privacy Policy",
+          "Terms of Service"
+        ],
+        "horizontalOverflow": false,
+        "documentWidth": 768,
+        "viewportWidth": 768
+      },
+      "destination": {
+        "url": "https://clear-path-hubs.lovable.app/global-talent",
+        "finalUrl": "https://clear-path-hubs.lovable.app/global-talent",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [],
+        "title": "Global Talent — remote-first hiring with clear scope | TaaSFlow",
+        "description": "Hire globally with TaaSFlow: remote-first briefs, regional sourcing, and relocation only when the employer commits. Clear scope, no unverified promises.",
+        "canonical": "https://clear-path-hubs.lovable.app/global-talent",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "twitter:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "og:title": "Global Talent — remote-first hiring with clear scope | TaaSFlow",
+          "og:description": "Hire globally with TaaSFlow: remote-first briefs, regional sourcing, and relocation only when the employer commits. Clear scope, no unverified promises.",
+          "og:type": "website",
+          "og:url": "https://clear-path-hubs.lovable.app/global-talent",
+          "twitter:card": "summary_large_image",
+          "twitter:title": "Global Talent — remote-first hiring with clear scope | TaaSFlow",
+          "twitter:description": "Hire globally with TaaSFlow: remote-first briefs, regional sourcing, and relocation only when the employer commits. Clear scope, no unverified promises."
+        },
+        "structuredData": [],
+        "h1": [
+          "Hire globally, without vague promises."
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "Hire globally, without vague promises."
+          },
+          {
+            "level": 2,
+            "text": "Geographic coverage"
+          },
+          {
+            "level": 3,
+            "text": "EMEA"
+          },
+          {
+            "level": 3,
+            "text": "Americas"
+          },
+          {
+            "level": 3,
+            "text": "APAC"
+          },
+          {
+            "level": 2,
+            "text": "Remote hiring, done properly"
+          },
+          {
+            "level": 2,
+            "text": "International sourcing"
+          },
+          {
+            "level": 2,
+            "text": "Relocation support"
+          },
+          {
+            "level": 3,
+            "text": "Only when the employer commits"
+          },
+          {
+            "level": 3,
+            "text": "Scope is on the brief"
+          },
+          {
+            "level": 3,
+            "text": "Eligibility captured up front"
+          },
+          {
+            "level": 2,
+            "text": "Employer options"
+          },
+          {
+            "level": 3,
+            "text": "Direct hire (permanent)"
+          },
+          {
+            "level": 3,
+            "text": "Contract engagements"
+          },
+          {
+            "level": 3,
+            "text": "Employer-of-record partners"
+          },
+          {
+            "level": 2,
+            "text": "Open a role across time zones."
+          },
+          {
+            "level": 3,
+            "text": "Company"
+          },
+          {
+            "level": 3,
+            "text": "Solutions"
+          },
+          {
+            "level": 3,
+            "text": "Employers"
+          },
+          {
+            "level": 3,
+            "text": "Candidates"
+          },
+          {
+            "level": 3,
+            "text": "Resources"
+          }
+        ],
+        "sections": [
+          "Hire globally, without vague promises.",
+          "Geographic coverage",
+          "Remote hiring, done properly",
+          "Relocation support",
+          "Employer options",
+          "Open a role across time zones.",
+          "SECTION"
+        ],
+        "textBlocks": [
+          "Solutions",
+          "Industries",
+          "Resources",
+          "About",
+          "Jobs",
+          "Home",
+          "Global Talent",
+          "Global reach",
+          "Remote-first sourcing across EMEA, the Americas and APAC. Relocation and visa support are offered per brief, only when the employer has confirmed the scope in writing.",
+          "Coverage means active sourcing, screening and time-zone alignment — not country checklists.",
+          "Active sourcing across the UK, EU-27, EFTA and select MENA markets. Local time-zone screening and language filters.",
+          "North America, LATAM and Caribbean coverage with time-zone-aligned pipelines for cross-region teams.",
+          "Established reach across Australia, New Zealand, India, Singapore and Southeast Asia. Explicit local-hours filters.",
+          "Remote-first is the default working model on most briefs.",
+          "Time-zone constraints are captured at intake and enforced in scoring.",
+          "Hybrid and on-site briefs state the required city or region up front.",
+          "Working preference is a candidate-owned field — filters, not assumptions.",
+          "Structured multi-channel sourcing per brief, not blanket outreach.",
+          "Role-specific rubrics adapt to regional titles, credentials and market norms.",
+          "Language proficiency captured as a first-class attribute where the brief requires it.",
+          "Every candidate is reviewed by a human before introduction.",
+          "Relocation and visa support are brief-specific. They appear on the job details only when the client has confirmed it in writing.",
+          "If a role offers relocation, the type of support (bonus, agency, sponsorship) is stated on the job page — never implied by us.",
+          "Candidates share work authorisation and relocation openness during intake, so mismatches never reach the shortlist.",
+          "We do not publish country totals or visa outcomes. Every brief states what the employer commits to, and nothing more.",
+          "Employer of record is the client. Introductions include eligibility and location.",
+          "Fixed-term contracts where the client already has the entity or contractor framework in place.",
+          "Where an EOR is required, we introduce with the client's chosen partner — we don't act as the employer of record ourselves.",
+          "Global reach",
+          "Structured intake captures region, remote scope and any relocation commitment before sourcing starts.",
+          "A live recruiting workspace with ranked, evidence-backed candidate delivery.",
+          "About",
+          "Journey",
+          "Contact",
+          "Solutions",
+          "How it works",
+          "Enterprise",
+          "Employer onboarding",
+          "Staffing partnership",
+          "Start hiring",
+          "Pilot",
+          "Pricing",
+          "Industries",
+          "Client sign in",
+          "Browse jobs",
+          "Talent network",
+          "Candidate success",
+          "Candidate journey",
+          "Candidate sign in",
+          "Resources",
+          "Blog",
+          "Case studies",
+          "Knowledge base",
+          "FAQ",
+          "© 2026 TaaSFlow. All rights reserved."
+        ],
+        "buttons": [
+          "Solutions",
+          "Industries",
+          "Resources",
+          "About"
+        ],
+        "links": [
+          {
+            "text": "Skip to main content",
+            "href": "https://clear-path-hubs.lovable.app/global-talent#main"
+          },
+          {
+            "text": "New: transparent role-specific scoring — see how it works.",
+            "href": "https://clear-path-hubs.lovable.app/how-it-works"
+          },
+          {
+            "text": "TaaSFlow",
+            "href": "https://clear-path-hubs.lovable.app/"
+          },
+          {
+            "text": "Jobs",
+            "href": "https://clear-path-hubs.lovable.app/jobs"
+          },
+          {
+            "text": "Sign in",
+            "href": "https://clear-path-hubs.lovable.app/login"
+          },
+          {
+            "text": "Browse jobs",
+            "href": "https://clear-path-hubs.lovable.app/jobs"
+          },
+          {
+            "text": "Start hiring",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "Home",
+            "href": "https://clear-path-hubs.lovable.app/"
+          },
+          {
+            "text": "Start an international hire",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "Browse remote briefs",
+            "href": "https://clear-path-hubs.lovable.app/jobs"
+          },
+          {
+            "text": "Start hiring",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "See open briefs",
+            "href": "https://clear-path-hubs.lovable.app/jobs"
+          },
+          {
+            "text": "TaaSFlow",
+            "href": "https://clear-path-hubs.lovable.app/"
+          },
+          {
+            "text": "",
+            "href": "https://www.linkedin.com/company/taasflow"
+          },
+          {
+            "text": "",
+            "href": "mailto:hello@taasflow.com"
+          },
+          {
+            "text": "About",
+            "href": "https://clear-path-hubs.lovable.app/about"
+          },
+          {
+            "text": "Journey",
+            "href": "https://clear-path-hubs.lovable.app/journey"
+          },
+          {
+            "text": "Contact",
+            "href": "https://clear-path-hubs.lovable.app/contact"
+          },
+          {
+            "text": "Solutions",
+            "href": "https://clear-path-hubs.lovable.app/solutions"
+          },
+          {
+            "text": "How it works",
+            "href": "https://clear-path-hubs.lovable.app/how-it-works"
+          },
+          {
+            "text": "Enterprise",
+            "href": "https://clear-path-hubs.lovable.app/enterprise"
+          },
+          {
+            "text": "Employer onboarding",
+            "href": "https://clear-path-hubs.lovable.app/employer-onboarding"
+          },
+          {
+            "text": "Staffing partnership",
+            "href": "https://clear-path-hubs.lovable.app/partnerships/staffing"
+          },
+          {
+            "text": "Start hiring",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "Pilot",
+            "href": "https://clear-path-hubs.lovable.app/pilot"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://clear-path-hubs.lovable.app/pricing"
+          },
+          {
+            "text": "Industries",
+            "href": "https://clear-path-hubs.lovable.app/industries"
+          },
+          {
+            "text": "Client sign in",
+            "href": "https://clear-path-hubs.lovable.app/login"
+          },
+          {
+            "text": "Browse jobs",
+            "href": "https://clear-path-hubs.lovable.app/jobs"
+          },
+          {
+            "text": "Talent network",
+            "href": "https://clear-path-hubs.lovable.app/talent-network"
+          },
+          {
+            "text": "Candidate success",
+            "href": "https://clear-path-hubs.lovable.app/candidate-success"
+          },
+          {
+            "text": "Candidate journey",
+            "href": "https://clear-path-hubs.lovable.app/journey"
+          },
+          {
+            "text": "Candidate sign in",
+            "href": "https://clear-path-hubs.lovable.app/login"
+          },
+          {
+            "text": "Resources",
+            "href": "https://clear-path-hubs.lovable.app/resources"
+          },
+          {
+            "text": "Blog",
+            "href": "https://clear-path-hubs.lovable.app/blog"
+          },
+          {
+            "text": "Case studies",
+            "href": "https://clear-path-hubs.lovable.app/case-studies"
+          },
+          {
+            "text": "Knowledge base",
+            "href": "https://clear-path-hubs.lovable.app/knowledge-base"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://clear-path-hubs.lovable.app/faq"
+          },
+          {
+            "text": "Privacy",
+            "href": "https://clear-path-hubs.lovable.app/privacy"
+          },
+          {
+            "text": "Terms",
+            "href": "https://clear-path-hubs.lovable.app/terms"
+          },
+          {
+            "text": "Sitemap",
+            "href": "https://clear-path-hubs.lovable.app/sitemap.xml"
+          },
+          {
+            "text": "hello@taasflow.com",
+            "href": "mailto:hello@taasflow.com"
+          },
+          {
+            "text": "Edit with",
+            "href": "https://lovable.dev/projects/1dc5ee7e-1294-441c-8288-850e79e443f6?utm_source=lovable-badge"
+          }
+        ],
+        "images": [
+          {
+            "src": "https://clear-path-hubs.lovable.app/assets/logo-on-white-Dk9DIcMP.png",
+            "alt": ""
+          },
+          {
+            "src": "https://clear-path-hubs.lovable.app/assets/logo-on-white-Dk9DIcMP.png",
+            "alt": ""
+          }
+        ],
+        "forms": [],
+        "navLinks": [
+          "TaaSFlow",
+          "Jobs",
+          "Sign in",
+          "Browse jobs",
+          "Start hiring",
+          "Home",
+          "Privacy",
+          "Terms",
+          "Sitemap",
+          "hello@taasflow.com"
+        ],
+        "footerLinks": [
+          "TaaSFlow",
+          "About",
+          "Journey",
+          "Contact",
+          "Solutions",
+          "How it works",
+          "Enterprise",
+          "Employer onboarding",
+          "Staffing partnership",
+          "Start hiring",
+          "Pilot",
+          "Pricing",
+          "Industries",
+          "Client sign in",
+          "Browse jobs",
+          "Talent network",
+          "Candidate success",
+          "Candidate journey",
+          "Candidate sign in",
+          "Resources",
+          "Blog",
+          "Case studies",
+          "Knowledge base",
+          "FAQ",
+          "Privacy",
+          "Terms",
+          "Sitemap",
+          "hello@taasflow.com"
+        ],
+        "horizontalOverflow": false,
+        "documentWidth": 768,
+        "viewportWidth": 768
+      },
+      "screenshots": {
+        "sourceFull": "reports/public-parity/screenshots/source/global-talent__tablet__full.png",
+        "sourceVisible": "reports/public-parity/screenshots/source/global-talent__tablet__visible.png",
+        "destinationFull": "reports/public-parity/screenshots/destination/global-talent__tablet__full.png",
+        "destinationVisible": "reports/public-parity/screenshots/destination/global-talent__tablet__visible.png"
+      },
+      "differences": [
+        "title: \"TaaSFlow Network — Private Network for Senior Talent\" vs \"Global Talent — remote-first hiring with clear scope | TaaSFlow\"",
+        "meta description mismatch",
+        "H1 differs: [A quieter way to be consideredfor the right work.] vs [Hire globally, without vague promises.]",
+        "heading overlap 0% (0/27)",
+        "form count 1 vs 0",
+        "destination images missing alt: 2"
+      ]
+    },
+    {
+      "viewport": "desktop",
+      "source": {
+        "url": "https://taasflow.com/global-talent",
+        "finalUrl": "https://taasflow.com/global-talent",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [
+          {
+            "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HJ2ECKCNK4&gtm=45je67m0h2v9245339446za200zd9245339446&_p=1784774008400&gcd=13l3l3l3l1l1&npa=0&_ng=1&dma=0&are=1&cid=2030561091.1784774009&frm=0&ngs=1&pscdl=noapi&rcb=9&sr=1440x900&uaa=x86&uab=64&uafvl=Not-A.Brand%3B24.0.0.0%7CChromium%3B146.0.7680.80&uam=&uamb=0&uap=Windows&uapv=&uaw=0&ul=en-us&_s=1&tag_exp=115938465~115938469~118395334~118897920~118897930~119896803&dp=%2Fglobal-talent&dt=TaaSFlow%20%7C%20Talent%20as%20a%20Service%20%7C%20Subscription%20Recruiting&dl=https%3A%2F%2Ftaasflow.com%2Fglobal-talent&sid=1784774008&sct=1&seg=0&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&ep.role_type=public&ep.is_authenticated=false&tfd=470",
+            "status": null,
+            "failure": "net::ERR_ABORTED"
+          },
+          {
+            "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HJ2ECKCNK4&gtm=45je67m0h2v9245339446za200zd9245339446&_p=1784774008400&gcd=13l3l3l3l1l1&npa=0&_ng=1&dma=0&_eu=AEAAAAQ&ae=a&are=1&cid=2030561091.1784774009&frm=0&ngs=1&pscdl=noapi&rcb=9&sr=1440x900&uaa=x86&uab=64&uafvl=Not-A.Brand%3B24.0.0.0%7CChromium%3B146.0.7680.80&uam=&uamb=0&uap=Windows&uapv=&uaw=0&ul=en-us&_s=2&tag_exp=115938465~115938469~118395334~118897920~118897930~119896803&sid=1784774008&sct=1&seg=0&dl=https%3A%2F%2Ftaasflow.com%2Fglobal-talent&dt=TaaSFlow%20%7C%20Talent%20as%20a%20Service%20%7C%20Subscription%20Recruiting&en=scroll&epn.percent_scrolled=90&_et=15&tfd=1272",
+            "status": null,
+            "failure": "net::ERR_ABORTED"
+          }
+        ],
+        "title": "TaaSFlow Network — Private Network for Senior Talent",
+        "description": "A curated network for highly skilled professionals. Express interest in selective briefs, or stay quietly discoverable for premium opportunities worldwide.",
+        "canonical": "https://taasflow.com/global-talent",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:type": "website",
+          "og:url": "https://taasflow.com/global-talent",
+          "og:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "og:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "og:image": "https://taasflow.com/og-image.png",
+          "og:image:width": "1200",
+          "og:image:height": "630",
+          "og:locale": "en_US",
+          "twitter:card": "summary_large_image",
+          "twitter:site": "@TaasFlow",
+          "twitter:creator": "@TaasFlow",
+          "twitter:url": "https://taasflow.com/global-talent",
+          "twitter:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "twitter:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "twitter:image": "https://taasflow.com/og-image.png"
+        },
+        "structuredData": [
+          {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "@id": "https://taasflow.com/#organization",
+            "name": "TaaSFlow",
+            "legalName": "TaaSFlow",
+            "url": "https://taasflow.com/",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://taasflow.com/favicon.png",
+              "width": 512,
+              "height": 512
+            },
+            "image": "https://taasflow.com/og-image.png",
+            "description": "Talent as a Service — subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+            "slogan": "Your hiring team. On demand.",
+            "foundingDate": "2024",
+            "areaServed": [
+              {
+                "@type": "Country",
+                "name": "United States"
+              },
+              {
+                "@type": "Country",
+                "name": "United Arab Emirates"
+              },
+              {
+                "@type": "Country",
+                "name": "United Kingdom"
+              },
+              {
+                "@type": "Country",
+                "name": "Brazil"
+              }
+            ],
+            "knowsAbout": [
+              "Subscription recruiting",
+              "Talent as a Service",
+              "Candidate sourcing",
+              "Pre-screened candidates",
+              "Recruitment process outsourcing"
+            ],
+            "contactPoint": [
+              {
+                "@type": "ContactPoint",
+                "contactType": "sales",
+                "email": "hello@taasflow.com",
+                "url": "https://taasflow.com/contact",
+                "availableLanguage": [
+                  "English",
+                  "Portuguese",
+                  "Spanish"
+                ]
+              }
+            ],
+            "sameAs": [
+              "https://www.linkedin.com/company/taasflow",
+              "https://twitter.com/TaasFlow"
+            ]
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "@id": "https://taasflow.com/#website",
+            "name": "TaaSFlow",
+            "alternateName": "Talent as a Service",
+            "url": "https://taasflow.com/",
+            "description": "Subscription recruiting that delivers pre-screened, ranked candidates in 14 days.",
+            "inLanguage": "en-US",
+            "publisher": {
+              "@id": "https://taasflow.com/#organization"
+            },
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": {
+                "@type": "EntryPoint",
+                "urlTemplate": "https://taasflow.com/jobs?q={search_term_string}"
+              },
+              "query-input": "required name=search_term_string"
+            }
+          }
+        ],
+        "h1": [
+          "A quieter way to be consideredfor the right work."
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "A quieter way to be consideredfor the right work."
+          },
+          {
+            "level": 2,
+            "text": "Built for people who don’t need another job board."
+          },
+          {
+            "level": 2,
+            "text": "Three ways to be considered."
+          },
+          {
+            "level": 3,
+            "text": "Express interest in a role"
+          },
+          {
+            "level": 3,
+            "text": "Join the network"
+          },
+          {
+            "level": 3,
+            "text": "Be quietly discoverable"
+          },
+          {
+            "level": 2,
+            "text": "Fewer roles. Higher signal.Considered work for considered people."
+          },
+          {
+            "level": 2,
+            "text": "Your career, on your terms."
+          },
+          {
+            "level": 2,
+            "text": "Work that crosses borders."
+          },
+          {
+            "level": 3,
+            "text": "Remote-first by default"
+          },
+          {
+            "level": 3,
+            "text": "Regional specialisation"
+          },
+          {
+            "level": 3,
+            "text": "Relocation, when offered"
+          },
+          {
+            "level": 2,
+            "text": "The other side of the network."
+          },
+          {
+            "level": 3,
+            "text": "See an open brief?"
+          },
+          {
+            "level": 3,
+            "text": "Not actively looking?"
+          },
+          {
+            "level": 2,
+            "text": "Direct answers."
+          },
+          {
+            "level": 3,
+            "text": "Is TaaSFlow Network free for professionals?"
+          },
+          {
+            "level": 3,
+            "text": "How is this different from a recruiter reaching out on LinkedIn?"
+          },
+          {
+            "level": 3,
+            "text": "Will my current employer see I&rsquo;m on the network?"
+          },
+          {
+            "level": 3,
+            "text": "Do you support relocation and visas?"
+          },
+          {
+            "level": 3,
+            "text": "What does &ldquo;expressing interest&rdquo; actually do?"
+          },
+          {
+            "level": 3,
+            "text": "Is this only for senior people?"
+          },
+          {
+            "level": 4,
+            "text": "Newsletter"
+          },
+          {
+            "level": 4,
+            "text": "For candidates"
+          },
+          {
+            "level": 4,
+            "text": "For companies"
+          },
+          {
+            "level": 4,
+            "text": "Industries"
+          },
+          {
+            "level": 4,
+            "text": "Company"
+          }
+        ],
+        "sections": [
+          "SECTION",
+          "A quieter way to be consideredfor the right work.",
+          "Built for people who don’t need another job board.",
+          "Three ways to be considered.",
+          "Fewer roles. Higher signal.Considered work for considered people.",
+          "Your career, on your terms.",
+          "Work that crosses borders.",
+          "The other side of the network.",
+          "See an open brief?",
+          "Direct answers."
+        ],
+        "textBlocks": [
+          "Solutions",
+          "Industries",
+          "Resources",
+          "TaaSFlow Network is a curated space for highly skilled people — senior operators, specialists and internationally mobile talent. Express interest in selective briefs, or stay privately discoverable for premium opportunities worldwide.",
+          "Membership is free for professionals. Your profile is never visible to clients without your consent.",
+          "TaaSFlow Network is most useful if you’re a senior operator, a deep specialist, or a professional considering an international move. The members we work best with already have options — they want fewer, better conversations.",
+          "Senior individual contributors",
+          "Founders, principals & heads of",
+          "Specialists with rare technical depth",
+          "Internationally mobile professionals",
+          "Quietly exploring, not actively searching",
+          "Open to relocation in selected markets",
+          "You decide how visible you want to be — and to whom.",
+          "Review the brief, then express interest. We review every submission individually and reply with a clear next step.",
+          "Create a member profile to be considered for future briefs that match your direction. No public listings, no algorithmic noise.",
+          "Opt in to be surfaced — privately — to selected subscription clients for premium opportunities. Always under your control.",
+          "Traditional job boards optimise for volume. We optimise for relevance. Every brief on the network has a real client behind it, a real budget, and a real timeline — and every member is reviewed by a person, not a filter.",
+          "Public listings",
+          "Auto-rejections",
+          "Mass outreach",
+          "Profile is a commodity",
+          "Curated briefs",
+          "Human review",
+          "Private introductions",
+          "Profile stays yours",
+          "Discretion is part of the product. Your profile is never indexed publicly, never sold, and never shown to a client without your consent for that specific brief.",
+          "Your profile is invisible to search engines. Members only.",
+          "We ask before sharing your details with any specific client.",
+          "Pause visibility, edit details, or leave the network at any time.",
+          "Hide your profile from named companies you don’t want to see it.",
+          "Many of our briefs are remote-first or open to international candidates. Where relocation or visa support is on the table, the brief will say so explicitly — and the client commits to it before we make the introduction.",
+          "Most briefs are open to professionals across multiple regions.",
+          "Focus on EMEA, APAC and the Americas — local context matters.",
+          "Visa and relocation support is brief-specific. Never assumed, never promised on our behalf.",
+          "TaaSFlow works with subscription clients — funded scale-ups, global enterprises, and specialist firms — who pay to access a curated network rather than scroll through CVs. When you opt in to be discoverable, you’re shown only to those clients, only for briefs that match your direction, and only with your consent at the moment of introduction.",
+          "Review live briefs and express interest in the ones that fit. We reply individually.",
+          "Join the network privately. We’ll only be in touch when something genuinely fits.",
+          "Talent as a Service",
+          "A global hiring system for teams that need consistent recruiting.",
+          "Weekly insights into talent acquisition. No spam.",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Book call",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "No recruitment agency fees. No placement charges. Subscription-based hiring system.",
+          "Copyright 2026 TaaSFlow. All rights reserved."
+        ],
+        "buttons": [
+          "Solutions",
+          "Industries",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Solutions",
+          "How it works",
+          "Pilot",
+          "Enterprise",
+          "Case studies",
+          "Jobs",
+          "Journey",
+          "Industries",
+          "Tech",
+          "SaaS & Cloud",
+          "Cybersecurity",
+          "Data & Analytics",
+          "Finance",
+          "Insurance",
+          "PE & VC",
+          "Accounting",
+          "Legal",
+          "Consulting",
+          "HR & Recruiting",
+          "Staffing Agencies",
+          "Sales",
+          "Marketing",
+          "E-commerce",
+          "Media",
+          "Real Estate",
+          "Construction",
+          "Hospitality",
+          "Healthcare",
+          "Public Sector",
+          "Non-Profit",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Success Stories",
+          "Talent Marketplace",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Is TaaSFlow Network free for professionals?",
+          "How is this different from a recruiter reaching out on LinkedIn?",
+          "Will my current employer see I&rsquo;m on the network?",
+          "Do you support relocation and visas?",
+          "What does &ldquo;expressing interest&rdquo; actually do?",
+          "Is this only for senior people?",
+          "Subscribe",
+          "Book call",
+          "Cookie preferences"
+        ],
+        "links": [
+          {
+            "text": "Skip to main content",
+            "href": "https://taasflow.com/global-talent#main-content"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "Browse jobs",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Join the network",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Browse open roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Join the network",
+            "href": "https://taasflow.com/candidate/join"
+          },
+          {
+            "text": "Browse roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Browse briefs",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Join the network",
+            "href": "https://taasflow.com/candidate/join"
+          },
+          {
+            "text": "Learn about privacy",
+            "href": "https://taasflow.com/privacy"
+          },
+          {
+            "text": "Join the network",
+            "href": "https://taasflow.com/candidate/join"
+          },
+          {
+            "text": "How it works",
+            "href": "https://taasflow.com/how-it-works"
+          },
+          {
+            "text": "Browse open briefs",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Join the network",
+            "href": "https://taasflow.com/candidate/join"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "LinkedIn",
+            "href": "https://www.linkedin.com/company/taasflow/"
+          },
+          {
+            "text": "Browse roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Talent network",
+            "href": "https://taasflow.com/global-talent"
+          },
+          {
+            "text": "Member stories",
+            "href": "https://taasflow.com/candidate-success"
+          },
+          {
+            "text": "Start pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "Employer onboarding",
+            "href": "https://taasflow.com/employer-onboarding"
+          },
+          {
+            "text": "Case studies",
+            "href": "https://taasflow.com/case-studies"
+          },
+          {
+            "text": "Healthcare",
+            "href": "https://taasflow.com/industries/healthcare"
+          },
+          {
+            "text": "Technology",
+            "href": "https://taasflow.com/industries/tech"
+          },
+          {
+            "text": "Finance",
+            "href": "https://taasflow.com/industries/finance"
+          },
+          {
+            "text": "Legal",
+            "href": "https://taasflow.com/industries/legal"
+          },
+          {
+            "text": "All →",
+            "href": "https://taasflow.com/industries"
+          },
+          {
+            "text": "About us",
+            "href": "https://taasflow.com/about"
+          },
+          {
+            "text": "Blog",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://taasflow.com/faq"
+          },
+          {
+            "text": "Knowledge Base",
+            "href": "https://taasflow.com/knowledge-base"
+          },
+          {
+            "text": "Contact us",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Privacy Policy",
+            "href": "https://taasflow.com/privacy"
+          },
+          {
+            "text": "Terms of Service",
+            "href": "https://taasflow.com/terms"
+          }
+        ],
+        "images": [
+          {
+            "src": "https://taasflow.com/assets/logo-on-white-Dk9DIcMP.png",
+            "alt": "TaaSFlow logo"
+          },
+          {
+            "src": "https://taasflow.com/assets/logo-on-blue-CX6jlwjg.png",
+            "alt": "TaaSFlow logo"
+          }
+        ],
+        "forms": [
+          {
+            "action": "https://taasflow.com/global-talent",
+            "fields": [
+              "input"
+            ]
+          }
+        ],
+        "navLinks": [
+          "Browse jobs",
+          "Join the network",
+          "Browse open roles",
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us"
+        ],
+        "footerLinks": [
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "Privacy Policy",
+          "Terms of Service"
+        ],
+        "horizontalOverflow": false,
+        "documentWidth": 1440,
+        "viewportWidth": 1440
+      },
+      "destination": {
+        "url": "https://clear-path-hubs.lovable.app/global-talent",
+        "finalUrl": "https://clear-path-hubs.lovable.app/global-talent",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [],
+        "title": "Global Talent — remote-first hiring with clear scope | TaaSFlow",
+        "description": "Hire globally with TaaSFlow: remote-first briefs, regional sourcing, and relocation only when the employer commits. Clear scope, no unverified promises.",
+        "canonical": "https://clear-path-hubs.lovable.app/global-talent",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "twitter:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "og:title": "Global Talent — remote-first hiring with clear scope | TaaSFlow",
+          "og:description": "Hire globally with TaaSFlow: remote-first briefs, regional sourcing, and relocation only when the employer commits. Clear scope, no unverified promises.",
+          "og:type": "website",
+          "og:url": "https://clear-path-hubs.lovable.app/global-talent",
+          "twitter:card": "summary_large_image",
+          "twitter:title": "Global Talent — remote-first hiring with clear scope | TaaSFlow",
+          "twitter:description": "Hire globally with TaaSFlow: remote-first briefs, regional sourcing, and relocation only when the employer commits. Clear scope, no unverified promises."
+        },
+        "structuredData": [],
+        "h1": [
+          "Hire globally, without vague promises."
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "Hire globally, without vague promises."
+          },
+          {
+            "level": 2,
+            "text": "Geographic coverage"
+          },
+          {
+            "level": 3,
+            "text": "EMEA"
+          },
+          {
+            "level": 3,
+            "text": "Americas"
+          },
+          {
+            "level": 3,
+            "text": "APAC"
+          },
+          {
+            "level": 2,
+            "text": "Remote hiring, done properly"
+          },
+          {
+            "level": 2,
+            "text": "International sourcing"
+          },
+          {
+            "level": 2,
+            "text": "Relocation support"
+          },
+          {
+            "level": 3,
+            "text": "Only when the employer commits"
+          },
+          {
+            "level": 3,
+            "text": "Scope is on the brief"
+          },
+          {
+            "level": 3,
+            "text": "Eligibility captured up front"
+          },
+          {
+            "level": 2,
+            "text": "Employer options"
+          },
+          {
+            "level": 3,
+            "text": "Direct hire (permanent)"
+          },
+          {
+            "level": 3,
+            "text": "Contract engagements"
+          },
+          {
+            "level": 3,
+            "text": "Employer-of-record partners"
+          },
+          {
+            "level": 2,
+            "text": "Open a role across time zones."
+          },
+          {
+            "level": 3,
+            "text": "Company"
+          },
+          {
+            "level": 3,
+            "text": "Solutions"
+          },
+          {
+            "level": 3,
+            "text": "Employers"
+          },
+          {
+            "level": 3,
+            "text": "Candidates"
+          },
+          {
+            "level": 3,
+            "text": "Resources"
+          }
+        ],
+        "sections": [
+          "Hire globally, without vague promises.",
+          "Geographic coverage",
+          "Remote hiring, done properly",
+          "Relocation support",
+          "Employer options",
+          "Open a role across time zones.",
+          "SECTION"
+        ],
+        "textBlocks": [
+          "Solutions",
+          "Industries",
+          "Resources",
+          "About",
+          "Jobs",
+          "Home",
+          "Global Talent",
+          "Global reach",
+          "Remote-first sourcing across EMEA, the Americas and APAC. Relocation and visa support are offered per brief, only when the employer has confirmed the scope in writing.",
+          "Coverage means active sourcing, screening and time-zone alignment — not country checklists.",
+          "Active sourcing across the UK, EU-27, EFTA and select MENA markets. Local time-zone screening and language filters.",
+          "North America, LATAM and Caribbean coverage with time-zone-aligned pipelines for cross-region teams.",
+          "Established reach across Australia, New Zealand, India, Singapore and Southeast Asia. Explicit local-hours filters.",
+          "Remote-first is the default working model on most briefs.",
+          "Time-zone constraints are captured at intake and enforced in scoring.",
+          "Hybrid and on-site briefs state the required city or region up front.",
+          "Working preference is a candidate-owned field — filters, not assumptions.",
+          "Structured multi-channel sourcing per brief, not blanket outreach.",
+          "Role-specific rubrics adapt to regional titles, credentials and market norms.",
+          "Language proficiency captured as a first-class attribute where the brief requires it.",
+          "Every candidate is reviewed by a human before introduction.",
+          "Relocation and visa support are brief-specific. They appear on the job details only when the client has confirmed it in writing.",
+          "If a role offers relocation, the type of support (bonus, agency, sponsorship) is stated on the job page — never implied by us.",
+          "Candidates share work authorisation and relocation openness during intake, so mismatches never reach the shortlist.",
+          "We do not publish country totals or visa outcomes. Every brief states what the employer commits to, and nothing more.",
+          "Employer of record is the client. Introductions include eligibility and location.",
+          "Fixed-term contracts where the client already has the entity or contractor framework in place.",
+          "Where an EOR is required, we introduce with the client's chosen partner — we don't act as the employer of record ourselves.",
+          "Global reach",
+          "Structured intake captures region, remote scope and any relocation commitment before sourcing starts.",
+          "A live recruiting workspace with ranked, evidence-backed candidate delivery.",
+          "About",
+          "Journey",
+          "Contact",
+          "Solutions",
+          "How it works",
+          "Enterprise",
+          "Employer onboarding",
+          "Staffing partnership",
+          "Start hiring",
+          "Pilot",
+          "Pricing",
+          "Industries",
+          "Client sign in",
+          "Browse jobs",
+          "Talent network",
+          "Candidate success",
+          "Candidate journey",
+          "Candidate sign in",
+          "Resources",
+          "Blog",
+          "Case studies",
+          "Knowledge base",
+          "FAQ",
+          "© 2026 TaaSFlow. All rights reserved."
+        ],
+        "buttons": [
+          "Solutions",
+          "Industries",
+          "Resources",
+          "About"
+        ],
+        "links": [
+          {
+            "text": "Skip to main content",
+            "href": "https://clear-path-hubs.lovable.app/global-talent#main"
+          },
+          {
+            "text": "New: transparent role-specific scoring — see how it works.",
+            "href": "https://clear-path-hubs.lovable.app/how-it-works"
+          },
+          {
+            "text": "TaaSFlow",
+            "href": "https://clear-path-hubs.lovable.app/"
+          },
+          {
+            "text": "Jobs",
+            "href": "https://clear-path-hubs.lovable.app/jobs"
+          },
+          {
+            "text": "Sign in",
+            "href": "https://clear-path-hubs.lovable.app/login"
+          },
+          {
+            "text": "Browse jobs",
+            "href": "https://clear-path-hubs.lovable.app/jobs"
+          },
+          {
+            "text": "Start hiring",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "Home",
+            "href": "https://clear-path-hubs.lovable.app/"
+          },
+          {
+            "text": "Start an international hire",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "Browse remote briefs",
+            "href": "https://clear-path-hubs.lovable.app/jobs"
+          },
+          {
+            "text": "Start hiring",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "See open briefs",
+            "href": "https://clear-path-hubs.lovable.app/jobs"
+          },
+          {
+            "text": "TaaSFlow",
+            "href": "https://clear-path-hubs.lovable.app/"
+          },
+          {
+            "text": "",
+            "href": "https://www.linkedin.com/company/taasflow"
+          },
+          {
+            "text": "",
+            "href": "mailto:hello@taasflow.com"
+          },
+          {
+            "text": "About",
+            "href": "https://clear-path-hubs.lovable.app/about"
+          },
+          {
+            "text": "Journey",
+            "href": "https://clear-path-hubs.lovable.app/journey"
+          },
+          {
+            "text": "Contact",
+            "href": "https://clear-path-hubs.lovable.app/contact"
+          },
+          {
+            "text": "Solutions",
+            "href": "https://clear-path-hubs.lovable.app/solutions"
+          },
+          {
+            "text": "How it works",
+            "href": "https://clear-path-hubs.lovable.app/how-it-works"
+          },
+          {
+            "text": "Enterprise",
+            "href": "https://clear-path-hubs.lovable.app/enterprise"
+          },
+          {
+            "text": "Employer onboarding",
+            "href": "https://clear-path-hubs.lovable.app/employer-onboarding"
+          },
+          {
+            "text": "Staffing partnership",
+            "href": "https://clear-path-hubs.lovable.app/partnerships/staffing"
+          },
+          {
+            "text": "Start hiring",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "Pilot",
+            "href": "https://clear-path-hubs.lovable.app/pilot"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://clear-path-hubs.lovable.app/pricing"
+          },
+          {
+            "text": "Industries",
+            "href": "https://clear-path-hubs.lovable.app/industries"
+          },
+          {
+            "text": "Client sign in",
+            "href": "https://clear-path-hubs.lovable.app/login"
+          },
+          {
+            "text": "Browse jobs",
+            "href": "https://clear-path-hubs.lovable.app/jobs"
+          },
+          {
+            "text": "Talent network",
+            "href": "https://clear-path-hubs.lovable.app/talent-network"
+          },
+          {
+            "text": "Candidate success",
+            "href": "https://clear-path-hubs.lovable.app/candidate-success"
+          },
+          {
+            "text": "Candidate journey",
+            "href": "https://clear-path-hubs.lovable.app/journey"
+          },
+          {
+            "text": "Candidate sign in",
+            "href": "https://clear-path-hubs.lovable.app/login"
+          },
+          {
+            "text": "Resources",
+            "href": "https://clear-path-hubs.lovable.app/resources"
+          },
+          {
+            "text": "Blog",
+            "href": "https://clear-path-hubs.lovable.app/blog"
+          },
+          {
+            "text": "Case studies",
+            "href": "https://clear-path-hubs.lovable.app/case-studies"
+          },
+          {
+            "text": "Knowledge base",
+            "href": "https://clear-path-hubs.lovable.app/knowledge-base"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://clear-path-hubs.lovable.app/faq"
+          },
+          {
+            "text": "Privacy",
+            "href": "https://clear-path-hubs.lovable.app/privacy"
+          },
+          {
+            "text": "Terms",
+            "href": "https://clear-path-hubs.lovable.app/terms"
+          },
+          {
+            "text": "Sitemap",
+            "href": "https://clear-path-hubs.lovable.app/sitemap.xml"
+          },
+          {
+            "text": "hello@taasflow.com",
+            "href": "mailto:hello@taasflow.com"
+          },
+          {
+            "text": "Edit with",
+            "href": "https://lovable.dev/projects/1dc5ee7e-1294-441c-8288-850e79e443f6?utm_source=lovable-badge"
+          }
+        ],
+        "images": [
+          {
+            "src": "https://clear-path-hubs.lovable.app/assets/logo-on-white-Dk9DIcMP.png",
+            "alt": ""
+          },
+          {
+            "src": "https://clear-path-hubs.lovable.app/assets/logo-on-white-Dk9DIcMP.png",
+            "alt": ""
+          }
+        ],
+        "forms": [],
+        "navLinks": [
+          "TaaSFlow",
+          "Jobs",
+          "Sign in",
+          "Browse jobs",
+          "Start hiring",
+          "Home",
+          "Privacy",
+          "Terms",
+          "Sitemap",
+          "hello@taasflow.com"
+        ],
+        "footerLinks": [
+          "TaaSFlow",
+          "About",
+          "Journey",
+          "Contact",
+          "Solutions",
+          "How it works",
+          "Enterprise",
+          "Employer onboarding",
+          "Staffing partnership",
+          "Start hiring",
+          "Pilot",
+          "Pricing",
+          "Industries",
+          "Client sign in",
+          "Browse jobs",
+          "Talent network",
+          "Candidate success",
+          "Candidate journey",
+          "Candidate sign in",
+          "Resources",
+          "Blog",
+          "Case studies",
+          "Knowledge base",
+          "FAQ",
+          "Privacy",
+          "Terms",
+          "Sitemap",
+          "hello@taasflow.com"
+        ],
+        "horizontalOverflow": false,
+        "documentWidth": 1440,
+        "viewportWidth": 1440
+      },
+      "screenshots": {
+        "sourceFull": "reports/public-parity/screenshots/source/global-talent__desktop__full.png",
+        "sourceVisible": "reports/public-parity/screenshots/source/global-talent__desktop__visible.png",
+        "destinationFull": "reports/public-parity/screenshots/destination/global-talent__desktop__full.png",
+        "destinationVisible": "reports/public-parity/screenshots/destination/global-talent__desktop__visible.png"
+      },
+      "differences": [
+        "title: \"TaaSFlow Network — Private Network for Senior Talent\" vs \"Global Talent — remote-first hiring with clear scope | TaaSFlow\"",
+        "meta description mismatch",
+        "H1 differs: [A quieter way to be consideredfor the right work.] vs [Hire globally, without vague promises.]",
+        "heading overlap 0% (0/27)",
+        "form count 1 vs 0",
+        "destination images missing alt: 2"
+      ]
+    }
+  ],
+  "summary": "18 differences detected",
+  "exclusions": []
+}

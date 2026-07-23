@@ -1,0 +1,3403 @@
+{
+  "sourcePath": "/industries/tech",
+  "destinationPath": "/industries/tech",
+  "pageType": "industry_page",
+  "protected": false,
+  "verdict": "MAJOR_DIFFERENCE",
+  "severity": "HIGH",
+  "viewports": [
+    {
+      "viewport": "mobile",
+      "source": {
+        "url": "https://taasflow.com/industries/tech",
+        "finalUrl": "https://taasflow.com/industries/tech",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [
+          {
+            "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HJ2ECKCNK4&gtm=45je67l1h1v9245339446za200zd9245339446&_p=1784774101686&gcd=13l3l3l3l1l1&npa=0&_ng=1&dma=0&are=1&cid=256652492.1784774102&frm=0&ngs=1&pscdl=noapi&rcb=18&sr=375x812&uaa=x86&uab=64&uafvl=Not-A.Brand%3B24.0.0.0%7CChromium%3B146.0.7680.80&uam=&uamb=0&uap=Windows&uapv=&uaw=0&ul=en-us&_s=1&tag_exp=115938465~115938468~118897920~118897930~119896802&dp=%2Findustries%2Ftech&dt=TaaSFlow%20%7C%20Talent%20as%20a%20Service%20%7C%20Subscription%20Recruiting&dl=https%3A%2F%2Ftaasflow.com%2Findustries%2Ftech&sid=1784774101&sct=1&seg=0&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&ep.role_type=public&ep.is_authenticated=false&tfd=754",
+            "status": null,
+            "failure": "net::ERR_ABORTED"
+          }
+        ],
+        "title": "Tech Industry Talent | TaaSFlow - Talent as a Service",
+        "description": "On-demand software developers, engineers, and IT specialists for tech companies. Scale your engineering team in days, not months.",
+        "canonical": "https://taasflow.com/industries/tech",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:type": "website",
+          "og:url": "https://taasflow.com/industries/tech",
+          "og:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "og:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "og:image": "https://taasflow.com/og-image.png",
+          "og:image:width": "1200",
+          "og:image:height": "630",
+          "og:locale": "en_US",
+          "twitter:card": "summary_large_image",
+          "twitter:site": "@TaasFlow",
+          "twitter:creator": "@TaasFlow",
+          "twitter:url": "https://taasflow.com/industries/tech",
+          "twitter:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "twitter:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "twitter:image": "https://taasflow.com/og-image.png"
+        },
+        "structuredData": [
+          {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "@id": "https://taasflow.com/#organization",
+            "name": "TaaSFlow",
+            "legalName": "TaaSFlow",
+            "url": "https://taasflow.com/",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://taasflow.com/favicon.png",
+              "width": 512,
+              "height": 512
+            },
+            "image": "https://taasflow.com/og-image.png",
+            "description": "Talent as a Service — subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+            "slogan": "Your hiring team. On demand.",
+            "foundingDate": "2024",
+            "areaServed": [
+              {
+                "@type": "Country",
+                "name": "United States"
+              },
+              {
+                "@type": "Country",
+                "name": "United Arab Emirates"
+              },
+              {
+                "@type": "Country",
+                "name": "United Kingdom"
+              },
+              {
+                "@type": "Country",
+                "name": "Brazil"
+              }
+            ],
+            "knowsAbout": [
+              "Subscription recruiting",
+              "Talent as a Service",
+              "Candidate sourcing",
+              "Pre-screened candidates",
+              "Recruitment process outsourcing"
+            ],
+            "contactPoint": [
+              {
+                "@type": "ContactPoint",
+                "contactType": "sales",
+                "email": "hello@taasflow.com",
+                "url": "https://taasflow.com/contact",
+                "availableLanguage": [
+                  "English",
+                  "Portuguese",
+                  "Spanish"
+                ]
+              }
+            ],
+            "sameAs": [
+              "https://www.linkedin.com/company/taasflow",
+              "https://twitter.com/TaasFlow"
+            ]
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "@id": "https://taasflow.com/#website",
+            "name": "TaaSFlow",
+            "alternateName": "Talent as a Service",
+            "url": "https://taasflow.com/",
+            "description": "Subscription recruiting that delivers pre-screened, ranked candidates in 14 days.",
+            "inLanguage": "en-US",
+            "publisher": {
+              "@id": "https://taasflow.com/#organization"
+            },
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": {
+                "@type": "EntryPoint",
+                "urlTemplate": "https://taasflow.com/jobs?q={search_term_string}"
+              },
+              "query-input": "required name=search_term_string"
+            }
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "Service",
+            "name": "Technology Talent Sourcing",
+            "description": "On-demand software developers, engineers, and IT specialists for tech companies. Scale your engineering team in days, not months.",
+            "provider": {
+              "@type": "Organization",
+              "name": "TaasFlow",
+              "url": "https://taasflow.com"
+            },
+            "serviceType": "Talent Acquisition",
+            "areaServed": "United States",
+            "hasOfferCatalog": {
+              "@type": "OfferCatalog",
+              "name": "Technology Recruiting Services",
+              "itemListElement": [
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Software Engineers Recruiting"
+                  },
+                  "position": 1
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Full-Stack Developers Recruiting"
+                  },
+                  "position": 2
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Frontend Specialists Recruiting"
+                  },
+                  "position": 3
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Backend Engineers Recruiting"
+                  },
+                  "position": 4
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "DevOps/SRE Recruiting"
+                  },
+                  "position": 5
+                }
+              ]
+            }
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "https://taasflow.com"
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Industries",
+                "item": "https://taasflow.com/industries"
+              },
+              {
+                "@type": "ListItem",
+                "position": 3,
+                "name": "Technology",
+                "item": "https://taasflow.com/industries//industries/tech"
+              }
+            ]
+          }
+        ],
+        "h1": [
+          "Engineering Talent On-Demand for Tech Companies"
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "Engineering Talent On-Demand for Tech Companies"
+          },
+          {
+            "level": 2,
+            "text": "Technology Industry Insights"
+          },
+          {
+            "level": 3,
+            "text": "Developer Shortage"
+          },
+          {
+            "level": 3,
+            "text": "Time to Hire"
+          },
+          {
+            "level": 3,
+            "text": "Passive Talent"
+          },
+          {
+            "level": 3,
+            "text": "Recruiter Fees"
+          },
+          {
+            "level": 3,
+            "text": "Industry Overview"
+          },
+          {
+            "level": 3,
+            "text": "Ready to transform your technology recruiting?"
+          },
+          {
+            "level": 2,
+            "text": "How we hire for Technology"
+          },
+          {
+            "level": 3,
+            "text": "Tech Stack Mapping"
+          },
+          {
+            "level": 3,
+            "text": "Code-Level Screening"
+          },
+          {
+            "level": 3,
+            "text": "Async Collaboration Check"
+          },
+          {
+            "level": 3,
+            "text": "Weekly Candidate Drops"
+          },
+          {
+            "level": 2,
+            "text": "The Tech Hiring Challenge"
+          },
+          {
+            "level": 3,
+            "text": "The TaasFlow Solution"
+          },
+          {
+            "level": 2,
+            "text": "Why Technology companies choose TaasFlow"
+          },
+          {
+            "level": 3,
+            "text": "Cut Time-to-Hire by 75%"
+          },
+          {
+            "level": 3,
+            "text": "Technical Screening Done"
+          },
+          {
+            "level": 3,
+            "text": "Scale On-Demand"
+          },
+          {
+            "level": 3,
+            "text": "Zero Placement Fees"
+          },
+          {
+            "level": 2,
+            "text": "Positions we fill for Technology"
+          },
+          {
+            "level": 2,
+            "text": "Real results for Technology teams"
+          },
+          {
+            "level": 2,
+            "text": "Technology Salary Explorer"
+          },
+          {
+            "level": 2,
+            "text": "Technology Career Path"
+          },
+          {
+            "level": 3,
+            "text": "Senior Engineer"
+          },
+          {
+            "level": 4,
+            "text": "Key Skills at This Level"
+          },
+          {
+            "level": 2,
+            "text": "Technology Hiring Trends"
+          },
+          {
+            "level": 2,
+            "text": "Interactive Hiring Guide"
+          },
+          {
+            "level": 3,
+            "text": "Define Your Ideal Candidate"
+          },
+          {
+            "level": 3,
+            "text": "Optimize Your Job Posting"
+          },
+          {
+            "level": 3,
+            "text": "Source Beyond Job Boards"
+          },
+          {
+            "level": 3,
+            "text": "Structure Your Interview Process"
+          },
+          {
+            "level": 3,
+            "text": "Close & Onboard Effectively"
+          },
+          {
+            "level": 2,
+            "text": "Technology Recruiting Insights"
+          },
+          {
+            "level": 3,
+            "text": "Software Engineer Salary Guide 2026: By Level, Location, and Stack"
+          },
+          {
+            "level": 3,
+            "text": "How to Hire a Full-Stack Developer in 2026: The Complete Playbook"
+          },
+          {
+            "level": 3,
+            "text": "Hiring AI Engineers in 2026: Salary Benchmarks, Skills, and Sourcing Strategies"
+          },
+          {
+            "level": 2,
+            "text": "Frequently Asked Questions"
+          },
+          {
+            "level": 3,
+            "text": "What tech stacks do your developers know?"
+          },
+          {
+            "level": 3,
+            "text": "Can developers work in our timezone?"
+          },
+          {
+            "level": 3,
+            "text": "How do you screen technical skills?"
+          },
+          {
+            "level": 2,
+            "text": "Discover related industries"
+          },
+          {
+            "level": 2,
+            "text": "Ready to build your Technology team?"
+          },
+          {
+            "level": 2,
+            "text": "Technology Recruiting"
+          },
+          {
+            "level": 3,
+            "text": "Hub Page"
+          },
+          {
+            "level": 3,
+            "text": "Related Articles"
+          },
+          {
+            "level": 3,
+            "text": "Get Started"
+          },
+          {
+            "level": 4,
+            "text": "Newsletter"
+          },
+          {
+            "level": 4,
+            "text": "For candidates"
+          },
+          {
+            "level": 4,
+            "text": "For companies"
+          },
+          {
+            "level": 4,
+            "text": "Industries"
+          },
+          {
+            "level": 4,
+            "text": "Company"
+          }
+        ],
+        "sections": [
+          "SECTION",
+          "Engineering Talent On-Demand for Tech Companies",
+          "SECTION",
+          "Technology Industry Insights",
+          "Ready to transform your technology recruiting?",
+          "How we hire for Technology",
+          "The Tech Hiring Challenge",
+          "Why Technology companies choose TaasFlow",
+          "Positions we fill for Technology",
+          "Real results for Technology teams",
+          "Technology Salary Explorer",
+          "Technology Career Path",
+          "Technology Hiring Trends",
+          "Interactive Hiring Guide",
+          "Technology Recruiting Insights",
+          "Frequently Asked Questions",
+          "Discover related industries",
+          "SECTION",
+          "Ready to build your Technology team?",
+          "Technology Recruiting"
+        ],
+        "textBlocks": [
+          "Solutions",
+          "Industries",
+          "Resources",
+          "Home",
+          "Industries",
+          "Technology",
+          "Stop waiting months for developers. Get pre-screened engineers, data scientists, and IT specialists delivered weekly, ready to code from day one.",
+          "Key market data and trends shaping talent demand in your industry. (Hover for details)",
+          "Unfilled software developer jobs in the US by 2026",
+          "Average time to fill a tech role using traditional methods",
+          "Of tech professionals are passive candidates not actively job searching",
+          "Typical agency fee for technical placements",
+          "Start a risk-free pilot and receive qualified candidates in 14 days.",
+          "A tailored workflow for the challenges of technology settings.",
+          "We map your exact stack, tools, and architecture to find developers who can contribute immediately.",
+          "Candidates complete technical assessments, code reviews, and system design evaluations.",
+          "We evaluate remote collaboration skills, communication clarity, and timezone flexibility.",
+          "Receive 3-5 screened engineers per week with skills scorecards and code samples.",
+          "In the tech industry, great developers have their pick of opportunities. Your job posting competes with hundreds of others, and top candidates are off the market within 10 days.",
+          "You need specialized skills (cloud architecture, AI/ML, cybersecurity, blockchain) but can't always justify permanent headcount for emerging technologies that may evolve.",
+          "Traditional recruiting eats 3-6 months and 20-30% of first-year salary in fees. Meanwhile, your product roadmap slips and competitors ship faster.",
+          "Pre-screened developers with proven project experience and code samples reviewed",
+          "Full-stack, backend, frontend, mobile, and DevOps specialists available",
+          "Familiar with modern stacks: React, Node, Python, AWS, GCP, Kubernetes",
+          "Remote-first talent experienced with async collaboration and agile workflows",
+          "Scale from 1 developer to an entire team, up or down as projects evolve",
+          "We understand the unique challenges of your industry and deliver matching talent.",
+          "Get qualified engineers in days, not months. No more lengthy recruiting cycles slowing your roadmap.",
+          "Every developer is screened for skills, code quality, and remote collaboration abilities.",
+          "Ramp up for product launches, scale back after. Match headcount to project phases.",
+          "Predictable monthly subscription. No 20-30% recruiter fees eating your budget.",
+          "Pre-vetted professionals, delivered weekly, ready to start.",
+          "- Series B SaaS Company, 150 employees",
+          "Explore current compensation ranges for top roles. Data updated quarterly from industry benchmarks.",
+          "* Based on industry benchmarks from SHRM, Glassdoor, LinkedIn Salary, and BLS data. Actual compensation may vary.",
+          "Click any level to explore typical progression, salary ranges, and key skills.",
+          "Key metrics shaping the talent landscape. Stay ahead of market shifts.",
+          "AI engineering roles are the fastest growing segment in tech hiring.",
+          "Majority of tech roles now offer fully remote or hybrid options.",
+          "Companies using TaaS models fill tech roles 30% faster.",
+          "Of tech candidates expect flexible work arrangements as standard.",
+          "Follow these proven steps to hire smarter. Track your progress and get actionable tips at every stage.",
+          "Create a detailed candidate persona with must-have vs nice-to-have skills, cultural fit criteria, and realistic salary expectations.",
+          "Write a compelling job description that sells the opportunity, not just lists requirements. Include salary range, growth path, and team culture.",
+          "Reach passive candidates through targeted outreach, employee referrals, and talent communities. 70% of top talent is not actively looking.",
+          "Design a consistent 3-4 stage process that evaluates skills, culture fit, and potential. Include take-home assessments where appropriate.",
+          "Move fast with competitive offers and start onboarding before day one. The first 90 days determine long-term retention.",
+          "Expert articles on recruiting and talent acquisition for technology.",
+          "Comprehensive salary data for software engineers from junior to principal, covering every major market, stack, and company stage.",
+          "How to Hire a Full-Stack Developer in 2026: The Complete Playbook",
+          "A comprehensive guide covering market landscape, skills assessment, sourcing channels, interview frameworks, and offer benchmarking for full-stack engineering hires.",
+          "Hiring AI Engineers in 2026: Salary Benchmarks, Skills, and Sourcing Strategies",
+          "AI engineering is the most competitive hiring market in tech. Here are the salary ranges, must-have skills, and sourcing channels that work.",
+          "Common questions about TaasFlow for technology.",
+          "Learn how we serve similar sectors with subscription recruiting.",
+          "Receive qualified technology professionals weekly. No agency fees, no long-term contracts.",
+          "Related Industries",
+          "Talent as a Service",
+          "A global hiring system for teams that need consistent recruiting.",
+          "Weekly insights into talent acquisition. No spam.",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Book call",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "No recruitment agency fees. No placement charges. Subscription-based hiring system.",
+          "Copyright 2026 TaaSFlow. All rights reserved."
+        ],
+        "buttons": [
+          "Solutions",
+          "Industries",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Solutions",
+          "How it works",
+          "Pilot",
+          "Enterprise",
+          "Case studies",
+          "Jobs",
+          "Journey",
+          "Industries",
+          "Tech",
+          "SaaS & Cloud",
+          "Cybersecurity",
+          "Data & Analytics",
+          "Finance",
+          "Insurance",
+          "PE & VC",
+          "Accounting",
+          "Legal",
+          "Consulting",
+          "HR & Recruiting",
+          "Staffing Agencies",
+          "Sales",
+          "Marketing",
+          "E-commerce",
+          "Media",
+          "Real Estate",
+          "Construction",
+          "Hospitality",
+          "Healthcare",
+          "Public Sector",
+          "Non-Profit",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Success Stories",
+          "Talent Marketplace",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Start Technology Pilot Program",
+          "Book call",
+          "Book call",
+          "1Junior Developer",
+          "2Mid-Level Engineer",
+          "3Senior Engineer",
+          "4Staff / Lead Engineer",
+          "5VP Engineering / CTO",
+          "Next: Staff / Lead Engineer",
+          "1Define Your Ideal Candidate1-2 days",
+          "1",
+          "Mark Complete",
+          "2Optimize Your Job PostingWrite a compelling job description that sells the opportunity, not just lists requirements. Include salary range, growth path, and team culture.1 day",
+          "2",
+          "3Source Beyond Job BoardsReach passive candidates through targeted outreach, employee referrals, and talent communities. 70% of top talent is not actively looking.Ongoing",
+          "3",
+          "4Structure Your Interview ProcessDesign a consistent 3-4 stage process that evaluates skills, culture fit, and potential. Include take-home assessments where appropriate.2-3 days setup",
+          "4",
+          "5Close & Onboard EffectivelyMove fast with competitive offers and start onboarding before day one. The first 90 days determine long-term retention.1-2 weeks",
+          "5",
+          "What tech stacks do your developers know?",
+          "Can developers work in our timezone?",
+          "How do you screen technical skills?",
+          "Start Technology Pilot",
+          "Contact",
+          "Subscribe",
+          "Book call"
+        ],
+        "links": [
+          {
+            "text": "Skip to main content",
+            "href": "https://taasflow.com/industries/tech#main-content"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "Browse jobs",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Join the network",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Browse open roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Home",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "Industries",
+            "href": "https://taasflow.com/industries"
+          },
+          {
+            "text": "View all articles",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "Salary InsightsTechnologySoftware Engineer Salary Guide 2026: By Level, Location, and StackComprehensive salary data for",
+            "href": "https://taasflow.com/blog/software-engineer-salary-guide-2026"
+          },
+          {
+            "text": "📋How to Hire a Full-Stack Developer in 2026: The Complete PlaybookIndustry Hiring GuidesIndustry Hiring GuidesTechnolog",
+            "href": "https://taasflow.com/blog/hire-full-stack-developer-2026"
+          },
+          {
+            "text": "📋Hiring AI Engineers in 2026: Salary Benchmarks, Skills, and Sourcing StrategiesIndustry Hiring GuidesIndustry Hiring G",
+            "href": "https://taasflow.com/blog/hiring-ai-engineers-2026"
+          },
+          {
+            "text": "View all articles",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "Legal",
+            "href": "https://taasflow.com/industries/legal"
+          },
+          {
+            "text": "Public Sector",
+            "href": "https://taasflow.com/industries/public-sector"
+          },
+          {
+            "text": "Finance & Banking",
+            "href": "https://taasflow.com/industries/finance"
+          },
+          {
+            "text": "Staffing Agencies",
+            "href": "https://taasflow.com/industries/staffing-agencies"
+          },
+          {
+            "text": "Healthcare",
+            "href": "https://taasflow.com/industries/healthcare"
+          },
+          {
+            "text": "Sales",
+            "href": "https://taasflow.com/industries/sales"
+          },
+          {
+            "text": "Marketing & Advertising",
+            "href": "https://taasflow.com/industries/marketing"
+          },
+          {
+            "text": "Human Resources",
+            "href": "https://taasflow.com/industries/human-resources"
+          },
+          {
+            "text": "Compare all industries",
+            "href": "https://taasflow.com/industries/compare"
+          },
+          {
+            "text": "How it works",
+            "href": "https://taasflow.com/how-it-works"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "Start Pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "Jobs",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Blog",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "About",
+            "href": "https://taasflow.com/about"
+          },
+          {
+            "text": "Enterprise",
+            "href": "https://taasflow.com/enterprise"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://taasflow.com/faq"
+          },
+          {
+            "text": "Contact",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Looking for a job in technology? Browse open positions",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Technology Recruiting",
+            "href": "https://taasflow.com/industries/tech"
+          },
+          {
+            "text": "Tech Hiring Trends 2025",
+            "href": "https://taasflow.com/blog/tech-hiring-trends-2025"
+          },
+          {
+            "text": "AI Recruitment Revolution",
+            "href": "https://taasflow.com/blog/ai-recruitment-revolution"
+          },
+          {
+            "text": "Remote Hiring Best Practices",
+            "href": "https://taasflow.com/blog/remote-hiring-best-practices"
+          },
+          {
+            "text": "Skills-Based Hiring Guide",
+            "href": "https://taasflow.com/blog/skills-based-hiring"
+          },
+          {
+            "text": "Cybersecurity Hiring",
+            "href": "https://taasflow.com/blog/cybersecurity-hiring-guide"
+          },
+          {
+            "text": "All Tech Articles",
+            "href": "https://taasflow.com/blog/category/technology"
+          },
+          {
+            "text": "Start a Pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "View Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "Talk to Us",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Cybersecurity Recruiting",
+            "href": "https://taasflow.com/industries/cybersecurity"
+          },
+          {
+            "text": "Real Estate Recruiting",
+            "href": "https://taasflow.com/industries/real-estate"
+          },
+          {
+            "text": "Open Positions",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "LinkedIn",
+            "href": "https://www.linkedin.com/company/taasflow/"
+          },
+          {
+            "text": "Browse roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Talent network",
+            "href": "https://taasflow.com/global-talent"
+          },
+          {
+            "text": "Member stories",
+            "href": "https://taasflow.com/candidate-success"
+          },
+          {
+            "text": "Start pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "Employer onboarding",
+            "href": "https://taasflow.com/employer-onboarding"
+          },
+          {
+            "text": "Case studies",
+            "href": "https://taasflow.com/case-studies"
+          },
+          {
+            "text": "Healthcare",
+            "href": "https://taasflow.com/industries/healthcare"
+          },
+          {
+            "text": "Technology",
+            "href": "https://taasflow.com/industries/tech"
+          },
+          {
+            "text": "Finance",
+            "href": "https://taasflow.com/industries/finance"
+          },
+          {
+            "text": "Legal",
+            "href": "https://taasflow.com/industries/legal"
+          },
+          {
+            "text": "All →",
+            "href": "https://taasflow.com/industries"
+          },
+          {
+            "text": "About us",
+            "href": "https://taasflow.com/about"
+          },
+          {
+            "text": "Blog",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://taasflow.com/faq"
+          },
+          {
+            "text": "Knowledge Base",
+            "href": "https://taasflow.com/knowledge-base"
+          },
+          {
+            "text": "Contact us",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Privacy Policy",
+            "href": "https://taasflow.com/privacy"
+          },
+          {
+            "text": "Terms of Service",
+            "href": "https://taasflow.com/terms"
+          }
+        ],
+        "images": [
+          {
+            "src": "https://taasflow.com/assets/logo-on-white-Dk9DIcMP.png",
+            "alt": "TaaSFlow logo"
+          },
+          {
+            "src": "https://taasflow.com/assets/tech-CUH6a1PL.jpg",
+            "alt": ""
+          },
+          {
+            "src": "https://taasflow.com/assets/tech-CUH6a1PL.jpg",
+            "alt": ""
+          },
+          {
+            "src": "https://taasflow.com/assets/tech-CUH6a1PL.jpg",
+            "alt": ""
+          },
+          {
+            "src": "https://taasflow.com/assets/tech-hiring-aEgw18iT.jpg",
+            "alt": "Software Engineer Salary Guide 2026: By Level, Location, and Stack"
+          },
+          {
+            "src": "https://taasflow.com/assets/logo-on-blue-CX6jlwjg.png",
+            "alt": "TaaSFlow logo"
+          }
+        ],
+        "forms": [
+          {
+            "action": "https://taasflow.com/industries/tech",
+            "fields": [
+              "input"
+            ]
+          }
+        ],
+        "navLinks": [
+          "Browse jobs",
+          "Join the network",
+          "Browse open roles",
+          "Home",
+          "Industries",
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us"
+        ],
+        "footerLinks": [
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "Privacy Policy",
+          "Terms of Service"
+        ],
+        "horizontalOverflow": false,
+        "documentWidth": 375,
+        "viewportWidth": 375
+      },
+      "destination": {
+        "url": "https://clear-path-hubs.lovable.app/industries/tech",
+        "finalUrl": "https://clear-path-hubs.lovable.app/industries/tech",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [],
+        "title": "Technology hiring — TaaSFlow",
+        "description": "Structured, evidence-based sourcing for engineering, platform, product and IT teams. Ranked shortlists in your workspace, with evidence tied to the CV.",
+        "canonical": "https://clear-path-hubs.lovable.app/industries/tech",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "twitter:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "og:title": "Technology hiring — TaaSFlow",
+          "og:description": "Structured, evidence-based sourcing for engineering, platform, product and IT teams. Ranked shortlists in your workspace, with evidence tied to the CV.",
+          "og:url": "https://clear-path-hubs.lovable.app/industries/tech",
+          "og:type": "website",
+          "twitter:card": "summary_large_image",
+          "twitter:title": "Technology hiring — TaaSFlow",
+          "twitter:description": "Structured, evidence-based sourcing for engineering, platform, product and IT teams. Ranked shortlists in your workspace, with evidence tied to the CV."
+        },
+        "structuredData": [],
+        "h1": [
+          "Engineering and product hiring, on one transparent workflow."
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "Engineering and product hiring, on one transparent workflow."
+          },
+          {
+            "level": 2,
+            "text": "What we hear from Technology teams"
+          },
+          {
+            "level": 3,
+            "text": "Signal is buried in the CV"
+          },
+          {
+            "level": 3,
+            "text": "Volume vs precision"
+          },
+          {
+            "level": 3,
+            "text": "Remote, hybrid and on-site trade-offs"
+          },
+          {
+            "level": 2,
+            "text": "Roles we source in Technology"
+          },
+          {
+            "level": 3,
+            "text": "Submit the role"
+          },
+          {
+            "level": 3,
+            "text": "We source and score"
+          },
+          {
+            "level": 3,
+            "text": "Review in your workspace"
+          },
+          {
+            "level": 2,
+            "text": "Hiring for a tech team?"
+          }
+        ],
+        "sections": [
+          "Engineering and product hiring, on one transparent workflow.",
+          "What we hear from Technology teams",
+          "Roles we source in Technology",
+          "Submit the role",
+          "Hiring for a tech team?",
+          "SECTION"
+        ],
+        "textBlocks": [
+          "Home",
+          "Industries",
+          "Technology",
+          "Technology",
+          "TaaSFlow gives tech leaders a single workspace for every engineering search — with role-specific scoring rubrics, evidence extracted from the CV, and a ranked shortlist reviewed before it reaches you.",
+          "Rubric per role level",
+          "Evidence quotes from the CV",
+          "Ranked shortlist in your workspace",
+          "Great engineers describe their impact in prose, not keywords. Our scoring extracts the specific evidence — architecture decisions, systems owned, scale handled — instead of matching buzzwords.",
+          "Junior funnels flood inboxes while senior roles stall. We tune the rubric per level so the shortlist you see is calibrated to the seniority you are actually hiring for.",
+          "Every tech role has a location model. We capture it in intake and use it as a first-class filter so time zone and location mismatches never reach the shortlist.",
+          "We calibrate the rubric to the seniority and specialisation you actually need.",
+          "Full-stack engineers",
+          "Backend & platform engineers",
+          "Frontend engineers",
+          "DevOps & site reliability",
+          "Mobile engineers",
+          "Data & ML engineers",
+          "Engineering managers",
+          "Product managers",
+          "IT & infrastructure specialists",
+          "01",
+          "A guided intake captures everything the search needs, in one flow.",
+          "02",
+          "Multi-channel sourcing, role-specific rubric, evidence extracted from every CV.",
+          "03",
+          "Ranked shortlist, evidence side-by-side, Kanban pipeline, direct messaging.",
+          "See the full process on how it works.",
+          "Technology",
+          "Submit the role in our guided intake — draft saving is on, and your workspace is ready as soon as you finish."
+        ],
+        "buttons": [],
+        "links": [
+          {
+            "text": "Home",
+            "href": "https://clear-path-hubs.lovable.app/"
+          },
+          {
+            "text": "Industries",
+            "href": "https://clear-path-hubs.lovable.app/industries"
+          },
+          {
+            "text": "Start hiring",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "Talk to us",
+            "href": "https://clear-path-hubs.lovable.app/contact"
+          },
+          {
+            "text": "how it works",
+            "href": "https://clear-path-hubs.lovable.app/how-it-works"
+          },
+          {
+            "text": "Start intake",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "See other industries",
+            "href": "https://clear-path-hubs.lovable.app/industries"
+          },
+          {
+            "text": "Edit with",
+            "href": "https://lovable.dev/projects/1dc5ee7e-1294-441c-8288-850e79e443f6?utm_source=lovable-badge"
+          }
+        ],
+        "images": [],
+        "forms": [],
+        "navLinks": [
+          "Home",
+          "Industries"
+        ],
+        "footerLinks": [],
+        "horizontalOverflow": false,
+        "documentWidth": 375,
+        "viewportWidth": 375
+      },
+      "screenshots": {
+        "sourceFull": "reports/public-parity/screenshots/source/industries_tech__mobile__full.png",
+        "sourceVisible": "reports/public-parity/screenshots/source/industries_tech__mobile__visible.png",
+        "destinationFull": "reports/public-parity/screenshots/destination/industries_tech__mobile__full.png",
+        "destinationVisible": "reports/public-parity/screenshots/destination/industries_tech__mobile__visible.png"
+      },
+      "differences": [
+        "title: \"Tech Industry Talent | TaaSFlow - Talent as a Service\" vs \"Technology hiring — TaaSFlow\"",
+        "meta description mismatch",
+        "H1 differs: [Engineering Talent On-Demand for Tech Companies] vs [Engineering and product hiring, on one transparent workflow.]",
+        "heading overlap 0% (0/30)",
+        "section count 20 vs 6",
+        "form count 1 vs 0"
+      ]
+    },
+    {
+      "viewport": "tablet",
+      "source": {
+        "url": "https://taasflow.com/industries/tech",
+        "finalUrl": "https://taasflow.com/industries/tech",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [
+          {
+            "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HJ2ECKCNK4&gtm=45je67m0h2v9245339446za200zd9245339446&_p=1784774105512&gcd=13l3l3l3l1l1&npa=0&_ng=1&dma=0&are=1&cid=1898146529.1784774106&frm=0&ngs=1&pscdl=noapi&rcb=7&sr=768x1024&uaa=x86&uab=64&uafvl=Not-A.Brand%3B24.0.0.0%7CChromium%3B146.0.7680.80&uam=&uamb=0&uap=Windows&uapv=&uaw=0&ul=en-us&_s=1&tag_exp=115616985~115938465~115938468~118897920~118897930~119724320~119896802&dp=%2Findustries%2Ftech&dt=TaaSFlow%20%7C%20Talent%20as%20a%20Service%20%7C%20Subscription%20Recruiting&dl=https%3A%2F%2Ftaasflow.com%2Findustries%2Ftech&sid=1784774105&sct=1&seg=0&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&ep.role_type=public&ep.is_authenticated=false&tfd=513",
+            "status": null,
+            "failure": "net::ERR_ABORTED"
+          },
+          {
+            "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HJ2ECKCNK4&gtm=45je67m0h2v9245339446za200zd9245339446&_p=1784774105512&gcd=13l3l3l3l1l1&npa=0&_ng=1&dma=0&_eu=AEAAAAQ&ae=a&are=1&cid=1898146529.1784774106&frm=0&ngs=1&pscdl=noapi&rcb=7&sr=768x1024&uaa=x86&uab=64&uafvl=Not-A.Brand%3B24.0.0.0%7CChromium%3B146.0.7680.80&uam=&uamb=0&uap=Windows&uapv=&uaw=0&ul=en-us&_s=2&tag_exp=115616985~115938465~115938468~118897920~118897930~119724320~119896802&sid=1784774105&sct=1&seg=0&dl=https%3A%2F%2Ftaasflow.com%2Findustries%2Ftech&dt=TaaSFlow%20%7C%20Talent%20as%20a%20Service%20%7C%20Subscription%20Recruiting&en=scroll&epn.percent_scrolled=90&_et=14&tfd=876",
+            "status": null,
+            "failure": "net::ERR_ABORTED"
+          }
+        ],
+        "title": "Tech Industry Talent | TaaSFlow - Talent as a Service",
+        "description": "On-demand software developers, engineers, and IT specialists for tech companies. Scale your engineering team in days, not months.",
+        "canonical": "https://taasflow.com/industries/tech",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:type": "website",
+          "og:url": "https://taasflow.com/industries/tech",
+          "og:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "og:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "og:image": "https://taasflow.com/og-image.png",
+          "og:image:width": "1200",
+          "og:image:height": "630",
+          "og:locale": "en_US",
+          "twitter:card": "summary_large_image",
+          "twitter:site": "@TaasFlow",
+          "twitter:creator": "@TaasFlow",
+          "twitter:url": "https://taasflow.com/industries/tech",
+          "twitter:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "twitter:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "twitter:image": "https://taasflow.com/og-image.png"
+        },
+        "structuredData": [
+          {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "@id": "https://taasflow.com/#organization",
+            "name": "TaaSFlow",
+            "legalName": "TaaSFlow",
+            "url": "https://taasflow.com/",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://taasflow.com/favicon.png",
+              "width": 512,
+              "height": 512
+            },
+            "image": "https://taasflow.com/og-image.png",
+            "description": "Talent as a Service — subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+            "slogan": "Your hiring team. On demand.",
+            "foundingDate": "2024",
+            "areaServed": [
+              {
+                "@type": "Country",
+                "name": "United States"
+              },
+              {
+                "@type": "Country",
+                "name": "United Arab Emirates"
+              },
+              {
+                "@type": "Country",
+                "name": "United Kingdom"
+              },
+              {
+                "@type": "Country",
+                "name": "Brazil"
+              }
+            ],
+            "knowsAbout": [
+              "Subscription recruiting",
+              "Talent as a Service",
+              "Candidate sourcing",
+              "Pre-screened candidates",
+              "Recruitment process outsourcing"
+            ],
+            "contactPoint": [
+              {
+                "@type": "ContactPoint",
+                "contactType": "sales",
+                "email": "hello@taasflow.com",
+                "url": "https://taasflow.com/contact",
+                "availableLanguage": [
+                  "English",
+                  "Portuguese",
+                  "Spanish"
+                ]
+              }
+            ],
+            "sameAs": [
+              "https://www.linkedin.com/company/taasflow",
+              "https://twitter.com/TaasFlow"
+            ]
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "@id": "https://taasflow.com/#website",
+            "name": "TaaSFlow",
+            "alternateName": "Talent as a Service",
+            "url": "https://taasflow.com/",
+            "description": "Subscription recruiting that delivers pre-screened, ranked candidates in 14 days.",
+            "inLanguage": "en-US",
+            "publisher": {
+              "@id": "https://taasflow.com/#organization"
+            },
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": {
+                "@type": "EntryPoint",
+                "urlTemplate": "https://taasflow.com/jobs?q={search_term_string}"
+              },
+              "query-input": "required name=search_term_string"
+            }
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "Service",
+            "name": "Technology Talent Sourcing",
+            "description": "On-demand software developers, engineers, and IT specialists for tech companies. Scale your engineering team in days, not months.",
+            "provider": {
+              "@type": "Organization",
+              "name": "TaasFlow",
+              "url": "https://taasflow.com"
+            },
+            "serviceType": "Talent Acquisition",
+            "areaServed": "United States",
+            "hasOfferCatalog": {
+              "@type": "OfferCatalog",
+              "name": "Technology Recruiting Services",
+              "itemListElement": [
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Software Engineers Recruiting"
+                  },
+                  "position": 1
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Full-Stack Developers Recruiting"
+                  },
+                  "position": 2
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Frontend Specialists Recruiting"
+                  },
+                  "position": 3
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Backend Engineers Recruiting"
+                  },
+                  "position": 4
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "DevOps/SRE Recruiting"
+                  },
+                  "position": 5
+                }
+              ]
+            }
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "https://taasflow.com"
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Industries",
+                "item": "https://taasflow.com/industries"
+              },
+              {
+                "@type": "ListItem",
+                "position": 3,
+                "name": "Technology",
+                "item": "https://taasflow.com/industries//industries/tech"
+              }
+            ]
+          }
+        ],
+        "h1": [
+          "Engineering Talent On-Demand for Tech Companies"
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "Engineering Talent On-Demand for Tech Companies"
+          },
+          {
+            "level": 2,
+            "text": "Technology Industry Insights"
+          },
+          {
+            "level": 3,
+            "text": "Developer Shortage"
+          },
+          {
+            "level": 3,
+            "text": "Time to Hire"
+          },
+          {
+            "level": 3,
+            "text": "Passive Talent"
+          },
+          {
+            "level": 3,
+            "text": "Recruiter Fees"
+          },
+          {
+            "level": 3,
+            "text": "Industry Overview"
+          },
+          {
+            "level": 3,
+            "text": "Ready to transform your technology recruiting?"
+          },
+          {
+            "level": 2,
+            "text": "How we hire for Technology"
+          },
+          {
+            "level": 3,
+            "text": "Tech Stack Mapping"
+          },
+          {
+            "level": 3,
+            "text": "Code-Level Screening"
+          },
+          {
+            "level": 3,
+            "text": "Async Collaboration Check"
+          },
+          {
+            "level": 3,
+            "text": "Weekly Candidate Drops"
+          },
+          {
+            "level": 2,
+            "text": "The Tech Hiring Challenge"
+          },
+          {
+            "level": 3,
+            "text": "The TaasFlow Solution"
+          },
+          {
+            "level": 2,
+            "text": "Why Technology companies choose TaasFlow"
+          },
+          {
+            "level": 3,
+            "text": "Cut Time-to-Hire by 75%"
+          },
+          {
+            "level": 3,
+            "text": "Technical Screening Done"
+          },
+          {
+            "level": 3,
+            "text": "Scale On-Demand"
+          },
+          {
+            "level": 3,
+            "text": "Zero Placement Fees"
+          },
+          {
+            "level": 2,
+            "text": "Positions we fill for Technology"
+          },
+          {
+            "level": 2,
+            "text": "Real results for Technology teams"
+          },
+          {
+            "level": 2,
+            "text": "Technology Salary Explorer"
+          },
+          {
+            "level": 2,
+            "text": "Technology Career Path"
+          },
+          {
+            "level": 3,
+            "text": "Senior Engineer"
+          },
+          {
+            "level": 4,
+            "text": "Key Skills at This Level"
+          },
+          {
+            "level": 2,
+            "text": "Technology Hiring Trends"
+          },
+          {
+            "level": 2,
+            "text": "Interactive Hiring Guide"
+          },
+          {
+            "level": 3,
+            "text": "Define Your Ideal Candidate"
+          },
+          {
+            "level": 3,
+            "text": "Optimize Your Job Posting"
+          },
+          {
+            "level": 3,
+            "text": "Source Beyond Job Boards"
+          },
+          {
+            "level": 3,
+            "text": "Structure Your Interview Process"
+          },
+          {
+            "level": 3,
+            "text": "Close & Onboard Effectively"
+          },
+          {
+            "level": 2,
+            "text": "Technology Recruiting Insights"
+          },
+          {
+            "level": 3,
+            "text": "Software Engineer Salary Guide 2026: By Level, Location, and Stack"
+          },
+          {
+            "level": 3,
+            "text": "How to Hire a Full-Stack Developer in 2026: The Complete Playbook"
+          },
+          {
+            "level": 3,
+            "text": "Hiring AI Engineers in 2026: Salary Benchmarks, Skills, and Sourcing Strategies"
+          },
+          {
+            "level": 2,
+            "text": "Frequently Asked Questions"
+          },
+          {
+            "level": 3,
+            "text": "What tech stacks do your developers know?"
+          },
+          {
+            "level": 3,
+            "text": "Can developers work in our timezone?"
+          },
+          {
+            "level": 3,
+            "text": "How do you screen technical skills?"
+          },
+          {
+            "level": 2,
+            "text": "Discover related industries"
+          },
+          {
+            "level": 2,
+            "text": "Ready to build your Technology team?"
+          },
+          {
+            "level": 2,
+            "text": "Technology Recruiting"
+          },
+          {
+            "level": 3,
+            "text": "Hub Page"
+          },
+          {
+            "level": 3,
+            "text": "Related Articles"
+          },
+          {
+            "level": 3,
+            "text": "Get Started"
+          },
+          {
+            "level": 4,
+            "text": "Newsletter"
+          },
+          {
+            "level": 4,
+            "text": "For candidates"
+          },
+          {
+            "level": 4,
+            "text": "For companies"
+          },
+          {
+            "level": 4,
+            "text": "Industries"
+          },
+          {
+            "level": 4,
+            "text": "Company"
+          },
+          {
+            "level": 3,
+            "text": "Cookie Preferences"
+          }
+        ],
+        "sections": [
+          "SECTION",
+          "Engineering Talent On-Demand for Tech Companies",
+          "SECTION",
+          "Technology Industry Insights",
+          "Ready to transform your technology recruiting?",
+          "How we hire for Technology",
+          "The Tech Hiring Challenge",
+          "Why Technology companies choose TaasFlow",
+          "Positions we fill for Technology",
+          "Real results for Technology teams",
+          "Technology Salary Explorer",
+          "Technology Career Path",
+          "Technology Hiring Trends",
+          "Interactive Hiring Guide",
+          "Technology Recruiting Insights",
+          "Frequently Asked Questions",
+          "Discover related industries",
+          "SECTION",
+          "Ready to build your Technology team?",
+          "Technology Recruiting"
+        ],
+        "textBlocks": [
+          "Solutions",
+          "Industries",
+          "Resources",
+          "Home",
+          "Industries",
+          "Technology",
+          "Stop waiting months for developers. Get pre-screened engineers, data scientists, and IT specialists delivered weekly, ready to code from day one.",
+          "Key market data and trends shaping talent demand in your industry. (Hover for details)",
+          "Unfilled software developer jobs in the US by 2026",
+          "Average time to fill a tech role using traditional methods",
+          "Of tech professionals are passive candidates not actively job searching",
+          "Typical agency fee for technical placements",
+          "Start a risk-free pilot and receive qualified candidates in 14 days.",
+          "A tailored workflow for the challenges of technology settings.",
+          "We map your exact stack, tools, and architecture to find developers who can contribute immediately.",
+          "Candidates complete technical assessments, code reviews, and system design evaluations.",
+          "We evaluate remote collaboration skills, communication clarity, and timezone flexibility.",
+          "Receive 3-5 screened engineers per week with skills scorecards and code samples.",
+          "In the tech industry, great developers have their pick of opportunities. Your job posting competes with hundreds of others, and top candidates are off the market within 10 days.",
+          "You need specialized skills (cloud architecture, AI/ML, cybersecurity, blockchain) but can't always justify permanent headcount for emerging technologies that may evolve.",
+          "Traditional recruiting eats 3-6 months and 20-30% of first-year salary in fees. Meanwhile, your product roadmap slips and competitors ship faster.",
+          "Pre-screened developers with proven project experience and code samples reviewed",
+          "Full-stack, backend, frontend, mobile, and DevOps specialists available",
+          "Familiar with modern stacks: React, Node, Python, AWS, GCP, Kubernetes",
+          "Remote-first talent experienced with async collaboration and agile workflows",
+          "Scale from 1 developer to an entire team, up or down as projects evolve",
+          "We understand the unique challenges of your industry and deliver matching talent.",
+          "Get qualified engineers in days, not months. No more lengthy recruiting cycles slowing your roadmap.",
+          "Every developer is screened for skills, code quality, and remote collaboration abilities.",
+          "Ramp up for product launches, scale back after. Match headcount to project phases.",
+          "Predictable monthly subscription. No 20-30% recruiter fees eating your budget.",
+          "Pre-vetted professionals, delivered weekly, ready to start.",
+          "- Series B SaaS Company, 150 employees",
+          "Explore current compensation ranges for top roles. Data updated quarterly from industry benchmarks.",
+          "* Based on industry benchmarks from SHRM, Glassdoor, LinkedIn Salary, and BLS data. Actual compensation may vary.",
+          "Click any level to explore typical progression, salary ranges, and key skills.",
+          "Key metrics shaping the talent landscape. Stay ahead of market shifts.",
+          "AI engineering roles are the fastest growing segment in tech hiring.",
+          "Majority of tech roles now offer fully remote or hybrid options.",
+          "Companies using TaaS models fill tech roles 30% faster.",
+          "Of tech candidates expect flexible work arrangements as standard.",
+          "Follow these proven steps to hire smarter. Track your progress and get actionable tips at every stage.",
+          "Create a detailed candidate persona with must-have vs nice-to-have skills, cultural fit criteria, and realistic salary expectations.",
+          "Write a compelling job description that sells the opportunity, not just lists requirements. Include salary range, growth path, and team culture.",
+          "Reach passive candidates through targeted outreach, employee referrals, and talent communities. 70% of top talent is not actively looking.",
+          "Design a consistent 3-4 stage process that evaluates skills, culture fit, and potential. Include take-home assessments where appropriate.",
+          "Move fast with competitive offers and start onboarding before day one. The first 90 days determine long-term retention.",
+          "Expert articles on recruiting and talent acquisition for technology.",
+          "Comprehensive salary data for software engineers from junior to principal, covering every major market, stack, and company stage.",
+          "How to Hire a Full-Stack Developer in 2026: The Complete Playbook",
+          "A comprehensive guide covering market landscape, skills assessment, sourcing channels, interview frameworks, and offer benchmarking for full-stack engineering hires.",
+          "Hiring AI Engineers in 2026: Salary Benchmarks, Skills, and Sourcing Strategies",
+          "AI engineering is the most competitive hiring market in tech. Here are the salary ranges, must-have skills, and sourcing channels that work.",
+          "Common questions about TaasFlow for technology.",
+          "Learn how we serve similar sectors with subscription recruiting.",
+          "Receive qualified technology professionals weekly. No agency fees, no long-term contracts.",
+          "Related Industries",
+          "Talent as a Service",
+          "A global hiring system for teams that need consistent recruiting.",
+          "Weekly insights into talent acquisition. No spam.",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Book call",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "No recruitment agency fees. No placement charges. Subscription-based hiring system.",
+          "Copyright 2026 TaaSFlow. All rights reserved.",
+          "We use essential cookies for core functionality. With your consent, we use analytics (Google Analytics) and marketing technologies (Meta Pixel, Apollo, Retention.com/RB2B) to understand website performance, improve campaigns, and measure conversions safely. Your data is processed in accordance with GDPR and our Privacy Notice. You can change your preferences at any time."
+        ],
+        "buttons": [
+          "Solutions",
+          "Industries",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Solutions",
+          "How it works",
+          "Pilot",
+          "Enterprise",
+          "Case studies",
+          "Jobs",
+          "Journey",
+          "Industries",
+          "Tech",
+          "SaaS & Cloud",
+          "Cybersecurity",
+          "Data & Analytics",
+          "Finance",
+          "Insurance",
+          "PE & VC",
+          "Accounting",
+          "Legal",
+          "Consulting",
+          "HR & Recruiting",
+          "Staffing Agencies",
+          "Sales",
+          "Marketing",
+          "E-commerce",
+          "Media",
+          "Real Estate",
+          "Construction",
+          "Hospitality",
+          "Healthcare",
+          "Public Sector",
+          "Non-Profit",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Success Stories",
+          "Talent Marketplace",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Start Technology Pilot Program",
+          "Book call",
+          "Book call",
+          "1Junior Developer",
+          "2Mid-Level Engineer",
+          "3Senior Engineer",
+          "4Staff / Lead Engineer",
+          "5VP Engineering / CTO",
+          "Next: Staff / Lead Engineer",
+          "1Define Your Ideal Candidate1-2 days",
+          "1",
+          "Mark Complete",
+          "2Optimize Your Job PostingWrite a compelling job description that sells the opportunity, not just lists requirements. Include salary range, growth path, and team culture.1 day",
+          "2",
+          "3Source Beyond Job BoardsReach passive candidates through targeted outreach, employee referrals, and talent communities. 70% of top talent is not actively looking.Ongoing",
+          "3",
+          "4Structure Your Interview ProcessDesign a consistent 3-4 stage process that evaluates skills, culture fit, and potential. Include take-home assessments where appropriate.2-3 days setup",
+          "4",
+          "5Close & Onboard EffectivelyMove fast with competitive offers and start onboarding before day one. The first 90 days determine long-term retention.1-2 weeks",
+          "5",
+          "What tech stacks do your developers know?",
+          "Can developers work in our timezone?",
+          "How do you screen technical skills?",
+          "Start Technology Pilot",
+          "Contact",
+          "Subscribe",
+          "Book call"
+        ],
+        "links": [
+          {
+            "text": "Skip to main content",
+            "href": "https://taasflow.com/industries/tech#main-content"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "Browse jobs",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Join the network",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Browse open roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Home",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "Industries",
+            "href": "https://taasflow.com/industries"
+          },
+          {
+            "text": "View all articles",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "Salary InsightsTechnologySoftware Engineer Salary Guide 2026: By Level, Location, and StackComprehensive salary data for",
+            "href": "https://taasflow.com/blog/software-engineer-salary-guide-2026"
+          },
+          {
+            "text": "📋How to Hire a Full-Stack Developer in 2026: The Complete PlaybookIndustry Hiring GuidesIndustry Hiring GuidesTechnolog",
+            "href": "https://taasflow.com/blog/hire-full-stack-developer-2026"
+          },
+          {
+            "text": "📋Hiring AI Engineers in 2026: Salary Benchmarks, Skills, and Sourcing StrategiesIndustry Hiring GuidesIndustry Hiring G",
+            "href": "https://taasflow.com/blog/hiring-ai-engineers-2026"
+          },
+          {
+            "text": "View all articles",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "Legal",
+            "href": "https://taasflow.com/industries/legal"
+          },
+          {
+            "text": "Public Sector",
+            "href": "https://taasflow.com/industries/public-sector"
+          },
+          {
+            "text": "Finance & Banking",
+            "href": "https://taasflow.com/industries/finance"
+          },
+          {
+            "text": "Staffing Agencies",
+            "href": "https://taasflow.com/industries/staffing-agencies"
+          },
+          {
+            "text": "Healthcare",
+            "href": "https://taasflow.com/industries/healthcare"
+          },
+          {
+            "text": "Sales",
+            "href": "https://taasflow.com/industries/sales"
+          },
+          {
+            "text": "Marketing & Advertising",
+            "href": "https://taasflow.com/industries/marketing"
+          },
+          {
+            "text": "Human Resources",
+            "href": "https://taasflow.com/industries/human-resources"
+          },
+          {
+            "text": "Compare all industries",
+            "href": "https://taasflow.com/industries/compare"
+          },
+          {
+            "text": "How it works",
+            "href": "https://taasflow.com/how-it-works"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "Start Pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "Jobs",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Blog",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "About",
+            "href": "https://taasflow.com/about"
+          },
+          {
+            "text": "Enterprise",
+            "href": "https://taasflow.com/enterprise"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://taasflow.com/faq"
+          },
+          {
+            "text": "Contact",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Looking for a job in technology? Browse open positions",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Technology Recruiting",
+            "href": "https://taasflow.com/industries/tech"
+          },
+          {
+            "text": "Tech Hiring Trends 2025",
+            "href": "https://taasflow.com/blog/tech-hiring-trends-2025"
+          },
+          {
+            "text": "AI Recruitment Revolution",
+            "href": "https://taasflow.com/blog/ai-recruitment-revolution"
+          },
+          {
+            "text": "Remote Hiring Best Practices",
+            "href": "https://taasflow.com/blog/remote-hiring-best-practices"
+          },
+          {
+            "text": "Skills-Based Hiring Guide",
+            "href": "https://taasflow.com/blog/skills-based-hiring"
+          },
+          {
+            "text": "Cybersecurity Hiring",
+            "href": "https://taasflow.com/blog/cybersecurity-hiring-guide"
+          },
+          {
+            "text": "All Tech Articles",
+            "href": "https://taasflow.com/blog/category/technology"
+          },
+          {
+            "text": "Start a Pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "View Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "Talk to Us",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Cybersecurity Recruiting",
+            "href": "https://taasflow.com/industries/cybersecurity"
+          },
+          {
+            "text": "Real Estate Recruiting",
+            "href": "https://taasflow.com/industries/real-estate"
+          },
+          {
+            "text": "Open Positions",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "LinkedIn",
+            "href": "https://www.linkedin.com/company/taasflow/"
+          },
+          {
+            "text": "Browse roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Talent network",
+            "href": "https://taasflow.com/global-talent"
+          },
+          {
+            "text": "Member stories",
+            "href": "https://taasflow.com/candidate-success"
+          },
+          {
+            "text": "Start pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "Employer onboarding",
+            "href": "https://taasflow.com/employer-onboarding"
+          },
+          {
+            "text": "Case studies",
+            "href": "https://taasflow.com/case-studies"
+          },
+          {
+            "text": "Healthcare",
+            "href": "https://taasflow.com/industries/healthcare"
+          },
+          {
+            "text": "Technology",
+            "href": "https://taasflow.com/industries/tech"
+          },
+          {
+            "text": "Finance",
+            "href": "https://taasflow.com/industries/finance"
+          },
+          {
+            "text": "Legal",
+            "href": "https://taasflow.com/industries/legal"
+          },
+          {
+            "text": "All →",
+            "href": "https://taasflow.com/industries"
+          },
+          {
+            "text": "About us",
+            "href": "https://taasflow.com/about"
+          },
+          {
+            "text": "Blog",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://taasflow.com/faq"
+          },
+          {
+            "text": "Knowledge Base",
+            "href": "https://taasflow.com/knowledge-base"
+          },
+          {
+            "text": "Contact us",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Privacy Policy",
+            "href": "https://taasflow.com/privacy"
+          },
+          {
+            "text": "Terms of Service",
+            "href": "https://taasflow.com/terms"
+          },
+          {
+            "text": "Privacy Notice",
+            "href": "https://taasflow.com/privacy"
+          }
+        ],
+        "images": [
+          {
+            "src": "https://taasflow.com/assets/logo-on-white-Dk9DIcMP.png",
+            "alt": "TaaSFlow logo"
+          },
+          {
+            "src": "https://taasflow.com/assets/tech-CUH6a1PL.jpg",
+            "alt": ""
+          },
+          {
+            "src": "https://taasflow.com/assets/tech-CUH6a1PL.jpg",
+            "alt": ""
+          },
+          {
+            "src": "https://taasflow.com/assets/tech-CUH6a1PL.jpg",
+            "alt": ""
+          },
+          {
+            "src": "https://taasflow.com/assets/tech-hiring-aEgw18iT.jpg",
+            "alt": "Software Engineer Salary Guide 2026: By Level, Location, and Stack"
+          },
+          {
+            "src": "https://taasflow.com/assets/logo-on-blue-CX6jlwjg.png",
+            "alt": "TaaSFlow logo"
+          }
+        ],
+        "forms": [
+          {
+            "action": "https://taasflow.com/industries/tech",
+            "fields": [
+              "input"
+            ]
+          }
+        ],
+        "navLinks": [
+          "Browse jobs",
+          "Join the network",
+          "Browse open roles",
+          "Home",
+          "Industries",
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us"
+        ],
+        "footerLinks": [
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "Privacy Policy",
+          "Terms of Service"
+        ],
+        "horizontalOverflow": false,
+        "documentWidth": 768,
+        "viewportWidth": 768
+      },
+      "destination": {
+        "url": "https://clear-path-hubs.lovable.app/industries/tech",
+        "finalUrl": "https://clear-path-hubs.lovable.app/industries/tech",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [],
+        "title": "Technology hiring — TaaSFlow",
+        "description": "Structured, evidence-based sourcing for engineering, platform, product and IT teams. Ranked shortlists in your workspace, with evidence tied to the CV.",
+        "canonical": "https://clear-path-hubs.lovable.app/industries/tech",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "twitter:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "og:title": "Technology hiring — TaaSFlow",
+          "og:description": "Structured, evidence-based sourcing for engineering, platform, product and IT teams. Ranked shortlists in your workspace, with evidence tied to the CV.",
+          "og:url": "https://clear-path-hubs.lovable.app/industries/tech",
+          "og:type": "website",
+          "twitter:card": "summary_large_image",
+          "twitter:title": "Technology hiring — TaaSFlow",
+          "twitter:description": "Structured, evidence-based sourcing for engineering, platform, product and IT teams. Ranked shortlists in your workspace, with evidence tied to the CV."
+        },
+        "structuredData": [],
+        "h1": [
+          "Engineering and product hiring, on one transparent workflow."
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "Engineering and product hiring, on one transparent workflow."
+          },
+          {
+            "level": 2,
+            "text": "What we hear from Technology teams"
+          },
+          {
+            "level": 3,
+            "text": "Signal is buried in the CV"
+          },
+          {
+            "level": 3,
+            "text": "Volume vs precision"
+          },
+          {
+            "level": 3,
+            "text": "Remote, hybrid and on-site trade-offs"
+          },
+          {
+            "level": 2,
+            "text": "Roles we source in Technology"
+          },
+          {
+            "level": 3,
+            "text": "Submit the role"
+          },
+          {
+            "level": 3,
+            "text": "We source and score"
+          },
+          {
+            "level": 3,
+            "text": "Review in your workspace"
+          },
+          {
+            "level": 2,
+            "text": "Hiring for a tech team?"
+          }
+        ],
+        "sections": [
+          "Engineering and product hiring, on one transparent workflow.",
+          "What we hear from Technology teams",
+          "Roles we source in Technology",
+          "Submit the role",
+          "Hiring for a tech team?",
+          "SECTION"
+        ],
+        "textBlocks": [
+          "Home",
+          "Industries",
+          "Technology",
+          "Technology",
+          "TaaSFlow gives tech leaders a single workspace for every engineering search — with role-specific scoring rubrics, evidence extracted from the CV, and a ranked shortlist reviewed before it reaches you.",
+          "Rubric per role level",
+          "Evidence quotes from the CV",
+          "Ranked shortlist in your workspace",
+          "Great engineers describe their impact in prose, not keywords. Our scoring extracts the specific evidence — architecture decisions, systems owned, scale handled — instead of matching buzzwords.",
+          "Junior funnels flood inboxes while senior roles stall. We tune the rubric per level so the shortlist you see is calibrated to the seniority you are actually hiring for.",
+          "Every tech role has a location model. We capture it in intake and use it as a first-class filter so time zone and location mismatches never reach the shortlist.",
+          "We calibrate the rubric to the seniority and specialisation you actually need.",
+          "Full-stack engineers",
+          "Backend & platform engineers",
+          "Frontend engineers",
+          "DevOps & site reliability",
+          "Mobile engineers",
+          "Data & ML engineers",
+          "Engineering managers",
+          "Product managers",
+          "IT & infrastructure specialists",
+          "01",
+          "A guided intake captures everything the search needs, in one flow.",
+          "02",
+          "Multi-channel sourcing, role-specific rubric, evidence extracted from every CV.",
+          "03",
+          "Ranked shortlist, evidence side-by-side, Kanban pipeline, direct messaging.",
+          "See the full process on how it works.",
+          "Technology",
+          "Submit the role in our guided intake — draft saving is on, and your workspace is ready as soon as you finish."
+        ],
+        "buttons": [],
+        "links": [
+          {
+            "text": "Home",
+            "href": "https://clear-path-hubs.lovable.app/"
+          },
+          {
+            "text": "Industries",
+            "href": "https://clear-path-hubs.lovable.app/industries"
+          },
+          {
+            "text": "Start hiring",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "Talk to us",
+            "href": "https://clear-path-hubs.lovable.app/contact"
+          },
+          {
+            "text": "how it works",
+            "href": "https://clear-path-hubs.lovable.app/how-it-works"
+          },
+          {
+            "text": "Start intake",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "See other industries",
+            "href": "https://clear-path-hubs.lovable.app/industries"
+          },
+          {
+            "text": "Edit with",
+            "href": "https://lovable.dev/projects/1dc5ee7e-1294-441c-8288-850e79e443f6?utm_source=lovable-badge"
+          }
+        ],
+        "images": [],
+        "forms": [],
+        "navLinks": [
+          "Home",
+          "Industries"
+        ],
+        "footerLinks": [],
+        "horizontalOverflow": false,
+        "documentWidth": 768,
+        "viewportWidth": 768
+      },
+      "screenshots": {
+        "sourceFull": "reports/public-parity/screenshots/source/industries_tech__tablet__full.png",
+        "sourceVisible": "reports/public-parity/screenshots/source/industries_tech__tablet__visible.png",
+        "destinationFull": "reports/public-parity/screenshots/destination/industries_tech__tablet__full.png",
+        "destinationVisible": "reports/public-parity/screenshots/destination/industries_tech__tablet__visible.png"
+      },
+      "differences": [
+        "title: \"Tech Industry Talent | TaaSFlow - Talent as a Service\" vs \"Technology hiring — TaaSFlow\"",
+        "meta description mismatch",
+        "H1 differs: [Engineering Talent On-Demand for Tech Companies] vs [Engineering and product hiring, on one transparent workflow.]",
+        "heading overlap 0% (0/30)",
+        "section count 20 vs 6",
+        "form count 1 vs 0"
+      ]
+    },
+    {
+      "viewport": "desktop",
+      "source": {
+        "url": "https://taasflow.com/industries/tech",
+        "finalUrl": "https://taasflow.com/industries/tech",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [
+          {
+            "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HJ2ECKCNK4&gtm=45je67l1v9245339446za200zd9245339446&_p=1784774109616&gcd=13l3l3l3l1l1&npa=0&_ng=1&dma=0&are=1&cid=748004896.1784774110&frm=0&ngs=1&pscdl=noapi&rcb=14&sr=1440x900&uaa=x86&uab=64&uafvl=Not-A.Brand%3B24.0.0.0%7CChromium%3B146.0.7680.80&uam=&uamb=0&uap=Windows&uapv=&uaw=0&ul=en-us&_s=1&tag_exp=115938465~115938469~118395335~118897920~118897930~119896803&dp=%2Findustries%2Ftech&dt=TaaSFlow%20%7C%20Talent%20as%20a%20Service%20%7C%20Subscription%20Recruiting&dl=https%3A%2F%2Ftaasflow.com%2Findustries%2Ftech&sid=1784774109&sct=1&seg=0&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&ep.role_type=public&ep.is_authenticated=false&tfd=484",
+            "status": null,
+            "failure": "net::ERR_ABORTED"
+          },
+          {
+            "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-HJ2ECKCNK4&gtm=45je67l1v9245339446za200zd9245339446&_p=1784774109616&gcd=13l3l3l3l1l1&npa=0&_ng=1&dma=0&_eu=AEAAAAQ&ae=a&are=1&cid=748004896.1784774110&frm=0&ngs=1&pscdl=noapi&rcb=14&sr=1440x900&uaa=x86&uab=64&uafvl=Not-A.Brand%3B24.0.0.0%7CChromium%3B146.0.7680.80&uam=&uamb=0&uap=Windows&uapv=&uaw=0&ul=en-us&_s=2&tag_exp=115938465~115938469~118395335~118897920~118897930~119896803&sid=1784774109&sct=1&seg=0&dl=https%3A%2F%2Ftaasflow.com%2Findustries%2Ftech&dt=TaaSFlow%20%7C%20Talent%20as%20a%20Service%20%7C%20Subscription%20Recruiting&en=scroll&epn.percent_scrolled=90&_et=11&tfd=811",
+            "status": null,
+            "failure": "net::ERR_ABORTED"
+          }
+        ],
+        "title": "Tech Industry Talent | TaaSFlow - Talent as a Service",
+        "description": "On-demand software developers, engineers, and IT specialists for tech companies. Scale your engineering team in days, not months.",
+        "canonical": "https://taasflow.com/industries/tech",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:type": "website",
+          "og:url": "https://taasflow.com/industries/tech",
+          "og:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "og:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "og:image": "https://taasflow.com/og-image.png",
+          "og:image:width": "1200",
+          "og:image:height": "630",
+          "og:locale": "en_US",
+          "twitter:card": "summary_large_image",
+          "twitter:site": "@TaasFlow",
+          "twitter:creator": "@TaasFlow",
+          "twitter:url": "https://taasflow.com/industries/tech",
+          "twitter:title": "TaaSFlow | Talent as a Service | Subscription Recruiting",
+          "twitter:description": "Talent as a Service: subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+          "twitter:image": "https://taasflow.com/og-image.png"
+        },
+        "structuredData": [
+          {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "@id": "https://taasflow.com/#organization",
+            "name": "TaaSFlow",
+            "legalName": "TaaSFlow",
+            "url": "https://taasflow.com/",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://taasflow.com/favicon.png",
+              "width": 512,
+              "height": 512
+            },
+            "image": "https://taasflow.com/og-image.png",
+            "description": "Talent as a Service — subscription recruiting that delivers pre-screened, ranked candidates in 14 days. No placement fees, no salary percentages.",
+            "slogan": "Your hiring team. On demand.",
+            "foundingDate": "2024",
+            "areaServed": [
+              {
+                "@type": "Country",
+                "name": "United States"
+              },
+              {
+                "@type": "Country",
+                "name": "United Arab Emirates"
+              },
+              {
+                "@type": "Country",
+                "name": "United Kingdom"
+              },
+              {
+                "@type": "Country",
+                "name": "Brazil"
+              }
+            ],
+            "knowsAbout": [
+              "Subscription recruiting",
+              "Talent as a Service",
+              "Candidate sourcing",
+              "Pre-screened candidates",
+              "Recruitment process outsourcing"
+            ],
+            "contactPoint": [
+              {
+                "@type": "ContactPoint",
+                "contactType": "sales",
+                "email": "hello@taasflow.com",
+                "url": "https://taasflow.com/contact",
+                "availableLanguage": [
+                  "English",
+                  "Portuguese",
+                  "Spanish"
+                ]
+              }
+            ],
+            "sameAs": [
+              "https://www.linkedin.com/company/taasflow",
+              "https://twitter.com/TaasFlow"
+            ]
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "@id": "https://taasflow.com/#website",
+            "name": "TaaSFlow",
+            "alternateName": "Talent as a Service",
+            "url": "https://taasflow.com/",
+            "description": "Subscription recruiting that delivers pre-screened, ranked candidates in 14 days.",
+            "inLanguage": "en-US",
+            "publisher": {
+              "@id": "https://taasflow.com/#organization"
+            },
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": {
+                "@type": "EntryPoint",
+                "urlTemplate": "https://taasflow.com/jobs?q={search_term_string}"
+              },
+              "query-input": "required name=search_term_string"
+            }
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "Service",
+            "name": "Technology Talent Sourcing",
+            "description": "On-demand software developers, engineers, and IT specialists for tech companies. Scale your engineering team in days, not months.",
+            "provider": {
+              "@type": "Organization",
+              "name": "TaasFlow",
+              "url": "https://taasflow.com"
+            },
+            "serviceType": "Talent Acquisition",
+            "areaServed": "United States",
+            "hasOfferCatalog": {
+              "@type": "OfferCatalog",
+              "name": "Technology Recruiting Services",
+              "itemListElement": [
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Software Engineers Recruiting"
+                  },
+                  "position": 1
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Full-Stack Developers Recruiting"
+                  },
+                  "position": 2
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Frontend Specialists Recruiting"
+                  },
+                  "position": 3
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Backend Engineers Recruiting"
+                  },
+                  "position": 4
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "DevOps/SRE Recruiting"
+                  },
+                  "position": 5
+                }
+              ]
+            }
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "https://taasflow.com"
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Industries",
+                "item": "https://taasflow.com/industries"
+              },
+              {
+                "@type": "ListItem",
+                "position": 3,
+                "name": "Technology",
+                "item": "https://taasflow.com/industries//industries/tech"
+              }
+            ]
+          }
+        ],
+        "h1": [
+          "Engineering Talent On-Demand for Tech Companies"
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "Engineering Talent On-Demand for Tech Companies"
+          },
+          {
+            "level": 2,
+            "text": "Technology Industry Insights"
+          },
+          {
+            "level": 3,
+            "text": "Developer Shortage"
+          },
+          {
+            "level": 3,
+            "text": "Time to Hire"
+          },
+          {
+            "level": 3,
+            "text": "Passive Talent"
+          },
+          {
+            "level": 3,
+            "text": "Recruiter Fees"
+          },
+          {
+            "level": 3,
+            "text": "Industry Overview"
+          },
+          {
+            "level": 3,
+            "text": "Ready to transform your technology recruiting?"
+          },
+          {
+            "level": 2,
+            "text": "How we hire for Technology"
+          },
+          {
+            "level": 3,
+            "text": "Tech Stack Mapping"
+          },
+          {
+            "level": 3,
+            "text": "Code-Level Screening"
+          },
+          {
+            "level": 3,
+            "text": "Async Collaboration Check"
+          },
+          {
+            "level": 3,
+            "text": "Weekly Candidate Drops"
+          },
+          {
+            "level": 2,
+            "text": "The Tech Hiring Challenge"
+          },
+          {
+            "level": 3,
+            "text": "The TaasFlow Solution"
+          },
+          {
+            "level": 2,
+            "text": "Why Technology companies choose TaasFlow"
+          },
+          {
+            "level": 3,
+            "text": "Cut Time-to-Hire by 75%"
+          },
+          {
+            "level": 3,
+            "text": "Technical Screening Done"
+          },
+          {
+            "level": 3,
+            "text": "Scale On-Demand"
+          },
+          {
+            "level": 3,
+            "text": "Zero Placement Fees"
+          },
+          {
+            "level": 2,
+            "text": "Positions we fill for Technology"
+          },
+          {
+            "level": 2,
+            "text": "Real results for Technology teams"
+          },
+          {
+            "level": 2,
+            "text": "Technology Salary Explorer"
+          },
+          {
+            "level": 2,
+            "text": "Technology Career Path"
+          },
+          {
+            "level": 3,
+            "text": "Senior Engineer"
+          },
+          {
+            "level": 4,
+            "text": "Key Skills at This Level"
+          },
+          {
+            "level": 2,
+            "text": "Technology Hiring Trends"
+          },
+          {
+            "level": 2,
+            "text": "Interactive Hiring Guide"
+          },
+          {
+            "level": 3,
+            "text": "Define Your Ideal Candidate"
+          },
+          {
+            "level": 3,
+            "text": "Optimize Your Job Posting"
+          },
+          {
+            "level": 3,
+            "text": "Source Beyond Job Boards"
+          },
+          {
+            "level": 3,
+            "text": "Structure Your Interview Process"
+          },
+          {
+            "level": 3,
+            "text": "Close & Onboard Effectively"
+          },
+          {
+            "level": 2,
+            "text": "Technology Recruiting Insights"
+          },
+          {
+            "level": 3,
+            "text": "Software Engineer Salary Guide 2026: By Level, Location, and Stack"
+          },
+          {
+            "level": 3,
+            "text": "How to Hire a Full-Stack Developer in 2026: The Complete Playbook"
+          },
+          {
+            "level": 3,
+            "text": "Hiring AI Engineers in 2026: Salary Benchmarks, Skills, and Sourcing Strategies"
+          },
+          {
+            "level": 2,
+            "text": "Frequently Asked Questions"
+          },
+          {
+            "level": 3,
+            "text": "What tech stacks do your developers know?"
+          },
+          {
+            "level": 3,
+            "text": "Can developers work in our timezone?"
+          },
+          {
+            "level": 3,
+            "text": "How do you screen technical skills?"
+          },
+          {
+            "level": 2,
+            "text": "Discover related industries"
+          },
+          {
+            "level": 2,
+            "text": "Ready to build your Technology team?"
+          },
+          {
+            "level": 2,
+            "text": "Technology Recruiting"
+          },
+          {
+            "level": 3,
+            "text": "Hub Page"
+          },
+          {
+            "level": 3,
+            "text": "Related Articles"
+          },
+          {
+            "level": 3,
+            "text": "Get Started"
+          },
+          {
+            "level": 4,
+            "text": "Newsletter"
+          },
+          {
+            "level": 4,
+            "text": "For candidates"
+          },
+          {
+            "level": 4,
+            "text": "For companies"
+          },
+          {
+            "level": 4,
+            "text": "Industries"
+          },
+          {
+            "level": 4,
+            "text": "Company"
+          },
+          {
+            "level": 3,
+            "text": "Cookie Preferences"
+          }
+        ],
+        "sections": [
+          "SECTION",
+          "Engineering Talent On-Demand for Tech Companies",
+          "SECTION",
+          "Technology Industry Insights",
+          "Ready to transform your technology recruiting?",
+          "How we hire for Technology",
+          "The Tech Hiring Challenge",
+          "Why Technology companies choose TaasFlow",
+          "Positions we fill for Technology",
+          "Real results for Technology teams",
+          "Technology Salary Explorer",
+          "Technology Career Path",
+          "Technology Hiring Trends",
+          "Interactive Hiring Guide",
+          "Technology Recruiting Insights",
+          "Frequently Asked Questions",
+          "Discover related industries",
+          "SECTION",
+          "Ready to build your Technology team?",
+          "Technology Recruiting"
+        ],
+        "textBlocks": [
+          "Solutions",
+          "Industries",
+          "Resources",
+          "Home",
+          "Industries",
+          "Technology",
+          "Stop waiting months for developers. Get pre-screened engineers, data scientists, and IT specialists delivered weekly, ready to code from day one.",
+          "Key market data and trends shaping talent demand in your industry. (Hover for details)",
+          "Unfilled software developer jobs in the US by 2026",
+          "Average time to fill a tech role using traditional methods",
+          "Of tech professionals are passive candidates not actively job searching",
+          "Typical agency fee for technical placements",
+          "Start a risk-free pilot and receive qualified candidates in 14 days.",
+          "A tailored workflow for the challenges of technology settings.",
+          "We map your exact stack, tools, and architecture to find developers who can contribute immediately.",
+          "Candidates complete technical assessments, code reviews, and system design evaluations.",
+          "We evaluate remote collaboration skills, communication clarity, and timezone flexibility.",
+          "Receive 3-5 screened engineers per week with skills scorecards and code samples.",
+          "In the tech industry, great developers have their pick of opportunities. Your job posting competes with hundreds of others, and top candidates are off the market within 10 days.",
+          "You need specialized skills (cloud architecture, AI/ML, cybersecurity, blockchain) but can't always justify permanent headcount for emerging technologies that may evolve.",
+          "Traditional recruiting eats 3-6 months and 20-30% of first-year salary in fees. Meanwhile, your product roadmap slips and competitors ship faster.",
+          "Pre-screened developers with proven project experience and code samples reviewed",
+          "Full-stack, backend, frontend, mobile, and DevOps specialists available",
+          "Familiar with modern stacks: React, Node, Python, AWS, GCP, Kubernetes",
+          "Remote-first talent experienced with async collaboration and agile workflows",
+          "Scale from 1 developer to an entire team, up or down as projects evolve",
+          "We understand the unique challenges of your industry and deliver matching talent.",
+          "Get qualified engineers in days, not months. No more lengthy recruiting cycles slowing your roadmap.",
+          "Every developer is screened for skills, code quality, and remote collaboration abilities.",
+          "Ramp up for product launches, scale back after. Match headcount to project phases.",
+          "Predictable monthly subscription. No 20-30% recruiter fees eating your budget.",
+          "Pre-vetted professionals, delivered weekly, ready to start.",
+          "- Series B SaaS Company, 150 employees",
+          "Explore current compensation ranges for top roles. Data updated quarterly from industry benchmarks.",
+          "* Based on industry benchmarks from SHRM, Glassdoor, LinkedIn Salary, and BLS data. Actual compensation may vary.",
+          "Click any level to explore typical progression, salary ranges, and key skills.",
+          "Key metrics shaping the talent landscape. Stay ahead of market shifts.",
+          "AI engineering roles are the fastest growing segment in tech hiring.",
+          "Majority of tech roles now offer fully remote or hybrid options.",
+          "Companies using TaaS models fill tech roles 30% faster.",
+          "Of tech candidates expect flexible work arrangements as standard.",
+          "Follow these proven steps to hire smarter. Track your progress and get actionable tips at every stage.",
+          "Create a detailed candidate persona with must-have vs nice-to-have skills, cultural fit criteria, and realistic salary expectations.",
+          "Write a compelling job description that sells the opportunity, not just lists requirements. Include salary range, growth path, and team culture.",
+          "Reach passive candidates through targeted outreach, employee referrals, and talent communities. 70% of top talent is not actively looking.",
+          "Design a consistent 3-4 stage process that evaluates skills, culture fit, and potential. Include take-home assessments where appropriate.",
+          "Move fast with competitive offers and start onboarding before day one. The first 90 days determine long-term retention.",
+          "Expert articles on recruiting and talent acquisition for technology.",
+          "Comprehensive salary data for software engineers from junior to principal, covering every major market, stack, and company stage.",
+          "How to Hire a Full-Stack Developer in 2026: The Complete Playbook",
+          "A comprehensive guide covering market landscape, skills assessment, sourcing channels, interview frameworks, and offer benchmarking for full-stack engineering hires.",
+          "Hiring AI Engineers in 2026: Salary Benchmarks, Skills, and Sourcing Strategies",
+          "AI engineering is the most competitive hiring market in tech. Here are the salary ranges, must-have skills, and sourcing channels that work.",
+          "Common questions about TaasFlow for technology.",
+          "Learn how we serve similar sectors with subscription recruiting.",
+          "Receive qualified technology professionals weekly. No agency fees, no long-term contracts.",
+          "Related Industries",
+          "Talent as a Service",
+          "A global hiring system for teams that need consistent recruiting.",
+          "Weekly insights into talent acquisition. No spam.",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Book call",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "No recruitment agency fees. No placement charges. Subscription-based hiring system.",
+          "Copyright 2026 TaaSFlow. All rights reserved.",
+          "We use essential cookies for core functionality. With your consent, we use analytics (Google Analytics) and marketing technologies (Meta Pixel, Apollo, Retention.com/RB2B) to understand website performance, improve campaigns, and measure conversions safely. Your data is processed in accordance with GDPR and our Privacy Notice. You can change your preferences at any time."
+        ],
+        "buttons": [
+          "Solutions",
+          "Industries",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Solutions",
+          "How it works",
+          "Pilot",
+          "Enterprise",
+          "Case studies",
+          "Jobs",
+          "Journey",
+          "Industries",
+          "Tech",
+          "SaaS & Cloud",
+          "Cybersecurity",
+          "Data & Analytics",
+          "Finance",
+          "Insurance",
+          "PE & VC",
+          "Accounting",
+          "Legal",
+          "Consulting",
+          "HR & Recruiting",
+          "Staffing Agencies",
+          "Sales",
+          "Marketing",
+          "E-commerce",
+          "Media",
+          "Real Estate",
+          "Construction",
+          "Hospitality",
+          "Healthcare",
+          "Public Sector",
+          "Non-Profit",
+          "Pricing",
+          "Jobs",
+          "Journey",
+          "Resources",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Success Stories",
+          "Talent Marketplace",
+          "About",
+          "Contact",
+          "Sign in",
+          "Hire talent",
+          "Start Technology Pilot Program",
+          "Book call",
+          "Book call",
+          "1Junior Developer",
+          "2Mid-Level Engineer",
+          "3Senior Engineer",
+          "4Staff / Lead Engineer",
+          "5VP Engineering / CTO",
+          "Next: Staff / Lead Engineer",
+          "1Define Your Ideal Candidate1-2 days",
+          "1",
+          "Mark Complete",
+          "2Optimize Your Job PostingWrite a compelling job description that sells the opportunity, not just lists requirements. Include salary range, growth path, and team culture.1 day",
+          "2",
+          "3Source Beyond Job BoardsReach passive candidates through targeted outreach, employee referrals, and talent communities. 70% of top talent is not actively looking.Ongoing",
+          "3",
+          "4Structure Your Interview ProcessDesign a consistent 3-4 stage process that evaluates skills, culture fit, and potential. Include take-home assessments where appropriate.2-3 days setup",
+          "4",
+          "5Close & Onboard EffectivelyMove fast with competitive offers and start onboarding before day one. The first 90 days determine long-term retention.1-2 weeks",
+          "5",
+          "What tech stacks do your developers know?",
+          "Can developers work in our timezone?",
+          "How do you screen technical skills?",
+          "Start Technology Pilot",
+          "Contact",
+          "Subscribe",
+          "Book call"
+        ],
+        "links": [
+          {
+            "text": "Skip to main content",
+            "href": "https://taasflow.com/industries/tech#main-content"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "Browse jobs",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Join the network",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Browse open roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Home",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "Industries",
+            "href": "https://taasflow.com/industries"
+          },
+          {
+            "text": "View all articles",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "Salary InsightsTechnologySoftware Engineer Salary Guide 2026: By Level, Location, and StackComprehensive salary data for",
+            "href": "https://taasflow.com/blog/software-engineer-salary-guide-2026"
+          },
+          {
+            "text": "📋How to Hire a Full-Stack Developer in 2026: The Complete PlaybookIndustry Hiring GuidesIndustry Hiring GuidesTechnolog",
+            "href": "https://taasflow.com/blog/hire-full-stack-developer-2026"
+          },
+          {
+            "text": "📋Hiring AI Engineers in 2026: Salary Benchmarks, Skills, and Sourcing StrategiesIndustry Hiring GuidesIndustry Hiring G",
+            "href": "https://taasflow.com/blog/hiring-ai-engineers-2026"
+          },
+          {
+            "text": "View all articles",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "Legal",
+            "href": "https://taasflow.com/industries/legal"
+          },
+          {
+            "text": "Public Sector",
+            "href": "https://taasflow.com/industries/public-sector"
+          },
+          {
+            "text": "Finance & Banking",
+            "href": "https://taasflow.com/industries/finance"
+          },
+          {
+            "text": "Staffing Agencies",
+            "href": "https://taasflow.com/industries/staffing-agencies"
+          },
+          {
+            "text": "Healthcare",
+            "href": "https://taasflow.com/industries/healthcare"
+          },
+          {
+            "text": "Sales",
+            "href": "https://taasflow.com/industries/sales"
+          },
+          {
+            "text": "Marketing & Advertising",
+            "href": "https://taasflow.com/industries/marketing"
+          },
+          {
+            "text": "Human Resources",
+            "href": "https://taasflow.com/industries/human-resources"
+          },
+          {
+            "text": "Compare all industries",
+            "href": "https://taasflow.com/industries/compare"
+          },
+          {
+            "text": "How it works",
+            "href": "https://taasflow.com/how-it-works"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "Start Pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "Jobs",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Blog",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "About",
+            "href": "https://taasflow.com/about"
+          },
+          {
+            "text": "Enterprise",
+            "href": "https://taasflow.com/enterprise"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://taasflow.com/faq"
+          },
+          {
+            "text": "Contact",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Looking for a job in technology? Browse open positions",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Technology Recruiting",
+            "href": "https://taasflow.com/industries/tech"
+          },
+          {
+            "text": "Tech Hiring Trends 2025",
+            "href": "https://taasflow.com/blog/tech-hiring-trends-2025"
+          },
+          {
+            "text": "AI Recruitment Revolution",
+            "href": "https://taasflow.com/blog/ai-recruitment-revolution"
+          },
+          {
+            "text": "Remote Hiring Best Practices",
+            "href": "https://taasflow.com/blog/remote-hiring-best-practices"
+          },
+          {
+            "text": "Skills-Based Hiring Guide",
+            "href": "https://taasflow.com/blog/skills-based-hiring"
+          },
+          {
+            "text": "Cybersecurity Hiring",
+            "href": "https://taasflow.com/blog/cybersecurity-hiring-guide"
+          },
+          {
+            "text": "All Tech Articles",
+            "href": "https://taasflow.com/blog/category/technology"
+          },
+          {
+            "text": "Start a Pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "View Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "Talk to Us",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Cybersecurity Recruiting",
+            "href": "https://taasflow.com/industries/cybersecurity"
+          },
+          {
+            "text": "Real Estate Recruiting",
+            "href": "https://taasflow.com/industries/real-estate"
+          },
+          {
+            "text": "Open Positions",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "",
+            "href": "https://taasflow.com/"
+          },
+          {
+            "text": "LinkedIn",
+            "href": "https://www.linkedin.com/company/taasflow/"
+          },
+          {
+            "text": "Browse roles",
+            "href": "https://taasflow.com/jobs"
+          },
+          {
+            "text": "Talent network",
+            "href": "https://taasflow.com/global-talent"
+          },
+          {
+            "text": "Member stories",
+            "href": "https://taasflow.com/candidate-success"
+          },
+          {
+            "text": "Start pilot",
+            "href": "https://taasflow.com/pilot"
+          },
+          {
+            "text": "Pricing",
+            "href": "https://taasflow.com/pricing"
+          },
+          {
+            "text": "Employer onboarding",
+            "href": "https://taasflow.com/employer-onboarding"
+          },
+          {
+            "text": "Case studies",
+            "href": "https://taasflow.com/case-studies"
+          },
+          {
+            "text": "Healthcare",
+            "href": "https://taasflow.com/industries/healthcare"
+          },
+          {
+            "text": "Technology",
+            "href": "https://taasflow.com/industries/tech"
+          },
+          {
+            "text": "Finance",
+            "href": "https://taasflow.com/industries/finance"
+          },
+          {
+            "text": "Legal",
+            "href": "https://taasflow.com/industries/legal"
+          },
+          {
+            "text": "All →",
+            "href": "https://taasflow.com/industries"
+          },
+          {
+            "text": "About us",
+            "href": "https://taasflow.com/about"
+          },
+          {
+            "text": "Blog",
+            "href": "https://taasflow.com/blog"
+          },
+          {
+            "text": "FAQ",
+            "href": "https://taasflow.com/faq"
+          },
+          {
+            "text": "Knowledge Base",
+            "href": "https://taasflow.com/knowledge-base"
+          },
+          {
+            "text": "Contact us",
+            "href": "https://taasflow.com/contact"
+          },
+          {
+            "text": "Privacy Policy",
+            "href": "https://taasflow.com/privacy"
+          },
+          {
+            "text": "Terms of Service",
+            "href": "https://taasflow.com/terms"
+          },
+          {
+            "text": "Privacy Notice",
+            "href": "https://taasflow.com/privacy"
+          }
+        ],
+        "images": [
+          {
+            "src": "https://taasflow.com/assets/logo-on-white-Dk9DIcMP.png",
+            "alt": "TaaSFlow logo"
+          },
+          {
+            "src": "https://taasflow.com/assets/tech-CUH6a1PL.jpg",
+            "alt": ""
+          },
+          {
+            "src": "https://taasflow.com/assets/tech-CUH6a1PL.jpg",
+            "alt": ""
+          },
+          {
+            "src": "https://taasflow.com/assets/tech-CUH6a1PL.jpg",
+            "alt": ""
+          },
+          {
+            "src": "https://taasflow.com/assets/tech-hiring-aEgw18iT.jpg",
+            "alt": "Software Engineer Salary Guide 2026: By Level, Location, and Stack"
+          },
+          {
+            "src": "https://taasflow.com/assets/logo-on-blue-CX6jlwjg.png",
+            "alt": "TaaSFlow logo"
+          }
+        ],
+        "forms": [
+          {
+            "action": "https://taasflow.com/industries/tech",
+            "fields": [
+              "input"
+            ]
+          }
+        ],
+        "navLinks": [
+          "Browse jobs",
+          "Join the network",
+          "Browse open roles",
+          "Home",
+          "Industries",
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us"
+        ],
+        "footerLinks": [
+          "LinkedIn",
+          "Browse roles",
+          "Talent network",
+          "Member stories",
+          "Start pilot",
+          "Pricing",
+          "Employer onboarding",
+          "Case studies",
+          "Healthcare",
+          "Technology",
+          "Finance",
+          "Legal",
+          "All →",
+          "About us",
+          "Blog",
+          "FAQ",
+          "Knowledge Base",
+          "Contact us",
+          "Privacy Policy",
+          "Terms of Service"
+        ],
+        "horizontalOverflow": false,
+        "documentWidth": 1440,
+        "viewportWidth": 1440
+      },
+      "destination": {
+        "url": "https://clear-path-hubs.lovable.app/industries/tech",
+        "finalUrl": "https://clear-path-hubs.lovable.app/industries/tech",
+        "status": 200,
+        "redirected": false,
+        "loadError": null,
+        "consoleErrors": [],
+        "failedRequests": [],
+        "title": "Technology hiring — TaaSFlow",
+        "description": "Structured, evidence-based sourcing for engineering, platform, product and IT teams. Ranked shortlists in your workspace, with evidence tied to the CV.",
+        "canonical": "https://clear-path-hubs.lovable.app/industries/tech",
+        "robots": null,
+        "openGraph": {
+          "og:site_name": "TaaSFlow",
+          "og:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "twitter:image": "https://clear-path-hubs.lovable.app/og-image.png",
+          "og:title": "Technology hiring — TaaSFlow",
+          "og:description": "Structured, evidence-based sourcing for engineering, platform, product and IT teams. Ranked shortlists in your workspace, with evidence tied to the CV.",
+          "og:url": "https://clear-path-hubs.lovable.app/industries/tech",
+          "og:type": "website",
+          "twitter:card": "summary_large_image",
+          "twitter:title": "Technology hiring — TaaSFlow",
+          "twitter:description": "Structured, evidence-based sourcing for engineering, platform, product and IT teams. Ranked shortlists in your workspace, with evidence tied to the CV."
+        },
+        "structuredData": [],
+        "h1": [
+          "Engineering and product hiring, on one transparent workflow."
+        ],
+        "headings": [
+          {
+            "level": 1,
+            "text": "Engineering and product hiring, on one transparent workflow."
+          },
+          {
+            "level": 2,
+            "text": "What we hear from Technology teams"
+          },
+          {
+            "level": 3,
+            "text": "Signal is buried in the CV"
+          },
+          {
+            "level": 3,
+            "text": "Volume vs precision"
+          },
+          {
+            "level": 3,
+            "text": "Remote, hybrid and on-site trade-offs"
+          },
+          {
+            "level": 2,
+            "text": "Roles we source in Technology"
+          },
+          {
+            "level": 3,
+            "text": "Submit the role"
+          },
+          {
+            "level": 3,
+            "text": "We source and score"
+          },
+          {
+            "level": 3,
+            "text": "Review in your workspace"
+          },
+          {
+            "level": 2,
+            "text": "Hiring for a tech team?"
+          }
+        ],
+        "sections": [
+          "Engineering and product hiring, on one transparent workflow.",
+          "What we hear from Technology teams",
+          "Roles we source in Technology",
+          "Submit the role",
+          "Hiring for a tech team?",
+          "SECTION"
+        ],
+        "textBlocks": [
+          "Home",
+          "Industries",
+          "Technology",
+          "Technology",
+          "TaaSFlow gives tech leaders a single workspace for every engineering search — with role-specific scoring rubrics, evidence extracted from the CV, and a ranked shortlist reviewed before it reaches you.",
+          "Rubric per role level",
+          "Evidence quotes from the CV",
+          "Ranked shortlist in your workspace",
+          "Great engineers describe their impact in prose, not keywords. Our scoring extracts the specific evidence — architecture decisions, systems owned, scale handled — instead of matching buzzwords.",
+          "Junior funnels flood inboxes while senior roles stall. We tune the rubric per level so the shortlist you see is calibrated to the seniority you are actually hiring for.",
+          "Every tech role has a location model. We capture it in intake and use it as a first-class filter so time zone and location mismatches never reach the shortlist.",
+          "We calibrate the rubric to the seniority and specialisation you actually need.",
+          "Full-stack engineers",
+          "Backend & platform engineers",
+          "Frontend engineers",
+          "DevOps & site reliability",
+          "Mobile engineers",
+          "Data & ML engineers",
+          "Engineering managers",
+          "Product managers",
+          "IT & infrastructure specialists",
+          "01",
+          "A guided intake captures everything the search needs, in one flow.",
+          "02",
+          "Multi-channel sourcing, role-specific rubric, evidence extracted from every CV.",
+          "03",
+          "Ranked shortlist, evidence side-by-side, Kanban pipeline, direct messaging.",
+          "See the full process on how it works.",
+          "Technology",
+          "Submit the role in our guided intake — draft saving is on, and your workspace is ready as soon as you finish."
+        ],
+        "buttons": [],
+        "links": [
+          {
+            "text": "Home",
+            "href": "https://clear-path-hubs.lovable.app/"
+          },
+          {
+            "text": "Industries",
+            "href": "https://clear-path-hubs.lovable.app/industries"
+          },
+          {
+            "text": "Start hiring",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "Talk to us",
+            "href": "https://clear-path-hubs.lovable.app/contact"
+          },
+          {
+            "text": "how it works",
+            "href": "https://clear-path-hubs.lovable.app/how-it-works"
+          },
+          {
+            "text": "Start intake",
+            "href": "https://clear-path-hubs.lovable.app/intake"
+          },
+          {
+            "text": "See other industries",
+            "href": "https://clear-path-hubs.lovable.app/industries"
+          },
+          {
+            "text": "Edit with",
+            "href": "https://lovable.dev/projects/1dc5ee7e-1294-441c-8288-850e79e443f6?utm_source=lovable-badge"
+          }
+        ],
+        "images": [],
+        "forms": [],
+        "navLinks": [
+          "Home",
+          "Industries"
+        ],
+        "footerLinks": [],
+        "horizontalOverflow": false,
+        "documentWidth": 1440,
+        "viewportWidth": 1440
+      },
+      "screenshots": {
+        "sourceFull": "reports/public-parity/screenshots/source/industries_tech__desktop__full.png",
+        "sourceVisible": "reports/public-parity/screenshots/source/industries_tech__desktop__visible.png",
+        "destinationFull": "reports/public-parity/screenshots/destination/industries_tech__desktop__full.png",
+        "destinationVisible": "reports/public-parity/screenshots/destination/industries_tech__desktop__visible.png"
+      },
+      "differences": [
+        "title: \"Tech Industry Talent | TaaSFlow - Talent as a Service\" vs \"Technology hiring — TaaSFlow\"",
+        "meta description mismatch",
+        "H1 differs: [Engineering Talent On-Demand for Tech Companies] vs [Engineering and product hiring, on one transparent workflow.]",
+        "heading overlap 0% (0/30)",
+        "section count 20 vs 6",
+        "form count 1 vs 0"
+      ]
+    }
+  ],
+  "summary": "18 differences detected",
+  "exclusions": []
+}
