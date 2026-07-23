@@ -8,7 +8,9 @@ import {
   Activity,
   MessageSquare,
   Settings,
+  Inbox,
 } from "lucide-react";
+
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
 import { NOTIFICATIONS_QUERY_KEY } from "@/components/notification-bell";
@@ -44,6 +46,7 @@ export const Route = createFileRoute("/_authenticated/admin")({
 
 const NAV: WorkspaceNavItem[] = [
   { to: "/admin", label: "Overview", icon: LayoutDashboard, exact: true },
+  { to: "/admin/intake", label: "Intake", icon: Inbox },
   { to: "/admin/clients", label: "Clients", icon: Building2 },
   { to: "/admin/positions", label: "Positions", icon: Briefcase },
   { to: "/admin/candidates", label: "Candidates", icon: Users },
@@ -52,6 +55,7 @@ const NAV: WorkspaceNavItem[] = [
   { to: "/admin/messages", label: "Messages", icon: MessageSquare },
   { to: "/admin/settings", label: "Settings", icon: Settings },
 ];
+
 
 const ADMIN_REFRESH_KEYS = [
   ["admin-overview"],
