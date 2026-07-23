@@ -78,9 +78,11 @@ export const getAdminOverview = createServerFn({ method: "GET" })
       processing_failures,
       client_requests,
       aging,
+      urgent_interviews,
+      intake_inbox,
     ] = await Promise.all([
-      // Fresh submissions from the public intake wizard (last 7d)
-      count("positions", (q) => q.eq("status", "submitted").gte("created_at", weekAgo)),
+      // Fresh intake submissions (canonical source, not positions)
+      count("intake_submissions", (q) => q.gte("created_at", weekAgo)),
       // Submitted / needs-clarification — anything not yet approved
       count("positions", (q) => q.in("status", ["submitted", "needs_clarification"])),
       // Applications landed in the pipeline in the last 24h
@@ -109,6 +111,17 @@ export const getAdminOverview = createServerFn({ method: "GET" })
           .in("processing_state", ["queued", "parsing", "enriching", "ready_to_score"])
           .lt("processing_updated_at", dayAgo),
       ),
+      // Urgent interview activity: requested awaiting scheduling, or
+      // scheduled within the next 48h.
+      count("interviews", (q) =>
+        q.or(
+          `status.eq.requested,and(status.eq.scheduled,scheduled_at.lte.${new Date(Date.now() + 48 * 3600_000).toISOString()})`,
+        ),
+      ),
+      // Intake submissions still needing platform action
+      count("intake_submissions", (q) =>
+        q.or("requisition_pending.eq.true,status.eq.submitted"),
+      ),
     ]);
 
     // ── Detailed drill-through lists for each command-center section ──────
@@ -120,12 +133,13 @@ export const getAdminOverview = createServerFn({ method: "GET" })
       { data: readyPublish },
       { data: processingIssues },
       { data: clientRequests },
+      { data: urgentInterviews },
+      { data: intakeInbox },
       { data: recentActivity },
     ] = await Promise.all([
       s
-        .from("positions")
-        .select("id,title,status,created_at,organizations(name)")
-        .eq("status", "submitted")
+        .from("intake_submissions")
+        .select("id,company_name,role_title,status,workspace_status,requisition_pending,created_at,position_id")
         .gte("created_at", weekAgo)
         .order("created_at", { ascending: false })
         .limit(5),
@@ -185,6 +199,22 @@ export const getAdminOverview = createServerFn({ method: "GET" })
         .order("created_at", { ascending: false })
         .limit(5),
       s
+        .from("interviews")
+        .select(
+          "id,status,scheduled_at,requested_at,candidate_match_id,candidate_matches(candidate_profiles(full_name),positions(title,organizations(name)))",
+        )
+        .or(
+          `status.eq.requested,and(status.eq.scheduled,scheduled_at.lte.${new Date(Date.now() + 48 * 3600_000).toISOString()})`,
+        )
+        .order("scheduled_at", { ascending: true, nullsFirst: true })
+        .limit(6),
+      s
+        .from("intake_submissions")
+        .select("id,company_name,role_title,status,workspace_status,requisition_pending,created_at,position_id")
+        .or("requisition_pending.eq.true,status.eq.submitted")
+        .order("created_at", { ascending: false })
+        .limit(6),
+      s
         .from("audit_events")
         .select("id,action,entity_type,entity_id,created_at,organization_id")
         .in("action", [
@@ -209,6 +239,8 @@ export const getAdminOverview = createServerFn({ method: "GET" })
       processing_failures,
       client_requests,
       aging,
+      urgent_interviews,
+      intake_inbox,
       lists: {
         new_intakes: (newIntakes ?? []) as AnyRow[],
         positions_review: (positionsReview ?? []) as AnyRow[],
@@ -217,6 +249,8 @@ export const getAdminOverview = createServerFn({ method: "GET" })
         candidates_ready_to_publish: (readyPublish ?? []) as AnyRow[],
         processing_issues: (processingIssues ?? []) as AnyRow[],
         client_requests: (clientRequests ?? []) as AnyRow[],
+        urgent_interviews: (urgentInterviews ?? []) as AnyRow[],
+        intake_inbox: (intakeInbox ?? []) as AnyRow[],
       },
 
 
@@ -224,6 +258,7 @@ export const getAdminOverview = createServerFn({ method: "GET" })
       generated_at: new Date().toISOString(),
     };
   });
+
 
 
 // ─── Clients & Positions ─────────────────────────────────────────────────────
