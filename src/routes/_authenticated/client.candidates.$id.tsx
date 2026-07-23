@@ -125,7 +125,7 @@ function CandidateDetailPage() {
           <div className="mt-4">
             <Link
               to="/client/candidates"
-              search={(prev) => prev}
+              search={(prev: Record<string, unknown>) => prev}
               className="text-sm text-primary hover:underline"
             >
               ← Back to candidates
