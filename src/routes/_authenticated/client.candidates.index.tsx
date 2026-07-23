@@ -331,7 +331,7 @@ function CandidatesPage() {
                 <span className="text-sm text-foreground/90 truncate">{a.label}</span>
                 <Link
                   to={a.href as never}
-                  search={orgSearch ? { org: orgSearch } : undefined}
+                  search={(orgSearch ? { org: orgSearch } : undefined) as never}
                   className="text-xs font-medium text-primary hover:underline shrink-0"
                 >
                   Open →
