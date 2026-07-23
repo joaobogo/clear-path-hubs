@@ -383,7 +383,13 @@ export function WorkspaceShell(props: WorkspaceShellProps) {
       {/* Main column */}
       <div className="flex min-w-0 flex-1 flex-col">
         {/* Top bar */}
-        <header className="sticky top-0 z-30 flex h-14 items-center gap-2 border-b bg-background/85 px-3 backdrop-blur supports-[backdrop-filter]:bg-background/70 md:px-6">
+        <header
+          className="sticky top-0 z-30 flex h-16 items-center gap-2 border-b px-3 backdrop-blur-md md:px-6"
+          style={{
+            background: "var(--taas-shell-topbar-bg)",
+            borderColor: "var(--taas-shell-topbar-border)",
+          }}
+        >
           <button
             type="button"
             onClick={() => setMobileOpen(true)}
