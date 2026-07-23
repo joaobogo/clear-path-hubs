@@ -86,7 +86,7 @@ function PositionsPage() {
     const t = setTimeout(() => {
       if ((q ?? "") !== (search.q ?? "")) {
         navigate({
-          search: (s) => ({ ...s, q: q || undefined, page: 1 }),
+          search: (s: Record<string, unknown>) => ({ ...s, q: q || undefined, page: 1 }),
           replace: true,
         });
       }
@@ -140,7 +140,7 @@ function PositionsPage() {
 
   const setSearch = (patch: Record<string, string | number | undefined>) =>
     navigate({
-      search: (s) => ({ ...s, ...patch }),
+      search: (s: Record<string, unknown>) => ({ ...s, ...patch }),
       replace: true,
     });
 
