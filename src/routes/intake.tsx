@@ -89,6 +89,8 @@ type FormState = {
   decisionMakers: string;
   additionalContext: string;
   screeningQuestions: ScreeningQ[];
+  password: string;
+  passwordConfirm: string;
   consent: boolean;
 };
 
