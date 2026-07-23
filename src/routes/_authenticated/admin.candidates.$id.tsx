@@ -412,7 +412,7 @@ function Row({ label, v }: { label: string; v: React.ReactNode }) {
 }
 
 // ── CV & parsed ────────────────────────────────────────────────────────────
-function CvTab({ cv }: { cv: Any }) {
+function CvTab({ cv, matchId }: { cv: Any; matchId: string }) {
   if (!cv)
     return (
       <div className="rounded-lg border border-dashed p-10 text-center text-sm text-muted-foreground">
@@ -422,18 +422,21 @@ function CvTab({ cv }: { cv: Any }) {
   return (
     <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_320px]">
       <div className="rounded-lg border bg-card p-5">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-2">
           <h2 className="text-sm font-semibold">Extracted text</h2>
-          {cv.signed_url && (
-            <a
-              href={cv.signed_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 text-sm text-primary hover:underline"
-            >
-              Open original <ExternalLink className="h-3.5 w-3.5" />
-            </a>
-          )}
+          <div className="flex items-center gap-2">
+            {cv.signed_url && (
+              <a
+                href={cv.signed_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 text-sm text-primary hover:underline"
+              >
+                Open original <ExternalLink className="h-3.5 w-3.5" />
+              </a>
+            )}
+            <DownloadCvButton matchId={matchId} />
+          </div>
         </div>
         <pre className="mt-3 max-h-[600px] overflow-auto whitespace-pre-wrap rounded-md bg-muted/40 p-3 text-xs">
           {cv.extracted_text?.trim() || "(no text extracted)"}
