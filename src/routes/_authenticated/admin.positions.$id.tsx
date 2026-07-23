@@ -37,7 +37,16 @@ import {
   Users,
   History,
   Settings2,
+  ShieldCheck,
+  MoreHorizontal,
 } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export const Route = createFileRoute("/_authenticated/admin/positions/$id")({
   loader: async ({ context, params }) => {
@@ -84,6 +93,7 @@ const TABS = [
   { id: "blueprint", label: "Scoring blueprint", icon: Gauge },
   { id: "pipeline", label: "Pipeline", icon: Users },
   { id: "activity", label: "Activity", icon: History },
+  { id: "audit", label: "Audit", icon: ShieldCheck },
   { id: "settings", label: "Settings", icon: Settings2 },
 ] as const;
 type TabId = (typeof TABS)[number]["id"];
@@ -252,6 +262,7 @@ function PositionWorkspace() {
         )}
         {tab === "pipeline" && <PipelineTab matches={matches} />}
         {tab === "activity" && <ActivityTab id={id} />}
+        {tab === "audit" && <AuditTab id={id} />}
         {tab === "settings" && <SettingsTab position={p} onDone={invalidate} />}
       </section>
     </main>
@@ -286,54 +297,76 @@ function LifecycleBar({ position, onDone }: { position: Any; onDone: () => Promi
   const v = position.visibility as string;
   const isPublic = v === "public";
 
-  const buttons: Array<{ key: string; label: string; onClick: () => Promise<void>; variant?: Any }> = [];
+  type Action = { key: string; label: string; onClick: () => Promise<void>; variant?: Any };
+  let primary: Action | null = null;
+  const secondary: Action[] = [];
 
   if (s === "submitted") {
-    buttons.push({ key: "clar", label: "Request clarification", variant: "outline", onClick: () => doStatus("request_clarification", "Clarification requested") });
-    buttons.push({ key: "approve", label: "Approve", onClick: () => doStatus("approve", "Approved") });
+    primary = { key: "approve", label: "Approve", onClick: () => doStatus("approve", "Approved") };
+    secondary.push({ key: "clar", label: "Request clarification", onClick: () => doStatus("request_clarification", "Clarification requested") });
+  } else if (s === "needs_clarification") {
+    primary = { key: "approve", label: "Approve", onClick: () => doStatus("approve", "Approved") };
+  } else if (s === "approved") {
+    primary = { key: "activate", label: "Activate", onClick: () => doStatus("activate", "Activated") };
+  } else if (s === "active") {
+    primary = isPublic
+      ? { key: "unpublish", label: "Unpublish", variant: "outline", onClick: () => doVis("private", "Removed from job board") }
+      : { key: "publish", label: "Publish", onClick: () => doVis("public", "Live on job board") };
+    secondary.push({ key: "pause", label: "Pause", onClick: () => doStatus("pause", "Paused") });
+    secondary.push({ key: "close", label: "Close", onClick: () => doStatus("close", "Closed") });
+  } else if (s === "paused") {
+    primary = { key: "resume", label: "Resume", onClick: () => doStatus("activate", "Resumed") };
+    secondary.push({ key: "close", label: "Close", onClick: () => doStatus("close", "Closed") });
+  } else if (s === "closed") {
+    primary = { key: "reopen", label: "Reopen", onClick: () => doStatus("reopen", "Reopened") };
+    secondary.push({ key: "archive", label: "Archive", onClick: () => doStatus("archive", "Archived") });
+  } else if (s === "draft") {
+    primary = { key: "submit", label: "No action available", onClick: async () => {} };
   }
-  if (s === "needs_clarification") {
-    buttons.push({ key: "approve", label: "Approve", onClick: () => doStatus("approve", "Approved") });
-  }
-  if (s === "approved") {
-    buttons.push({ key: "activate", label: "Activate", onClick: () => doStatus("activate", "Activated") });
-  }
-  if (s === "active") {
-    buttons.push({
-      key: "publish",
-      label: isPublic ? "Unpublish" : "Publish",
-      variant: isPublic ? "outline" : "default",
-      onClick: () => doVis(isPublic ? "private" : "public", isPublic ? "Removed from job board" : "Live on job board"),
-    });
-    buttons.push({ key: "pause", label: "Pause", variant: "outline", onClick: () => doStatus("pause", "Paused") });
-    buttons.push({ key: "close", label: "Close", variant: "outline", onClick: () => doStatus("close", "Closed") });
-  }
-  if (s === "paused") {
-    buttons.push({ key: "resume", label: "Resume", onClick: () => doStatus("activate", "Resumed") });
-    buttons.push({ key: "close", label: "Close", variant: "outline", onClick: () => doStatus("close", "Closed") });
-  }
-  if (s === "closed") {
-    buttons.push({ key: "reopen", label: "Reopen", onClick: () => doStatus("reopen", "Reopened") });
-    buttons.push({ key: "archive", label: "Archive", variant: "outline", onClick: () => doStatus("archive", "Archived") });
-  }
+
   if (s !== "archived" && s !== "closed") {
-    buttons.push({ key: "archive", label: "Archive", variant: "ghost", onClick: () => doStatus("archive", "Archived") });
+    if (!secondary.some((b) => b.key === "archive")) {
+      secondary.push({ key: "archive", label: "Archive", onClick: () => doStatus("archive", "Archived") });
+    }
   }
 
   return (
-    <div className="flex flex-wrap items-center gap-2">
-      {buttons.map((b) => (
+    <div className="flex items-center gap-2">
+      {primary && (
         <Button
-          key={b.key}
           size="sm"
-          variant={b.variant}
-          disabled={busy}
-          onClick={b.onClick}
-          data-qa-action={`position-${b.key}`}
+          variant={primary.variant}
+          disabled={busy || primary.key === "submit"}
+          onClick={primary.onClick}
+          data-qa-action={`position-${primary.key}`}
         >
-          {b.label}
+          {primary.label}
         </Button>
-      ))}
+      )}
+      {secondary.length > 0 && (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button size="sm" variant="outline" disabled={busy} aria-label="More actions" data-qa-action="position-actions-menu">
+              <MoreHorizontal className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            {secondary.map((b, i) => (
+              <>
+                {i > 0 && b.key === "archive" && <DropdownMenuSeparator key={`sep-${i}`} />}
+                <DropdownMenuItem
+                  key={b.key}
+                  onClick={b.onClick}
+                  data-qa-action={`position-${b.key}`}
+                  className={b.key === "archive" ? "text-destructive" : undefined}
+                >
+                  {b.label}
+                </DropdownMenuItem>
+              </>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      )}
     </div>
   );
 }
@@ -1147,6 +1180,86 @@ function SettingsTab({ position, onDone }: { position: Any; onDone: () => Promis
           </Button>
         </div>
       </div>
+    </div>
+  );
+}
+
+// ── Audit ───────────────────────────────────────────────────────────────────
+function humanizeDiff(before: unknown, after: unknown): string[] {
+  const b = (before && typeof before === "object" ? before : {}) as Record<string, Any>;
+  const a = (after && typeof after === "object" ? after : {}) as Record<string, Any>;
+  const keys = new Set([...Object.keys(b), ...Object.keys(a)]);
+  const notes: string[] = [];
+  for (const k of keys) {
+    if (["id", "created_at", "updated_at"].includes(k)) continue;
+    const bv = b[k];
+    const av = a[k];
+    if (JSON.stringify(bv) === JSON.stringify(av)) continue;
+    const fmt = (v: Any) => {
+      if (v == null) return "—";
+      if (typeof v === "string") return v.length > 60 ? v.slice(0, 57) + "…" : v;
+      if (typeof v === "number" || typeof v === "boolean") return String(v);
+      if (Array.isArray(v)) return `${v.length} item${v.length === 1 ? "" : "s"}`;
+      return "updated";
+    };
+    notes.push(`${k.replace(/_/g, " ")}: ${fmt(bv)} → ${fmt(av)}`);
+  }
+  return notes;
+}
+
+function AuditTab({ id }: { id: string }) {
+  const { data } = useSuspenseQuery({
+    queryKey: ["admin-position-audit", id],
+    queryFn: () => getPositionActivity({ data: { id, limit: 200 } }),
+  });
+  const rows = (data ?? []) as Any[];
+  return (
+    <div className="overflow-hidden rounded-lg border bg-card">
+      <div className="border-b bg-muted/40 px-4 py-2 text-xs text-muted-foreground">
+        Immutable audit trail — every change to this position, oldest first at the bottom.
+      </div>
+      <ul className="divide-y">
+        {rows.map((r) => {
+          const notes = humanizeDiff(r.before_state, r.after_state);
+          return (
+            <li key={r.id} className="px-4 py-3 text-sm">
+              <div className="flex flex-wrap items-baseline justify-between gap-2">
+                <div className="font-medium">{r.action.replace(/_/g, " ")}</div>
+                <div className="text-xs text-muted-foreground">
+                  {new Date(r.created_at).toLocaleString()}
+                </div>
+              </div>
+              <div className="mt-0.5 text-xs text-muted-foreground">
+                Actor{" "}
+                <span className="font-mono">
+                  {r.actor_user_id ? String(r.actor_user_id).slice(0, 8) : "system"}
+                </span>
+                {r.trace_id && (
+                  <>
+                    {" · trace "}
+                    <span className="font-mono">{r.trace_id}</span>
+                  </>
+                )}
+              </div>
+              {notes.length > 0 && (
+                <ul className="mt-2 space-y-0.5 text-xs text-muted-foreground">
+                  {notes.slice(0, 8).map((n, i) => (
+                    <li key={i}>• {n}</li>
+                  ))}
+                  {notes.length > 8 && (
+                    <li className="italic">…and {notes.length - 8} more field changes</li>
+                  )}
+                </ul>
+              )}
+            </li>
+          );
+        })}
+        {rows.length === 0 && (
+          <li className="px-4 py-10 text-center text-muted-foreground">
+            No audit events yet.
+          </li>
+        )}
+      </ul>
     </div>
   );
 }
