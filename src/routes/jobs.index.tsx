@@ -324,7 +324,7 @@ function JobsPage() {
             )}
           </>
         )}
-      </main>
-    </div>
+      </div>
+    </SiteShell>
   );
 }

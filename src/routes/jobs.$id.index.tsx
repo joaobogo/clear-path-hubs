@@ -3,6 +3,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { getPublicPosition } from "@/lib/jobs.functions";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { SiteShell } from "@/components/marketing/site-shell";
 
 export const Route = createFileRoute("/jobs/$id/")({
   loader: async ({ context, params }) => {
