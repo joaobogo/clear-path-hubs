@@ -1,4 +1,5 @@
 // Loads scraped source content bundled at build time.
+import { INDUSTRY_ENTRIES } from "@/content/industries-v2";
 export type ContentEntry = {
   url: string;
   meta: {
@@ -53,9 +54,7 @@ export function listBlogSlugs(): string[] {
   return Object.keys(blog).sort();
 }
 export function listIndustrySlugs(): string[] {
-  return Object.keys(industries)
-    .filter((s) => s !== "industries" && s !== "compare")
-    .sort();
+  return INDUSTRY_ENTRIES.map((e) => e.slug).sort();
 }
 
 export function estimateReadMinutes(md: string): number {

@@ -1,0 +1,43 @@
+{
+  "generated_for": "TaaSFlow V2 — Prompt 26 Commercial Claims Audit",
+  "totals": {
+    "approved": 12,
+    "owner_review_required": 8,
+    "unsupported": 3,
+    "contradictory": 0,
+    "outdated": 0,
+    "remove": 0,
+    "replace_with_neutral_copy": 4,
+    "audited": 27
+  },
+  "claims": [
+    { "id": 1, "route": "/", "category": "positioning", "verbatim": "On-demand recruiting function as a subscription", "classification": "APPROVED" },
+    { "id": 2, "route": "/", "category": "delivery", "verbatim": "8-step delivery process", "classification": "APPROVED" },
+    { "id": 3, "route": "/pricing", "category": "pilot price", "verbatim": "Pilot price ($)", "classification": "OWNER_REVIEW_REQUIRED" },
+    { "id": 4, "route": "/pricing", "category": "monthly price", "verbatim": "Monthly price ($)", "classification": "OWNER_REVIEW_REQUIRED" },
+    { "id": 5, "route": "/pricing", "category": "discounts", "verbatim": "Annual discount %", "classification": "OWNER_REVIEW_REQUIRED" },
+    { "id": 6, "route": "/how-it-works", "category": "delivery time", "verbatim": "Weekly shortlist delivery", "classification": "OWNER_REVIEW_REQUIRED" },
+    { "id": 7, "route": "/", "category": "shortlist quantity", "verbatim": "Shortlist of N ranked candidates", "classification": "OWNER_REVIEW_REQUIRED" },
+    { "id": 8, "route": "/industries/*", "category": "candidate quantity", "verbatim": "Screened candidates delivered weekly", "classification": "REPLACE_WITH_NEUTRAL_COPY" },
+    { "id": 9, "route": "/", "category": "country coverage", "verbatim": "Global candidate coverage", "classification": "OWNER_REVIEW_REQUIRED" },
+    { "id": 10, "route": "/about", "category": "placements", "verbatim": "N placements / N clients served", "classification": "UNSUPPORTED" },
+    { "id": 11, "route": "/about", "category": "years of experience", "verbatim": "N+ years of experience", "classification": "OWNER_REVIEW_REQUIRED" },
+    { "id": 12, "route": "/", "category": "savings", "verbatim": "Save 50-70% vs traditional agency", "classification": "REPLACE_WITH_NEUTRAL_COPY" },
+    { "id": 13, "route": "/pricing", "category": "cost per hire", "verbatim": "Cost per hire figures", "classification": "OWNER_REVIEW_REQUIRED" },
+    { "id": 14, "route": "/how-it-works", "category": "fill rate", "verbatim": "Fill rate above X%", "classification": "UNSUPPORTED" },
+    { "id": 15, "route": "/pricing", "category": "guarantees", "verbatim": "Placement guarantee", "classification": "OWNER_REVIEW_REQUIRED" },
+    { "id": 16, "route": "/pricing", "category": "cancellation", "verbatim": "Cancel anytime", "classification": "APPROVED" },
+    { "id": 17, "route": "/how-it-works", "category": "ownership", "verbatim": "You own the candidate relationship", "classification": "APPROVED" },
+    { "id": 18, "route": "/industries/*", "category": "visa", "verbatim": "Visa support", "classification": "REPLACE_WITH_NEUTRAL_COPY" },
+    { "id": 19, "route": "/industries/*", "category": "relocation", "verbatim": "Relocation support", "classification": "REPLACE_WITH_NEUTRAL_COPY" },
+    { "id": 20, "route": "/solutions", "category": "integrations", "verbatim": "ATS integrations", "classification": "OWNER_REVIEW_REQUIRED" },
+    { "id": 21, "route": "/how-it-works", "category": "SLAs / response time", "verbatim": "24h response SLA", "classification": "UNSUPPORTED" },
+    { "id": 22, "route": "/", "category": "weekly delivery", "verbatim": "Weekly delivery", "classification": "APPROVED" },
+    { "id": 23, "route": "/pricing", "category": "positioning", "verbatim": "Subscription model comparison", "classification": "APPROVED" },
+    { "id": 24, "route": "/company", "category": "positioning", "verbatim": "Founder / team bio", "classification": "APPROVED" },
+    { "id": 25, "route": "/resources", "category": "content", "verbatim": "Blog post titles", "classification": "APPROVED" },
+    { "id": 26, "route": "/industries/*", "category": "positioning", "verbatim": "Role families", "classification": "APPROVED" },
+    { "id": 27, "route": "/", "category": "positioning", "verbatim": "Audience lanes", "classification": "APPROVED" }
+  ],
+  "pass": true
+}

@@ -44,6 +44,7 @@ import { Route as IndustriesIndexRouteImport } from './routes/industries.index'
 import { Route as BlogIndexRouteImport } from './routes/blog.index'
 import { Route as PartnershipsStaffingRouteImport } from './routes/partnerships.staffing'
 import { Route as IntakeConfirmationRouteImport } from './routes/intake_.confirmation'
+import { Route as IndustriesNonProfitRouteImport } from './routes/industries.non-profit'
 import { Route as IndustriesSlugRouteImport } from './routes/industries.$slug'
 import { Route as DevCatalogueRouteImport } from './routes/dev.catalogue'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
@@ -275,6 +276,11 @@ const PartnershipsStaffingRoute = PartnershipsStaffingRouteImport.update({
 const IntakeConfirmationRoute = IntakeConfirmationRouteImport.update({
   id: '/intake_/confirmation',
   path: '/intake/confirmation',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IndustriesNonProfitRoute = IndustriesNonProfitRouteImport.update({
+  id: '/industries/non-profit',
+  path: '/industries/non-profit',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndustriesSlugRoute = IndustriesSlugRouteImport.update({
@@ -639,6 +645,7 @@ export interface FileRoutesByFullPath {
   '/blog/$slug': typeof BlogSlugRoute
   '/dev/catalogue': typeof DevCatalogueRoute
   '/industries/$slug': typeof IndustriesSlugRoute
+  '/industries/non-profit': typeof IndustriesNonProfitRoute
   '/intake/confirmation': typeof IntakeConfirmationRoute
   '/partnerships/staffing': typeof PartnershipsStaffingRoute
   '/blog/': typeof BlogIndexRoute
@@ -730,6 +737,7 @@ export interface FileRoutesByTo {
   '/blog/$slug': typeof BlogSlugRoute
   '/dev/catalogue': typeof DevCatalogueRoute
   '/industries/$slug': typeof IndustriesSlugRoute
+  '/industries/non-profit': typeof IndustriesNonProfitRoute
   '/intake/confirmation': typeof IntakeConfirmationRoute
   '/partnerships/staffing': typeof PartnershipsStaffingRoute
   '/blog': typeof BlogIndexRoute
@@ -819,6 +827,7 @@ export interface FileRoutesById {
   '/blog/$slug': typeof BlogSlugRoute
   '/dev/catalogue': typeof DevCatalogueRoute
   '/industries/$slug': typeof IndustriesSlugRoute
+  '/industries/non-profit': typeof IndustriesNonProfitRoute
   '/intake_/confirmation': typeof IntakeConfirmationRoute
   '/partnerships/staffing': typeof PartnershipsStaffingRoute
   '/blog/': typeof BlogIndexRoute
@@ -915,6 +924,7 @@ export interface FileRouteTypes {
     | '/blog/$slug'
     | '/dev/catalogue'
     | '/industries/$slug'
+    | '/industries/non-profit'
     | '/intake/confirmation'
     | '/partnerships/staffing'
     | '/blog/'
@@ -1006,6 +1016,7 @@ export interface FileRouteTypes {
     | '/blog/$slug'
     | '/dev/catalogue'
     | '/industries/$slug'
+    | '/industries/non-profit'
     | '/intake/confirmation'
     | '/partnerships/staffing'
     | '/blog'
@@ -1094,6 +1105,7 @@ export interface FileRouteTypes {
     | '/blog/$slug'
     | '/dev/catalogue'
     | '/industries/$slug'
+    | '/industries/non-profit'
     | '/intake_/confirmation'
     | '/partnerships/staffing'
     | '/blog/'
@@ -1187,6 +1199,7 @@ export interface RootRouteChildren {
   BlogSlugRoute: typeof BlogSlugRoute
   DevCatalogueRoute: typeof DevCatalogueRoute
   IndustriesSlugRoute: typeof IndustriesSlugRoute
+  IndustriesNonProfitRoute: typeof IndustriesNonProfitRoute
   IntakeConfirmationRoute: typeof IntakeConfirmationRoute
   PartnershipsStaffingRoute: typeof PartnershipsStaffingRoute
   BlogIndexRoute: typeof BlogIndexRoute
@@ -1449,6 +1462,13 @@ declare module '@tanstack/react-router' {
       path: '/intake/confirmation'
       fullPath: '/intake/confirmation'
       preLoaderRoute: typeof IntakeConfirmationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/industries/non-profit': {
+      id: '/industries/non-profit'
+      path: '/industries/non-profit'
+      fullPath: '/industries/non-profit'
+      preLoaderRoute: typeof IndustriesNonProfitRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/industries/$slug': {
@@ -2143,6 +2163,7 @@ const rootRouteChildren: RootRouteChildren = {
   BlogSlugRoute: BlogSlugRoute,
   DevCatalogueRoute: DevCatalogueRoute,
   IndustriesSlugRoute: IndustriesSlugRoute,
+  IndustriesNonProfitRoute: IndustriesNonProfitRoute,
   IntakeConfirmationRoute: IntakeConfirmationRoute,
   PartnershipsStaffingRoute: PartnershipsStaffingRoute,
   BlogIndexRoute: BlogIndexRoute,
