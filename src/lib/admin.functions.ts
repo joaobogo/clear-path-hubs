@@ -1230,3 +1230,41 @@ export const getPositionActivity = createServerFn({ method: "GET" })
       .limit(data.limit);
     return (rows ?? []) as AnyRow[];
   });
+
+// ─── Publish Desk — grouped, single source of truth ─────────────────────────
+export const getPublishDeskGroups = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await requireStaff(context.userId);
+    const s = await getAdmin();
+    const { data } = await s
+      .from("candidate_matches")
+      .select(
+        "id,updated_at,admin_status,client_visibility,processing_state,current_score_run_id,candidate_profiles(full_name,email),positions(id,title,organizations(id,name)),score_runs!candidate_matches_current_score_run_id_fkey(score,fit_label,contradiction_status,must_have_coverage)",
+      )
+      .order("updated_at", { ascending: false })
+      .limit(500);
+    const rows = (data ?? []) as AnyRow[];
+    const needs_review: AnyRow[] = [];
+    const blocked: AnyRow[] = [];
+    const ready: AnyRow[] = [];
+    const published: AnyRow[] = [];
+    const held: AnyRow[] = [];
+    for (const r of rows) {
+      if (r.client_visibility === "visible") published.push(r);
+      else if (r.admin_status === "on_hold") held.push(r);
+      else if (["failed", "provider_blocked", "ocr_required"].includes(r.processing_state))
+        blocked.push(r);
+      else if (
+        r.processing_state === "scored" &&
+        r.admin_status === "approved"
+      )
+        ready.push(r);
+      else if (
+        r.processing_state === "manual_review_required" ||
+        (r.processing_state === "scored" && r.admin_status === "pending")
+      )
+        needs_review.push(r);
+    }
+    return { needs_review, blocked, ready, published, held };
+  });

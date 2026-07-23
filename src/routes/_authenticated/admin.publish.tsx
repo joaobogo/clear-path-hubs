@@ -1,252 +1,236 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useSuspenseQuery, useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useServerFn } from "@tanstack/react-start";
-import { useState } from "react";
-import { getPublishQueue, getClientPreview } from "@/lib/admin.functions";
-import { applyReviewDecision } from "@/lib/processing.functions";
-import { Button } from "@/components/ui/button";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { useMemo, useState } from "react";
+import { getPublishDeskGroups } from "@/lib/admin.functions";
 import { Badge } from "@/components/ui/badge";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
+import { AlertTriangle, Ban, CheckCircle2, Eye, Pause } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/admin/publish")({
   loader: ({ context }) =>
     context.queryClient.ensureQueryData({
-      queryKey: ["publish-queue"],
-      queryFn: () => getPublishQueue(),
+      queryKey: ["publish-desk-groups"],
+      queryFn: () => getPublishDeskGroups(),
     }),
   errorComponent: ({ error }) => (
     <div className="p-8 text-destructive">Publish desk unavailable: {error.message}</div>
   ),
-  head: () => ({ meta: [{ title: "Publish Desk · TaaSFlow admin" }] }),
+  head: () => ({
+    meta: [
+      { title: "Publish Desk · TaaSFlow admin" },
+      { name: "robots", content: "noindex" },
+    ],
+  }),
   component: PublishDesk,
 });
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-type AnyRow = any;
+type Any = any;
+
+const GROUPS = [
+  {
+    id: "needs_review",
+    label: "Needs review",
+    tone: "text-amber-800 dark:text-amber-200 bg-amber-500/10",
+    icon: AlertTriangle,
+    hint: "Scored candidates awaiting an admin decision.",
+  },
+  {
+    id: "blocked",
+    label: "Blocked",
+    tone: "text-destructive bg-destructive/10",
+    icon: Ban,
+    hint: "Processing failures, provider blocks, and OCR requests.",
+  },
+  {
+    id: "ready",
+    label: "Ready to publish",
+    tone: "text-emerald-800 dark:text-emerald-200 bg-emerald-500/10",
+    icon: CheckCircle2,
+    hint: "Approved by admin — one click to send to the client.",
+  },
+  {
+    id: "published",
+    label: "Published",
+    tone: "text-primary bg-primary/10",
+    icon: Eye,
+    hint: "Currently live in the client workspace.",
+  },
+  {
+    id: "held",
+    label: "Held",
+    tone: "text-muted-foreground bg-muted",
+    icon: Pause,
+    hint: "Paused pending clarification.",
+  },
+] as const;
+
+type GroupId = (typeof GROUPS)[number]["id"];
 
 function PublishDesk() {
-  const qc = useQueryClient();
-  const { data: rows } = useSuspenseQuery({
-    queryKey: ["publish-queue"],
-    queryFn: () => getPublishQueue(),
+  const { data } = useSuspenseQuery({
+    queryKey: ["publish-desk-groups"],
+    queryFn: () => getPublishDeskGroups(),
   });
-  const [activeId, setActiveId] = useState<string | null>(
-    (rows as AnyRow[])[0]?.id ?? null,
+  const buckets = data as Record<GroupId, Any[]>;
+
+  const [group, setGroup] = useState<GroupId>(
+    (GROUPS.find((g) => (buckets[g.id] ?? []).length > 0)?.id ?? "needs_review") as GroupId,
   );
+  const [query, setQuery] = useState("");
+
+  const rows = useMemo(() => {
+    const bucket = buckets[group] ?? [];
+    const q = query.trim().toLowerCase();
+    if (!q) return bucket;
+    return bucket.filter((r) => {
+      const name = r.candidate_profiles?.full_name?.toLowerCase() ?? "";
+      const title = r.positions?.title?.toLowerCase() ?? "";
+      const org = r.positions?.organizations?.name?.toLowerCase() ?? "";
+      return name.includes(q) || title.includes(q) || org.includes(q);
+    });
+  }, [buckets, group, query]);
 
   return (
-    <main className="grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-0 min-h-[calc(100vh)]">
-      <aside className="border-r bg-card p-3 overflow-y-auto">
-        <div className="mb-3">
-          <h1 className="text-lg font-semibold">Publish Desk</h1>
-          <p className="text-xs text-muted-foreground">
-            Scored candidates awaiting client publication.
-          </p>
-        </div>
-        <ul className="space-y-1">
-          {(rows as AnyRow[]).map((r) => (
-            <li key={r.id}>
-              <button
-                onClick={() => setActiveId(r.id)}
-                className={`w-full rounded p-2 text-left text-sm transition ${
-                  activeId === r.id ? "bg-primary text-primary-foreground" : "hover:bg-muted"
-                }`}
-              >
-                <div className="font-medium truncate">
-                  {r.candidate_profiles?.full_name ?? "—"}
-                </div>
-                <div className="text-xs opacity-80 truncate">
-                  {r.positions?.title} · {r.positions?.organizations?.name}
-                </div>
-                <div className="mt-1 flex items-center gap-2 text-xs opacity-80">
-                  <span>{r.score_runs?.score?.toFixed(0) ?? "—"}</span>
-                  <span>·</span>
-                  <span>{r.admin_status}</span>
-                  {r.score_runs?.contradiction_status &&
-                    r.score_runs.contradiction_status !== "none" && (
-                      <span className="text-amber-500">⚠</span>
-                    )}
-                </div>
-              </button>
-            </li>
-          ))}
-          {rows.length === 0 && (
-            <li className="p-4 text-center text-sm text-muted-foreground">
-              Queue empty.
-            </li>
-          )}
-        </ul>
-      </aside>
-      <section className="min-w-0 overflow-y-auto">
-        {activeId ? (
-          <SideBySide matchId={activeId} onDone={() => qc.invalidateQueries({ queryKey: ["publish-queue"] })} />
-        ) : (
-          <div className="p-8 text-muted-foreground">Select a candidate.</div>
-        )}
-      </section>
-    </main>
-  );
-}
-
-function SideBySide({ matchId, onDone }: { matchId: string; onDone: () => void }) {
-  const qc = useQueryClient();
-  const { data: preview, isLoading } = useQuery({
-    queryKey: ["client-preview", matchId],
-    queryFn: () => getClientPreview({ data: { match_id: matchId } }),
-  });
-  const decisionFn = useServerFn(applyReviewDecision);
-  const [reason, setReason] = useState("");
-  const [feedback, setFeedback] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
-
-  const doAction = useMutation({
-    mutationFn: (action: "approve_for_client" | "hold" | "archive") =>
-      decisionFn({ data: { match_id: matchId, action, reason: reason || undefined } }),
-    onSuccess: async (r) => {
-      setFeedback(`${r.action} applied.`);
-      setError(null);
-      setReason("");
-      await qc.invalidateQueries({ queryKey: ["publish-queue"] });
-      await qc.invalidateQueries({ queryKey: ["client-preview", matchId] });
-      onDone();
-    },
-    onError: (e: Error) => setError(e.message),
-  });
-
-  if (isLoading || !preview)
-    return <div className="p-8 text-muted-foreground">Loading preview…</div>;
-  const p = preview as AnyRow;
-
-  return (
-    <div className="grid grid-cols-1 xl:grid-cols-2 gap-0 divide-y xl:divide-y-0 xl:divide-x">
-      <div className="p-6 space-y-4">
-        <header>
-          <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-            Admin review
-          </div>
-          <h2 className="text-xl font-semibold mt-1">
-            {p.candidate.display_name} — {p.position?.title ?? "—"}
-          </h2>
-          <div className="text-sm text-muted-foreground">
-            Stage: {p.stage}
-          </div>
-          <div className="mt-2 flex gap-2">
-            <Badge>score {p.score?.toFixed(1) ?? "—"}</Badge>
-            {p.fit_label && <Badge variant="secondary">{p.fit_label}</Badge>}
-          </div>
-        </header>
-        <div>
-          <h3 className="font-medium">Evidence ({p.evidence?.length ?? 0})</h3>
-          <ul className="mt-2 space-y-2 text-sm">
-            {(p.evidence as AnyRow[])?.slice(0, 8).map((e, i) => (
-              <li key={i} className="rounded border bg-muted/30 p-2">
-                <div className="font-medium">{e.label}</div>
-                <div className="mt-1 text-xs text-muted-foreground">“…{e.snippet}…”</div>
-              </li>
-            ))}
-          </ul>
-        </div>
-        <div>
-          <h3 className="font-medium">Main consideration</h3>
-          <p className="text-sm text-muted-foreground">
-            {p.main_consideration ?? "None flagged."}
-          </p>
-        </div>
-        <Link
-          to="/admin/candidates/$id"
-          params={{ id: matchId }}
-          className="inline-block text-sm text-primary hover:underline"
-        >
-          Full candidate workspace →
-        </Link>
-      </div>
-
-      <div className="p-6 bg-muted/20 space-y-4">
-        <header>
-          <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-            Client preview (identical DTO)
-          </div>
-          <h2 className="text-xl font-semibold mt-1">{p.candidate.display_name}</h2>
-          <div className="text-sm text-muted-foreground">
-            {p.candidate.location ?? "Location undisclosed"}
-            {p.candidate.headline ? ` · ${p.candidate.headline}` : ""}
-          </div>
-        </header>
-        <div className="rounded-lg border bg-card p-4">
-          <div className="flex items-baseline gap-3">
-            <div className="text-3xl font-semibold tabular-nums">
-              {p.score?.toFixed(1) ?? "—"}
-            </div>
-            <div>
-              <div className="font-medium capitalize">
-                {p.fit_label?.replace(/_/g, " ")}
-              </div>
-              <div className="text-xs text-muted-foreground">Fit for {p.position?.title ?? "—"}</div>
-            </div>
-          </div>
-          <p className="mt-3 text-sm">{p.summary}</p>
-        </div>
-        <div className="rounded-lg border bg-card p-4">
-          <h3 className="font-medium">Strengths</h3>
-          <ul className="mt-2 list-disc pl-5 text-sm space-y-1">
-            {(p.strengths as string[])?.map((s, i) => <li key={i}>{s}</li>)}
-            {(p.strengths?.length ?? 0) === 0 && (
-              <li className="list-none text-muted-foreground">None yet.</li>
-            )}
-          </ul>
-        </div>
-        <p className="text-xs text-muted-foreground">
-          Withheld: contact details, CV, contradiction flags, admin notes, trace ids.
+    <main className="mx-auto max-w-[1600px] space-y-6 px-6 py-6">
+      <header>
+        <h1 className="text-2xl font-semibold tracking-tight">Publish desk</h1>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Every candidate opens the full review workspace — the same one Admin uses everywhere.
         </p>
+      </header>
+
+      <div className="grid gap-3 md:grid-cols-5">
+        {GROUPS.map((g) => {
+          const count = (buckets[g.id] ?? []).length;
+          const active = group === g.id;
+          const Icon = g.icon;
+          return (
+            <button
+              key={g.id}
+              onClick={() => setGroup(g.id)}
+              data-qa-action={`desk-group-${g.id}`}
+              className={
+                "group rounded-lg border p-3 text-left transition " +
+                (active
+                  ? "border-primary bg-primary/5 ring-1 ring-primary/40"
+                  : "hover:border-muted-foreground/40")
+              }
+              aria-pressed={active}
+            >
+              <div className="flex items-center justify-between">
+                <span
+                  className={
+                    "inline-flex items-center gap-1.5 rounded-md px-1.5 py-0.5 text-xs font-medium " +
+                    g.tone
+                  }
+                >
+                  <Icon className="h-3 w-3" />
+                  {g.label}
+                </span>
+                <span className="text-lg font-semibold tabular-nums">{count}</span>
+              </div>
+              <p className="mt-2 text-xs text-muted-foreground">{g.hint}</p>
+            </button>
+          );
+        })}
       </div>
 
-
-      <div className="xl:col-span-2 border-t p-6 bg-card space-y-3">
-        {feedback && <Alert><AlertDescription>{feedback}</AlertDescription></Alert>}
-        {error && (
-          <Alert variant="destructive">
-            <AlertTitle>Failed</AlertTitle>
-            <AlertDescription>{error}</AlertDescription>
-          </Alert>
-        )}
-        <Textarea
-          placeholder="Reason (optional, recorded on the decision)"
-          value={reason}
-          onChange={(e) => setReason(e.target.value)}
-        />
-        <div className="flex flex-wrap gap-2">
-          <Button
-            disabled={doAction.isPending}
-            onClick={() => doAction.mutate("approve_for_client")}
-            data-qa-action="publish-approve"
-          >
-            {doAction.isPending ? "Publishing…" : "Approve & Publish"}
-          </Button>
-          <Button
-            variant="secondary"
-            disabled={doAction.isPending}
-            onClick={() => doAction.mutate("hold")}
-            data-qa-action="publish-hold"
-          >
-            Hold
-          </Button>
-          <Link
-            to="/admin/candidates/$id"
-            params={{ id: matchId }}
-            className="inline-flex items-center rounded-md border px-3 py-2 text-sm hover:bg-muted"
-          >
-            Request repair
-          </Link>
-          <Button
-            variant="destructive"
-            disabled={doAction.isPending}
-            onClick={() => doAction.mutate("archive")}
-          >
-            Archive
-          </Button>
+      <div className="rounded-lg border bg-card">
+        <div className="flex items-center justify-between gap-4 border-b px-4 py-2.5">
+          <h2 className="text-sm font-semibold">
+            {GROUPS.find((g) => g.id === group)?.label}
+            <span className="ml-2 text-xs font-normal text-muted-foreground">
+              ({rows.length} of {(buckets[group] ?? []).length})
+            </span>
+          </h2>
+          <Input
+            placeholder="Filter by candidate, position, or client…"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            className="h-8 max-w-xs"
+          />
         </div>
+
+        {rows.length === 0 ? (
+          <p className="p-10 text-center text-sm text-muted-foreground">
+            Nothing here right now.
+          </p>
+        ) : (
+          <table className="w-full text-sm">
+            <thead className="bg-muted/40 text-left text-xs uppercase text-muted-foreground">
+              <tr>
+                <th className="px-3 py-2 font-medium">Candidate</th>
+                <th className="px-3 py-2 font-medium">Position · Client</th>
+                <th className="px-3 py-2 font-medium tabular-nums">Score</th>
+                <th className="px-3 py-2 font-medium">State</th>
+                <th className="px-3 py-2 font-medium">Updated</th>
+                <th className="px-3 py-2 sr-only">Open</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y">
+              {rows.map((r) => {
+                const run = r.score_runs;
+                const contradiction =
+                  run?.contradiction_status && run.contradiction_status !== "none";
+                return (
+                  <tr key={r.id} className="hover:bg-muted/30">
+                    <td className="px-3 py-2">
+                      <div className="font-medium">
+                        {r.candidate_profiles?.full_name ?? "—"}
+                      </div>
+                      <div className="text-[10px] text-muted-foreground">
+                        {r.candidate_profiles?.email ?? ""}
+                      </div>
+                    </td>
+                    <td className="px-3 py-2">
+                      <div>{r.positions?.title ?? "—"}</div>
+                      <div className="text-[10px] text-muted-foreground">
+                        {r.positions?.organizations?.name ?? ""}
+                      </div>
+                    </td>
+                    <td className="px-3 py-2 tabular-nums">
+                      {run?.score != null ? Math.round(run.score) : "—"}
+                      {contradiction && (
+                        <span
+                          className="ml-1 text-amber-600"
+                          title={String(run.contradiction_status)}
+                        >
+                          ⚠
+                        </span>
+                      )}
+                    </td>
+                    <td className="px-3 py-2 text-xs">
+                      <div>{r.processing_state.replace(/_/g, " ")}</div>
+                      <div className="text-[10px] text-muted-foreground">
+                        admin: {r.admin_status} · vis: {r.client_visibility}
+                      </div>
+                    </td>
+                    <td className="px-3 py-2 text-xs text-muted-foreground">
+                      {r.updated_at ? new Date(r.updated_at).toLocaleString() : "—"}
+                    </td>
+                    <td className="px-3 py-2 text-right">
+                      <Link
+                        to="/admin/candidates/$id"
+                        params={{ id: r.id }}
+                        className="text-primary hover:underline"
+                        data-qa-action="open-workspace"
+                      >
+                        Open workspace →
+                      </Link>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        )}
       </div>
-    </div>
+
+      <p className="text-xs text-muted-foreground">
+        Prefer full search? Use <Link to="/admin/candidates" className="text-primary hover:underline">/admin/candidates</Link> —
+        every workspace opens the same route as here.
+      </p>
+    </main>
   );
 }
