@@ -13,6 +13,7 @@ import {
   getSessionContext,
   getQaPersonaConfig,
   qaPersonaLogin,
+  provisionClientMembershipForSelf,
 } from "@/lib/auth.functions";
 import {
   landingPathForRole,
