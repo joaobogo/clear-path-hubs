@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useSearch } from "@tanstack/react-router";
 import { Badge } from "@/components/ui/badge";
 import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
 
@@ -19,6 +19,8 @@ function primaryCta(stage: ClientCandidateDTO["stage"]): string {
 }
 
 export function CandidateCard({ candidate }: { candidate: ClientCandidateDTO }) {
+  const search = useSearch({ strict: false }) as { org?: string };
+
   const c = candidate;
   return (
     <div className="rounded-lg border bg-card p-4 hover:border-primary transition">
@@ -69,8 +71,10 @@ export function CandidateCard({ candidate }: { candidate: ClientCandidateDTO }) 
           <Link
             to="/client/candidates/$id"
             params={{ id: c.match_id }}
+            search={search.org ? { org: search.org } : undefined}
             className="text-sm text-primary hover:underline"
           >
+
             {primaryCta(c.stage)}
           </Link>
         </div>
