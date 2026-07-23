@@ -13,6 +13,7 @@ import {
   getSessionContext,
   getQaPersonaConfig,
   qaPersonaLogin,
+  provisionClientMembershipForSelf,
 } from "@/lib/auth.functions";
 import {
   landingPathForRole,
@@ -45,6 +46,7 @@ function LoginPage() {
   const qa = Route.useLoaderData();
   const runPersona = useServerFn(qaPersonaLogin);
   const runSession = useServerFn(getSessionContext);
+  const runProvision = useServerFn(provisionClientMembershipForSelf);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -60,7 +62,15 @@ function LoginPage() {
       const { data } = await supabase.auth.getSession();
       if (!data.session) return;
       try {
-        const ctx = await runSession();
+        let ctx = await runSession();
+        // Newly-confirmed signup landing here with no memberships and no
+        // candidate profile → auto-provision as client_admin of a new workspace.
+        if (!ctx.primary_role && ctx.memberships.length === 0) {
+          try {
+            await runProvision({ data: {} });
+            ctx = await runSession();
+          } catch { /* fall through to routing */ }
+        }
         if (cancelled) return;
         routeToDest(ctx.memberships, ctx.primary_role);
       } catch {
@@ -155,6 +165,12 @@ function LoginPage() {
         toast.success("Account created. Check your email to confirm, then sign in.");
         setMode("signin");
         return;
+      }
+      // Provision a client workspace + client_admin membership for the new user.
+      try {
+        await runProvision({ data: { full_name: fullName } });
+      } catch {
+        /* non-fatal: session context will report no memberships → access-denied */
       }
       try {
         const ctx = await runSession();

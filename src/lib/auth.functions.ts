@@ -568,3 +568,96 @@ export const qaPersonaLogin = createServerFn({ method: "POST" })
     if (!action_link) throw new Error("Failed to generate persona magic link");
     return { action_link };
   });
+
+// ─────────────────────────────────────────────────────────────
+// Self-service signup provisioning.
+// When a user creates an account via the public signup form, they become a
+// client_admin of a freshly-created workspace. Candidates are NOT created
+// this way — candidate accounts are only provisioned when a CV is submitted
+// via the public job application flow.
+// Idempotent: safe to re-run; existing memberships/profile are preserved.
+// ─────────────────────────────────────────────────────────────
+const provisionSelfInput = z.object({
+  full_name: z.string().min(1).max(120).optional().nullable(),
+  company_name: z.string().min(1).max(200).optional().nullable(),
+});
+
+export const provisionClientMembershipForSelf = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((raw) => provisionSelfInput.parse(raw))
+  .handler(async ({ data, context }) => {
+    const { userId, claims } = context;
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    const email = (claims?.email as string | undefined)?.toLowerCase() ?? null;
+    const metaName =
+      (claims?.user_metadata as { full_name?: string } | undefined)?.full_name ?? null;
+    const fullName = data.full_name?.trim() || metaName || (email ? email.split("@")[0] : "New user");
+
+    // If any active membership already exists, do nothing.
+    const { data: existingMems } = await supabaseAdmin
+      .from("memberships")
+      .select("id, role, organization_id, status")
+      .eq("user_id", userId)
+      .eq("status", "active");
+    if (existingMems && existingMems.length > 0) {
+      return { ok: true, provisioned: false as const };
+    }
+
+    // If this auth user is already a candidate, do not turn them into a client.
+    const { data: candProfile } = await supabaseAdmin
+      .from("candidate_profiles")
+      .select("id")
+      .eq("user_id", userId)
+      .maybeSingle();
+    if (candProfile) {
+      return { ok: true, provisioned: false as const, reason: "candidate" as const };
+    }
+
+    // Ensure a profile row exists.
+    const { data: existingProfile } = await supabaseAdmin
+      .from("profiles")
+      .select("id")
+      .eq("auth_user_id", userId)
+      .maybeSingle();
+    if (!existingProfile) {
+      await supabaseAdmin.from("profiles").insert({
+        auth_user_id: userId,
+        email: email ?? `${userId}@unknown.local`,
+        full_name: fullName,
+        status: "active",
+      });
+    }
+
+    // Create a workspace named after the company (or derived from email/name).
+    const derived =
+      data.company_name?.trim() ||
+      (email ? `${email.split("@")[0]}'s workspace` : `${fullName}'s workspace`);
+    const { data: newOrg, error: orgErr } = await supabaseAdmin
+      .from("organizations")
+      .insert({ name: derived, status: "active" })
+      .select("id")
+      .single();
+    if (orgErr) throw orgErr;
+    const orgId = newOrg.id as string;
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { error: memErr } = await (supabaseAdmin as any)
+      .from("memberships")
+      .upsert(
+        { user_id: userId, organization_id: orgId, role: "client_admin", status: "active" },
+        { onConflict: "user_id,organization_id,role" },
+      );
+    if (memErr) throw memErr;
+
+    await supabaseAdmin.from("audit_events").insert({
+      actor_user_id: userId,
+      organization_id: orgId,
+      entity_type: "organizations",
+      entity_id: orgId,
+      action: "self.signup_provision_client",
+      after_state: { company_name: derived, email },
+    });
+
+    return { ok: true, provisioned: true as const, organization_id: orgId };
+  });
