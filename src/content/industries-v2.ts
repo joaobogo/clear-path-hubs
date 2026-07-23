@@ -43,15 +43,19 @@ export const INDUSTRY_ENTRIES: IndustryEntry[] = [
     slug: "tech",
     eyebrow: "Technology",
     name: "Technology",
+    category: "Tech & Data",
+    aliases: ["Tech", "Software", "Engineering", "IT", "Developers"],
+    summary:
+      "Software engineering, product, cloud, cybersecurity and data hiring on one transparent workflow, with technical-evidence validation drawn straight from the CV.",
     meta: {
       title: "Technology hiring — TaaSFlow",
       description:
-        "Structured, evidence-based sourcing for engineering, platform, product and IT teams. Ranked shortlists in your workspace, with evidence tied to the CV.",
+        "Structured, evidence-based sourcing for software engineering, product, cloud, cybersecurity and data teams. Ranked shortlists with technical-evidence validation tied to the CV.",
     },
     hero: {
       title: "Engineering and product hiring, on one transparent workflow.",
       subtitle:
-        "TaaSFlow gives tech leaders a single workspace for every engineering search — with role-specific scoring rubrics, evidence extracted from the CV, and a ranked shortlist reviewed before it reaches you.",
+        "TaaSFlow gives tech leaders a single workspace for every engineering, product, cloud, cybersecurity and data search — with role-specific scoring rubrics, technical-evidence validation extracted from the CV, and a ranked shortlist reviewed before it reaches you.",
     },
     challenges: [
       {
@@ -59,12 +63,66 @@ export const INDUSTRY_ENTRIES: IndustryEntry[] = [
         body: "Great engineers describe their impact in prose, not keywords. Our scoring extracts the specific evidence — architecture decisions, systems owned, scale handled — instead of matching buzzwords.",
       },
       {
-        title: "Volume vs precision",
-        body: "Junior funnels flood inboxes while senior roles stall. We tune the rubric per level so the shortlist you see is calibrated to the seniority you are actually hiring for.",
+        title: "Stack fit vs transferable skill",
+        body: "Every technical stack looks similar on paper. We calibrate the rubric to the specific languages, frameworks, cloud platforms and databases the role actually needs, and flag transferable adjacencies explicitly.",
+      },
+      {
+        title: "Volume vs precision at every level",
+        body: "Junior funnels flood inboxes while senior and staff searches stall. We tune the rubric per level so the shortlist you see is calibrated to the seniority — and specialisation — you are actually hiring for.",
       },
       {
         title: "Remote, hybrid and on-site trade-offs",
         body: "Every tech role has a location model. We capture it in intake and use it as a first-class filter so time zone and location mismatches never reach the shortlist.",
+      },
+    ],
+    solutions: [
+      {
+        title: "Technical-evidence validation, not keyword matching",
+        body: "Every candidate CV is parsed for the specific technical claims a role requires — services owned, incidents led, systems scaled — and each claim is quoted back with its source line for review.",
+      },
+      {
+        title: "Role rubrics per specialisation",
+        body: "Separate rubrics for backend, frontend, full-stack, platform/SRE, mobile, data engineering, ML, security, product and engineering management — so scoring is comparable within a role, not across unrelated ones.",
+      },
+      {
+        title: "Stack-aware scoring",
+        body: "Node, Go, Python, Java, .NET, Rust, Swift, Kotlin, React, Next.js, TypeScript, AWS, GCP, Azure, Kubernetes, Terraform, Postgres, Kafka, Snowflake — the rubric maps to the exact stack the role needs and shows evidence of production use, not just exposure.",
+      },
+      {
+        title: "One workspace per role",
+        body: "Ranked shortlist, evidence side-by-side, Kanban pipeline, direct messaging, audit trail. Your team owns the workspace and the data.",
+      },
+    ],
+    roleFamilies: [
+      {
+        name: "Software engineering",
+        blurb: "Backend, frontend, full-stack, mobile and embedded engineers across all levels.",
+        roles: ["Backend engineers (Go, Node, Java, Python)", "Frontend engineers (React, Next.js, TypeScript)", "Full-stack engineers", "Mobile engineers (iOS, Android, React Native)", "Staff and principal engineers"],
+      },
+      {
+        name: "Product",
+        blurb: "Product managers, technical product managers and product operations.",
+        roles: ["Product managers", "Technical product managers", "Group product managers", "Product operations"],
+      },
+      {
+        name: "Cloud, platform and DevOps",
+        blurb: "Site reliability, platform, infrastructure, and cloud specialists.",
+        roles: ["Site reliability engineers", "Platform engineers", "DevOps engineers", "Cloud architects (AWS, GCP, Azure)", "Infrastructure engineers"],
+      },
+      {
+        name: "Cybersecurity",
+        blurb: "Application, cloud, product and offensive security across the stack.",
+        roles: ["Application security engineers", "Cloud security engineers", "Security engineers", "GRC and compliance analysts", "Detection & response engineers"],
+      },
+      {
+        name: "Data and AI",
+        blurb: "Data engineering, analytics engineering, data science and ML.",
+        roles: ["Data engineers", "Analytics engineers", "Data scientists", "Machine learning engineers", "MLOps engineers"],
+      },
+      {
+        name: "Engineering leadership",
+        blurb: "First-line managers to VPs of engineering.",
+        roles: ["Engineering managers", "Senior engineering managers", "Directors of engineering", "VPs of engineering"],
       },
     ],
     roles: [
@@ -74,14 +132,49 @@ export const INDUSTRY_ENTRIES: IndustryEntry[] = [
       "DevOps & site reliability",
       "Mobile engineers",
       "Data & ML engineers",
+      "Security engineers",
       "Engineering managers",
       "Product managers",
       "IT & infrastructure specialists",
     ],
+    candidateSignals: [
+      { title: "Systems owned end-to-end", body: "Named services with production ownership, on-call responsibility and measurable scale (RPS, data volume, users)." },
+      { title: "Architecture decisions", body: "Trade-offs documented in the CV — chosen technology, rejected alternatives, and the reason behind the choice." },
+      { title: "Scale and reliability", body: "Concrete numbers on latency, availability, incident response and cost impact — not adjectives." },
+      { title: "Stack depth vs breadth", body: "Years of production use per language, framework, cloud and database — separated from tools merely listed." },
+      { title: "Delivery evidence", body: "Shipped features, migrations completed, teams led — with dates, scope and outcomes." },
+      { title: "Collaboration and communication", body: "Cross-team programs, RFC authorship, mentorship footprint and public technical writing where present." },
+    ],
+    skills: ["TypeScript", "Python", "Go", "Java", "Rust", "SQL", "System design", "Distributed systems", "API design", "Testing and CI/CD", "Observability", "Performance"],
+    tools: ["AWS", "GCP", "Azure", "Kubernetes", "Terraform", "Docker", "React", "Next.js", "Node.js", "Postgres", "Kafka", "Snowflake", "BigQuery", "Datadog", "GitHub Actions"],
+    certifications: ["AWS Certified Solutions Architect", "AWS Certified DevOps Engineer", "GCP Professional Cloud Architect", "Azure Solutions Architect Expert", "CKA / CKAD", "OSCP", "CISSP"],
+    regulatedRequirements: [
+      "SOC 2 program experience for platform/security hires",
+      "PCI-DSS scope experience for payments-adjacent engineers",
+      "HIPAA-aware handling for healthtech engineers",
+      "GDPR-aware data handling for EU/UK-facing systems",
+    ],
     signals: [
       "Rubric per role level",
-      "Evidence quotes from the CV",
+      "Technical-evidence validation from the CV",
       "Ranked shortlist in your workspace",
+    ],
+    relatedIndustries: [
+      { slug: "saas", name: "SaaS", blurb: "Product, CS and RevOps for software companies." },
+      { slug: "cybersecurity", name: "Cybersecurity", blurb: "Security engineers, GRC and compliance." },
+      { slug: "data-analytics", name: "Data & Analytics", blurb: "Data engineering, analytics and ML." },
+    ],
+    resources: [
+      { title: "How TaaSFlow works", kind: "Product", to: "/how-it-works", description: "The full workflow, end to end." },
+      { title: "Enterprise engineering hiring", kind: "Playbook", to: "/enterprise", description: "Multi-team programmes and reporting." },
+      { title: "Pricing", kind: "Pricing", to: "/pricing", description: "Subscription pricing without placement fees." },
+    ],
+    faqs: [
+      { q: "How is technical fit evaluated?", a: "We calibrate a rubric per role — backend, frontend, platform, mobile, data, ML, security, product — and score each candidate against it. Every point in the score has an evidence quote from the CV, so review is fast and defensible." },
+      { q: "Do you handle senior and staff-level roles?", a: "Yes. Staff, principal and engineering leadership searches are our largest single category. Rubrics for those levels weight architecture, scope and cross-team delivery over tooling breadth." },
+      { q: "Can you match a specific stack?", a: "We map the exact stack the role needs in intake — languages, frameworks, cloud, data — and score for production use, not exposure. Adjacent stacks are flagged separately so they are never scored as an exact match." },
+      { q: "How do you handle remote vs hybrid vs on-site?", a: "Location model is a first-class intake field and a hard filter on the shortlist. Time-zone requirements are captured explicitly." },
+      { q: "How does technical-evidence validation work?", a: "Every CV is parsed for the technical claims the role requires — services owned, scale handled, incidents led — and the specific line from the CV supporting each claim is quoted back for review." },
     ],
     cta: {
       title: "Hiring for a tech team?",
@@ -89,6 +182,7 @@ export const INDUSTRY_ENTRIES: IndustryEntry[] = [
         "Submit the role in our guided intake — draft saving is on, and your workspace is ready as soon as you finish.",
     },
   },
+
   {
     slug: "saas",
     eyebrow: "SaaS & Cloud",
