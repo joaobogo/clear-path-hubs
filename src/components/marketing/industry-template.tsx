@@ -352,72 +352,129 @@ export function IndustryTemplate({ entry }: { entry: IndustryEntry }) {
         </PublicPage>
       </PublicSection>
 
-      {/* 9. Related industries */}
-      {entry.relatedIndustries && entry.relatedIndustries.length > 0 ? (
-        <PublicSection className="border-t border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-mist)]/40 py-12">
-          <PublicPage>
-            <h2 className="font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight">
-              Related industries
-            </h2>
-            <div className="mt-6 grid gap-5 md:grid-cols-3">
-              {entry.relatedIndustries.map((r) => (
-                <Link
-                  key={r.slug}
-                  to="/industries/$slug"
-                  params={{ slug: r.slug }}
-                  className="group rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6 transition-colors hover:border-[color:var(--brand-ocean)]/50"
-                >
-                  <h3 className="text-lg font-semibold text-[color:var(--brand-navy)] group-hover:text-[color:var(--brand-ocean)]">
-                    {r.name}
-                  </h3>
-                  {r.blurb ? (
-                    <p className="mt-2 text-sm text-[color:var(--brand-navy)]/70">
-                      {r.blurb}
-                    </p>
-                  ) : null}
-                  <span className="mt-4 inline-flex text-sm font-semibold text-[color:var(--brand-ocean)]">
-                    Explore →
-                  </span>
-                </Link>
-              ))}
+      {/* 9. Related industries — engine-driven, guaranteed 3–5 meaningful links */}
+      <PublicSection className="border-t border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-mist)]/40 py-12">
+        <PublicPage>
+          <div className="flex items-end justify-between gap-4">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean)]">
+                Adjacent hiring
+              </p>
+              <h2 className="mt-1 font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight">
+                Related industries
+              </h2>
             </div>
-          </PublicPage>
-        </PublicSection>
-      ) : null}
+            <Link
+              to="/industries"
+              className="hidden text-sm font-semibold text-[color:var(--brand-ocean)] underline-offset-4 hover:underline sm:inline-flex"
+            >
+              See all industries →
+            </Link>
+          </div>
+          <div className="mt-6 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
+            {relationships.related.map((r, i) => (
+              <Link
+                key={r.slug}
+                to="/industries/$slug"
+                params={{ slug: r.slug }}
+                style={{ animationDelay: `${i * 60}ms` }}
+                className="group rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6 transition-all hover:-translate-y-0.5 hover:border-[color:var(--brand-ocean)]/50 hover:shadow-md motion-safe:animate-[fade-in_320ms_ease-out_both]"
+              >
+                <h3 className="text-lg font-semibold text-[color:var(--brand-navy)] group-hover:text-[color:var(--brand-ocean)]">
+                  {r.name}
+                </h3>
+                {r.blurb ? (
+                  <p className="mt-2 line-clamp-3 text-sm text-[color:var(--brand-navy)]/70">
+                    {r.blurb}
+                  </p>
+                ) : null}
+                <span className="mt-4 inline-flex text-sm font-semibold text-[color:var(--brand-ocean)]">
+                  Explore →
+                </span>
+              </Link>
+            ))}
+          </div>
+        </PublicPage>
+      </PublicSection>
+
+      {/* 9a. Industry link web — commercial + audience + Start hiring */}
+      <PublicSection className="py-10">
+        <PublicPage>
+          <div className="grid gap-4 md:grid-cols-3">
+            <Link
+              to={relationships.commercial.to}
+              className="group flex items-center justify-between rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6 transition-colors hover:border-[color:var(--brand-ocean)]/50"
+            >
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean)]">Commercial</p>
+                <p className="mt-1 font-semibold text-[color:var(--brand-navy)]">{relationships.commercial.label}</p>
+                <p className="mt-1 text-sm text-[color:var(--brand-navy)]/70">Subscription pricing — no placement fees.</p>
+              </div>
+              <span className="text-lg text-[color:var(--brand-ocean)] transition-transform group-hover:translate-x-1">→</span>
+            </Link>
+            <Link
+              to={relationships.audience.to}
+              className="group flex items-center justify-between rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6 transition-colors hover:border-[color:var(--brand-ocean)]/50"
+            >
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean)]">Audience</p>
+                <p className="mt-1 font-semibold text-[color:var(--brand-navy)]">{relationships.audience.label}</p>
+                <p className="mt-1 text-sm text-[color:var(--brand-navy)]/70">{relationships.audience.blurb}</p>
+              </div>
+              <span className="text-lg text-[color:var(--brand-ocean)] transition-transform group-hover:translate-x-1">→</span>
+            </Link>
+            <Link
+              to="/intake"
+              className="group flex items-center justify-between rounded-2xl border border-[color:var(--brand-navy)] bg-[color:var(--brand-navy)] p-6 text-white transition-opacity hover:opacity-95"
+            >
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.14em] text-white/70">Next step</p>
+                <p className="mt-1 font-semibold">Start hiring for {entry.name}</p>
+                <p className="mt-1 text-sm text-white/80">Guided intake — draft saving, no login required.</p>
+              </div>
+              <span className="text-lg transition-transform group-hover:translate-x-1">→</span>
+            </Link>
+          </div>
+        </PublicPage>
+      </PublicSection>
 
       {/* 9b. Industry-specific blog insights */}
       <IndustryInsights industrySlug={entry.slug} industryName={entry.name} />
 
-      {/* 10. Related resources */}
-      {entry.resources && entry.resources.length > 0 ? (
-        <PublicSection className="py-12">
-          <PublicPage>
-            <h2 className="font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight">
-              Related resources
-            </h2>
-            <div className="mt-6 grid gap-5 md:grid-cols-3">
-              {entry.resources.map((r) => (
-                <Link
-                  key={r.to}
-                  to={r.to}
-                  className="group rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6 transition-colors hover:border-[color:var(--brand-ocean)]/50"
-                >
-                  <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean)]">
-                    {r.kind}
+      {/* 10. Related resources — 2 guides + pricing + process + category article */}
+      <PublicSection className="py-12">
+        <PublicPage>
+          <h2 className="font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight">
+            {entry.name} hiring resources
+          </h2>
+          <p className="mt-2 max-w-2xl text-sm text-[color:var(--brand-navy)]/70">
+            Two hiring guides, a commercial explainer, the process breakdown, and a category-relevant read — everything a
+            hiring lead in {entry.name} typically needs before intake.
+          </p>
+          <div className="mt-6 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+            {relationships.resources.map((r, i) => (
+              <Link
+                key={`${r.to}-${i}`}
+                to={r.to}
+                style={{ animationDelay: `${i * 50}ms` }}
+                className="group rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6 transition-all hover:-translate-y-0.5 hover:border-[color:var(--brand-ocean)]/50 hover:shadow-md motion-safe:animate-[fade-in_320ms_ease-out_both]"
+              >
+                <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean)]">
+                  {r.kind}
+                </p>
+                <h3 className="mt-2 text-lg font-semibold text-[color:var(--brand-navy)] group-hover:text-[color:var(--brand-ocean)]">
+                  {r.title}
+                </h3>
+                {r.description ? (
+                  <p className="mt-2 text-sm text-[color:var(--brand-navy)]/70">
+                    {r.description}
                   </p>
-                  <h3 className="mt-2 text-lg font-semibold text-[color:var(--brand-navy)] group-hover:text-[color:var(--brand-ocean)]">
-                    {r.title}
-                  </h3>
-                  {r.description ? (
-                    <p className="mt-2 text-sm text-[color:var(--brand-navy)]/70">
-                      {r.description}
-                    </p>
-                  ) : null}
-                </Link>
-              ))}
-            </div>
-          </PublicPage>
-        </PublicSection>
+                ) : null}
+              </Link>
+            ))}
+          </div>
+        </PublicPage>
+      </PublicSection>
       ) : null}
 
       {/* 11. Industry FAQ */}
