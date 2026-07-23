@@ -19,6 +19,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
+import { GlobalSearchDialog } from "@/components/workspace/global-search-dialog";
 import { cn } from "@/lib/utils";
 
 export type WorkspaceNavItem = {
@@ -44,6 +45,8 @@ export type WorkspaceShellProps = {
   topBanner?: ReactNode;
   /** Search params merged into every nav link (support-view mode). */
   linkSearch?: Record<string, string | undefined>;
+  /** Global search scope. Defaults to "client". Admin layout should pass "admin". */
+  searchScope?: "admin" | "client";
   children: ReactNode;
 };
 
@@ -207,12 +210,26 @@ export function WorkspaceShell(props: WorkspaceShellProps) {
     aboveNav,
     topBanner,
     linkSearch,
+    searchScope,
     children,
   } = props;
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const { collapsed, toggle, mobileOpen, setMobileOpen } = useSidebarState();
   const crumbs = buildBreadcrumbs(pathname, navItems);
   const currentPage = crumbs[crumbs.length - 1]?.label ?? "";
+  const [searchOpen, setSearchOpen] = useState(false);
+
+  // Cmd/Ctrl-K opens search from anywhere.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        setSearchOpen((v) => !v);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
 
   // Close mobile drawer on route change.
   useEffect(() => {
@@ -342,18 +359,23 @@ export function WorkspaceShell(props: WorkspaceShellProps) {
           <button
             type="button"
             className="hidden h-9 items-center gap-2 rounded-md border bg-card px-3 text-xs text-muted-foreground shadow-sm hover:text-foreground md:inline-flex"
-            onClick={() => {
-              /* Global search entry point — hook up when search index ships. */
-              const el = document.getElementById("workspace-search");
-              el?.focus();
-            }}
-            aria-label="Search"
+            onClick={() => setSearchOpen(true)}
+            aria-label="Open global search"
+            aria-keyshortcuts="Meta+K Control+K"
           >
             <Search className="h-3.5 w-3.5" />
             <span>Search</span>
             <kbd className="ml-4 rounded border bg-muted px-1.5 py-0.5 font-mono text-[10px]">
               ⌘K
             </kbd>
+          </button>
+          <button
+            type="button"
+            className="rounded-md p-2 text-muted-foreground hover:bg-muted md:hidden"
+            onClick={() => setSearchOpen(true)}
+            aria-label="Open global search"
+          >
+            <Search className="h-4 w-4" />
           </button>
 
           <a
@@ -427,6 +449,11 @@ export function WorkspaceShell(props: WorkspaceShellProps) {
           </div>
         </main>
       </div>
+      <GlobalSearchDialog
+        open={searchOpen}
+        onOpenChange={setSearchOpen}
+        scope={searchScope ?? "client"}
+      />
     </div>
   );
 }

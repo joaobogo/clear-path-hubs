@@ -24,7 +24,7 @@ import {
   Briefcase,
   Users,
   MessageSquare,
-  CalendarClock,
+  // CalendarClock removed from nav; icon no longer needed here.
   UserCog,
   Settings,
 } from "lucide-react";
@@ -70,7 +70,7 @@ const TABS: NavDef[] = [
   { to: "/client", label: "Overview", icon: LayoutDashboard, exact: true, everyone: true },
   { to: "/client/positions", label: "Positions", icon: Briefcase, everyone: true },
   { to: "/client/candidates", label: "Candidates", icon: Users, everyone: true },
-  { to: "/client/interviews", label: "Interviews", icon: CalendarClock, everyone: true },
+  // Interviews merged into Positions / Candidates record pages — route stays reachable via deep links.
   { to: "/client/messages", label: "Messages", icon: MessageSquare, everyone: true },
   { to: "/client/team", label: "Team", icon: UserCog, everyone: false },
   { to: "/client/settings", label: "Settings", icon: Settings, everyone: false },
