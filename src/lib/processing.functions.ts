@@ -583,7 +583,7 @@ export const applyReviewDecision = createServerFn({ method: "POST" })
         reason: data.reason ?? null,
         actor_user_id: context.userId,
       });
-      await supabase
+      const { data: published, error: publishError } = await supabase
         .from("candidate_matches")
         .update({
           approved_score_run_id: runIdForDecision,
@@ -592,7 +592,13 @@ export const applyReviewDecision = createServerFn({ method: "POST" })
           stage: "delivered",
           delivered_at: new Date().toISOString(),
         })
-        .eq("id", data.match_id);
+        .eq("id", data.match_id)
+        .select("id,admin_status,client_visibility,stage,approved_score_run_id,delivered_at")
+        .maybeSingle();
+      if (publishError) throw new Error(`publish_failed:${publishError.message}`);
+      if (published?.client_visibility !== "visible") {
+        throw new Error("publish_failed:not_visible_after_update");
+      }
 
       // Emit candidate_published to the client org (visible delivery)
       try {
@@ -626,7 +632,7 @@ export const applyReviewDecision = createServerFn({ method: "POST" })
       } catch (emitErr) {
         console.error("[approve_for_client] emit failed", emitErr);
       }
-      return { ok: true as const, action: data.action };
+      return { ok: true as const, action: data.action, match: published };
     }
 
     // Hold and archive both use decision_type='reject' since the enum has no hold/archive.
