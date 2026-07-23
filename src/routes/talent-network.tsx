@@ -1,267 +1,330 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { marketingHead } from "@/lib/marketing/head";
+import { PublicPage, PublicSection } from "@/components/marketing/site-shell";
 import {
-  SiteShell,
-  PublicPage,
-  PublicSection,
-  CtaSection,
-  Breadcrumbs,
-} from "@/components/marketing/site-shell";
-
-const CANONICAL = "https://clear-path-hubs.lovable.app/talent-network";
-const TITLE = "Talent Network — private matching for senior professionals | TaaSFlow";
-const DESC =
-  "Join the TaaSFlow Talent Network. Get privately matched to role-specific briefs, review evidence-based feedback, and stay in control of your visibility.";
+  Search,
+  UserPlus,
+  LogIn,
+  Users,
+  Sparkles,
+  ShieldCheck,
+  Inbox,
+  ArrowRight,
+  ClipboardList,
+  Eye,
+} from "lucide-react";
 
 export const Route = createFileRoute("/talent-network")({
-  head: () => ({
-    meta: [
-      { title: TITLE },
-      { name: "description", content: DESC },
-      { property: "og:title", content: TITLE },
-      { property: "og:description", content: DESC },
-      { property: "og:type", content: "website" },
-      { property: "og:url", content: CANONICAL },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-    links: [{ rel: "canonical", href: CANONICAL }],
-  }),
+  head: () =>
+    marketingHead(undefined, "/talent-network", {
+      title: "Talent Network — TaaSFlow",
+      description:
+        "Join the TaaSFlow Talent Network. Browse open roles, join for private matching to future briefs, and stay in control of your visibility and data.",
+    }),
   component: TalentNetworkPage,
 });
 
-const REASONS = [
-  {
-    title: "Fewer, better-matched briefs",
-    body:
-      "We only forward roles that match your captured direction, seniority and constraints — not blanket outreach.",
-  },
-  {
-    title: "Evidence-based review",
-    body:
-      "Every application is scored against the actual requirements, and the reasoning is shared with you.",
-  },
-  {
-    title: "Private by default",
-    body:
-      "Your profile is never public, never sold, and never sent to a client without your consent for that specific brief.",
-  },
-  {
-    title: "Real feedback loop",
-    body:
-      "Structured status updates in your dashboard — no more silent rejections.",
-  },
-];
-
-const INFO_NEEDED = [
-  "Current or most recent role, employer and location",
-  "Working preference: remote, hybrid or on-site, and eligible regions",
-  "Compensation range and notice period, so we only match viable briefs",
-  "CV or resume (PDF or DOCX) — parsed for evidence, editable by you",
-  "Optional signals: languages, work authorisation, availability window",
-];
-
-const MATCHING = [
-  {
-    step: "01",
-    title: "Structured intake",
-    body: "You share the facts once. We convert them into a searchable profile you own.",
-  },
-  {
-    step: "02",
-    title: "Role-specific scoring",
-    body:
-      "When a brief is live, each requirement is scored with cited evidence from your CV — no keyword games.",
-  },
-  {
-    step: "03",
-    title: "Consent-based introduction",
-    body:
-      "If you rank, we ask before sending your details to the client. You see the brief in full first.",
-  },
-];
-
-const EXPECT = [
-  "A dashboard that tracks every application, stage and message in one place.",
-  "Direct chat with the TaaSFlow team on live matches — no phone tag.",
-  "Structured status updates: submitted, in review, shortlisted, interview, decision.",
-  "Downloadable evidence of how you were scored on each brief you consent to.",
-];
-
 function TalentNetworkPage() {
   return (
-    <SiteShell>
-      <Breadcrumbs items={[{ label: "Home", to: "/" }, { label: "Talent Network" }]} />
-
-      <PublicSection className="pb-8 pt-10 sm:pt-14">
+    <>
+      {/* ── Hero ─────────────────────────────────────────────────── */}
+      <PublicSection className="pb-10 pt-16 sm:pt-20">
         <PublicPage>
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">
-            For candidates
+            Talent Network
           </p>
           <h1 className="mt-3 max-w-3xl font-[family-name:var(--brand-font-display)] text-4xl font-semibold tracking-tight sm:text-5xl">
-            A private talent network — matched by evidence, not keywords.
+            Be considered for the right roles &mdash; on your terms.
           </h1>
-          <p className="mt-4 max-w-2xl text-lg text-[color:var(--brand-navy)]/75">
-            Join once, then be considered for briefs that actually fit your direction, seniority and
-            working preferences. You stay in control of your visibility at every step.
+          <p className="mt-5 max-w-2xl text-lg text-[color:var(--brand-navy)]/70">
+            Browse roles that are open today, or join the network so we can match you to briefs
+            as they come in. Your profile stays private until you choose to be considered.
           </p>
-
-          <div className="mt-6 flex flex-wrap gap-3">
+          <div className="mt-8 flex flex-wrap items-center gap-3">
             <Link
               to="/jobs"
-              className="inline-flex items-center rounded-lg bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-medium text-white"
+              className="inline-flex min-h-11 items-center justify-center rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-white hover:opacity-90"
             >
-              Browse open briefs
+              Browse Open Roles
+              <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
             <Link
-              to="/jobs"
-              className="inline-flex items-center rounded-lg border border-[color:var(--brand-navy)]/20 px-5 py-2.5 text-sm font-medium text-[color:var(--brand-navy)]"
+              to="/candidate-join"
+              className="inline-flex min-h-11 items-center justify-center rounded-md border border-[color:var(--brand-navy)]/20 px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5"
             >
-              Join by applying
+              Join the Talent Network
             </Link>
             <Link
               to="/login"
-              className="inline-flex items-center rounded-lg px-5 py-2.5 text-sm font-medium text-[color:var(--brand-navy)] underline underline-offset-4"
+              className="inline-flex min-h-11 items-center gap-2 rounded-md px-3 py-2 text-sm text-[color:var(--brand-navy)]/70 hover:text-[color:var(--brand-navy)]"
             >
-              Candidate sign in
+              <LogIn className="h-4 w-4" />
+              Candidate Sign In
             </Link>
           </div>
+        </PublicPage>
+      </PublicSection>
 
-          <div className="mt-6 flex flex-wrap gap-2 text-xs">
-            {["Consent per introduction", "Free for professionals", "No public profile"].map((chip) => (
-              <span
-                key={chip}
-                className="rounded-full border border-[color:var(--brand-navy)]/15 bg-white px-3 py-1 text-[color:var(--brand-navy)]/75"
+      {/* ── Three primary paths ─────────────────────────────────── */}
+      <PublicSection className="py-16">
+        <PublicPage>
+          <div className="grid gap-6 md:grid-cols-3">
+            {[
+              {
+                icon: Search,
+                title: "Browse open roles",
+                body: "See roles that are actively hiring today. Apply directly to the ones that fit.",
+                cta: { label: "Browse Open Roles", to: "/jobs" },
+              },
+              {
+                icon: UserPlus,
+                title: "Join the network",
+                body: "Add your profile once and be considered for future roles that match your background.",
+                cta: { label: "Join the Talent Network", to: "/candidate-join" },
+              },
+              {
+                icon: LogIn,
+                title: "Candidate sign in",
+                body: "Already applied or joined the network? Sign in to update your profile and check applications.",
+                cta: { label: "Candidate Sign In", to: "/login" },
+              },
+            ].map((card) => (
+              <div
+                key={card.title}
+                className="flex flex-col rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6"
               >
-                {chip}
-              </span>
+                <card.icon className="h-6 w-6 text-[color:var(--brand-navy)]" />
+                <h3 className="mt-4 text-lg font-semibold">{card.title}</h3>
+                <p className="mt-2 flex-1 text-sm text-[color:var(--brand-navy)]/70">{card.body}</p>
+                <Link
+                  to={card.cta.to}
+                  className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-[color:var(--brand-navy)] hover:opacity-80"
+                >
+                  {card.cta.label}
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              </div>
             ))}
           </div>
         </PublicPage>
       </PublicSection>
 
-      <PublicSection className="py-10">
+      {/* ── Who this is for ─────────────────────────────────────── */}
+      <PublicSection className="bg-[color:var(--brand-cream)] py-16">
         <PublicPage>
-          <h2 className="font-[family-name:var(--brand-font-display)] text-2xl font-semibold sm:text-3xl">
-            Why join
+          <div className="grid gap-10 lg:grid-cols-2">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">
+                Who this network is for
+              </p>
+              <h2 className="mt-3 font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight">
+                Experienced professionals who want to be found for the right work
+              </h2>
+              <p className="mt-4 text-[color:var(--brand-navy)]/70">
+                The network is designed for candidates who value quality of match over volume of
+                outreach. You choose what to share, and you only surface for roles where the
+                brief fits.
+              </p>
+            </div>
+            <ul className="space-y-4">
+              {[
+                "Senior individual contributors and specialists",
+                "Managers and leaders across functions",
+                "Consultants and operators between engagements",
+                "Professionals open to selective, well-scoped roles",
+                "People who prefer briefed matches over cold pitches",
+              ].map((point) => (
+                <li key={point} className="flex gap-3">
+                  <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[color:var(--brand-navy)]" />
+                  <span className="text-[color:var(--brand-navy)]/80">{point}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </PublicPage>
+      </PublicSection>
+
+      {/* ── How matching works ──────────────────────────────────── */}
+      <PublicSection className="py-16">
+        <PublicPage>
+          <h2 className="max-w-2xl font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight">
+            How matching works
           </h2>
-          <div className="mt-6 grid gap-5 md:grid-cols-2">
-            {REASONS.map((r) => (
+          <p className="mt-4 max-w-2xl text-[color:var(--brand-navy)]/70">
+            When a client opens a role, we look at the requirements and see which network
+            candidates are a genuine fit. If your background matches, we&rsquo;ll reach out with
+            the brief so you can decide whether to be considered.
+          </p>
+          <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+            {[
+              {
+                icon: ClipboardList,
+                title: "Structured brief",
+                body: "Each role has a clear set of requirements. Matching is against the brief, not against keywords alone.",
+              },
+              {
+                icon: Users,
+                title: "Fit review",
+                body: "We check the network for candidates whose background genuinely matches the role.",
+              },
+              {
+                icon: Inbox,
+                title: "You get the brief",
+                body: "If your profile fits, we share the role privately so you can decide whether to move forward.",
+              },
+              {
+                icon: Sparkles,
+                title: "You stay in control",
+                body: "Only your explicit go-ahead surfaces your profile for a specific role.",
+              },
+            ].map((step) => (
               <div
-                key={r.title}
+                key={step.title}
                 className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6"
               >
-                <h3 className="font-[family-name:var(--brand-font-display)] text-lg font-semibold">
-                  {r.title}
-                </h3>
-                <p className="mt-2 text-sm text-[color:var(--brand-navy)]/75">{r.body}</p>
+                <step.icon className="h-6 w-6 text-[color:var(--brand-navy)]" />
+                <h3 className="mt-4 text-lg font-semibold">{step.title}</h3>
+                <p className="mt-2 text-sm text-[color:var(--brand-navy)]/70">{step.body}</p>
               </div>
             ))}
           </div>
         </PublicPage>
       </PublicSection>
 
-      <PublicSection className="py-10">
+      {/* ── Privacy & control ───────────────────────────────────── */}
+      <PublicSection className="bg-[color:var(--brand-cream)] py-16">
         <PublicPage>
-          <div className="grid gap-8 md:grid-cols-2">
+          <div className="grid gap-10 lg:grid-cols-2">
             <div>
-              <h2 className="font-[family-name:var(--brand-font-display)] text-2xl font-semibold sm:text-3xl">
-                What information we need
-              </h2>
-              <p className="mt-3 text-[color:var(--brand-navy)]/75">
-                Enough to match you accurately — nothing that isn't used for scoring or introductions.
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">
+                Privacy and control
               </p>
-              <ul className="mt-5 space-y-2 text-sm text-[color:var(--brand-navy)]/85">
-                {INFO_NEEDED.map((i) => (
-                  <li key={i} className="flex gap-2">
-                    <span
-                      aria-hidden
-                      className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[color:var(--brand-navy)]"
-                    />
-                    {i}
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div>
-              <h2 className="font-[family-name:var(--brand-font-display)] text-2xl font-semibold sm:text-3xl">
-                How opportunities are matched
+              <h2 className="mt-3 font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight">
+                Your profile, your choices
               </h2>
-              <div className="mt-5 space-y-4">
-                {MATCHING.map((m) => (
-                  <div
-                    key={m.step}
-                    className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-5"
-                  >
-                    <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/50">
-                      {m.step}
-                    </p>
-                    <h3 className="mt-1 font-[family-name:var(--brand-font-display)] text-lg font-semibold">
-                      {m.title}
-                    </h3>
-                    <p className="mt-1 text-sm text-[color:var(--brand-navy)]/75">{m.body}</p>
-                  </div>
-                ))}
-              </div>
+              <p className="mt-4 text-[color:var(--brand-navy)]/70">
+                Joining the network doesn&rsquo;t put your profile in front of any employer. Your
+                information stays private until you decide to be considered for a specific role.
+              </p>
             </div>
+            <ul className="space-y-4">
+              {[
+                { icon: ShieldCheck, text: "Your profile isn't shared publicly or browsed by employers." },
+                { icon: Eye, text: "Nothing surfaces to a client until you approve consideration for a role." },
+                { icon: UserPlus, text: "You can update, pause, or delete your profile at any time from your workspace." },
+                { icon: Inbox, text: "You choose which briefs to respond to — there's no obligation to move forward." },
+              ].map((item) => (
+                <li key={item.text} className="flex gap-3">
+                  <item.icon className="mt-0.5 h-5 w-5 shrink-0 text-[color:var(--brand-navy)]" />
+                  <span className="text-[color:var(--brand-navy)]/80">{item.text}</span>
+                </li>
+              ))}
+            </ul>
           </div>
         </PublicPage>
       </PublicSection>
 
-      <PublicSection className="py-10">
+      {/* ── What happens after joining ──────────────────────────── */}
+      <PublicSection className="py-16">
         <PublicPage>
-          <h2 className="font-[family-name:var(--brand-font-display)] text-2xl font-semibold sm:text-3xl">
-            What you can expect
+          <h2 className="max-w-2xl font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight">
+            What happens after joining
           </h2>
-          <ul className="mt-5 grid gap-3 text-sm text-[color:var(--brand-navy)]/85 sm:grid-cols-2">
-            {EXPECT.map((e) => (
+          <p className="mt-4 max-w-2xl text-[color:var(--brand-navy)]/70">
+            Joining takes a few minutes. From there, activity is quiet by design — we only
+            reach out when there&rsquo;s a real reason to.
+          </p>
+          <ol className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {[
+              {
+                n: "01",
+                title: "Create your profile",
+                body: "Share your background, experience, and the kind of work you&rsquo;re open to.",
+              },
+              {
+                n: "02",
+                title: "Access your workspace",
+                body: "A candidate workspace where you can update your profile and see any roles you&rsquo;ve applied to.",
+              },
+              {
+                n: "03",
+                title: "Receive relevant briefs",
+                body: "When a role fits, we send you the brief privately so you can decide whether to move forward.",
+              },
+              {
+                n: "04",
+                title: "Choose to be considered",
+                body: "If a role is interesting, you confirm consideration and we take it from there.",
+              },
+              {
+                n: "05",
+                title: "Follow the process",
+                body: "Track application status, next steps, and messages inside your workspace.",
+              },
+              {
+                n: "06",
+                title: "Stay in control",
+                body: "Update preferences, pause matching, or remove your profile whenever you need to.",
+              },
+            ].map((step) => (
               <li
-                key={e}
-                className="rounded-xl border border-[color:var(--brand-navy)]/10 bg-white p-4"
+                key={step.n}
+                className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6"
               >
-                {e}
+                <span className="text-sm font-semibold text-[color:var(--brand-navy)]/50">
+                  {step.n}
+                </span>
+                <h3 className="mt-3 text-lg font-semibold">{step.title}</h3>
+                <p
+                  className="mt-2 text-sm text-[color:var(--brand-navy)]/70"
+                  dangerouslySetInnerHTML={{ __html: step.body }}
+                />
               </li>
             ))}
-          </ul>
+          </ol>
         </PublicPage>
       </PublicSection>
 
-      <PublicSection className="py-10">
+      {/* ── Final CTA ───────────────────────────────────────────── */}
+      <PublicSection className="py-16">
         <PublicPage>
-          <div className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6 sm:p-8">
-            <h2 className="font-[family-name:var(--brand-font-display)] text-2xl font-semibold sm:text-3xl">
-              Privacy and consent
-            </h2>
-            <div className="mt-5 grid gap-4 text-sm text-[color:var(--brand-navy)]/80 md:grid-cols-2">
-              <p>
-                Your profile is not indexed publicly and is not visible to any client until you
-                consent to a specific introduction for a specific brief.
-              </p>
-              <p>
-                You can pause visibility, edit any field, export your data, or delete your account at
-                any time from your candidate dashboard.
-              </p>
-              <p>
-                We only process the fields listed above for matching, scoring and communication about
-                live briefs.
-              </p>
-              <p>
-                Full detail — retention, data subject rights and processors — is documented on the{" "}
-                <Link to="/privacy" className="underline underline-offset-4">
-                  privacy page
+          <div className="rounded-2xl bg-[color:var(--brand-navy)] px-6 py-14 text-white sm:px-12 sm:py-16">
+            <div className="flex flex-col items-start gap-6 md:flex-row md:items-center md:justify-between">
+              <div>
+                <h2 className="font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight text-white">
+                  Ready when you are.
+                </h2>
+                <p className="mt-3 max-w-2xl text-white/70">
+                  See what&rsquo;s open today, or join the network so the right role can come to
+                  you.
+                </p>
+              </div>
+              <div className="flex flex-wrap items-center gap-3">
+                <Link
+                  to="/jobs"
+                  className="inline-flex min-h-11 items-center justify-center rounded-md bg-white px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-navy)] hover:opacity-90"
+                >
+                  Browse Open Roles
+                  <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
-                .
-              </p>
+                <Link
+                  to="/candidate-join"
+                  className="inline-flex min-h-11 items-center justify-center rounded-md border border-white/30 px-5 py-2.5 text-sm font-semibold text-white hover:bg-white/10"
+                >
+                  Join the Talent Network
+                </Link>
+                <Link
+                  to="/login"
+                  className="inline-flex min-h-11 items-center gap-2 px-3 py-2 text-sm text-white/70 hover:text-white"
+                >
+                  <LogIn className="h-4 w-4" />
+                  Candidate Sign In
+                </Link>
+              </div>
             </div>
           </div>
         </PublicPage>
       </PublicSection>
-
-      <CtaSection
-        eyebrow="For candidates"
-        title="Be considered for the next brief that fits."
-        description="Apply to an open brief to join the network, or sign in if you already have an account."
-        primary={{ to: "/jobs", label: "Browse open briefs" }}
-        secondary={{ to: "/login", label: "Candidate sign in" }}
-      />
-    </SiteShell>
+    </>
   );
 }
