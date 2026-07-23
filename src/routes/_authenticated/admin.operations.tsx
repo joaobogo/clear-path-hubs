@@ -14,6 +14,7 @@ import {
   retryEnrichment,
   rescore,
   markManualReview,
+  backfillCandidateInsights,
 } from "@/lib/processing.functions";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -224,11 +225,14 @@ function OperationsPage() {
 
   return (
     <main className="mx-auto max-w-[1600px] px-6 py-8 space-y-6">
-      <header>
-        <h1 className="text-2xl font-semibold tracking-tight">Operations</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Actionable incidents grouped by entity, process, and root cause.
-        </p>
+      <header className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight">Operations</h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Actionable incidents grouped by entity, process, and root cause.
+          </p>
+        </div>
+        <BackfillInsightsButton onDone={(msg) => setFeedback(msg)} />
       </header>
 
       {feedback && (
@@ -571,5 +575,26 @@ function CategoryPill({
     >
       {children}
     </button>
+  );
+}
+
+function BackfillInsightsButton({ onDone }: { onDone: (msg: string) => void }) {
+  const qc = useQueryClient();
+  const backfillFn = useServerFn(backfillCandidateInsights);
+  const m = useMutation({
+    mutationFn: () => backfillFn({ data: {} }),
+    onSuccess: async (r: { scanned: number; targeted: number; processed: number; failed: { message: string }[] }) => {
+      onDone(
+        `Insights backfill · scanned ${r.scanned}, enriched ${r.processed} of ${r.targeted}` +
+          (r.failed.length ? ` · ${r.failed.length} failed` : ""),
+      );
+      await qc.invalidateQueries({ queryKey: ["pipeline-health"] });
+    },
+    onError: (e: Error) => onDone(`Backfill failed: ${e.message}`),
+  });
+  return (
+    <Button size="sm" variant="secondary" onClick={() => m.mutate()} disabled={m.isPending}>
+      {m.isPending ? "Enriching candidates…" : "Enrich all candidate profiles"}
+    </Button>
   );
 }
