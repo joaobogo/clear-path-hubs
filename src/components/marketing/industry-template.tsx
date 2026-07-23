@@ -46,9 +46,7 @@ export function IndustryTemplate({ entry }: { entry: IndustryEntry }) {
       {/* 1. Industry-specific hero */}
       <PublicSection className="pb-8 pt-10 sm:pt-14">
         <PublicPage>
-      {/* 1. Industry-specific hero */}
-      <PublicSection className="pb-8 pt-10 sm:pt-14">
-        <PublicPage>
+
           <div className={heroImage ? "grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:items-center" : ""}>
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">
