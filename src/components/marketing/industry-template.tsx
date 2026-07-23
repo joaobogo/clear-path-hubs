@@ -10,6 +10,7 @@ import { getIndustryHeroImage } from "@/content/industry-hero-images";
 import { IndustryRoleExplorer } from "@/components/marketing/industry-role-explorer";
 import { IndustrySignalExplorer } from "@/components/marketing/industry-signal-explorer";
 import { IndustryHeroBackdrop } from "@/components/marketing/industry-hero-backdrop";
+import { IndustryInsights } from "@/components/marketing/industry-insights";
 import { getIndustryVisualIdentity } from "@/content/industry-visual-identity";
 
 
@@ -345,6 +346,9 @@ export function IndustryTemplate({ entry }: { entry: IndustryEntry }) {
           </PublicPage>
         </PublicSection>
       ) : null}
+
+      {/* 9b. Industry-specific blog insights */}
+      <IndustryInsights industrySlug={entry.slug} industryName={entry.name} />
 
       {/* 10. Related resources */}
       {entry.resources && entry.resources.length > 0 ? (
