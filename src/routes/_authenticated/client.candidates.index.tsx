@@ -133,6 +133,13 @@ function CandidatesPage() {
     const q = search.q.trim().toLowerCase();
     const loc = search.location.trim().toLowerCase();
     const rows = (rowsRaw as ClientCandidateDTO[]).filter((c) => {
+      // Canonical KPI drill-through — mirrors client-kpi.server predicates.
+      if (search.filter === "top") {
+        if (c.fit.band !== "exceptional" && c.fit.band !== "strong") return false;
+        if (c.score == null) return false;
+      } else if (search.filter === "interview_pipeline") {
+        if (c.stage !== "interview_process" && c.stage !== "offer") return false;
+      }
       if (search.stage !== "all" && c.stage !== search.stage) return false;
       if (search.fit !== "all" && c.fit.band !== search.fit) return false;
       if (loc && !(c.candidate.location ?? "").toLowerCase().includes(loc)) return false;
