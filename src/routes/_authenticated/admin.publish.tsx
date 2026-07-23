@@ -224,10 +224,12 @@ function PublishDesk() {
                         <Check ok={rd.evidenceOk} label="Evidence" />
                         <Check ok={rd.contradictionOk} label="No contradictions" />
                         <Check ok={rd.clientSafeOk} label="Client-safe" />
+                        <Check ok={rd.adminApproved} label="Approved" />
+                        <Check ok={rd.orgOk} label="Binding" />
                       </div>
-                      {group === "blocked" && rd.blockedReasons.length > 0 && (
+                      {rd.blockedReasons.length > 0 && (
                         <ul className="mt-1.5 space-y-0.5 text-[10px] text-destructive">
-                          {rd.blockedReasons.map((reason) => (
+                          {rd.blockedReasons.map((reason: string) => (
                             <li key={reason}>• {reason}</li>
                           ))}
                         </ul>
