@@ -10,10 +10,12 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import {
   NAV_GROUPS,
+  PRIMARY_ITEMS,
   PRIMARY_NAV as CONFIG_PRIMARY_NAV,
   PRIMARY_CTA,
   SECONDARY_CTAS,
   FOOTER_GROUPS,
+  FOOTER_DESCRIPTION,
   SOCIAL_LINKS,
   type NavLink,
 } from "@/config/public-navigation";
