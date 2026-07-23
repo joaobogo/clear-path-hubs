@@ -711,22 +711,28 @@ function Home() {
         </PublicSection>
       </section>
 
-      {/* 6 — CANDIDATE DELIVERY & EVIDENCE */}
+      {/* 6 — WHAT CLIENTS RECEIVE (deliverable + candidate detail visual) */}
       <PublicSection>
         <PublicPage>
-          <div className="grid grid-cols-1 gap-10 lg:grid-cols-2 lg:items-center">
+          <div className="grid grid-cols-1 gap-10 lg:grid-cols-[1fr_1.1fr] lg:items-start">
             <div>
               <SectionHead
-                eyebrow="Candidate delivery & evidence"
-                title="Recruiter-written fit narratives — not attached PDFs."
-                lead="Each candidate arrives in your workspace with a role-specific score and the exact CV quotes behind every requirement. Debate the requirement, not the candidate."
+                eyebrow="What you receive"
+                title="More than candidates. Clear hiring decisions."
+                lead="Instead of receiving a stack of CVs, your team receives candidates organized around the role, with the evidence needed to decide who should move forward."
               />
-              <ul className="mt-6 space-y-3 text-sm text-[color:var(--brand-navy)]">
+              <ul className="mt-6 grid grid-cols-1 gap-x-6 gap-y-2.5 text-sm text-[color:var(--brand-navy)] sm:grid-cols-2">
                 {[
-                  "Ranked delivery with a composite score per candidate",
-                  "Evidence and CV quotes mapped to every must-have",
-                  "Recruiter-written fit narrative attached to the profile",
-                  "One-click shortlist, interview, or pass",
+                  "Ranked candidate shortlist",
+                  "Role-specific fit analysis",
+                  "Strengths and validation areas",
+                  "Requirement coverage",
+                  "Professional background",
+                  "CV access",
+                  "Location and availability",
+                  "Personalized interview questions",
+                  "Visible candidate stage",
+                  "Decision controls in one click",
                 ].map((t) => (
                   <li key={t} className="flex items-start gap-2">
                     <CheckCircle2
@@ -738,50 +744,12 @@ function Home() {
                 ))}
               </ul>
             </div>
-            <Card className="p-6 sm:p-7">
-              <div className="flex items-start justify-between gap-4">
-                <div className="min-w-0">
-                  <div className="truncate text-sm font-semibold text-[color:var(--brand-navy)]">
-                    Alex R.
-                  </div>
-                  <div className="truncate text-xs text-[color:var(--brand-navy)]/60">
-                    Senior Product Designer · Remote
-                  </div>
-                </div>
-                <div className="shrink-0 rounded-md bg-[color:var(--brand-ocean)]/12 px-3 py-1 text-sm font-semibold tabular-nums text-[color:var(--brand-ocean)]">
-                  94
-                </div>
-              </div>
-              <div className="mt-5 space-y-2.5">
-                {DELIVERY_EVIDENCE.map(([k, v]) => (
-                  <div key={String(k)} className="flex items-center gap-3 text-xs">
-                    <span className="w-24 shrink-0 truncate text-[color:var(--brand-navy)]/60 sm:w-36">
-                      {k}
-                    </span>
-                    <div className="h-1.5 min-w-0 flex-1 overflow-hidden rounded-full bg-[color:var(--brand-navy)]/8">
-                      <div
-                        className="h-full rounded-full bg-[color:var(--brand-ocean)]"
-                        style={{ width: `${v}%` }}
-                        aria-hidden
-                      />
-                    </div>
-                    <span className="w-8 shrink-0 text-right font-semibold tabular-nums text-[color:var(--brand-navy)]">
-                      {v}
-                    </span>
-                  </div>
-                ))}
-              </div>
-              <blockquote className="mt-5 flex gap-2 border-t border-[color:var(--brand-navy)]/8 pt-4 text-xs text-[color:var(--brand-navy)]/70">
-                <Quote className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[color:var(--brand-navy)]/40" aria-hidden />
-                <span>
-                  "Led design system rollout, reducing component debt by ~40%."
-                  <span className="ml-1 text-[color:var(--brand-navy)]/50">— CV, page 2</span>
-                </span>
-              </blockquote>
-            </Card>
+
+            <ClientCandidateDelivery />
           </div>
         </PublicPage>
       </PublicSection>
+
 
       {/* 7 — TAASFLOW VS AGENCY MODEL */}
       <section className="border-y border-[color:var(--brand-navy)]/8 bg-white">
