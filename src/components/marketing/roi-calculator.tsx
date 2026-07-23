@@ -524,6 +524,15 @@ export function RoiCalculator({
                 </p>
               ) : null}
             </div>
+            {/* Annualized context — only meaningful for monthly billing */}
+            {result.taasflowCostUsd != null &&
+            result.taasflowPackage?.billingType === "monthly-subscription" ? (
+              <p className="mt-1 text-[11px] text-white/60">
+                Annualized reference: {formatUsdCompact(result.taasflowCostUsd * 12)} at 12 months.
+                Subscription is month-to-month — cancel anytime.
+              </p>
+            ) : null}
+
 
             {result.isCustomPricing ? (
               <div className="mt-4 rounded-lg bg-white/8 p-3 text-sm text-white/85">
