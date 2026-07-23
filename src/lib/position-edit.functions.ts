@@ -85,8 +85,23 @@ export type PositionEditInitial = {
   work_authorization: string;
   target_titles: string[];
   screening_questions: ScreeningInput[];
+  // Extended intake context (mirrors public intake questionnaire)
+  responsibilities: string;
+  experience: string;
+  education: string;
+  certifications: string;
+  languages: string;
+  industry_experience: string;
+  hiring_timeline: string;
+  timezone_requirements: string;
+  reason_for_hiring: "" | "replacement" | "growth" | "backfill" | "new_team";
+  hiring_challenges: string;
+  interview_process: string;
+  decision_makers: string;
+  additional_context: string;
   status: string;
 };
+
 
 function fromJsonArray(v: unknown): string[] {
   if (!Array.isArray(v)) return [];
