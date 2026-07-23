@@ -212,7 +212,8 @@ export const getAdminOverview = createServerFn({ method: "GET" })
       s
         .from("intake_submissions")
         .select("id,company_name,role_title,status,workspace_status,requisition_pending,created_at,position_id")
-        .or("requisition_pending.eq.true,status.eq.submitted")
+        .is("position_id", null)
+        .not("status", "in", "(approved,rejected)")
         .order("created_at", { ascending: false })
         .limit(6),
       s
