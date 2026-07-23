@@ -656,6 +656,9 @@ function EnrichmentTab({ cp, evidence }: { cp: Any; evidence: Any }) {
 // ── Evidence ───────────────────────────────────────────────────────────────
 function EvidenceTab({ evidence, result }: { evidence: Any; result: Any }) {
   const items = result?.requirement_assessment ?? result?.evidence ?? [];
+  const llmVerdicts: Any[] = Array.isArray(evidence?.extracted?.insights?.requirement_verdicts)
+    ? evidence.extracted.insights.requirement_verdicts
+    : [];
   const contradictions = result?.contradiction_status && result.contradiction_status !== "none"
     ? result.contradiction_status
     : null;
