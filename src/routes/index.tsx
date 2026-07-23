@@ -546,29 +546,102 @@ function Home() {
         </PublicPage>
       </PublicSection>
 
-      {/* 3 — WHO TAASFLOW IS FOR */}
-      <section className="border-y border-[color:var(--brand-navy)]/8 bg-white">
+      {/* 3 — WHO TAASFLOW SERVES (Audience lanes) */}
+      <section
+        aria-labelledby="home-audiences-heading"
+        className="border-y border-[color:var(--brand-navy)]/8 bg-white"
+      >
         <PublicSection>
           <PublicPage>
             <SectionHead
-              eyebrow="Who TaaSFlow is for"
-              title="Teams that would rather hire than manage recruiters."
-              lead="TaaSFlow is built for hiring teams that want an on-demand recruiting function without the friction of traditional agency work."
+              eyebrow="Who TaaSFlow serves"
+              title="Four hiring realities. One recruiting function."
+              lead="TaaSFlow adapts to how your team hires — from a single founder covering every role to enterprise TA leaders coordinating across regions."
             />
-            <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
-              {AUDIENCES.map((a) => (
-                <Card key={a.t}>
-                  <a.icon className="h-6 w-6 text-[color:var(--brand-ocean)]" aria-hidden />
-                  <h3 className="mt-4 text-base font-semibold text-[color:var(--brand-navy)]">
-                    {a.t}
-                  </h3>
-                  <p className="mt-2 text-sm text-[color:var(--brand-navy)]/70">{a.d}</p>
-                </Card>
-              ))}
+            <div id="home-audiences-heading" className="sr-only">
+              Audiences TaaSFlow serves
+            </div>
+            <div className="mt-10 grid gap-5 md:grid-cols-2">
+              {AUDIENCE_LANES.map((lane) => {
+                const accentMap: Record<string, { bar: string; icon: string; chip: string }> = {
+                  ocean: {
+                    bar: "bg-[color:var(--brand-ocean)]",
+                    icon: "text-[color:var(--brand-ocean)] bg-[color:var(--brand-ocean)]/10",
+                    chip: "bg-[color:var(--brand-ocean)]/10 text-[color:var(--brand-ocean)]",
+                  },
+                  sky: {
+                    bar: "bg-[color:var(--brand-sky)]",
+                    icon: "text-[color:var(--brand-navy)] bg-[color:var(--brand-sky)]/50",
+                    chip: "bg-[color:var(--brand-sky)]/50 text-[color:var(--brand-navy)]",
+                  },
+                  navy: {
+                    bar: "bg-[color:var(--brand-navy)]",
+                    icon: "text-white bg-[color:var(--brand-navy)]",
+                    chip: "bg-[color:var(--brand-navy)]/10 text-[color:var(--brand-navy)]",
+                  },
+                  sand: {
+                    bar: "bg-[color:var(--brand-sand,#c9a76a)]",
+                    icon: "text-[color:var(--brand-navy)] bg-[color:var(--brand-sand,#c9a76a)]/25",
+                    chip: "bg-[color:var(--brand-sand,#c9a76a)]/25 text-[color:var(--brand-navy)]",
+                  },
+                };
+                const a = accentMap[lane.accent] ?? accentMap.ocean;
+                return (
+                  <article
+                    key={lane.name}
+                    className="group relative flex flex-col overflow-hidden rounded-2xl border border-[color:var(--brand-navy)]/12 bg-white p-6 shadow-sm transition-shadow hover:shadow-[var(--brand-shadow-lg)] sm:p-7"
+                  >
+                    <span className={`absolute inset-x-0 top-0 h-1 ${a.bar}`} aria-hidden />
+                    <div className="flex items-center gap-3">
+                      <span
+                        className={`inline-flex h-10 w-10 items-center justify-center rounded-xl ${a.icon}`}
+                        aria-hidden
+                      >
+                        <lane.icon className="h-5 w-5" />
+                      </span>
+                      <h3 className="text-lg font-semibold text-[color:var(--brand-navy)]">
+                        {lane.name}
+                      </h3>
+                    </div>
+
+                    <dl className="mt-5 space-y-4 text-sm">
+                      <div>
+                        <dt className="text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/55">
+                          The hiring problem
+                        </dt>
+                        <dd className="mt-1 text-[color:var(--brand-navy)]/80">{lane.problem}</dd>
+                      </div>
+                      <div>
+                        <dt className="text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/55">
+                          How TaaSFlow helps
+                        </dt>
+                        <dd className="mt-1 text-[color:var(--brand-navy)]/80">{lane.value}</dd>
+                      </div>
+                    </dl>
+
+                    <div
+                      className={`mt-5 inline-flex w-fit items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold ${a.chip}`}
+                    >
+                      <TrendingUp className="h-3.5 w-3.5" aria-hidden />
+                      {lane.result}
+                    </div>
+
+                    <div className="mt-6 flex-1" />
+                    <Link
+                      to={lane.ctaTo}
+                      className="mt-2 inline-flex min-h-10 w-fit items-center gap-1.5 rounded-md border border-[color:var(--brand-navy)]/15 bg-white px-4 py-2 text-sm font-semibold text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+                    >
+                      {lane.ctaLabel}
+                      <ArrowRight className="h-4 w-4" aria-hidden />
+                    </Link>
+                  </article>
+                );
+              })}
             </div>
           </PublicPage>
         </PublicSection>
       </section>
+
 
       {/* 4 — WHY SUBSCRIPTION RECRUITING */}
       <PublicSection>
