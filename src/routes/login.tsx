@@ -158,6 +158,12 @@ function LoginPage() {
         setMode("signin");
         return;
       }
+      // Provision a client workspace + client_admin membership for the new user.
+      try {
+        await runProvision({ data: { full_name: fullName } });
+      } catch {
+        /* non-fatal: session context will report no memberships → access-denied */
+      }
       try {
         const ctx = await runSession();
         routeToDest(ctx.memberships, ctx.primary_role);
