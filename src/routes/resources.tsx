@@ -55,7 +55,7 @@ const FEATURED_RESEARCH: Insight[] = [
     headline: "Cost-per-hire compounds across every open role.",
     takeaway:
       "Where the money actually goes: sourcing, screening, agency fees, and internal recruiter time.",
-    href: "/blog/cost-per-hire-benchmark",
+    href: "/blog/reducing-cost-per-hire",
     hrefLabel: "Read the analysis",
     icon: Calculator,
   },
@@ -73,7 +73,7 @@ const FEATURED_RESEARCH: Insight[] = [
     headline: "Where the days actually go.",
     takeaway:
       "The invisible waits — intake, scheduling, decision-making — that stretch hiring cycles.",
-    href: "/blog/reducing-time-to-hire",
+    href: "/blog/reduce-time-to-hire-strategies",
     hrefLabel: "See the breakdown",
     icon: LineChart,
   },
@@ -136,12 +136,12 @@ const BENCHMARKS: Benchmark[] = [
   {
     label: "Compensation",
     claim: "Salary ranges vary widely across markets, seniorities, and stacks.",
-    href: "/blog/compensation-benchmark",
+    href: "/blog/compensation-benchmarking",
   },
   {
     label: "HR productivity",
     claim: "Recruiter capacity depends on requisition mix, not headcount.",
-    href: "/blog/hr-productivity-benchmarks",
+    href: "/blog/recruiter-productivity-tips",
   },
   {
     label: "Industry hiring",
@@ -199,7 +199,7 @@ const CASE_STUDIES: Card[] = [
     title: "Agency comparison",
     description:
       "How TaaSFlow differs from traditional agency and RPO delivery.",
-    href: "/blog/traditional-recruitment-vs-modern-taas",
+    href: "/blog/subscription-sourcing-vs-agencies",
     cta: "Read the comparison",
     icon: LineChart,
   },
