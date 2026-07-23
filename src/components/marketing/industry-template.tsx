@@ -22,6 +22,7 @@ import { getIndustryVisualIdentity } from "@/content/industry-visual-identity";
  */
 export function IndustryTemplate({ entry }: { entry: IndustryEntry }) {
   const heroImage = getIndustryHeroImage(entry.slug);
+  const identity = getIndustryVisualIdentity(entry.slug);
   const jsonLd = entry.faqs
 
     ? {
