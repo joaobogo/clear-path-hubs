@@ -1,0 +1,164 @@
+/*
+ * TaaSFlow — industry motion motifs
+ *
+ * One-shot ambient decorations that layer on top of the base motion system.
+ * All motifs:
+ *   - use transform / opacity only (no layout shift)
+ *   - stop after the initial reveal or loop at low opacity + long duration
+ *   - are disabled entirely under prefers-reduced-motion
+ *   - never block content — content renders visible immediately, the motif
+ *     is decorative overlay only
+ *
+ * Applied via `data-industry-motif="<slug>"` on the hero figure.
+ */
+
+/* ------------------ Keyframes (motif-scoped) ------------------ */
+@keyframes taas-motif-grid-drift {
+  0%   { background-position: 0 0, 0 0; }
+  100% { background-position: 24px 24px, 24px 24px; }
+}
+@keyframes taas-motif-scan-line {
+  0%   { transform: translateY(-8%); opacity: 0; }
+  20%  { opacity: 0.55; }
+  80%  { opacity: 0.55; }
+  100% { transform: translateY(108%); opacity: 0; }
+}
+@keyframes taas-motif-blueprint-sweep {
+  0%   { transform: translateX(-100%); opacity: 0; }
+  30%  { opacity: 0.6; }
+  100% { transform: translateX(120%); opacity: 0; }
+}
+@keyframes taas-motif-pulse-node {
+  0%, 100% { transform: scale(1);   opacity: 0.35; }
+  50%      { transform: scale(1.4); opacity: 0.8; }
+}
+@keyframes taas-motif-route-dash {
+  from { stroke-dashoffset: 240; }
+  to   { stroke-dashoffset: 0; }
+}
+
+/* ------------------ Base motif container ------------------ */
+[data-industry-motif] {
+  position: relative;
+  isolation: isolate;
+}
+[data-industry-motif]::before,
+[data-industry-motif]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ------------------ Technology / SaaS / Data / Cyber ------------------ */
+/* Structured data flow — subtle grid drift + one-shot scan line */
+[data-industry-motif="tech"]::before,
+[data-industry-motif="saas"]::before,
+[data-industry-motif="data-analytics"]::before,
+[data-industry-motif="cybersecurity"]::before {
+  background-image:
+    linear-gradient(color-mix(in oklab, var(--brand-ocean) 12%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in oklab, var(--brand-ocean) 12%, transparent) 1px, transparent 1px);
+  background-size: 24px 24px, 24px 24px;
+  mask-image: radial-gradient(ellipse at 70% 30%, black 30%, transparent 70%);
+  opacity: 0.4;
+  animation: taas-motif-grid-drift 18s linear infinite;
+}
+[data-industry-motif="tech"]::after,
+[data-industry-motif="saas"]::after,
+[data-industry-motif="data-analytics"]::after,
+[data-industry-motif="cybersecurity"]::after {
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    color-mix(in oklab, var(--brand-ocean) 25%, transparent) 50%,
+    transparent 100%
+  );
+  height: 20%;
+  animation: taas-motif-scan-line 5.2s var(--taas-ease-emphasized) 800ms 1 both;
+}
+
+/* ------------------ Finance / Investment / Accounting ------------------ */
+/* Precise chart transitions — measured node pulse */
+[data-industry-motif="finance"]::before,
+[data-industry-motif="investment-banking"]::before,
+[data-industry-motif="accounting"]::before,
+[data-industry-motif="private-equity"]::before {
+  background:
+    radial-gradient(circle at 20% 80%, color-mix(in oklab, var(--brand-ocean) 30%, transparent) 0 4px, transparent 5px),
+    radial-gradient(circle at 45% 65%, color-mix(in oklab, var(--brand-ocean) 30%, transparent) 0 4px, transparent 5px),
+    radial-gradient(circle at 70% 45%, color-mix(in oklab, var(--brand-ocean) 30%, transparent) 0 4px, transparent 5px),
+    radial-gradient(circle at 92% 25%, color-mix(in oklab, var(--brand-ocean) 30%, transparent) 0 4px, transparent 5px);
+  animation: taas-motif-pulse-node 4.8s var(--taas-ease-in-out) infinite;
+}
+
+/* ------------------ Construction / Manufacturing / Engineering ------------------ */
+/* Blueprint reveal — one-shot sweep */
+[data-industry-motif="construction"]::before,
+[data-industry-motif="manufacturing"]::before,
+[data-industry-motif="engineering"]::before,
+[data-industry-motif="industrial"]::before {
+  background:
+    repeating-linear-gradient(
+      45deg,
+      transparent 0 20px,
+      color-mix(in oklab, var(--brand-navy) 8%, transparent) 20px 21px
+    );
+  mask-image: linear-gradient(90deg, black 30%, transparent 100%);
+  opacity: 0.6;
+}
+[data-industry-motif="construction"]::after,
+[data-industry-motif="manufacturing"]::after,
+[data-industry-motif="engineering"]::after,
+[data-industry-motif="industrial"]::after {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    color-mix(in oklab, var(--brand-navy) 18%, transparent) 50%,
+    transparent 100%
+  );
+  animation: taas-motif-blueprint-sweep 1600ms var(--taas-ease-emphasized) 400ms 1 both;
+}
+
+/* ------------------ Healthcare / Pharma / Biotech ------------------ */
+/* Calm — no ambient motion, only a soft entry glow */
+[data-industry-motif="healthcare"]::before,
+[data-industry-motif="pharma"]::before,
+[data-industry-motif="biotech"]::before,
+[data-industry-motif="medical-devices"]::before {
+  background: radial-gradient(
+    ellipse at 50% 20%,
+    color-mix(in oklab, var(--brand-ocean) 14%, transparent),
+    transparent 60%
+  );
+  animation: taas-reveal-in 900ms var(--taas-ease-out-soft) both;
+}
+
+/* ------------------ Logistics / Supply Chain / Retail ------------------ */
+/* Directional route — dashed line draws once */
+[data-industry-motif="logistics"]::before,
+[data-industry-motif="supply-chain"]::before,
+[data-industry-motif="retail"]::before,
+[data-industry-motif="ecommerce"]::before {
+  background: linear-gradient(
+    90deg,
+    color-mix(in oklab, var(--brand-ocean) 30%, transparent) 0,
+    color-mix(in oklab, var(--brand-ocean) 30%, transparent) 10px,
+    transparent 10px,
+    transparent 20px
+  );
+  background-size: 20px 2px;
+  background-repeat: no-repeat;
+  background-position: 0 70%;
+  animation: taas-motif-blueprint-sweep 1400ms var(--taas-ease-emphasized) 300ms 1 both;
+}
+
+/* ------------------ Reduced motion — kill every motif ------------------ */
+@media (prefers-reduced-motion: reduce) {
+  [data-industry-motif]::before,
+  [data-industry-motif]::after {
+    animation: none !important;
+    opacity: 0 !important;
+  }
+}
