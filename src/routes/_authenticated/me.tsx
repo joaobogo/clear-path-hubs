@@ -40,11 +40,12 @@ export const Route = createFileRoute("/_authenticated/me")({
 });
 
 const NAV: WorkspaceNavItem[] = [
+ { to: "/me", label: "Home", icon: Home },
  { to: "/me/applications", label: "Applications", icon: FileText },
  { to: "/me/profile", label: "Profile", icon: User },
  { to: "/me/cv", label: "CV", icon: FileUp },
  { to: "/me/messages", label: "Messages", icon: MessageSquare },
- { to: "/me/settings", label: "Settings", icon: Shield },
+ { to: "/me/settings", label: "Privacy", icon: Shield },
 ];
 
 function MeLayout() {
