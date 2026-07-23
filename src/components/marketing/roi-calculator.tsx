@@ -258,10 +258,48 @@ export function RoiCalculator({
       <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)]">
         {/* Inputs */}
         <div>
-          <p className="text-xs font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/55">
-            Assumptions
-          </p>
-          <div className="mt-3 grid gap-3">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <p className="text-xs font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/55">
+              Assumptions
+            </p>
+            <p className="text-[11px] text-[color:var(--brand-navy)]/50">
+              Presets adjust inputs only — never results.
+            </p>
+          </div>
+
+          <div
+            role="group"
+            aria-label="Scenario presets"
+            className="mt-3 flex flex-wrap gap-2"
+          >
+            {CALCULATOR_PRESETS.map((preset) => {
+              const active =
+                inputs.positions === preset.inputs.positions &&
+                inputs.averageSalaryUsd === preset.inputs.averageSalaryUsd &&
+                Math.round(inputs.agencyFeePct * 100) === Math.round(preset.inputs.agencyFeePct * 100) &&
+                inputs.recruiterHourlyUsd === preset.inputs.recruiterHourlyUsd &&
+                inputs.sourcingHoursPerRole === preset.inputs.sourcingHoursPerRole;
+              return (
+                <button
+                  key={preset.id}
+                  type="button"
+                  aria-pressed={active}
+                  title={preset.description}
+                  onClick={() => setInputs({ ...preset.inputs })}
+                  className={cn(
+                    "min-h-9 rounded-full border px-3.5 py-1.5 text-xs font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]",
+                    active
+                      ? "border-[color:var(--brand-navy)] bg-[color:var(--brand-navy)] text-white"
+                      : "border-[color:var(--brand-navy)]/15 bg-white text-[color:var(--brand-navy)] hover:border-[color:var(--brand-navy)]/30",
+                  )}
+                >
+                  {preset.label}
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="mt-4 grid gap-3">
             <Stepper
               id="roi-positions"
               label="Positions to fill"
