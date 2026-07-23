@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useState, useEffect } from "react";
@@ -9,10 +9,9 @@ import {
   listOrgOptions,
   listPositionOptions,
 } from "@/lib/admin.functions";
-import { CandidateDetailDrawer } from "@/components/candidate-detail-drawer";
-import { DownloadCvButton } from "@/components/download-cv-button";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import {
   Select,
   SelectContent,
@@ -20,22 +19,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { ArrowRight } from "lucide-react";
 
 const searchSchema = z.object({
   q: fallback(z.string(), "").default(""),
   admin_status: fallback(z.string(), "").default(""),
   processing_state: fallback(z.string(), "").default(""),
-  stage: fallback(z.string(), "").default(""),
-  min_score: fallback(z.string(), "").default(""),
-  max_score: fallback(z.string(), "").default(""),
+  fit: fallback(z.string(), "").default(""),
   client_visibility: fallback(z.string(), "").default(""),
   organization_id: fallback(z.string(), "").default(""),
   position_id: fallback(z.string(), "").default(""),
-  date_from: fallback(z.string(), "").default(""),
-  date_to: fallback(z.string(), "").default(""),
   sort: fallback(z.string(), "updated_desc").default("updated_desc"),
   page: fallback(z.number().int(), 1).default(1),
-  open: fallback(z.string(), "").default(""),
 });
 
 export const Route = createFileRoute("/_authenticated/admin/candidates/")({
@@ -50,12 +45,34 @@ export const Route = createFileRoute("/_authenticated/admin/candidates/")({
 });
 
 const PAGE_SIZE = 50;
-const STATE_COLOR: Record<string, string> = {
+
+const STATE_TONE: Record<string, string> = {
+  queued: "bg-muted text-muted-foreground",
+  parsing: "bg-blue-500/10 text-blue-700 dark:text-blue-300",
+  enriching: "bg-blue-500/10 text-blue-700 dark:text-blue-300",
+  ready_to_score: "bg-blue-500/10 text-blue-700 dark:text-blue-300",
+  scoring: "bg-blue-500/10 text-blue-700 dark:text-blue-300",
   scored: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300",
   manual_review_required: "bg-amber-500/10 text-amber-700 dark:text-amber-300",
+  ocr_required: "bg-amber-500/10 text-amber-700 dark:text-amber-300",
   failed: "bg-destructive/10 text-destructive",
   provider_blocked: "bg-destructive/10 text-destructive",
-  ocr_required: "bg-amber-500/10 text-amber-700 dark:text-amber-300",
+};
+
+const REVIEW_TONE: Record<string, string> = {
+  pending: "bg-muted text-muted-foreground",
+  approved: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300",
+  rejected: "bg-destructive/10 text-destructive",
+  on_hold: "bg-amber-500/10 text-amber-700 dark:text-amber-300",
+};
+
+const FIT_TONE: Record<string, string> = {
+  strong_match: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300",
+  good_match: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300",
+  potential_match: "bg-amber-500/10 text-amber-700 dark:text-amber-300",
+  partial_match: "bg-amber-500/10 text-amber-700 dark:text-amber-300",
+  weak_match: "bg-muted text-muted-foreground",
+  poor_match: "bg-destructive/10 text-destructive",
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -74,16 +91,15 @@ function CandidatesPage() {
     q: search.q || undefined,
     admin_status: search.admin_status || undefined,
     processing_state: search.processing_state || undefined,
-    stage: search.stage || undefined,
     client_visibility: search.client_visibility || undefined,
     organization_id: search.organization_id || undefined,
     position_id: search.position_id || undefined,
-    min_score: search.min_score ? Number(search.min_score) : undefined,
-    max_score: search.max_score ? Number(search.max_score) : undefined,
-    date_from: search.date_from || undefined,
-    date_to: search.date_to || undefined,
     sort: search.sort as
-      | "updated_desc" | "updated_asc" | "score_desc" | "score_asc" | "created_desc",
+      | "updated_desc"
+      | "updated_asc"
+      | "score_desc"
+      | "score_asc"
+      | "created_desc",
     limit: PAGE_SIZE,
     offset: Math.max(0, (search.page - 1) * PAGE_SIZE),
   };
@@ -93,8 +109,13 @@ function CandidatesPage() {
     queryFn: () => searchFn({ data: filters }),
   });
 
-  const rows = ((data && "rows" in data ? data.rows : []) as AnyRow[]) ?? [];
+  let rows = ((data && "rows" in data ? data.rows : []) as AnyRow[]) ?? [];
   const total = (data && "total" in data ? data.total : 0) ?? 0;
+
+  // Fit filter applied client-side (score run join carries fit_label).
+  if (search.fit) {
+    rows = rows.filter((r) => (r.score_runs?.fit_label ?? "") === search.fit);
+  }
 
   const { data: orgs = [] } = useQuery({
     queryKey: ["admin-orgs"],
@@ -102,135 +123,187 @@ function CandidatesPage() {
   });
   const { data: positions = [] } = useQuery({
     queryKey: ["admin-positions-filter", search.organization_id],
-    queryFn: () => positionsFn({ data: { organization_id: search.organization_id || undefined } }),
+    queryFn: () =>
+      positionsFn({
+        data: { organization_id: search.organization_id || undefined },
+      }),
   });
 
   const setF = (patch: Partial<typeof search>) =>
     navigate({ search: { ...search, ...patch, page: 1 } });
 
-  const openDrawer = (id: string) => navigate({ search: { ...search, open: id } });
-  const closeDrawer = () => navigate({ search: { ...search, open: "" } });
-
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
   return (
-    <main className="mx-auto max-w-7xl px-6 py-8">
-      <header className="mb-6 flex items-baseline justify-between">
-        <h1 className="text-2xl font-semibold">Candidates</h1>
+    <main className="mx-auto max-w-[1600px] px-6 py-8">
+      <header className="mb-6 flex flex-wrap items-baseline justify-between gap-2">
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight">Candidates</h1>
+          <p className="mt-0.5 text-sm text-muted-foreground">
+            Every row opens the exact candidate submission — repair actions live inside the workspace.
+          </p>
+        </div>
         <div className="text-sm text-muted-foreground">
           {isFetching ? "Searching…" : `${total} match${total === 1 ? "" : "es"}`}
         </div>
       </header>
 
-      <div className="mb-3 grid grid-cols-2 md:grid-cols-6 gap-2">
+      {/* Filter row 1 */}
+      <div className="mb-3 grid grid-cols-2 gap-2 md:grid-cols-6">
         <form
           className="col-span-2"
-          onSubmit={(e) => { e.preventDefault(); setF({ q }); }}
+          onSubmit={(e) => {
+            e.preventDefault();
+            setF({ q });
+          }}
         >
-          <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Name or email" />
+          <Input
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            placeholder="Name or email"
+            aria-label="Search candidates by name or email"
+          />
         </form>
-        <Select value={search.organization_id || "any"} onValueChange={(v) => setF({ organization_id: v === "any" ? "" : v, position_id: "" })}>
-          <SelectTrigger><SelectValue placeholder="Client" /></SelectTrigger>
+        <Select
+          value={search.organization_id || "any"}
+          onValueChange={(v) =>
+            setF({ organization_id: v === "any" ? "" : v, position_id: "" })
+          }
+        >
+          <SelectTrigger aria-label="Filter by client"><SelectValue placeholder="Client" /></SelectTrigger>
           <SelectContent>
             <SelectItem value="any">Any client</SelectItem>
-            {(orgs as AnyRow[]).map((o) => <SelectItem key={o.id} value={o.id}>{o.name}</SelectItem>)}
+            {(orgs as AnyRow[]).map((o) => (
+              <SelectItem key={o.id} value={o.id}>{o.name}</SelectItem>
+            ))}
           </SelectContent>
         </Select>
-        <Select value={search.position_id || "any"} onValueChange={(v) => setF({ position_id: v === "any" ? "" : v })}>
-          <SelectTrigger><SelectValue placeholder="Position" /></SelectTrigger>
+        <Select
+          value={search.position_id || "any"}
+          onValueChange={(v) => setF({ position_id: v === "any" ? "" : v })}
+        >
+          <SelectTrigger aria-label="Filter by position"><SelectValue placeholder="Position" /></SelectTrigger>
           <SelectContent>
             <SelectItem value="any">Any position</SelectItem>
-            {(positions as AnyRow[]).map((p) => <SelectItem key={p.id} value={p.id}>{p.title}</SelectItem>)}
-          </SelectContent>
-        </Select>
-        <Select value={search.stage || "any"} onValueChange={(v) => setF({ stage: v === "any" ? "" : v })}>
-          <SelectTrigger><SelectValue placeholder="Stage" /></SelectTrigger>
-          <SelectContent>
-            <SelectItem value="any">Any stage</SelectItem>
-            {["new","reviewing","delivered","shortlisted","interview_process","offer","hired","not_moving_forward","archived"].map((s) => (
-              <SelectItem key={s} value={s}>{s.replace(/_/g," ")}</SelectItem>
+            {(positions as AnyRow[]).map((p) => (
+              <SelectItem key={p.id} value={p.id}>{p.title}</SelectItem>
             ))}
           </SelectContent>
         </Select>
-        <Select value={search.processing_state || "any"} onValueChange={(v) => setF({ processing_state: v === "any" ? "" : v })}>
-          <SelectTrigger><SelectValue placeholder="Parse state" /></SelectTrigger>
+        <Select
+          value={search.processing_state || "any"}
+          onValueChange={(v) => setF({ processing_state: v === "any" ? "" : v })}
+        >
+          <SelectTrigger aria-label="Filter by processing state"><SelectValue placeholder="Processing" /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="any">Any state</SelectItem>
-            {["queued","parsing","ocr_required","parsed","enriching","ready_to_score","scoring","scored","manual_review_required","provider_blocked","failed"].map((s) => (
-              <SelectItem key={s} value={s}>{s.replace(/_/g," ")}</SelectItem>
+            <SelectItem value="any">Any processing</SelectItem>
+            {[
+              "queued","parsing","ocr_required","parsed","enriching",
+              "ready_to_score","scoring","scored",
+              "manual_review_required","provider_blocked","failed",
+            ].map((s) => (
+              <SelectItem key={s} value={s}>{s.replace(/_/g, " ")}</SelectItem>
             ))}
           </SelectContent>
         </Select>
       </div>
 
-      <div className="mb-4 grid grid-cols-2 md:grid-cols-6 gap-2">
-        <Select value={search.admin_status || "any"} onValueChange={(v) => setF({ admin_status: v === "any" ? "" : v })}>
-          <SelectTrigger><SelectValue placeholder="Review" /></SelectTrigger>
+      {/* Filter row 2 */}
+      <div className="mb-4 grid grid-cols-2 gap-2 md:grid-cols-6">
+        <Select
+          value={search.fit || "any"}
+          onValueChange={(v) => setF({ fit: v === "any" ? "" : v })}
+        >
+          <SelectTrigger aria-label="Filter by fit band"><SelectValue placeholder="Fit band" /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="any">Any fit</SelectItem>
+            <SelectItem value="strong_match">Strong match</SelectItem>
+            <SelectItem value="good_match">Good match</SelectItem>
+            <SelectItem value="potential_match">Potential match</SelectItem>
+            <SelectItem value="partial_match">Partial match</SelectItem>
+            <SelectItem value="weak_match">Weak match</SelectItem>
+            <SelectItem value="poor_match">Poor match</SelectItem>
+          </SelectContent>
+        </Select>
+        <Select
+          value={search.admin_status || "any"}
+          onValueChange={(v) => setF({ admin_status: v === "any" ? "" : v })}
+        >
+          <SelectTrigger aria-label="Filter by review state"><SelectValue placeholder="Review" /></SelectTrigger>
           <SelectContent>
             <SelectItem value="any">Any review</SelectItem>
-            {["pending","approved","rejected","on_hold"].map((s) => (
-              <SelectItem key={s} value={s}>{s}</SelectItem>
+            {["pending", "approved", "rejected", "on_hold"].map((s) => (
+              <SelectItem key={s} value={s}>{s.replace(/_/g, " ")}</SelectItem>
             ))}
           </SelectContent>
         </Select>
-        <Select value={search.client_visibility || "any"} onValueChange={(v) => setF({ client_visibility: v === "any" ? "" : v })}>
-          <SelectTrigger><SelectValue placeholder="Visibility" /></SelectTrigger>
+        <Select
+          value={search.client_visibility || "any"}
+          onValueChange={(v) => setF({ client_visibility: v === "any" ? "" : v })}
+        >
+          <SelectTrigger aria-label="Filter by publication state"><SelectValue placeholder="Publication" /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="any">Any visibility</SelectItem>
-            <SelectItem value="hidden">Hidden</SelectItem>
-            <SelectItem value="visible">Client-visible</SelectItem>
+            <SelectItem value="any">Any publication</SelectItem>
+            <SelectItem value="hidden">Not published</SelectItem>
+            <SelectItem value="visible">Published to client</SelectItem>
           </SelectContent>
         </Select>
-        <Select value={search.min_score || "any"} onValueChange={(v) => setF({ min_score: v === "any" ? "" : v })}>
-          <SelectTrigger><SelectValue placeholder="Min score" /></SelectTrigger>
-          <SelectContent>
-            <SelectItem value="any">Any min</SelectItem>
-            <SelectItem value="50">≥ 50</SelectItem>
-            <SelectItem value="70">≥ 70</SelectItem>
-            <SelectItem value="85">≥ 85</SelectItem>
-          </SelectContent>
-        </Select>
-        <Select value={search.max_score || "any"} onValueChange={(v) => setF({ max_score: v === "any" ? "" : v })}>
-          <SelectTrigger><SelectValue placeholder="Max score" /></SelectTrigger>
-          <SelectContent>
-            <SelectItem value="any">Any max</SelectItem>
-            <SelectItem value="49">&lt; 50</SelectItem>
-            <SelectItem value="69">&lt; 70</SelectItem>
-            <SelectItem value="84">&lt; 85</SelectItem>
-          </SelectContent>
-        </Select>
-        <Input
-          type="date"
-          value={search.date_from || ""}
-          onChange={(e) => setF({ date_from: e.target.value })}
-          title="Updated from"
-        />
         <Select value={search.sort} onValueChange={(v) => setF({ sort: v })}>
-          <SelectTrigger><SelectValue /></SelectTrigger>
+          <SelectTrigger aria-label="Sort"><SelectValue /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="updated_desc">Updated ↓</SelectItem>
-            <SelectItem value="updated_asc">Updated ↑</SelectItem>
-            <SelectItem value="score_desc">Score ↓</SelectItem>
-            <SelectItem value="score_asc">Score ↑</SelectItem>
-            <SelectItem value="created_desc">Created ↓</SelectItem>
+            <SelectItem value="updated_desc">Latest update ↓</SelectItem>
+            <SelectItem value="updated_asc">Latest update ↑</SelectItem>
+            <SelectItem value="score_desc">Approved score ↓</SelectItem>
+            <SelectItem value="score_asc">Approved score ↑</SelectItem>
+            <SelectItem value="created_desc">Submitted ↓</SelectItem>
           </SelectContent>
         </Select>
+        <div className="col-span-2 flex items-center justify-end">
+          {(search.q ||
+            search.organization_id ||
+            search.position_id ||
+            search.processing_state ||
+            search.admin_status ||
+            search.client_visibility ||
+            search.fit) && (
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={() =>
+                navigate({
+                  search: {
+                    q: "",
+                    admin_status: "",
+                    processing_state: "",
+                    fit: "",
+                    client_visibility: "",
+                    organization_id: "",
+                    position_id: "",
+                    sort: "updated_desc",
+                    page: 1,
+                  },
+                })
+              }
+            >
+              Clear filters
+            </Button>
+          )}
+        </div>
       </div>
 
-      <div className="rounded-lg border overflow-x-auto">
+      {/* Desktop table */}
+      <div className="hidden overflow-x-auto rounded-lg border md:block">
         <table className="w-full text-sm">
           <thead className="bg-muted/50 text-left">
             <tr>
               <th className="px-3 py-2 font-medium">Candidate</th>
               <th className="px-3 py-2 font-medium">Client</th>
               <th className="px-3 py-2 font-medium">Position</th>
-              <th className="px-3 py-2 font-medium">Applied</th>
-              <th className="px-3 py-2 font-medium">Stage</th>
-              <th className="px-3 py-2 font-medium">Pipeline</th>
-              <th className="px-3 py-2 font-medium">Score</th>
+              <th className="px-3 py-2 font-medium">Processing</th>
+              <th className="px-3 py-2 font-medium text-right">Score</th>
               <th className="px-3 py-2 font-medium">Fit</th>
               <th className="px-3 py-2 font-medium">Review</th>
-              <th className="px-3 py-2 font-medium">Client</th>
+              <th className="px-3 py-2 font-medium">Publication</th>
               <th className="px-3 py-2 font-medium">Updated</th>
               <th className="px-3 py-2"></th>
             </tr>
@@ -239,13 +312,12 @@ function CandidatesPage() {
             {rows.map((m) => {
               const score = m.score_runs?.score;
               const fit = m.score_runs?.fit_label as string | undefined;
-              const applied = m.created_at ? new Date(m.created_at) : null;
               const updated = m.updated_at ? new Date(m.updated_at) : null;
+              const pubLabel = m.client_visibility === "visible" ? "Published" : "Not published";
               return (
                 <tr
                   key={m.id}
-                  className="border-t hover:bg-muted/30 cursor-pointer"
-                  onClick={() => openDrawer(m.id)}
+                  className="border-t hover:bg-muted/30"
                   data-qa-row="candidate-match"
                   data-submission-id={m.id}
                   data-application-id={m.application_id}
@@ -253,51 +325,94 @@ function CandidatesPage() {
                   data-position-id={m.position_id}
                   data-organization-id={m.organization_id}
                 >
-                  <td className="px-3 py-2 min-w-[180px]">
-                    <div className="font-medium">{m.candidate_profiles?.full_name ?? "—"}</div>
-                    <div className="text-xs text-muted-foreground truncate max-w-[220px]">{m.candidate_profiles?.email}</div>
+                  <td className="min-w-[180px] px-3 py-2">
+                    <Link
+                      to="/admin/candidates/$id"
+                      params={{ id: m.id }}
+                      className="block hover:underline"
+                    >
+                      <div className="font-medium">
+                        {m.candidate_profiles?.full_name ?? "Unnamed candidate"}
+                      </div>
+                      <div className="truncate max-w-[220px] text-xs text-muted-foreground">
+                        {m.candidate_profiles?.email}
+                      </div>
+                    </Link>
                   </td>
-                  <td className="px-3 py-2 text-xs">{m.positions?.organizations?.name ?? "—"}</td>
-                  <td className="px-3 py-2 text-xs">{m.positions?.title ?? "—"}</td>
-                  <td className="px-3 py-2 text-xs whitespace-nowrap">
-                    {applied ? applied.toLocaleDateString() : "—"}
+                  <td className="px-3 py-2 text-xs">
+                    {m.positions?.organizations?.name ?? "—"}
                   </td>
-                  <td className="px-3 py-2 text-xs capitalize whitespace-nowrap">{m.stage?.replace(/_/g, " ")}</td>
+                  <td className="px-3 py-2 text-xs">
+                    <Link
+                      to="/admin/positions/$id"
+                      params={{ id: m.position_id }}
+                      className="hover:underline"
+                    >
+                      {m.positions?.title ?? "—"}
+                    </Link>
+                  </td>
                   <td className="px-3 py-2">
-                    <span className={`inline-block rounded px-2 py-0.5 text-xs whitespace-nowrap ${STATE_COLOR[m.processing_state] ?? "bg-muted text-muted-foreground"}`}>
+                    <span
+                      className={`inline-block whitespace-nowrap rounded px-2 py-0.5 text-xs ${
+                        STATE_TONE[m.processing_state] ?? "bg-muted text-muted-foreground"
+                      }`}
+                    >
                       {(m.processing_state ?? "").replace(/_/g, " ")}
                     </span>
                   </td>
-                  <td className="px-3 py-2 tabular-nums text-right">
-                    {score == null ? "—" : score.toFixed(1)}
+                  <td className="px-3 py-2 text-right tabular-nums">
+                    {score == null ? "—" : Math.round(score)}
                   </td>
-                  <td className="px-3 py-2 text-xs whitespace-nowrap">
-                    {fit ? fit.replace(/_/g, " ") : "—"}
+                  <td className="px-3 py-2">
+                    {fit ? (
+                      <Badge
+                        variant="outline"
+                        className={`whitespace-nowrap text-xs ${FIT_TONE[fit] ?? ""}`}
+                      >
+                        {fit.replace(/_/g, " ")}
+                      </Badge>
+                    ) : (
+                      <span className="text-xs text-muted-foreground">—</span>
+                    )}
                   </td>
-                  <td className="px-3 py-2 text-xs capitalize">{m.admin_status ?? "—"}</td>
-                  <td className="px-3 py-2 text-xs">{m.client_visibility ?? "—"}</td>
-                  <td className="px-3 py-2 text-xs text-muted-foreground whitespace-nowrap">
+                  <td className="px-3 py-2">
+                    <span
+                      className={`inline-block whitespace-nowrap rounded px-2 py-0.5 text-xs ${
+                        REVIEW_TONE[m.admin_status] ?? "bg-muted text-muted-foreground"
+                      }`}
+                    >
+                      {(m.admin_status ?? "pending").replace(/_/g, " ")}
+                    </span>
+                  </td>
+                  <td className="px-3 py-2">
+                    <Badge
+                      variant={m.client_visibility === "visible" ? "default" : "outline"}
+                      className="whitespace-nowrap text-xs"
+                    >
+                      {pubLabel}
+                    </Badge>
+                  </td>
+                  <td className="whitespace-nowrap px-3 py-2 text-xs text-muted-foreground">
                     {updated ? updated.toLocaleDateString() : "—"}
                   </td>
-                  <td className="px-3 py-2 text-right whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
-                    <div className="inline-flex gap-1">
-                      <DownloadCvButton matchId={m.id} size="sm" variant="ghost" label="CV" />
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        data-qa-action="open-candidate-drawer"
-                        onClick={(e) => { e.stopPropagation(); openDrawer(m.id); }}
-                      >
-                        Open →
-                      </Button>
-                    </div>
+                  <td className="whitespace-nowrap px-3 py-2 text-right">
+                    <Button
+                      asChild
+                      size="sm"
+                      variant="ghost"
+                      data-qa-action="open-candidate"
+                    >
+                      <Link to="/admin/candidates/$id" params={{ id: m.id }}>
+                        Open <ArrowRight className="ml-1 h-3.5 w-3.5" />
+                      </Link>
+                    </Button>
                   </td>
                 </tr>
               );
             })}
             {rows.length === 0 && !isFetching && (
               <tr>
-                <td colSpan={12} className="px-3 py-16 text-center text-muted-foreground">
+                <td colSpan={10} className="px-3 py-16 text-center text-muted-foreground">
                   No candidates match your filters.
                 </td>
               </tr>
@@ -306,6 +421,70 @@ function CandidatesPage() {
         </table>
       </div>
 
+      {/* Mobile cards */}
+      <ul className="space-y-3 md:hidden">
+        {rows.map((m) => {
+          const score = m.score_runs?.score;
+          const fit = m.score_runs?.fit_label as string | undefined;
+          return (
+            <li
+              key={m.id}
+              className="rounded-lg border bg-card p-3"
+              data-qa-row="candidate-match"
+              data-submission-id={m.id}
+            >
+              <Link
+                to="/admin/candidates/$id"
+                params={{ id: m.id }}
+                className="block"
+              >
+                <div className="flex items-start justify-between gap-2">
+                  <div className="min-w-0">
+                    <div className="truncate font-medium">
+                      {m.candidate_profiles?.full_name ?? "Unnamed candidate"}
+                    </div>
+                    <div className="truncate text-xs text-muted-foreground">
+                      {m.positions?.organizations?.name} · {m.positions?.title}
+                    </div>
+                  </div>
+                  <div className="tabular-nums text-right text-sm font-semibold">
+                    {score == null ? "—" : Math.round(score)}
+                  </div>
+                </div>
+                <div className="mt-2 flex flex-wrap gap-1.5 text-xs">
+                  <span
+                    className={`rounded px-2 py-0.5 ${
+                      STATE_TONE[m.processing_state] ?? "bg-muted text-muted-foreground"
+                    }`}
+                  >
+                    {(m.processing_state ?? "").replace(/_/g, " ")}
+                  </span>
+                  {fit && (
+                    <span className={`rounded px-2 py-0.5 ${FIT_TONE[fit] ?? "bg-muted"}`}>
+                      {fit.replace(/_/g, " ")}
+                    </span>
+                  )}
+                  <span
+                    className={`rounded px-2 py-0.5 ${
+                      REVIEW_TONE[m.admin_status] ?? "bg-muted"
+                    }`}
+                  >
+                    {(m.admin_status ?? "pending").replace(/_/g, " ")}
+                  </span>
+                  <span className="rounded border px-2 py-0.5">
+                    {m.client_visibility === "visible" ? "Published" : "Not published"}
+                  </span>
+                </div>
+              </Link>
+            </li>
+          );
+        })}
+        {rows.length === 0 && !isFetching && (
+          <li className="rounded-lg border border-dashed py-16 text-center text-sm text-muted-foreground">
+            No candidates match your filters.
+          </li>
+        )}
+      </ul>
 
       <div className="mt-4 flex items-center justify-between text-sm">
         <div className="text-muted-foreground">
@@ -313,24 +492,27 @@ function CandidatesPage() {
         </div>
         <div className="flex gap-2">
           <Button
-            size="sm" variant="outline"
+            size="sm"
+            variant="outline"
             disabled={search.page <= 1}
-            onClick={() => navigate({ search: { ...search, page: search.page - 1 } })}
-          >Prev</Button>
+            onClick={() =>
+              navigate({ search: { ...search, page: search.page - 1 } })
+            }
+          >
+            Prev
+          </Button>
           <Button
-            size="sm" variant="outline"
+            size="sm"
+            variant="outline"
             disabled={search.page >= totalPages}
-            onClick={() => navigate({ search: { ...search, page: search.page + 1 } })}
-          >Next</Button>
+            onClick={() =>
+              navigate({ search: { ...search, page: search.page + 1 } })
+            }
+          >
+            Next
+          </Button>
         </div>
       </div>
-
-      <CandidateDetailDrawer
-        open={!!search.open}
-        submissionId={search.open || null}
-        onOpenChange={(o) => { if (!o) closeDrawer(); }}
-        onSubmissionChange={(id) => openDrawer(id)}
-      />
     </main>
   );
 }

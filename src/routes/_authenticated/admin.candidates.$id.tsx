@@ -25,6 +25,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
   User,
   FileText,
   Sparkles,
@@ -37,7 +45,9 @@ import {
   Activity as ActivityIcon,
   ExternalLink,
   Wrench,
+  MoreHorizontal,
 } from "lucide-react";
+
 
 export const Route = createFileRoute("/_authenticated/admin/candidates/$id")({
   loader: async ({ context, params }) => {
@@ -222,7 +232,9 @@ function CandidateWorkspace() {
           busy={busy}
           onRun={run}
           onDone={invalidate}
+          onSetTab={setTab}
         />
+
       </div>
     </main>
   );
@@ -990,12 +1002,14 @@ function ActionRail({
   busy,
   onRun,
   onDone,
+  onSetTab,
 }: {
   m: Any;
   currentRun?: Any;
   busy: string | null;
   onRun: (label: string, fn: () => Promise<Any>) => Promise<void>;
   onDone: () => Promise<void>;
+  onSetTab: (t: Any) => void;
 }) {
   const [reason, setReason] = useState("");
   const [ocrText, setOcrText] = useState("");
@@ -1012,55 +1026,217 @@ function ActionRail({
     onError: (e: Error) => toast.error(e.message),
   });
 
-  const canApprove = m.processing_state === "scored";
+  const scored = m.processing_state === "scored";
   const isPublished = m.client_visibility === "visible";
+  const approved = m.admin_status === "approved";
+  const needsRepair =
+    m.processing_state === "failed" ||
+    m.processing_state === "provider_blocked" ||
+    m.processing_state === "manual_review_required" ||
+    m.processing_state === "ocr_required";
+
+  // Context-aware primary action — one at a time, following readiness order.
+  let primary: { label: string; qa: string; onClick: () => void; disabled?: boolean };
+  if (needsRepair) {
+    primary = {
+      label: "Review evidence",
+      qa: "primary-review-evidence",
+      onClick: () => onSetTab("evidence"),
+    };
+  } else if (scored && !approved) {
+    primary = {
+      label: "Approve score",
+      qa: "primary-approve-score",
+      disabled: !!busy,
+      onClick: () =>
+        onRun("approve", () =>
+          applyReviewDecision({
+            data: { match_id: m.id, action: "approve_for_client", reason },
+          }),
+        ),
+    };
+  } else if (approved && !isPublished) {
+    primary = {
+      label: "Preview as client",
+      qa: "primary-preview-client",
+      onClick: () => onSetTab("preview"),
+    };
+  } else if (approved && isPublished) {
+    primary = {
+      label: "View client preview",
+      qa: "primary-view-preview",
+      onClick: () => onSetTab("preview"),
+    };
+  } else {
+    primary = {
+      label: "Review evidence",
+      qa: "primary-review-evidence",
+      onClick: () => onSetTab("evidence"),
+    };
+  }
+
+  // Publish secondary is shown only when scored & approved.
+  const canPublish = scored && approved && !!m.current_score_run_id;
 
   return (
     <aside className="space-y-4 lg:sticky lg:top-4 lg:self-start">
+      {/* Context-aware primary action bar */}
       <div className="rounded-lg border bg-card p-4">
-        <h2 className="text-sm font-semibold">Publication</h2>
+        <h2 className="text-sm font-semibold">Next step</h2>
         <p className="mt-1 text-xs text-muted-foreground">
-          Requires an approved, scored, evidence-backed run.
+          Actions follow readiness: review → approve → preview → publish.
         </p>
-        <div className="mt-3 space-y-2">
-          {!isPublished ? (
-            <Button
-              className="w-full"
-              disabled={
-                publish.isPending ||
-                !canApprove ||
-                m.admin_status !== "approved" ||
-                !m.current_score_run_id
-              }
-              onClick={() => publish.mutate("visible")}
-              data-qa-action="publish-to-client"
-            >
-              Publish to client
-            </Button>
-          ) : (
-            <Button
-              variant="outline"
-              className="w-full"
-              disabled={publish.isPending}
-              onClick={() => publish.mutate("hidden")}
-              data-qa-action="unpublish-from-client"
-            >
-              Unpublish
-            </Button>
-          )}
-          <Badge
-            variant={isPublished ? "default" : "outline"}
-            className="w-full justify-center"
+        <div className="mt-3 flex items-stretch gap-2">
+          <Button
+            className="flex-1"
+            disabled={primary.disabled}
+            onClick={primary.onClick}
+            data-qa-action={primary.qa}
           >
-            {isPublished ? "Live for client" : "Not yet published"}
+            {primary.label}
+          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="outline"
+                size="icon"
+                aria-label="More actions"
+                data-qa-action="candidate-overflow-menu"
+              >
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuLabel>Repair &amp; processing</DropdownMenuLabel>
+              <DropdownMenuItem
+                disabled={!!busy}
+                onSelect={() =>
+                  onRun("retry parse", () => retryParse({ data: { match_id: m.id } }))
+                }
+                data-qa-action="overflow-retry-parse"
+              >
+                Retry parse
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                disabled={!!busy || m.processing_state !== "ocr_required"}
+                onSelect={() => onSetTab("cv")}
+                data-qa-action="overflow-run-ocr"
+              >
+                Run OCR…
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                disabled={!!busy}
+                onSelect={() =>
+                  onRun("retry hydration", () =>
+                    retryHydration({ data: { match_id: m.id } }),
+                  )
+                }
+                data-qa-action="overflow-retry-hydration"
+              >
+                Retry hydration
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                disabled={!!busy}
+                onSelect={() =>
+                  onRun("retry enrichment", () =>
+                    retryEnrichment({ data: { match_id: m.id } }),
+                  )
+                }
+                data-qa-action="overflow-retry-enrichment"
+              >
+                Retry enrichment
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                disabled={!!busy}
+                onSelect={() =>
+                  onRun("rescore", () => rescore({ data: { match_id: m.id } }))
+                }
+                data-qa-action="overflow-rescore"
+              >
+                Rescore
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                disabled={!!busy}
+                onSelect={() =>
+                  onRun("advance", () =>
+                    advanceProcessing({ data: { match_id: m.id } }),
+                  )
+                }
+                data-qa-action="overflow-advance"
+              >
+                Advance processing
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuLabel>Review</DropdownMenuLabel>
+              <DropdownMenuItem
+                disabled={!!busy}
+                onSelect={() =>
+                  onRun("hold", () =>
+                    applyReviewDecision({
+                      data: { match_id: m.id, action: "hold", reason },
+                    }),
+                  )
+                }
+                data-qa-action="overflow-hold"
+              >
+                Hold
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                disabled={!!busy}
+                onSelect={() =>
+                  onRun("archive", () =>
+                    applyReviewDecision({
+                      data: { match_id: m.id, action: "archive", reason },
+                    }),
+                  )
+                }
+                data-qa-action="overflow-hide"
+                className="text-destructive"
+              >
+                Hide (archive)
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+
+        {/* Publish button surfaces only when it is the next real step */}
+        {canPublish && !isPublished && (
+          <Button
+            variant="secondary"
+            className="mt-2 w-full"
+            disabled={publish.isPending}
+            onClick={() => publish.mutate("visible")}
+            data-qa-action="publish-to-client"
+          >
+            Publish candidate
+          </Button>
+        )}
+        {isPublished && (
+          <Button
+            variant="outline"
+            className="mt-2 w-full"
+            disabled={publish.isPending}
+            onClick={() => publish.mutate("hidden")}
+            data-qa-action="unpublish-from-client"
+          >
+            Unpublish
+          </Button>
+        )}
+
+        <div className="mt-3 flex flex-wrap gap-1.5 text-[11px]">
+          <Badge variant="outline">processing: {m.processing_state.replace(/_/g, " ")}</Badge>
+          <Badge variant="outline">review: {m.admin_status}</Badge>
+          <Badge variant={isPublished ? "default" : "outline"}>
+            {isPublished ? "Published" : "Not published"}
           </Badge>
         </div>
       </div>
 
+      {/* Review notes + manual override — kept persistent (audit-visible input) */}
       <div className="rounded-lg border bg-card p-4">
-        <h2 className="text-sm font-semibold">Review decision</h2>
+        <h2 className="text-sm font-semibold">Review notes</h2>
         <Label htmlFor="reason" className="mt-2 text-xs">
-          Reason (optional)
+          Reason (attaches to the next review decision)
         </Label>
         <Textarea
           id="reason"
@@ -1069,52 +1245,6 @@ function ActionRail({
           onChange={(e) => setReason(e.target.value)}
           placeholder="Note for the audit trail…"
         />
-        <div className="mt-2 grid grid-cols-1 gap-1.5">
-          <Button
-            size="sm"
-            disabled={!!busy || !canApprove}
-            onClick={() =>
-              onRun("approve", () =>
-                applyReviewDecision({
-                  data: { match_id: m.id, action: "approve_for_client", reason },
-                }),
-              )
-            }
-            data-qa-action="approve"
-          >
-            Approve for client
-          </Button>
-          <Button
-            size="sm"
-            variant="secondary"
-            disabled={!!busy}
-            onClick={() =>
-              onRun("hold", () =>
-                applyReviewDecision({
-                  data: { match_id: m.id, action: "hold", reason },
-                }),
-              )
-            }
-            data-qa-action="hold"
-          >
-            Hold
-          </Button>
-          <Button
-            size="sm"
-            variant="destructive"
-            disabled={!!busy}
-            onClick={() =>
-              onRun("archive", () =>
-                applyReviewDecision({
-                  data: { match_id: m.id, action: "archive", reason },
-                }),
-              )
-            }
-            data-qa-action="archive"
-          >
-            Archive
-          </Button>
-        </div>
 
         <Label htmlFor="override" className="mt-3 block text-xs">
           Manual override score
@@ -1152,57 +1282,33 @@ function ActionRail({
         </p>
       </div>
 
-      <div className="rounded-lg border bg-card p-4">
-        <h2 className="text-sm font-semibold">Pipeline</h2>
-        <div className="mt-2 grid grid-cols-1 gap-1.5">
-          <Button size="sm" variant="outline" disabled={!!busy}
-            onClick={() => onRun("advance", () => advanceProcessing({ data: { match_id: m.id } }))}>
-            Advance
-          </Button>
-          <Button size="sm" variant="outline" disabled={!!busy}
-            onClick={() => onRun("retry parse", () => retryParse({ data: { match_id: m.id } }))}>
-            Retry parse
-          </Button>
-          <Button size="sm" variant="outline" disabled={!!busy}
-            onClick={() => onRun("retry hydration", () => retryHydration({ data: { match_id: m.id } }))}>
-            Retry hydration
-          </Button>
-          <Button size="sm" variant="outline" disabled={!!busy}
-            onClick={() => onRun("retry enrichment", () => retryEnrichment({ data: { match_id: m.id } }))}>
-            Retry enrichment
-          </Button>
-          <Button size="sm" disabled={!!busy}
-            onClick={() => onRun("rescore", () => rescore({ data: { match_id: m.id } }))}>
-            Rescore
+      {/* Inline OCR entry — only when the pipeline is blocked on it */}
+      {m.processing_state === "ocr_required" && (
+        <div className="rounded-lg border bg-card p-4">
+          <h2 className="text-sm font-semibold">Attach OCR text</h2>
+          <Label htmlFor="ocr" className="mt-2 text-xs">
+            Paste OCR output (min 60 chars)
+          </Label>
+          <Textarea
+            id="ocr"
+            rows={3}
+            value={ocrText}
+            onChange={(e) => setOcrText(e.target.value)}
+          />
+          <Button
+            className="mt-2 w-full"
+            size="sm"
+            disabled={!!busy || ocrText.length < 60}
+            onClick={() =>
+              onRun("attach OCR", () =>
+                markOcrDone({ data: { match_id: m.id, ocr_text: ocrText } }),
+              )
+            }
+          >
+            Attach OCR &amp; continue
           </Button>
         </div>
-
-        {m.processing_state === "ocr_required" && (
-          <div className="mt-3">
-            <Label htmlFor="ocr" className="text-xs">
-              OCR text (min 60 chars)
-            </Label>
-            <Textarea
-              id="ocr"
-              rows={3}
-              value={ocrText}
-              onChange={(e) => setOcrText(e.target.value)}
-            />
-            <Button
-              className="mt-2 w-full"
-              size="sm"
-              disabled={!!busy || ocrText.length < 60}
-              onClick={() =>
-                onRun("attach OCR", () =>
-                  markOcrDone({ data: { match_id: m.id, ocr_text: ocrText } }),
-                )
-              }
-            >
-              Attach OCR &amp; continue
-            </Button>
-          </div>
-        )}
-      </div>
+      )}
 
       {currentRun && (
         <div className="rounded-lg border bg-muted/30 p-3 text-xs text-muted-foreground">
@@ -1224,3 +1330,4 @@ function ActionRail({
     </aside>
   );
 }
+
