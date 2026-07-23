@@ -390,52 +390,264 @@ function Home() {
       </section>
 
 
-      {/* 2 — DASHBOARD-FIRST VALUE */}
-      <PublicSection as="section" className="scroll-mt-16" >
+      {/* 2 — WORKSPACE SHOWCASE */}
+      <PublicSection as="section" className="scroll-mt-16">
         <span id="workspace" className="sr-only" aria-hidden />
         <PublicPage>
           <SectionHead
-            eyebrow="The workspace is the product"
-            title="Every candidate, every decision, one screen."
-            lead="Recruiting agencies send PDFs. TaaSFlow gives you a live workspace where ranked candidates arrive, evidence is one click away, and every action updates for everyone simultaneously."
+            eyebrow="Inside the workspace"
+            title="Everything a hiring team needs. On one screen. In real time."
+            lead="Positions, ranked candidates, evidence, pipeline, and messages — the client workspace shows what matters and updates the moment anything changes."
           />
-          <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {WORKSPACE_VALUE.map((v) => (
-              <Card key={v.title}>
-                <v.icon
-                  className="h-6 w-6 text-[color:var(--brand-ocean)]"
-                  aria-hidden
-                />
+
+          {/* Composite showcase panel */}
+          <div className="mt-10 overflow-hidden rounded-3xl border border-[color:var(--brand-navy)]/10 bg-gradient-to-br from-white via-[color:var(--brand-paper)]/50 to-[color:var(--brand-sky)]/20 p-4 shadow-[var(--brand-shadow-lg)] sm:p-6">
+            {/* window chrome */}
+            <div className="flex items-center justify-between gap-3 border-b border-[color:var(--brand-navy)]/8 pb-3">
+              <div className="flex items-center gap-2">
+                <div className="flex gap-1.5" aria-hidden>
+                  <span className="h-2.5 w-2.5 rounded-full bg-[#ff5f57]" />
+                  <span className="h-2.5 w-2.5 rounded-full bg-[#febc2e]" />
+                  <span className="h-2.5 w-2.5 rounded-full bg-[#28c840]" />
+                </div>
+                <span className="text-xs font-medium text-[color:var(--brand-navy)]/60">
+                  client workspace · overview
+                </span>
+              </div>
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-[color:var(--brand-ocean)]/10 px-2.5 py-1 text-[11px] font-semibold text-[color:var(--brand-ocean)]">
+                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[color:var(--brand-ocean)]" aria-hidden />
+                Live · synchronized
+              </span>
+            </div>
+
+            <div className="mt-5 grid gap-4 lg:grid-cols-12">
+              {/* Active positions column */}
+              <div className="lg:col-span-4">
+                <div className="mb-2 flex items-center justify-between text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/55">
+                  <span>Active positions</span>
+                  <span className="tabular-nums text-[color:var(--brand-navy)]/50">3</span>
+                </div>
+                <ul className="space-y-2.5">
+                  {[
+                    { role: "Senior Product Designer", loc: "Remote · EU", stage: "Shortlist ready", pct: 80 },
+                    { role: "Backend Engineer", loc: "Lisbon · Hybrid", stage: "Under review", pct: 55 },
+                    { role: "Finance Manager", loc: "London", stage: "Sourcing", pct: 25 },
+                  ].map((p) => (
+                    <li
+                      key={p.role}
+                      className="rounded-xl border border-[color:var(--brand-navy)]/8 bg-white p-3 shadow-[var(--brand-shadow-xs)]"
+                    >
+                      <div className="truncate text-sm font-semibold text-[color:var(--brand-navy)]">
+                        {p.role}
+                      </div>
+                      <div className="truncate text-[11px] text-[color:var(--brand-navy)]/60">
+                        {p.loc}
+                      </div>
+                      <div className="mt-2 h-1 w-full overflow-hidden rounded-full bg-[color:var(--brand-navy)]/8">
+                        <div
+                          className="h-full rounded-full bg-[color:var(--brand-ocean)]"
+                          style={{ width: `${p.pct}%` }}
+                          aria-hidden
+                        />
+                      </div>
+                      <div className="mt-1.5 text-[11px] font-medium text-[color:var(--brand-navy)]/70">
+                        {p.stage}
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Ranked candidate with evidence */}
+              <div className="lg:col-span-5">
+                <div className="mb-2 flex items-center justify-between text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/55">
+                  <span>Ranked candidate · evidence</span>
+                  <span className="rounded-full bg-[color:var(--brand-ocean)]/12 px-2 py-0.5 text-[10px] font-semibold text-[color:var(--brand-ocean)]">
+                    Strong match
+                  </span>
+                </div>
+                <div className="rounded-xl border border-[color:var(--brand-navy)]/10 bg-white p-4 shadow-[var(--brand-shadow-xs)]">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <div className="truncate text-sm font-semibold text-[color:var(--brand-navy)]">
+                        Candidate #A-1042
+                      </div>
+                      <div className="truncate text-[11px] text-[color:var(--brand-navy)]/60">
+                        Senior Product Designer · Remote
+                      </div>
+                    </div>
+                    <div className="shrink-0 rounded-md bg-[color:var(--brand-ocean)]/12 px-2.5 py-1 text-sm font-semibold tabular-nums text-[color:var(--brand-ocean)]">
+                      94
+                    </div>
+                  </div>
+                  <div className="mt-4 space-y-2">
+                    {DELIVERY_EVIDENCE.map(([k, v]) => (
+                      <div key={String(k)} className="flex items-center gap-3 text-[11px]">
+                        <span className="w-28 shrink-0 truncate text-[color:var(--brand-navy)]/65">
+                          {k}
+                        </span>
+                        <div className="h-1.5 min-w-0 flex-1 overflow-hidden rounded-full bg-[color:var(--brand-navy)]/8">
+                          <div
+                            className="h-full rounded-full bg-[color:var(--brand-ocean)]"
+                            style={{ width: `${v}%` }}
+                            aria-hidden
+                          />
+                        </div>
+                        <span className="w-7 shrink-0 text-right font-semibold tabular-nums text-[color:var(--brand-navy)]">
+                          {v}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                  <blockquote className="mt-4 flex gap-2 border-t border-[color:var(--brand-navy)]/8 pt-3 text-[11px] text-[color:var(--brand-navy)]/70">
+                    <Quote className="mt-0.5 h-3 w-3 shrink-0 text-[color:var(--brand-navy)]/40" aria-hidden />
+                    <span>
+                      "Led design system rollout, reducing component debt by ~40%."
+                      <span className="ml-1 text-[color:var(--brand-navy)]/50">— CV, page 2</span>
+                    </span>
+                  </blockquote>
+
+                  {/* Client actions */}
+                  <div className="mt-4 grid grid-cols-3 gap-2">
+                    {[
+                      { label: "Shortlist", solid: true },
+                      { label: "Interview", solid: false },
+                      { label: "Pass", solid: false },
+                    ].map((a) => (
+                      <div
+                        key={a.label}
+                        className={
+                          a.solid
+                            ? "rounded-md bg-[color:var(--brand-navy)] px-2 py-1.5 text-center text-[11px] font-semibold text-white"
+                            : "rounded-md border border-[color:var(--brand-navy)]/15 bg-white px-2 py-1.5 text-center text-[11px] font-semibold text-[color:var(--brand-navy)]"
+                        }
+                      >
+                        {a.label}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Pipeline + activity */}
+              <div className="space-y-4 lg:col-span-3">
+                {/* Pipeline */}
+                <div>
+                  <div className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/55">
+                    Hiring pipeline
+                  </div>
+                  <div className="rounded-xl border border-[color:var(--brand-navy)]/10 bg-white p-3 shadow-[var(--brand-shadow-xs)]">
+                    <ul className="space-y-2">
+                      {[
+                        ["Applied", 24],
+                        ["Under review", 12],
+                        ["Shortlisted", 6],
+                        ["Interview", 3],
+                        ["Offer", 1],
+                      ].map(([label, n]) => (
+                        <li key={String(label)} className="flex items-center justify-between gap-2 text-[11px]">
+                          <span className="truncate text-[color:var(--brand-navy)]/70">{label}</span>
+                          <span className="tabular-nums font-semibold text-[color:var(--brand-navy)]">
+                            {n}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+
+                {/* Live activity */}
+                <div>
+                  <div className="mb-2 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/55">
+                    <Activity className="h-3 w-3 text-[color:var(--brand-ocean)]" aria-hidden />
+                    Activity
+                  </div>
+                  <ul className="space-y-2 rounded-xl border border-[color:var(--brand-navy)]/10 bg-white p-3 shadow-[var(--brand-shadow-xs)]">
+                    {[
+                      ["New candidate ranked", "just now"],
+                      ["Evidence updated", "12m"],
+                      ["Interview confirmed", "1h"],
+                    ].map(([t, w]) => (
+                      <li key={String(t)} className="flex items-center justify-between gap-2 text-[11px]">
+                        <span className="min-w-0 truncate text-[color:var(--brand-navy)]/75">{t}</span>
+                        <span className="shrink-0 text-[color:var(--brand-navy)]/50">{w}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Explanations */}
+          <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
+            {[
+              {
+                icon: Eye,
+                t: "What you see",
+                d: "Every active position, every ranked candidate, and the evidence behind each score — no PDFs to chase.",
+              },
+              {
+                icon: BarChart3,
+                t: "Better decisions",
+                d: "Compare candidates against the requirements your team approved, side by side, with the CV quotes in front of you.",
+              },
+              {
+                icon: Activity,
+                t: "Always synchronized",
+                d: "When a candidate moves, a score updates, or a message arrives, the workspace refreshes for everyone at once.",
+              },
+              {
+                icon: ClipboardCheck,
+                t: "Full visibility",
+                d: "Pipeline, activity, and status stay in one place so you can check progress in seconds — not follow-up emails.",
+              },
+            ].map((v) => (
+              <Card key={v.t}>
+                <v.icon className="h-6 w-6 text-[color:var(--brand-ocean)]" aria-hidden />
                 <h3 className="mt-4 text-base font-semibold text-[color:var(--brand-navy)]">
-                  {v.title}
+                  {v.t}
                 </h3>
-                <p className="mt-2 text-sm text-[color:var(--brand-navy)]/70">
-                  {v.body}
-                </p>
+                <p className="mt-2 text-sm text-[color:var(--brand-navy)]/70">{v.d}</p>
               </Card>
             ))}
+          </div>
+
+          <div className="mt-8">
+            <Link
+              to="/how-it-works"
+              className="inline-flex min-h-11 items-center gap-2 rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-[color:var(--brand-navy-dark)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+            >
+              Explore How It Works <ArrowRight className="h-4 w-4" aria-hidden />
+            </Link>
           </div>
         </PublicPage>
       </PublicSection>
 
-      {/* 3 — HOW IT WORKS */}
+      {/* 3 — HOW IT WORKS · 6 STEPS */}
       <section className="border-y border-[color:var(--brand-navy)]/8 bg-white">
         <PublicSection>
           <PublicPage>
             <SectionHead
               eyebrow="How it works"
-              title="From intake to hire in four clear steps."
+              title="From intake to hire in six clear steps."
+              lead="A guided process that keeps everyone — hiring team, recruiter, and candidates — moving at the same pace."
             />
-            <ol className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            <ol className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
               {STEPS.map((s) => (
                 <li
                   key={s.n}
-                  className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6 shadow-[var(--brand-shadow-xs)]"
+                  className="group relative flex flex-col rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6 shadow-[var(--brand-shadow-xs)] transition hover:border-[color:var(--brand-ocean)]/30 hover:shadow-[var(--brand-shadow-sm)]"
                 >
-                  <div className="font-[family-name:var(--brand-font-display)] text-2xl font-semibold tabular-nums text-[color:var(--brand-ocean)]">
-                    {s.n}
+                  <div className="flex items-center justify-between">
+                    <span className="font-[family-name:var(--brand-font-display)] text-2xl font-semibold tabular-nums text-[color:var(--brand-ocean)]">
+                      {s.n}
+                    </span>
+                    <span className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-[color:var(--brand-ocean)]/10 text-[color:var(--brand-ocean)]">
+                      <s.icon className="h-4.5 w-4.5" aria-hidden />
+                    </span>
                   </div>
-                  <h3 className="mt-3 text-base font-semibold text-[color:var(--brand-navy)]">
+                  <h3 className="mt-4 text-base font-semibold text-[color:var(--brand-navy)]">
                     {s.t}
                   </h3>
                   <p className="mt-2 text-sm text-[color:var(--brand-navy)]/70">
@@ -444,17 +656,18 @@ function Home() {
                 </li>
               ))}
             </ol>
-            <div className="mt-8">
+            <div className="mt-10">
               <Link
                 to="/how-it-works"
-                className="inline-flex items-center gap-1 text-sm font-semibold text-[color:var(--brand-ocean)] hover:text-[color:var(--brand-navy)]"
+                className="inline-flex min-h-11 items-center gap-2 rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-[color:var(--brand-navy-dark)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
               >
-                See the full process <ArrowRight className="h-4 w-4" aria-hidden />
+                See How TaaSFlow Works <ArrowRight className="h-4 w-4" aria-hidden />
               </Link>
             </div>
           </PublicPage>
         </PublicSection>
       </section>
+
 
       {/* 4 — CANDIDATE DELIVERY & RANKING */}
       <PublicSection>
