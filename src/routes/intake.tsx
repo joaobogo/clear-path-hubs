@@ -134,6 +134,8 @@ const EMPTY: FormState = {
   decisionMakers: "",
   additionalContext: "",
   screeningQuestions: [],
+  password: "",
+  passwordConfirm: "",
   consent: false,
 };
 
