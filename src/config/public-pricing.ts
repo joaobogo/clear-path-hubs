@@ -1,20 +1,29 @@
 /**
- * TaaSFlow — Canonical public pricing configuration
+ * TaaSFlow — Calculator/selector shape for public pricing.
  * ==================================================
- * Single source of truth for every public marketing surface:
- *   • Pricing page cards
- *   • Homepage ROI calculator (when built)
+ * Numeric values are imported from src/config/pricing-core.ts — the single
+ * source of truth. Update pricing-core.ts and every consumer here plus
+ * src/content/pricing.ts updates automatically.
+ *
+ * Consumed by:
+ *   • Pricing page calculator
+ *   • Homepage ROI calculator
+ *   • Agency comparator
  *   • Enterprise page teasers
- *   • Any package/tier labels used in marketing copy
  *
  * Rules
- *   • Do NOT hard-code prices elsewhere.
+ *   • Do NOT hard-code prices in this file — use the core.
  *   • Do NOT infer checkout prices from this file — it is marketing config.
- *   • Values pending owner sign-off are flagged with approvalStatus !== "approved".
- *     The calculator and Pricing page MUST hide the numeric price and render
- *     a "Contact Sales" affordance for any non-approved tier.
- *   • Update this file (not the components) when pricing changes.
+ *   • Values pending owner sign-off use approvalStatus !== "approved" and the
+ *     calculator hides the numeric price / renders a "Contact Sales" affordance.
  */
+
+import {
+  PRICE_PILOT_USD,
+  PRICE_MULTI_USD,
+  PRICE_SPRINT_USD,
+  POSITION_BANDS,
+} from "@/config/pricing-core";
 
 export type BillingType = "one-time-flat" | "monthly-subscription" | "custom";
 export type ApprovalStatus = "approved" | "pending" | "review";
@@ -53,9 +62,9 @@ export const PRICING_PACKAGES: readonly PricingPackage[] = [
     id: "pilot",
     name: "Pilot — Single Position",
     description: "A focused engagement to fill one open role.",
-    minPositions: 1,
-    maxPositions: 1,
-    priceUsd: 399,
+    minPositions: POSITION_BANDS.pilot.min,
+    maxPositions: POSITION_BANDS.pilot.max,
+    priceUsd: PRICE_PILOT_USD,
     billingType: "one-time-flat",
     customPricingOnly: false,
     approvalStatus: "approved",
@@ -66,9 +75,9 @@ export const PRICING_PACKAGES: readonly PricingPackage[] = [
     id: "multi-position",
     name: "Multi Position",
     description: "A handful of roles running in parallel.",
-    minPositions: 2,
-    maxPositions: 5,
-    priceUsd: 2100,
+    minPositions: POSITION_BANDS.multi.min,
+    maxPositions: POSITION_BANDS.multi.max,
+    priceUsd: PRICE_MULTI_USD,
     billingType: "one-time-flat",
     customPricingOnly: false,
     approvalStatus: "approved",
@@ -79,9 +88,9 @@ export const PRICING_PACKAGES: readonly PricingPackage[] = [
     id: "hiring-sprint",
     name: "Hiring Sprint",
     description: "Multiple roles sourced simultaneously.",
-    minPositions: 6,
-    maxPositions: 10,
-    priceUsd: 4500,
+    minPositions: POSITION_BANDS.sprint.min,
+    maxPositions: POSITION_BANDS.sprint.max,
+    priceUsd: PRICE_SPRINT_USD,
     billingType: "one-time-flat",
     customPricingOnly: false,
     approvalStatus: "approved",
@@ -92,8 +101,8 @@ export const PRICING_PACKAGES: readonly PricingPackage[] = [
     id: "subscription",
     name: "Subscription",
     description: "Continuous hiring across teams and geographies.",
-    minPositions: 11,
-    maxPositions: null,
+    minPositions: POSITION_BANDS.subscription.min,
+    maxPositions: POSITION_BANDS.subscription.max,
     priceUsd: null, // Unapproved — see reconciliation doc.
     billingType: "custom",
     customPricingOnly: true,

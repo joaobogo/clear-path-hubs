@@ -402,6 +402,36 @@ function JourneyPage() {
         </PublicPage>
       </PublicSection>
 
+      {/* Founder note */}
+      <PublicSection>
+        <PublicPage>
+          <figure className="mx-auto max-w-3xl rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-8 sm:p-10">
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean)]">
+              A note from the founders
+            </p>
+            <blockquote className="mt-4 font-[family-name:var(--brand-font-display)] text-2xl leading-snug text-[color:var(--brand-navy)] sm:text-3xl">
+              “We built TaaSFlow because hiring was the least explainable part
+              of running a company. Every decision now cites the exact CV quote
+              it came from. If we can’t cite it, we don’t claim it.”
+            </blockquote>
+            <figcaption className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">
+              <span className="font-semibold text-[color:var(--brand-navy)]">
+                João Luciano, Christian Brogger & João Bogo
+              </span>
+              <span className="text-[color:var(--brand-navy)]/60">
+                Co-founders, TaaSFlow
+              </span>
+              <Link
+                to="/about"
+                className="ml-auto inline-flex items-center gap-1 text-sm font-semibold text-[color:var(--brand-ocean)] hover:text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+              >
+                Meet the team →
+              </Link>
+            </figcaption>
+          </figure>
+        </PublicPage>
+      </PublicSection>
+
 
       {/* Start with TaaSFlow */}
       <CtaSection
