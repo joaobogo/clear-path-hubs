@@ -51,6 +51,7 @@ import { WorkspaceTour } from "@/components/marketing/workspace-tour";
 import { AudienceSelector } from "@/components/marketing/audience-selector";
 import { TrustStrip } from "@/components/marketing/trust-strip";
 import { WhySwitchMatrix } from "@/components/marketing/why-switch-matrix";
+import { ProofSystem } from "@/components/marketing/proof-system";
 
 // Homepage metadata is authored inline (guardrail: legacy JSON entry contains
 // unapproved "14 days" and totals claims). Do not pass the legacy entry here.
@@ -1907,47 +1908,8 @@ function Home() {
 
 
       {/* 8 — APPROVED PROOF (process credibility) */}
-      <PublicSection>
-        <PublicPage>
-          <SectionHead
-            eyebrow="Why teams trust the process"
-            title="Proof lives in how the work is done."
-            lead="We don't publish testimonials we can't verify. What we can show you is the discipline behind every candidate we deliver — the same evaluation, workspace, and audit trail on every role."
-          />
-          <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-            {APPROVED_PROOF.map((item) => {
-              const Icon = item.icon;
-              return (
-                <Card key={item.t}>
-                  <div className="inline-flex h-10 w-10 items-center justify-center rounded-md bg-[color:var(--brand-ocean)]/10 text-[color:var(--brand-ocean)]">
-                    <Icon className="h-5 w-5" aria-hidden />
-                  </div>
-                  <h3 className="mt-4 text-base font-semibold text-[color:var(--brand-navy)]">
-                    {item.t}
-                  </h3>
-                  <p className="mt-2 text-sm leading-relaxed text-[color:var(--brand-navy)]/70">
-                    {item.d}
-                  </p>
-                </Card>
-              );
-            })}
-          </div>
-          <div className="mt-8 flex flex-wrap items-center gap-4 text-xs text-[color:var(--brand-navy)]/60">
-            <Link
-              to="/how-it-works"
-              className="inline-flex items-center gap-1 text-sm font-semibold text-[color:var(--brand-ocean)] hover:text-[color:var(--brand-navy)]"
-            >
-              See the full process <ArrowRight className="h-4 w-4" aria-hidden />
-            </Link>
-            <Link
-              to="/case-studies"
-              className="inline-flex items-center gap-1 text-sm font-semibold text-[color:var(--brand-navy)]/70 hover:text-[color:var(--brand-navy)]"
-            >
-              Case studies <ArrowRight className="h-4 w-4" aria-hidden />
-            </Link>
-          </div>
-        </PublicPage>
-      </PublicSection>
+      {/* 8 — PROOF SYSTEM (no fake testimonials) */}
+      <ProofSystem />
 
       {/* 9 — RESOURCES PREVIEW */}
       <section className="border-y border-[color:var(--brand-navy)]/8 bg-[color:var(--brand-paper)]">
