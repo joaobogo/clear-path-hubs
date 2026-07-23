@@ -68,25 +68,48 @@ const WORKSPACE_VALUE = [
 const STEPS = [
   {
     n: "01",
-    t: "Guided intake",
-    d: "Tell us the role, requirements, and hiring context in five short steps.",
+    icon: ClipboardCheck,
+    t: "Submit the role",
+    d: "Five guided steps capture the requirements, seniority, and hiring context — no long forms.",
+    visual: "form",
   },
   {
     n: "02",
-    t: "Sourcing & evidence",
-    d: "We source, parse, and produce a role-specific evidence sheet for every candidate.",
+    icon: Search,
+    t: "TaaSFlow builds the search",
+    d: "Your recruiter turns the intake into a structured search plan with must-haves and nice-to-haves.",
+    visual: "search",
   },
   {
     n: "03",
-    t: "Ranked shortlist in your workspace",
-    d: "Delivered live. Shortlist, interview, or reject in one click — your recruiter sees it instantly.",
+    icon: Users,
+    t: "Candidates are sourced and evaluated",
+    d: "We source across our network and evaluate each candidate against your approved requirements.",
+    visual: "sourcing",
   },
   {
     n: "04",
-    t: "Hire without placement fees",
-    d: "Predictable subscription pricing — no per-hire commissions.",
+    icon: BarChart3,
+    t: "Ranked candidates enter the workspace",
+    d: "Each candidate arrives ranked, with CV evidence mapped to every requirement.",
+    visual: "ranked",
+  },
+  {
+    n: "05",
+    icon: CheckCircle2,
+    t: "You review and advance candidates",
+    d: "Shortlist, interview, or pass in one click — your team and the recruiter see the same status.",
+    visual: "decide",
+  },
+  {
+    n: "06",
+    icon: Handshake,
+    t: "TaaSFlow supports the process through hire",
+    d: "Interviews, feedback, and offer coordination stay in the workspace until the role is closed.",
+    visual: "hire",
   },
 ] as const;
+
 
 const DELIVERY_EVIDENCE = [
   ["Design systems", 96],
