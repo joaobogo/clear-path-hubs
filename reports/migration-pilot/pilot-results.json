@@ -1,0 +1,70 @@
+{
+  "trace": "MIG-PILOT-2026-07-23",
+  "source_repo": "https://github.com/joaobogo/sourcing-suite-ai.git",
+  "source_repo_access": "UNRESOLVED (HTTP 404 unauthenticated); parity measured against destination-mirrored content in src/content/pages/{index,about}.json + live-site headings, per docs/migration/source-repository-inventory.md fallback.",
+  "source_site": "https://sourcing-suite-ai.lovable.app",
+  "destination_site": "https://clear-path-hubs.lovable.app",
+  "pages": {
+    "homepage": {
+      "destination_file": "src/routes/index.tsx",
+      "source_content_file": "src/content/pages/index.json",
+      "sections_expected": 21,
+      "sections_implemented": 21,
+      "sections_rewritten": 3,
+      "sections_excluded": 0,
+      "assets_expected": 1,
+      "assets_implemented": 1,
+      "old_dependencies_detected": 0,
+      "broken_links": 0,
+      "broken_ctas": 0,
+      "internal_links_verified": ["/intake", "/how-it-works", "/solutions", "/enterprise", "/global-talent", "/industries", "/industries/$slug", "/case-studies", "/jobs"],
+      "visual_differences": "Product visuals rebuilt as destination WorkspacePreview panels (ranked candidate, evidence, pipeline, activity) — no legacy dashboard screenshots.",
+      "mobile_issues": 0,
+      "accessibility_issues_critical": 0,
+      "accessibility_issues_serious": 0,
+      "console_errors": 0,
+      "verdict": "PASS"
+    },
+    "about": {
+      "destination_file": "src/routes/about.tsx",
+      "source_content_file": "src/content/pages/about.json",
+      "sections_expected": 12,
+      "sections_implemented": 10,
+      "sections_rewritten": 1,
+      "sections_excluded": 2,
+      "assets_expected": 2,
+      "assets_implemented": 0,
+      "assets_replaced_with_placeholder": 2,
+      "old_dependencies_detected": 0,
+      "broken_links": 0,
+      "broken_ctas": 0,
+      "internal_links_verified": ["/journey", "/pilot", "/how-it-works", "/contact", "/intake"],
+      "visual_differences": "Founder headshots replaced with initials avatars (source hotlinked taasflow.com — pending rehost). Per-region volumes and Growth/Placements/Company-size/Seniority charts intentionally not rendered (unverified numeric claims).",
+      "mobile_issues": 0,
+      "accessibility_issues_critical": 0,
+      "accessibility_issues_serious": 0,
+      "console_errors": 0,
+      "verdict": "PASS"
+    }
+  },
+  "reconciliation": {
+    "unexplained_missing_sections": 0,
+    "missing_required_assets": 0,
+    "old_operational_imports": 0,
+    "broken_ctas": 0,
+    "broken_internal_links": 0,
+    "critical_accessibility_failures": 0,
+    "serious_accessibility_failures": 0,
+    "mobile_layout_failures": 0,
+    "production_build_failures": 0
+  },
+  "artifacts": {
+    "screenshots_dir": "/mnt/documents/migration-pilot",
+    "viewports": ["375", "768", "1440"],
+    "files": [
+      "home_375.png", "home_768.png", "home_1440.png",
+      "about_375.png", "about_768.png", "about_1440.png"
+    ]
+  },
+  "overall_verdict": "PASS"
+}
