@@ -428,16 +428,16 @@ function MockChrome({ title, children }: { title: string; children: React.ReactN
     <div
       role="img"
       aria-label={`TaaSFlow ${title} preview`}
-      className="rounded-2xl border border-[color:var(--brand-navy)]/12 bg-white shadow-sm"
+      className="min-w-0 overflow-hidden rounded-2xl border border-[color:var(--brand-navy)]/12 bg-white shadow-sm"
     >
       <div className="flex items-center gap-2 border-b border-[color:var(--brand-navy)]/10 px-4 py-2.5">
-        <span className="h-2.5 w-2.5 rounded-full bg-red-400/70" aria-hidden />
-        <span className="h-2.5 w-2.5 rounded-full bg-yellow-400/70" aria-hidden />
-        <span className="h-2.5 w-2.5 rounded-full bg-green-400/70" aria-hidden />
-        <span className="ml-3 text-xs font-medium text-[color:var(--brand-navy)]/70">
+        <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-red-400/70" aria-hidden />
+        <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-yellow-400/70" aria-hidden />
+        <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-green-400/70" aria-hidden />
+        <span className="ml-3 min-w-0 flex-1 truncate text-xs font-medium text-[color:var(--brand-navy)]/70">
           {title}
         </span>
-        <span className="ml-auto inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-semibold text-emerald-700">
+        <span className="ml-auto inline-flex shrink-0 items-center gap-1 rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-semibold text-emerald-700">
           <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" aria-hidden />
           Live
         </span>
