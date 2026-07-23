@@ -278,9 +278,25 @@ export const savePositionEdit = createServerFn({ method: "POST" })
         countries: data.target_countries,
         target_titles: data.target_titles,
       },
+      intake_context: {
+        responsibilities: data.responsibilities || "",
+        experience: data.experience || "",
+        education: data.education || "",
+        certifications: data.certifications || "",
+        languages: data.languages || "",
+        industry_experience: data.industry_experience || "",
+        hiring_timeline: data.hiring_timeline || "",
+        timezone_requirements: data.timezone_requirements || "",
+        reason_for_hiring: data.reason_for_hiring || "",
+        hiring_challenges: data.hiring_challenges || "",
+        interview_process: data.interview_process || "",
+        decision_makers: data.decision_makers || "",
+        additional_context: data.additional_context || "",
+      },
       openings: typeof data.headcount === "number" ? data.headcount : 1,
       updated_at: new Date().toISOString(),
     };
+
 
     const { data: after, error } = await s
       .from("positions")
