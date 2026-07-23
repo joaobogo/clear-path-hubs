@@ -1,11 +1,23 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState, type ReactNode } from "react";
-import { ChevronRight, Loader2, Menu, Linkedin, Twitter, Github, Mail } from "lucide-react";
+import { ChevronRight, ChevronDown, Loader2, Menu, Linkedin, Mail } from "lucide-react";
+import * as NavigationMenuPrimitive from "@radix-ui/react-navigation-menu";
 
 import { brand } from "@/config/brand";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import {
+  NAV_GROUPS,
+  PRIMARY_NAV as CONFIG_PRIMARY_NAV,
+  PRIMARY_CTA,
+  SECONDARY_CTAS,
+  FOOTER_GROUPS,
+  SOCIAL_LINKS,
+  type NavLink,
+} from "@/config/public-navigation";
+
 
 /* ---------------------------------------------------------------- Nav data */
 
