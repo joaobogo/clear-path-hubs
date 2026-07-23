@@ -237,49 +237,128 @@ export const listClients = createServerFn({ method: "GET" })
         status: z.enum(["prospect", "active", "paused", "closed"]).optional(),
         include_archived: z.boolean().optional().default(false),
         sort: z
-          .enum(["updated_desc", "updated_asc", "name_asc", "name_desc", "status_asc"])
+          .enum([
+            "activity_desc",
+            "updated_desc",
+            "updated_asc",
+            "name_asc",
+            "name_desc",
+            "status_asc",
+            "candidates_desc",
+            "positions_desc",
+          ])
           .optional()
-          .default("updated_desc"),
+          .default("activity_desc"),
+        page: z.number().int().min(1).optional().default(1),
+        page_size: z.number().int().min(10).max(100).optional().default(25),
       })
       .parse(i ?? {}),
   )
   .handler(async ({ data, context }) => {
     await requireStaff(context.userId);
     const s = await getAdmin();
+
+    // Bounded fetch: pull a working set, then compute counts + last activity in memory
+    // and paginate the merged result. Cap protects the endpoint on large tenants.
     let q = s
       .from("organizations")
-      .select("id,name,status,domain,industry,updated_at,archived_at,onboarding_status,dashboard_status")
+      .select(
+        "id,name,status,domain,industry,updated_at,archived_at,onboarding_status,dashboard_status,primary_contact_name,primary_contact_email",
+      )
       .limit(500);
     if (data.q) q = q.ilike("name", `%${data.q}%`);
     if (data.status) q = q.eq("status", data.status);
     if (!data.include_archived) q = q.is("archived_at", null);
-    switch (data.sort) {
-      case "updated_asc": q = q.order("updated_at", { ascending: true }); break;
-      case "name_asc": q = q.order("name", { ascending: true }); break;
-      case "name_desc": q = q.order("name", { ascending: false }); break;
-      case "status_asc": q = q.order("status", { ascending: true }).order("name", { ascending: true }); break;
-      default: q = q.order("updated_at", { ascending: false });
-    }
     const { data: rows } = await q;
     const orgIds = (rows ?? []).map((r: AnyRow) => r.id);
-    let counts: Record<string, { positions: number; active: number }> = {};
+
+    const stats: Record<
+      string,
+      { positions: number; active: number; candidates_delivered: number; last_activity_at: string | null }
+    > = {};
+    for (const id of orgIds) {
+      stats[id] = { positions: 0, active: 0, candidates_delivered: 0, last_activity_at: null };
+    }
+
     if (orgIds.length) {
-      const { data: pos } = await s
-        .from("positions")
-        .select("organization_id,status")
-        .in("organization_id", orgIds);
+      const [{ data: pos }, { data: matches }, { data: activity }] = await Promise.all([
+        s.from("positions").select("organization_id,status").in("organization_id", orgIds),
+        s
+          .from("candidate_matches")
+          .select("organization_id,client_visibility")
+          .in("organization_id", orgIds)
+          .eq("client_visibility", "visible"),
+        s
+          .from("audit_events")
+          .select("organization_id,created_at")
+          .in("organization_id", orgIds)
+          .order("created_at", { ascending: false })
+          .limit(1000),
+      ]);
       for (const p of (pos ?? []) as AnyRow[]) {
-        const c = (counts[p.organization_id] ??= { positions: 0, active: 0 });
+        const c = stats[p.organization_id];
+        if (!c) continue;
         c.positions += 1;
         if (p.status === "active") c.active += 1;
       }
+      for (const m of (matches ?? []) as AnyRow[]) {
+        const c = stats[m.organization_id];
+        if (c) c.candidates_delivered += 1;
+      }
+      for (const a of (activity ?? []) as AnyRow[]) {
+        const c = stats[a.organization_id];
+        if (c && !c.last_activity_at) c.last_activity_at = a.created_at;
+      }
     }
-    return (rows ?? []).map((r: AnyRow) => ({
-      ...r,
-      positions_total: counts[r.id]?.positions ?? 0,
-      positions_active: counts[r.id]?.active ?? 0,
-    }));
+
+    const merged = (rows ?? []).map((r: AnyRow) => {
+      const st = stats[r.id]!;
+      return {
+        ...r,
+        positions_total: st.positions,
+        positions_active: st.active,
+        candidates_delivered: st.candidates_delivered,
+        last_activity_at: st.last_activity_at ?? r.updated_at,
+      };
+    });
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const cmp = (a: any, b: any) => {
+      switch (data.sort) {
+        case "updated_asc":
+          return String(a.updated_at).localeCompare(String(b.updated_at));
+        case "updated_desc":
+          return String(b.updated_at).localeCompare(String(a.updated_at));
+        case "name_asc":
+          return String(a.name).localeCompare(String(b.name));
+        case "name_desc":
+          return String(b.name).localeCompare(String(a.name));
+        case "status_asc":
+          return String(a.status).localeCompare(String(b.status));
+        case "candidates_desc":
+          return (b.candidates_delivered ?? 0) - (a.candidates_delivered ?? 0);
+        case "positions_desc":
+          return (b.positions_active ?? 0) - (a.positions_active ?? 0);
+        case "activity_desc":
+        default:
+          return String(b.last_activity_at ?? "").localeCompare(String(a.last_activity_at ?? ""));
+      }
+    };
+    merged.sort(cmp);
+
+    const total = merged.length;
+    const start = (data.page - 1) * data.page_size;
+    const items = merged.slice(start, start + data.page_size);
+
+    return {
+      items,
+      total,
+      page: data.page,
+      page_size: data.page_size,
+      page_count: Math.max(1, Math.ceil(total / data.page_size)),
+    };
   });
+
 
 
 export const getClient = createServerFn({ method: "GET" })
@@ -975,4 +1054,58 @@ export const getClientCandidatesForOrg = createServerFn({ method: "GET" })
       .order("updated_at", { ascending: false })
       .limit(data.limit);
     return (rows ?? []) as AnyRow[];
+  });
+
+export const getClientDocuments = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: unknown) =>
+    z
+      .object({
+        id: z.string().uuid(),
+        limit: z.number().int().min(1).max(200).optional().default(100),
+      })
+      .parse(i),
+  )
+  .handler(async ({ data, context }) => {
+    await requireStaff(context.userId);
+    const s = await getAdmin();
+    // Documents attached to candidates matched to any position in this org
+    const { data: matches } = await s
+      .from("candidate_matches")
+      .select("candidate_profile_id")
+      .eq("organization_id", data.id);
+    const profileIds = Array.from(
+      new Set(((matches ?? []) as AnyRow[]).map((m) => m.candidate_profile_id).filter(Boolean)),
+    );
+    if (profileIds.length === 0) return [] as AnyRow[];
+    const { data: files } = await s
+      .from("files")
+      .select(
+        "id,filename,mime_type,size,file_status,created_at,candidate_profile_id,candidate_profiles(id,full_name)",
+      )
+      .in("candidate_profile_id", profileIds)
+      .order("created_at", { ascending: false })
+      .limit(data.limit);
+    return (files ?? []) as AnyRow[];
+  });
+
+export const updateClientNotes = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: unknown) =>
+    z
+      .object({
+        id: z.string().uuid(),
+        internal_notes: z.string().max(20000),
+      })
+      .parse(i),
+  )
+  .handler(async ({ data, context }) => {
+    await requireStaff(context.userId);
+    const s = await getAdmin();
+    const { error } = await s
+      .from("organizations")
+      .update({ internal_notes: data.internal_notes, updated_at: new Date().toISOString() })
+      .eq("id", data.id);
+    if (error) throw new Error(error.message);
+    return { ok: true, trace_id: crypto.randomUUID() };
   });

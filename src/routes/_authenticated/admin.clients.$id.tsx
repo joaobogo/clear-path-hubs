@@ -9,6 +9,8 @@ import {
   archiveOrganization,
   getClientActivity,
   getClientCandidatesForOrg,
+  getClientDocuments,
+  updateClientNotes,
 } from "@/lib/admin.functions";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -30,17 +32,51 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  Building2,
+  Users2,
+  Contact2,
+  Briefcase,
+  UserCheck,
+  StickyNote,
+  FileText,
+  Activity,
+  ShieldCheck,
+  Settings,
+  ExternalLink,
+  MessagesSquare,
+} from "lucide-react";
 
 const TABS = [
   "overview",
   "company",
+  "contacts",
   "team",
   "positions",
   "candidates",
+  "messages",
+  "notes",
+  "documents",
   "activity",
+  "audit",
   "settings",
 ] as const;
 type TabKey = (typeof TABS)[number];
+
+const TAB_LABELS: Record<TabKey, { label: string; icon: typeof Building2 }> = {
+  overview: { label: "Overview", icon: Building2 },
+  company: { label: "Company", icon: Building2 },
+  contacts: { label: "Contacts", icon: Contact2 },
+  team: { label: "Team", icon: Users2 },
+  positions: { label: "Positions", icon: Briefcase },
+  candidates: { label: "Candidates", icon: UserCheck },
+  messages: { label: "Messages", icon: MessagesSquare },
+  notes: { label: "Notes", icon: StickyNote },
+  documents: { label: "Documents", icon: FileText },
+  activity: { label: "Activity", icon: Activity },
+  audit: { label: "Audit", icon: ShieldCheck },
+  settings: { label: "Settings", icon: Settings },
+};
 
 const searchSchema = z.object({
   tab: z.enum(TABS).optional().default("overview"),
@@ -82,66 +118,82 @@ function ClientDetail() {
   const setTab = (t: TabKey) => navigate({ search: { tab: t } });
 
   return (
-    <main className="mx-auto max-w-6xl px-6 py-8 space-y-6" data-qa-action={`admin-client-${id}`}>
+    <div className="space-y-6" data-qa-action={`admin-client-${id}`}>
       <div>
         <Link
           to="/admin/clients"
-          className="text-sm text-muted-foreground hover:underline"
+          className="text-xs text-muted-foreground hover:underline"
           data-qa-action="back-to-clients"
         >
-          ← Clients
+          ← All clients
         </Link>
-        <div className="mt-2 flex flex-wrap items-baseline gap-3">
-          <h1 className="text-2xl font-semibold">{org.name}</h1>
-          <Badge variant="outline" className="capitalize">{org.status}</Badge>
-          {org.archived_at && <Badge variant="secondary">archived</Badge>}
-          <Link
-            to="/client"
-            search={{ org: org.id, preview: "client_admin" }}
-            className="ml-auto inline-flex items-center rounded border px-3 py-1.5 text-sm hover:bg-muted"
-            title="Open this tenant's dashboard as an administrator (read-only)"
-            data-qa-action="view-client-dashboard"
-          >
-            View Client Dashboard →
-          </Link>
+        <div className="mt-2 flex flex-wrap items-center gap-3">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-lg font-semibold text-primary">
+            {String(org.name).slice(0, 1).toUpperCase()}
+          </div>
+          <div className="min-w-0 flex-1">
+            <h1 className="truncate text-2xl font-semibold tracking-tight">{org.name}</h1>
+            <p className="mt-0.5 text-xs text-muted-foreground">
+              {org.domain ?? "—"} · {org.industry ?? "—"} · {org.headquarters ?? "—"}
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            <Badge variant="outline" className="capitalize">
+              {org.status}
+            </Badge>
+            {org.archived_at && <Badge variant="secondary">archived</Badge>}
+            <Link
+              to="/client"
+              search={{ org: org.id, preview: "client_admin" }}
+              className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+              title="Open this tenant's dashboard as an administrator (read-only)"
+              data-qa-action="view-client-workspace"
+            >
+              View Client Workspace <ExternalLink className="h-3.5 w-3.5" />
+            </Link>
+          </div>
         </div>
-        <p className="mt-1 text-sm text-muted-foreground">
-          {org.domain ?? "—"} · {org.industry ?? "—"} · {org.headquarters ?? "—"}
-        </p>
-        <p className="mt-1 font-mono text-[10px] text-muted-foreground">
-          tenant_id: {org.id}
-        </p>
       </div>
 
-      <nav className="flex flex-wrap gap-1 border-b" role="tablist">
-        {TABS.map((t) => (
-          <button
-            key={t}
-            role="tab"
-            aria-selected={tab === t}
-            onClick={() => setTab(t)}
-            data-qa-action={`tab-${t}`}
-            className={`px-3 py-2 text-sm capitalize border-b-2 ${
-              tab === t
-                ? "border-primary text-foreground font-medium"
-                : "border-transparent text-muted-foreground hover:text-foreground"
-            }`}
-          >
-            {t}
-          </button>
-        ))}
+      <nav className="flex flex-wrap gap-0.5 border-b" role="tablist">
+        {TABS.map((t) => {
+          const Icon = TAB_LABELS[t].icon;
+          return (
+            <button
+              key={t}
+              role="tab"
+              aria-selected={tab === t}
+              onClick={() => setTab(t)}
+              data-qa-action={`tab-${t}`}
+              className={`inline-flex items-center gap-1.5 border-b-2 px-3 py-2 text-sm ${
+                tab === t
+                  ? "border-primary font-medium text-foreground"
+                  : "border-transparent text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              <Icon className="h-3.5 w-3.5" />
+              {TAB_LABELS[t].label}
+            </button>
+          );
+        })}
       </nav>
 
       {tab === "overview" && <OverviewTab org={org} members={members} positions={positions} />}
       {tab === "company" && <CompanyTab org={org} />}
+      {tab === "contacts" && <ContactsTab org={org} members={members} />}
       {tab === "team" && <TeamTab members={members} />}
       {tab === "positions" && <PositionsTab positions={positions} />}
       {tab === "candidates" && <CandidatesTab id={id} />}
+      {tab === "messages" && <MessagesTab orgId={org.id} />}
+      {tab === "notes" && <NotesTab org={org} />}
+      {tab === "documents" && <DocumentsTab id={id} />}
       {tab === "activity" && <ActivityTab id={id} />}
+      {tab === "audit" && <ActivityTab id={id} audit />}
       {tab === "settings" && <SettingsTab org={org} />}
-    </main>
+    </div>
   );
 }
+
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function OverviewTab({ org, members, positions }: { org: any; members: any[]; positions: any[] }) {
@@ -487,7 +539,7 @@ function CandidatesTab({ id }: { id: string }) {
   );
 }
 
-function ActivityTab({ id }: { id: string }) {
+function ActivityTab({ id, audit = false }: { id: string; audit?: boolean }) {
   const { data } = useSuspenseQuery({
     queryKey: ["admin-client-activity", id],
     queryFn: () => getClientActivity({ data: { id, limit: 100 } }),
@@ -615,6 +667,223 @@ function SettingsTab({ org }: { org: any }) {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+    </section>
+  );
+}
+
+// ── Contacts tab ──────────────────────────────────────────────────────────
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function ContactsTab({ org, members }: { org: any; members: any[] }) {
+  const primary = {
+    name: org.primary_contact_name as string | null,
+    email: org.primary_contact_email as string | null,
+    phone: org.phone as string | null,
+  };
+  return (
+    <section className="space-y-4">
+      <div className="rounded-lg border bg-card p-4">
+        <div className="text-xs uppercase tracking-wide text-muted-foreground">
+          Primary contact
+        </div>
+        {primary.name || primary.email || primary.phone ? (
+          <div className="mt-2 grid gap-1 text-sm">
+            <div className="font-medium">{primary.name ?? "—"}</div>
+            {primary.email && (
+              <a href={`mailto:${primary.email}`} className="text-primary hover:underline">
+                {primary.email}
+              </a>
+            )}
+            {primary.phone && <div className="text-muted-foreground">{primary.phone}</div>}
+          </div>
+        ) : (
+          <p className="mt-2 text-sm text-muted-foreground">
+            No primary contact set. Edit on the Company tab.
+          </p>
+        )}
+      </div>
+
+      <div className="overflow-hidden rounded-lg border bg-card">
+        <header className="border-b px-4 py-2.5 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+          Team members with email ({members.filter((m) => m.profiles?.email).length})
+        </header>
+        <table className="w-full text-sm">
+          <thead className="bg-muted/30 text-left text-xs uppercase text-muted-foreground">
+            <tr>
+              <th className="px-3 py-2 font-medium">Name</th>
+              <th className="px-3 py-2 font-medium">Email</th>
+              <th className="px-3 py-2 font-medium">Role</th>
+              <th className="px-3 py-2 font-medium">Status</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y">
+            {members
+              .filter((m) => m.profiles?.email)
+              .map((m) => (
+                <tr key={m.id}>
+                  <td className="px-3 py-2">{m.profiles?.full_name ?? "—"}</td>
+                  <td className="px-3 py-2">
+                    <a
+                      href={`mailto:${m.profiles.email}`}
+                      className="text-primary hover:underline"
+                    >
+                      {m.profiles.email}
+                    </a>
+                  </td>
+                  <td className="px-3 py-2 capitalize">{m.role}</td>
+                  <td className="px-3 py-2 capitalize text-xs text-muted-foreground">
+                    {m.status}
+                  </td>
+                </tr>
+              ))}
+            {members.filter((m) => m.profiles?.email).length === 0 && (
+              <tr>
+                <td colSpan={4} className="px-3 py-8 text-center text-muted-foreground">
+                  No team contacts yet.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  );
+}
+
+// ── Notes tab ─────────────────────────────────────────────────────────────
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function NotesTab({ org }: { org: any }) {
+  const qc = useQueryClient();
+  const [text, setText] = useState<string>(org.internal_notes ?? "");
+  useEffect(() => setText(org.internal_notes ?? ""), [org.id, org.updated_at]);
+
+  const m = useMutation({
+    mutationFn: () =>
+      updateClientNotes({ data: { id: org.id, internal_notes: text } }),
+    onSuccess: async () => {
+      toast.success("Notes saved");
+      await qc.invalidateQueries({ queryKey: ["admin-client", org.id] });
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const dirty = (text ?? "") !== (org.internal_notes ?? "");
+
+  return (
+    <section className="space-y-3">
+      <div className="rounded-md border bg-muted/30 p-3 text-xs text-muted-foreground">
+        Internal notes are never visible to the client. Use for context, escalation info,
+        and ops history.
+      </div>
+      <Textarea
+        rows={14}
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+        placeholder="Add notes for the platform team…"
+        data-qa-action="client-notes-editor"
+      />
+      <div className="flex items-center gap-2">
+        <Button
+          disabled={!dirty || m.isPending}
+          onClick={() => m.mutate()}
+          data-qa-action="save-notes"
+        >
+          {m.isPending ? "Saving…" : "Save notes"}
+        </Button>
+        {dirty && (
+          <button
+            className="text-xs text-muted-foreground hover:underline"
+            onClick={() => setText(org.internal_notes ?? "")}
+          >
+            Discard changes
+          </button>
+        )}
+      </div>
+    </section>
+  );
+}
+
+// ── Documents tab ─────────────────────────────────────────────────────────
+function DocumentsTab({ id }: { id: string }) {
+  const { data } = useSuspenseQuery({
+    queryKey: ["admin-client-documents", id],
+    queryFn: () => getClientDocuments({ data: { id, limit: 100 } }),
+  });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const rows = (data ?? []) as any[];
+  return (
+    <div className="overflow-hidden rounded-lg border bg-card">
+      <header className="border-b px-4 py-2.5 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+        Documents linked to this client's candidates ({rows.length})
+      </header>
+      <table className="w-full text-sm">
+        <thead className="bg-muted/30 text-left text-xs uppercase text-muted-foreground">
+          <tr>
+            <th className="px-3 py-2 font-medium">File</th>
+            <th className="px-3 py-2 font-medium">Candidate</th>
+            <th className="px-3 py-2 font-medium">Type</th>
+            <th className="px-3 py-2 font-medium tabular-nums">Size</th>
+            <th className="px-3 py-2 font-medium">Uploaded</th>
+          </tr>
+        </thead>
+        <tbody className="divide-y">
+          {rows.map((f) => (
+            <tr key={f.id} className="hover:bg-muted/30">
+              <td className="px-3 py-2">
+                <div className="font-medium">{f.filename}</div>
+                <div className="text-[10px] text-muted-foreground">
+                  status: {f.file_status}
+                </div>
+              </td>
+              <td className="px-3 py-2">
+                {f.candidate_profiles?.full_name ?? "—"}
+              </td>
+              <td className="px-3 py-2 text-xs text-muted-foreground">
+                {f.mime_type ?? "—"}
+              </td>
+              <td className="px-3 py-2 tabular-nums text-xs text-muted-foreground">
+                {f.size ? `${(Number(f.size) / 1024).toFixed(0)} KB` : "—"}
+              </td>
+              <td className="px-3 py-2 text-xs text-muted-foreground">
+                {new Date(f.created_at).toLocaleDateString()}
+              </td>
+            </tr>
+          ))}
+          {rows.length === 0 && (
+            <tr>
+              <td colSpan={5} className="px-3 py-8 text-center text-muted-foreground">
+                No documents uploaded by this client's candidates yet.
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+// ── Messages tab (pointer view; full thread lives in workspace) ──────────
+function MessagesTab({ orgId }: { orgId: string }) {
+  return (
+    <section className="space-y-3">
+      <div className="rounded-lg border bg-card p-6 text-sm">
+        <div className="flex items-start gap-3">
+          <MessagesSquare className="mt-0.5 h-5 w-5 text-muted-foreground" />
+          <div>
+            <h2 className="font-semibold">Messages</h2>
+            <p className="mt-1 text-muted-foreground">
+              Client conversations live inside the workspace so context, candidates, and
+              positions stay linked. Open the workspace to read or reply.
+            </p>
+            <Link
+              to="/client"
+              search={{ org: orgId, preview: "client_admin" }}
+              className="mt-3 inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+            >
+              Open messages in workspace <ExternalLink className="h-3.5 w-3.5" />
+            </Link>
+          </div>
+        </div>
+      </div>
     </section>
   );
 }
