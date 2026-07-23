@@ -182,7 +182,7 @@ function ClientDetail() {
       {tab === "overview" && <OverviewTab org={org} members={members} positions={positions} />}
       {tab === "company" && <CompanyTab org={org} />}
       {tab === "contacts" && <ContactsTab org={org} members={members} />}
-      {tab === "team" && <TeamTab members={members} />}
+      {tab === "team" && <TeamTab members={members} org={org} />}
       {tab === "positions" && <PositionsTab positions={positions} />}
       {tab === "candidates" && <CandidatesTab id={id} />}
       {tab === "messages" && <MessagesTab orgId={org.id} />}
