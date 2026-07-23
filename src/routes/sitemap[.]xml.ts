@@ -24,6 +24,7 @@ const STATIC_PATHS = [
   "/partnerships/staffing",
   "/privacy",
   "/terms",
+  "/sitemap",
   "/industries",
   "/blog",
   "/jobs",
