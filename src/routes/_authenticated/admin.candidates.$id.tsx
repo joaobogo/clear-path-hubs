@@ -222,7 +222,9 @@ function CandidateWorkspace() {
           busy={busy}
           onRun={run}
           onDone={invalidate}
+          onSetTab={setTab}
         />
+
       </div>
     </main>
   );
