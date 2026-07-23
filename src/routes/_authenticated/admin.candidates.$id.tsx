@@ -330,14 +330,20 @@ function ProfileTab({
   pos,
   m,
   siblings,
+  evidence,
 }: {
   cp: Any;
   pos: Any;
   m: Any;
   siblings: Any[];
+  evidence: Any;
 }) {
+  const insights = evidence?.extracted?.insights as Any | null;
   return (
-    <div className="grid gap-4 lg:grid-cols-2">
+    <div className="space-y-4">
+      {insights && <InsightsBriefing insights={insights} />}
+      <div className="grid gap-4 lg:grid-cols-2">
+
       <div className="rounded-lg border bg-card p-5">
         <h2 className="text-sm font-semibold">Candidate profile</h2>
         <dl className="mt-3 grid grid-cols-[9rem_1fr] gap-y-1.5 text-sm">
