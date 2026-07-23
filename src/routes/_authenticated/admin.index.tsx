@@ -224,6 +224,17 @@ function Overview() {
         </div>
       </header>
 
+      {/* ─── Triage summary: what matters in 10 seconds. ─── */}
+      <TriageStrip
+        blocked={L.processing_issues.length}
+        review={L.candidates_pending_review.length}
+        publish={L.candidates_ready_to_publish.length}
+        urgent={(L.urgent_interviews ?? []).length}
+        intake={(L.intake_inbox ?? []).length}
+        positions={L.positions_review.length}
+      />
+
+
       {/* Action Required — prioritized single panel. */}
       {topActions.length > 0 ? (
         <section className="rounded-xl border-2 border-primary/30 bg-primary/[0.03] shadow-sm">
