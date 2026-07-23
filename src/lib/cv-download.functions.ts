@@ -29,12 +29,16 @@ export const getCandidateCvDownload = createServerFn({ method: "POST" })
 
     const orgId = (match as any).positions?.organization_id as string | undefined;
 
-    // Authorization: admin/staff role OR org member.
-    const [{ data: isAdmin }, { data: isStaff }] = await Promise.all([
-      supabase.rpc("has_role", { _user_id: userId, _role: "platform_admin" as any }),
-      supabase.rpc("has_role", { _user_id: userId, _role: "platform_staff" as any }),
-    ]);
-    let authorized = Boolean(isAdmin) || Boolean(isStaff);
+    // Authorization: platform staff (platform_admin/operations) OR active org member.
+    const { data: staffRow } = await supabase
+      .from("memberships")
+      .select("id")
+      .eq("user_id", userId)
+      .eq("status", "active")
+      .in("role", ["platform_admin", "operations"])
+      .limit(1)
+      .maybeSingle();
+    let authorized = Boolean(staffRow);
     if (!authorized && orgId) {
       const { data: mem } = await supabase
         .from("memberships")
