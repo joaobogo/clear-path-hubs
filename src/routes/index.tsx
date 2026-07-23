@@ -1855,6 +1855,19 @@ function Home() {
         </PublicPage>
       </PublicSection>
 
+      {/* 6.5 — CLIENT WORKSPACE TOUR */}
+      <section className="border-y border-[color:var(--brand-navy)]/8 bg-[color:var(--brand-mist)]/30">
+        <PublicSection>
+          <PublicPage>
+            <SectionHead
+              eyebrow="Inside the workspace"
+              title="See how clients actually work with us."
+              lead="Every open role, ranked candidate, and decision in one place."
+            />
+            <WorkspaceTour />
+          </PublicPage>
+        </PublicSection>
+      </section>
 
       {/* 7 — TAASFLOW VS AGENCY MODEL */}
       <section className="border-y border-[color:var(--brand-navy)]/8 bg-white">
@@ -1869,6 +1882,19 @@ function Home() {
           </PublicPage>
         </PublicSection>
       </section>
+
+      {/* 7.5 — AUDIENCE PERSONALIZATION */}
+      <PublicSection>
+        <PublicPage>
+          <SectionHead
+            eyebrow="Built for your context"
+            title="Built around how you hire."
+            lead="Pick your role. See exactly what TaaSFlow does for you."
+          />
+          <AudienceSelector />
+        </PublicPage>
+      </PublicSection>
+
 
       {/* 8 — APPROVED PROOF (process credibility) */}
       <PublicSection>
