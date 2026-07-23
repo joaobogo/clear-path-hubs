@@ -812,7 +812,7 @@ export const setPositionStatus = createServerFn({ method: "POST" })
       try {
         const { emitEventFromServer } = await import("./notifications.functions");
         await emitEventFromServer({
-          event: eventMap[data.action],
+          event: eventMap[data.action] as EventType,
           scope: `${data.id}:${data.action}`,
           organization_id: before.organization_id,
           position_id: data.id,
