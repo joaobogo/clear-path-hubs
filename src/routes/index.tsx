@@ -55,6 +55,7 @@ import { HiddenCostOfWaiting } from "@/components/marketing/hidden-cost-of-waiti
 import { WhySwitchMatrix } from "@/components/marketing/why-switch-matrix";
 import { ProofSystem } from "@/components/marketing/proof-system";
 import { PageConnections } from "@/components/marketing/page-connections";
+import { FoundersStrip } from "@/components/marketing/founders-strip";
 
 // Homepage metadata is authored inline (guardrail: legacy JSON entry contains
 // unapproved "14 days" and totals claims). Do not pass the legacy entry here.
@@ -1641,6 +1642,13 @@ function Home() {
           </PublicPage>
         </PublicSection>
       </section>
+
+      {/* 11.5 — FOUNDERS STRIP */}
+      <PublicSection>
+        <PublicPage>
+          <FoundersStrip />
+        </PublicPage>
+      </PublicSection>
 
       {/* 12 — FAQ */}
       <PublicSection>
