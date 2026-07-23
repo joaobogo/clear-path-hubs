@@ -62,15 +62,17 @@ export function ClientOnboardingModal({
     mutationFn: async () => {
       // Persist preferences and mark onboarding complete.
       await Promise.all([
-        saveTz({ data: { timezone: tz } }).catch(() => null),
+        saveTz({ data: { orgId, timezone: tz } }).catch(() => null),
         saveNotifs({
           data: {
             orgId,
-            preferences: [
-              { event_type: "candidate_delivered", channel: "email", enabled: emailOptIn },
-              { event_type: "message_received", channel: "email", enabled: emailOptIn },
-              { event_type: "interview_scheduled", channel: "email", enabled: emailOptIn },
-            ],
+            candidate_delivered: emailOptIn,
+            interview_request: emailOptIn,
+            new_message: emailOptIn,
+            offer_update: emailOptIn,
+            hire_update: emailOptIn,
+            email_enabled: emailOptIn,
+            digest: "immediate",
           },
         }).catch(() => null),
         dismiss(),
