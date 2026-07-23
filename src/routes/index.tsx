@@ -49,6 +49,8 @@ import { ModelComparison } from "@/components/marketing/model-comparison";
 import { OperatingSystem } from "@/components/marketing/operating-system";
 import { WorkspaceTour } from "@/components/marketing/workspace-tour";
 import { AudienceSelector } from "@/components/marketing/audience-selector";
+import { TrustStrip } from "@/components/marketing/trust-strip";
+import { WhySwitchMatrix } from "@/components/marketing/why-switch-matrix";
 
 // Homepage metadata is authored inline (guardrail: legacy JSON entry contains
 // unapproved "14 days" and totals claims). Do not pass the legacy entry here.
@@ -1372,6 +1374,9 @@ function Home() {
         </PublicPage>
       </section>
 
+      {/* 1b — TRUST STRIP */}
+      <TrustStrip />
+
       {/* 2 — WHAT YOU GET EVERY WEEK */}
       <PublicSection>
         <PublicPage>
@@ -1393,6 +1398,9 @@ function Home() {
           </div>
         </PublicPage>
       </PublicSection>
+
+      {/* 2b — WHY TEAMS SWITCH — decision matrix */}
+      <WhySwitchMatrix />
 
       {/* 3 — WHO TAASFLOW SERVES (Audience lanes) */}
       <section
