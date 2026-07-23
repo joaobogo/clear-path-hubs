@@ -1,0 +1,109 @@
+{
+  "phase": "authenticated-workspace-brand-audit",
+  "code_changes": 0,
+  "sources": {
+    "public_brand_reference": "https://www.taasflow.com",
+    "destination": "https://clear-path-hubs.lovable.app"
+  },
+  "scope": {
+    "routes_inspected": {
+      "admin": [
+        "admin.tsx", "admin.index.tsx",
+        "admin.clients.tsx", "admin.clients.index.tsx", "admin.clients.$id.tsx", "admin.clients_new.tsx",
+        "admin.positions.tsx", "admin.positions.index.tsx", "admin.positions.$id.tsx", "admin.positions.$id.edit.tsx",
+        "admin.candidates.tsx", "admin.candidates.index.tsx", "admin.candidates.$id.tsx",
+        "admin.publish.tsx", "admin.operations.tsx",
+        "admin.intake.tsx", "admin.intake.index.tsx", "admin.intake.$id.tsx",
+        "admin.messages.tsx", "admin.notifications.tsx",
+        "admin.team.tsx", "admin.settings.tsx", "admin.health.tsx"
+      ],
+      "client": [
+        "client.tsx", "client.index.tsx",
+        "client.positions.tsx", "client.positions.index.tsx", "client.positions.$id.tsx", "client.positions.$id.edit.tsx",
+        "client.candidates.tsx", "client.candidates.index.tsx", "client.candidates.$id.tsx",
+        "client.interviews.tsx", "client.messages.tsx",
+        "client.team.tsx", "client.settings.tsx"
+      ],
+      "candidate": [
+        "me.tsx", "me.index.tsx",
+        "me.applications.tsx", "me.applications.index.tsx", "me.applications.$id.tsx",
+        "me.profile.tsx", "me.cv.tsx", "me.messages.tsx", "me.settings.tsx"
+      ]
+    },
+    "shared_components_inspected": [
+      "components/workspace/workspace-shell.tsx",
+      "components/workspace/org-switcher.tsx",
+      "components/workspace/global-search-dialog.tsx",
+      "components/brand/BrandLogo.tsx",
+      "components/brand/BrandMark.tsx",
+      "components/ds/page-header.tsx",
+      "components/ds/section.tsx",
+      "components/ds/dashboard-card.tsx",
+      "components/ds/kpi-card.tsx",
+      "components/ds/status-badge.tsx",
+      "components/ds/empty-state.tsx",
+      "components/ds/error-state.tsx",
+      "components/ds/loading-skeleton.tsx",
+      "components/notification-bell.tsx",
+      "components/sign-out-button.tsx",
+      "components/candidate-detail-drawer.tsx",
+      "components/action-guard.tsx"
+    ],
+    "token_surfaces_inspected": [
+      "src/styles.css",
+      "src/styles/brand-tokens.css"
+    ]
+  },
+  "findings": [
+    { "id": "logo",              "pattern": "Logo treatment",           "status": "ALIGNED",                 "impact": "low"    },
+    { "id": "primary-blue",      "pattern": "Brand blue (--primary)",    "status": "GENERIC_SAAS",            "impact": "high",  "note": "Dashboard --primary is shadcn-default oklch(0.208 0.042 265.755); public brand is --brand-ocean oklch(0.60 0.19 258). Flagship gap." },
+    { "id": "accent",            "pattern": "Accent colour",            "status": "FUNCTIONAL_BUT_UNBRANDED", "impact": "medium" },
+    { "id": "background-light",  "pattern": "Background (light)",       "status": "ALIGNED",                 "impact": "low"    },
+    { "id": "background-dark",   "pattern": "Background (dark)",        "status": "REVIEW_REQUIRED",         "impact": "low",   "note": "No dark public reference yet." },
+    { "id": "typography-family", "pattern": "Typography family",        "status": "ALIGNED",                 "impact": "low"    },
+    { "id": "heading-hierarchy", "pattern": "Heading hierarchy",        "status": "INCONSISTENT",            "impact": "medium", "note": "Ad-hoc h1 on admin.candidates.$id, client.positions.$id, me.profile." },
+    { "id": "card-styling",      "pattern": "Card styling",             "status": "FUNCTIONAL_BUT_UNBRANDED", "impact": "medium" },
+    { "id": "borders",           "pattern": "Border treatment",         "status": "FUNCTIONAL_BUT_UNBRANDED", "impact": "low"    },
+    { "id": "shadows",           "pattern": "Shadows",                  "status": "GENERIC_SAAS",            "impact": "medium" },
+    { "id": "buttons-default",   "pattern": "Buttons (default variant)","status": "GENERIC_SAAS",            "impact": "high"   },
+    { "id": "buttons-destructive","pattern": "Buttons (destructive)",   "status": "MUST_PRESERVE",           "impact": "n/a",   "note": "Semantic red for reject/delete flows." },
+    { "id": "badges-status",     "pattern": "Badges via StatusBadge",   "status": "ALIGNED",                 "impact": "low"    },
+    { "id": "badges-adhoc",      "pattern": "Ad-hoc filter chips",      "status": "INCONSISTENT",            "impact": "low",   "note": "text-blue-600/bg-amber-50 islands on admin.candidates.index, client.candidates.index." },
+    { "id": "status-colors",     "pattern": "Status colour tokens",     "status": "ALIGNED",                 "impact": "low"    },
+    { "id": "icons",             "pattern": "Icons (lucide)",           "status": "ALIGNED",                 "impact": "low"    },
+    { "id": "charts",            "pattern": "Charts --chart-1..5",      "status": "GENERIC_SAAS",            "impact": "medium", "note": "Shadcn defaults; retune to blue-family ramp." },
+    { "id": "charts-a11y",       "pattern": "Chart adjacent contrast",  "status": "ACCESSIBILITY_RISK",      "impact": "medium", "note": "chart-4 vs chart-5 (yellow-family) below AA for adjacent categorical series." },
+    { "id": "scores-page",       "pattern": "Score displays (pages)",   "status": "INCONSISTENT",            "impact": "medium", "note": "bg-primary bar will auto-align after token retune." },
+    { "id": "scores-drawer",     "pattern": "Score chips (drawer)",     "status": "INCONSISTENT",            "impact": "medium", "note": "candidate-detail-drawer.tsx hard-codes text-emerald/amber/rose." },
+    { "id": "empty-states",      "pattern": "Empty states",             "status": "FUNCTIONAL_BUT_UNBRANDED", "impact": "low"    },
+    { "id": "loading-states",    "pattern": "Loading skeletons",        "status": "ALIGNED",                 "impact": "low"    },
+    { "id": "nav-sidebar",       "pattern": "Sidebar navigation",       "status": "FUNCTIONAL_BUT_UNBRANDED", "impact": "high",  "note": "Active-nav pill inherits --accent (neutral grey)." },
+    { "id": "mobile-shell",      "pattern": "Mobile shell / drawer",    "status": "ALIGNED",                 "impact": "low"    },
+    { "id": "mobile-density",    "pattern": "Mobile filter density",    "status": "REVIEW_REQUIRED",         "impact": "low"    },
+    { "id": "focus-ring",        "pattern": "Focus ring --ring",        "status": "GENERIC_SAAS",            "impact": "medium", "note": "--brand-focus-ring exists but is not wired to shadcn --ring." },
+    { "id": "sidebar-tokens",    "pattern": "Sidebar tokens",           "status": "FUNCTIONAL_BUT_UNBRANDED", "impact": "high",  "note": "Wired to shell already; single token edit rebrands all three workspaces." },
+    { "id": "messages-bubble",   "pattern": "Message bubble bg-primary","status": "REVIEW_REQUIRED",         "impact": "low",   "note": "Auto-aligns after token retune; recheck timestamp contrast." },
+    { "id": "notification-dot",  "pattern": "Notification unread dot",  "status": "GENERIC_SAAS",            "impact": "low",   "note": "bg-destructive should be brand ocean." }
+  ],
+  "counters": {
+    "aligned": 6,
+    "functional_but_unbranded": 7,
+    "inconsistent": 3,
+    "generic_saas": 6,
+    "accessibility_risk": 1,
+    "review_required": 3,
+    "must_preserve": 1
+  },
+  "safest_branding_sequence": [
+    { "step": 1, "action": "Retune shadcn tokens in src/styles.css toward brand-ocean / brand-navy / brand-sky; retune --chart-1..5 to blue-family ramp.", "files": ["src/styles.css"], "risk": "low", "impact": "high" },
+    { "step": 2, "action": "Wire --brand-focus-ring into shadcn --ring.", "files": ["src/styles.css"], "risk": "low", "impact": "medium" },
+    { "step": 3, "action": "Retune DS card shadows to --brand-shadow-sm/md.", "files": ["components/ds/dashboard-card.tsx", "components/ds/kpi-card.tsx", "components/ds/page-header.tsx"], "risk": "low", "impact": "medium" },
+    { "step": 4, "action": "Replace hard-coded emerald/amber/rose score chips in candidate-detail-drawer with StatusBadge.", "files": ["components/candidate-detail-drawer.tsx"], "risk": "low", "impact": "medium" },
+    { "step": 5, "action": "Replace ad-hoc filter chips on candidates index pages with StatusBadge.", "files": ["src/routes/_authenticated/admin.candidates.index.tsx", "src/routes/_authenticated/client.candidates.index.tsx"], "risk": "low", "impact": "low" },
+    { "step": 6, "action": "Restyle EmptyState with Sky-tinted background and brand-blue CTA.", "files": ["components/ds/empty-state.tsx"], "risk": "low", "impact": "low" },
+    { "step": 7, "action": "Change notification-bell unread dot from bg-destructive to bg-primary.", "files": ["components/notification-bell.tsx"], "risk": "low", "impact": "low" },
+    { "step": 8, "action": "Consolidate ad-hoc h1 blocks to use PageHeader.", "files": ["src/routes/_authenticated/admin.candidates.$id.tsx", "src/routes/_authenticated/client.positions.$id.tsx", "src/routes/_authenticated/me.profile.tsx"], "risk": "low", "impact": "low" },
+    { "step": 9, "action": "Visual verification pass on charts (admin.health, admin.operations).", "files": [], "risk": "none", "impact": "medium" }
+  ],
+  "verdict": "PASS"
+}
