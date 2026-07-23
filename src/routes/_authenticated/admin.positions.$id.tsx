@@ -345,7 +345,7 @@ function LifecycleBar({ position, onDone }: { position: Any; onDone: () => Promi
         <Button
           size="sm"
           variant={primary.variant}
-          disabled={busy || primary.key === "submit"}
+          disabled={busy}
           onClick={primary.onClick}
           data-qa-action={`position-${primary.key}`}
         >
