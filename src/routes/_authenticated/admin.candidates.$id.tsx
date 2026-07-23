@@ -399,9 +399,95 @@ function ProfileTab({
           </div>
         )}
       </div>
+      </div>
     </div>
   );
 }
+
+function InsightsBriefing({ insights }: { insights: Any }) {
+  const rec = String(insights?.overall_recommendation ?? "consider");
+  const recTone =
+    rec === "advance" ? "bg-emerald-500/15 text-emerald-800 dark:text-emerald-200"
+    : rec === "reject" ? "bg-destructive/15 text-destructive"
+    : "bg-amber-500/15 text-amber-800 dark:text-amber-200";
+  const highlights: string[] = Array.isArray(insights?.highlights) ? insights.highlights : [];
+  const strengths: Any[] = Array.isArray(insights?.strengths) ? insights.strengths : [];
+  const concerns: Any[] = Array.isArray(insights?.concerns) ? insights.concerns : [];
+  return (
+    <div className="rounded-lg border bg-gradient-to-br from-primary/5 to-transparent p-5">
+      <div className="flex flex-wrap items-center gap-2">
+        <h2 className="text-sm font-semibold">Candidate briefing</h2>
+        <Badge variant="secondary" className="capitalize">
+          {String(insights?.seniority ?? "unknown")}
+        </Badge>
+        <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium capitalize ${recTone}`}>
+          {rec}
+        </span>
+        {typeof insights?.confidence === "number" && (
+          <span className="text-xs text-muted-foreground">
+            confidence {Math.round(insights.confidence * 100)}%
+          </span>
+        )}
+      </div>
+      {insights?.headline_suggested && (
+        <p className="mt-2 text-sm font-medium text-foreground">{insights.headline_suggested}</p>
+      )}
+      {insights?.narrative && (
+        <div className="mt-3 whitespace-pre-wrap text-sm leading-relaxed text-foreground/90">
+          {insights.narrative}
+        </div>
+      )}
+      {highlights.length > 0 && (
+        <>
+          <h3 className="mt-4 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            Highlights
+          </h3>
+          <ul className="mt-1 list-disc space-y-0.5 pl-5 text-sm">
+            {highlights.map((h, i) => <li key={i}>{h}</li>)}
+          </ul>
+        </>
+      )}
+      {(strengths.length > 0 || concerns.length > 0) && (
+        <div className="mt-4 grid gap-3 md:grid-cols-2">
+          <div className="rounded-md border bg-background/60 p-3">
+            <h4 className="text-xs font-semibold uppercase text-emerald-700 dark:text-emerald-300">
+              Why they fit
+            </h4>
+            <ul className="mt-2 space-y-2 text-sm">
+              {strengths.length === 0 && <li className="text-muted-foreground">None surfaced.</li>}
+              {strengths.map((s, i) => (
+                <li key={i}>
+                  <div className="font-medium">{s.title}</div>
+                  {s.detail && <div className="text-xs text-muted-foreground">{s.detail}</div>}
+                  {s.cv_quote && (
+                    <div className="mt-1 border-l-2 border-emerald-500/40 pl-2 text-xs italic text-muted-foreground">
+                      "{s.cv_quote}"
+                    </div>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="rounded-md border bg-background/60 p-3">
+            <h4 className="text-xs font-semibold uppercase text-destructive">
+              Where they may fall short
+            </h4>
+            <ul className="mt-2 space-y-2 text-sm">
+              {concerns.length === 0 && <li className="text-muted-foreground">None flagged.</li>}
+              {concerns.map((c, i) => (
+                <li key={i}>
+                  <div className="font-medium">{c.title}</div>
+                  {c.detail && <div className="text-xs text-muted-foreground">{c.detail}</div>}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 
 function safeNode(v: unknown): React.ReactNode {
   if (v == null || v === "") return null;
