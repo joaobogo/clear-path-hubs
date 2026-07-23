@@ -1486,7 +1486,7 @@ function Home() {
 
 
       {/* 3.25 — ROI CALCULATOR (reusable, canonical config) */}
-      <PublicSection>
+      <PublicSection id="roi-calculator">
         <PublicPage>
           <RoiCalculator
             variant="homepage"
