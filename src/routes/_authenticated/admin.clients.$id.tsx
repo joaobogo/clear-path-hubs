@@ -642,23 +642,42 @@ function SettingsTab({ org }: { org: any }) {
           )}
         </dl>
       </div>
-      <div className="rounded-lg border border-destructive/30 bg-destructive/5 p-4 text-sm">
-        <div className="font-medium text-destructive">Archive client</div>
-        <p className="mt-1 text-muted-foreground">
-          Archiving hides the organization from active client lists and sets its
-          dashboard to inactive. Data is retained for audit and can be restored by
-          the platform team. Type the exact company name to confirm.
-        </p>
-        <Button
-          variant="outline"
-          className="mt-3"
-          disabled={alreadyArchived}
-          onClick={() => setOpen(true)}
-          data-qa-action="open-archive-dialog"
-        >
-          {alreadyArchived ? "Already archived" : "Archive client…"}
-        </Button>
-      </div>
+      {alreadyArchived ? (
+        <div className="rounded-lg border border-amber-500/40 bg-amber-500/5 p-4 text-sm">
+          <div className="font-medium text-amber-700 dark:text-amber-400">Restore client</div>
+          <p className="mt-1 text-muted-foreground">
+            This client is archived. Restoring returns it to active client lists,
+            reactivates any suspended memberships, and re-enables the workspace.
+            The action is audited.
+          </p>
+          <Button
+            variant="outline"
+            className="mt-3"
+            disabled={restore.isPending}
+            onClick={() => restore.mutate()}
+            data-qa-action="restore-client"
+          >
+            {restore.isPending ? "Restoring…" : "Restore client"}
+          </Button>
+        </div>
+      ) : (
+        <div className="rounded-lg border border-destructive/30 bg-destructive/5 p-4 text-sm">
+          <div className="font-medium text-destructive">Archive client</div>
+          <p className="mt-1 text-muted-foreground">
+            Archiving hides the organization from active client lists and sets its
+            dashboard to inactive. Data is retained for audit and can be restored by
+            the platform team. Type the exact company name to confirm.
+          </p>
+          <Button
+            variant="outline"
+            className="mt-3"
+            onClick={() => setOpen(true)}
+            data-qa-action="open-archive-dialog"
+          >
+            Archive client…
+          </Button>
+        </div>
+      )}
 
       <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) setConfirm(""); }}>
         <DialogContent>
