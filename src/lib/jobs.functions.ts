@@ -45,6 +45,21 @@ export type PublicPositionSummary = {
 // Completeness: description must be at least 40 chars, requirements array non-empty.
 const MIN_DESC = 40;
 
+function toReqStrings(input: unknown): string[] {
+  if (!Array.isArray(input)) return [];
+  return input
+    .map((r) => {
+      if (typeof r === "string") return r;
+      if (r && typeof r === "object") {
+        const o = r as { label?: unknown; text?: unknown; name?: unknown };
+        const v = o.label ?? o.text ?? o.name;
+        return typeof v === "string" ? v : null;
+      }
+      return null;
+    })
+    .filter((v): v is string => !!v && v.trim().length > 0);
+}
+
 export const listPublicPositions = createServerFn({ method: "GET" }).handler(
   async (): Promise<PublicPositionSummary[]> => {
     const supabase = publicClient();
@@ -106,7 +121,7 @@ export const getPublicPosition = createServerFn({ method: "GET" })
     if (!pos) return null;
 
     const desc = (pos.description ?? "").trim();
-    const reqs = Array.isArray(pos.requirements) ? (pos.requirements as string[]) : [];
+    const reqs = toReqStrings(pos.requirements);
     if (desc.length < MIN_DESC || reqs.length === 0) return null;
 
     const { data: questions, error: qErr } = await supabase
@@ -128,9 +143,7 @@ export const getPublicPosition = createServerFn({ method: "GET" })
       seniority: pos.seniority,
       description: desc,
       requirements: reqs,
-      preferred_requirements: Array.isArray(pos.preferred_requirements)
-        ? (pos.preferred_requirements as string[])
-        : [],
+      preferred_requirements: toReqStrings(pos.preferred_requirements),
       compensation_display: comp.approved && comp.display ? comp.display : null,
       published_at: pos.published_at,
       openings: (pos as { openings?: number }).openings ?? 1,
