@@ -1,17 +1,18 @@
 import { Link } from "@tanstack/react-router";
 import { Check, ChevronDown } from "lucide-react";
 import { useState } from "react";
-import { formatMonthly, type PricingTier } from "@/content/pricing";
+import { formatPrice, type PricingTier } from "@/content/pricing";
 
 /**
- * Pricing tier card with progressive disclosure.
- * Shows price + best-fit + top 3 included items above the fold.
- * "See what's included" expands the full list.
+ * Pricing tier card — one-off package model.
+ * Progressive disclosure: shows price, roles, turnaround, and top 3 items;
+ * "See all capabilities" expands the rest.
  */
 export function PricingTierCard({ tier }: { tier: PricingTier }) {
   const [open, setOpen] = useState(false);
   const topItems = tier.included.slice(0, 3);
   const restItems = tier.included.slice(3);
+  const isCustom = tier.oneTime === null;
 
   return (
     <div
@@ -33,28 +34,22 @@ export function PricingTierCard({ tier }: { tier: PricingTier }) {
         </div>
         {tier.highlight ? (
           <span className="rounded-full bg-[color:var(--brand-navy)] px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-white">
-            Most common
+            Most Popular
           </span>
         ) : null}
       </div>
 
       <div className="mt-5 flex items-baseline gap-1.5">
         <span className="font-[family-name:var(--brand-font-display)] text-4xl font-semibold tracking-tight text-[color:var(--brand-navy)]">
-          {formatMonthly(tier)}
+          {formatPrice(tier)}
         </span>
-        {tier.monthly !== null ? (
-          <span className="text-sm text-[color:var(--brand-navy)]/60">/ month</span>
-        ) : null}
       </div>
-      {tier.monthly !== null ? (
-        <p className="mt-1 text-xs text-[color:var(--brand-navy)]/55">
-          Indicative — exact price confirmed on scoped quote
-        </p>
-      ) : (
-        <p className="mt-1 text-xs text-[color:var(--brand-navy)]/55">
-          Scoped to your programme
-        </p>
-      )}
+      <p className="mt-1 text-xs text-[color:var(--brand-navy)]/60">
+        {isCustom ? "Scoped to your programme" : "one-time flat fee"}
+      </p>
+      {tier.pricePer ? (
+        <p className="mt-0.5 text-xs text-[color:var(--brand-navy)]/55">{tier.pricePer}</p>
+      ) : null}
 
       <p className="mt-5 text-sm text-[color:var(--brand-navy)]/75">{tier.bestFor}</p>
 
@@ -62,13 +57,13 @@ export function PricingTierCard({ tier }: { tier: PricingTier }) {
         <div>
           <dt className="text-[color:var(--brand-navy)]/55">Active roles</dt>
           <dd className="mt-0.5 font-semibold text-[color:var(--brand-navy)]">
-            {tier.rolesIncluded === "custom" ? "Custom" : tier.rolesIncluded}
+            {tier.rolesIncluded}
           </dd>
         </div>
         <div>
-          <dt className="text-[color:var(--brand-navy)]/55">Delivery</dt>
+          <dt className="text-[color:var(--brand-navy)]/55">Turnaround</dt>
           <dd className="mt-0.5 font-semibold text-[color:var(--brand-navy)]">
-            {tier.weeklyDelivery}
+            {tier.turnaround}
           </dd>
         </div>
       </dl>
