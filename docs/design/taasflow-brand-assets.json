@@ -1,0 +1,74 @@
+{
+  "version": "phase-3",
+  "generated_at": "2026-07-23",
+  "assets": [
+    {
+      "id": "logo-full-light",
+      "role": "Full wordmark on light background",
+      "source_path": "src/assets/brand/logo-on-white.png",
+      "destination_path": "src/assets/brand/logo-on-white.png",
+      "type": "image/png",
+      "background": "light",
+      "used_by": ["site-shell header", "form-shell auth screens", "workspace sidebar expanded"],
+      "decision": "MIGRATE_EXACTLY",
+      "optimization": "none-required",
+      "accessibility": "Rendered via BrandLogo; alt defaults to 'TaaSFlow' unless decorative."
+    },
+    {
+      "id": "logo-full-dark",
+      "role": "Full wordmark on dark/navy background",
+      "source_path": "src/assets/brand/logo-on-blue.png",
+      "destination_path": "src/assets/brand/logo-on-blue.png",
+      "type": "image/png",
+      "background": "dark",
+      "used_by": ["dark CTA sections", "footer over navy"],
+      "decision": "MIGRATE_EXACTLY",
+      "optimization": "none-required",
+      "accessibility": "Rendered via BrandLogo with background='dark'."
+    },
+    {
+      "id": "icon-mark",
+      "role": "Icon-only mark",
+      "source_path": "src/assets/brand/icon-white.png",
+      "destination_path": "src/assets/brand/icon-white.png",
+      "type": "image/png",
+      "background": "any",
+      "used_by": ["collapsed workspace sidebar", "mobile header", "email header"],
+      "decision": "MIGRATE_EXACTLY",
+      "optimization": "none-required",
+      "accessibility": "Rendered via BrandMark; decorative by default."
+    },
+    {
+      "id": "favicon-png",
+      "role": "Primary favicon",
+      "destination_path": "public/favicon.png",
+      "type": "image/png",
+      "decision": "MIGRATE_EXACTLY",
+      "wired_in": "src/routes/__root.tsx head.links"
+    },
+    {
+      "id": "favicon-ico",
+      "role": "Legacy favicon fallback",
+      "destination_path": "public/favicon.ico",
+      "type": "image/x-icon",
+      "decision": "MIGRATE_EXACTLY"
+    },
+    {
+      "id": "og-image",
+      "role": "Open Graph / Twitter share image",
+      "destination_path": "public/og-image.png",
+      "type": "image/png",
+      "decision": "MIGRATE_EXACTLY",
+      "wired_in": "src/routes/__root.tsx head.meta og:image, twitter:image"
+    }
+  ],
+  "excluded": [
+    { "reason": "EXCLUDE_INTERNAL", "pattern": "candidate CVs, client uploads, QA screenshots, internal reports" },
+    { "reason": "EXCLUDE_INTERNAL", "pattern": "Supabase Storage private files" },
+    { "reason": "EXCLUDE_INTERNAL", "pattern": "expired signed URLs" }
+  ],
+  "unresolved": [
+    { "id": "apple-touch-icon-180", "note": "180x180 PNG not yet added; ledger requires it. Falls back to favicon.png." },
+    { "id": "web-manifest", "note": "site.webmanifest not created in Phase 3; defer to Phase 4 SEO/manifest pass." }
+  ]
+}

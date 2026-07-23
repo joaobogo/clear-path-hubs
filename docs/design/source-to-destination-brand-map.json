@@ -1,0 +1,49 @@
+{
+  "version": "phase-3",
+  "source_repository": "https://github.com/joaobogo/sourcing-suite-ai.git",
+  "source_website":    "https://sourcing-suite-ai.lovable.app",
+  "source_sha":        "UNRESOLVED — source repository not public via unauthenticated fetch. Fallback: live site + prior migration ledger.",
+  "destination_repository": "clear-path-hubs",
+  "destination_sha_starting": "799b8097eb52124f34fe3e229d5f0135db8226de",
+  "backend_project_ref":   "nfwetiyrxsrejdodvale",
+  "mapping": {
+    "colors": {
+      "hsl(222 47% 20%) navy":     "oklch(0.29 0.055 262) → --brand-navy",
+      "hsl(221 83% 53%) blue":     "oklch(0.60 0.19 258) → --brand-ocean",
+      "hsl(214 32% 91%) sky":      "oklch(0.92 0.017 245) → --brand-sky",
+      "hsl(0 0% 100%) paper":      "oklch(0.985 0.003 245) → --brand-paper",
+      "success green":             "→ --brand-success",
+      "warning amber":             "→ --brand-warning",
+      "destructive red":           "→ --brand-danger",
+      "info blue":                 "→ --brand-info (aliased to ocean)"
+    },
+    "typography": {
+      "Inter (sans)":     "--brand-font-sans (Google Fonts <link>)",
+      "Fraunces (display)":"--brand-font-display (Google Fonts <link>)"
+    },
+    "assets": {
+      "source /logo-on-white.png": "src/assets/brand/logo-on-white.png",
+      "source /logo-on-blue.png":  "src/assets/brand/logo-on-blue.png",
+      "source /icon-white.png":    "src/assets/brand/icon-white.png",
+      "source /favicon.png":       "public/favicon.png",
+      "source /favicon.ico":       "public/favicon.ico",
+      "source /og-image.png":      "public/og-image.png"
+    },
+    "components": {
+      "source Logo.tsx":           "src/components/brand/BrandLogo.tsx (new, canonical)",
+      "source LogoIcon.tsx":       "src/components/brand/BrandMark.tsx (new, canonical)",
+      "source public Header":      "src/components/marketing/site-shell.tsx (preserved implementation)",
+      "source public Footer":      "src/components/marketing/site-shell.tsx (preserved implementation)",
+      "source auth shell":         "src/components/marketing/form-shell.tsx"
+    }
+  },
+  "excluded_from_source": [
+    "old Supabase clients, migrations, edge functions",
+    "old dashboard layouts / sidebars / pages",
+    "old intake, application, scoring, publication logic",
+    "old auth hooks, membership logic, realtime bridges",
+    "environment variables and secrets"
+  ],
+  "legacy_operational_imports_detected": 0,
+  "legacy_operational_imports_added":    0
+}

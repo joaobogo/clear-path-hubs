@@ -1,0 +1,45 @@
+{
+  "version": "phase-3",
+  "source_of_truth": "src/styles/brand-tokens.css + src/config/brand.ts",
+  "spacing_scale_px": [4, 8, 12, 16, 20, 24, 32, 40, 48, 64, 80, 96],
+  "section_padding_y_px": { "sm": 48, "md": 72, "lg": 96, "xl": 128 },
+  "layout_widths_px": {
+    "public":    1200,
+    "workspace": 1440,
+    "prose":      720
+  },
+  "workspace": {
+    "sidebar_expanded_px":  260,
+    "sidebar_collapsed_px":  72,
+    "topbar_height_px":      64,
+    "mobile_header_px":      56,
+    "drawer_width_px":      480,
+    "modal_width_px":       560,
+    "page_padding_px":       24,
+    "card_padding_px":       20,
+    "table_row_padding_y_px":12
+  },
+  "radius_px": {
+    "xs":   4,
+    "sm":   6,
+    "md":   8,
+    "lg":  12,
+    "xl":  16,
+    "2xl": 24,
+    "pill":999
+  },
+  "shadow": {
+    "xs":   "subtle elevation — inputs, chips",
+    "sm":   "cards on paper",
+    "md":   "raised cards, popovers",
+    "lg":   "dropdowns, sticky headers",
+    "xl":   "drawers, modals",
+    "glow": "focus/selection accent"
+  },
+  "rules": [
+    "Avoid ad-hoc spacing values; pick from scale.",
+    "Card radius must be consistent within a surface (md on workspace, lg on marketing).",
+    "Never nest shadow-xl inside shadow-xl surfaces.",
+    "Mobile page padding uses 16px; desktop uses 24-32px."
+  ]
+}
