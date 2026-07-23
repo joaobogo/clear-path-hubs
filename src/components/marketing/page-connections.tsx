@@ -80,10 +80,8 @@ export function PageConnections({
             return (
               <li key={kind}>
                 <Link
-                  // @ts-expect-error dynamic to-string is authored per page
-                  to={link.to}
-                  // @ts-expect-error params passthrough per page
-                  params={link.params}
+                  to={link.to as never}
+                  params={link.params as never}
                   className="group block h-full rounded-xl border border-[color:var(--brand-navy)]/10 bg-white p-5 transition hover:border-[color:var(--brand-navy)]/30 hover:shadow-sm"
                 >
                   <div className="flex items-center gap-2 text-[color:var(--brand-navy)]/60">
