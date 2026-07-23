@@ -883,68 +883,73 @@ function ActionArea({
  onAct: (k: ActionKey) => void;
  stage: MatchStage;
 }) {
- return (
- <div className="rounded-xl border bg-card p-4">
- <h2 className="mb-2 text-sm font-semibold">Next step</h2>
- {stage === "hired" ? (
- <p className="text-sm text-muted-foreground">Candidate marked as hired.</p>
- ) : (
- <p className="mb-3 text-xs text-muted-foreground">
- Current stage:{" "}
- <span className="font-medium capitalize text-foreground">
- {stage.replace(/_/g, " ")}
- </span>
- </p>
- )}
- <div className="flex items-center gap-2">
- {actions.primary && (
- <Button
- className="flex-1"
- disabled={readOnly || pending}
- onClick={() => onAct(actions.primary!.key)}
- >
- {actions.primary.label}
- </Button>
- )}
- {actions.more.length > 0 && (
- <DropdownMenu>
- <DropdownMenuTrigger asChild>
- <Button variant="outline" size="icon" aria-label="More actions" disabled={readOnly}>
- <MoreHorizontal className="h-4 w-4" aria-hidden />
- </Button>
- </DropdownMenuTrigger>
- <DropdownMenuContent align="end" className="w-56">
- {actions.more.map((a, i) => (
- <div key={a.key}>
- {i > 0 && a.key === "not_moving_forward" && <DropdownMenuSeparator />}
- <DropdownMenuItem
- onSelect={() => onAct(a.key)}
- disabled={pending}
- className={cn(
- a.key === "not_moving_forward" && "text-destructive focus:text-destructive",
- )}
- >
- {a.label}
- </DropdownMenuItem>
- </div>
- ))}
- </DropdownMenuContent>
- </DropdownMenu>
- )}
- </div>
- {readOnly && (
- <p className="mt-3 text-xs text-muted-foreground">
- Actions unavailable in read-only preview.
- </p>
- )}
- <Link
- to="/client/messages"
- className="mt-3 block text-center text-sm text-primary hover:underline"
- >
- Message TaaSFlow →
- </Link>
- </div>
- );
+  return (
+    <div className="rounded-xl border bg-card p-4 shadow-sm ring-1 ring-primary/5">
+      <div className="mb-3 flex items-center justify-between gap-2">
+        <h2 className="text-sm font-semibold uppercase tracking-[0.08em] text-foreground/90">Stage actions</h2>
+        <Badge variant="outline" className="capitalize tabular-nums">
+          {stage.replace(/_/g, " ")}
+        </Badge>
+      </div>
+      {stage === "hired" ? (
+        <p className="text-sm text-muted-foreground">Candidate marked as hired. 🎉</p>
+      ) : (
+        <p className="mb-3 text-xs text-muted-foreground">
+          Recommend the next move for this candidate. Every decision is logged.
+        </p>
+      )}
+      <div className="flex items-center gap-2">
+        {actions.primary && (
+          <Button
+            className="flex-1 min-h-11"
+            disabled={readOnly || pending}
+            onClick={() => onAct(actions.primary!.key)}
+          >
+            {actions.primary.label}
+          </Button>
+        )}
+        {actions.more.length > 0 && (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="icon" aria-label="More actions" disabled={readOnly} className="min-h-11 min-w-11">
+                <MoreHorizontal className="h-4 w-4" aria-hidden />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56">
+              {actions.more.map((a, i) => (
+                <div key={a.key}>
+                  {i > 0 && a.key === "not_moving_forward" && <DropdownMenuSeparator />}
+                  <DropdownMenuItem
+                    onSelect={() => onAct(a.key)}
+                    disabled={pending}
+                    className={cn(
+                      a.key === "not_moving_forward" && "text-destructive focus:text-destructive",
+                    )}
+                  >
+                    {a.label}
+                  </DropdownMenuItem>
+                </div>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
+      </div>
+      {readOnly && (
+        <p className="mt-3 text-xs text-muted-foreground">
+          Actions unavailable in read-only preview.
+        </p>
+      )}
+      <div className="mt-3 border-t pt-3">
+        <Link
+          to="/client/messages"
+          className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
+        >
+          <MessageSquare className="h-3.5 w-3.5" />
+          Message TaaSFlow
+        </Link>
+      </div>
+    </div>
+  );
 }
 
 function ProfilePanel({
