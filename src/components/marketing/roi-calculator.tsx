@@ -40,8 +40,15 @@ export interface RoiCalculatorProps {
   supportingCopy?: string;
   /** When false, hide the pair of CTAs beneath the results. */
   showCtas?: boolean;
+  /**
+   * Fires whenever the computed result changes. Downstream consumers use this
+   * to adapt CTA copy without duplicating pricing math (single source of truth
+   * = src/lib/roi-calculator.ts).
+   */
+  onResultChange?: (result: import("@/lib/roi-calculator").CalculatorResult) => void;
   className?: string;
 }
+
 
 const DEFAULT_EYEBROW = "Recruiting Cost Calculator";
 const DEFAULT_HEADING = "Cut your cost-per-hire. See the math.";
