@@ -441,6 +441,53 @@ export const confirmInterviewTime = createServerFn({ method: "POST" })
       after: { status: "scheduled", scheduled_at: scheduledAt.toISOString() },
       trace_id: trace,
     });
+    // Emit interview_scheduled so client/admin/candidate dashboards refresh.
+    try {
+      const { emitEventFromServer } = await import("./notifications.functions");
+      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+      const { data: match } = await supabaseAdmin
+        .from("candidate_matches")
+        .select("id, application_id, position_id, candidate_profile_id, candidate_profiles:candidate_profile_id(user_id)")
+        .eq("id", prev.candidate_match_id ?? "")
+        .maybeSingle();
+      const cpUser = (match?.candidate_profiles as { user_id: string | null } | null)?.user_id ?? null;
+      const recipients = cpUser
+        ? [{
+            user_id: cpUser,
+            audience: "candidate" as const,
+            link_path: `/me/applications/${match?.application_id ?? ""}`,
+          }]
+        : [];
+      // Org fanout (client + admin audiences)
+      await emitEventFromServer({
+        event: "interview_scheduled",
+        scope: `${data.id}:${scheduledAt.toISOString()}`,
+        organization_id: data.orgId,
+        position_id: match?.position_id ?? null,
+        application_id: match?.application_id ?? null,
+        candidate_match_id: match?.id ?? null,
+        candidate_profile_id: match?.candidate_profile_id ?? null,
+        actor_user_id: context.userId,
+        link_path: `/client/interviews`,
+        payload: { scheduled_at: scheduledAt.toISOString(), timezone: data.timezone },
+      });
+      // Explicit candidate delivery (auto-fanout only reaches org members).
+      if (recipients.length) {
+        await emitEventFromServer({
+          event: "interview_scheduled",
+          scope: `${data.id}:${scheduledAt.toISOString()}:candidate`,
+          organization_id: data.orgId,
+          position_id: match?.position_id ?? null,
+          application_id: match?.application_id ?? null,
+          candidate_match_id: match?.id ?? null,
+          candidate_profile_id: match?.candidate_profile_id ?? null,
+          actor_user_id: context.userId,
+          recipients,
+        });
+      }
+    } catch (e) {
+      console.error("[confirmInterviewTime] emit failed", trace, e);
+    }
     return { ok: true, trace_id: trace };
   });
 
