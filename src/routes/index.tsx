@@ -1379,43 +1379,39 @@ function Home() {
 
 
 
-      {/* 3 — WHAT YOU RECEIVE */}
+      {/* 3 — WHAT YOU RECEIVE (product-grade interactive deliverable) */}
       <PublicSection>
         <PublicPage>
-          <div className="grid grid-cols-1 gap-10 lg:grid-cols-[1fr_1.1fr] lg:items-start">
-            <div>
-              <SectionHead
-                eyebrow="What you receive"
-                title="More than candidates. Clear hiring decisions."
-                lead="Every week the workspace refreshes with a ranked shortlist, evidence cited per requirement, and the decision controls your team actually uses — not a stack of CVs to sort."
-              />
-              <ul className="mt-6 grid grid-cols-1 gap-x-6 gap-y-2.5 text-sm text-[color:var(--brand-navy)] sm:grid-cols-2">
-                {[
-                  "Ranked candidate shortlist",
-                  "Role-specific fit analysis",
-                  "Strengths and validation areas",
-                  "Requirement coverage",
-                  "Professional background",
-                  "CV access",
-                  "Location and availability",
-                  "Personalized interview questions",
-                  "Visible candidate stage",
-                  "Decision controls in one click",
-                ].map((t) => (
-                  <li key={t} className="flex items-start gap-2">
-                    <CheckCircle2
-                      className="mt-0.5 h-4 w-4 shrink-0 text-[color:var(--brand-ocean)]"
-                      aria-hidden
-                    />
-                    <span>{t}</span>
-                  </li>
-                ))}
-              </ul>
+          <div className="mx-auto max-w-3xl text-center">
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[color:var(--brand-ocean)]">
+              What you receive
+            </p>
+            <h2 className="mt-2 font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight text-[color:var(--brand-navy)] sm:text-4xl">
+              This is the deliverable. Not a stack of CVs.
+            </h2>
+            <p className="mt-3 text-[color:var(--brand-navy)]/70">
+              Pick a candidate. The fit recommendation, requirement coverage,
+              strengths, validations, interview prompts, and stage controls
+              update together — the same layout your team works in every week.
+            </p>
+          </div>
+
+          <div className="mx-auto mt-8 max-w-4xl">
+            <div className="mb-3 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/55">
+              <span className="inline-flex items-center gap-1.5">
+                <span className="inline-block h-1.5 w-1.5 rounded-full bg-[color:var(--brand-ocean)]" aria-hidden />
+                Interactive · fictional data
+              </span>
+              <span aria-hidden>·</span>
+              <span>Tap a candidate to update the panel</span>
+              <span aria-hidden>·</span>
+              <span>Tap a requirement to reveal the evidence</span>
             </div>
             <ClientCandidateDelivery />
           </div>
         </PublicPage>
       </PublicSection>
+
 
       {/* 4 — CALCULATOR */}
       <section
