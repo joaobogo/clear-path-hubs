@@ -176,20 +176,20 @@ function DecisionMock() {
 const CHAPTERS = [
   {
     n: "01",
-    label: "The problem",
-    title: "Why hiring is broken",
-    body: "As operators we lived it: agencies delivered names without reasoning, RPO added process without improving quality, and every search felt like a fresh set of spreadsheets. There was no shared surface where the rubric, the evidence and the decisions lived together.",
+    label: "What was broken",
+    title: "Hiring had no shared surface.",
+    body: "As operators we lived it: agencies delivered names without reasoning, RPO added process without improving quality, and every search felt like a fresh set of spreadsheets. There was no shared surface where the rubric, the evidence, and the decisions lived together.",
   },
   {
     n: "02",
-    label: "The insight",
-    title: "The operator insight behind TaaSFlow",
-    body: "The problem was not sourcing — it was explainability. If we could write the rubric down, extract evidence for it directly from the CV, and put both in a workspace the client could see, most of the friction disappeared.",
+    label: "Why agencies failed",
+    title: "Incentives were pointed at the wrong outcome.",
+    body: "Contingent fees rewarded speed to placement, not quality of match. Recruiters had every reason to push a candidate over the line and no reason to explain why. Clients paid five figures per hire and still had to trust a summary paragraph.",
   },
   {
     n: "03",
-    label: "The model",
-    title: "Building a structured recruiting model",
+    label: "What TaaSFlow changed",
+    title: "A recruiting function, delivered as product.",
     body: "Instead of contingent fees, a subscription. Instead of a private inbox, a per-requisition workspace. Instead of a summary paragraph, a rubric with citations. The model is boring on purpose — cadence and clarity beat heroics.",
   },
 ];
