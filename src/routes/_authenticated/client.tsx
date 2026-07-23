@@ -35,9 +35,13 @@ import {
 } from "@/components/workspace/workspace-shell";
 import { OrgSwitcher } from "@/components/workspace/org-switcher";
 
+const emptyToUndef = (v: unknown) => (v === "" ? undefined : v);
 const searchSchema = z.object({
-  org: z.string().uuid().optional(),
-  preview: z.enum(["client_admin", "client_editor", "client_viewer"]).optional(),
+  org: z.preprocess(emptyToUndef, z.string().uuid().optional()),
+  preview: z.preprocess(
+    emptyToUndef,
+    z.enum(["client_admin", "client_editor", "client_viewer"]).optional(),
+  ),
 });
 
 export const Route = createFileRoute("/_authenticated/client")({
