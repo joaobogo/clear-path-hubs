@@ -244,7 +244,7 @@ export function IndustryTemplate({ entry }: { entry: IndustryEntry }) {
                 before it reaches you.
               </p>
             </div>
-            <DeliveryVisual industryName={entry.name} />
+            <DeliveryVisual entry={entry} />
           </div>
         </PublicPage>
       </PublicSection>
@@ -428,24 +428,45 @@ function SkillBlock({ title, items }: { title: string; items: string[] }) {
   );
 }
 
-function DeliveryVisual({ industryName }: { industryName: string }) {
+function DeliveryVisual({ entry }: { entry: IndustryEntry }) {
+  // Fully fictional candidate — no production data.
+  const primaryRole = entry.roleFamilies?.[0]?.roles?.[0] ?? entry.roles[0] ?? `${entry.name} specialist`;
+  const skillChips = (entry.skills ?? entry.tools ?? entry.signals).slice(0, 3);
+  const evidenceLine =
+    entry.candidateSignals?.[0]?.body ??
+    `Delivered a ${entry.name.toLowerCase()} programme with measurable outcomes — scope and stakeholders documented on the CV.`;
   return (
-    <div className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-5 shadow-sm">
-      <div className="flex items-center justify-between">
+    <div className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-5 shadow-sm motion-safe:animate-[fade-in_400ms_ease-out]">
+      <div className="flex items-start justify-between gap-3">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[color:var(--brand-navy)]/55">
-            {industryName} shortlist
+            {entry.name} shortlist · Fictional
           </p>
           <p className="mt-1 text-sm font-semibold text-[color:var(--brand-navy)]">
             Candidate #A-1042 · Alex R.
+          </p>
+          <p className="mt-0.5 text-xs text-[color:var(--brand-navy)]/70">
+            Applying as: {primaryRole}
           </p>
         </div>
         <div className="rounded-full bg-[color:var(--brand-ocean)]/10 px-3 py-1 text-xs font-semibold text-[color:var(--brand-ocean)]">
           Fit 94
         </div>
       </div>
+      {skillChips.length ? (
+        <ul className="mt-3 flex flex-wrap gap-1.5">
+          {skillChips.map((s) => (
+            <li
+              key={s}
+              className="rounded-full bg-[color:var(--brand-navy)]/5 px-2.5 py-0.5 text-[11px] font-medium text-[color:var(--brand-navy)]/80"
+            >
+              {s}
+            </li>
+          ))}
+        </ul>
+      ) : null}
       <div className="mt-4 space-y-2 text-xs text-[color:var(--brand-navy)]/80">
-        <RequirementBar label="Stack fit" pct={96} />
+        <RequirementBar label="Role fit" pct={96} />
         <RequirementBar label="Scope & scale" pct={91} />
         <RequirementBar label="Delivery evidence" pct={88} />
         <RequirementBar label="Communication" pct={82} />
@@ -454,14 +475,17 @@ function DeliveryVisual({ industryName }: { industryName: string }) {
         <p className="font-semibold text-[color:var(--brand-navy)]">
           Recommended: shortlist
         </p>
-        <p className="mt-1">
-          Evidence quoted from the CV supports each score. Strengths and
-          validation areas listed in the workspace.
+        <p className="mt-1 line-clamp-3">
+          “{evidenceLine}”
+        </p>
+        <p className="mt-2 text-[10px] uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/50">
+          Fictional example — no production candidate data.
         </p>
       </div>
     </div>
   );
 }
+
 
 function RequirementBar({ label, pct }: { label: string; pct: number }) {
   return (
