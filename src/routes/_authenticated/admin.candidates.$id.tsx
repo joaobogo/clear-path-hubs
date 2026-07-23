@@ -766,7 +766,7 @@ function EvidenceTab({ evidence, result }: { evidence: Any; result: Any }) {
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0 text-sm">
                       {v.required && <span className="text-destructive">* </span>}
-                      <span className="font-medium">{v.requirement_text}</span>
+                      <span className="font-medium">{toReqText(v.requirement_text)}</span>
                     </div>
                     <Badge variant={tone as Any} className="capitalize">{v.verdict}</Badge>
                   </div>
