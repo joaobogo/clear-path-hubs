@@ -6,7 +6,7 @@ import { getMyContext } from "@/lib/candidate.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { NOTIFICATIONS_QUERY_KEY } from "@/components/notification-bell";
 import { useDashboardRealtime } from "@/hooks/use-realtime-refresh";
-import { FileText, User, MessageSquare, Shield, FileUp } from "lucide-react";
+import { FileText, User, MessageSquare, Shield, FileUp, Home } from "lucide-react";
 import {
  WorkspaceShell,
  type WorkspaceNavItem,
