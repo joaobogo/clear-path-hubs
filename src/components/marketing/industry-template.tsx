@@ -71,19 +71,35 @@ export function IndustryTemplate({ entry }: { entry: IndustryEntry }) {
                 {entry.hero.subtitle}
               </p>
               <div className="mt-8 flex flex-wrap gap-3">
-                <Link
-                  to="/intake"
-                  className="inline-flex min-h-11 items-center justify-center rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-white hover:opacity-90"
-                >
-                  Start hiring
-                </Link>
+                <BookACallDialog
+                  industrySlug={entry.slug}
+                  industryName={entry.name}
+                  trigger={
+                    <button className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-opacity hover:opacity-90">
+                      <CalendarDays className="h-4 w-4" />
+                      Book a {entry.name} call
+                    </button>
+                  }
+                />
+                <BookACallDialog
+                  industrySlug={entry.slug}
+                  industryName={entry.name}
+                  defaultTab="message"
+                  trigger={
+                    <button className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md border border-[color:var(--brand-navy)]/20 px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5">
+                      <MessageSquare className="h-4 w-4" />
+                      Send a message
+                    </button>
+                  }
+                />
                 <a
                   href="#role-explorer"
-                  className="inline-flex min-h-11 items-center justify-center rounded-md border border-[color:var(--brand-navy)]/20 px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5"
+                  className="inline-flex min-h-11 items-center justify-center rounded-md px-3 py-2.5 text-sm font-semibold text-[color:var(--brand-navy)]/70 hover:text-[color:var(--brand-navy)]"
                 >
-                  Explore roles
+                  Explore roles →
                 </a>
               </div>
+
               <ul className="mt-8 flex flex-wrap gap-2">
                 {entry.signals.map((s) => (
                   <li
