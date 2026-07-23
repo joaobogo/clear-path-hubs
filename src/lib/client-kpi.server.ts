@@ -181,13 +181,7 @@ export type ClientCandidateDTO = {
   screening_answers: Array<{ question: string; answer: string }>;
 };
 
-  experience: Array<{ title: string; company: string | null; period: string | null; description: string | null }>;
-  skills: string[];
-  education: Array<{ degree: string | null; institution: string | null; period: string | null }>;
-  languages: Array<{ name: string; level: string | null }>;
-  work_authorization: string | null;
-  screening_answers: Array<{ question: string; answer: string }>;
-};
+
 
 function normStr(v: unknown): string | null {
   if (v == null) return null;
