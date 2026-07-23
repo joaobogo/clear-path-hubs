@@ -563,18 +563,103 @@ function Card({
   );
 }
 
-/* ---------- Hero workspace visual (destination product, not the legacy dashboard) ---------- */
+/* ---------- Hero workspace visual — interactive, static fictional data ---------- */
+
+type HeroCandidate = {
+  id: string;
+  name: string;
+  headline: string;
+  score: number;
+  band: "Top fit" | "Strong fit" | "Consider";
+  stage: "Under review" | "Shortlisted" | "Interview";
+  recommendation: string;
+  coverage: { key: string; label: string; pct: number; evidence: string }[];
+};
+
+const HERO_CANDIDATES: HeroCandidate[] = [
+  {
+    id: "A-1042",
+    name: "Alex R.",
+    headline: "Senior Product Designer · 8 yrs · B2B SaaS",
+    score: 94,
+    band: "Top fit",
+    stage: "Shortlisted",
+    recommendation: "Shortlist — strongest evidence on design-system ownership and B2B depth.",
+    coverage: [
+      { key: "ds", label: "Design systems ownership", pct: 96, evidence: "Led design-system rollout across three product lines; documented adoption across ten squads." },
+      { key: "b2b", label: "B2B SaaS product experience", pct: 92, evidence: "Six years shipping B2B SaaS surfaces used by revenue and operations teams." },
+      { key: "lead", label: "Team leadership", pct: 88, evidence: "Managed a team of five designers through one org restructure and two hiring cycles." },
+      { key: "ops", label: "Design ops tooling", pct: 62, evidence: "Partnered with engineering on tokens pipeline; hands-on tooling ownership to validate." },
+    ],
+  },
+  {
+    id: "A-1039",
+    name: "Priya M.",
+    headline: "Senior Product Designer · 7 yrs · Fintech",
+    score: 91,
+    band: "Strong fit",
+    stage: "Under review",
+    recommendation: "Advance to interview — strong systems work, validate B2B SaaS depth.",
+    coverage: [
+      { key: "ds", label: "Design systems ownership", pct: 90, evidence: "Rebuilt a fintech design system to WCAG 2.2 AA; ran adoption workshops for four squads." },
+      { key: "b2b", label: "B2B SaaS product experience", pct: 74, evidence: "Two years on B2B-facing fintech surfaces; most work sits closer to consumer flows." },
+      { key: "lead", label: "Team leadership", pct: 82, evidence: "Design lead on a three-person team; mentors two mid-level designers." },
+      { key: "ops", label: "Design ops tooling", pct: 78, evidence: "Owned Figma library governance and contribution model end to end." },
+    ],
+  },
+  {
+    id: "A-1037",
+    name: "Dan K.",
+    headline: "Senior Product Designer · 9 yrs · Marketplaces",
+    score: 87,
+    band: "Consider",
+    stage: "Under review",
+    recommendation: "Consider — strong craft, validate systems ownership at scale in interview.",
+    coverage: [
+      { key: "ds", label: "Design systems ownership", pct: 78, evidence: "Contributed heavily to two systems; not the named owner on either rollout." },
+      { key: "b2b", label: "B2B SaaS product experience", pct: 84, evidence: "Marketplace SaaS with a B2B seller side; five years of relevant surface work." },
+      { key: "lead", label: "Team leadership", pct: 76, evidence: "Tech-lead pattern rather than people-management; mentored ICs on two squads." },
+      { key: "ops", label: "Design ops tooling", pct: 70, evidence: "Ran token migrations twice; comfortable in the pipeline, not the owner." },
+    ],
+  },
+];
+
+const HERO_STAGES = [
+  {
+    key: "review" as const,
+    label: "Under review",
+    pct: 60,
+    nextAction: "Open the top-ranked profile and confirm shortlist.",
+    cta: "Shortlist top fit",
+  },
+  {
+    key: "shortlisted" as const,
+    label: "Shortlisted",
+    pct: 100,
+    nextAction: "Send interview invite to shortlisted candidates.",
+    cta: "Send interview invite",
+  },
+  {
+    key: "interview" as const,
+    label: "Interview",
+    pct: 40,
+    nextAction: "Log interview outcome and decide on the offer step.",
+    cta: "Log interview outcome",
+  },
+];
 
 function HeroWorkspacePreview() {
-  const rankedCandidates = [
-    { id: "A-1042", role: "Senior Product Designer · Remote · EU", score: 94, stage: "Shortlisted", top: true },
-    { id: "A-1039", role: "Senior Product Designer · Berlin", score: 91, stage: "Under review", top: false },
-    { id: "A-1037", role: "Senior Product Designer · Lisbon", score: 87, stage: "Under review", top: false },
-  ];
+  const [candidateId, setCandidateId] = React.useState(HERO_CANDIDATES[0].id);
+  const [reqKey, setReqKey] = React.useState(HERO_CANDIDATES[0].coverage[0].key);
+  const [stageKey, setStageKey] = React.useState<(typeof HERO_STAGES)[number]["key"]>("shortlisted");
+
+  const candidate = HERO_CANDIDATES.find((c) => c.id === candidateId) ?? HERO_CANDIDATES[0];
+  const req = candidate.coverage.find((c) => c.key === reqKey) ?? candidate.coverage[0];
+  const stage = HERO_STAGES.find((s) => s.key === stageKey) ?? HERO_STAGES[0];
+
   return (
     <div
-      role="img"
-      aria-label="A preview of the TaaSFlow client workspace showing an active position, three ranked candidates with fit scores, requirement coverage, candidate stage, a shortlist action, and a live hiring pipeline."
+      aria-label="Interactive preview of the TaaSFlow client workspace. Select a candidate, a requirement, or a stage to see how the workspace updates."
       className="rounded-2xl border border-[color:var(--brand-navy)]/12 bg-white p-4 shadow-[var(--brand-shadow-lg)]"
     >
       {/* Window chrome + active position */}
@@ -586,7 +671,7 @@ function HeroWorkspacePreview() {
             <span className="h-2.5 w-2.5 rounded-full bg-[#28c840]" />
           </div>
           <span className="truncate text-xs font-medium text-[color:var(--brand-navy)]/60">
-            client workspace · Senior Product Designer
+            client workspace · Senior Product Designer · Sample data
           </span>
         </div>
         <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-[color:var(--brand-ocean)]/10 px-2.5 py-1 text-[11px] font-semibold text-[color:var(--brand-ocean)]">
@@ -595,214 +680,519 @@ function HeroWorkspacePreview() {
         </span>
       </div>
 
-      {/* Ranked candidates */}
+      {/* Ranked candidates — interactive selector */}
       <div className="mt-4">
         <div className="flex items-center justify-between">
           <div className="text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/55">
-            Ranked candidates · this week
+            Ranked candidates
           </div>
           <div className="text-[11px] font-medium text-[color:var(--brand-navy)]/55">3 of 12</div>
         </div>
 
-        <div className="mt-2 space-y-2">
-          {rankedCandidates.map((c) => (
-            <div
-              key={c.id}
-              className={
-                c.top
-                  ? "rounded-xl border border-[color:var(--brand-ocean)]/25 bg-[color:var(--brand-ocean)]/[0.03] p-3"
-                  : "rounded-xl border border-[color:var(--brand-navy)]/10 bg-white p-3"
-              }
-            >
-              <div className="flex items-start justify-between gap-3">
-                <div className="min-w-0">
-                  <div className="flex items-center gap-2">
-                    <span className="truncate text-sm font-semibold text-[color:var(--brand-navy)]">
-                      Candidate #{c.id}
-                    </span>
-                    {c.top ? (
-                      <span className="shrink-0 rounded-full bg-[color:var(--brand-ocean)]/12 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-[color:var(--brand-ocean)]">
-                        Top fit
+        <div
+          className="mt-2 space-y-2"
+          role="radiogroup"
+          aria-label="Select a candidate to update the fit summary"
+        >
+          {HERO_CANDIDATES.map((c) => {
+            const active = c.id === candidateId;
+            return (
+              <button
+                type="button"
+                key={c.id}
+                role="radio"
+                aria-checked={active}
+                onClick={() => {
+                  setCandidateId(c.id);
+                  setReqKey(c.coverage[0].key);
+                }}
+                className={
+                  "block w-full rounded-xl border p-3 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)] " +
+                  (active
+                    ? "border-[color:var(--brand-ocean)]/40 bg-[color:var(--brand-ocean)]/[0.04]"
+                    : "border-[color:var(--brand-navy)]/10 bg-white hover:border-[color:var(--brand-navy)]/25")
+                }
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className="truncate text-sm font-semibold text-[color:var(--brand-navy)]">
+                        {c.name}
                       </span>
-                    ) : null}
-                  </div>
-                  <div className="truncate text-[11px] text-[color:var(--brand-navy)]/60">{c.role}</div>
-                </div>
-                <div className="flex shrink-0 items-center gap-2">
-                  <span className="rounded-full border border-[color:var(--brand-navy)]/12 bg-white px-2 py-0.5 text-[10px] font-medium text-[color:var(--brand-navy)]/70">
-                    {c.stage}
-                  </span>
-                  <div className="rounded-md bg-[color:var(--brand-ocean)]/12 px-2.5 py-1 text-sm font-semibold tabular-nums text-[color:var(--brand-ocean)]">
-                    {c.score}
-                  </div>
-                </div>
-              </div>
-
-              {c.top ? (
-                <div className="mt-3 space-y-1.5">
-                  {DELIVERY_EVIDENCE.map(([k, v]) => (
-                    <div key={String(k)} className="flex items-center gap-3 text-[11px]">
-                      <span className="w-24 shrink-0 truncate text-[color:var(--brand-navy)]/65">{k}</span>
-                      <div className="h-1.5 min-w-0 flex-1 overflow-hidden rounded-full bg-[color:var(--brand-navy)]/8">
-                        <div
-                          className="h-full rounded-full bg-[color:var(--brand-ocean)]"
-                          style={{ width: `${v}%` }}
-                          aria-hidden
-                        />
-                      </div>
-                      <span className="w-7 shrink-0 text-right font-semibold tabular-nums text-[color:var(--brand-navy)]">
-                        {v}
+                      <span
+                        className={
+                          "shrink-0 rounded-full px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide " +
+                          (c.band === "Top fit"
+                            ? "bg-[color:var(--brand-ocean)]/12 text-[color:var(--brand-ocean)]"
+                            : c.band === "Strong fit"
+                              ? "bg-[color:var(--brand-navy)]/8 text-[color:var(--brand-navy)]/75"
+                              : "bg-[color:var(--brand-navy)]/6 text-[color:var(--brand-navy)]/60")
+                        }
+                      >
+                        {c.band}
                       </span>
                     </div>
-                  ))}
+                    <div className="truncate text-[11px] text-[color:var(--brand-navy)]/60">
+                      {c.headline}
+                    </div>
+                  </div>
+                  <div className="flex shrink-0 items-center gap-2">
+                    <span className="rounded-full border border-[color:var(--brand-navy)]/12 bg-white px-2 py-0.5 text-[10px] font-medium text-[color:var(--brand-navy)]/70">
+                      {c.stage}
+                    </span>
+                    <div className="rounded-md bg-[color:var(--brand-ocean)]/12 px-2.5 py-1 text-sm font-semibold tabular-nums text-[color:var(--brand-ocean)]">
+                      {c.score}
+                    </div>
+                  </div>
                 </div>
-              ) : null}
-            </div>
-          ))}
+              </button>
+            );
+          })}
         </div>
       </div>
 
-      {/* Live pipeline */}
+      {/* Fit summary — updates with candidate */}
+      <div className="mt-4 rounded-xl border border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-paper)] p-3">
+        <div className="text-[10px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/55">
+          Fit summary
+        </div>
+        <p
+          className="mt-1 text-[12px] leading-snug text-[color:var(--brand-navy)]/80"
+          aria-live="polite"
+        >
+          {candidate.recommendation}
+        </p>
+      </div>
+
+      {/* Requirement coverage — click a requirement to reveal evidence */}
+      <div className="mt-4">
+        <div className="text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/55">
+          Requirement coverage · tap a requirement
+        </div>
+        <div className="mt-2 space-y-1.5" role="listbox" aria-label="Requirements">
+          {candidate.coverage.map((c) => {
+            const active = c.key === reqKey;
+            return (
+              <button
+                type="button"
+                key={c.key}
+                role="option"
+                aria-selected={active}
+                onClick={() => setReqKey(c.key)}
+                className={
+                  "flex w-full items-center gap-3 rounded-md px-2 py-1.5 text-left text-[11px] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)] " +
+                  (active
+                    ? "bg-[color:var(--brand-ocean)]/8"
+                    : "hover:bg-[color:var(--brand-navy)]/[0.04]")
+                }
+              >
+                <span className="w-32 shrink-0 truncate text-[color:var(--brand-navy)]/75">
+                  {c.label}
+                </span>
+                <div className="h-1.5 min-w-0 flex-1 overflow-hidden rounded-full bg-[color:var(--brand-navy)]/8">
+                  <div
+                    className={
+                      "h-full rounded-full " +
+                      (c.pct >= 80
+                        ? "bg-[color:var(--brand-ocean)]"
+                        : "bg-[color:var(--brand-navy)]/40")
+                    }
+                    style={{ width: `${c.pct}%` }}
+                    aria-hidden
+                  />
+                </div>
+                <span className="w-7 shrink-0 text-right font-semibold tabular-nums text-[color:var(--brand-navy)]">
+                  {c.pct}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+        <div
+          className="mt-2 rounded-md border border-dashed border-[color:var(--brand-ocean)]/30 bg-white px-3 py-2 text-[11px] italic leading-snug text-[color:var(--brand-navy)]/80"
+          aria-live="polite"
+        >
+          <span className="mr-1 not-italic font-semibold text-[color:var(--brand-ocean)]">
+            Evidence ·
+          </span>
+          {req.evidence}
+        </div>
+      </div>
+
+      {/* Stage rail — click to reveal next Client action */}
       <div className="mt-4">
         <div className="flex items-center justify-between">
           <div className="text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/55">
-            Pipeline
-          </div>
-          <div className="text-[11px] font-medium text-[color:var(--brand-navy)]/55">
-            2 shortlisted · 1 in interview
+            Stage · tap for next action
           </div>
         </div>
-        <div className="mt-2 grid grid-cols-5 gap-1.5">
-          {[
-            { label: "Applied", pct: 100 },
-            { label: "Under review", pct: 80 },
-            { label: "Shortlisted", pct: 55 },
-            { label: "Interview", pct: 30 },
-            { label: "Offer", pct: 12 },
-          ].map((s) => (
-            <div key={s.label} className="min-w-0">
-              <div className="h-1.5 w-full overflow-hidden rounded-full bg-[color:var(--brand-navy)]/8">
-                <div
-                  className="h-full rounded-full bg-[color:var(--brand-ocean)]"
-                  style={{ width: `${s.pct}%` }}
-                  aria-hidden
-                />
-              </div>
-              <div className="mt-1.5 truncate text-[10px] font-medium text-[color:var(--brand-navy)]/70">
-                {s.label}
-              </div>
-            </div>
-          ))}
+        <div className="mt-2 grid grid-cols-3 gap-1.5" role="tablist" aria-label="Hiring stages">
+          {HERO_STAGES.map((s) => {
+            const active = s.key === stageKey;
+            return (
+              <button
+                type="button"
+                key={s.key}
+                role="tab"
+                aria-selected={active}
+                onClick={() => setStageKey(s.key)}
+                className={
+                  "min-w-0 rounded-md border px-2 py-1.5 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)] " +
+                  (active
+                    ? "border-[color:var(--brand-ocean)]/40 bg-[color:var(--brand-ocean)]/[0.06]"
+                    : "border-[color:var(--brand-navy)]/10 bg-white hover:border-[color:var(--brand-navy)]/25")
+                }
+              >
+                <div className="h-1.5 w-full overflow-hidden rounded-full bg-[color:var(--brand-navy)]/8">
+                  <div
+                    className="h-full rounded-full bg-[color:var(--brand-ocean)]"
+                    style={{ width: `${s.pct}%` }}
+                    aria-hidden
+                  />
+                </div>
+                <div className="mt-1.5 truncate text-[10px] font-semibold text-[color:var(--brand-navy)]">
+                  {s.label}
+                </div>
+              </button>
+            );
+          })}
+        </div>
+        <div
+          className="mt-2 flex items-start gap-2 rounded-md bg-[color:var(--brand-sky)]/30 px-3 py-2 text-[11px] leading-snug text-[color:var(--brand-navy)]/85"
+          aria-live="polite"
+        >
+          <ArrowRight className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[color:var(--brand-navy)]" aria-hidden />
+          <span>
+            <span className="font-semibold">Next · </span>
+            {stage.nextAction}
+          </span>
         </div>
       </div>
 
-      {/* Client action row */}
-      <div className="mt-4 grid grid-cols-3 gap-2 border-t border-[color:var(--brand-navy)]/8 pt-3">
-        {[
-          { label: "Shortlist top fit", solid: true },
-          { label: "Interview", solid: false },
-          { label: "Pass", solid: false },
-        ].map((a) => (
-          <div
-            key={a.label}
-            className={
-              a.solid
-                ? "rounded-md bg-[color:var(--brand-navy)] px-2 py-1.5 text-center text-[11px] font-semibold text-white"
-                : "rounded-md border border-[color:var(--brand-navy)]/15 bg-white px-2 py-1.5 text-center text-[11px] font-semibold text-[color:var(--brand-navy)]"
-            }
-          >
-            {a.label}
-          </div>
-        ))}
+      {/* Recent delivery + one clear Client action */}
+      <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-[color:var(--brand-navy)]/8 pt-3">
+        <div className="min-w-0 text-[11px] text-[color:var(--brand-navy)]/60">
+          <span className="font-semibold text-[color:var(--brand-navy)]/75">Recent delivery ·</span>{" "}
+          3 ranked candidates added this week
+        </div>
+        <button
+          type="button"
+          className="inline-flex min-h-9 items-center gap-1.5 rounded-md bg-[color:var(--brand-navy)] px-3 py-1.5 text-[12px] font-semibold text-white hover:bg-[color:var(--brand-navy-dark)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+        >
+          {stage.cta}
+          <ArrowRight className="h-3.5 w-3.5" aria-hidden />
+        </button>
       </div>
     </div>
   );
 }
 
+/* ---------- Client candidate delivery — interactive, static fictional data ---------- */
+
+type DeliveryCandidate = {
+  id: string;
+  name: string;
+  headline: string;
+  location: string;
+  band: "Top fit" | "Strong fit" | "Consider";
+  stage: "Under review" | "Shortlisted" | "Interview";
+  score: number;
+  availability: string;
+  recommendation: string;
+  coverage: { key: string; label: string; pct: number; verdict: string; evidence: string }[];
+  strengths: string[];
+  validations: string[];
+  experience: { role: string; org: string; period: string }[];
+  questions: string[];
+};
+
+const DELIVERY_CANDIDATES: DeliveryCandidate[] = [
+  {
+    id: "A-1042",
+    name: "Alex R.",
+    headline: "Senior Product Designer · 8 yrs · B2B SaaS",
+    location: "Lisbon, PT · Remote-friendly",
+    band: "Top fit",
+    stage: "Under review",
+    score: 94,
+    availability: "Available in 4 weeks",
+    recommendation: "Shortlist — strongest evidence on design-system ownership and B2B depth.",
+    coverage: [
+      { key: "ds", label: "Design systems ownership", pct: 96, verdict: "Strong", evidence: "Named owner of a design-system rollout across three product lines; documented adoption across ten squads." },
+      { key: "b2b", label: "B2B SaaS product experience", pct: 92, verdict: "Strong", evidence: "Six years shipping B2B SaaS products used by revenue and operations teams." },
+      { key: "lead", label: "Team leadership", pct: 88, verdict: "Strong", evidence: "Managed five designers through one org restructure and two hiring cycles." },
+      { key: "ops", label: "Design ops tooling", pct: 62, verdict: "Validate", evidence: "Partnered on tokens pipeline; hands-on tooling scope to confirm in interview." },
+    ],
+    strengths: [
+      "Led design-system rollout across three product lines, reducing component debt materially.",
+      "Six years shipping B2B SaaS products used by revenue and operations teams.",
+      "Managed a design team through two hiring cycles and one org restructure.",
+    ],
+    validations: [
+      "Confirm scope of hands-on design-ops tooling ownership versus partnership with engineering.",
+      "Clarify recent experience with usage-based product analytics for prioritization.",
+    ],
+    experience: [
+      { role: "Senior Product Designer", org: "Fictional SaaS Co.", period: "2021 — present" },
+      { role: "Product Designer", org: "Fictional Analytics Ltd.", period: "2018 — 2021" },
+    ],
+    questions: [
+      "Walk us through the design-system rollout you led — how did you handle adoption across teams that hadn't asked for it?",
+      "How do you decide when a component belongs in the system versus in a product surface?",
+    ],
+  },
+  {
+    id: "A-1039",
+    name: "Priya M.",
+    headline: "Senior Product Designer · 7 yrs · Fintech",
+    location: "Berlin, DE · Hybrid",
+    band: "Strong fit",
+    stage: "Shortlisted",
+    score: 91,
+    availability: "Available in 6 weeks",
+    recommendation: "Advance to interview — strong systems work, validate B2B SaaS depth.",
+    coverage: [
+      { key: "ds", label: "Design systems ownership", pct: 90, verdict: "Strong", evidence: "Rebuilt a fintech design system to WCAG 2.2 AA; ran adoption workshops for four squads." },
+      { key: "b2b", label: "B2B SaaS product experience", pct: 74, verdict: "Validate", evidence: "Two years on B2B-facing fintech surfaces; most work sits closer to consumer flows." },
+      { key: "lead", label: "Team leadership", pct: 82, verdict: "Strong", evidence: "Design lead on a three-person team; mentors two mid-level designers." },
+      { key: "ops", label: "Design ops tooling", pct: 78, verdict: "Strong", evidence: "Owned Figma library governance and contribution model end to end." },
+    ],
+    strengths: [
+      "Owned a full fintech design-system rebuild to accessibility standards.",
+      "Runs a lightweight contribution model that scales across squads.",
+      "Comfortable pairing daily with engineering on tokens and primitives.",
+    ],
+    validations: [
+      "Confirm depth of B2B SaaS surface work beyond fintech.",
+      "Explore how they've handled non-fintech stakeholders and priorities.",
+    ],
+    experience: [
+      { role: "Senior Product Designer", org: "Fictional Fintech AG", period: "2020 — present" },
+      { role: "Product Designer", org: "Fictional Payments GmbH", period: "2017 — 2020" },
+    ],
+    questions: [
+      "How does your contribution model handle a squad that wants to fork a component?",
+      "Which parts of your fintech work translate cleanly to a non-fintech B2B SaaS surface?",
+    ],
+  },
+  {
+    id: "A-1037",
+    name: "Dan K.",
+    headline: "Senior Product Designer · 9 yrs · Marketplaces",
+    location: "Remote · CET timezone",
+    band: "Consider",
+    stage: "Under review",
+    score: 87,
+    availability: "Available in 2 weeks",
+    recommendation: "Consider — strong craft, validate systems ownership at scale in interview.",
+    coverage: [
+      { key: "ds", label: "Design systems ownership", pct: 78, verdict: "Validate", evidence: "Contributed heavily to two systems; not the named owner on either rollout." },
+      { key: "b2b", label: "B2B SaaS product experience", pct: 84, verdict: "Strong", evidence: "Marketplace SaaS with a B2B seller side; five years of relevant surface work." },
+      { key: "lead", label: "Team leadership", pct: 76, verdict: "Validate", evidence: "Tech-lead pattern rather than people-management; mentored ICs on two squads." },
+      { key: "ops", label: "Design ops tooling", pct: 70, verdict: "Validate", evidence: "Ran token migrations twice; comfortable in the pipeline, not the owner." },
+    ],
+    strengths: [
+      "Nine years of shipped work across marketplace and B2B surfaces.",
+      "Strong evidence on cross-functional pairing with engineering and PM.",
+      "Fast onboarding — has stepped into two greenfield systems.",
+    ],
+    validations: [
+      "Confirm scope and outcome of design-system ownership beyond contribution.",
+      "Assess appetite for a people-management path versus staying IC.",
+    ],
+    experience: [
+      { role: "Senior Product Designer", org: "Fictional Marketplace Inc.", period: "2019 — present" },
+      { role: "Product Designer", org: "Fictional Commerce Co.", period: "2015 — 2019" },
+    ],
+    questions: [
+      "Which system decision are you most proud of, and where would you land differently today?",
+      "Would a formal people-management remit change your interest in this role?",
+    ],
+  },
+];
+
 function ClientCandidateDelivery() {
-  const coverage = [
-    { label: "Design systems ownership", pct: 96, verdict: "Strong" },
-    { label: "B2B SaaS product experience", pct: 92, verdict: "Strong" },
-    { label: "Team leadership (4+ designers)", pct: 88, verdict: "Strong" },
-    { label: "Design ops tooling", pct: 62, verdict: "Validate" },
-  ];
-  const strengths = [
-    "Led design-system rollout across three product lines, reducing component debt materially.",
-    "Six years shipping B2B SaaS products used by revenue and operations teams.",
-    "Managed a design team through two hiring cycles and one org restructure.",
-  ];
-  const validations = [
-    "Confirm scope of hands-on design-ops tooling ownership versus partnership with engineering.",
-    "Clarify recent experience with usage-based product analytics for prioritization.",
-  ];
+  const [candidateId, setCandidateId] = React.useState(DELIVERY_CANDIDATES[0].id);
+  const [reqKey, setReqKey] = React.useState(DELIVERY_CANDIDATES[0].coverage[0].key);
+  const candidate =
+    DELIVERY_CANDIDATES.find((c) => c.id === candidateId) ?? DELIVERY_CANDIDATES[0];
+  const req = candidate.coverage.find((c) => c.key === reqKey) ?? candidate.coverage[0];
 
   return (
     <div
-      role="img"
-      aria-label="A preview of the client candidate detail view showing candidate identity, professional headline, fit recommendation, requirement coverage, strengths, validation areas, personalized interview questions, and client decision controls."
+      aria-label="Interactive preview of the client candidate detail view. Select a candidate or a requirement to update the panel."
       className="rounded-2xl border border-[color:var(--brand-navy)]/12 bg-white p-5 shadow-[var(--brand-shadow-lg)] sm:p-6"
     >
-      {/* Header: identity + fit recommendation */}
-      <div className="flex flex-wrap items-start justify-between gap-4 border-b border-[color:var(--brand-navy)]/8 pb-4">
+      {/* Candidate selector — top on mobile, top row on desktop */}
+      <div
+        role="radiogroup"
+        aria-label="Select a candidate"
+        className="-mx-1 flex gap-2 overflow-x-auto pb-2 sm:mx-0 sm:grid sm:grid-cols-3 sm:overflow-visible sm:pb-0"
+      >
+        {DELIVERY_CANDIDATES.map((c) => {
+          const active = c.id === candidateId;
+          return (
+            <button
+              type="button"
+              key={c.id}
+              role="radio"
+              aria-checked={active}
+              onClick={() => {
+                setCandidateId(c.id);
+                setReqKey(c.coverage[0].key);
+              }}
+              className={
+                "min-w-[15rem] shrink-0 rounded-xl border p-3 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)] sm:min-w-0 " +
+                (active
+                  ? "border-[color:var(--brand-ocean)]/40 bg-[color:var(--brand-ocean)]/[0.05]"
+                  : "border-[color:var(--brand-navy)]/10 bg-white hover:border-[color:var(--brand-navy)]/25")
+              }
+            >
+              <div className="flex items-center gap-2">
+                <span className="truncate text-sm font-semibold text-[color:var(--brand-navy)]">
+                  {c.name}
+                </span>
+                <span
+                  className={
+                    "shrink-0 rounded-full px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide " +
+                    (c.band === "Top fit"
+                      ? "bg-[color:var(--brand-ocean)]/12 text-[color:var(--brand-ocean)]"
+                      : c.band === "Strong fit"
+                        ? "bg-[color:var(--brand-navy)]/8 text-[color:var(--brand-navy)]/75"
+                        : "bg-[color:var(--brand-navy)]/6 text-[color:var(--brand-navy)]/60")
+                  }
+                >
+                  {c.band}
+                </span>
+              </div>
+              <div className="mt-0.5 truncate text-[11px] text-[color:var(--brand-navy)]/65">
+                {c.headline}
+              </div>
+              <div className="mt-1 flex items-center gap-2 text-[10px] text-[color:var(--brand-navy)]/55">
+                <MapPin className="h-3 w-3" aria-hidden />
+                <span className="truncate">{c.location}</span>
+              </div>
+              <div className="mt-1.5 inline-flex items-center rounded-full border border-[color:var(--brand-navy)]/12 bg-white px-2 py-0.5 text-[10px] font-medium text-[color:var(--brand-navy)]/70">
+                Stage · {c.stage}
+              </div>
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Header: identity + recommendation */}
+      <div
+        className="mt-4 flex flex-wrap items-start justify-between gap-4 border-t border-[color:var(--brand-navy)]/8 pt-4"
+        aria-live="polite"
+      >
         <div className="min-w-0">
           <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/55">
-            <span className="inline-flex h-1.5 w-1.5 rounded-full bg-[color:var(--brand-ocean)]" aria-hidden />
-            Candidate #A-1042
+            <span
+              className="inline-flex h-1.5 w-1.5 rounded-full bg-[color:var(--brand-ocean)]"
+              aria-hidden
+            />
+            Candidate #{candidate.id}
           </div>
-          <div className="mt-1 text-lg font-semibold text-[color:var(--brand-navy)]">Alex R.</div>
+          <div className="mt-1 text-lg font-semibold text-[color:var(--brand-navy)]">
+            {candidate.name}
+          </div>
           <div className="truncate text-sm text-[color:var(--brand-navy)]/70">
-            Senior Product Designer · 8 years · B2B SaaS
+            {candidate.headline}
           </div>
           <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-[color:var(--brand-navy)]/60">
             <span className="inline-flex items-center gap-1">
-              <MapPin className="h-3.5 w-3.5" aria-hidden /> Lisbon, PT · Remote-friendly
+              <MapPin className="h-3.5 w-3.5" aria-hidden /> {candidate.location}
             </span>
             <span className="inline-flex items-center gap-1">
-              <CalendarClock className="h-3.5 w-3.5" aria-hidden /> Available in 4 weeks
+              <CalendarClock className="h-3.5 w-3.5" aria-hidden /> {candidate.availability}
             </span>
-            <span className="inline-flex items-center gap-1">
-              <FileText className="h-3.5 w-3.5" aria-hidden /> CV attached
-            </span>
+            <button
+              type="button"
+              className="inline-flex items-center gap-1 rounded-md border border-[color:var(--brand-navy)]/15 bg-white px-2 py-0.5 font-medium text-[color:var(--brand-navy)]/75 hover:bg-[color:var(--brand-navy)]/[0.04] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+            >
+              <FileText className="h-3.5 w-3.5" aria-hidden /> View CV
+            </button>
           </div>
         </div>
         <div className="flex shrink-0 flex-col items-end gap-1.5">
           <div className="rounded-md bg-[color:var(--brand-ocean)]/12 px-3 py-1 text-lg font-semibold tabular-nums text-[color:var(--brand-ocean)]">
-            94
+            {candidate.score}
           </div>
           <span className="inline-flex items-center gap-1 rounded-full bg-[color:var(--brand-ocean)]/10 px-2 py-0.5 text-[11px] font-semibold text-[color:var(--brand-ocean)]">
-            <Sparkles className="h-3 w-3" aria-hidden /> Recommended: shortlist
-          </span>
-          <span className="inline-flex items-center gap-1 rounded-full border border-[color:var(--brand-navy)]/12 bg-white px-2 py-0.5 text-[11px] font-medium text-[color:var(--brand-navy)]/70">
-            Stage · Under review
+            <Sparkles className="h-3 w-3" aria-hidden /> {candidate.band}
           </span>
         </div>
       </div>
 
-      {/* Requirement coverage */}
-      <div className="mt-4">
-        <div className="text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/55">
-          Requirement coverage
+      {/* Recommendation */}
+      <div className="mt-4 rounded-xl border border-[color:var(--brand-ocean)]/20 bg-[color:var(--brand-ocean)]/[0.04] p-3.5">
+        <div className="text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-ocean)]">
+          Recommendation
         </div>
-        <div className="mt-2 space-y-2">
-          {coverage.map((c) => (
-            <div key={c.label} className="flex items-center gap-3 text-xs">
-              <span className="w-40 shrink-0 truncate text-[color:var(--brand-navy)]/75 sm:w-52">
-                {c.label}
-              </span>
-              <div className="h-1.5 min-w-0 flex-1 overflow-hidden rounded-full bg-[color:var(--brand-navy)]/8">
-                <div
-                  className={`h-full rounded-full ${c.pct >= 80 ? "bg-[color:var(--brand-ocean)]" : "bg-[color:var(--brand-navy)]/35"}`}
-                  style={{ width: `${c.pct}%` }}
-                  aria-hidden
-                />
-              </div>
-              <span
-                className={`w-16 shrink-0 text-right text-[10px] font-semibold uppercase tracking-wide ${c.pct >= 80 ? "text-[color:var(--brand-ocean)]" : "text-[color:var(--brand-navy)]/55"}`}
+        <p className="mt-1 text-sm text-[color:var(--brand-navy)]/85">{candidate.recommendation}</p>
+      </div>
+
+      {/* Requirement coverage — click for evidence */}
+      <div className="mt-4">
+        <div className="flex items-center justify-between">
+          <div className="text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/55">
+            Requirement coverage · tap a requirement
+          </div>
+        </div>
+        <div className="mt-2 space-y-1.5" role="listbox" aria-label="Requirements">
+          {candidate.coverage.map((c) => {
+            const active = c.key === reqKey;
+            return (
+              <button
+                type="button"
+                key={c.key}
+                role="option"
+                aria-selected={active}
+                onClick={() => setReqKey(c.key)}
+                className={
+                  "flex w-full items-center gap-3 rounded-md px-2 py-1.5 text-left text-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)] " +
+                  (active
+                    ? "bg-[color:var(--brand-ocean)]/8"
+                    : "hover:bg-[color:var(--brand-navy)]/[0.04]")
+                }
               >
-                {c.verdict}
-              </span>
-            </div>
-          ))}
+                <span className="w-40 shrink-0 truncate text-[color:var(--brand-navy)]/75 sm:w-52">
+                  {c.label}
+                </span>
+                <div className="h-1.5 min-w-0 flex-1 overflow-hidden rounded-full bg-[color:var(--brand-navy)]/8">
+                  <div
+                    className={
+                      "h-full rounded-full " +
+                      (c.pct >= 80
+                        ? "bg-[color:var(--brand-ocean)]"
+                        : "bg-[color:var(--brand-navy)]/35")
+                    }
+                    style={{ width: `${c.pct}%` }}
+                    aria-hidden
+                  />
+                </div>
+                <span
+                  className={
+                    "w-16 shrink-0 text-right text-[10px] font-semibold uppercase tracking-wide " +
+                    (c.verdict === "Strong"
+                      ? "text-[color:var(--brand-ocean)]"
+                      : "text-[color:var(--brand-navy)]/60")
+                  }
+                >
+                  {c.verdict}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+        <div
+          className="mt-2 rounded-md border border-dashed border-[color:var(--brand-ocean)]/30 bg-white px-3 py-2 text-xs italic leading-snug text-[color:var(--brand-navy)]/80"
+          aria-live="polite"
+        >
+          <span className="mr-1 not-italic font-semibold text-[color:var(--brand-ocean)]">
+            Evidence ·
+          </span>
+          {req.evidence}
         </div>
       </div>
 
@@ -814,9 +1204,12 @@ function ClientCandidateDelivery() {
             Strengths
           </div>
           <ul className="mt-2 space-y-1.5 text-xs text-[color:var(--brand-navy)]/80">
-            {strengths.map((s) => (
+            {candidate.strengths.map((s) => (
               <li key={s} className="flex gap-1.5">
-                <span className="mt-1 inline-block h-1 w-1 shrink-0 rounded-full bg-[color:var(--brand-ocean)]" aria-hidden />
+                <span
+                  className="mt-1 inline-block h-1 w-1 shrink-0 rounded-full bg-[color:var(--brand-ocean)]"
+                  aria-hidden
+                />
                 <span>{s}</span>
               </li>
             ))}
@@ -828,9 +1221,12 @@ function ClientCandidateDelivery() {
             Validate in interview
           </div>
           <ul className="mt-2 space-y-1.5 text-xs text-[color:var(--brand-navy)]/80">
-            {validations.map((v) => (
+            {candidate.validations.map((v) => (
               <li key={v} className="flex gap-1.5">
-                <span className="mt-1 inline-block h-1 w-1 shrink-0 rounded-full bg-[color:var(--brand-navy)]/40" aria-hidden />
+                <span
+                  className="mt-1 inline-block h-1 w-1 shrink-0 rounded-full bg-[color:var(--brand-navy)]/40"
+                  aria-hidden
+                />
                 <span>{v}</span>
               </li>
             ))}
@@ -838,29 +1234,61 @@ function ClientCandidateDelivery() {
         </div>
       </div>
 
-      {/* Personalized interview question */}
+      {/* Professional experience */}
+      <div className="mt-4 rounded-xl border border-[color:var(--brand-navy)]/10 bg-white p-3.5">
+        <div className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/60">
+          <Briefcase className="h-3.5 w-3.5 text-[color:var(--brand-navy)]/60" aria-hidden />
+          Professional experience
+        </div>
+        <ul className="mt-2 space-y-1.5 text-xs text-[color:var(--brand-navy)]/80">
+          {candidate.experience.map((e) => (
+            <li key={`${e.role}-${e.org}`} className="flex items-baseline justify-between gap-3">
+              <span className="min-w-0 truncate">
+                <span className="font-semibold text-[color:var(--brand-navy)]">{e.role}</span> ·{" "}
+                {e.org}
+              </span>
+              <span className="shrink-0 text-[color:var(--brand-navy)]/55">{e.period}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {/* Personalized interview questions */}
       <div className="mt-4 rounded-xl border border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-sky)]/25 p-3.5">
         <div className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/65">
           <MessageCircle className="h-3.5 w-3.5" aria-hidden />
-          Suggested interview question
+          Personalized interview questions
         </div>
-        <p className="mt-1.5 text-sm italic text-[color:var(--brand-navy)]/85">
-          "Walk us through the design-system rollout you led — how you handled adoption across
-          teams that hadn't asked for it."
-        </p>
+        <ul className="mt-2 space-y-1.5 text-sm italic text-[color:var(--brand-navy)]/85">
+          {candidate.questions.map((q) => (
+            <li key={q} className="flex gap-2">
+              <Quote className="mt-1 h-3.5 w-3.5 shrink-0 text-[color:var(--brand-navy)]/50" aria-hidden />
+              <span>{q}</span>
+            </li>
+          ))}
+        </ul>
       </div>
 
       {/* Client decision controls */}
       <div className="mt-4 grid grid-cols-3 gap-2 border-t border-[color:var(--brand-navy)]/8 pt-4">
-        <div className="rounded-md bg-[color:var(--brand-navy)] px-3 py-2 text-center text-sm font-semibold text-white">
+        <button
+          type="button"
+          className="rounded-md bg-[color:var(--brand-navy)] px-3 py-2 text-center text-sm font-semibold text-white hover:bg-[color:var(--brand-navy-dark)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+        >
           Shortlist
-        </div>
-        <div className="rounded-md border border-[color:var(--brand-navy)]/15 bg-white px-3 py-2 text-center text-sm font-semibold text-[color:var(--brand-navy)]">
+        </button>
+        <button
+          type="button"
+          className="rounded-md border border-[color:var(--brand-navy)]/15 bg-white px-3 py-2 text-center text-sm font-semibold text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/[0.04] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+        >
           Interview
-        </div>
-        <div className="rounded-md border border-[color:var(--brand-navy)]/15 bg-white px-3 py-2 text-center text-sm font-semibold text-[color:var(--brand-navy)]/70">
+        </button>
+        <button
+          type="button"
+          className="rounded-md border border-[color:var(--brand-navy)]/15 bg-white px-3 py-2 text-center text-sm font-semibold text-[color:var(--brand-navy)]/70 hover:bg-[color:var(--brand-navy)]/[0.04] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+        >
           Pass
-        </div>
+        </button>
       </div>
     </div>
   );
