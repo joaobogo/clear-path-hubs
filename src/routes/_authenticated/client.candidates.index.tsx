@@ -217,7 +217,13 @@ function CandidatesPage() {
   const [compareOpen, setCompareOpen] = useState(false);
   useEffect(() => {
     // Drop any selection that is no longer client-visible (tenant switch, filter change to hidden rows).
-    setCompareIds((ids) => ids.filter((id) => (rowsRaw as ClientCandidateDTO[]).some((r) => r.match_id === id)));
+    setCompareIds((ids) => {
+      const rows = rowsRaw as ClientCandidateDTO[];
+      const next = ids.filter((id) => rows.some((r) => r.match_id === id));
+      // Bail out if unchanged to avoid render loops (rowsRaw default `[]` is a fresh ref each render).
+      if (next.length === ids.length && next.every((v, i) => v === ids[i])) return ids;
+      return next;
+    });
   }, [rowsRaw, orgId]);
 
   const selectedCandidates = useMemo(
