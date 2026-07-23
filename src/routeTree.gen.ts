@@ -9,11 +9,13 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as UnauthorizedRouteImport } from './routes/unauthorized'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as TalentNetworkRouteImport } from './routes/talent-network'
 import { Route as TalentMarketplaceRouteImport } from './routes/talent-marketplace'
 import { Route as SolutionsRouteImport } from './routes/solutions'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as SitemapRouteImport } from './routes/sitemap'
 import { Route as ResourcesRouteImport } from './routes/resources'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as PrivacyRouteImport } from './routes/privacy'
@@ -96,6 +98,11 @@ import { Route as AuthenticatedAdminPositionsIdRouteImport } from './routes/_aut
 import { Route as AuthenticatedAdminClientsIdRouteImport } from './routes/_authenticated/admin.clients.$id'
 import { Route as AuthenticatedAdminCandidatesIdRouteImport } from './routes/_authenticated/admin.candidates.$id'
 
+const UnauthorizedRoute = UnauthorizedRouteImport.update({
+  id: '/unauthorized',
+  path: '/unauthorized',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
   path: '/terms',
@@ -119,6 +126,11 @@ const SolutionsRoute = SolutionsRouteImport.update({
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapRoute = SitemapRouteImport.update({
+  id: '/sitemap',
+  path: '/sitemap',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ResourcesRoute = ResourcesRouteImport.update({
@@ -579,11 +591,13 @@ export interface FileRoutesByFullPath {
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
   '/resources': typeof ResourcesRoute
+  '/sitemap': typeof SitemapRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/solutions': typeof SolutionsRoute
   '/talent-marketplace': typeof TalentMarketplaceRoute
   '/talent-network': typeof TalentNetworkRoute
   '/terms': typeof TermsRoute
+  '/unauthorized': typeof UnauthorizedRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/client': typeof AuthenticatedClientRouteWithChildren
   '/me': typeof AuthenticatedMeRouteWithChildren
@@ -666,11 +680,13 @@ export interface FileRoutesByTo {
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
   '/resources': typeof ResourcesRoute
+  '/sitemap': typeof SitemapRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/solutions': typeof SolutionsRoute
   '/talent-marketplace': typeof TalentMarketplaceRoute
   '/talent-network': typeof TalentNetworkRoute
   '/terms': typeof TermsRoute
+  '/unauthorized': typeof UnauthorizedRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/dev/catalogue': typeof DevCatalogueRoute
   '/industries/$slug': typeof IndustriesSlugRoute
@@ -746,11 +762,13 @@ export interface FileRoutesById {
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
   '/resources': typeof ResourcesRoute
+  '/sitemap': typeof SitemapRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/solutions': typeof SolutionsRoute
   '/talent-marketplace': typeof TalentMarketplaceRoute
   '/talent-network': typeof TalentNetworkRoute
   '/terms': typeof TermsRoute
+  '/unauthorized': typeof UnauthorizedRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/client': typeof AuthenticatedClientRouteWithChildren
   '/_authenticated/me': typeof AuthenticatedMeRouteWithChildren
@@ -835,11 +853,13 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/reset-password'
     | '/resources'
+    | '/sitemap'
     | '/sitemap.xml'
     | '/solutions'
     | '/talent-marketplace'
     | '/talent-network'
     | '/terms'
+    | '/unauthorized'
     | '/admin'
     | '/client'
     | '/me'
@@ -922,11 +942,13 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/reset-password'
     | '/resources'
+    | '/sitemap'
     | '/sitemap.xml'
     | '/solutions'
     | '/talent-marketplace'
     | '/talent-network'
     | '/terms'
+    | '/unauthorized'
     | '/blog/$slug'
     | '/dev/catalogue'
     | '/industries/$slug'
@@ -1001,11 +1023,13 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/reset-password'
     | '/resources'
+    | '/sitemap'
     | '/sitemap.xml'
     | '/solutions'
     | '/talent-marketplace'
     | '/talent-network'
     | '/terms'
+    | '/unauthorized'
     | '/_authenticated/admin'
     | '/_authenticated/client'
     | '/_authenticated/me'
@@ -1090,11 +1114,13 @@ export interface RootRouteChildren {
   PrivacyRoute: typeof PrivacyRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   ResourcesRoute: typeof ResourcesRoute
+  SitemapRoute: typeof SitemapRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SolutionsRoute: typeof SolutionsRoute
   TalentMarketplaceRoute: typeof TalentMarketplaceRoute
   TalentNetworkRoute: typeof TalentNetworkRoute
   TermsRoute: typeof TermsRoute
+  UnauthorizedRoute: typeof UnauthorizedRoute
   BlogSlugRoute: typeof BlogSlugRoute
   DevCatalogueRoute: typeof DevCatalogueRoute
   IndustriesSlugRoute: typeof IndustriesSlugRoute
@@ -1117,6 +1143,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/unauthorized': {
+      id: '/unauthorized'
+      path: '/unauthorized'
+      fullPath: '/unauthorized'
+      preLoaderRoute: typeof UnauthorizedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/terms': {
       id: '/terms'
       path: '/terms'
@@ -1150,6 +1183,13 @@ declare module '@tanstack/react-router' {
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap': {
+      id: '/sitemap'
+      path: '/sitemap'
+      fullPath: '/sitemap'
+      preLoaderRoute: typeof SitemapRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/resources': {
@@ -1945,11 +1985,13 @@ const rootRouteChildren: RootRouteChildren = {
   PrivacyRoute: PrivacyRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   ResourcesRoute: ResourcesRoute,
+  SitemapRoute: SitemapRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   SolutionsRoute: SolutionsRoute,
   TalentMarketplaceRoute: TalentMarketplaceRoute,
   TalentNetworkRoute: TalentNetworkRoute,
   TermsRoute: TermsRoute,
+  UnauthorizedRoute: UnauthorizedRoute,
   BlogSlugRoute: BlogSlugRoute,
   DevCatalogueRoute: DevCatalogueRoute,
   IndustriesSlugRoute: IndustriesSlugRoute,
@@ -1972,3 +2014,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
