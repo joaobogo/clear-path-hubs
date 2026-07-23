@@ -379,7 +379,7 @@ function IntakePage() {
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-5">
-          {step === 1 && (
+          {step === 2 && (
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <Field label="First name" error={errors.firstName} required>
                 <Input
@@ -465,7 +465,7 @@ function IntakePage() {
             </div>
           )}
 
-          {step === 2 && (
+          {step === 1 && (
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <Field label="Role title" error={errors.roleTitle} required className="sm:col-span-2">
                 <Input
@@ -883,7 +883,7 @@ function IntakePage() {
             </div>
           )}
 
-          {step === 5 && (
+          {step === 6 && (
             <div className="space-y-4 text-sm">
               <ReviewBlock title="Contact">
                 <div>
