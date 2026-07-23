@@ -180,8 +180,8 @@ function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background px-4">
-      <div className="w-full max-w-md space-y-4">
+    <FormShell exitTo="/" exitLabel="Exit" width="sm">
+      <div className="w-full space-y-4">
         <Card className="p-6 space-y-4">
           <div>
             <h1 className="text-xl font-semibold">
@@ -330,6 +330,6 @@ function LoginPage() {
           </Card>
         )}
       </div>
-    </div>
+    </FormShell>
   );
 }

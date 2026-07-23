@@ -55,8 +55,8 @@ function ResetPasswordPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background px-4">
-      <Card className="w-full max-w-sm p-6 space-y-4">
+    <FormShell exitTo="/login" exitLabel="Back to sign in" width="sm">
+      <Card className="w-full p-6 space-y-4">
         <div>
           <h1 className="text-xl font-semibold">Set a new password</h1>
           {!hasRecoverySession && (
@@ -93,6 +93,6 @@ function ResetPasswordPage() {
           </Button>
         </form>
       </Card>
-    </div>
+    </FormShell>
   );
 }
