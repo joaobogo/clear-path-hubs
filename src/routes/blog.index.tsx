@@ -55,10 +55,14 @@ function BlogIndex() {
 
   const categoriesToShow = dynamicCategories;
 
-  const total = filtered.length;
+  const isBrowsing = q.trim() === "" && cat === "" && page === 1;
+  const featured = isBrowsing ? all[0] : null;
+  const listSource = featured ? filtered.filter((p) => p.slug !== featured.slug) : filtered;
+
+  const total = listSource.length;
   const pages = Math.max(1, Math.ceil(total / PAGE_SIZE));
   const current = Math.min(page, pages);
-  const paged = filtered.slice((current - 1) * PAGE_SIZE, current * PAGE_SIZE);
+  const paged = listSource.slice((current - 1) * PAGE_SIZE, current * PAGE_SIZE);
 
   return (
     <SiteShell>
