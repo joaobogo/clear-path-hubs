@@ -1309,20 +1309,7 @@ function ClientCandidateDelivery() {
 /* ---------- Calculator + adaptive CTA bridge (Prompt 13) ---------- */
 
 function HomeCalculator() {
-  const [result, setResult] = React.useState<CalculatorResult | null>(null);
-  return (
-    <>
-      <RoiCalculator
-        variant="homepage"
-        supportingCopy="Adjust the assumptions to compare traditional agency and internal sourcing costs with the TaaSFlow model."
-        showCtas={false}
-        onResultChange={setResult}
-      />
-      <div className="mt-6">
-        <CalculatorCtaBridge result={result} />
-      </div>
-    </>
-  );
+  return <AgencyComparator />;
 }
 
 /* ---------- Component ---------- */
