@@ -1,0 +1,169 @@
+{
+  "generated_at": "2026-07-22",
+  "principle": "One primary action per page. Uncommon actions in overflow. Detail lives in record pages or drawers.",
+  "pages": [
+    {
+      "path": "/admin",
+      "primary": "Open Publish Desk",
+      "secondary": ["Open stalled position", "Open latest intake"],
+      "overflow": ["Export today's activity"],
+      "remove": ["Decorative KPI tiles (vanity totals)"]
+    },
+    {
+      "path": "/admin/clients",
+      "primary": "Open client",
+      "secondary": ["Search"],
+      "overflow": ["New client (opens modal, replaces /admin/clients/new)", "Export CSV"],
+      "remove": []
+    },
+    {
+      "path": "/admin/clients/$id",
+      "primary": "Add position for client",
+      "secondary": ["Message client owner", "Impersonate (support view)"],
+      "overflow": ["Edit billing", "Adjust cost limit", "Archive client"],
+      "remove": []
+    },
+    {
+      "path": "/admin/positions",
+      "primary": "Open position",
+      "secondary": ["Filter stalled"],
+      "overflow": ["Assign owner (bulk)", "Export CSV"],
+      "remove": []
+    },
+    {
+      "path": "/admin/positions/$id",
+      "primary": "Publish next candidate",
+      "secondary": ["Edit brief", "Edit screening", "Pause"],
+      "overflow": ["Reassign owner", "Close position", "Export shortlist"],
+      "remove": []
+    },
+    {
+      "path": "/admin/candidates",
+      "primary": "Open candidate",
+      "secondary": ["Filter by stage", "Search"],
+      "overflow": ["Bulk stage change", "Bulk flag"],
+      "remove": []
+    },
+    {
+      "path": "/admin/candidates/$id",
+      "primary": "Approve for publication",
+      "secondary": ["Reject", "Message", "Download CV"],
+      "overflow": ["Request rescore", "Edit evidence", "Merge duplicate", "Delete"],
+      "remove": ["Model internals surfaced to admin (keep in overflow debug panel)"]
+    },
+    {
+      "path": "/admin/publish",
+      "primary": "Approve & publish",
+      "secondary": ["Reject", "Open candidate"],
+      "overflow": ["Bulk approve (with audit note)"],
+      "remove": []
+    },
+    {
+      "path": "/admin/operations",
+      "primary": "Retry failed job",
+      "secondary": ["Filter by job type", "Search trace"],
+      "overflow": ["Open provider usage", "Open retention runs", "Notifications tab (merged)"],
+      "remove": ["Duplicate charts already covered elsewhere"]
+    },
+    {
+      "path": "/admin/messages",
+      "primary": "Reply",
+      "secondary": ["Mark resolved"],
+      "overflow": ["Assign owner", "Create canned response"],
+      "remove": []
+    },
+    {
+      "path": "/admin/settings",
+      "primary": "Save",
+      "secondary": [],
+      "overflow": ["Team", "Cost limits", "Retention", "Integrations"],
+      "remove": []
+    },
+
+    {
+      "path": "/client",
+      "primary": "Open shortlist",
+      "secondary": ["View interviews"],
+      "overflow": [],
+      "remove": ["Decorative KPI tiles"]
+    },
+    {
+      "path": "/client/positions",
+      "primary": "Open position",
+      "secondary": ["Start a new hire (→ /intake)"],
+      "overflow": ["Export CSV"],
+      "remove": []
+    },
+    {
+      "path": "/client/positions/$id",
+      "primary": "Move candidate stage",
+      "secondary": ["Schedule interview", "Message"],
+      "overflow": ["View brief", "Pause position", "Close position"],
+      "remove": []
+    },
+    {
+      "path": "/client/candidates",
+      "primary": "Open candidate",
+      "secondary": ["Filter by stage", "Search"],
+      "overflow": ["Export CSV"],
+      "remove": []
+    },
+    {
+      "path": "/client/candidates/$id",
+      "primary": "Move stage / record decision",
+      "secondary": ["Schedule interview", "Message", "Download CV"],
+      "overflow": ["Share redacted summary", "Flag concern"],
+      "remove": ["Any 'score model' technical labels — plain language only"]
+    },
+    {
+      "path": "/client/messages",
+      "primary": "Reply",
+      "secondary": [],
+      "overflow": [],
+      "remove": []
+    },
+    {
+      "path": "/client/settings",
+      "primary": "Save",
+      "secondary": [],
+      "overflow": ["Team (merged from /client/team)", "Notifications", "Data & privacy"],
+      "remove": []
+    },
+
+    {
+      "path": "/me/applications",
+      "primary": "Open application",
+      "secondary": ["Browse open roles"],
+      "overflow": ["Withdraw"],
+      "remove": []
+    },
+    {
+      "path": "/me/applications/$id",
+      "primary": "Message recruiter",
+      "secondary": ["Update CV"],
+      "overflow": ["Withdraw", "Request interview reschedule"],
+      "remove": []
+    },
+    {
+      "path": "/me/profile",
+      "primary": "Save",
+      "secondary": ["Upload CV (merged from /me/cv)"],
+      "overflow": ["Download my data"],
+      "remove": []
+    },
+    {
+      "path": "/me/messages",
+      "primary": "Reply",
+      "secondary": [],
+      "overflow": [],
+      "remove": []
+    },
+    {
+      "path": "/me/settings",
+      "primary": "Save",
+      "secondary": ["Submit data request"],
+      "overflow": ["Delete account"],
+      "remove": []
+    }
+  ]
+}
