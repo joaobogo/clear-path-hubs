@@ -8,16 +8,16 @@ import {
 } from "@/components/marketing/site-shell";
 import { PricingTierCard } from "@/components/marketing/pricing-tier-card";
 import { AgencyComparator } from "@/components/marketing/agency-comparator";
-import { PRICING_TIERS, NEVER_CHARGED } from "@/content/pricing";
+import { PRICING_TIERS, NEVER_CHARGED, PRICING_GUARANTEES } from "@/content/pricing";
 import { Check, X } from "lucide-react";
 import { PageConnections } from "@/components/marketing/page-connections";
 
 export const Route = createFileRoute("/pricing")({
   head: () =>
     marketingHead(undefined, "/pricing", {
-      title: "Pricing — TaaSFlow subscription recruiting",
+      title: "Pricing — Plans that scale with volume | TaaSFlow",
       description:
-        "Flat-fee subscription recruiting. Transparent tiers, no placement fees, no salary-percentage commissions. Compare directly against a traditional agency invoice.",
+        "Transparent one-off packages from $399. Ranked candidates in 14 days, no placement fees, no salary percentages. Higher volume = lower cost per role.",
     }),
   component: PricingPage,
 });
@@ -28,26 +28,24 @@ function PricingPage() {
 
   return (
     <SiteShell>
-      {/* Hero */}
+      {/* Hero — mirrors taasflow.com/pricing */}
       <PublicSection className="pb-6 pt-16 sm:pt-20">
         <PublicPage>
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">
-            Pricing
+            Transparent Pricing
           </p>
           <h1 className="mt-3 max-w-3xl font-[family-name:var(--brand-font-display)] text-4xl font-semibold tracking-tight sm:text-5xl">
-            One flat subscription. Zero placement fees.
+            Plans that scale with volume.
           </h1>
           <p className="mt-5 max-w-2xl text-lg text-[color:var(--brand-navy)]/70">
-            You pay for the recruiting work, not a share of the salary. Every
-            tier includes ranked candidates with evidence, live workspace
-            visibility, and full pipeline ownership.
+            Higher volume = lower cost per role. Annual commitment saves 10%.
           </p>
           <ul className="mt-6 grid gap-3 text-sm text-[color:var(--brand-navy)]/75 sm:grid-cols-2 lg:grid-cols-4">
             {[
-              "Flat subscription — no placement fees",
-              "Ranked candidates every week",
-              "Live workspace visibility",
-              "You own pipeline and decisions",
+              "No salary percentage fees",
+              "Ranked candidates in 14 days",
+              "Ethical, criteria-based scoring",
+              "You keep the candidates forever",
             ].map((x) => (
               <li key={x} className="flex items-start gap-2">
                 <Check
@@ -61,7 +59,7 @@ function PricingPage() {
         </PublicPage>
       </PublicSection>
 
-      {/* Three tier cards — progressive disclosure inside each */}
+      {/* Three tier cards */}
       <PublicSection className="pt-4">
         <PublicPage>
           <div className="grid gap-5 md:grid-cols-3">
@@ -69,12 +67,20 @@ function PricingPage() {
               <PricingTierCard key={tier.id} tier={tier} />
             ))}
           </div>
-          <p className="mt-4 text-xs text-[color:var(--brand-navy)]/55">
-            Prices shown are indicative starting points. The contractual price
-            is confirmed on your scoped quote once the intake is complete.
+          <p className="mt-6 text-sm text-[color:var(--brand-navy)]/70">
+            Deliveries include the <span className="font-semibold text-[color:var(--brand-navy)]">top 10</span> ranked candidates per position each week.
           </p>
+          <div className="mt-4 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-[color:var(--brand-navy)]/80">
+            {PRICING_GUARANTEES.map((g) => (
+              <span key={g} className="inline-flex items-center gap-2">
+                <Check className="h-4 w-4 text-[color:var(--brand-navy)]" aria-hidden />
+                {g}
+              </span>
+            ))}
+          </div>
         </PublicPage>
       </PublicSection>
+
 
       {/* Enterprise strip */}
       <PublicSection className="py-10">

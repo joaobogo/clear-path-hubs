@@ -1,102 +1,115 @@
 // Canonical pricing configuration — single source of truth.
-// Consumed by: /pricing, /roi calculator, homepage cost band, agency comparator.
+// Mirrors the public taasflow.com/pricing packages exactly:
+// Pilot $399 (1 role), Multi Position $2.1K (2–5 roles), Hiring Sprint $4.5K (6–10 roles).
+// All packages are one-time flat fees with 14-day turnaround.
 //
-// GUARDRAIL: Prices below are indicative starting points published to give
-// buyers commercial confidence. The exact price is confirmed on the scoped
-// quote once the intake is complete. Do not add fabricated discounts,
-// promotions, or "was $X now $Y" language.
+// Consumed by: /pricing, ROI calculator, homepage cost band, agency comparator.
 
 export type PricingTier = {
-  id: "starter" | "growth" | "scale" | "enterprise";
+  id: "pilot" | "multi" | "sprint" | "enterprise";
   name: string;
   eyebrow: string;
-  /** Base monthly USD. Null for "quote-only" (enterprise). */
-  monthly: number | null;
-  /** Best-fit descriptor — no fake company sizes. */
+  /** One-time flat fee in USD. Null for custom scope. */
+  oneTime: number | null;
+  /** Display string, e.g. "$399", "$2.1K", "$4.5K", "Custom". */
+  priceDisplay: string;
+  /** Sub-price line (e.g. "≈ $600 per position"). */
+  pricePer?: string;
+  /** Best-fit descriptor. */
   bestFor: string;
-  /** Active roles included in the base subscription. */
-  rolesIncluded: number | "custom";
-  /** Weekly ranked-delivery cadence per role. */
-  weeklyDelivery: string;
-  /** Included capabilities — every capability is a real product feature. */
+  /** Active roles range. */
+  rolesIncluded: string;
+  /** Turnaround guarantee. */
+  turnaround: string;
+  /** Included capabilities. */
   included: string[];
-  /** Line on the CTA button. */
+  /** CTA. */
   ctaLabel: string;
   ctaTo: string;
   highlight?: boolean;
 };
 
+const BASE_INCLUDED = [
+  "Delivered weekly",
+  "Top 10 candidates per position",
+  "Ranked candidate shortlist",
+  "Scoring with fit notes",
+  "Criteria-based ethical ranking",
+  "3 months access to candidate data",
+];
+
 export const PRICING_TIERS: PricingTier[] = [
   {
-    id: "starter",
-    name: "Starter",
-    eyebrow: "One active role",
-    monthly: 2400,
-    bestFor: "Teams testing the model on one critical hire.",
-    rolesIncluded: 1,
-    weeklyDelivery: "Weekly ranked shortlist",
-    included: [
-      "Guided intake and search plan",
-      "Role-specific evidence-based scoring",
-      "Recruiter-written fit narratives with CV quotes",
-      "Client workspace with Kanban pipeline",
-      "Direct workspace messaging",
-      "Full audit trail on every decision",
-      "Direct handover after shortlist",
-    ],
-    ctaLabel: "Start with one role",
-    ctaTo: "/intake",
+    id: "pilot",
+    name: "Pilot — Single Position",
+    eyebrow: "1 active role",
+    oneTime: 399,
+    priceDisplay: "$399",
+    bestFor: "Test the model on one critical hire.",
+    rolesIncluded: "1 active role",
+    turnaround: "14-day turnaround",
+    included: BASE_INCLUDED,
+    ctaLabel: "Book a discovery call",
+    ctaTo: "/contact",
   },
   {
-    id: "growth",
-    name: "Growth",
-    eyebrow: "Up to three parallel roles",
-    monthly: 5900,
-    bestFor: "Series A–C operators running multiple parallel searches.",
-    rolesIncluded: 3,
-    weeklyDelivery: "Weekly ranked shortlist per role",
+    id: "multi",
+    name: "Multi Position",
+    eyebrow: "2–5 active roles",
+    oneTime: 2100,
+    priceDisplay: "$2.1K",
+    pricePer: "≈ $600 per position",
+    bestFor: "Run parallel searches with shared intake context.",
+    rolesIncluded: "2–5 active roles",
+    turnaround: "14-day turnaround",
     included: [
-      "Everything in Starter",
-      "Shared intake context across roles",
-      "One recruiter pod on every search",
-      "Portfolio view across roles",
-      "Priority workspace response",
-      "Reusable candidate pipeline between roles",
+      "Delivered weekly",
+      "Top 10 candidates per position",
+      "All roles sourced simultaneously",
+      "Ranked shortlist per role",
+      "Scoring with fit notes",
+      "Criteria-based ethical ranking",
+      "3 months access to candidate data",
     ],
-    ctaLabel: "Scope three roles",
-    ctaTo: "/intake",
+    ctaLabel: "Book a discovery call",
+    ctaTo: "/contact",
     highlight: true,
   },
   {
-    id: "scale",
-    name: "Scale",
-    eyebrow: "Up to eight parallel roles",
-    monthly: 12500,
-    bestFor: "Operators with concurrent hiring across functions or regions.",
-    rolesIncluded: 8,
-    weeklyDelivery: "Twice-weekly delivery on priority roles",
+    id: "sprint",
+    name: "Hiring Sprint",
+    eyebrow: "6–10 active roles",
+    oneTime: 4500,
+    priceDisplay: "$4.5K",
+    pricePer: "≈ $562 per position",
+    bestFor: "Concurrent hiring across functions with priority support.",
+    rolesIncluded: "6–10 active roles",
+    turnaround: "14-day turnaround",
     included: [
-      "Everything in Growth",
-      "Dedicated recruiter pod",
-      "Custom scoring rubrics per function",
-      "Multi-region sourcing",
-      "Named engagement lead",
-      "Quarterly hiring review",
+      "Delivered weekly",
+      "Top 10 candidates per position",
+      "All roles sourced simultaneously",
+      "Ranked shortlist per role",
+      "Scoring with fit notes",
+      "Criteria-based ethical ranking",
+      "3 months access to candidate data",
+      "Priority support",
     ],
-    ctaLabel: "Scope multi-role search",
-    ctaTo: "/intake",
+    ctaLabel: "Book a discovery call",
+    ctaTo: "/contact",
   },
   {
     id: "enterprise",
-    name: "Enterprise",
-    eyebrow: "Custom scope",
-    monthly: null,
+    name: "Custom Billing",
+    eyebrow: "10+ roles or continuous hiring",
+    oneTime: null,
+    priceDisplay: "Custom",
     bestFor:
-      "Continuous hiring across business units, geographies, or 50-5,000-employee operators.",
-    rolesIncluded: "custom",
-    weeklyDelivery: "Custom delivery cadence",
+      "Continuous hiring across business units, geographies, or 50–5,000-employee operators.",
+    rolesIncluded: "Custom scope",
+    turnaround: "Custom delivery cadence",
     included: [
-      "Everything in Scale",
+      "Everything in Hiring Sprint",
       "Dedicated account structure",
       "Tailored billing and reporting",
       "SLA-backed delivery",
@@ -109,8 +122,16 @@ export const PRICING_TIERS: PricingTier[] = [
 ];
 
 /**
+ * Guarantees shown under the pricing tiers.
+ */
+export const PRICING_GUARANTEES: string[] = [
+  "No hidden fees",
+  "You keep all candidates",
+  "14-day guarantee",
+];
+
+/**
  * "What you will never see on a TaaSFlow invoice."
- * Shared across pricing UI + agency comparator.
  */
 export const NEVER_CHARGED: string[] = [
   "Placement fees",
@@ -119,10 +140,10 @@ export const NEVER_CHARGED: string[] = [
   "Hidden markups on interviews or offers",
 ];
 
-/** Reference monthly used by ROI calculator when no user override. */
-export const ROI_REFERENCE_MONTHLY = 5900;
+/** Reference package price used by ROI calculator (Multi Position). */
+export const ROI_REFERENCE_PACKAGE = 2100;
+export const ROI_REFERENCE_PACKAGE_LABEL = "Multi Position one-off package (2–5 roles)";
 
-export function formatMonthly(tier: PricingTier): string {
-  if (tier.monthly === null) return "Custom";
-  return `$${tier.monthly.toLocaleString("en-US")}`;
+export function formatPrice(tier: PricingTier): string {
+  return tier.priceDisplay;
 }
