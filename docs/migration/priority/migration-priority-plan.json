@@ -1,0 +1,39 @@
+{
+  "P0": [
+    "/",
+    "/privacy",
+    "/terms",
+    "destination_login",
+    "destination_intake",
+    "destination_job_board",
+    "destination_dashboards"
+  ],
+  "P1": [
+    "/how-it-works",
+    "/pricing",
+    "/pilot",
+    "/enterprise",
+    "/faq",
+    "/contact",
+    "/about",
+    "/industries",
+    "/employer-onboarding",
+    "/partnerships/staffing",
+    "/global-talent"
+  ],
+  "P2": [
+    "/resources",
+    "/case-studies",
+    "/knowledge-base",
+    "/industries/compare"
+  ],
+  "P3": [
+    "/blog + 304 articles",
+    "24 industry detail pages"
+  ],
+  "P4": [
+    "/taasflow-journey redirect",
+    "/candidate/join redirect",
+    "/talent redirect"
+  ]
+}

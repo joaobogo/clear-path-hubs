@@ -1,0 +1,38 @@
+{
+  "redirects": [
+    {
+      "source_path": "/taasflow-journey",
+      "destination_path": "/journey",
+      "redirect_type": "301",
+      "reason": "renamed_route",
+      "query_behavior": "preserve",
+      "fragment_behavior": "preserve",
+      "locale_behavior": "none",
+      "canonical_behavior": "destination_wins",
+      "verification_status": "PENDING"
+    },
+    {
+      "source_path": "/candidate/join",
+      "destination_path": "/jobs",
+      "redirect_type": "301",
+      "reason": "legacy_candidate_signup_moved_to_job_board",
+      "query_behavior": "preserve",
+      "fragment_behavior": "preserve",
+      "locale_behavior": "none",
+      "canonical_behavior": "destination_wins",
+      "verification_status": "PENDING"
+    },
+    {
+      "source_path": "/talent",
+      "destination_path": "/talent-network",
+      "redirect_type": "301",
+      "reason": "legacy_talent_page_renamed",
+      "query_behavior": "preserve",
+      "fragment_behavior": "preserve",
+      "locale_behavior": "none",
+      "canonical_behavior": "destination_wins",
+      "verification_status": "PENDING"
+    }
+  ],
+  "total": 3
+}
