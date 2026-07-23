@@ -448,7 +448,10 @@ async function main() {
   await mkdir(`${OUT_ROOT}/screenshots/source`, { recursive: true });
   await mkdir(`${OUT_ROOT}/screenshots/destination`, { recursive: true });
 
-  const browser = await chromium.launch({ headless: true });
+  const browser = await chromium.launch({
+    headless: true,
+    executablePath: process.env.CHROMIUM_EXECUTABLE || "/bin/chromium",
+  });
   const results: RouteResult[] = [];
   let screenshotCount = 0;
 
