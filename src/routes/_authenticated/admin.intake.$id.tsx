@@ -141,9 +141,9 @@ function IntakeDetail() {
                 <span
                   className={
                     completeness.score >= 80
-                      ? "text-emerald-600"
+                      ? "text-success"
                       : completeness.score >= 50
-                        ? "text-amber-600"
+                        ? "text-warning-foreground"
                         : "text-destructive"
                   }
                 >
@@ -183,8 +183,8 @@ function IntakeDetail() {
       </header>
 
       {duplicates.length > 0 && (
-        <section className="rounded-lg border border-amber-300/60 bg-amber-50/60 p-4 dark:bg-amber-950/20">
-          <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-amber-800 dark:text-amber-200">
+        <section className="rounded-lg border border-warning/60 bg-warning/60 p-4 dark:bg-warning/20">
+          <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-warning-foreground dark:text-warning-foreground">
             <AlertTriangle className="h-4 w-4" /> Possible duplicates
           </div>
           <ul className="space-y-1 text-xs">
@@ -314,7 +314,7 @@ function IntakeDetail() {
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           <section className="rounded-lg border bg-card p-5">
             <h2 className="flex items-center gap-2 text-sm font-semibold">
-              <MessageSquareWarning className="h-4 w-4 text-amber-600" />
+              <MessageSquareWarning className="h-4 w-4 text-warning-foreground" />
               Request clarification
             </h2>
             <p className="mt-1 text-xs text-muted-foreground">

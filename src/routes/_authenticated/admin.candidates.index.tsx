@@ -48,29 +48,29 @@ const PAGE_SIZE = 50;
 
 const STATE_TONE: Record<string, string> = {
   queued: "bg-muted text-muted-foreground",
-  parsing: "bg-blue-500/10 text-blue-700 dark:text-blue-300",
-  enriching: "bg-blue-500/10 text-blue-700 dark:text-blue-300",
-  ready_to_score: "bg-blue-500/10 text-blue-700 dark:text-blue-300",
-  scoring: "bg-blue-500/10 text-blue-700 dark:text-blue-300",
-  scored: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300",
-  manual_review_required: "bg-amber-500/10 text-amber-700 dark:text-amber-300",
-  ocr_required: "bg-amber-500/10 text-amber-700 dark:text-amber-300",
+  parsing: "bg-info/10 text-info dark:text-info",
+  enriching: "bg-info/10 text-info dark:text-info",
+  ready_to_score: "bg-info/10 text-info dark:text-info",
+  scoring: "bg-info/10 text-info dark:text-info",
+  scored: "bg-success/10 text-success dark:text-success",
+  manual_review_required: "bg-warning/10 text-warning-foreground dark:text-warning-foreground",
+  ocr_required: "bg-warning/10 text-warning-foreground dark:text-warning-foreground",
   failed: "bg-destructive/10 text-destructive",
   provider_blocked: "bg-destructive/10 text-destructive",
 };
 
 const REVIEW_TONE: Record<string, string> = {
   pending: "bg-muted text-muted-foreground",
-  approved: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300",
+  approved: "bg-success/10 text-success dark:text-success",
   rejected: "bg-destructive/10 text-destructive",
-  on_hold: "bg-amber-500/10 text-amber-700 dark:text-amber-300",
+  on_hold: "bg-warning/10 text-warning-foreground dark:text-warning-foreground",
 };
 
 const FIT_TONE: Record<string, string> = {
-  strong_match: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300",
-  good_match: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300",
-  potential_match: "bg-amber-500/10 text-amber-700 dark:text-amber-300",
-  partial_match: "bg-amber-500/10 text-amber-700 dark:text-amber-300",
+  strong_match: "bg-success/10 text-success dark:text-success",
+  good_match: "bg-success/10 text-success dark:text-success",
+  potential_match: "bg-warning/10 text-warning-foreground dark:text-warning-foreground",
+  partial_match: "bg-warning/10 text-warning-foreground dark:text-warning-foreground",
   weak_match: "bg-muted text-muted-foreground",
   poor_match: "bg-destructive/10 text-destructive",
 };

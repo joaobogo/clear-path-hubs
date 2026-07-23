@@ -33,9 +33,9 @@ export const Route = createFileRoute("/_authenticated/admin/publish")({
 type Any = any;
 
 const GROUPS = [
-  { id: "needs_review", label: "Needs review", tone: "text-amber-800 dark:text-amber-200 bg-amber-500/10", icon: AlertTriangle, hint: "Scored candidates awaiting an admin decision." },
+  { id: "needs_review", label: "Needs review", tone: "text-warning-foreground dark:text-warning-foreground bg-warning/10", icon: AlertTriangle, hint: "Scored candidates awaiting an admin decision." },
   { id: "blocked", label: "Blocked", tone: "text-destructive bg-destructive/10", icon: Ban, hint: "Processing failures, provider blocks, and OCR requests." },
-  { id: "ready", label: "Ready to publish", tone: "text-emerald-800 dark:text-emerald-200 bg-emerald-500/10", icon: CheckCircle2, hint: "Approved by admin — one click to send to the client." },
+  { id: "ready", label: "Ready to publish", tone: "text-success dark:text-success bg-success/10", icon: CheckCircle2, hint: "Approved by admin — one click to send to the client." },
   { id: "published", label: "Published", tone: "text-primary bg-primary/10", icon: Eye, hint: "Currently live in the client workspace." },
   { id: "held", label: "Held", tone: "text-muted-foreground bg-muted", icon: Pause, hint: "Paused pending clarification." },
 ] as const;
@@ -66,7 +66,7 @@ function Check({ ok, label }: { ok: boolean; label: string }) {
       className={
         "inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[10px] font-medium " +
         (ok
-          ? "bg-emerald-500/10 text-emerald-800 dark:text-emerald-200"
+          ? "bg-success/10 text-success dark:text-success"
           : "bg-destructive/10 text-destructive")
       }
       title={label}

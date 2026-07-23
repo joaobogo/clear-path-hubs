@@ -129,7 +129,7 @@ function IntakeInbox() {
                       {it.company_name}
                     </Link>
                     {it.duplicate && (
-                      <span className="ml-2 inline-flex items-center gap-1 text-[11px] text-amber-600">
+                      <span className="ml-2 inline-flex items-center gap-1 text-[11px] text-warning-foreground">
                         <AlertTriangle className="h-3 w-3" /> duplicate
                       </span>
                     )}

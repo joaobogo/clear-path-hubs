@@ -186,7 +186,7 @@ function CreateUserPanel({ organizationId }: { organizationId: string | null }) 
       </form>
 
       {result && (
-        <Card className="mt-4 border-emerald-500/40 bg-emerald-500/5 p-4">
+        <Card className="mt-4 border-success/40 bg-success/5 p-4">
           <p className="text-sm font-medium">Account ready</p>
           <p className="mt-1 text-xs text-muted-foreground">
             The password below will not be shown again. Copy it now and share
@@ -348,7 +348,7 @@ function OrgTeamList({ organizationId }: { organizationId: string }) {
       </div>
 
       {resetShown && (
-        <Card className="mt-4 border-amber-500/40 bg-amber-500/5 p-4">
+        <Card className="mt-4 border-warning/40 bg-warning/5 p-4">
           <p className="text-sm font-medium">New temporary password</p>
           <p className="mt-1 text-xs text-muted-foreground">
             Shown once. Share it securely.

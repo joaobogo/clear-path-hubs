@@ -5,22 +5,22 @@ import type { FitPresentation } from "@/lib/client-fit-presentation";
 
 const ACCENT: Record<FitPresentation["accent"], { ring: string; chip: string; bar: string; dot: string }> = {
   emerald: {
-    ring: "ring-emerald-400/40",
-    chip: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/20",
-    bar: "bg-emerald-500",
-    dot: "bg-emerald-500",
+    ring: "ring-success/40",
+    chip: "bg-success/10 text-success dark:text-success border-success/20",
+    bar: "bg-success",
+    dot: "bg-success",
   },
   sky: {
-    ring: "ring-sky-400/40",
-    chip: "bg-sky-500/10 text-sky-700 dark:text-sky-300 border-sky-500/20",
-    bar: "bg-sky-500",
-    dot: "bg-sky-500",
+    ring: "ring-info/40",
+    chip: "bg-info/10 text-info dark:text-info border-info/20",
+    bar: "bg-info",
+    dot: "bg-info",
   },
   amber: {
-    ring: "ring-amber-400/40",
-    chip: "bg-amber-500/10 text-amber-700 dark:text-amber-300 border-amber-500/20",
-    bar: "bg-amber-500",
-    dot: "bg-amber-500",
+    ring: "ring-warning/40",
+    chip: "bg-warning/10 text-warning-foreground dark:text-warning-foreground border-warning/20",
+    bar: "bg-warning",
+    dot: "bg-warning",
   },
   slate: {
     ring: "ring-slate-400/30",
@@ -29,10 +29,10 @@ const ACCENT: Record<FitPresentation["accent"], { ring: string; chip: string; ba
     dot: "bg-slate-400",
   },
   rose: {
-    ring: "ring-rose-400/40",
-    chip: "bg-rose-500/10 text-rose-700 dark:text-rose-300 border-rose-500/20",
-    bar: "bg-rose-500",
-    dot: "bg-rose-500",
+    ring: "ring-destructive/40",
+    chip: "bg-destructive/10 text-destructive dark:text-destructive border-destructive/20",
+    bar: "bg-destructive",
+    dot: "bg-destructive",
   },
 };
 
@@ -167,7 +167,7 @@ export function CandidateCard({
         <div className="mt-1.5 text-xs text-muted-foreground line-clamp-1">• {c.strengths[1]}</div>
       )}
       {c.main_consideration && (
-        <div className="mt-1.5 text-xs text-amber-700 dark:text-amber-400 line-clamp-1">
+        <div className="mt-1.5 text-xs text-warning-foreground dark:text-warning-foreground line-clamp-1">
           ⚠ {c.main_consideration}
         </div>
       )}

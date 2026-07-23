@@ -44,10 +44,10 @@ export const Route = createFileRoute("/_authenticated/admin/positions/")({
 
 const STATUS_COLOR: Record<string, string> = {
   draft: "bg-muted text-muted-foreground",
-  submitted: "bg-amber-500/15 text-amber-800 dark:text-amber-200",
-  needs_clarification: "bg-amber-500/15 text-amber-800 dark:text-amber-200",
-  approved: "bg-blue-500/15 text-blue-800 dark:text-blue-200",
-  active: "bg-emerald-500/15 text-emerald-800 dark:text-emerald-200",
+  submitted: "bg-warning/15 text-warning-foreground dark:text-warning-foreground",
+  needs_clarification: "bg-warning/15 text-warning-foreground dark:text-warning-foreground",
+  approved: "bg-info/15 text-info dark:text-info",
+  active: "bg-success/15 text-success dark:text-success",
   paused: "bg-muted text-muted-foreground",
   closed: "bg-muted text-muted-foreground",
   archived: "bg-muted text-muted-foreground",
@@ -346,7 +346,7 @@ function PositionsPage() {
                     </td>
                     <td className="px-4 py-3 text-right">
                       {p.counts.action_required > 0 ? (
-                        <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/15 px-2 py-0.5 text-xs font-medium text-amber-800 dark:text-amber-200">
+                        <span className="inline-flex items-center gap-1 rounded-full bg-warning/15 px-2 py-0.5 text-xs font-medium text-warning-foreground dark:text-warning-foreground">
                           <AlertCircle className="h-3 w-3" />
                           {p.counts.action_required}
                         </span>
@@ -419,7 +419,7 @@ function PositionsPage() {
                   <span>Shortlisted <b className="text-foreground">{p.counts.shortlisted}</b></span>
                   <span>Interviews <b className="text-foreground">{p.counts.interviews}</b></span>
                   {p.counts.action_required > 0 && (
-                    <span className="inline-flex items-center gap-1 text-amber-700 dark:text-amber-300">
+                    <span className="inline-flex items-center gap-1 text-warning-foreground dark:text-warning-foreground">
                       <AlertCircle className="h-3 w-3" />
                       {p.counts.action_required} action
                     </span>

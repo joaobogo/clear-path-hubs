@@ -251,7 +251,7 @@ function Overview() {
                       a.tone === "danger"
                         ? "bg-destructive"
                         : a.tone === "warn"
-                          ? "bg-amber-500"
+                          ? "bg-warning"
                           : "bg-primary"
                     }`}
                     aria-hidden
