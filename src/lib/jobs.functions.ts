@@ -45,6 +45,21 @@ export type PublicPositionSummary = {
 // Completeness: description must be at least 40 chars, requirements array non-empty.
 const MIN_DESC = 40;
 
+function toReqStrings(input: unknown): string[] {
+  if (!Array.isArray(input)) return [];
+  return input
+    .map((r) => {
+      if (typeof r === "string") return r;
+      if (r && typeof r === "object") {
+        const o = r as { label?: unknown; text?: unknown; name?: unknown };
+        const v = o.label ?? o.text ?? o.name;
+        return typeof v === "string" ? v : null;
+      }
+      return null;
+    })
+    .filter((v): v is string => !!v && v.trim().length > 0);
+}
+
 export const listPublicPositions = createServerFn({ method: "GET" }).handler(
   async (): Promise<PublicPositionSummary[]> => {
     const supabase = publicClient();
