@@ -85,6 +85,155 @@
   --brand-font-display: "Fraunces", "Inter", Georgia, serif;
   --brand-font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo,
     Consolas, monospace;
+
+  /* ============================================================
+   * Semantic --taas-* token layer (canonical brand API)
+   * Single source of truth. All shadcn tokens in src/styles.css
+   * reference these. Do NOT hard-code new hex/oklch anywhere else.
+   * ============================================================ */
+
+  /* Brand — blues */
+  --taas-brand-primary:         var(--brand-ocean);         /* Ocean 221 83% 53% */
+  --taas-brand-primary-hover:   oklch(0.55 0.19 258);       /* darker ocean */
+  --taas-brand-primary-active:  oklch(0.50 0.19 258);       /* pressed */
+  --taas-brand-primary-soft:    var(--brand-sky);           /* tinted surface */
+  --taas-brand-primary-softer:  oklch(0.965 0.012 245);     /* subtle wash */
+  --taas-brand-primary-foreground: oklch(0.99 0.005 245);   /* on primary */
+  --taas-brand-navy:            var(--brand-navy-dark);     /* authority */
+  --taas-brand-navy-foreground: oklch(0.99 0.005 245);
+  --taas-brand-accent:          oklch(0.72 0.14 245);       /* light ocean accent */
+  --taas-brand-accent-soft:     oklch(0.94 0.045 245);
+
+  /* Surfaces */
+  --taas-surface-page:      var(--brand-paper);             /* app background */
+  --taas-surface-card:      oklch(1 0 0);                   /* cards / panels */
+  --taas-surface-elevated:  oklch(1 0 0);                   /* modals, popovers */
+  --taas-surface-muted:     oklch(0.965 0.007 247);         /* muted fills */
+  --taas-surface-sunken:    oklch(0.955 0.008 247);         /* inset areas */
+  --taas-surface-inverse:   var(--brand-navy-dark);         /* dark surface */
+
+  /* Text */
+  --taas-text-primary:      var(--brand-ink);
+  --taas-text-secondary:    oklch(0.45 0.03 262);
+  --taas-text-tertiary:     oklch(0.58 0.03 262);
+  --taas-text-disabled:     oklch(0.72 0.02 262);
+  --taas-text-inverse:      oklch(0.99 0.005 245);
+  --taas-text-link:         var(--taas-brand-primary);
+  --taas-text-link-hover:   var(--taas-brand-primary-hover);
+
+  /* Borders */
+  --taas-border-subtle:     oklch(0.94 0.008 247);
+  --taas-border-default:    oklch(0.90 0.010 247);
+  --taas-border-strong:     oklch(0.82 0.014 247);
+  --taas-border-focus:      var(--taas-brand-primary);
+
+  /* Interaction */
+  --taas-interactive-hover:      oklch(0.965 0.010 247);    /* neutral hover bg */
+  --taas-interactive-pressed:    oklch(0.94 0.012 247);
+  --taas-interactive-selected:   oklch(0.95 0.035 245);     /* tinted selected row */
+  --taas-interactive-disabled:   oklch(0.955 0.005 247);
+  --taas-focus-ring:             var(--brand-focus-ring);
+
+  /* Status */
+  --taas-status-success:            var(--brand-success);
+  --taas-status-success-foreground: oklch(0.99 0.005 155);
+  --taas-status-success-soft:       oklch(0.955 0.045 155);
+  --taas-status-warning:            var(--brand-warning);
+  --taas-status-warning-foreground: oklch(0.22 0.05 75);
+  --taas-status-warning-soft:       oklch(0.965 0.05 82);
+  --taas-status-danger:             var(--brand-danger);
+  --taas-status-danger-foreground:  oklch(0.99 0.005 27);
+  --taas-status-danger-soft:        oklch(0.96 0.04 27);
+  --taas-status-info:               var(--brand-ocean);
+  --taas-status-info-foreground:    oklch(0.99 0.005 245);
+  --taas-status-info-soft:          oklch(0.955 0.04 245);
+  --taas-status-neutral:            oklch(0.55 0.02 262);
+  --taas-status-neutral-soft:       oklch(0.955 0.006 247);
+
+  /* Typography scale */
+  --taas-font-sans:    var(--brand-font-sans);
+  --taas-font-display: var(--brand-font-display);
+  --taas-font-mono:    var(--brand-font-mono);
+
+  /* Display (marketing) */
+  --taas-text-display-xl: 4.5rem;    /* 72 */
+  --taas-text-display-lg: 3.5rem;    /* 56 */
+  --taas-text-display-md: 2.75rem;   /* 44 */
+  --taas-text-display-sm: 2.25rem;   /* 36 */
+
+  /* Dashboard headings */
+  --taas-text-h1: 1.875rem;  /* 30 */
+  --taas-text-h2: 1.5rem;    /* 24 */
+  --taas-text-h3: 1.25rem;   /* 20 */
+  --taas-text-h4: 1.0625rem; /* 17 */
+
+  /* Body + meta */
+  --taas-text-body-lg: 1.0625rem;
+  --taas-text-body-md: 0.9375rem;
+  --taas-text-body-sm: 0.875rem;
+  --taas-text-meta-md: 0.8125rem;
+  --taas-text-meta-sm: 0.75rem;
+  --taas-text-caption: 0.6875rem;
+
+  --taas-leading-tight:   1.15;
+  --taas-leading-snug:    1.3;
+  --taas-leading-normal:  1.5;
+  --taas-leading-relaxed: 1.65;
+
+  /* Radii */
+  --taas-radius-control: var(--brand-radius-sm);  /* inputs, buttons */
+  --taas-radius-card:    var(--brand-radius-lg);
+  --taas-radius-surface: var(--brand-radius-xl);
+  --taas-radius-pill:    var(--brand-radius-pill);
+
+  /* Border weights */
+  --taas-border-hairline: 1px;
+  --taas-border-regular:  1px;
+  --taas-border-emphasis: 2px;
+
+  /* Shadows (elevation) */
+  --taas-shadow-0: none;
+  --taas-shadow-1: var(--brand-shadow-xs);
+  --taas-shadow-2: var(--brand-shadow-sm);
+  --taas-shadow-3: var(--brand-shadow-md);
+  --taas-shadow-4: var(--brand-shadow-lg);
+  --taas-shadow-5: var(--brand-shadow-xl);
+  --taas-shadow-focus: var(--brand-focus-ring);
+
+  /* Motion */
+  --taas-motion-instant: 80ms;
+  --taas-motion-fast:    120ms;
+  --taas-motion-base:    180ms;
+  --taas-motion-slow:    280ms;
+  --taas-motion-slower:  420ms;
+  --taas-ease-standard:  cubic-bezier(0.2, 0, 0, 1);
+  --taas-ease-emphasized: cubic-bezier(0.2, 0, 0.1, 1);
+
+  /* Charts (categorical, WCAG-safe pairs) */
+  --taas-chart-1: var(--brand-ocean);              /* primary series */
+  --taas-chart-2: var(--brand-navy-dark);          /* secondary */
+  --taas-chart-3: oklch(0.72 0.14 245);            /* accent light-ocean */
+  --taas-chart-4: var(--brand-success);            /* positive */
+  --taas-chart-5: var(--brand-warning);            /* attention */
+  --taas-chart-6: oklch(0.55 0.18 300);            /* violet, tie-break */
+  --taas-chart-7: oklch(0.65 0.15 195);            /* teal, tie-break */
+
+  /* Score bands (0–100) */
+  --taas-score-excellent: var(--brand-success);        /* 85–100 */
+  --taas-score-strong:    oklch(0.68 0.13 165);        /* 70–84  */
+  --taas-score-moderate:  var(--brand-warning);        /* 55–69  */
+  --taas-score-weak:      oklch(0.65 0.19 45);         /* 40–54  */
+  --taas-score-poor:      var(--brand-danger);         /* 0–39   */
+
+  /* Pipeline stage colors */
+  --taas-stage-new:         oklch(0.55 0.02 262);      /* neutral */
+  --taas-stage-review:      var(--brand-ocean);        /* action */
+  --taas-stage-shortlisted: oklch(0.72 0.14 245);
+  --taas-stage-interview:   oklch(0.55 0.18 300);
+  --taas-stage-offer:       var(--brand-success);
+  --taas-stage-hired:       oklch(0.50 0.14 155);
+  --taas-stage-rejected:    var(--brand-danger);
+  --taas-stage-withdrawn:   oklch(0.65 0.02 262);
 }
 
 .dark {

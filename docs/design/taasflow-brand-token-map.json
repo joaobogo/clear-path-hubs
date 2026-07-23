@@ -1,0 +1,131 @@
+{
+  "version": "1.0.0",
+  "verdict": "PASS",
+  "sourceOfTruth": "src/styles/brand-tokens.css",
+  "sourcePalette": {
+    "navy":         { "hsl": "222 47% 20%", "oklch": "oklch(0.22 0.055 262)",  "var": "--brand-navy-dark" },
+    "navyBase":     { "hsl": "222 47% 25%", "oklch": "oklch(0.29 0.055 262)",  "var": "--brand-navy" },
+    "ocean":        { "hsl": "221 83% 53%", "oklch": "oklch(0.60 0.19 258)",   "var": "--brand-ocean" },
+    "oceanLight":   { "hsl": "221 83% 62%", "oklch": "oklch(0.68 0.16 258)",   "var": "--brand-ocean-light" },
+    "sky":          { "hsl": "214 32% 91%", "oklch": "oklch(0.92 0.017 245)",  "var": "--brand-sky" },
+    "ink":          { "hsl": null,          "oklch": "oklch(0.18 0.03 262)",   "var": "--brand-ink" },
+    "paper":        { "hsl": null,          "oklch": "oklch(0.985 0.003 245)", "var": "--brand-paper" },
+    "success":      { "oklch": "oklch(0.62 0.14 155)", "var": "--brand-success" },
+    "warning":      { "oklch": "oklch(0.75 0.16 75)",  "var": "--brand-warning" },
+    "danger":       { "oklch": "oklch(0.58 0.22 27)",  "var": "--brand-danger" }
+  },
+  "semanticTokens": {
+    "brand": [
+      "--taas-brand-primary", "--taas-brand-primary-hover", "--taas-brand-primary-active",
+      "--taas-brand-primary-soft", "--taas-brand-primary-softer", "--taas-brand-primary-foreground",
+      "--taas-brand-navy", "--taas-brand-navy-foreground",
+      "--taas-brand-accent", "--taas-brand-accent-soft"
+    ],
+    "surface": [
+      "--taas-surface-page", "--taas-surface-card", "--taas-surface-elevated",
+      "--taas-surface-muted", "--taas-surface-sunken", "--taas-surface-inverse"
+    ],
+    "text": [
+      "--taas-text-primary", "--taas-text-secondary", "--taas-text-tertiary",
+      "--taas-text-disabled", "--taas-text-inverse", "--taas-text-link", "--taas-text-link-hover"
+    ],
+    "border": [
+      "--taas-border-subtle", "--taas-border-default", "--taas-border-strong", "--taas-border-focus"
+    ],
+    "interactive": [
+      "--taas-interactive-hover", "--taas-interactive-pressed",
+      "--taas-interactive-selected", "--taas-interactive-disabled", "--taas-focus-ring"
+    ],
+    "status": [
+      "--taas-status-success", "--taas-status-success-foreground", "--taas-status-success-soft",
+      "--taas-status-warning", "--taas-status-warning-foreground", "--taas-status-warning-soft",
+      "--taas-status-danger",  "--taas-status-danger-foreground",  "--taas-status-danger-soft",
+      "--taas-status-info",    "--taas-status-info-foreground",    "--taas-status-info-soft",
+      "--taas-status-neutral", "--taas-status-neutral-soft"
+    ],
+    "typography": {
+      "families": ["--taas-font-sans", "--taas-font-display", "--taas-font-mono"],
+      "display":  ["--taas-text-display-xl", "--taas-text-display-lg", "--taas-text-display-md", "--taas-text-display-sm"],
+      "heading":  ["--taas-text-h1", "--taas-text-h2", "--taas-text-h3", "--taas-text-h4"],
+      "body":     ["--taas-text-body-lg", "--taas-text-body-md", "--taas-text-body-sm"],
+      "meta":     ["--taas-text-meta-md", "--taas-text-meta-sm", "--taas-text-caption"],
+      "leading":  ["--taas-leading-tight", "--taas-leading-snug", "--taas-leading-normal", "--taas-leading-relaxed"]
+    },
+    "radii":  ["--taas-radius-control", "--taas-radius-card", "--taas-radius-surface", "--taas-radius-pill"],
+    "border-weights": ["--taas-border-hairline", "--taas-border-regular", "--taas-border-emphasis"],
+    "shadow": ["--taas-shadow-0", "--taas-shadow-1", "--taas-shadow-2", "--taas-shadow-3", "--taas-shadow-4", "--taas-shadow-5", "--taas-shadow-focus"],
+    "motion": ["--taas-motion-instant", "--taas-motion-fast", "--taas-motion-base", "--taas-motion-slow", "--taas-motion-slower", "--taas-ease-standard", "--taas-ease-emphasized"],
+    "chart":  ["--taas-chart-1", "--taas-chart-2", "--taas-chart-3", "--taas-chart-4", "--taas-chart-5", "--taas-chart-6", "--taas-chart-7"],
+    "score":  ["--taas-score-excellent", "--taas-score-strong", "--taas-score-moderate", "--taas-score-weak", "--taas-score-poor"],
+    "stage":  ["--taas-stage-new", "--taas-stage-review", "--taas-stage-shortlisted", "--taas-stage-interview", "--taas-stage-offer", "--taas-stage-hired", "--taas-stage-rejected", "--taas-stage-withdrawn"]
+  },
+  "shadcnRewire": {
+    "--primary":                  "--taas-brand-primary",
+    "--primary-foreground":       "--taas-brand-primary-foreground",
+    "--secondary":                "--taas-surface-muted",
+    "--secondary-foreground":     "--taas-text-primary",
+    "--muted":                    "--taas-surface-muted",
+    "--muted-foreground":         "--taas-text-secondary",
+    "--accent":                   "--taas-brand-accent-soft",
+    "--accent-foreground":        "--taas-brand-navy",
+    "--destructive":              "--taas-status-danger",
+    "--destructive-foreground":   "--taas-status-danger-foreground",
+    "--border":                   "--taas-border-default",
+    "--input":                    "--taas-border-default",
+    "--ring":                     "--taas-brand-primary",
+    "--chart-1":                  "--taas-chart-1",
+    "--chart-2":                  "--taas-chart-2",
+    "--chart-3":                  "--taas-chart-3",
+    "--chart-4":                  "--taas-chart-4",
+    "--chart-5":                  "--taas-chart-5",
+    "--sidebar":                  "--taas-surface-card",
+    "--sidebar-foreground":       "--taas-text-primary",
+    "--sidebar-primary":          "--taas-brand-primary",
+    "--sidebar-primary-foreground": "--taas-brand-primary-foreground",
+    "--sidebar-accent":           "--taas-brand-accent-soft",
+    "--sidebar-accent-foreground":"--taas-brand-navy",
+    "--sidebar-border":           "--taas-border-default",
+    "--sidebar-ring":             "--taas-brand-primary",
+    "--success":                  "--taas-status-success",
+    "--success-foreground":       "--taas-status-success-foreground",
+    "--success-soft":             "--taas-status-success-soft",
+    "--warning":                  "--taas-status-warning",
+    "--warning-foreground":       "--taas-status-warning-foreground",
+    "--warning-soft":             "--taas-status-warning-soft",
+    "--info":                     "--taas-status-info",
+    "--info-foreground":          "--taas-status-info-foreground",
+    "--info-soft":                "--taas-status-info-soft",
+    "--danger-soft":              "--taas-status-danger-soft"
+  },
+  "visualConflicts": [
+    "Primary shifts from slate-navy to Ocean — affects buttons/rings/active nav.",
+    "Chart palette shifts from warm/teal mix to Ocean/Navy/Success/Warning-anchored set.",
+    "Accent gains a subtle ocean tint (was near-white)."
+  ],
+  "accessibility": {
+    "method": "WCAG 2.1 luminance approximation from OKLCH L",
+    "results": [
+      { "pair": "text-primary/surface-page",              "ratio": 15.6, "AA": true,  "AA_large": true },
+      { "pair": "text-secondary/surface-page",            "ratio": 5.0,  "AA": true,  "AA_large": true },
+      { "pair": "text-tertiary/surface-page",             "ratio": 3.4,  "AA": false, "AA_large": true },
+      { "pair": "brand-primary/primary-foreground",       "ratio": 5.1,  "AA": true,  "AA_large": true },
+      { "pair": "brand-primary-hover/white",              "ratio": 6.3,  "AA": true,  "AA_large": true },
+      { "pair": "brand-navy/text-inverse",                "ratio": 12.8, "AA": true,  "AA_large": true },
+      { "pair": "status-success/white",                   "ratio": 3.4,  "AA": false, "AA_large": true },
+      { "pair": "status-warning/warning-foreground",      "ratio": 7.2,  "AA": true,  "AA_large": true },
+      { "pair": "status-danger/white",                    "ratio": 4.6,  "AA": true,  "AA_large": true },
+      { "pair": "status-info/white",                      "ratio": 5.1,  "AA": true,  "AA_large": true }
+    ]
+  },
+  "filesChanged": [
+    "src/styles/brand-tokens.css",
+    "src/styles.css"
+  ],
+  "businessLogicFilesChanged": 0,
+  "databaseFilesChanged": 0,
+  "constraints": {
+    "duplicateBrandColorsIntroduced": 0,
+    "darkModeTouched": false,
+    "componentPropsRenamed": 0
+  }
+}
