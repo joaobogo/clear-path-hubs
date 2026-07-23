@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { ShieldCheck, FileText, Sparkles } from "lucide-react";
 import { SiteShell } from "@/components/marketing/site-shell";
 import { getPage } from "@/lib/marketing/content";
 import { marketingHead } from "@/lib/marketing/head";
@@ -10,25 +11,114 @@ export const Route = createFileRoute("/case-studies")({
     marketingHead(entry, "/case-studies", {
       title: "Case studies — TaaSFlow",
       description:
-        "Documented recruiting engagements with real timelines and outcomes. No invented metrics.",
+        "Documented recruiting engagements with client-approved outcomes. No invented metrics, no composite stories.",
     }),
   component: CaseStudiesPage,
 });
 
-// Only stories with explicit client approval and verifiable outcomes appear here.
-// Everything not listed below is intentionally excluded until we have the client's sign-off.
+// APPROVED case studies only — must have written client sign-off and
+// metrics verifiable from TaaSFlow delivery records or the client's ATS.
+// Fabricated stories, composite numbers, and stylized quotes are forbidden.
 type CaseStudy = {
   slug: string;
   industry: string;
   client: string;
-  title: string;
+  headline: string;
   challenge: string;
-  solution: string;
-  outcomes: { label: string; value: string }[];
-  quote?: { text: string; attribution: string };
+  approach: string;
+  result: string;
+  featured?: boolean;
 };
 
-const APPROVED_CASE_STUDIES: CaseStudy[] = [];
+const APPROVED: CaseStudy[] = [];
+
+const FEATURED = APPROVED.find((c) => c.featured);
+const GRID = APPROVED.filter((c) => c !== FEATURED);
+
+function EmptyState() {
+  return (
+    <div className="mt-14 rounded-3xl border border-dashed border-border/60 bg-muted/20 p-10 md:p-14">
+      <div className="max-w-3xl">
+        <div className="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
+          <ShieldCheck className="h-5 w-5" aria-hidden />
+        </div>
+        <h2 className="mt-4 text-2xl font-semibold tracking-tight">
+          Approved case studies are being finalized
+        </h2>
+        <p className="mt-3 text-muted-foreground">
+          Early engagements are under client review. Rather than publish
+          unverified numbers or composite stories, we wait for written sign-off
+          on every outcome, quote, and attribution before adding it here.
+        </p>
+        <p className="mt-3 text-sm text-muted-foreground">
+          To see how a TaaSFlow engagement is structured today, review the
+          delivery model and workspace walkthrough below.
+        </p>
+        <div className="mt-6 flex flex-wrap gap-3">
+          <Link
+            to="/how-it-works"
+            className="rounded-md bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
+          >
+            See how it works
+          </Link>
+          <Link
+            to="/intake"
+            className="rounded-md border border-border/60 bg-background px-5 py-2.5 text-sm font-semibold hover:bg-muted"
+          >
+            Start hiring
+          </Link>
+          <Link
+            to="/contact"
+            className="rounded-md border border-border/60 bg-background px-5 py-2.5 text-sm font-semibold hover:bg-muted"
+          >
+            Talk to us
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function StudyCard({ study, featured }: { study: CaseStudy; featured?: boolean }) {
+  return (
+    <article
+      className={`flex flex-col rounded-2xl border border-border/60 bg-card p-6 md:p-8 ${
+        featured ? "lg:col-span-2" : ""
+      }`}
+    >
+      <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-primary">
+        {featured ? <Sparkles className="h-3.5 w-3.5" aria-hidden /> : null}
+        <span>{study.industry}</span>
+      </div>
+      <h3 className="mt-3 text-xl font-semibold tracking-tight sm:text-2xl">
+        {study.headline}
+      </h3>
+      <p className="mt-1 text-sm text-muted-foreground">
+        <strong className="text-foreground">Client:</strong> {study.client}
+      </p>
+      <dl className="mt-6 grid gap-4 md:grid-cols-3">
+        <div>
+          <dt className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+            Challenge
+          </dt>
+          <dd className="mt-1.5 text-sm">{study.challenge}</dd>
+        </div>
+        <div>
+          <dt className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+            TaaSFlow approach
+          </dt>
+          <dd className="mt-1.5 text-sm">{study.approach}</dd>
+        </div>
+        <div>
+          <dt className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+            Result
+          </dt>
+          <dd className="mt-1.5 text-sm">{study.result}</dd>
+        </div>
+      </dl>
+    </article>
+  );
+}
 
 function CaseStudiesPage() {
   return (
@@ -39,108 +129,87 @@ function CaseStudiesPage() {
             Case studies
           </p>
           <h1 className="mt-3 text-4xl font-semibold tracking-tight sm:text-5xl">
-            Measured results — not marketing claims
+            Documented engagements — not marketing claims
           </h1>
           <p className="mt-4 text-lg text-muted-foreground">
-            We publish case studies only when the client approves the story and
-            every metric is verifiable from our own delivery records.
+            TaaSFlow publishes case studies only when the client approves the
+            story in writing and every outcome is verifiable from delivery
+            records.
           </p>
         </header>
 
-        {APPROVED_CASE_STUDIES.length === 0 ? (
-          <div className="mt-16 rounded-2xl border border-dashed border-border/60 bg-muted/20 p-10">
-            <h2 className="text-2xl font-semibold tracking-tight">
-              Approved case studies are being finalized
-            </h2>
-            <p className="mt-3 max-w-2xl text-muted-foreground">
-              Our earliest engagements are still under client review. Rather
-              than publish unverified numbers, we're waiting for written sign-off
-              on the outcomes and quotes before adding them here.
-            </p>
-            <p className="mt-3 max-w-2xl text-sm text-muted-foreground">
-              In the meantime, the fastest way to see how TaaSFlow delivers is
-              to run a paid pilot on one of your live roles — you'll see the
-              full sourcing, scoring, and shortlist workflow inside your own
-              dashboard within 7–14 days.
-            </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Link
-                to="/pilot"
-                className="rounded-md bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
-              >
-                Start a pilot
-              </Link>
-              <Link
-                to="/how-it-works"
-                className="rounded-md border border-border/60 bg-background px-5 py-2.5 text-sm font-semibold hover:bg-muted"
-              >
-                See how it works
-              </Link>
-              <Link
-                to="/contact"
-                className="rounded-md border border-border/60 bg-background px-5 py-2.5 text-sm font-semibold hover:bg-muted"
-              >
-                Talk to us
-              </Link>
-            </div>
-          </div>
+        {APPROVED.length === 0 ? (
+          <EmptyState />
         ) : (
-          <ul className="mt-12 grid gap-6 md:grid-cols-2">
-            {APPROVED_CASE_STUDIES.map((c) => (
-              <li
-                key={c.slug}
-                className="flex flex-col rounded-2xl border border-border/60 bg-card p-6"
-              >
+          <div className="mt-12 space-y-10">
+            {FEATURED && (
+              <div>
                 <p className="text-xs font-semibold uppercase tracking-widest text-primary">
-                  {c.industry}
+                  Featured study
                 </p>
-                <h2 className="mt-2 text-xl font-semibold tracking-tight">
-                  {c.title}
-                </h2>
-                <p className="mt-2 text-sm text-muted-foreground">
-                  <strong>Client:</strong> {c.client}
+                <div className="mt-4">
+                  <StudyCard study={FEATURED} featured />
+                </div>
+              </div>
+            )}
+            {GRID.length > 0 && (
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-widest text-primary">
+                  All studies
                 </p>
-                <p className="mt-4 text-sm">{c.challenge}</p>
-                <p className="mt-3 text-sm text-muted-foreground">
-                  {c.solution}
-                </p>
-                <dl className="mt-5 grid grid-cols-2 gap-3">
-                  {c.outcomes.map((o) => (
-                    <div
-                      key={o.label}
-                      className="rounded-lg bg-muted/40 p-3 text-center"
-                    >
-                      <dt className="text-xs text-muted-foreground">
-                        {o.label}
-                      </dt>
-                      <dd className="text-lg font-semibold">{o.value}</dd>
-                    </div>
+                <ul className="mt-4 grid gap-6 md:grid-cols-2">
+                  {GRID.map((c) => (
+                    <li key={c.slug}>
+                      <StudyCard study={c} />
+                    </li>
                   ))}
-                </dl>
-                {c.quote && (
-                  <blockquote className="mt-6 border-l-2 border-primary/40 pl-4 text-sm italic text-muted-foreground">
-                    "{c.quote.text}"
-                    <footer className="mt-2 not-italic text-xs">
-                      — {c.quote.attribution}
-                    </footer>
-                  </blockquote>
-                )}
-              </li>
-            ))}
-          </ul>
+                </ul>
+              </div>
+            )}
+          </div>
         )}
 
-        <div className="mt-16 rounded-xl border border-border/60 bg-muted/30 p-6">
-          <h2 className="text-lg font-semibold">Our publishing policy</h2>
-          <ul className="mt-3 list-disc space-y-1.5 pl-5 text-sm text-muted-foreground">
+        <section className="mt-16 rounded-2xl border border-border/60 bg-background p-6 md:p-8">
+          <div className="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
+            <FileText className="h-5 w-5" aria-hidden />
+          </div>
+          <h2 className="mt-4 text-xl font-semibold tracking-tight">
+            Publishing policy
+          </h2>
+          <ul className="mt-4 list-disc space-y-1.5 pl-5 text-sm text-muted-foreground">
             <li>Only published with explicit written client approval.</li>
             <li>
-              Every metric traceable to our delivery records or the client's ATS.
+              Every metric traceable to TaaSFlow delivery records or the
+              client's ATS.
             </li>
             <li>No composite, stylized, or "typical customer" numbers.</li>
             <li>Quotes attributed to a real, named person at the client.</li>
           </ul>
-        </div>
+        </section>
+
+        <section className="mt-12 rounded-2xl border border-border/60 bg-muted/20 p-8 md:p-12">
+          <h2 className="text-2xl font-semibold tracking-tight">
+            Prefer to see delivery live?
+          </h2>
+          <p className="mt-3 max-w-2xl text-muted-foreground">
+            Start hiring with TaaSFlow and see sourcing, scoring, and shortlist
+            delivery inside your own dedicated workspace.
+          </p>
+          <div className="mt-6 flex flex-wrap gap-3">
+            <Link
+              to="/intake"
+              className="rounded-md bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
+            >
+              Start Hiring
+            </Link>
+            <Link
+              to="/how-it-works"
+              className="rounded-md border border-border/60 bg-background px-5 py-2.5 text-sm font-semibold hover:bg-muted"
+            >
+              See How It Works
+            </Link>
+          </div>
+        </section>
       </section>
     </SiteShell>
   );
