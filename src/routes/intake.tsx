@@ -704,7 +704,13 @@ function IntakePage() {
                   </SelectContent>
                 </Select>
               </Field>
+            </div>
+          )}
+
+          {step === 5 && (
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <Field label="Work authorization">
+
                 <Input
                   value={state.workAuthorization}
                   onChange={(e) => set("workAuthorization", e.target.value)}
