@@ -1315,7 +1315,7 @@ export const archiveOrganization = createServerFn({ method: "POST" })
     const now = new Date().toISOString();
     const { data: after, error } = await s
       .from("organizations")
-      .update({ archived_at: now, status: "closed", dashboard_status: "inactive", updated_at: now })
+      .update({ archived_at: now, status: "archived", dashboard_status: "inactive", updated_at: now })
       .eq("id", data.id)
       .select("*")
       .maybeSingle();
