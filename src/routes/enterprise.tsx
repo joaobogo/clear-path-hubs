@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { marketingHead } from "@/lib/marketing/head";
 import { SiteShell, PublicPage, PublicSection, CtaSection } from "@/components/marketing/site-shell";
+import { EnterpriseStakeholderSelector } from "@/components/marketing/enterprise-stakeholder-selector";
 import {
   Building2,
   Layers,
