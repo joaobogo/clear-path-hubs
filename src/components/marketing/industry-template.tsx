@@ -536,14 +536,15 @@ export function IndustryTemplate({ entry }: { entry: IndustryEntry }) {
         </PublicSection>
       ) : null}
 
-      {/* 12. Final CTA */}
-      <CtaSection
+      {/* 12. Final CTA — book a call directly on the page */}
+      <BookACallSection
+        industrySlug={entry.slug}
+        industryName={entry.name}
         eyebrow={entry.eyebrow}
         title={entry.cta.title}
         description={entry.cta.description}
-        primary={{ to: "/intake", label: "Start intake" }}
-        secondary={{ to: "/industries", label: "See other industries" }}
       />
+
     </>
   );
 }
