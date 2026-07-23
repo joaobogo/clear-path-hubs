@@ -1093,3 +1093,293 @@ export const removeClientMember = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { ok: true };
   });
+
+// ─── Settings ───────────────────────────────────────────────────────────────
+// Company Profile (org-level, admin-only, audited), Notifications & Timezone
+// (user-scoped, any active member — Client Viewer blocked at handler + UI).
+
+const notifPrefsShape = {
+  candidate_delivered: true,
+  interview_request: true,
+  new_message: true,
+  offer_update: true,
+  hire_update: true,
+  email_enabled: true,
+  digest: "immediate" as "immediate" | "daily" | "off",
+};
+
+const companyProfileZ = z.object({
+  orgId: z.string().uuid(),
+  name: z.string().trim().min(2).max(200),
+  website: z
+    .string()
+    .trim()
+    .max(300)
+    .transform((s) => (s === "" ? null : s))
+    .nullable()
+    .refine(
+      (v) => v == null || /^https?:\/\/[^\s]+\.[^\s]+$/i.test(v),
+      "Website must start with http(s):// and be a valid URL.",
+    ),
+  industry: z
+    .string()
+    .trim()
+    .max(120)
+    .transform((s) => (s === "" ? null : s))
+    .nullable(),
+  headquarters: z
+    .string()
+    .trim()
+    .max(200)
+    .transform((s) => (s === "" ? null : s))
+    .nullable(),
+  phone: z
+    .string()
+    .trim()
+    .max(60)
+    .transform((s) => (s === "" ? null : s))
+    .nullable(),
+});
+
+const notifPrefsZ = z.object({
+  orgId: z.string().uuid(),
+  candidate_delivered: z.boolean(),
+  interview_request: z.boolean(),
+  new_message: z.boolean(),
+  offer_update: z.boolean(),
+  hire_update: z.boolean(),
+  email_enabled: z.boolean(),
+  digest: z.enum(["immediate", "daily", "off"]),
+});
+
+const timezoneZ = z.object({
+  timezone: z
+    .string()
+    .trim()
+    .min(1)
+    .max(60)
+    .refine((v) => {
+      try {
+        new Intl.DateTimeFormat("en-US", { timeZone: v });
+        return true;
+      } catch {
+        return false;
+      }
+    }, "Invalid IANA timezone."),
+});
+
+export const getClientSettings = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: { orgId: string }) =>
+    z.object({ orgId: z.string().uuid() }).parse(input),
+  )
+  .handler(async ({ context, data }) => {
+    // Tenant gate — must be an active member (or platform staff).
+    const { data: member } = await context.supabase
+      .from("memberships")
+      .select("role, status")
+      .eq("organization_id", data.orgId)
+      .eq("user_id", context.userId)
+      .eq("status", "active")
+      .maybeSingle();
+    const { data: staff } = await context.supabase.rpc("is_platform_staff", {
+      _user: context.userId,
+    });
+    if (!member && staff !== true) throw new Error("Forbidden");
+
+    const [{ data: org }, { data: prefs }, { data: profile }] = await Promise.all([
+      context.supabase
+        .from("organizations")
+        .select("id, name, website, industry, headquarters, phone, onboarding_status, dashboard_status, status")
+        .eq("id", data.orgId)
+        .maybeSingle(),
+      context.supabase
+        .from("client_notification_preferences")
+        .select("*")
+        .eq("user_id", context.userId)
+        .eq("organization_id", data.orgId)
+        .maybeSingle(),
+      context.supabase
+        .from("profiles")
+        .select("timezone, email, full_name")
+        .eq("auth_user_id", context.userId)
+        .maybeSingle(),
+    ]);
+    if (!org) throw new Error("Workspace not found");
+    return {
+      role: (member?.role ?? "operations") as ClientRole,
+      approved:
+        (org as AnyRow).onboarding_status === "active" ||
+        (org as AnyRow).dashboard_status === "active" ||
+        (org as AnyRow).status === "active",
+      company: {
+        id: (org as AnyRow).id as string,
+        name: (org as AnyRow).name as string,
+        website: ((org as AnyRow).website as string | null) ?? "",
+        industry: ((org as AnyRow).industry as string | null) ?? "",
+        headquarters: ((org as AnyRow).headquarters as string | null) ?? "",
+        phone: ((org as AnyRow).phone as string | null) ?? "",
+      },
+      notifications: {
+        candidate_delivered: (prefs as AnyRow)?.candidate_delivered ?? notifPrefsShape.candidate_delivered,
+        interview_request: (prefs as AnyRow)?.interview_request ?? notifPrefsShape.interview_request,
+        new_message: (prefs as AnyRow)?.new_message ?? notifPrefsShape.new_message,
+        offer_update: (prefs as AnyRow)?.offer_update ?? notifPrefsShape.offer_update,
+        hire_update: (prefs as AnyRow)?.hire_update ?? notifPrefsShape.hire_update,
+        email_enabled: (prefs as AnyRow)?.email_enabled ?? notifPrefsShape.email_enabled,
+        digest: ((prefs as AnyRow)?.digest ?? notifPrefsShape.digest) as
+          | "immediate"
+          | "daily"
+          | "off",
+      },
+      account: {
+        email: ((profile as AnyRow)?.email as string | null) ?? "",
+        full_name: ((profile as AnyRow)?.full_name as string | null) ?? "",
+        timezone: ((profile as AnyRow)?.timezone as string | null) ?? "UTC",
+      },
+    };
+  });
+
+export const updateClientCompanyProfile = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: z.input<typeof companyProfileZ>) => companyProfileZ.parse(input))
+  .handler(async ({ context, data }) => {
+    await assertOrgAdmin(context.supabase, context.userId, data.orgId);
+    await assertNotSupportViewReadOnly(context.supabase, context.userId, data.orgId);
+    const trace_id = `st-cp-${crypto.randomUUID()}`;
+    const { data: before } = await context.supabase
+      .from("organizations")
+      .select("name, website, industry, headquarters, phone")
+      .eq("id", data.orgId)
+      .maybeSingle();
+    const patch = {
+      name: data.name,
+      website: data.website,
+      industry: data.industry,
+      headquarters: data.headquarters,
+      phone: data.phone,
+    };
+    const { data: updated, error } = await context.supabase
+      .from("organizations")
+      .update(patch)
+      .eq("id", data.orgId)
+      .select("name, website, industry, headquarters, phone")
+      .maybeSingle();
+    if (error) throw new Error(error.message);
+    await writeAudit(context.supabase, {
+      actor: context.userId,
+      action: "client.settings.company_profile.update",
+      entity_type: "organizations",
+      entity_id: data.orgId,
+      organization_id: data.orgId,
+      before,
+      after: updated,
+      trace_id,
+    });
+    return { ok: true, company: updated };
+  });
+
+export const updateClientNotificationPreferences = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: z.input<typeof notifPrefsZ>) => notifPrefsZ.parse(input))
+  .handler(async ({ context, data }) => {
+    // Any active member may manage their own — but block viewers per product rule.
+    const { data: member } = await context.supabase
+      .from("memberships")
+      .select("role, status")
+      .eq("organization_id", data.orgId)
+      .eq("user_id", context.userId)
+      .eq("status", "active")
+      .maybeSingle();
+    const { data: staff } = await context.supabase.rpc("is_platform_staff", {
+      _user: context.userId,
+    });
+    if (!member && staff !== true) throw new Error("Forbidden");
+    if (member?.role === "client_viewer") throw new Error("Read-only role");
+    await assertNotSupportViewReadOnly(context.supabase, context.userId, data.orgId);
+
+    const trace_id = `st-np-${crypto.randomUUID()}`;
+    const { data: before } = await context.supabase
+      .from("client_notification_preferences")
+      .select("*")
+      .eq("user_id", context.userId)
+      .eq("organization_id", data.orgId)
+      .maybeSingle();
+    const row = {
+      user_id: context.userId,
+      organization_id: data.orgId,
+      candidate_delivered: data.candidate_delivered,
+      interview_request: data.interview_request,
+      new_message: data.new_message,
+      offer_update: data.offer_update,
+      hire_update: data.hire_update,
+      email_enabled: data.email_enabled,
+      digest: data.digest,
+    };
+    const { data: after, error } = await context.supabase
+      .from("client_notification_preferences")
+      .upsert(row, { onConflict: "user_id,organization_id" })
+      .select("*")
+      .maybeSingle();
+    if (error) throw new Error(error.message);
+    await writeAudit(context.supabase, {
+      actor: context.userId,
+      action: "client.settings.notifications.update",
+      entity_type: "client_notification_preferences",
+      entity_id: `${context.userId}:${data.orgId}`,
+      organization_id: data.orgId,
+      before,
+      after,
+      trace_id,
+    });
+    return { ok: true, notifications: after };
+  });
+
+export const updateClientTimezone = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: { orgId: string; timezone: string }) =>
+    z
+      .object({ orgId: z.string().uuid() })
+      .merge(timezoneZ)
+      .parse(input),
+  )
+  .handler(async ({ context, data }) => {
+    const { data: member } = await context.supabase
+      .from("memberships")
+      .select("role, status")
+      .eq("organization_id", data.orgId)
+      .eq("user_id", context.userId)
+      .eq("status", "active")
+      .maybeSingle();
+    const { data: staff } = await context.supabase.rpc("is_platform_staff", {
+      _user: context.userId,
+    });
+    if (!member && staff !== true) throw new Error("Forbidden");
+    if (member?.role === "client_viewer") throw new Error("Read-only role");
+    await assertNotSupportViewReadOnly(context.supabase, context.userId, data.orgId);
+
+    const trace_id = `st-tz-${crypto.randomUUID()}`;
+    const { data: before } = await context.supabase
+      .from("profiles")
+      .select("timezone")
+      .eq("auth_user_id", context.userId)
+      .maybeSingle();
+    const { data: after, error } = await context.supabase
+      .from("profiles")
+      .update({ timezone: data.timezone })
+      .eq("auth_user_id", context.userId)
+      .select("timezone")
+      .maybeSingle();
+    if (error) throw new Error(error.message);
+    await writeAudit(context.supabase, {
+      actor: context.userId,
+      action: "client.settings.timezone.update",
+      entity_type: "profiles",
+      entity_id: context.userId,
+      organization_id: data.orgId,
+      before,
+      after,
+      trace_id,
+    });
+    return { ok: true, timezone: (after as AnyRow)?.timezone as string };
+  });
