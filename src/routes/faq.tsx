@@ -150,10 +150,10 @@ export const Route = createFileRoute("/faq")({
     return {
       ...base,
       scripts: [
-        ...(base.scripts ?? []),
         { type: "application/ld+json", children: JSON.stringify(faqJsonLd) },
       ],
     };
+
   },
   component: FaqPage,
 });
