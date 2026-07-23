@@ -374,18 +374,20 @@ function CardGrid({ items }: { items: Card[] }) {
 }
 
 function Section({
+  id,
   eyebrow,
   title,
   description,
   children,
 }: {
+  id?: string;
   eyebrow: string;
   title: string;
   description: string;
   children: React.ReactNode;
 }) {
   return (
-    <section className="mt-20">
+    <section id={id} className="mt-20 scroll-mt-24">
       <header className="max-w-3xl">
         <p className="text-xs font-semibold uppercase tracking-widest text-[color:var(--brand-ocean)]">
           {eyebrow}
@@ -397,6 +399,35 @@ function Section({
       </header>
       <div className="mt-8">{children}</div>
     </section>
+  );
+}
+
+const COLLECTIONS = [
+  { id: "hiring-guides", label: "Hiring Guides" },
+  { id: "cost-roi", label: "Cost & ROI" },
+  { id: "candidate-evaluation", label: "Candidate Evaluation" },
+  { id: "industry-hiring", label: "Industry Hiring" },
+  { id: "recruiting-operations", label: "Recruiting Operations" },
+  { id: "tools-calculators", label: "Tools & Calculators" },
+  { id: "case-studies", label: "Case Studies" },
+];
+
+function CollectionsNav() {
+  return (
+    <nav
+      aria-label="Resource collections"
+      className="mt-8 flex flex-wrap gap-2 border-y border-[color:var(--brand-navy)]/10 py-4"
+    >
+      {COLLECTIONS.map((c) => (
+        <a
+          key={c.id}
+          href={`#${c.id}`}
+          className="inline-flex items-center rounded-full border border-[color:var(--brand-navy)]/15 bg-white px-3 py-1.5 text-xs font-semibold text-[color:var(--brand-navy)]/80 transition hover:border-[color:var(--brand-ocean)]/40 hover:text-[color:var(--brand-ocean)]"
+        >
+          {c.label}
+        </a>
+      ))}
+    </nav>
   );
 }
 
