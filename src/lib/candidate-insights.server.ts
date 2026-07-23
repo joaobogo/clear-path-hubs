@@ -190,6 +190,10 @@ export async function generateCandidateInsights(
       typeof v === "string" ? v.slice(0, max) : "";
     const arr = (v: unknown): unknown[] => (Array.isArray(v) ? v : []);
     const clean: CandidateInsights = {
+      pitch_summary: clampStr(parsed.pitch_summary, 1200),
+      pitch_tone: (["sell", "balanced", "cautious"].includes(String(parsed.pitch_tone))
+        ? (parsed.pitch_tone as "sell" | "balanced" | "cautious")
+        : "balanced"),
       narrative: clampStr(parsed.narrative, 2400),
       headline_suggested: typeof parsed.headline_suggested === "string" ? parsed.headline_suggested.slice(0, 160) : null,
       seniority: (["junior", "mid", "senior", "lead", "executive"].includes(String(parsed.seniority))
