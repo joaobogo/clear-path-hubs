@@ -247,21 +247,23 @@ function CandidateDetailPage() {
  )}
  </div>
 
- {/* SIDE PANEL */}
- <aside className="space-y-6 lg:col-span-4">
- <ActionArea
- actions={actions}
- readOnly={readOnly}
- pending={act.isPending}
- onAct={(k) => act.mutate(k)}
- stage={candidate.stage}
- />
- <ProfilePanel candidate={candidate} />
- <LinksPanel candidate={candidate} />
- </aside>
- </div>
- </main>
- );
+        {/* SIDE PANEL — Decision cockpit (sticky on desktop) */}
+        <aside className="space-y-6 lg:col-span-4">
+          <div className="lg:sticky lg:top-20 space-y-6">
+            <ActionArea
+              actions={actions}
+              readOnly={readOnly}
+              pending={act.isPending}
+              onAct={(k) => act.mutate(k)}
+              stage={candidate.stage}
+            />
+            <ProfilePanel candidate={candidate} />
+            <LinksPanel candidate={candidate} />
+          </div>
+        </aside>
+      </div>
+    </main>
+  );
 }
 
 // ─── Building blocks ─────────────────────────────────────────────────────────
