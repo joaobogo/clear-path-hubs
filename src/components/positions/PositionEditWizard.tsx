@@ -362,6 +362,14 @@ export function PositionEditWizard({
                   {state.description.trim().length} / 40 minimum characters
                 </p>
               </Field>
+              <Field label="Key responsibilities" hint="Top outcomes and day-to-day scope.">
+                <Textarea
+                  rows={3}
+                  value={state.responsibilities}
+                  onChange={(e) => set("responsibilities", e.target.value)}
+                  placeholder="Own X. Lead Y. Deliver Z."
+                />
+              </Field>
               <Field label="Preferred skills" hint="One per line.">
                 <Textarea
                   rows={3}
@@ -369,6 +377,43 @@ export function PositionEditWizard({
                   onChange={(e) => set("preferred_requirements", e.target.value)}
                 />
               </Field>
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <Field label="Experience">
+                  <Input
+                    value={state.experience}
+                    onChange={(e) => set("experience", e.target.value)}
+                    placeholder="e.g. 5+ years"
+                  />
+                </Field>
+                <Field label="Education">
+                  <Input
+                    value={state.education}
+                    onChange={(e) => set("education", e.target.value)}
+                    placeholder="e.g. BSc CS or equivalent"
+                  />
+                </Field>
+                <Field label="Certifications">
+                  <Input
+                    value={state.certifications}
+                    onChange={(e) => set("certifications", e.target.value)}
+                    placeholder="AWS SA, PMP…"
+                  />
+                </Field>
+                <Field label="Languages">
+                  <Input
+                    value={state.languages}
+                    onChange={(e) => set("languages", e.target.value)}
+                    placeholder="English (fluent), German (B2)…"
+                  />
+                </Field>
+                <Field label="Industry experience" className="sm:col-span-2">
+                  <Input
+                    value={state.industry_experience}
+                    onChange={(e) => set("industry_experience", e.target.value)}
+                    placeholder="Fintech, healthcare, gaming…"
+                  />
+                </Field>
+              </div>
               <Field label="Dealbreakers" hint="One per line.">
                 <Textarea
                   rows={3}
@@ -378,6 +423,7 @@ export function PositionEditWizard({
               </Field>
             </div>
           )}
+
 
           {step === 3 && (
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
