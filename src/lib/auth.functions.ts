@@ -623,7 +623,7 @@ export const provisionClientMembershipForSelf = createServerFn({ method: "POST" 
     if (!existingProfile) {
       await supabaseAdmin.from("profiles").insert({
         auth_user_id: userId,
-        email,
+        email: email ?? `${userId}@unknown.local`,
         full_name: fullName,
         status: "active",
       });
