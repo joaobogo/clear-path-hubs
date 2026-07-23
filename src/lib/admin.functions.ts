@@ -219,8 +219,7 @@ export const getAdminOverview = createServerFn({ method: "GET" })
         client_requests: (clientRequests ?? []) as AnyRow[],
       },
 
-        positions_awaiting_approval: (submittedPositions ?? []) as AnyRow[],
-      },
+
       recent_activity: (recentActivity ?? []) as AnyRow[],
       generated_at: new Date().toISOString(),
     };
