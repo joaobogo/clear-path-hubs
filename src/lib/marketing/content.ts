@@ -1,4 +1,5 @@
 // Loads scraped source content bundled at build time.
+import { INDUSTRY_ENTRIES } from "@/content/industries-v2";
 export type ContentEntry = {
   url: string;
   meta: {
