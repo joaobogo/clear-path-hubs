@@ -601,7 +601,7 @@ function CompactList({ rows }: { rows: Row[] }) {
               >
                 <td className="px-4 py-2">
                   <Link
-                    to="/client/positions/$id"
+                    to="/client/positions/$id/edit"
                     params={{ id: p.id }}
                     className="font-medium hover:underline"
                   >
