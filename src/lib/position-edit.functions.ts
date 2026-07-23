@@ -85,8 +85,23 @@ export type PositionEditInitial = {
   work_authorization: string;
   target_titles: string[];
   screening_questions: ScreeningInput[];
+  // Extended intake context (mirrors public intake questionnaire)
+  responsibilities: string;
+  experience: string;
+  education: string;
+  certifications: string;
+  languages: string;
+  industry_experience: string;
+  hiring_timeline: string;
+  timezone_requirements: string;
+  reason_for_hiring: "" | "replacement" | "growth" | "backfill" | "new_team";
+  hiring_challenges: string;
+  interview_process: string;
+  decision_makers: string;
+  additional_context: string;
   status: string;
 };
+
 
 function fromJsonArray(v: unknown): string[] {
   if (!Array.isArray(v)) return [];
@@ -132,6 +147,7 @@ export const getPositionForEdit = createServerFn({ method: "GET" })
     if (!p) throw new Error("position_not_found");
     const comp = (p.compensation ?? {}) as AnyRow;
     const wa = (p.work_authorization ?? {}) as AnyRow;
+    const ctx = (p.intake_context ?? {}) as AnyRow;
     const initial: PositionEditInitial = {
       id: p.id,
       organization_id: p.organization_id,
@@ -147,10 +163,10 @@ export const getPositionForEdit = createServerFn({ method: "GET" })
       must_have_skills: fromJsonArray(p.requirements),
       preferred_requirements: joinArrayText(p.preferred_requirements),
       dealbreakers: joinArrayText(p.dealbreakers),
-      compensation: comp.summary ?? comp.text ?? "",
+      compensation: comp.summary ?? comp.text ?? comp.note ?? "",
       hiring_urgency: comp.urgency ?? "",
       target_countries: fromJsonArray(wa.countries),
-      work_authorization: wa.summary ?? wa.text ?? "",
+      work_authorization: wa.summary ?? wa.text ?? wa.note ?? "",
       target_titles: fromJsonArray(wa.target_titles),
       screening_questions: ((screeningRes.data ?? []) as AnyRow[]).map((r) => ({
         id: r.id,
@@ -159,8 +175,22 @@ export const getPositionForEdit = createServerFn({ method: "GET" })
         required: !!r.required,
         dealbreaker: !!r.dealbreaker,
       })),
+      responsibilities: ctx.responsibilities ?? "",
+      experience: ctx.experience ?? "",
+      education: ctx.education ?? "",
+      certifications: ctx.certifications ?? "",
+      languages: ctx.languages ?? "",
+      industry_experience: ctx.industry_experience ?? "",
+      hiring_timeline: ctx.hiring_timeline ?? "",
+      timezone_requirements: ctx.timezone_requirements ?? "",
+      reason_for_hiring: (ctx.reason_for_hiring ?? "") as PositionEditInitial["reason_for_hiring"],
+      hiring_challenges: ctx.hiring_challenges ?? "",
+      interview_process: ctx.interview_process ?? "",
+      decision_makers: ctx.decision_makers ?? "",
+      additional_context: ctx.additional_context ?? "",
       status: p.status ?? "draft",
     };
+
     return initial;
   });
 
@@ -195,7 +225,23 @@ const saveInput = z.object({
       }),
     )
     .max(30),
+  responsibilities: z.string().max(6000).default(""),
+  experience: z.string().trim().max(200).default(""),
+  education: z.string().trim().max(400).default(""),
+  certifications: z.string().trim().max(400).default(""),
+  languages: z.string().trim().max(400).default(""),
+  industry_experience: z.string().trim().max(400).default(""),
+  hiring_timeline: z.string().trim().max(200).default(""),
+  timezone_requirements: z.string().trim().max(160).default(""),
+  reason_for_hiring: z
+    .enum(["replacement", "growth", "backfill", "new_team", ""])
+    .default(""),
+  hiring_challenges: z.string().max(2000).default(""),
+  interview_process: z.string().max(2000).default(""),
+  decision_makers: z.string().trim().max(400).default(""),
+  additional_context: z.string().max(4000).default(""),
 });
+
 
 export const savePositionEdit = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -232,9 +278,25 @@ export const savePositionEdit = createServerFn({ method: "POST" })
         countries: data.target_countries,
         target_titles: data.target_titles,
       },
+      intake_context: {
+        responsibilities: data.responsibilities || "",
+        experience: data.experience || "",
+        education: data.education || "",
+        certifications: data.certifications || "",
+        languages: data.languages || "",
+        industry_experience: data.industry_experience || "",
+        hiring_timeline: data.hiring_timeline || "",
+        timezone_requirements: data.timezone_requirements || "",
+        reason_for_hiring: data.reason_for_hiring || "",
+        hiring_challenges: data.hiring_challenges || "",
+        interview_process: data.interview_process || "",
+        decision_makers: data.decision_makers || "",
+        additional_context: data.additional_context || "",
+      },
       openings: typeof data.headcount === "number" ? data.headcount : 1,
       updated_at: new Date().toISOString(),
     };
+
 
     const { data: after, error } = await s
       .from("positions")

@@ -28,10 +28,13 @@ import {
 
 const STEPS = [
   { id: 1, label: "Role overview" },
-  { id: 2, label: "Requirements" },
-  { id: 3, label: "Hiring context" },
-  { id: 4, label: "Review & save" },
+  { id: 2, label: "Requirements & profile" },
+  { id: 3, label: "Compensation" },
+  { id: 4, label: "Search criteria" },
+  { id: 5, label: "Review & save" },
 ];
+const LAST_STEP = STEPS.length;
+
 
 type State = Omit<PositionEditInitial, "organization_id" | "organization_name" | "status">;
 
@@ -97,7 +100,21 @@ export function PositionEditWizard({
     work_authorization: initial.work_authorization,
     target_titles: initial.target_titles,
     screening_questions: initial.screening_questions,
+    responsibilities: initial.responsibilities,
+    experience: initial.experience,
+    education: initial.education,
+    certifications: initial.certifications,
+    languages: initial.languages,
+    industry_experience: initial.industry_experience,
+    hiring_timeline: initial.hiring_timeline,
+    timezone_requirements: initial.timezone_requirements,
+    reason_for_hiring: initial.reason_for_hiring,
+    hiring_challenges: initial.hiring_challenges,
+    interview_process: initial.interview_process,
+    decision_makers: initial.decision_makers,
+    additional_context: initial.additional_context,
   });
+
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [skillDraft, setSkillDraft] = useState("");
   const [countryDraft, setCountryDraft] = useState("");
@@ -110,7 +127,7 @@ export function PositionEditWizard({
   const next = () => {
     const e = validateStep(step, state);
     setErrors(e);
-    if (Object.keys(e).length === 0) setStep((n) => Math.min(4, n + 1));
+    if (Object.keys(e).length === 0) setStep((n) => Math.min(LAST_STEP, n + 1));
   };
   const back = () => setStep((n) => Math.max(1, n - 1));
 
@@ -145,9 +162,23 @@ export function PositionEditWizard({
           screening_questions: state.screening_questions.filter(
             (q) => q.question.trim().length >= 3,
           ),
+          responsibilities: state.responsibilities,
+          experience: state.experience.trim(),
+          education: state.education.trim(),
+          certifications: state.certifications.trim(),
+          languages: state.languages.trim(),
+          industry_experience: state.industry_experience.trim(),
+          hiring_timeline: state.hiring_timeline.trim(),
+          timezone_requirements: state.timezone_requirements.trim(),
+          reason_for_hiring: state.reason_for_hiring,
+          hiring_challenges: state.hiring_challenges,
+          interview_process: state.interview_process,
+          decision_makers: state.decision_makers.trim(),
+          additional_context: state.additional_context,
         },
       });
     },
+
     onSuccess: async () => {
       toast.success("Position saved");
       await Promise.all(invalidateKeys.map((k) => qc.invalidateQueries({ queryKey: k })));
@@ -331,6 +362,14 @@ export function PositionEditWizard({
                   {state.description.trim().length} / 40 minimum characters
                 </p>
               </Field>
+              <Field label="Key responsibilities" hint="Top outcomes and day-to-day scope.">
+                <Textarea
+                  rows={3}
+                  value={state.responsibilities}
+                  onChange={(e) => set("responsibilities", e.target.value)}
+                  placeholder="Own X. Lead Y. Deliver Z."
+                />
+              </Field>
               <Field label="Preferred skills" hint="One per line.">
                 <Textarea
                   rows={3}
@@ -338,6 +377,43 @@ export function PositionEditWizard({
                   onChange={(e) => set("preferred_requirements", e.target.value)}
                 />
               </Field>
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <Field label="Experience">
+                  <Input
+                    value={state.experience}
+                    onChange={(e) => set("experience", e.target.value)}
+                    placeholder="e.g. 5+ years"
+                  />
+                </Field>
+                <Field label="Education">
+                  <Input
+                    value={state.education}
+                    onChange={(e) => set("education", e.target.value)}
+                    placeholder="e.g. BSc CS or equivalent"
+                  />
+                </Field>
+                <Field label="Certifications">
+                  <Input
+                    value={state.certifications}
+                    onChange={(e) => set("certifications", e.target.value)}
+                    placeholder="AWS SA, PMP…"
+                  />
+                </Field>
+                <Field label="Languages">
+                  <Input
+                    value={state.languages}
+                    onChange={(e) => set("languages", e.target.value)}
+                    placeholder="English (fluent), German (B2)…"
+                  />
+                </Field>
+                <Field label="Industry experience" className="sm:col-span-2">
+                  <Input
+                    value={state.industry_experience}
+                    onChange={(e) => set("industry_experience", e.target.value)}
+                    placeholder="Fintech, healthcare, gaming…"
+                  />
+                </Field>
+              </div>
               <Field label="Dealbreakers" hint="One per line.">
                 <Textarea
                   rows={3}
@@ -347,6 +423,7 @@ export function PositionEditWizard({
               </Field>
             </div>
           )}
+
 
           {step === 3 && (
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -374,11 +451,48 @@ export function PositionEditWizard({
                   </SelectContent>
                 </Select>
               </Field>
+              <Field label="Hiring timeline" hint="Target start date or key milestones.">
+                <Input
+                  value={state.hiring_timeline}
+                  onChange={(e) => set("hiring_timeline", e.target.value)}
+                  placeholder="Start by Q3, onboarding by Sept…"
+                />
+              </Field>
+              <Field label="Reason for hiring">
+                <Select
+                  value={state.reason_for_hiring}
+                  onValueChange={(v) =>
+                    set("reason_for_hiring", v as State["reason_for_hiring"])
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select…" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="growth">Growth — new headcount</SelectItem>
+                    <SelectItem value="replacement">Replacement</SelectItem>
+                    <SelectItem value="backfill">Backfill</SelectItem>
+                    <SelectItem value="new_team">New team / function</SelectItem>
+                  </SelectContent>
+                </Select>
+              </Field>
+            </div>
+          )}
+
+          {step === 4 && (
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <Field label="Work authorization">
                 <Input
                   value={state.work_authorization}
                   onChange={(e) => set("work_authorization", e.target.value)}
                   placeholder="EU, US, sponsor…"
+                />
+              </Field>
+              <Field label="Timezone requirements">
+                <Input
+                  value={state.timezone_requirements}
+                  onChange={(e) => set("timezone_requirements", e.target.value)}
+                  placeholder="CET ±3h"
                 />
               </Field>
               <Field label="Target countries" hint="Enter to add." className="sm:col-span-2">
@@ -465,12 +579,7 @@ export function PositionEditWizard({
                         if (v.length >= 3) {
                           set("screening_questions", [
                             ...state.screening_questions,
-                            {
-                              question: v,
-                              answer_type: "text",
-                              required: false,
-                              dealbreaker: false,
-                            },
+                            { question: v, answer_type: "text", required: false, dealbreaker: false },
                           ]);
                           setQDraft("");
                         }
@@ -486,12 +595,7 @@ export function PositionEditWizard({
                       if (v.length >= 3) {
                         set("screening_questions", [
                           ...state.screening_questions,
-                          {
-                            question: v,
-                            answer_type: "text",
-                            required: false,
-                            dealbreaker: false,
-                          },
+                          { question: v, answer_type: "text", required: false, dealbreaker: false },
                         ]);
                         setQDraft("");
                       }
@@ -526,10 +630,50 @@ export function PositionEditWizard({
                   </ul>
                 )}
               </Field>
+              <Field label="Current hiring challenges" className="sm:col-span-2">
+                <Textarea
+                  rows={2}
+                  value={state.hiring_challenges}
+                  onChange={(e) => set("hiring_challenges", e.target.value)}
+                  placeholder="What has made this role hard to fill?"
+                />
+              </Field>
+              <Field
+                label="Interview process"
+                hint="Number of rounds, format, panel."
+                className="sm:col-span-2"
+              >
+                <Textarea
+                  rows={2}
+                  value={state.interview_process}
+                  onChange={(e) => set("interview_process", e.target.value)}
+                  placeholder="Screen → Technical → Panel → Offer"
+                />
+              </Field>
+              <Field
+                label="Decision makers"
+                hint="Who signs off on the hire?"
+                className="sm:col-span-2"
+              >
+                <Input
+                  value={state.decision_makers}
+                  onChange={(e) => set("decision_makers", e.target.value)}
+                  placeholder="Hiring manager, VP Eng, CEO…"
+                />
+              </Field>
+              <Field label="Additional context" className="sm:col-span-2">
+                <Textarea
+                  rows={3}
+                  value={state.additional_context}
+                  onChange={(e) => set("additional_context", e.target.value)}
+                  placeholder="Anything else we should know?"
+                />
+              </Field>
             </div>
           )}
 
-          {step === 4 && (
+          {step === 5 && (
+
             <div className="space-y-3 text-sm">
               <ReviewBlock title="Role">
                 <div>
@@ -567,7 +711,7 @@ export function PositionEditWizard({
         >
           Back
         </Button>
-        {step < 4 ? (
+        {step < LAST_STEP ? (
           <Button type="button" onClick={next}>
             Continue
           </Button>

@@ -301,7 +301,24 @@ export const Route = createFileRoute("/api/public/intake")({
               preferred_requirements: preferred,
               dealbreakers,
               compensation: data.compensation ? { note: data.compensation } : {},
-              work_authorization: data.workAuthorization ? { note: data.workAuthorization } : {},
+              work_authorization: data.workAuthorization
+                ? { note: data.workAuthorization, countries: data.targetCountries, target_titles: data.targetTitles }
+                : { countries: data.targetCountries, target_titles: data.targetTitles },
+              intake_context: {
+                responsibilities: data.responsibilities || "",
+                experience: data.experience || "",
+                education: data.education || "",
+                certifications: data.certifications || "",
+                languages: data.languages || "",
+                industry_experience: data.industryExperience || "",
+                hiring_timeline: data.hiringTimeline || "",
+                timezone_requirements: data.timezoneRequirements || "",
+                reason_for_hiring: data.reasonForHiring || "",
+                hiring_challenges: data.hiringChallenges || "",
+                interview_process: data.interviewProcess || "",
+                decision_makers: data.decisionMakers || "",
+                additional_context: data.additionalContext || "",
+              },
               status: "submitted",
               visibility: "private",
               created_by: authUserId,
@@ -311,6 +328,7 @@ export const Route = createFileRoute("/api/public/intake")({
             .single();
           if (posErr) throw posErr;
           positionId = pos.id;
+
 
           if (data.screeningQuestions.length > 0) {
             const rows = data.screeningQuestions.map((q, i) => ({
