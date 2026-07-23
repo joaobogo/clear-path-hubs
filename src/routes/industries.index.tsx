@@ -87,17 +87,41 @@ const HIGHLIGHT_SLUGS = [
 
 function IndustriesIndex() {
   const [active, setActive] = useState<Category>("All");
+  const [query, setQuery] = useState("");
+
+  const decorated = useMemo(
+    () =>
+      INDUSTRY_ENTRIES.map((e) => ({
+        ...e,
+        category: CATEGORY_BY_SLUG[e.slug] ?? "Operations & Services",
+      })),
+    [],
+  );
 
   const cards = useMemo(() => {
-    return INDUSTRY_ENTRIES.map((e) => ({
-      ...e,
-      category: CATEGORY_BY_SLUG[e.slug] ?? "Operations & Services",
-    })).filter((e) => active === "All" || e.category === active);
-  }, [active]);
+    const q = query.trim().toLowerCase();
+    return decorated.filter((e) => {
+      if (active !== "All" && e.category !== active) return false;
+      if (!q) return true;
+      const haystack = [
+        e.name,
+        e.eyebrow,
+        e.summary ?? "",
+        (e.aliases ?? []).join(" "),
+        e.roles.join(" "),
+        (e.skills ?? []).join(" "),
+        (e.tools ?? []).join(" "),
+      ]
+        .join(" ")
+        .toLowerCase();
+      return haystack.includes(q);
+    });
+  }, [decorated, active, query]);
 
   const highlights = HIGHLIGHT_SLUGS
     .map((slug) => INDUSTRY_ENTRIES.find((e) => e.slug === slug))
     .filter((e): e is (typeof INDUSTRY_ENTRIES)[number] => Boolean(e));
+
 
   return (
     <SiteShell>
@@ -157,13 +181,33 @@ function IndustriesIndex() {
             </div>
           </div>
 
+          <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <label className="relative block w-full sm:max-w-md">
+              <span className="sr-only">Search industries</span>
+              <input
+                type="search"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Search industry, role, skill or tool"
+                className="w-full rounded-full border border-[color:var(--brand-navy)]/15 bg-white px-4 py-2.5 text-sm text-[color:var(--brand-navy)] placeholder:text-[color:var(--brand-navy)]/50 focus:border-[color:var(--brand-ocean)] focus:outline-none focus:ring-2 focus:ring-[color:var(--brand-focus-ring)]"
+              />
+            </label>
+            <p className="text-xs text-[color:var(--brand-navy)]/60">
+              Showing <span className="font-semibold text-[color:var(--brand-navy)]">{cards.length}</span> of {decorated.length} industries
+            </p>
+          </div>
+
           <div
             role="tablist"
             aria-label="Industry categories"
-            className="mt-8 flex flex-wrap gap-2"
+            className="mt-4 flex flex-wrap gap-2"
           >
             {CATEGORIES.map((c) => {
               const isActive = c === active;
+              const count =
+                c === "All"
+                  ? decorated.length
+                  : decorated.filter((e) => e.category === c).length;
               return (
                 <button
                   key={c}
@@ -172,17 +216,25 @@ function IndustriesIndex() {
                   aria-selected={isActive}
                   onClick={() => setActive(c)}
                   className={
-                    "inline-flex min-h-9 items-center rounded-full border px-4 text-sm font-medium transition-colors " +
+                    "inline-flex min-h-9 items-center gap-2 rounded-full border px-4 text-sm font-medium transition-colors " +
                     (isActive
                       ? "border-[color:var(--brand-navy)] bg-[color:var(--brand-navy)] text-white"
                       : "border-[color:var(--brand-navy)]/15 bg-white text-[color:var(--brand-navy)] hover:border-[color:var(--brand-navy)]/40")
                   }
                 >
                   {c}
+                  <span className={"text-xs " + (isActive ? "text-white/70" : "text-[color:var(--brand-navy)]/50")}>{count}</span>
                 </button>
               );
             })}
           </div>
+
+          {cards.length === 0 ? (
+            <p className="mt-10 rounded-2xl border border-dashed border-[color:var(--brand-navy)]/15 bg-white p-8 text-center text-sm text-[color:var(--brand-navy)]/60">
+              No industries match &ldquo;{query}&rdquo;. Try a role, skill or category.
+            </p>
+          ) : null}
+
 
           <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {cards.map((c) => (
@@ -218,11 +270,12 @@ function IndustriesIndex() {
         </PublicPage>
       </PublicSection>
 
-      {/* Role examples by industry */}
+      {/* Common role families */}
       <PublicSection className="border-t border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-mist)]/40">
         <PublicPage>
           <h2 className="max-w-2xl font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight sm:text-4xl">
-            Role examples by industry
+            Common role families
+
           </h2>
           <p className="mt-3 max-w-2xl text-[color:var(--brand-navy)]/70">
             A snapshot of the roles TaaSFlow calibrates for across the most
