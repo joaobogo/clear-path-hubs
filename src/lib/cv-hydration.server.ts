@@ -71,10 +71,16 @@ const SCHEMA_HINT = `{
   "industry":   {"value": "string", "confidence": 0..1}
 }`;
 
-export async function structureCv(cvText: string): Promise<{ ok: true; data: StructuredCv } | { ok: false; reason: string }> {
+export type StructureResult =
+  | { ok: true; data: StructuredCv; source: "llm" | "heuristic"; degraded_reason?: string }
+  | { ok: false; reason: string };
+
+export async function structureCv(cvText: string): Promise<StructureResult> {
   const key = process.env.LOVABLE_API_KEY;
-  if (!key) return { ok: false, reason: "no_lovable_api_key" };
   const trimmed = cvText.slice(0, 18_000); // keep context small
+  if (!key) {
+    return { ok: true, data: heuristicStructure(cvText), source: "heuristic", degraded_reason: "no_lovable_api_key" };
+  }
   try {
     const res = await fetch(GATEWAY_URL, {
       method: "POST",
@@ -91,34 +97,130 @@ export async function structureCv(cvText: string): Promise<{ ok: true; data: Str
     });
     if (!res.ok) {
       const body = await res.text();
+      // 402/403 credit limit, 429 rate limit, 5xx transient: fall back to heuristic parser so
+      // the pipeline keeps making forward progress instead of getting stuck at hydrate=failed.
+      if (res.status === 402 || res.status === 403 || res.status === 429 || res.status >= 500) {
+        return {
+          ok: true,
+          data: heuristicStructure(cvText),
+          source: "heuristic",
+          degraded_reason: `gateway_${res.status}:${body.slice(0, 160)}`,
+        };
+      }
       return { ok: false, reason: `gateway_${res.status}:${body.slice(0, 160)}` };
     }
     const j = (await res.json()) as { choices?: Array<{ message?: { content?: string } }> };
     const content = j.choices?.[0]?.message?.content ?? "";
-    if (!content) return { ok: false, reason: "empty_completion" };
-    let parsed: unknown;
-    // Strip common wrappers (```json fences, prose preamble/suffix) before parsing.
+    if (!content) {
+      return { ok: true, data: heuristicStructure(cvText), source: "heuristic", degraded_reason: "empty_completion" };
+    }
     const stripped = content
       .replace(/^\uFEFF/, "")
       .replace(/^\s*```(?:json)?\s*/i, "")
       .replace(/```\s*$/i, "")
       .trim();
+    let parsed: unknown;
     try {
       parsed = JSON.parse(stripped);
     } catch {
       const first = stripped.indexOf("{");
       const last = stripped.lastIndexOf("}");
-      if (first < 0 || last <= first) return { ok: false, reason: "non_json_completion" };
+      if (first < 0 || last <= first) {
+        return { ok: true, data: heuristicStructure(cvText), source: "heuristic", degraded_reason: "non_json_completion" };
+      }
       try {
         parsed = JSON.parse(stripped.slice(first, last + 1));
       } catch {
-        return { ok: false, reason: "non_json_completion" };
+        return { ok: true, data: heuristicStructure(cvText), source: "heuristic", degraded_reason: "non_json_completion" };
       }
     }
-    return { ok: true, data: parsed as StructuredCv };
+    void trimmed;
+    return { ok: true, data: parsed as StructuredCv, source: "llm" };
   } catch (e) {
-    return { ok: false, reason: `fetch_failed:${(e as Error).message?.slice(0, 120)}` };
+    return {
+      ok: true,
+      data: heuristicStructure(cvText),
+      source: "heuristic",
+      degraded_reason: `fetch_failed:${(e as Error).message?.slice(0, 120)}`,
+    };
   }
+}
+
+// ─── Heuristic fallback ────────────────────────────────────────────────────
+// A pragmatic regex/section parser used when the LLM gateway is unavailable
+// (credit limit reached, rate-limited, transient 5xx, missing key). Confidence
+// is intentionally modest so admin-corrected values always win.
+function heuristicStructure(cvText: string): StructuredCv {
+  const text = cvText.replace(/\r\n/g, "\n");
+  const out: StructuredCv = {};
+
+  const emailMatch = text.match(/[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}/i);
+  if (emailMatch) out.email = { value: emailMatch[0], confidence: 0.9, source_snippet: emailMatch[0] };
+
+  const phoneMatch = text.match(/(\+?\d[\d\s().-]{7,}\d)/);
+  if (phoneMatch) out.phone = { value: phoneMatch[1].trim(), confidence: 0.75, source_snippet: phoneMatch[1] };
+
+  // Full name: first non-empty line that looks like a name (2-4 capitalized words, no digits/@).
+  const firstLines = text.split("\n").map((l) => l.trim()).filter(Boolean).slice(0, 10);
+  for (const line of firstLines) {
+    if (line.length > 60 || /[@\d]/.test(line)) continue;
+    const words = line.split(/\s+/);
+    if (words.length < 2 || words.length > 5) continue;
+    if (words.every((w) => /^[A-ZÀ-Ý][a-zà-ÿ'’.-]+$/.test(w))) {
+      out.full_name = { value: line, confidence: 0.7, source_snippet: line };
+      break;
+    }
+  }
+
+  // Location: line containing common location cues near the top.
+  for (const line of firstLines) {
+    if (/\b(remote|hybrid|based in|located|city|,\s*[A-Z]{2,})\b/i.test(line) && line.length < 80) {
+      out.location = { value: line, confidence: 0.55, source_snippet: line };
+      break;
+    }
+  }
+
+  // Headline: line just after name, short and non-contact.
+  if (out.full_name) {
+    const idx = firstLines.indexOf(out.full_name.value as string);
+    for (let i = idx + 1; i < Math.min(idx + 4, firstLines.length); i++) {
+      const l = firstLines[i];
+      if (!l || l.length > 90 || /[@]/.test(l) || /\d{4}/.test(l)) continue;
+      out.headline = { value: l, confidence: 0.6, source_snippet: l };
+      break;
+    }
+  }
+
+  // Skills: look for a "Skills" section and collect comma/bullet separated tokens.
+  const skillsSection = text.match(/(?:^|\n)\s*(?:skills|competências|competencies|technical skills)\s*[:\n]([\s\S]{0,1200}?)(?:\n\s*\n|\n[A-Z][A-Z ]{3,}\n|$)/i);
+  if (skillsSection) {
+    const tokens = skillsSection[1]
+      .split(/[,•·\n|/]+/)
+      .map((t) => t.replace(/^[-*\s]+/, "").trim())
+      .filter((t) => t.length >= 2 && t.length <= 40);
+    const uniq = Array.from(new Set(tokens)).slice(0, 30);
+    if (uniq.length > 0) out.skills = { value: uniq, confidence: 0.65 };
+  }
+
+  // Years of experience: look for "X years" near "experience".
+  const yoeMatch = text.match(/(\d{1,2})\+?\s*(?:years?|yrs?)\s*(?:of)?\s*(?:experience|exp)/i);
+  if (yoeMatch) {
+    const n = Number(yoeMatch[1]);
+    if (Number.isFinite(n) && n > 0 && n < 60) {
+      out.years_of_experience = { value: n, confidence: 0.7, source_snippet: yoeMatch[0] };
+    }
+  }
+
+  // Summary: first paragraph of 120-600 chars.
+  const paragraphs = text.split(/\n\s*\n/).map((p) => p.trim());
+  for (const p of paragraphs) {
+    if (p.length >= 120 && p.length <= 600 && !/@/.test(p) && p.split(/\s+/).length > 15) {
+      out.summary = { value: p.slice(0, 600), confidence: 0.55 };
+      break;
+    }
+  }
+
+  return out;
 }
 
 // ────────────────────────────────────────────────────────────────────────────
