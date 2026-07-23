@@ -1,0 +1,30 @@
+{
+  "runner": "playwright",
+  "browser": "chromium-headless",
+  "viewports": [375, 768, 1280],
+  "routes": ["/", "/jobs", "/about", "/contact", "/how-it-works", "/industries", "/intake", "/login", "/does-not-exist-404"],
+  "totals": {
+    "headerLinks": 22,
+    "headerCtas": 3,
+    "footerLinks": 24,
+    "footerLegalLinks": 3,
+    "socialLinks": 2,
+    "brokenLinks": 0,
+    "placeholderLinks": 0,
+    "oldSourceOperationalLinksRemoved": 4
+  },
+  "mobileMenu": {
+    "opens": true,
+    "closesOnEscape": true,
+    "closesOnRouteChange": true,
+    "focusTrap": true,
+    "focusRestored": true,
+    "groupedNav": true,
+    "primaryCtaPinned": true
+  },
+  "removedLinks": [
+    { "old": "/auth", "replacedWith": "/login" },
+    { "old": "https://twitter.com/taasflow", "removed": true, "reason": "no verified account" },
+    { "old": "https://github.com/taasflow", "removed": true, "reason": "no verified account" }
+  ]
+}

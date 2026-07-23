@@ -1,0 +1,31 @@
+{
+  "shell": {
+    "PublicPageShell":      { "path": "src/components/marketing/site-shell.tsx",         "role": "Full public shell (header + footer + main).", "canonicalImport": "@/components/public" },
+    "FocusedShell":         { "path": "src/components/marketing/form-shell.tsx",         "role": "Focused chrome for intake, application, auth, tracking.", "canonicalImport": "@/components/public" },
+    "SkipLink":             { "path": "src/components/marketing/site-shell.tsx",         "role": "First focusable element; targets #main." }
+  },
+  "containers": {
+    "PublicPageContainer":  { "path": "src/components/marketing/site-shell.tsx",         "role": "Max-width 1200 container with responsive padding." },
+    "PublicSection":        { "path": "src/components/marketing/site-shell.tsx",         "role": "Vertical rhythm section wrapper." },
+    "PublicPageHeader":     { "path": "src/components/public/public-page-header.tsx",    "role": "Eyebrow + h1 + description + actions block." }
+  },
+  "navigation": {
+    "Breadcrumbs":          { "path": "src/components/marketing/site-shell.tsx",         "role": "Semantic breadcrumb list." }
+  },
+  "cta": {
+    "HeroCTAGroup":         { "path": "src/components/public/cta.tsx", "role": "Primary + secondary buttons side by side." },
+    "InlineCTA":            { "path": "src/components/public/cta.tsx", "role": "Single primary button." },
+    "SectionCTA":           { "path": "src/components/public/cta.tsx", "role": "Boxed section-close CTA on light background." },
+    "FinalCTASection":      { "path": "src/components/public/cta.tsx", "role": "Full-width navy conversion block." },
+    "TextLinkCTA":          { "path": "src/components/public/cta.tsx", "role": "Underlined text link with arrow." },
+    "EmployerCTA":          { "path": "src/components/public/cta.tsx", "role": "Preset → /intake." },
+    "CandidateCTA":         { "path": "src/components/public/cta.tsx", "role": "Preset → /jobs." },
+    "CTASection":           { "path": "src/components/marketing/site-shell.tsx", "role": "Legacy dark hero-style CTA (kept for existing pages)." }
+  },
+  "utility": {
+    "PublicLoadingState":   { "path": "src/components/marketing/site-shell.tsx",        "role": "Spinner + polite live label." },
+    "PublicErrorState":     { "path": "src/components/marketing/site-shell.tsx",        "role": "Error page with retry callback." },
+    "PublicNotFoundState":  { "path": "src/components/marketing/site-shell.tsx",        "role": "404 with Home / Jobs / Contact." },
+    "PublicEmptyState":     { "path": "src/components/public/public-empty-state.tsx",   "role": "Empty collection card." }
+  }
+}

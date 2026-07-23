@@ -1,0 +1,43 @@
+{
+  "sourceRepo": "https://github.com/joaobogo/sourcing-suite-ai.git",
+  "sourcePreview": "https://sourcing-suite-ai.lovable.app",
+  "destination": "https://clear-path-hubs.lovable.app",
+  "extractionMode": "PATTERNS_ONLY",
+  "policy": "Source components that import Supabase, auth hooks, dashboard services, operational services, old route guards, or realtime bridges are classified REBUILD_FROM_REFERENCE and are NOT copied. Only structure and presentation patterns inform destination implementation.",
+  "map": [
+    {
+      "sourceArea": "public site header",
+      "sourceKind": "shell",
+      "classification": "REBUILD_FROM_REFERENCE",
+      "destinationImplementation": "src/components/marketing/site-shell.tsx#Header",
+      "notes": "Grouped nav via Radix NavigationMenu, primary CTA to /intake, sign-in to /login."
+    },
+    {
+      "sourceArea": "public site footer",
+      "sourceKind": "shell",
+      "classification": "REBUILD_FROM_REFERENCE",
+      "destinationImplementation": "src/components/marketing/site-shell.tsx#Footer",
+      "notes": "Six-group footer driven by src/config/public-navigation.ts."
+    },
+    {
+      "sourceArea": "mobile navigation",
+      "sourceKind": "shell",
+      "classification": "REBUILD_FROM_REFERENCE",
+      "destinationImplementation": "src/components/marketing/site-shell.tsx#Header (Sheet + Accordion)",
+      "notes": "Focus trap, focus restore, Escape close, scroll-lock, route-change auto-close."
+    },
+    {
+      "sourceArea": "focused form shell (intake/apply/auth)",
+      "sourceKind": "shell",
+      "classification": "REBUILD_FROM_REFERENCE",
+      "destinationImplementation": "src/components/marketing/form-shell.tsx#FormShell",
+      "notes": "Rebuilt from scratch to preserve destination business logic."
+    },
+    {
+      "sourceArea": "404 / error / loading pages",
+      "sourceKind": "utility",
+      "classification": "REBUILD_FROM_REFERENCE",
+      "destinationImplementation": "src/components/marketing/site-shell.tsx (PublicNotFound / PublicErrorState / PublicLoading)"
+    }
+  ]
+}
