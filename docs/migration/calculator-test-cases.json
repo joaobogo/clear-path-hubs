@@ -1,0 +1,128 @@
+{
+  "$schema": "https://taasflow.com/schemas/roi-calculator-test-cases.json",
+  "description": "Deterministic test cases for the TaaSFlow ROI calculator, derived from source live-page verification.",
+  "currency": "USD",
+  "formulaVersion": "1.0.0",
+  "assumptions": {
+    "tierBoundaryInclusive": true,
+    "reductionRounding": "nearest-integer-percent",
+    "kAbbreviationThresholdUsd": 1000
+  },
+  "cases": [
+    {
+      "id": "source-defaults",
+      "description": "Live-page defaults on taasflow.com/pricing — reproduces the visible figures.",
+      "input": {
+        "positions": 5,
+        "agencyFeePct": 0.20,
+        "averageSalary": 85000,
+        "recruiterHourlyCost": 40,
+        "sourcingHoursPerRole": 25
+      },
+      "expected": {
+        "agencyPlacementCost": 85000,
+        "internalSourcingCost": 5000,
+        "traditionalCost": 90000,
+        "package": "multi-position",
+        "taasflowCost": 2100,
+        "savings": 87900,
+        "reductionPct": 98,
+        "display": {
+          "agency": "$85K",
+          "sourcing": "$5K",
+          "traditional": "$90K",
+          "taasflow": "$2.1K",
+          "savings": "$87.9K"
+        }
+      }
+    },
+    {
+      "id": "single-role-pilot",
+      "input": {
+        "positions": 1,
+        "agencyFeePct": 0.20,
+        "averageSalary": 100000,
+        "recruiterHourlyCost": 40,
+        "sourcingHoursPerRole": 25
+      },
+      "expected": {
+        "agencyPlacementCost": 20000,
+        "internalSourcingCost": 1000,
+        "traditionalCost": 21000,
+        "package": "pilot",
+        "taasflowCost": 399,
+        "savings": 20601,
+        "reductionPct": 98
+      }
+    },
+    {
+      "id": "sprint-boundary-6",
+      "input": {
+        "positions": 6,
+        "agencyFeePct": 0.25,
+        "averageSalary": 120000,
+        "recruiterHourlyCost": 50,
+        "sourcingHoursPerRole": 30
+      },
+      "expected": {
+        "agencyPlacementCost": 180000,
+        "internalSourcingCost": 9000,
+        "traditionalCost": 189000,
+        "package": "hiring-sprint",
+        "taasflowCost": 4500,
+        "savings": 184500,
+        "reductionPct": 98
+      }
+    },
+    {
+      "id": "sprint-boundary-10",
+      "input": {
+        "positions": 10,
+        "agencyFeePct": 0.20,
+        "averageSalary": 90000,
+        "recruiterHourlyCost": 45,
+        "sourcingHoursPerRole": 25
+      },
+      "expected": {
+        "package": "hiring-sprint",
+        "taasflowCost": 4500,
+        "traditionalCost": 191250,
+        "reductionPct": 98
+      }
+    },
+    {
+      "id": "subscription-tier-11-plus",
+      "description": "Owner-decision-dependent: subscription price is currently unapproved.",
+      "input": {
+        "positions": 12,
+        "agencyFeePct": 0.20,
+        "averageSalary": 90000,
+        "recruiterHourlyCost": 40,
+        "sourcingHoursPerRole": 25
+      },
+      "expected": {
+        "package": "subscription",
+        "requiresOwnerApproval": true,
+        "taasflowCost": null,
+        "note": "Calculator must render 'Contact Sales' when tier.approvalStatus !== 'approved'."
+      }
+    },
+    {
+      "id": "zero-guard",
+      "description": "Below the min tier — calculator must not divide by zero and must show 'Add at least 1 position'.",
+      "input": {
+        "positions": 0,
+        "agencyFeePct": 0.20,
+        "averageSalary": 85000,
+        "recruiterHourlyCost": 40,
+        "sourcingHoursPerRole": 25
+      },
+      "expected": {
+        "package": null,
+        "taasflowCost": null,
+        "traditionalCost": 0,
+        "reductionPct": 0
+      }
+    }
+  ]
+}
