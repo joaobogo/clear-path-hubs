@@ -3,6 +3,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { getPublicPosition } from "@/lib/jobs.functions";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { SiteShell } from "@/components/marketing/site-shell";
 
 export const Route = createFileRoute("/jobs/$id/")({
   loader: async ({ context, params }) => {
@@ -92,19 +93,8 @@ function JobDetail() {
   const { overview, responsibilities } = splitOverviewAndResponsibilities(pos.description);
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b">
-        <div className="mx-auto max-w-4xl px-4 py-4 flex items-center justify-between">
-          <Link to="/" className="font-semibold tracking-tight">TaaSFlow</Link>
-          <nav className="flex items-center gap-3 text-sm">
-            <Link to="/jobs" className="text-muted-foreground hover:text-foreground">
-              ← All roles
-            </Link>
-          </nav>
-        </div>
-      </header>
-
-      <main className="mx-auto max-w-3xl px-4 py-10">
+    <SiteShell>
+      <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6 lg:px-8">
         <div className="text-sm text-muted-foreground">{pos.organization_name}</div>
         <h1 className="mt-1 text-3xl md:text-4xl font-semibold tracking-tight">{pos.title}</h1>
         <div className="mt-3 flex flex-wrap gap-1.5">
@@ -189,7 +179,7 @@ function JobDetail() {
             <Link to="/jobs">Back to job board</Link>
           </Button>
         </div>
-      </main>
-    </div>
+      </div>
+    </SiteShell>
   );
 }

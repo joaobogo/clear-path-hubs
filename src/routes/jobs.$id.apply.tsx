@@ -19,6 +19,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { FormShell } from "@/components/marketing/form-shell";
 
 export const Route = createFileRoute("/jobs/$id/apply")({
   loader: async ({ context, params }) => {
@@ -276,21 +277,13 @@ function ApplyPage() {
   if (!pos) return null;
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b">
-        <div className="mx-auto max-w-3xl px-4 py-4 flex items-center justify-between">
-          <Link to="/" className="font-semibold tracking-tight">TaaSFlow</Link>
-          <Link
-            to="/jobs/$id"
-            params={{ id }}
-            className="text-sm text-muted-foreground hover:text-foreground"
-          >
-            ← Role details
-          </Link>
-        </div>
-      </header>
-
-      <main className="mx-auto max-w-2xl px-4 py-10">
+    <FormShell
+      exitTo={`/jobs/${id}`}
+      exitLabel="← Role details"
+      progress={{ step, total: STEP_LABELS.length, label: `Step ${step} of ${STEP_LABELS.length}` }}
+      width="md"
+    >
+      <div className="text-sm text-[color:var(--brand-navy)]/60">{pos.organization_name}</div>
         <div className="text-sm text-muted-foreground">{pos.organization_name}</div>
         <h1 className="mt-1 text-2xl md:text-3xl font-semibold tracking-tight">
           Apply — {pos.title}
@@ -645,8 +638,7 @@ function ApplyPage() {
             Cancel and return to role
           </Link>
         </div>
-      </main>
-    </div>
+    </FormShell>
   );
 }
 

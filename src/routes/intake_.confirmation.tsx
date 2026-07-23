@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { FormShell } from "@/components/marketing/form-shell";
 import { useEffect, useState } from "react";
 import { z } from "zod";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -72,7 +73,7 @@ function ConfirmationPage() {
   }, [intake_id]);
 
   return (
-    <main className="mx-auto max-w-2xl px-4 py-16 sm:px-6">
+    <FormShell exitTo="/" exitLabel="Back to home" width="md" eyebrow="Employer intake">
       <Card>
         <CardHeader>
           <CardTitle className="text-2xl">Intake received</CardTitle>
@@ -137,6 +138,6 @@ function ConfirmationPage() {
           </div>
         </CardContent>
       </Card>
-    </main>
+    </FormShell>
   );
 }

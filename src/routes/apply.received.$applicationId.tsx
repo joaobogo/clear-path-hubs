@@ -1,4 +1,5 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { FormShell } from "@/components/marketing/form-shell";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { getApplicationReceipt } from "@/lib/apply.functions";
 import { Button } from "@/components/ui/button";
@@ -39,13 +40,7 @@ function Received() {
   if (!data) return null;
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b">
-        <div className="mx-auto max-w-3xl px-4 py-4">
-          <Link to="/" className="font-semibold tracking-tight">TaaSFlow</Link>
-        </div>
-      </header>
-      <main className="mx-auto max-w-2xl px-4 py-16">
+    <FormShell exitTo="/jobs" exitLabel="Browse more roles" width="md">
         <div className="rounded-lg border bg-card p-8 text-center">
           <div className="mx-auto h-12 w-12 rounded-full bg-primary/10 text-primary flex items-center justify-center text-2xl">
             ✓
@@ -92,7 +87,6 @@ function Received() {
         <p className="mt-6 text-xs text-muted-foreground">
           Keep this reference handy — we'll ask for it if you contact us about this application.
         </p>
-      </main>
-    </div>
+      </FormShell>
   );
 }
