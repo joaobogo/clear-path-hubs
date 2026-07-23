@@ -5,7 +5,7 @@ import {
   PublicSection,
   CtaSection,
 } from "@/components/marketing/site-shell";
-import { IndustryGallery } from "@/components/marketing/industry-gallery";
+import { IndustryFinder } from "@/components/marketing/industry-finder";
 import { marketingHead } from "@/lib/marketing/head";
 import { PageConnections } from "@/components/marketing/page-connections";
 
@@ -54,10 +54,10 @@ function IndustriesIndex() {
         </PublicPage>
       </PublicSection>
 
-      {/* Explorer */}
+      {/* Finder */}
       <PublicSection>
         <PublicPage>
-          <IndustryGallery />
+          <IndustryFinder />
         </PublicPage>
       </PublicSection>
 
