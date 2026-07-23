@@ -275,7 +275,7 @@ function IntakePage() {
       if (["firstName", "lastName", "workEmail", "companyName"].includes(firstKey)) setStep(1);
       else if (["roleTitle", "workModel"].includes(firstKey)) setStep(2);
       else if (["mustHaveSkills", "jobDescription"].includes(firstKey)) setStep(3);
-      else if (firstKey === "consent") setStep(5);
+      else if (["password", "passwordConfirm", "consent"].includes(firstKey)) setStep(5);
       toast.error("Please fix the highlighted fields");
       return;
     }
