@@ -2203,6 +2203,57 @@ export type Database = {
           },
         ]
       }
+      marketing_inquiries: {
+        Row: {
+          company: string | null
+          created_at: string
+          email: string
+          id: string
+          industry_slug: string | null
+          kind: string
+          message: string | null
+          name: string
+          preferred_slot: string | null
+          role_count: string | null
+          role_title: string | null
+          source_path: string | null
+          status: string
+          user_agent: string | null
+        }
+        Insert: {
+          company?: string | null
+          created_at?: string
+          email: string
+          id?: string
+          industry_slug?: string | null
+          kind: string
+          message?: string | null
+          name: string
+          preferred_slot?: string | null
+          role_count?: string | null
+          role_title?: string | null
+          source_path?: string | null
+          status?: string
+          user_agent?: string | null
+        }
+        Update: {
+          company?: string | null
+          created_at?: string
+          email?: string
+          id?: string
+          industry_slug?: string | null
+          kind?: string
+          message?: string | null
+          name?: string
+          preferred_slot?: string | null
+          role_count?: string | null
+          role_title?: string | null
+          source_path?: string | null
+          status?: string
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
       memberships: {
         Row: {
           created_at: string
