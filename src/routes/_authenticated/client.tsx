@@ -202,6 +202,14 @@ function ClientLayout() {
         navItems={navItems}
         linkSearch={linkSearch}
         topBanner={topBanner}
+        aboveNav={
+          data && data.organizations.length > 1 ? (
+            <OrgSwitcher
+              activeOrgId={active.organization_id}
+              organizations={data.organizations}
+            />
+          ) : undefined
+        }
       >
         <Outlet />
       </WorkspaceShell>
