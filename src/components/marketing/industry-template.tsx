@@ -84,7 +84,10 @@ export function IndustryTemplate({ entry }: { entry: IndustryEntry }) {
               </ul>
             </div>
             {heroImage ? (
-              <figure className="relative overflow-hidden rounded-2xl border border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-mist)]/40 shadow-sm motion-safe:animate-[fade-in_400ms_ease-out]">
+              <figure
+                data-industry-motif={entry.slug}
+                className="relative overflow-hidden rounded-2xl border border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-mist)]/40 shadow-sm motion-safe:animate-[taas-reveal-up_520ms_var(--taas-ease-emphasized)_both]"
+              >
                 <img
                   src={heroImage.src}
                   alt={heroImage.alt}
@@ -93,7 +96,7 @@ export function IndustryTemplate({ entry }: { entry: IndustryEntry }) {
                   loading="eager"
                   fetchPriority="high"
                   decoding="async"
-                  className="aspect-[2/1] h-auto w-full object-cover lg:aspect-auto"
+                  className="relative z-0 aspect-[2/1] h-auto w-full object-cover lg:aspect-auto"
                 />
               </figure>
             ) : null}
