@@ -310,6 +310,7 @@ function IntakePage() {
         timezoneRequirements: state.timezoneRequirements.trim(),
         screeningQuestions: state.screeningQuestions.filter((q) => q.question.trim().length >= 3),
         consent: state.consent,
+        password: state.password,
         source: "public_form",
         submittedAt: new Date().toISOString(),
       };
