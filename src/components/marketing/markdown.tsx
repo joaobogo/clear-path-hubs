@@ -1,6 +1,24 @@
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
+export function slugifyHeading(input: string): string {
+  return String(input)
+    .toLowerCase()
+    .replace(/[^\w\s-]/g, "")
+    .trim()
+    .replace(/\s+/g, "-")
+    .slice(0, 80);
+}
+
+function headingText(children: unknown): string {
+  if (typeof children === "string") return children;
+  if (Array.isArray(children)) return children.map(headingText).join("");
+  if (children && typeof children === "object" && "props" in (children as any)) {
+    return headingText((children as any).props?.children);
+  }
+  return "";
+}
+
 // Rewrite legacy source links so anchors and CTAs stay same-origin.
 function rewriteHref(href?: string): string | undefined {
   if (!href) return href;
