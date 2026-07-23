@@ -7,20 +7,36 @@ import {
 } from "@/components/marketing/site-shell";
 import { marketingHead } from "@/lib/marketing/head";
 
-// ─── FOUNDER — Edit this block to publish the named founder narrative ────
+// ─── LEADERSHIP — Edit this block to publish the named founder narrative ────
 // The rest of the About page reads from this constant. Update once, publish.
 // If any field is empty string, that block hides gracefully.
-const FOUNDER = {
-  name: "João Luciano",
-  title: "Founder & CEO, TaaSFlow",
-  location: "Lisbon · Remote",
-  photoUrl: "", // Add a photo URL to render the portrait; empty renders initials.
-  // Named founder voice replacing the generic "founding team" quote.
-  quote:
-    "I spent years buying agency shortlists I could not explain. TaaSFlow is the recruiting system I always wanted on the buying side — one workspace, one rubric, one evidence file per candidate.",
-  // One-paragraph "why TaaSFlow, why now".
-  why: "TaaSFlow started because the recruiting market is stuck between two bad options: an ATS that gives you tooling but no work done, or an agency that does the work but hides how. Both leave hiring teams guessing. We built a third model — a recruiting function delivered through a transparent product, priced like software, run by people who care whether the candidate was actually a good fit.",
-} as const;
+const LEADERS = [
+  {
+    name: "Christian Brogger",
+    title: "Co-founder & CEO",
+    location: "London · Global",
+    photoUrl: "https://taasflow.com/assets/christian-9Ad2XECQ.jpg",
+    linkedin: "https://www.linkedin.com/in/christian-brogger/",
+    quote:
+      "Great hiring starts with great process. We just made it repeatable.",
+    bio: "25 years designing and driving value creation across Fortune 500s and private equity. Former Director at UBS Investment Bank; led strategic programmes for Google, Barclays, HSBC, IBM and AstraZeneca. Pragmatic, disruption-minded, technology-as-enabler — with deep experience partnering directly with leadership teams to execute business strategy.",
+    tags: ["Process excellence", "Enterprise transformation", "Global delivery", "Operational strategy"],
+  },
+  {
+    name: "João Bogo",
+    title: "Co-founder & CMO",
+    location: "Lisbon · LATAM & EMEA",
+    photoUrl: "https://taasflow.com/assets/joao-BvCqv2_l.jpg",
+    linkedin: "https://www.linkedin.com/in/joaomarcoscsilva/",
+    quote:
+      "The best candidates aren't looking. You need to know where they are and how to reach them.",
+    bio: "Former strategist for Hilton, Marriott, Four Seasons, and Philips. Represented at G20 and B20 forums. Has built and scaled talent acquisition campaigns across the US, LATAM, Europe, and the Gulf — with a focus on employer branding, global talent markets, and building real connections at scale.",
+    tags: ["Global talent markets", "Employer branding", "Strategic partnerships", "Recruitment marketing"],
+  },
+] as const;
+
+const WHY_NOW =
+  "TaaSFlow started because the recruiting market is stuck between two bad options: an ATS that gives you tooling but no work done, or an agency that does the work but hides how. Both leave hiring teams guessing. We built a third model — a recruiting function delivered through a transparent product, priced like software, run by people who care whether the candidate was actually a good fit.";
 
 const PRINCIPLES = [
   {
