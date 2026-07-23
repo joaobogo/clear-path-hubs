@@ -97,13 +97,23 @@ export async function structureCv(cvText: string): Promise<{ ok: true; data: Str
     const content = j.choices?.[0]?.message?.content ?? "";
     if (!content) return { ok: false, reason: "empty_completion" };
     let parsed: unknown;
+    // Strip common wrappers (```json fences, prose preamble/suffix) before parsing.
+    const stripped = content
+      .replace(/^\uFEFF/, "")
+      .replace(/^\s*```(?:json)?\s*/i, "")
+      .replace(/```\s*$/i, "")
+      .trim();
     try {
-      parsed = JSON.parse(content);
+      parsed = JSON.parse(stripped);
     } catch {
-      // last-ditch: pull first JSON object
-      const m = content.match(/\{[\s\S]*\}/);
-      if (!m) return { ok: false, reason: "non_json_completion" };
-      parsed = JSON.parse(m[0]);
+      const first = stripped.indexOf("{");
+      const last = stripped.lastIndexOf("}");
+      if (first < 0 || last <= first) return { ok: false, reason: "non_json_completion" };
+      try {
+        parsed = JSON.parse(stripped.slice(first, last + 1));
+      } catch {
+        return { ok: false, reason: "non_json_completion" };
+      }
     }
     return { ok: true, data: parsed as StructuredCv };
   } catch (e) {
