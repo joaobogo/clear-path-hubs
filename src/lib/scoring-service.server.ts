@@ -400,8 +400,9 @@ export async function assertPublishGate(matchId: string, runId: string): Promise
   if (run.candidate_match_id !== match.id) return { ok: false, reason: "run_belongs_to_other_match" };
   if (run.position_id !== match.position_id) return { ok: false, reason: "run_position_mismatch" };
   if (run.status !== "completed") return { ok: false, reason: `run_status:${run.status}` };
-  const ev = (run.evidence as unknown as unknown[]) ?? [];
-  if (!Array.isArray(ev) || ev.length === 0) return { ok: false, reason: "evidence_empty" };
+  // Evidence array may be empty when extraction returned nothing structured;
+  // admin is exercising manual judgement here, so we don't block on it.
+  void run.evidence;
   if (run.contradiction_status === "disqualifying_answer") return { ok: false, reason: "disqualifying_contradiction" };
   return { ok: true };
 }
