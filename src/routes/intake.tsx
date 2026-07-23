@@ -979,7 +979,7 @@ function IntakePage() {
           <a href="mailto:hello@taasflow.com" className="text-sm text-muted-foreground underline">
             Talk to TaaSFlow
           </a>
-          {step < 5 ? (
+          {step < 6 ? (
             <Button type="button" onClick={next}>
               Continue
             </Button>
