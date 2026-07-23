@@ -16,63 +16,145 @@ import {
   ArrowRight,
   LogIn,
   Search,
+  Clock,
+  CheckCircle2,
+  Mail,
 } from "lucide-react";
 
 type Intent = "hire" | "candidate" | "existing_client" | "support" | "general";
 
-const INTENTS: Array<{
+type IntentSpec = {
   id: Intent;
   label: string;
+  tagline: string;
   icon: React.ComponentType<{ className?: string }>;
-  body: string;
-}> = [
-  { id: "hire", label: "I want to hire", icon: Briefcase, body: "Start a role, request a consultation, or talk to sales." },
-  { id: "candidate", label: "I am a candidate", icon: UserCircle2, body: "Browse open roles or sign in to your candidate workspace." },
-  { id: "existing_client", label: "I am an existing Client", icon: Building2, body: "Sign in to your workspace or reach your account team." },
-  { id: "support", label: "I need support", icon: LifeBuoy, body: "Report an issue with your account, workspace, or an application." },
-  { id: "general", label: "General inquiry", icon: MessageSquare, body: "Press, partnerships, or anything else." },
+  responseSla: string;
+  respondsFrom: string;
+  primaryCta: { label: string; to?: string; anchor?: string; icon?: React.ComponentType<{ className?: string }> };
+  secondaryCta?: { label: string; to?: string; anchor?: string; icon?: React.ComponentType<{ className?: string }> };
+  backup: string;
+  fields: Array<"name" | "email" | "company" | "role" | "url" | "message">;
+  formHeading: string;
+  formDescription: string;
+  topic: "hire_talent" | "candidate" | "existing_client" | "support" | "general";
+};
+
+const INTENTS: IntentSpec[] = [
+  {
+    id: "hire",
+    label: "Hire talent",
+    tagline: "Start a role or talk to sales.",
+    icon: Briefcase,
+    responseSla: "Same business day",
+    respondsFrom: "Sales team",
+    primaryCta: { label: "Start Hiring", to: "/intake", icon: ArrowRight },
+    secondaryCta: { label: "Contact sales", anchor: "#contact-form" },
+    backup: "Prefer email? sales@taasflow.com",
+    fields: ["name", "email", "company", "role", "message"],
+    formHeading: "Talk to sales",
+    formDescription: "Tell us who you are and the role you need to fill. We reply within one business day.",
+    topic: "hire_talent",
+  },
+  {
+    id: "candidate",
+    label: "Candidate",
+    tagline: "Browse roles or manage your application.",
+    icon: UserCircle2,
+    responseSla: "Within 2 business days",
+    respondsFrom: "Talent team",
+    primaryCta: { label: "Browse Jobs", to: "/jobs", icon: Search },
+    secondaryCta: { label: "Candidate Sign In", to: "/login", icon: LogIn },
+    backup: "Application questions: talent@taasflow.com",
+    fields: ["name", "email", "url", "message"],
+    formHeading: "Ask the talent team",
+    formDescription: "Share your LinkedIn or a link to your work, and the question you'd like answered.",
+    topic: "candidate",
+  },
+  {
+    id: "existing_client",
+    label: "Existing client",
+    tagline: "Reach your account team.",
+    icon: Building2,
+    responseSla: "Within 4 business hours",
+    respondsFrom: "Your account manager",
+    primaryCta: { label: "Client Sign In", to: "/login", icon: LogIn },
+    secondaryCta: { label: "Send a message", anchor: "#contact-form" },
+    backup: "Fastest route: message us inside your workspace.",
+    fields: ["name", "email", "company", "message"],
+    formHeading: "Message your account team",
+    formDescription: "Use the email tied to your workspace so we can find the right account.",
+    topic: "existing_client",
+  },
+  {
+    id: "support",
+    label: "Support",
+    tagline: "Report an issue with your account or workspace.",
+    icon: LifeBuoy,
+    responseSla: "Within 4 business hours",
+    respondsFrom: "Support team",
+    primaryCta: { label: "Report an issue", anchor: "#contact-form", icon: ArrowRight },
+    secondaryCta: { label: "Sign in first", to: "/login", icon: LogIn },
+    backup: "Urgent workspace outage? support@taasflow.com",
+    fields: ["name", "email", "url", "message"],
+    formHeading: "Support request",
+    formDescription: "Include your account email and the URL where you hit the issue. Screenshots welcome — reply to the confirmation email to attach.",
+    topic: "support",
+  },
+  {
+    id: "general",
+    label: "General inquiry",
+    tagline: "Press, partnerships, anything else.",
+    icon: MessageSquare,
+    responseSla: "Within 3 business days",
+    respondsFrom: "Comms team",
+    primaryCta: { label: "Send a message", anchor: "#contact-form", icon: ArrowRight },
+    secondaryCta: { label: "See our journey", to: "/journey" },
+    backup: "Press: press@taasflow.com · Partnerships: partners@taasflow.com",
+    fields: ["name", "email", "company", "message"],
+    formHeading: "General inquiry",
+    formDescription: "Press, partnerships, or anything else. We'll route it to the right team.",
+    topic: "general",
+  },
 ];
 
 export const Route = createFileRoute("/contact")({
   head: () =>
     marketingHead(undefined, "/contact", {
-      title: "Contact — TaaSFlow",
+      title: "Contact TaaSFlow — Sales, Support, Candidates, Partnerships",
       description:
-        "Contact TaaSFlow. Start hiring, ask about a role, reach your account team, request support, or send a general inquiry.",
+        "Pick the path that fits: hire talent, candidate questions, existing client, support, or general inquiry. Each route has its own SLA and the right team on the other end.",
     }),
   component: ContactPage,
 });
 
 function ContactPage() {
-  const [intent, setIntent] = useState<Intent>("hire");
+  const [intentId, setIntentId] = useState<Intent>("hire");
+  const intent = INTENTS.find((i) => i.id === intentId)!;
+
   return (
     <SiteShell>
-      {/* ── Hero ─────────────────────────────────────────────────── */}
-      <PublicSection className="pb-8 pt-16 sm:pt-20">
+      {/* Hero */}
+      <PublicSection className="pb-6 pt-16 sm:pt-20">
         <PublicPage>
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">
             Contact
           </p>
           <h1 className="mt-3 max-w-3xl font-[family-name:var(--brand-font-display)] text-4xl font-semibold tracking-tight sm:text-5xl">
-            How can we help?
+            Pick your path. We route from there.
           </h1>
           <p className="mt-5 max-w-2xl text-lg text-[color:var(--brand-navy)]/70">
-            Pick the path that fits. We route each request to the right team so you don&rsquo;t
-            wait behind the wrong queue.
+            Five paths, five teams. Choose the one that fits and you'll see the right CTA,
+            an honest response time, and a backup channel — before you fill a single field.
           </p>
         </PublicPage>
       </PublicSection>
 
-      {/* ── Intent selector ─────────────────────────────────────── */}
+      {/* Intent selector */}
       <PublicSection className="pb-4">
         <PublicPage>
-          <div
-            role="tablist"
-            aria-label="Contact intent"
-            className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5"
-          >
+          <div role="tablist" aria-label="Contact path" className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
             {INTENTS.map((opt) => {
-              const active = intent === opt.id;
+              const active = intentId === opt.id;
               return (
                 <button
                   key={opt.id}
@@ -80,16 +162,19 @@ function ContactPage() {
                   aria-selected={active}
                   aria-controls={`panel-${opt.id}`}
                   id={`tab-${opt.id}`}
-                  onClick={() => setIntent(opt.id)}
+                  onClick={() => setIntentId(opt.id)}
                   className={
-                    "flex min-h-16 items-start gap-3 rounded-xl border p-4 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-navy)]/40 " +
+                    "flex min-h-20 flex-col items-start gap-1.5 rounded-xl border p-4 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-navy)]/40 " +
                     (active
                       ? "border-[color:var(--brand-navy)] bg-[color:var(--brand-navy)] text-white"
                       : "border-[color:var(--brand-navy)]/15 bg-white hover:border-[color:var(--brand-navy)]/40")
                   }
                 >
-                  <opt.icon className="mt-0.5 h-5 w-5 shrink-0" />
+                  <opt.icon className="h-5 w-5 shrink-0" />
                   <span className="text-sm font-semibold leading-snug">{opt.label}</span>
+                  <span className={"text-xs leading-snug " + (active ? "text-white/75" : "text-[color:var(--brand-navy)]/60")}>
+                    {opt.tagline}
+                  </span>
                 </button>
               );
             })}
@@ -97,20 +182,97 @@ function ContactPage() {
         </PublicPage>
       </PublicSection>
 
-      {/* ── Context-aware panel ─────────────────────────────────── */}
+      {/* Context panel: spec + form */}
       <PublicSection className="py-10">
         <PublicPage>
           <div
             role="tabpanel"
-            id={`panel-${intent}`}
-            aria-labelledby={`tab-${intent}`}
-            className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6 sm:p-10"
+            id={`panel-${intent.id}`}
+            aria-labelledby={`tab-${intent.id}`}
+            className="grid gap-6 lg:grid-cols-5"
           >
-            {intent === "hire" && <HirePanel />}
-            {intent === "candidate" && <CandidatePanel />}
-            {intent === "existing_client" && <ExistingClientPanel />}
-            {intent === "support" && <ContactForm topic="support" heading="Support request" description="Tell us what went wrong. Include your account email and the URL where you hit the issue." />}
-            {intent === "general" && <ContactForm topic="general" heading="General inquiry" description="Press, partnerships, or anything else. We'll route it to the right team." />}
+            {/* Left: spec card */}
+            <aside className="lg:col-span-2">
+              <div className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6 sm:p-8">
+                <div className="flex items-center gap-2">
+                  <intent.icon className="h-5 w-5 text-[color:var(--brand-navy)]" />
+                  <h2 className="font-[family-name:var(--brand-font-display)] text-2xl font-semibold tracking-tight">
+                    {intent.label}
+                  </h2>
+                </div>
+                <p className="mt-3 text-[color:var(--brand-navy)]/70">{intent.tagline}</p>
+
+                <div className="mt-6 flex flex-wrap gap-2.5">
+                  {intent.primaryCta.to ? (
+                    <Link
+                      to={intent.primaryCta.to}
+                      className="inline-flex min-h-11 items-center justify-center rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-white hover:opacity-90"
+                    >
+                      {intent.primaryCta.icon ? <intent.primaryCta.icon className="mr-2 h-4 w-4" /> : null}
+                      {intent.primaryCta.label}
+                    </Link>
+                  ) : (
+                    <a
+                      href={intent.primaryCta.anchor}
+                      className="inline-flex min-h-11 items-center justify-center rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-white hover:opacity-90"
+                    >
+                      {intent.primaryCta.icon ? <intent.primaryCta.icon className="mr-2 h-4 w-4" /> : null}
+                      {intent.primaryCta.label}
+                    </a>
+                  )}
+                  {intent.secondaryCta ? (
+                    intent.secondaryCta.to ? (
+                      <Link
+                        to={intent.secondaryCta.to}
+                        className="inline-flex min-h-11 items-center justify-center rounded-md border border-[color:var(--brand-navy)]/20 px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5"
+                      >
+                        {intent.secondaryCta.icon ? <intent.secondaryCta.icon className="mr-2 h-4 w-4" /> : null}
+                        {intent.secondaryCta.label}
+                      </Link>
+                    ) : (
+                      <a
+                        href={intent.secondaryCta.anchor}
+                        className="inline-flex min-h-11 items-center justify-center rounded-md border border-[color:var(--brand-navy)]/20 px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5"
+                      >
+                        {intent.secondaryCta.icon ? <intent.secondaryCta.icon className="mr-2 h-4 w-4" /> : null}
+                        {intent.secondaryCta.label}
+                      </a>
+                    )
+                  ) : null}
+                </div>
+
+                <dl className="mt-8 space-y-4 border-t border-[color:var(--brand-navy)]/10 pt-6 text-sm">
+                  <div className="flex items-start gap-3">
+                    <Clock className="mt-0.5 h-4 w-4 text-[color:var(--brand-navy)]/60" />
+                    <div>
+                      <dt className="font-semibold text-[color:var(--brand-navy)]">Expected response</dt>
+                      <dd className="text-[color:var(--brand-navy)]/70">{intent.responseSla}</dd>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <CheckCircle2 className="mt-0.5 h-4 w-4 text-[color:var(--brand-navy)]/60" />
+                    <div>
+                      <dt className="font-semibold text-[color:var(--brand-navy)]">Responded to by</dt>
+                      <dd className="text-[color:var(--brand-navy)]/70">{intent.respondsFrom}</dd>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <Mail className="mt-0.5 h-4 w-4 text-[color:var(--brand-navy)]/60" />
+                    <div>
+                      <dt className="font-semibold text-[color:var(--brand-navy)]">Backup channel</dt>
+                      <dd className="text-[color:var(--brand-navy)]/70">{intent.backup}</dd>
+                    </div>
+                  </div>
+                </dl>
+              </div>
+            </aside>
+
+            {/* Right: form */}
+            <div id="contact-form" className="lg:col-span-3">
+              <div className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6 sm:p-8">
+                <ContactForm intent={intent} />
+              </div>
+            </div>
           </div>
         </PublicPage>
       </PublicSection>
@@ -118,136 +280,10 @@ function ContactPage() {
   );
 }
 
-/* ── Panels ─────────────────────────────────────────────────────── */
-
-function HirePanel() {
-  return (
-    <div className="grid gap-8 lg:grid-cols-2">
-      <div>
-        <h2 className="font-[family-name:var(--brand-font-display)] text-2xl font-semibold tracking-tight">
-          Start hiring with TaaSFlow
-        </h2>
-        <p className="mt-3 text-[color:var(--brand-navy)]/70">
-          The fastest path is to submit the role directly. If you&rsquo;d prefer a conversation
-          first, book a consultation with sales.
-        </p>
-        <div className="mt-6 flex flex-wrap gap-3">
-          <Link
-            to="/intake"
-            className="inline-flex min-h-11 items-center justify-center rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-white hover:opacity-90"
-          >
-            Start Hiring
-            <ArrowRight className="ml-2 h-4 w-4" />
-          </Link>
-          <a
-            href="#hire-form"
-            className="inline-flex min-h-11 items-center justify-center rounded-md border border-[color:var(--brand-navy)]/20 px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5"
-          >
-            Contact sales
-          </a>
-        </div>
-      </div>
-      <div id="hire-form">
-        <ContactForm
-          topic="hire_talent"
-          heading="Talk to sales"
-          description="Share a few details and we'll be in touch."
-        />
-      </div>
-    </div>
-  );
-}
-
-function CandidatePanel() {
-  return (
-    <div className="grid gap-8 lg:grid-cols-2">
-      <div>
-        <h2 className="font-[family-name:var(--brand-font-display)] text-2xl font-semibold tracking-tight">
-          For candidates
-        </h2>
-        <p className="mt-3 text-[color:var(--brand-navy)]/70">
-          Looking for a role? Browse what&rsquo;s open today. Already applied or joined the
-          network? Sign in to your candidate workspace.
-        </p>
-        <div className="mt-6 flex flex-wrap gap-3">
-          <Link
-            to="/jobs"
-            className="inline-flex min-h-11 items-center justify-center rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-white hover:opacity-90"
-          >
-            <Search className="mr-2 h-4 w-4" />
-            Browse Jobs
-          </Link>
-          <Link
-            to="/login"
-            className="inline-flex min-h-11 items-center justify-center rounded-md border border-[color:var(--brand-navy)]/20 px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5"
-          >
-            <LogIn className="mr-2 h-4 w-4" />
-            Candidate Sign In
-          </Link>
-        </div>
-      </div>
-      <div>
-        <ContactForm
-          topic="candidate"
-          heading="Have a question?"
-          description="If you can't find what you're looking for, send us a note."
-        />
-      </div>
-    </div>
-  );
-}
-
-function ExistingClientPanel() {
-  return (
-    <div className="grid gap-8 lg:grid-cols-2">
-      <div>
-        <h2 className="font-[family-name:var(--brand-font-display)] text-2xl font-semibold tracking-tight">
-          For existing clients
-        </h2>
-        <p className="mt-3 text-[color:var(--brand-navy)]/70">
-          The fastest way to reach us is inside your workspace — messages there route directly
-          to your account team.
-        </p>
-        <div className="mt-6 flex flex-wrap gap-3">
-          <Link
-            to="/login"
-            className="inline-flex min-h-11 items-center justify-center rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-white hover:opacity-90"
-          >
-            <LogIn className="mr-2 h-4 w-4" />
-            Client Sign In
-          </Link>
-          <a
-            href="#client-form"
-            className="inline-flex min-h-11 items-center justify-center rounded-md border border-[color:var(--brand-navy)]/20 px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5"
-          >
-            Send a message
-          </a>
-        </div>
-      </div>
-      <div id="client-form">
-        <ContactForm
-          topic="existing_client"
-          heading="Message your account team"
-          description="Use the email tied to your workspace so we can find the right account."
-        />
-      </div>
-    </div>
-  );
-}
-
 /* ── Shared form ────────────────────────────────────────────────── */
 
-type Topic = "hire_talent" | "candidate" | "existing_client" | "support" | "general";
-
-function ContactForm({
-  topic,
-  heading,
-  description,
-}: {
-  topic: Topic;
-  heading: string;
-  description: string;
-}) {
+function ContactForm({ intent }: { intent: IntentSpec }) {
+  const { topic, formHeading, formDescription, fields } = intent;
   const mountedAt = useMemo(() => Date.now(), []);
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState<null | { traceId: string }>(null);
@@ -260,18 +296,28 @@ function ContactForm({
     setError(null);
     const form = e.currentTarget;
     const fd = new FormData(form);
+    const roleExtra = fields.includes("role") ? String(fd.get("role") ?? "").trim() : "";
+    const urlExtra = fields.includes("url") ? String(fd.get("url") ?? "").trim() : "";
+    const rawMessage = String(fd.get("message") ?? "").trim();
+    const composedMessage = [
+      roleExtra ? `Role: ${roleExtra}` : null,
+      urlExtra ? `Link: ${urlExtra}` : null,
+      rawMessage,
+    ]
+      .filter(Boolean)
+      .join("\n\n");
+
     const payload = {
       name: String(fd.get("name") ?? "").trim(),
       email: String(fd.get("email") ?? "").trim(),
       company: String(fd.get("company") ?? "").trim(),
-      message: String(fd.get("message") ?? "").trim(),
+      message: composedMessage,
       topic,
       source: "public_contact_form",
       website: String(fd.get("website") ?? ""),
       elapsedMs: Date.now() - mountedAt,
     };
 
-    // Client-side validation
     if (payload.name.length < 1 || payload.name.length > 120) {
       setError("Please enter your name.");
       return;
@@ -326,13 +372,17 @@ function ContactForm({
 
   if (done) {
     return (
-      <div className="rounded-xl border border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-cream)] p-6">
+      <div>
         <h3 className="font-[family-name:var(--brand-font-display)] text-xl font-semibold">
-          Thanks — we&rsquo;ve got it.
+          Thanks — we've got it.
         </h3>
         <p className="mt-2 text-sm text-[color:var(--brand-navy)]/70">
-          We&rsquo;ll reply to the email you provided. Reference:{" "}
-          <span className="font-mono text-xs">{done.traceId.slice(0, 8) || "—"}</span>
+          Expected response: <span className="font-semibold">{intent.responseSla}</span>, from{" "}
+          <span className="font-semibold">{intent.respondsFrom}</span>. We'll reply to the email
+          you provided.
+        </p>
+        <p className="mt-2 text-xs text-[color:var(--brand-navy)]/60">
+          Reference: <span className="font-mono">{done.traceId.slice(0, 8) || "—"}</span>
         </p>
       </div>
     );
@@ -342,9 +392,9 @@ function ContactForm({
     <form onSubmit={onSubmit} noValidate className="space-y-4">
       <div>
         <h3 className="font-[family-name:var(--brand-font-display)] text-xl font-semibold">
-          {heading}
+          {formHeading}
         </h3>
-        <p className="mt-1 text-sm text-[color:var(--brand-navy)]/70">{description}</p>
+        <p className="mt-1 text-sm text-[color:var(--brand-navy)]/70">{formDescription}</p>
       </div>
 
       {/* Honeypot */}
@@ -353,38 +403,79 @@ function ContactForm({
         <input id={`hp-${topic}`} name="website" tabIndex={-1} autoComplete="off" />
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2">
-        <div>
-          <Label htmlFor={`name-${topic}`}>Name</Label>
-          <Input id={`name-${topic}`} name="name" required autoComplete="name" maxLength={120} />
+      {(fields.includes("name") || fields.includes("email")) && (
+        <div className="grid gap-4 sm:grid-cols-2">
+          {fields.includes("name") && (
+            <div>
+              <Label htmlFor={`name-${topic}`}>Name</Label>
+              <Input id={`name-${topic}`} name="name" required autoComplete="name" maxLength={120} />
+            </div>
+          )}
+          {fields.includes("email") && (
+            <div>
+              <Label htmlFor={`email-${topic}`}>Email</Label>
+              <Input
+                id={`email-${topic}`}
+                name="email"
+                type="email"
+                required
+                autoComplete="email"
+                maxLength={255}
+              />
+            </div>
+          )}
         </div>
+      )}
+
+      {fields.includes("company") && (
         <div>
-          <Label htmlFor={`email-${topic}`}>Email</Label>
+          <Label htmlFor={`company-${topic}`}>Company{intent.id === "hire" ? "" : " (optional)"}</Label>
+          <Input id={`company-${topic}`} name="company" autoComplete="organization" maxLength={160} />
+        </div>
+      )}
+
+      {fields.includes("role") && (
+        <div>
+          <Label htmlFor={`role-${topic}`}>Role you need to fill</Label>
           <Input
-            id={`email-${topic}`}
-            name="email"
-            type="email"
-            required
-            autoComplete="email"
-            maxLength={255}
+            id={`role-${topic}`}
+            name="role"
+            placeholder="e.g. Senior Backend Engineer, Head of Sales"
+            maxLength={200}
           />
         </div>
-      </div>
-      <div>
-        <Label htmlFor={`company-${topic}`}>Company (optional)</Label>
-        <Input id={`company-${topic}`} name="company" autoComplete="organization" maxLength={160} />
-      </div>
-      <div>
-        <Label htmlFor={`message-${topic}`}>Message</Label>
-        <Textarea
-          id={`message-${topic}`}
-          name="message"
-          required
-          rows={5}
-          maxLength={4000}
-          placeholder="A few lines about what you need."
-        />
-      </div>
+      )}
+
+      {fields.includes("url") && (
+        <div>
+          <Label htmlFor={`url-${topic}`}>
+            {intent.id === "support" ? "URL where the issue happened" : "Link (LinkedIn, portfolio, or job URL)"}
+          </Label>
+          <Input id={`url-${topic}`} name="url" type="url" placeholder="https://" maxLength={400} />
+        </div>
+      )}
+
+      {fields.includes("message") && (
+        <div>
+          <Label htmlFor={`message-${topic}`}>
+            {intent.id === "support" ? "What went wrong?" : "Message"}
+          </Label>
+          <Textarea
+            id={`message-${topic}`}
+            name="message"
+            required
+            rows={5}
+            maxLength={4000}
+            placeholder={
+              intent.id === "hire"
+                ? "A few lines on the role, timeline, and where you are today."
+                : intent.id === "support"
+                  ? "Steps to reproduce, what you expected, and what happened instead."
+                  : "A few lines about what you need."
+            }
+          />
+        </div>
+      )}
 
       {error && (
         <p role="alert" className="text-sm text-red-600">
@@ -401,7 +492,7 @@ function ContactForm({
           {submitting ? "Sending…" : "Send message"}
         </Button>
         <span className="text-xs text-[color:var(--brand-navy)]/50">
-          We reply to the email you provide.
+          Expected reply: {intent.responseSla.toLowerCase()}.
         </span>
       </div>
     </form>
