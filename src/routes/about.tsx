@@ -85,10 +85,11 @@ function AboutPage() {
             We exist to make recruiting explainable again.
           </h1>
           <p className="mt-6 max-w-2xl text-lg text-[color:var(--brand-navy)]/70">
-            TaaSFlow is subscription recruiting delivered through a transparent
-            product. Our purpose is simple: give hiring teams a system where
-            every shortlist, every score, and every decision can be traced to
-            the evidence behind it.
+            TaaSFlow is an on-demand recruiting function delivered through a
+            transparent product — human recruiters, AI-supported structure,
+            and a live workspace on a flat subscription. Every shortlist,
+            every score, every decision traces to the evidence behind it,
+            because hiring should never be a black box.
           </p>
         </PublicPage>
       </PublicSection>
