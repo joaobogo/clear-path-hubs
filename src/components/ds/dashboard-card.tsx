@@ -36,8 +36,8 @@ type BaseProps = {
 
 const toneAccent: Record<NonNullable<BaseProps["tone"]>, string> = {
   default: "",
-  attention: "before:bg-amber-500/70",
-  success: "before:bg-emerald-500/70",
+  attention: "before:bg-warning/70",
+  success: "before:bg-success/70",
   danger: "before:bg-destructive/70",
 };
 
