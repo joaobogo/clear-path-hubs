@@ -119,9 +119,9 @@ export const getAdminOverview = createServerFn({ method: "GET" })
           `status.eq.requested,and(status.eq.scheduled,scheduled_at.lte.${new Date(Date.now() + 48 * 3600_000).toISOString()})`,
         ),
       ),
-      // Intake submissions still needing platform action
+      // Intake submissions still needing platform action (not yet converted or resolved)
       count("intake_submissions", (q) =>
-        q.or("requisition_pending.eq.true,status.eq.submitted"),
+        q.is("position_id", null).not("status", "in", "(approved,rejected)"),
       ),
     ]);
 
