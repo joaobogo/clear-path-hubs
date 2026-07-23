@@ -143,8 +143,7 @@ export const getPublicPosition = createServerFn({ method: "GET" })
       seniority: pos.seniority,
       description: desc,
       requirements: reqs,
-      preferred_requirements: Array.isArray(pos.preferred_requirements)
-        ? (pos.preferred_requirements as string[])
+      preferred_requirements: toReqStrings(pos.preferred_requirements),
         : [],
       compensation_display: comp.approved && comp.display ? comp.display : null,
       published_at: pos.published_at,
