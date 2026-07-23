@@ -207,7 +207,7 @@ function Chart() {
   );
 }
 
-const REGISTRY: Record<IndustryPattern, () => JSX.Element> = {
+const REGISTRY: Record<IndustryPattern, () => ReactElement> = {
   circuit: Circuit,
   grid: Grid,
   waves: Waves,
