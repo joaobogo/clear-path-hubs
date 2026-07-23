@@ -6,6 +6,10 @@ import {
   Breadcrumbs,
 } from "@/components/marketing/site-shell";
 import type { IndustryEntry } from "@/content/industries-v2";
+import { getIndustryHeroImage } from "@/content/industry-hero-images";
+import { IndustryRoleExplorer } from "@/components/marketing/industry-role-explorer";
+import { IndustrySignalExplorer } from "@/components/marketing/industry-signal-explorer";
+
 
 /**
  * Reusable industry detail template. All industry pages render through this
@@ -15,7 +19,9 @@ import type { IndustryEntry } from "@/content/industries-v2";
  * partially populated industry silently hides sections it lacks.
  */
 export function IndustryTemplate({ entry }: { entry: IndustryEntry }) {
+  const heroImage = getIndustryHeroImage(entry.slug);
   const jsonLd = entry.faqs
+
     ? {
         "@context": "https://schema.org",
         "@type": "FAQPage",
@@ -40,41 +46,61 @@ export function IndustryTemplate({ entry }: { entry: IndustryEntry }) {
       {/* 1. Industry-specific hero */}
       <PublicSection className="pb-8 pt-10 sm:pt-14">
         <PublicPage>
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">
-            {entry.eyebrow}
-          </p>
-          <h1 className="mt-3 max-w-3xl font-[family-name:var(--brand-font-display)] text-4xl font-semibold tracking-tight sm:text-5xl">
-            {entry.hero.title}
-          </h1>
-          <p className="mt-5 max-w-2xl text-lg text-[color:var(--brand-navy)]/70">
-            {entry.hero.subtitle}
-          </p>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <Link
-              to="/intake"
-              className="inline-flex min-h-11 items-center justify-center rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-white hover:opacity-90"
-            >
-              Start hiring
-            </Link>
-            <Link
-              to="/contact"
-              className="inline-flex min-h-11 items-center justify-center rounded-md border border-[color:var(--brand-navy)]/20 px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5"
-            >
-              Talk to us
-            </Link>
+
+          <div className={heroImage ? "grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:items-center" : ""}>
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">
+                {entry.eyebrow}
+              </p>
+              <h1 className="mt-3 max-w-3xl font-[family-name:var(--brand-font-display)] text-4xl font-semibold tracking-tight sm:text-5xl">
+                {entry.hero.title}
+              </h1>
+              <p className="mt-5 max-w-2xl text-lg text-[color:var(--brand-navy)]/70">
+                {entry.hero.subtitle}
+              </p>
+              <div className="mt-8 flex flex-wrap gap-3">
+                <Link
+                  to="/intake"
+                  className="inline-flex min-h-11 items-center justify-center rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-white hover:opacity-90"
+                >
+                  Start hiring
+                </Link>
+                <a
+                  href="#role-explorer"
+                  className="inline-flex min-h-11 items-center justify-center rounded-md border border-[color:var(--brand-navy)]/20 px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5"
+                >
+                  Explore roles
+                </a>
+              </div>
+              <ul className="mt-8 flex flex-wrap gap-2">
+                {entry.signals.map((s) => (
+                  <li
+                    key={s}
+                    className="rounded-full bg-[color:var(--brand-navy)]/5 px-3 py-1 text-xs font-medium text-[color:var(--brand-navy)]/80"
+                  >
+                    {s}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            {heroImage ? (
+              <figure className="relative overflow-hidden rounded-2xl border border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-mist)]/40 shadow-sm motion-safe:animate-[fade-in_400ms_ease-out]">
+                <img
+                  src={heroImage.src}
+                  alt={heroImage.alt}
+                  width={heroImage.width}
+                  height={heroImage.height}
+                  loading="eager"
+                  fetchPriority="high"
+                  decoding="async"
+                  className="aspect-[2/1] h-auto w-full object-cover lg:aspect-auto"
+                />
+              </figure>
+            ) : null}
           </div>
-          <ul className="mt-8 flex flex-wrap gap-2">
-            {entry.signals.map((s) => (
-              <li
-                key={s}
-                className="rounded-full bg-[color:var(--brand-navy)]/5 px-3 py-1 text-xs font-medium text-[color:var(--brand-navy)]/80"
-              >
-                {s}
-              </li>
-            ))}
-          </ul>
         </PublicPage>
       </PublicSection>
+
 
       {/* 2. Industry hiring challenges */}
       <PublicSection className="py-8">
@@ -130,99 +156,51 @@ export function IndustryTemplate({ entry }: { entry: IndustryEntry }) {
         </PublicSection>
       ) : null}
 
-      {/* 4. Common role families */}
-      {entry.roleFamilies && entry.roleFamilies.length > 0 ? (
-        <PublicSection className="py-12">
-          <PublicPage>
-            <h2 className="font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight">
-              Common role families in {entry.name}
-            </h2>
-            <p className="mt-2 max-w-2xl text-[color:var(--brand-navy)]/70">
-              Grouped by specialisation. Each family has its own scoring rubric.
-            </p>
-            <div className="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-              {entry.roleFamilies.map((fam) => (
-                <div
-                  key={fam.name}
-                  className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6"
-                >
-                  <h3 className="text-lg font-semibold text-[color:var(--brand-navy)]">
-                    {fam.name}
-                  </h3>
-                  {fam.blurb ? (
-                    <p className="mt-2 text-sm text-[color:var(--brand-navy)]/70">
-                      {fam.blurb}
-                    </p>
-                  ) : null}
-                  <ul className="mt-3 space-y-1.5 text-sm text-[color:var(--brand-navy)]/85">
-                    {fam.roles.map((r) => (
-                      <li key={r} className="flex gap-2">
-                        <span
-                          aria-hidden
-                          className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-[color:var(--brand-navy)]"
-                        />
-                        {r}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
-            </div>
-          </PublicPage>
-        </PublicSection>
-      ) : (
-        // Fallback: flat roles list
-        <PublicSection className="py-8">
-          <PublicPage>
-            <div className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6 sm:p-8">
-              <h2 className="font-[family-name:var(--brand-font-display)] text-2xl font-semibold">
-                Roles we source in {entry.name}
-              </h2>
-              <ul className="mt-5 grid gap-2 text-sm text-[color:var(--brand-navy)]/85 sm:grid-cols-2 lg:grid-cols-3">
-                {entry.roles.map((r) => (
-                  <li key={r} className="flex gap-2">
-                    <span
-                      aria-hidden
-                      className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-[color:var(--brand-navy)]"
-                    />
-                    {r}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </PublicPage>
-        </PublicSection>
-      )}
+      {/* 4. Interactive role explorer */}
+      <PublicSection className="py-12">
+        <span id="role-explorer" className="sr-only" aria-hidden />
 
-      {/* 5. Candidate signals evaluated */}
-      {entry.candidateSignals && entry.candidateSignals.length > 0 ? (
-        <PublicSection className="border-t border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-mist)]/40 py-12">
-          <PublicPage>
-            <h2 className="font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight">
-              Candidate signals we evaluate
-            </h2>
-            <p className="mt-2 max-w-2xl text-[color:var(--brand-navy)]/70">
-              Every point of the score maps to a specific evidence quote from
-              the CV — no keyword matching.
+        <PublicPage>
+          <div className="max-w-3xl">
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean)]">
+              Role explorer
             </p>
-            <div className="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-              {entry.candidateSignals.map((s) => (
-                <div
-                  key={s.title}
-                  className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6"
-                >
-                  <h3 className="text-base font-semibold text-[color:var(--brand-navy)]">
-                    {s.title}
-                  </h3>
-                  <p className="mt-2 text-sm text-[color:var(--brand-navy)]/75">
-                    {s.body}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </PublicPage>
-        </PublicSection>
-      ) : null}
+            <h2 className="mt-2 font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight">
+              Explore {entry.name} roles TaaSFlow sources
+            </h2>
+            <p className="mt-2 text-[color:var(--brand-navy)]/70">
+              Select a family to see typical roles, common requirements, the
+              signals we evaluate, and a sample of the evidence we quote back.
+            </p>
+          </div>
+          <div className="mt-8">
+            <IndustryRoleExplorer entry={entry} />
+          </div>
+        </PublicPage>
+      </PublicSection>
+
+      {/* 5. Interactive candidate-signal explorer */}
+      <PublicSection className="border-t border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-mist)]/40 py-12">
+        <PublicPage>
+          <div className="max-w-3xl">
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean)]">
+              Candidate signals
+            </p>
+            <h2 className="mt-2 font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight">
+              What TaaSFlow evaluates for {entry.name}
+            </h2>
+            <p className="mt-2 text-[color:var(--brand-navy)]/70">
+              Every point of the score maps to a specific evidence quote from
+              the CV. Tap a signal to see what it means and how we validate it.
+            </p>
+          </div>
+          <div className="mt-8">
+            <IndustrySignalExplorer entry={entry} />
+          </div>
+        </PublicPage>
+      </PublicSection>
+
+
 
       {/* 6. Skills, tools, certifications */}
       {entry.skills || entry.tools || entry.certifications || entry.regulatedRequirements ? (
@@ -266,7 +244,7 @@ export function IndustryTemplate({ entry }: { entry: IndustryEntry }) {
                 before it reaches you.
               </p>
             </div>
-            <DeliveryVisual industryName={entry.name} />
+            <DeliveryVisual entry={entry} />
           </div>
         </PublicPage>
       </PublicSection>
@@ -450,24 +428,45 @@ function SkillBlock({ title, items }: { title: string; items: string[] }) {
   );
 }
 
-function DeliveryVisual({ industryName }: { industryName: string }) {
+function DeliveryVisual({ entry }: { entry: IndustryEntry }) {
+  // Fully fictional candidate — no production data.
+  const primaryRole = entry.roleFamilies?.[0]?.roles?.[0] ?? entry.roles[0] ?? `${entry.name} specialist`;
+  const skillChips = (entry.skills ?? entry.tools ?? entry.signals).slice(0, 3);
+  const evidenceLine =
+    entry.candidateSignals?.[0]?.body ??
+    `Delivered a ${entry.name.toLowerCase()} programme with measurable outcomes — scope and stakeholders documented on the CV.`;
   return (
-    <div className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-5 shadow-sm">
-      <div className="flex items-center justify-between">
+    <div className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-5 shadow-sm motion-safe:animate-[fade-in_400ms_ease-out]">
+      <div className="flex items-start justify-between gap-3">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[color:var(--brand-navy)]/55">
-            {industryName} shortlist
+            {entry.name} shortlist · Fictional
           </p>
           <p className="mt-1 text-sm font-semibold text-[color:var(--brand-navy)]">
             Candidate #A-1042 · Alex R.
+          </p>
+          <p className="mt-0.5 text-xs text-[color:var(--brand-navy)]/70">
+            Applying as: {primaryRole}
           </p>
         </div>
         <div className="rounded-full bg-[color:var(--brand-ocean)]/10 px-3 py-1 text-xs font-semibold text-[color:var(--brand-ocean)]">
           Fit 94
         </div>
       </div>
+      {skillChips.length ? (
+        <ul className="mt-3 flex flex-wrap gap-1.5">
+          {skillChips.map((s) => (
+            <li
+              key={s}
+              className="rounded-full bg-[color:var(--brand-navy)]/5 px-2.5 py-0.5 text-[11px] font-medium text-[color:var(--brand-navy)]/80"
+            >
+              {s}
+            </li>
+          ))}
+        </ul>
+      ) : null}
       <div className="mt-4 space-y-2 text-xs text-[color:var(--brand-navy)]/80">
-        <RequirementBar label="Stack fit" pct={96} />
+        <RequirementBar label="Role fit" pct={96} />
         <RequirementBar label="Scope & scale" pct={91} />
         <RequirementBar label="Delivery evidence" pct={88} />
         <RequirementBar label="Communication" pct={82} />
@@ -476,14 +475,17 @@ function DeliveryVisual({ industryName }: { industryName: string }) {
         <p className="font-semibold text-[color:var(--brand-navy)]">
           Recommended: shortlist
         </p>
-        <p className="mt-1">
-          Evidence quoted from the CV supports each score. Strengths and
-          validation areas listed in the workspace.
+        <p className="mt-1 line-clamp-3">
+          “{evidenceLine}”
+        </p>
+        <p className="mt-2 text-[10px] uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/50">
+          Fictional example — no production candidate data.
         </p>
       </div>
     </div>
   );
 }
+
 
 function RequirementBar({ label, pct }: { label: string; pct: number }) {
   return (
