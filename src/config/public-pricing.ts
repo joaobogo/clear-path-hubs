@@ -1,20 +1,29 @@
 /**
- * TaaSFlow — Canonical public pricing configuration
+ * TaaSFlow — Calculator/selector shape for public pricing.
  * ==================================================
- * Single source of truth for every public marketing surface:
- *   • Pricing page cards
- *   • Homepage ROI calculator (when built)
+ * Numeric values are imported from src/config/pricing-core.ts — the single
+ * source of truth. Update pricing-core.ts and every consumer here plus
+ * src/content/pricing.ts updates automatically.
+ *
+ * Consumed by:
+ *   • Pricing page calculator
+ *   • Homepage ROI calculator
+ *   • Agency comparator
  *   • Enterprise page teasers
- *   • Any package/tier labels used in marketing copy
  *
  * Rules
- *   • Do NOT hard-code prices elsewhere.
+ *   • Do NOT hard-code prices in this file — use the core.
  *   • Do NOT infer checkout prices from this file — it is marketing config.
- *   • Values pending owner sign-off are flagged with approvalStatus !== "approved".
- *     The calculator and Pricing page MUST hide the numeric price and render
- *     a "Contact Sales" affordance for any non-approved tier.
- *   • Update this file (not the components) when pricing changes.
+ *   • Values pending owner sign-off use approvalStatus !== "approved" and the
+ *     calculator hides the numeric price / renders a "Contact Sales" affordance.
  */
+
+import {
+  PRICE_PILOT_USD,
+  PRICE_MULTI_USD,
+  PRICE_SPRINT_USD,
+  POSITION_BANDS,
+} from "@/config/pricing-core";
 
 export type BillingType = "one-time-flat" | "monthly-subscription" | "custom";
 export type ApprovalStatus = "approved" | "pending" | "review";
