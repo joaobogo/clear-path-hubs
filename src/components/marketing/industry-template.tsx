@@ -9,6 +9,8 @@ import type { IndustryEntry } from "@/content/industries-v2";
 import { getIndustryHeroImage } from "@/content/industry-hero-images";
 import { IndustryRoleExplorer } from "@/components/marketing/industry-role-explorer";
 import { IndustrySignalExplorer } from "@/components/marketing/industry-signal-explorer";
+import { IndustryHeroBackdrop } from "@/components/marketing/industry-hero-backdrop";
+import { getIndustryVisualIdentity } from "@/content/industry-visual-identity";
 
 
 /**
@@ -20,6 +22,7 @@ import { IndustrySignalExplorer } from "@/components/marketing/industry-signal-e
  */
 export function IndustryTemplate({ entry }: { entry: IndustryEntry }) {
   const heroImage = getIndustryHeroImage(entry.slug);
+  const identity = getIndustryVisualIdentity(entry.slug);
   const jsonLd = entry.faqs
 
     ? {
@@ -47,7 +50,7 @@ export function IndustryTemplate({ entry }: { entry: IndustryEntry }) {
       <PublicSection className="pb-8 pt-10 sm:pt-14">
         <PublicPage>
 
-          <div className={heroImage ? "grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:items-center" : ""}>
+          <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:items-center">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">
                 {entry.eyebrow}
@@ -99,7 +102,15 @@ export function IndustryTemplate({ entry }: { entry: IndustryEntry }) {
                   className="relative z-0 aspect-[2/1] h-auto w-full object-cover lg:aspect-auto"
                 />
               </figure>
-            ) : null}
+            ) : (
+              <IndustryHeroBackdrop
+                gradient={identity.gradient}
+                accent={identity.accent}
+                pattern={identity.pattern}
+                label={entry.name}
+                eyebrow={entry.eyebrow}
+              />
+            )}
           </div>
         </PublicPage>
       </PublicSection>
