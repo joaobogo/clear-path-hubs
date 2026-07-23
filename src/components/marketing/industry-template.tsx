@@ -101,7 +101,8 @@ export function IndustryTemplate({ entry }: { entry: IndustryEntry }) {
                   loading="eager"
                   fetchPriority="high"
                   decoding="async"
-                  className="relative z-0 aspect-[2/1] h-auto w-full object-cover lg:aspect-auto"
+                  style={{ objectPosition: heroImage.focal ?? "50% 40%" }}
+                  className="relative z-0 aspect-[4/3] h-auto w-full object-cover sm:aspect-[16/10] lg:aspect-[16/9]"
                 />
               </figure>
             ) : (
