@@ -1,0 +1,152 @@
+/*
+ * TaaSFlow motion system — public site
+ *
+ * Rules:
+ *  - normal motion 150–400ms, longer only when justified
+ *  - never block interaction, never shift layout
+ *  - respect prefers-reduced-motion
+ *  - no bouncing, no constant movement, no parallax overuse
+ *
+ * Duration tokens live in brand-tokens.css:
+ *   --taas-motion-instant 80ms
+ *   --taas-motion-fast    120ms
+ *   --taas-motion-base    180ms   ← default
+ *   --taas-motion-slow    280ms
+ *   --taas-motion-slower  420ms   ← storytelling ceiling
+ */
+
+/* ---------------------------------------------------------------------- */
+/* Easings                                                                */
+/* ---------------------------------------------------------------------- */
+:root {
+  --taas-ease-standard: cubic-bezier(0.2, 0, 0, 1);   /* ui default */
+  --taas-ease-emphasized: cubic-bezier(0.2, 0, 0.1, 1); /* section entry */
+  --taas-ease-out-soft: cubic-bezier(0.16, 1, 0.3, 1);  /* number tweens */
+  --taas-ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  /* subtle spring for product micro-interactions only */
+  --taas-spring-subtle: linear(
+    0, 0.35 20%, 0.72 40%, 0.94 60%, 1.02 75%, 1 100%
+  );
+}
+
+/* ---------------------------------------------------------------------- */
+/* Keyframes                                                              */
+/* ---------------------------------------------------------------------- */
+@keyframes taas-reveal-up {
+  from { opacity: 0; transform: translate3d(0, 8px, 0); }
+  to   { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+
+@keyframes taas-reveal-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes taas-pulse-soft {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.55; }
+}
+
+@keyframes taas-shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* ---------------------------------------------------------------------- */
+/* Utilities                                                              */
+/* ---------------------------------------------------------------------- */
+
+/* Section entry — used with `[data-reveal]` + IntersectionObserver. */
+@utility motion-reveal {
+  opacity: 0;
+  transform: translate3d(0, 8px, 0);
+  transition:
+    opacity var(--taas-motion-slow) var(--taas-ease-emphasized),
+    transform var(--taas-motion-slow) var(--taas-ease-emphasized);
+  will-change: opacity, transform;
+}
+@utility motion-reveal-in {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+/* Tab / segmented switch — content crossfade only, no size change. */
+@utility motion-tab-swap {
+  animation: taas-reveal-in var(--taas-motion-base) var(--taas-ease-standard) both;
+}
+
+/* Card interactive feedback — no scale on hover, only elevation + border. */
+@utility motion-surface {
+  transition:
+    border-color var(--taas-motion-fast) var(--taas-ease-standard),
+    box-shadow   var(--taas-motion-base) var(--taas-ease-standard),
+    background-color var(--taas-motion-fast) var(--taas-ease-standard);
+}
+
+/* CTA press feedback — subtle inward feedback on active only. */
+@utility motion-press {
+  transition:
+    transform var(--taas-motion-fast) var(--taas-ease-standard),
+    background-color var(--taas-motion-fast) var(--taas-ease-standard),
+    box-shadow var(--taas-motion-fast) var(--taas-ease-standard);
+}
+@utility motion-press-active {
+  &:active { transform: translateY(1px); }
+}
+
+/* Card expansion — animate max-height + opacity, not layout width. */
+@utility motion-collapse {
+  overflow: hidden;
+  transition:
+    grid-template-rows var(--taas-motion-slow) var(--taas-ease-emphasized),
+    opacity var(--taas-motion-base) var(--taas-ease-standard);
+}
+
+/* Menu / dropdown open — origin-based scale + fade, spring only here. */
+@utility motion-menu-open {
+  animation: taas-reveal-up var(--taas-motion-base) var(--taas-ease-standard) both;
+  transform-origin: top center;
+}
+
+/* Loading — soft opacity pulse, no size change. */
+@utility motion-loading {
+  animation: taas-pulse-soft 1.6s var(--taas-ease-in-out) infinite;
+}
+
+/* Skeleton shimmer — one direction, low contrast. */
+@utility motion-shimmer {
+  background: linear-gradient(
+    90deg,
+    color-mix(in oklab, currentColor 6%, transparent) 0%,
+    color-mix(in oklab, currentColor 12%, transparent) 50%,
+    color-mix(in oklab, currentColor 6%, transparent) 100%
+  );
+  background-size: 200% 100%;
+  animation: taas-shimmer 1.4s linear infinite;
+}
+
+/* Requirement highlight — one-shot ring, decays. */
+@utility motion-highlight {
+  animation: taas-reveal-in var(--taas-motion-base) var(--taas-ease-standard) both;
+  box-shadow: 0 0 0 2px color-mix(in oklab, var(--brand-ocean) 45%, transparent);
+  transition: box-shadow var(--taas-motion-slower) var(--taas-ease-out-soft);
+}
+@utility motion-highlight-off {
+  box-shadow: 0 0 0 2px transparent;
+}
+
+/* ---------------------------------------------------------------------- */
+/* Reduced motion — one global override                                   */
+/* ---------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+    scroll-behavior: auto !important;
+  }
+  /* Ensure revealed content is always visible. */
+  [data-reveal] { opacity: 1 !important; transform: none !important; }
+}
