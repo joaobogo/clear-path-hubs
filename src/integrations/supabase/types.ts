@@ -2988,6 +2988,7 @@ export type Database = {
           employment_type: Database["public"]["Enums"]["employment_type"] | null
           expires_at: string | null
           id: string
+          intake_context: Json
           is_test_record: boolean | null
           legacy_source_id: string | null
           legacy_source_system: string | null
@@ -3029,6 +3030,7 @@ export type Database = {
             | null
           expires_at?: string | null
           id?: string
+          intake_context?: Json
           is_test_record?: boolean | null
           legacy_source_id?: string | null
           legacy_source_system?: string | null
@@ -3070,6 +3072,7 @@ export type Database = {
             | null
           expires_at?: string | null
           id?: string
+          intake_context?: Json
           is_test_record?: boolean | null
           legacy_source_id?: string | null
           legacy_source_system?: string | null
