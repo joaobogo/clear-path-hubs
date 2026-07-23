@@ -301,11 +301,18 @@ function LifecycleBar({ position, onDone }: { position: Any; onDone: () => Promi
   let primary: Action | null = null;
   const secondary: Action[] = [];
 
-  if (s === "submitted") {
+  if (s === "draft") {
+    primary = { key: "submit", label: "Submit for review", onClick: () => doStatus("submit", "Submitted") };
+  } else if (s === "submitted") {
+    primary = { key: "start_review", label: "Start review", onClick: () => doStatus("start_review", "Under review") };
+    secondary.push({ key: "approve", label: "Approve", onClick: () => doStatus("approve", "Approved") });
+    secondary.push({ key: "clar", label: "Request clarification", onClick: () => doStatus("request_clarification", "Clarification requested") });
+  } else if (s === "under_review") {
     primary = { key: "approve", label: "Approve", onClick: () => doStatus("approve", "Approved") };
     secondary.push({ key: "clar", label: "Request clarification", onClick: () => doStatus("request_clarification", "Clarification requested") });
   } else if (s === "needs_clarification") {
     primary = { key: "approve", label: "Approve", onClick: () => doStatus("approve", "Approved") };
+    secondary.push({ key: "start_review", label: "Back to review", onClick: () => doStatus("start_review", "Under review") });
   } else if (s === "approved") {
     primary = { key: "activate", label: "Activate", onClick: () => doStatus("activate", "Activated") };
   } else if (s === "active") {
@@ -313,15 +320,17 @@ function LifecycleBar({ position, onDone }: { position: Any; onDone: () => Promi
       ? { key: "unpublish", label: "Unpublish", variant: "outline", onClick: () => doVis("private", "Removed from job board") }
       : { key: "publish", label: "Publish", onClick: () => doVis("public", "Live on job board") };
     secondary.push({ key: "pause", label: "Pause", onClick: () => doStatus("pause", "Paused") });
+    secondary.push({ key: "mark_filled", label: "Mark filled", onClick: () => doStatus("mark_filled", "Marked filled") });
     secondary.push({ key: "close", label: "Close", onClick: () => doStatus("close", "Closed") });
   } else if (s === "paused") {
     primary = { key: "resume", label: "Resume", onClick: () => doStatus("activate", "Resumed") };
     secondary.push({ key: "close", label: "Close", onClick: () => doStatus("close", "Closed") });
+  } else if (s === "filled") {
+    primary = { key: "reopen", label: "Reopen", onClick: () => doStatus("reopen", "Reopened") };
+    secondary.push({ key: "close", label: "Close", onClick: () => doStatus("close", "Closed") });
   } else if (s === "closed") {
     primary = { key: "reopen", label: "Reopen", onClick: () => doStatus("reopen", "Reopened") };
     secondary.push({ key: "archive", label: "Archive", onClick: () => doStatus("archive", "Archived") });
-  } else if (s === "draft") {
-    primary = { key: "submit", label: "No action available", onClick: async () => {} };
   }
 
   if (s !== "archived" && s !== "closed") {
