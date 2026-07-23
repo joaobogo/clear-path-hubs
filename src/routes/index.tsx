@@ -1,3 +1,4 @@
+import * as React from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   Activity,
@@ -13,17 +14,24 @@ import {
   FileText,
   Handshake,
   LayoutDashboard,
+  ListChecks,
   MapPin,
   MessageCircle,
   MessageSquare,
   Quote,
+  Radar,
+  Repeat,
   Rocket,
+  Search,
+  Send,
   ShieldCheck,
   Sparkles,
   Target,
   TrendingUp,
   Users,
   Wallet,
+  Workflow,
+  XCircle,
   Zap,
 } from "lucide-react";
 
@@ -246,6 +254,112 @@ const HOMEPAGE_FAQ = [
     a: "Each candidate is scored against the requirements you approved in the intake, with evidence and CV quotes attached. See the scoring section on How It Works for the full methodology.",
   },
 ] as const;
+
+const PROBLEM_ROWS = [
+  {
+    label: "Commercial model",
+    icon: Wallet,
+    old: "Percentage-of-salary placement fees, paid on every hire.",
+    next: "Flat subscription. No placement fees per hire.",
+  },
+  {
+    label: "Sourcing",
+    icon: Search,
+    old: "Black-box sourcing. You see the CVs, not the search behind them.",
+    next: "Continuous sourcing you can follow in the workspace.",
+  },
+  {
+    label: "Candidate delivery",
+    icon: ListChecks,
+    old: "CV volume forwarded by email. No ranking, no reasoning.",
+    next: "Ranked candidates with role-specific evidence per requirement.",
+  },
+  {
+    label: "Visibility",
+    icon: Eye,
+    old: "Limited visibility until the agency decides to update you.",
+    next: "Live Client workspace with transparent progress at every stage.",
+  },
+  {
+    label: "Communication",
+    icon: MessageSquare,
+    old: "Fragmented across email threads, calls, and forwarded attachments.",
+    next: "One workspace thread with your recruiter, tied to the role.",
+  },
+  {
+    label: "Effort on your team",
+    icon: Users,
+    old: "Sourcing work quietly ends up on internal HR after the first pass.",
+    next: "TaaSFlow carries the sourcing and evaluation load end-to-end.",
+  },
+  {
+    label: "Pipeline ownership",
+    icon: Repeat,
+    old: "Pipeline and candidate context disappear when the engagement ends.",
+    next: "Reusable, Client-owned candidate pipeline that stays with you.",
+  },
+] as const;
+
+const PROCESS_STEPS = [
+  {
+    title: "Define the role",
+    icon: ClipboardCheck,
+    taasflow: "Structured intake with your team to align on scope and must-haves.",
+    client: "A draft role brief to review and approve.",
+    output: "Approved requirements and success criteria.",
+  },
+  {
+    title: "Build the search strategy",
+    icon: Compass,
+    taasflow: "Design the sourcing plan, target profiles, and outreach angles.",
+    client: "A summary of where and how we'll search.",
+    output: "Search strategy tied to the approved brief.",
+  },
+  {
+    title: "Source candidates",
+    icon: Radar,
+    taasflow: "Continuous multi-channel sourcing and outreach.",
+    client: "Live sourcing progress inside the workspace.",
+    output: "A pool of engaged candidates for the role.",
+  },
+  {
+    title: "Evaluate evidence",
+    icon: FileText,
+    taasflow: "Recruiter review of each CV, mapped to your requirements.",
+    client: "Evidence and CV quotes per requirement.",
+    output: "A recruiter-written evidence file per candidate.",
+  },
+  {
+    title: "Rank the strongest profiles",
+    icon: BarChart3,
+    taasflow: "Role-specific scoring against the approved criteria.",
+    client: "Ranked candidates with fit scores and reasoning.",
+    output: "A ranked shortlist, highest fit first.",
+  },
+  {
+    title: "Deliver to the workspace",
+    icon: Send,
+    taasflow: "Publish the shortlist and open direct handover.",
+    client: "Candidates, evidence, and contact ready to act on.",
+    output: "A live shortlist you can review and move forward.",
+  },
+  {
+    title: "Client reviews and decides",
+    icon: Handshake,
+    taasflow: "Support your team through interview scheduling and questions.",
+    client: "Full profiles, evidence, and status controls.",
+    output: "Interview, offer, and hiring decisions — yours.",
+  },
+  {
+    title: "Feedback improves the next delivery",
+    icon: Workflow,
+    taasflow: "Recalibrate the search from your feedback on each candidate.",
+    client: "A pipeline that gets sharper delivery after delivery.",
+    output: "A refined search and a reusable candidate pipeline.",
+  },
+] as const;
+
+
 
 /* ---------- Small building blocks ---------- */
 
@@ -791,6 +905,182 @@ function Home() {
         </PublicSection>
       </section>
 
+
+      {/* 3.5 — THE RECRUITING PROBLEM (old model vs TaaSFlow model) */}
+      <PublicSection>
+        <PublicPage>
+          <SectionHead
+            eyebrow="The recruiting problem"
+            title="Recruiting should not restart from zero every time you hire."
+            lead="Traditional agencies sell placements. When the engagement ends, the sourcing work, the candidate context, and the pipeline leave with them. Subscription recruiting is a different arrangement."
+          />
+
+          {/* Header row — hidden on mobile, shown on md+ */}
+          <div className="mt-10 hidden grid-cols-[1.1fr_1fr_1fr] gap-4 md:grid">
+            <div />
+            <div className="rounded-t-xl border border-b-0 border-[color:var(--brand-navy)]/12 bg-[color:var(--brand-navy)]/5 px-5 py-3">
+              <div className="flex items-center gap-2 text-[color:var(--brand-navy)]/70">
+                <XCircle className="h-4 w-4" aria-hidden />
+                <span className="text-xs font-semibold uppercase tracking-wide">
+                  Traditional agency model
+                </span>
+              </div>
+            </div>
+            <div className="rounded-t-xl border border-b-0 border-[color:var(--brand-ocean)]/25 bg-[color:var(--brand-ocean)]/8 px-5 py-3">
+              <div className="flex items-center gap-2 text-[color:var(--brand-ocean)]">
+                <CheckCircle2 className="h-4 w-4" aria-hidden />
+                <span className="text-xs font-semibold uppercase tracking-wide">
+                  TaaSFlow model
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div className="md:grid md:grid-cols-[1.1fr_1fr_1fr] md:gap-4">
+            {PROBLEM_ROWS.map((row, i) => (
+              <React.Fragment key={row.label}>
+                {/* Row label */}
+                <div
+                  className={`mt-6 md:mt-0 ${
+                    i > 0 ? "md:border-t md:border-[color:var(--brand-navy)]/10" : ""
+                  } md:flex md:items-center md:px-5 md:py-5`}
+                >
+                  <div className="flex items-center gap-2">
+                    <row.icon
+                      className="h-4 w-4 text-[color:var(--brand-navy)]/60"
+                      aria-hidden
+                    />
+                    <span className="text-sm font-semibold text-[color:var(--brand-navy)]">
+                      {row.label}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Old model cell */}
+                <div
+                  className={`mt-2 rounded-lg border border-[color:var(--brand-navy)]/12 bg-[color:var(--brand-navy)]/[0.03] px-4 py-3 text-sm text-[color:var(--brand-navy)]/75 md:mt-0 md:rounded-none md:border-x md:border-b-0 md:border-t md:border-[color:var(--brand-navy)]/12 md:bg-[color:var(--brand-navy)]/[0.03] md:px-5 md:py-5 ${
+                    i === PROBLEM_ROWS.length - 1 ? "md:rounded-b-xl md:border-b" : ""
+                  }`}
+                >
+                  <div className="flex items-start gap-2 md:hidden">
+                    <XCircle
+                      className="mt-0.5 h-4 w-4 shrink-0 text-[color:var(--brand-navy)]/50"
+                      aria-hidden
+                    />
+                    <div>
+                      <div className="text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/55">
+                        Traditional agency
+                      </div>
+                      <div className="mt-0.5">{row.old}</div>
+                    </div>
+                  </div>
+                  <div className="hidden md:block">{row.old}</div>
+                </div>
+
+                {/* TaaSFlow cell */}
+                <div
+                  className={`mt-2 rounded-lg border border-[color:var(--brand-ocean)]/30 bg-[color:var(--brand-ocean)]/8 px-4 py-3 text-sm text-[color:var(--brand-navy)] md:mt-0 md:rounded-none md:border-x md:border-b-0 md:border-t md:border-[color:var(--brand-ocean)]/25 md:px-5 md:py-5 ${
+                    i === PROBLEM_ROWS.length - 1 ? "md:rounded-b-xl md:border-b" : ""
+                  }`}
+                >
+                  <div className="flex items-start gap-2 md:hidden">
+                    <CheckCircle2
+                      className="mt-0.5 h-4 w-4 shrink-0 text-[color:var(--brand-ocean)]"
+                      aria-hidden
+                    />
+                    <div>
+                      <div className="text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-ocean)]">
+                        TaaSFlow
+                      </div>
+                      <div className="mt-0.5">{row.next}</div>
+                    </div>
+                  </div>
+                  <div className="hidden md:block font-medium">{row.next}</div>
+                </div>
+              </React.Fragment>
+            ))}
+          </div>
+        </PublicPage>
+      </PublicSection>
+
+      {/* 3.6 — HOW IT WORKS (8-step process, horizontal desktop / vertical mobile) */}
+      <section className="border-y border-[color:var(--brand-navy)]/8 bg-white">
+        <PublicSection>
+          <PublicPage>
+            <SectionHead
+              eyebrow="How it works"
+              title="Eight steps from open role to hiring decision."
+              lead="TaaSFlow manages the sourcing and evaluation work. Your team stays in control of interviews, offers, and hiring decisions."
+            />
+
+            <ol className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+              {PROCESS_STEPS.map((step, i) => (
+                <li
+                  key={step.title}
+                  className="relative flex flex-col rounded-2xl border border-[color:var(--brand-navy)]/12 bg-white p-5 shadow-[var(--brand-shadow-sm)]"
+                >
+                  <div className="flex items-center gap-3">
+                    <span
+                      className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[color:var(--brand-navy)] text-xs font-semibold text-white"
+                      aria-hidden
+                    >
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                    <step.icon
+                      className="h-5 w-5 text-[color:var(--brand-ocean)]"
+                      aria-hidden
+                    />
+                  </div>
+                  <h3 className="mt-4 text-base font-semibold text-[color:var(--brand-navy)]">
+                    {step.title}
+                  </h3>
+
+                  <dl className="mt-4 space-y-3 text-xs">
+                    <div>
+                      <dt className="font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/55">
+                        TaaSFlow does
+                      </dt>
+                      <dd className="mt-1 text-sm text-[color:var(--brand-navy)]/80">
+                        {step.taasflow}
+                      </dd>
+                    </div>
+                    <div>
+                      <dt className="font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/55">
+                        Client sees
+                      </dt>
+                      <dd className="mt-1 text-sm text-[color:var(--brand-navy)]/80">
+                        {step.client}
+                      </dd>
+                    </div>
+                    <div>
+                      <dt className="font-semibold uppercase tracking-wide text-[color:var(--brand-ocean)]">
+                        Produced
+                      </dt>
+                      <dd className="mt-1 text-sm font-medium text-[color:var(--brand-navy)]">
+                        {step.output}
+                      </dd>
+                    </div>
+                  </dl>
+                </li>
+              ))}
+            </ol>
+
+            <p className="mt-8 max-w-3xl rounded-xl border border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-paper)] px-5 py-4 text-sm text-[color:var(--brand-navy)]/80">
+              TaaSFlow manages the sourcing and evaluation work. Your team stays
+              in control of interviews, offers, and hiring decisions.
+            </p>
+
+            <div className="mt-6">
+              <Link
+                to="/how-it-works"
+                className="inline-flex min-h-11 items-center gap-2 rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-[color:var(--brand-navy-dark)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+              >
+                See the Full Process <ArrowRight className="h-4 w-4" aria-hidden />
+              </Link>
+            </div>
+          </PublicPage>
+        </PublicSection>
+      </section>
 
       {/* 4 — WHY SUBSCRIPTION RECRUITING */}
       <PublicSection>
