@@ -52,8 +52,6 @@ import { AudienceSelector } from "@/components/marketing/audience-selector";
 import { TrustStrip } from "@/components/marketing/trust-strip";
 import { StraightAnswers } from "@/components/marketing/straight-answers";
 import { HiddenCostOfWaiting } from "@/components/marketing/hidden-cost-of-waiting";
-import { CalculatorCtaBridge } from "@/components/marketing/calculator-cta-bridge";
-import type { CalculatorResult } from "@/lib/roi-calculator";
 import { WhySwitchMatrix } from "@/components/marketing/why-switch-matrix";
 import { ProofSystem } from "@/components/marketing/proof-system";
 import { PageConnections } from "@/components/marketing/page-connections";
