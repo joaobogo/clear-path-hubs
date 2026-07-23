@@ -248,7 +248,7 @@ function IntakePage() {
   const next = () => {
     const stepErrs = validateStep(step, state);
     setErrors(stepErrs);
-    if (Object.keys(stepErrs).length === 0) setStep((n) => Math.min(5, n + 1));
+    if (Object.keys(stepErrs).length === 0) setStep((n) => Math.min(6, n + 1));
   };
   const back = () => setStep((n) => Math.max(1, n - 1));
 
