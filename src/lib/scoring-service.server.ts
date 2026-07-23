@@ -107,13 +107,27 @@ async function loadInputs(matchId: string) {
         .eq("id", profRes.data.current_cv_file_id).maybeSingle()).data
     : null;
 
+  const reqToText = (r: unknown): string | null => {
+    if (typeof r === "string") return r.trim() || null;
+    if (r && typeof r === "object") {
+      const o = r as { label?: unknown; text?: unknown; name?: unknown; requirement?: unknown };
+      const v = o.label ?? o.text ?? o.name ?? o.requirement;
+      return typeof v === "string" && v.trim() ? v.trim() : null;
+    }
+    return null;
+  };
+  const mapReqs = (arr: unknown, prefix: string, required: boolean): RequirementInput[] => {
+    if (!Array.isArray(arr)) return [];
+    const out: RequirementInput[] = [];
+    arr.forEach((t, i) => {
+      const text = reqToText(t);
+      if (text) out.push({ id: `${prefix}-${i}`, text, required, keywords: [] });
+    });
+    return out;
+  };
   const requirements: RequirementInput[] = [
-    ...(Array.isArray(posRes.data?.requirements) ? posRes.data.requirements : []).map(
-      (t: string, i: number) => ({ id: `req-${i}`, text: String(t), required: true, keywords: [] as string[] }),
-    ),
-    ...(Array.isArray(posRes.data?.preferred_requirements) ? posRes.data.preferred_requirements : []).map(
-      (t: string, i: number) => ({ id: `pref-${i}`, text: String(t), required: false, keywords: [] as string[] }),
-    ),
+    ...mapReqs(posRes.data?.requirements, "req", true),
+    ...mapReqs(posRes.data?.preferred_requirements, "pref", false),
   ];
 
   const screening: ScreeningAnswer[] = (ansRes.data ?? []).map((r: Any) => {

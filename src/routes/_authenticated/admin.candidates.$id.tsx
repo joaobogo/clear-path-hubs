@@ -513,6 +513,25 @@ function safeNode(v: unknown): React.ReactNode {
   return null;
 }
 
+function toReqText(v: unknown): string {
+  if (v == null) return "—";
+  if (typeof v === "string") return v;
+  if (typeof v === "number" || typeof v === "boolean") return String(v);
+  if (Array.isArray(v)) return v.map(toReqText).filter((s) => s && s !== "—").join(", ") || "—";
+  if (typeof v === "object") {
+    const o = v as Record<string, unknown>;
+    const cand = o.text ?? o.label ?? o.name ?? o.requirement ?? o.requirement_text ?? o.title;
+    if (typeof cand === "string" && cand.trim()) return cand;
+    return "—";
+  }
+  return "—";
+}
+
+function cleanLine(s: string): string {
+  return s.replace(/\[object Object\]/g, "requirement").trim();
+}
+
+
 function Row({ label, v }: { label: string; v: React.ReactNode }) {
   const safe = safeNode(v);
   return (
@@ -685,7 +704,7 @@ function EvidenceTab({ evidence, result }: { evidence: Any; result: Any }) {
                 <div className="min-w-0">
                   <div className="font-medium">
                     {r.required && <span className="text-destructive">* </span>}
-                    {r.text ?? r.requirement_text ?? "—"}
+                    {toReqText(r.text ?? r.requirement_text ?? r.label ?? r.name)}
                   </div>
                   {r.matched_terms?.length > 0 && (
                     <div className="mt-1 text-xs text-muted-foreground">
@@ -747,7 +766,7 @@ function EvidenceTab({ evidence, result }: { evidence: Any; result: Any }) {
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0 text-sm">
                       {v.required && <span className="text-destructive">* </span>}
-                      <span className="font-medium">{v.requirement_text}</span>
+                      <span className="font-medium">{toReqText(v.requirement_text)}</span>
                     </div>
                     <Badge variant={tone as Any} className="capitalize">{v.verdict}</Badge>
                   </div>
@@ -835,7 +854,7 @@ function ScoreTab({ currentRun, result }: { currentRun: Any; result: Any }) {
               <h4 className="text-xs font-semibold uppercase text-destructive">Concerns</h4>
               <ul className="mt-1 list-disc space-y-1 pl-4 text-sm">
                 {(result?.concerns ?? []).map((s: string, i: number) => (
-                  <li key={i}>{s}</li>
+                  <li key={i}>{cleanLine(String(s))}</li>
                 ))}
                 {(result?.concerns ?? []).length === 0 && (
                   <li className="list-none text-muted-foreground">None flagged.</li>
