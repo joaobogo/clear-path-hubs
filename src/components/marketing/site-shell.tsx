@@ -361,7 +361,7 @@ function Footer() {
           <div className="lg:col-span-2">
             <BrandMark />
             <p className="mt-4 max-w-sm text-sm text-[color:var(--brand-navy)]/70">
-              A live recruiting workspace with ranked, evidence-backed candidate delivery.
+              {FOOTER_DESCRIPTION}
             </p>
             <div className="mt-5 flex items-center gap-3">
               {SOCIAL_LINKS.map(({ href, label }) => {
