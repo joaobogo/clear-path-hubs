@@ -80,7 +80,12 @@ const TAB_LABELS: Record<TabKey, { label: string; icon: typeof Building2 }> = {
 };
 
 const searchSchema = z.object({
-  tab: z.enum(TABS).optional().default("overview"),
+  tab: z
+    .preprocess((value) => {
+      if (typeof value === "string" && TABS.includes(value as TabKey)) return value;
+      return "overview";
+    }, z.enum(TABS))
+    .default("overview"),
 });
 
 export const Route = createFileRoute("/_authenticated/admin/clients/$id")({
