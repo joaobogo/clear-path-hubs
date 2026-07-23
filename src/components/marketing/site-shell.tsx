@@ -19,24 +19,18 @@ import {
 } from "@/config/public-navigation";
 
 
-/* ---------------------------------------------------------------- Nav data */
+/* ---------------------------------------------------------------- Nav data
+ * Legacy re-export retained for older imports. The single source of truth is
+ * `@/config/public-navigation`; do not add links here.
+ */
 
-export const PRIMARY_NAV = [
-  { to: "/solutions",     label: "Solutions" },
-  { to: "/industries",    label: "Industries" },
-  { to: "/enterprise",    label: "Enterprise" },
-  { to: "/how-it-works",  label: "How it works" },
-  { to: "/resources",     label: "Resources" },
-  { to: "/jobs",          label: "Jobs" },
-  { to: "/about",         label: "About" },
-] as const;
+export const PRIMARY_NAV = CONFIG_PRIMARY_NAV;
 
-const SOCIAL = [
-  { href: "https://www.linkedin.com/company/taasflow", label: "LinkedIn", Icon: Linkedin },
-  { href: "https://twitter.com/taasflow",              label: "Twitter",  Icon: Twitter  },
-  { href: "https://github.com/taasflow",               label: "GitHub",   Icon: Github   },
-  { href: "mailto:hello@taasflow.com",                 label: "Email",    Icon: Mail     },
-] as const;
+const SOCIAL_ICONS: Record<string, typeof Linkedin> = {
+  LinkedIn: Linkedin,
+  Email: Mail,
+};
+
 
 /* ---------------------------------------------------------------- Brand mark */
 
