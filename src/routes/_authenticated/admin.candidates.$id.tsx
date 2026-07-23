@@ -201,7 +201,7 @@ function CandidateWorkspace() {
 
           <section>
             {tab === "profile" && (
-              <ProfileTab cp={cp} pos={pos} m={m} siblings={siblings} />
+              <ProfileTab cp={cp} pos={pos} m={m} siblings={siblings} evidence={evidence} />
             )}
             {tab === "cv" && <CvTab cv={cv} matchId={id} />}
             {tab === "enrichment" && <EnrichmentTab cp={cp} evidence={evidence} />}
@@ -212,7 +212,7 @@ function CandidateWorkspace() {
               <ScoreTab currentRun={currentRun} result={currentResult} />
             )}
             {tab === "screening" && (
-              <ScreeningTab result={currentResult} />
+              <ScreeningTab result={currentResult} evidence={evidence} />
             )}
             {tab === "history" && (
               <HistoryTab runs={runs} jobs={jobs} decisions={decisions} />
@@ -330,14 +330,20 @@ function ProfileTab({
   pos,
   m,
   siblings,
+  evidence,
 }: {
   cp: Any;
   pos: Any;
   m: Any;
   siblings: Any[];
+  evidence: Any;
 }) {
+  const insights = evidence?.extracted?.insights as Any | null;
   return (
-    <div className="grid gap-4 lg:grid-cols-2">
+    <div className="space-y-4">
+      {insights && <InsightsBriefing insights={insights} />}
+      <div className="grid gap-4 lg:grid-cols-2">
+
       <div className="rounded-lg border bg-card p-5">
         <h2 className="text-sm font-semibold">Candidate profile</h2>
         <dl className="mt-3 grid grid-cols-[9rem_1fr] gap-y-1.5 text-sm">
@@ -393,9 +399,95 @@ function ProfileTab({
           </div>
         )}
       </div>
+      </div>
     </div>
   );
 }
+
+function InsightsBriefing({ insights }: { insights: Any }) {
+  const rec = String(insights?.overall_recommendation ?? "consider");
+  const recTone =
+    rec === "advance" ? "bg-emerald-500/15 text-emerald-800 dark:text-emerald-200"
+    : rec === "reject" ? "bg-destructive/15 text-destructive"
+    : "bg-amber-500/15 text-amber-800 dark:text-amber-200";
+  const highlights: string[] = Array.isArray(insights?.highlights) ? insights.highlights : [];
+  const strengths: Any[] = Array.isArray(insights?.strengths) ? insights.strengths : [];
+  const concerns: Any[] = Array.isArray(insights?.concerns) ? insights.concerns : [];
+  return (
+    <div className="rounded-lg border bg-gradient-to-br from-primary/5 to-transparent p-5">
+      <div className="flex flex-wrap items-center gap-2">
+        <h2 className="text-sm font-semibold">Candidate briefing</h2>
+        <Badge variant="secondary" className="capitalize">
+          {String(insights?.seniority ?? "unknown")}
+        </Badge>
+        <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium capitalize ${recTone}`}>
+          {rec}
+        </span>
+        {typeof insights?.confidence === "number" && (
+          <span className="text-xs text-muted-foreground">
+            confidence {Math.round(insights.confidence * 100)}%
+          </span>
+        )}
+      </div>
+      {insights?.headline_suggested && (
+        <p className="mt-2 text-sm font-medium text-foreground">{insights.headline_suggested}</p>
+      )}
+      {insights?.narrative && (
+        <div className="mt-3 whitespace-pre-wrap text-sm leading-relaxed text-foreground/90">
+          {insights.narrative}
+        </div>
+      )}
+      {highlights.length > 0 && (
+        <>
+          <h3 className="mt-4 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            Highlights
+          </h3>
+          <ul className="mt-1 list-disc space-y-0.5 pl-5 text-sm">
+            {highlights.map((h, i) => <li key={i}>{h}</li>)}
+          </ul>
+        </>
+      )}
+      {(strengths.length > 0 || concerns.length > 0) && (
+        <div className="mt-4 grid gap-3 md:grid-cols-2">
+          <div className="rounded-md border bg-background/60 p-3">
+            <h4 className="text-xs font-semibold uppercase text-emerald-700 dark:text-emerald-300">
+              Why they fit
+            </h4>
+            <ul className="mt-2 space-y-2 text-sm">
+              {strengths.length === 0 && <li className="text-muted-foreground">None surfaced.</li>}
+              {strengths.map((s, i) => (
+                <li key={i}>
+                  <div className="font-medium">{s.title}</div>
+                  {s.detail && <div className="text-xs text-muted-foreground">{s.detail}</div>}
+                  {s.cv_quote && (
+                    <div className="mt-1 border-l-2 border-emerald-500/40 pl-2 text-xs italic text-muted-foreground">
+                      "{s.cv_quote}"
+                    </div>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="rounded-md border bg-background/60 p-3">
+            <h4 className="text-xs font-semibold uppercase text-destructive">
+              Where they may fall short
+            </h4>
+            <ul className="mt-2 space-y-2 text-sm">
+              {concerns.length === 0 && <li className="text-muted-foreground">None flagged.</li>}
+              {concerns.map((c, i) => (
+                <li key={i}>
+                  <div className="font-medium">{c.title}</div>
+                  {c.detail && <div className="text-xs text-muted-foreground">{c.detail}</div>}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 
 function safeNode(v: unknown): React.ReactNode {
   if (v == null || v === "") return null;
@@ -564,6 +656,9 @@ function EnrichmentTab({ cp, evidence }: { cp: Any; evidence: Any }) {
 // ── Evidence ───────────────────────────────────────────────────────────────
 function EvidenceTab({ evidence, result }: { evidence: Any; result: Any }) {
   const items = result?.requirement_assessment ?? result?.evidence ?? [];
+  const llmVerdicts: Any[] = Array.isArray(evidence?.extracted?.insights?.requirement_verdicts)
+    ? evidence.extracted.insights.requirement_verdicts
+    : [];
   const contradictions = result?.contradiction_status && result.contradiction_status !== "none"
     ? result.contradiction_status
     : null;
@@ -630,6 +725,45 @@ function EvidenceTab({ evidence, result }: { evidence: Any; result: Any }) {
             </li>
           ))}
         </ul>
+      )}
+
+      {llmVerdicts.length > 0 && (
+        <div className="rounded-lg border bg-card p-4">
+          <div className="flex items-center justify-between">
+            <h3 className="text-sm font-semibold">AI evidence review</h3>
+            <span className="text-xs text-muted-foreground">
+              Per-requirement verdicts grounded in verbatim CV quotes.
+            </span>
+          </div>
+          <ul className="mt-3 space-y-2">
+            {llmVerdicts.map((v, i) => {
+              const tone =
+                v.verdict === "met" ? "default"
+                : v.verdict === "partial" ? "secondary"
+                : v.verdict === "contradicted" ? "destructive"
+                : "outline";
+              return (
+                <li key={i} className="rounded-md border bg-background/60 p-3">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0 text-sm">
+                      {v.required && <span className="text-destructive">* </span>}
+                      <span className="font-medium">{v.requirement_text}</span>
+                    </div>
+                    <Badge variant={tone as Any} className="capitalize">{v.verdict}</Badge>
+                  </div>
+                  {v.rationale && (
+                    <div className="mt-1 text-xs text-muted-foreground">{v.rationale}</div>
+                  )}
+                  {v.cv_quote && (
+                    <div className="mt-1 border-l-2 border-primary/30 pl-2 text-xs italic text-muted-foreground">
+                      "{v.cv_quote}"
+                    </div>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
+        </div>
       )}
 
       {evidence?.raw_text_sample && (
@@ -752,41 +886,145 @@ function Bar({ label, value }: { label: string; value?: number | null }) {
 }
 
 // ── Screening ──────────────────────────────────────────────────────────────
-function ScreeningTab({ result }: { result: Any }) {
+function ScreeningTab({ result, evidence }: { result: Any; evidence: Any }) {
   const items = (result?.screening_evidence ?? []) as Any[];
-  if (items.length === 0)
+  const llmAnalysis: Any[] = Array.isArray(evidence?.extracted?.insights?.screening_analysis)
+    ? evidence.extracted.insights.screening_analysis
+    : [];
+  const rawAnswers: Any[] = Array.isArray(evidence?.screening_normalized?.answers)
+    ? evidence.screening_normalized.answers
+    : [];
+
+  // Build a merged view keyed by question_id when possible.
+  const byId = new Map<string, Any>();
+  for (const a of rawAnswers) if (a?.question_id) byId.set(String(a.question_id), a);
+  const analysisById = new Map<string, Any>();
+  for (const a of llmAnalysis) if (a?.question_id) analysisById.set(String(a.question_id), a);
+
+  const hasAnything = items.length > 0 || rawAnswers.length > 0 || llmAnalysis.length > 0;
+  if (!hasAnything) {
     return (
       <div className="rounded-lg border border-dashed p-10 text-center text-sm text-muted-foreground">
         No screening answers on file.
       </div>
     );
+  }
+
   return (
-    <ul className="space-y-2">
-      {items.map((s, i) => (
-        <li
-          key={i}
-          className="flex items-start justify-between gap-4 rounded-lg border bg-card p-4"
-        >
-          <div className="min-w-0">
-            <div className="text-sm font-medium">{s.question}</div>
-            <div className="mt-1 whitespace-pre-wrap text-sm text-muted-foreground">
-              {s.normalized_value || s.answer || "—"}
-            </div>
-          </div>
-          <Badge
-            variant={
-              s.aligned === "aligned"
-                ? "default"
-                : s.aligned === "misaligned"
-                  ? "destructive"
-                  : "outline"
-            }
-          >
-            {s.aligned ?? "n/a"}
-          </Badge>
-        </li>
-      ))}
-    </ul>
+    <div className="space-y-4">
+      {items.length > 0 && (
+        <ul className="space-y-2">
+          {items.map((s, i) => {
+            const llm = analysisById.get(String(s.question_id ?? ""));
+            return (
+              <li key={i} className="rounded-lg border bg-card p-4">
+                <div className="flex items-start justify-between gap-4">
+                  <div className="min-w-0">
+                    <div className="text-sm font-medium">{s.question}</div>
+                    <div className="mt-1 whitespace-pre-wrap text-sm text-muted-foreground">
+                      {s.normalized_value || s.answer || "—"}
+                    </div>
+                  </div>
+                  <Badge
+                    variant={
+                      s.aligned === "aligned"
+                        ? "default"
+                        : s.aligned === "misaligned"
+                          ? "destructive"
+                          : "outline"
+                    }
+                  >
+                    {s.aligned ?? "n/a"}
+                  </Badge>
+                </div>
+                {llm && (
+                  <div className="mt-2 rounded-md border bg-background/60 p-2 text-xs">
+                    <div className="flex items-center gap-2">
+                      <span className="font-semibold uppercase tracking-wide text-muted-foreground">
+                        CV supports:
+                      </span>
+                      <Badge
+                        variant={
+                          llm.cv_supports === "yes" ? "default"
+                          : llm.cv_supports === "no" ? "destructive"
+                          : "outline"
+                        }
+                      >
+                        {llm.cv_supports}
+                      </Badge>
+                    </div>
+                    {llm.note && <p className="mt-1 text-muted-foreground">{llm.note}</p>}
+                  </div>
+                )}
+              </li>
+            );
+          })}
+        </ul>
+      )}
+
+      {items.length === 0 && rawAnswers.length > 0 && (
+        <ul className="space-y-2">
+          {rawAnswers.map((a, i) => {
+            const llm = analysisById.get(String(a.question_id ?? ""));
+            const val = a?.value == null ? "—"
+              : typeof a.value === "string" ? a.value
+              : JSON.stringify(a.value);
+            return (
+              <li key={i} className="rounded-lg border bg-card p-4">
+                <div className="text-sm font-medium">{a.question}</div>
+                <div className="mt-1 whitespace-pre-wrap text-sm text-muted-foreground">{val}</div>
+                {llm && (
+                  <div className="mt-2 rounded-md border bg-background/60 p-2 text-xs">
+                    <div className="flex items-center gap-2">
+                      <span className="font-semibold uppercase tracking-wide text-muted-foreground">
+                        CV supports:
+                      </span>
+                      <Badge
+                        variant={
+                          llm.cv_supports === "yes" ? "default"
+                          : llm.cv_supports === "no" ? "destructive"
+                          : "outline"
+                        }
+                      >
+                        {llm.cv_supports}
+                      </Badge>
+                    </div>
+                    {llm.note && <p className="mt-1 text-muted-foreground">{llm.note}</p>}
+                  </div>
+                )}
+              </li>
+            );
+          })}
+        </ul>
+      )}
+
+      {items.length === 0 && rawAnswers.length === 0 && llmAnalysis.length > 0 && (
+        <ul className="space-y-2">
+          {llmAnalysis.map((llm, i) => (
+            <li key={i} className="rounded-lg border bg-card p-4 text-sm">
+              <div className="font-medium">{llm.question}</div>
+              <div className="mt-1 whitespace-pre-wrap text-muted-foreground">{llm.candidate_answer || "—"}</div>
+              <div className="mt-2 flex items-center gap-2 text-xs">
+                <span className="font-semibold uppercase tracking-wide text-muted-foreground">CV supports:</span>
+                <Badge
+                  variant={
+                    llm.cv_supports === "yes" ? "default"
+                    : llm.cv_supports === "no" ? "destructive"
+                    : "outline"
+                  }
+                >
+                  {llm.cv_supports}
+                </Badge>
+              </div>
+              {llm.note && <p className="mt-1 text-xs text-muted-foreground">{llm.note}</p>}
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {/* Silence unused-var warnings */}
+      <span className="hidden">{byId.size}</span>
+    </div>
   );
 }
 

@@ -9,6 +9,7 @@ import { extractCvText } from "./cv-extractor.server";
 import { hydrateProfileFromCv } from "./cv-hydration.server";
 import { ENGINE_VERSION, type ScreeningAnswer } from "./scoring-engine.server";
 import { executeScoring } from "./scoring-service.server";
+import { generateCandidateInsights, type CandidateInsights } from "./candidate-insights.server";
 import type { Json } from "@/integrations/supabase/types";
 
 type State =
@@ -86,6 +87,58 @@ function buildScreening(rows: Any[]): ScreeningAnswer[] {
   });
 }
 
+// Best-effort LLM insights (narrative + per-requirement verdicts + screening
+// analysis). Never throws — returns { insights, insights_error } so callers can
+// merge into candidate_evidence.extracted.
+async function buildInsights(args: {
+  cvText: string;
+  position: Any;
+  screening: ScreeningAnswer[];
+}): Promise<{ insights: CandidateInsights | null; insights_error: string | null }> {
+  const pos = args.position;
+  if (!pos) return { insights: null, insights_error: "no_position" };
+  const reqs = [
+    ...(Array.isArray(pos.requirements) ? pos.requirements : []).map((r: Any, i: number) => ({
+      id: String(r?.id ?? `must-${i}`),
+      text: String(r?.text ?? r?.requirement ?? r?.title ?? "").trim(),
+      required: true,
+    })),
+    ...(Array.isArray(pos.preferred_requirements) ? pos.preferred_requirements : []).map((r: Any, i: number) => ({
+      id: String(r?.id ?? `pref-${i}`),
+      text: String(r?.text ?? r?.requirement ?? r?.title ?? "").trim(),
+      required: false,
+    })),
+  ].filter((r) => r.text);
+  if (reqs.length === 0) return { insights: null, insights_error: "no_requirements" };
+
+  const screening = args.screening.map((s) => ({
+    question_id: s.question_id,
+    question: s.question,
+    required: s.required,
+    answer_type: s.answer_type,
+    answer:
+      s.value == null
+        ? ""
+        : typeof s.value === "string"
+          ? s.value
+          : typeof s.value === "number" || typeof s.value === "boolean"
+            ? String(s.value)
+            : JSON.stringify(s.value).slice(0, 400),
+  }));
+
+  try {
+    const res = await generateCandidateInsights({
+      cv_text: args.cvText,
+      position: { title: pos.title ?? "", description: pos.description ?? null, requirements: reqs },
+      screening,
+    });
+    if (res.ok) return { insights: res.data, insights_error: null };
+    return { insights: null, insights_error: res.reason };
+  } catch (e) {
+    return { insights: null, insights_error: (e as Error).message?.slice(0, 200) ?? "insights_failed" };
+  }
+}
+
 export type PipelineOutcome = {
   match_id: string;
   trace_id: string;
@@ -101,7 +154,7 @@ async function loadCtx(s: Any, matchId: string) {
     .maybeSingle();
   if (!match) throw new Error(`match_not_found:${matchId}`);
   const [posRes, profRes, ansRes] = await Promise.all([
-    s.from("positions").select("id,status,requirements,preferred_requirements,title").eq("id", match.position_id).maybeSingle(),
+    s.from("positions").select("id,status,requirements,preferred_requirements,title,description").eq("id", match.position_id).maybeSingle(),
     s.from("candidate_profiles").select("id,current_cv_file_id,skills,experience,consent").eq("id", match.candidate_profile_id).maybeSingle(),
     s.from("application_answers").select("question_id,answer,screening_questions(question,answer_type,required,dealbreaker,preferred_answer)").eq("application_id", match.application_id),
   ]);
@@ -240,6 +293,9 @@ export async function runPipelineForMatch(matchId: string, opts: { force?: boole
       .eq("id", ctx.match.candidate_profile_id)
       .maybeSingle();
     const screening = buildScreening(ctx.answers);
+    const { insights, insights_error } = await buildInsights({
+      cvText, position: ctx.position, screening,
+    });
     await s.from("candidate_evidence").upsert({
       candidate_match_id: matchId,
       candidate_profile_id: ctx.match.candidate_profile_id,
@@ -252,6 +308,8 @@ export async function runPipelineForMatch(matchId: string, opts: { force?: boole
         headline: freshProfile?.headline ?? null,
         location: freshProfile?.location ?? null,
         hydration: { applied: hydration.applied, skipped: hydration.skipped, ok: hydration.ok, reason: hydration.reason ?? null },
+        insights: insights as unknown as Json,
+        insights_error,
       } as unknown as Json,
       screening_normalized: {
         answers: screening.map((s2) => ({
@@ -261,6 +319,7 @@ export async function runPipelineForMatch(matchId: string, opts: { force?: boole
       } as unknown as Json,
       raw_text_sample: cvText.slice(0, 800),
     }, { onConflict: "candidate_match_id,engine_version" });
+    steps.push({ step: "insights", ok: !!insights, note: insights ? `verdicts:${insights.requirement_verdicts.length}` : insights_error ?? "skipped" });
 
     const pos = ctx.position;
     if (!pos || pos.status !== "active") {
@@ -383,6 +442,9 @@ export async function runEnrichmentOnly(
       .select("id,skills,experience,headline,location,consent")
       .eq("id", ctx.match.candidate_profile_id).maybeSingle();
     const screening = buildScreening(ctx.answers);
+    const { insights, insights_error } = await buildInsights({
+      cvText, position: ctx.position, screening,
+    });
     await s.from("candidate_evidence").upsert({
       candidate_match_id: matchId,
       candidate_profile_id: ctx.match.candidate_profile_id,
@@ -395,6 +457,8 @@ export async function runEnrichmentOnly(
         headline: freshProfile?.headline ?? null,
         location: freshProfile?.location ?? null,
         refreshed_at: new Date().toISOString(),
+        insights: insights as unknown as Json,
+        insights_error,
       } as unknown as Json,
       screening_normalized: {
         answers: screening.map((s2) => ({
