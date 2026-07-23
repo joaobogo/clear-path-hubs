@@ -9,6 +9,7 @@ import {
   MessageSquare,
   Settings,
   Inbox,
+  CalendarRange,
 } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
@@ -52,6 +53,7 @@ const NAV: WorkspaceNavItem[] = [
   { to: "/admin/candidates", label: "Candidates", icon: Users },
   { to: "/admin/publish", label: "Publish Desk", icon: Send },
   { to: "/admin/operations", label: "Operations", icon: Activity },
+  { to: "/admin/wbr", label: "Weekly Review", icon: CalendarRange },
   { to: "/admin/messages", label: "Messages", icon: MessageSquare },
   { to: "/admin/settings", label: "Settings", icon: Settings },
 ];

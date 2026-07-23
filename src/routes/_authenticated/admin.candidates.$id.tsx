@@ -48,6 +48,7 @@ import {
   MoreHorizontal,
 } from "lucide-react";
 import { DownloadCvButton } from "@/components/download-cv-button";
+import { ScoreExplainability } from "@/components/candidate/score-explainability";
 
 
 
@@ -209,7 +210,13 @@ function CandidateWorkspace() {
               <EvidenceTab evidence={evidence} result={currentResult} />
             )}
             {tab === "score" && (
-              <ScoreTab currentRun={currentRun} result={currentResult} />
+              <ScoreTab
+                currentRun={currentRun}
+                result={currentResult}
+                runs={runs}
+                decisions={decisions}
+                evidence={evidence}
+              />
             )}
             {tab === "screening" && (
               <ScreeningTab result={currentResult} evidence={evidence} />
@@ -941,7 +948,19 @@ function EvidenceTab({ evidence, result }: { evidence: Any; result: Any }) {
 }
 
 // ── Score ──────────────────────────────────────────────────────────────────
-function ScoreTab({ currentRun, result }: { currentRun: Any; result: Any }) {
+function ScoreTab({
+  currentRun,
+  result,
+  runs,
+  decisions,
+  evidence,
+}: {
+  currentRun: Any;
+  result: Any;
+  runs?: Any[];
+  decisions?: Any[];
+  evidence?: Any;
+}) {
   if (!currentRun)
     return (
       <div className="rounded-lg border border-dashed p-10 text-center text-sm text-muted-foreground">
@@ -1022,6 +1041,15 @@ function ScoreTab({ currentRun, result }: { currentRun: Any; result: Any }) {
           Score runs are immutable. Rescoring writes a new row and keeps every prior score.
         </p>
       </aside>
+
+      <div className="lg:col-span-2">
+        <ScoreExplainability
+          runs={runs ?? []}
+          decisions={decisions ?? []}
+          result={result}
+          evidence={evidence}
+        />
+      </div>
     </div>
   );
 }
