@@ -149,6 +149,9 @@ export function CompareSheet({
               </p>
             )}
 
+            {/* Visual ranking bands — relative strength per axis, not a single winner. */}
+            <RelativeStrengthBoard candidates={candidates} />
+
             {observations.length > 0 && (
               <div className="mt-3 rounded-lg border bg-muted/30 p-3 text-sm space-y-1.5">
                 <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
@@ -417,6 +420,108 @@ function ComparisonRow({
     >
       <div className="text-xs text-muted-foreground">{label}</div>
       {children}
+    </div>
+  );
+}
+
+/**
+ * Visual ranking board — shows relative strength per axis using dots (●○○).
+ * Never picks a single winner; every axis is independent, and score is only
+ * one axis among many.
+ */
+function RelativeStrengthBoard({ candidates }: { candidates: ClientCandidateDTO[] }) {
+  if (candidates.length < 2) return null;
+
+  type Axis = { key: string; label: string; values: number[]; format?: (n: number) => string };
+  const axes: Axis[] = [
+    {
+      key: "fit",
+      label: "Fit score",
+      values: candidates.map((c) => c.score ?? 0),
+      format: (n) => (n ? n.toFixed(0) : "—"),
+    },
+    {
+      key: "coverage",
+      label: "Must-haves met",
+      values: candidates.map((c) =>
+        c.coverage.must_total ? c.coverage.must_met / c.coverage.must_total : 0,
+      ),
+      format: (n) => `${Math.round(n * 100)}%`,
+    },
+    {
+      key: "experience",
+      label: "Experience",
+      values: candidates.map((c) => c.candidate.years_experience ?? 0),
+      format: (n) => (n ? `${n}+ yrs` : "—"),
+    },
+    {
+      key: "strengths",
+      label: "Verified strengths",
+      values: candidates.map((c) => c.strengths.length),
+      format: (n) => `${n}`,
+    },
+    {
+      key: "validation",
+      label: "Areas to validate",
+      values: candidates.map((c) => -c.concerns.length), // inverse: fewer concerns = stronger
+      format: (n) => `${Math.abs(n)}`,
+    },
+  ];
+
+  return (
+    <div className="mt-4 rounded-xl border bg-gradient-to-br from-primary/[0.03] to-transparent p-4">
+      <div className="mb-3 flex items-center justify-between">
+        <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+          Relative strength — axis by axis
+        </div>
+        <div className="text-[10px] uppercase tracking-wide text-muted-foreground">
+          ● Strongest · ◐ Mid · ○ Weakest
+        </div>
+      </div>
+      <div className="space-y-2.5">
+        {axes.map((axis) => {
+          const max = Math.max(...axis.values);
+          const min = Math.min(...axis.values);
+          const span = max - min;
+          return (
+            <div key={axis.key} className="grid gap-3 sm:grid-cols-[9rem_1fr] items-center">
+              <div className="text-xs font-medium text-foreground/80">{axis.label}</div>
+              <div className="grid gap-2" style={{ gridTemplateColumns: `repeat(${candidates.length}, minmax(0, 1fr))` }}>
+                {candidates.map((c, i) => {
+                  const v = axis.values[i];
+                  const rel = span === 0 ? 0.5 : (v - min) / span;
+                  const dot = rel > 0.66 ? "●" : rel > 0.33 ? "◐" : "○";
+                  const cls =
+                    rel > 0.66
+                      ? "text-success"
+                      : rel > 0.33
+                        ? "text-warning-foreground dark:text-warning-foreground"
+                        : "text-muted-foreground";
+                  return (
+                    <div key={c.match_id} className="flex items-center gap-2 rounded-md border bg-card px-2 py-1.5">
+                      <span className={`text-lg leading-none ${cls}`} aria-hidden>
+                        {dot}
+                      </span>
+                      <div className="min-w-0">
+                        <div className="truncate text-[11px] text-muted-foreground">
+                          {c.candidate.display_name}
+                        </div>
+                        <div className="text-xs font-semibold tabular-nums">
+                          {axis.format ? axis.format(v) : String(v)}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      <p className="mt-3 text-[11px] leading-relaxed text-muted-foreground">
+        Ranking is per axis. No single candidate is the winner across all dimensions —
+        weigh these signals against your team fit and interview evidence.
+      </p>
     </div>
   );
 }

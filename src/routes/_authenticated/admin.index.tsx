@@ -224,6 +224,17 @@ function Overview() {
         </div>
       </header>
 
+      {/* ─── Triage summary: what matters in 10 seconds. ─── */}
+      <TriageStrip
+        blocked={L.processing_issues.length}
+        review={L.candidates_pending_review.length}
+        publish={L.candidates_ready_to_publish.length}
+        urgent={(L.urgent_interviews ?? []).length}
+        intake={(L.intake_inbox ?? []).length}
+        positions={L.positions_review.length}
+      />
+
+
       {/* Action Required — prioritized single panel. */}
       {topActions.length > 0 ? (
         <section className="rounded-xl border-2 border-primary/30 bg-primary/[0.03] shadow-sm">
@@ -640,5 +651,68 @@ function RecordLink({
         <ArrowRight className="h-3.5 w-3.5 shrink-0 text-muted-foreground/60" />
       </Link>
     </li>
+  );
+}
+
+function TriageStrip({
+  blocked,
+  review,
+  publish,
+  urgent,
+  intake,
+  positions,
+}: {
+  blocked: number;
+  review: number;
+  publish: number;
+  urgent: number;
+  intake: number;
+  positions: number;
+}) {
+  const tiles: Array<{
+    label: string;
+    value: number;
+    to: string;
+    search?: Record<string, string>;
+    tone: "danger" | "warn" | "info" | "neutral";
+    hint: string;
+  }> = [
+    { label: "Blocked", value: blocked, to: "/admin/operations", tone: "danger", hint: "Processing incidents" },
+    { label: "Urgent interviews", value: urgent, to: "/admin/candidates", search: { has_interview: "true" }, tone: "danger", hint: "Requested / ≤ 48h" },
+    { label: "Awaiting review", value: review, to: "/admin/candidates", search: { admin_status: "pending", processing_state: "scored" }, tone: "warn", hint: "Scored, not decided" },
+    { label: "Ready to publish", value: publish, to: "/admin/publish", tone: "warn", hint: "Approved, not delivered" },
+    { label: "New intake", value: intake, to: "/admin/intake", tone: "info", hint: "Client briefs" },
+    { label: "Positions to approve", value: positions, to: "/admin/positions", search: { status: "submitted" }, tone: "info", hint: "Awaiting approval" },
+  ];
+  const toneCls = (t: "danger" | "warn" | "info" | "neutral", v: number) => {
+    if (v === 0) return "border-border bg-muted/30 text-muted-foreground";
+    if (t === "danger") return "border-destructive/40 bg-destructive/[0.06] text-foreground";
+    if (t === "warn") return "border-warning/50 bg-warning/[0.06] text-foreground";
+    return "border-primary/30 bg-primary/[0.04] text-foreground";
+  };
+  const dotCls = (t: "danger" | "warn" | "info" | "neutral", v: number) => {
+    if (v === 0) return "bg-muted-foreground/40";
+    if (t === "danger") return "bg-destructive";
+    if (t === "warn") return "bg-warning";
+    return "bg-primary";
+  };
+  return (
+    <section aria-label="Triage summary" className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 lg:grid-cols-6">
+      {tiles.map((t) => (
+        <Link
+          key={t.label}
+          to={t.to}
+          search={t.search as never}
+          className={`group rounded-lg border px-3 py-2.5 transition hover:shadow-sm ${toneCls(t.tone, t.value)}`}
+        >
+          <div className="flex items-center gap-1.5 text-[10.5px] font-medium uppercase tracking-wide text-muted-foreground">
+            <span className={`h-1.5 w-1.5 rounded-full ${dotCls(t.tone, t.value)}`} aria-hidden />
+            <span className="truncate">{t.label}</span>
+          </div>
+          <div className="mt-1 text-2xl font-semibold tabular-nums leading-none">{t.value}</div>
+          <div className="mt-1 text-[10.5px] text-muted-foreground truncate">{t.hint}</div>
+        </Link>
+      ))}
+    </section>
   );
 }
