@@ -369,7 +369,58 @@ export function RoiCalculator({
             Estimated cost comparison
           </p>
 
-          <div className="mt-3">
+          {/* Proportional cost bars */}
+          {(() => {
+            const maxCost = Math.max(
+              result.traditionalCostUsd,
+              result.taasflowCostUsd ?? 0,
+              1,
+            );
+            const tradPct = (result.traditionalCostUsd / maxCost) * 100;
+            const taasPct = result.taasflowCostUsd == null
+              ? 0
+              : (result.taasflowCostUsd / maxCost) * 100;
+            return (
+              <div className="mt-4 space-y-3" aria-hidden>
+                <div>
+                  <div className="flex justify-between text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/60">
+                    <span>Traditional</span>
+                    <span className="tabular-nums text-[color:var(--brand-navy)]">
+                      {formatUsdCompact(result.traditionalCostUsd)}
+                    </span>
+                  </div>
+                  <div className="mt-1 h-2.5 overflow-hidden rounded-full bg-[color:var(--brand-navy)]/8">
+                    <div
+                      className="h-full rounded-full bg-[color:var(--brand-navy)]/70 motion-safe:transition-all motion-safe:duration-500"
+                      style={{ width: `${Math.max(2, Math.min(100, tradPct))}%` }}
+                    />
+                  </div>
+                </div>
+                <div>
+                  <div className="flex justify-between text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/60">
+                    <span>TaaSFlow</span>
+                    <span className="tabular-nums text-[color:var(--brand-navy)]">
+                      {result.taasflowCostUsd == null
+                        ? "Custom"
+                        : formatUsdCompact(result.taasflowCostUsd)}
+                    </span>
+                  </div>
+                  <div className="mt-1 h-2.5 overflow-hidden rounded-full bg-[color:var(--brand-ocean)]/10">
+                    <div
+                      className="h-full rounded-full bg-[color:var(--brand-ocean)] motion-safe:transition-all motion-safe:duration-500"
+                      style={{
+                        width: result.taasflowCostUsd == null
+                          ? "8%"
+                          : `${Math.max(2, Math.min(100, taasPct))}%`,
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+            );
+          })()}
+
+          <div className="mt-5">
             <ResultRow
               label="Traditional recruiting cost"
               value={formatUsdCompact(result.traditionalCostUsd)}
