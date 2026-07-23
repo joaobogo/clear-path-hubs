@@ -560,7 +560,7 @@ async function assertEditor(supabase: AnyRow, userId: string, orgId: string) {
 async function loadMatch(supabase: AnyRow, orgId: string, matchId: string) {
   const { data, error } = await supabase
     .from("candidate_matches")
-    .select("id, stage, organization_id, position_id, candidate_profile_id, client_visibility")
+    .select("id, stage, organization_id, position_id, application_id, candidate_profile_id, client_visibility")
     .eq("id", matchId)
     .eq("organization_id", orgId)
     .maybeSingle();
