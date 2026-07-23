@@ -550,6 +550,7 @@ export const setPositionStatus = createServerFn({ method: "POST" })
     if (data.action === "approve") patch.approved_at = new Date().toISOString();
     if (data.action === "activate") patch.published_at = new Date().toISOString();
     if (data.action === "close") patch.closed_at = new Date().toISOString();
+    if (data.action === "archive") patch.closed_at = before.closed_at ?? new Date().toISOString();
     const { data: after, error } = await s
       .from("positions")
       .update(patch)
