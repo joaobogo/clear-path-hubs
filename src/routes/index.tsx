@@ -1082,27 +1082,93 @@ function Home() {
         </PublicSection>
       </section>
 
-      {/* 4 — WHY SUBSCRIPTION RECRUITING */}
+      {/* 4 — SUBSCRIPTION MODEL */}
       <PublicSection>
         <PublicPage>
           <SectionHead
-            eyebrow="Why subscription recruiting"
-            title="A different economic model — and a different working relationship."
-            lead="Placement fees create incentives to close the deal. A subscription creates incentives to keep delivering."
+            eyebrow="The subscription model"
+            title="A recruiting function, not another placement fee."
+            lead="TaaSFlow replaces one-off agency transactions with a recurring recruiting function — predictable cost, continuous pipeline, and candidates you keep."
           />
-          <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
-            {SUBSCRIPTION_REASONS.map((r) => (
-              <Card key={r.t}>
-                <r.icon className="h-6 w-6 text-[color:var(--brand-ocean)]" aria-hidden />
-                <h3 className="mt-4 text-base font-semibold text-[color:var(--brand-navy)]">
-                  {r.t}
-                </h3>
-                <p className="mt-2 text-sm text-[color:var(--brand-navy)]/70">{r.d}</p>
-              </Card>
-            ))}
+
+          <div className="mt-10 grid grid-cols-1 gap-5 lg:grid-cols-2">
+            {/* Traditional agency card */}
+            <div className="relative flex flex-col rounded-2xl border border-[color:var(--brand-navy)]/12 bg-[color:var(--brand-navy)]/[0.03] p-6 sm:p-7">
+              <div className="flex items-center gap-2 text-[color:var(--brand-navy)]/70">
+                <XCircle className="h-4 w-4" aria-hidden />
+                <span className="text-xs font-semibold uppercase tracking-wide">
+                  Traditional agency transaction
+                </span>
+              </div>
+              <h3 className="mt-3 text-xl font-semibold text-[color:var(--brand-navy)]">
+                Paid per hire, resets every role.
+              </h3>
+              <ul className="mt-5 space-y-3 text-sm text-[color:var(--brand-navy)]/80">
+                {[
+                  "Percentage-of-salary placement fee on every hire.",
+                  "Cost is unpredictable and scales with each new hire.",
+                  "Sourcing restarts from zero for each new engagement.",
+                  "Candidate context leaves with the agency at the end.",
+                  "Structured as isolated transactions, not ongoing hiring support.",
+                ].map((line) => (
+                  <li key={line} className="flex items-start gap-2">
+                    <XCircle
+                      className="mt-0.5 h-4 w-4 shrink-0 text-[color:var(--brand-navy)]/45"
+                      aria-hidden
+                    />
+                    <span>{line}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* TaaSFlow subscription card */}
+            <div className="relative flex flex-col overflow-hidden rounded-2xl border border-[color:var(--brand-ocean)]/30 bg-[color:var(--brand-ocean)]/8 p-6 shadow-[var(--brand-shadow-sm)] sm:p-7">
+              <span
+                className="absolute inset-x-0 top-0 h-1 bg-[color:var(--brand-ocean)]"
+                aria-hidden
+              />
+              <div className="flex items-center gap-2 text-[color:var(--brand-ocean)]">
+                <CheckCircle2 className="h-4 w-4" aria-hidden />
+                <span className="text-xs font-semibold uppercase tracking-wide">
+                  TaaSFlow continuous subscription
+                </span>
+              </div>
+              <h3 className="mt-3 text-xl font-semibold text-[color:var(--brand-navy)]">
+                One recurring cost. Continuous recruiting.
+              </h3>
+              <ul className="mt-5 space-y-3 text-sm text-[color:var(--brand-navy)]">
+                {[
+                  "Predictable recurring cost for the recruiting function.",
+                  "No percentage-of-salary placement fee.",
+                  "Continuous candidate pipeline instead of one-off searches.",
+                  "You own the delivered candidate information in your workspace.",
+                  "No extra placement fee when a delivered candidate is hired.",
+                  "Built to support ongoing hiring, not isolated transactions.",
+                ].map((line) => (
+                  <li key={line} className="flex items-start gap-2">
+                    <CheckCircle2
+                      className="mt-0.5 h-4 w-4 shrink-0 text-[color:var(--brand-ocean)]"
+                      aria-hidden
+                    />
+                    <span>{line}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          <div className="mt-8">
+            <Link
+              to="/pricing"
+              className="inline-flex min-h-11 items-center gap-2 rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-[color:var(--brand-navy-dark)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+            >
+              View Pricing <ArrowRight className="h-4 w-4" aria-hidden />
+            </Link>
           </div>
         </PublicPage>
       </PublicSection>
+
 
       {/* 5 — LIVE WORKSPACE SHOWCASE */}
       <section className="border-y border-[color:var(--brand-navy)]/8 bg-[color:var(--brand-paper)]">
