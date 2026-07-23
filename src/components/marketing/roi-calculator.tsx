@@ -21,6 +21,7 @@ import {
   CALCULATOR_DEFAULTS,
   CALCULATOR_LIMITS,
   CALCULATOR_DISCLAIMER,
+  CALCULATOR_PRESETS,
   formatUsdCompact,
 } from "@/config/public-pricing";
 import { computeRoi, type CalculatorInputs } from "@/lib/roi-calculator";
@@ -257,10 +258,48 @@ export function RoiCalculator({
       <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)]">
         {/* Inputs */}
         <div>
-          <p className="text-xs font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/55">
-            Assumptions
-          </p>
-          <div className="mt-3 grid gap-3">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <p className="text-xs font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/55">
+              Assumptions
+            </p>
+            <p className="text-[11px] text-[color:var(--brand-navy)]/50">
+              Presets adjust inputs only — never results.
+            </p>
+          </div>
+
+          <div
+            role="group"
+            aria-label="Scenario presets"
+            className="mt-3 flex flex-wrap gap-2"
+          >
+            {CALCULATOR_PRESETS.map((preset) => {
+              const active =
+                inputs.positions === preset.inputs.positions &&
+                inputs.averageSalaryUsd === preset.inputs.averageSalaryUsd &&
+                Math.round(inputs.agencyFeePct * 100) === Math.round(preset.inputs.agencyFeePct * 100) &&
+                inputs.recruiterHourlyUsd === preset.inputs.recruiterHourlyUsd &&
+                inputs.sourcingHoursPerRole === preset.inputs.sourcingHoursPerRole;
+              return (
+                <button
+                  key={preset.id}
+                  type="button"
+                  aria-pressed={active}
+                  title={preset.description}
+                  onClick={() => setInputs({ ...preset.inputs })}
+                  className={cn(
+                    "min-h-9 rounded-full border px-3.5 py-1.5 text-xs font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]",
+                    active
+                      ? "border-[color:var(--brand-navy)] bg-[color:var(--brand-navy)] text-white"
+                      : "border-[color:var(--brand-navy)]/15 bg-white text-[color:var(--brand-navy)] hover:border-[color:var(--brand-navy)]/30",
+                  )}
+                >
+                  {preset.label}
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="mt-4 grid gap-3">
             <Stepper
               id="roi-positions"
               label="Positions to fill"
@@ -330,7 +369,58 @@ export function RoiCalculator({
             Estimated cost comparison
           </p>
 
-          <div className="mt-3">
+          {/* Proportional cost bars */}
+          {(() => {
+            const maxCost = Math.max(
+              result.traditionalCostUsd,
+              result.taasflowCostUsd ?? 0,
+              1,
+            );
+            const tradPct = (result.traditionalCostUsd / maxCost) * 100;
+            const taasPct = result.taasflowCostUsd == null
+              ? 0
+              : (result.taasflowCostUsd / maxCost) * 100;
+            return (
+              <div className="mt-4 space-y-3" aria-hidden>
+                <div>
+                  <div className="flex justify-between text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/60">
+                    <span>Traditional</span>
+                    <span className="tabular-nums text-[color:var(--brand-navy)]">
+                      {formatUsdCompact(result.traditionalCostUsd)}
+                    </span>
+                  </div>
+                  <div className="mt-1 h-2.5 overflow-hidden rounded-full bg-[color:var(--brand-navy)]/8">
+                    <div
+                      className="h-full rounded-full bg-[color:var(--brand-navy)]/70 motion-safe:transition-all motion-safe:duration-500"
+                      style={{ width: `${Math.max(2, Math.min(100, tradPct))}%` }}
+                    />
+                  </div>
+                </div>
+                <div>
+                  <div className="flex justify-between text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/60">
+                    <span>TaaSFlow</span>
+                    <span className="tabular-nums text-[color:var(--brand-navy)]">
+                      {result.taasflowCostUsd == null
+                        ? "Custom"
+                        : formatUsdCompact(result.taasflowCostUsd)}
+                    </span>
+                  </div>
+                  <div className="mt-1 h-2.5 overflow-hidden rounded-full bg-[color:var(--brand-ocean)]/10">
+                    <div
+                      className="h-full rounded-full bg-[color:var(--brand-ocean)] motion-safe:transition-all motion-safe:duration-500"
+                      style={{
+                        width: result.taasflowCostUsd == null
+                          ? "8%"
+                          : `${Math.max(2, Math.min(100, taasPct))}%`,
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+            );
+          })()}
+
+          <div className="mt-5">
             <ResultRow
               label="Traditional recruiting cost"
               value={formatUsdCompact(result.traditionalCostUsd)}
