@@ -262,6 +262,7 @@ function PositionWorkspace() {
         )}
         {tab === "pipeline" && <PipelineTab matches={matches} />}
         {tab === "activity" && <ActivityTab id={id} />}
+        {tab === "audit" && <AuditTab id={id} />}
         {tab === "settings" && <SettingsTab position={p} onDone={invalidate} />}
       </section>
     </main>
