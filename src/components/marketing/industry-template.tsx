@@ -475,7 +475,6 @@ export function IndustryTemplate({ entry }: { entry: IndustryEntry }) {
           </div>
         </PublicPage>
       </PublicSection>
-      ) : null}
 
       {/* 11. Industry FAQ */}
       {entry.faqs && entry.faqs.length > 0 ? (
