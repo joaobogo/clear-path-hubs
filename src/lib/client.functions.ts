@@ -458,7 +458,7 @@ export const getClientCandidate = createServerFn({ method: "GET" })
         `id, stage, delivered_at, position_id, application_id,
          candidate_profiles(id, full_name, headline, location, timezone, availability, years_experience, summary, experience, skills, education, languages, work_authorization, linkedin_url, portfolio_url, certifications),
          positions(id, title, location, work_model, requirements, preferred_requirements),
-         score_runs:approved_score_run_id (score, fit_label, explanation, result, evidence, requirement_coverage)`,
+         score_runs:approved_score_run_id (score, fit_label, explanation, result, evidence, requirement_coverage, completed_at)`,
       )
       .eq("organization_id", data.orgId)
       .eq("id", data.matchId)
