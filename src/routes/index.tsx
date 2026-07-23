@@ -180,61 +180,112 @@ function Card({
   );
 }
 
-/* ---------- Workspace preview (product-safe mock) ---------- */
+/* ---------- Accurate workspace visual (no invented data) -----------------
+ * Uses the workspace's real language:
+ *  - Canonical client pipeline stages
+ *  - Real fit-band tokens (Strong / Good / Consider)
+ *  - Real KPI labels
+ * No candidate names, no invented scores, no claim of counts.
+ * Renders as a stylized panel — it is a diagram, not a screenshot.
+ */
+
+const PIPELINE_STAGES = [
+  { label: "Applied", tone: "var(--brand-navy)" },
+  { label: "Under review", tone: "var(--brand-ocean)" },
+  { label: "Shortlisted", tone: "var(--brand-ocean)" },
+  { label: "Interview", tone: "var(--brand-navy)" },
+  { label: "Offer", tone: "var(--brand-navy)" },
+] as const;
 
 function WorkspacePreview() {
   return (
-    <div className="rounded-2xl border border-[color:var(--brand-navy)]/12 bg-white p-4 shadow-[var(--brand-shadow-lg)]">
+    <div
+      role="img"
+      aria-label="Diagram of the TaaSFlow hiring workspace showing the pipeline stages, fit bands, and live activity."
+      className="rounded-2xl border border-[color:var(--brand-navy)]/12 bg-white p-4 shadow-[var(--brand-shadow-lg)]"
+    >
       {/* window chrome */}
       <div className="flex items-center gap-2 border-b border-[color:var(--brand-navy)]/8 pb-3">
-        <div className="flex gap-1.5">
+        <div className="flex gap-1.5" aria-hidden>
           <span className="h-2.5 w-2.5 rounded-full bg-[#ff5f57]" />
           <span className="h-2.5 w-2.5 rounded-full bg-[#febc2e]" />
           <span className="h-2.5 w-2.5 rounded-full bg-[#28c840]" />
         </div>
         <span className="text-xs font-medium text-[color:var(--brand-navy)]/60">
-          workspace · Senior Product Designer
+          workspace · hiring pipeline
         </span>
       </div>
-      {/* candidate list */}
-      <div className="mt-4 space-y-2.5">
-        {[
-          { n: "Alex R.", s: 94, tag: "Top match", tone: "success" },
-          { n: "Priya S.", s: 88, tag: "Strong", tone: "success" },
-          { n: "Marco V.", s: 82, tag: "Consider", tone: "info" },
-          { n: "Yuki T.", s: 76, tag: "Shortlist", tone: "warning" },
-        ].map((c) => (
-          <div
-            key={c.n}
-            className="flex items-center gap-3 rounded-xl border border-[color:var(--brand-navy)]/8 bg-[color:var(--brand-paper)]/60 p-3"
-          >
-            <div className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-[color:var(--brand-ocean)]/12 text-sm font-semibold text-[color:var(--brand-ocean)]">
-              {c.n[0]}
-            </div>
-            <div className="min-w-0 flex-1">
-              <div className="truncate text-sm font-medium text-[color:var(--brand-navy)]">
-                {c.n}
+
+      {/* Pipeline stages — canonical labels, abstract markers */}
+      <div className="mt-4">
+        <div className="flex items-center justify-between text-[11px] font-medium uppercase tracking-wide text-[color:var(--brand-navy)]/50">
+          <span>Pipeline</span>
+          <span className="inline-flex items-center gap-1 text-[color:var(--brand-ocean)]">
+            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[color:var(--brand-ocean)]" aria-hidden />
+            Live
+          </span>
+        </div>
+        <div className="mt-2 grid grid-cols-5 gap-1.5">
+          {PIPELINE_STAGES.map((stage, i) => (
+            <div key={stage.label} className="min-w-0">
+              <div
+                className="h-1.5 w-full rounded-full"
+                style={{
+                  background: `color-mix(in oklab, ${stage.tone} ${90 - i * 15}%, transparent)`,
+                }}
+                aria-hidden
+              />
+              <div className="mt-1.5 truncate text-[10px] font-medium text-[color:var(--brand-navy)]/70">
+                {stage.label}
               </div>
-              <div className="text-xs text-[color:var(--brand-navy)]/60">{c.tag}</div>
             </div>
-            <div className="shrink-0 rounded-md bg-[color:var(--brand-ocean)]/10 px-2 py-1 text-xs font-semibold tabular-nums text-[color:var(--brand-ocean)]">
-              {c.s}
-            </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
-      {/* footer stats */}
-      <div className="mt-4 grid grid-cols-3 gap-2 border-t border-[color:var(--brand-navy)]/8 pt-3 text-center">
-        {[
-          ["12", "Ranked"],
-          ["4", "Shortlisted"],
-          ["1", "Offer"],
-        ].map(([k, v]) => (
-          <div key={v}>
-            <div className="text-base font-semibold tabular-nums text-[color:var(--brand-navy)]">
-              {k}
+
+      {/* Fit-band legend — real workspace bands, no fake scores */}
+      <div className="mt-5">
+        <div className="text-[11px] font-medium uppercase tracking-wide text-[color:var(--brand-navy)]/50">
+          Ranked by fit to your requirements
+        </div>
+        <div className="mt-2 space-y-1.5">
+          {[
+            { label: "Strong match", width: "92%", tone: "var(--brand-ocean)" },
+            { label: "Good match", width: "78%", tone: "var(--brand-ocean)" },
+            { label: "Consider", width: "58%", tone: "var(--brand-navy)" },
+          ].map((band) => (
+            <div key={band.label} className="flex items-center gap-3">
+              <span className="w-24 shrink-0 text-xs text-[color:var(--brand-navy)]/75">
+                {band.label}
+              </span>
+              <div className="h-2 flex-1 overflow-hidden rounded-full bg-[color:var(--brand-navy)]/8">
+                <div
+                  className="h-full rounded-full"
+                  style={{
+                    width: band.width,
+                    background: `color-mix(in oklab, ${band.tone} 70%, transparent)`,
+                  }}
+                  aria-hidden
+                />
+              </div>
             </div>
-            <div className="text-xs text-[color:var(--brand-navy)]/60">{v}</div>
+          ))}
+        </div>
+      </div>
+
+      {/* Decisions strip — real workspace actions */}
+      <div className="mt-5 grid grid-cols-3 gap-2 border-t border-[color:var(--brand-navy)]/8 pt-3 text-center">
+        {[
+          ["Ranked", <BarChart3 key="i" className="h-3.5 w-3.5" aria-hidden />],
+          ["Evidence", <Eye key="i" className="h-3.5 w-3.5" aria-hidden />],
+          ["Decide", <CheckCircle2 key="i" className="h-3.5 w-3.5" aria-hidden />],
+        ].map(([label, icon]) => (
+          <div
+            key={label as string}
+            className="flex items-center justify-center gap-1.5 rounded-md bg-[color:var(--brand-paper)]/60 py-1.5 text-[11px] font-medium text-[color:var(--brand-navy)]/80"
+          >
+            {icon}
+            {label}
           </div>
         ))}
       </div>
@@ -248,20 +299,29 @@ function Home() {
   return (
     <SiteShell>
       {/* 1 — HERO */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-[color:var(--brand-sky)]/30 via-[color:var(--brand-paper)] to-[color:var(--brand-paper)]">
+      <section
+        aria-labelledby="home-hero-heading"
+        className="relative overflow-hidden bg-gradient-to-b from-[color:var(--brand-sky)]/30 via-[color:var(--brand-paper)] to-[color:var(--brand-paper)]"
+      >
         <PublicPage>
           <div className="grid grid-cols-1 gap-12 py-16 sm:py-20 lg:grid-cols-[1.05fr_1fr] lg:py-24">
             <div className="flex min-w-0 flex-col justify-center gap-6">
-              <Eyebrow>Talent as a Service</Eyebrow>
-              <h1 className="font-[family-name:var(--brand-font-display)] text-4xl font-semibold leading-tight tracking-tight text-[color:var(--brand-navy)] sm:text-5xl lg:text-[3.5rem]">
-                A live recruiting workspace.
+              <span className="inline-flex w-fit items-center gap-2 rounded-full border border-[color:var(--brand-navy)]/12 bg-white/70 px-3 py-1 text-xs font-semibold text-[color:var(--brand-navy)]/75 backdrop-blur">
+                <span className="h-1.5 w-1.5 rounded-full bg-[color:var(--brand-ocean)]" aria-hidden />
+                A modern alternative to traditional recruiting agencies
+              </span>
+              <h1
+                id="home-hero-heading"
+                className="font-[family-name:var(--brand-font-display)] text-4xl font-semibold leading-tight tracking-tight text-[color:var(--brand-navy)] sm:text-5xl lg:text-[3.5rem]"
+              >
+                Ranked candidates.
                 <br className="hidden sm:block" />{" "}
-                Ranked candidates. No black box.
+                Live hiring workspace.
               </h1>
               <p className="max-w-xl text-lg text-[color:var(--brand-navy)]/75">
-                Positions, ranked candidates, evidence, and every hiring decision
-                in one workspace your team, your recruiter, and every candidate
-                can see.
+                See every candidate ranked to your requirements, follow progress
+                as it happens, and make faster decisions — your team, your
+                recruiter, and every candidate looking at the same live workspace.
               </p>
               <div className="flex flex-wrap items-center gap-3 pt-1">
                 <Link
@@ -270,16 +330,31 @@ function Home() {
                 >
                   Start hiring <ArrowRight className="h-4 w-4" aria-hidden />
                 </Link>
-                <a
-                  href="#workspace"
+                <Link
+                  to="/how-it-works"
                   className="inline-flex min-h-11 items-center justify-center rounded-md border border-[color:var(--brand-navy)]/15 bg-white px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
                 >
                   Explore the workspace
-                </a>
+                </Link>
               </div>
-              <p className="text-xs text-[color:var(--brand-navy)]/60">
-                Ranked delivery · Evidence per requirement · One live workspace
-              </p>
+              <ul className="flex flex-wrap gap-x-5 gap-y-1.5 text-xs text-[color:var(--brand-navy)]/60">
+                <li className="inline-flex items-center gap-1.5">
+                  <CheckCircle2 className="h-3.5 w-3.5 text-[color:var(--brand-ocean)]" aria-hidden />
+                  Ranked delivery
+                </li>
+                <li className="inline-flex items-center gap-1.5">
+                  <CheckCircle2 className="h-3.5 w-3.5 text-[color:var(--brand-ocean)]" aria-hidden />
+                  Evidence per requirement
+                </li>
+                <li className="inline-flex items-center gap-1.5">
+                  <CheckCircle2 className="h-3.5 w-3.5 text-[color:var(--brand-ocean)]" aria-hidden />
+                  Transparent progress
+                </li>
+                <li className="inline-flex items-center gap-1.5">
+                  <CheckCircle2 className="h-3.5 w-3.5 text-[color:var(--brand-ocean)]" aria-hidden />
+                  Subscription pricing
+                </li>
+              </ul>
             </div>
             <div className="min-w-0">
               <WorkspacePreview />
@@ -287,6 +362,7 @@ function Home() {
           </div>
         </PublicPage>
       </section>
+
 
       {/* 2 — DASHBOARD-FIRST VALUE */}
       <PublicSection as="section" className="scroll-mt-16" >
