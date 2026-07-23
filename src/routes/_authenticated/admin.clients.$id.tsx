@@ -11,6 +11,7 @@ import {
   getClientCandidatesForOrg,
   getClientDocuments,
   updateClientNotes,
+  restoreOrganization,
 } from "@/lib/admin.functions";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
