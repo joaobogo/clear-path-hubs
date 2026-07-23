@@ -358,21 +358,59 @@ function Overview() {
           desc="Client briefs submitted in the last 7 days."
           icon={Inbox}
           count={data.new_intakes}
-          moreTo="/admin/positions"
-          moreSearch={{ status: "submitted" }}
+          moreTo="/admin/intake"
           emptyLabel="No new intakes this week."
           items={L.new_intakes}
-          render={(p: Row) => (
+          render={(it: Row) => (
             <RecordLink
-              key={p.id}
-              to="/admin/positions/$id"
-              params={{ id: p.id }}
-              title={p.title}
-              subtitle={p.organizations?.name ?? "—"}
-              time={p.created_at}
+              key={it.id}
+              to="/admin/intake/$id"
+              params={{ id: it.id }}
+              title={it.company_name}
+              subtitle={it.role_title}
+              time={it.created_at}
+              badge={
+                it.requisition_pending ? (
+                  <Badge variant="destructive">needs conversion</Badge>
+                ) : (
+                  <Badge variant="secondary" className="capitalize">
+                    {String(it.workspace_status ?? it.status).replace(/_/g, " ")}
+                  </Badge>
+                )
+              }
             />
           )}
         />
+
+        <Section
+          title="Urgent interview activity"
+          desc="Requested or scheduled within the next 48h."
+          icon={CalendarClock}
+          count={data.urgent_interviews ?? 0}
+          moreTo="/admin/candidates"
+          moreSearch={{ has_interview: "true" }}
+          emptyLabel="No urgent interviews."
+          items={L.urgent_interviews ?? []}
+          render={(iv: Row) => (
+            <RecordLink
+              key={iv.id}
+              to="/admin/candidates/$id"
+              params={{ id: iv.candidate_match_id }}
+              title={iv.candidate_matches?.candidate_profiles?.full_name ?? "Candidate"}
+              subtitle={`${iv.candidate_matches?.positions?.title ?? "—"} · ${iv.candidate_matches?.positions?.organizations?.name ?? "—"}`}
+              time={iv.scheduled_at ?? iv.requested_at}
+              badge={
+                <Badge
+                  variant={iv.status === "requested" ? "outline" : "destructive"}
+                  className="capitalize"
+                >
+                  {iv.status}
+                </Badge>
+              }
+            />
+          )}
+        />
+
 
         <Section
           title="New applications (24h)"
