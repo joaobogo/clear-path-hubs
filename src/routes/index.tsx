@@ -453,7 +453,156 @@ function HeroWorkspacePreview() {
   );
 }
 
+function ClientCandidateDelivery() {
+  const coverage = [
+    { label: "Design systems ownership", pct: 96, verdict: "Strong" },
+    { label: "B2B SaaS product experience", pct: 92, verdict: "Strong" },
+    { label: "Team leadership (4+ designers)", pct: 88, verdict: "Strong" },
+    { label: "Design ops tooling", pct: 62, verdict: "Validate" },
+  ];
+  const strengths = [
+    "Led design-system rollout across three product lines, reducing component debt materially.",
+    "Six years shipping B2B SaaS products used by revenue and operations teams.",
+    "Managed a design team through two hiring cycles and one org restructure.",
+  ];
+  const validations = [
+    "Confirm scope of hands-on design-ops tooling ownership versus partnership with engineering.",
+    "Clarify recent experience with usage-based product analytics for prioritization.",
+  ];
+
+  return (
+    <div
+      role="img"
+      aria-label="A preview of the client candidate detail view showing candidate identity, professional headline, fit recommendation, requirement coverage, strengths, validation areas, personalized interview questions, and client decision controls."
+      className="rounded-2xl border border-[color:var(--brand-navy)]/12 bg-white p-5 shadow-[var(--brand-shadow-lg)] sm:p-6"
+    >
+      {/* Header: identity + fit recommendation */}
+      <div className="flex flex-wrap items-start justify-between gap-4 border-b border-[color:var(--brand-navy)]/8 pb-4">
+        <div className="min-w-0">
+          <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/55">
+            <span className="inline-flex h-1.5 w-1.5 rounded-full bg-[color:var(--brand-ocean)]" aria-hidden />
+            Candidate #A-1042
+          </div>
+          <div className="mt-1 text-lg font-semibold text-[color:var(--brand-navy)]">Alex R.</div>
+          <div className="truncate text-sm text-[color:var(--brand-navy)]/70">
+            Senior Product Designer · 8 years · B2B SaaS
+          </div>
+          <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-[color:var(--brand-navy)]/60">
+            <span className="inline-flex items-center gap-1">
+              <MapPin className="h-3.5 w-3.5" aria-hidden /> Lisbon, PT · Remote-friendly
+            </span>
+            <span className="inline-flex items-center gap-1">
+              <CalendarClock className="h-3.5 w-3.5" aria-hidden /> Available in 4 weeks
+            </span>
+            <span className="inline-flex items-center gap-1">
+              <FileText className="h-3.5 w-3.5" aria-hidden /> CV attached
+            </span>
+          </div>
+        </div>
+        <div className="flex shrink-0 flex-col items-end gap-1.5">
+          <div className="rounded-md bg-[color:var(--brand-ocean)]/12 px-3 py-1 text-lg font-semibold tabular-nums text-[color:var(--brand-ocean)]">
+            94
+          </div>
+          <span className="inline-flex items-center gap-1 rounded-full bg-[color:var(--brand-ocean)]/10 px-2 py-0.5 text-[11px] font-semibold text-[color:var(--brand-ocean)]">
+            <Sparkles className="h-3 w-3" aria-hidden /> Recommended: shortlist
+          </span>
+          <span className="inline-flex items-center gap-1 rounded-full border border-[color:var(--brand-navy)]/12 bg-white px-2 py-0.5 text-[11px] font-medium text-[color:var(--brand-navy)]/70">
+            Stage · Under review
+          </span>
+        </div>
+      </div>
+
+      {/* Requirement coverage */}
+      <div className="mt-4">
+        <div className="text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/55">
+          Requirement coverage
+        </div>
+        <div className="mt-2 space-y-2">
+          {coverage.map((c) => (
+            <div key={c.label} className="flex items-center gap-3 text-xs">
+              <span className="w-40 shrink-0 truncate text-[color:var(--brand-navy)]/75 sm:w-52">
+                {c.label}
+              </span>
+              <div className="h-1.5 min-w-0 flex-1 overflow-hidden rounded-full bg-[color:var(--brand-navy)]/8">
+                <div
+                  className={`h-full rounded-full ${c.pct >= 80 ? "bg-[color:var(--brand-ocean)]" : "bg-[color:var(--brand-navy)]/35"}`}
+                  style={{ width: `${c.pct}%` }}
+                  aria-hidden
+                />
+              </div>
+              <span
+                className={`w-16 shrink-0 text-right text-[10px] font-semibold uppercase tracking-wide ${c.pct >= 80 ? "text-[color:var(--brand-ocean)]" : "text-[color:var(--brand-navy)]/55"}`}
+              >
+                {c.verdict}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Strengths + Validation areas */}
+      <div className="mt-4 grid gap-3 sm:grid-cols-2">
+        <div className="rounded-xl border border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-paper)] p-3.5">
+          <div className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/60">
+            <CheckCircle2 className="h-3.5 w-3.5 text-[color:var(--brand-ocean)]" aria-hidden />
+            Strengths
+          </div>
+          <ul className="mt-2 space-y-1.5 text-xs text-[color:var(--brand-navy)]/80">
+            {strengths.map((s) => (
+              <li key={s} className="flex gap-1.5">
+                <span className="mt-1 inline-block h-1 w-1 shrink-0 rounded-full bg-[color:var(--brand-ocean)]" aria-hidden />
+                <span>{s}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div className="rounded-xl border border-[color:var(--brand-navy)]/10 bg-white p-3.5">
+          <div className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/60">
+            <Target className="h-3.5 w-3.5 text-[color:var(--brand-navy)]/60" aria-hidden />
+            Validate in interview
+          </div>
+          <ul className="mt-2 space-y-1.5 text-xs text-[color:var(--brand-navy)]/80">
+            {validations.map((v) => (
+              <li key={v} className="flex gap-1.5">
+                <span className="mt-1 inline-block h-1 w-1 shrink-0 rounded-full bg-[color:var(--brand-navy)]/40" aria-hidden />
+                <span>{v}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+
+      {/* Personalized interview question */}
+      <div className="mt-4 rounded-xl border border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-sky)]/25 p-3.5">
+        <div className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/65">
+          <MessageCircle className="h-3.5 w-3.5" aria-hidden />
+          Suggested interview question
+        </div>
+        <p className="mt-1.5 text-sm italic text-[color:var(--brand-navy)]/85">
+          "Walk us through the design-system rollout you led — how you handled adoption across
+          teams that hadn't asked for it."
+        </p>
+      </div>
+
+      {/* Client decision controls */}
+      <div className="mt-4 grid grid-cols-3 gap-2 border-t border-[color:var(--brand-navy)]/8 pt-4">
+        <div className="rounded-md bg-[color:var(--brand-navy)] px-3 py-2 text-center text-sm font-semibold text-white">
+          Shortlist
+        </div>
+        <div className="rounded-md border border-[color:var(--brand-navy)]/15 bg-white px-3 py-2 text-center text-sm font-semibold text-[color:var(--brand-navy)]">
+          Interview
+        </div>
+        <div className="rounded-md border border-[color:var(--brand-navy)]/15 bg-white px-3 py-2 text-center text-sm font-semibold text-[color:var(--brand-navy)]/70">
+          Pass
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* ---------- Component ---------- */
+
+
 
 function Home() {
   return (
