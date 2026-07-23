@@ -79,6 +79,7 @@ import { Route as AuthenticatedAdminPositionsRouteImport } from './routes/_authe
 import { Route as AuthenticatedAdminOperationsRouteImport } from './routes/_authenticated/admin.operations'
 import { Route as AuthenticatedAdminNotificationsRouteImport } from './routes/_authenticated/admin.notifications'
 import { Route as AuthenticatedAdminMessagesRouteImport } from './routes/_authenticated/admin.messages'
+import { Route as AuthenticatedAdminIntakeRouteImport } from './routes/_authenticated/admin.intake'
 import { Route as AuthenticatedAdminHealthRouteImport } from './routes/_authenticated/admin.health'
 import { Route as AuthenticatedAdminClients_newRouteImport } from './routes/_authenticated/admin.clients_new'
 import { Route as AuthenticatedAdminClientsRouteImport } from './routes/_authenticated/admin.clients'
@@ -87,6 +88,7 @@ import { Route as AuthenticatedMeApplicationsIndexRouteImport } from './routes/_
 import { Route as AuthenticatedClientPositionsIndexRouteImport } from './routes/_authenticated/client.positions.index'
 import { Route as AuthenticatedClientCandidatesIndexRouteImport } from './routes/_authenticated/client.candidates.index'
 import { Route as AuthenticatedAdminPositionsIndexRouteImport } from './routes/_authenticated/admin.positions.index'
+import { Route as AuthenticatedAdminIntakeIndexRouteImport } from './routes/_authenticated/admin.intake.index'
 import { Route as AuthenticatedAdminClientsIndexRouteImport } from './routes/_authenticated/admin.clients.index'
 import { Route as AuthenticatedAdminCandidatesIndexRouteImport } from './routes/_authenticated/admin.candidates.index'
 import { Route as ApiPublicPipelineRunRouteImport } from './routes/api/public/pipeline.run'
@@ -95,6 +97,7 @@ import { Route as AuthenticatedMeApplicationsIdRouteImport } from './routes/_aut
 import { Route as AuthenticatedClientPositionsIdRouteImport } from './routes/_authenticated/client.positions.$id'
 import { Route as AuthenticatedClientCandidatesIdRouteImport } from './routes/_authenticated/client.candidates.$id'
 import { Route as AuthenticatedAdminPositionsIdRouteImport } from './routes/_authenticated/admin.positions.$id'
+import { Route as AuthenticatedAdminIntakeIdRouteImport } from './routes/_authenticated/admin.intake.$id'
 import { Route as AuthenticatedAdminClientsIdRouteImport } from './routes/_authenticated/admin.clients.$id'
 import { Route as AuthenticatedAdminCandidatesIdRouteImport } from './routes/_authenticated/admin.candidates.$id'
 
@@ -461,6 +464,12 @@ const AuthenticatedAdminMessagesRoute =
     path: '/messages',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminIntakeRoute =
+  AuthenticatedAdminIntakeRouteImport.update({
+    id: '/intake',
+    path: '/intake',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminHealthRoute =
   AuthenticatedAdminHealthRouteImport.update({
     id: '/health',
@@ -509,6 +518,12 @@ const AuthenticatedAdminPositionsIndexRoute =
     path: '/',
     getParentRoute: () => AuthenticatedAdminPositionsRoute,
   } as any)
+const AuthenticatedAdminIntakeIndexRoute =
+  AuthenticatedAdminIntakeIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedAdminIntakeRoute,
+  } as any)
 const AuthenticatedAdminClientsIndexRoute =
   AuthenticatedAdminClientsIndexRouteImport.update({
     id: '/',
@@ -554,6 +569,12 @@ const AuthenticatedAdminPositionsIdRoute =
     id: '/$id',
     path: '/$id',
     getParentRoute: () => AuthenticatedAdminPositionsRoute,
+  } as any)
+const AuthenticatedAdminIntakeIdRoute =
+  AuthenticatedAdminIntakeIdRouteImport.update({
+    id: '/$id',
+    path: '/$id',
+    getParentRoute: () => AuthenticatedAdminIntakeRoute,
   } as any)
 const AuthenticatedAdminClientsIdRoute =
   AuthenticatedAdminClientsIdRouteImport.update({
@@ -613,6 +634,7 @@ export interface FileRoutesByFullPath {
   '/admin/clients': typeof AuthenticatedAdminClientsRouteWithChildren
   '/admin/clients_new': typeof AuthenticatedAdminClients_newRoute
   '/admin/health': typeof AuthenticatedAdminHealthRoute
+  '/admin/intake': typeof AuthenticatedAdminIntakeRouteWithChildren
   '/admin/messages': typeof AuthenticatedAdminMessagesRoute
   '/admin/notifications': typeof AuthenticatedAdminNotificationsRoute
   '/admin/operations': typeof AuthenticatedAdminOperationsRoute
@@ -644,6 +666,7 @@ export interface FileRoutesByFullPath {
   '/jobs/$id/': typeof JobsIdIndexRoute
   '/admin/candidates/$id': typeof AuthenticatedAdminCandidatesIdRoute
   '/admin/clients/$id': typeof AuthenticatedAdminClientsIdRoute
+  '/admin/intake/$id': typeof AuthenticatedAdminIntakeIdRoute
   '/admin/positions/$id': typeof AuthenticatedAdminPositionsIdRoute
   '/client/candidates/$id': typeof AuthenticatedClientCandidatesIdRoute
   '/client/positions/$id': typeof AuthenticatedClientPositionsIdRoute
@@ -652,6 +675,7 @@ export interface FileRoutesByFullPath {
   '/api/public/pipeline/run': typeof ApiPublicPipelineRunRoute
   '/admin/candidates/': typeof AuthenticatedAdminCandidatesIndexRoute
   '/admin/clients/': typeof AuthenticatedAdminClientsIndexRoute
+  '/admin/intake/': typeof AuthenticatedAdminIntakeIndexRoute
   '/admin/positions/': typeof AuthenticatedAdminPositionsIndexRoute
   '/client/candidates/': typeof AuthenticatedClientCandidatesIndexRoute
   '/client/positions/': typeof AuthenticatedClientPositionsIndexRoute
@@ -724,6 +748,7 @@ export interface FileRoutesByTo {
   '/jobs/$id': typeof JobsIdIndexRoute
   '/admin/candidates/$id': typeof AuthenticatedAdminCandidatesIdRoute
   '/admin/clients/$id': typeof AuthenticatedAdminClientsIdRoute
+  '/admin/intake/$id': typeof AuthenticatedAdminIntakeIdRoute
   '/admin/positions/$id': typeof AuthenticatedAdminPositionsIdRoute
   '/client/candidates/$id': typeof AuthenticatedClientCandidatesIdRoute
   '/client/positions/$id': typeof AuthenticatedClientPositionsIdRoute
@@ -732,6 +757,7 @@ export interface FileRoutesByTo {
   '/api/public/pipeline/run': typeof ApiPublicPipelineRunRoute
   '/admin/candidates': typeof AuthenticatedAdminCandidatesIndexRoute
   '/admin/clients': typeof AuthenticatedAdminClientsIndexRoute
+  '/admin/intake': typeof AuthenticatedAdminIntakeIndexRoute
   '/admin/positions': typeof AuthenticatedAdminPositionsIndexRoute
   '/client/candidates': typeof AuthenticatedClientCandidatesIndexRoute
   '/client/positions': typeof AuthenticatedClientPositionsIndexRoute
@@ -784,6 +810,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/clients': typeof AuthenticatedAdminClientsRouteWithChildren
   '/_authenticated/admin/clients_new': typeof AuthenticatedAdminClients_newRoute
   '/_authenticated/admin/health': typeof AuthenticatedAdminHealthRoute
+  '/_authenticated/admin/intake': typeof AuthenticatedAdminIntakeRouteWithChildren
   '/_authenticated/admin/messages': typeof AuthenticatedAdminMessagesRoute
   '/_authenticated/admin/notifications': typeof AuthenticatedAdminNotificationsRoute
   '/_authenticated/admin/operations': typeof AuthenticatedAdminOperationsRoute
@@ -815,6 +842,7 @@ export interface FileRoutesById {
   '/jobs/$id/': typeof JobsIdIndexRoute
   '/_authenticated/admin/candidates/$id': typeof AuthenticatedAdminCandidatesIdRoute
   '/_authenticated/admin/clients/$id': typeof AuthenticatedAdminClientsIdRoute
+  '/_authenticated/admin/intake/$id': typeof AuthenticatedAdminIntakeIdRoute
   '/_authenticated/admin/positions/$id': typeof AuthenticatedAdminPositionsIdRoute
   '/_authenticated/client/candidates/$id': typeof AuthenticatedClientCandidatesIdRoute
   '/_authenticated/client/positions/$id': typeof AuthenticatedClientPositionsIdRoute
@@ -823,6 +851,7 @@ export interface FileRoutesById {
   '/api/public/pipeline/run': typeof ApiPublicPipelineRunRoute
   '/_authenticated/admin/candidates/': typeof AuthenticatedAdminCandidatesIndexRoute
   '/_authenticated/admin/clients/': typeof AuthenticatedAdminClientsIndexRoute
+  '/_authenticated/admin/intake/': typeof AuthenticatedAdminIntakeIndexRoute
   '/_authenticated/admin/positions/': typeof AuthenticatedAdminPositionsIndexRoute
   '/_authenticated/client/candidates/': typeof AuthenticatedClientCandidatesIndexRoute
   '/_authenticated/client/positions/': typeof AuthenticatedClientPositionsIndexRoute
@@ -875,6 +904,7 @@ export interface FileRouteTypes {
     | '/admin/clients'
     | '/admin/clients_new'
     | '/admin/health'
+    | '/admin/intake'
     | '/admin/messages'
     | '/admin/notifications'
     | '/admin/operations'
@@ -906,6 +936,7 @@ export interface FileRouteTypes {
     | '/jobs/$id/'
     | '/admin/candidates/$id'
     | '/admin/clients/$id'
+    | '/admin/intake/$id'
     | '/admin/positions/$id'
     | '/client/candidates/$id'
     | '/client/positions/$id'
@@ -914,6 +945,7 @@ export interface FileRouteTypes {
     | '/api/public/pipeline/run'
     | '/admin/candidates/'
     | '/admin/clients/'
+    | '/admin/intake/'
     | '/admin/positions/'
     | '/client/candidates/'
     | '/client/positions/'
@@ -986,6 +1018,7 @@ export interface FileRouteTypes {
     | '/jobs/$id'
     | '/admin/candidates/$id'
     | '/admin/clients/$id'
+    | '/admin/intake/$id'
     | '/admin/positions/$id'
     | '/client/candidates/$id'
     | '/client/positions/$id'
@@ -994,6 +1027,7 @@ export interface FileRouteTypes {
     | '/api/public/pipeline/run'
     | '/admin/candidates'
     | '/admin/clients'
+    | '/admin/intake'
     | '/admin/positions'
     | '/client/candidates'
     | '/client/positions'
@@ -1045,6 +1079,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/clients'
     | '/_authenticated/admin/clients_new'
     | '/_authenticated/admin/health'
+    | '/_authenticated/admin/intake'
     | '/_authenticated/admin/messages'
     | '/_authenticated/admin/notifications'
     | '/_authenticated/admin/operations'
@@ -1076,6 +1111,7 @@ export interface FileRouteTypes {
     | '/jobs/$id/'
     | '/_authenticated/admin/candidates/$id'
     | '/_authenticated/admin/clients/$id'
+    | '/_authenticated/admin/intake/$id'
     | '/_authenticated/admin/positions/$id'
     | '/_authenticated/client/candidates/$id'
     | '/_authenticated/client/positions/$id'
@@ -1084,6 +1120,7 @@ export interface FileRouteTypes {
     | '/api/public/pipeline/run'
     | '/_authenticated/admin/candidates/'
     | '/_authenticated/admin/clients/'
+    | '/_authenticated/admin/intake/'
     | '/_authenticated/admin/positions/'
     | '/_authenticated/client/candidates/'
     | '/_authenticated/client/positions/'
@@ -1633,6 +1670,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminMessagesRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/intake': {
+      id: '/_authenticated/admin/intake'
+      path: '/intake'
+      fullPath: '/admin/intake'
+      preLoaderRoute: typeof AuthenticatedAdminIntakeRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/health': {
       id: '/_authenticated/admin/health'
       path: '/health'
@@ -1688,6 +1732,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/positions/'
       preLoaderRoute: typeof AuthenticatedAdminPositionsIndexRouteImport
       parentRoute: typeof AuthenticatedAdminPositionsRoute
+    }
+    '/_authenticated/admin/intake/': {
+      id: '/_authenticated/admin/intake/'
+      path: '/'
+      fullPath: '/admin/intake/'
+      preLoaderRoute: typeof AuthenticatedAdminIntakeIndexRouteImport
+      parentRoute: typeof AuthenticatedAdminIntakeRoute
     }
     '/_authenticated/admin/clients/': {
       id: '/_authenticated/admin/clients/'
@@ -1745,6 +1796,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminPositionsIdRouteImport
       parentRoute: typeof AuthenticatedAdminPositionsRoute
     }
+    '/_authenticated/admin/intake/$id': {
+      id: '/_authenticated/admin/intake/$id'
+      path: '/$id'
+      fullPath: '/admin/intake/$id'
+      preLoaderRoute: typeof AuthenticatedAdminIntakeIdRouteImport
+      parentRoute: typeof AuthenticatedAdminIntakeRoute
+    }
     '/_authenticated/admin/clients/$id': {
       id: '/_authenticated/admin/clients/$id'
       path: '/$id'
@@ -1795,6 +1853,22 @@ const AuthenticatedAdminClientsRouteWithChildren =
     AuthenticatedAdminClientsRouteChildren,
   )
 
+interface AuthenticatedAdminIntakeRouteChildren {
+  AuthenticatedAdminIntakeIdRoute: typeof AuthenticatedAdminIntakeIdRoute
+  AuthenticatedAdminIntakeIndexRoute: typeof AuthenticatedAdminIntakeIndexRoute
+}
+
+const AuthenticatedAdminIntakeRouteChildren: AuthenticatedAdminIntakeRouteChildren =
+  {
+    AuthenticatedAdminIntakeIdRoute: AuthenticatedAdminIntakeIdRoute,
+    AuthenticatedAdminIntakeIndexRoute: AuthenticatedAdminIntakeIndexRoute,
+  }
+
+const AuthenticatedAdminIntakeRouteWithChildren =
+  AuthenticatedAdminIntakeRoute._addFileChildren(
+    AuthenticatedAdminIntakeRouteChildren,
+  )
+
 interface AuthenticatedAdminPositionsRouteChildren {
   AuthenticatedAdminPositionsIdRoute: typeof AuthenticatedAdminPositionsIdRoute
   AuthenticatedAdminPositionsIndexRoute: typeof AuthenticatedAdminPositionsIndexRoute
@@ -1817,6 +1891,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminClientsRoute: typeof AuthenticatedAdminClientsRouteWithChildren
   AuthenticatedAdminClients_newRoute: typeof AuthenticatedAdminClients_newRoute
   AuthenticatedAdminHealthRoute: typeof AuthenticatedAdminHealthRoute
+  AuthenticatedAdminIntakeRoute: typeof AuthenticatedAdminIntakeRouteWithChildren
   AuthenticatedAdminMessagesRoute: typeof AuthenticatedAdminMessagesRoute
   AuthenticatedAdminNotificationsRoute: typeof AuthenticatedAdminNotificationsRoute
   AuthenticatedAdminOperationsRoute: typeof AuthenticatedAdminOperationsRoute
@@ -1833,6 +1908,7 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminClientsRoute: AuthenticatedAdminClientsRouteWithChildren,
   AuthenticatedAdminClients_newRoute: AuthenticatedAdminClients_newRoute,
   AuthenticatedAdminHealthRoute: AuthenticatedAdminHealthRoute,
+  AuthenticatedAdminIntakeRoute: AuthenticatedAdminIntakeRouteWithChildren,
   AuthenticatedAdminMessagesRoute: AuthenticatedAdminMessagesRoute,
   AuthenticatedAdminNotificationsRoute: AuthenticatedAdminNotificationsRoute,
   AuthenticatedAdminOperationsRoute: AuthenticatedAdminOperationsRoute,
