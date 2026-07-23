@@ -7,20 +7,36 @@ import {
 } from "@/components/marketing/site-shell";
 import { marketingHead } from "@/lib/marketing/head";
 
-// ─── FOUNDER — Edit this block to publish the named founder narrative ────
+// ─── LEADERSHIP — Edit this block to publish the named founder narrative ────
 // The rest of the About page reads from this constant. Update once, publish.
 // If any field is empty string, that block hides gracefully.
-const FOUNDER = {
-  name: "João Luciano",
-  title: "Founder & CEO, TaaSFlow",
-  location: "Lisbon · Remote",
-  photoUrl: "", // Add a photo URL to render the portrait; empty renders initials.
-  // Named founder voice replacing the generic "founding team" quote.
-  quote:
-    "I spent years buying agency shortlists I could not explain. TaaSFlow is the recruiting system I always wanted on the buying side — one workspace, one rubric, one evidence file per candidate.",
-  // One-paragraph "why TaaSFlow, why now".
-  why: "TaaSFlow started because the recruiting market is stuck between two bad options: an ATS that gives you tooling but no work done, or an agency that does the work but hides how. Both leave hiring teams guessing. We built a third model — a recruiting function delivered through a transparent product, priced like software, run by people who care whether the candidate was actually a good fit.",
-} as const;
+const LEADERS = [
+  {
+    name: "Christian Brogger",
+    title: "Co-founder & CEO",
+    location: "London · Global",
+    photoUrl: "https://taasflow.com/assets/christian-9Ad2XECQ.jpg",
+    linkedin: "https://www.linkedin.com/in/christian-brogger/",
+    quote:
+      "Great hiring starts with great process. We just made it repeatable.",
+    bio: "25 years designing and driving value creation across Fortune 500s and private equity. Former Director at UBS Investment Bank; led strategic programmes for Google, Barclays, HSBC, IBM and AstraZeneca. Pragmatic, disruption-minded, technology-as-enabler — with deep experience partnering directly with leadership teams to execute business strategy.",
+    tags: ["Process excellence", "Enterprise transformation", "Global delivery", "Operational strategy"],
+  },
+  {
+    name: "João Bogo",
+    title: "Co-founder & CMO",
+    location: "Lisbon · LATAM & EMEA",
+    photoUrl: "https://taasflow.com/assets/joao-BvCqv2_l.jpg",
+    linkedin: "https://www.linkedin.com/in/joaomarcoscsilva/",
+    quote:
+      "The best candidates aren't looking. You need to know where they are and how to reach them.",
+    bio: "Former strategist for Hilton, Marriott, Four Seasons, and Philips. Represented at G20 and B20 forums. Has built and scaled talent acquisition campaigns across the US, LATAM, Europe, and the Gulf — with a focus on employer branding, global talent markets, and building real connections at scale.",
+    tags: ["Global talent markets", "Employer branding", "Strategic partnerships", "Recruitment marketing"],
+  },
+] as const;
+
+const WHY_NOW =
+  "TaaSFlow started because the recruiting market is stuck between two bad options: an ATS that gives you tooling but no work done, or an agency that does the work but hides how. Both leave hiring teams guessing. We built a third model — a recruiting function delivered through a transparent product, priced like software, run by people who care whether the candidate was actually a good fit.";
 
 const PRINCIPLES = [
   {
@@ -67,12 +83,6 @@ export const Route = createFileRoute("/about")({
 });
 
 function AboutPage() {
-  const initials = FOUNDER.name
-    .split(" ")
-    .map((n) => n[0])
-    .slice(0, 2)
-    .join("");
-
   return (
     <SiteShell>
       {/* Purpose */}
@@ -94,54 +104,102 @@ function AboutPage() {
         </PublicPage>
       </PublicSection>
 
-      {/* Founder-led narrative */}
+      {/* Leadership */}
       <PublicSection className="border-t border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-mist)]/40 py-16">
-        <PublicPage className="grid gap-10 md:grid-cols-[1fr_1.2fr] md:items-start">
-          {/* Founder card */}
-          <figure className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6 sm:p-8">
-            <div className="flex items-center gap-4">
-              {FOUNDER.photoUrl ? (
-                <img
-                  src={FOUNDER.photoUrl}
-                  alt={FOUNDER.name}
-                  className="h-16 w-16 rounded-full object-cover"
-                />
-              ) : (
-                <div
-                  aria-hidden
-                  className="flex h-16 w-16 items-center justify-center rounded-full bg-[color:var(--brand-navy)] font-[family-name:var(--brand-font-display)] text-xl font-semibold text-white"
-                >
-                  {initials}
-                </div>
-              )}
-              <figcaption>
-                <p className="font-[family-name:var(--brand-font-display)] text-lg font-semibold text-[color:var(--brand-navy)]">
-                  {FOUNDER.name}
-                </p>
-                <p className="text-sm text-[color:var(--brand-navy)]/60">
-                  {FOUNDER.title}
-                </p>
-                {FOUNDER.location ? (
-                  <p className="mt-0.5 text-xs text-[color:var(--brand-navy)]/50">
-                    {FOUNDER.location}
-                  </p>
-                ) : null}
-              </figcaption>
-            </div>
-            <blockquote className="mt-6 border-l-2 border-[color:var(--brand-navy)]/20 pl-4 text-[color:var(--brand-navy)]">
-              <p className="text-base leading-relaxed sm:text-lg">
-                "{FOUNDER.quote}"
-              </p>
-            </blockquote>
-          </figure>
+        <PublicPage>
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">
+            Leadership
+          </p>
+          <h2 className="mt-3 max-w-2xl font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight sm:text-4xl">
+            Meet the founders
+          </h2>
+          <p className="mt-4 max-w-2xl text-[color:var(--brand-navy)]/70">
+            Careers built advising global enterprises. Now applying the same
+            rigor to the world of hiring.
+          </p>
 
-          <div>
-            <h2 className="font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight sm:text-4xl">
+          <div className="mt-10 grid gap-6 md:grid-cols-2">
+            {LEADERS.map((leader) => {
+              const initials = leader.name
+                .split(" ")
+                .map((n) => n[0])
+                .slice(0, 2)
+                .join("");
+              return (
+                <figure
+                  key={leader.name}
+                  className="flex flex-col rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6 sm:p-8"
+                >
+                  <div className="flex items-center gap-4">
+                    {leader.photoUrl ? (
+                      <img
+                        src={leader.photoUrl}
+                        alt={leader.name}
+                        loading="lazy"
+                        className="h-20 w-20 rounded-full object-cover"
+                      />
+                    ) : (
+                      <div
+                        aria-hidden
+                        className="flex h-20 w-20 items-center justify-center rounded-full bg-[color:var(--brand-navy)] font-[family-name:var(--brand-font-display)] text-2xl font-semibold text-white"
+                      >
+                        {initials}
+                      </div>
+                    )}
+                    <figcaption className="min-w-0">
+                      <p className="font-[family-name:var(--brand-font-display)] text-xl font-semibold text-[color:var(--brand-navy)]">
+                        {leader.name}
+                      </p>
+                      <p className="text-sm font-medium text-[color:var(--brand-navy)]/70">
+                        {leader.title}
+                      </p>
+                      {leader.location ? (
+                        <p className="mt-0.5 text-xs text-[color:var(--brand-navy)]/55">
+                          {leader.location}
+                        </p>
+                      ) : null}
+                    </figcaption>
+                  </div>
+
+                  <blockquote className="mt-5 border-l-2 border-[color:var(--brand-navy)]/20 pl-4 text-[color:var(--brand-navy)]">
+                    <p className="text-base leading-relaxed">"{leader.quote}"</p>
+                  </blockquote>
+
+                  <p className="mt-5 text-sm text-[color:var(--brand-navy)]/75">
+                    {leader.bio}
+                  </p>
+
+                  <ul className="mt-5 flex flex-wrap gap-1.5">
+                    {leader.tags.map((tag) => (
+                      <li
+                        key={tag}
+                        className="rounded-full border border-[color:var(--brand-navy)]/12 bg-[color:var(--brand-mist)]/60 px-2.5 py-1 text-xs font-medium text-[color:var(--brand-navy)]/75"
+                      >
+                        {tag}
+                      </li>
+                    ))}
+                  </ul>
+
+                  {leader.linkedin ? (
+                    <a
+                      href={leader.linkedin}
+                      target="_blank"
+                      rel="noreferrer noopener"
+                      className="mt-5 inline-flex w-fit items-center gap-1.5 text-sm font-semibold text-[color:var(--brand-navy)] underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+                    >
+                      Connect on LinkedIn →
+                    </a>
+                  ) : null}
+                </figure>
+              );
+            })}
+          </div>
+
+          <div className="mt-12 rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6 sm:p-8">
+            <h3 className="font-[family-name:var(--brand-font-display)] text-2xl font-semibold tracking-tight text-[color:var(--brand-navy)] sm:text-3xl">
               Why TaaSFlow, why now
-            </h2>
-            <p className="mt-4 text-[color:var(--brand-navy)]/75">
-              {FOUNDER.why}
-            </p>
+            </h3>
+            <p className="mt-4 text-[color:var(--brand-navy)]/75">{WHY_NOW}</p>
             <div className="mt-6 flex flex-wrap gap-3">
               <Link
                 to="/journey"
