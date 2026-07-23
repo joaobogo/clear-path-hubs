@@ -14,6 +14,7 @@ import {
   retryEnrichment,
   rescore,
   markManualReview,
+  backfillCandidateInsights,
 } from "@/lib/processing.functions";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
