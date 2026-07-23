@@ -18,7 +18,7 @@ export const EXPLORER_CATEGORIES: ExplorerCategory[] = [
   "Operations & Physical Industries",
 ];
 
-const CATEGORY_BY_SLUG: Record<string, ExplorerCategory> = {
+export const CATEGORY_BY_SLUG: Record<string, ExplorerCategory> = {
   // Technology & Digital
   tech: "Technology & Digital",
   saas: "Technology & Digital",
