@@ -112,7 +112,7 @@ function BlogIndex() {
           >
             All ({all.length})
           </button>
-          {BLOG_CATEGORIES.map((c) => {
+          {categoriesToShow.map((c) => {
             const n = all.filter((r) => r.category === c).length;
             if (!n) return null;
             const active = cat === c;
@@ -157,36 +157,51 @@ function BlogIndex() {
             {paged.map((p) => (
               <li
                 key={p.slug}
-                className="flex flex-col rounded-xl border border-border/60 bg-card p-6 transition hover:border-primary/40 hover:shadow-sm"
+                className="group flex flex-col overflow-hidden rounded-xl border border-border/60 bg-card transition hover:border-primary/40 hover:shadow-sm"
               >
-                <div className="mb-3 flex items-center gap-2 text-xs text-muted-foreground">
-                  <Link
-                    to="/blog/category/$slug"
-                    params={{ slug: BLOG_CATEGORY_SLUGS[p.category] || "general" }}
-                    className="rounded-full bg-primary/10 px-2 py-0.5 font-medium text-primary hover:bg-primary/15"
-                  >
-                    {p.category}
-                  </Link>
-                  <span>·</span>
-                  <span>{p.readMinutes} min read</span>
-                </div>
-                <h2 className="text-lg font-semibold leading-snug tracking-tight">
-                  <Link
-                    to="/blog/$slug"
-                    params={{ slug: p.slug }}
-                    className="hover:text-primary"
-                  >
-                    {p.title}
-                  </Link>
-                </h2>
-                <p className="mt-2 line-clamp-3 flex-1 text-sm text-muted-foreground">
-                  {p.description}
-                </p>
-                {p.publishedAt && (
-                  <p className="mt-4 text-xs text-muted-foreground">
-                    Published {new Date(p.publishedAt).toLocaleDateString()}
+                <Link to="/blog/$slug" params={{ slug: p.slug }} className="block">
+                  {p.heroImage ? (
+                    <div className="aspect-[16/9] overflow-hidden bg-muted/20">
+                      <img
+                        src={p.heroImage}
+                        alt=""
+                        loading="lazy"
+                        decoding="async"
+                        className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]"
+                      />
+                    </div>
+                  ) : null}
+                </Link>
+                <div className="flex flex-1 flex-col p-6">
+                  <div className="mb-3 flex items-center gap-2 text-xs text-muted-foreground">
+                    <Link
+                      to="/blog/category/$slug"
+                      params={{ slug: BLOG_CATEGORY_SLUGS[p.category] || "general" }}
+                      className="rounded-full bg-primary/10 px-2 py-0.5 font-medium text-primary hover:bg-primary/15"
+                    >
+                      {p.category}
+                    </Link>
+                    <span>·</span>
+                    <span>{p.readMinutes} min read</span>
+                  </div>
+                  <h2 className="text-lg font-semibold leading-snug tracking-tight">
+                    <Link
+                      to="/blog/$slug"
+                      params={{ slug: p.slug }}
+                      className="hover:text-primary"
+                    >
+                      {p.title}
+                    </Link>
+                  </h2>
+                  <p className="mt-2 line-clamp-3 flex-1 text-sm text-muted-foreground">
+                    {p.description}
                   </p>
-                )}
+                  {p.publishedAt && (
+                    <p className="mt-4 text-xs text-muted-foreground">
+                      Published {new Date(p.publishedAt).toLocaleDateString()}
+                    </p>
+                  )}
+                </div>
               </li>
             ))}
           </ul>
