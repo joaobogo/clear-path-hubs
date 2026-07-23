@@ -338,6 +338,70 @@ function JourneyPage() {
         </PublicPage>
       </PublicSection>
 
+      {/* Chapter 07 — Economics */}
+      <PublicSection>
+        <PublicPage>
+          <div className="grid gap-10 md:grid-cols-2 md:items-start">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean)]">
+                Chapter 07 — Economics
+              </p>
+              <h2 className="mt-2 font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight sm:text-4xl">
+                Priced like software, not like a placement.
+              </h2>
+              <p className="mt-4 max-w-xl text-[color:var(--brand-navy)]/75">
+                A flat subscription instead of contingent fees. Predictable
+                per-role economics your finance team can model, and no
+                incentive to push a hire that doesn't fit. When the search
+                is done, the pipeline stays with you — not the recruiter.
+              </p>
+              <div className="mt-6 flex flex-wrap gap-3">
+                <Link
+                  to="/pricing"
+                  className="inline-flex min-h-11 items-center justify-center rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-white hover:opacity-90"
+                >
+                  View pricing
+                </Link>
+              </div>
+            </div>
+            <ul className="space-y-3 rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6">
+              {[
+                "Flat monthly subscription — no placement fees, no percentage of salary",
+                "Cancel anytime — no long-term lock-in",
+                "The candidates and evidence you paid for stay in your workspace",
+                "Finance can forecast recruiting cost like any SaaS line item",
+              ].map((point) => (
+                <li key={point} className="flex gap-3 text-sm text-[color:var(--brand-navy)]/80">
+                  <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[color:var(--brand-ocean)]" />
+                  <span>{point}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </PublicPage>
+      </PublicSection>
+
+      {/* Chapter 08 — The future */}
+      <PublicSection className="border-t border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-mist)]/40">
+        <PublicPage>
+          <div className="max-w-3xl">
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean)]">
+              Chapter 08 — What the future looks like
+            </p>
+            <h2 className="mt-2 font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight sm:text-4xl">
+              Hiring stops being a black box.
+            </h2>
+            <p className="mt-4 text-[color:var(--brand-navy)]/75">
+              Every hire has a rubric behind it. Every rejection has a reason.
+              Every pipeline is owned by the company that paid for it. The
+              recruiter is still human — the reasoning is finally visible.
+              We think that's the version of hiring companies actually want.
+            </p>
+          </div>
+        </PublicPage>
+      </PublicSection>
+
+
       {/* Start with TaaSFlow */}
       <CtaSection
         eyebrow="Start with TaaSFlow"
