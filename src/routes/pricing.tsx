@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { marketingHead } from "@/lib/marketing/head";
 import { SiteShell, PublicPage, PublicSection, CtaSection } from "@/components/marketing/site-shell";
+import { RoiCalculator } from "@/components/marketing/roi-calculator";
 import {
   Check,
   X,
@@ -163,6 +164,16 @@ function PricingPage() {
             Published price points are being reviewed for the current plan year. Contact
             Sales for an exact quote scoped to your roles.
           </p>
+        </PublicPage>
+      </PublicSection>
+
+      {/* ── ROI Calculator (reusable, same component as homepage) ── */}
+      <PublicSection className="py-10">
+        <PublicPage>
+          <RoiCalculator
+            variant="pricing"
+            supportingCopy="Adjust the assumptions to compare traditional agency and internal sourcing costs with the TaaSFlow model. This is a directional estimate — the contractual price is confirmed on your scoped quote."
+          />
         </PublicPage>
       </PublicSection>
 
