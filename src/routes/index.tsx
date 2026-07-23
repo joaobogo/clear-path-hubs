@@ -644,7 +644,7 @@ function Home() {
                       {s.n}
                     </span>
                     <span className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-[color:var(--brand-ocean)]/10 text-[color:var(--brand-ocean)]">
-                      <s.icon className="h-4.5 w-4.5" aria-hidden />
+                      <s.icon className="h-4 w-4" aria-hidden />
                     </span>
                   </div>
                   <h3 className="mt-4 text-base font-semibold text-[color:var(--brand-navy)]">
