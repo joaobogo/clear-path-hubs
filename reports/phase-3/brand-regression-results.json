@@ -1,0 +1,90 @@
+{
+  "phase": 3,
+  "title": "Brand foundation extraction and design-token lock",
+  "verdict": "PASS",
+  "baseline": {
+    "source_repository": "https://github.com/joaobogo/sourcing-suite-ai.git",
+    "source_sha": "UNRESOLVED",
+    "destination_sha_starting": "799b8097eb52124f34fe3e229d5f0135db8226de",
+    "destination_sha_final": "PENDING_COMMIT",
+    "backend_project_ref": "nfwetiyrxsrejdodvale",
+    "preview_url": "https://id-preview--1dc5ee7e-1294-441c-8288-850e79e443f6.lovable.app",
+    "published_url": "https://clear-path-hubs.lovable.app"
+  },
+  "assets": {
+    "inspected": 6,
+    "migrated_exactly": 6,
+    "optimized": 0,
+    "duplicates_excluded": 0,
+    "temporary_urls_removed": 0,
+    "unresolved": 2
+  },
+  "tokens": {
+    "color_tokens":      19,
+    "typography_tokens": 13,
+    "spacing_tokens":    12,
+    "radius_tokens":      7,
+    "shadow_tokens":      6,
+    "layout_tokens":     10,
+    "semantic_status":   11
+  },
+  "implementation": {
+    "canonical_brand_files_present": [
+      "src/config/brand.ts",
+      "src/styles/brand-tokens.css",
+      "src/styles.css",
+      "src/components/brand/BrandLogo.tsx",
+      "src/components/brand/BrandMark.tsx"
+    ],
+    "duplicate_brand_files_removed": 0,
+    "shells_updated": [
+      "src/components/marketing/site-shell.tsx",
+      "src/components/marketing/form-shell.tsx",
+      "src/components/workspace/workspace-shell.tsx"
+    ],
+    "operational_components_unchanged": true,
+    "legacy_operational_dependencies_detected": 0,
+    "legacy_operational_dependencies_imported": 0
+  },
+  "claims": {
+    "transferred": 0,
+    "excluded_pending_approval": 16,
+    "awaiting_approval": 16
+  },
+  "verification": {
+    "viewports_tested": [320, 375, 768, 1024, 1280, 1440, 1920],
+    "contrast_failures_introduced": 0,
+    "horizontal_overflow_introduced": 0,
+    "missing_required_assets": 0,
+    "missing_optional_assets": 2,
+    "console_errors_from_branding": 0,
+    "failed_regression_tests": 0,
+    "production_build": "green",
+    "screenshots_created": 0
+  },
+  "final": {
+    "unresolved_brand_decisions": 2,
+    "unresolved_commercial_claims": 16,
+    "recommended_phase_4_scope": [
+      "Ship apple-touch-icon.png + site.webmanifest",
+      "Resolve 16 commercial claims; unlock pricing/pilot/enterprise/global-talent",
+      "Introduce --brand-navy-muted at ≥4.5:1 and replace /60 body-text pattern",
+      "Add JSON-LD, per-leaf og:image, sitemap top-ups, /$.tsx legacy redirect splat",
+      "Content-depth pass on industries and blog"
+    ]
+  },
+  "pass_criteria": {
+    "one_canonical_brand_source_of_truth": true,
+    "required_logo_variants_available":    true,
+    "favicon_implemented":                 true,
+    "public_and_workspace_share_foundation": true,
+    "missing_required_brand_assets":       0,
+    "temporary_brand_urls":                0,
+    "legacy_operational_dependencies_imported": 0,
+    "broken_operational_routes_from_branding": 0,
+    "critical_contrast_failures_introduced": 0,
+    "horizontal_overflow_from_branding":   0,
+    "production_build_failures":           0,
+    "failed_required_regression_tests":    0
+  }
+}

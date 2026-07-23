@@ -1,0 +1,40 @@
+{
+  "version": "phase-3",
+  "source_of_truth": "src/config/brand.ts (brand.typography)",
+  "families": {
+    "sans":    { "token": "--brand-font-sans",    "primary": "Inter",    "fallback": "system-ui, sans-serif", "weights": [400, 500, 600, 700] },
+    "display": { "token": "--brand-font-display", "primary": "Fraunces", "fallback": "Georgia, serif",         "weights": [400, 600] },
+    "mono":    { "token": "--brand-font-mono",    "primary": "ui-monospace", "fallback": "SFMono-Regular, Menlo, monospace" }
+  },
+  "loader": "Google Fonts <link> in src/routes/__root.tsx (preconnect + swap).",
+  "scale": {
+    "display": { "size_px": 52, "line": 1.04, "tracking": "-0.025em", "weight": 600, "use": "Public hero display" },
+    "h1":      { "size_px": 40, "line": 1.08, "tracking": "-0.022em", "weight": 600, "use": "Page title (public)" },
+    "h2":      { "size_px": 30, "line": 1.15, "tracking": "-0.018em", "weight": 600, "use": "Section title" },
+    "h3":      { "size_px": 22, "line": 1.25, "tracking": "-0.01em",  "weight": 600, "use": "Card title, workspace section title" },
+    "h4":      { "size_px": 18, "line": 1.30, "tracking": "-0.005em", "weight": 600, "use": "Record title" },
+    "body_lg": { "size_px": 18, "line": 1.60, "weight": 400, "use": "Public lead paragraph" },
+    "body":    { "size_px": 16, "line": 1.60, "weight": 400, "use": "Default body and workspace copy" },
+    "body_sm": { "size_px": 14, "line": 1.55, "weight": 400, "use": "Table body, helper text" },
+    "meta":    { "size_px": 12, "line": 1.50, "tracking": "0.02em",   "weight": 500, "use": "Metadata, badge text" },
+    "eyebrow": { "size_px": 11, "line": 1.20, "tracking": "0.12em",   "weight": 600, "use": "Section eyebrow (sparingly)" }
+  },
+  "workspace": {
+    "page_title":     "h2",
+    "section_title":  "h3",
+    "record_title":   "h4",
+    "kpi_value":      { "size_px": 32, "weight": 600, "tabular_nums": true },
+    "kpi_label":      "meta",
+    "table_heading":  { "size_px": 12, "weight": 600, "tracking": "0.02em", "uppercase": false },
+    "table_body":     "body_sm",
+    "form_label":     { "size_px": 14, "weight": 500 },
+    "helper_text":    { "size_px": 13, "weight": 400 },
+    "error_text":     { "size_px": 13, "weight": 500 }
+  },
+  "rules": [
+    "No uppercase-forced headings.",
+    "KPI numerals use tabular-nums so columns align.",
+    "Mobile body copy stays ≥ 16px to prevent iOS zoom.",
+    "Line length on prose surfaces capped at 720px."
+  ]
+}

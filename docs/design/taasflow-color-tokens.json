@@ -1,0 +1,48 @@
+{
+  "version": "phase-3",
+  "source_of_truth": "src/styles/brand-tokens.css",
+  "format": "oklch",
+  "brand": {
+    "navy":         { "token": "--brand-navy",        "value": "oklch(0.29 0.055 262)", "use": "Primary authority; headings on light; CTA-dark background." },
+    "navy_light":   { "token": "--brand-navy-light",  "value": "oklch(0.45 0.055 262)", "use": "Muted body text on light; inactive status." },
+    "navy_dark":    { "token": "--brand-navy-dark",   "value": "oklch(0.22 0.055 262)", "use": "Dark surfaces, footer, shadow anchor." },
+    "ocean":        { "token": "--brand-ocean",       "value": "oklch(0.60 0.19 258)", "use": "Primary action, links, focus ring, info." },
+    "ocean_light":  { "token": "--brand-ocean-light", "value": "oklch(0.68 0.16 258)", "use": "Hover, selected, subtle emphasis." },
+    "sky":          { "token": "--brand-sky",         "value": "oklch(0.92 0.017 245)","use": "Section divider, quiet surface." },
+    "sky_dark":     { "token": "--brand-sky-dark",    "value": "oklch(0.87 0.020 245)","use": "Card border on paper." },
+    "ink":          { "token": "--brand-ink",         "value": "oklch(0.18 0.03 262)", "use": "Body copy on light." },
+    "paper":        { "token": "--brand-paper",       "value": "oklch(0.985 0.003 245)","use": "Default public background." }
+  },
+  "semantic": {
+    "success":  { "token": "--brand-success", "use": "Confirmed, published, hired, positive delta." },
+    "warning":  { "token": "--brand-warning", "use": "Pending, needs attention, at-risk." },
+    "danger":   { "token": "--brand-danger",  "use": "Blocked, error, destructive, rejected." },
+    "info":     { "token": "--brand-info",    "use": "In progress, informational, neutral emphasis." }
+  },
+  "interaction": {
+    "focus_ring":       { "token": "--brand-focus-ring",       "use": "Global focus outline; minimum 3:1 contrast." },
+    "focus_ring_inset": { "token": "--brand-focus-ring-inset", "use": "Inset focus for tightly bordered controls." },
+    "hover_link":       "brand.navy",
+    "visited_link":     "brand.navy_light",
+    "disabled":         "brand.navy_light + 40% alpha"
+  },
+  "status_mapping": {
+    "active":     "success",
+    "published":  "success",
+    "hired":      "success",
+    "shortlisted":"info",
+    "interview":  "info",
+    "offer":      "info",
+    "pending":    "warning",
+    "at_risk":    "warning",
+    "blocked":    "danger",
+    "not_moving_forward": "danger",
+    "inactive":   "navy_light"
+  },
+  "rules": [
+    "Never encode status by color alone — always pair with icon or label.",
+    "Never hardcode raw brand colors in components; consume tokens.",
+    "Never repurpose ocean and info to mean different things.",
+    "Body text contrast on paper must remain ≥ 4.5:1; muted variants must remain ≥ 4.5:1 for body copy sizes."
+  ]
+}
