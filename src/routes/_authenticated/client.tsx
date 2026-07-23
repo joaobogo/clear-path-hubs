@@ -32,6 +32,7 @@ import {
   WorkspaceShell,
   type WorkspaceNavItem,
 } from "@/components/workspace/workspace-shell";
+import { OrgSwitcher } from "@/components/workspace/org-switcher";
 
 const searchSchema = z.object({
   org: z.string().uuid().optional(),
