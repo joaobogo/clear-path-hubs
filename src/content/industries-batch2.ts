@@ -1,0 +1,1330 @@
+/**
+ * TaaSFlow V2 — Industry template data (Batch 2).
+ *
+ * 32 additional industry entries appended to Batch 1 to reach 57 total.
+ * Each entry is unique per vertical: hero, challenges, role families, signals,
+ * skills, tools, related industries, FAQs, CTA. No claims, no fabricated
+ * metrics — descriptive of how the workspace and rubric adapt.
+ */
+
+import type { IndustryEntry, IndustryResource } from "./industries-v2";
+
+const DEFAULT_RESOURCES: IndustryResource[] = [
+  { title: "How TaaSFlow works", kind: "Product", to: "/how-it-works", description: "The full workflow, end to end." },
+  { title: "Pricing", kind: "Pricing", to: "/pricing", description: "Subscription pricing without placement fees." },
+  { title: "Submit a role", kind: "Get started", to: "/intake", description: "Guided intake with draft saving." },
+];
+
+export const INDUSTRY_ENTRIES_BATCH2: IndustryEntry[] = [
+  // ============================================================
+  // TECH & DATA (extended)
+  // ============================================================
+  {
+    slug: "ai-ml",
+    eyebrow: "AI & Machine Learning",
+    name: "AI & Machine Learning",
+    category: "Tech & Data",
+    aliases: ["Machine Learning", "Applied AI", "Generative AI", "MLOps", "LLM"],
+    summary:
+      "Applied AI, machine learning, MLOps and research hiring — with rubrics that separate research signal from production ML engineering and platform delivery.",
+    meta: {
+      title: "AI & Machine Learning hiring — TaaSFlow",
+      description:
+        "Ranked shortlists for applied AI, ML engineering, MLOps, research and LLM roles. Evidence tied to models shipped, benchmarks owned, and platforms delivered — never buzzwords.",
+    },
+    hero: {
+      title: "Applied AI hiring, calibrated between research, engineering and platform.",
+      subtitle:
+        "TaaSFlow separates researchers, applied scientists, ML engineers and platform builders — with rubrics tuned to what each role actually ships: papers, benchmarks, production models or MLOps foundations.",
+    },
+    challenges: [
+      { title: "Research vs production drift", body: "Publications and Kaggle badges do not equal production ML. Rubrics score each track on the outcomes it actually owned — inference latency, training pipelines, evaluation harnesses or published research." },
+      { title: "Frontier vs applied", body: "Frontier-model research and applied LLM engineering demand different evidence. We capture which layer of the stack the candidate lives at." },
+      { title: "Evaluation rigour", body: "Model quality is only credible with evaluation. We look for named benchmarks, offline test sets, A/B design and monitoring — not vibes." },
+      { title: "Compute and cost fluency", body: "Serving GPUs at production scale is a distinct skill. Rubrics capture training-cost, inference-cost and quantisation experience explicitly." },
+    ],
+    solutions: [
+      { title: "Track-specific rubrics", body: "Research scientist, applied scientist, ML engineer, MLOps engineer and AI product lead — each scored on its own evidence." },
+      { title: "Model-lifecycle evidence", body: "Data pipelines, training, evaluation, deployment, monitoring — mapped to the stage the role owns." },
+      { title: "LLM & GenAI specialisation", body: "Fine-tuning, RAG, prompt design, safety evaluation, agent frameworks — captured as first-class signals." },
+      { title: "Stack-aware scoring", body: "PyTorch, JAX, TensorFlow, HuggingFace, Ray, Kubeflow, Vertex AI, SageMaker, Databricks — evidence of production use, not just exposure." },
+    ],
+    roleFamilies: [
+      { name: "Research", roles: ["Research scientists", "Applied research scientists", "Research engineers", "Heads of research"] },
+      { name: "Applied ML engineering", roles: ["ML engineers", "Senior ML engineers", "Staff ML engineers", "ML tech leads"] },
+      { name: "MLOps & platform", roles: ["MLOps engineers", "ML platform engineers", "Data & ML platform leads"] },
+      { name: "GenAI & LLM", roles: ["LLM engineers", "Applied AI engineers", "AI product engineers", "Prompt engineers"] },
+      { name: "AI product & leadership", roles: ["AI product managers", "Heads of AI", "VPs of ML", "Chief AI officers"] },
+    ],
+    roles: ["Applied research scientists", "ML engineers (backend + serving)", "MLOps and platform engineers", "LLM and RAG engineers", "AI product managers", "Heads of AI / VP ML"],
+    candidateSignals: [
+      { title: "Model portfolio", body: "Models trained, benchmarks owned, production traffic served — with named datasets and framework." },
+      { title: "Evaluation discipline", body: "Offline evals, A/B testing, monitoring dashboards, drift detection — evidenced not implied." },
+      { title: "Cost and compute", body: "Training cost, inference cost, quantisation, distillation and hardware fluency (H100, TPU, A100) surfaced from the CV." },
+      { title: "Publication and OSS", body: "Peer-reviewed venues, OSS contributions, patents — captured with links where available." },
+    ],
+    skills: ["Deep learning", "Transformers", "RAG", "Fine-tuning", "MLOps", "Distributed training", "Model serving", "Evaluation design"],
+    tools: ["PyTorch", "JAX", "HuggingFace", "LangChain", "LlamaIndex", "Ray", "Weights & Biases", "MLflow", "Kubeflow", "Vertex AI", "SageMaker", "Databricks", "vLLM", "Triton"],
+    signals: ["Track-specific rubric per role", "Model-lifecycle evidence captured", "LLM/GenAI specialisation surfaced"],
+    relatedIndustries: [
+      { slug: "tech", name: "Technology", blurb: "Engineering and platform teams shipping AI features." },
+      { slug: "data-analytics", name: "Data & Analytics", blurb: "Data engineering foundations that ML depends on." },
+      { slug: "fintech", name: "FinTech", blurb: "Applied ML for risk, fraud and personalisation." },
+    ],
+    resources: DEFAULT_RESOURCES,
+    faqs: [
+      { q: "Do you separate research and engineering candidates?", a: "Yes — different rubrics, different evidence, never merged in ranking." },
+      { q: "Can you hire specifically for LLM/GenAI roles?", a: "Yes. Fine-tuning, RAG, evaluation and agent-framework experience are captured as first-class signals." },
+      { q: "How do you validate production ML claims?", a: "We quote CV lines describing production traffic, latency, model size and monitoring — not just tool names." },
+    ],
+    cta: { title: "Hiring in AI or ML?", description: "Submit the role — track-specific rubric, ranked shortlist, evidence you can defend." },
+  },
+
+  {
+    slug: "fintech",
+    eyebrow: "FinTech",
+    name: "FinTech",
+    category: "Tech & Data",
+    aliases: ["Financial Technology", "Payments", "Digital Banking", "Neobank", "Embedded Finance"],
+    summary:
+      "Payments, digital banking, lending, wealth-tech and embedded-finance hiring — with rubrics tuned to regulated product delivery and payments infrastructure.",
+    meta: {
+      title: "FinTech hiring — TaaSFlow",
+      description:
+        "Ranked shortlists for payments, digital banking, lending, wealthtech and embedded finance. Regulated-product experience captured explicitly.",
+    },
+    hero: {
+      title: "FinTech hiring, tuned to regulated product delivery.",
+      subtitle:
+        "TaaSFlow gives fintech leaders a workspace for engineering, product, risk, compliance and commercial hires — with rubrics that separate greenfield product from regulated payments-infrastructure work.",
+    },
+    challenges: [
+      { title: "Regulated-product experience", body: "Shipping in an EMI, bank or PI is different from unregulated SaaS. Rubrics capture licensing regime, control frameworks and audit context." },
+      { title: "Payments-rail depth", body: "Card, ACH, SEPA, Faster Payments, Open Banking and stablecoin rails each demand different evidence. Rails are captured explicitly." },
+      { title: "Risk-and-fraud fluency", body: "Product, engineering and ops candidates alike need risk fluency. We surface fraud, AML, sanctions and dispute handling from the CV." },
+      { title: "Speed vs control tension", body: "Move-fast culture must coexist with regulatory obligations. Rubrics capture governance ownership, not just delivery velocity." },
+    ],
+    solutions: [
+      { title: "Regulatory-regime capture", body: "EMI, PI, credit institution, broker-dealer, MSB — captured at intake and applied as filters." },
+      { title: "Rail-specific rubrics", body: "Card issuing, card acquiring, ACH, SEPA, FPS, Open Banking and crypto rails scored separately." },
+      { title: "Risk & compliance integration", body: "Compliance, financial crime and risk hires share the same workspace as product/engineering — with role-specific rubrics." },
+      { title: "Commercial and BD tracks", body: "Partnerships, BD, enterprise sales and PSP-relationship roles get dedicated rubrics." },
+    ],
+    roleFamilies: [
+      { name: "Product & engineering", roles: ["Product managers (payments/banking/lending)", "Backend and platform engineers", "Mobile engineers", "SREs and platform leads"] },
+      { name: "Risk, compliance & fraud", roles: ["Compliance officers (MLRO/DPO)", "Financial crime analysts", "Risk and fraud analysts", "Heads of compliance"] },
+      { name: "Operations", roles: ["Payments ops", "Reconciliation and settlement", "Customer ops leaders", "Disputes and chargebacks"] },
+      { name: "Commercial", roles: ["BD and partnerships", "Enterprise sales", "Account managers", "GTM leads"] },
+      { name: "Leadership", roles: ["Heads of product", "VPs engineering", "Chief compliance officers", "CTOs / COOs"] },
+    ],
+    roles: ["Payments product managers", "Backend engineers (Go/Java/Kotlin)", "Mobile engineers", "Financial crime and MLRO leads", "Fraud and risk analysts", "BD and partnerships leads", "VPs of product / engineering"],
+    candidateSignals: [
+      { title: "Licensing context", body: "Named regulatory regime, jurisdiction and role within the control framework." },
+      { title: "Rails and volumes", body: "Payment rails owned, TPV, geographies and PSP relationships surfaced from the CV." },
+      { title: "Risk portfolio", body: "Fraud vectors handled, financial-crime typologies covered, sanctions screening ownership." },
+      { title: "Delivery evidence", body: "Products launched, migrations completed, incidents led — not just tenure." },
+    ],
+    skills: ["Payments", "Card issuing", "Open Banking", "AML/KYC", "Financial crime", "PSD2", "Dispute management"],
+    tools: ["Stripe", "Adyen", "Marqeta", "Plaid", "TrueLayer", "Chainalysis", "SumSub", "Onfido", "ComplyAdvantage", "Actimize"],
+    certifications: ["ICA / ACAMS", "CFE", "CISI"],
+    regulatedRequirements: ["MLRO approval", "SMF regime familiarity", "PCI-DSS awareness for card handlers"],
+    signals: ["Regulatory-regime capture", "Rail-specific rubric", "Risk and compliance in the same workspace"],
+    relatedIndustries: [
+      { slug: "finance", name: "Finance", blurb: "Corporate finance and treasury alongside fintech." },
+      { slug: "insurance", name: "Insurance", blurb: "InsurTech and regulated-product cousins." },
+      { slug: "tech", name: "Technology", blurb: "Engineering and product foundations." },
+    ],
+    resources: DEFAULT_RESOURCES,
+    faqs: [
+      { q: "Can you hire regulated-role approvals (SMF, MLRO)?", a: "Yes. Regulatory regime and approval status are intake fields and applied as filters." },
+      { q: "Do you cover crypto and stablecoin fintech?", a: "Yes, with rubrics that separate custody, exchange, on/off-ramp and DeFi contexts." },
+      { q: "How do you validate payments-rail depth?", a: "We quote CV lines showing rail ownership, TPV, PSP relationships and settlement fluency." },
+    ],
+    cta: { title: "Hiring in FinTech?", description: "Submit the role — regulatory regime captured, rails scored, evidence you can audit." },
+  },
+
+  {
+    slug: "healthtech",
+    eyebrow: "HealthTech",
+    name: "HealthTech",
+    category: "Tech & Data",
+    aliases: ["Digital Health", "Health IT", "Telemedicine", "MedTech Software"],
+    meta: {
+      title: "HealthTech hiring — TaaSFlow",
+      description: "Ranked shortlists for digital health, telemedicine, EHR integrations and clinical-software product teams — with regulated-product evidence.",
+    },
+    hero: {
+      title: "HealthTech hiring, tuned to clinical-grade product delivery.",
+      subtitle: "Digital-health engineering, product, clinical informatics and regulatory hires — each scored on the evidence its own remit demands.",
+    },
+    challenges: [
+      { title: "Clinical-context fluency", body: "Building for clinicians is different from building for consumers. We surface CV evidence of clinical partnerships, workflow design and safety context." },
+      { title: "Interop and standards", body: "HL7, FHIR, DICOM and SMART-on-FHIR are non-negotiable for many roles. Standards fluency is captured explicitly." },
+      { title: "Regulatory pathway", body: "SaMD, MDR, FDA 510(k) and CE marking pathways demand distinct evidence. Rubrics separate teams by pathway." },
+      { title: "Data-sensitivity discipline", body: "PHI, HIPAA and GDPR-health-data controls belong in every engineering rubric — surfaced from the CV." },
+    ],
+    roleFamilies: [
+      { name: "Product & engineering", roles: ["Product managers (clinical/consumer)", "Full-stack engineers", "Data engineers", "Mobile engineers"] },
+      { name: "Clinical & informatics", roles: ["Clinical informaticists", "Medical directors", "Nurse informaticists", "Clinical product leads"] },
+      { name: "Regulatory & quality", roles: ["Regulatory affairs leads", "Quality assurance managers", "Clinical safety officers (DCB0129/0160)"] },
+      { name: "Interoperability", roles: ["FHIR engineers", "Integration engineers", "EHR partnership leads"] },
+    ],
+    roles: ["Digital-health PMs", "FHIR/HL7 integration engineers", "Clinical informaticists", "Regulatory affairs leads", "Clinical safety officers", "VPs of engineering"],
+    candidateSignals: [
+      { title: "Standards portfolio", body: "FHIR, HL7v2, DICOM, IHE — with named integrations shipped." },
+      { title: "Regulatory pathway", body: "SaMD class, submission owned, notified body engaged, audit outcomes." },
+      { title: "Clinical partnerships", body: "Providers, payers and health-systems partnered with — captured explicitly." },
+    ],
+    skills: ["FHIR", "HL7", "SMART-on-FHIR", "HIPAA", "SaMD", "Clinical workflow design"],
+    tools: ["Epic", "Cerner (Oracle Health)", "Meditech", "Redox", "1upHealth", "Firely", "Aidbox"],
+    certifications: ["HL7 / FHIR", "CPHIMS", "AHIMA"],
+    regulatedRequirements: ["HIPAA controls awareness", "MDR / FDA 21 CFR familiarity where role demands"],
+    signals: ["Regulatory-pathway rubric", "Standards fluency from the CV", "Clinical partnerships surfaced"],
+    relatedIndustries: [
+      { slug: "healthcare", name: "Healthcare", blurb: "Clinical and operational healthcare teams." },
+      { slug: "biotech", name: "Biotech", blurb: "Regulated life-sciences product." },
+      { slug: "tech", name: "Technology", blurb: "Engineering and product foundations." },
+    ],
+    resources: DEFAULT_RESOURCES,
+    faqs: [
+      { q: "Do you cover clinical safety officers?", a: "Yes. DCB0129/0160 experience is captured as a first-class signal for UK health-tech." },
+      { q: "Can you hire for FDA-regulated products?", a: "Yes — SaMD class, submission history and QMS ownership captured at intake." },
+    ],
+    cta: { title: "Hiring in HealthTech?", description: "Submit the role — regulatory pathway captured, standards fluency scored." },
+  },
+
+  {
+    slug: "edtech",
+    eyebrow: "EdTech",
+    name: "EdTech",
+    category: "Tech & Data",
+    aliases: ["Education Technology", "LMS", "Learning Platforms", "K-12", "Higher Ed Software"],
+    meta: { title: "EdTech hiring — TaaSFlow", description: "Ranked shortlists for education-technology product, engineering, content and B2B sales." },
+    hero: {
+      title: "EdTech hiring, calibrated per learner audience and buyer.",
+      subtitle: "K-12, higher-ed, workforce learning and consumer learning each demand different evidence. Rubrics separate the audiences you build for.",
+    },
+    challenges: [
+      { title: "Buyer vs learner", body: "Teachers, admins, procurement and learners all matter. Rubrics capture which stakeholder the candidate actually served." },
+      { title: "Content pedagogy", body: "Instructional design, learning science and content ops are distinct disciplines — scored explicitly." },
+      { title: "Compliance and safeguarding", body: "COPPA, FERPA, SEND and GDPR-child-data belong in engineering rubrics — surfaced from the CV." },
+      { title: "B2B sales cycles", body: "District and university procurement is long. Sales rubrics capture named accounts, RFP wins and pilot-to-district evidence." },
+    ],
+    roleFamilies: [
+      { name: "Product & engineering", roles: ["EdTech PMs", "Full-stack engineers", "Mobile engineers", "Learning-platform architects"] },
+      { name: "Learning & content", roles: ["Instructional designers", "Learning scientists", "Curriculum leads", "Content producers"] },
+      { name: "B2B sales", roles: ["District sales reps", "Higher-ed BD", "Customer success managers", "Renewal specialists"] },
+    ],
+    roles: ["EdTech product managers", "Instructional designers", "Learning scientists", "District/higher-ed sales reps", "Customer success managers"],
+    candidateSignals: [
+      { title: "Audience served", body: "K-12, higher-ed, workforce or consumer — captured explicitly with named districts or institutions." },
+      { title: "Pedagogy portfolio", body: "Frameworks used, outcomes measured, research citations." },
+      { title: "Compliance evidence", body: "COPPA/FERPA/SEND ownership from the CV." },
+    ],
+    skills: ["Instructional design", "Learning science", "LMS integration (LTI)", "Adaptive learning"],
+    tools: ["Canvas", "Blackboard", "Moodle", "Schoology", "PowerSchool", "Clever", "OneRoster"],
+    signals: ["Audience-specific rubric", "Pedagogy portfolio surfaced", "District/university procurement evidence"],
+    relatedIndustries: [
+      { slug: "education", name: "Education", blurb: "K-12 and higher-education institutions." },
+      { slug: "tech", name: "Technology", blurb: "Engineering and product foundations." },
+    ],
+    resources: DEFAULT_RESOURCES,
+    faqs: [
+      { q: "Do you cover instructional designers?", a: "Yes, with rubrics tuned to pedagogy framework and audience served." },
+      { q: "Can you hire district sales reps?", a: "Yes. Named districts, RFP wins and pilot-to-district conversion captured." },
+    ],
+    cta: { title: "Hiring in EdTech?", description: "Submit the role — audience captured, pedagogy scored, evidence you can review." },
+  },
+
+  {
+    slug: "proptech",
+    eyebrow: "PropTech",
+    name: "PropTech",
+    category: "Tech & Data",
+    aliases: ["Property Technology", "Real Estate Tech", "ConTech"],
+    meta: { title: "PropTech hiring — TaaSFlow", description: "Ranked shortlists for real-estate technology, building operations software and construction-tech." },
+    hero: {
+      title: "PropTech hiring, tuned per real-estate segment.",
+      subtitle: "Residential, commercial, iBuying, building ops and ConTech each demand different evidence — captured at intake and applied as filters.",
+    },
+    challenges: [
+      { title: "Segment fluency", body: "Residential brokerage, CRE, iBuying, multi-family and building-ops are different worlds. Rubrics separate them." },
+      { title: "Data-partnership depth", body: "MLS, CoStar, county-record and IoT-sensor integrations belong in engineering rubrics." },
+      { title: "Field vs software", body: "Field ops and software often collide. Rubrics capture on-site experience alongside product delivery." },
+    ],
+    roleFamilies: [
+      { name: "Product & engineering", roles: ["PropTech PMs", "Full-stack engineers", "Data engineers", "GIS specialists"] },
+      { name: "Real-estate ops", roles: ["Field operations leads", "Portfolio managers", "Underwriting analysts"] },
+      { name: "Commercial", roles: ["Broker-partnership leads", "Enterprise CRE sales", "Landlord sales"] },
+    ],
+    roles: ["PropTech PMs", "Full-stack engineers", "GIS specialists", "Broker-partnership leads", "Underwriting analysts"],
+    skills: ["GIS", "Property valuation", "IoT sensor integration", "Real-estate data"],
+    tools: ["MLS", "CoStar", "Yardi", "MRI Software", "AppFolio", "Procore"],
+    signals: ["Segment-specific rubric", "Data-partnership evidence", "Field vs software separation"],
+    relatedIndustries: [
+      { slug: "real-estate", name: "Real Estate", blurb: "Brokerage, investment and asset management." },
+      { slug: "construction", name: "Construction", blurb: "ConTech and site delivery." },
+    ],
+    resources: DEFAULT_RESOURCES,
+    faqs: [
+      { q: "Do you cover ConTech?", a: "Yes — construction-tech hires get rubrics that weight field-ops fluency alongside software." },
+    ],
+    cta: { title: "Hiring in PropTech?", description: "Submit the role — segment scored, data partnerships surfaced." },
+  },
+
+  {
+    slug: "gaming",
+    eyebrow: "Gaming & Interactive",
+    name: "Gaming & Interactive",
+    category: "Tech & Data",
+    aliases: ["Video Games", "Interactive Media", "eSports", "Game Development"],
+    meta: { title: "Gaming hiring — TaaSFlow", description: "Ranked shortlists for game development, live-ops, engine engineering and publishing — with genre and platform captured." },
+    hero: {
+      title: "Gaming hiring, tuned per engine, genre and platform.",
+      subtitle: "Console, PC, mobile, live-service and web3 games each demand different evidence. Rubrics separate them and never merge scoring across platforms.",
+    },
+    challenges: [
+      { title: "Engine and pipeline", body: "Unreal, Unity and in-house engines are non-transferable. Rubrics capture the exact stack and gameplay-systems ownership." },
+      { title: "Live-service ops", body: "Shipping games and running live-service are different disciplines. LiveOps evidence is scored separately." },
+      { title: "Genre fluency", body: "MMO, shooter, sim, mobile puzzler and sports each need distinct signal. Genre is captured explicitly." },
+      { title: "Craft depth", body: "Combat design, level design, narrative and technical art are separate crafts. Rubrics honour the specialisation." },
+    ],
+    roleFamilies: [
+      { name: "Engineering", roles: ["Gameplay engineers", "Engine engineers", "Graphics engineers", "Server/backend engineers", "Tools engineers"] },
+      { name: "Design", roles: ["Systems designers", "Level designers", "Combat designers", "Narrative designers"] },
+      { name: "Art & animation", roles: ["Character artists", "Environment artists", "Technical artists", "Animators"] },
+      { name: "Production & live-ops", roles: ["Producers", "Live-ops leads", "Release managers", "Community managers"] },
+    ],
+    roles: ["Gameplay/engine engineers", "Technical and character artists", "Systems and level designers", "Live-ops leads", "Producers"],
+    candidateSignals: [
+      { title: "Shipped titles", body: "Games shipped, platforms, credits, sales tier — surfaced from the CV." },
+      { title: "Engine portfolio", body: "Unreal, Unity, Bevy, Godot or in-house — with production years." },
+      { title: "Live-service evidence", body: "MAU/DAU cohorts, seasonal cadence, event delivery, retention outcomes." },
+    ],
+    skills: ["Unreal", "Unity", "C++", "C#", "Graphics programming", "Level design", "Narrative design"],
+    tools: ["Unreal Engine", "Unity", "Perforce", "Houdini", "Maya", "Substance", "Jira/Hansoft"],
+    signals: ["Engine and platform captured", "Genre-specific rubric", "Live-service track separated"],
+    relatedIndustries: [
+      { slug: "media", name: "Media & Entertainment", blurb: "Studios, publishers and interactive media." },
+      { slug: "tech", name: "Technology", blurb: "Engine, tools and platform engineering." },
+    ],
+    resources: DEFAULT_RESOURCES,
+    faqs: [
+      { q: "Can you hire for in-house engine teams?", a: "Yes. Engine engineering is scored on named systems owned and shipped." },
+      { q: "Do you cover live-service leadership?", a: "Yes, with rubrics that weight seasonal cadence, retention and event delivery." },
+    ],
+    cta: { title: "Hiring in Gaming?", description: "Submit the role — engine, genre and platform captured, craft-specific rubric applied." },
+  },
+
+  {
+    slug: "web3",
+    eyebrow: "Web3 & Blockchain",
+    name: "Web3 & Blockchain",
+    category: "Tech & Data",
+    aliases: ["Crypto", "DeFi", "Smart Contracts", "Layer 1", "Layer 2", "Web3"],
+    meta: { title: "Web3 & Blockchain hiring — TaaSFlow", description: "Ranked shortlists for protocol engineering, smart-contract development, DeFi product and crypto operations." },
+    hero: {
+      title: "Web3 hiring, tuned per layer and product surface.",
+      subtitle: "Protocol, L2, wallet, DeFi, custody and exchange each demand different evidence. Rubrics separate them and score security discipline explicitly.",
+    },
+    challenges: [
+      { title: "Security discipline", body: "Smart-contract vulnerabilities are catastrophic. Rubrics capture audit history, formal-verification familiarity and post-mortem ownership." },
+      { title: "Chain and language fluency", body: "Solidity, Rust, Move, Cairo — each ecosystem is distinct. Rubrics never merge chains in scoring." },
+      { title: "Regulated vs permissionless", body: "Exchange, custody and stablecoin roles collide with FinTech regulation. Regulatory regime is captured at intake." },
+    ],
+    roleFamilies: [
+      { name: "Protocol & smart contracts", roles: ["Solidity engineers", "Rust engineers (Solana/Substrate)", "Protocol engineers", "Cryptography engineers"] },
+      { name: "Product & app layer", roles: ["Wallet engineers", "DeFi product managers", "Frontend engineers (dApp)"] },
+      { name: "Security", roles: ["Smart-contract auditors", "Security researchers", "Bug-bounty leads"] },
+      { name: "Operations & compliance", roles: ["Exchange ops", "Compliance and financial-crime leads", "Treasury managers"] },
+    ],
+    roles: ["Solidity/Rust engineers", "Protocol engineers", "Smart-contract auditors", "DeFi product managers", "Exchange compliance leads"],
+    skills: ["Solidity", "Rust", "Cryptography", "Zero-knowledge proofs", "Formal verification", "MEV"],
+    tools: ["Foundry", "Hardhat", "Anchor", "Halmos", "Certora", "Etherscan", "Dune"],
+    signals: ["Security-track rubric", "Chain-specific scoring", "Regulatory regime captured"],
+    relatedIndustries: [
+      { slug: "fintech", name: "FinTech", blurb: "Regulated payments and financial products." },
+      { slug: "cybersecurity", name: "Cybersecurity", blurb: "Security engineering and audit." },
+    ],
+    resources: DEFAULT_RESOURCES,
+    faqs: [
+      { q: "Do you cover smart-contract auditors?", a: "Yes. Audit portfolio, methodology and disclosure history are captured." },
+    ],
+    cta: { title: "Hiring in Web3?", description: "Submit the role — chain scored, security captured, regulatory context surfaced." },
+  },
+
+  {
+    slug: "devops",
+    eyebrow: "DevOps & Cloud",
+    name: "DevOps & Cloud Infrastructure",
+    category: "Tech & Data",
+    aliases: ["SRE", "Platform Engineering", "Cloud", "Infrastructure", "Kubernetes"],
+    meta: { title: "DevOps & Cloud hiring — TaaSFlow", description: "Ranked shortlists for SRE, platform engineering, cloud infrastructure and reliability leadership." },
+    hero: {
+      title: "Platform and reliability hiring, calibrated to your operating model.",
+      subtitle: "SRE, platform engineering, cloud infra, security engineering and reliability leadership — each scored on the evidence its remit demands.",
+    },
+    challenges: [
+      { title: "SRE vs platform vs DevOps", body: "These labels are used interchangeably but mean different things. Rubrics capture the actual remit: reliability, developer experience or ops automation." },
+      { title: "Scale and blast radius", body: "Running a startup cluster and running a fleet at hyperscale are not comparable. Scale is captured with named metrics." },
+      { title: "Cost fluency", body: "Cloud cost is now a first-class skill. FinOps discipline is scored explicitly." },
+    ],
+    roleFamilies: [
+      { name: "SRE", roles: ["Site reliability engineers", "Senior SREs", "Staff SREs", "SRE managers"] },
+      { name: "Platform engineering", roles: ["Platform engineers", "Developer-experience leads", "IDP owners"] },
+      { name: "Cloud infrastructure", roles: ["Cloud engineers (AWS/GCP/Azure)", "Networking engineers", "Kubernetes specialists"] },
+      { name: "Security engineering", roles: ["Cloud security engineers", "AppSec engineers", "IAM specialists"] },
+    ],
+    roles: ["SREs (all levels)", "Platform engineers", "Cloud infrastructure engineers", "Kubernetes specialists", "Cloud security engineers", "Heads of platform"],
+    candidateSignals: [
+      { title: "Scale evidence", body: "Fleet size, request volume, incident cadence — with named SLOs." },
+      { title: "IaC portfolio", body: "Terraform, Pulumi, Crossplane, CDK — with production ownership." },
+      { title: "FinOps discipline", body: "Cost dashboards, savings-plan design, rightsizing programmes evidenced." },
+    ],
+    skills: ["Kubernetes", "Terraform", "Observability", "IaC", "FinOps", "Incident response"],
+    tools: ["AWS", "GCP", "Azure", "Kubernetes", "Terraform", "Pulumi", "Datadog", "Grafana", "PagerDuty", "Argo CD"],
+    signals: ["Remit-specific rubric", "Scale and blast radius captured", "FinOps fluency surfaced"],
+    relatedIndustries: [
+      { slug: "tech", name: "Technology", blurb: "Engineering foundations." },
+      { slug: "cybersecurity", name: "Cybersecurity", blurb: "Security engineering and IAM." },
+    ],
+    resources: DEFAULT_RESOURCES,
+    faqs: [
+      { q: "Do you separate SRE and platform roles?", a: "Yes — different rubrics, different evidence." },
+    ],
+    cta: { title: "Hiring for Platform or SRE?", description: "Submit the role — remit captured, scale scored, evidence you can defend." },
+  },
+
+  // ============================================================
+  // PROFESSIONAL SERVICES (extended)
+  // ============================================================
+  {
+    slug: "investment-banking",
+    eyebrow: "Investment Banking",
+    name: "Investment Banking",
+    category: "Professional Services",
+    aliases: ["IBD", "M&A", "Capital Markets", "Corporate Finance Advisory"],
+    meta: { title: "Investment Banking hiring — TaaSFlow", description: "Ranked shortlists for M&A, ECM, DCM and coverage banking roles across analyst, associate, VP and MD." },
+    hero: {
+      title: "Investment banking hiring, calibrated per product and coverage.",
+      subtitle: "M&A, ECM, DCM, leveraged finance and coverage bankers each demand different evidence. Deal-tape depth is scored explicitly.",
+    },
+    challenges: [
+      { title: "Deal-tape depth", body: "Named deals, roles played, transaction size and geography — captured and quoted from the CV." },
+      { title: "Product vs coverage", body: "Product bankers and coverage bankers are scored separately. Rubrics honour the distinction." },
+      { title: "Boutique vs bulge", body: "Bulge-bracket process discipline and boutique deal breadth reward different signal — captured at intake." },
+    ],
+    roleFamilies: [
+      { name: "M&A", roles: ["Analysts", "Associates", "Vice Presidents", "Directors", "Managing Directors"] },
+      { name: "Capital markets", roles: ["ECM analysts/associates/VPs", "DCM analysts/associates/VPs", "Syndicate professionals"] },
+      { name: "Leveraged finance", roles: ["LevFin analysts", "LevFin VPs", "Sponsor-coverage bankers"] },
+      { name: "Coverage", roles: ["Industry coverage bankers", "Sector MDs", "Product specialists"] },
+    ],
+    roles: ["M&A analysts to MDs", "ECM/DCM originators", "LevFin professionals", "Sector coverage bankers"],
+    candidateSignals: [
+      { title: "Deal tape", body: "Named transactions, role played, deal value, geography, sector." },
+      { title: "Modelling depth", body: "LBO, DCF, merger, precedent — with role owned and audit context." },
+      { title: "Client ownership", body: "For VP+: named accounts, mandates won, revenue attribution where evidenced." },
+    ],
+    skills: ["M&A execution", "LBO modelling", "Debt structuring", "Equity syndication", "Pitching"],
+    tools: ["Excel (advanced)", "PowerPoint", "Bloomberg", "Refinitiv", "Capital IQ", "Dealogic", "FactSet"],
+    signals: ["Deal-tape rubric", "Product vs coverage separated", "Boutique vs bulge captured"],
+    relatedIndustries: [
+      { slug: "finance", name: "Finance", blurb: "Corporate finance and treasury." },
+      { slug: "private-equity", name: "Private Equity", blurb: "Fund and portfolio hiring." },
+      { slug: "wealth-management", name: "Wealth Management", blurb: "Private wealth and family office." },
+    ],
+    resources: DEFAULT_RESOURCES,
+    faqs: [
+      { q: "Do you handle MD-level searches?", a: "Yes. Coverage, sector focus and revenue attribution are captured as first-class signals." },
+    ],
+    cta: { title: "Hiring in Investment Banking?", description: "Submit the role — deal tape scored, product and coverage separated." },
+  },
+
+  {
+    slug: "wealth-management",
+    eyebrow: "Wealth Management",
+    name: "Wealth Management",
+    category: "Professional Services",
+    aliases: ["Private Banking", "Family Office", "RIA", "Financial Planning"],
+    meta: { title: "Wealth Management hiring — TaaSFlow", description: "Ranked shortlists for private bankers, RIAs, wealth planners and family-office professionals." },
+    hero: {
+      title: "Wealth management hiring, tuned per client segment and AUM band.",
+      subtitle: "Retail advisors, HNW private bankers and UHNW family-office professionals each demand different evidence. AUM, book portability and licensing captured explicitly.",
+    },
+    challenges: [
+      { title: "Book portability", body: "Not all AUM travels. We capture book characteristics: client tenure, product mix and portability signal — without breaching confidentiality." },
+      { title: "Licensing regime", body: "Series 7/66, SIE, CFP, CFA, CISI — captured at intake and applied as filters." },
+      { title: "Segment fit", body: "Mass-affluent, HNW and UHNW workflows differ. Rubrics separate them." },
+    ],
+    roleFamilies: [
+      { name: "Advisory", roles: ["Financial advisors", "Private bankers", "Wealth planners"] },
+      { name: "Investment", roles: ["Portfolio managers", "Investment strategists", "Fixed-income specialists"] },
+      { name: "Family office", roles: ["Family-office CIOs", "Trust officers", "Estate planners"] },
+    ],
+    roles: ["Private bankers", "Financial advisors (RIA/broker-dealer)", "Portfolio managers", "Family-office CIOs"],
+    skills: ["Financial planning", "Portfolio construction", "Trust & estate", "Alternative investments"],
+    tools: ["Salesforce Financial Services Cloud", "eMoney", "Envestnet", "Addepar", "Orion"],
+    certifications: ["CFP", "CFA", "CISI", "Series 7/66"],
+    signals: ["AUM and book context", "Licensing captured", "Segment-specific rubric"],
+    relatedIndustries: [
+      { slug: "finance", name: "Finance", blurb: "Corporate finance and markets." },
+      { slug: "investment-banking", name: "Investment Banking", blurb: "Advisory-side finance." },
+    ],
+    resources: DEFAULT_RESOURCES,
+    faqs: [
+      { q: "How do you assess book portability without compromising confidentiality?", a: "We capture book characteristics — tenure, product mix, segment — never client identities." },
+    ],
+    cta: { title: "Hiring in Wealth Management?", description: "Submit the role — segment scored, licensing captured." },
+  },
+
+  {
+    slug: "venture-capital",
+    eyebrow: "Venture Capital",
+    name: "Venture Capital",
+    category: "Professional Services",
+    aliases: ["VC", "Growth Equity", "Seed", "Series A"],
+    meta: { title: "Venture Capital hiring — TaaSFlow", description: "Ranked shortlists for investment professionals, platform, and portfolio-services roles at VC and growth-equity firms." },
+    hero: {
+      title: "Venture capital hiring, calibrated per stage, thesis and function.",
+      subtitle: "Investment, platform, portfolio-services and operations roles at VC and growth firms — each scored on the evidence its remit demands.",
+    },
+    challenges: [
+      { title: "Thesis fit", body: "Seed sector, growth thesis and geography must match. Thesis alignment captured at intake." },
+      { title: "Track record signal", body: "Investment memos led, deals championed, board seats held — captured from the CV." },
+      { title: "Platform vs investing", body: "Platform, ops and investment roles are scored separately." },
+    ],
+    roleFamilies: [
+      { name: "Investment", roles: ["Investment associates", "Principals", "Partners", "MPs"] },
+      { name: "Platform & portfolio", roles: ["Platform leads", "Portfolio talent partners", "GTM partners"] },
+      { name: "Ops", roles: ["Fund controllers", "IR / LP relations", "COO / CFO"] },
+    ],
+    roles: ["Investment associates to partners", "Platform and portfolio talent leads", "Fund controllers", "IR / LP-relations professionals"],
+    skills: ["Investment memos", "Board governance", "Portfolio support", "LP fundraising"],
+    tools: ["Affinity", "PitchBook", "Crunchbase", "Carta", "Airtable"],
+    signals: ["Thesis fit captured", "Track-record signal from CV", "Function-specific rubric"],
+    relatedIndustries: [
+      { slug: "private-equity", name: "Private Equity", blurb: "Buyout and growth PE." },
+      { slug: "investment-banking", name: "Investment Banking", blurb: "Deal execution and coverage." },
+    ],
+    resources: DEFAULT_RESOURCES,
+    faqs: [
+      { q: "Can you cover platform and talent partners?", a: "Yes. Portfolio support, network depth and named-founder outcomes captured." },
+    ],
+    cta: { title: "Hiring in VC?", description: "Submit the role — thesis captured, function-specific rubric applied." },
+  },
+
+  {
+    slug: "architecture",
+    eyebrow: "Architecture",
+    name: "Architecture & Design",
+    category: "Professional Services",
+    aliases: ["Architects", "Interior Design", "Urban Design"],
+    meta: { title: "Architecture hiring — TaaSFlow", description: "Ranked shortlists for architects, designers and studio leadership across commercial, residential and civic practices." },
+    hero: {
+      title: "Architecture hiring, calibrated per project type and studio stage.",
+      subtitle: "Concept, technical delivery, project architects and studio leadership — each scored on the portfolio evidence their remit demands.",
+    },
+    challenges: [
+      { title: "Portfolio parsing", body: "Portfolios are the evidence. Rubrics capture project type, scale, role played and delivery stage owned." },
+      { title: "Stage specialisation", body: "Concept designers, technical architects and delivery leads reward different signal — separated in scoring." },
+      { title: "Registration status", body: "ARB/RIBA, AIA, licensing captured at intake." },
+    ],
+    roleFamilies: [
+      { name: "Design", roles: ["Concept architects", "Design leads", "Interior designers"] },
+      { name: "Technical & delivery", roles: ["Technical architects", "Project architects", "BIM specialists"] },
+      { name: "Studio leadership", roles: ["Associates", "Principals", "Studio directors"] },
+    ],
+    roles: ["Architects (Part 1/2/3)", "Interior designers", "BIM specialists", "Project architects", "Studio directors"],
+    skills: ["Concept design", "Technical detailing", "BIM (Revit)", "Planning & consent", "Contract administration"],
+    tools: ["Revit", "AutoCAD", "Rhino/Grasshopper", "SketchUp", "V-Ray", "Enscape", "Bluebeam"],
+    certifications: ["ARB / RIBA", "AIA", "LEED / BREEAM / WELL"],
+    signals: ["Portfolio-based rubric", "Stage specialisation captured", "Registration status verified"],
+    relatedIndustries: [
+      { slug: "construction", name: "Construction", blurb: "Delivery-side of the built environment." },
+      { slug: "real-estate", name: "Real Estate", blurb: "Client-side property owners and developers." },
+      { slug: "proptech", name: "PropTech", blurb: "Software for the built environment." },
+    ],
+    resources: DEFAULT_RESOURCES,
+    faqs: [
+      { q: "How do you handle portfolio submissions?", a: "Portfolio links are captured at intake and referenced in evidence alongside CV claims." },
+    ],
+    cta: { title: "Hiring in Architecture?", description: "Submit the role — portfolio scored, stage specialisation captured." },
+  },
+
+  // ============================================================
+  // REGULATED & PUBLIC (extended)
+  // ============================================================
+  {
+    slug: "pharmaceuticals",
+    eyebrow: "Pharmaceuticals",
+    name: "Pharmaceuticals",
+    category: "Regulated & Public",
+    aliases: ["Pharma", "Drug Development", "Big Pharma"],
+    meta: { title: "Pharmaceuticals hiring — TaaSFlow", description: "Ranked shortlists for clinical, regulatory, medical affairs, R&D and commercial pharma roles." },
+    hero: {
+      title: "Pharma hiring, tuned per therapeutic area and phase.",
+      subtitle: "Discovery, clinical, regulatory, medical affairs and commercial — each scored on the therapeutic area, phase and regulatory pathway their remit demands.",
+    },
+    challenges: [
+      { title: "Therapeutic-area depth", body: "Oncology, immunology, CNS, rare disease and cardiometabolic each demand distinct evidence. TA captured at intake." },
+      { title: "Phase specialisation", body: "Discovery, Phase I/II/III and post-market surveillance reward different signal — never merged in scoring." },
+      { title: "Regulatory pathway", body: "FDA, EMA, MHRA, PMDA — captured with submission history where evidenced." },
+      { title: "GxP discipline", body: "GCP, GLP, GMP, GVP ownership surfaced from the CV." },
+    ],
+    roleFamilies: [
+      { name: "Clinical development", roles: ["Clinical scientists", "Study directors", "Medical monitors", "Clinical operations leads"] },
+      { name: "Regulatory affairs", roles: ["Regulatory scientists", "Regulatory affairs managers", "Heads of regulatory"] },
+      { name: "Medical affairs", roles: ["Medical Science Liaisons (MSLs)", "Medical directors", "Publications leads"] },
+      { name: "R&D", roles: ["Medicinal chemists", "Pharmacologists", "Bioinformaticians"] },
+      { name: "Commercial", roles: ["Brand leads", "Market-access professionals", "KAMs"] },
+    ],
+    roles: ["Clinical scientists and study directors", "MSLs", "Regulatory affairs professionals", "Market-access leads", "R&D scientists"],
+    candidateSignals: [
+      { title: "TA and phase evidence", body: "Named indications, phase, endpoints owned." },
+      { title: "Submission history", body: "IND, NDA, BLA, MAA, CTA — with authority engaged." },
+      { title: "GxP portfolio", body: "GCP/GLP/GMP/GVP with named audit outcomes." },
+    ],
+    skills: ["Clinical development", "Regulatory strategy", "Medical writing", "Biostatistics"],
+    tools: ["Veeva Vault", "Medidata Rave", "Oracle Argus", "SAS", "Trial Master File systems"],
+    certifications: ["RAC", "PharmD / PhD / MD", "GCP training"],
+    regulatedRequirements: ["GxP compliance", "Sponsor accountability for regulated tasks"],
+    signals: ["TA and phase rubric", "Submission history captured", "GxP evidence from CV"],
+    relatedIndustries: [
+      { slug: "biotech", name: "Biotech", blurb: "Discovery-stage life sciences." },
+      { slug: "medical-devices", name: "Medical Devices", blurb: "Regulated device product." },
+      { slug: "healthcare", name: "Healthcare", blurb: "Clinical and operational healthcare." },
+    ],
+    resources: DEFAULT_RESOURCES,
+    faqs: [
+      { q: "Do you cover medical affairs and MSLs?", a: "Yes. TA, geography and KOL-engagement evidence captured." },
+      { q: "Can you hire for FDA submissions?", a: "Yes. Submission type and authority engaged captured at intake." },
+    ],
+    cta: { title: "Hiring in Pharmaceuticals?", description: "Submit the role — TA captured, phase and pathway scored." },
+  },
+
+  {
+    slug: "biotech",
+    eyebrow: "Biotechnology",
+    name: "Biotechnology",
+    category: "Regulated & Public",
+    aliases: ["Bio", "Life Sciences", "Cell & Gene Therapy", "Synthetic Biology"],
+    meta: { title: "Biotech hiring — TaaSFlow", description: "Ranked shortlists for discovery science, translational, CMC, clinical and platform biotech roles." },
+    hero: {
+      title: "Biotech hiring, calibrated per modality and platform.",
+      subtitle: "Small molecule, biologics, cell & gene therapy, mRNA and synthetic biology — each scored on the modality and platform evidence their remit demands.",
+    },
+    challenges: [
+      { title: "Modality fluency", body: "Modality is non-transferable. Rubrics separate small molecule, biologics, cell/gene, mRNA and synbio in scoring." },
+      { title: "Bench to translational", body: "Bench scientists and translational scientists reward different signal — captured separately." },
+      { title: "CMC and process", body: "Process development, tech transfer and scale-up are distinct disciplines with dedicated rubrics." },
+    ],
+    roleFamilies: [
+      { name: "Discovery science", roles: ["Molecular biologists", "Biochemists", "Computational biologists"] },
+      { name: "Translational", roles: ["Translational scientists", "Biomarker leads"] },
+      { name: "CMC & process", roles: ["Process development scientists", "Upstream/downstream engineers", "Tech-transfer leads"] },
+      { name: "Clinical & regulatory", roles: ["Clinical scientists", "Regulatory affairs leads"] },
+    ],
+    roles: ["Molecular biologists", "Computational biologists", "Process development scientists", "Translational scientists", "CMC leads"],
+    skills: ["Cell biology", "Bioinformatics", "Upstream/downstream processing", "Analytical development"],
+    tools: ["Benchling", "Geneious", "GraphPad Prism", "SnapGene", "SEQUEL / NovaSeq platforms"],
+    certifications: ["PhD in relevant biology", "GMP training for CMC"],
+    signals: ["Modality-specific rubric", "Bench vs translational separated", "CMC track captured"],
+    relatedIndustries: [
+      { slug: "pharmaceuticals", name: "Pharmaceuticals", blurb: "Late-stage clinical and commercial." },
+      { slug: "medical-devices", name: "Medical Devices", blurb: "Diagnostics and combination products." },
+    ],
+    resources: DEFAULT_RESOURCES,
+    faqs: [
+      { q: "Do you cover cell & gene therapy specifically?", a: "Yes — modality is captured as a first-class filter." },
+    ],
+    cta: { title: "Hiring in Biotech?", description: "Submit the role — modality scored, track captured." },
+  },
+
+  {
+    slug: "medical-devices",
+    eyebrow: "Medical Devices",
+    name: "Medical Devices",
+    category: "Regulated & Public",
+    aliases: ["MedTech", "IVD", "Diagnostics", "Combination Products"],
+    meta: { title: "Medical Devices hiring — TaaSFlow", description: "Ranked shortlists for R&D, regulatory, quality, clinical and commercial medical-device roles." },
+    hero: {
+      title: "MedTech hiring, tuned per device class and pathway.",
+      subtitle: "Class I/II/III devices, IVDs, SaMD and combination products each demand different evidence. Class, pathway and QMS captured at intake.",
+    },
+    challenges: [
+      { title: "Class and pathway", body: "510(k), De Novo, PMA and CE marking under MDR/IVDR reward different signal. Pathway captured at intake." },
+      { title: "R&D specialisation", body: "Mechanical, electrical, firmware and software-in-devices are distinct crafts — separated in scoring." },
+      { title: "QMS and design controls", body: "ISO 13485 and design-control ownership surfaced from the CV." },
+    ],
+    roleFamilies: [
+      { name: "R&D engineering", roles: ["Mechanical engineers", "Electrical engineers", "Firmware engineers", "Software-in-device engineers"] },
+      { name: "Regulatory & quality", roles: ["Regulatory affairs (medical devices)", "Quality engineers", "Clinical safety officers"] },
+      { name: "Clinical & post-market", roles: ["Clinical affairs leads", "Post-market surveillance specialists"] },
+      { name: "Commercial", roles: ["Product managers", "Field-based clinical specialists", "KAMs"] },
+    ],
+    roles: ["Medical-device R&D engineers", "Regulatory affairs (MedTech)", "Quality engineers", "Clinical affairs leads"],
+    skills: ["Design controls", "ISO 13485", "Risk management (ISO 14971)", "Verification & validation"],
+    tools: ["Greenlight Guru", "MasterControl", "Solidworks", "Altium"],
+    certifications: ["RAC", "ASQ CQE", "Notified-body audit history"],
+    regulatedRequirements: ["MDR / IVDR", "FDA 21 CFR 820", "ISO 13485"],
+    signals: ["Class and pathway captured", "QMS evidence from CV", "R&D specialisation separated"],
+    relatedIndustries: [
+      { slug: "pharmaceuticals", name: "Pharmaceuticals", blurb: "Combination-product overlap." },
+      { slug: "biotech", name: "Biotech", blurb: "Diagnostics and IVD overlap." },
+      { slug: "healthtech", name: "HealthTech", blurb: "SaMD software product." },
+    ],
+    resources: DEFAULT_RESOURCES,
+    faqs: [
+      { q: "Do you cover SaMD specifically?", a: "Yes — with rubrics that blend software engineering evidence with regulatory pathway." },
+    ],
+    cta: { title: "Hiring in Medical Devices?", description: "Submit the role — class captured, QMS and pathway scored." },
+  },
+
+  {
+    slug: "defense",
+    eyebrow: "Defense & Aerospace",
+    name: "Defense & Aerospace",
+    category: "Regulated & Public",
+    aliases: ["Defence", "A&D", "Military", "Space"],
+    meta: { title: "Defense & Aerospace hiring — TaaSFlow", description: "Ranked shortlists for engineering, programme, security-cleared and mission-systems roles across defence, aerospace and space." },
+    hero: {
+      title: "Defense and aerospace hiring, tuned to programme reality.",
+      subtitle: "Systems, mission, propulsion, avionics, guidance and programme-management roles — each scored with clearance and programme evidence captured explicitly.",
+    },
+    challenges: [
+      { title: "Clearance and citizenship", body: "SC, DV, TS/SCI and equivalent captured at intake and applied as filters." },
+      { title: "Programme heritage", body: "Named programmes, phase and role played — captured from the CV." },
+      { title: "Standards fluency", body: "DO-178C, DO-254, ARP4754A, MIL-STD, AS9100 ownership surfaced." },
+    ],
+    roleFamilies: [
+      { name: "Systems engineering", roles: ["Systems engineers", "Requirements engineers", "V&V engineers"] },
+      { name: "Mission & payload", roles: ["Mission-systems engineers", "Guidance/navigation/control engineers", "Payload engineers"] },
+      { name: "Software & hardware", roles: ["Embedded engineers", "Avionics software engineers", "RF engineers"] },
+      { name: "Programme & production", roles: ["Programme managers", "Production engineers", "Supply-chain leads"] },
+    ],
+    roles: ["Systems engineers", "GNC engineers", "Avionics software engineers", "Programme managers (cleared)"],
+    skills: ["Requirements engineering", "V&V", "Embedded systems", "GNC", "Systems safety"],
+    tools: ["DOORS", "Rhapsody", "MATLAB/Simulink", "SysML", "Ansys"],
+    certifications: ["INCOSE CSEP", "PMP / APM PMQ", "Security clearances (SC/DV/TS/SCI)"],
+    regulatedRequirements: ["Export controls (ITAR/EAR)", "AS9100 for production", "DO-178C/DO-254 for airborne systems"],
+    signals: ["Clearance captured", "Programme heritage from CV", "Standards fluency scored"],
+    relatedIndustries: [
+      { slug: "aviation", name: "Aviation", blurb: "Commercial and civil aerospace." },
+      { slug: "manufacturing", name: "Manufacturing", blurb: "Precision production and supply chain." },
+      { slug: "public-sector", name: "Public Sector", blurb: "Government and defence procurement." },
+    ],
+    resources: DEFAULT_RESOURCES,
+    faqs: [
+      { q: "Do you handle cleared roles?", a: "Yes. Clearance status and citizenship are intake fields; unclearable candidates are filtered out." },
+    ],
+    cta: { title: "Hiring in Defense or Aerospace?", description: "Submit the role — clearance captured, programme and standards scored." },
+  },
+
+  {
+    slug: "education",
+    eyebrow: "Education",
+    name: "Education",
+    category: "Regulated & Public",
+    aliases: ["K-12", "Schools", "Teaching", "Academic Support"],
+    meta: { title: "Education hiring — TaaSFlow", description: "Ranked shortlists for K-12 teaching, school leadership and academic-support roles." },
+    hero: {
+      title: "Education hiring, tuned to phase and stage.",
+      subtitle: "EYFS, primary, secondary, post-16 and SEND each demand different evidence. Phase, subject and safeguarding captured at intake.",
+    },
+    challenges: [
+      { title: "Phase specialisation", body: "Primary and secondary reward different signal. Rubrics separate them." },
+      { title: "Subject fluency", body: "STEM, humanities and vocational subjects captured with named exam boards." },
+      { title: "Safeguarding & DBS", body: "Enhanced DBS, safeguarding training and prohibition-list checks are baseline." },
+    ],
+    roleFamilies: [
+      { name: "Teaching", roles: ["Primary teachers", "Secondary teachers", "SEND specialists", "TAs and HLTAs"] },
+      { name: "Leadership", roles: ["Middle leaders", "Deputies", "Headteachers", "MAT executives"] },
+    ],
+    roles: ["Teachers (all phases)", "SEND specialists", "School leaders", "MAT central-team roles"],
+    skills: ["Curriculum planning", "Assessment", "Safeguarding", "Behaviour management"],
+    tools: ["SIMS", "Arbor", "Bromcom", "Google Classroom", "Microsoft Teams for Education"],
+    certifications: ["QTS", "NPQ suite", "Enhanced DBS"],
+    regulatedRequirements: ["KCSIE compliance", "Prohibition-list checks", "Right-to-work"],
+    signals: ["Phase and subject captured", "Safeguarding baseline verified", "Leadership pipeline separated"],
+    relatedIndustries: [
+      { slug: "edtech", name: "EdTech", blurb: "Software for schools and learners." },
+      { slug: "higher-education", name: "Higher Education", blurb: "Universities and colleges." },
+    ],
+    resources: DEFAULT_RESOURCES,
+    faqs: [
+      { q: "Do you cover MAT central teams?", a: "Yes. School-improvement, HR and finance roles at MAT level are captured with sector context." },
+    ],
+    cta: { title: "Hiring in Education?", description: "Submit the role — phase, subject and safeguarding captured." },
+  },
+
+  {
+    slug: "higher-education",
+    eyebrow: "Higher Education",
+    name: "Higher Education",
+    category: "Regulated & Public",
+    aliases: ["Universities", "Research Institutions", "Colleges"],
+    meta: { title: "Higher Education hiring — TaaSFlow", description: "Ranked shortlists for academic, research, professional-services and leadership roles at universities and colleges." },
+    hero: {
+      title: "Higher-ed hiring, tuned per faculty and mission.",
+      subtitle: "Academic, research, professional-services and executive roles across research-intensive, teaching-focused and specialist institutions.",
+    },
+    challenges: [
+      { title: "Academic vs professional", body: "Academic and professional-services roles are governed differently. Rubrics separate them." },
+      { title: "Research portfolio", body: "Publications, grants, PhD supervision and REF/RAE outputs captured as first-class signals for academic roles." },
+      { title: "Mission fit", body: "Research-intensive, teaching-focused, applied and vocational institutions reward different signal." },
+    ],
+    roleFamilies: [
+      { name: "Academic", roles: ["Lecturers", "Senior lecturers", "Readers", "Professors", "Chairs"] },
+      { name: "Research", roles: ["Postdocs", "Research fellows", "PIs", "Institute directors"] },
+      { name: "Professional services", roles: ["Registry", "Finance", "Estates", "Marketing & admissions"] },
+      { name: "Leadership", roles: ["Deans", "Pro-vice-chancellors", "Vice-chancellors"] },
+    ],
+    roles: ["Academic staff (all grades)", "Postdocs and research fellows", "Registry and admissions leaders", "Deans and PVCs"],
+    skills: ["Teaching", "Research design", "Grant writing", "Curriculum design"],
+    tools: ["Blackboard", "Canvas", "SITS", "Banner", "Symplectic Elements"],
+    signals: ["Academic vs professional separated", "Research portfolio captured", "Mission fit scored"],
+    relatedIndustries: [
+      { slug: "education", name: "Education", blurb: "K-12 and further education." },
+      { slug: "edtech", name: "EdTech", blurb: "Learning platforms and content." },
+      { slug: "public-sector", name: "Public Sector", blurb: "Government-adjacent institutions." },
+    ],
+    resources: DEFAULT_RESOURCES,
+    faqs: [
+      { q: "Can you cover professorial appointments?", a: "Yes — with rubrics that weight research portfolio, teaching outcomes and citizenship." },
+    ],
+    cta: { title: "Hiring in Higher Education?", description: "Submit the role — track separated, portfolio and mission scored." },
+  },
+
+  // ============================================================
+  // PEOPLE & GTM (extended)
+  // ============================================================
+  {
+    slug: "customer-success",
+    eyebrow: "Customer Success",
+    name: "Customer Success",
+    category: "People & GTM",
+    aliases: ["CS", "CSM", "Post-Sales", "Account Management"],
+    meta: { title: "Customer Success hiring — TaaSFlow", description: "Ranked shortlists for CSMs, AMs, renewal and CS-operations roles across SMB, mid-market and enterprise." },
+    hero: {
+      title: "Customer Success hiring, calibrated per segment and motion.",
+      subtitle: "SMB high-volume CSMs, mid-market hybrid AMs and enterprise strategic CSMs each demand different evidence. Segment, ARR under management and renewal outcomes captured explicitly.",
+    },
+    challenges: [
+      { title: "Segment fit", body: "SMB, mid-market and enterprise CS look nothing alike. Rubrics separate them and never merge scoring." },
+      { title: "Renewal vs growth", body: "GRR-focused and NRR-focused CS roles reward different signal. Rubrics separate them." },
+      { title: "Technical vs strategic", body: "Solution-heavy CS and strategic account CS are different crafts — captured explicitly." },
+    ],
+    roleFamilies: [
+      { name: "Individual contributor", roles: ["CSMs (SMB/MM/Ent)", "Technical CSMs", "Strategic CSMs"] },
+      { name: "Renewals & commercial", roles: ["Renewal managers", "Account managers", "Commercial CSMs"] },
+      { name: "Leadership & ops", roles: ["CS managers/directors", "VPs of CS", "CS ops leads"] },
+    ],
+    roles: ["CSMs (all segments)", "Renewal managers", "CS operations leads", "VPs of Customer Success"],
+    candidateSignals: [
+      { title: "Book characteristics", body: "ARR under management, account count, segment, industry mix." },
+      { title: "Retention outcomes", body: "GRR, NRR, logo churn, expansion — evidenced not implied." },
+      { title: "Motion clarity", body: "Onboarding, adoption, renewal, expansion — which stages actually owned." },
+    ],
+    skills: ["Onboarding design", "QBRs", "Adoption analytics", "Renewal negotiation", "Executive relationship management"],
+    tools: ["Gainsight", "Salesforce", "ChurnZero", "Vitally", "Catalyst", "Totango"],
+    signals: ["Segment-specific rubric", "Retention outcomes captured", "Motion clarity from CV"],
+    relatedIndustries: [
+      { slug: "saas", name: "SaaS", blurb: "Recurring-revenue software." },
+      { slug: "sales", name: "Sales", blurb: "New-business acquisition." },
+    ],
+    resources: DEFAULT_RESOURCES,
+    faqs: [
+      { q: "Do you separate SMB and enterprise CSMs?", a: "Yes — segment is captured at intake and rubrics never mix them." },
+    ],
+    cta: { title: "Hiring in Customer Success?", description: "Submit the role — segment scored, retention outcomes captured." },
+  },
+
+  {
+    slug: "product-management",
+    eyebrow: "Product Management",
+    name: "Product Management",
+    category: "People & GTM",
+    aliases: ["PM", "Product", "APM", "Group PM", "CPO"],
+    meta: { title: "Product Management hiring — TaaSFlow", description: "Ranked shortlists for product managers, group PMs, principal PMs and product leaders across B2B, B2C, platform and growth." },
+    hero: {
+      title: "Product management hiring, tuned per surface and stage.",
+      subtitle: "B2B SaaS, consumer, platform, growth, data and AI product each demand different evidence. Surface, stage and outcomes captured explicitly.",
+    },
+    challenges: [
+      { title: "Surface fluency", body: "B2B, consumer, platform, growth and data product are distinct disciplines — never merged in scoring." },
+      { title: "Outcome vs output", body: "Rubrics capture measurable outcomes owned — activation, retention, revenue — not just launches." },
+      { title: "Founding vs scale", body: "0→1 founding PMs and scale-stage optimisation PMs reward different signal — captured at intake." },
+    ],
+    roleFamilies: [
+      { name: "IC PMs", roles: ["APMs", "PMs", "Senior PMs", "Staff PMs", "Principal PMs"] },
+      { name: "Specialist", roles: ["Platform PMs", "Growth PMs", "Data/AI PMs", "Technical PMs"] },
+      { name: "Leadership", roles: ["Group PMs", "Directors of Product", "VPs Product", "CPOs"] },
+    ],
+    roles: ["PMs (all levels)", "Platform / Growth / Data PMs", "Group PMs", "VPs of Product", "CPOs"],
+    candidateSignals: [
+      { title: "Outcome portfolio", body: "Named metrics moved, hypotheses tested, launches shipped — evidenced from the CV." },
+      { title: "Surface and stage", body: "B2B/consumer/platform, and 0→1 vs scale — captured explicitly." },
+      { title: "Leadership footprint", body: "Team size, PM headcount managed, function-shape decisions owned." },
+    ],
+    skills: ["Discovery", "Prioritisation frameworks", "A/B testing", "Roadmap communication", "Metrics design"],
+    tools: ["Jira", "Linear", "Amplitude", "Mixpanel", "Figma", "Notion", "Productboard"],
+    signals: ["Surface-specific rubric", "Outcome evidence captured", "0→1 vs scale separated"],
+    relatedIndustries: [
+      { slug: "saas", name: "SaaS", blurb: "Recurring-revenue software product." },
+      { slug: "tech", name: "Technology", blurb: "Engineering partners for PMs." },
+      { slug: "ai-ml", name: "AI & ML", blurb: "AI product management." },
+    ],
+    resources: DEFAULT_RESOURCES,
+    faqs: [
+      { q: "Do you cover Chief Product Officer searches?", a: "Yes. Function shape, org design and CEO-partnership evidence captured." },
+    ],
+    cta: { title: "Hiring in Product?", description: "Submit the role — surface scored, outcomes captured, level calibrated." },
+  },
+
+  {
+    slug: "design",
+    eyebrow: "Design & Creative",
+    name: "Design & Creative",
+    category: "People & GTM",
+    aliases: ["Product Design", "UX", "UI", "Brand", "Creative"],
+    meta: { title: "Design hiring — TaaSFlow", description: "Ranked shortlists for product designers, brand designers, UX researchers and design leadership." },
+    hero: {
+      title: "Design hiring, tuned per craft and portfolio.",
+      subtitle: "Product design, brand, UX research and design ops each demand different evidence. Portfolio depth, craft specialisation and outcomes captured explicitly.",
+    },
+    challenges: [
+      { title: "Portfolio parsing", body: "Portfolios beat resumes. Rubrics capture named projects, role played, craft depth and shipped surface." },
+      { title: "Craft specialisation", body: "Interaction, visual, research, systems and content design are distinct — separated in scoring." },
+      { title: "Product vs agency", body: "Agency polish and in-house shipping-cadence discipline reward different signal." },
+    ],
+    roleFamilies: [
+      { name: "Product design", roles: ["Product designers", "Senior product designers", "Staff designers", "Principal designers"] },
+      { name: "Specialist", roles: ["Design-systems leads", "UX researchers", "Content designers", "Motion designers"] },
+      { name: "Brand & creative", roles: ["Brand designers", "Art directors", "Creative directors"] },
+      { name: "Leadership", roles: ["Design managers", "Heads of design", "VPs of design"] },
+    ],
+    roles: ["Product designers (all levels)", "UX researchers", "Design-systems leads", "Brand designers", "Heads of Design"],
+    skills: ["Interaction design", "Visual design", "User research", "Design systems", "Prototyping"],
+    tools: ["Figma", "FigJam", "Sketch", "Adobe CC", "Framer", "Principle", "Dovetail"],
+    signals: ["Portfolio-based rubric", "Craft specialisation captured", "Product vs agency separated"],
+    relatedIndustries: [
+      { slug: "saas", name: "SaaS", blurb: "Product design for recurring-revenue software." },
+      { slug: "marketing", name: "Marketing", blurb: "Brand and creative for demand." },
+    ],
+    resources: DEFAULT_RESOURCES,
+    faqs: [
+      { q: "Do you review portfolios?", a: "Yes — portfolio URLs are captured at intake and referenced in evidence alongside CV claims." },
+    ],
+    cta: { title: "Hiring in Design?", description: "Submit the role — portfolio scored, craft calibrated." },
+  },
+
+  // ============================================================
+  // OPERATIONS & SERVICES (extended)
+  // ============================================================
+  {
+    slug: "automotive",
+    eyebrow: "Automotive",
+    name: "Automotive",
+    category: "Operations & Services",
+    aliases: ["Auto", "EV", "OEM", "Tier-1 Suppliers"],
+    meta: { title: "Automotive hiring — TaaSFlow", description: "Ranked shortlists for OEM, Tier-1, EV and automotive-software roles across engineering, manufacturing and quality." },
+    hero: {
+      title: "Automotive hiring, tuned per OEM vs supplier and ICE vs EV.",
+      subtitle: "Vehicle engineering, powertrain, ADAS, software-defined vehicle, manufacturing and quality — each scored with the platform, plant and standard evidence their remit demands.",
+    },
+    challenges: [
+      { title: "OEM vs Tier-1 fluency", body: "OEM programme discipline and Tier-1 delivery cadence reward different signal — captured at intake." },
+      { title: "ICE vs EV vs software", body: "Powertrain, e-mobility and software-defined vehicle roles never merge in scoring." },
+      { title: "Standards fluency", body: "IATF 16949, ISO 26262, ASPICE, ASIL — captured from the CV with named programme use." },
+    ],
+    roleFamilies: [
+      { name: "Vehicle engineering", roles: ["Body engineers", "Chassis engineers", "Powertrain engineers", "Battery engineers"] },
+      { name: "Software & ADAS", roles: ["ADAS engineers", "Autonomy engineers", "In-vehicle software engineers", "Embedded engineers"] },
+      { name: "Manufacturing & quality", roles: ["Plant managers", "Quality engineers", "Production engineers"] },
+    ],
+    roles: ["Vehicle engineers", "ADAS/autonomy engineers", "Battery engineers", "Plant and quality leaders"],
+    skills: ["Functional safety", "MBSE", "Powertrain", "Vehicle dynamics", "Manufacturing engineering"],
+    tools: ["MATLAB/Simulink", "dSPACE", "CANoe", "Teamcenter", "CATIA"],
+    certifications: ["ISO 26262 practitioner", "APQP / PPAP", "Six Sigma"],
+    signals: ["OEM vs Tier-1 captured", "ICE/EV/software separated", "Standards fluency scored"],
+    relatedIndustries: [
+      { slug: "manufacturing", name: "Manufacturing", blurb: "Precision production." },
+      { slug: "energy", name: "Energy", blurb: "EV charging and grid integration." },
+    ],
+    resources: DEFAULT_RESOURCES,
+    faqs: [
+      { q: "Do you cover software-defined vehicle roles?", a: "Yes. Embedded, middleware and cloud-to-vehicle roles captured with stack." },
+    ],
+    cta: { title: "Hiring in Automotive?", description: "Submit the role — track captured, standards scored." },
+  },
+
+  {
+    slug: "energy",
+    eyebrow: "Energy & Utilities",
+    name: "Energy & Utilities",
+    category: "Operations & Services",
+    aliases: ["Power", "Grid", "Utilities", "Transmission"],
+    meta: { title: "Energy & Utilities hiring — TaaSFlow", description: "Ranked shortlists for generation, transmission, distribution and utility-operations roles." },
+    hero: {
+      title: "Energy hiring, calibrated per asset class and network layer.",
+      subtitle: "Generation, transmission, distribution and retail utilities each demand different evidence. Asset class, network layer and regulatory regime captured explicitly.",
+    },
+    challenges: [
+      { title: "Asset-class specialisation", body: "Thermal, nuclear, hydro, wind and solar reward different signal. Never merged in scoring." },
+      { title: "Network layer", body: "Transmission, distribution and retail are distinct — captured explicitly." },
+      { title: "Regulatory regime", body: "Ofgem, FERC, national regulators — with named submissions captured." },
+    ],
+    roleFamilies: [
+      { name: "Generation", roles: ["Plant managers", "Generation engineers", "Asset performance engineers"] },
+      { name: "Networks", roles: ["Grid engineers", "Substation engineers", "Network planning engineers"] },
+      { name: "Trading & commercial", roles: ["Power traders", "Origination leads", "PPA structuring"] },
+      { name: "Regulatory", roles: ["Regulatory affairs leads", "Compliance managers"] },
+    ],
+    roles: ["Generation engineers", "Grid and substation engineers", "Power traders", "Regulatory affairs leads"],
+    skills: ["Power systems", "Grid planning", "Energy trading", "PPA structuring"],
+    tools: ["PSS/E", "DIgSILENT", "PSCAD", "ETAP"],
+    certifications: ["Chartered engineer status (CEng)", "IET / IEEE membership"],
+    signals: ["Asset-class rubric", "Network layer captured", "Regulatory context surfaced"],
+    relatedIndustries: [
+      { slug: "renewable-energy", name: "Renewable Energy", blurb: "Wind, solar and storage." },
+      { slug: "oil-gas", name: "Oil & Gas", blurb: "Hydrocarbon operations." },
+    ],
+    resources: DEFAULT_RESOURCES,
+    faqs: [
+      { q: "Do you cover trading and origination?", a: "Yes. Traded product, market and volume captured." },
+    ],
+    cta: { title: "Hiring in Energy?", description: "Submit the role — asset class scored, network layer captured." },
+  },
+
+  {
+    slug: "renewable-energy",
+    eyebrow: "Renewable Energy",
+    name: "Renewable Energy",
+    category: "Operations & Services",
+    aliases: ["CleanTech", "Wind", "Solar", "Battery Storage", "Green Hydrogen"],
+    meta: { title: "Renewable Energy hiring — TaaSFlow", description: "Ranked shortlists for renewable-development, engineering, operations and financing roles." },
+    hero: {
+      title: "Renewables hiring, tuned per technology and lifecycle.",
+      subtitle: "Onshore wind, offshore wind, utility-scale solar, C&I, BESS and hydrogen — each scored on technology, jurisdiction and lifecycle stage.",
+    },
+    challenges: [
+      { title: "Technology-specific evidence", body: "Wind, solar and storage are distinct. Rubrics never merge them." },
+      { title: "Lifecycle stage", body: "Development, engineering/procurement/construction, and O&M reward different signal — separated explicitly." },
+      { title: "Jurisdiction and consent", body: "Planning consent, grid connection and permitting captured with jurisdiction." },
+    ],
+    roleFamilies: [
+      { name: "Development", roles: ["Project developers", "Land agents", "Consent managers", "Grid-connection specialists"] },
+      { name: "Engineering & construction", roles: ["Electrical engineers", "Civil engineers", "Package managers"] },
+      { name: "Operations", roles: ["O&M managers", "Asset managers", "SCADA engineers"] },
+      { name: "Finance & investment", roles: ["Project finance analysts", "M&A leads", "PPA originators"] },
+    ],
+    roles: ["Project developers", "Grid-connection specialists", "Asset managers", "Project finance analysts"],
+    skills: ["Project development", "Grid connection", "PV/wind engineering", "PPA origination"],
+    tools: ["PVsyst", "WindPRO", "PLEXOS", "HOMER"],
+    signals: ["Technology-specific rubric", "Lifecycle stage captured", "Jurisdiction and consent surfaced"],
+    relatedIndustries: [
+      { slug: "energy", name: "Energy", blurb: "Wider power markets." },
+      { slug: "finance", name: "Finance", blurb: "Project and infrastructure finance." },
+    ],
+    resources: DEFAULT_RESOURCES,
+    faqs: [
+      { q: "Do you cover offshore-wind development?", a: "Yes. Jurisdiction, seabed rights and consent evidence captured." },
+    ],
+    cta: { title: "Hiring in Renewables?", description: "Submit the role — technology captured, lifecycle scored." },
+  },
+
+  {
+    slug: "oil-gas",
+    eyebrow: "Oil & Gas",
+    name: "Oil & Gas",
+    category: "Operations & Services",
+    aliases: ["Upstream", "Midstream", "Downstream", "LNG", "Petrochemicals"],
+    meta: { title: "Oil & Gas hiring — TaaSFlow", description: "Ranked shortlists for upstream, midstream and downstream engineering, operations and commercial roles." },
+    hero: {
+      title: "Oil & gas hiring, tuned per segment and asset.",
+      subtitle: "Upstream E&P, midstream, downstream refining, LNG and petrochemicals — each scored on asset type, geography and standards.",
+    },
+    challenges: [
+      { title: "Segment fluency", body: "Upstream, midstream and downstream never merge in scoring." },
+      { title: "Asset and geography", body: "Deep-water, onshore, unconventional, LNG plant and refinery captured explicitly." },
+      { title: "HSE discipline", body: "Process safety, PSM and IOGP standards surfaced from the CV." },
+    ],
+    roleFamilies: [
+      { name: "Subsurface & wells", roles: ["Reservoir engineers", "Petrophysicists", "Drilling engineers", "Completion engineers"] },
+      { name: "Facilities & operations", roles: ["Facilities engineers", "Production engineers", "Operations managers"] },
+      { name: "Commercial & trading", roles: ["Traders", "Originators", "Commercial managers"] },
+      { name: "HSE", roles: ["Process safety engineers", "HSE managers"] },
+    ],
+    roles: ["Reservoir and drilling engineers", "Facilities and production engineers", "Commercial and trading leads", "HSE managers"],
+    skills: ["Reservoir modelling", "Well engineering", "Process safety", "Energy trading"],
+    tools: ["Petrel", "Eclipse", "OLGA", "Aspen HYSYS"],
+    certifications: ["SPE membership", "NEBOSH", "IOGP-aligned safety qualifications"],
+    signals: ["Segment scoring", "Asset and geography captured", "HSE discipline surfaced"],
+    relatedIndustries: [
+      { slug: "energy", name: "Energy", blurb: "Wider power and utilities." },
+      { slug: "renewable-energy", name: "Renewables", blurb: "Energy-transition adjacencies." },
+    ],
+    resources: DEFAULT_RESOURCES,
+    faqs: [
+      { q: "Do you cover energy transition roles?", a: "Yes. CCUS, hydrogen and low-carbon transitions inside integrated majors captured explicitly." },
+    ],
+    cta: { title: "Hiring in Oil & Gas?", description: "Submit the role — segment scored, HSE captured." },
+  },
+
+  {
+    slug: "agriculture",
+    eyebrow: "Agriculture & AgriTech",
+    name: "Agriculture & AgriTech",
+    category: "Operations & Services",
+    aliases: ["AgTech", "Farming", "Food Production", "Agribusiness"],
+    meta: { title: "Agriculture hiring — TaaSFlow", description: "Ranked shortlists for farm operations, agri-supply, and AgTech engineering and commercial roles." },
+    hero: {
+      title: "Agri hiring, tuned per farm gate to fork.",
+      subtitle: "Farm operations, agri-supply, food-science and AgTech software — each scored on the segment and product evidence the role demands.",
+    },
+    challenges: [
+      { title: "Farm-gate to supply-chain", body: "Farm operators, agri-suppliers and food processors demand different evidence." },
+      { title: "AgTech specialisation", body: "Precision-agriculture, farm-management software and biological-input companies scored separately." },
+    ],
+    roleFamilies: [
+      { name: "Farm operations", roles: ["Farm managers", "Agronomists", "Livestock managers"] },
+      { name: "Agri-supply", roles: ["Category managers", "Grain traders", "Commodities analysts"] },
+      { name: "AgTech", roles: ["AgTech PMs", "IoT/embedded engineers", "Data scientists (crop models)"] },
+    ],
+    roles: ["Agronomists", "Farm managers", "Agri-commodities traders", "AgTech PMs and engineers"],
+    skills: ["Agronomy", "Livestock management", "Commodities trading", "Precision agriculture"],
+    tools: ["Climate FieldView", "John Deere Operations Center", "Cropwise", "SAP for Agribusiness"],
+    signals: ["Segment-specific rubric", "AgTech separation", "Commodities exposure captured"],
+    relatedIndustries: [
+      { slug: "food-beverage", name: "Food & Beverage", blurb: "Processed-food and CPG." },
+      { slug: "logistics", name: "Logistics", blurb: "Cold-chain and agri-logistics." },
+    ],
+    resources: DEFAULT_RESOURCES,
+    faqs: [
+      { q: "Do you cover AgTech engineering?", a: "Yes — IoT, robotics and crop-model engineering captured explicitly." },
+    ],
+    cta: { title: "Hiring in Agriculture?", description: "Submit the role — segment scored, commodity exposure captured." },
+  },
+
+  {
+    slug: "food-beverage",
+    eyebrow: "Food & Beverage",
+    name: "Food & Beverage",
+    category: "Operations & Services",
+    aliases: ["CPG", "FMCG", "Food Manufacturing", "Beverages"],
+    meta: { title: "Food & Beverage hiring — TaaSFlow", description: "Ranked shortlists for food-science, manufacturing, quality and commercial CPG roles." },
+    hero: {
+      title: "F&B hiring, tuned per category and channel.",
+      subtitle: "Ambient, chilled, frozen, beverages and alcohol each demand different evidence. Category, plant and channel captured explicitly.",
+    },
+    challenges: [
+      { title: "Category depth", body: "Ambient, chilled, frozen, bakery, beverage and alcohol reward different signal — separated in scoring." },
+      { title: "Regulatory and quality", body: "BRC, SQF, HACCP and FSMA captured with plant experience." },
+      { title: "Channel mix", body: "Retail, foodservice and DTC captured explicitly." },
+    ],
+    roleFamilies: [
+      { name: "R&D and food science", roles: ["Food scientists", "NPD managers", "Flavourists"] },
+      { name: "Manufacturing & quality", roles: ["Plant managers", "Quality managers", "HACCP leads"] },
+      { name: "Commercial", roles: ["National account managers", "Category managers", "Trade marketing"] },
+    ],
+    roles: ["Food scientists and NPD leads", "Plant and quality managers", "National account managers"],
+    skills: ["NPD", "HACCP", "Food safety", "Category management", "Trade marketing"],
+    tools: ["SAP", "Infor M3", "TraceGains", "Kalypso"],
+    certifications: ["BRC / SQF audit history", "HACCP", "IFST membership"],
+    signals: ["Category-specific rubric", "Plant experience captured", "Channel mix scored"],
+    relatedIndustries: [
+      { slug: "retail", name: "Retail", blurb: "Retail buying and merchandising." },
+      { slug: "agriculture", name: "Agriculture", blurb: "Upstream ingredient sourcing." },
+      { slug: "hospitality", name: "Hospitality", blurb: "Foodservice partners." },
+    ],
+    resources: DEFAULT_RESOURCES,
+    faqs: [
+      { q: "Do you cover NPD roles?", a: "Yes — with rubrics that weight named launches, category and shelf outcomes." },
+    ],
+    cta: { title: "Hiring in Food & Beverage?", description: "Submit the role — category scored, plant experience captured." },
+  },
+
+  {
+    slug: "telecom",
+    eyebrow: "Telecommunications",
+    name: "Telecommunications",
+    category: "Operations & Services",
+    aliases: ["Telco", "Carrier", "Networks", "5G", "Fibre"],
+    meta: { title: "Telecommunications hiring — TaaSFlow", description: "Ranked shortlists for RAN, core, transport, IT and B2B telco roles." },
+    hero: {
+      title: "Telco hiring, calibrated per layer and technology generation.",
+      subtitle: "RAN, core, transport, OSS/BSS and B2B networks — each scored on the technology generation, vendor mix and carrier context.",
+    },
+    challenges: [
+      { title: "Layer specialisation", body: "RAN, core and transport are distinct. Rubrics never merge them." },
+      { title: "Vendor mix", body: "Ericsson, Nokia, Huawei, Samsung, open-RAN captured explicitly." },
+      { title: "OSS/BSS transformation", body: "Legacy transformation programmes with named vendors surfaced from the CV." },
+    ],
+    roleFamilies: [
+      { name: "RAN & core", roles: ["RAN engineers", "Core engineers", "5G specialists"] },
+      { name: "Transport & IP", roles: ["Transport engineers", "IP/MPLS engineers", "Optical engineers"] },
+      { name: "OSS/BSS & IT", roles: ["OSS engineers", "BSS engineers", "Billing specialists"] },
+      { name: "B2B & commercial", roles: ["B2B account managers", "Solutions architects"] },
+    ],
+    roles: ["RAN and core engineers", "Transport/IP engineers", "OSS/BSS specialists", "B2B solutions architects"],
+    skills: ["5G/4G", "IP/MPLS", "OSS/BSS", "Network planning"],
+    tools: ["Amdocs", "Netcracker", "Ericsson OSS", "Nokia NetAct"],
+    signals: ["Layer-specific rubric", "Vendor mix captured", "Transformation programme evidence"],
+    relatedIndustries: [
+      { slug: "tech", name: "Technology", blurb: "IT and platform adjacencies." },
+      { slug: "devops", name: "DevOps & Cloud", blurb: "Cloud-native telco." },
+    ],
+    resources: DEFAULT_RESOURCES,
+    faqs: [
+      { q: "Do you cover open-RAN specialists?", a: "Yes. Vendor experience captured explicitly." },
+    ],
+    cta: { title: "Hiring in Telco?", description: "Submit the role — layer scored, vendors captured." },
+  },
+
+  {
+    slug: "aviation",
+    eyebrow: "Aviation",
+    name: "Aviation",
+    category: "Operations & Services",
+    aliases: ["Airlines", "Airports", "MRO", "Air Traffic"],
+    meta: { title: "Aviation hiring — TaaSFlow", description: "Ranked shortlists for airline, airport, MRO and air-navigation roles." },
+    hero: {
+      title: "Aviation hiring, tuned per operator and function.",
+      subtitle: "Airlines, airports, MRO and air-navigation service providers each demand different evidence. Operator type, function and regulatory context captured explicitly.",
+    },
+    challenges: [
+      { title: "Operator distinction", body: "Airlines, airports, MRO and ANSPs reward different signal — separated in scoring." },
+      { title: "Regulatory context", body: "EASA, FAA, CAA and ICAO frameworks captured with named audit history." },
+      { title: "Ops vs commercial", body: "Flight ops, ground ops, engineering and commercial captured distinctly." },
+    ],
+    roleFamilies: [
+      { name: "Flight operations", roles: ["Chief pilots", "Ops managers", "Crew scheduling"] },
+      { name: "Engineering & MRO", roles: ["Licensed engineers (B1/B2)", "MRO managers", "Continuing airworthiness"] },
+      { name: "Ground ops & airports", roles: ["Airport ops managers", "Turnaround managers", "Ground handling directors"] },
+      { name: "Commercial", roles: ["Route planning", "Revenue management", "Cargo commercial"] },
+    ],
+    roles: ["Airline operations leaders", "MRO engineers", "Airport operations managers", "Revenue management analysts"],
+    skills: ["Flight operations", "Airworthiness", "Aviation safety", "Revenue management"],
+    tools: ["Sabre", "Amadeus", "AIMS", "AMOS", "Ramco Aviation"],
+    certifications: ["Part 66 licences", "IATA qualifications"],
+    regulatedRequirements: ["Part 145 / Part M / Part 21", "SMS ownership"],
+    signals: ["Operator-type rubric", "Regulatory framework captured", "Function-specific scoring"],
+    relatedIndustries: [
+      { slug: "defense", name: "Defense & Aerospace", blurb: "Aerospace overlap." },
+      { slug: "logistics", name: "Logistics", blurb: "Air cargo and freight forwarding." },
+      { slug: "travel", name: "Travel & Tourism", blurb: "Travel-distribution partners." },
+    ],
+    resources: DEFAULT_RESOURCES,
+    faqs: [
+      { q: "Do you cover MRO leadership?", a: "Yes. Part 145 approval and named-fleet experience captured." },
+    ],
+    cta: { title: "Hiring in Aviation?", description: "Submit the role — operator scored, regulation captured." },
+  },
+
+  {
+    slug: "travel",
+    eyebrow: "Travel & Tourism",
+    name: "Travel & Tourism",
+    category: "Operations & Services",
+    aliases: ["OTA", "Tour Operator", "Hotels", "Destination Marketing"],
+    meta: { title: "Travel & Tourism hiring — TaaSFlow", description: "Ranked shortlists for OTAs, tour operators, hotel groups and destination marketing." },
+    hero: {
+      title: "Travel hiring, tuned per operator type.",
+      subtitle: "OTAs, tour operators, hotel groups, cruise, and DMOs each demand different evidence. Operator type, segment and channel captured explicitly.",
+    },
+    challenges: [
+      { title: "Operator specialisation", body: "OTAs, tour ops, hoteliers and DMOs reward different signal — separated in scoring." },
+      { title: "Distribution and channel", body: "GDS, direct, wholesale and B2B2C captured explicitly." },
+    ],
+    roleFamilies: [
+      { name: "Commercial", roles: ["Revenue managers", "Distribution managers", "Trade sales"] },
+      { name: "Product & content", roles: ["Product managers (travel product)", "Content producers", "Contracting managers"] },
+      { name: "Operations", roles: ["Operations managers", "Guest experience directors"] },
+    ],
+    roles: ["Revenue and distribution managers", "Product managers", "Contracting managers"],
+    skills: ["Revenue management", "Distribution", "Contracting", "Product design"],
+    tools: ["Amadeus", "Sabre", "IDeaS RMS", "Duetto", "Opera PMS"],
+    signals: ["Operator-type rubric", "Distribution channel captured", "Segment scoring"],
+    relatedIndustries: [
+      { slug: "hospitality", name: "Hospitality", blurb: "Hotels and F&B operations." },
+      { slug: "aviation", name: "Aviation", blurb: "Travel distribution partners." },
+    ],
+    resources: DEFAULT_RESOURCES,
+    faqs: [
+      { q: "Do you cover OTA product roles?", a: "Yes. Marketplace, supply and demand-side experience captured." },
+    ],
+    cta: { title: "Hiring in Travel?", description: "Submit the role — operator scored, channel captured." },
+  },
+
+  {
+    slug: "sports",
+    eyebrow: "Sports & Entertainment",
+    name: "Sports & Entertainment",
+    category: "Operations & Services",
+    aliases: ["Sports", "Live Events", "Music", "Talent Agencies"],
+    meta: { title: "Sports & Entertainment hiring — TaaSFlow", description: "Ranked shortlists for clubs, leagues, agencies, live-events and entertainment operators." },
+    hero: {
+      title: "Sports & entertainment hiring, tuned per operator.",
+      subtitle: "Clubs, leagues, agencies, promoters and venues each demand different evidence. Operator type, revenue mix and rights context captured explicitly.",
+    },
+    challenges: [
+      { title: "Operator specialisation", body: "Rights holders, agencies and venues reward different signal — separated in scoring." },
+      { title: "Commercial fluency", body: "Broadcast, sponsorship, ticketing and hospitality captured explicitly." },
+    ],
+    roleFamilies: [
+      { name: "Commercial", roles: ["Sponsorship sales", "Partnership managers", "Broadcast rights leads"] },
+      { name: "Operations", roles: ["Match-day operations", "Venue operations", "Event producers"] },
+      { name: "Athlete & talent", roles: ["Performance directors", "Talent agents", "Player-liaison leads"] },
+    ],
+    roles: ["Sponsorship sales", "Match-day operations", "Talent agents", "Broadcast rights leads"],
+    skills: ["Sponsorship sales", "Event production", "Talent management", "Rights commercialisation"],
+    tools: ["Salesforce", "SAP Ticketing", "AXS", "Ticketmaster Enterprise"],
+    signals: ["Operator-type rubric", "Revenue mix captured", "Rights fluency scored"],
+    relatedIndustries: [
+      { slug: "media", name: "Media & Entertainment", blurb: "Broadcasters and studios." },
+      { slug: "hospitality", name: "Hospitality", blurb: "Venue F&B and hospitality." },
+    ],
+    resources: DEFAULT_RESOURCES,
+    faqs: [
+      { q: "Do you cover rights-holder commercial roles?", a: "Yes. Named-partner outcomes and revenue attribution captured." },
+    ],
+    cta: { title: "Hiring in Sports or Entertainment?", description: "Submit the role — operator scored, commercial captured." },
+  },
+
+  {
+    slug: "fashion",
+    eyebrow: "Fashion & Apparel",
+    name: "Fashion & Apparel",
+    category: "Operations & Services",
+    aliases: ["Apparel", "Luxury", "Footwear", "Beauty", "Accessories"],
+    meta: { title: "Fashion & Apparel hiring — TaaSFlow", description: "Ranked shortlists for design, buying, merchandising, wholesale and retail-ops fashion roles." },
+    hero: {
+      title: "Fashion hiring, tuned per segment and channel.",
+      subtitle: "Luxury, contemporary, premium, mass-market and fast-fashion each demand different evidence. Segment, category and channel captured explicitly.",
+    },
+    challenges: [
+      { title: "Segment specialisation", body: "Luxury, premium and mass never merge in scoring." },
+      { title: "Category depth", body: "Womenswear, menswear, kidswear, footwear, beauty and accessories captured explicitly." },
+      { title: "Channel mix", body: "Wholesale, retail, DTC and marketplace scored separately." },
+    ],
+    roleFamilies: [
+      { name: "Design & product", roles: ["Designers", "Head designers", "Design directors"] },
+      { name: "Buying & merchandising", roles: ["Buyers", "Senior buyers", "Merchandisers", "Merchandise planners"] },
+      { name: "Wholesale & retail", roles: ["Wholesale account managers", "Retail directors", "Store leaders"] },
+    ],
+    roles: ["Designers and design directors", "Buyers and merchandisers", "Wholesale account managers"],
+    skills: ["Trend forecasting", "Range planning", "Merchandise planning", "Wholesale sales"],
+    tools: ["PLM (Centric/Flex)", "Anaplan", "SAP Fashion Management", "Nuorder"],
+    signals: ["Segment scoring", "Category captured", "Channel separated"],
+    relatedIndustries: [
+      { slug: "retail", name: "Retail", blurb: "Retail operations and buying." },
+      { slug: "ecommerce", name: "E-commerce", blurb: "DTC and marketplace channels." },
+    ],
+    resources: DEFAULT_RESOURCES,
+    faqs: [
+      { q: "Do you cover luxury specifically?", a: "Yes. Luxury-house context and category experience captured explicitly." },
+    ],
+    cta: { title: "Hiring in Fashion?", description: "Submit the role — segment scored, category captured." },
+  },
+];
