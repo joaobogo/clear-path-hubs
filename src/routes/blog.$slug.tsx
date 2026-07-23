@@ -77,7 +77,7 @@ function BlogPost() {
   const published = meta["article:published_time"];
   const updated = meta["article:modified_time"] || published;
   const author = meta.author || "TaaSFlow";
-  const entryAny = entry as unknown as { category?: string; tags?: string[] };
+  const entryAny = entry as unknown as { category?: string; tags?: string[]; industry?: string };
   const category =
     BLOG_METADATA[slug]?.category ?? entryAny.category ?? "General";
   const tags = BLOG_METADATA[slug]?.tags ?? entryAny.tags ?? [];
