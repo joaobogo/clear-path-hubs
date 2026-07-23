@@ -711,7 +711,7 @@ export function PositionEditWizard({
         >
           Back
         </Button>
-        {step < 4 ? (
+        {step < LAST_STEP ? (
           <Button type="button" onClick={next}>
             Continue
           </Button>
