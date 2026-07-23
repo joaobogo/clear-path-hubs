@@ -451,11 +451,48 @@ export function PositionEditWizard({
                   </SelectContent>
                 </Select>
               </Field>
+              <Field label="Hiring timeline" hint="Target start date or key milestones.">
+                <Input
+                  value={state.hiring_timeline}
+                  onChange={(e) => set("hiring_timeline", e.target.value)}
+                  placeholder="Start by Q3, onboarding by Sept…"
+                />
+              </Field>
+              <Field label="Reason for hiring">
+                <Select
+                  value={state.reason_for_hiring}
+                  onValueChange={(v) =>
+                    set("reason_for_hiring", v as State["reason_for_hiring"])
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select…" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="growth">Growth — new headcount</SelectItem>
+                    <SelectItem value="replacement">Replacement</SelectItem>
+                    <SelectItem value="backfill">Backfill</SelectItem>
+                    <SelectItem value="new_team">New team / function</SelectItem>
+                  </SelectContent>
+                </Select>
+              </Field>
+            </div>
+          )}
+
+          {step === 4 && (
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <Field label="Work authorization">
                 <Input
                   value={state.work_authorization}
                   onChange={(e) => set("work_authorization", e.target.value)}
                   placeholder="EU, US, sponsor…"
+                />
+              </Field>
+              <Field label="Timezone requirements">
+                <Input
+                  value={state.timezone_requirements}
+                  onChange={(e) => set("timezone_requirements", e.target.value)}
+                  placeholder="CET ±3h"
                 />
               </Field>
               <Field label="Target countries" hint="Enter to add." className="sm:col-span-2">
@@ -542,12 +579,7 @@ export function PositionEditWizard({
                         if (v.length >= 3) {
                           set("screening_questions", [
                             ...state.screening_questions,
-                            {
-                              question: v,
-                              answer_type: "text",
-                              required: false,
-                              dealbreaker: false,
-                            },
+                            { question: v, answer_type: "text", required: false, dealbreaker: false },
                           ]);
                           setQDraft("");
                         }
@@ -563,12 +595,7 @@ export function PositionEditWizard({
                       if (v.length >= 3) {
                         set("screening_questions", [
                           ...state.screening_questions,
-                          {
-                            question: v,
-                            answer_type: "text",
-                            required: false,
-                            dealbreaker: false,
-                          },
+                          { question: v, answer_type: "text", required: false, dealbreaker: false },
                         ]);
                         setQDraft("");
                       }
@@ -603,10 +630,50 @@ export function PositionEditWizard({
                   </ul>
                 )}
               </Field>
+              <Field label="Current hiring challenges" className="sm:col-span-2">
+                <Textarea
+                  rows={2}
+                  value={state.hiring_challenges}
+                  onChange={(e) => set("hiring_challenges", e.target.value)}
+                  placeholder="What has made this role hard to fill?"
+                />
+              </Field>
+              <Field
+                label="Interview process"
+                hint="Number of rounds, format, panel."
+                className="sm:col-span-2"
+              >
+                <Textarea
+                  rows={2}
+                  value={state.interview_process}
+                  onChange={(e) => set("interview_process", e.target.value)}
+                  placeholder="Screen → Technical → Panel → Offer"
+                />
+              </Field>
+              <Field
+                label="Decision makers"
+                hint="Who signs off on the hire?"
+                className="sm:col-span-2"
+              >
+                <Input
+                  value={state.decision_makers}
+                  onChange={(e) => set("decision_makers", e.target.value)}
+                  placeholder="Hiring manager, VP Eng, CEO…"
+                />
+              </Field>
+              <Field label="Additional context" className="sm:col-span-2">
+                <Textarea
+                  rows={3}
+                  value={state.additional_context}
+                  onChange={(e) => set("additional_context", e.target.value)}
+                  placeholder="Anything else we should know?"
+                />
+              </Field>
             </div>
           )}
 
-          {step === 4 && (
+          {step === 5 && (
+
             <div className="space-y-3 text-sm">
               <ReviewBlock title="Role">
                 <div>
