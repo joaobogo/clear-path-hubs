@@ -1,148 +1,157 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import {
-  SiteShell,
-  PublicPage,
-  PublicSection,
-  CtaSection,
-} from "@/components/marketing/site-shell";
+import { useEffect, useMemo, useState } from "react";
 import { marketingHead } from "@/lib/marketing/head";
+import { PublicPage, PublicSection } from "@/components/marketing/site-shell";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { ArrowRight, Link as LinkIcon } from "lucide-react";
 
-type QA = { id: string; q: string; a: string };
+type QA = { q: string; a: string; id: string };
 type Group = { id: string; title: string; items: QA[] };
 
-const GROUPS: Group[] = [
+const slug = (s: string) =>
+  s
+    .toLowerCase()
+    .replace(/[^\w\s-]/g, "")
+    .trim()
+    .replace(/\s+/g, "-")
+    .slice(0, 80);
+
+const RAW_GROUPS: Array<{ id: string; title: string; items: Array<Omit<QA, "id">> }> = [
   {
-    id: "model",
-    title: "The subscription model",
+    id: "how-taasflow-works",
+    title: "How TaaSFlow Works",
     items: [
-      {
-        id: "are-you-agency",
-        q: "Are you a staffing agency?",
-        a: "No. Agencies charge a percentage of first-year salary per hire and disappear between placements. TaaSFlow is a subscription recruiting service: a flat monthly fee, weekly candidate delivery, and a workspace your team owns.",
-      },
-      {
-        id: "placement-fees",
-        q: "Do you charge placement fees or salary percentages?",
-        a: "No. Pricing is a flat subscription — the same whether you hire one person or ten. No success fees, no salary percentages, no back-end invoices.",
-      },
-      {
-        id: "one-off-vs-subscription",
-        q: "What is the difference between one-off recruiting and subscription?",
-        a: "One-off recruiting resets every hire: new brief, new agency, new fees. A TaaSFlow subscription is continuous — sourcing, screening, and delivery keep running so pipeline and learnings compound across roles.",
-      },
-      {
-        id: "cancel",
-        q: "How do contracts and cancellation work?",
-        a: "Month-to-month by default. You can pause or cancel between billing cycles. Annual plans include a discount and can be cancelled at renewal.",
-      },
+      { q: "What is TaaSFlow?", a: "TaaSFlow is a hiring operating system. Clients submit roles through a structured intake, we run sourcing and screening, and candidates are delivered inside a shared workspace with evidence against each requirement." },
+      { q: "How is TaaSFlow different from a traditional agency?", a: "You get a workspace instead of a PDF. Every role, candidate, and note lives in the same account, and delivery is structured around the brief rather than contingent on placements." },
+      { q: "Who operates the delivery?", a: "A dedicated TaaSFlow team handles intake, sourcing, screening, and evidence capture. Your hiring managers keep decision rights." },
+      { q: "Do we need to change our ATS?", a: "No. TaaSFlow runs the pre-hire workflow inside its own workspace. Handover into your ATS happens at the point you decide." },
     ],
   },
   {
-    id: "delivery",
-    title: "Delivery and cadence",
+    id: "candidate-delivery",
+    title: "Candidate Delivery",
     items: [
-      {
-        id: "how-fast",
-        q: "How fast do you deliver candidates?",
-        a: "Most subscriptions produce a first ranked shortlist within one to two weeks of intake, then a rolling weekly delivery of new candidates until the role is closed.",
-      },
-      {
-        id: "what-do-we-get",
-        q: "What do we get in a weekly delivery?",
-        a: "A ranked shortlist inside your workspace. Each candidate carries an evidence-based score, a recruiter-written fit narrative, strengths and gaps, and a one-click path to shortlist, request an interview, or send feedback.",
-      },
-      {
-        id: "roles-regions",
-        q: "What roles and regions do you support?",
-        a: "TaaSFlow supports individual contributor and leadership roles across engineering, product, design, data, revenue, operations, and G&A. Sourcing runs globally with active coverage in the Americas, Europe, and the Middle East.",
-      },
+      { q: "How are candidates delivered?", a: "Candidates surface in your workspace as a ranked shortlist, each with evidence against the requirements defined in the brief." },
+      { q: "What does evidence mean?", a: "For each candidate, we capture concrete signals mapped to your requirements — experience, projects, credentials, or answers to screening questions — so review isn't guesswork." },
+      { q: "How many candidates should we expect?", a: "A shortlist is sized to the role and the market. We favour signal over volume." },
+      { q: "Can we request more candidates?", a: "Yes. Feedback in the workspace shapes the next batch." },
     ],
   },
   {
-    id: "scoring",
-    title: "Screening and scoring",
+    id: "workspace-and-visibility",
+    title: "Workspace and Visibility",
     items: [
-      {
-        id: "how-scoring-works",
-        q: "How does candidate scoring work?",
-        a: "Every candidate is scored 0–100 against the exact requirements in your intake. Scores are evidence-first: each requirement is either supported by a citation from the CV, partially met, or missing. You see the evidence, not just a number.",
-      },
-      {
-        id: "customize-scoring",
-        q: "Can we customise scoring weights for our role?",
-        a: "Yes. Requirements you flag as must-have or dealbreaker are weighted heavier and can cap a candidate's score. Preferred requirements add lift. Everything is set during intake and can be updated as the role evolves.",
-      },
-      {
-        id: "screening-questions",
-        q: "Can we add screening questions?",
-        a: "Yes. You define role-specific questions during intake — free text, boolean, or multiple choice. Answers are stored with the application and shown alongside the CV evidence.",
-      },
+      { q: "Who has access to our workspace?", a: "The client account, invited teammates, and the TaaSFlow delivery team assigned to your roles." },
+      { q: "Can multiple teammates review candidates?", a: "Yes. Invite as many teammates as needed with role-appropriate access." },
+      { q: "What can we see about progress?", a: "Open roles, current stage per candidate, feedback exchanged, and messages — in one view." },
+      { q: "Can we message the delivery team?", a: "Yes. Messaging is inside the workspace so it stays attached to the role." },
     ],
   },
   {
-    id: "start",
-    title: "Getting started",
+    id: "pricing-and-billing",
+    title: "Pricing and Billing",
     items: [
-      {
-        id: "what-you-need",
-        q: "What do you need from us to begin?",
-        a: "An intake session (or the online intake form) covering the role, must-haves, dealbreakers, and hiring context. If you have a job description, share it — otherwise we can build one from the intake.",
-      },
-      {
-        id: "alongside-agencies",
-        q: "Can we use TaaSFlow alongside an agency?",
-        a: "Yes. Many clients run TaaSFlow next to an existing agency, especially during transition. Because you own the pipeline, there is no conflict on candidates we source.",
-      },
-      {
-        id: "employer-brand",
-        q: "How do you protect our employer brand?",
-        a: "All outreach is co-branded with your company. Messaging, tone, and role framing are agreed during intake, and any candidate-facing content is reviewed before it goes out.",
-      },
+      { q: "How does TaaSFlow charge?", a: "TaaSFlow uses a service model rather than placement fees. Specific pricing depends on scope and is confirmed in the commercial agreement." },
+      { q: "Are there placement fees?", a: "No. Delivery is not contingent on placement." },
+      { q: "How is billing handled?", a: "Billing is agreed with your account team and documented in your contract." },
+      { q: "Where can I see current pricing?", a: "See the Pricing page for how the model works. Exact numbers are shared during the commercial conversation." },
     ],
   },
   {
-    id: "trust",
-    title: "Data and trust",
+    id: "pilots-and-starting",
+    title: "Pilots and Starting",
     items: [
-      {
-        id: "gdpr",
-        q: "How do you handle data privacy and GDPR?",
-        a: "Candidate data is stored under explicit consent, retained only as long as needed to run the process, and deleted on request. You can export or purge candidate records from your workspace at any time.",
-      },
-      {
-        id: "pipeline-ownership",
-        q: "Do we own the pipeline if we cancel?",
-        a: "Yes. Every candidate sourced under your subscription belongs to you — during the subscription and after cancellation. No re-engagement fees to talk to your own candidates.",
-      },
+      { q: "Can we start with a single role?", a: "Yes. Most clients start with one or two roles to see how delivery works before scaling." },
+      { q: "What do we need to start?", a: "A role to fill and someone to run the intake with us. We handle the structure from there." },
+      { q: "How do pilots work?", a: "Pilot scope, cadence, and success criteria are agreed together. Details are confirmed in the commercial conversation." },
+      { q: "How do I kick off?", a: "Submit the role through Start Hiring, or contact sales to talk through scope first." },
+    ],
+  },
+  {
+    id: "candidate-scoring-and-evaluation",
+    title: "Candidate Scoring and Evaluation",
+    items: [
+      { q: "How does TaaSFlow evaluate candidates?", a: "Each requirement in the brief is assessed against evidence captured during sourcing and screening. Reviewers see the evidence, not just a verdict." },
+      { q: "Is the evaluation automated?", a: "Structured tooling supports the delivery team, but a human reviews evidence before candidates surface to clients." },
+      { q: "What if we disagree with an assessment?", a: "Feedback in the workspace goes straight to the delivery team and shapes what comes next." },
+    ],
+  },
+  {
+    id: "enterprise",
+    title: "Enterprise",
+    items: [
+      { q: "Does TaaSFlow support multiple teams or business units?", a: "Yes. Enterprise accounts run parallel searches across teams and business units on a shared workspace with account-level reporting." },
+      { q: "Do you support SSO and enterprise access controls?", a: "Enterprise access, provisioning, and security details are discussed as part of the enterprise consultation." },
+      { q: "How is reporting handled at scale?", a: "Account-level reporting rolls up roles across teams, with role-level detail available in each requisition." },
+      { q: "How do we start an enterprise engagement?", a: "Book an enterprise consultation from the Enterprise page." },
+    ],
+  },
+  {
+    id: "staffing-partnerships",
+    title: "Staffing Partnerships",
+    items: [
+      { q: "Do you work with staffing agencies?", a: "Yes. TaaSFlow partners with staffing and recruiting agencies who want more delivery capacity while keeping the client relationship." },
+      { q: "Can delivery be white-labelled?", a: "White-label or co-branded delivery is available where approved. The exact model is agreed per account." },
+      { q: "How does a partnership start?", a: "Reach out through the Staffing Partnerships page to discuss scope and how your clients would experience the workspace." },
+    ],
+  },
+  {
+    id: "candidate-questions",
+    title: "Candidate Questions",
+    items: [
+      { q: "How do I apply for a role?", a: "Browse open roles on the Jobs page and apply directly to the ones that fit." },
+      { q: "What is the Talent Network?", a: "A private pool that lets us match you to future briefs. Your profile stays private until you choose to be considered for a specific role." },
+      { q: "How do I sign in?", a: "Use Candidate Sign In to access your workspace, update your profile, and track applications." },
+      { q: "What happens after I apply?", a: "You'll get a confirmation and can follow status inside your candidate workspace. If there's a fit, the delivery team follows up with next steps." },
+    ],
+  },
+  {
+    id: "privacy-and-data",
+    title: "Privacy and Data",
+    items: [
+      { q: "Who can see my candidate profile?", a: "Your profile is not browsed by employers. It surfaces to a specific client only when you agree to be considered for a specific role." },
+      { q: "Can I update or delete my data?", a: "Yes. You can update, pause, or remove your profile from your candidate workspace." },
+      { q: "Who has access to client hiring data?", a: "The client account, invited teammates, and the TaaSFlow delivery team assigned to that account." },
+      { q: "How can I request more information about privacy?", a: "Send a note via the Contact page and select Support or General inquiry." },
     ],
   },
 ];
 
-const ALL_QA: QA[] = GROUPS.flatMap((g) => g.items);
+const GROUPS: Group[] = RAW_GROUPS.map((g) => ({
+  ...g,
+  items: g.items.map((it) => ({ ...it, id: `${g.id}--${slug(it.q)}` })),
+}));
+
+const CANONICAL = "https://clear-path-hubs.lovable.app/faq";
 
 export const Route = createFileRoute("/faq")({
   head: () => {
     const base = marketingHead(undefined, "/faq", {
-      title: "FAQ — how TaaSFlow subscription recruiting works",
+      title: "FAQ — TaaSFlow",
       description:
-        "Answers to the questions buyers ask before starting a TaaSFlow pilot: pricing, delivery cadence, scoring, screening, data privacy, and cancellation.",
+        "Answers to common questions about TaaSFlow: how hiring works, candidate delivery, workspace visibility, pricing model, pilots, enterprise, staffing partnerships, and privacy.",
     });
     const faqJsonLd = {
       "@context": "https://schema.org",
       "@type": "FAQPage",
-      mainEntity: ALL_QA.map((item) => ({
-        "@type": "Question",
-        name: item.q,
-        acceptedAnswer: { "@type": "Answer", text: item.a },
-      })),
+      mainEntity: GROUPS.flatMap((g) =>
+        g.items.map((it) => ({
+          "@type": "Question",
+          name: it.q,
+          acceptedAnswer: { "@type": "Answer", text: it.a },
+        })),
+      ),
     };
     return {
       ...base,
       scripts: [
-        {
-          type: "application/ld+json",
-          children: JSON.stringify(faqJsonLd),
-        },
+        ...(base.scripts ?? []),
+        { type: "application/ld+json", children: JSON.stringify(faqJsonLd) },
       ],
     };
   },
@@ -150,119 +159,127 @@ export const Route = createFileRoute("/faq")({
 });
 
 function FaqPage() {
+  const initial = useMemo(() => {
+    if (typeof window === "undefined") return undefined;
+    const hash = window.location.hash.replace(/^#/, "");
+    if (!hash) return undefined;
+    const match = GROUPS.flatMap((g) => g.items).find((it) => it.id === hash);
+    return match?.id;
+  }, []);
+  const [openItem, setOpenItem] = useState<string | undefined>(initial);
+
+  // Scroll to and open the deep-linked question after mount.
+  useEffect(() => {
+    if (!initial) return;
+    const el = document.getElementById(initial);
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [initial]);
+
   return (
-    <SiteShell>
-      <PublicSection className="pt-24">
-        <PublicPage className="max-w-3xl">
-          <p className="text-sm font-medium uppercase tracking-widest text-[color:var(--brand-ocean)]">
-            Have questions?
+    <>
+      {/* ── Hero ─────────────────────────────────────────────────── */}
+      <PublicSection className="pb-8 pt-16 sm:pt-20">
+        <PublicPage>
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">
+            FAQ
           </p>
-          <h1 className="mt-3 text-4xl font-semibold tracking-tight sm:text-5xl">
+          <h1 className="mt-3 max-w-3xl font-[family-name:var(--brand-font-display)] text-4xl font-semibold tracking-tight sm:text-5xl">
             Frequently asked questions
           </h1>
-          <p className="mt-5 text-lg text-[color:var(--brand-navy)]/70">
-            Everything buyers ask before starting a TaaSFlow pilot — the model,
-            the cadence, the scoring, and how we handle data. Can&apos;t find
-            what you need?{" "}
-            <Link
-              to="/contact"
-              className="underline decoration-[color:var(--brand-ocean)] underline-offset-4"
-            >
-              Contact a hiring lead
-            </Link>
-            .
+          <p className="mt-5 max-w-2xl text-lg text-[color:var(--brand-navy)]/70">
+            Straight answers about how TaaSFlow works, what to expect from delivery, and how
+            candidates, clients, and partners fit together.
           </p>
+        </PublicPage>
+      </PublicSection>
 
-          <nav aria-label="FAQ topics" className="mt-8">
-            <ul className="flex flex-wrap gap-2">
-              {GROUPS.map((g) => (
-                <li key={g.id}>
-                  <a
-                    href={`#${g.id}`}
-                    className="inline-flex rounded-full border border-[color:var(--brand-navy)]/15 bg-white px-3 py-1.5 text-sm font-medium text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-sky)]/60"
-                  >
-                    {g.title}
-                  </a>
-                </li>
-              ))}
-            </ul>
+      {/* ── Category nav ────────────────────────────────────────── */}
+      <PublicSection className="pb-4">
+        <PublicPage>
+          <nav aria-label="FAQ categories" className="flex flex-wrap gap-2">
+            {GROUPS.map((g) => (
+              <a
+                key={g.id}
+                href={`#${g.id}`}
+                className="rounded-full border border-[color:var(--brand-navy)]/15 bg-white px-3 py-1.5 text-xs font-medium text-[color:var(--brand-navy)]/80 hover:border-[color:var(--brand-navy)]/40 hover:text-[color:var(--brand-navy)]"
+              >
+                {g.title}
+              </a>
+            ))}
           </nav>
         </PublicPage>
       </PublicSection>
 
-      <PublicSection className="border-t border-[color:var(--brand-navy)]/10 !pt-8">
-        <PublicPage className="max-w-3xl">
-          <div className="space-y-14">
+      {/* ── Groups ──────────────────────────────────────────────── */}
+      <PublicSection className="py-8">
+        <PublicPage>
+          <div className="space-y-12">
             {GROUPS.map((group) => (
-              <section
-                key={group.id}
-                id={group.id}
-                aria-labelledby={`${group.id}-title`}
-                className="scroll-mt-24"
-              >
+              <section key={group.id} id={group.id} aria-labelledby={`${group.id}-h`}>
                 <h2
-                  id={`${group.id}-title`}
-                  className="text-2xl font-semibold tracking-tight text-[color:var(--brand-navy)]"
+                  id={`${group.id}-h`}
+                  className="font-[family-name:var(--brand-font-display)] text-2xl font-semibold tracking-tight"
                 >
                   {group.title}
                 </h2>
-                <div className="mt-4 divide-y divide-[color:var(--brand-navy)]/10 rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white shadow-sm">
-                  {group.items.map((item) => (
-                    <details
-                      key={item.id}
-                      id={item.id}
-                      className="group scroll-mt-24 px-5 py-4 open:pb-5"
-                    >
-                      <summary
-                        className="flex cursor-pointer list-none items-center justify-between gap-4 text-left text-base font-medium text-[color:var(--brand-navy)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[color:var(--brand-ocean)]"
-                        aria-controls={`${item.id}-body`}
-                      >
-                        <span>{item.q}</span>
-                        <svg
-                          aria-hidden
-                          viewBox="0 0 24 24"
-                          className="h-5 w-5 shrink-0 text-[color:var(--brand-navy)]/60 transition-transform group-open:rotate-180"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
+                <Accordion
+                  type="single"
+                  collapsible
+                  className="mt-4 rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white px-6"
+                  value={openItem}
+                  onValueChange={(v) => setOpenItem(v || undefined)}
+                >
+                  {group.items.map((it) => (
+                    <AccordionItem key={it.id} value={it.id} id={it.id}>
+                      <AccordionTrigger className="text-left text-base font-semibold">
+                        <span className="flex items-center gap-2">
+                          <span>{it.q}</span>
+                        </span>
+                      </AccordionTrigger>
+                      <AccordionContent>
+                        <p className="text-[color:var(--brand-navy)]/75">{it.a}</p>
+                        <a
+                          href={`#${it.id}`}
+                          className="mt-3 inline-flex items-center gap-1 text-xs text-[color:var(--brand-navy)]/60 hover:text-[color:var(--brand-navy)]"
+                          aria-label={`Link to question: ${it.q}`}
                         >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M6 9l6 6 6-6"
-                          />
-                        </svg>
-                      </summary>
-                      <div
-                        id={`${item.id}-body`}
-                        className="mt-3 text-sm leading-relaxed text-[color:var(--brand-navy)]/80"
-                      >
-                        <p>{item.a}</p>
-                        <p className="mt-3">
-                          <a
-                            href={`#${item.id}`}
-                            className="text-xs font-medium uppercase tracking-widest text-[color:var(--brand-ocean)] hover:underline"
-                          >
-                            Direct link to this question
-                          </a>
-                        </p>
-                      </div>
-                    </details>
+                          <LinkIcon className="h-3 w-3" />
+                          Direct link
+                        </a>
+                      </AccordionContent>
+                    </AccordionItem>
                   ))}
-                </div>
+                </Accordion>
               </section>
             ))}
           </div>
         </PublicPage>
       </PublicSection>
 
-      <CtaSection
-        eyebrow="Still have questions?"
-        title="Book a 20-minute intro with a hiring lead."
-        description="We'll walk through your roles, hiring volume, and what a pilot would look like — no obligation."
-        primary={{ to: "/contact", label: "Contact us" }}
-        secondary={{ to: "/intake", label: "Start an intake" }}
-      />
-    </SiteShell>
+      {/* ── Still stuck CTA ─────────────────────────────────────── */}
+      <PublicSection className="py-16">
+        <PublicPage>
+          <div className="rounded-2xl bg-[color:var(--brand-navy)] px-6 py-12 text-white sm:px-12">
+            <div className="flex flex-col items-start gap-6 md:flex-row md:items-center md:justify-between">
+              <div>
+                <h2 className="font-[family-name:var(--brand-font-display)] text-2xl font-semibold tracking-tight text-white">
+                  Didn&rsquo;t find your answer?
+                </h2>
+                <p className="mt-2 max-w-2xl text-white/70">
+                  Send a note through Contact and we&rsquo;ll route it to the right team.
+                </p>
+              </div>
+              <Link
+                to="/contact"
+                className="inline-flex min-h-11 items-center justify-center rounded-md bg-white px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-navy)] hover:opacity-90"
+              >
+                Contact us
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </div>
+          </div>
+        </PublicPage>
+      </PublicSection>
+    </>
   );
 }
