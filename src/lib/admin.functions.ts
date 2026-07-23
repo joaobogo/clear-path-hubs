@@ -346,13 +346,12 @@ export const listClients = createServerFn({ method: "GET" })
     });
 
     // Distinct industry set for the filter dropdown (before pagination).
-    const industries = Array.from(
-      new Set(
-        (rows ?? [])
-          .map((r: AnyRow) => (r.industry ? String(r.industry) : null))
-          .filter((v: string | null): v is string => Boolean(v)),
-      ),
-    ).sort();
+    const industrySet = new Set<string>();
+    for (const r of (rows ?? []) as AnyRow[]) {
+      if (r.industry) industrySet.add(String(r.industry));
+    }
+    const industries: string[] = Array.from(industrySet).sort();
+
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const cmp = (a: any, b: any) => {
