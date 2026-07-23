@@ -127,7 +127,7 @@ export function PositionEditWizard({
   const next = () => {
     const e = validateStep(step, state);
     setErrors(e);
-    if (Object.keys(e).length === 0) setStep((n) => Math.min(4, n + 1));
+    if (Object.keys(e).length === 0) setStep((n) => Math.min(LAST_STEP, n + 1));
   };
   const back = () => setStep((n) => Math.max(1, n - 1));
 
@@ -162,9 +162,23 @@ export function PositionEditWizard({
           screening_questions: state.screening_questions.filter(
             (q) => q.question.trim().length >= 3,
           ),
+          responsibilities: state.responsibilities,
+          experience: state.experience.trim(),
+          education: state.education.trim(),
+          certifications: state.certifications.trim(),
+          languages: state.languages.trim(),
+          industry_experience: state.industry_experience.trim(),
+          hiring_timeline: state.hiring_timeline.trim(),
+          timezone_requirements: state.timezone_requirements.trim(),
+          reason_for_hiring: state.reason_for_hiring,
+          hiring_challenges: state.hiring_challenges,
+          interview_process: state.interview_process,
+          decision_makers: state.decision_makers.trim(),
+          additional_context: state.additional_context,
         },
       });
     },
+
     onSuccess: async () => {
       toast.success("Position saved");
       await Promise.all(invalidateKeys.map((k) => qc.invalidateQueries({ queryKey: k })));
