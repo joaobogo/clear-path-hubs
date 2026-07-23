@@ -1533,3 +1533,71 @@ export const getPublishDeskGroups = createServerFn({ method: "GET" })
     }
     return { needs_review, blocked, ready, published, held };
   });
+
+// ─── Operations: enriched incidents + resolve ────────────────────────────────
+
+export const getOperationsIncidents = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await requireStaff(context.userId);
+    const s = await getAdmin();
+    const { data: failed } = await s
+      .from("processing_jobs")
+      .select("id,entity_type,entity_id,job_type,status,attempts,error_code,error_message,trace_id,created_at,started_at,completed_at")
+      .eq("status", "failed")
+      .order("created_at", { ascending: false })
+      .limit(200);
+    const jobs = (failed ?? []) as AnyRow[];
+    const matchIds = Array.from(
+      new Set(jobs.filter((j) => j.entity_type === "candidate_match").map((j) => j.entity_id)),
+    );
+    let matchMap = new Map<string, AnyRow>();
+    if (matchIds.length) {
+      const { data: matches } = await s
+        .from("candidate_matches")
+        .select(
+          "id,processing_state,candidate_profiles(full_name),positions(title,organizations(name))",
+        )
+        .in("id", matchIds);
+      matchMap = new Map(((matches ?? []) as AnyRow[]).map((m) => [m.id, m]));
+    }
+    // Active queued/running jobs — to prevent duplicate retries.
+    const { data: active } = await s
+      .from("processing_jobs")
+      .select("entity_id,job_type,status")
+      .in("status", ["queued", "running"]);
+    const activeKey = new Set(
+      ((active ?? []) as AnyRow[]).map((j) => `${j.entity_id}::${j.job_type}`),
+    );
+    return { jobs, matches: Object.fromEntries(matchMap), active: Array.from(activeKey) };
+  });
+
+export const resolveIncident = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: unknown) =>
+    z.object({ job_id: z.string().uuid(), note: z.string().trim().max(500).optional() }).parse(i),
+  )
+  .handler(async ({ data, context }) => {
+    await requireStaff(context.userId);
+    const s = await getAdmin();
+    const { data: before } = await s
+      .from("processing_jobs")
+      .select("id,entity_type,entity_id,status,error_code,error_message")
+      .eq("id", data.job_id)
+      .maybeSingle();
+    if (!before) throw new Error("job_not_found");
+    const { error } = await s
+      .from("processing_jobs")
+      .update({ status: "cancelled", completed_at: new Date().toISOString() })
+      .eq("id", data.job_id);
+    if (error) throw new Error(error.message);
+    await writeAudit({
+      actor: context.userId,
+      action: "incident.resolve",
+      entity_type: before.entity_type,
+      entity_id: before.entity_id,
+      before,
+      after: { status: "cancelled", note: data.note ?? null },
+    });
+    return { ok: true };
+  });
