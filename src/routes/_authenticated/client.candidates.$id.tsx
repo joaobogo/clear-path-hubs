@@ -987,7 +987,7 @@ function LinksPanel({
   candidate: import("@/lib/client-kpi.server").ClientCandidateDTO;
 }) {
   const links = candidate.candidate.links;
-  const entries: Array<{ label: string; url: string | null; icon: JSX.Element }> = [
+  const entries: Array<{ label: string; url: string | null; icon: React.ReactNode }> = [
     { label: "LinkedIn", url: links.linkedin, icon: <Linkedin className="h-4 w-4" aria-hidden /> },
     { label: "Portfolio", url: links.portfolio, icon: <Globe className="h-4 w-4" aria-hidden /> },
     { label: "GitHub", url: links.github, icon: <Github className="h-4 w-4" aria-hidden /> },
