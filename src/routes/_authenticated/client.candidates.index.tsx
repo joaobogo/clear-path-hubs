@@ -60,7 +60,7 @@ const searchSchema = z.object({
   location: fallback(z.string(), "").default(""),
   sort: fallback(z.string(), "recent").default("recent"),
   view: fallback(z.enum(["cards", "list"]), "cards").default("cards"),
-  org: fallback(z.string(), "").default(""),
+  org: fallback(z.string().uuid().optional(), undefined),
   // Canonical KPI drill-through key. Mirrors client-kpi.server predicates:
   //   "top"                → isTopMatch (fit_label ∈ excellent|strong)
   //   "interview_pipeline" → isInInterview (stage ∈ interview_process|offer OR active interview)
