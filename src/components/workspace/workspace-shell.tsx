@@ -449,6 +449,11 @@ export function WorkspaceShell(props: WorkspaceShellProps) {
           </div>
         </main>
       </div>
+      <GlobalSearchDialog
+        open={searchOpen}
+        onOpenChange={setSearchOpen}
+        scope={searchScope ?? "client"}
+      />
     </div>
   );
 }
