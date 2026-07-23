@@ -47,6 +47,8 @@ import {
   Wrench,
   MoreHorizontal,
 } from "lucide-react";
+import { DownloadCvButton } from "@/components/download-cv-button";
+
 
 
 export const Route = createFileRoute("/_authenticated/admin/candidates/$id")({
