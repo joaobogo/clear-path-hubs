@@ -249,14 +249,14 @@ export const convertIntakeToPosition = createServerFn({ method: "POST" })
 
     const payload = intake.payload ?? {};
     const uniqueSkills: string[] = Array.from(
-      new Map(
-        (payload.mustHaveSkills ?? [])
-          .filter(Boolean)
-          .map((sk: string) => sk.trim())
-          .filter(Boolean)
-          .map((sk: string) => [sk.toLowerCase(), sk]),
+      new Map<string, string>(
+        ((payload.mustHaveSkills ?? []) as unknown[])
+          .map((sk) => String(sk ?? "").trim())
+          .filter((sk): sk is string => sk.length > 0)
+          .map((sk) => [sk.toLowerCase(), sk] as [string, string]),
       ).values(),
     );
+
     const requirements = uniqueSkills.map((sk) => ({ label: sk, kind: "skill", weight: 1 }));
     const preferred = String(payload.preferredRequirements ?? "")
       .split(/\r?\n/)
