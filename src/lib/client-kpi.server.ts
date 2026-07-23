@@ -141,21 +141,46 @@ export type ClientCandidateDTO = {
   match_id: string;
   stage: MatchStage;
   delivered_at: string | null;
+  last_updated: string | null;
   position: { id: string; title: string } | null;
   candidate: {
     display_name: string; // first name + last initial
     location: string | null;
+    timezone: string | null;
     headline: string | null;
+    headline_chips: string[];
     availability: string | null;
     years_experience: number | null;
     summary: string | null;
+    current_role: string | null;
+    current_company: string | null;
+    links: {
+      linkedin: string | null;
+      portfolio: string | null;
+      github: string | null;
+      website: string | null;
+    };
   };
   score: number | null;
   fit_label: string | null;
+  fit: FitPresentation;
   summary: string | null;
   strengths: string[];
+  concerns: string[];
   main_consideration: string | null;
+  requirement_rows: RequirementRow[];
+  coverage: CoverageSummary;
+  interview_guide: InterviewQuestion[];
   evidence: Array<{ label: string; snippet: string }>;
+  experience: Array<{ title: string; company: string | null; period: string | null; description: string | null }>;
+  skills: string[];
+  education: Array<{ degree: string | null; institution: string | null; period: string | null }>;
+  languages: Array<{ name: string; level: string | null }>;
+  certifications: Array<{ name: string; issuer: string | null; date: string | null }>;
+  work_authorization: string | null;
+  screening_answers: Array<{ question: string; answer: string }>;
+};
+
   experience: Array<{ title: string; company: string | null; period: string | null; description: string | null }>;
   skills: string[];
   education: Array<{ degree: string | null; institution: string | null; period: string | null }>;
