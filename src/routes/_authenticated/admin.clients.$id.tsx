@@ -9,6 +9,8 @@ import {
   archiveOrganization,
   getClientActivity,
   getClientCandidatesForOrg,
+  getClientDocuments,
+  updateClientNotes,
 } from "@/lib/admin.functions";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -30,17 +32,51 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  Building2,
+  Users2,
+  Contact2,
+  Briefcase,
+  UserCheck,
+  StickyNote,
+  FileText,
+  Activity,
+  ShieldCheck,
+  Settings,
+  ExternalLink,
+  MessagesSquare,
+} from "lucide-react";
 
 const TABS = [
   "overview",
   "company",
+  "contacts",
   "team",
   "positions",
   "candidates",
+  "messages",
+  "notes",
+  "documents",
   "activity",
+  "audit",
   "settings",
 ] as const;
 type TabKey = (typeof TABS)[number];
+
+const TAB_LABELS: Record<TabKey, { label: string; icon: typeof Building2 }> = {
+  overview: { label: "Overview", icon: Building2 },
+  company: { label: "Company", icon: Building2 },
+  contacts: { label: "Contacts", icon: Contact2 },
+  team: { label: "Team", icon: Users2 },
+  positions: { label: "Positions", icon: Briefcase },
+  candidates: { label: "Candidates", icon: UserCheck },
+  messages: { label: "Messages", icon: MessagesSquare },
+  notes: { label: "Notes", icon: StickyNote },
+  documents: { label: "Documents", icon: FileText },
+  activity: { label: "Activity", icon: Activity },
+  audit: { label: "Audit", icon: ShieldCheck },
+  settings: { label: "Settings", icon: Settings },
+};
 
 const searchSchema = z.object({
   tab: z.enum(TABS).optional().default("overview"),
@@ -82,66 +118,82 @@ function ClientDetail() {
   const setTab = (t: TabKey) => navigate({ search: { tab: t } });
 
   return (
-    <main className="mx-auto max-w-6xl px-6 py-8 space-y-6" data-qa-action={`admin-client-${id}`}>
+    <div className="space-y-6" data-qa-action={`admin-client-${id}`}>
       <div>
         <Link
           to="/admin/clients"
-          className="text-sm text-muted-foreground hover:underline"
+          className="text-xs text-muted-foreground hover:underline"
           data-qa-action="back-to-clients"
         >
-          ← Clients
+          ← All clients
         </Link>
-        <div className="mt-2 flex flex-wrap items-baseline gap-3">
-          <h1 className="text-2xl font-semibold">{org.name}</h1>
-          <Badge variant="outline" className="capitalize">{org.status}</Badge>
-          {org.archived_at && <Badge variant="secondary">archived</Badge>}
-          <Link
-            to="/client"
-            search={{ org: org.id, preview: "client_admin" }}
-            className="ml-auto inline-flex items-center rounded border px-3 py-1.5 text-sm hover:bg-muted"
-            title="Open this tenant's dashboard as an administrator (read-only)"
-            data-qa-action="view-client-dashboard"
-          >
-            View Client Dashboard →
-          </Link>
+        <div className="mt-2 flex flex-wrap items-center gap-3">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-lg font-semibold text-primary">
+            {String(org.name).slice(0, 1).toUpperCase()}
+          </div>
+          <div className="min-w-0 flex-1">
+            <h1 className="truncate text-2xl font-semibold tracking-tight">{org.name}</h1>
+            <p className="mt-0.5 text-xs text-muted-foreground">
+              {org.domain ?? "—"} · {org.industry ?? "—"} · {org.headquarters ?? "—"}
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            <Badge variant="outline" className="capitalize">
+              {org.status}
+            </Badge>
+            {org.archived_at && <Badge variant="secondary">archived</Badge>}
+            <Link
+              to="/client"
+              search={{ org: org.id, preview: "client_admin" }}
+              className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+              title="Open this tenant's dashboard as an administrator (read-only)"
+              data-qa-action="view-client-workspace"
+            >
+              View Client Workspace <ExternalLink className="h-3.5 w-3.5" />
+            </Link>
+          </div>
         </div>
-        <p className="mt-1 text-sm text-muted-foreground">
-          {org.domain ?? "—"} · {org.industry ?? "—"} · {org.headquarters ?? "—"}
-        </p>
-        <p className="mt-1 font-mono text-[10px] text-muted-foreground">
-          tenant_id: {org.id}
-        </p>
       </div>
 
-      <nav className="flex flex-wrap gap-1 border-b" role="tablist">
-        {TABS.map((t) => (
-          <button
-            key={t}
-            role="tab"
-            aria-selected={tab === t}
-            onClick={() => setTab(t)}
-            data-qa-action={`tab-${t}`}
-            className={`px-3 py-2 text-sm capitalize border-b-2 ${
-              tab === t
-                ? "border-primary text-foreground font-medium"
-                : "border-transparent text-muted-foreground hover:text-foreground"
-            }`}
-          >
-            {t}
-          </button>
-        ))}
+      <nav className="flex flex-wrap gap-0.5 border-b" role="tablist">
+        {TABS.map((t) => {
+          const Icon = TAB_LABELS[t].icon;
+          return (
+            <button
+              key={t}
+              role="tab"
+              aria-selected={tab === t}
+              onClick={() => setTab(t)}
+              data-qa-action={`tab-${t}`}
+              className={`inline-flex items-center gap-1.5 border-b-2 px-3 py-2 text-sm ${
+                tab === t
+                  ? "border-primary font-medium text-foreground"
+                  : "border-transparent text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              <Icon className="h-3.5 w-3.5" />
+              {TAB_LABELS[t].label}
+            </button>
+          );
+        })}
       </nav>
 
       {tab === "overview" && <OverviewTab org={org} members={members} positions={positions} />}
       {tab === "company" && <CompanyTab org={org} />}
+      {tab === "contacts" && <ContactsTab org={org} members={members} />}
       {tab === "team" && <TeamTab members={members} />}
       {tab === "positions" && <PositionsTab positions={positions} />}
       {tab === "candidates" && <CandidatesTab id={id} />}
+      {tab === "messages" && <MessagesTab orgId={org.id} />}
+      {tab === "notes" && <NotesTab org={org} />}
+      {tab === "documents" && <DocumentsTab id={id} />}
       {tab === "activity" && <ActivityTab id={id} />}
+      {tab === "audit" && <ActivityTab id={id} audit />}
       {tab === "settings" && <SettingsTab org={org} />}
-    </main>
+    </div>
   );
 }
+
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function OverviewTab({ org, members, positions }: { org: any; members: any[]; positions: any[] }) {
