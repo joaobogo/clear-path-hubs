@@ -272,3 +272,42 @@
 
 .brand-shadow-card    { box-shadow: var(--brand-shadow-sm); }
 .brand-shadow-elevate { box-shadow: var(--brand-shadow-lg); }
+
+/* ─── Semantic status utilities (Client workspace brand application) ─── */
+.taas-fg-success  { color: var(--taas-status-success); }
+.taas-fg-warning  { color: var(--taas-status-warning); }
+.taas-fg-danger   { color: var(--taas-status-danger); }
+.taas-fg-info     { color: var(--taas-status-info); }
+.taas-fg-neutral  { color: var(--taas-status-neutral); }
+.taas-fg-accent   { color: var(--taas-brand-accent); }
+
+.taas-bg-success-soft { background-color: var(--taas-status-success-soft); }
+.taas-bg-warning-soft { background-color: var(--taas-status-warning-soft); }
+.taas-bg-danger-soft  { background-color: var(--taas-status-danger-soft); }
+.taas-bg-info-soft    { background-color: var(--taas-status-info-soft); }
+.taas-bg-neutral-soft { background-color: var(--taas-status-neutral-soft); }
+.taas-bg-accent-soft  { background-color: var(--taas-brand-accent-soft); }
+
+.taas-bg-success-solid { background-color: var(--taas-status-success); color: var(--taas-status-success-foreground); }
+.taas-bg-warning-solid { background-color: var(--taas-status-warning); color: var(--taas-status-warning-foreground); }
+.taas-bg-danger-solid  { background-color: var(--taas-status-danger);  color: var(--taas-status-danger-foreground); }
+.taas-bg-info-solid    { background-color: var(--taas-status-info);    color: var(--taas-status-info-foreground); }
+.taas-bg-neutral-solid { background-color: var(--taas-status-neutral); color: var(--taas-text-inverse); }
+
+.taas-bd-success { border-color: color-mix(in oklab, var(--taas-status-success) 30%, transparent); }
+.taas-bd-warning { border-color: color-mix(in oklab, var(--taas-status-warning) 35%, transparent); }
+.taas-bd-danger  { border-color: color-mix(in oklab, var(--taas-status-danger) 30%, transparent); }
+.taas-bd-info    { border-color: color-mix(in oklab, var(--taas-status-info) 28%, transparent); }
+.taas-bd-neutral { border-color: color-mix(in oklab, var(--taas-status-neutral) 25%, transparent); }
+.taas-bd-accent  { border-color: color-mix(in oklab, var(--taas-brand-accent) 35%, transparent); }
+
+.taas-chip {
+  display: inline-flex; align-items: center; gap: 0.375rem;
+  padding: 0.125rem 0.5rem; border-radius: var(--taas-radius-pill);
+  font-size: var(--taas-text-meta-sm); font-weight: 500; line-height: 1;
+}
+.taas-chip-success { background: var(--taas-status-success-soft); color: var(--taas-status-success); }
+.taas-chip-warning { background: var(--taas-status-warning-soft); color: color-mix(in oklab, var(--taas-status-warning) 80%, black); }
+.taas-chip-danger  { background: var(--taas-status-danger-soft);  color: var(--taas-status-danger); }
+.taas-chip-info    { background: var(--taas-status-info-soft);    color: var(--taas-status-info); }
+.taas-chip-neutral { background: var(--taas-status-neutral-soft); color: var(--taas-status-neutral); }
