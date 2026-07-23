@@ -2,7 +2,6 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { marketingHead } from "@/lib/marketing/head";
 import { SiteShell, PublicPage, PublicSection } from "@/components/marketing/site-shell";
 import {
-import { PageConnections } from "@/components/marketing/page-connections";
   Search,
   UserPlus,
   LogIn,
@@ -14,6 +13,7 @@ import { PageConnections } from "@/components/marketing/page-connections";
   ClipboardList,
   Eye,
 } from "lucide-react";
+import { PageConnections } from "@/components/marketing/page-connections";
 
 export const Route = createFileRoute("/talent-network")({
   head: () =>

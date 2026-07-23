@@ -3,7 +3,6 @@ import { marketingHead } from "@/lib/marketing/head";
 import { SiteShell, PublicPage, PublicSection, CtaSection } from "@/components/marketing/site-shell";
 import { EnterpriseStakeholderSelector } from "@/components/marketing/enterprise-stakeholder-selector";
 import {
-import { PageConnections } from "@/components/marketing/page-connections";
   Building2,
   Layers,
   Users,
@@ -15,6 +14,7 @@ import { PageConnections } from "@/components/marketing/page-connections";
   ClipboardList,
   ArrowRight,
 } from "lucide-react";
+import { PageConnections } from "@/components/marketing/page-connections";
 
 // Enterprise metadata authored inline. Legacy JSON contained unapproved
 // commercial and volume claims — kept out on purpose.

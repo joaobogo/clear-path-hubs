@@ -3,7 +3,6 @@ import { SiteShell } from "@/components/marketing/site-shell";
 import { marketingHead } from "@/lib/marketing/head";
 import { PRICING_PACKAGES, isTierPricePublic, formatUsdCompact } from "@/config/public-pricing";
 import {
-import { PageConnections } from "@/components/marketing/page-connections";
   Users,
   Building2,
   Rocket,
@@ -11,6 +10,7 @@ import { PageConnections } from "@/components/marketing/page-connections";
   ClipboardList,
   ShieldCheck,
 } from "lucide-react";
+import { PageConnections } from "@/components/marketing/page-connections";
 
 const PILOT = PRICING_PACKAGES.find((p) => p.id === "pilot");
 const PILOT_PRICE_LABEL =

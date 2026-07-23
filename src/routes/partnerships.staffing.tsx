@@ -6,7 +6,6 @@ import {
   StaffingOwnershipMatrix,
 } from "@/components/marketing/staffing-workflow";
 import {
-import { PageConnections } from "@/components/marketing/page-connections";
   Handshake,
   Layers,
   Users,
@@ -16,6 +15,7 @@ import { PageConnections } from "@/components/marketing/page-connections";
   Building2,
   ArrowRight,
 } from "lucide-react";
+import { PageConnections } from "@/components/marketing/page-connections";
 
 export const Route = createFileRoute("/partnerships/staffing")({
   head: () =>

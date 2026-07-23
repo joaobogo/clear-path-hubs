@@ -3,7 +3,6 @@ import { getPage } from "@/lib/marketing/content";
 import { marketingHead } from "@/lib/marketing/head";
 import { SiteShell, PublicPage, PublicSection, CtaSection } from "@/components/marketing/site-shell";
 import {
-import { PageConnections } from "@/components/marketing/page-connections";
   RoleBlueprintMock,
   SourcingEcosystemMap,
   EvidenceReviewPanel,
@@ -12,6 +11,7 @@ import { PageConnections } from "@/components/marketing/page-connections";
   ResponsibilityMatrix,
   StepRail,
 } from "@/components/marketing/how-it-works-deep";
+import { PageConnections } from "@/components/marketing/page-connections";
 
 const entry = getPage("how-it-works");
 
