@@ -111,25 +111,94 @@ export const getAdminOverview = createServerFn({ method: "GET" })
       ),
     ]);
 
-    // ── Action Required feed: top prioritized items across the platform ────
-    const [{ data: pendingReview }, { data: readyPublish }, { data: submittedPositions }, { data: recentActivity }] =
-      await Promise.all([
-        s.from("candidate_matches")
-          .select("id,updated_at,candidate_profiles(full_name),positions(title,organizations(name)),score_runs!candidate_matches_current_score_run_id_fkey(score,fit_label)")
-          .eq("processing_state", "scored").eq("admin_status", "pending")
-          .order("updated_at", { ascending: false }).limit(6),
-        s.from("candidate_matches")
-          .select("id,updated_at,candidate_profiles(full_name),positions(title,organizations(name))")
-          .eq("admin_status", "approved").eq("client_visibility", "hidden")
-          .order("updated_at", { ascending: false }).limit(4),
-        s.from("positions")
-          .select("id,title,status,created_at,organizations(name)")
-          .in("status", ["submitted", "needs_clarification"])
-          .order("created_at", { ascending: false }).limit(4),
-        s.from("audit_events")
-          .select("id,action,entity_type,entity_id,created_at,organization_id")
-          .order("created_at", { ascending: false }).limit(8),
-      ]);
+    // ── Detailed drill-through lists for each command-center section ──────
+    const [
+      { data: newIntakes },
+      { data: positionsReview },
+      { data: newApplications },
+      { data: pendingReview },
+      { data: readyPublish },
+      { data: processingIssues },
+      { data: clientRequests },
+      { data: recentActivity },
+    ] = await Promise.all([
+      s
+        .from("positions")
+        .select("id,title,status,created_at,organizations(name)")
+        .eq("status", "submitted")
+        .gte("created_at", weekAgo)
+        .order("created_at", { ascending: false })
+        .limit(5),
+      s
+        .from("positions")
+        .select("id,title,status,created_at,organizations(name)")
+        .in("status", ["submitted", "needs_clarification"])
+        .order("created_at", { ascending: true })
+        .limit(5),
+      s
+        .from("candidate_matches")
+        .select(
+          "id,created_at,processing_state,candidate_profiles(full_name),positions(title,organizations(name))",
+        )
+        .in("processing_state", ["queued", "parsing", "enriching", "ready_to_score", "parsed"])
+        .gte("created_at", dayAgo)
+        .order("created_at", { ascending: false })
+        .limit(5),
+      s
+        .from("candidate_matches")
+        .select(
+          "id,updated_at,candidate_profiles(full_name),positions(title,organizations(name)),score_runs!candidate_matches_current_score_run_id_fkey(score,fit_label)",
+        )
+        .eq("processing_state", "scored")
+        .eq("admin_status", "pending")
+        .order("updated_at", { ascending: false })
+        .limit(6),
+      s
+        .from("candidate_matches")
+        .select(
+          "id,updated_at,candidate_profiles(full_name),positions(title,organizations(name))",
+        )
+        .eq("admin_status", "approved")
+        .eq("client_visibility", "hidden")
+        .order("updated_at", { ascending: false })
+        .limit(5),
+      s
+        .from("candidate_matches")
+        .select(
+          "id,processing_state,processing_error_code,processing_updated_at,candidate_profiles(full_name),positions(title,organizations(name))",
+        )
+        .in("processing_state", [
+          "failed",
+          "provider_blocked",
+          "ocr_required",
+          "manual_review_required",
+        ])
+        .order("processing_updated_at", { ascending: false })
+        .limit(6),
+      s
+        .from("score_decisions")
+        .select(
+          "id,decision_type,reason,created_at,candidate_match_id,candidate_matches(candidate_profiles(full_name),positions(title,organizations(name)))",
+        )
+        .eq("decision_type", "request_recompute")
+        .gte("created_at", weekAgo)
+        .order("created_at", { ascending: false })
+        .limit(5),
+      s
+        .from("audit_events")
+        .select("id,action,entity_type,entity_id,created_at,organization_id")
+        .in("action", [
+          "intake.submitted",
+          "match.visibility.hidden",
+          "master_admin_designated",
+          "support.session_started",
+          "organization.update",
+          "INSERT",
+          "UPDATE",
+        ])
+        .order("created_at", { ascending: false })
+        .limit(10),
+    ]);
 
     return {
       new_intakes,
@@ -140,9 +209,16 @@ export const getAdminOverview = createServerFn({ method: "GET" })
       processing_failures,
       client_requests,
       aging,
-      action_items: {
+      lists: {
+        new_intakes: (newIntakes ?? []) as AnyRow[],
+        positions_review: (positionsReview ?? []) as AnyRow[],
+        new_applications: (newApplications ?? []) as AnyRow[],
         candidates_pending_review: (pendingReview ?? []) as AnyRow[],
         candidates_ready_to_publish: (readyPublish ?? []) as AnyRow[],
+        processing_issues: (processingIssues ?? []) as AnyRow[],
+        client_requests: (clientRequests ?? []) as AnyRow[],
+      },
+
         positions_awaiting_approval: (submittedPositions ?? []) as AnyRow[],
       },
       recent_activity: (recentActivity ?? []) as AnyRow[],
