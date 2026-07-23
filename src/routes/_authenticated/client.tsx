@@ -24,6 +24,7 @@ import {
   Briefcase,
   Users,
   MessageSquare,
+  CalendarClock,
   UserCog,
   Settings,
 } from "lucide-react";
