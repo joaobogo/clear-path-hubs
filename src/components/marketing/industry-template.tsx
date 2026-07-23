@@ -9,6 +9,8 @@ import type { IndustryEntry } from "@/content/industries-v2";
 import { getIndustryHeroImage } from "@/content/industry-hero-images";
 import { IndustryRoleExplorer } from "@/components/marketing/industry-role-explorer";
 import { IndustrySignalExplorer } from "@/components/marketing/industry-signal-explorer";
+import { IndustryHeroBackdrop } from "@/components/marketing/industry-hero-backdrop";
+import { getIndustryVisualIdentity } from "@/content/industry-visual-identity";
 
 
 /**
