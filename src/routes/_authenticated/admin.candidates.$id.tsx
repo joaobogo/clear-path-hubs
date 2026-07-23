@@ -986,7 +986,7 @@ function ScoreTab({ currentRun, result }: { currentRun: Any; result: Any }) {
               <h4 className="text-xs font-semibold uppercase text-emerald-700 dark:text-emerald-300">Strengths</h4>
               <ul className="mt-1 list-disc space-y-1 pl-4 text-sm">
                 {(result?.strengths ?? []).map((s: string, i: number) => (
-                  <li key={i}>{s}</li>
+                  <li key={i}>{cleanLine(String(s))}</li>
                 ))}
                 {(result?.strengths ?? []).length === 0 && (
                   <li className="list-none text-muted-foreground">None surfaced.</li>
