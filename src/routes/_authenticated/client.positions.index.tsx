@@ -200,11 +200,11 @@ function PositionsPage() {
   }, [rows]);
 
   const setSearch = (patch: Record<string, string>) =>
-    navigate({ search: (prev) => ({ ...prev, ...patch }), replace: true });
+    navigate({ search: (prev: Record<string, unknown>) => ({ ...prev, ...patch }), replace: true });
 
   const clearAll = () =>
     navigate({
-      search: (prev) => ({ ...prev, q: "", location: "all" }),
+      search: (prev: Record<string, unknown>) => ({ ...prev, q: "", location: "all" }),
       replace: true,
     });
 
