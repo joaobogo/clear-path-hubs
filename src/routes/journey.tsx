@@ -273,10 +273,10 @@ function JourneyPage() {
           <div className="grid gap-10 md:grid-cols-2 md:items-center">
             <div className="md:order-2">
               <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean)]">
-                Chapter 05
+                Chapter 04 — The live workspace
               </p>
               <h2 className="mt-2 font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight sm:text-4xl">
-                Client workspace visibility
+                One workspace per requisition.
               </h2>
               <p className="mt-4 max-w-xl text-[color:var(--brand-navy)]/75">
                 One workspace per requisition, one aggregate view across all
