@@ -1461,6 +1461,9 @@ function Home() {
         </PublicPage>
       </PublicSection>
 
+      {/* 5b — WHAT YOU KEEP MISSING (status-quo tax) */}
+      <HiddenCostOfWaiting />
+
       {/* 6 — HOW IT WORKS */}
       <section className="border-y border-[color:var(--brand-navy)]/8 bg-white">
         <PublicSection>
