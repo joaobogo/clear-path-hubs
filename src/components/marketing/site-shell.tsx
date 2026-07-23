@@ -162,7 +162,6 @@ function Header() {
       <Announcement />
       <header className="sticky top-0 z-40 w-full border-b border-[color:var(--brand-navy)]/10 bg-white/85 backdrop-blur supports-[backdrop-filter]:bg-white/70">
         <div className="mx-auto flex h-16 max-w-[1200px] items-center gap-4 px-4 sm:px-6 lg:px-8">
-          <BrandMark />
 
           <NavigationMenuPrimitive.Root
             aria-label="Primary"
