@@ -235,6 +235,7 @@ export const listClients = createServerFn({ method: "GET" })
       .object({
         q: z.string().optional().default(""),
         status: z.enum(["prospect", "active", "paused", "closed"]).optional(),
+        industry: z.string().optional(),
         include_archived: z.boolean().optional().default(false),
         sort: z
           .enum([
@@ -246,6 +247,7 @@ export const listClients = createServerFn({ method: "GET" })
             "status_asc",
             "candidates_desc",
             "positions_desc",
+            "action_desc",
           ])
           .optional()
           .default("activity_desc"),
@@ -268,16 +270,29 @@ export const listClients = createServerFn({ method: "GET" })
       .limit(500);
     if (data.q) q = q.ilike("name", `%${data.q}%`);
     if (data.status) q = q.eq("status", data.status);
+    if (data.industry) q = q.eq("industry", data.industry);
     if (!data.include_archived) q = q.is("archived_at", null);
     const { data: rows } = await q;
     const orgIds = (rows ?? []).map((r: AnyRow) => r.id);
 
     const stats: Record<
       string,
-      { positions: number; active: number; candidates_delivered: number; last_activity_at: string | null }
+      {
+        positions: number;
+        active: number;
+        candidates_delivered: number;
+        last_activity_at: string | null;
+        actions_required: number;
+      }
     > = {};
     for (const id of orgIds) {
-      stats[id] = { positions: 0, active: 0, candidates_delivered: 0, last_activity_at: null };
+      stats[id] = {
+        positions: 0,
+        active: 0,
+        candidates_delivered: 0,
+        last_activity_at: null,
+        actions_required: 0,
+      };
     }
 
     if (orgIds.length) {
@@ -285,9 +300,8 @@ export const listClients = createServerFn({ method: "GET" })
         s.from("positions").select("organization_id,status").in("organization_id", orgIds),
         s
           .from("candidate_matches")
-          .select("organization_id,client_visibility")
-          .in("organization_id", orgIds)
-          .eq("client_visibility", "visible"),
+          .select("organization_id,client_visibility,client_stage")
+          .in("organization_id", orgIds),
         s
           .from("audit_events")
           .select("organization_id,created_at")
@@ -300,10 +314,18 @@ export const listClients = createServerFn({ method: "GET" })
         if (!c) continue;
         c.positions += 1;
         if (p.status === "active") c.active += 1;
+        // Positions waiting on client approval count as an action.
+        if (p.status === "review" || p.status === "pending_approval") c.actions_required += 1;
       }
       for (const m of (matches ?? []) as AnyRow[]) {
         const c = stats[m.organization_id];
-        if (c) c.candidates_delivered += 1;
+        if (!c) continue;
+        if (m.client_visibility === "visible") c.candidates_delivered += 1;
+        // Delivered candidates the client has not moved yet are the primary
+        // "waiting on client" signal for the Admin list.
+        if (m.client_visibility === "visible" && (m.client_stage === "delivered" || !m.client_stage)) {
+          c.actions_required += 1;
+        }
       }
       for (const a of (activity ?? []) as AnyRow[]) {
         const c = stats[a.organization_id];
@@ -318,9 +340,19 @@ export const listClients = createServerFn({ method: "GET" })
         positions_total: st.positions,
         positions_active: st.active,
         candidates_delivered: st.candidates_delivered,
+        actions_required: st.actions_required,
         last_activity_at: st.last_activity_at ?? r.updated_at,
       };
     });
+
+    // Distinct industry set for the filter dropdown (before pagination).
+    const industries = Array.from(
+      new Set(
+        (rows ?? [])
+          .map((r: AnyRow) => (r.industry ? String(r.industry) : null))
+          .filter((v: string | null): v is string => Boolean(v)),
+      ),
+    ).sort();
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const cmp = (a: any, b: any) => {
@@ -339,6 +371,11 @@ export const listClients = createServerFn({ method: "GET" })
           return (b.candidates_delivered ?? 0) - (a.candidates_delivered ?? 0);
         case "positions_desc":
           return (b.positions_active ?? 0) - (a.positions_active ?? 0);
+        case "action_desc":
+          return (
+            (b.actions_required ?? 0) - (a.actions_required ?? 0) ||
+            String(b.last_activity_at ?? "").localeCompare(String(a.last_activity_at ?? ""))
+          );
         case "activity_desc":
         default:
           return String(b.last_activity_at ?? "").localeCompare(String(a.last_activity_at ?? ""));
@@ -353,11 +390,48 @@ export const listClients = createServerFn({ method: "GET" })
     return {
       items,
       total,
+      industries,
       page: data.page,
       page_size: data.page_size,
       page_count: Math.max(1, Math.ceil(total / data.page_size)),
     };
   });
+
+export const restoreOrganization = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: unknown) => z.object({ id: z.string().uuid() }).parse(i))
+  .handler(async ({ data, context }) => {
+    await requireStaff(context.userId);
+    const s = await getAdmin();
+    const trace = traceId();
+    const { data: before } = await s
+      .from("organizations")
+      .select("*")
+      .eq("id", data.id)
+      .maybeSingle();
+    if (!before) throw new Error(`organization_not_found [${trace}]`);
+    if (!before.archived_at) return { ok: true as const, organization: before, trace_id: trace };
+    const now = new Date().toISOString();
+    const { data: after, error } = await s
+      .from("organizations")
+      .update({ archived_at: null, status: "active", dashboard_status: "active", updated_at: now })
+      .eq("id", data.id)
+      .select("*")
+      .maybeSingle();
+    if (error) throw new Error(`restore_failed:${error.message} [${trace}]`);
+    await writeAudit({
+      actor: context.userId,
+      action: "organization.restore",
+      entity_type: "organizations",
+      entity_id: data.id,
+      organization_id: data.id,
+      before,
+      after,
+      trace_id: trace,
+    });
+    return { ok: true as const, organization: after, trace_id: trace };
+  });
+
 
 
 
