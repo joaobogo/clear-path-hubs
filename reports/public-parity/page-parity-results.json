@@ -1,0 +1,103 @@
+{
+  "generatedAt": "2026-07-23T02:31:00.255Z",
+  "sourceOrigin": "https://taasflow.com",
+  "destinationOrigin": "https://clear-path-hubs.lovable.app",
+  "viewports": [
+    {
+      "name": "mobile",
+      "width": 375,
+      "height": 812
+    },
+    {
+      "name": "tablet",
+      "width": 768,
+      "height": 1024
+    },
+    {
+      "name": "desktop",
+      "width": 1440,
+      "height": 900
+    }
+  ],
+  "counts": {
+    "routesCompared": 3,
+    "screenshotsCreated": 36,
+    "passing": 0,
+    "critical": 0,
+    "high": 3,
+    "medium": 0,
+    "low": 0,
+    "approved": 0,
+    "protectedModified": 0
+  },
+  "verdict": "PASS",
+  "verdictMeaning": "PASS means the comparison automation ran end-to-end. It does NOT assert the two websites match.",
+  "results": [
+    {
+      "sourcePath": "/",
+      "destinationPath": "/",
+      "pageType": "marketing_static",
+      "verdict": "MAJOR_DIFFERENCE",
+      "severity": "HIGH",
+      "summary": "12 differences detected",
+      "viewportDiffCounts": [
+        {
+          "viewport": "mobile",
+          "diffs": 4
+        },
+        {
+          "viewport": "tablet",
+          "diffs": 4
+        },
+        {
+          "viewport": "desktop",
+          "diffs": 4
+        }
+      ]
+    },
+    {
+      "sourcePath": "/how-it-works",
+      "destinationPath": "/how-it-works",
+      "pageType": "marketing_static",
+      "verdict": "MAJOR_DIFFERENCE",
+      "severity": "HIGH",
+      "summary": "12 differences detected",
+      "viewportDiffCounts": [
+        {
+          "viewport": "mobile",
+          "diffs": 4
+        },
+        {
+          "viewport": "tablet",
+          "diffs": 4
+        },
+        {
+          "viewport": "desktop",
+          "diffs": 4
+        }
+      ]
+    },
+    {
+      "sourcePath": "/pricing",
+      "destinationPath": "/pricing",
+      "pageType": "marketing_static",
+      "verdict": "MAJOR_DIFFERENCE",
+      "severity": "HIGH",
+      "summary": "12 differences detected",
+      "viewportDiffCounts": [
+        {
+          "viewport": "mobile",
+          "diffs": 4
+        },
+        {
+          "viewport": "tablet",
+          "diffs": 4
+        },
+        {
+          "viewport": "desktop",
+          "diffs": 4
+        }
+      ]
+    }
+  ]
+}
