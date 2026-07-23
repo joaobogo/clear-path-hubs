@@ -182,3 +182,44 @@ Fixing wordy/visually-weak content in this order yields the fastest lift in prem
 ## PASS
 
 **PASS** — every gap (absent, wordy, visually weak, claim-gated, remove) has an explicit fix path and a recommended destination format. **Implementation files changed: 0.**
+
+---
+
+## 9. Cross-page inconsistencies (new category — owner must resolve)
+
+Fresh crawl of the live source found the site contradicts itself. Every rebuild block that touches these must lock a single answer before publish.
+
+| Dimension | Conflicting values | Where |
+|---|---|---|
+| Founder / team tenure | 8+ years · 10 years · 24+ years combined | `/how-it-works` · `/how-it-works` · `/about` |
+| Scoring dimensions | 47 at intake · 9 scoring · 4 weighted | home · `/knowledge-base` · `/how-it-works` |
+| Process step count | 4-step · 5-step | home · `/knowledge-base` |
+| Delivery cadence | 14-day guarantee · 7–14 days | `/pricing` · `/resources` |
+| Countries covered | 50+ · 30+ | home + `/about` · `/enterprise` |
+| Candidate volume | 20,000+ candidates · 2M+ data points | home + `/about` · `/how-it-works` |
+
+**Fix pattern:** pick one canonical value per row; do not carry the contradiction into the rebuild. Numbers with no verified answer stay behind the qualitative fallback until owner signs off.
+
+## 10. CMS-broken source surfaces (do not copy)
+
+Static fetch of the source returns literal placeholder tokens on several pages — real copy is either unpublished or hydration-gated in a broken state. Rebuild must drive from destination content (`src/content/*`), not from these scrapes.
+
+| Broken source page | Symptom |
+|---|---|
+| `/talent-network` | "Eyebrow / Headline / Subheadline / Title / Body" literals |
+| `/employer-onboarding` | "Hero Title / Step1 Title / Check1" literals |
+| `/pricing` — Included/Excluded table | "Included1 / Excluded1" literals |
+| `/pricing` — FAQ block | "Pricing Faq1 Q" literals |
+| `/industries/*` — stat counters | Show as `0%`, `0 weeks`, `0+` before hydration |
+| `/contact` — Calendly widget | Booking link 404s |
+
+## 11. Newly-confirmed destination gap — `/industries/compare`
+
+Source has a structured comparison hub at `/industries/compare` (22 industries × 5 columns). Destination has no equivalent.
+
+- Recommended format: **DATA_VISUALIZATION** (sortable table + filter chips).
+- All per-industry metrics OWNER_VERIFICATION_REQUIRED.
+
+## 12. Confirmed 304 blog posts + editorial gate remains required
+
+Blog sitemap confirmed at **304 posts**. Per-post metadata (title / date / category / excerpt) for the 303 not yet analyzed requires a batch crawl pass — treat as follow-up scope.

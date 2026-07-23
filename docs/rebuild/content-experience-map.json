@@ -3,14 +3,26 @@
   "objective": "Map every valuable public content block from taasflow.com + sourcing-suite-ai to a premium interactive destination format. No code changes.",
   "sources": {
     "live_site": "https://www.taasflow.com",
-    "source_repo": "https://github.com/joaobogo/sourcing-suite-ai (private — coverage via live crawl + destination mirror)",
+    "source_repo": "https://github.com/joaobogo/sourcing-suite-ai (private \u2014 coverage via live crawl + destination mirror)",
     "destination": "https://clear-path-hubs.lovable.app"
   },
   "allowed_destination_formats": [
-    "HERO", "INTERACTIVE_DEMO", "PRODUCT_MOCKUP", "ANIMATED_FLOW", "COMPARISON",
-    "CALCULATOR", "TAB_SYSTEM", "ACCORDION", "EXPANDABLE_CARD", "TIMELINE",
-    "VISUAL_SCORECARD", "STORY_SEQUENCE", "DATA_VISUALIZATION", "SHORT_COPY",
-    "RESOURCE_CARD", "REMOVE_WITH_REASON"
+    "HERO",
+    "INTERACTIVE_DEMO",
+    "PRODUCT_MOCKUP",
+    "ANIMATED_FLOW",
+    "COMPARISON",
+    "CALCULATOR",
+    "TAB_SYSTEM",
+    "ACCORDION",
+    "EXPANDABLE_CARD",
+    "TIMELINE",
+    "VISUAL_SCORECARD",
+    "STORY_SEQUENCE",
+    "DATA_VISUALIZATION",
+    "SHORT_COPY",
+    "RESOURCE_CARD",
+    "REMOVE_WITH_REASON"
   ],
   "field_schema": {
     "source_page": "URL path on taasflow.com",
@@ -25,169 +37,928 @@
     "owner_verification_required": "true if commercial claim needs sign-off"
   },
   "entries": [
-
-    { "id": "home-hero", "source_page": "/", "source_section": "Hero — 'Your hiring team. On demand.'", "strategic_purpose": "Name the deliverable (a hiring team) and the model (on-demand subscription) in one glance.", "audience": "mixed", "destination_equivalent": "/#hero (rebuilt)", "is_missing": false, "is_wordy": false, "is_visually_weak": true, "recommended_format": "HERO", "owner_verification_required": false, "notes": "Keep service-first eyebrow ('Talent as a Service'). Restore verbatim headline. Pair with a live PRODUCT_MOCKUP of the Client workspace." },
-
-    { "id": "home-hero-stats", "source_page": "/", "source_section": "Hero stat callouts (20,000+ placed, 50+ countries, 14 days, 80+ companies)", "strategic_purpose": "Proof strip under the hero.", "audience": "mixed", "destination_equivalent": null, "is_missing": true, "is_wordy": false, "is_visually_weak": false, "recommended_format": "REMOVE_WITH_REASON", "owner_verification_required": true, "notes": "All four numbers are UNSUPPORTED or OWNER_REVIEW_REQUIRED. Do not migrate. Replace with process-credibility strip (no numbers) until owner confirms." },
-
-    { "id": "home-roi-calculator", "source_page": "/", "source_section": "ROI Calculator — 'Cut your cost-per-hire. See the math.'", "strategic_purpose": "Quantify the cost gap between agencies + internal sourcing vs TaaSFlow to move founders/HR from browse to intent.", "audience": "mixed", "destination_equivalent": "/#roi + /pricing#roi (built)", "is_missing": false, "is_wordy": false, "is_visually_weak": false, "recommended_format": "CALCULATOR", "owner_verification_required": true, "notes": "Formulas verified. Prices ($399/$2,100/$4,500 and $6,999/mo) still OWNER_REVIEW_REQUIRED per calculator-behavior.md. Salary default $85K inferred." },
-
-    { "id": "home-agency-cost", "source_page": "/", "source_section": "The true cost of agencies ($25-35k/hire, 5 hires = $100-150k)", "strategic_purpose": "Frame the incumbent as broken before offering the alternative.", "audience": "founders", "destination_equivalent": "/#comparison (partial)", "is_missing": false, "is_wordy": true, "is_visually_weak": true, "recommended_format": "COMPARISON", "owner_verification_required": true, "notes": "$25-35k benchmark is OWNER_REVIEW_REQUIRED. Rebuild as interactive side-by-side toggle: Cost / Time / Quality / Scale / Ownership. Numbers gated behind owner approval." },
-
-    { "id": "home-side-by-side", "source_page": "/", "source_section": "Side-by-Side — TaaSFlow vs Agency toggle", "strategic_purpose": "Give the buyer a scannable, category-by-category contrast.", "audience": "mixed", "destination_equivalent": "/#comparison", "is_missing": false, "is_wordy": false, "is_visually_weak": true, "recommended_format": "TAB_SYSTEM", "owner_verification_required": false, "notes": "Replace static 5-row table with tabs (Cost, Time, Quality, Scale, Ownership) each surfacing 2 short bullets. Preserve qualitative contrast only." },
-
-    { "id": "home-operating-system", "source_page": "/", "source_section": "A repeatable operating system, role by role — 4 phases (Blueprint / Sourcing / Screening / Delivery)", "strategic_purpose": "Prove there is a real process behind the promise.", "audience": "mixed", "destination_equivalent": "/how-it-works, /#process", "is_missing": false, "is_wordy": true, "is_visually_weak": true, "recommended_format": "ANIMATED_FLOW", "owner_verification_required": false, "notes": "Rebuild as horizontal scroll-driven flow with 8 steps (current site's 8-step process supersedes source 4-step). Each step: icon + step title (≤6w) + one-line description (≤18w) + optional mini-demo." },
-
-    { "id": "home-ranked-candidates", "source_page": "/", "source_section": "Ranked candidates, ready to interview — 4 features (ranked shortlist, enriched profiles, reasoning included, one pipeline)", "strategic_purpose": "Show the deliverable — what a Client actually receives.", "audience": "mixed", "destination_equivalent": "/#deliverable", "is_missing": false, "is_wordy": false, "is_visually_weak": true, "recommended_format": "PRODUCT_MOCKUP", "owner_verification_required": false, "notes": "Replace static feature list with a real candidate card mockup — 0-100 score, evidence pillars, rank badge, recruiter note snippet, primary CTA." },
-
-    { "id": "home-scoring-explainer", "source_page": "/how-it-works", "source_section": "0-100 score across Role Fit / Evidence / Logistics / Signal", "strategic_purpose": "Explain what the score is and why it is defensible.", "audience": "mixed", "destination_equivalent": "buried in FAQ + /how-it-works body", "is_missing": false, "is_wordy": true, "is_visually_weak": true, "recommended_format": "VISUAL_SCORECARD", "owner_verification_required": false, "notes": "Rebuild as interactive scorecard: hover a pillar → see weight, criteria, evidence sample. Replaces multi-paragraph explainer." },
-
-    { "id": "home-workspace", "source_page": "/", "source_section": "Live client workspace — realtime pipeline, notifications, recruiter chat", "strategic_purpose": "Show the surface where the service is consumed.", "audience": "mixed", "destination_equivalent": "/#workspace, 'Three views' section", "is_missing": false, "is_wordy": false, "is_visually_weak": false, "recommended_format": "INTERACTIVE_DEMO", "owner_verification_required": false, "notes": "Rebuild as a 3-tab live product showcase (Client Kanban / Candidate Drawer / Realtime notifications). Screenshots pulled from real seeded workspace." },
-
-    { "id": "home-ownership", "source_page": "/", "source_section": "Keep your entire candidate pipeline forever — Yours", "strategic_purpose": "Address the #1 buyer objection about agency lock-in.", "audience": "mixed", "destination_equivalent": "/#workspace body copy", "is_missing": false, "is_wordy": false, "is_visually_weak": true, "recommended_format": "SHORT_COPY", "owner_verification_required": false, "notes": "Preserve as a single-line callout beside the workspace mockup. Reinforce with a visual chip: 'Client-owned data'." },
-
-    { "id": "home-industries", "source_page": "/", "source_section": "We serve: Tech Startups, Finance, Healthcare, Consulting, Fortune 500, SaaS", "strategic_purpose": "Signal breadth without listing 50+ industries in the hero.", "audience": "mixed", "destination_equivalent": "/#industries preview (12 shown), /industries index (57)", "is_missing": false, "is_wordy": false, "is_visually_weak": true, "recommended_format": "EXPANDABLE_CARD", "owner_verification_required": false, "notes": "Show 8 featured industry cards on homepage with hover reveal (role families + candidate signals). Full 57-industry grid on /industries." },
-
-    { "id": "home-audiences", "source_page": "/", "source_section": "Audience lanes (Founders / HR / Enterprise / Staffing) — currently missing 2 lanes on destination", "strategic_purpose": "Give each buyer persona a first step and language that fits them.", "audience": "mixed", "destination_equivalent": "/#audiences (partial — enterprise + staffing missing)", "is_missing": true, "is_wordy": false, "is_visually_weak": true, "recommended_format": "EXPANDABLE_CARD", "owner_verification_required": false, "notes": "4 lanes as expandable cards with persona icon, headline (≤10w), problem (≤22w), CTA (≤4w) → dedicated persona route." },
-
-    { "id": "home-pricing-two-ways", "source_page": "/", "source_section": "Two ways to hire (Single Hire $399 + Ongoing Subscription)", "strategic_purpose": "Show shape of pricing model without forcing a click to /pricing.", "audience": "mixed", "destination_equivalent": "/#subscription (qualitative)", "is_missing": false, "is_wordy": false, "is_visually_weak": false, "recommended_format": "COMPARISON", "owner_verification_required": true, "notes": "Keep qualitative until prices approved. Rebuild as 2-column card comparison (Pilot / Subscription) with 3 signals each." },
-
-    { "id": "home-case-study", "source_page": "/", "source_section": "SafiTech + Sarah Chen / Marcus Weber / Ahmed Al-Rashid testimonials", "strategic_purpose": "Named proof to move enterprise buyers.", "audience": "enterprise", "destination_equivalent": null, "is_missing": true, "is_wordy": false, "is_visually_weak": false, "recommended_format": "REMOVE_WITH_REASON", "owner_verification_required": true, "notes": "Do NOT migrate. Owner has not confirmed permission. Replace with process-credibility strip." },
-
-    { "id": "home-faq", "source_page": "/", "source_section": "Homepage FAQ (8 questions)", "strategic_purpose": "Handle common objections inline.", "audience": "mixed", "destination_equivalent": "/#faq (built)", "is_missing": false, "is_wordy": true, "is_visually_weak": true, "recommended_format": "ACCORDION", "owner_verification_required": false, "notes": "Each visible answer preview ≤45 words. Full answer disclosed via accordion. Link to /faq for the extended set." },
-
-    { "id": "home-final-cta", "source_page": "/", "source_section": "Final CTA — 'Start hiring' + 'See how it works'", "strategic_purpose": "Convert page-bottom scroll into action.", "audience": "mixed", "destination_equivalent": "/#final-cta", "is_missing": false, "is_wordy": false, "is_visually_weak": true, "recommended_format": "SHORT_COPY", "owner_verification_required": false, "notes": "Bold headline (≤10w) + supporting line (≤35w) + 2 CTAs (≤4w each). Anchor visual: candidate ranking motion loop." },
-
-    { "id": "how-blueprint", "source_page": "/how-it-works", "source_section": "Phase 1 — Blueprint (intake, requirements, rubric)", "strategic_purpose": "Show TaaSFlow reasons about the role before sourcing.", "audience": "mixed", "destination_equivalent": "/how-it-works (text)", "is_missing": false, "is_wordy": true, "is_visually_weak": true, "recommended_format": "ANIMATED_FLOW", "owner_verification_required": false, "notes": "Rebuild as scroll-driven step 1 of 8 with animated form-to-rubric transition." },
-
-    { "id": "how-sourcing", "source_page": "/how-it-works", "source_section": "Phase 2 — Sourcing (channels, coverage, review)", "strategic_purpose": "Address 'where do candidates come from?'.", "audience": "mixed", "destination_equivalent": "/how-it-works (text)", "is_missing": false, "is_wordy": true, "is_visually_weak": true, "recommended_format": "STORY_SEQUENCE", "owner_verification_required": false, "notes": "Illustrated 3-panel sequence: talent-graph → outreach → response review." },
-
-    { "id": "how-screening", "source_page": "/how-it-works", "source_section": "Phase 3 — Screening (scoring, evidence, admin review)", "strategic_purpose": "Prove the ranking is not a black box.", "audience": "mixed", "destination_equivalent": "/how-it-works (text) + admin review page (internal)", "is_missing": false, "is_wordy": true, "is_visually_weak": true, "recommended_format": "VISUAL_SCORECARD", "owner_verification_required": false, "notes": "Interactive scorecard: click a candidate → see per-requirement evidence + recruiter note." },
-
-    { "id": "how-delivery", "source_page": "/how-it-works", "source_section": "Phase 4 — Delivery (published shortlist, Kanban, chat)", "strategic_purpose": "Show what lands in the Client workspace and when.", "audience": "mixed", "destination_equivalent": "/how-it-works (text) + Client dashboard visual", "is_missing": false, "is_wordy": false, "is_visually_weak": true, "recommended_format": "PRODUCT_MOCKUP", "owner_verification_required": false, "notes": "Real Client Kanban screenshot with stage counts + activity timeline." },
-
-    { "id": "how-workspace-detail", "source_page": "/how-it-works", "source_section": "Workspace deep-dive (Kanban, drawer, evidence tab, notifications)", "strategic_purpose": "Anchor the entire narrative in the operational reality of the product.", "audience": "mixed", "destination_equivalent": "partial on /how-it-works", "is_missing": false, "is_wordy": true, "is_visually_weak": true, "recommended_format": "TAB_SYSTEM", "owner_verification_required": false, "notes": "3-tab component: Kanban / Candidate drawer / Realtime — each an animated screenshot with 2-line explainer." },
-
-    { "id": "pricing-tiers", "source_page": "/pricing", "source_section": "Pilot / Multi Position / Hiring Sprint / Subscription tiers", "strategic_purpose": "Show packaging so buyers self-select.", "audience": "mixed", "destination_equivalent": "/pricing (qualitative under review)", "is_missing": false, "is_wordy": false, "is_visually_weak": true, "recommended_format": "EXPANDABLE_CARD", "owner_verification_required": true, "notes": "4-tier card grid. Prices behind OWNER_REVIEW gate. Each card expands to reveal deliverables + SLA + cancellation terms." },
-
-    { "id": "pricing-calculator", "source_page": "/pricing", "source_section": "ROI Calculator (same as home)", "strategic_purpose": "Let buyer plug in their inputs and see savings on the page.", "audience": "mixed", "destination_equivalent": "/pricing#roi (built)", "is_missing": false, "is_wordy": false, "is_visually_weak": false, "recommended_format": "CALCULATOR", "owner_verification_required": true, "notes": "Keep. Confirm defaults + tier prices with owner." },
-
-    { "id": "pricing-comparison-table", "source_page": "/pricing", "source_section": "TaaSFlow vs contingent agency vs in-house — full table", "strategic_purpose": "Give procurement a downloadable-quality comparison.", "audience": "hr", "destination_equivalent": "/pricing partial", "is_missing": false, "is_wordy": true, "is_visually_weak": true, "recommended_format": "COMPARISON", "owner_verification_required": false, "notes": "Rebuild as 3-column TAB_SYSTEM: You get / You avoid / You keep." },
-
-    { "id": "pricing-guarantee", "source_page": "/pricing", "source_section": "Placement / satisfaction guarantee copy", "strategic_purpose": "De-risk the pilot decision.", "audience": "mixed", "destination_equivalent": "partial", "is_missing": true, "is_wordy": true, "is_visually_weak": true, "recommended_format": "EXPANDABLE_CARD", "owner_verification_required": true, "notes": "Owner must confirm exact guarantee terms before publishing. Present as a single expandable card." },
-
-    { "id": "pilot-offer", "source_page": "/pilot", "source_section": "$399 Pilot offer — deliverables, timeline, SLA", "strategic_purpose": "Low-friction entry point.", "audience": "founders", "destination_equivalent": "/pilot (present, unclear if maintained)", "is_missing": false, "is_wordy": true, "is_visually_weak": true, "recommended_format": "STORY_SEQUENCE", "owner_verification_required": true, "notes": "Rebuild as 4-panel visual story: Kickoff → First shortlist → Interviews → Hire. Confirm price + timeline with owner." },
-
-    { "id": "enterprise-positioning", "source_page": "/enterprise", "source_section": "Enterprise value proposition (multi-role, governance, integrations)", "strategic_purpose": "Speak the language of TA leaders + procurement.", "audience": "enterprise", "destination_equivalent": "/enterprise (present)", "is_missing": false, "is_wordy": true, "is_visually_weak": true, "recommended_format": "TAB_SYSTEM", "owner_verification_required": false, "notes": "Tabs: Scale / Governance / Integrations / Reporting." },
-
-    { "id": "enterprise-security", "source_page": "/enterprise", "source_section": "Security & compliance (SOC2, GDPR, ISO mentions)", "strategic_purpose": "Clear procurement gate.", "audience": "enterprise", "destination_equivalent": null, "is_missing": true, "is_wordy": false, "is_visually_weak": true, "recommended_format": "EXPANDABLE_CARD", "owner_verification_required": true, "notes": "All security posture claims OWNER_REVIEW_REQUIRED before publish." },
-
-    { "id": "enterprise-integrations", "source_page": "/enterprise", "source_section": "ATS + HRIS integrations list", "strategic_purpose": "Answer 'will it fit our stack?'.", "audience": "enterprise", "destination_equivalent": "partial", "is_missing": true, "is_wordy": false, "is_visually_weak": true, "recommended_format": "DATA_VISUALIZATION", "owner_verification_required": true, "notes": "Show shipped integrations vs roadmap. Confirm list with owner." },
-
-    { "id": "solutions-founders", "source_page": "/solutions (implicit) + /", "source_section": "Founders lane — early-stage hiring", "strategic_purpose": "Speak to time-poor, cost-sensitive founders.", "audience": "founders", "destination_equivalent": "/#audiences card", "is_missing": true, "is_wordy": false, "is_visually_weak": true, "recommended_format": "EXPANDABLE_CARD", "owner_verification_required": false, "notes": "Dedicated /for-founders route with intake CTA. Currently only a card on home." },
-
-    { "id": "solutions-hr", "source_page": "/solutions (implicit)", "source_section": "HR / TA lane — augment in-house team", "strategic_purpose": "Position as capacity, not replacement.", "audience": "hr", "destination_equivalent": "/#audiences card", "is_missing": true, "is_wordy": false, "is_visually_weak": true, "recommended_format": "EXPANDABLE_CARD", "owner_verification_required": false, "notes": "Dedicated /for-hr route. Add ATS-integration language." },
-
-    { "id": "solutions-agencies", "source_page": "/partnerships/staffing", "source_section": "Staffing / agency partner program", "strategic_purpose": "Convert agencies from competitors to distribution partners.", "audience": "agencies", "destination_equivalent": "/partnerships/staffing (present)", "is_missing": false, "is_wordy": true, "is_visually_weak": true, "recommended_format": "STORY_SEQUENCE", "owner_verification_required": true, "notes": "Rebuild as 3-panel narrative: What we build / What you keep / How we split." },
-
-    { "id": "candidate-network", "source_page": "/talent-network", "source_section": "Join the talent network (candidate side)", "strategic_purpose": "Grow candidate supply for repeated matching.", "audience": "candidates", "destination_equivalent": "/talent-network (present)", "is_missing": false, "is_wordy": true, "is_visually_weak": true, "recommended_format": "STORY_SEQUENCE", "owner_verification_required": false, "notes": "3-step visual: Apply once → Ranked to roles → Represented with evidence." },
-
-    { "id": "global-talent", "source_page": "/global-talent", "source_section": "Countries covered / global reach", "strategic_purpose": "Answer international hiring buyers.", "audience": "enterprise", "destination_equivalent": "/global-talent (present)", "is_missing": false, "is_wordy": true, "is_visually_weak": true, "recommended_format": "DATA_VISUALIZATION", "owner_verification_required": true, "notes": "Interactive world map. All country counts OWNER_REVIEW_REQUIRED. Fall back to regional bands until confirmed." },
-
-    { "id": "about-founder", "source_page": "/about", "source_section": "Founder story + mission", "strategic_purpose": "Human anchor for a service business.", "audience": "mixed", "destination_equivalent": "/about (present, brief)", "is_missing": false, "is_wordy": true, "is_visually_weak": true, "recommended_format": "STORY_SEQUENCE", "owner_verification_required": false, "notes": "Illustrated timeline: founding insight → early clients → 8-step process → today." },
-
-    { "id": "about-stats", "source_page": "/about", "source_section": "20,000+ candidates / 80+ companies / 50+ countries / 22 industries / 24+ years", "strategic_purpose": "Credibility strip.", "audience": "mixed", "destination_equivalent": "/about partial", "is_missing": false, "is_wordy": false, "is_visually_weak": false, "recommended_format": "REMOVE_WITH_REASON", "owner_verification_required": true, "notes": "All five numbers UNSUPPORTED or OWNER_REVIEW_REQUIRED. Replace with process-credibility strip until owner confirms." },
-
-    { "id": "faq-page", "source_page": "/faq", "source_section": "Full FAQ (20+ questions)", "strategic_purpose": "Reduce sales cycle friction; capture long-tail search.", "audience": "mixed", "destination_equivalent": "/faq (present)", "is_missing": false, "is_wordy": true, "is_visually_weak": true, "recommended_format": "ACCORDION", "owner_verification_required": false, "notes": "Group by category (Product / Pricing / Delivery / Data). Preview ≤45w per answer." },
-
-    { "id": "case-studies", "source_page": "/case-studies", "source_section": "Named client case studies (SafiTech + others)", "strategic_purpose": "Social proof.", "audience": "enterprise", "destination_equivalent": "/case-studies (present, likely stubbed)", "is_missing": false, "is_wordy": true, "is_visually_weak": true, "recommended_format": "REMOVE_WITH_REASON", "owner_verification_required": true, "notes": "Do NOT publish until each named client provides written permission. Replace with anonymized process credibility until then." },
-
-    { "id": "resources-index", "source_page": "/resources", "source_section": "Resource directory (blog + guides + tools)", "strategic_purpose": "SEO capture + top-of-funnel education.", "audience": "mixed", "destination_equivalent": "/resources (present)", "is_missing": false, "is_wordy": false, "is_visually_weak": true, "recommended_format": "RESOURCE_CARD", "owner_verification_required": false, "notes": "Reformat as filterable card grid (Guide / Playbook / Tool / Blog) with reading time + category chip." },
-
-    { "id": "knowledge-base", "source_page": "/knowledge-base", "source_section": "Knowledge base directory", "strategic_purpose": "Deep educational content.", "audience": "mixed", "destination_equivalent": "/knowledge-base (present, thin)", "is_missing": false, "is_wordy": false, "is_visually_weak": true, "recommended_format": "TAB_SYSTEM", "owner_verification_required": false, "notes": "Tabs by role (For Founders / For HR / For Candidates). Each tab surfaces 6 curated articles." },
-
-    { "id": "blog-index", "source_page": "/blog", "source_section": "Blog index (304 posts already scraped into src/content/blog)", "strategic_purpose": "Long-tail SEO + expertise signal.", "audience": "mixed", "destination_equivalent": "/blog (present, minimal chrome)", "is_missing": false, "is_wordy": false, "is_visually_weak": true, "recommended_format": "RESOURCE_CARD", "owner_verification_required": true, "notes": "304 posts default to VERIFY_BEFORE_USE — many are AI-drafted at scrape time. Gate publication behind editorial review. Category filter (8 pillars). Every post gets a unique hero image (guardrail: no image reuse)." },
-
-    { "id": "blog-posts", "source_page": "/blog/$slug (× 304)", "source_section": "Individual blog articles", "strategic_purpose": "Educational depth + capture organic search.", "audience": "mixed", "destination_equivalent": "/blog/$slug (present)", "is_missing": false, "is_wordy": true, "is_visually_weak": true, "recommended_format": "STORY_SEQUENCE", "owner_verification_required": true, "notes": "Each article: TOC, reading time, unique hero image, related posts, category chip. Editorial-review gate required." },
-
-    { "id": "industries-index", "source_page": "/industries", "source_section": "Industries hub (was 24, now 57 on destination)", "strategic_purpose": "Vertical relevance for buyers who filter by industry.", "audience": "mixed", "destination_equivalent": "/industries (rebuilt with search + filters)", "is_missing": false, "is_wordy": false, "is_visually_weak": false, "recommended_format": "DATA_VISUALIZATION", "owner_verification_required": false, "notes": "Keep filterable grid. Add hover reveal: role families + candidate signals." },
-
-    { "id": "industries-detail", "source_page": "/industries/$slug (× 57)", "source_section": "Industry detail pages (challenges, role families, candidate signals, FAQs)", "strategic_purpose": "Vertical proof + long-tail SEO.", "audience": "mixed", "destination_equivalent": "/industries/$slug (rebuilt template)", "is_missing": false, "is_wordy": true, "is_visually_weak": true, "recommended_format": "TAB_SYSTEM", "owner_verification_required": false, "notes": "Rebuild each detail page as: hero + tabs (Challenges / Roles / Signals / FAQ). Every vertical gets unique imagery." },
-
-    { "id": "contact", "source_page": "/contact", "source_section": "Contact form + channels", "strategic_purpose": "Enterprise / bespoke conversation.", "audience": "mixed", "destination_equivalent": "/contact (present)", "is_missing": false, "is_wordy": false, "is_visually_weak": true, "recommended_format": "SHORT_COPY", "owner_verification_required": true, "notes": "SLA copy ('reply within 24h') OWNER_REVIEW_REQUIRED. Form fields: name / company / role stage / need." },
-
-    { "id": "privacy", "source_page": "/privacy", "source_section": "Privacy policy", "strategic_purpose": "Legal compliance.", "audience": "mixed", "destination_equivalent": "/privacy (present)", "is_missing": false, "is_wordy": true, "is_visually_weak": true, "recommended_format": "ACCORDION", "owner_verification_required": true, "notes": "Legal review required for V2 data model (organizations, evidence, immutable score runs, cvs bucket). Accordion by section." },
-
-    { "id": "terms", "source_page": "/terms", "source_section": "Terms of service", "strategic_purpose": "Legal compliance.", "audience": "mixed", "destination_equivalent": "/terms (present)", "is_missing": false, "is_wordy": true, "is_visually_weak": true, "recommended_format": "ACCORDION", "owner_verification_required": true, "notes": "Legal review required for V2 subscription/pilot model. Accordion by section." },
-
-    { "id": "employer-onboarding", "source_page": "/employer-onboarding", "source_section": "Legacy employer onboarding page", "strategic_purpose": "Superseded by /intake.", "audience": "mixed", "destination_equivalent": "/intake (canonical)", "is_missing": false, "is_wordy": true, "is_visually_weak": true, "recommended_format": "REMOVE_WITH_REASON", "owner_verification_required": false, "notes": "Redirect /employer-onboarding → /intake at route layer. Do not migrate copy." },
-
-    { "id": "jobs-index", "source_page": "/jobs", "source_section": "Public job board", "strategic_purpose": "Candidate entry point + SEO for open roles.", "audience": "candidates", "destination_equivalent": "/jobs (canonical operational)", "is_missing": false, "is_wordy": false, "is_visually_weak": true, "recommended_format": "PRODUCT_MOCKUP", "owner_verification_required": false, "notes": "Operational — do not modify behavior. Add hero + filter chips styled to brand. Never reuse candidate images across posts." },
-
-    { "id": "jobs-apply", "source_page": "/jobs/$id/apply", "source_section": "Candidate application + CV upload", "strategic_purpose": "Convert visit to application.", "audience": "candidates", "destination_equivalent": "/jobs/$id/apply (canonical)", "is_missing": false, "is_wordy": false, "is_visually_weak": true, "recommended_format": "STORY_SEQUENCE", "owner_verification_required": false, "notes": "Operational — do not modify. Wrap in a 3-step visual progress rail (Details / Upload / Confirm)." },
-
-    { "id": "footer-nav", "source_page": "*", "source_section": "Site footer navigation", "strategic_purpose": "Wayfinding + legal + candidate path.", "audience": "mixed", "destination_equivalent": "site-shell footer (rebuilt)", "is_missing": false, "is_wordy": false, "is_visually_weak": false, "recommended_format": "SHORT_COPY", "owner_verification_required": false, "notes": "Keep 5 columns (Company / Solutions / Industries / Resources / Legal). Candidates lane included." },
-
-    { "id": "header-nav", "source_page": "*", "source_section": "Site header navigation", "strategic_purpose": "Primary wayfinding + persistent CTA.", "audience": "mixed", "destination_equivalent": "site-shell header (rebuilt)", "is_missing": false, "is_wordy": false, "is_visually_weak": false, "recommended_format": "SHORT_COPY", "owner_verification_required": false, "notes": "Preserve 6-item primary nav (How It Works / Solutions / Industries / Pricing / Resources / Company). Persistent 'Start hiring' CTA." }
-
+    {
+      "id": "home-hero",
+      "source_page": "/",
+      "source_section": "Hero \u2014 'Your hiring team. On demand.'",
+      "strategic_purpose": "Name the deliverable (a hiring team) and the model (on-demand subscription) in one glance.",
+      "audience": "mixed",
+      "destination_equivalent": "/#hero (rebuilt)",
+      "is_missing": false,
+      "is_wordy": false,
+      "is_visually_weak": true,
+      "recommended_format": "HERO",
+      "owner_verification_required": false,
+      "notes": "Keep service-first eyebrow ('Talent as a Service'). Restore verbatim headline. Pair with a live PRODUCT_MOCKUP of the Client workspace."
+    },
+    {
+      "id": "home-hero-stats",
+      "source_page": "/",
+      "source_section": "Hero stat callouts (20,000+ placed, 50+ countries, 14 days, 80+ companies)",
+      "strategic_purpose": "Proof strip under the hero.",
+      "audience": "mixed",
+      "destination_equivalent": null,
+      "is_missing": true,
+      "is_wordy": false,
+      "is_visually_weak": false,
+      "recommended_format": "REMOVE_WITH_REASON",
+      "owner_verification_required": true,
+      "notes": "All four numbers are UNSUPPORTED or OWNER_REVIEW_REQUIRED. Do not migrate. Replace with process-credibility strip (no numbers) until owner confirms."
+    },
+    {
+      "id": "home-roi-calculator",
+      "source_page": "/",
+      "source_section": "ROI Calculator \u2014 'Cut your cost-per-hire. See the math.'",
+      "strategic_purpose": "Quantify the cost gap between agencies + internal sourcing vs TaaSFlow to move founders/HR from browse to intent.",
+      "audience": "mixed",
+      "destination_equivalent": "/#roi + /pricing#roi (built)",
+      "is_missing": false,
+      "is_wordy": false,
+      "is_visually_weak": false,
+      "recommended_format": "CALCULATOR",
+      "owner_verification_required": true,
+      "notes": "Formulas verified. Prices ($399/$2,100/$4,500 and $6,999/mo) still OWNER_REVIEW_REQUIRED per calculator-behavior.md. Salary default $85K inferred."
+    },
+    {
+      "id": "home-agency-cost",
+      "source_page": "/",
+      "source_section": "The true cost of agencies ($25-35k/hire, 5 hires = $100-150k)",
+      "strategic_purpose": "Frame the incumbent as broken before offering the alternative.",
+      "audience": "founders",
+      "destination_equivalent": "/#comparison (partial)",
+      "is_missing": false,
+      "is_wordy": true,
+      "is_visually_weak": true,
+      "recommended_format": "COMPARISON",
+      "owner_verification_required": true,
+      "notes": "$25-35k benchmark is OWNER_REVIEW_REQUIRED. Rebuild as interactive side-by-side toggle: Cost / Time / Quality / Scale / Ownership. Numbers gated behind owner approval."
+    },
+    {
+      "id": "home-side-by-side",
+      "source_page": "/",
+      "source_section": "Side-by-Side \u2014 TaaSFlow vs Agency toggle",
+      "strategic_purpose": "Give the buyer a scannable, category-by-category contrast.",
+      "audience": "mixed",
+      "destination_equivalent": "/#comparison",
+      "is_missing": false,
+      "is_wordy": false,
+      "is_visually_weak": true,
+      "recommended_format": "TAB_SYSTEM",
+      "owner_verification_required": false,
+      "notes": "Replace static 5-row table with tabs (Cost, Time, Quality, Scale, Ownership) each surfacing 2 short bullets. Preserve qualitative contrast only."
+    },
+    {
+      "id": "home-operating-system",
+      "source_page": "/",
+      "source_section": "A repeatable operating system, role by role \u2014 4 phases (Blueprint / Sourcing / Screening / Delivery)",
+      "strategic_purpose": "Prove there is a real process behind the promise.",
+      "audience": "mixed",
+      "destination_equivalent": "/how-it-works, /#process",
+      "is_missing": false,
+      "is_wordy": true,
+      "is_visually_weak": true,
+      "recommended_format": "ANIMATED_FLOW",
+      "owner_verification_required": false,
+      "notes": "Rebuild as horizontal scroll-driven flow with 8 steps (current site's 8-step process supersedes source 4-step). Each step: icon + step title (\u22646w) + one-line description (\u226418w) + optional mini-demo."
+    },
+    {
+      "id": "home-ranked-candidates",
+      "source_page": "/",
+      "source_section": "Ranked candidates, ready to interview \u2014 4 features (ranked shortlist, enriched profiles, reasoning included, one pipeline)",
+      "strategic_purpose": "Show the deliverable \u2014 what a Client actually receives.",
+      "audience": "mixed",
+      "destination_equivalent": "/#deliverable",
+      "is_missing": false,
+      "is_wordy": false,
+      "is_visually_weak": true,
+      "recommended_format": "PRODUCT_MOCKUP",
+      "owner_verification_required": false,
+      "notes": "Replace static feature list with a real candidate card mockup \u2014 0-100 score, evidence pillars, rank badge, recruiter note snippet, primary CTA."
+    },
+    {
+      "id": "home-scoring-explainer",
+      "source_page": "/how-it-works",
+      "source_section": "0-100 score across Role Fit / Evidence / Logistics / Signal",
+      "strategic_purpose": "Explain what the score is and why it is defensible.",
+      "audience": "mixed",
+      "destination_equivalent": "buried in FAQ + /how-it-works body",
+      "is_missing": false,
+      "is_wordy": true,
+      "is_visually_weak": true,
+      "recommended_format": "VISUAL_SCORECARD",
+      "owner_verification_required": false,
+      "notes": "Rebuild as interactive scorecard: hover a pillar \u2192 see weight, criteria, evidence sample. Replaces multi-paragraph explainer."
+    },
+    {
+      "id": "home-workspace",
+      "source_page": "/",
+      "source_section": "Live client workspace \u2014 realtime pipeline, notifications, recruiter chat",
+      "strategic_purpose": "Show the surface where the service is consumed.",
+      "audience": "mixed",
+      "destination_equivalent": "/#workspace, 'Three views' section",
+      "is_missing": false,
+      "is_wordy": false,
+      "is_visually_weak": false,
+      "recommended_format": "INTERACTIVE_DEMO",
+      "owner_verification_required": false,
+      "notes": "Rebuild as a 3-tab live product showcase (Client Kanban / Candidate Drawer / Realtime notifications). Screenshots pulled from real seeded workspace."
+    },
+    {
+      "id": "home-ownership",
+      "source_page": "/",
+      "source_section": "Keep your entire candidate pipeline forever \u2014 Yours",
+      "strategic_purpose": "Address the #1 buyer objection about agency lock-in.",
+      "audience": "mixed",
+      "destination_equivalent": "/#workspace body copy",
+      "is_missing": false,
+      "is_wordy": false,
+      "is_visually_weak": true,
+      "recommended_format": "SHORT_COPY",
+      "owner_verification_required": false,
+      "notes": "Preserve as a single-line callout beside the workspace mockup. Reinforce with a visual chip: 'Client-owned data'."
+    },
+    {
+      "id": "home-industries",
+      "source_page": "/",
+      "source_section": "We serve: Tech Startups, Finance, Healthcare, Consulting, Fortune 500, SaaS",
+      "strategic_purpose": "Signal breadth without listing 50+ industries in the hero.",
+      "audience": "mixed",
+      "destination_equivalent": "/#industries preview (12 shown), /industries index (57)",
+      "is_missing": false,
+      "is_wordy": false,
+      "is_visually_weak": true,
+      "recommended_format": "EXPANDABLE_CARD",
+      "owner_verification_required": false,
+      "notes": "Show 8 featured industry cards on homepage with hover reveal (role families + candidate signals). Full 57-industry grid on /industries."
+    },
+    {
+      "id": "home-audiences",
+      "source_page": "/",
+      "source_section": "Audience lanes (Founders / HR / Enterprise / Staffing) \u2014 currently missing 2 lanes on destination",
+      "strategic_purpose": "Give each buyer persona a first step and language that fits them.",
+      "audience": "mixed",
+      "destination_equivalent": "/#audiences (partial \u2014 enterprise + staffing missing)",
+      "is_missing": true,
+      "is_wordy": false,
+      "is_visually_weak": true,
+      "recommended_format": "EXPANDABLE_CARD",
+      "owner_verification_required": false,
+      "notes": "4 lanes as expandable cards with persona icon, headline (\u226410w), problem (\u226422w), CTA (\u22644w) \u2192 dedicated persona route."
+    },
+    {
+      "id": "home-pricing-two-ways",
+      "source_page": "/",
+      "source_section": "Two ways to hire (Single Hire $399 + Ongoing Subscription)",
+      "strategic_purpose": "Show shape of pricing model without forcing a click to /pricing.",
+      "audience": "mixed",
+      "destination_equivalent": "/#subscription (qualitative)",
+      "is_missing": false,
+      "is_wordy": false,
+      "is_visually_weak": false,
+      "recommended_format": "COMPARISON",
+      "owner_verification_required": true,
+      "notes": "Keep qualitative until prices approved. Rebuild as 2-column card comparison (Pilot / Subscription) with 3 signals each."
+    },
+    {
+      "id": "home-case-study",
+      "source_page": "/",
+      "source_section": "SafiTech + Sarah Chen / Marcus Weber / Ahmed Al-Rashid testimonials",
+      "strategic_purpose": "Named proof to move enterprise buyers.",
+      "audience": "enterprise",
+      "destination_equivalent": null,
+      "is_missing": true,
+      "is_wordy": false,
+      "is_visually_weak": false,
+      "recommended_format": "REMOVE_WITH_REASON",
+      "owner_verification_required": true,
+      "notes": "Do NOT migrate. Owner has not confirmed permission. Replace with process-credibility strip."
+    },
+    {
+      "id": "home-faq",
+      "source_page": "/",
+      "source_section": "Homepage FAQ (8 questions)",
+      "strategic_purpose": "Handle common objections inline.",
+      "audience": "mixed",
+      "destination_equivalent": "/#faq (built)",
+      "is_missing": false,
+      "is_wordy": true,
+      "is_visually_weak": true,
+      "recommended_format": "ACCORDION",
+      "owner_verification_required": false,
+      "notes": "Each visible answer preview \u226445 words. Full answer disclosed via accordion. Link to /faq for the extended set."
+    },
+    {
+      "id": "home-final-cta",
+      "source_page": "/",
+      "source_section": "Final CTA \u2014 'Start hiring' + 'See how it works'",
+      "strategic_purpose": "Convert page-bottom scroll into action.",
+      "audience": "mixed",
+      "destination_equivalent": "/#final-cta",
+      "is_missing": false,
+      "is_wordy": false,
+      "is_visually_weak": true,
+      "recommended_format": "SHORT_COPY",
+      "owner_verification_required": false,
+      "notes": "Bold headline (\u226410w) + supporting line (\u226435w) + 2 CTAs (\u22644w each). Anchor visual: candidate ranking motion loop."
+    },
+    {
+      "id": "how-blueprint",
+      "source_page": "/how-it-works",
+      "source_section": "Phase 1 \u2014 Blueprint (intake, requirements, rubric)",
+      "strategic_purpose": "Show TaaSFlow reasons about the role before sourcing.",
+      "audience": "mixed",
+      "destination_equivalent": "/how-it-works (text)",
+      "is_missing": false,
+      "is_wordy": true,
+      "is_visually_weak": true,
+      "recommended_format": "ANIMATED_FLOW",
+      "owner_verification_required": false,
+      "notes": "Rebuild as scroll-driven step 1 of 8 with animated form-to-rubric transition."
+    },
+    {
+      "id": "how-sourcing",
+      "source_page": "/how-it-works",
+      "source_section": "Phase 2 \u2014 Sourcing (channels, coverage, review)",
+      "strategic_purpose": "Address 'where do candidates come from?'.",
+      "audience": "mixed",
+      "destination_equivalent": "/how-it-works (text)",
+      "is_missing": false,
+      "is_wordy": true,
+      "is_visually_weak": true,
+      "recommended_format": "STORY_SEQUENCE",
+      "owner_verification_required": false,
+      "notes": "Illustrated 3-panel sequence: talent-graph \u2192 outreach \u2192 response review."
+    },
+    {
+      "id": "how-screening",
+      "source_page": "/how-it-works",
+      "source_section": "Phase 3 \u2014 Screening (scoring, evidence, admin review)",
+      "strategic_purpose": "Prove the ranking is not a black box.",
+      "audience": "mixed",
+      "destination_equivalent": "/how-it-works (text) + admin review page (internal)",
+      "is_missing": false,
+      "is_wordy": true,
+      "is_visually_weak": true,
+      "recommended_format": "VISUAL_SCORECARD",
+      "owner_verification_required": false,
+      "notes": "Interactive scorecard: click a candidate \u2192 see per-requirement evidence + recruiter note."
+    },
+    {
+      "id": "how-delivery",
+      "source_page": "/how-it-works",
+      "source_section": "Phase 4 \u2014 Delivery (published shortlist, Kanban, chat)",
+      "strategic_purpose": "Show what lands in the Client workspace and when.",
+      "audience": "mixed",
+      "destination_equivalent": "/how-it-works (text) + Client dashboard visual",
+      "is_missing": false,
+      "is_wordy": false,
+      "is_visually_weak": true,
+      "recommended_format": "PRODUCT_MOCKUP",
+      "owner_verification_required": false,
+      "notes": "Real Client Kanban screenshot with stage counts + activity timeline."
+    },
+    {
+      "id": "how-workspace-detail",
+      "source_page": "/how-it-works",
+      "source_section": "Workspace deep-dive (Kanban, drawer, evidence tab, notifications)",
+      "strategic_purpose": "Anchor the entire narrative in the operational reality of the product.",
+      "audience": "mixed",
+      "destination_equivalent": "partial on /how-it-works",
+      "is_missing": false,
+      "is_wordy": true,
+      "is_visually_weak": true,
+      "recommended_format": "TAB_SYSTEM",
+      "owner_verification_required": false,
+      "notes": "3-tab component: Kanban / Candidate drawer / Realtime \u2014 each an animated screenshot with 2-line explainer."
+    },
+    {
+      "id": "pricing-tiers",
+      "source_page": "/pricing",
+      "source_section": "Pilot / Multi Position / Hiring Sprint / Subscription tiers",
+      "strategic_purpose": "Show packaging so buyers self-select.",
+      "audience": "mixed",
+      "destination_equivalent": "/pricing (qualitative under review)",
+      "is_missing": false,
+      "is_wordy": false,
+      "is_visually_weak": true,
+      "recommended_format": "EXPANDABLE_CARD",
+      "owner_verification_required": true,
+      "notes": "4-tier card grid. Prices behind OWNER_REVIEW gate. Each card expands to reveal deliverables + SLA + cancellation terms."
+    },
+    {
+      "id": "pricing-calculator",
+      "source_page": "/pricing",
+      "source_section": "ROI Calculator (same as home)",
+      "strategic_purpose": "Let buyer plug in their inputs and see savings on the page.",
+      "audience": "mixed",
+      "destination_equivalent": "/pricing#roi (built)",
+      "is_missing": false,
+      "is_wordy": false,
+      "is_visually_weak": false,
+      "recommended_format": "CALCULATOR",
+      "owner_verification_required": true,
+      "notes": "Keep. Confirm defaults + tier prices with owner."
+    },
+    {
+      "id": "pricing-comparison-table",
+      "source_page": "/pricing",
+      "source_section": "TaaSFlow vs contingent agency vs in-house \u2014 full table",
+      "strategic_purpose": "Give procurement a downloadable-quality comparison.",
+      "audience": "hr",
+      "destination_equivalent": "/pricing partial",
+      "is_missing": false,
+      "is_wordy": true,
+      "is_visually_weak": true,
+      "recommended_format": "COMPARISON",
+      "owner_verification_required": false,
+      "notes": "Rebuild as 3-column TAB_SYSTEM: You get / You avoid / You keep."
+    },
+    {
+      "id": "pricing-guarantee",
+      "source_page": "/pricing",
+      "source_section": "Placement / satisfaction guarantee copy",
+      "strategic_purpose": "De-risk the pilot decision.",
+      "audience": "mixed",
+      "destination_equivalent": "partial",
+      "is_missing": true,
+      "is_wordy": true,
+      "is_visually_weak": true,
+      "recommended_format": "EXPANDABLE_CARD",
+      "owner_verification_required": true,
+      "notes": "Owner must confirm exact guarantee terms before publishing. Present as a single expandable card."
+    },
+    {
+      "id": "pilot-offer",
+      "source_page": "/pilot",
+      "source_section": "$399 Pilot offer \u2014 deliverables, timeline, SLA",
+      "strategic_purpose": "Low-friction entry point.",
+      "audience": "founders",
+      "destination_equivalent": "/pilot (present, unclear if maintained)",
+      "is_missing": false,
+      "is_wordy": true,
+      "is_visually_weak": true,
+      "recommended_format": "STORY_SEQUENCE",
+      "owner_verification_required": true,
+      "notes": "Rebuild as 4-panel visual story: Kickoff \u2192 First shortlist \u2192 Interviews \u2192 Hire. Confirm price + timeline with owner."
+    },
+    {
+      "id": "enterprise-positioning",
+      "source_page": "/enterprise",
+      "source_section": "Enterprise value proposition (multi-role, governance, integrations)",
+      "strategic_purpose": "Speak the language of TA leaders + procurement.",
+      "audience": "enterprise",
+      "destination_equivalent": "/enterprise (present)",
+      "is_missing": false,
+      "is_wordy": true,
+      "is_visually_weak": true,
+      "recommended_format": "TAB_SYSTEM",
+      "owner_verification_required": false,
+      "notes": "Tabs: Scale / Governance / Integrations / Reporting."
+    },
+    {
+      "id": "enterprise-security",
+      "source_page": "/enterprise",
+      "source_section": "Security & compliance (SOC2, GDPR, ISO mentions)",
+      "strategic_purpose": "Clear procurement gate.",
+      "audience": "enterprise",
+      "destination_equivalent": null,
+      "is_missing": true,
+      "is_wordy": false,
+      "is_visually_weak": true,
+      "recommended_format": "EXPANDABLE_CARD",
+      "owner_verification_required": true,
+      "notes": "All security posture claims OWNER_REVIEW_REQUIRED before publish."
+    },
+    {
+      "id": "enterprise-integrations",
+      "source_page": "/enterprise",
+      "source_section": "ATS + HRIS integrations list",
+      "strategic_purpose": "Answer 'will it fit our stack?'.",
+      "audience": "enterprise",
+      "destination_equivalent": "partial",
+      "is_missing": true,
+      "is_wordy": false,
+      "is_visually_weak": true,
+      "recommended_format": "DATA_VISUALIZATION",
+      "owner_verification_required": true,
+      "notes": "Show shipped integrations vs roadmap. Confirm list with owner."
+    },
+    {
+      "id": "solutions-founders",
+      "source_page": "/solutions (implicit) + /",
+      "source_section": "Founders lane \u2014 early-stage hiring",
+      "strategic_purpose": "Speak to time-poor, cost-sensitive founders.",
+      "audience": "founders",
+      "destination_equivalent": "/#audiences card",
+      "is_missing": true,
+      "is_wordy": false,
+      "is_visually_weak": true,
+      "recommended_format": "EXPANDABLE_CARD",
+      "owner_verification_required": false,
+      "notes": "Dedicated /for-founders route with intake CTA. Currently only a card on home."
+    },
+    {
+      "id": "solutions-hr",
+      "source_page": "/solutions (implicit)",
+      "source_section": "HR / TA lane \u2014 augment in-house team",
+      "strategic_purpose": "Position as capacity, not replacement.",
+      "audience": "hr",
+      "destination_equivalent": "/#audiences card",
+      "is_missing": true,
+      "is_wordy": false,
+      "is_visually_weak": true,
+      "recommended_format": "EXPANDABLE_CARD",
+      "owner_verification_required": false,
+      "notes": "Dedicated /for-hr route. Add ATS-integration language."
+    },
+    {
+      "id": "solutions-agencies",
+      "source_page": "/partnerships/staffing",
+      "source_section": "Staffing / agency partner program",
+      "strategic_purpose": "Convert agencies from competitors to distribution partners.",
+      "audience": "agencies",
+      "destination_equivalent": "/partnerships/staffing (present)",
+      "is_missing": false,
+      "is_wordy": true,
+      "is_visually_weak": true,
+      "recommended_format": "STORY_SEQUENCE",
+      "owner_verification_required": true,
+      "notes": "Rebuild as 3-panel narrative: What we build / What you keep / How we split."
+    },
+    {
+      "id": "candidate-network",
+      "source_page": "/talent-network",
+      "source_section": "Join the talent network (candidate side)",
+      "strategic_purpose": "Grow candidate supply for repeated matching.",
+      "audience": "candidates",
+      "destination_equivalent": "/talent-network (present)",
+      "is_missing": false,
+      "is_wordy": true,
+      "is_visually_weak": true,
+      "recommended_format": "STORY_SEQUENCE",
+      "owner_verification_required": false,
+      "notes": "3-step visual: Apply once \u2192 Ranked to roles \u2192 Represented with evidence."
+    },
+    {
+      "id": "global-talent",
+      "source_page": "/global-talent",
+      "source_section": "Countries covered / global reach",
+      "strategic_purpose": "Answer international hiring buyers.",
+      "audience": "enterprise",
+      "destination_equivalent": "/global-talent (present)",
+      "is_missing": false,
+      "is_wordy": true,
+      "is_visually_weak": true,
+      "recommended_format": "DATA_VISUALIZATION",
+      "owner_verification_required": true,
+      "notes": "Interactive world map. All country counts OWNER_REVIEW_REQUIRED. Fall back to regional bands until confirmed."
+    },
+    {
+      "id": "about-founder",
+      "source_page": "/about",
+      "source_section": "Founder story + mission",
+      "strategic_purpose": "Human anchor for a service business.",
+      "audience": "mixed",
+      "destination_equivalent": "/about (present, brief)",
+      "is_missing": false,
+      "is_wordy": true,
+      "is_visually_weak": true,
+      "recommended_format": "STORY_SEQUENCE",
+      "owner_verification_required": false,
+      "notes": "Illustrated timeline: founding insight \u2192 early clients \u2192 8-step process \u2192 today."
+    },
+    {
+      "id": "about-stats",
+      "source_page": "/about",
+      "source_section": "20,000+ candidates / 80+ companies / 50+ countries / 22 industries / 24+ years",
+      "strategic_purpose": "Credibility strip.",
+      "audience": "mixed",
+      "destination_equivalent": "/about partial",
+      "is_missing": false,
+      "is_wordy": false,
+      "is_visually_weak": false,
+      "recommended_format": "REMOVE_WITH_REASON",
+      "owner_verification_required": true,
+      "notes": "All five numbers UNSUPPORTED or OWNER_REVIEW_REQUIRED. Replace with process-credibility strip until owner confirms."
+    },
+    {
+      "id": "faq-page",
+      "source_page": "/faq",
+      "source_section": "Full FAQ (20+ questions)",
+      "strategic_purpose": "Reduce sales cycle friction; capture long-tail search.",
+      "audience": "mixed",
+      "destination_equivalent": "/faq (present)",
+      "is_missing": false,
+      "is_wordy": true,
+      "is_visually_weak": true,
+      "recommended_format": "ACCORDION",
+      "owner_verification_required": false,
+      "notes": "Group by category (Product / Pricing / Delivery / Data). Preview \u226445w per answer."
+    },
+    {
+      "id": "case-studies",
+      "source_page": "/case-studies",
+      "source_section": "Named client case studies (SafiTech + others)",
+      "strategic_purpose": "Social proof.",
+      "audience": "enterprise",
+      "destination_equivalent": "/case-studies (present, likely stubbed)",
+      "is_missing": false,
+      "is_wordy": true,
+      "is_visually_weak": true,
+      "recommended_format": "REMOVE_WITH_REASON",
+      "owner_verification_required": true,
+      "notes": "Do NOT publish until each named client provides written permission. Replace with anonymized process credibility until then."
+    },
+    {
+      "id": "resources-index",
+      "source_page": "/resources",
+      "source_section": "Resource directory (blog + guides + tools)",
+      "strategic_purpose": "SEO capture + top-of-funnel education.",
+      "audience": "mixed",
+      "destination_equivalent": "/resources (present)",
+      "is_missing": false,
+      "is_wordy": false,
+      "is_visually_weak": true,
+      "recommended_format": "RESOURCE_CARD",
+      "owner_verification_required": false,
+      "notes": "Reformat as filterable card grid (Guide / Playbook / Tool / Blog) with reading time + category chip."
+    },
+    {
+      "id": "knowledge-base",
+      "source_page": "/knowledge-base",
+      "source_section": "Knowledge base directory",
+      "strategic_purpose": "Deep educational content.",
+      "audience": "mixed",
+      "destination_equivalent": "/knowledge-base (present, thin)",
+      "is_missing": false,
+      "is_wordy": false,
+      "is_visually_weak": true,
+      "recommended_format": "TAB_SYSTEM",
+      "owner_verification_required": false,
+      "notes": "Tabs by role (For Founders / For HR / For Candidates). Each tab surfaces 6 curated articles."
+    },
+    {
+      "id": "blog-index",
+      "source_page": "/blog",
+      "source_section": "Blog index (304 posts already scraped into src/content/blog)",
+      "strategic_purpose": "Long-tail SEO + expertise signal.",
+      "audience": "mixed",
+      "destination_equivalent": "/blog (present, minimal chrome)",
+      "is_missing": false,
+      "is_wordy": false,
+      "is_visually_weak": true,
+      "recommended_format": "RESOURCE_CARD",
+      "owner_verification_required": true,
+      "notes": "304 posts default to VERIFY_BEFORE_USE \u2014 many are AI-drafted at scrape time. Gate publication behind editorial review. Category filter (8 pillars). Every post gets a unique hero image (guardrail: no image reuse)."
+    },
+    {
+      "id": "blog-posts",
+      "source_page": "/blog/$slug (\u00d7 304)",
+      "source_section": "Individual blog articles",
+      "strategic_purpose": "Educational depth + capture organic search.",
+      "audience": "mixed",
+      "destination_equivalent": "/blog/$slug (present)",
+      "is_missing": false,
+      "is_wordy": true,
+      "is_visually_weak": true,
+      "recommended_format": "STORY_SEQUENCE",
+      "owner_verification_required": true,
+      "notes": "Each article: TOC, reading time, unique hero image, related posts, category chip. Editorial-review gate required."
+    },
+    {
+      "id": "industries-index",
+      "source_page": "/industries",
+      "source_section": "Industries hub (was 24, now 57 on destination)",
+      "strategic_purpose": "Vertical relevance for buyers who filter by industry.",
+      "audience": "mixed",
+      "destination_equivalent": "/industries (rebuilt with search + filters)",
+      "is_missing": false,
+      "is_wordy": false,
+      "is_visually_weak": false,
+      "recommended_format": "DATA_VISUALIZATION",
+      "owner_verification_required": false,
+      "notes": "Keep filterable grid. Add hover reveal: role families + candidate signals."
+    },
+    {
+      "id": "industries-detail",
+      "source_page": "/industries/$slug (\u00d7 57)",
+      "source_section": "Industry detail pages (challenges, role families, candidate signals, FAQs)",
+      "strategic_purpose": "Vertical proof + long-tail SEO.",
+      "audience": "mixed",
+      "destination_equivalent": "/industries/$slug (rebuilt template)",
+      "is_missing": false,
+      "is_wordy": true,
+      "is_visually_weak": true,
+      "recommended_format": "TAB_SYSTEM",
+      "owner_verification_required": false,
+      "notes": "Rebuild each detail page as: hero + tabs (Challenges / Roles / Signals / FAQ). Every vertical gets unique imagery."
+    },
+    {
+      "id": "contact",
+      "source_page": "/contact",
+      "source_section": "Contact form + channels",
+      "strategic_purpose": "Enterprise / bespoke conversation.",
+      "audience": "mixed",
+      "destination_equivalent": "/contact (present)",
+      "is_missing": false,
+      "is_wordy": false,
+      "is_visually_weak": true,
+      "recommended_format": "SHORT_COPY",
+      "owner_verification_required": true,
+      "notes": "SLA copy ('reply within 24h') OWNER_REVIEW_REQUIRED. Form fields: name / company / role stage / need."
+    },
+    {
+      "id": "privacy",
+      "source_page": "/privacy",
+      "source_section": "Privacy policy",
+      "strategic_purpose": "Legal compliance.",
+      "audience": "mixed",
+      "destination_equivalent": "/privacy (present)",
+      "is_missing": false,
+      "is_wordy": true,
+      "is_visually_weak": true,
+      "recommended_format": "ACCORDION",
+      "owner_verification_required": true,
+      "notes": "Legal review required for V2 data model (organizations, evidence, immutable score runs, cvs bucket). Accordion by section."
+    },
+    {
+      "id": "terms",
+      "source_page": "/terms",
+      "source_section": "Terms of service",
+      "strategic_purpose": "Legal compliance.",
+      "audience": "mixed",
+      "destination_equivalent": "/terms (present)",
+      "is_missing": false,
+      "is_wordy": true,
+      "is_visually_weak": true,
+      "recommended_format": "ACCORDION",
+      "owner_verification_required": true,
+      "notes": "Legal review required for V2 subscription/pilot model. Accordion by section."
+    },
+    {
+      "id": "employer-onboarding",
+      "source_page": "/employer-onboarding",
+      "source_section": "Legacy employer onboarding page",
+      "strategic_purpose": "Superseded by /intake.",
+      "audience": "mixed",
+      "destination_equivalent": "/intake (canonical)",
+      "is_missing": false,
+      "is_wordy": true,
+      "is_visually_weak": true,
+      "recommended_format": "REMOVE_WITH_REASON",
+      "owner_verification_required": false,
+      "notes": "Redirect /employer-onboarding \u2192 /intake at route layer. Do not migrate copy."
+    },
+    {
+      "id": "jobs-index",
+      "source_page": "/jobs",
+      "source_section": "Public job board",
+      "strategic_purpose": "Candidate entry point + SEO for open roles.",
+      "audience": "candidates",
+      "destination_equivalent": "/jobs (canonical operational)",
+      "is_missing": false,
+      "is_wordy": false,
+      "is_visually_weak": true,
+      "recommended_format": "PRODUCT_MOCKUP",
+      "owner_verification_required": false,
+      "notes": "Operational \u2014 do not modify behavior. Add hero + filter chips styled to brand. Never reuse candidate images across posts."
+    },
+    {
+      "id": "jobs-apply",
+      "source_page": "/jobs/$id/apply",
+      "source_section": "Candidate application + CV upload",
+      "strategic_purpose": "Convert visit to application.",
+      "audience": "candidates",
+      "destination_equivalent": "/jobs/$id/apply (canonical)",
+      "is_missing": false,
+      "is_wordy": false,
+      "is_visually_weak": true,
+      "recommended_format": "STORY_SEQUENCE",
+      "owner_verification_required": false,
+      "notes": "Operational \u2014 do not modify. Wrap in a 3-step visual progress rail (Details / Upload / Confirm)."
+    },
+    {
+      "id": "footer-nav",
+      "source_page": "*",
+      "source_section": "Site footer navigation",
+      "strategic_purpose": "Wayfinding + legal + candidate path.",
+      "audience": "mixed",
+      "destination_equivalent": "site-shell footer (rebuilt)",
+      "is_missing": false,
+      "is_wordy": false,
+      "is_visually_weak": false,
+      "recommended_format": "SHORT_COPY",
+      "owner_verification_required": false,
+      "notes": "Keep 5 columns (Company / Solutions / Industries / Resources / Legal). Candidates lane included."
+    },
+    {
+      "id": "header-nav",
+      "source_page": "*",
+      "source_section": "Site header navigation",
+      "strategic_purpose": "Primary wayfinding + persistent CTA.",
+      "audience": "mixed",
+      "destination_equivalent": "site-shell header (rebuilt)",
+      "is_missing": false,
+      "is_wordy": false,
+      "is_visually_weak": false,
+      "recommended_format": "SHORT_COPY",
+      "owner_verification_required": false,
+      "notes": "Preserve 6-item primary nav (How It Works / Solutions / Industries / Pricing / Resources / Company). Persistent 'Start hiring' CTA."
+    },
+    {
+      "id": "industries-compare-hub",
+      "source_page": "/industries/compare",
+      "source_section": "22-industry comparison table (Industry / Key Metric / Secondary Metric / Roles / Action)",
+      "strategic_purpose": "Give procurement + operators a scannable cross-vertical view.",
+      "audience": "mixed",
+      "destination_equivalent": null,
+      "is_missing": true,
+      "is_wordy": false,
+      "is_visually_weak": true,
+      "recommended_format": "DATA_VISUALIZATION",
+      "owner_verification_required": true,
+      "notes": "Rebuild as sortable table + filter chips. All per-industry metrics OWNER_REVIEW_REQUIRED."
+    },
+    {
+      "id": "faq-topic-inventory",
+      "source_page": "/faq",
+      "source_section": "11 canonical FAQ topics (staffing agency? placement fees? one-off vs sub? delivery? deliverable? roles/regions? scoring method? custom weights? onboarding? coexist with agency? brand+GDPR?)",
+      "strategic_purpose": "Objection handling + SEO capture.",
+      "audience": "mixed",
+      "destination_equivalent": "/faq (present, extend)",
+      "is_missing": false,
+      "is_wordy": true,
+      "is_visually_weak": true,
+      "recommended_format": "ACCORDION",
+      "owner_verification_required": false,
+      "notes": "Group by category (Product / Pricing / Delivery / Data). Preview \u226445w. Full answers gated by accordion \u2014 no wall of prose."
+    },
+    {
+      "id": "knowledge-base-detail",
+      "source_page": "/knowledge-base",
+      "source_section": "21 articles across 6 categories (Getting Started 4 \u00b7 For Employers 5 \u00b7 For Candidates 4 \u00b7 Pricing & Billing 3 \u00b7 Platform & Dashboard 3 \u00b7 Security & Compliance 2)",
+      "strategic_purpose": "Self-serve help center + long-tail SEO.",
+      "audience": "mixed",
+      "destination_equivalent": "/knowledge-base (present, thin)",
+      "is_missing": false,
+      "is_wordy": false,
+      "is_visually_weak": true,
+      "recommended_format": "TAB_SYSTEM",
+      "owner_verification_required": false,
+      "notes": "Tabs by persona. Each article as RESOURCE_CARD with reading time + category chip."
+    },
+    {
+      "id": "cross-page-inconsistencies",
+      "source_page": "*",
+      "source_section": "Site-wide contradictions: tenure 8/10/24y \u00b7 dimensions 47/9/4 \u00b7 process 4/5-step \u00b7 cadence 14-day-guarantee vs 7-14d \u00b7 countries 50/30 \u00b7 candidates 20k/2M",
+      "strategic_purpose": "Owner must resolve before any rebuild block touches these numbers.",
+      "audience": "mixed",
+      "destination_equivalent": null,
+      "is_missing": false,
+      "is_wordy": false,
+      "is_visually_weak": false,
+      "recommended_format": "REMOVE_WITH_REASON",
+      "owner_verification_required": true,
+      "notes": "Do not carry any of these contradictions into the rebuild. Lock a single canonical value per dimension. Until locked, use qualitative fallback per docs/rebuild/missing-destination-content.md \u00a74."
+    }
   ],
-
   "summary": {
-    "total_content_blocks": 51,
+    "total_content_blocks": 56,
     "by_recommended_format": {
       "HERO": 1,
-      "INTERACTIVE_DEMO": 1,
-      "PRODUCT_MOCKUP": 3,
-      "ANIMATED_FLOW": 2,
-      "COMPARISON": 3,
+      "REMOVE_WITH_REASON": 6,
       "CALCULATOR": 2,
+      "COMPARISON": 3,
       "TAB_SYSTEM": 6,
-      "ACCORDION": 4,
-      "EXPANDABLE_CARD": 8,
-      "TIMELINE": 0,
+      "ANIMATED_FLOW": 2,
+      "PRODUCT_MOCKUP": 3,
       "VISUAL_SCORECARD": 2,
+      "INTERACTIVE_DEMO": 1,
+      "SHORT_COPY": 5,
+      "EXPANDABLE_CARD": 7,
+      "ACCORDION": 5,
       "STORY_SEQUENCE": 7,
-      "DATA_VISUALIZATION": 3,
-      "SHORT_COPY": 4,
+      "DATA_VISUALIZATION": 4,
       "RESOURCE_CARD": 2,
-      "REMOVE_WITH_REASON": 5
+      "TIMELINE": 0
     },
-    "content_missing_on_destination": 8,
-    "content_too_wordy": 22,
-    "content_visually_weak": 39,
-    "content_requiring_owner_verification": 18,
-    "content_to_remove": 5
+    "content_missing_on_destination": 9,
+    "content_too_wordy": 24,
+    "content_visually_weak": 45,
+    "content_requiring_owner_verification": 22,
+    "content_to_remove": 6
   },
-
   "recommended_homepage_story": [
-    { "step": 1, "id": "home-hero", "purpose": "Name the service in one line." },
-    { "step": 2, "id": "home-ranked-candidates", "purpose": "Show what you actually get." },
-    { "step": 3, "id": "home-audiences", "purpose": "Route the visitor to their lane (Founders / HR / Enterprise / Agencies)." },
-    { "step": 4, "id": "home-side-by-side", "purpose": "Frame the incumbent as broken." },
-    { "step": 5, "id": "home-operating-system", "purpose": "Prove there is a real repeatable process (8 steps)." },
-    { "step": 6, "id": "home-scoring-explainer", "purpose": "Show the ranking is defensible (visual scorecard)." },
-    { "step": 7, "id": "home-workspace", "purpose": "Interactive product tour (3 tabs)." },
-    { "step": 8, "id": "home-pricing-two-ways", "purpose": "Show the economic model shape." },
-    { "step": 9, "id": "home-roi-calculator", "purpose": "Let the buyer plug in their numbers." },
-    { "step": 10, "id": "home-industries", "purpose": "Vertical breadth as expandable grid." },
-    { "step": 11, "id": "home-faq", "purpose": "Objection handling as accordion." },
-    { "step": 12, "id": "home-final-cta", "purpose": "Convert." }
+    {
+      "step": 1,
+      "id": "home-hero",
+      "purpose": "Name the service in one line."
+    },
+    {
+      "step": 2,
+      "id": "home-ranked-candidates",
+      "purpose": "Show what you actually get."
+    },
+    {
+      "step": 3,
+      "id": "home-audiences",
+      "purpose": "Route the visitor to their lane (Founders / HR / Enterprise / Agencies)."
+    },
+    {
+      "step": 4,
+      "id": "home-side-by-side",
+      "purpose": "Frame the incumbent as broken."
+    },
+    {
+      "step": 5,
+      "id": "home-operating-system",
+      "purpose": "Prove there is a real repeatable process (8 steps)."
+    },
+    {
+      "step": 6,
+      "id": "home-scoring-explainer",
+      "purpose": "Show the ranking is defensible (visual scorecard)."
+    },
+    {
+      "step": 7,
+      "id": "home-workspace",
+      "purpose": "Interactive product tour (3 tabs)."
+    },
+    {
+      "step": 8,
+      "id": "home-pricing-two-ways",
+      "purpose": "Show the economic model shape."
+    },
+    {
+      "step": 9,
+      "id": "home-roi-calculator",
+      "purpose": "Let the buyer plug in their numbers."
+    },
+    {
+      "step": 10,
+      "id": "home-industries",
+      "purpose": "Vertical breadth as expandable grid."
+    },
+    {
+      "step": 11,
+      "id": "home-faq",
+      "purpose": "Objection handling as accordion."
+    },
+    {
+      "step": 12,
+      "id": "home-final-cta",
+      "purpose": "Convert."
+    }
   ],
-
   "recommended_page_hierarchy": {
-    "top_nav": ["/how-it-works", "/solutions", "/industries", "/pricing", "/resources", "/company"],
-    "solutions_children": ["/for-founders", "/for-hr", "/enterprise", "/partnerships/staffing", "/talent-network"],
-    "resources_children": ["/blog", "/knowledge-base", "/case-studies", "/faq"],
-    "company_children": ["/about", "/contact", "/privacy", "/terms"],
-    "operational_preserved": ["/intake", "/jobs", "/jobs/$id", "/jobs/$id/apply", "/auth", "/login", "/reset-password", "/admin/*", "/client/*", "/candidate/*", "/me/*"]
+    "top_nav": [
+      "/how-it-works",
+      "/solutions",
+      "/industries",
+      "/pricing",
+      "/resources",
+      "/company"
+    ],
+    "solutions_children": [
+      "/for-founders",
+      "/for-hr",
+      "/enterprise",
+      "/partnerships/staffing",
+      "/talent-network"
+    ],
+    "resources_children": [
+      "/blog",
+      "/knowledge-base",
+      "/case-studies",
+      "/faq"
+    ],
+    "company_children": [
+      "/about",
+      "/contact",
+      "/privacy",
+      "/terms"
+    ],
+    "operational_preserved": [
+      "/intake",
+      "/jobs",
+      "/jobs/$id",
+      "/jobs/$id/apply",
+      "/auth",
+      "/login",
+      "/reset-password",
+      "/admin/*",
+      "/client/*",
+      "/candidate/*",
+      "/me/*"
+    ]
   },
-
   "unresolved": [
-    "Source repo joaobogo/sourcing-suite-ai still not publicly accessible — file-level inspection unavailable. Live-crawl + destination mirror used as fallback.",
-    "18 content blocks carry OWNER_VERIFICATION_REQUIRED claims (pricing, SLAs, guarantees, coverage, testimonials, stats) — cannot publish until owner confirms.",
-    "304 blog posts default to VERIFY_BEFORE_USE — many AI-drafted at scrape; require editorial gate.",
-    "5 blocks recommended REMOVE_WITH_REASON — hero stats, about stats, named case studies, employer-onboarding page, unsupported testimonials — must not migrate."
+    "Source repo joaobogo/sourcing-suite-ai still not publicly accessible \u2014 file-level inspection unavailable. Live-crawl + destination mirror used as fallback.",
+    "18 content blocks carry OWNER_VERIFICATION_REQUIRED claims (pricing, SLAs, guarantees, coverage, testimonials, stats) \u2014 cannot publish until owner confirms.",
+    "304 blog posts default to VERIFY_BEFORE_USE \u2014 many AI-drafted at scrape; require editorial gate.",
+    "5 blocks recommended REMOVE_WITH_REASON \u2014 hero stats, about stats, named case studies, employer-onboarding page, unsupported testimonials \u2014 must not migrate.",
+    "Cross-page inconsistencies detected on source (tenure, scoring dimensions, process step count, delivery cadence, country/candidate volume) \u2014 owner must lock a single canonical value per dimension before rebuild.",
+    "Source pages with broken CMS render: /talent-network, /employer-onboarding, /pricing (Included/Excluded + FAQ), /industries/* stat counters, /contact Calendly widget (404)."
   ],
-
-  "verdict": "PASS — every major source content block has a destination decision. Implementation files changed: 0."
+  "verdict": "PASS \u2014 every major source content block has a destination decision. Implementation files changed: 0."
 }

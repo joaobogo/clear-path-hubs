@@ -225,3 +225,116 @@ No column recommends "copy the paragraph as-is."
 ## Verdict
 
 **PASS** — every major source content block has a destination decision. **Implementation files changed: 0.**
+
+---
+
+## Addendum — fresh-crawl findings (2026-07-23)
+
+A second live crawl surfaced material not covered in the prior audit corpus. Captured here for the rebuild plan.
+
+### A1. Cross-page inconsistencies (owner must resolve before publish)
+
+The source contradicts itself across pages. Every rebuild block that touches these numbers must lock a single answer.
+
+| Dimension | Values found on source | Where |
+|---|---|---|
+| Founder / team tenure | **8+ years** · **10 years** · **24+ years combined** | `/how-it-works` · `/how-it-works` (elsewhere) · `/about` |
+| Scoring dimensions | **47 dimensions** captured at intake · **9 dimensions** scoring · **4 weighted dimensions** | home · `/knowledge-base` · `/how-it-works` |
+| Process step count | **4-step operating system** · **5-step operating system** | home · `/knowledge-base` |
+| Delivery cadence | **14-day guarantee** · **7–14 days** | `/pricing` · `/resources` |
+| Countries covered | **50+** · **30+** | home / `/about` · `/enterprise` |
+| Candidate volume | **20,000+** · **2M+ candidate data points** | home / `/about` · `/how-it-works` |
+
+Recommended destination handling: pick one canonical value per row, gate rest behind owner sign-off, remove contradictions from copy before rebuild.
+
+### A2. Broken source surfaces (rebuild cannot copy from these)
+
+Static fetch of the live source returns literal CMS placeholder tokens on several pages — real copy is either unpublished or gated behind JS hydration that fails.
+
+| Page | Symptom |
+|---|---|
+| `/talent-network` | "Eyebrow / Headline / Subheadline / Title / Body" literals |
+| `/employer-onboarding` | "Hero Title / Step1 Title / Check1" literals |
+| `/pricing` — Included/Excluded table | "Included1 / Excluded1" literals |
+| `/pricing` — FAQ block | "Pricing Faq1 Q" literals |
+| `/industries/*` — stat counters | Show as `0%`, `0 weeks`, `0+` before JS hydration |
+| `/contact` — Calendly widget | Booking link 404s to a Calendly blog page |
+
+Rebuild must ignore these and drive from the destination's canonical content (`src/content/*`), not from broken source scrapes.
+
+### A3. `/industries/compare` — new structured asset
+
+The source has a comparison hub at `/industries/compare` — a table across all 22 industries with columns: Industry · Key Metric · Secondary Metric · Roles · Action.
+
+- Recommended destination format: **DATA_VISUALIZATION** — sortable table + filter chips.
+- Every per-industry metric is OWNER_VERIFICATION_REQUIRED (methodology unclear).
+- Add to hierarchy as `/industries/compare` (currently absent on destination).
+
+### A4. FAQ topic inventory (source `/faq` — 11 questions)
+
+Answers were collapsed at fetch (accordion, JS-gated), but topics captured:
+
+1. Are you a staffing agency?
+2. Do you charge placement fees?
+3. One-off vs subscription — which?
+4. How fast is delivery?
+5. What's actually in a delivery?
+6. Which roles and regions do you cover?
+7. What is the scoring methodology?
+8. Can we customize scoring weights?
+9. What onboarding do we need?
+10. Can we run TaaSFlow alongside our current agency?
+11. How is employer brand + candidate GDPR protected?
+
+Destination rebuild: **ACCORDION** grouped by category (Product / Pricing / Delivery / Data). Preview ≤45w per answer.
+
+### A5. Knowledge base — 21 articles across 6 categories
+
+Categories: Getting Started (4) · For Employers (5) · For Candidates (4) · Pricing & Billing (3) · Platform & Dashboard (3) · Security & Compliance (2). Sample titles: *What is Talent-as-a-Service?*, *How Does the Process Work?*, *Getting Started as an Employer*, *Understanding Candidate Scoring*, *How to Complete the Intake Blueprint*.
+
+Destination: **TAB_SYSTEM** by persona × **RESOURCE_CARD** per article. Reading-time chip on each card.
+
+### A6. Case studies — confirmed inventory
+
+- **SafiTech** (Technology): 8 SaaS developers, 2-week candidate turnaround, 4-week total onboarding. Stats: 75% time-to-hire reduction · 40% cost savings. Testimonial: Sarah Chen, CTO.
+- **Sterling Law Partners** (Legal): 5 paralegals in 3 weeks for litigation support.
+- Additional case studies likely follow (page has ~119 lines, only ~52 fetched).
+
+All named-client stats are OWNER_VERIFICATION_REQUIRED. Do not publish testimonials until each client provides written permission. Until then: **REMOVE_WITH_REASON**.
+
+### A7. Partnerships / staffing — "Triple Win" model
+
+Home stat bar: **50+ Agency Partners · 92% Avg Fill Rate · 24hrs First Candidates · $0 Placement Fees**. Structure: three side-by-side benefit cards — for the Agency, for the Client, for TaaSFlow.
+
+Destination: **STORY_SEQUENCE** with 3 lanes. All four bar-stats OWNER_VERIFICATION_REQUIRED.
+
+### A8. Blog inventory confirmed at 304 posts (sitemap-blog.xml)
+
+Category surface areas: AI/recruiting trends, industry hiring guides, HR practice, workforce-of-the-future, comparison content. Sample post fully analyzed: `/blog/subscription-sourcing-vs-agencies` — 8-min read, comparison content, contains claim "$150K salary → $30,000 contingency fee" (flagged for verification).
+
+Destination rebuild: **RESOURCE_CARD** grid + editorial-review gate + unique hero image per post. Per-post metadata (title/date/category/excerpt) for the other 303 posts requires a batch crawl pass — treat as follow-up scope.
+
+### A9. Source repo definitively inaccessible
+
+`github.com/joaobogo/sourcing-suite-ai` returns GitHub 404 and does **not appear** among the account's 41 public repositories. Either private, renamed, deleted, or the URL is incorrect. File-level parity certification remains blocked pending correction of the URL or a grant of repo access.
+
+### A10. Absent from source (destination must not invent)
+
+The following exist on the destination as recommended routes but have **no source equivalent**:
+
+- `/for-founders` · `/for-hr` · `/for-agencies` — no dedicated pages on source; all rolled into `/` audience cards.
+- `/solutions` hub — no source equivalent.
+- Dedicated `/company` — folded into `/about` on source.
+
+Adding these routes is a destination-side improvement, not a source migration. Copy must be authored fresh (not lifted from source).
+
+### A11. New content-experience-map entries appended
+
+The JSON adds 4 rows for these findings:
+
+| id | source_section | recommended_format |
+|---|---|---|
+| `industries-compare-hub` | `/industries/compare` table | **DATA_VISUALIZATION** |
+| `faq-topic-inventory` | `/faq` 11-question set | **ACCORDION** |
+| `knowledge-base-detail` | 21 articles across 6 categories | **TAB_SYSTEM** + **RESOURCE_CARD** |
+| `cross-page-inconsistencies` | tenure / dimensions / step count / cadence contradictions | **REMOVE_WITH_REASON** (until owner resolves) |
