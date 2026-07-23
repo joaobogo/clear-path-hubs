@@ -93,6 +93,7 @@ const TABS = [
   { id: "blueprint", label: "Scoring blueprint", icon: Gauge },
   { id: "pipeline", label: "Pipeline", icon: Users },
   { id: "activity", label: "Activity", icon: History },
+  { id: "audit", label: "Audit", icon: ShieldCheck },
   { id: "settings", label: "Settings", icon: Settings2 },
 ] as const;
 type TabId = (typeof TABS)[number]["id"];
