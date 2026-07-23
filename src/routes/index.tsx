@@ -1595,67 +1595,16 @@ function Home() {
         </PublicPage>
       </PublicSection>
 
-      {/* 3.6 — HOW IT WORKS (8-step process, horizontal desktop / vertical mobile) */}
+      {/* 3.6 — INTERACTIVE OPERATING SYSTEM */}
       <section className="border-y border-[color:var(--brand-navy)]/8 bg-white">
         <PublicSection>
           <PublicPage>
             <SectionHead
-              eyebrow="How it works"
-              title="Eight steps from open role to hiring decision."
-              lead="TaaSFlow manages the sourcing and evaluation work. Your team stays in control of interviews, offers, and hiring decisions."
+              eyebrow="The TaaSFlow operating system"
+              title="One hiring engine. Every step visible."
+              lead="Human recruiting expertise, technology-supported execution, and Client visibility — from open role to hiring decision."
             />
-
-            <ol className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-              {PROCESS_STEPS.map((step, i) => (
-                <li
-                  key={step.title}
-                  className="relative flex flex-col rounded-2xl border border-[color:var(--brand-navy)]/12 bg-white p-5 shadow-[var(--brand-shadow-sm)]"
-                >
-                  <div className="flex items-center gap-3">
-                    <span
-                      className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[color:var(--brand-navy)] text-xs font-semibold text-white"
-                      aria-hidden
-                    >
-                      {String(i + 1).padStart(2, "0")}
-                    </span>
-                    <step.icon
-                      className="h-5 w-5 text-[color:var(--brand-ocean)]"
-                      aria-hidden
-                    />
-                  </div>
-                  <h3 className="mt-4 text-base font-semibold text-[color:var(--brand-navy)]">
-                    {step.title}
-                  </h3>
-
-                  <dl className="mt-4 space-y-3 text-xs">
-                    <div>
-                      <dt className="font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/55">
-                        TaaSFlow does
-                      </dt>
-                      <dd className="mt-1 text-sm text-[color:var(--brand-navy)]/80">
-                        {step.taasflow}
-                      </dd>
-                    </div>
-                    <div>
-                      <dt className="font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/55">
-                        Client sees
-                      </dt>
-                      <dd className="mt-1 text-sm text-[color:var(--brand-navy)]/80">
-                        {step.client}
-                      </dd>
-                    </div>
-                    <div>
-                      <dt className="font-semibold uppercase tracking-wide text-[color:var(--brand-ocean)]">
-                        Produced
-                      </dt>
-                      <dd className="mt-1 text-sm font-medium text-[color:var(--brand-navy)]">
-                        {step.output}
-                      </dd>
-                    </div>
-                  </dl>
-                </li>
-              ))}
-            </ol>
+            <OperatingSystem />
 
             <p className="mt-8 max-w-3xl rounded-xl border border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-paper)] px-5 py-4 text-sm text-[color:var(--brand-navy)]/80">
               TaaSFlow manages the sourcing and evaluation work. Your team stays
