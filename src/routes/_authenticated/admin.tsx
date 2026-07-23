@@ -82,6 +82,7 @@ function AdminLayout() {
       contextLabel="Admin"
       contextSubLabel={email ?? undefined}
       navItems={NAV}
+      searchScope="admin"
     >
       <Outlet />
     </WorkspaceShell>
