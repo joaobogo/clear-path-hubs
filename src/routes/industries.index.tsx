@@ -87,17 +87,41 @@ const HIGHLIGHT_SLUGS = [
 
 function IndustriesIndex() {
   const [active, setActive] = useState<Category>("All");
+  const [query, setQuery] = useState("");
+
+  const decorated = useMemo(
+    () =>
+      INDUSTRY_ENTRIES.map((e) => ({
+        ...e,
+        category: CATEGORY_BY_SLUG[e.slug] ?? "Operations & Services",
+      })),
+    [],
+  );
 
   const cards = useMemo(() => {
-    return INDUSTRY_ENTRIES.map((e) => ({
-      ...e,
-      category: CATEGORY_BY_SLUG[e.slug] ?? "Operations & Services",
-    })).filter((e) => active === "All" || e.category === active);
-  }, [active]);
+    const q = query.trim().toLowerCase();
+    return decorated.filter((e) => {
+      if (active !== "All" && e.category !== active) return false;
+      if (!q) return true;
+      const haystack = [
+        e.name,
+        e.eyebrow,
+        e.summary ?? "",
+        (e.aliases ?? []).join(" "),
+        e.roles.join(" "),
+        (e.skills ?? []).join(" "),
+        (e.tools ?? []).join(" "),
+      ]
+        .join(" ")
+        .toLowerCase();
+      return haystack.includes(q);
+    });
+  }, [decorated, active, query]);
 
   const highlights = HIGHLIGHT_SLUGS
     .map((slug) => INDUSTRY_ENTRIES.find((e) => e.slug === slug))
     .filter((e): e is (typeof INDUSTRY_ENTRIES)[number] => Boolean(e));
+
 
   return (
     <SiteShell>
