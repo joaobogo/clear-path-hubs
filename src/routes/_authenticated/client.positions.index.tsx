@@ -87,7 +87,7 @@ function PositionsPage() {
     const t = setTimeout(() => {
       if (searchInput !== q) {
         navigate({
-          search: (prev) => ({ ...prev, q: searchInput }),
+          search: (prev: Record<string, unknown>) => ({ ...prev, q: searchInput }),
           replace: true,
         });
       }
