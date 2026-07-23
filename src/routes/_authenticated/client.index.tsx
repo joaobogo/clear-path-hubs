@@ -405,15 +405,14 @@ function HiringSnapshot({
       <div className="grid gap-3 sm:grid-cols-3">
         <PrimaryKpi
           label="Active positions"
-          value={kpis?.active_positions ?? 0}
+          value={kpis?.active_positions}
           href="/client/positions"
           icon={<Briefcase className="h-4 w-4" />}
         />
         <PrimaryKpi
           label="Candidates delivered"
-          value={kpis?.delivered ?? 0}
+          value={kpis?.delivered}
           href="/client/candidates"
-          hrefSearch={{ filter: "all" }}
           icon={<Users className="h-4 w-4" />}
           hint={deliveredPending > 0 ? `${deliveredPending} waiting for your review` : "All reviewed"}
         />
@@ -421,19 +420,19 @@ function HiringSnapshot({
           label="Awaiting your review"
           value={deliveredPending}
           href="/client/candidates"
-          hrefSearch={{ filter: "new" }}
+          hrefSearch={{ stage: "delivered" }}
           icon={<AlertTriangle className="h-4 w-4" />}
           tone="amber"
         />
       </div>
       {/* Secondary tiles */}
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6">
-        <SecondaryKpi label="Top matches" value={kpis?.top ?? 0} href="/client/candidates" hrefSearch={{ filter: "top" }} icon={<Star className="h-3 w-3" />} />
-        <SecondaryKpi label="Shortlisted" value={kpis?.shortlisted ?? 0} href="/client/candidates" hrefSearch={{ filter: "shortlisted" }} />
-        <SecondaryKpi label="Interview process" value={kpis?.interviewing ?? 0} href="/client/candidates" hrefSearch={{ filter: "interview" }} />
-        <SecondaryKpi label="Scheduled interviews" value={kpis?.interview_scheduled ?? 0} href="/client/candidates" hrefSearch={{ filter: "interview" }} />
-        <SecondaryKpi label="Offers" value={offers} href="/client/candidates" hrefSearch={{ filter: "interview" }} />
-        <SecondaryKpi label="Hires" value={kpis?.hires ?? 0} href="/client/candidates" hrefSearch={{ filter: "hired" }} tone="emerald" />
+        <SecondaryKpi label="Top matches" value={kpis?.top} href="/client/candidates" hrefSearch={{ filter: "top" }} icon={<Star className="h-3 w-3" />} />
+        <SecondaryKpi label="Shortlisted" value={kpis?.shortlisted} href="/client/candidates" hrefSearch={{ stage: "shortlisted" }} />
+        <SecondaryKpi label="Interview process" value={kpis?.interviewing} href="/client/candidates" hrefSearch={{ filter: "interview_pipeline" }} />
+        <SecondaryKpi label="Scheduled interviews" value={kpis?.interview_scheduled} href="/client/interviews" hrefSearch={{ status: "scheduled" }} />
+        <SecondaryKpi label="Offers" value={kpis?.offers ?? offers} href="/client/candidates" hrefSearch={{ stage: "offer" }} />
+        <SecondaryKpi label="Hires" value={kpis?.hires} href="/client/candidates" hrefSearch={{ stage: "hired" }} tone="emerald" />
       </div>
     </section>
   );
