@@ -266,8 +266,55 @@ export function RoiCalculator({
             {heading}
           </h2>
           <p className="mt-3 text-[color:var(--brand-navy)]/75">{supportingCopy}</p>
+
+          {/* How to read this — expandable helper (Prompt 12) */}
+          <div className="mt-4 rounded-xl border border-[color:var(--brand-navy)]/10 bg-white">
+            <button
+              type="button"
+              aria-expanded={showHelper}
+              aria-controls="roi-helper-body"
+              onClick={() => setShowHelper((s) => !s)}
+              className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left text-sm font-semibold text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/[0.03] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+            >
+              <span className="inline-flex items-center gap-2">
+                <Info className="h-4 w-4 text-[color:var(--brand-ocean)]" aria-hidden />
+                How to read this calculator
+              </span>
+              <span className="text-xs font-medium text-[color:var(--brand-navy)]/55">
+                {showHelper ? "Hide" : "Show"}
+              </span>
+            </button>
+            {showHelper ? (
+              <div
+                id="roi-helper-body"
+                className="border-t border-[color:var(--brand-navy)]/8 px-4 py-3 text-sm leading-relaxed text-[color:var(--brand-navy)]/75"
+              >
+                <ul className="grid gap-2 sm:grid-cols-2">
+                  <li>
+                    <span className="font-semibold text-[color:var(--brand-navy)]">Traditional cost</span> = agency placement (positions × salary × fee) plus internal sourcing time (positions × hourly × hours).
+                  </li>
+                  <li>
+                    <span className="font-semibold text-[color:var(--brand-navy)]">TaaSFlow cost</span> comes from the approved package that covers your volume — never a fabricated number.
+                  </li>
+                  <li>
+                    <span className="font-semibold text-[color:var(--brand-navy)]">Presets</span> only change the inputs. The math still runs against the same approved pricing.
+                  </li>
+                  <li>
+                    <span className="font-semibold text-[color:var(--brand-navy)]">Custom quote</span> appears when your volume crosses into Subscription — no savings number is invented.
+                  </li>
+                  <li>
+                    <span className="font-semibold text-[color:var(--brand-navy)]">Negative savings</span> is shown honestly when your inputs don't favor us — we surface it instead of hiding it.
+                  </li>
+                  <li>
+                    <span className="font-semibold text-[color:var(--brand-navy)]">Sliders</span> respond to arrow keys, Page Up/Down, and Home/End for precise adjustment.
+                  </li>
+                </ul>
+              </div>
+            ) : null}
+          </div>
         </header>
       ) : null}
+
 
       <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)]">
         {/* Inputs */}
