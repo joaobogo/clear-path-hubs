@@ -234,24 +234,99 @@ const AGENCY_COMPARE = [
 
 const HOMEPAGE_FAQ = [
   {
-    q: "Is TaaSFlow a recruiting agency?",
-    a: "No. TaaSFlow is a subscription recruiting service delivered through a live workspace. You pay for the service, not per hire.",
+    q: "What is TaaSFlow?",
+    a: "TaaSFlow is an on-demand recruiting function delivered as a subscription. A recruiter runs sourcing and evaluation for your roles inside a live workspace your team can see at any time.",
   },
   {
-    q: "Do you charge placement fees?",
-    a: "No placement fees, ever. You pay a flat monthly subscription per active role.",
+    q: "How is TaaSFlow different from a recruiting agency?",
+    a: "Agencies charge a percentage of salary per hire and forward CVs by email. TaaSFlow is a flat monthly subscription with ranked candidates, evidence per requirement, and a transparent workspace — no placement fees.",
   },
   {
-    q: "What happens after the shortlist?",
-    a: "Your team runs the interview and offer process directly with the candidate — all inside the same workspace. We stay available to support, we don't gate access.",
+    q: "What does the Client actually receive?",
+    a: "A ranked shortlist, recruiter-written evidence tied to each requirement, CV quotes, a live pipeline across every stage, and one workspace thread with your recruiter — all owned by your team.",
   },
   {
-    q: "Do we keep the candidates and data?",
-    a: "Yes. Every candidate, every note, and every message stays in your workspace so you can revisit past pipelines when new roles open.",
+    q: "Who runs the interviews?",
+    a: "Your team runs interviews and the offer conversation directly with the candidate. TaaSFlow prepares the shortlist and stays available in the workspace for support — we do not gate access to candidates.",
   },
   {
-    q: "How is candidate scoring done?",
-    a: "Each candidate is scored against the requirements you approved in the intake, with evidence and CV quotes attached. See the scoring section on How It Works for the full methodology.",
+    q: "How does pricing work?",
+    a: "Flat monthly subscription per active role. No percentage-of-salary fees and no per-hire fees. Specific plans are shared on request so we can match capacity to your open roles.",
+  },
+  {
+    q: "Who owns the candidates and pipeline?",
+    a: "You do. Every candidate, note, evidence quote, and message stays in your workspace so past pipelines are reusable when new roles open.",
+  },
+  {
+    q: "What types of hiring do you support?",
+    a: "Individual contributor and manager roles across the industries listed on the Industries page — including SaaS, Tech, Finance, Healthcare, Sales, HR, Consulting, and Skilled Trades. Executive search is scoped case by case.",
+  },
+  {
+    q: "How do we start?",
+    a: "Open a role with the intake wizard or book a conversation. We confirm the requirements with you before any sourcing begins so evidence is scored against what you actually approved.",
+  },
+] as const;
+
+const APPROVED_PROOF = [
+  {
+    icon: ClipboardCheck,
+    t: "Structured evaluation",
+    d: "Every candidate is scored against the requirements you approved in the intake — same criteria, same weighting, same evidence format across roles.",
+  },
+  {
+    icon: Eye,
+    t: "Transparent workspace",
+    d: "Sourcing progress, pipeline stages, evidence, and recruiter notes are visible to your team in real time. Nothing sits in a private inbox.",
+  },
+  {
+    icon: Repeat,
+    t: "Client-controlled pipeline",
+    d: "Candidates, notes, and evidence belong to your workspace. When a role closes, the context is still there for the next one.",
+  },
+  {
+    icon: Target,
+    t: "Role-specific delivery",
+    d: "Requirements, evidence prompts, and scoring are tuned to the role — not a generic template applied to every search.",
+  },
+  {
+    icon: Users,
+    t: "Human review on every candidate",
+    d: "A recruiter reads each CV, writes the evidence, and approves it before a candidate is published to your shortlist.",
+  },
+  {
+    icon: ShieldCheck,
+    t: "Full audit trail",
+    d: "Every decision — approvals, stage moves, evidence edits — is recorded, so your team can revisit why a candidate progressed or didn't.",
+  },
+] as const;
+
+const HOMEPAGE_RESOURCES = [
+  {
+    slug: "ai-in-recruitment",
+    type: "Article",
+    title: "AI in Recruitment 2026: What Works, What Fails, and What Is Next",
+    description:
+      "An honest assessment of AI in recruiting — from resume parsing to predictive analytics — and where human judgment still decides.",
+    icon: Sparkles,
+    tone: "ocean",
+  },
+  {
+    slug: "30-60-90-onboarding-plan-2026",
+    type: "Guide",
+    title: "The 30-60-90 Onboarding Plan for 2026",
+    description:
+      "A research-backed onboarding framework with week-by-week milestones and manager checkpoints for new hires.",
+    icon: CalendarClock,
+    tone: "navy",
+  },
+  {
+    slug: "ai-impact-on-jobs-hiring",
+    type: "Analysis",
+    title: "AI's Impact on Jobs and Hiring",
+    description:
+      "Which roles are being augmented versus automated — and how hiring teams should prioritise skills as the mix shifts.",
+    icon: TrendingUp,
+    tone: "ocean",
   },
 ] as const;
 
@@ -1430,104 +1505,144 @@ function Home() {
         </PublicSection>
       </section>
 
-      {/* 8 — SOCIAL PROOF / TRUST */}
+      {/* 8 — APPROVED PROOF (process credibility) */}
       <PublicSection>
         <PublicPage>
           <SectionHead
-            eyebrow="What hiring teams say"
-            title="Teams hiring differently."
-            lead="Hiring managers use TaaSFlow because it changes how their team decides — evidence in front of everyone, in the same workspace, at the same time."
+            eyebrow="Why teams trust the process"
+            title="Proof lives in how the work is done."
+            lead="We don't publish testimonials we can't verify. What we can show you is the discipline behind every candidate we deliver — the same evaluation, workspace, and audit trail on every role."
           />
-          <div className="mt-10 grid gap-5 md:grid-cols-3">
-            {[
-              {
-                q: "We stopped comparing PDFs. The workspace tells us which candidates fit the requirements we actually agreed on.",
-                who: "Head of Talent · SaaS scale-up",
-              },
-              {
-                q: "Evidence quotes changed the conversation with our hiring managers. We debate the requirement, not the candidate.",
-                who: "Recruiting Lead · Fintech",
-              },
-              {
-                q: "Predictable pricing and a single workspace let us open three roles at once without adding more vendors.",
-                who: "People Ops · Healthcare",
-              },
-            ].map((t) => (
-              <Card key={t.who}>
-                <Building2 className="h-5 w-5 text-[color:var(--brand-ocean)]" aria-hidden />
-                <blockquote className="mt-4 text-sm leading-relaxed text-[color:var(--brand-navy)]">
-                  "{t.q}"
-                </blockquote>
-                <p className="mt-4 text-xs font-medium text-[color:var(--brand-navy)]/60">
-                  {t.who}
-                </p>
-              </Card>
-            ))}
+          <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+            {APPROVED_PROOF.map((item) => {
+              const Icon = item.icon;
+              return (
+                <Card key={item.t}>
+                  <div className="inline-flex h-10 w-10 items-center justify-center rounded-md bg-[color:var(--brand-ocean)]/10 text-[color:var(--brand-ocean)]">
+                    <Icon className="h-5 w-5" aria-hidden />
+                  </div>
+                  <h3 className="mt-4 text-base font-semibold text-[color:var(--brand-navy)]">
+                    {item.t}
+                  </h3>
+                  <p className="mt-2 text-sm leading-relaxed text-[color:var(--brand-navy)]/70">
+                    {item.d}
+                  </p>
+                </Card>
+              );
+            })}
           </div>
           <div className="mt-8 flex flex-wrap items-center gap-4 text-xs text-[color:var(--brand-navy)]/60">
-            <span className="inline-flex items-center gap-1.5">
-              <ShieldCheck className="h-4 w-4 text-[color:var(--brand-ocean)]" aria-hidden />
-              Evidence-first candidate delivery
-            </span>
-            <span className="inline-flex items-center gap-1.5">
-              <ClipboardCheck className="h-4 w-4 text-[color:var(--brand-ocean)]" aria-hidden />
-              Full audit trail on every decision
-            </span>
-            <span className="inline-flex items-center gap-1.5">
-              <Users className="h-4 w-4 text-[color:var(--brand-ocean)]" aria-hidden />
-              Role-based access for your team
-            </span>
-          </div>
-          <div className="mt-6">
             <Link
-              to="/case-studies"
+              to="/how-it-works"
               className="inline-flex items-center gap-1 text-sm font-semibold text-[color:var(--brand-ocean)] hover:text-[color:var(--brand-navy)]"
             >
-              Read case studies <ArrowRight className="h-4 w-4" aria-hidden />
+              See the full process <ArrowRight className="h-4 w-4" aria-hidden />
+            </Link>
+            <Link
+              to="/case-studies"
+              className="inline-flex items-center gap-1 text-sm font-semibold text-[color:var(--brand-navy)]/70 hover:text-[color:var(--brand-navy)]"
+            >
+              Case studies <ArrowRight className="h-4 w-4" aria-hidden />
             </Link>
           </div>
         </PublicPage>
       </PublicSection>
 
-      {/* 9 — FAQ PREVIEW */}
+      {/* 9 — RESOURCES PREVIEW */}
       <section className="border-y border-[color:var(--brand-navy)]/8 bg-[color:var(--brand-paper)]">
         <PublicSection>
           <PublicPage>
             <SectionHead
-              eyebrow="Quick answers"
-              title="Common questions about TaaSFlow."
+              eyebrow="Resources"
+              title="Reading for hiring teams."
+              lead="Practical guides and analysis on how hiring is actually changing — written for the people running the process."
             />
-            <dl className="mt-10 grid gap-5 md:grid-cols-2">
-              {HOMEPAGE_FAQ.map((item) => (
-                <Card key={item.q}>
-                  <dt className="text-base font-semibold text-[color:var(--brand-navy)]">
-                    {item.q}
-                  </dt>
-                  <dd className="mt-2 text-sm text-[color:var(--brand-navy)]/70">
-                    {item.a}
-                  </dd>
-                </Card>
-              ))}
-            </dl>
+            <div className="mt-10 grid gap-5 md:grid-cols-3">
+              {HOMEPAGE_RESOURCES.map((r) => {
+                const Icon = r.icon;
+                return (
+                  <Link
+                    key={r.slug}
+                    to="/blog/$slug"
+                    params={{ slug: r.slug }}
+                    className="group flex h-full flex-col overflow-hidden rounded-xl border border-[color:var(--brand-navy)]/10 bg-white transition hover:border-[color:var(--brand-ocean)]/40 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-ocean)]"
+                  >
+                    <div
+                      className={`relative flex h-40 items-center justify-center ${
+                        r.tone === "navy"
+                          ? "bg-gradient-to-br from-[color:var(--brand-navy)] to-[color:var(--brand-ocean)]"
+                          : "bg-gradient-to-br from-[color:var(--brand-ocean)]/90 to-[color:var(--brand-navy)]/80"
+                      }`}
+                    >
+                      <Icon className="h-12 w-12 text-white/90" aria-hidden />
+                      <span className="absolute left-3 top-3 rounded-full bg-white/95 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]">
+                        {r.type}
+                      </span>
+                    </div>
+                    <div className="flex flex-1 flex-col p-5">
+                      <h3 className="text-base font-semibold leading-snug text-[color:var(--brand-navy)] group-hover:text-[color:var(--brand-ocean)]">
+                        {r.title}
+                      </h3>
+                      <p className="mt-2 flex-1 text-sm leading-relaxed text-[color:var(--brand-navy)]/70">
+                        {r.description}
+                      </p>
+                      <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-[color:var(--brand-ocean)]">
+                        Read {r.type.toLowerCase()} <ArrowRight className="h-4 w-4" aria-hidden />
+                      </span>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
             <div className="mt-8">
               <Link
-                to="/faq"
+                to="/resources"
                 className="inline-flex items-center gap-1 text-sm font-semibold text-[color:var(--brand-ocean)] hover:text-[color:var(--brand-navy)]"
               >
-                View all FAQs <ArrowRight className="h-4 w-4" aria-hidden />
+                Browse all resources <ArrowRight className="h-4 w-4" aria-hidden />
               </Link>
             </div>
           </PublicPage>
         </PublicSection>
       </section>
 
-      {/* 10 — FINAL CTA */}
+      {/* 10 — FAQ */}
+      <PublicSection>
+        <PublicPage>
+          <SectionHead
+            eyebrow="Quick answers"
+            title="Common questions about TaaSFlow."
+          />
+          <dl className="mt-10 grid gap-5 md:grid-cols-2">
+            {HOMEPAGE_FAQ.map((item) => (
+              <Card key={item.q}>
+                <dt className="text-base font-semibold text-[color:var(--brand-navy)]">
+                  {item.q}
+                </dt>
+                <dd className="mt-2 text-sm leading-relaxed text-[color:var(--brand-navy)]/70">
+                  {item.a}
+                </dd>
+              </Card>
+            ))}
+          </dl>
+          <div className="mt-8">
+            <Link
+              to="/faq"
+              className="inline-flex items-center gap-1 text-sm font-semibold text-[color:var(--brand-ocean)] hover:text-[color:var(--brand-navy)]"
+            >
+              View all FAQs <ArrowRight className="h-4 w-4" aria-hidden />
+            </Link>
+          </div>
+        </PublicPage>
+      </PublicSection>
+
+      {/* 11 — FINAL CTA */}
       <CtaSection
         eyebrow="Get started"
-        title="A faster, clearer, more transparent way to recruit."
-        description="Give your hiring team ranked candidates, evidence per requirement, and a live workspace everyone can see."
+        title="Build your next candidate pipeline with TaaSFlow."
+        description="Open a role and get a ranked shortlist, evidence per requirement, and a live workspace your whole hiring team can see."
         primary={{ to: "/intake", label: "Start Hiring" }}
-        secondary={{ to: "/how-it-works", label: "See How It Works" }}
+        secondary={{ to: "/contact", label: "Book a Conversation" }}
       />
     </SiteShell>
   );
