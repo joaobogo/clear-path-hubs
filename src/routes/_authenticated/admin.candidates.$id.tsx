@@ -704,7 +704,7 @@ function EvidenceTab({ evidence, result }: { evidence: Any; result: Any }) {
                 <div className="min-w-0">
                   <div className="font-medium">
                     {r.required && <span className="text-destructive">* </span>}
-                    {r.text ?? r.requirement_text ?? "—"}
+                    {toReqText(r.text ?? r.requirement_text ?? r.label ?? r.name)}
                   </div>
                   {r.matched_terms?.length > 0 && (
                     <div className="mt-1 text-xs text-muted-foreground">
