@@ -12,7 +12,7 @@ const missingFor = (e) => {
   if (!e.cta?.title) m.push("cta.title");
   if (!e.cta?.description) m.push("cta.description");
   if (!(e.roleFamilies?.length || e.roles?.length)) m.push("roles/roleFamilies");
-  if (!e.candidateSignals?.length) m.push("candidateSignals");
+  if (!e.candidateSignals?.length && !e.signals?.length) m.push("candidateSignals/signals");
   if (!e.challenges?.length) m.push("challenges");
   if (!e.signals?.length) m.push("signals");
   return m;
