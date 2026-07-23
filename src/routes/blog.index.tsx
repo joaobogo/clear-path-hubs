@@ -55,10 +55,14 @@ function BlogIndex() {
 
   const categoriesToShow = dynamicCategories;
 
-  const total = filtered.length;
+  const isBrowsing = q.trim() === "" && cat === "" && page === 1;
+  const featured = isBrowsing ? all[0] : null;
+  const listSource = featured ? filtered.filter((p) => p.slug !== featured.slug) : filtered;
+
+  const total = listSource.length;
   const pages = Math.max(1, Math.ceil(total / PAGE_SIZE));
   const current = Math.min(page, pages);
-  const paged = filtered.slice((current - 1) * PAGE_SIZE, current * PAGE_SIZE);
+  const paged = listSource.slice((current - 1) * PAGE_SIZE, current * PAGE_SIZE);
 
   return (
     <SiteShell>
@@ -134,6 +138,47 @@ function BlogIndex() {
             );
           })}
         </nav>
+
+        {featured && (
+          <Link
+            to="/blog/$slug"
+            params={{ slug: featured.slug }}
+            className="group mb-10 grid overflow-hidden rounded-2xl border border-border/60 bg-card transition hover:border-primary/40 hover:shadow-md md:grid-cols-2"
+          >
+            {featured.heroImage ? (
+              <div className="aspect-[16/10] overflow-hidden bg-muted/20 md:aspect-auto">
+                <img
+                  src={featured.heroImage}
+                  alt=""
+                  loading="eager"
+                  decoding="async"
+                  className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.02]"
+                />
+              </div>
+            ) : (
+              <div className="aspect-[16/10] bg-gradient-to-br from-primary/15 via-primary/5 to-transparent md:aspect-auto" />
+            )}
+            <div className="flex flex-col justify-center p-8 sm:p-10">
+              <span className="inline-flex w-fit items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-primary">
+                Featured · {featured.category}
+              </span>
+              <h2 className="mt-4 text-2xl font-semibold tracking-tight sm:text-3xl group-hover:text-primary">
+                {featured.title}
+              </h2>
+              <p className="mt-3 line-clamp-3 text-sm text-muted-foreground sm:text-base">
+                {featured.description}
+              </p>
+              <p className="mt-5 text-xs text-muted-foreground">
+                {featured.readMinutes} min read
+                {featured.publishedAt
+                  ? ` · ${new Date(featured.publishedAt).toLocaleDateString()}`
+                  : ""}
+              </p>
+            </div>
+          </Link>
+        )}
+
+
 
         {paged.length === 0 ? (
           <div className="rounded-xl border border-dashed border-border/60 bg-muted/20 p-10 text-center">
