@@ -6,6 +6,7 @@ import {
   CtaSection,
 } from "@/components/marketing/site-shell";
 import { marketingHead } from "@/lib/marketing/head";
+import { PageConnections } from "@/components/marketing/page-connections";
 
 // ─── LEADERSHIP — Edit this block to publish the named founder narrative ────
 // The rest of the About page reads from this constant. Update once, publish.
@@ -287,6 +288,12 @@ function AboutPage() {
         description="Submit a role in the guided intake — your workspace is ready as soon as you finish."
         primary={{ to: "/intake", label: "Start hiring" }}
         secondary={{ to: "/journey", label: "Explore our journey" }}
+      />
+          <PageConnections
+        commercial={{ to: "/how-it-works", label: "See the model", desc: "The operational spine behind TaaSFlow." }}
+        explainer={{ to: "/journey", label: "Our journey", desc: "Why we built a subscription recruiting product." }}
+        resource={{ to: "/case-studies", label: "Proof, not claims", desc: "Named outcomes from real teams." }}
+        audience={{ to: "/enterprise", label: "Working with enterprise", desc: "How large orgs adopt TaaSFlow." }}
       />
     </SiteShell>
   );

@@ -14,6 +14,7 @@ import {
   ClipboardList,
   ArrowRight,
 } from "lucide-react";
+import { PageConnections } from "@/components/marketing/page-connections";
 
 // Enterprise metadata authored inline. Legacy JSON contained unapproved
 // commercial and volume claims — kept out on purpose.
@@ -362,6 +363,12 @@ function EnterprisePage() {
         description="Book a consultation to scope role families, business units, and reporting. Or start a single search today and expand from there."
         primary={{ to: "/contact", label: "Book Enterprise Consultation" }}
         secondary={{ to: "/intake", label: "Start Hiring" }}
+      />
+          <PageConnections
+        commercial={{ to: "/contact", label: "Talk to enterprise sales", desc: "Get a scoped rollout and pricing proposal." }}
+        explainer={{ to: "/how-it-works", label: "The operating model", desc: "How multi-role portfolios run through the workspace." }}
+        resource={{ to: "/case-studies", label: "Portfolio outcomes", desc: "How large teams govern hiring at scale." }}
+        audience={{ to: "/global-talent", label: "Global talent options", desc: "Hire compliantly across borders." }}
       />
     </SiteShell>
   );

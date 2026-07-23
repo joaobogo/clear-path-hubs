@@ -11,6 +11,7 @@ import {
   ResponsibilityMatrix,
   StepRail,
 } from "@/components/marketing/how-it-works-deep";
+import { PageConnections } from "@/components/marketing/page-connections";
 
 const entry = getPage("how-it-works");
 
@@ -228,6 +229,12 @@ function HowItWorksPage() {
         description="Intake takes a few minutes. Draft saving is on — return anytime and pick up where you left off."
         primary={{ to: "/intake", label: "Start Hiring" }}
         secondary={{ to: "/pricing", label: "View Pricing" }}
+      />
+          <PageConnections
+        commercial={{ to: "/intake", label: "Start a role", desc: "Kick off hiring in minutes with a guided intake." }}
+        explainer={{ to: "/enterprise", label: "Enterprise mechanics", desc: "Governance and cross-role reporting." }}
+        resource={{ to: "/case-studies", label: "See it in production", desc: "Weekly delivery on named roles." }}
+        audience={{ to: "/solutions", label: "Solutions by team stage", desc: "How Series A–C operators use TaaSFlow." }}
       />
     </SiteShell>
   );

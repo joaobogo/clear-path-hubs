@@ -15,6 +15,7 @@ import {
   Building2,
   ArrowRight,
 } from "lucide-react";
+import { PageConnections } from "@/components/marketing/page-connections";
 
 export const Route = createFileRoute("/partnerships/staffing")({
   head: () =>
@@ -340,6 +341,12 @@ function PartnershipsStaffingPage() {
         </PublicPage>
       </PublicSection>
 
+          <PageConnections
+        commercial={{ to: "/contact", label: "Talk to partnerships", desc: "Scope a white-label or referral engagement." }}
+        explainer={{ to: "/how-it-works", label: "How sourcing runs", desc: "What agencies get from a TaaSFlow-powered pipeline." }}
+        resource={{ to: "/case-studies", label: "Partner outcomes", desc: "Ranked shortlists, delivered weekly." }}
+        audience={{ to: "/enterprise", label: "Enterprise co-delivery", desc: "Serving enterprise clients together." }}
+      />
     </SiteShell>
   );
 }

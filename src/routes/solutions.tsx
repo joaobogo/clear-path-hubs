@@ -10,6 +10,7 @@ import {
   ClipboardList,
   ShieldCheck,
 } from "lucide-react";
+import { PageConnections } from "@/components/marketing/page-connections";
 
 const PILOT = PRICING_PACKAGES.find((p) => p.id === "pilot");
 const PILOT_PRICE_LABEL =
@@ -128,6 +129,12 @@ function SolutionsPage() {
           </div>
         </div>
       </section>
+          <PageConnections
+        commercial={{ to: "/intake", label: "Start hiring", desc: "Open your first role in minutes." }}
+        explainer={{ to: "/how-it-works", label: "The delivery model", desc: "Evidence-first ranking, weekly cadence." }}
+        resource={{ to: "/case-studies", label: "Operator case studies", desc: "Series A–C teams shipping hires." }}
+        audience={{ to: "/industries", label: "By industry", desc: "Role blueprints for your vertical." }}
+      />
     </SiteShell>
   );
 }

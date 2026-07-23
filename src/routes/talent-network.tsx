@@ -13,6 +13,7 @@ import {
   ClipboardList,
   Eye,
 } from "lucide-react";
+import { PageConnections } from "@/components/marketing/page-connections";
 
 export const Route = createFileRoute("/talent-network")({
   head: () =>
@@ -325,6 +326,12 @@ function TalentNetworkPage() {
           </div>
         </PublicPage>
       </PublicSection>
+          <PageConnections
+        commercial={{ to: "/jobs", label: "Browse open roles", desc: "Roles active this week." }}
+        explainer={{ to: "/candidate-success", label: "Candidate success", desc: "What good outcomes look like on TaaSFlow." }}
+        resource={{ to: "/blog", label: "Career insights", desc: "Interview prep and market context." }}
+        audience={{ to: "/candidate-join", label: "Join the network", desc: "Get matched to future roles." }}
+      />
     </SiteShell>
   );
 }
