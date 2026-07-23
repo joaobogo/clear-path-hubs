@@ -1,0 +1,27 @@
+{
+  "generated_for": "TaaSFlow V2 — Prompt 27 SEO and Redirects",
+  "policy": {
+    "trailing_slash": "no-trailing-slash canonical",
+    "chain_limit": 1,
+    "loop_check": true,
+    "preserve_query_params": true
+  },
+  "redirects": [
+    {
+      "from": "/industries/non-profit",
+      "to": "/industries/nonprofit",
+      "code": 308,
+      "reason": "Source slug normalisation to destination convention.",
+      "implementation": "src/routes/industries.non-profit.tsx"
+    }
+  ],
+  "documented_removals": [
+    {
+      "path": "/industries/education",
+      "reason": "Not present in source manifest; deliberately excluded pending owner approval. No redirect required (page never existed on destination).",
+      "sitemap_included": false
+    }
+  ],
+  "verified_no_chain": true,
+  "verified_no_loop": true
+}
