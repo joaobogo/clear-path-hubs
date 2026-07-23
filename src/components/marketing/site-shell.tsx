@@ -241,42 +241,58 @@ function Header() {
                 </SheetDescription>
               </SheetHeader>
               <div className="flex-1 overflow-y-auto">
-                <nav aria-label="Mobile primary" className="flex flex-col gap-1 px-3 py-4">
-                  {CONFIG_PRIMARY_NAV.filter((n) => !n.hidden).map((n) => (
-                    <Link
-                      key={n.to}
-                      to={n.to}
-                      className="min-h-11 rounded-md px-3 py-2.5 text-base text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
-                      activeProps={{ className: "bg-[color:var(--brand-navy)]/5 font-semibold" }}
-                    >
-                      {n.label}
-                    </Link>
-                  ))}
-                </nav>
-                <Accordion type="multiple" className="px-3 pb-4">
-                  {NAV_GROUPS.map((group) => (
-                    <AccordionItem key={group.label} value={group.label} className="border-b-0">
-                      <AccordionTrigger className="min-h-11 rounded-md px-3 py-2.5 text-base font-medium text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5 hover:no-underline">
-                        {group.label}
-                      </AccordionTrigger>
-                      <AccordionContent className="pb-1">
-                        <ul className="flex flex-col">
-                          {group.links.filter((l) => !l.hidden).map((l) => (
-                            <li key={`${l.to}-${l.label}`}>
-                              <Link
-                                to={l.to}
-                                className="block min-h-11 rounded-md px-6 py-2.5 text-sm text-[color:var(--brand-navy)]/85 hover:bg-[color:var(--brand-navy)]/5 hover:text-[color:var(--brand-navy)]"
-                                activeProps={{ className: "font-semibold text-[color:var(--brand-navy)]" }}
-                              >
-                                {l.label}
-                              </Link>
-                            </li>
-                          ))}
-                        </ul>
-                      </AccordionContent>
-                    </AccordionItem>
-                  ))}
+                <Accordion type="multiple" className="px-3 py-4">
+                  {PRIMARY_ITEMS.map((item) =>
+                    item.kind === "link" ? (
+                      <Link
+                        key={item.to}
+                        to={item.to}
+                        className="flex min-h-11 items-center rounded-md px-3 py-2.5 text-base font-medium text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+                        activeProps={{ className: "bg-[color:var(--brand-navy)]/5 font-semibold" }}
+                      >
+                        {item.label}
+                      </Link>
+                    ) : (
+                      <AccordionItem key={item.label} value={item.label} className="border-b-0">
+                        <AccordionTrigger className="min-h-11 rounded-md px-3 py-2.5 text-base font-medium text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5 hover:no-underline">
+                          {item.label}
+                        </AccordionTrigger>
+                        <AccordionContent className="pb-1">
+                          <ul className="flex flex-col">
+                            {item.links.filter((l) => !l.hidden).map((l) => (
+                              <li key={`${l.to}-${l.label}`}>
+                                <Link
+                                  to={l.to}
+                                  className="block min-h-11 rounded-md px-6 py-2.5 text-sm text-[color:var(--brand-navy)]/85 hover:bg-[color:var(--brand-navy)]/5 hover:text-[color:var(--brand-navy)]"
+                                  activeProps={{ className: "font-semibold text-[color:var(--brand-navy)]" }}
+                                >
+                                  {l.label}
+                                </Link>
+                              </li>
+                            ))}
+                          </ul>
+                        </AccordionContent>
+                      </AccordionItem>
+                    ),
+                  )}
                 </Accordion>
+                <div className="border-t border-[color:var(--brand-navy)]/10 px-3 py-4">
+                  <p className="px-3 pb-2 text-xs font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/55">
+                    For candidates
+                  </p>
+                  <Link
+                    to={browseJobs.to}
+                    className="flex min-h-11 items-center rounded-md px-3 py-2.5 text-base text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5"
+                  >
+                    {browseJobs.label}
+                  </Link>
+                  <Link
+                    to={joinNetwork.to}
+                    className="flex min-h-11 items-center rounded-md px-3 py-2.5 text-base text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5"
+                  >
+                    {joinNetwork.label}
+                  </Link>
+                </div>
               </div>
               <div className="space-y-2 border-t border-[color:var(--brand-navy)]/10 p-4">
                 <Link
@@ -285,20 +301,12 @@ function Header() {
                 >
                   {PRIMARY_CTA.label}
                 </Link>
-                <div className="grid grid-cols-2 gap-2">
-                  <Link
-                    to={browseJobs.to}
-                    className="flex min-h-11 items-center justify-center rounded-md border border-[color:var(--brand-navy)]/15 px-3 py-2 text-sm font-medium text-[color:var(--brand-navy)]"
-                  >
-                    {browseJobs.label}
-                  </Link>
-                  <Link
-                    to={signIn.to}
-                    className="flex min-h-11 items-center justify-center rounded-md border border-[color:var(--brand-navy)]/15 px-3 py-2 text-sm font-medium text-[color:var(--brand-navy)]"
-                  >
-                    {signIn.label}
-                  </Link>
-                </div>
+                <Link
+                  to={signIn.to}
+                  className="flex min-h-11 items-center justify-center rounded-md border border-[color:var(--brand-navy)]/15 px-3 py-2 text-sm font-medium text-[color:var(--brand-navy)]"
+                >
+                  {signIn.label}
+                </Link>
               </div>
             </SheetContent>
           </Sheet>
