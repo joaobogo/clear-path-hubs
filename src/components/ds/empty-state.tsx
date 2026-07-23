@@ -6,20 +6,52 @@ export interface EmptyStateProps {
   title: string;
   description?: string;
   action?: ReactNode;
+  secondaryAction?: ReactNode;
+  tone?: "neutral" | "positive" | "info";
   className?: string;
 }
 
-export function EmptyState({ icon, title, description, action, className }: EmptyStateProps) {
+const TONE = {
+  neutral: {
+    bg: "bg-card/40",
+    ring: "bg-muted text-muted-foreground",
+  },
+  positive: {
+    bg: "bg-gradient-to-br from-primary/5 via-card/40 to-card/40",
+    ring: "bg-primary/10 text-primary",
+  },
+  info: {
+    bg: "bg-gradient-to-br from-secondary/40 via-card/40 to-card/40",
+    ring: "bg-secondary text-secondary-foreground",
+  },
+} as const;
+
+export function EmptyState({
+  icon,
+  title,
+  description,
+  action,
+  secondaryAction,
+  tone = "neutral",
+  className,
+}: EmptyStateProps) {
+  const t = TONE[tone];
   return (
     <div
       role="status"
       className={cn(
-        "flex flex-col items-center justify-center rounded-xl border border-dashed border-border bg-card/40 px-6 py-14 text-center",
+        "taas-motion-surface flex flex-col items-center justify-center rounded-2xl border border-dashed border-border px-6 py-14 text-center",
+        t.bg,
         className,
       )}
     >
       {icon ? (
-        <div className="mb-4 grid h-12 w-12 place-items-center rounded-full bg-muted text-muted-foreground">
+        <div
+          className={cn(
+            "mb-4 grid h-12 w-12 place-items-center rounded-full",
+            t.ring,
+          )}
+        >
           {icon}
         </div>
       ) : null}
@@ -27,7 +59,12 @@ export function EmptyState({ icon, title, description, action, className }: Empt
       {description ? (
         <p className="mt-1.5 max-w-md text-sm text-muted-foreground">{description}</p>
       ) : null}
-      {action ? <div className="mt-5">{action}</div> : null}
+      {(action || secondaryAction) ? (
+        <div className="mt-5 flex flex-wrap items-center justify-center gap-2">
+          {action}
+          {secondaryAction}
+        </div>
+      ) : null}
     </div>
   );
 }
