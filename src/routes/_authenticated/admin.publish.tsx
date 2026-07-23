@@ -1,10 +1,13 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useSuspenseQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
 import { useMemo, useState } from "react";
-import { getPublishDeskGroups } from "@/lib/admin.functions";
-import { Badge } from "@/components/ui/badge";
+import { getPublishDeskGroups, setMatchClientVisibility } from "@/lib/admin.functions";
 import { Input } from "@/components/ui/input";
-import { AlertTriangle, Ban, CheckCircle2, Eye, Pause } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { AlertTriangle, Ban, CheckCircle2, Eye, Pause, ExternalLink } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/admin/publish")({
   loader: ({ context }) =>
@@ -15,9 +18,11 @@ export const Route = createFileRoute("/_authenticated/admin/publish")({
   errorComponent: ({ error }) => (
     <div className="p-8 text-destructive">Publish desk unavailable: {error.message}</div>
   ),
+  notFoundComponent: () => <div className="p-8">Not found.</div>,
   head: () => ({
     meta: [
       { title: "Publish Desk · TaaSFlow admin" },
+      { name: "description", content: "Preview and publish approved candidates." },
       { name: "robots", content: "noindex" },
     ],
   }),
@@ -28,46 +33,67 @@ export const Route = createFileRoute("/_authenticated/admin/publish")({
 type Any = any;
 
 const GROUPS = [
-  {
-    id: "needs_review",
-    label: "Needs review",
-    tone: "text-amber-800 dark:text-amber-200 bg-amber-500/10",
-    icon: AlertTriangle,
-    hint: "Scored candidates awaiting an admin decision.",
-  },
-  {
-    id: "blocked",
-    label: "Blocked",
-    tone: "text-destructive bg-destructive/10",
-    icon: Ban,
-    hint: "Processing failures, provider blocks, and OCR requests.",
-  },
-  {
-    id: "ready",
-    label: "Ready to publish",
-    tone: "text-emerald-800 dark:text-emerald-200 bg-emerald-500/10",
-    icon: CheckCircle2,
-    hint: "Approved by admin — one click to send to the client.",
-  },
-  {
-    id: "published",
-    label: "Published",
-    tone: "text-primary bg-primary/10",
-    icon: Eye,
-    hint: "Currently live in the client workspace.",
-  },
-  {
-    id: "held",
-    label: "Held",
-    tone: "text-muted-foreground bg-muted",
-    icon: Pause,
-    hint: "Paused pending clarification.",
-  },
+  { id: "needs_review", label: "Needs review", tone: "text-amber-800 dark:text-amber-200 bg-amber-500/10", icon: AlertTriangle, hint: "Scored candidates awaiting an admin decision." },
+  { id: "blocked", label: "Blocked", tone: "text-destructive bg-destructive/10", icon: Ban, hint: "Processing failures, provider blocks, and OCR requests." },
+  { id: "ready", label: "Ready to publish", tone: "text-emerald-800 dark:text-emerald-200 bg-emerald-500/10", icon: CheckCircle2, hint: "Approved by admin — one click to send to the client." },
+  { id: "published", label: "Published", tone: "text-primary bg-primary/10", icon: Eye, hint: "Currently live in the client workspace." },
+  { id: "held", label: "Held", tone: "text-muted-foreground bg-muted", icon: Pause, hint: "Paused pending clarification." },
 ] as const;
 
 type GroupId = (typeof GROUPS)[number]["id"];
 
+type Readiness = {
+  hasScore: boolean;
+  evidenceOk: boolean;
+  contradictionOk: boolean;
+  reviewOk: boolean;
+  clientSafeOk: boolean;
+  canPublish: boolean;
+  blockedReasons: string[];
+};
+
+function assessReadiness(r: Any): Readiness {
+  const run = r.score_runs;
+  const hasScore = run?.score != null;
+  const coverage = Number(run?.must_have_coverage ?? 0);
+  const evidenceOk = hasScore && coverage >= 0.5;
+  const contradictionOk = !run?.contradiction_status || run.contradiction_status === "none";
+  const reviewOk = r.admin_status === "approved";
+  const clientSafeOk = !!r.candidate_profiles?.full_name && !!r.positions?.id;
+  const blockedReasons: string[] = [];
+  if (["failed", "provider_blocked"].includes(r.processing_state))
+    blockedReasons.push(`Processing ${r.processing_state.replace(/_/g, " ")}`);
+  if (r.processing_state === "ocr_required") blockedReasons.push("OCR required on CV");
+  if (!hasScore) blockedReasons.push("Score incomplete");
+  else if (!evidenceOk) blockedReasons.push("Evidence coverage insufficient");
+  if (!contradictionOk) blockedReasons.push(`Contradiction unresolved (${run.contradiction_status})`);
+  if (!clientSafeOk) blockedReasons.push("Client-safe data incomplete");
+  if (!reviewOk && r.admin_status !== "on_hold")
+    blockedReasons.push(`Admin review ${r.admin_status ?? "pending"}`);
+  const canPublish =
+    hasScore && evidenceOk && contradictionOk && reviewOk && clientSafeOk &&
+    !["failed", "provider_blocked", "ocr_required"].includes(r.processing_state);
+  return { hasScore, evidenceOk, contradictionOk, reviewOk, clientSafeOk, canPublish, blockedReasons };
+}
+
+function Check({ ok, label }: { ok: boolean; label: string }) {
+  return (
+    <span
+      className={
+        "inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[10px] font-medium " +
+        (ok
+          ? "bg-emerald-500/10 text-emerald-800 dark:text-emerald-200"
+          : "bg-destructive/10 text-destructive")
+      }
+      title={label}
+    >
+      {ok ? "✓" : "✗"} {label}
+    </span>
+  );
+}
+
 function PublishDesk() {
+  const qc = useQueryClient();
   const { data } = useSuspenseQuery({
     queryKey: ["publish-desk-groups"],
     queryFn: () => getPublishDeskGroups(),
@@ -78,6 +104,18 @@ function PublishDesk() {
     (GROUPS.find((g) => (buckets[g.id] ?? []).length > 0)?.id ?? "needs_review") as GroupId,
   );
   const [query, setQuery] = useState("");
+  const [feedback, setFeedback] = useState<string | null>(null);
+
+  const setVis = useServerFn(setMatchClientVisibility);
+  const publishMut = useMutation({
+    mutationFn: async (vars: { match_id: string; visibility: "visible" | "hidden" }) =>
+      await setVis({ data: vars }),
+    onSuccess: async (_r, vars) => {
+      setFeedback(vars.visibility === "visible" ? "Published to client." : "Hidden from client.");
+      await qc.invalidateQueries({ queryKey: ["publish-desk-groups"] });
+    },
+    onError: (e: Error) => setFeedback(`Action failed: ${e.message}`),
+  });
 
   const rows = useMemo(() => {
     const bucket = buckets[group] ?? [];
@@ -96,9 +134,15 @@ function PublishDesk() {
       <header>
         <h1 className="text-2xl font-semibold tracking-tight">Publish desk</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Every candidate opens the full review workspace — the same one Admin uses everywhere.
+          Preview approved candidates before sending them to clients. Every action is audited.
         </p>
       </header>
+
+      {feedback && (
+        <Alert>
+          <AlertDescription>{feedback}</AlertDescription>
+        </Alert>
+      )}
 
       <div className="grid gap-3 md:grid-cols-5">
         {GROUPS.map((g) => {
@@ -119,12 +163,7 @@ function PublishDesk() {
               aria-pressed={active}
             >
               <div className="flex items-center justify-between">
-                <span
-                  className={
-                    "inline-flex items-center gap-1.5 rounded-md px-1.5 py-0.5 text-xs font-medium " +
-                    g.tone
-                  }
-                >
+                <span className={"inline-flex items-center gap-1.5 rounded-md px-1.5 py-0.5 text-xs font-medium " + g.tone}>
                   <Icon className="h-3 w-3" />
                   {g.label}
                 </span>
@@ -153,71 +192,138 @@ function PublishDesk() {
         </div>
 
         {rows.length === 0 ? (
-          <p className="p-10 text-center text-sm text-muted-foreground">
-            Nothing here right now.
-          </p>
+          <p className="p-10 text-center text-sm text-muted-foreground">Nothing here right now.</p>
         ) : (
           <table className="w-full text-sm">
             <thead className="bg-muted/40 text-left text-xs uppercase text-muted-foreground">
               <tr>
                 <th className="px-3 py-2 font-medium">Candidate</th>
-                <th className="px-3 py-2 font-medium">Position · Client</th>
+                <th className="px-3 py-2 font-medium">Client · Position</th>
                 <th className="px-3 py-2 font-medium tabular-nums">Score</th>
-                <th className="px-3 py-2 font-medium">State</th>
-                <th className="px-3 py-2 font-medium">Updated</th>
-                <th className="px-3 py-2 sr-only">Open</th>
+                <th className="px-3 py-2 font-medium">Readiness</th>
+                <th className="px-3 py-2 font-medium">Review · Publication</th>
+                <th className="px-3 py-2 font-medium text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y">
               {rows.map((r) => {
                 const run = r.score_runs;
-                const contradiction =
-                  run?.contradiction_status && run.contradiction_status !== "none";
+                const rd = assessReadiness(r);
+                const orgId = r.positions?.organizations?.id as string | undefined;
+                const previewHref = orgId
+                  ? `/client/candidates/${r.id}?org=${encodeURIComponent(orgId)}&preview=client_admin`
+                  : `/admin/candidates/${r.id}`;
+                const isPublished = r.client_visibility === "visible";
                 return (
-                  <tr key={r.id} className="hover:bg-muted/30">
+                  <tr key={r.id} className="hover:bg-muted/30 align-top">
                     <td className="px-3 py-2">
-                      <div className="font-medium">
-                        {r.candidate_profiles?.full_name ?? "—"}
-                      </div>
+                      <div className="font-medium">{r.candidate_profiles?.full_name ?? "—"}</div>
                       <div className="text-[10px] text-muted-foreground">
                         {r.candidate_profiles?.email ?? ""}
                       </div>
                     </td>
                     <td className="px-3 py-2">
-                      <div>{r.positions?.title ?? "—"}</div>
+                      <div className="font-medium">{r.positions?.organizations?.name ?? "—"}</div>
                       <div className="text-[10px] text-muted-foreground">
-                        {r.positions?.organizations?.name ?? ""}
+                        {r.positions?.title ?? "—"}
                       </div>
                     </td>
                     <td className="px-3 py-2 tabular-nums">
                       {run?.score != null ? Math.round(run.score) : "—"}
-                      {contradiction && (
-                        <span
-                          className="ml-1 text-amber-600"
-                          title={String(run.contradiction_status)}
-                        >
-                          ⚠
-                        </span>
+                      {run?.fit_label && (
+                        <div className="text-[10px] text-muted-foreground">{run.fit_label}</div>
+                      )}
+                    </td>
+                    <td className="px-3 py-2">
+                      <div className="flex flex-wrap gap-1">
+                        <Check ok={rd.hasScore} label="Score" />
+                        <Check ok={rd.evidenceOk} label="Evidence" />
+                        <Check ok={rd.contradictionOk} label="No contradictions" />
+                        <Check ok={rd.clientSafeOk} label="Client-safe" />
+                      </div>
+                      {group === "blocked" && rd.blockedReasons.length > 0 && (
+                        <ul className="mt-1.5 space-y-0.5 text-[10px] text-destructive">
+                          {rd.blockedReasons.map((reason) => (
+                            <li key={reason}>• {reason}</li>
+                          ))}
+                        </ul>
                       )}
                     </td>
                     <td className="px-3 py-2 text-xs">
-                      <div>{r.processing_state.replace(/_/g, " ")}</div>
-                      <div className="text-[10px] text-muted-foreground">
-                        admin: {r.admin_status} · vis: {r.client_visibility}
+                      <Badge variant="outline" className="mr-1">{r.admin_status}</Badge>
+                      <Badge variant={isPublished ? "default" : "secondary"}>
+                        {r.client_visibility}
+                      </Badge>
+                      <div className="mt-1 text-[10px] text-muted-foreground">
+                        {r.updated_at ? new Date(r.updated_at).toLocaleString() : "—"}
                       </div>
                     </td>
-                    <td className="px-3 py-2 text-xs text-muted-foreground">
-                      {r.updated_at ? new Date(r.updated_at).toLocaleString() : "—"}
-                    </td>
                     <td className="px-3 py-2 text-right">
-                      <Link
-                        to="/admin/candidates/$id"
-                        params={{ id: r.id }}
-                        className="text-primary hover:underline"
-                        data-qa-action="open-workspace"
-                      >
-                        Open workspace →
-                      </Link>
+                      <div className="flex flex-col items-end gap-1.5">
+                        {rd.canPublish && !isPublished && (
+                          <>
+                            <Link
+                              to={previewHref as "/client/candidates/$id"}
+                              className="inline-flex items-center gap-1 rounded-md border border-primary/40 bg-primary/5 px-2 py-1 text-xs font-medium text-primary hover:bg-primary/10"
+                              data-qa-action="preview-as-client"
+                            >
+                              <Eye className="h-3 w-3" /> Preview as client
+                            </Link>
+                            <Button
+                              size="sm"
+                              variant="secondary"
+                              className="h-7"
+                              disabled={publishMut.isPending}
+                              onClick={() =>
+                                publishMut.mutate({ match_id: r.id, visibility: "visible" })
+                              }
+                              data-qa-action="publish"
+                            >
+                              Publish
+                            </Button>
+                          </>
+                        )}
+                        {isPublished && (
+                          <>
+                            <Link
+                              to={previewHref as "/client/candidates/$id"}
+                              className="inline-flex items-center gap-1 text-xs text-primary hover:underline"
+                            >
+                              <ExternalLink className="h-3 w-3" /> View live
+                            </Link>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              className="h-7"
+                              disabled={publishMut.isPending}
+                              onClick={() =>
+                                publishMut.mutate({ match_id: r.id, visibility: "hidden" })
+                              }
+                            >
+                              Unpublish
+                            </Button>
+                          </>
+                        )}
+                        {!rd.canPublish && !isPublished && (
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="h-7"
+                            disabled
+                            title={rd.blockedReasons.join(" · ") || "Not ready"}
+                          >
+                            Publish
+                          </Button>
+                        )}
+                        <Link
+                          to="/admin/candidates/$id"
+                          params={{ id: r.id }}
+                          className="text-[11px] text-muted-foreground hover:text-primary hover:underline"
+                          data-qa-action="open-workspace"
+                        >
+                          Open workspace →
+                        </Link>
+                      </div>
                     </td>
                   </tr>
                 );
@@ -228,8 +334,11 @@ function PublishDesk() {
       </div>
 
       <p className="text-xs text-muted-foreground">
-        Prefer full search? Use <Link to="/admin/candidates" className="text-primary hover:underline">/admin/candidates</Link> —
-        every workspace opens the same route as here.
+        Prefer full search? Use{" "}
+        <Link to="/admin/candidates" className="text-primary hover:underline">
+          /admin/candidates
+        </Link>{" "}
+        — every workspace opens the same route as here.
       </p>
     </main>
   );
