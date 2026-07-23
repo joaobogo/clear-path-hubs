@@ -332,36 +332,39 @@ function PartnershipsStaffingPage() {
       </PublicSection>
 
       {/* ── Final CTA ───────────────────────────────────────────── */}
-      <CtaSection>
+      <PublicSection className="py-16">
         <PublicPage>
-          <div className="flex flex-col items-start gap-6 md:flex-row md:items-center md:justify-between">
-            <div>
-              <h2 className="font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight text-white">
-                Let&rsquo;s design a partnership that fits your agency.
-              </h2>
-              <p className="mt-3 max-w-2xl text-white/70">
-                Tell us about your book, the role types you struggle to deliver, and how you want
-                your clients to experience the workspace. We&rsquo;ll take it from there.
-              </p>
-            </div>
-            <div className="flex flex-wrap gap-3">
-              <Link
-                to="/contact"
-                className="inline-flex min-h-11 items-center justify-center rounded-md bg-white px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-navy)] hover:opacity-90"
-              >
-                Discuss a Partnership
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-              <Link
-                to="/how-it-works"
-                className="inline-flex min-h-11 items-center justify-center rounded-md border border-white/30 px-5 py-2.5 text-sm font-semibold text-white hover:bg-white/10"
-              >
-                See How It Works
-              </Link>
+          <div className="rounded-2xl bg-[color:var(--brand-navy)] px-6 py-14 text-white sm:px-12 sm:py-16">
+            <div className="flex flex-col items-start gap-6 md:flex-row md:items-center md:justify-between">
+              <div>
+                <h2 className="font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight text-white">
+                  Let&rsquo;s design a partnership that fits your agency.
+                </h2>
+                <p className="mt-3 max-w-2xl text-white/70">
+                  Tell us about your book, the role types you struggle to deliver, and how you
+                  want your clients to experience the workspace. We&rsquo;ll take it from there.
+                </p>
+              </div>
+              <div className="flex flex-wrap gap-3">
+                <Link
+                  to="/contact"
+                  className="inline-flex min-h-11 items-center justify-center rounded-md bg-white px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-navy)] hover:opacity-90"
+                >
+                  Discuss a Partnership
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+                <Link
+                  to="/how-it-works"
+                  className="inline-flex min-h-11 items-center justify-center rounded-md border border-white/30 px-5 py-2.5 text-sm font-semibold text-white hover:bg-white/10"
+                >
+                  See How It Works
+                </Link>
+              </div>
             </div>
           </div>
         </PublicPage>
-      </CtaSection>
+      </PublicSection>
+
     </>
   );
 }
