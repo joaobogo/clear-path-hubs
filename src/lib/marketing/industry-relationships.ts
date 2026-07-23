@@ -37,7 +37,7 @@ const CATEGORY_AUDIENCE: Record<string, { to: string; label: string; blurb: stri
   "Regulated & Public": { to: "/enterprise", label: "For regulated operators", blurb: "Audit trails and compliance-ready workflow." },
   "Go-to-Market": { to: "/solutions", label: "For revenue teams", blurb: "Ranked GTM shortlists tied to quota-carrying evidence." },
   "People & GTM": { to: "/solutions", label: "For people and revenue leaders", blurb: "Structured intake for hybrid people/GTM roles." },
-  "People & Advisory": { to: "/staffing-partnership", label: "For staffing and advisory teams", blurb: "Extend your desk with an on-demand delivery layer." },
+  "People & Advisory": { to: "/partnerships/staffing", label: "For staffing and advisory teams", blurb: "Extend your desk with an on-demand delivery layer." },
   "Professional Services": { to: "/enterprise", label: "For partner-led firms", blurb: "Confidential sourcing for principal and partner-track hires." },
   "Built Environment & Industrial": { to: "/enterprise", label: "For industrial operators", blurb: "Site-aware sourcing with certifications validated up front." },
   "Operations & Services": { to: "/solutions", label: "For operations leaders", blurb: "Structured hiring for multi-site and services teams." },
