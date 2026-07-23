@@ -24,7 +24,7 @@ import {
   Briefcase,
   Users,
   MessageSquare,
-  CalendarClock,
+  // CalendarClock removed from nav; icon no longer needed here.
   UserCog,
   Settings,
 } from "lucide-react";
