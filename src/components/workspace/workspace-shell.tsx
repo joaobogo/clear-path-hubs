@@ -259,13 +259,21 @@ export function WorkspaceShell(props: WorkspaceShellProps) {
   }, [pathname, setMobileOpen]);
 
   return (
-    <div className="flex min-h-screen w-full bg-muted/20">
+    <div
+      className="flex min-h-screen w-full"
+      style={{ background: "var(--taas-shell-bg-gradient)" }}
+    >
       {/* Desktop sidebar */}
       <aside
         className={cn(
-          "sticky top-0 hidden h-screen shrink-0 flex-col border-r bg-card md:flex transition-[width] duration-200 ease-out",
-          collapsed ? "w-14" : "w-60",
+          "sticky top-0 hidden h-screen shrink-0 flex-col border-r md:flex transition-[width] duration-200 ease-out",
+          collapsed ? "w-14" : "w-64",
         )}
+        style={{
+          background: "var(--taas-shell-sidebar-bg)",
+          borderColor: "var(--taas-shell-sidebar-border)",
+          boxShadow: "1px 0 0 0 var(--taas-shell-sidebar-border)",
+        }}
         aria-label="Workspace navigation"
       >
         <ContextHeader
@@ -274,18 +282,28 @@ export function WorkspaceShell(props: WorkspaceShellProps) {
           sub={contextSubLabel}
           collapsed={collapsed}
         />
-        {aboveNav && !collapsed && <div className="border-b px-3 py-2">{aboveNav}</div>}
+        {aboveNav && !collapsed && (
+          <div
+            className="border-b px-3 py-2"
+            style={{ borderColor: "var(--taas-shell-sidebar-border)" }}
+          >
+            {aboveNav}
+          </div>
+        )}
         <NavList
           navItems={navItems}
           pathname={pathname}
           collapsed={collapsed}
           linkSearch={linkSearch}
         />
-        <div className="border-t p-2">
+        <div
+          className="border-t p-2"
+          style={{ borderColor: "var(--taas-shell-sidebar-border)" }}
+        >
           <button
             type="button"
             onClick={toggle}
-            className="flex w-full items-center justify-center gap-2 rounded-md px-2 py-1.5 text-xs text-muted-foreground hover:bg-muted hover:text-foreground"
+            className="flex w-full items-center justify-center gap-2 rounded-md px-2 py-1.5 text-xs text-muted-foreground hover:bg-[color:var(--taas-shell-nav-hover-bg)] hover:text-foreground transition-colors"
             aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
             aria-pressed={collapsed}
           >
@@ -303,13 +321,31 @@ export function WorkspaceShell(props: WorkspaceShellProps) {
       {mobileOpen && (
         <div className="fixed inset-0 z-50 md:hidden" role="dialog" aria-modal="true">
           <div
-            className="absolute inset-0 bg-foreground/40"
+            className="absolute inset-0 bg-foreground/50 backdrop-blur-sm"
             onClick={() => setMobileOpen(false)}
             aria-hidden
           />
-          <aside className="absolute inset-y-0 left-0 flex w-72 flex-col bg-card shadow-xl">
-            <div className="flex h-14 items-center justify-between border-b px-4">
-              <span className="text-sm font-semibold">{contextLabel}</span>
+          <aside
+            className="absolute inset-y-0 left-0 flex w-72 flex-col shadow-2xl"
+            style={{ background: "var(--taas-shell-sidebar-bg)" }}
+          >
+            <div
+              className="flex h-16 items-center justify-between border-b px-4"
+              style={{ borderColor: "var(--taas-shell-sidebar-border)" }}
+            >
+              <div className="flex items-center gap-2 min-w-0">
+                <span
+                  className="grid h-8 w-8 shrink-0 place-items-center rounded-lg font-bold text-sm text-white"
+                  style={{
+                    background: "var(--taas-shell-logo-gradient)",
+                    boxShadow: "var(--taas-shell-logo-shadow)",
+                    fontFamily: "var(--taas-font-display)",
+                  }}
+                >
+                  T
+                </span>
+                <span className="truncate text-sm font-semibold">{contextLabel}</span>
+              </div>
               <button
                 type="button"
                 onClick={() => setMobileOpen(false)}
@@ -319,7 +355,14 @@ export function WorkspaceShell(props: WorkspaceShellProps) {
                 <X className="h-4 w-4" />
               </button>
             </div>
-            {aboveNav && <div className="border-b px-3 py-2">{aboveNav}</div>}
+            {aboveNav && (
+              <div
+                className="border-b px-3 py-2"
+                style={{ borderColor: "var(--taas-shell-sidebar-border)" }}
+              >
+                {aboveNav}
+              </div>
+            )}
             <NavList
               navItems={navItems}
               pathname={pathname}
@@ -327,7 +370,10 @@ export function WorkspaceShell(props: WorkspaceShellProps) {
               linkSearch={linkSearch}
               onNavigate={() => setMobileOpen(false)}
             />
-            <div className="border-t p-3">
+            <div
+              className="border-t p-3"
+              style={{ borderColor: "var(--taas-shell-sidebar-border)" }}
+            >
               <SignOutButton className="inline-flex w-full items-center justify-center gap-1.5 rounded-md px-2 py-2 text-xs text-muted-foreground hover:bg-muted hover:text-foreground" />
             </div>
           </aside>
