@@ -6,6 +6,7 @@ import {
   CtaSection,
 } from "@/components/marketing/site-shell";
 import { marketingHead } from "@/lib/marketing/head";
+import { PageConnections } from "@/components/marketing/page-connections";
 
 export const Route = createFileRoute("/journey")({
   head: () =>
@@ -409,6 +410,12 @@ function JourneyPage() {
         description="Submit a role in the guided intake — your workspace is ready as soon as you finish."
         primary={{ to: "/intake", label: "Start hiring" }}
         secondary={{ to: "/how-it-works", label: "See how it works" }}
+      />
+          <PageConnections
+        commercial={{ to: "/how-it-works", label: "See the model in action", desc: "The product built from this story." }}
+        explainer={{ to: "/about", label: "Meet the team", desc: "Founders and operators behind TaaSFlow." }}
+        resource={{ to: "/case-studies", label: "Where it lands", desc: "Named outcomes from the current model." }}
+        audience={{ to: "/industries", label: "By industry", desc: "How the model adapts to your vertical." }}
       />
     </SiteShell>
   );

@@ -10,6 +10,7 @@ import { PricingTierCard } from "@/components/marketing/pricing-tier-card";
 import { AgencyComparator } from "@/components/marketing/agency-comparator";
 import { PRICING_TIERS, NEVER_CHARGED } from "@/content/pricing";
 import { Check, X } from "lucide-react";
+import { PageConnections } from "@/components/marketing/page-connections";
 
 export const Route = createFileRoute("/pricing")({
   head: () =>
@@ -194,6 +195,12 @@ function PricingPage() {
         description="Complete the guided intake or book a short call — no obligation, no placement fees, no lock-in on the conversation."
         primary={{ to: "/intake", label: "Start Hiring" }}
         secondary={{ to: "/contact", label: "Contact Sales" }}
+      />
+          <PageConnections
+        commercial={{ to: "/intake", label: "Start hiring", desc: "Pick a plan and open your first role." }}
+        explainer={{ to: "/how-it-works", label: "How delivery works", desc: "What each subscription actually includes each week." }}
+        resource={{ to: "/faq", label: "Pricing questions answered", desc: "Overages, holds, cancellation, and enterprise terms." }}
+        audience={{ to: "/enterprise", label: "Enterprise pricing", desc: "Volume, procurement, and MSA-ready terms." }}
       />
     </SiteShell>
   );

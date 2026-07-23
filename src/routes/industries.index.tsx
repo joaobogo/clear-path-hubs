@@ -7,6 +7,7 @@ import {
 } from "@/components/marketing/site-shell";
 import { IndustryGallery } from "@/components/marketing/industry-gallery";
 import { marketingHead } from "@/lib/marketing/head";
+import { PageConnections } from "@/components/marketing/page-connections";
 
 export const Route = createFileRoute("/industries/")({
   head: () =>
@@ -128,6 +129,12 @@ function IndustriesIndex() {
         description="Submit a role and your workspace is ready when you finish the guided intake."
         primary={{ to: "/intake", label: "Start hiring" }}
         secondary={{ to: "/how-it-works", label: "See how it works" }}
+      />
+          <PageConnections
+        commercial={{ to: "/intake", label: "Start hiring", desc: "Kick off a role in your industry." }}
+        explainer={{ to: "/how-it-works", label: "How delivery works", desc: "Role blueprints, sourcing, and ranking per vertical." }}
+        resource={{ to: "/case-studies", label: "Industry outcomes", desc: "Named hiring results across verticals." }}
+        audience={{ to: "/solutions", label: "By team stage", desc: "Series A–C operator playbooks." }}
       />
     </SiteShell>
   );

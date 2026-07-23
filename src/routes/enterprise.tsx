@@ -3,6 +3,7 @@ import { marketingHead } from "@/lib/marketing/head";
 import { SiteShell, PublicPage, PublicSection, CtaSection } from "@/components/marketing/site-shell";
 import { EnterpriseStakeholderSelector } from "@/components/marketing/enterprise-stakeholder-selector";
 import {
+import { PageConnections } from "@/components/marketing/page-connections";
   Building2,
   Layers,
   Users,
@@ -362,6 +363,12 @@ function EnterprisePage() {
         description="Book a consultation to scope role families, business units, and reporting. Or start a single search today and expand from there."
         primary={{ to: "/contact", label: "Book Enterprise Consultation" }}
         secondary={{ to: "/intake", label: "Start Hiring" }}
+      />
+          <PageConnections
+        commercial={{ to: "/contact", label: "Talk to enterprise sales", desc: "Get a scoped rollout and pricing proposal." }}
+        explainer={{ to: "/how-it-works", label: "The operating model", desc: "How multi-role portfolios run through the workspace." }}
+        resource={{ to: "/case-studies", label: "Portfolio outcomes", desc: "How large teams govern hiring at scale." }}
+        audience={{ to: "/global-talent", label: "Global talent options", desc: "Hire compliantly across borders." }}
       />
     </SiteShell>
   );

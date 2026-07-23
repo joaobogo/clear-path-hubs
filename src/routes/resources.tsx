@@ -17,6 +17,7 @@ import {
 import { SiteShell } from "@/components/marketing/site-shell";
 import { getPage } from "@/lib/marketing/content";
 import { marketingHead } from "@/lib/marketing/head";
+import { PageConnections } from "@/components/marketing/page-connections";
 
 const entry = getPage("resources");
 
@@ -558,6 +559,12 @@ function ResourcesPage() {
           </div>
         </section>
       </section>
+          <PageConnections
+        commercial={{ to: "/how-it-works", label: "See how it works", desc: "The operational spine behind every playbook." }}
+        explainer={{ to: "/pricing", label: "What it costs", desc: "Subscription tiers and enterprise options." }}
+        resource={{ to: "/blog", label: "Latest on the blog", desc: "Hiring strategy, cost math, and evaluation frameworks." }}
+        audience={{ to: "/industries", label: "Explore by industry", desc: "Role blueprints across 57 verticals." }}
+      />
     </SiteShell>
   );
 }

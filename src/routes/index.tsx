@@ -56,6 +56,7 @@ import { CalculatorCtaBridge } from "@/components/marketing/calculator-cta-bridg
 import type { CalculatorResult } from "@/lib/roi-calculator";
 import { WhySwitchMatrix } from "@/components/marketing/why-switch-matrix";
 import { ProofSystem } from "@/components/marketing/proof-system";
+import { PageConnections } from "@/components/marketing/page-connections";
 
 // Homepage metadata is authored inline (guardrail: legacy JSON entry contains
 // unapproved "14 days" and totals claims). Do not pass the legacy entry here.
@@ -1694,6 +1695,12 @@ function Home() {
         description="Open a role and get evidence per requirement, a live workspace your whole team can see, and a flat subscription instead of placement fees."
         primary={{ to: "/intake", label: "Start Hiring" }}
         secondary={{ to: "/contact", label: "Book a Call" }}
+      />
+          <PageConnections
+        commercial={{ to: "/pricing", label: "See pricing", desc: "Fixed monthly subscription, per role." }}
+        explainer={{ to: "/how-it-works", label: "How it works", desc: "Sourcing, evidence, ranking, delivery — step by step." }}
+        resource={{ to: "/case-studies", label: "Real outcomes", desc: "How teams cut cost per hire without losing quality." }}
+        audience={{ to: "/enterprise", label: "For enterprise teams", desc: "Governance, security, and multi-role rollouts." }}
       />
     </SiteShell>
   );

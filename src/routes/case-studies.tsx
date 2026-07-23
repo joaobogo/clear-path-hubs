@@ -24,6 +24,7 @@ import {
 import { SiteShell } from "@/components/marketing/site-shell";
 import { getPage } from "@/lib/marketing/content";
 import { marketingHead } from "@/lib/marketing/head";
+import { PageConnections } from "@/components/marketing/page-connections";
 
 const entry = getPage("case-studies");
 
@@ -693,6 +694,12 @@ function CaseStudiesPage() {
           </div>
         </section>
       </section>
+          <PageConnections
+        commercial={{ to: "/pricing", label: "See what it costs", desc: "Subscription pricing per role." }}
+        explainer={{ to: "/how-it-works", label: "Behind the outcomes", desc: "The operating model that produced these numbers." }}
+        resource={{ to: "/blog", label: "More on the blog", desc: "Deep dives on hiring economics and evaluation." }}
+        audience={{ to: "/industries", label: "By industry", desc: "Case-study-adjacent playbooks per vertical." }}
+      />
     </SiteShell>
   );
 }
