@@ -58,6 +58,7 @@ const intakePayloadSchema = z
     additionalContext: z.string().trim().max(4000).optional().or(z.literal("")),
     screeningQuestions: z.array(screeningQuestionSchema).max(20).default([]),
     consent: z.literal(true),
+    password: z.string().min(8).max(128).optional(),
     source: z.string().trim().max(80).default("public_form"),
     submittedAt: z.string().datetime().optional(),
   })
