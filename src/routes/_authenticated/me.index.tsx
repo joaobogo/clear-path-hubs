@@ -135,7 +135,7 @@ function MeHome() {
   return (
     <main className="mx-auto max-w-5xl px-4 sm:px-6 py-8 space-y-6">
       {/* Reassuring hero */}
-      <header className="rounded-2xl border bg-gradient-to-br from-primary/5 via-card to-card p-6 sm:p-8 taas-motion-surface">
+      <header className="rounded-2xl border bg-gradient-to-br from-primary/5 via-card to-card p-6 sm:p-8 motion-surface">
         <p className="text-xs uppercase tracking-wider text-muted-foreground">
           Welcome back
         </p>
@@ -150,7 +150,7 @@ function MeHome() {
 
       {/* Application status spotlight */}
       {spotlight ? (
-        <section className="rounded-2xl border bg-card p-5 sm:p-6 taas-motion-surface">
+        <section className="rounded-2xl border bg-card p-5 sm:p-6 motion-surface">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div className="min-w-0">
               <p className="text-xs uppercase tracking-wider text-muted-foreground">
@@ -293,7 +293,7 @@ function Tile({
   return (
     <Link
       to={to}
-      className="group rounded-2xl border bg-card p-5 taas-motion-surface transition-all hover:border-primary/40 hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+      className="group rounded-2xl border bg-card p-5 motion-surface transition-all hover:border-primary/40 hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
     >
       <div className="flex items-center gap-2 text-xs uppercase tracking-wider text-muted-foreground">
         <span className="grid h-6 w-6 place-items-center rounded-full bg-primary/10 text-primary">

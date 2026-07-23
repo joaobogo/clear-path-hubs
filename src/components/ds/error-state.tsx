@@ -28,7 +28,7 @@ export function ErrorState({
     <div
       role="alert"
       className={cn(
-        "taas-motion-surface flex flex-col items-center justify-center rounded-2xl border border-destructive/30 bg-danger-soft px-6 py-12 text-center",
+        "motion-surface flex flex-col items-center justify-center rounded-2xl border border-destructive/30 bg-danger-soft px-6 py-12 text-center",
         className,
       )}
     >
