@@ -79,6 +79,18 @@ export const getClientContext = createServerFn({ method: "GET" })
       context.userId,
       data.orgId,
     );
+    const { data: prof } = await context.supabase
+      .from("profiles")
+      .select("full_name, timezone, client_onboarding_dismissed_at")
+      .eq("auth_user_id", context.userId)
+      .maybeSingle();
+    const onboarding = {
+      dismissed_at:
+        (prof as { client_onboarding_dismissed_at?: string | null } | null)
+          ?.client_onboarding_dismissed_at ?? null,
+      timezone: (prof as { timezone?: string | null } | null)?.timezone ?? null,
+      display_name: (prof as { full_name?: string | null } | null)?.full_name ?? null,
+    };
     if (!active) {
       return {
         active: null as null | {
@@ -92,6 +104,7 @@ export const getClientContext = createServerFn({ method: "GET" })
           name: m.organizations?.name ?? "Organization",
         })),
         isStaff,
+        onboarding,
       };
     }
     return {
@@ -106,7 +119,30 @@ export const getClientContext = createServerFn({ method: "GET" })
         name: m.organizations?.name ?? "Organization",
       })),
       isStaff,
+      onboarding,
     };
+  });
+
+export const dismissClientOnboarding = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { error } = await context.supabase
+      .from("profiles")
+      .update({ client_onboarding_dismissed_at: new Date().toISOString() })
+      .eq("auth_user_id", context.userId);
+    if (error) throw new Error(error.message);
+    return { ok: true as const };
+  });
+
+export const resetClientOnboarding = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { error } = await context.supabase
+      .from("profiles")
+      .update({ client_onboarding_dismissed_at: null })
+      .eq("auth_user_id", context.userId);
+    if (error) throw new Error(error.message);
+    return { ok: true as const };
   });
 
 // ─── Canonical KPI service ──────────────────────────────────────────────────
