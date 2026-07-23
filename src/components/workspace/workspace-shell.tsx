@@ -44,6 +44,8 @@ export type WorkspaceShellProps = {
   topBanner?: ReactNode;
   /** Search params merged into every nav link (support-view mode). */
   linkSearch?: Record<string, string | undefined>;
+  /** Global search scope. Defaults to "client". Admin layout should pass "admin". */
+  searchScope?: "admin" | "client";
   children: ReactNode;
 };
 
