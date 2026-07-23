@@ -7,17 +7,36 @@
  * unique title, description, hero, challenge set, role list and CTA.
  */
 
+export type IndustryFAQ = { q: string; a: string };
+export type IndustryRoleFamily = { name: string; roles: string[]; blurb?: string };
+export type IndustryResource = { title: string; kind: string; to: string; description?: string };
+export type IndustryRelated = { slug: string; name: string; blurb?: string };
+
 export type IndustryEntry = {
   slug: string;
   eyebrow: string;
   name: string;
+  category?: string;
+  aliases?: string[];
+  summary?: string;
   meta: { title: string; description: string };
   hero: { title: string; subtitle: string };
   challenges: { title: string; body: string }[];
+  solutions?: { title: string; body: string }[];
+  roleFamilies?: IndustryRoleFamily[];
   roles: string[];
+  candidateSignals?: { title: string; body: string }[];
+  skills?: string[];
+  tools?: string[];
+  certifications?: string[];
+  regulatedRequirements?: string[];
   signals: string[];
+  relatedIndustries?: IndustryRelated[];
+  resources?: IndustryResource[];
+  faqs?: IndustryFAQ[];
   cta: { title: string; description: string };
 };
+
 
 export const INDUSTRY_ENTRIES: IndustryEntry[] = [
   {
