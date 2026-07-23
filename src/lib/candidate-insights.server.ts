@@ -61,6 +61,8 @@ Non-negotiables:
 - Return STRICT JSON matching the schema. Do not include prose outside JSON.`;
 
 const SCHEMA_HINT = `{
+  "pitch_summary": "3-5 sentence elevator pitch to a hiring manager (sell if strong, honest gaps if weak)",
+  "pitch_tone": "sell|balanced|cautious",
   "narrative": "2-3 paragraphs",
   "headline_suggested": "one-line professional headline",
   "seniority": "junior|mid|senior|lead|executive|unknown",
