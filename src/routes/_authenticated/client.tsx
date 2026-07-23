@@ -8,7 +8,6 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useMemo, useState } from "react";
 import { z } from "zod";
-import { fallback } from "@tanstack/zod-adapter";
 import { getClientContext } from "@/lib/client.functions";
 import { startSupportSession } from "@/lib/support.functions";
 import { supabase } from "@/integrations/supabase/client";
