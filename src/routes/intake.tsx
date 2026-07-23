@@ -267,16 +267,16 @@ function IntakePage() {
       ...validateStep(1, state),
       ...validateStep(2, state),
       ...validateStep(3, state),
-      ...validateStep(5, state),
+      ...validateStep(6, state),
     };
     setErrors(allErrs);
     if (Object.keys(allErrs).length > 0) {
       // jump back to first step containing an error
       const firstKey = Object.keys(allErrs)[0];
-      if (["firstName", "lastName", "workEmail", "companyName"].includes(firstKey)) setStep(1);
-      else if (["roleTitle", "workModel"].includes(firstKey)) setStep(2);
+      if (["roleTitle", "workModel"].includes(firstKey)) setStep(1);
+      else if (["firstName", "lastName", "workEmail", "companyName"].includes(firstKey)) setStep(2);
       else if (["mustHaveSkills", "jobDescription"].includes(firstKey)) setStep(3);
-      else if (["password", "passwordConfirm", "consent"].includes(firstKey)) setStep(5);
+      else if (["password", "passwordConfirm", "consent"].includes(firstKey)) setStep(6);
       toast.error("Please fix the highlighted fields");
       return;
     }
