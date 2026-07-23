@@ -545,7 +545,7 @@ function RowOverflowMenu({ row, onArchive }: { row: ClientRow; onArchive: () => 
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
-          <Link to="/admin/clients/$id" params={{ id: row.id }} search={{ tab: "profile" }}>
+          <Link to="/admin/clients/$id" params={{ id: row.id }} search={{ tab: "overview" }}>
             <Pencil className="mr-2 h-4 w-4" />
             Edit
           </Link>
