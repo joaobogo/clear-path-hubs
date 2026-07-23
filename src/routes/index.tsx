@@ -1374,6 +1374,11 @@ function Home() {
       {/* 2 — TRUST */}
       <TrustStrip />
 
+      {/* 2b — STRAIGHT ANSWERS (sales-risk removal) */}
+      <StraightAnswers />
+
+
+
       {/* 3 — WHAT YOU RECEIVE */}
       <PublicSection>
         <PublicPage>
