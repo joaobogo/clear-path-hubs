@@ -31,7 +31,7 @@ const SOLUTIONS = [
   {
     icon: Rocket,
     title: "Pilot a single hire",
-    body: "Test TaaSFlow on one role for $399. Ranked shortlist in 14 days. If it isn't the best hiring experience you've had, you don't renew.",
+    body: `Test TaaSFlow on one role${PILOT_PRICE_LABEL}. Ranked shortlist delivered fast. If it isn't the best hiring experience you've had, you don't renew.`,
     cta: { to: "/pilot", label: "Start a pilot" },
   },
   {
