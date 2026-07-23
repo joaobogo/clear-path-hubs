@@ -46,6 +46,7 @@ function LoginPage() {
   const qa = Route.useLoaderData();
   const runPersona = useServerFn(qaPersonaLogin);
   const runSession = useServerFn(getSessionContext);
+  const runProvision = useServerFn(provisionClientMembershipForSelf);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
