@@ -11,6 +11,7 @@ import {
   getClientCandidatesForOrg,
   getClientDocuments,
   updateClientNotes,
+  restoreOrganization,
 } from "@/lib/admin.functions";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -181,7 +182,7 @@ function ClientDetail() {
       {tab === "overview" && <OverviewTab org={org} members={members} positions={positions} />}
       {tab === "company" && <CompanyTab org={org} />}
       {tab === "contacts" && <ContactsTab org={org} members={members} />}
-      {tab === "team" && <TeamTab members={members} />}
+      {tab === "team" && <TeamTab members={members} org={org} />}
       {tab === "positions" && <PositionsTab positions={positions} />}
       {tab === "candidates" && <CandidatesTab id={id} />}
       {tab === "messages" && <MessagesTab orgId={org.id} />}
@@ -399,13 +400,26 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function TeamTab({ members }: { members: any[] }) {
+function TeamTab({ members, org }: { members: any[]; org: any }) {
+  const archived = Boolean(org.archived_at);
+  const workspaceHref = `/client?org=${encodeURIComponent(org.id)}&preview=client_admin&tab=team`;
   return (
     <section className="space-y-3">
-      <div className="rounded-md border p-3 text-xs text-muted-foreground bg-muted/40">
-        User invite / role edit / password reset / deactivate are managed via the master
-        admin team console; wire-through actions land in a follow-up. Read view below is
-        canonical.
+      <div className="flex flex-wrap items-start justify-between gap-3 rounded-md border bg-muted/30 p-3 text-xs">
+        <div className="max-w-2xl text-muted-foreground">
+          Invitations, role changes, reactivation and removal are performed inside
+          the Client Workspace so every mutation is audited under an interactive
+          support session. Click <strong>Manage team</strong> to open this
+          tenant&rsquo;s team console as an administrator.
+        </div>
+        <a
+          href={workspaceHref}
+          className="inline-flex items-center gap-1.5 rounded-md bg-primary px-2.5 py-1.5 text-xs font-medium text-primary-foreground hover:bg-primary/90 aria-disabled:pointer-events-none aria-disabled:opacity-50"
+          aria-disabled={archived}
+          data-qa-action="manage-team-in-workspace"
+        >
+          Manage team <ExternalLink className="h-3 w-3" />
+        </a>
       </div>
       <div className="rounded-lg border overflow-hidden">
         <table className="w-full text-sm">
@@ -603,6 +617,17 @@ function SettingsTab({ org }: { org: any }) {
     onError: (e: Error) => toast.error(e.message),
   });
 
+  const restore = useMutation({
+    mutationFn: () => restoreOrganization({ data: { id: org.id } }),
+    onSuccess: async (res) => {
+      toast.success(`Client restored · ${res.trace_id ?? "ok"}`);
+      await qc.invalidateQueries({ queryKey: ["admin-client", org.id] });
+      await qc.invalidateQueries({ queryKey: ["admin-clients"] });
+      router.invalidate();
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
   return (
     <section className="space-y-4">
       <div className="rounded-lg border p-4 text-sm">
@@ -617,23 +642,42 @@ function SettingsTab({ org }: { org: any }) {
           )}
         </dl>
       </div>
-      <div className="rounded-lg border border-destructive/30 bg-destructive/5 p-4 text-sm">
-        <div className="font-medium text-destructive">Archive client</div>
-        <p className="mt-1 text-muted-foreground">
-          Archiving hides the organization from active client lists and sets its
-          dashboard to inactive. Data is retained for audit and can be restored by
-          the platform team. Type the exact company name to confirm.
-        </p>
-        <Button
-          variant="outline"
-          className="mt-3"
-          disabled={alreadyArchived}
-          onClick={() => setOpen(true)}
-          data-qa-action="open-archive-dialog"
-        >
-          {alreadyArchived ? "Already archived" : "Archive client…"}
-        </Button>
-      </div>
+      {alreadyArchived ? (
+        <div className="rounded-lg border border-amber-500/40 bg-amber-500/5 p-4 text-sm">
+          <div className="font-medium text-amber-700 dark:text-amber-400">Restore client</div>
+          <p className="mt-1 text-muted-foreground">
+            This client is archived. Restoring returns it to active client lists,
+            reactivates any suspended memberships, and re-enables the workspace.
+            The action is audited.
+          </p>
+          <Button
+            variant="outline"
+            className="mt-3"
+            disabled={restore.isPending}
+            onClick={() => restore.mutate()}
+            data-qa-action="restore-client"
+          >
+            {restore.isPending ? "Restoring…" : "Restore client"}
+          </Button>
+        </div>
+      ) : (
+        <div className="rounded-lg border border-destructive/30 bg-destructive/5 p-4 text-sm">
+          <div className="font-medium text-destructive">Archive client</div>
+          <p className="mt-1 text-muted-foreground">
+            Archiving hides the organization from active client lists and sets its
+            dashboard to inactive. Data is retained for audit and can be restored by
+            the platform team. Type the exact company name to confirm.
+          </p>
+          <Button
+            variant="outline"
+            className="mt-3"
+            onClick={() => setOpen(true)}
+            data-qa-action="open-archive-dialog"
+          >
+            Archive client…
+          </Button>
+        </div>
+      )}
 
       <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) setConfirm(""); }}>
         <DialogContent>
