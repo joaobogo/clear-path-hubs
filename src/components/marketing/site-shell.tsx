@@ -157,7 +157,8 @@ function Header() {
   useEffect(() => { setOpen(false); }, [pathname]);
 
   const signIn = SECONDARY_CTAS.find((c) => c.label === "Sign in") ?? { to: "/login", label: "Sign in" };
-  const browseJobs = SECONDARY_CTAS.find((c) => c.label === "Browse jobs") ?? { to: "/jobs", label: "Browse jobs" };
+  const browseJobs = SECONDARY_CTAS.find((c) => c.label === "Browse Jobs") ?? { to: "/jobs", label: "Browse Jobs" };
+  const joinNetwork = SECONDARY_CTAS.find((c) => c.label === "Join the Talent Network") ?? { to: "/candidate-join", label: "Join the Talent Network" };
 
   return (
     <>
@@ -171,19 +172,20 @@ function Header() {
             className="relative hidden flex-1 items-center justify-center lg:flex"
           >
             <NavigationMenuPrimitive.List className="flex items-center gap-1">
-              {NAV_GROUPS.map((group) => (
-                <NavigationMenuPrimitive.Item key={group.label}>
-                  <GroupTrigger label={group.label} />
-                  <GroupContent links={group.links} />
-                </NavigationMenuPrimitive.Item>
-              ))}
-              {CONFIG_PRIMARY_NAV.filter((n) => !n.hidden).map((n) => (
-                <NavigationMenuPrimitive.Item key={n.to}>
-                  <NavigationMenuPrimitive.Link asChild>
-                    <DesktopNavLink to={n.to} label={n.label} />
-                  </NavigationMenuPrimitive.Link>
-                </NavigationMenuPrimitive.Item>
-              ))}
+              {PRIMARY_ITEMS.map((item) =>
+                item.kind === "link" ? (
+                  <NavigationMenuPrimitive.Item key={item.to}>
+                    <NavigationMenuPrimitive.Link asChild>
+                      <DesktopNavLink to={item.to} label={item.label} />
+                    </NavigationMenuPrimitive.Link>
+                  </NavigationMenuPrimitive.Item>
+                ) : (
+                  <NavigationMenuPrimitive.Item key={item.label}>
+                    <GroupTrigger label={item.label} />
+                    <GroupContent links={item.links} />
+                  </NavigationMenuPrimitive.Item>
+                ),
+              )}
             </NavigationMenuPrimitive.List>
             <div className="absolute left-0 top-full flex w-full justify-center">
               <NavigationMenuPrimitive.Viewport className="origin-top-center relative mt-2 h-[var(--radix-navigation-menu-viewport-height)] w-full overflow-hidden rounded-xl border border-[color:var(--brand-navy)]/10 bg-white text-[color:var(--brand-navy)] shadow-lg data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-90 md:w-[var(--radix-navigation-menu-viewport-width)]" />
