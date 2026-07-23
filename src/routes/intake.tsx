@@ -39,101 +39,150 @@ export const Route = createFileRoute("/intake")({
   component: IntakePage,
 });
 
-const DRAFT_KEY = "taasflow.intake.draft.v2";
-const IDEM_KEY = "taasflow.intake.idem.v2";
+const DRAFT_KEY = "taasflow.intake.draft.v3";
+const IDEM_KEY = "taasflow.intake.idem.v3";
 
-type ScreeningQ = {
-  question: string;
-  answer_type: "text" | "boolean" | "number";
-  required: boolean;
-  dealbreaker: boolean;
-};
+const DISQUALIFIER_OPTIONS = [
+  "Compensation above budget",
+  "No degree or certification",
+  "No distributed/remote experience",
+  "No relevant industry experience",
+  "No work authorization",
+  "Overqualified for the level",
+  "Weak communication skills",
+  "Currently at a competitor",
+] as const;
+
+const COMPANY_TYPE_OPTIONS = [
+  "Startups (Seed - Series B)",
+  "Growth-stage (Series C+)",
+  "Public / Enterprise",
+  "Big Tech (FAANG)",
+  "Consulting firms",
+  "Agencies",
+  "Non-profit",
+  "Government",
+] as const;
 
 type FormState = {
-  firstName: string;
-  lastName: string;
-  workEmail: string;
-  phone: string;
-  companyName: string;
-  companyWebsite: string;
-  industry: string;
-  companySize: string;
-  headquarters: string;
+  // Step 1 — Role Definition
   roleTitle: string;
-  department: string;
-  location: string;
-  workModel: "" | "remote" | "hybrid" | "onsite";
   employmentType: "" | "full_time" | "part_time" | "contract" | "temporary" | "internship";
+  workModel: "" | "remote" | "hybrid" | "onsite";
   seniority: string;
   headcount: string;
   jobDescription: string;
-  responsibilities: string;
+  openWorldwide: boolean;
+  targetCountries: string[];
+  statesRegions: string[];
+  metroAreas: string[];
+  searchRadius: string;
+  hiringUrgency: string;
+  targetStartDate: string;
+  timeToHire: string;
+  department: string;
+  location: string;
+
+  // Step 2 — Hiring Contact
+  companyName: string;
+  companyWebsite: string;
+  companySize: string;
+  headquarters: string;
+  hireFromCountries: string[];
+  firstName: string;
+  lastName: string;
+  currentTitle: string;
+  workEmail: string;
+  phone: string;
+  employerValueProposition: string;
+
+  // Step 3 — Candidate Profile
   mustHaveSkills: string[];
-  preferredRequirements: string;
+  niceToHaveSkills: string[];
+  certificationsList: string[];
+  toolsPlatforms: string[];
   experience: string;
   education: string;
-  certifications: string;
-  languages: string;
-  industryExperience: string;
-  dealbreakers: string;
-  compensation: string;
-  hiringUrgency: string;
-  hiringTimeline: string;
-  targetCountries: string[];
-  workAuthorization: string;
-  targetTitles: string[];
   timezoneRequirements: string;
-  reasonForHiring: "" | "replacement" | "growth" | "backfill" | "new_team";
-  hiringChallenges: string;
+  responsibilities: string;
+  additionalRequirements: string;
+
+  // Step 4 — Compensation
+  currency: string;
+  budgetMin: string;
+  budgetMax: string;
+  compensation: string; // free-text notes
+
+  // Step 5 — Search Criteria
+  targetTitles: string[];
+  titleMatchTiming: "" | "current" | "previous" | "either";
+  targetCompanyTypes: string[];
+  includeKeywords: string[];
+  excludeKeywords: string[];
+  disqualifiers: string[];
   interviewProcess: string;
-  decisionMakers: string;
   additionalContext: string;
-  screeningQuestions: ScreeningQ[];
+
+  // Step 6 — Submit
   password: string;
   passwordConfirm: string;
   consent: boolean;
 };
 
 const EMPTY: FormState = {
-  firstName: "",
-  lastName: "",
-  workEmail: "",
-  phone: "",
-  companyName: "",
-  companyWebsite: "",
-  industry: "",
-  companySize: "",
-  headquarters: "",
   roleTitle: "",
+  employmentType: "",
+  workModel: "",
+  seniority: "",
+  headcount: "1",
+  jobDescription: "",
+  openWorldwide: false,
+  targetCountries: [],
+  statesRegions: [],
+  metroAreas: [],
+  searchRadius: "",
+  hiringUrgency: "",
+  targetStartDate: "",
+  timeToHire: "",
   department: "",
   location: "",
-  workModel: "",
-  employmentType: "",
-  seniority: "",
-  headcount: "",
-  jobDescription: "",
-  responsibilities: "",
+
+  companyName: "",
+  companyWebsite: "",
+  companySize: "",
+  headquarters: "",
+  hireFromCountries: [],
+  firstName: "",
+  lastName: "",
+  currentTitle: "",
+  workEmail: "",
+  phone: "",
+  employerValueProposition: "",
+
   mustHaveSkills: [],
-  preferredRequirements: "",
+  niceToHaveSkills: [],
+  certificationsList: [],
+  toolsPlatforms: [],
   experience: "",
   education: "",
-  certifications: "",
-  languages: "",
-  industryExperience: "",
-  dealbreakers: "",
-  compensation: "",
-  hiringUrgency: "",
-  hiringTimeline: "",
-  targetCountries: [],
-  workAuthorization: "",
-  targetTitles: [],
   timezoneRequirements: "",
-  reasonForHiring: "",
-  hiringChallenges: "",
+  responsibilities: "",
+  additionalRequirements: "",
+
+  currency: "USD",
+  budgetMin: "",
+  budgetMax: "",
+  compensation: "",
+
+  targetTitles: [],
+  titleMatchTiming: "",
+  targetCompanyTypes: [],
+  includeKeywords: [],
+  excludeKeywords: [],
+  disqualifiers: [],
   interviewProcess: "",
-  decisionMakers: "",
   additionalContext: "",
-  screeningQuestions: [],
+
   password: "",
   passwordConfirm: "",
   consent: false,
@@ -167,13 +216,21 @@ function validateStep(step: number, s: FormState): Record<string, string> {
   const e: Record<string, string> = {};
   if (step === 1) {
     if (!s.roleTitle.trim()) e.roleTitle = "Role title is required";
-    if (!s.workModel) e.workModel = "Select a work model";
+    if (!s.employmentType) e.employmentType = "Select an employment type";
+    if (!s.workModel) e.workModel = "Select a work arrangement";
+    if (!s.seniority.trim()) e.seniority = "Select a seniority level";
+    const n = Number(s.headcount);
+    if (!s.headcount || !Number.isFinite(n) || n < 1) e.headcount = "At least 1 position required";
   }
   if (step === 2) {
+    if (!s.companyName.trim()) e.companyName = "Organization name is required";
+    if (!s.companyWebsite.trim()) e.companyWebsite = "Company website is required";
+    if (!s.companySize) e.companySize = "Select company size";
+    if (!s.headquarters.trim()) e.headquarters = "Headquarters is required";
+    if (s.hireFromCountries.length === 0) e.hireFromCountries = "Add at least one country you can hire from";
     if (!s.firstName.trim()) e.firstName = "First name is required";
     if (!s.lastName.trim()) e.lastName = "Last name is required";
     if (!emailIsValid(s.workEmail)) e.workEmail = "Enter a valid work email";
-    if (!s.companyName.trim()) e.companyName = "Company name is required";
   }
   if (step === 3) {
     const skills = uniqueLower(s.mustHaveSkills);
@@ -182,6 +239,9 @@ function validateStep(step: number, s: FormState): Record<string, string> {
       e.mustHaveSkills =
         "Provide at least 3 must-have skills or a job description of at least 40 characters";
     }
+  }
+  if (step === 5) {
+    if (s.targetTitles.length === 0) e.targetTitles = "Add at least one target job title";
   }
   if (step === 6) {
     if (!s.password || s.password.length < 8) e.password = "Choose a password with at least 8 characters";
@@ -197,14 +257,9 @@ function IntakePage() {
   const [state, setState] = useState<FormState>(EMPTY);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
-  const [skillDraft, setSkillDraft] = useState("");
-  const [countryDraft, setCountryDraft] = useState("");
-  const [titleDraft, setTitleDraft] = useState("");
-  const [qDraft, setQDraft] = useState("");
   const idemRef = useRef<string>("");
   const firstErrRef = useRef<HTMLElement | null>(null);
 
-  // Load draft + idempotency key from storage (client-only)
   useEffect(() => {
     try {
       const raw = localStorage.getItem(DRAFT_KEY);
@@ -231,7 +286,6 @@ function IntakePage() {
     }
   }, [state]);
 
-  // Focus first invalid field when errors change
   useEffect(() => {
     if (Object.keys(errors).length === 0) return;
     const first = Object.keys(errors)[0];
@@ -262,20 +316,20 @@ function IntakePage() {
   };
 
   const submit = async () => {
-    // Cross-step validation
     const allErrs = {
       ...validateStep(1, state),
       ...validateStep(2, state),
       ...validateStep(3, state),
+      ...validateStep(5, state),
       ...validateStep(6, state),
     };
     setErrors(allErrs);
     if (Object.keys(allErrs).length > 0) {
-      // jump back to first step containing an error
       const firstKey = Object.keys(allErrs)[0];
-      if (["roleTitle", "workModel"].includes(firstKey)) setStep(1);
-      else if (["firstName", "lastName", "workEmail", "companyName"].includes(firstKey)) setStep(2);
-      else if (["mustHaveSkills", "jobDescription"].includes(firstKey)) setStep(3);
+      if (["roleTitle", "workModel", "employmentType", "seniority", "headcount"].includes(firstKey)) setStep(1);
+      else if (["firstName", "lastName", "workEmail", "companyName", "companyWebsite", "companySize", "headquarters", "hireFromCountries"].includes(firstKey)) setStep(2);
+      else if (["mustHaveSkills"].includes(firstKey)) setStep(3);
+      else if (["targetTitles"].includes(firstKey)) setStep(5);
       else if (["password", "passwordConfirm", "consent"].includes(firstKey)) setStep(6);
       toast.error("Please fix the highlighted fields");
       return;
@@ -285,13 +339,20 @@ function IntakePage() {
     try {
       const payload = {
         idempotencyKey: idemRef.current || crypto.randomUUID(),
+        // Contact
         firstName: state.firstName.trim(),
         lastName: state.lastName.trim(),
+        currentTitle: state.currentTitle.trim(),
         workEmail: state.workEmail.trim().toLowerCase(),
+        phone: state.phone.trim(),
+        // Organization
         companyName: state.companyName.trim(),
         companyWebsite: state.companyWebsite.trim(),
-        industry: state.industry.trim(),
+        companySize: state.companySize,
         headquarters: state.headquarters.trim(),
+        hireFromCountries: uniqueLower(state.hireFromCountries),
+        employerValueProposition: state.employerValueProposition.trim(),
+        // Role
         roleTitle: state.roleTitle.trim(),
         department: state.department.trim(),
         location: state.location.trim(),
@@ -300,26 +361,41 @@ function IntakePage() {
         seniority: state.seniority.trim(),
         headcount: state.headcount ? Number(state.headcount) : null,
         jobDescription: state.jobDescription.trim(),
+        // Geography
+        openWorldwide: state.openWorldwide,
+        targetCountries: uniqueLower(state.targetCountries),
+        statesRegions: uniqueLower(state.statesRegions),
+        metroAreas: uniqueLower(state.metroAreas),
+        searchRadius: state.searchRadius.trim(),
+        // Timeline
+        hiringUrgency: state.hiringUrgency.trim(),
+        targetStartDate: state.targetStartDate.trim(),
+        timeToHire: state.timeToHire.trim(),
+        // Candidate profile
         mustHaveSkills: uniqueLower(state.mustHaveSkills),
-        preferredRequirements: state.preferredRequirements.trim(),
+        niceToHaveSkills: uniqueLower(state.niceToHaveSkills),
+        certificationsList: uniqueLower(state.certificationsList),
+        toolsPlatforms: uniqueLower(state.toolsPlatforms),
         experience: state.experience.trim(),
         education: state.education.trim(),
-        certifications: state.certifications.trim(),
-        languages: state.languages.trim(),
-        industryExperience: state.industryExperience.trim(),
-        dealbreakers: state.dealbreakers.trim(),
-        compensation: state.compensation.trim(),
-        hiringUrgency: state.hiringUrgency.trim(),
-        hiringTimeline: state.hiringTimeline.trim(),
-        reasonForHiring: state.reasonForHiring || "",
-        targetCountries: uniqueLower(state.targetCountries),
-        workAuthorization: state.workAuthorization.trim(),
-        targetTitles: uniqueLower(state.targetTitles),
         timezoneRequirements: state.timezoneRequirements.trim(),
-        hiringChallenges: state.hiringChallenges.trim(),
+        responsibilities: state.responsibilities.trim(),
+        additionalRequirements: state.additionalRequirements.trim(),
+        // Compensation
+        currency: state.currency,
+        budgetMin: state.budgetMin ? Number(state.budgetMin) : null,
+        budgetMax: state.budgetMax ? Number(state.budgetMax) : null,
+        compensation: state.compensation.trim(),
+        // Search
+        targetTitles: uniqueLower(state.targetTitles),
+        titleMatchTiming: state.titleMatchTiming || "",
+        targetCompanyTypes: state.targetCompanyTypes,
+        includeKeywords: uniqueLower(state.includeKeywords),
+        excludeKeywords: uniqueLower(state.excludeKeywords),
+        disqualifiers: state.disqualifiers,
         interviewProcess: state.interviewProcess.trim(),
-        decisionMakers: state.decisionMakers.trim(),
-        screeningQuestions: state.screeningQuestions.filter((q) => q.question.trim().length >= 3),
+        additionalContext: state.additionalContext.trim(),
+        // Consent
         consent: state.consent,
         password: state.password,
         source: "public_form",
@@ -336,7 +412,6 @@ function IntakePage() {
         toast.error(body?.message || body?.error || "Submission failed. Please retry.");
         return;
       }
-      // clear draft on success (keep idem in case of navigation retry not needed)
       try {
         localStorage.removeItem(DRAFT_KEY);
         localStorage.removeItem(IDEM_KEY);
@@ -356,6 +431,23 @@ function IntakePage() {
 
   const progress = useMemo(() => Math.round(((step - 1) / (STEPS.length - 1)) * 100), [step]);
 
+  const toggleDisqualifier = (opt: string) => {
+    set(
+      "disqualifiers",
+      state.disqualifiers.includes(opt)
+        ? state.disqualifiers.filter((d) => d !== opt)
+        : [...state.disqualifiers, opt],
+    );
+  };
+  const toggleCompanyType = (opt: string) => {
+    set(
+      "targetCompanyTypes",
+      state.targetCompanyTypes.includes(opt)
+        ? state.targetCompanyTypes.filter((d) => d !== opt)
+        : [...state.targetCompanyTypes, opt],
+    );
+  };
+
   return (
     <FormShell
       exitTo="/"
@@ -366,7 +458,6 @@ function IntakePage() {
       title="Start a hiring engagement"
       description="Tell us who you need to hire. TaaSFlow returns evidence-scored shortlists — usually within 48 hours. No account required. Your progress is saved as you go."
     >
-
       <div className="mb-6" aria-label="Progress">
         <Progress value={progress} />
         <ol className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
@@ -388,555 +479,573 @@ function IntakePage() {
             Step {step}: {STEPS[step - 1].label}
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-5">
-          {step === 2 && (
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <Field label="First name" error={errors.firstName} required>
-                <Input
-                  data-field="firstName"
-                  value={state.firstName}
-                  onChange={(e) => set("firstName", e.target.value)}
-                  autoComplete="given-name"
-                />
-              </Field>
-              <Field label="Last name" error={errors.lastName} required>
-                <Input
-                  data-field="lastName"
-                  value={state.lastName}
-                  onChange={(e) => set("lastName", e.target.value)}
-                  autoComplete="family-name"
-                />
-              </Field>
-              <Field label="Work email" error={errors.workEmail} required className="sm:col-span-2">
-                <Input
-                  data-field="workEmail"
-                  type="email"
-                  value={state.workEmail}
-                  onChange={(e) => set("workEmail", e.target.value)}
-                  autoComplete="email"
-                />
-              </Field>
-              <Field label="Company name" error={errors.companyName} required>
-                <Input
-                  data-field="companyName"
-                  value={state.companyName}
-                  onChange={(e) => set("companyName", e.target.value)}
-                  autoComplete="organization"
-                />
-              </Field>
-              <Field label="Phone" hint="Optional. Best number to reach you.">
-                <Input
-                  type="tel"
-                  value={state.phone}
-                  onChange={(e) => set("phone", e.target.value)}
-                  autoComplete="tel"
-                  placeholder="+1 555 123 4567"
-                />
-              </Field>
-              <Field label="Company website">
-                <Input
-                  value={state.companyWebsite}
-                  onChange={(e) => set("companyWebsite", e.target.value)}
-                  placeholder="https://"
-                />
-              </Field>
-              <Field label="Industry">
-                <Input
-                  value={state.industry}
-                  onChange={(e) => set("industry", e.target.value)}
-                  placeholder="SaaS, Fintech, Healthcare…"
-                />
-              </Field>
-              <Field label="Company size">
-                <Select
-                  value={state.companySize}
-                  onValueChange={(v) => set("companySize", v)}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select…" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="1-10">1–10</SelectItem>
-                    <SelectItem value="11-50">11–50</SelectItem>
-                    <SelectItem value="51-200">51–200</SelectItem>
-                    <SelectItem value="201-500">201–500</SelectItem>
-                    <SelectItem value="501-1000">501–1000</SelectItem>
-                    <SelectItem value="1000+">1000+</SelectItem>
-                  </SelectContent>
-                </Select>
-              </Field>
-              <Field label="Headquarters" className="sm:col-span-2">
-                <Input
-                  value={state.headquarters}
-                  onChange={(e) => set("headquarters", e.target.value)}
-                  placeholder="City, Country"
-                />
-              </Field>
-            </div>
-          )}
-
+        <CardContent className="space-y-6">
+          {/* ================= STEP 1: ROLE DEFINITION ================= */}
           {step === 1 && (
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <Field label="Role title" error={errors.roleTitle} required className="sm:col-span-2">
-                <Input
-                  data-field="roleTitle"
-                  value={state.roleTitle}
-                  onChange={(e) => set("roleTitle", e.target.value)}
-                />
-              </Field>
-              <Field label="Department">
-                <Input
-                  value={state.department}
-                  onChange={(e) => set("department", e.target.value)}
-                />
-              </Field>
-              <Field label="Location">
-                <Input
-                  value={state.location}
-                  onChange={(e) => set("location", e.target.value)}
-                />
-              </Field>
-              <Field label="Work model" error={errors.workModel} required>
-                <Select
-                  value={state.workModel}
-                  onValueChange={(v) => set("workModel", v as FormState["workModel"])}
-                >
-                  <SelectTrigger data-field="workModel">
-                    <SelectValue placeholder="Select…" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="remote">Remote</SelectItem>
-                    <SelectItem value="hybrid">Hybrid</SelectItem>
-                    <SelectItem value="onsite">Onsite</SelectItem>
-                  </SelectContent>
-                </Select>
-              </Field>
-              <Field label="Employment type">
-                <Select
-                  value={state.employmentType}
-                  onValueChange={(v) => set("employmentType", v as FormState["employmentType"])}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select…" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="full_time">Full time</SelectItem>
-                    <SelectItem value="part_time">Part time</SelectItem>
-                    <SelectItem value="contract">Contract</SelectItem>
-                    <SelectItem value="temporary">Temporary</SelectItem>
-                    <SelectItem value="internship">Internship</SelectItem>
-                  </SelectContent>
-                </Select>
-              </Field>
-              <Field label="Seniority">
-                <Input
-                  value={state.seniority}
-                  onChange={(e) => set("seniority", e.target.value)}
-                  placeholder="Senior, Lead, Principal…"
-                />
-              </Field>
-              <Field label="Headcount">
-                <Input
-                  type="number"
-                  min={1}
-                  max={999}
-                  value={state.headcount}
-                  onChange={(e) => set("headcount", e.target.value)}
-                />
-              </Field>
-            </div>
-          )}
-
-          {step === 3 && (
-            <div className="space-y-4">
-              <Field
-                label="Must-have skills"
-                hint="Add at least 3 or provide a job description of at least 40 characters."
-                error={errors.mustHaveSkills}
-              >
-                <div className="flex gap-2">
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <Field label="Role Title" error={errors.roleTitle} required className="sm:col-span-2">
                   <Input
-                    data-field="mustHaveSkills"
-                    value={skillDraft}
-                    onChange={(e) => setSkillDraft(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" || e.key === ",") {
-                        e.preventDefault();
-                        const v = skillDraft.trim().replace(/,$/, "");
-                        if (v) set("mustHaveSkills", uniqueLower([...state.mustHaveSkills, v]));
-                        setSkillDraft("");
-                      }
-                    }}
-                    placeholder="Type a skill and press Enter"
+                    data-field="roleTitle"
+                    value={state.roleTitle}
+                    onChange={(e) => set("roleTitle", e.target.value)}
+                    placeholder="e.g. Senior Backend Engineer"
                   />
-                  <Button
-                    type="button"
-                    variant="secondary"
-                    onClick={() => {
-                      const v = skillDraft.trim();
-                      if (v) set("mustHaveSkills", uniqueLower([...state.mustHaveSkills, v]));
-                      setSkillDraft("");
-                    }}
+                </Field>
+                <Field label="Employment Type" error={errors.employmentType} required>
+                  <Select
+                    value={state.employmentType}
+                    onValueChange={(v) => set("employmentType", v as FormState["employmentType"])}
                   >
-                    Add
-                  </Button>
-                </div>
-                <ChipList
-                  items={state.mustHaveSkills}
-                  onRemove={(i) =>
-                    set(
-                      "mustHaveSkills",
-                      state.mustHaveSkills.filter((_, idx) => idx !== i),
-                    )
-                  }
-                />
-              </Field>
-              <Field label="Job description">
+                    <SelectTrigger data-field="employmentType">
+                      <SelectValue placeholder="Select…" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="full_time">Full time</SelectItem>
+                      <SelectItem value="part_time">Part time</SelectItem>
+                      <SelectItem value="contract">Contract</SelectItem>
+                      <SelectItem value="temporary">Temporary</SelectItem>
+                      <SelectItem value="internship">Internship</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </Field>
+                <Field label="Work Arrangement" error={errors.workModel} required>
+                  <Select
+                    value={state.workModel}
+                    onValueChange={(v) => set("workModel", v as FormState["workModel"])}
+                  >
+                    <SelectTrigger data-field="workModel">
+                      <SelectValue placeholder="Select…" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="remote">Remote</SelectItem>
+                      <SelectItem value="hybrid">Hybrid</SelectItem>
+                      <SelectItem value="onsite">Onsite</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </Field>
+                <Field label="Seniority Level" error={errors.seniority} required>
+                  <Select value={state.seniority} onValueChange={(v) => set("seniority", v)}>
+                    <SelectTrigger data-field="seniority">
+                      <SelectValue placeholder="Select…" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Intern">Intern</SelectItem>
+                      <SelectItem value="Junior">Junior</SelectItem>
+                      <SelectItem value="Mid">Mid</SelectItem>
+                      <SelectItem value="Senior">Senior</SelectItem>
+                      <SelectItem value="Lead">Lead</SelectItem>
+                      <SelectItem value="Staff">Staff</SelectItem>
+                      <SelectItem value="Principal">Principal</SelectItem>
+                      <SelectItem value="Director">Director</SelectItem>
+                      <SelectItem value="VP">VP</SelectItem>
+                      <SelectItem value="C-Level">C-Level</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </Field>
+                <Field label="Positions to Fill" error={errors.headcount} required>
+                  <Input
+                    data-field="headcount"
+                    type="number"
+                    min={1}
+                    max={999}
+                    value={state.headcount}
+                    onChange={(e) => set("headcount", e.target.value)}
+                  />
+                </Field>
+              </div>
+
+              <Field
+                label="Job Description"
+                hint="Paste the JD or write it here. We use this to enrich matching."
+              >
                 <Textarea
-                  data-field="jobDescription"
                   rows={6}
                   value={state.jobDescription}
                   onChange={(e) => set("jobDescription", e.target.value)}
-                  placeholder="Describe the role, responsibilities, and success criteria."
+                  placeholder="Paste the full job description or describe the role, responsibilities, and success criteria."
                 />
                 <p className="mt-1 text-xs text-muted-foreground">
-                  {state.jobDescription.trim().length} / 40 minimum characters
+                  {state.jobDescription.trim().length} characters
                 </p>
               </Field>
-              <Field label="Key responsibilities" hint="Top outcomes and day-to-day scope.">
-                <Textarea
-                  rows={3}
-                  value={state.responsibilities}
-                  onChange={(e) => set("responsibilities", e.target.value)}
-                  placeholder="Own X. Lead Y. Deliver Z."
+
+              <SectionHeader
+                title="Geographic Requirements"
+                subtitle="Where the role can be based."
+              />
+              <label className="flex items-center gap-2 text-sm">
+                <Checkbox
+                  checked={state.openWorldwide}
+                  onCheckedChange={(v) => set("openWorldwide", Boolean(v))}
                 />
-              </Field>
-              <Field label="Preferred skills" hint="One per line.">
-                <Textarea
-                  rows={3}
-                  value={state.preferredRequirements}
-                  onChange={(e) => set("preferredRequirements", e.target.value)}
-                />
-              </Field>
+                <span>Open worldwide (fully remote — anywhere)</span>
+              </label>
+              {!state.openWorldwide && (
+                <div className="space-y-4">
+                  <ChipInput
+                    label="Target Countries"
+                    hint="Countries where the role can be based."
+                    error={errors.targetCountries}
+                    values={state.targetCountries}
+                    onChange={(v) => set("targetCountries", v)}
+                    placeholder="e.g. United States, Portugal, Germany"
+                  />
+                  <ChipInput
+                    label="States / Regions"
+                    values={state.statesRegions}
+                    onChange={(v) => set("statesRegions", v)}
+                    placeholder="e.g. California, Bavaria, Ontario"
+                  />
+                  <ChipInput
+                    label="Metro Areas"
+                    values={state.metroAreas}
+                    onChange={(v) => set("metroAreas", v)}
+                    placeholder="e.g. San Francisco Bay Area, Berlin, Lisbon"
+                  />
+                  <Field label="Search Radius" hint="Optional. e.g. 25 miles, 50 km">
+                    <Input
+                      value={state.searchRadius}
+                      onChange={(e) => set("searchRadius", e.target.value)}
+                      placeholder="25 miles"
+                    />
+                  </Field>
+                </div>
+              )}
+
+              <SectionHeader title="Timeline & Availability" subtitle="Optional." />
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                <Field label="Hiring Timeline">
+                  <Select value={state.hiringUrgency} onValueChange={(v) => set("hiringUrgency", v)}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Indicate your hiring timeline" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="asap">ASAP</SelectItem>
+                      <SelectItem value="30_days">Within 30 days</SelectItem>
+                      <SelectItem value="60_days">Within 60 days</SelectItem>
+                      <SelectItem value="90_days">Within 90 days</SelectItem>
+                      <SelectItem value="exploratory">Exploratory</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </Field>
+                <Field label="Target Start Date">
+                  <Input
+                    type="date"
+                    value={state.targetStartDate}
+                    onChange={(e) => set("targetStartDate", e.target.value)}
+                  />
+                </Field>
+                <Field label="Time to Hire" hint="How fast do you need to close?">
+                  <Input
+                    value={state.timeToHire}
+                    onChange={(e) => set("timeToHire", e.target.value)}
+                    placeholder="e.g. 4 weeks"
+                  />
+                </Field>
+              </div>
+            </div>
+          )}
+
+          {/* ================= STEP 2: HIRING CONTACT ================= */}
+          {step === 2 && (
+            <div className="space-y-6">
+              <SectionHeader title="Organization" />
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <Field label="Experience">
+                <Field label="Organization Name" error={errors.companyName} required>
+                  <Input
+                    data-field="companyName"
+                    value={state.companyName}
+                    onChange={(e) => set("companyName", e.target.value)}
+                    autoComplete="organization"
+                  />
+                </Field>
+                <Field label="Company Website" error={errors.companyWebsite} required>
+                  <Input
+                    data-field="companyWebsite"
+                    value={state.companyWebsite}
+                    onChange={(e) => set("companyWebsite", e.target.value)}
+                    placeholder="https://"
+                  />
+                </Field>
+                <Field label="Company Size" error={errors.companySize} required>
+                  <Select value={state.companySize} onValueChange={(v) => set("companySize", v)}>
+                    <SelectTrigger data-field="companySize">
+                      <SelectValue placeholder="Select…" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="1-10">1–10</SelectItem>
+                      <SelectItem value="11-50">11–50</SelectItem>
+                      <SelectItem value="51-200">51–200</SelectItem>
+                      <SelectItem value="201-500">201–500</SelectItem>
+                      <SelectItem value="501-1000">501–1000</SelectItem>
+                      <SelectItem value="1000+">1000+</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </Field>
+                <Field label="Headquarters" error={errors.headquarters} required>
+                  <Input
+                    data-field="headquarters"
+                    value={state.headquarters}
+                    onChange={(e) => set("headquarters", e.target.value)}
+                    placeholder="City, Country"
+                  />
+                </Field>
+                <div className="sm:col-span-2">
+                  <ChipInput
+                    label="Countries you can hire from"
+                    hint="Where you have legal entities or can employ candidates."
+                    error={errors.hireFromCountries}
+                    values={state.hireFromCountries}
+                    onChange={(v) => set("hireFromCountries", v)}
+                    required
+                    placeholder="e.g. United States, Portugal"
+                    dataField="hireFromCountries"
+                  />
+                </div>
+                <Field label="Employer Value Proposition" className="sm:col-span-2" hint="Why do candidates want to work with you? Mission, culture, perks.">
+                  <Textarea
+                    rows={3}
+                    value={state.employerValueProposition}
+                    onChange={(e) => set("employerValueProposition", e.target.value)}
+                    placeholder="Our mission is… We offer… Our team…"
+                  />
+                </Field>
+              </div>
+
+              <SectionHeader title="Primary Hiring Contact" />
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <Field label="First Name" error={errors.firstName} required>
+                  <Input
+                    data-field="firstName"
+                    value={state.firstName}
+                    onChange={(e) => set("firstName", e.target.value)}
+                    autoComplete="given-name"
+                  />
+                </Field>
+                <Field label="Last Name" error={errors.lastName} required>
+                  <Input
+                    data-field="lastName"
+                    value={state.lastName}
+                    onChange={(e) => set("lastName", e.target.value)}
+                    autoComplete="family-name"
+                  />
+                </Field>
+                <Field label="Current title" hint="Your role at the company.">
+                  <Input
+                    value={state.currentTitle}
+                    onChange={(e) => set("currentTitle", e.target.value)}
+                    placeholder="Head of Talent, VP People, CEO…"
+                  />
+                </Field>
+                <Field label="Work Email" error={errors.workEmail} required>
+                  <Input
+                    data-field="workEmail"
+                    type="email"
+                    value={state.workEmail}
+                    onChange={(e) => set("workEmail", e.target.value)}
+                    autoComplete="email"
+                  />
+                </Field>
+                <Field label="Direct Phone" hint="Optional. Best number to reach you." className="sm:col-span-2">
+                  <Input
+                    type="tel"
+                    value={state.phone}
+                    onChange={(e) => set("phone", e.target.value)}
+                    autoComplete="tel"
+                    placeholder="+1 555 123 4567"
+                  />
+                </Field>
+              </div>
+            </div>
+          )}
+
+          {/* ================= STEP 3: CANDIDATE PROFILE ================= */}
+          {step === 3 && (
+            <div className="space-y-6">
+              <ChipInput
+                label="Must-have skills"
+                hint="Add at least 3 or provide a job description of at least 40 characters on Step 1."
+                error={errors.mustHaveSkills}
+                values={state.mustHaveSkills}
+                onChange={(v) => set("mustHaveSkills", v)}
+                placeholder="Type a skill and press Enter"
+                dataField="mustHaveSkills"
+              />
+              <ChipInput
+                label="Nice-to-have skills"
+                hint="Bonus skills that strengthen a candidate."
+                values={state.niceToHaveSkills}
+                onChange={(v) => set("niceToHaveSkills", v)}
+                placeholder="e.g. GraphQL, Terraform"
+              />
+              <ChipInput
+                label="Required Certifications"
+                values={state.certificationsList}
+                onChange={(v) => set("certificationsList", v)}
+                placeholder="e.g. AWS SA, PMP, CFA"
+              />
+              <ChipInput
+                label="Required Tools & Platforms"
+                values={state.toolsPlatforms}
+                onChange={(v) => set("toolsPlatforms", v)}
+                placeholder="e.g. Salesforce, Snowflake, Figma"
+              />
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <Field label="Minimum Experience" hint="Years of relevant experience.">
                   <Input
                     value={state.experience}
                     onChange={(e) => set("experience", e.target.value)}
                     placeholder="e.g. 5+ years"
                   />
                 </Field>
-                <Field label="Education">
+                <Field label="Education Requirement">
                   <Input
                     value={state.education}
                     onChange={(e) => set("education", e.target.value)}
                     placeholder="e.g. BSc CS or equivalent"
                   />
                 </Field>
-                <Field label="Certifications">
+                <Field label="Required Timezone Coverage" className="sm:col-span-2">
                   <Input
-                    value={state.certifications}
-                    onChange={(e) => set("certifications", e.target.value)}
-                    placeholder="AWS SA, PMP…"
-                  />
-                </Field>
-                <Field label="Languages">
-                  <Input
-                    value={state.languages}
-                    onChange={(e) => set("languages", e.target.value)}
-                    placeholder="English (fluent), German (B2)…"
-                  />
-                </Field>
-                <Field label="Industry experience" className="sm:col-span-2">
-                  <Input
-                    value={state.industryExperience}
-                    onChange={(e) => set("industryExperience", e.target.value)}
-                    placeholder="Fintech, healthcare, gaming…"
+                    value={state.timezoneRequirements}
+                    onChange={(e) => set("timezoneRequirements", e.target.value)}
+                    placeholder="e.g. Must overlap CET 10:00–14:00"
                   />
                 </Field>
               </div>
-              <Field label="Dealbreakers" hint="One per line.">
+              <Field label="Core Responsibilities" hint="Top outcomes and day-to-day scope.">
+                <Textarea
+                  rows={4}
+                  value={state.responsibilities}
+                  onChange={(e) => set("responsibilities", e.target.value)}
+                  placeholder="Own X. Lead Y. Deliver Z."
+                />
+              </Field>
+              <Field label="Additional Requirements" hint="Anything else the candidate must have.">
                 <Textarea
                   rows={3}
-                  value={state.dealbreakers}
-                  onChange={(e) => set("dealbreakers", e.target.value)}
+                  value={state.additionalRequirements}
+                  onChange={(e) => set("additionalRequirements", e.target.value)}
                 />
               </Field>
             </div>
           )}
 
+          {/* ================= STEP 4: COMPENSATION ================= */}
           {step === 4 && (
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <Field label="Compensation">
-                <Input
+            <div className="space-y-6">
+              <SectionHeader
+                title="Budget range"
+                subtitle="Give us a realistic band. We use this to filter candidates."
+              />
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                <Field label="Currency">
+                  <Select value={state.currency} onValueChange={(v) => set("currency", v)}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select…" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="USD">USD</SelectItem>
+                      <SelectItem value="EUR">EUR</SelectItem>
+                      <SelectItem value="GBP">GBP</SelectItem>
+                      <SelectItem value="CAD">CAD</SelectItem>
+                      <SelectItem value="AUD">AUD</SelectItem>
+                      <SelectItem value="BRL">BRL</SelectItem>
+                      <SelectItem value="INR">INR</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </Field>
+                <Field label="Minimum" hint="Base salary or contract rate.">
+                  <Input
+                    type="number"
+                    min={0}
+                    value={state.budgetMin}
+                    onChange={(e) => set("budgetMin", e.target.value)}
+                    placeholder="80000"
+                  />
+                </Field>
+                <Field label="Maximum">
+                  <Input
+                    type="number"
+                    min={0}
+                    value={state.budgetMax}
+                    onChange={(e) => set("budgetMax", e.target.value)}
+                    placeholder="120000"
+                  />
+                </Field>
+              </div>
+              <Field label="Notes" hint="Bonus, equity, benefits, structure — anything relevant.">
+                <Textarea
+                  rows={3}
                   value={state.compensation}
                   onChange={(e) => set("compensation", e.target.value)}
-                  placeholder="e.g. €80k–€110k + equity"
+                  placeholder="e.g. Base + 20% bonus + equity. Fully remote stipend."
                 />
-              </Field>
-              <Field label="Hiring urgency">
-                <Select
-                  value={state.hiringUrgency}
-                  onValueChange={(v) => set("hiringUrgency", v)}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select…" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="asap">ASAP</SelectItem>
-                    <SelectItem value="30_days">Within 30 days</SelectItem>
-                    <SelectItem value="60_days">Within 60 days</SelectItem>
-                    <SelectItem value="90_days">Within 90 days</SelectItem>
-                    <SelectItem value="exploratory">Exploratory</SelectItem>
-                  </SelectContent>
-                </Select>
-              </Field>
-              <Field label="Hiring timeline" hint="Target start date or key milestones.">
-                <Input
-                  value={state.hiringTimeline}
-                  onChange={(e) => set("hiringTimeline", e.target.value)}
-                  placeholder="Start by Q3, onboarding by Sept…"
-                />
-              </Field>
-              <Field label="Reason for hiring" className="sm:col-span-2">
-                <Select
-                  value={state.reasonForHiring}
-                  onValueChange={(v) => set("reasonForHiring", v as FormState["reasonForHiring"])}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select…" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="growth">Growth — new headcount</SelectItem>
-                    <SelectItem value="replacement">Replacement</SelectItem>
-                    <SelectItem value="backfill">Backfill</SelectItem>
-                    <SelectItem value="new_team">New team / function</SelectItem>
-                  </SelectContent>
-                </Select>
               </Field>
             </div>
           )}
 
+          {/* ================= STEP 5: SEARCH CRITERIA ================= */}
           {step === 5 && (
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <Field label="Work authorization">
+            <div className="space-y-6">
+              <ChipInput
+                label="Target Job Titles"
+                hint="Titles to source from (current or previous roles)."
+                error={errors.targetTitles}
+                values={state.targetTitles}
+                onChange={(v) => set("targetTitles", v)}
+                placeholder="e.g. Senior Software Engineer, Staff Engineer"
+                required
+                dataField="targetTitles"
+              />
+              <Field label="Title Match Timing" hint="Should the target title be their current, previous, or either role?">
+                <Select
+                  value={state.titleMatchTiming}
+                  onValueChange={(v) => set("titleMatchTiming", v as FormState["titleMatchTiming"])}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select…" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="current">Current role only</SelectItem>
+                    <SelectItem value="previous">Previous role only</SelectItem>
+                    <SelectItem value="either">Either — current or previous</SelectItem>
+                  </SelectContent>
+                </Select>
+              </Field>
 
-                <Input
-                  value={state.workAuthorization}
-                  onChange={(e) => set("workAuthorization", e.target.value)}
-                  placeholder="EU, US, sponsor…"
-                />
-              </Field>
-              <Field label="Timezone requirements">
-                <Input
-                  value={state.timezoneRequirements}
-                  onChange={(e) => set("timezoneRequirements", e.target.value)}
-                  placeholder="CET ±3h"
-                />
-              </Field>
-              <Field label="Target countries" hint="Add and press Enter." className="sm:col-span-2">
-                <div className="flex gap-2">
-                  <Input
-                    value={countryDraft}
-                    onChange={(e) => setCountryDraft(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        e.preventDefault();
-                        const v = countryDraft.trim();
-                        if (v) set("targetCountries", uniqueLower([...state.targetCountries, v]));
-                        setCountryDraft("");
-                      }
-                    }}
-                  />
-                  <Button
-                    type="button"
-                    variant="secondary"
-                    onClick={() => {
-                      const v = countryDraft.trim();
-                      if (v) set("targetCountries", uniqueLower([...state.targetCountries, v]));
-                      setCountryDraft("");
-                    }}
-                  >
-                    Add
-                  </Button>
+              <div>
+                <Label className="mb-2 block text-sm">Target Company Types</Label>
+                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                  {COMPANY_TYPE_OPTIONS.map((opt) => (
+                    <label key={opt} className="flex items-center gap-2 text-sm">
+                      <Checkbox
+                        checked={state.targetCompanyTypes.includes(opt)}
+                        onCheckedChange={() => toggleCompanyType(opt)}
+                      />
+                      <span>{opt}</span>
+                    </label>
+                  ))}
                 </div>
-                <ChipList
-                  items={state.targetCountries}
-                  onRemove={(i) =>
-                    set(
-                      "targetCountries",
-                      state.targetCountries.filter((_, idx) => idx !== i),
-                    )
-                  }
-                />
-              </Field>
-              <Field label="Target titles" hint="Similar titles to consider." className="sm:col-span-2">
-                <div className="flex gap-2">
-                  <Input
-                    value={titleDraft}
-                    onChange={(e) => setTitleDraft(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        e.preventDefault();
-                        const v = titleDraft.trim();
-                        if (v) set("targetTitles", uniqueLower([...state.targetTitles, v]));
-                        setTitleDraft("");
-                      }
-                    }}
-                  />
-                  <Button
-                    type="button"
-                    variant="secondary"
-                    onClick={() => {
-                      const v = titleDraft.trim();
-                      if (v) set("targetTitles", uniqueLower([...state.targetTitles, v]));
-                      setTitleDraft("");
-                    }}
-                  >
-                    Add
-                  </Button>
+              </div>
+
+              <ChipInput
+                label="Include Keywords"
+                hint="Boost candidates whose profiles contain these terms."
+                values={state.includeKeywords}
+                onChange={(v) => set("includeKeywords", v)}
+                placeholder="e.g. Kubernetes, distributed systems"
+              />
+              <ChipInput
+                label="Exclude Keywords"
+                hint="Filter out candidates whose profiles contain these terms."
+                values={state.excludeKeywords}
+                onChange={(v) => set("excludeKeywords", v)}
+                placeholder="e.g. bootcamp only, agency"
+              />
+
+              <div>
+                <Label className="mb-2 block text-sm">Immediate disqualification criteria</Label>
+                <p className="mb-3 text-xs text-muted-foreground">
+                  Select conditions that automatically disqualify a candidate.
+                </p>
+                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                  {DISQUALIFIER_OPTIONS.map((opt) => (
+                    <label key={opt} className="flex items-center gap-2 text-sm">
+                      <Checkbox
+                        checked={state.disqualifiers.includes(opt)}
+                        onCheckedChange={() => toggleDisqualifier(opt)}
+                      />
+                      <span>{opt}</span>
+                    </label>
+                  ))}
                 </div>
-                <ChipList
-                  items={state.targetTitles}
-                  onRemove={(i) =>
-                    set("targetTitles", state.targetTitles.filter((_, idx) => idx !== i))
-                  }
-                />
-              </Field>
-              <Field label="Screening questions" className="sm:col-span-2">
-                <div className="flex gap-2">
-                  <Input
-                    value={qDraft}
-                    onChange={(e) => setQDraft(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        e.preventDefault();
-                        const v = qDraft.trim();
-                        if (v.length >= 3) {
-                          set("screeningQuestions", [
-                            ...state.screeningQuestions,
-                            { question: v, answer_type: "text", required: false, dealbreaker: false },
-                          ]);
-                          setQDraft("");
-                        }
-                      }
-                    }}
-                    placeholder="Add a question and press Enter"
-                  />
-                  <Button
-                    type="button"
-                    variant="secondary"
-                    onClick={() => {
-                      const v = qDraft.trim();
-                      if (v.length >= 3) {
-                        set("screeningQuestions", [
-                          ...state.screeningQuestions,
-                          { question: v, answer_type: "text", required: false, dealbreaker: false },
-                        ]);
-                        setQDraft("");
-                      }
-                    }}
-                  >
-                    Add
-                  </Button>
-                </div>
-                {state.screeningQuestions.length > 0 && (
-                  <ul className="mt-3 space-y-2">
-                    {state.screeningQuestions.map((q, i) => (
-                      <li
-                        key={i}
-                        className="flex items-start justify-between gap-2 rounded-md border p-3 text-sm"
-                      >
-                        <span className="flex-1">{q.question}</span>
-                        <button
-                          type="button"
-                          className="text-xs text-muted-foreground underline"
-                          onClick={() =>
-                            set(
-                              "screeningQuestions",
-                              state.screeningQuestions.filter((_, idx) => idx !== i),
-                            )
-                          }
-                        >
-                          Remove
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </Field>
-              <Field label="Current hiring challenges" className="sm:col-span-2">
+              </div>
+
+              <Field label="Interview Process" hint="Number of rounds, format, panel.">
                 <Textarea
-                  rows={2}
-                  value={state.hiringChallenges}
-                  onChange={(e) => set("hiringChallenges", e.target.value)}
-                  placeholder="What has made this role hard to fill?"
-                />
-              </Field>
-              <Field label="Interview process" hint="Number of rounds, format, panel." className="sm:col-span-2">
-                <Textarea
-                  rows={2}
+                  rows={3}
                   value={state.interviewProcess}
                   onChange={(e) => set("interviewProcess", e.target.value)}
                   placeholder="Screen → Technical → Panel → Offer"
                 />
               </Field>
-              <Field label="Decision makers" hint="Who signs off on the hire?" className="sm:col-span-2">
-                <Input
-                  value={state.decisionMakers}
-                  onChange={(e) => set("decisionMakers", e.target.value)}
-                  placeholder="Hiring manager, VP Eng, CEO…"
-                />
-              </Field>
-              <Field label="Additional context" className="sm:col-span-2">
+              <Field label="Additional Context" hint="Anything else we should know?">
                 <Textarea
                   rows={3}
                   value={state.additionalContext}
                   onChange={(e) => set("additionalContext", e.target.value)}
-                  placeholder="Anything else we should know?"
                 />
               </Field>
             </div>
           )}
 
+          {/* ================= STEP 6: REVIEW & SUBMIT ================= */}
           {step === 6 && (
             <div className="space-y-4 text-sm">
+              <ReviewBlock title="Role">
+                <div>
+                  {state.roleTitle || "—"} · {state.workModel || "—"} · {state.employmentType || "—"}
+                </div>
+                <div className="text-muted-foreground">
+                  {state.seniority || "—"} · Positions: {state.headcount || "—"}
+                </div>
+              </ReviewBlock>
+              <ReviewBlock title="Geography">
+                <div>
+                  {state.openWorldwide
+                    ? "Open worldwide"
+                    : state.targetCountries.join(", ") || "—"}
+                </div>
+                {state.metroAreas.length > 0 && (
+                  <div className="text-muted-foreground">Metros: {state.metroAreas.join(", ")}</div>
+                )}
+              </ReviewBlock>
               <ReviewBlock title="Contact">
                 <div>
-                  {state.firstName} {state.lastName} · {state.workEmail}
+                  {state.firstName} {state.lastName}
+                  {state.currentTitle ? ` · ${state.currentTitle}` : ""} · {state.workEmail}
                 </div>
                 <div className="text-muted-foreground">
                   {state.companyName}
-                  {state.companyWebsite ? ` · ${state.companyWebsite}` : ""}
+                  {state.companyWebsite ? ` · ${state.companyWebsite}` : ""} · {state.companySize || "—"}
                 </div>
               </ReviewBlock>
-              <ReviewBlock title="Role">
-                <div>
-                  {state.roleTitle} · {state.workModel || "—"}
-                  {state.location ? ` · ${state.location}` : ""}
-                </div>
+              <ReviewBlock title="Candidate profile">
+                <div>Must-have: {state.mustHaveSkills.join(", ") || "—"}</div>
+                <div>Nice-to-have: {state.niceToHaveSkills.join(", ") || "—"}</div>
                 <div className="text-muted-foreground">
-                  {state.seniority || "—"} · {state.employmentType || "—"} · Headcount {state.headcount || "—"}
+                  Experience: {state.experience || "—"} · Education: {state.education || "—"}
                 </div>
               </ReviewBlock>
-              <ReviewBlock title="Requirements">
-                <div>Must-have: {uniqueLower(state.mustHaveSkills).join(", ") || "—"}</div>
-                <div className="whitespace-pre-wrap text-muted-foreground">
-                  {state.jobDescription || "—"}
+              <ReviewBlock title="Compensation">
+                <div>
+                  {state.budgetMin || "—"}
+                  {state.budgetMax ? ` – ${state.budgetMax}` : ""} {state.currency}
                 </div>
+                {state.compensation && (
+                  <div className="text-muted-foreground">{state.compensation}</div>
+                )}
               </ReviewBlock>
-              <ReviewBlock title="Hiring context">
-                <div>Compensation: {state.compensation || "—"}</div>
-                <div>Urgency: {state.hiringUrgency || "—"}</div>
-                <div>Countries: {state.targetCountries.join(", ") || "—"}</div>
-                <div>Screening questions: {state.screeningQuestions.length}</div>
+              <ReviewBlock title="Search criteria">
+                <div>Titles: {state.targetTitles.join(", ") || "—"}</div>
+                {state.disqualifiers.length > 0 && (
+                  <div className="text-muted-foreground">
+                    Disqualifiers: {state.disqualifiers.join(", ")}
+                  </div>
+                )}
               </ReviewBlock>
 
-              <div className="rounded-md border p-4 space-y-3 bg-muted/30">
+              <div className="space-y-3 rounded-md border bg-muted/30 p-4">
                 <div>
                   <div className="text-sm font-medium">Create your client account</div>
-                  <p className="text-xs text-muted-foreground mt-0.5">
-                    We'll set up your workspace at <span className="font-medium text-foreground">{state.workEmail || "your work email"}</span>. Choose a password to sign in and track your shortlist.
+                  <p className="mt-0.5 text-xs text-muted-foreground">
+                    We'll set up your workspace at{" "}
+                    <span className="font-medium text-foreground">
+                      {state.workEmail || "your work email"}
+                    </span>
+                    . Choose a password to sign in and track your shortlist.
                   </p>
                 </div>
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -962,7 +1071,6 @@ function IntakePage() {
                   </Field>
                 </div>
               </div>
-
 
               <Field label="" error={errors.consent}>
                 <label className="flex items-start gap-2">
@@ -1044,27 +1152,88 @@ function Field({
   );
 }
 
-function ChipList({ items, onRemove }: { items: string[]; onRemove: (i: number) => void }) {
-  if (items.length === 0) return null;
+function SectionHeader({ title, subtitle }: { title: string; subtitle?: string }) {
   return (
-    <ul className="mt-2 flex flex-wrap gap-2">
-      {items.map((v, i) => (
-        <li
-          key={`${v}-${i}`}
-          className="inline-flex items-center gap-1 rounded-full bg-secondary px-2.5 py-1 text-xs"
-        >
-          <span>{v}</span>
-          <button
-            type="button"
-            aria-label={`Remove ${v}`}
-            className="text-muted-foreground"
-            onClick={() => onRemove(i)}
-          >
-            ×
-          </button>
-        </li>
-      ))}
-    </ul>
+    <div className="border-b pb-2">
+      <div className="text-sm font-semibold">{title}</div>
+      {subtitle && <div className="mt-0.5 text-xs text-muted-foreground">{subtitle}</div>}
+    </div>
+  );
+}
+
+function ChipInput({
+  label,
+  hint,
+  error,
+  values,
+  onChange,
+  placeholder,
+  required,
+  dataField,
+}: {
+  label: string;
+  hint?: string;
+  error?: string;
+  values: string[];
+  onChange: (v: string[]) => void;
+  placeholder?: string;
+  required?: boolean;
+  dataField?: string;
+}) {
+  const [draft, setDraft] = useState("");
+  const add = () => {
+    const v = draft.trim().replace(/,$/, "");
+    if (!v) return;
+    const map = new Map<string, string>();
+    for (const x of [...values, v]) {
+      const t = x.trim();
+      if (!t) continue;
+      const k = t.toLowerCase();
+      if (!map.has(k)) map.set(k, t);
+    }
+    onChange(Array.from(map.values()));
+    setDraft("");
+  };
+  return (
+    <Field label={label} hint={hint} error={error} required={required}>
+      <div className="flex gap-2">
+        <Input
+          data-field={dataField}
+          value={draft}
+          onChange={(e) => setDraft(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === ",") {
+              e.preventDefault();
+              add();
+            }
+          }}
+          placeholder={placeholder}
+        />
+        <Button type="button" variant="secondary" onClick={add}>
+          Add
+        </Button>
+      </div>
+      {values.length > 0 && (
+        <ul className="mt-2 flex flex-wrap gap-2">
+          {values.map((v, i) => (
+            <li
+              key={`${v}-${i}`}
+              className="inline-flex items-center gap-1 rounded-full bg-secondary px-2.5 py-1 text-xs"
+            >
+              <span>{v}</span>
+              <button
+                type="button"
+                aria-label={`Remove ${v}`}
+                className="text-muted-foreground"
+                onClick={() => onChange(values.filter((_, idx) => idx !== i))}
+              >
+                ×
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+    </Field>
   );
 }
 
