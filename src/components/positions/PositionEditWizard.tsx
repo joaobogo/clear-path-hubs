@@ -28,10 +28,13 @@ import {
 
 const STEPS = [
   { id: 1, label: "Role overview" },
-  { id: 2, label: "Requirements" },
-  { id: 3, label: "Hiring context" },
-  { id: 4, label: "Review & save" },
+  { id: 2, label: "Requirements & profile" },
+  { id: 3, label: "Compensation" },
+  { id: 4, label: "Search criteria" },
+  { id: 5, label: "Review & save" },
 ];
+const LAST_STEP = STEPS.length;
+
 
 type State = Omit<PositionEditInitial, "organization_id" | "organization_name" | "status">;
 
