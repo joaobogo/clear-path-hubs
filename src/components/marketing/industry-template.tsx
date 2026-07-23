@@ -444,17 +444,24 @@ export function IndustryTemplate({ entry }: { entry: IndustryEntry }) {
               </div>
               <span className="text-lg text-[color:var(--brand-ocean)] transition-transform group-hover:translate-x-1">→</span>
             </Link>
-            <Link
-              to="/intake"
-              className="group flex items-center justify-between rounded-2xl border border-[color:var(--brand-navy)] bg-[color:var(--brand-navy)] p-6 text-white transition-opacity hover:opacity-95"
-            >
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.14em] text-white/70">Next step</p>
-                <p className="mt-1 font-semibold">Start hiring for {entry.name}</p>
-                <p className="mt-1 text-sm text-white/80">Guided intake — draft saving, no login required.</p>
-              </div>
-              <span className="text-lg transition-transform group-hover:translate-x-1">→</span>
-            </Link>
+            <BookACallDialog
+              industrySlug={entry.slug}
+              industryName={entry.name}
+              trigger={
+                <button
+                  type="button"
+                  className="group flex w-full items-center justify-between rounded-2xl border border-[color:var(--brand-navy)] bg-[color:var(--brand-navy)] p-6 text-left text-white transition-opacity hover:opacity-95"
+                >
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-[0.14em] text-white/70">Next step</p>
+                    <p className="mt-1 font-semibold">Book a {entry.name} hiring call</p>
+                    <p className="mt-1 text-sm text-white/80">20 minutes — role, timeline, shortlist plan.</p>
+                  </div>
+                  <span className="text-lg transition-transform group-hover:translate-x-1">→</span>
+                </button>
+              }
+            />
+
           </div>
         </PublicPage>
       </PublicSection>
