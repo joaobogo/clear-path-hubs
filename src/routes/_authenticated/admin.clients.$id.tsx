@@ -400,13 +400,26 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function TeamTab({ members }: { members: any[] }) {
+function TeamTab({ members, org }: { members: any[]; org: any }) {
+  const archived = Boolean(org.archived_at);
+  const workspaceHref = `/client?org=${encodeURIComponent(org.id)}&preview=client_admin&tab=team`;
   return (
     <section className="space-y-3">
-      <div className="rounded-md border p-3 text-xs text-muted-foreground bg-muted/40">
-        User invite / role edit / password reset / deactivate are managed via the master
-        admin team console; wire-through actions land in a follow-up. Read view below is
-        canonical.
+      <div className="flex flex-wrap items-start justify-between gap-3 rounded-md border bg-muted/30 p-3 text-xs">
+        <div className="max-w-2xl text-muted-foreground">
+          Invitations, role changes, reactivation and removal are performed inside
+          the Client Workspace so every mutation is audited under an interactive
+          support session. Click <strong>Manage team</strong> to open this
+          tenant&rsquo;s team console as an administrator.
+        </div>
+        <a
+          href={workspaceHref}
+          className="inline-flex items-center gap-1.5 rounded-md bg-primary px-2.5 py-1.5 text-xs font-medium text-primary-foreground hover:bg-primary/90 aria-disabled:pointer-events-none aria-disabled:opacity-50"
+          aria-disabled={archived}
+          data-qa-action="manage-team-in-workspace"
+        >
+          Manage team <ExternalLink className="h-3 w-3" />
+        </a>
       </div>
       <div className="rounded-lg border overflow-hidden">
         <table className="w-full text-sm">
