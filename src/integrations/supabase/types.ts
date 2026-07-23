@@ -2948,6 +2948,7 @@ export type Database = {
             | Database["public"]["Enums"]["migration_row_status"]
             | null
           migration_version: string | null
+          openings: number
           organization_id: string
           preferred_requirements: Json
           published_at: string | null
@@ -2988,6 +2989,7 @@ export type Database = {
             | Database["public"]["Enums"]["migration_row_status"]
             | null
           migration_version?: string | null
+          openings?: number
           organization_id: string
           preferred_requirements?: Json
           published_at?: string | null
@@ -3028,6 +3030,7 @@ export type Database = {
             | Database["public"]["Enums"]["migration_row_status"]
             | null
           migration_version?: string | null
+          openings?: number
           organization_id?: string
           preferred_requirements?: Json
           published_at?: string | null
@@ -4792,10 +4795,12 @@ export type Database = {
       position_status:
         | "draft"
         | "submitted"
+        | "under_review"
         | "needs_clarification"
         | "approved"
         | "active"
         | "paused"
+        | "filled"
         | "closed"
         | "archived"
       position_visibility: "public" | "private" | "internal"
@@ -5058,10 +5063,12 @@ export const Constants = {
       position_status: [
         "draft",
         "submitted",
+        "under_review",
         "needs_clarification",
         "approved",
         "active",
         "paused",
+        "filled",
         "closed",
         "archived",
       ],
