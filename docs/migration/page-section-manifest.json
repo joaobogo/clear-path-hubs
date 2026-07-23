@@ -1,0 +1,3822 @@
+{
+  "trace": "MIG-VERIFIED-MANIFEST-2026-07-23",
+  "total_sections": 381,
+  "sections": [
+    {
+      "source_route": "/",
+      "section_order": 1,
+      "heading": "Your hiring team. On demand.",
+      "heading_level": 1,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/index.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/",
+      "section_order": 2,
+      "heading": "Cut your cost-per-hire. See the math.",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/index.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/",
+      "section_order": 3,
+      "heading": "Assumptions & Inputs",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/index.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/",
+      "section_order": 4,
+      "heading": "You found the perfect candidate. Now comes the invoice.",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/index.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/",
+      "section_order": 5,
+      "heading": "What agencies charge",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/index.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/",
+      "section_order": 6,
+      "heading": "How TaaSFlow works",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/index.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/",
+      "section_order": 7,
+      "heading": "A repeatable operating system, role by role",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/index.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/",
+      "section_order": 8,
+      "heading": "Blueprint & Calibration",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/index.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/",
+      "section_order": 9,
+      "heading": "Multi-Channel Sourcing",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/index.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/",
+      "section_order": 10,
+      "heading": "Screening & Scoring",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/index.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/",
+      "section_order": 11,
+      "heading": "Top 10 Shortlist Delivery",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/index.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/",
+      "section_order": 12,
+      "heading": "Ranked candidates, ready to interview",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/index.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/",
+      "section_order": 13,
+      "heading": "Ranked shortlist",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/index.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/",
+      "section_order": 14,
+      "heading": "Enriched profiles",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/index.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/",
+      "section_order": 15,
+      "heading": "Reasoning included",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/index.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/",
+      "section_order": 16,
+      "heading": "One pipeline",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/index.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/",
+      "section_order": 17,
+      "heading": "Two ways to hire. Zero placement fees.",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/index.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/",
+      "section_order": 18,
+      "heading": "Need to fill 1-3 roles fast?",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/index.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/",
+      "section_order": 19,
+      "heading": "Hiring for multiple positions?",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/index.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/",
+      "section_order": 20,
+      "heading": "How TaaS Stacks Up \u2014 On Every Metric",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/index.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/",
+      "section_order": 21,
+      "heading": "The TaaS Advantage",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/index.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/",
+      "section_order": 22,
+      "heading": "Recruiting without the drama",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/index.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/",
+      "section_order": 23,
+      "heading": "Source anywhere",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/index.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/",
+      "section_order": 24,
+      "heading": "Set & forget",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/index.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/",
+      "section_order": 25,
+      "heading": "Hire 1 or 10",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/index.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/",
+      "section_order": 26,
+      "heading": "Scoring that accelerates decisions",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/index.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/",
+      "section_order": 27,
+      "heading": "Role Fit",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/index.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/",
+      "section_order": 28,
+      "heading": "Scoring methodology FAQ",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/index.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/",
+      "section_order": 29,
+      "heading": "How are candidates scored?",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/index.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/",
+      "section_order": 30,
+      "heading": "What determines Role Fit (35%)?",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/index.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/",
+      "section_order": 31,
+      "heading": "How is Evidence (30%) evaluated?",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/index.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/",
+      "section_order": 32,
+      "heading": "What falls under Logistics (20%)?",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/index.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/",
+      "section_order": 33,
+      "heading": "What is Signal (15%)?",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/index.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/",
+      "section_order": 34,
+      "heading": "What are Qualifiers and Disqualifiers?",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/index.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/",
+      "section_order": 35,
+      "heading": "Why these specific weights?",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/index.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/",
+      "section_order": 36,
+      "heading": "Can weights be customised?",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/index.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/",
+      "section_order": 37,
+      "heading": "What our clients say",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/index.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/",
+      "section_order": 38,
+      "heading": "Measured Results. Not Marketing Claims.",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/index.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/",
+      "section_order": 39,
+      "heading": "SafiTech: Scaling a Development Team in 4 Weeks",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/index.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/",
+      "section_order": 40,
+      "heading": "Meet the Founders",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/index.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/how-it-works",
+      "section_order": 1,
+      "heading": "Built by Industry Leaders on 10 Years of Data",
+      "heading_level": 1,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/how-it-works.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/how-it-works",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/how-it-works",
+      "section_order": 2,
+      "heading": "From HR Frustration to Recruiting Innovation",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/how-it-works.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/how-it-works",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/how-it-works",
+      "section_order": 3,
+      "heading": "Traditional Recruiting Is Broken by Design",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/how-it-works.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/how-it-works",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/how-it-works",
+      "section_order": 4,
+      "heading": "Proprietary Technology Stack",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/how-it-works.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/how-it-works",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/how-it-works",
+      "section_order": 5,
+      "heading": "Data-Backed Decision Making",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/how-it-works.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/how-it-works",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/how-it-works",
+      "section_order": 6,
+      "heading": "Global Recruiting Intelligence",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/how-it-works.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/how-it-works",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/how-it-works",
+      "section_order": 7,
+      "heading": "14-Day Execution Standard",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/how-it-works.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/how-it-works",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/how-it-works",
+      "section_order": 8,
+      "heading": "Five Pillars of Precision",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/how-it-works.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/how-it-works",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/how-it-works",
+      "section_order": 9,
+      "heading": "Precision Intake Engine",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/how-it-works.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/how-it-works",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/how-it-works",
+      "section_order": 10,
+      "heading": "Multi-Channel Acquisition Network",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/how-it-works.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/how-it-works",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/how-it-works",
+      "section_order": 11,
+      "heading": "AI-Assisted Scoring Framework",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/how-it-works.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/how-it-works",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/how-it-works",
+      "section_order": 12,
+      "heading": "Weekly Delivery Cadence",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/how-it-works.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/how-it-works",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/how-it-works",
+      "section_order": 13,
+      "heading": "Feedback-Driven Refinement",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/how-it-works.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/how-it-works",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/how-it-works",
+      "section_order": 14,
+      "heading": "From Intake to Impact",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/how-it-works.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/how-it-works",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/how-it-works",
+      "section_order": 15,
+      "heading": "Strategic Intake & Calibration",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/how-it-works.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/how-it-works",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/how-it-works",
+      "section_order": 16,
+      "heading": "Targeted Candidate Acquisition",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/how-it-works.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/how-it-works",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/how-it-works",
+      "section_order": 17,
+      "heading": "Qualification & Scoring",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/how-it-works.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/how-it-works",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/how-it-works",
+      "section_order": 18,
+      "heading": "First Ranked Delivery",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/how-it-works.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/how-it-works",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/how-it-works",
+      "section_order": 19,
+      "heading": "Continuous Optimization",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/how-it-works.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/how-it-works",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/how-it-works",
+      "section_order": 20,
+      "heading": "The Win-Win-Win Mentality",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/how-it-works.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/how-it-works",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/how-it-works",
+      "section_order": 21,
+      "heading": "Candidates Win",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/how-it-works.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/how-it-works",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/how-it-works",
+      "section_order": 22,
+      "heading": "Companies Win",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/how-it-works.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/how-it-works",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/how-it-works",
+      "section_order": 23,
+      "heading": "We All Win",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/how-it-works.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/how-it-works",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/how-it-works",
+      "section_order": 24,
+      "heading": "Recruiting Across 50+ Countries",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/how-it-works.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/how-it-works",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/how-it-works",
+      "section_order": 25,
+      "heading": "Middle East",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/how-it-works.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/how-it-works",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/how-it-works",
+      "section_order": 26,
+      "heading": "Europe",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/how-it-works.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/how-it-works",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/how-it-works",
+      "section_order": 27,
+      "heading": "North America",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/how-it-works.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/how-it-works",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/how-it-works",
+      "section_order": 28,
+      "heading": "South America",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/how-it-works.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/how-it-works",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/how-it-works",
+      "section_order": 29,
+      "heading": "Asia Pacific",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/how-it-works.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/how-it-works",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/how-it-works",
+      "section_order": 30,
+      "heading": "Africa",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/how-it-works.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/how-it-works",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/how-it-works",
+      "section_order": 31,
+      "heading": "From Startups to Enterprises",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/how-it-works.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/how-it-works",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/how-it-works",
+      "section_order": 32,
+      "heading": "Startups & Scale-ups",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/how-it-works.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/how-it-works",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/how-it-works",
+      "section_order": 33,
+      "heading": "Mid-Market Companies",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/how-it-works.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/how-it-works",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/how-it-works",
+      "section_order": 34,
+      "heading": "Enterprise Organizations",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/how-it-works.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/how-it-works",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/how-it-works",
+      "section_order": 35,
+      "heading": "Our Values",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/how-it-works.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/how-it-works",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/how-it-works",
+      "section_order": 36,
+      "heading": "Systematic",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/how-it-works.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/how-it-works",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/how-it-works",
+      "section_order": 37,
+      "heading": "Global",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/how-it-works.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/how-it-works",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/how-it-works",
+      "section_order": 38,
+      "heading": "Data-Driven",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/how-it-works.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/how-it-works",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/how-it-works",
+      "section_order": 39,
+      "heading": "Iterative",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/how-it-works.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/how-it-works",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/how-it-works",
+      "section_order": 40,
+      "heading": "Transparent",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/how-it-works.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/how-it-works",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/pricing",
+      "section_order": 1,
+      "heading": "Plans that scale with volume",
+      "heading_level": 1,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/pricing.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/pricing",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/pricing",
+      "section_order": 2,
+      "heading": "Pilot \u2014 Single Position",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/pricing.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/pricing",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/pricing",
+      "section_order": 3,
+      "heading": "Multi Position",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/pricing.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/pricing",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/pricing",
+      "section_order": 4,
+      "heading": "Hiring Sprint",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/pricing.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/pricing",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/pricing",
+      "section_order": 5,
+      "heading": "Included Title",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/pricing.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/pricing",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/pricing",
+      "section_order": 6,
+      "heading": "Included Title",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/pricing.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/pricing",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/pricing",
+      "section_order": 7,
+      "heading": "Excluded Title",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/pricing.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/pricing",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/pricing",
+      "section_order": 8,
+      "heading": "After Title",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/pricing.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/pricing",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/pricing",
+      "section_order": 9,
+      "heading": "After Step1 Title",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/pricing.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/pricing",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/pricing",
+      "section_order": 10,
+      "heading": "After Step2 Title",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/pricing.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/pricing",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/pricing",
+      "section_order": 11,
+      "heading": "After Step3 Title",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/pricing.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/pricing",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/pricing",
+      "section_order": 12,
+      "heading": "After Step4 Title",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/pricing.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/pricing",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/pricing",
+      "section_order": 13,
+      "heading": "Compare Title",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/pricing.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/pricing",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/pricing",
+      "section_order": 14,
+      "heading": "Cut your cost-per-hire. See the math.",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/pricing.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/pricing",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/pricing",
+      "section_order": 15,
+      "heading": "Assumptions & Inputs",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/pricing.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/pricing",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/pricing",
+      "section_order": 16,
+      "heading": "Pricing Faq Title",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/pricing.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/pricing",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/pricing",
+      "section_order": 17,
+      "heading": "Pricing Faq1 Q",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/pricing.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/pricing",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/pricing",
+      "section_order": 18,
+      "heading": "Pricing Faq2 Q",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/pricing.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/pricing",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/pricing",
+      "section_order": 19,
+      "heading": "Pricing Faq3 Q",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/pricing.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/pricing",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/pricing",
+      "section_order": 20,
+      "heading": "Pricing Faq4 Q",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/pricing.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/pricing",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/pricing",
+      "section_order": 21,
+      "heading": "Pricing Faq5 Q",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/pricing.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/pricing",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/pricing",
+      "section_order": 22,
+      "heading": "Pricing Faq6 Q",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/pricing.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/pricing",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/pricing",
+      "section_order": 23,
+      "heading": "Pricing Faq7 Q",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/pricing.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/pricing",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/pricing",
+      "section_order": 24,
+      "heading": "Final Cta Title",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/pricing.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/pricing",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/pricing",
+      "section_order": 25,
+      "heading": "Explore Our Solutions",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/pricing.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/pricing",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/pricing",
+      "section_order": 26,
+      "heading": "Our Services",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/pricing.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/pricing",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/pricing",
+      "section_order": 27,
+      "heading": "Industries",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/pricing.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/pricing",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/pilot",
+      "section_order": 1,
+      "heading": "What the Pilot Is",
+      "heading_level": 1,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/pilot.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/pilot",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/pilot",
+      "section_order": 2,
+      "heading": "What Happens Next",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/pilot.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/pilot",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/pilot",
+      "section_order": 3,
+      "heading": "Blueprint Review",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/pilot.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/pilot",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/pilot",
+      "section_order": 4,
+      "heading": "Kickoff Call",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/pilot.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/pilot",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/pilot",
+      "section_order": 5,
+      "heading": "Execution Begins",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/pilot.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/pilot",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/pilot",
+      "section_order": 6,
+      "heading": "Scored Results",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/pilot.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/pilot",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/pilot",
+      "section_order": 7,
+      "heading": "Blueprint Review",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/pilot.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/pilot",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/pilot",
+      "section_order": 8,
+      "heading": "Kickoff Call",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/pilot.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/pilot",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/pilot",
+      "section_order": 9,
+      "heading": "Execution Begins",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/pilot.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/pilot",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/pilot",
+      "section_order": 10,
+      "heading": "Scored Results",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/pilot.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/pilot",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/pilot",
+      "section_order": 11,
+      "heading": "Ready to Start?",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/pilot.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/pilot",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/enterprise",
+      "section_order": 1,
+      "heading": "Scale Your Workforce. Globally.",
+      "heading_level": 1,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/enterprise.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/enterprise",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/enterprise",
+      "section_order": 2,
+      "heading": "Built for High-Volume, Global Operations",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/enterprise.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/enterprise",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/enterprise",
+      "section_order": 3,
+      "heading": "Global Reach",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/enterprise.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/enterprise",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/enterprise",
+      "section_order": 4,
+      "heading": "14-Day Delivery Cycles",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/enterprise.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/enterprise",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/enterprise",
+      "section_order": 5,
+      "heading": "Visa & Relocation",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/enterprise.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/enterprise",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/enterprise",
+      "section_order": 6,
+      "heading": "Candidate Ownership",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/enterprise.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/enterprise",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/enterprise",
+      "section_order": 7,
+      "heading": "Pipeline Analytics",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/enterprise.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/enterprise",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/enterprise",
+      "section_order": 8,
+      "heading": "Dedicated Pod",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/enterprise.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/enterprise",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/enterprise",
+      "section_order": 9,
+      "heading": "Purpose-Built for Volume Hiring Industries",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/enterprise.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/enterprise",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/enterprise",
+      "section_order": 10,
+      "heading": "Hospitality & Hotels",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/enterprise.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/enterprise",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/enterprise",
+      "section_order": 11,
+      "heading": "Food & Beverage",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/enterprise.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/enterprise",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/enterprise",
+      "section_order": 12,
+      "heading": "Retail",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/enterprise.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/enterprise",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/enterprise",
+      "section_order": 13,
+      "heading": "Manufacturing",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/enterprise.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/enterprise",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/enterprise",
+      "section_order": 14,
+      "heading": "Construction",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/enterprise.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/enterprise",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/enterprise",
+      "section_order": 15,
+      "heading": "Logistics & Supply Chain",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/enterprise.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/enterprise",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/enterprise",
+      "section_order": 16,
+      "heading": "Hiring Across Borders, Without the Barriers",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/enterprise.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/enterprise",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/enterprise",
+      "section_order": 17,
+      "heading": "United Arab Emirates",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/enterprise.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/enterprise",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/enterprise",
+      "section_order": 18,
+      "heading": "United States",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/enterprise.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/enterprise",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/enterprise",
+      "section_order": 19,
+      "heading": "Global Markets",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/enterprise.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/enterprise",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/enterprise",
+      "section_order": 20,
+      "heading": "Agency Fees vs. TaaSFlow Subscription",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/enterprise.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/enterprise",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/enterprise",
+      "section_order": 21,
+      "heading": "Calculate Your Enterprise Savings",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/enterprise.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/enterprise",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/enterprise",
+      "section_order": 22,
+      "heading": "Tiered Pricing That Scales With You",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/enterprise.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/enterprise",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/enterprise",
+      "section_order": 23,
+      "heading": "Scale",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/enterprise.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/enterprise",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/enterprise",
+      "section_order": 24,
+      "heading": "Growth",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/enterprise.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/enterprise",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/enterprise",
+      "section_order": 25,
+      "heading": "Enterprise",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/enterprise.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/enterprise",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/enterprise",
+      "section_order": 26,
+      "heading": "Enterprise Results at Scale",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/enterprise.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/enterprise",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/enterprise",
+      "section_order": 27,
+      "heading": "Hotel Chain Expansion \u2013 UAE",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/enterprise.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/enterprise",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/enterprise",
+      "section_order": 28,
+      "heading": "Multi-Location Retail Rollout",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/enterprise.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/enterprise",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/enterprise",
+      "section_order": 29,
+      "heading": "Infrastructure Project Staffing",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/enterprise.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/enterprise",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/enterprise",
+      "section_order": 30,
+      "heading": "From Kickoff to Candidates in 14 Days",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/enterprise.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/enterprise",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/enterprise",
+      "section_order": 31,
+      "heading": "Enterprise Consultation",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/enterprise.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/enterprise",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/enterprise",
+      "section_order": 32,
+      "heading": "Role Matrix & Calibration",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/enterprise.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/enterprise",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/enterprise",
+      "section_order": 33,
+      "heading": "Multi-Channel Activation",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/enterprise.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/enterprise",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/enterprise",
+      "section_order": 34,
+      "heading": "Bi-Weekly Candidate Drops",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/enterprise.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/enterprise",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/enterprise",
+      "section_order": 35,
+      "heading": "Continuous Optimization",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/enterprise.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/enterprise",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/enterprise",
+      "section_order": 36,
+      "heading": "Meet the Founders",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/enterprise.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/enterprise",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/enterprise",
+      "section_order": 37,
+      "heading": "Christian Brogger",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/enterprise.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/enterprise",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/enterprise",
+      "section_order": 38,
+      "heading": "Jo\u00e3o Bogo",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/enterprise.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/enterprise",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/enterprise",
+      "section_order": 39,
+      "heading": "Ready to Transform Your Hiring at Scale?",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/enterprise.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/enterprise",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/faq",
+      "section_order": 1,
+      "heading": "Frequently asked questions",
+      "heading_level": 1,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/faq.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/faq",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/faq",
+      "section_order": 2,
+      "heading": "Common questions",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/faq.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/faq",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/faq",
+      "section_order": 3,
+      "heading": "Are you a staffing agency?",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/faq.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/faq",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/faq",
+      "section_order": 4,
+      "heading": "Do you charge placement fees or salary percentages?",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/faq.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/faq",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/faq",
+      "section_order": 5,
+      "heading": "What's the difference between one-off and subscription?",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/faq.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/faq",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/faq",
+      "section_order": 6,
+      "heading": "How fast do you deliver candidates?",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/faq.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/faq",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/faq",
+      "section_order": 7,
+      "heading": "What do we get in a delivery?",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/faq.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/faq",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/faq",
+      "section_order": 8,
+      "heading": "What roles and regions do you support?",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/faq.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/faq",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/faq",
+      "section_order": 9,
+      "heading": "How does candidate scoring work?",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/faq.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/faq",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/faq",
+      "section_order": 10,
+      "heading": "Can clients customize scoring weights?",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/faq.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/faq",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/faq",
+      "section_order": 11,
+      "heading": "What do you need from us to begin?",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/faq.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/faq",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/faq",
+      "section_order": 12,
+      "heading": "Can we use this alongside agencies?",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/faq.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/faq",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/faq",
+      "section_order": 13,
+      "heading": "How do you protect employer brand?",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/faq.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/faq",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/faq",
+      "section_order": 14,
+      "heading": "How do you handle data privacy and GDPR?",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/faq.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/faq",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/faq",
+      "section_order": 15,
+      "heading": "Related topics",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/faq.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/faq",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/faq",
+      "section_order": 16,
+      "heading": "Still have questions?",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/faq.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/faq",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/contact",
+      "section_order": 1,
+      "heading": "Contact us",
+      "heading_level": 1,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/contact.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/contact",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/contact",
+      "section_order": 2,
+      "heading": "Book a call or send a message",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/contact.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/contact",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/resources",
+      "section_order": 1,
+      "heading": "Recruiting resources for talent leaders",
+      "heading_level": 1,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/resources.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/resources",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/resources",
+      "section_order": 2,
+      "heading": "Recruiting playbooks and guides",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/resources.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/resources",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/resources",
+      "section_order": 3,
+      "heading": "ROI calculator",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/resources.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/resources",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/resources",
+      "section_order": 4,
+      "heading": "Sample deliverable pack",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/resources.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/resources",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/resources",
+      "section_order": 5,
+      "heading": "How it works",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/resources.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/resources",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/resources",
+      "section_order": 6,
+      "heading": "FAQ",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/resources.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/resources",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/resources",
+      "section_order": 7,
+      "heading": "How to use these resources",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/resources.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/resources",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/resources",
+      "section_order": 8,
+      "heading": "Who they're for",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/resources.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/resources",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/resources",
+      "section_order": 9,
+      "heading": "Why the model works",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/resources.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/resources",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/blog",
+      "section_order": 1,
+      "heading": "The TaaSFlow Journal",
+      "heading_level": 1,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/blog.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/blog",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/blog",
+      "section_order": 2,
+      "heading": "Editorial Sections",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/blog.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/blog",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/blog",
+      "section_order": 3,
+      "heading": "Section Hiring Ops",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/blog.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/blog",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/blog",
+      "section_order": 4,
+      "heading": "Section Taa S",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/blog.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/blog",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/blog",
+      "section_order": 5,
+      "heading": "Section Industry",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/blog.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/blog",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/blog",
+      "section_order": 6,
+      "heading": "Section Playbooks",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/blog.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/blog",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/blog",
+      "section_order": 7,
+      "heading": "Section Case Studies",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/blog.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/blog",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/blog",
+      "section_order": 8,
+      "heading": "Section H R Leadership",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/blog.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/blog",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/blog",
+      "section_order": 9,
+      "heading": "Section Future Of Work",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/blog.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/blog",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/blog",
+      "section_order": 10,
+      "heading": "Section Technology",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/blog.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/blog",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/blog",
+      "section_order": 11,
+      "heading": "Latest Articles",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/blog.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/blog",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/blog",
+      "section_order": 12,
+      "heading": "Editors Picks",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/blog.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/blog",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/blog",
+      "section_order": 13,
+      "heading": "Industry Deep Dives",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/blog.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/blog",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/blog",
+      "section_order": 14,
+      "heading": "Recommended Reading",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/blog.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/blog",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/blog",
+      "section_order": 15,
+      "heading": "Hiring Strategy",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/blog.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/blog",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/blog",
+      "section_order": 16,
+      "heading": "Workforce Trends",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/blog.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/blog",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/blog",
+      "section_order": 17,
+      "heading": "Cta Headline",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/blog.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/blog",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/case-studies",
+      "section_order": 1,
+      "heading": "Success Stories",
+      "heading_level": 1,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/case-studies.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/case-studies",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/case-studies",
+      "section_order": 2,
+      "heading": "SafiTech: Scaling a Development Team in 4 Weeks",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/case-studies.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/case-studies",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/case-studies",
+      "section_order": 3,
+      "heading": "The Challenge",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/case-studies.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/case-studies",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/case-studies",
+      "section_order": 4,
+      "heading": "Our Solution",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/case-studies.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/case-studies",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/case-studies",
+      "section_order": 5,
+      "heading": "Results",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/case-studies.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/case-studies",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/case-studies",
+      "section_order": 6,
+      "heading": "Sterling Law Partners: Supporting a Major Litigation with Rapid Paralegal Deployment",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/case-studies.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/case-studies",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/case-studies",
+      "section_order": 7,
+      "heading": "The Challenge",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/case-studies.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/case-studies",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/case-studies",
+      "section_order": 8,
+      "heading": "Our Solution",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/case-studies.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/case-studies",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/case-studies",
+      "section_order": 9,
+      "heading": "Results",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/case-studies.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/case-studies",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/case-studies",
+      "section_order": 10,
+      "heading": "Meridian Regional Bank: Meeting Regulatory Compliance Deadline with Analyst Team",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/case-studies.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/case-studies",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/case-studies",
+      "section_order": 11,
+      "heading": "The Challenge",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/case-studies.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/case-studies",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/case-studies",
+      "section_order": 12,
+      "heading": "Our Solution",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/case-studies.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/case-studies",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/case-studies",
+      "section_order": 13,
+      "heading": "Results",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/case-studies.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/case-studies",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/case-studies",
+      "section_order": 14,
+      "heading": "Your success story could be next",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/case-studies.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/case-studies",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/industries",
+      "section_order": 1,
+      "heading": "Title",
+      "heading_level": 1,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/industries/index.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/industries",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/industries",
+      "section_order": 2,
+      "heading": "Cta Title",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/industries/index.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/industries",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/industries/compare",
+      "section_order": 1,
+      "heading": "Industry Comparison",
+      "heading_level": 1,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/industries/compare.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/industries/compare",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/industries/compare",
+      "section_order": 2,
+      "heading": "Filter and compare industries",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/industries/compare.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/industries/compare",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/partnerships/staffing",
+      "section_order": 1,
+      "heading": "Everybody Wins When You Partner with TaaS",
+      "heading_level": 1,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/partnerships-staffing.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/partnerships/staffing",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/partnerships/staffing",
+      "section_order": 2,
+      "heading": "A Partnership Where Everyone Wins",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/partnerships-staffing.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/partnerships/staffing",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/partnerships/staffing",
+      "section_order": 3,
+      "heading": "Your Agency",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/partnerships-staffing.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/partnerships/staffing",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/partnerships/staffing",
+      "section_order": 4,
+      "heading": "Your Clients",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/partnerships-staffing.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/partnerships/staffing",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/partnerships/staffing",
+      "section_order": 5,
+      "heading": "TaasFlow",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/partnerships-staffing.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/partnerships/staffing",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/partnerships/staffing",
+      "section_order": 6,
+      "heading": "More Affordable Than Contingency. Better Results.",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/partnerships-staffing.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/partnerships/staffing",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/partnerships/staffing",
+      "section_order": 7,
+      "heading": "What Our Agency Partners Say",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/partnerships-staffing.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/partnerships/staffing",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/partnerships/staffing",
+      "section_order": 8,
+      "heading": "Choose Your Partnership Level",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/partnerships-staffing.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/partnerships/staffing",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/partnerships/staffing",
+      "section_order": 9,
+      "heading": "Starter",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/partnerships-staffing.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/partnerships/staffing",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/partnerships/staffing",
+      "section_order": 10,
+      "heading": "Growth",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/partnerships-staffing.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/partnerships/staffing",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/partnerships/staffing",
+      "section_order": 11,
+      "heading": "Enterprise",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/partnerships-staffing.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/partnerships/staffing",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/partnerships/staffing",
+      "section_order": 12,
+      "heading": "Partnership FAQs",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/partnerships-staffing.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/partnerships/staffing",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/partnerships/staffing",
+      "section_order": 13,
+      "heading": "Will my clients know you're involved?",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/partnerships-staffing.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/partnerships/staffing",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/partnerships/staffing",
+      "section_order": 14,
+      "heading": "How quickly can we get started?",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/partnerships-staffing.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/partnerships/staffing",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/partnerships/staffing",
+      "section_order": 15,
+      "heading": "What if we only need help occasionally?",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/partnerships-staffing.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/partnerships/staffing",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/partnerships/staffing",
+      "section_order": 16,
+      "heading": "Can you handle specialized or niche roles?",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/partnerships-staffing.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/partnerships/staffing",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/partnerships/staffing",
+      "section_order": 17,
+      "heading": "What's the quality of candidates?",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/partnerships-staffing.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/partnerships/staffing",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/partnerships/staffing",
+      "section_order": 18,
+      "heading": "Ready to Transform Your Agency?",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/partnerships-staffing.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/partnerships/staffing",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/privacy",
+      "section_order": 1,
+      "heading": "Global Recruitment Privacy Notice",
+      "heading_level": 1,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/privacy.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/privacy",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/privacy",
+      "section_order": 2,
+      "heading": "1. Who We Are",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/privacy.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/privacy",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/privacy",
+      "section_order": 3,
+      "heading": "2. Personal Data We Collect",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/privacy.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/privacy",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/privacy",
+      "section_order": 4,
+      "heading": "Identification & Contact Information",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/privacy.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/privacy",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/privacy",
+      "section_order": 5,
+      "heading": "Professional Information",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/privacy.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/privacy",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/privacy",
+      "section_order": 6,
+      "heading": "Recruitment Process Information",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/privacy.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/privacy",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/privacy",
+      "section_order": 7,
+      "heading": "Publicly Available Information",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/privacy.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/privacy",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/privacy",
+      "section_order": 8,
+      "heading": "Sensitive / Special Category Data (Limited)",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/privacy.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/privacy",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/privacy",
+      "section_order": 9,
+      "heading": "3. How We Collect Personal Data",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/privacy.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/privacy",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/privacy",
+      "section_order": 10,
+      "heading": "4. Purposes of Processing",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/privacy.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/privacy",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/privacy",
+      "section_order": 11,
+      "heading": "5. Legal Bases for Processing",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/privacy.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/privacy",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/privacy",
+      "section_order": 12,
+      "heading": "European Union (GDPR)",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/privacy.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/privacy",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/privacy",
+      "section_order": 13,
+      "heading": "United States",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/privacy.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/privacy",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/privacy",
+      "section_order": 14,
+      "heading": "United Arab Emirates (PDPL)",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/privacy.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/privacy",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/privacy",
+      "section_order": 15,
+      "heading": "Brazil (LGPD)",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/privacy.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/privacy",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/privacy",
+      "section_order": 16,
+      "heading": "6. Sharing of Personal Data & Sub\u2011processors",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/privacy.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/privacy",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/privacy",
+      "section_order": 17,
+      "heading": "7. International Data Transfers & Safeguards",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/privacy.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/privacy",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/privacy",
+      "section_order": 18,
+      "heading": "8. Data Retention & Cross\u2011Position Matching",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/privacy.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/privacy",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/privacy",
+      "section_order": 19,
+      "heading": "Cross\u2011Position Matching",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/privacy.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/privacy",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/privacy",
+      "section_order": 20,
+      "heading": "9. Your Rights",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/privacy.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/privacy",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/privacy",
+      "section_order": 21,
+      "heading": "10. AI\u2011Assisted Sourcing & Scoring",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/privacy.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/privacy",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/privacy",
+      "section_order": 22,
+      "heading": "11. Data Security",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/privacy.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/privacy",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/privacy",
+      "section_order": 23,
+      "heading": "12. Data Breaches",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/privacy.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/privacy",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/privacy",
+      "section_order": 24,
+      "heading": "13. Cookies & Tracking Technologies",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/privacy.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/privacy",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/privacy",
+      "section_order": 25,
+      "heading": "Category of Cookies",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/privacy.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/privacy",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/privacy",
+      "section_order": 26,
+      "heading": "14. Children's Privacy",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/privacy.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/privacy",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/privacy",
+      "section_order": 27,
+      "heading": "15. Updates to This Notice",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/privacy.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/privacy",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/privacy",
+      "section_order": 28,
+      "heading": "16. Data Protection Officer (DPO) & Contact",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/privacy.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/privacy",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/terms",
+      "section_order": 1,
+      "heading": "Terms of Service",
+      "heading_level": 1,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/terms.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/terms",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/terms",
+      "section_order": 2,
+      "heading": "1. Acceptance of Terms",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/terms.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/terms",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/terms",
+      "section_order": 3,
+      "heading": "2. Description of Services",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/terms.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/terms",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/terms",
+      "section_order": 4,
+      "heading": "3. Account Registration",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/terms.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/terms",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/terms",
+      "section_order": 5,
+      "heading": "4. Subscriptions, Pricing, and Payment",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/terms.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/terms",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/terms",
+      "section_order": 6,
+      "heading": "5. Client Obligations",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/terms.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/terms",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/terms",
+      "section_order": 7,
+      "heading": "6. Candidate Data and Pipeline Ownership",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/terms.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/terms",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/terms",
+      "section_order": 8,
+      "heading": "7. Intellectual Property",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/terms.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/terms",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/terms",
+      "section_order": 9,
+      "heading": "8. Prohibited Use",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/terms.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/terms",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/terms",
+      "section_order": 10,
+      "heading": "9. Disclaimers",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/terms.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/terms",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/terms",
+      "section_order": 11,
+      "heading": "10. Limitation of Liability",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/terms.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/terms",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/terms",
+      "section_order": 12,
+      "heading": "11. Indemnification",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/terms.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/terms",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/terms",
+      "section_order": 13,
+      "heading": "12. Termination",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/terms.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/terms",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/terms",
+      "section_order": 14,
+      "heading": "13. Governing Law and Disputes",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/terms.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/terms",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/terms",
+      "section_order": 15,
+      "heading": "14. Changes to These Terms",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/terms.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/terms",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/terms",
+      "section_order": 16,
+      "heading": "15. Contact",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/terms.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/terms",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/employer-onboarding",
+      "section_order": 1,
+      "heading": "Hero Title Hero Title Accent",
+      "heading_level": 1,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/employer-onboarding.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/employer-onboarding",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/employer-onboarding",
+      "section_order": 2,
+      "heading": "Journey Title",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/employer-onboarding.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/employer-onboarding",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/employer-onboarding",
+      "section_order": 3,
+      "heading": "Step1 Title",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/employer-onboarding.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/employer-onboarding",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/employer-onboarding",
+      "section_order": 4,
+      "heading": "Step2 Title",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/employer-onboarding.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/employer-onboarding",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/employer-onboarding",
+      "section_order": 5,
+      "heading": "Step3 Title",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/employer-onboarding.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/employer-onboarding",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/employer-onboarding",
+      "section_order": 6,
+      "heading": "Step4 Title",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/employer-onboarding.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/employer-onboarding",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/employer-onboarding",
+      "section_order": 7,
+      "heading": "Step5 Title",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/employer-onboarding.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/employer-onboarding",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/employer-onboarding",
+      "section_order": 8,
+      "heading": "Step6 Title",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/employer-onboarding.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/employer-onboarding",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/employer-onboarding",
+      "section_order": 9,
+      "heading": "Expectations Title",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/employer-onboarding.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/employer-onboarding",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/employer-onboarding",
+      "section_order": 10,
+      "heading": "Expect1 Title",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/employer-onboarding.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/employer-onboarding",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/employer-onboarding",
+      "section_order": 11,
+      "heading": "Expect2 Title",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/employer-onboarding.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/employer-onboarding",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/employer-onboarding",
+      "section_order": 12,
+      "heading": "Expect3 Title",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/employer-onboarding.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/employer-onboarding",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/employer-onboarding",
+      "section_order": 13,
+      "heading": "Expect4 Title",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/employer-onboarding.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/employer-onboarding",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/employer-onboarding",
+      "section_order": 14,
+      "heading": "Checklist Title",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/employer-onboarding.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/employer-onboarding",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/employer-onboarding",
+      "section_order": 15,
+      "heading": "Cta Title",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/employer-onboarding.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/employer-onboarding",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/knowledge-base",
+      "section_order": 1,
+      "heading": "How Can We Help?",
+      "heading_level": 1,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/knowledge-base.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/knowledge-base",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/knowledge-base",
+      "section_order": 2,
+      "heading": "What is Talent-as-a-Service?",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/knowledge-base.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/knowledge-base",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/knowledge-base",
+      "section_order": 3,
+      "heading": "How Does the Process Work?",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/knowledge-base.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/knowledge-base",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/knowledge-base",
+      "section_order": 4,
+      "heading": "Getting Started as an Employer",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/knowledge-base.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/knowledge-base",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/knowledge-base",
+      "section_order": 5,
+      "heading": "Getting Started as a Candidate",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/knowledge-base.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/knowledge-base",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/knowledge-base",
+      "section_order": 6,
+      "heading": "How to Complete the Intake Blueprint",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/knowledge-base.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/knowledge-base",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/knowledge-base",
+      "section_order": 7,
+      "heading": "Understanding Candidate Scoring",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/knowledge-base.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/knowledge-base",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/knowledge-base",
+      "section_order": 8,
+      "heading": "Managing Your Hiring Pipeline",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/knowledge-base.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/knowledge-base",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/knowledge-base",
+      "section_order": 9,
+      "heading": "What Are Weekly Candidate Drops?",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/knowledge-base.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/knowledge-base",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/knowledge-base",
+      "section_order": 10,
+      "heading": "Inviting Your Team to the Dashboard",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/knowledge-base.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/knowledge-base",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/knowledge-base",
+      "section_order": 11,
+      "heading": "Creating a Standout Candidate Profile",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/knowledge-base.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/knowledge-base",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/knowledge-base",
+      "section_order": 12,
+      "heading": "The Application & Matching Process",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/knowledge-base.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/knowledge-base",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/knowledge-base",
+      "section_order": 13,
+      "heading": "Interview Preparation Guide",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/knowledge-base.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/knowledge-base",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/knowledge-base",
+      "section_order": 14,
+      "heading": "Your Public Talent Profile",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/knowledge-base.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/knowledge-base",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/knowledge-base",
+      "section_order": 15,
+      "heading": "How Pricing Works",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/knowledge-base.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/knowledge-base",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/knowledge-base",
+      "section_order": 16,
+      "heading": "Using the ROI Calculator",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/knowledge-base.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/knowledge-base",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/knowledge-base",
+      "section_order": 17,
+      "heading": "The Pilot Program",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/knowledge-base.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/knowledge-base",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/knowledge-base",
+      "section_order": 18,
+      "heading": "Dashboard Overview",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/knowledge-base.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/knowledge-base",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/knowledge-base",
+      "section_order": 19,
+      "heading": "Understanding Analytics & Reports",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/knowledge-base.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/knowledge-base",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/knowledge-base",
+      "section_order": 20,
+      "heading": "Notification Settings",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/knowledge-base.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/knowledge-base",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/knowledge-base",
+      "section_order": 21,
+      "heading": "How We Protect Your Data",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/knowledge-base.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/knowledge-base",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/knowledge-base",
+      "section_order": 22,
+      "heading": "Candidate Privacy & Anonymization",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/knowledge-base.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/knowledge-base",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/knowledge-base",
+      "section_order": 23,
+      "heading": "Still have questions?",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/knowledge-base.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/knowledge-base",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/global-talent",
+      "section_order": 1,
+      "heading": "A quieter way to be considered for the right work.",
+      "heading_level": 1,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/global-talent.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/global-talent",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/global-talent",
+      "section_order": 2,
+      "heading": "Built for people who don\u2019t need another job board.",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/global-talent.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/global-talent",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/global-talent",
+      "section_order": 3,
+      "heading": "Three ways to be considered.",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/global-talent.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/global-talent",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/global-talent",
+      "section_order": 4,
+      "heading": "Express interest in a role",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/global-talent.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/global-talent",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/global-talent",
+      "section_order": 5,
+      "heading": "Join the network",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/global-talent.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/global-talent",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/global-talent",
+      "section_order": 6,
+      "heading": "Be quietly discoverable",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/global-talent.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/global-talent",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/global-talent",
+      "section_order": 7,
+      "heading": "Fewer roles. Higher signal. Considered work for considered people.",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/global-talent.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/global-talent",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/global-talent",
+      "section_order": 8,
+      "heading": "Your career, on your terms.",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/global-talent.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/global-talent",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/global-talent",
+      "section_order": 9,
+      "heading": "Work that crosses borders.",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/global-talent.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/global-talent",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/global-talent",
+      "section_order": 10,
+      "heading": "Remote-first by default",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/global-talent.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/global-talent",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/global-talent",
+      "section_order": 11,
+      "heading": "Regional specialisation",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/global-talent.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/global-talent",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/global-talent",
+      "section_order": 12,
+      "heading": "Relocation, when offered",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/global-talent.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/global-talent",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/global-talent",
+      "section_order": 13,
+      "heading": "The other side of the network.",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/global-talent.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/global-talent",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/global-talent",
+      "section_order": 14,
+      "heading": "See an open brief?",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/global-talent.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/global-talent",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/global-talent",
+      "section_order": 15,
+      "heading": "Not actively looking?",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/global-talent.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/global-talent",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/global-talent",
+      "section_order": 16,
+      "heading": "Direct answers.",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/global-talent.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/global-talent",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/global-talent",
+      "section_order": 17,
+      "heading": "Is TaaSFlow Network free for professionals?",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/global-talent.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/global-talent",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/global-talent",
+      "section_order": 18,
+      "heading": "How is this different from a recruiter reaching out on LinkedIn?",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/global-talent.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/global-talent",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/global-talent",
+      "section_order": 19,
+      "heading": "Will my current employer see I&rsquo;m on the network?",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/global-talent.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/global-talent",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/global-talent",
+      "section_order": 20,
+      "heading": "Do you support relocation and visas?",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/global-talent.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/global-talent",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/global-talent",
+      "section_order": 21,
+      "heading": "What does &ldquo;expressing interest&rdquo; actually do?",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/global-talent.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/global-talent",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/global-talent",
+      "section_order": 22,
+      "heading": "Is this only for senior people?",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/global-talent.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/global-talent",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/about",
+      "section_order": 1,
+      "heading": "We built the hiring system that hire.",
+      "heading_level": 1,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/about.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/about",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/about",
+      "section_order": 2,
+      "heading": "From HR Frustration to Recruiting Innovation",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/about.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/about",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/about",
+      "section_order": 3,
+      "heading": "From a broken model to a hiring throughput system",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/about.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/about",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/about",
+      "section_order": 4,
+      "heading": "The old model is broken",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/about.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/about",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/about",
+      "section_order": 5,
+      "heading": "Why TAASFlow exists",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/about.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/about",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/about",
+      "section_order": 6,
+      "heading": "Talent-as-a-Service, not agency",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/about.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/about",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/about",
+      "section_order": 7,
+      "heading": "A faster, transparent delivery",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/about.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/about",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/about",
+      "section_order": 8,
+      "heading": "Built for hiring throughput",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/about.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/about",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/about",
+      "section_order": 9,
+      "heading": "A better model for everyone",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/about.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/about",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/about",
+      "section_order": 10,
+      "heading": "The Win-Win-Win Mentality",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/about.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/about",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/about",
+      "section_order": 11,
+      "heading": "Candidates Win",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/about.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/about",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/about",
+      "section_order": 12,
+      "heading": "Companies Win",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/about.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/about",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/about",
+      "section_order": 13,
+      "heading": "We All Win",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/about.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/about",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/about",
+      "section_order": 14,
+      "heading": "Recruiting Across 50+ Countries",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/about.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/about",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/about",
+      "section_order": 15,
+      "heading": "Middle East",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/about.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/about",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/about",
+      "section_order": 16,
+      "heading": "Europe",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/about.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/about",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/about",
+      "section_order": 17,
+      "heading": "North America",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/about.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/about",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/about",
+      "section_order": 18,
+      "heading": "South America",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/about.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/about",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/about",
+      "section_order": 19,
+      "heading": "Asia Pacific",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/about.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/about",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/about",
+      "section_order": 20,
+      "heading": "Africa",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/about.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/about",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/about",
+      "section_order": 21,
+      "heading": "8+ Years of Data-Driven Recruiting",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/about.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/about",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/about",
+      "section_order": 22,
+      "heading": "Growth Trajectory",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/about.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/about",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/about",
+      "section_order": 23,
+      "heading": "Placements by Industry",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/about.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/about",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/about",
+      "section_order": 24,
+      "heading": "Companies by Size",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/about.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/about",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/about",
+      "section_order": 25,
+      "heading": "Placements by Seniority",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/about.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/about",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/about",
+      "section_order": 26,
+      "heading": "Meet the Founders",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/about.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/about",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/about",
+      "section_order": 27,
+      "heading": "Christian Brogger",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/about.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/about",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/about",
+      "section_order": 28,
+      "heading": "Jo\u00e3o Bogo",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/about.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/about",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/about",
+      "section_order": 29,
+      "heading": "From Startups to Enterprises",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/about.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/about",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/about",
+      "section_order": 30,
+      "heading": "Startups & Scale-ups",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/about.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/about",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/about",
+      "section_order": 31,
+      "heading": "Mid-Market Companies",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/about.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/about",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/about",
+      "section_order": 32,
+      "heading": "Enterprise Organizations",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/about.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/about",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/about",
+      "section_order": 33,
+      "heading": "How we think",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/about.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/about",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/about",
+      "section_order": 34,
+      "heading": "Systematic",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/about.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/about",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/about",
+      "section_order": 35,
+      "heading": "Global",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/about.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/about",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/about",
+      "section_order": 36,
+      "heading": "Data-Driven",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/about.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/about",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/about",
+      "section_order": 37,
+      "heading": "Iterative",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/about.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/about",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/about",
+      "section_order": 38,
+      "heading": "Transparent",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/about.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/about",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/about",
+      "section_order": 39,
+      "heading": "Fast",
+      "heading_level": 3,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/about.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/about",
+      "destination_decision": "MIGRATE"
+    },
+    {
+      "source_route": "/about",
+      "section_order": 40,
+      "heading": "Related Reading",
+      "heading_level": 2,
+      "purpose": "INFERRED_FROM_HEADING",
+      "copy_source": "src/content/pages/about.json",
+      "visual_source": "live site: https://sourcing-suite-ai.lovable.app/about",
+      "destination_decision": "MIGRATE"
+    }
+  ],
+  "reconciliation": {
+    "source_sections": 381,
+    "destination_migrated": 381,
+    "redirected_routes_sections": 0,
+    "excluded": 0
+  }
+}

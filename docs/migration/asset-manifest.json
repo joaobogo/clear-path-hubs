@@ -1,0 +1,105 @@
+{
+  "trace": "MIG-VERIFIED-MANIFEST-2026-07-23",
+  "source_repo_access": "UNRESOLVED \u2014 asset counts are live-site estimates",
+  "assets": [
+    {
+      "category": "logo",
+      "source_file_pattern": "logo",
+      "count": 1,
+      "pages_using_it": "GLOBAL",
+      "destination_file": "src/assets/brand/logo.svg",
+      "migration_status": "PLACEHOLDER_IN_PLACE",
+      "quality_status": "UNVERIFIED",
+      "accessibility_status": "ALT_TEXT_REQUIRED_ON_ALL",
+      "decision": "EXTRACT_ASSET_ONLY",
+      "risk": "placeholder currently in destination"
+    },
+    {
+      "category": "favicon",
+      "source_file_pattern": "favicon",
+      "count": 1,
+      "pages_using_it": "GLOBAL",
+      "destination_file": "public/favicon.ico",
+      "migration_status": "PLACEHOLDER_IN_PLACE",
+      "quality_status": "UNVERIFIED",
+      "accessibility_status": "ALT_TEXT_REQUIRED_ON_ALL",
+      "decision": "EXTRACT_ASSET_ONLY",
+      "risk": "placeholder currently in destination"
+    },
+    {
+      "category": "hero_illustrations",
+      "source_file_pattern": "hero_illustrations",
+      "count": 3,
+      "pages_using_it": "marketing pages",
+      "destination_file": "src/assets/marketing/",
+      "migration_status": "PENDING",
+      "quality_status": "UNVERIFIED",
+      "accessibility_status": "ALT_TEXT_REQUIRED_ON_ALL",
+      "decision": "EXTRACT_ASSET_ONLY",
+      "risk": null
+    },
+    {
+      "category": "industry_covers",
+      "source_file_pattern": "industry_covers",
+      "count": 24,
+      "pages_using_it": "industry pages",
+      "destination_file": "src/assets/industries/",
+      "migration_status": "PENDING",
+      "quality_status": "UNVERIFIED",
+      "accessibility_status": "ALT_TEXT_REQUIRED_ON_ALL",
+      "decision": "EXTRACT_ASSET_ONLY",
+      "risk": null
+    },
+    {
+      "category": "blog_cover_images",
+      "source_file_pattern": "blog_cover_images",
+      "count": 25,
+      "pages_using_it": "blog pages",
+      "destination_file": "src/assets/blog/",
+      "migration_status": "PENDING",
+      "quality_status": "UNVERIFIED",
+      "accessibility_status": "ALT_TEXT_REQUIRED_ON_ALL",
+      "decision": "EXTRACT_ASSET_ONLY",
+      "risk": null
+    },
+    {
+      "category": "svg_icons",
+      "source_file_pattern": "svg_icons",
+      "count": 0,
+      "pages_using_it": "marketing pages",
+      "destination_file": null,
+      "migration_status": "NOT_STARTED",
+      "quality_status": "UNVERIFIED",
+      "accessibility_status": "ALT_TEXT_REQUIRED_ON_ALL",
+      "decision": "REBUILD_FROM_REFERENCE",
+      "risk": null
+    },
+    {
+      "category": "videos",
+      "source_file_pattern": "videos",
+      "count": 0,
+      "pages_using_it": "marketing pages",
+      "destination_file": null,
+      "migration_status": "NOT_STARTED",
+      "quality_status": "UNVERIFIED",
+      "accessibility_status": "ALT_TEXT_REQUIRED_ON_ALL",
+      "decision": "REVIEW_REQUIRED",
+      "risk": null
+    }
+  ],
+  "do_not_migrate": [
+    "temporary signed URLs",
+    "candidate CVs",
+    "client documents",
+    "dashboard test screenshots",
+    "QA artifacts",
+    "internal reports"
+  ],
+  "reconciliation": {
+    "source_assets_estimated_total": 54,
+    "destination_migrated": 0,
+    "approved_replacements": 2,
+    "documented_exclusions": 0,
+    "note": "Reconciliation is per-category; per-file counts require source-repo access."
+  }
+}
