@@ -406,17 +406,17 @@ export const INDUSTRY_ENTRIES: IndustryEntry[] = [
     hero: {
       title: "Finance hiring with rubrics tuned per function and regulatory context.",
       subtitle:
-        "TaaSFlow gives CFOs, heads of risk and heads of compliance a workspace for every hire — from FP&A analysts to VP-level bankers — with function-specific rubrics and evidence of the regulatory environments the candidate actually worked in.",
+        "A workspace for every finance hire — from FP&A analyst to VP-level banker — with function-specific rubrics and evidence of the regulatory environments each candidate actually worked in.",
     },
     challenges: [
-      { title: "Function-specific signal", body: "Banking, FP&A, treasury, controllership, investment, risk and compliance each need a different rubric. We build one per requisition instead of matching a generic 'finance' keyword set." },
-      { title: "Regulated-environment evidence", body: "Basel, MiFID II, Dodd-Frank, IFRS 9, CECL — supervisory context shapes the role. Regulatory exposure is captured as a structured signal, not a keyword search." },
-      { title: "Systems and reporting stack", body: "ERP, consolidation, treasury and risk platforms are captured in intake so shortlists reflect the operating environment the hire will actually work in." },
-      { title: "Level calibration", body: "Senior finance roles need judgement evidence, not tool lists. Rubrics per level surface the decision scope and ownership the CV actually describes." },
+      { title: "Function-specific signal", body: "Banking, FP&A, treasury, investment, risk and compliance each need a different rubric. We build one per requisition." },
+      { title: "Regulated-environment evidence", body: "Basel, MiFID II, Dodd-Frank, IFRS 9, CECL shape the seat. Regulatory exposure is a structured signal, not a keyword search." },
+      { title: "Systems and reporting stack", body: "ERP, consolidation, treasury and risk platforms are captured in intake so shortlists reflect the actual operating environment." },
+      { title: "Level calibration", body: "Senior finance roles need judgement evidence, not tool lists. Rubrics per level surface decision scope and ownership described on the CV." },
     ],
     solutions: [
       { title: "Function-mapped rubrics", body: "Distinct rubrics for banking, corporate finance, FP&A, investment, treasury, risk and compliance — no cross-scoring." },
-      { title: "Regulated-environment scoring", body: "Basel III, MiFID II, Dodd-Frank, EMIR, IFRS 9, SOX, CECL exposure is graded as a first-class signal with the exact CV line for review." },
+      { title: "Regulated-environment scoring", body: "Basel III, MiFID II, Dodd-Frank, EMIR, IFRS 9, SOX and CECL exposure graded as first-class signals with CV lines quoted." },
       { title: "Systems-aware shortlists", body: "Oracle EPM, SAP, Anaplan, Adaptive, HFM, Kyriba, Bloomberg and Aladdin coverage mapped to the seat." },
       { title: "Discreet, workspace-scoped delivery", body: "Every mandate sits in a private workspace with row-level isolation and audit trails." },
     ],
@@ -460,8 +460,11 @@ export const INDUSTRY_ENTRIES: IndustryEntry[] = [
       { slug: "accounting", name: "Accounting", blurb: "Audit, tax, controllership and reporting hiring." },
       { slug: "insurance", name: "Insurance", blurb: "Underwriting, actuarial, claims and broking." },
       { slug: "private-equity", name: "Private Equity", blurb: "Fund and portfolio hiring." },
+      { slug: "investment-banking", name: "Investment Banking", blurb: "M&A, capital markets and coverage bankers." },
+      { slug: "fintech", name: "Fintech", blurb: "Regulated financial products and platforms." },
     ],
     resources: DEFAULT_RESOURCES,
+
     faqs: [
       { q: "Do you cover both buy-side and sell-side?", a: "Yes. Buy-side portfolio and research hires get a distinct rubric focused on mandate style, benchmark and coverage universe; sell-side hires are scored on deal experience and coverage." },
       { q: "How do you handle regulated hires?", a: "Regulatory exposure — SMCR, FINRA, MiFID II, SOX — is captured as a structured signal with the CV line quoted back. We surface what the CV states so your team can verify through the appropriate channel." },
