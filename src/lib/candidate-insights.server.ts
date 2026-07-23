@@ -28,6 +28,8 @@ export interface ScreeningInsight {
 }
 
 export interface CandidateInsights {
+  pitch_summary: string;
+  pitch_tone: "sell" | "balanced" | "cautious";
   narrative: string;
   headline_suggested: string | null;
   seniority: Seniority;
