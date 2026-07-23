@@ -49,10 +49,7 @@ export function FormShell({
             aria-label="TaaSFlow — Home"
             className="inline-flex items-center gap-2 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
           >
-            <img src={brand.logos.primary} alt="" aria-hidden width={28} height={28} className="h-7 w-auto" />
-            <span className="text-base font-semibold tracking-tight text-[color:var(--brand-navy)]">
-              TaaSFlow
-            </span>
+            <img src={brand.logos.primary} alt="TaaSFlow" width={28} height={28} className="h-7 w-auto" />
           </Link>
           {progress && (
             <div className="hidden items-center gap-3 sm:flex" aria-live="polite">
