@@ -2,7 +2,6 @@ import { Link } from "@tanstack/react-router";
 import {
   PublicPage,
   PublicSection,
-  CtaSection,
   Breadcrumbs,
 } from "@/components/marketing/site-shell";
 import type { IndustryEntry } from "@/content/industries-v2";
@@ -14,6 +13,12 @@ import { IndustryInsights } from "@/components/marketing/industry-insights";
 import { getIndustryVisualIdentity } from "@/content/industry-visual-identity";
 import { SubtleCta } from "@/components/marketing/subtle-cta";
 import { getIndustryRelationships } from "@/lib/marketing/industry-relationships";
+import {
+  BookACallDialog,
+  BookACallSection,
+} from "@/components/marketing/book-a-call";
+import { CalendarDays, MessageSquare } from "lucide-react";
+
 
 
 /**
