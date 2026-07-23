@@ -149,6 +149,9 @@ export function CompareSheet({
               </p>
             )}
 
+            {/* Visual ranking bands — relative strength per axis, not a single winner. */}
+            <RelativeStrengthBoard candidates={candidates} />
+
             {observations.length > 0 && (
               <div className="mt-3 rounded-lg border bg-muted/30 p-3 text-sm space-y-1.5">
                 <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
