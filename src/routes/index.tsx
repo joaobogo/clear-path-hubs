@@ -1315,7 +1315,7 @@ function Home() {
             <div className="flex min-w-0 flex-col justify-center gap-6">
               <span className="inline-flex w-fit items-center gap-2 rounded-full border border-[color:var(--brand-navy)]/12 bg-white/70 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/75 backdrop-blur">
                 <Sparkles className="h-3.5 w-3.5 text-[color:var(--brand-ocean)]" aria-hidden />
-                Talent as a Service
+                On-demand recruiting function
               </span>
               <h1
                 id="home-hero-heading"
@@ -1325,36 +1325,38 @@ function Home() {
                 <br className="hidden sm:block" /> On demand.
               </h1>
               <p className="max-w-xl text-lg text-[color:var(--brand-navy)]/75">
-                Recruiting execution, a live workspace, and AI-supported
-                evaluation — one flat subscription. <span className="font-semibold text-[color:var(--brand-navy)]">Ranked candidates, not CV dumps.</span> You own the pipeline.
+                Open a role Monday. See a{" "}
+                <span className="font-semibold text-[color:var(--brand-navy)]">ranked shortlist with evidence</span>{" "}
+                by Friday. One flat subscription — no placement fees. You keep the
+                recruiter, the ATS, and the final call.
               </p>
               <div className="flex flex-wrap items-center gap-3 pt-1">
                 <Link
                   to="/intake"
                   className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-[color:var(--brand-navy-dark)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
                 >
-                  Start Hiring <ArrowRight className="h-4 w-4" aria-hidden />
+                  Open a role <ArrowRight className="h-4 w-4" aria-hidden />
                 </Link>
                 <Link
                   to="/how-it-works"
                   className="inline-flex min-h-11 items-center justify-center rounded-md border border-[color:var(--brand-navy)]/15 bg-white px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
                 >
-                  See How It Works
+                  See a sample shortlist
                 </Link>
                 <a
                   href="#roi-calculator"
                   className="inline-flex min-h-11 items-center rounded-md px-2 py-2.5 text-sm font-medium text-[color:var(--brand-navy)]/70 underline-offset-4 hover:text-[color:var(--brand-navy)] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
                 >
-                  Calculate Your Savings
+                  Compare to agency fees
                 </a>
               </div>
               <ul className="flex flex-wrap gap-x-5 gap-y-1.5 text-xs text-[color:var(--brand-navy)]/65">
                 {[
-                  "Ranked candidates, not CV dumps",
+                  "5–12 ranked candidates per role, week 1",
+                  "Evidence cited for every requirement",
+                  "Flat subscription vs. 20–25% contingency fees",
                   "Human recruiters + AI-supported structure",
-                  "Live workspace visibility",
-                  "Flat subscription — no placement fees",
-                  "You own pipeline and decisions",
+                  "You own the pipeline and the decisions",
                 ].map((t) => (
                   <li key={t} className="inline-flex items-center gap-1.5">
                     <CheckCircle2 className="h-3.5 w-3.5 text-[color:var(--brand-ocean)]" aria-hidden />
