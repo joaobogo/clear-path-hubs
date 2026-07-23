@@ -85,7 +85,7 @@ const CATEGORY_BY_SLUG: Record<string, ExplorerCategory> = {
 
 type Decorated = IndustryEntry & { explorerCategory: ExplorerCategory };
 
-const ALL_ENTRIES: Decorated[] = [...INDUSTRY_ENTRIES, ...INDUSTRY_ENTRIES_BATCH2]
+const ALL_ENTRIES: Decorated[] = [...INDUSTRY_ENTRIES]
   .map((e) => ({
     ...e,
     explorerCategory:
