@@ -147,6 +147,7 @@ export const getPositionForEdit = createServerFn({ method: "GET" })
     if (!p) throw new Error("position_not_found");
     const comp = (p.compensation ?? {}) as AnyRow;
     const wa = (p.work_authorization ?? {}) as AnyRow;
+    const ctx = (p.intake_context ?? {}) as AnyRow;
     const initial: PositionEditInitial = {
       id: p.id,
       organization_id: p.organization_id,
@@ -162,10 +163,10 @@ export const getPositionForEdit = createServerFn({ method: "GET" })
       must_have_skills: fromJsonArray(p.requirements),
       preferred_requirements: joinArrayText(p.preferred_requirements),
       dealbreakers: joinArrayText(p.dealbreakers),
-      compensation: comp.summary ?? comp.text ?? "",
+      compensation: comp.summary ?? comp.text ?? comp.note ?? "",
       hiring_urgency: comp.urgency ?? "",
       target_countries: fromJsonArray(wa.countries),
-      work_authorization: wa.summary ?? wa.text ?? "",
+      work_authorization: wa.summary ?? wa.text ?? wa.note ?? "",
       target_titles: fromJsonArray(wa.target_titles),
       screening_questions: ((screeningRes.data ?? []) as AnyRow[]).map((r) => ({
         id: r.id,
@@ -174,8 +175,22 @@ export const getPositionForEdit = createServerFn({ method: "GET" })
         required: !!r.required,
         dealbreaker: !!r.dealbreaker,
       })),
+      responsibilities: ctx.responsibilities ?? "",
+      experience: ctx.experience ?? "",
+      education: ctx.education ?? "",
+      certifications: ctx.certifications ?? "",
+      languages: ctx.languages ?? "",
+      industry_experience: ctx.industry_experience ?? "",
+      hiring_timeline: ctx.hiring_timeline ?? "",
+      timezone_requirements: ctx.timezone_requirements ?? "",
+      reason_for_hiring: (ctx.reason_for_hiring ?? "") as PositionEditInitial["reason_for_hiring"],
+      hiring_challenges: ctx.hiring_challenges ?? "",
+      interview_process: ctx.interview_process ?? "",
+      decision_makers: ctx.decision_makers ?? "",
+      additional_context: ctx.additional_context ?? "",
       status: p.status ?? "draft",
     };
+
     return initial;
   });
 
