@@ -1,0 +1,211 @@
+{
+  "version": "1.0",
+  "identity_rule": {
+    "candidate_profile": "the person, one row per human",
+    "candidate_submission": "candidacy for one exact position, one row per (candidate_profile_id, position_id)",
+    "score_run": "one score for one exact candidate_submission",
+    "required_identity_columns_on_role_specific_records": [
+      "organization_id",
+      "position_id",
+      "candidate_profile_id",
+      "candidate_submission_id"
+    ]
+  },
+  "entities": [
+    {
+      "name": "organization",
+      "table": "organizations",
+      "pk": "id",
+      "fks": [],
+      "tenant_scope": "self",
+      "lifecycle": ["active", "archived"],
+      "create_authority": ["platform_admin", "intake_admin_convert"],
+      "update_authority": ["platform_admin", "operations", "client_admin"],
+      "archive": "archived_at IS NOT NULL",
+      "history": "audit_events"
+    },
+    {
+      "name": "membership",
+      "table": "memberships",
+      "pk": "id",
+      "fks": ["user_id -> auth.users", "organization_id -> organizations"],
+      "tenant_scope": "organization_id",
+      "lifecycle": ["active", "revoked"],
+      "create_authority": ["platform_admin", "operations", "client_admin", "intake_admin_convert"],
+      "update_authority": ["platform_admin", "operations", "client_admin_own_org"],
+      "archive": "status='revoked'",
+      "history": "audit_events"
+    },
+    {
+      "name": "position",
+      "table": "positions",
+      "pk": "id",
+      "fks": ["organization_id -> organizations"],
+      "tenant_scope": "organization_id",
+      "lifecycle": ["draft","submitted","under_review","approved","active","paused","filled","closed","archived"],
+      "create_authority": ["client_admin","client_editor","intake_admin_convert"],
+      "update_authority": ["client_admin","client_editor","platform_admin"],
+      "archive": "status='archived' AND archived_at NOT NULL",
+      "history": "audit_events"
+    },
+    {
+      "name": "candidate_profile",
+      "table": "candidate_profiles",
+      "pk": "id",
+      "fks": ["user_id -> auth.users (nullable)", "current_cv_file_id -> files"],
+      "tenant_scope": "none (cross-org identity)",
+      "lifecycle": ["active","deactivated","deleted"],
+      "create_authority": ["apply.functions.ts","candidate.functions.ts"],
+      "update_authority": ["owner","platform_admin"],
+      "archive": "status='deactivated'",
+      "history": "candidate_evidence + audit_events",
+      "uniqueness": "one per user_id; guests deduped by lower(email) at claim"
+    },
+    {
+      "name": "application",
+      "table": "applications",
+      "pk": "id",
+      "fks": ["candidate_profile_id","position_id","file_id","organization_id"],
+      "tenant_scope": "organization_id",
+      "lifecycle": ["received","superseded"],
+      "create_authority": ["POST /api/public/apply"],
+      "update_authority": ["none (immutable event)"],
+      "archive": "never; DSR only",
+      "history": "self",
+      "uniqueness": "UNIQUE(candidate_email, position_id)"
+    },
+    {
+      "name": "candidate_submission",
+      "table": "candidate_matches",
+      "rename_target": "candidate_submissions",
+      "pk": "id",
+      "fks": ["organization_id","position_id","candidate_profile_id","application_id","approved_score_run_id -> score_runs"],
+      "tenant_scope": "organization_id",
+      "lifecycle_stage": ["new","screened","shortlisted","interviewing","offer","hired","rejected","withdrawn"],
+      "visibility": ["hidden","visible"],
+      "create_authority": ["apply.functions.ts","platform_admin"],
+      "update_authority": ["client_admin","client_editor","platform_admin"],
+      "archive": "stage terminal; row retained",
+      "history": "client_decisions, score_runs, audit_events",
+      "uniqueness": "UNIQUE(candidate_profile_id, position_id)"
+    },
+    {
+      "name": "document",
+      "table": "files",
+      "pk": "id",
+      "fks": ["candidate_profile_id","application_id"],
+      "storage": "supabase.storage bucket 'cvs' (private)",
+      "tenant_scope": "via candidate; RLS scoped",
+      "lifecycle": ["uploaded","extracted","hydrated","failed"],
+      "create_authority": ["apply.functions.ts","candidate.functions.ts"],
+      "update_authority": ["pipeline worker"],
+      "archive": "retention policy erase",
+      "history": "processing_jobs"
+    },
+    {
+      "name": "processing_run",
+      "table": "processing_jobs",
+      "pk": "id",
+      "fks": ["entity_id (polymorphic)"],
+      "tenant_scope": "inherited",
+      "lifecycle": ["queued","running","completed","failed","cancelled"],
+      "create_authority": ["pipeline-runner","admin retry"],
+      "update_authority": ["worker"],
+      "archive": "retention 90d",
+      "uniqueness": "partial unique (entity_id, job_type) WHERE status IN (queued,running)"
+    },
+    {
+      "name": "evidence_item",
+      "table": "candidate_evidence",
+      "pk": "id",
+      "fks": ["candidate_submission_id","candidate_profile_id","position_id","organization_id"],
+      "tenant_scope": "organization_id",
+      "lifecycle": ["immutable snapshot"],
+      "create_authority": ["cv-hydration.server.ts"],
+      "update_authority": ["never"],
+      "archive": "retained with submission",
+      "contract": "8 mandatory fields per contracts.json"
+    },
+    {
+      "name": "score_run",
+      "table": "score_runs",
+      "pk": "id",
+      "fks": ["candidate_submission_id","application_id","candidate_profile_id","position_id","organization_id"],
+      "identity_guard": "tg_score_runs_identity",
+      "tenant_scope": "organization_id",
+      "lifecycle": ["pending","running","completed","failed","cancelled"],
+      "create_authority": ["scoring-service.server.ts"],
+      "update_authority": ["worker until terminal"],
+      "immutable_after": ["completed","failed","cancelled"],
+      "immutability_guard": "tg_score_runs_immutable",
+      "archive": "never"
+    },
+    {
+      "name": "publication",
+      "table": null,
+      "represented_as": "candidate_submissions.client_visibility transition + approved_score_run_id",
+      "gate": "tg_candidate_matches_publish_gate",
+      "history": "audit_events"
+    },
+    {
+      "name": "client_decision",
+      "table": "client_decisions",
+      "pk": "id",
+      "fks": ["candidate_submission_id","organization_id","decided_by_user_id"],
+      "tenant_scope": "organization_id",
+      "lifecycle": ["append-only log"],
+      "sync_contract": "candidate_submissions.decision fields mirror latest row; written in same transaction by moveMatchStage"
+    },
+    {
+      "name": "interview",
+      "table": "interviews",
+      "pk": "id",
+      "fks": ["candidate_submission_id","organization_id","position_id","candidate_profile_id"],
+      "tenant_scope": "organization_id",
+      "lifecycle": ["requested","confirmed","completed","cancelled","no_show","rescheduled"],
+      "create_authority": ["interviews.functions.ts"],
+      "update_authority": ["client","candidate"],
+      "uniqueness": "partial unique (candidate_submission_id, status) WHERE status IN (requested,confirmed)"
+    },
+    {
+      "name": "conversation",
+      "table": null,
+      "represented_as": "messages.thread_id grouping",
+      "note": "First-class conversations table deferred; introduce with sync contract if needed."
+    },
+    {
+      "name": "message",
+      "table": "messages",
+      "pk": "id",
+      "fks": ["sender_user_id","organization_id","candidate_submission_id (nullable)"],
+      "tenant_scope": "organization_id",
+      "lifecycle": ["append-only; soft-delete via deleted_at"],
+      "uniqueness": "UNIQUE(client_msg_id) per thread"
+    },
+    {
+      "name": "activity_event",
+      "table": "notification_events",
+      "pk": "id",
+      "fks": ["organization_id","candidate_submission_id (nullable)","actor_user_id"],
+      "tenant_scope": "organization_id",
+      "lifecycle": ["append-only"],
+      "fanout": ["notifications","notification_deliveries"]
+    },
+    {
+      "name": "audit_event",
+      "table": "audit_events",
+      "pk": "id",
+      "fks": ["organization_id","actor_user_id","entity_type","entity_id","trace_id"],
+      "tenant_scope": "organization_id",
+      "lifecycle": ["append-only immutable"],
+      "create_authority": ["tg_write_audit_event trigger"],
+      "retention": "per retention_policies"
+    }
+  ],
+  "data_layers": {
+    "canonical_business": ["organizations","memberships","positions","candidate_profiles","applications","candidate_matches","files","interviews","messages","notification_events"],
+    "temporary_processing": ["processing_jobs","score_runs (pending/running)"],
+    "historical_snapshots": ["candidate_evidence","score_runs (terminal)","client_decisions","score_decisions","notification_deliveries","audit_events"],
+    "dashboard_read_models": ["admin_clients_view","admin_positions_view","admin_candidate_matches_view","admin_pipeline_health","admin_work_inbox","client_positions_view","client_candidate_matches_view","client_kanban_view","client_dashboard_kpis","client_messages_view","candidate_profile_view","candidate_my_applications","candidate_messages_view"]
+  }
+}
