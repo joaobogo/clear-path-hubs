@@ -4,9 +4,21 @@
 //
 // Server-only: consumed by createServerFn handlers via the authenticated
 // supabase client (RLS applies as the caller).
+import {
+  buildRequirementRows,
+  summariseCoverage,
+  buildInterviewGuide,
+  toFitPresentation,
+  prettifyHeadline,
+  type RequirementRow,
+  type CoverageSummary,
+  type InterviewQuestion,
+  type FitPresentation,
+} from "@/lib/client-fit-presentation";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
+
 
 export type MatchStage =
   | "delivered"
