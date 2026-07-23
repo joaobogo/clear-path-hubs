@@ -323,13 +323,13 @@ function BenchmarkCard({ b }: { b: Benchmark }) {
   return (
     <Link
       to={b.href}
-      className="group flex items-center justify-between gap-3 rounded-xl border border-[color:var(--brand-navy)]/10 bg-white px-4 py-3 transition hover:border-[color:var(--brand-ocean)]/40"
+      className="group flex min-w-0 items-center justify-between gap-3 rounded-xl border border-[color:var(--brand-navy)]/10 bg-white px-4 py-3 transition hover:border-[color:var(--brand-ocean)]/40"
     >
-      <div className="min-w-0">
+      <div className="min-w-0 flex-1">
         <div className="text-[10px] font-semibold uppercase tracking-widest text-[color:var(--brand-ocean)]">
           {b.label}
         </div>
-        <div className="mt-0.5 truncate text-sm text-[color:var(--brand-navy)]/85">
+        <div className="mt-0.5 text-sm text-[color:var(--brand-navy)]/85">
           {b.claim}
         </div>
       </div>
@@ -446,7 +446,7 @@ function ResourcesPage() {
           title="Context varies by industry"
           description="No fabricated statistics — every claim links to its source."
         >
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-[minmax(0,1fr)] gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {BENCHMARKS.map((b) => (
               <BenchmarkCard key={b.label} b={b} />
             ))}
