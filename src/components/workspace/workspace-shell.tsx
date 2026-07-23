@@ -19,6 +19,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
+import { GlobalSearchDialog } from "@/components/workspace/global-search-dialog";
 import { cn } from "@/lib/utils";
 
 export type WorkspaceNavItem = {
