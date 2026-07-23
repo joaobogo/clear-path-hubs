@@ -116,19 +116,18 @@ async function loadInputs(matchId: string) {
     }
     return null;
   };
+  const mapReqs = (arr: unknown, prefix: string, required: boolean): RequirementInput[] => {
+    if (!Array.isArray(arr)) return [];
+    const out: RequirementInput[] = [];
+    arr.forEach((t, i) => {
+      const text = reqToText(t);
+      if (text) out.push({ id: `${prefix}-${i}`, text, required, keywords: [] });
+    });
+    return out;
+  };
   const requirements: RequirementInput[] = [
-    ...(Array.isArray(posRes.data?.requirements) ? posRes.data.requirements : [])
-      .map((t: unknown, i: number) => {
-        const text = reqToText(t);
-        return text ? { id: `req-${i}`, text, required: true, keywords: [] as string[] } : null;
-      })
-      .filter((x): x is RequirementInput => x !== null),
-    ...(Array.isArray(posRes.data?.preferred_requirements) ? posRes.data.preferred_requirements : [])
-      .map((t: unknown, i: number) => {
-        const text = reqToText(t);
-        return text ? { id: `pref-${i}`, text, required: false, keywords: [] as string[] } : null;
-      })
-      .filter((x): x is RequirementInput => x !== null),
+    ...mapReqs(posRes.data?.requirements, "req", true),
+    ...mapReqs(posRes.data?.preferred_requirements, "pref", false),
   ];
 
   const screening: ScreeningAnswer[] = (ansRes.data ?? []).map((r: Any) => {
