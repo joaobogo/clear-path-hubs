@@ -14,3 +14,6 @@ export {
   CardFooter,
   CardChevron,
 } from "./dashboard-card";
+export { ScoreDisplay, bandForScore, type ScoreBand } from "./score-display";
+export { StageIndicator, type PipelineStage } from "./stage-indicator";
+export { RequirementCoverage, type CoverageStatus, type RequirementItem } from "./requirement-coverage";
