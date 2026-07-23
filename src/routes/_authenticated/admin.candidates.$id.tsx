@@ -25,6 +25,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
   User,
   FileText,
   Sparkles,
@@ -37,7 +45,9 @@ import {
   Activity as ActivityIcon,
   ExternalLink,
   Wrench,
+  MoreHorizontal,
 } from "lucide-react";
+
 
 export const Route = createFileRoute("/_authenticated/admin/candidates/$id")({
   loader: async ({ context, params }) => {
