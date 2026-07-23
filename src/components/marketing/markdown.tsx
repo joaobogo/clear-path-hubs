@@ -38,9 +38,30 @@ export function Markdown({ children }: { children: string }) {
         remarkPlugins={[remarkGfm]}
         components={{
           // Prevent duplicate H1s — the page header already renders the H1.
-          h1: ({ children, ...rest }) => <h2 {...rest}>{children}</h2>,
-          h2: ({ children, ...rest }) => <h3 {...rest}>{children}</h3>,
-          h3: ({ children, ...rest }) => <h4 {...rest}>{children}</h4>,
+          // Preserve stable IDs so a TOC can deep-link into headings.
+          h1: ({ children, ...rest }) => (
+            <h2 id={slugifyHeading(headingText(children))} {...rest}>
+              {children}
+            </h2>
+          ),
+          h2: ({ children, ...rest }) => (
+            <h3 id={slugifyHeading(headingText(children))} className="scroll-mt-24" {...rest}>
+              {children}
+            </h3>
+          ),
+          h3: ({ children, ...rest }) => (
+            <h4 id={slugifyHeading(headingText(children))} className="scroll-mt-24" {...rest}>
+              {children}
+            </h4>
+          ),
+          blockquote: ({ children, ...rest }) => (
+            <blockquote
+              {...rest}
+              className="not-prose my-8 border-l-4 border-primary/70 bg-primary/[0.04] px-6 py-5 text-lg font-medium leading-relaxed tracking-tight text-foreground"
+            >
+              {children}
+            </blockquote>
+          ),
           a: ({ href, children, ...rest }) => (
             <a href={rewriteHref(href)} {...rest}>
               {children}
