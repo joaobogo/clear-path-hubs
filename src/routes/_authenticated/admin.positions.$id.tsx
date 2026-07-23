@@ -318,7 +318,7 @@ function LifecycleBar({ position, onDone }: { position: Any; onDone: () => Promi
     primary = { key: "resume", label: "Resume", onClick: () => doStatus("activate", "Resumed") };
     secondary.push({ key: "close", label: "Close", onClick: () => doStatus("close", "Closed") });
   } else if (s === "closed") {
-    primary = { key: "reopen", label: "Reopen", onClick: () => doStatus("reopen", "Reopened") });
+    primary = { key: "reopen", label: "Reopen", onClick: () => doStatus("reopen", "Reopened") };
     secondary.push({ key: "archive", label: "Archive", onClick: () => doStatus("archive", "Archived") });
   } else if (s === "draft") {
     primary = { key: "submit", label: "No action available", onClick: async () => {} };
