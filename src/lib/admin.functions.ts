@@ -568,6 +568,28 @@ export const setPositionStatus = createServerFn({ method: "POST" })
       after,
       trace_id,
     });
+    // Emit lifecycle events so Client + Admin dashboards refresh in real time.
+    if (data.action === "activate" || data.action === "approve" || data.action === "close") {
+      try {
+        const { emitEventFromServer } = await import("./notifications.functions");
+        const eventMap = {
+          activate: "position_activated",
+          approve: "position_approved",
+          close: "position_closed",
+        } as const;
+        await emitEventFromServer({
+          event: eventMap[data.action as keyof typeof eventMap],
+          scope: `${data.id}:${data.action}`,
+          organization_id: before.organization_id,
+          position_id: data.id,
+          actor_user_id: context.userId,
+          link_path: `/client/positions/${data.id}`,
+          payload: { title: before.title ?? null },
+        });
+      } catch (e) {
+        console.error("[setPositionStatus] emit failed", trace_id, e);
+      }
+    }
     return { ok: true as const, trace_id, position: after };
   });
 
