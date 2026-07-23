@@ -1,0 +1,20 @@
+{
+  "count": 1,
+  "records": [
+    {
+      "sourceUrl": "https://taasflow.com/industries/compare",
+      "sourcePath": "/industries/compare",
+      "destinationUrl": "https://clear-path-hubs.lovable.app",
+      "destinationPath": null,
+      "pageType": "industries_compare",
+      "sourceRouteOrigin": "sitemap-industries.xml + homepage-link",
+      "dynamic": false,
+      "protected": false,
+      "expectedTitle": null,
+      "expectedH1": null,
+      "expectedStatus": 200,
+      "redirectBehavior": null,
+      "auditStatus": "unresolved"
+    }
+  ]
+}

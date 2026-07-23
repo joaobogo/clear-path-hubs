@@ -1,0 +1,43 @@
+{
+  "generatedAt": "2026-07-23",
+  "policy": "These destination route trees are the canonical operational surface. Any source route mapping into these trees is protected and NOT subject to public marketing migration.",
+  "trees": [
+    {
+      "destinationPath": "/_authenticated/admin",
+      "system": "Admin workspace"
+    },
+    {
+      "destinationPath": "/_authenticated/client",
+      "system": "Client workspace"
+    },
+    {
+      "destinationPath": "/_authenticated/me",
+      "system": "Candidate workspace"
+    },
+    {
+      "destinationPath": "/intake",
+      "system": "Employer intake wizard"
+    },
+    {
+      "destinationPath": "/intake/confirmation",
+      "system": "Employer intake confirmation"
+    },
+    {
+      "destinationPath": "/jobs",
+      "system": "Job Board (destination canonical)"
+    },
+    {
+      "destinationPath": "/jobs/$id",
+      "system": "Job detail (destination canonical)"
+    },
+    {
+      "destinationPath": "/jobs/$id/apply",
+      "system": "Job application (destination canonical)"
+    },
+    {
+      "destinationPath": "/apply/received/$applicationId",
+      "system": "Application tracking receipt"
+    }
+  ],
+  "protectedRecordCount": 6
+}
