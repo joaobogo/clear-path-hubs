@@ -44,7 +44,7 @@ import {
 
 import { getPage } from "@/lib/marketing/content";
 import { marketingHead } from "@/lib/marketing/head";
-import { RoiCalculator } from "@/components/marketing/roi-calculator";
+import { AgencyComparator } from "@/components/marketing/agency-comparator";
 import { ModelComparison } from "@/components/marketing/model-comparison";
 import { OperatingSystem } from "@/components/marketing/operating-system";
 import { WorkspaceTour } from "@/components/marketing/workspace-tour";
