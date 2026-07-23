@@ -457,6 +457,7 @@ const positionPatch = z.object({
       title: z.string().min(3).max(200).optional(),
       description: z.string().max(20_000).optional(),
       location: z.string().max(200).nullable().optional(),
+      department: z.string().max(200).nullable().optional(),
       work_model: z.enum(["remote", "hybrid", "onsite"]).nullable().optional(),
       employment_type: z
         .enum(["full_time", "part_time", "contract", "temporary", "internship"])
@@ -465,6 +466,9 @@ const positionPatch = z.object({
       seniority: z.string().max(60).nullable().optional(),
       requirements: z.array(z.unknown()).optional(),
       preferred_requirements: z.array(z.unknown()).optional(),
+      dealbreakers: z.array(z.unknown()).optional(),
+      compensation: z.record(z.string(), z.unknown()).optional(),
+      work_authorization: z.record(z.string(), z.unknown()).optional(),
     })
     .refine((p) => Object.keys(p).length > 0, "no_changes"),
   reason: z.string().max(500).optional(),
@@ -512,6 +516,7 @@ const statusTransition = z.object({
     "pause",
     "close",
     "reopen",
+    "archive",
   ]),
   reason: z.string().max(500).optional(),
 });
@@ -523,7 +528,9 @@ const STATUS_MAP: Record<string, string> = {
   pause: "paused",
   close: "closed",
   reopen: "approved",
+  archive: "archived",
 };
+
 
 export const setPositionStatus = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
