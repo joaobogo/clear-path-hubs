@@ -7,7 +7,7 @@
   "totals": {
     "records": 358,
     "duplicatesRemoved": 1,
-    "unresolved": 1,
+    "unresolved": 0,
     "protected": 6,
     "blogArticles": 304,
     "industryPages": 22,
@@ -368,8 +368,8 @@
     {
       "sourceUrl": "https://taasflow.com/industries/compare",
       "sourcePath": "/industries/compare",
-      "destinationUrl": "https://clear-path-hubs.lovable.app",
-      "destinationPath": null,
+      "destinationUrl": "https://clear-path-hubs.lovable.app/industries/compare",
+      "destinationPath": "/industries/compare",
       "pageType": "industries_compare",
       "sourceRouteOrigin": "sitemap-industries.xml + homepage-link",
       "dynamic": false,
@@ -378,7 +378,7 @@
       "expectedH1": null,
       "expectedStatus": 200,
       "redirectBehavior": null,
-      "auditStatus": "unresolved"
+      "auditStatus": "pending-implementation"
     },
     {
       "sourceUrl": "https://taasflow.com/industries/tech",
