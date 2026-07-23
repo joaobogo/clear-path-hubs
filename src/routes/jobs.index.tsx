@@ -13,6 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { X } from "lucide-react";
+import { SiteShell } from "@/components/marketing/site-shell";
 
 const positionsQuery = queryOptions({
   queryKey: ["public-positions"],
@@ -136,23 +137,8 @@ function JobsPage() {
   const pageItems = filtered.slice((clampedPage - 1) * PAGE_SIZE, clampedPage * PAGE_SIZE);
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b">
-        <div className="mx-auto max-w-6xl px-4 py-4 flex items-center justify-between">
-          <Link to="/" className="font-semibold tracking-tight">TaaSFlow</Link>
-          <nav className="flex items-center gap-4 text-sm">
-            <Link to="/jobs" className="text-foreground">Jobs</Link>
-            <Link to="/intake" className="text-muted-foreground hover:text-foreground">
-              For employers
-            </Link>
-            <Link to="/auth" className="text-muted-foreground hover:text-foreground">
-              Sign in
-            </Link>
-          </nav>
-        </div>
-      </header>
-
-      <main className="mx-auto max-w-6xl px-4 py-10">
+    <SiteShell>
+      <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
         <div className="mb-8">
           <h1 className="text-3xl md:text-4xl font-semibold tracking-tight">Open roles</h1>
           <p className="mt-2 text-muted-foreground">
