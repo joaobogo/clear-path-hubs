@@ -96,7 +96,7 @@ export const getPublicPosition = createServerFn({ method: "GET" })
     const { data: pos, error } = await supabase
       .from("positions")
       .select(
-        "id,title,department,location,work_model,employment_type,seniority,description,requirements,preferred_requirements,compensation,published_at,organizations(name)",
+        "id,title,department,location,work_model,employment_type,seniority,description,requirements,preferred_requirements,compensation,published_at,openings,organizations(name)",
       )
       .eq("id", data.id)
       .eq("status", "active")
