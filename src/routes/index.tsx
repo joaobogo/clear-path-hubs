@@ -46,6 +46,7 @@ import { getPage } from "@/lib/marketing/content";
 import { marketingHead } from "@/lib/marketing/head";
 import { RoiCalculator } from "@/components/marketing/roi-calculator";
 import { ModelComparison } from "@/components/marketing/model-comparison";
+import { OperatingSystem } from "@/components/marketing/operating-system";
 
 // Homepage metadata is authored inline (guardrail: legacy JSON entry contains
 // unapproved "14 days" and totals claims). Do not pass the legacy entry here.
