@@ -269,7 +269,7 @@ export const bulkUpdateTasks = createServerFn({ method: "POST" })
     if (Object.keys(patch).length === 0) return { updated: 0 };
     const { data: rows, error } = await context.supabase
       .from("tasks")
-      .update(patch)
+      .update(patch as never)
       .in("id", data.ids)
       .select("id");
     if (error) throw new Error(error.message);
