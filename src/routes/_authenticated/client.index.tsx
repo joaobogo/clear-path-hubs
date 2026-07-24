@@ -252,8 +252,24 @@ function OverviewPage() {
           {/* 0 · INDUSTRY PERSONALIZATION — vertical-tuned rubric + samples */}
           <IndustryPersonalizationPanel industry={ctx?.active?.industry ?? null} />
 
+          {/* 0.5 · BLOCKING APPROVALS — urgent tasks that hold delivery */}
+          {blocking && blocking.count > 0 && (
+            <Link
+              to="/client/tasks"
+              search={{ view: "blocking" }}
+              className="flex items-center gap-3 rounded-lg border border-destructive/40 bg-destructive/5 px-4 py-3 text-sm hover:bg-destructive/10"
+            >
+              <AlertTriangle className="h-4 w-4 text-destructive" />
+              <span className="flex-1 font-medium">
+                {blocking.count} task{blocking.count === 1 ? "" : "s"} blocking delivery — needs approval or decision
+              </span>
+              <ArrowRight className="h-4 w-4 text-destructive" />
+            </Link>
+          )}
+
           {/* 1 · PRIORITY ACTIONS — what needs me now, deduped */}
           <PriorityActions queue={priorityQueue} loading={!data && isFetching} />
+
 
           {/* 2 · HOTTEST ROLE + WEEKLY PROGRESS */}
           <section className="grid gap-4 lg:grid-cols-5">
