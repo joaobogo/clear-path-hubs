@@ -67,8 +67,8 @@ export function SkipNav() {
 /* ---------------------------------------------------------------- Announcement */
 
 const ANNOUNCEMENT_KEY = "taasflow.announcement.v1";
-const ANNOUNCEMENT_TEXT = "New: transparent role-specific scoring — see how it works.";
-const ANNOUNCEMENT_LINK = "/how-it-works";
+const ANNOUNCEMENT_TEXT = "The category we're building: ATS + recruiting execution, in one system.";
+const ANNOUNCEMENT_LINK = "/platform";
 
 function Announcement() {
   const [dismissed, setDismissed] = useState(true);
