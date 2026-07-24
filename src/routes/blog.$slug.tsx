@@ -204,7 +204,7 @@ function BlogPost() {
             </h1>
             <p className="mt-3 text-sm text-muted-foreground">By {author}</p>
 
-            {heroImage && (
+            {heroImage ? (
               <figure className="mt-8 overflow-hidden rounded-2xl border border-border/60 bg-muted/20">
                 <img
                   src={heroImage}
@@ -214,6 +214,15 @@ function BlogPost() {
                   className="aspect-[16/9] w-full object-cover"
                 />
               </figure>
+            ) : (
+              <div
+                aria-hidden
+                className="mt-8 flex aspect-[16/5] w-full items-end overflow-hidden rounded-2xl border border-border/60 bg-gradient-to-br from-primary/15 via-primary/5 to-background p-8"
+              >
+                <p className="text-xs font-semibold uppercase tracking-[0.22em] text-primary/80">
+                  {category} · TaaSFlow Insights
+                </p>
+              </div>
             )}
 
             {/* Editorial callout — what this article covers */}
