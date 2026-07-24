@@ -87,7 +87,7 @@ export const saveSavedView = createServerFn({ method: "POST" })
       user_id: context.userId,
       surface: data.surface,
       name: data.name,
-      filters: data.filters,
+      filters: data.filters as never,
       is_shared: data.is_shared ?? false,
       organization_id: data.is_shared ? data.organization_id ?? null : null,
     };
