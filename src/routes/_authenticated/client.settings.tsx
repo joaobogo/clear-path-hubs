@@ -163,6 +163,18 @@ function SettingsPage() {
  canEdit={!!isAdmin && !readOnlySupport}
  />
 
+ <BrandingSection
+ orgId={orgId}
+ initial={{
+ logo_url: ctx?.active?.logo_url ?? null,
+ brand_display_name: ctx?.active?.brand_display_name ?? null,
+ brand_primary_color: ctx?.active?.brand_primary_color ?? null,
+ brand_accent_color: ctx?.active?.brand_accent_color ?? null,
+ fallbackName: settings.company.name,
+ }}
+ canEdit={!!isAdmin && !readOnlySupport}
+ />
+
  <NotificationsSection
  orgId={orgId}
  initial={settings.notifications}
