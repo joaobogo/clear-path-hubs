@@ -32,6 +32,7 @@ import {
  Sparkles,
  HandCoins,
  Bot,
+ Radar,
 } from "lucide-react";
 import {
  WorkspaceShell,
