@@ -436,6 +436,7 @@ export const askAssistant = createServerFn({ method: "POST" })
     const citationsMap = new Map<string, {
       kind: string; id: string; label: string; href?: string;
     }>();
+    const proposedActionsMap = new Map<string, AnyRow>();
 
     let finalContent = "";
     for (let step = 0; step < MAX_STEPS; step++) {
