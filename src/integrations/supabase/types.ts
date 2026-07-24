@@ -215,6 +215,115 @@ export type Database = {
           },
         ]
       }
+      assistant_conversations: {
+        Row: {
+          archived_at: string | null
+          created_at: string
+          id: string
+          organization_id: string
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          archived_at?: string | null
+          created_at?: string
+          id?: string
+          organization_id: string
+          title?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          archived_at?: string | null
+          created_at?: string
+          id?: string
+          organization_id?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "assistant_conversations_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "admin_clients_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "assistant_conversations_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      assistant_messages: {
+        Row: {
+          citations: Json
+          content: string
+          conversation_id: string
+          created_at: string
+          id: string
+          latency_ms: number | null
+          model: string | null
+          organization_id: string
+          role: string
+          tool_trace: Json
+          user_id: string
+        }
+        Insert: {
+          citations?: Json
+          content?: string
+          conversation_id: string
+          created_at?: string
+          id?: string
+          latency_ms?: number | null
+          model?: string | null
+          organization_id: string
+          role: string
+          tool_trace?: Json
+          user_id: string
+        }
+        Update: {
+          citations?: Json
+          content?: string
+          conversation_id?: string
+          created_at?: string
+          id?: string
+          latency_ms?: number | null
+          model?: string | null
+          organization_id?: string
+          role?: string
+          tool_trace?: Json
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "assistant_messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "assistant_conversations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "assistant_messages_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "admin_clients_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "assistant_messages_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       audit_events: {
         Row: {
           action: string
