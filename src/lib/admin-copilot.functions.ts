@@ -393,7 +393,7 @@ export const executeCopilotAction = createServerFn({ method: "POST" })
       .object({
         action: z
           .object({
-            kind: z.enum(["navigate", "draft_client_update", "draft_candidate_outreach"]),
+            kind: z.enum(["navigate", "draft_client_update"]),
             action_id: z.string(),
             org_id: z.string().uuid().optional(),
             match_id: z.string().uuid().optional(),
