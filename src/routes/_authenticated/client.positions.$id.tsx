@@ -649,33 +649,6 @@ function SummaryTile({
  );
 }
 
-function BlueprintList({ title, items }: { title: string; items: AnyRow[] }) {
- return (
- <div>
- <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground mb-1.5">
- {title}
- </div>
- {items.length === 0 ? (
- <div className="text-xs text-muted-foreground">Not specified</div>
- ) : (
- <ul className="space-y-1 text-sm">
- {items.map((r: AnyRow, i: number) => {
- const label =
- typeof r === "string"
- ? r
- : (r?.label ?? r?.name ?? r?.title ?? r?.text ?? "Requirement");
- return (
- <li key={i} className="flex gap-1.5">
- <span className="text-muted-foreground">•</span>
- <span>{label}</span>
- </li>
- );
- })}
- </ul>
- )}
- </div>
- );
-}
 
 function ProcessStep({
  n,
