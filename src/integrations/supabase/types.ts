@@ -14,6 +14,83 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_copilot_conversations: {
+        Row: {
+          archived_at: string | null
+          created_at: string
+          id: string
+          title: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          archived_at?: string | null
+          created_at?: string
+          id?: string
+          title?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          archived_at?: string | null
+          created_at?: string
+          id?: string
+          title?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      admin_copilot_messages: {
+        Row: {
+          citations: Json
+          content: string
+          conversation_id: string
+          created_at: string
+          id: string
+          latency_ms: number | null
+          model: string | null
+          proposed_actions: Json
+          role: string
+          tool_trace: Json
+          user_id: string
+        }
+        Insert: {
+          citations?: Json
+          content: string
+          conversation_id: string
+          created_at?: string
+          id?: string
+          latency_ms?: number | null
+          model?: string | null
+          proposed_actions?: Json
+          role: string
+          tool_trace?: Json
+          user_id: string
+        }
+        Update: {
+          citations?: Json
+          content?: string
+          conversation_id?: string
+          created_at?: string
+          id?: string
+          latency_ms?: number | null
+          model?: string | null
+          proposed_actions?: Json
+          role?: string
+          tool_trace?: Json
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "admin_copilot_messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "admin_copilot_conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       application_answers: {
         Row: {
           answer: Json
@@ -270,6 +347,7 @@ export type Database = {
           latency_ms: number | null
           model: string | null
           organization_id: string
+          proposed_actions: Json
           role: string
           tool_trace: Json
           user_id: string
@@ -283,6 +361,7 @@ export type Database = {
           latency_ms?: number | null
           model?: string | null
           organization_id: string
+          proposed_actions?: Json
           role: string
           tool_trace?: Json
           user_id: string
@@ -296,6 +375,7 @@ export type Database = {
           latency_ms?: number | null
           model?: string | null
           organization_id?: string
+          proposed_actions?: Json
           role?: string
           tool_trace?: Json
           user_id?: string
