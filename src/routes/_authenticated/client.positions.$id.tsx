@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { AlertCircle, MessageSquare, Users } from "lucide-react";
 import { RoleBlueprint } from "@/components/product/role-blueprint";
+import { ResurfacePanel } from "@/components/client/resurface-panel";
 
 export const Route = createFileRoute("/_authenticated/client/positions/$id")({
  head: () => ({
@@ -521,6 +522,9 @@ function PositionDetailPage() {
 
   {/* 6. Role blueprint — ATS-grade source of truth */}
  <RoleBlueprint position={position} activity={activity} />
+
+ {/* 6b. Silver medalists from talent memory */}
+ {orgId && <ResurfacePanel orgId={orgId} positionId={id} />}
 
  {/* 7. Hiring process */}
  <section aria-label="Hiring process" className="rounded-xl border bg-card p-4">
