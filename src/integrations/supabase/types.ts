@@ -4318,6 +4318,122 @@ export type Database = {
           },
         ]
       }
+      role_memory: {
+        Row: {
+          author_display_name: string | null
+          author_user_id: string
+          body: string
+          candidate_profile_id: string | null
+          created_at: string
+          id: string
+          kind: Database["public"]["Enums"]["role_memory_kind"]
+          organization_id: string
+          pinned: boolean
+          position_id: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          author_display_name?: string | null
+          author_user_id: string
+          body: string
+          candidate_profile_id?: string | null
+          created_at?: string
+          id?: string
+          kind?: Database["public"]["Enums"]["role_memory_kind"]
+          organization_id: string
+          pinned?: boolean
+          position_id: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          author_display_name?: string | null
+          author_user_id?: string
+          body?: string
+          candidate_profile_id?: string | null
+          created_at?: string
+          id?: string
+          kind?: Database["public"]["Enums"]["role_memory_kind"]
+          organization_id?: string
+          pinned?: boolean
+          position_id?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "role_memory_candidate_profile_id_fkey"
+            columns: ["candidate_profile_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_profile_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "role_memory_candidate_profile_id_fkey"
+            columns: ["candidate_profile_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "role_memory_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "admin_clients_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "role_memory_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "role_memory_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_portfolio_rollup"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "role_memory_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "admin_pipeline_health"
+            referencedColumns: ["position_id"]
+          },
+          {
+            foreignKeyName: "role_memory_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "admin_positions_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "role_memory_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_my_applications"
+            referencedColumns: ["position_id"]
+          },
+          {
+            foreignKeyName: "role_memory_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "client_positions_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "role_memory_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "positions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       saved_views: {
         Row: {
           created_at: string
@@ -6923,6 +7039,14 @@ export type Database = {
         | "provider_blocked"
         | "failed"
       profile_status: "active" | "suspended" | "deleted"
+      role_memory_kind:
+        | "brief"
+        | "rationale"
+        | "handoff"
+        | "candidate_reasoning"
+        | "decision"
+        | "risk"
+        | "next_step"
       score_decision_type:
         | "approve"
         | "override"
@@ -7278,6 +7402,15 @@ export const Constants = {
         "failed",
       ],
       profile_status: ["active", "suspended", "deleted"],
+      role_memory_kind: [
+        "brief",
+        "rationale",
+        "handoff",
+        "candidate_reasoning",
+        "decision",
+        "risk",
+        "next_step",
+      ],
       score_decision_type: [
         "approve",
         "override",
