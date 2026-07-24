@@ -1318,6 +1318,215 @@ export type Database = {
           },
         ]
       }
+      hire_records: {
+        Row: {
+          accepted_at: string | null
+          application_id: string | null
+          bonus_notes: string | null
+          candidate_match_id: string
+          candidate_profile_id: string
+          close_reason: Database["public"]["Enums"]["hire_close_reason"] | null
+          close_reason_notes: string | null
+          closed_at: string | null
+          created_at: string
+          created_by: string | null
+          declined_at: string | null
+          drafted_at: string | null
+          employment_type: string | null
+          equity_notes: string | null
+          hired_at: string | null
+          id: string
+          location: string | null
+          offer_notes: string | null
+          organization_id: string
+          owner_user_id: string | null
+          position_id: string
+          salary_amount: number | null
+          salary_currency: string | null
+          salary_period: string | null
+          sent_at: string | null
+          start_date: string | null
+          status: Database["public"]["Enums"]["hire_status"]
+          updated_at: string
+          work_model: string | null
+        }
+        Insert: {
+          accepted_at?: string | null
+          application_id?: string | null
+          bonus_notes?: string | null
+          candidate_match_id: string
+          candidate_profile_id: string
+          close_reason?: Database["public"]["Enums"]["hire_close_reason"] | null
+          close_reason_notes?: string | null
+          closed_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          declined_at?: string | null
+          drafted_at?: string | null
+          employment_type?: string | null
+          equity_notes?: string | null
+          hired_at?: string | null
+          id?: string
+          location?: string | null
+          offer_notes?: string | null
+          organization_id: string
+          owner_user_id?: string | null
+          position_id: string
+          salary_amount?: number | null
+          salary_currency?: string | null
+          salary_period?: string | null
+          sent_at?: string | null
+          start_date?: string | null
+          status?: Database["public"]["Enums"]["hire_status"]
+          updated_at?: string
+          work_model?: string | null
+        }
+        Update: {
+          accepted_at?: string | null
+          application_id?: string | null
+          bonus_notes?: string | null
+          candidate_match_id?: string
+          candidate_profile_id?: string
+          close_reason?: Database["public"]["Enums"]["hire_close_reason"] | null
+          close_reason_notes?: string | null
+          closed_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          declined_at?: string | null
+          drafted_at?: string | null
+          employment_type?: string | null
+          equity_notes?: string | null
+          hired_at?: string | null
+          id?: string
+          location?: string | null
+          offer_notes?: string | null
+          organization_id?: string
+          owner_user_id?: string | null
+          position_id?: string
+          salary_amount?: number | null
+          salary_currency?: string | null
+          salary_period?: string | null
+          sent_at?: string | null
+          start_date?: string | null
+          status?: Database["public"]["Enums"]["hire_status"]
+          updated_at?: string
+          work_model?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hire_records_application_id_fkey"
+            columns: ["application_id"]
+            isOneToOne: false
+            referencedRelation: "applications"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hire_records_application_id_fkey"
+            columns: ["application_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_my_applications"
+            referencedColumns: ["application_id"]
+          },
+          {
+            foreignKeyName: "hire_records_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: true
+            referencedRelation: "admin_candidate_matches_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hire_records_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: true
+            referencedRelation: "admin_work_inbox"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hire_records_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: true
+            referencedRelation: "candidate_matches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hire_records_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: true
+            referencedRelation: "client_candidate_matches_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hire_records_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: true
+            referencedRelation: "client_kanban_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hire_records_candidate_profile_id_fkey"
+            columns: ["candidate_profile_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_profile_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hire_records_candidate_profile_id_fkey"
+            columns: ["candidate_profile_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hire_records_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "admin_clients_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hire_records_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hire_records_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "admin_pipeline_health"
+            referencedColumns: ["position_id"]
+          },
+          {
+            foreignKeyName: "hire_records_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "admin_positions_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hire_records_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_my_applications"
+            referencedColumns: ["position_id"]
+          },
+          {
+            foreignKeyName: "hire_records_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "client_positions_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hire_records_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "positions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       intake_submissions: {
         Row: {
           company_name: string
@@ -5106,6 +5315,90 @@ export type Database = {
           },
         ]
       }
+      v_time_to_hire: {
+        Row: {
+          applied_at: string | null
+          candidate_name: string | null
+          candidate_profile_id: string | null
+          close_reason: Database["public"]["Enums"]["hire_close_reason"] | null
+          days_offer_to_accept: number | null
+          days_to_hire: number | null
+          hire_record_id: string | null
+          hired_at: string | null
+          offer_accepted_at: string | null
+          offer_sent_at: string | null
+          organization_id: string | null
+          owner_user_id: string | null
+          position_id: string | null
+          position_title: string | null
+          status: Database["public"]["Enums"]["hire_status"] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hire_records_candidate_profile_id_fkey"
+            columns: ["candidate_profile_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_profile_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hire_records_candidate_profile_id_fkey"
+            columns: ["candidate_profile_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hire_records_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "admin_clients_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hire_records_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hire_records_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "admin_pipeline_health"
+            referencedColumns: ["position_id"]
+          },
+          {
+            foreignKeyName: "hire_records_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "admin_positions_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hire_records_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_my_applications"
+            referencedColumns: ["position_id"]
+          },
+          {
+            foreignKeyName: "hire_records_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "client_positions_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hire_records_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "positions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       has_org_role: {
@@ -5197,6 +5490,25 @@ export type Database = {
         | "position_closed"
         | "message_sent"
       file_status: "uploading" | "ready" | "failed" | "deleted"
+      hire_close_reason:
+        | "candidate_declined"
+        | "counter_offer"
+        | "other_offer_accepted"
+        | "compensation_mismatch"
+        | "role_paused"
+        | "budget"
+        | "timing"
+        | "culture_fit"
+        | "background_check"
+        | "position_cancelled"
+        | "other"
+      hire_status:
+        | "offer_drafted"
+        | "offer_sent"
+        | "offer_accepted"
+        | "offer_declined"
+        | "hire_confirmed"
+        | "closed_lost"
       interview_status:
         | "requested"
         | "scheduling"
@@ -5472,6 +5784,27 @@ export const Constants = {
         "message_sent",
       ],
       file_status: ["uploading", "ready", "failed", "deleted"],
+      hire_close_reason: [
+        "candidate_declined",
+        "counter_offer",
+        "other_offer_accepted",
+        "compensation_mismatch",
+        "role_paused",
+        "budget",
+        "timing",
+        "culture_fit",
+        "background_check",
+        "position_cancelled",
+        "other",
+      ],
+      hire_status: [
+        "offer_drafted",
+        "offer_sent",
+        "offer_accepted",
+        "offer_declined",
+        "hire_confirmed",
+        "closed_lost",
+      ],
       interview_status: [
         "requested",
         "scheduling",
