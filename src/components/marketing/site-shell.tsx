@@ -501,12 +501,14 @@ export function CtaSection({
   description,
   primary = { to: "/intake", label: "Start hiring" },
   secondary = { to: "/jobs", label: "Browse jobs" },
+  tertiary,
 }: {
   eyebrow?: string;
   title: string;
   description?: string;
   primary?: { to: string; label: string };
   secondary?: { to: string; label: string };
+  tertiary?: { to: string; label: string };
 }) {
   return (
     <PublicSection>
@@ -537,11 +539,23 @@ export function CtaSection({
               {secondary.label}
             </Link>
           </div>
+          {tertiary && (
+            <div className="mt-5">
+              <Link
+                to={tertiary.to}
+                className="inline-flex items-center gap-1 rounded text-sm font-medium text-white/75 underline-offset-4 hover:text-white hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+              >
+                {tertiary.label}
+                <ChevronRight className="h-4 w-4" aria-hidden />
+              </Link>
+            </div>
+          )}
         </div>
       </PublicPage>
     </PublicSection>
   );
 }
+
 
 /* ---------------------------------------------------------------- Loading */
 
