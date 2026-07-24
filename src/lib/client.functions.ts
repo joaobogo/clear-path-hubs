@@ -56,7 +56,7 @@ async function resolveContext(supabase: AnyRow, userId: string, orgId?: string) 
   if (!active && isStaff && orgId) {
     const { data: org } = await supabase
       .from("organizations")
-      .select("id, name, industry, parent_organization_id")
+      .select("id, name, industry, parent_organization_id, logo_url, brand_display_name, brand_primary_color, brand_accent_color")
       .eq("id", orgId)
       .maybeSingle();
     if (org) {
