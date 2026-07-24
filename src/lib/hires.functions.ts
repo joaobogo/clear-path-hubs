@@ -314,21 +314,23 @@ export const getHireByMatch = createServerFn({ method: "POST" })
       .maybeSingle();
     if (error) throw new Error(error.message);
     if (!row) return { hire: null as HireRecordDTO | null };
+    const r = row as AnyRow;
     let owner_name: string | null = null;
-    if (row.owner_user_id) {
+    if (r.owner_user_id) {
       const { data: prof } = await context.supabase
         .from("profiles")
         .select("full_name, email")
-        .eq("auth_user_id", row.owner_user_id)
+        .eq("auth_user_id", r.owner_user_id)
         .maybeSingle();
-      owner_name = prof?.full_name || prof?.email || null;
+      const p = prof as AnyRow | null;
+      owner_name = p?.full_name || p?.email || null;
     }
     return {
       hire: toDTO({
-        ...row,
-        position_title: row.positions?.title ?? "Role",
-        candidate_name: row.candidate_profiles?.full_name ?? "Candidate",
-        applied_at: row.applications?.applied_at ?? null,
+        ...r,
+        position_title: r.positions?.title ?? "Role",
+        candidate_name: r.candidate_profiles?.full_name ?? "Candidate",
+        applied_at: r.applications?.applied_at ?? null,
         owner_name,
       }),
     };
