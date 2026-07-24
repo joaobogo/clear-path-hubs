@@ -126,14 +126,16 @@ function HowItWorksPage() {
             <div>
               <SectionHead
                 eyebrow="02 · Sourcing"
-                title="Six channels. One rubric. No side-doors."
-                lead="Direct outreach, curated network, LinkedIn, communities, referrals, and inbound applications all feed into the same scoring bar. There is no back-channel that skips evidence."
+                title="22 channels. One rubric. No side-doors."
+                lead="LinkedIn, sponsored ads, university partnerships, email marketing, web-scale intent scanning, billboards, radio, cold calling, job boards, communities, staffing partners, executive recruiters, inbound applications — every source feeds the same evidence-first scoring bar."
               />
               <ul className="mt-5 space-y-2 text-sm text-[color:var(--brand-navy)]/80">
                 {[
-                  "Named target companies from your search plan",
-                  "Curated network of prior candidates re-evaluated with fresh evidence",
-                  "Inbound job board applications enter the same pipeline as outbound",
+                  "Digital, direct, AI-driven, inbound, offline — five families of channels working in parallel per role",
+                  "AI intent scanning surfaces high-intent passive candidates other tools never see",
+                  "Named-target outreach + a 20,000-strong talent network + silver-medalist rehydration",
+                  "Universities, staffing partners, referrals, events, PR, radio and OOH when a role warrants it",
+                  "Whatever the channel — LinkedIn or a billboard — the candidate is scored on the same rubric",
                 ].map((t) => (
                   <li key={t} className="flex gap-2">
                     <span
