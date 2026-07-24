@@ -394,6 +394,100 @@ function CandidateHeader({
  );
 }
 
+function EvaluationProvenance({
+  candidate,
+}: {
+  candidate: import("@/lib/client-kpi.server").ClientCandidateDTO;
+}) {
+  const ev = candidate.evaluation;
+  const anyValue = ev.category_breakdown.some((c) => c.value != null);
+  if (!ev.engine_version && !ev.contradiction && !anyValue) return null;
+  const pretty = (s: string) =>
+    s.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+  return (
+    <section
+      aria-labelledby="evaluation-heading"
+      className="rounded-xl border bg-card p-5"
+    >
+      <div className="flex flex-wrap items-center gap-2">
+        <BadgeCheck className="h-4 w-4 text-muted-foreground" aria-hidden />
+        <h3
+          id="evaluation-heading"
+          className="text-sm font-semibold tracking-tight"
+        >
+          How this score was built
+        </h3>
+        {ev.engine_version && (
+          <Badge variant="secondary" className="ml-auto font-mono text-[10px]">
+            {ev.engine_version}
+          </Badge>
+        )}
+      </div>
+      <p className="mt-1 text-xs text-muted-foreground">
+        Every category is grounded in verbatim CV evidence and screening
+        answers. Nothing is inferred. Each evaluation is versioned and
+        preserved — a rescore appends a new run, never edits the old one.
+      </p>
+
+      {ev.contradiction && (
+        <div className="mt-3 rounded-md border border-destructive/40 bg-destructive/5 p-3 text-sm">
+          <div className="flex items-center gap-2 font-medium text-destructive">
+            <ShieldAlert className="h-4 w-4" aria-hidden />
+            Conflicting signals found
+          </div>
+          <p className="mt-1 text-xs text-muted-foreground">
+            {pretty(ev.contradiction)} — flagged in evidence review before this
+            candidate was delivered to your workspace.
+          </p>
+        </div>
+      )}
+
+      {anyValue && (
+        <div className="mt-4 space-y-2.5">
+          {ev.category_breakdown.map((c) => {
+            const pct =
+              c.value == null
+                ? null
+                : Math.max(0, Math.min(100, Math.round(c.value * 100)));
+            return (
+              <div key={c.label}>
+                <div className="flex items-baseline justify-between text-xs">
+                  <span className="font-medium">
+                    {c.label}
+                    {c.weight != null && (
+                      <span className="ml-2 text-muted-foreground">
+                        · weight {Math.round(c.weight * 100)}%
+                      </span>
+                    )}
+                  </span>
+                  <span className="tabular-nums text-muted-foreground">
+                    {pct == null ? "—" : `${pct}%`}
+                  </span>
+                </div>
+                <div className="mt-1 h-1.5 rounded-full bg-muted">
+                  <div
+                    className="h-1.5 rounded-full bg-primary transition-all"
+                    style={{ width: `${pct ?? 0}%` }}
+                  />
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {ev.completed_at && (
+        <p className="mt-3 text-[11px] text-muted-foreground">
+          Evaluation completed{" "}
+          {new Date(ev.completed_at).toLocaleString()}
+        </p>
+      )}
+    </section>
+  );
+}
+
+
+
 function FitHero({
  candidate,
 }: {
