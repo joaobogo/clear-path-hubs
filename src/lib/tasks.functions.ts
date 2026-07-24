@@ -240,7 +240,7 @@ export const updateTask = createServerFn({ method: "POST" })
     ] as const) {
       if (data[k] !== undefined) patch[k] = data[k];
     }
-    const { error } = await context.supabase.from("tasks").update(patch).eq("id", data.id);
+    const { error } = await context.supabase.from("tasks").update(patch as never).eq("id", data.id);
     if (error) throw new Error(error.message);
     return { ok: true };
   });
