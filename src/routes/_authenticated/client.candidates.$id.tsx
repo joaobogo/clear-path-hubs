@@ -266,8 +266,8 @@ function CandidateDetailPage() {
             <TalentMemoryAction
               orgId={orgId}
               matchId={candidate.match_id}
-              candidateName={candidate.display_name}
-              roleTitle={candidate.position_title ?? null}
+              candidateName={candidate.candidate.display_name}
+              roleTitle={candidate.position?.title ?? null}
               readOnly={readOnly}
             />
             <ProfilePanel candidate={candidate} />
