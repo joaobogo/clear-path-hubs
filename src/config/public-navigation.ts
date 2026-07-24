@@ -157,6 +157,7 @@ export const FOOTER_GROUPS: NavGroup[] = [
     links: [
       { to: "/about",   label: "About" },
       { to: "/journey", label: "Journey" },
+      { to: "/trust",   label: "Trust" },
       { to: "/contact", label: "Contact" },
     ],
   },
