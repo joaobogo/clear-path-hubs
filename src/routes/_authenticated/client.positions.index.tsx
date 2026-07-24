@@ -299,7 +299,20 @@ function PositionsPage() {
  </div>
 
  <div className="mb-4 flex flex-wrap items-center gap-2">
- <div className="relative flex-1 min-w-[200px] max-w-md">
+  <div className="mb-4 flex flex-wrap items-center gap-2">
+   <SavedViewsBar
+    surface="client_positions"
+    organizationId={orgId ?? undefined}
+    currentFilters={{ status, q, location, view, sort }}
+    onApply={(f) =>
+     navigate({
+      search: (prev: Record<string, unknown>) => ({ ...prev, ...f }),
+      replace: true,
+     })
+    }
+    canShare={ctx?.effective_role === "client_admin"}
+   />
+   <div className="relative flex-1 min-w-[200px] max-w-md">
  <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
  <Input
  value={searchInput}
