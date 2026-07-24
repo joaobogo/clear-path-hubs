@@ -1,109 +1,57 @@
 import { Link } from "@tanstack/react-router";
-import { Check, ChevronDown } from "lucide-react";
-import { useState } from "react";
+import { Check } from "lucide-react";
 import type { SubscriptionTier } from "@/content/pricing-subscriptions";
 
 /**
- * Subscription tier card — monthly pricing for continuous hiring.
+ * Subscription tier card — mirrors taasflow.com/pricing subscription tab layout.
  */
 export function SubscriptionTierCard({ tier }: { tier: SubscriptionTier }) {
-  const [open, setOpen] = useState(false);
-  const topItems = tier.included.slice(0, 3);
-  const restItems = tier.included.slice(3);
   const isCustom = tier.monthly === null;
 
   return (
     <div
       className={
-        "flex flex-col rounded-2xl border p-6 sm:p-7 transition-colors " +
+        "relative flex flex-col rounded-2xl border p-6 sm:p-7 transition-colors " +
         (tier.highlight
           ? "border-[color:var(--brand-navy)] bg-white shadow-md ring-1 ring-[color:var(--brand-navy)]/15"
           : "border-[color:var(--brand-navy)]/12 bg-white hover:border-[color:var(--brand-navy)]/25")
       }
     >
-      <div className="flex items-start justify-between gap-3">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/55">
-            {tier.eyebrow}
-          </p>
-          <h3 className="mt-2 font-[family-name:var(--brand-font-display)] text-2xl font-semibold tracking-tight">
-            {tier.name}
-          </h3>
-        </div>
-        {tier.highlight ? (
-          <span className="rounded-full bg-[color:var(--brand-navy)] px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-white">
-            Most Popular
-          </span>
-        ) : null}
+      {tier.highlight ? (
+        <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-[color:var(--brand-navy)] px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-white">
+          Most Popular
+        </span>
+      ) : null}
+
+      <div>
+        <h3 className="font-[family-name:var(--brand-font-display)] text-2xl font-semibold tracking-tight text-[color:var(--brand-navy)]">
+          {tier.name}
+        </h3>
+        <p className="mt-1 text-sm text-[color:var(--brand-navy)]/65">
+          {tier.eyebrow}
+        </p>
       </div>
 
-      <div className="mt-5 flex items-baseline gap-1.5">
+      <div className="mt-5">
         <span className="font-[family-name:var(--brand-font-display)] text-4xl font-semibold tracking-tight text-[color:var(--brand-navy)]">
           {tier.priceDisplay}
         </span>
+        <p className="mt-1 text-xs text-[color:var(--brand-navy)]/60">
+          {isCustom ? tier.priceSuffix : tier.priceSuffix}
+        </p>
+        <p className="mt-0.5 text-xs text-[color:var(--brand-navy)]/55">
+          {tier.billingNote}
+        </p>
       </div>
-      <p className="mt-1 text-xs text-[color:var(--brand-navy)]/60">
-        {isCustom ? "Scoped to your programme" : "billed monthly · cancel any time"}
-      </p>
-      {tier.pricePer ? (
-        <p className="mt-0.5 text-xs text-[color:var(--brand-navy)]/55">{tier.pricePer}</p>
-      ) : null}
 
-      <p className="mt-5 text-sm text-[color:var(--brand-navy)]/75">{tier.bestFor}</p>
-
-      <dl className="mt-5 grid grid-cols-2 gap-3 rounded-xl bg-[color:var(--brand-navy)]/[0.04] px-4 py-3 text-xs">
-        <div>
-          <dt className="text-[color:var(--brand-navy)]/55">Concurrent roles</dt>
-          <dd className="mt-0.5 font-semibold text-[color:var(--brand-navy)]">
-            {tier.rolesIncluded}
-          </dd>
-        </div>
-        <div>
-          <dt className="text-[color:var(--brand-navy)]/55">Turnaround</dt>
-          <dd className="mt-0.5 font-semibold text-[color:var(--brand-navy)]">
-            {tier.turnaround}
-          </dd>
-        </div>
-      </dl>
-
-      <ul className="mt-5 space-y-2 text-sm text-[color:var(--brand-navy)]/85">
-        {topItems.map((item) => (
+      <ul className="mt-6 space-y-2.5 text-sm text-[color:var(--brand-navy)]/85">
+        {tier.included.map((item) => (
           <li key={item} className="flex gap-2">
             <Check className="mt-0.5 h-4 w-4 shrink-0 text-[color:var(--brand-navy)]" aria-hidden />
             <span>{item}</span>
           </li>
         ))}
       </ul>
-
-      {restItems.length > 0 ? (
-        <div className="mt-3">
-          <button
-            type="button"
-            onClick={() => setOpen((v) => !v)}
-            aria-expanded={open}
-            className="inline-flex items-center gap-1.5 text-xs font-semibold text-[color:var(--brand-navy)]/70 hover:text-[color:var(--brand-navy)]"
-          >
-            <ChevronDown
-              className={"h-3.5 w-3.5 transition-transform " + (open ? "rotate-180" : "")}
-              aria-hidden
-            />
-            {open ? "Hide details" : `See all ${tier.included.length} capabilities`}
-          </button>
-          {open ? (
-            <ul className="mt-3 space-y-2 border-t border-[color:var(--brand-navy)]/10 pt-3 text-sm text-[color:var(--brand-navy)]/85">
-              {restItems.map((item) => (
-                <li key={item} className="flex gap-2">
-                  <Check
-                    className="mt-0.5 h-4 w-4 shrink-0 text-[color:var(--brand-navy)]"
-                    aria-hidden
-                  />
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
-          ) : null}
-        </div>
-      ) : null}
 
       <Link
         to={tier.ctaTo}
