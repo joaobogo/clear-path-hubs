@@ -1,0 +1,58 @@
+{
+  "certification": "PASS",
+  "date": "2026-07-24",
+  "product": "TaaSFlow",
+  "version": "greenfield.v2",
+  "gates": {
+    "broken_links": { "required": 0, "actual": 0, "source": "docs/audit/prompt-45-crawl.md" },
+    "critical_a11y_failures": { "required": 0, "actual": 0, "source": "docs/audit/prompt-46-a11y-visual.md" },
+    "duplicate_core_queries": { "required": 0, "actual": 0, "source": "docs/audit/prompt-39-dashboard-query-dedup.md" },
+    "pricing_contradictions": { "required": 0, "actual": 0, "source": "src/config/pricing-core.ts" },
+    "missing_founder_fidelity": { "required": 0, "actual": 0, "source": "src/routes/pitch.tsx + src/routes/index.tsx" },
+    "incomplete_industry_pages": { "required": 0, "actual": 0, "source": "docs/industries/prompt-28-29-batch-report.md" },
+    "protected_operational_regressions": { "required": 0, "actual": 0, "source": "docs/audit/prompt-47-e2e-journeys.md" },
+    "production_build_failures": { "required": 0, "actual": 0, "source": "bun run build (built in 1.88s)" },
+    "critical_security_findings": { "required": 0, "actual": 0, "source": "security--get_scan_results 2026-07-24" }
+  },
+  "sweep": {
+    "viewports": [320, 375, 768, 1024, 1440, 1920],
+    "routes": ["/", "/platform", "/pricing", "/trust", "/system", "/pitch",
+      "/industries", "/industries/hospitality", "/industries/healthcare",
+      "/industries/finance", "/faq", "/jobs", "/talent-network"],
+    "total_checks": 78,
+    "passed": 78,
+    "failed": 0,
+    "hard_refresh": "included at every viewport/route",
+    "artifact": "docs/audit/prompt-50-artifacts/report.json"
+  },
+  "reused_certifications": [
+    "prompt-33-shared-components", "prompt-34-admin-polish", "prompt-35-client-polish",
+    "prompt-36-candidate-polish", "prompt-37-a11y-responsive-sweep",
+    "prompt-38-canonical-candidate-detail", "prompt-39-dashboard-query-dedup",
+    "prompt-40-tenant-isolation", "prompt-41-concurrency-idempotency",
+    "prompt-42-client-assistant", "prompt-43-admin-assistant",
+    "prompt-44-analytics", "prompt-45-crawl", "prompt-46-a11y-visual",
+    "prompt-47-e2e-journeys", "prompt-48-chaos", "prompt-49-security-perf-build"
+  ],
+  "unresolved_findings": [
+    {
+      "id": "SUPA_anon_security_definer_function_executable",
+      "level": "warn",
+      "accepted": true,
+      "rationale": "Helper functions (is_org_member, has_role, is_platform_staff, is_org_editor, is_org_viewer) are intentionally executable so RLS policies can invoke them. search_path is pinned (Prompt 3). Revoking EXECUTE would break every RLS policy in the schema."
+    },
+    {
+      "id": "SUPA_authenticated_security_definer_function_executable",
+      "level": "warn",
+      "accepted": true,
+      "rationale": "Same as above — required for RLS policy evaluation by signed-in users."
+    }
+  ],
+  "changed_files_this_prompt": [
+    "scripts/qa/final_release_sweep.py",
+    "docs/audit/prompt-50-artifacts/report.json",
+    "docs/audit/prompt-50-artifacts/screens/*.png",
+    "reports/release/final-certification.md",
+    "reports/release/final-certification.json"
+  ]
+}
