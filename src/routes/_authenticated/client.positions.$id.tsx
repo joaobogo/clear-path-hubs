@@ -628,6 +628,10 @@ function PositionDetailPage() {
  )}
  </div>
  </section>
+
+ <section className="mt-8">
+  <RoleMemoryPanel positionId={position.id} canEdit={true} />
+ </section>
  </main>
  );
 }
