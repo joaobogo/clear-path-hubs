@@ -133,6 +133,17 @@ function OverviewPage() {
     placeholderData: (prev) => prev,
   });
 
+  // Blocking tasks — surfaces urgent approvals directly on the overview
+  const blockingFn = useServerFn(
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    require("@/lib/tasks.functions").countBlockingTasks,
+  );
+  const { data: blocking } = useQuery({
+    queryKey: ["client", "blocking-tasks", orgId],
+    queryFn: () => blockingFn({ data: { organization_id: orgId! } }),
+    enabled: !!orgId,
+  });
+
   useEffect(() => {
     const onRefresh = () => refetch();
     window.addEventListener("client:refresh", onRefresh);
