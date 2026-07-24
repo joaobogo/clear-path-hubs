@@ -1346,6 +1346,7 @@ function Home() {
               <div className="flex flex-wrap items-center gap-3 pt-1">
                 <Link
                   to="/intake"
+                  aria-label="Start hiring — launch a role"
                   className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-[color:var(--brand-navy-dark)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
                 >
                   Start Hiring <ArrowRight className="h-4 w-4" aria-hidden />
@@ -1357,10 +1358,19 @@ function Home() {
                   See the Platform
                 </Link>
               </div>
+              <div className="text-xs text-[color:var(--brand-navy)]/60">
+                Hiring for a candidate seat?{" "}
+                <Link
+                  to="/jobs"
+                  className="inline-flex items-center gap-1 font-semibold text-[color:var(--brand-ocean)] underline-offset-4 hover:text-[color:var(--brand-navy)] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)] rounded"
+                >
+                  Browse open jobs <ArrowRight className="h-3 w-3" aria-hidden />
+                </Link>
+              </div>
               <ul className="flex flex-wrap gap-x-5 gap-y-1.5 text-xs text-[color:var(--brand-navy)]/65">
                 {[
                   "Ranked shortlist within one week",
-                  "Flat subscription, no placement fees",
+                  "Package pricing, no placement fees",
                   "You keep the ATS, the candidates, the final call",
                 ].map((t) => (
                   <li key={t} className="inline-flex items-center gap-1.5">
