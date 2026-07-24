@@ -1,9 +1,12 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Link, useSearch } from "@tanstack/react-router";
+import { Printer, Share2 } from "lucide-react";
+import { toast } from "sonner";
 import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
 import type { RequirementRow } from "@/lib/client-fit-presentation";
+
 
 const STATUS_META: Record<
   RequirementRow["status"],
@@ -102,10 +105,9 @@ export function CompareSheet({
   candidates: ClientCandidateDTO[];
 }) {
   const search = useSearch({ strict: false }) as { org?: string };
+  const [diffOnly, setDiffOnly] = useState(false);
 
   // Guard: never render a comparison if candidates span multiple positions.
-  // The parent already gates on `crossPosition`, but we defend at the render
-  // boundary so accidental misuse cannot leak cross-role cells.
   const positionIds = new Set(candidates.map((c) => c.position?.id).filter(Boolean));
   const positionSafe = positionIds.size <= 1;
 
@@ -130,12 +132,32 @@ export function CompareSheet({
   const cols = Math.max(1, candidates.length);
   const positionTitle = candidates[0]?.position?.title;
 
+  // Helper: are values across candidates identical? (for "differences only")
+  const allSame = (vals: (string | number | null | undefined)[]) => {
+    const first = vals[0];
+    return vals.every((v) => (v ?? "") === (first ?? ""));
+  };
+
+  const handleShare = async () => {
+    const url = new URL(window.location.href);
+    url.searchParams.set("compare", candidates.map((c) => c.match_id).join(","));
+    try {
+      await navigator.clipboard.writeText(url.toString());
+      toast.success("Share link copied", { description: "Same-role view, preserves context." });
+    } catch {
+      toast.error("Could not copy link");
+    }
+  };
+
+  const handlePrint = () => window.print();
+
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="right" className="w-full sm:max-w-5xl overflow-y-auto">
+      <SheetContent side="right" className="w-full sm:max-w-5xl overflow-y-auto print:!max-w-none print:!w-full">
         <SheetHeader>
           <SheetTitle>Candidate comparison</SheetTitle>
         </SheetHeader>
+
 
         {!positionSafe ? (
           <div className="mt-4 rounded-lg border border-warning/30 bg-warning/5 p-3 text-sm">
@@ -143,11 +165,31 @@ export function CompareSheet({
           </div>
         ) : (
           <>
-            {positionTitle && (
-              <p className="mt-3 text-xs text-muted-foreground">
-                Position: <span className="font-medium text-foreground">{positionTitle}</span> · {candidates.length} candidates
-              </p>
-            )}
+            <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
+              <div className="min-w-0 text-xs text-muted-foreground">
+                {positionTitle && (
+                  <>Position: <span className="font-medium text-foreground">{positionTitle}</span> · {candidates.length} candidates</>
+                )}
+              </div>
+              <div className="flex items-center gap-2 print:hidden">
+                <label className="flex items-center gap-1.5 text-xs cursor-pointer select-none">
+                  <input
+                    type="checkbox"
+                    checked={diffOnly}
+                    onChange={(e) => setDiffOnly(e.target.checked)}
+                    className="h-3.5 w-3.5 rounded border-input"
+                  />
+                  Show only differences
+                </label>
+                <Button size="sm" variant="outline" onClick={handleShare}>
+                  <Share2 className="h-3.5 w-3.5 mr-1.5" /> Share
+                </Button>
+                <Button size="sm" variant="outline" onClick={handlePrint}>
+                  <Printer className="h-3.5 w-3.5 mr-1.5" /> Export PDF
+                </Button>
+              </div>
+            </div>
+
 
             {/* Visual ranking bands — relative strength per axis, not a single winner. */}
             <RelativeStrengthBoard candidates={candidates} />
@@ -196,7 +238,11 @@ export function CompareSheet({
             </div>
 
             {/* Fit recommendation row */}
-            <ComparisonRow label="Recommendation" cols={cols}>
+            <ComparisonRow
+              label="Recommendation"
+              cols={cols}
+              hide={diffOnly && allSame(candidates.map((c) => c.fit.recommendation))}
+            >
               {candidates.map((c) => (
                 <div key={c.match_id} className="text-xs text-foreground/90">
                   {c.fit.recommendation}
@@ -205,7 +251,11 @@ export function CompareSheet({
             </ComparisonRow>
 
             {/* Stage */}
-            <ComparisonRow label="Stage" cols={cols}>
+            <ComparisonRow
+              label="Stage"
+              cols={cols}
+              hide={diffOnly && allSame(candidates.map((c) => c.stage))}
+            >
               {candidates.map((c) => (
                 <div key={c.match_id} className="text-xs capitalize">
                   {String(c.stage).replace(/_/g, " ")}
@@ -214,7 +264,11 @@ export function CompareSheet({
             </ComparisonRow>
 
             {/* Availability */}
-            <ComparisonRow label="Availability" cols={cols}>
+            <ComparisonRow
+              label="Availability"
+              cols={cols}
+              hide={diffOnly && allSame(candidates.map((c) => c.candidate.availability ?? ""))}
+            >
               {candidates.map((c) => (
                 <div key={c.match_id} className="text-xs">
                   {c.candidate.availability || (
@@ -224,8 +278,81 @@ export function CompareSheet({
               ))}
             </ComparisonRow>
 
+            {/* Logistics — location + timezone + work authorization */}
+            <ComparisonRow
+              label="Logistics"
+              cols={cols}
+              hide={
+                diffOnly &&
+                allSame(
+                  candidates.map(
+                    (c) =>
+                      `${c.candidate.location ?? ""}|${c.candidate.timezone ?? ""}|${c.work_authorization ?? ""}`,
+                  ),
+                )
+              }
+            >
+              {candidates.map((c) => (
+                <div key={c.match_id} className="text-xs">
+                  <div>{c.candidate.location ?? <span className="text-muted-foreground">Location N/A</span>}</div>
+                  {c.candidate.timezone && (
+                    <div className="text-muted-foreground">TZ {c.candidate.timezone}</div>
+                  )}
+                  <div className="text-muted-foreground">
+                    Auth: {c.work_authorization ?? "not confirmed"}
+                  </div>
+                </div>
+              ))}
+            </ComparisonRow>
+
+            {/* Compensation alignment */}
+            <ComparisonRow
+              label="Compensation"
+              cols={cols}
+              hide={
+                diffOnly &&
+                allSame(
+                  candidates.map(
+                    (c) =>
+                      `${c.compensation_alignment.verdict}|${c.compensation_alignment.candidate_expectation ?? ""}`,
+                  ),
+                )
+              }
+            >
+              {candidates.map((c) => {
+                const comp = c.compensation_alignment;
+                const tone: Record<typeof comp.verdict, string> = {
+                  aligned: "taas-bg-success-soft taas-fg-success",
+                  over: "taas-bg-warning-soft taas-fg-warning",
+                  under: "taas-bg-info-soft taas-fg-info",
+                  unknown: "taas-bg-neutral-soft taas-fg-neutral",
+                };
+                const labels: Record<typeof comp.verdict, string> = {
+                  aligned: "In range",
+                  over: "Above range",
+                  under: "Below range",
+                  unknown: "Not confirmed",
+                };
+                return (
+                  <div key={c.match_id} className="text-xs space-y-1">
+                    <span className={`inline-flex rounded-full px-2 py-0.5 text-[10px] font-semibold ${tone[comp.verdict]}`}>
+                      {labels[comp.verdict]}
+                    </span>
+                    <div>{comp.candidate_expectation ?? <span className="text-muted-foreground">Not shared</span>}</div>
+                    {comp.role_range && (
+                      <div className="text-muted-foreground">Role: {comp.role_range}</div>
+                    )}
+                  </div>
+                );
+              })}
+            </ComparisonRow>
+
             {/* Experience */}
-            <ComparisonRow label="Experience" cols={cols}>
+            <ComparisonRow
+              label="Experience"
+              cols={cols}
+              hide={diffOnly && allSame(candidates.map((c) => c.candidate.years_experience ?? -1))}
+            >
               {candidates.map((c) => (
                 <div key={c.match_id} className="text-xs">
                   {c.candidate.years_experience != null ? (
@@ -244,7 +371,11 @@ export function CompareSheet({
             </ComparisonRow>
 
             {/* Coverage summary */}
-            <ComparisonRow label="Must-have coverage" cols={cols}>
+            <ComparisonRow
+              label="Must-have coverage"
+              cols={cols}
+              hide={diffOnly && allSame(candidates.map((c) => `${c.coverage.must_met}/${c.coverage.must_total}`))}
+            >
               {candidates.map((c) => (
                 <div key={c.match_id} className="text-xs">
                   <span className="font-medium">
@@ -256,6 +387,7 @@ export function CompareSheet({
                 </div>
               ))}
             </ComparisonRow>
+
 
             {/* Strengths */}
             <ComparisonRow label="Strengths" cols={cols}>
@@ -407,12 +539,15 @@ export function CompareSheet({
 function ComparisonRow({
   label,
   cols,
+  hide = false,
   children,
 }: {
   label: string;
   cols: number;
+  hide?: boolean;
   children: React.ReactNode;
 }) {
+  if (hide) return null;
   return (
     <div
       className="grid gap-3 py-2 border-b"
@@ -423,6 +558,7 @@ function ComparisonRow({
     </div>
   );
 }
+
 
 /**
  * Visual ranking board — shows relative strength per axis using dots (●○○).
