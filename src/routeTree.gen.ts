@@ -70,6 +70,7 @@ import { Route as AuthenticatedMeApplicationsRouteImport } from './routes/_authe
 import { Route as AuthenticatedClientTeamRouteImport } from './routes/_authenticated/client.team'
 import { Route as AuthenticatedClientTalentPoolRouteImport } from './routes/_authenticated/client.talent-pool'
 import { Route as AuthenticatedClientTalentMemoryRouteImport } from './routes/_authenticated/client.talent-memory'
+import { Route as AuthenticatedClientSourcesRouteImport } from './routes/_authenticated/client.sources'
 import { Route as AuthenticatedClientSettingsRouteImport } from './routes/_authenticated/client.settings'
 import { Route as AuthenticatedClientPositionsRouteImport } from './routes/_authenticated/client.positions'
 import { Route as AuthenticatedClientOffersRouteImport } from './routes/_authenticated/client.offers'
@@ -419,6 +420,12 @@ const AuthenticatedClientTalentMemoryRoute =
     path: '/talent-memory',
     getParentRoute: () => AuthenticatedClientRoute,
   } as any)
+const AuthenticatedClientSourcesRoute =
+  AuthenticatedClientSourcesRouteImport.update({
+    id: '/sources',
+    path: '/sources',
+    getParentRoute: () => AuthenticatedClientRoute,
+  } as any)
 const AuthenticatedClientSettingsRoute =
   AuthenticatedClientSettingsRouteImport.update({
     id: '/settings',
@@ -713,6 +720,7 @@ export interface FileRoutesByFullPath {
   '/client/offers': typeof AuthenticatedClientOffersRoute
   '/client/positions': typeof AuthenticatedClientPositionsRouteWithChildren
   '/client/settings': typeof AuthenticatedClientSettingsRoute
+  '/client/sources': typeof AuthenticatedClientSourcesRoute
   '/client/talent-memory': typeof AuthenticatedClientTalentMemoryRoute
   '/client/talent-pool': typeof AuthenticatedClientTalentPoolRoute
   '/client/team': typeof AuthenticatedClientTeamRoute
@@ -805,6 +813,7 @@ export interface FileRoutesByTo {
   '/client/messages': typeof AuthenticatedClientMessagesRoute
   '/client/offers': typeof AuthenticatedClientOffersRoute
   '/client/settings': typeof AuthenticatedClientSettingsRoute
+  '/client/sources': typeof AuthenticatedClientSourcesRoute
   '/client/talent-memory': typeof AuthenticatedClientTalentMemoryRoute
   '/client/talent-pool': typeof AuthenticatedClientTalentPoolRoute
   '/client/team': typeof AuthenticatedClientTeamRoute
@@ -907,6 +916,7 @@ export interface FileRoutesById {
   '/_authenticated/client/offers': typeof AuthenticatedClientOffersRoute
   '/_authenticated/client/positions': typeof AuthenticatedClientPositionsRouteWithChildren
   '/_authenticated/client/settings': typeof AuthenticatedClientSettingsRoute
+  '/_authenticated/client/sources': typeof AuthenticatedClientSourcesRoute
   '/_authenticated/client/talent-memory': typeof AuthenticatedClientTalentMemoryRoute
   '/_authenticated/client/talent-pool': typeof AuthenticatedClientTalentPoolRoute
   '/_authenticated/client/team': typeof AuthenticatedClientTeamRoute
@@ -1010,6 +1020,7 @@ export interface FileRouteTypes {
     | '/client/offers'
     | '/client/positions'
     | '/client/settings'
+    | '/client/sources'
     | '/client/talent-memory'
     | '/client/talent-pool'
     | '/client/team'
@@ -1102,6 +1113,7 @@ export interface FileRouteTypes {
     | '/client/messages'
     | '/client/offers'
     | '/client/settings'
+    | '/client/sources'
     | '/client/talent-memory'
     | '/client/talent-pool'
     | '/client/team'
@@ -1203,6 +1215,7 @@ export interface FileRouteTypes {
     | '/_authenticated/client/offers'
     | '/_authenticated/client/positions'
     | '/_authenticated/client/settings'
+    | '/_authenticated/client/sources'
     | '/_authenticated/client/talent-memory'
     | '/_authenticated/client/talent-pool'
     | '/_authenticated/client/team'
@@ -1723,6 +1736,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedClientTalentMemoryRouteImport
       parentRoute: typeof AuthenticatedClientRoute
     }
+    '/_authenticated/client/sources': {
+      id: '/_authenticated/client/sources'
+      path: '/sources'
+      fullPath: '/client/sources'
+      preLoaderRoute: typeof AuthenticatedClientSourcesRouteImport
+      parentRoute: typeof AuthenticatedClientRoute
+    }
     '/_authenticated/client/settings': {
       id: '/_authenticated/client/settings'
       path: '/settings'
@@ -2180,6 +2200,7 @@ interface AuthenticatedClientRouteChildren {
   AuthenticatedClientOffersRoute: typeof AuthenticatedClientOffersRoute
   AuthenticatedClientPositionsRoute: typeof AuthenticatedClientPositionsRouteWithChildren
   AuthenticatedClientSettingsRoute: typeof AuthenticatedClientSettingsRoute
+  AuthenticatedClientSourcesRoute: typeof AuthenticatedClientSourcesRoute
   AuthenticatedClientTalentMemoryRoute: typeof AuthenticatedClientTalentMemoryRoute
   AuthenticatedClientTalentPoolRoute: typeof AuthenticatedClientTalentPoolRoute
   AuthenticatedClientTeamRoute: typeof AuthenticatedClientTeamRoute
@@ -2196,6 +2217,7 @@ const AuthenticatedClientRouteChildren: AuthenticatedClientRouteChildren = {
   AuthenticatedClientPositionsRoute:
     AuthenticatedClientPositionsRouteWithChildren,
   AuthenticatedClientSettingsRoute: AuthenticatedClientSettingsRoute,
+  AuthenticatedClientSourcesRoute: AuthenticatedClientSourcesRoute,
   AuthenticatedClientTalentMemoryRoute: AuthenticatedClientTalentMemoryRoute,
   AuthenticatedClientTalentPoolRoute: AuthenticatedClientTalentPoolRoute,
   AuthenticatedClientTeamRoute: AuthenticatedClientTeamRoute,
