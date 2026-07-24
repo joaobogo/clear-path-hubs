@@ -1647,17 +1647,23 @@ function ActionRail({
               </DropdownMenuItem>
               <DropdownMenuItem
                 disabled={!!busy}
-                onSelect={() =>
-                  onRun("archive", () =>
-                    applyReviewDecision({
-                      data: { match_id: m.id, action: "archive", reason },
-                    }),
-                  )
-                }
-                data-qa-action="overflow-hide"
+                onSelect={() => {
+                  if (!window.confirm("Delete this candidate? They will be removed from the client view and archived.")) return;
+                  onRun("delete", async () => {
+                    const r = await deleteCandidateMatch({
+                      data: { match_id: m.id, reason },
+                    });
+                    // Navigate back to the admin list after delete
+                    setTimeout(() => {
+                      window.location.href = "/admin/candidates";
+                    }, 400);
+                    return r;
+                  });
+                }}
+                data-qa-action="overflow-delete"
                 className="text-destructive"
               >
-                Hide (archive)
+                Delete candidate
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
