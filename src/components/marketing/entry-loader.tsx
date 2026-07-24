@@ -16,7 +16,7 @@
  *  - does not replay on internal navigation (no React state, DOM node is removed)
  */
 
-const SESSION_KEY = "taasflow.entryLoader.seen.v1";
+const SESSION_KEY = "taasflow.entryLoader.seen.v2";
 
 const CSS = `
 #tf-entry-loader{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;overflow:hidden;background:radial-gradient(1200px 800px at 50% 30%,#12244a 0%,#0a1533 45%,#050c22 100%);opacity:1;transition:opacity 380ms ease-out;font-family:Inter,ui-sans-serif,system-ui,sans-serif;color:#fff;height:100dvh;width:100vw;pointer-events:auto}
