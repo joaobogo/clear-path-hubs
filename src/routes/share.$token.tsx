@@ -94,7 +94,7 @@ function SharePage() {
 
 function ShareGate({ message }: { message: string }) {
   return (
-    <div className="mx-auto flex min-h-screen max-w-lg flex-col items-center justify-center p-8 text-center">
+    <div className="mx-auto flex min-h-dvh max-w-lg flex-col items-center justify-center p-8 text-center">
       <ShieldAlert className="h-10 w-10 text-muted-foreground" aria-hidden />
       <h1 className="mt-4 text-xl font-semibold">Access unavailable</h1>
       <p className="mt-2 text-muted-foreground">{message}</p>
@@ -127,7 +127,7 @@ function ShareShell({
   );
 
   return (
-    <div className="min-h-screen bg-muted/20 print:bg-white">
+    <div className="min-h-dvh bg-muted/20 print:bg-white">
       <header className="border-b bg-background/90 backdrop-blur print:hidden">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-3 px-6 py-4">
           <div className="flex-1">
