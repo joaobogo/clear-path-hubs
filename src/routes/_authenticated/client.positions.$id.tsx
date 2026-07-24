@@ -522,6 +522,9 @@ function PositionDetailPage() {
   {/* 6. Role blueprint — ATS-grade source of truth */}
  <RoleBlueprint position={position} activity={activity} />
 
+ {/* 6b. Silver medalists from talent memory */}
+ {orgId && <ResurfacePanel orgId={orgId} positionId={id} />}
+
  {/* 7. Hiring process */}
  <section aria-label="Hiring process" className="rounded-xl border bg-card p-4">
  <h2 className="text-lg font-semibold mb-3">Hiring process</h2>
