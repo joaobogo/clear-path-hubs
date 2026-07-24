@@ -185,8 +185,8 @@ export function RoiCalculator({
 
   const headingSize =
     variant === "presentation"
-      ? "text-5xl sm:text-6xl"
-      : "text-4xl sm:text-5xl";
+      ? "text-4xl sm:text-6xl"
+      : "text-3xl sm:text-5xl";
 
   const savingsHeadline = result.isCustomPricing
     ? "Custom"
