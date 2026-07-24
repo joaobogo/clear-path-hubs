@@ -240,7 +240,19 @@ function ClientLayout() {
  ) : undefined
  }
  >
- <Outlet />
+      <div className="mb-4">
+        <ClientBrandHeader
+          name={active.name}
+          displayName={active.brand_display_name ?? null}
+          logoUrl={active.logo_url ?? null}
+          primaryColor={active.brand_primary_color ?? null}
+          accentColor={active.brand_accent_color ?? null}
+          parentName={active.parent_name ?? null}
+          role={effectiveRole}
+          supportView={supportView.active}
+        />
+      </div>
+      <Outlet />
  {showOnboarding && (
  <ClientOnboardingModal
  orgId={active.organization_id}
