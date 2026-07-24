@@ -224,6 +224,14 @@ export const askCopilot = createServerFn({ method: "POST" })
 
     const conversationId = await ensureConversation(context.supabase, context.userId);
 
+    await auditAssistantEvent(context.supabase, {
+      surface: "admin_copilot",
+      event_type: "prompt_submitted",
+      user_id: context.userId,
+      conversation_id: conversationId,
+      content_preview: data.message,
+    });
+
     const { data: history } = await context.supabase
       .from("admin_copilot_messages")
       .select("role, content")
