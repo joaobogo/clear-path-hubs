@@ -332,7 +332,7 @@ export function RoiCalculator({
           <div
             role="group"
             aria-label="Scenario presets"
-            className="mt-3 flex flex-wrap gap-2"
+            className="mt-3 -mx-1 flex gap-2 overflow-x-auto px-1 pb-1 sm:flex-wrap sm:overflow-visible sm:pb-0"
           >
             {CALCULATOR_PRESETS.map((preset) => {
               const active =
@@ -347,9 +347,16 @@ export function RoiCalculator({
                   type="button"
                   aria-pressed={active}
                   title={preset.description}
-                  onClick={() => setInputs({ ...preset.inputs })}
+                  onClick={() => {
+                    setInputs({ ...preset.inputs });
+                    trackEvent("calculator.preset_selected", {
+                      preset_id: preset.id,
+                      variant,
+                      positions: preset.inputs.positions,
+                    });
+                  }}
                   className={cn(
-                    "min-h-9 rounded-full border px-3.5 py-1.5 text-xs font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]",
+                    "min-h-9 shrink-0 whitespace-nowrap rounded-full border px-3.5 py-1.5 text-xs font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]",
                     active
                       ? "border-[color:var(--brand-navy)] bg-[color:var(--brand-navy)] text-white"
                       : "border-[color:var(--brand-navy)]/15 bg-white text-[color:var(--brand-navy)] hover:border-[color:var(--brand-navy)]/30",
