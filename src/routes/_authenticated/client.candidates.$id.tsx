@@ -1082,10 +1082,18 @@ function ActionArea({
           Actions unavailable in read-only preview.
         </p>
       )}
-      <div className="mt-3 border-t pt-3">
+      <div className="mt-3 flex flex-wrap items-center gap-3 border-t pt-3 text-sm">
+        <Link
+          to="/client/candidates"
+          search={{ compare: matchId } as never}
+          className="inline-flex items-center gap-1.5 font-medium text-primary hover:underline"
+        >
+          <Sparkles className="h-3.5 w-3.5" />
+          Add to comparison
+        </Link>
         <Link
           to="/client/messages"
-          className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
+          className="inline-flex items-center gap-1.5 font-medium text-primary hover:underline"
         >
           <MessageSquare className="h-3.5 w-3.5" />
           Message TaaSFlow
