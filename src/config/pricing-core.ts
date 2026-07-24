@@ -17,6 +17,17 @@ export const PRICE_MULTI_USD = 2_100;
 export const PRICE_SPRINT_USD = 4_500;
 
 /**
+ * Monthly subscription anchors — for continuous hiring programmes.
+ * Annual commit saves 10% (applied at checkout / on invoice).
+ */
+export const PRICE_SUB_GROWTH_USD = 1_900;
+export const PRICE_SUB_SCALE_USD = 3_600;
+export const PRICE_SUB_GROWTH_DISPLAY = `$${PRICE_SUB_GROWTH_USD.toLocaleString()}/mo`;
+export const PRICE_SUB_SCALE_DISPLAY = `$${PRICE_SUB_SCALE_USD.toLocaleString()}/mo`;
+export const PRICE_SUB_ENTERPRISE_DISPLAY = "Custom /mo";
+export const SUBSCRIPTION_ANNUAL_DISCOUNT_LABEL = "Save 10% with annual commit";
+
+/**
  * Canonical display strings — every public surface (pricing page, homepage
  * tiers, ROI calculator, pitch/boardroom decks, proposal templates, intake
  * copy) MUST render prices via these constants. Never hard-code the string
