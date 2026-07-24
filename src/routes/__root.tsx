@@ -12,6 +12,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Toaster } from "@/components/ui/sonner";
 import { PublicNotFound, PublicErrorState } from "@/components/marketing/site-shell";
+import { TaaSFlowEntryLoader } from "@/components/marketing/entry-loader";
 
 function NotFoundComponent() {
   return <PublicNotFound />;
@@ -99,6 +100,7 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <TaaSFlowEntryLoader />
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <Outlet />
       <Toaster />
