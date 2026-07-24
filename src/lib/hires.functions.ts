@@ -480,7 +480,7 @@ export const transitionHire = createServerFn({ method: "POST" })
 
     const { error } = await context.supabase
       .from("hire_records")
-      .update(patch)
+      .update(patch as never)
       .eq("id", data.id);
     if (error) throw new Error(error.message);
 
