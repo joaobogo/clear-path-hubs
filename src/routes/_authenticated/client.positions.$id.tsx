@@ -111,8 +111,8 @@ function PositionDetailPage() {
  const [dragOver, setDragOver] = useState<MatchStage | null>(null);
 
  const move = useMutation({
- mutationFn: (v: { matchId: string; toStage: MatchStage }) =>
- moveFn({ data: { orgId: orgId!, matchId: v.matchId, toStage: v.toStage } }),
+  mutationFn: (v: { matchId: string; toStage: MatchStage; reason?: string }) =>
+   moveFn({ data: { orgId: orgId!, matchId: v.matchId, toStage: v.toStage, reason: v.reason } }),
  onMutate: async (v) => {
  await qc.cancelQueries({ queryKey });
  const snapshot = qc.getQueryData<AnyRow>(queryKey);
@@ -130,15 +130,17 @@ function PositionDetailPage() {
  onError: (e: Error, _v, ctx) => {
  if (ctx?.snapshot) qc.setQueryData(queryKey, ctx.snapshot);
  const raw = e.message.replace(/^Error: /, "");
- const msg = raw.startsWith("invalid_transition")
- ? "That move is not allowed for this stage."
- : raw === "SUPPORT_VIEW_READ_ONLY"
- ? "Unavailable while viewing this workspace in read-only support mode."
- : raw === "forbidden"
- ? "You do not have permission to move candidates."
- : raw === "match_not_visible"
- ? "This candidate is no longer available."
- : raw;
+  const msg = raw.startsWith("invalid_transition")
+  ? "That move is not allowed for this stage."
+  : raw === "reason_required"
+  ? "A reason is required to mark a candidate as not moving forward."
+  : raw === "SUPPORT_VIEW_READ_ONLY"
+  ? "Unavailable while viewing this workspace in read-only support mode."
+  : raw === "forbidden"
+  ? "You do not have permission to move candidates."
+  : raw === "match_not_visible"
+  ? "This candidate is no longer available."
+  : raw;
  toast.error(msg);
  },
  onSuccess: () => {
@@ -178,15 +180,29 @@ function PositionDetailPage() {
  }
 
  const attemptMove = (matchId: string, from: MatchStage, to: MatchStage) => {
- if (from === to) return;
- const allowed = STAGE_GRAPH[from] ?? [];
- if (!allowed.includes(to)) {
- toast.error(
- `Cannot move from ${from.replace("_", " ")} to ${to.replace("_", " ")}.`,
- );
- return;
- }
- move.mutate({ matchId, toStage: to });
+  if (from === to) return;
+  const allowed = STAGE_GRAPH[from] ?? [];
+  if (!allowed.includes(to)) {
+   toast.error(
+    `Cannot move from ${from.replace("_", " ")} to ${to.replace("_", " ")}.`,
+   );
+   return;
+  }
+  if (to === "not_moving_forward") {
+   const reason =
+    typeof window !== "undefined"
+     ? window.prompt(
+        "Reason for not moving this candidate forward (required, visible to your team):",
+       )
+     : null;
+   if (!reason || !reason.trim()) {
+    toast.error("A reason is required to reject a candidate.");
+    return;
+   }
+   move.mutate({ matchId, toStage: to, reason: reason.trim() });
+   return;
+  }
+  move.mutate({ matchId, toStage: to });
  };
 
 

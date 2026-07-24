@@ -769,21 +769,28 @@ async function writeAudit(
 
 export const moveMatchStage = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: { orgId: string; matchId: string; toStage: MatchStage }) =>
-    z
-      .object({
-        orgId: z.string().uuid(),
-        matchId: z.string().uuid(),
-        toStage: z.enum([
-          "delivered",
-          "shortlisted",
-          "interview_process",
-          "offer",
-          "hired",
-          "not_moving_forward",
-        ]),
-      })
-      .parse(input),
+  .inputValidator(
+    (input: {
+      orgId: string;
+      matchId: string;
+      toStage: MatchStage;
+      reason?: string;
+    }) =>
+      z
+        .object({
+          orgId: z.string().uuid(),
+          matchId: z.string().uuid(),
+          toStage: z.enum([
+            "delivered",
+            "shortlisted",
+            "interview_process",
+            "offer",
+            "hired",
+            "not_moving_forward",
+          ]),
+          reason: z.string().trim().max(2000).optional(),
+        })
+        .parse(input),
   )
   .handler(async ({ context, data }) => {
     const trace = traceId();
@@ -794,6 +801,10 @@ export const moveMatchStage = createServerFn({ method: "POST" })
     const allowed = STAGE_GRAPH[from] ?? [];
     if (!allowed.includes(data.toStage)) {
       throw new Error(`invalid_transition:${from}->${data.toStage}`);
+    }
+    // Business rule: rejecting a candidate requires a reason.
+    if (data.toStage === "not_moving_forward" && !data.reason?.trim()) {
+      throw new Error("reason_required");
     }
     const { error } = await context.supabase
       .from("candidate_matches")
@@ -818,6 +829,7 @@ export const moveMatchStage = createServerFn({ method: "POST" })
         organization_id: data.orgId,
         decision: decision as never,
         actor_user_id: context.userId,
+        feedback: data.reason?.trim() || null,
       });
     }
     if (data.toStage === "interview_process" && from !== "interview_process") {
