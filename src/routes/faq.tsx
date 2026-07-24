@@ -313,7 +313,7 @@ function FaqPage() {
   const totalMatches = filteredGroups.reduce((n, g) => n + g.items.length, 0);
 
   return (
-    <>
+    <SiteShell>
       {/* ── Hero ─────────────────────────────────────────────────── */}
       <PublicSection className="pb-6 pt-16 sm:pt-20">
         <PublicPage>
@@ -468,6 +468,6 @@ function FaqPage() {
           </div>
         </PublicPage>
       </PublicSection>
-    </>
+    </SiteShell>
   );
 }
