@@ -132,14 +132,8 @@ async function runTool(supabase: AnyRow, name: string, args: Record<string, unkn
       return t.rediscoveryCandidates(supabase, (args.position_id as string | undefined) ?? null);
     case "draft_client_update":
       return t.draftClientUpdate(supabase, String(args.org_id ?? ""));
-    case "draft_candidate_outreach":
-      return t.draftCandidateOutreach(
-        supabase,
-        String(args.match_id ?? ""),
-        (args.intent as string | undefined) ?? null,
-      );
-    case "source_performance":
-      return t.sourcePerformance(supabase);
+    default:
+      return { data: { error: `unknown_tool:${name}` }, citations: [] };
     default:
       return { data: { error: `unknown_tool:${name}` }, citations: [] };
   }
