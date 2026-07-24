@@ -239,12 +239,12 @@ export const tagSilverMedalist = createServerFn({ method: "POST" })
       await Promise.all([
         context.supabase
           .from("candidate_profiles")
-          .select("headline, seniority, skills")
+          .select("headline, skills")
           .eq("id", (match as AnyRow).candidate_profile_id)
           .maybeSingle(),
         context.supabase
           .from("positions")
-          .select("title")
+          .select("title, seniority")
           .eq("id", (match as AnyRow).position_id)
           .maybeSingle(),
         (match as AnyRow).approved_score_run_id
