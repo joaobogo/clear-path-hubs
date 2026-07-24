@@ -117,7 +117,7 @@ function AssistantPage() {
         if (!p) return prev;
         return {
           ...p,
-          messages: [...p.messages, res.user_message as MessageRow, res.assistant_message as MessageRow],
+          messages: [...p.messages, res.user_message as unknown as MessageRow, res.assistant_message as unknown as MessageRow],
         };
       });
       setInput("");
