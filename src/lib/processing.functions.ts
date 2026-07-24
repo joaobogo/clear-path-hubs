@@ -681,18 +681,19 @@ export const deleteCandidateMatch = createServerFn({ method: "POST" })
       .select("storage_bucket,storage_path")
       .eq("candidate_profile_id", match.candidate_profile_id);
 
-    for (const file of files ?? []) {
-      if (file.storage_bucket && file.storage_path) {
-        await supabase.storage.from(file.storage_bucket).remove([file.storage_path]);
-      }
-    }
-
     const { data: deleted, error } = await supabase.rpc("hard_delete_candidate_match", {
       _match_id: data.match_id,
       _actor_user_id: context.userId,
       _reason: data.reason ?? null,
     });
     if (error) throw new Error(`delete_failed:${error.message}`);
+
+    for (const file of files ?? []) {
+      if (file.storage_bucket && file.storage_path) {
+        await supabase.storage.from(file.storage_bucket).remove([file.storage_path]);
+      }
+    }
+
     return { ok: true as const, action: "delete" as const, deleted };
   });
 
