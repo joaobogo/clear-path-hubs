@@ -62,6 +62,10 @@ const SCRIPT = `
   // Only show on the home route, and only once per browser (first access).
   if(location.pathname!=='/'){ kill(); return; }
   try{ if(localStorage.getItem(KEY)||sessionStorage.getItem(KEY)){ kill(); return; } }catch(e){}
+  // Safety net: if the user navigates away from '/' while the loader is still
+  // animating (e.g. clicks a nav link before dismissal), kill it immediately.
+  var routeGuard=setInterval(function(){ if(location.pathname!=='/'){ try{clearInterval(routeGuard);}catch(e){} kill(); } },120);
+  addEventListener('popstate', function(){ if(location.pathname!=='/') kill(); });
   var started=performance.now();
   var MAX=2500, MIN=550, FAST=180, EXIT=380;
 
@@ -78,7 +82,7 @@ const SCRIPT = `
   var done=false;
   function remove(){
     try{ localStorage.setItem(KEY,'1'); sessionStorage.setItem(KEY,'1'); }catch(e){}
-    if(iv1) clearInterval(iv1); if(iv2) clearInterval(iv2);
+    if(iv1) clearInterval(iv1); if(iv2) clearInterval(iv2); if(routeGuard) clearInterval(routeGuard);
     if(el&&el.parentNode) el.parentNode.removeChild(el);
   }
   function finish(){
