@@ -16,7 +16,7 @@
  *  - does not replay on internal navigation (no React state, DOM node is removed)
  */
 
-const SESSION_KEY = "taasflow.entryLoader.seen.v1";
+const SESSION_KEY = "taasflow.entryLoader.seen.v2";
 
 const CSS = `
 #tf-entry-loader{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;overflow:hidden;background:radial-gradient(1200px 800px at 50% 30%,#12244a 0%,#0a1533 45%,#050c22 100%);opacity:1;transition:opacity 380ms ease-out;font-family:Inter,ui-sans-serif,system-ui,sans-serif;color:#fff;height:100dvh;width:100vw;pointer-events:auto}
@@ -58,12 +58,10 @@ const SCRIPT = `
   var KEY=${JSON.stringify(SESSION_KEY)};
   var el=document.getElementById('tf-entry-loader');
   if(!el) return;
-  function kill(){ try{ sessionStorage.setItem(KEY,'1'); }catch(e){} if(el&&el.parentNode) el.parentNode.removeChild(el); }
-  // Only show the branded entry animation on the home route. Any other
-  // page (hard refresh on /jobs, /pricing, dashboard, etc.) dismisses
-  // immediately so the loader can never trap navigation.
+  function kill(){ try{ localStorage.setItem(KEY,'1'); sessionStorage.setItem(KEY,'1'); }catch(e){} if(el&&el.parentNode) el.parentNode.removeChild(el); }
+  // Only show on the home route, and only once per browser (first access).
   if(location.pathname!=='/'){ kill(); return; }
-  try{ if(sessionStorage.getItem(KEY)){ kill(); return; } }catch(e){}
+  try{ if(localStorage.getItem(KEY)||sessionStorage.getItem(KEY)){ kill(); return; } }catch(e){}
   var started=performance.now();
   var MAX=2500, MIN=550, FAST=180, EXIT=380;
 
@@ -79,7 +77,7 @@ const SCRIPT = `
   var iv2=reduced?0:setInterval(function(){ msg=(msg+1)%MSGS.length; if(msgEl) msgEl.textContent=MSGS[msg]+'\u2026'; },900);
   var done=false;
   function remove(){
-    try{ sessionStorage.setItem(KEY,'1'); }catch(e){}
+    try{ localStorage.setItem(KEY,'1'); sessionStorage.setItem(KEY,'1'); }catch(e){}
     if(iv1) clearInterval(iv1); if(iv2) clearInterval(iv2);
     if(el&&el.parentNode) el.parentNode.removeChild(el);
   }
