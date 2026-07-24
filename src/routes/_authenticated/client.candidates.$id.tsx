@@ -25,7 +25,6 @@ import {
  MapPin,
  MessageSquare,
  MoreHorizontal,
- Radar,
  ShieldAlert,
  Sparkles,
  XCircle,

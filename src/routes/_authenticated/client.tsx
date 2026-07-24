@@ -32,7 +32,6 @@ import {
 	Sparkles,
 	HandCoins,
 	Bot,
-	Radar,
 	LineChart,
  	Share2,
  	Building2,
