@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
-import { Building2, Briefcase, Users, MessageSquare, Loader2, Clock } from "lucide-react";
+import { Building2, Briefcase, Users, MessageSquare, Loader2, Clock, CheckSquare, Zap, LineChart, PlusCircle, Truck } from "lucide-react";
 import {
   CommandDialog,
   CommandEmpty,
@@ -49,14 +49,30 @@ const ICONS: Record<SearchResult["type"], React.ComponentType<{ className?: stri
   position: Briefcase,
   candidate: Users,
   message: MessageSquare,
+  task: CheckSquare,
 };
 
-const TYPE_LABELS: Record<SearchResult["type"], string> = {
-  client: "Clients",
-  position: "Positions",
-  candidate: "Candidates",
-  messages: "Messages",
-} as unknown as Record<SearchResult["type"], string>;
+type QuickAction = {
+  id: string;
+  label: string;
+  keywords: string;
+  href: string;
+  icon: React.ComponentType<{ className?: string }>;
+};
+
+const CLIENT_QUICK_ACTIONS: QuickAction[] = [
+  { id: "qa-new-role", label: "Create new role", keywords: "create new role position intake", href: "/intake", icon: PlusCircle },
+  { id: "qa-overdue", label: "View overdue tasks", keywords: "overdue tasks approvals", href: "/client/tasks?view=overdue", icon: CheckSquare },
+  { id: "qa-blocking", label: "View blocking tasks", keywords: "blocking urgent approvals", href: "/client/tasks?view=blocking", icon: Zap },
+  { id: "qa-deliveries", label: "Go to latest delivery", keywords: "deliveries weekly delivery", href: "/client/deliveries", icon: Truck },
+  { id: "qa-analytics", label: "Open analytics", keywords: "analytics metrics conversion", href: "/client/analytics", icon: LineChart },
+  { id: "qa-inbox", label: "Open inbox", keywords: "messages notifications inbox", href: "/client/inbox", icon: MessageSquare },
+];
+
+const ADMIN_QUICK_ACTIONS: QuickAction[] = [
+  { id: "qa-admin-copilot", label: "Open Copilot", keywords: "copilot assistant admin", href: "/admin/copilot", icon: Zap },
+  { id: "qa-admin-clients", label: "Open clients list", keywords: "clients", href: "/admin/clients", icon: Building2 },
+];
 
 export function GlobalSearchDialog({
   open,
@@ -86,6 +102,8 @@ export function GlobalSearchDialog({
     staleTime: 15_000,
   });
 
+  const quickActions = scope === "admin" ? ADMIN_QUICK_ACTIONS : CLIENT_QUICK_ACTIONS;
+
   const allResults: SearchResult[] = useMemo(() => {
     if (!data) return [];
     return [
@@ -93,6 +111,7 @@ export function GlobalSearchDialog({
       ...data.groups.positions,
       ...data.groups.candidates,
       ...data.groups.messages,
+      ...data.groups.tasks,
     ];
   }, [data]);
 
@@ -127,23 +146,36 @@ export function GlobalSearchDialog({
       <CommandList>
         {debounced.length < 2 && (
           <>
-            {recent.length > 0 ? (
-              <CommandGroup heading="Recent searches">
-                {recent.map((r) => (
+            <CommandGroup heading="Quick actions">
+              {quickActions.map((qa) => {
+                const Icon = qa.icon;
+                return (
                   <CommandItem
-                    key={r}
-                    value={`recent:${r}`}
-                    onSelect={() => setQ(r)}
+                    key={qa.id}
+                    value={`qa:${qa.id}:${qa.keywords}`}
+                    onSelect={() => {
+                      onOpenChange(false);
+                      navigate({ to: qa.href });
+                    }}
                   >
-                    <Clock className="mr-2 h-4 w-4 text-muted-foreground" />
-                    {r}
+                    <Icon className="mr-2 h-4 w-4 text-muted-foreground" />
+                    {qa.label}
                   </CommandItem>
-                ))}
-              </CommandGroup>
-            ) : (
-              <div className="px-4 py-8 text-center text-sm text-muted-foreground">
-                Type at least 2 characters to search.
-              </div>
+                );
+              })}
+            </CommandGroup>
+            {recent.length > 0 && (
+              <>
+                <CommandSeparator />
+                <CommandGroup heading="Recent searches">
+                  {recent.map((r) => (
+                    <CommandItem key={r} value={`recent:${r}`} onSelect={() => setQ(r)}>
+                      <Clock className="mr-2 h-4 w-4 text-muted-foreground" />
+                      {r}
+                    </CommandItem>
+                  ))}
+                </CommandGroup>
+              </>
             )}
           </>
         )}
@@ -162,7 +194,7 @@ export function GlobalSearchDialog({
             )}
 
             {groups &&
-              (["clients", "positions", "candidates", "messages"] as const).map((key, idx) => {
+              (["clients", "positions", "candidates", "tasks", "messages"] as const).map((key, idx) => {
                 const items = groups[key];
                 if (!items || items.length === 0) return null;
                 return (
@@ -200,5 +232,3 @@ export function GlobalSearchDialog({
   );
 }
 
-// Suppress unused-var lint on the labels helper (kept for reference / future i18n).
-void TYPE_LABELS;

@@ -25,7 +25,8 @@ export type SearchResultType =
   | "client"
   | "position"
   | "candidate"
-  | "message";
+  | "message"
+  | "task";
 
 export type SearchResult = {
   type: SearchResultType;
@@ -43,6 +44,7 @@ export type SearchResponse = {
     positions: SearchResult[];
     candidates: SearchResult[];
     messages: SearchResult[];
+    tasks: SearchResult[];
   };
 };
 
@@ -79,13 +81,13 @@ export const globalSearch = createServerFn({ method: "POST" })
     if (scope === "client" && orgIds.length === 0) {
       return {
         scope,
-        groups: { clients: [], positions: [], candidates: [], messages: [] },
+        groups: { clients: [], positions: [], candidates: [], messages: [], tasks: [] },
       };
     }
 
     // Bounded per-group limits.
     const LIMIT = 6;
-    const empty = { clients: [], positions: [], candidates: [], messages: [] } as SearchResponse["groups"];
+    const empty = { clients: [], positions: [], candidates: [], messages: [], tasks: [] } as SearchResponse["groups"];
     const groups: SearchResponse["groups"] = { ...empty };
 
     // Clients — admin only.
@@ -222,5 +224,30 @@ export const globalSearch = createServerFn({ method: "POST" })
       });
     }
 
+    // Tasks — title search scoped to caller's orgs (client) or all (admin).
+    {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      let tq: any = supabase
+        .from("tasks")
+        .select("id, title, status, task_type, organization_id, due_at, blocking")
+        .ilike("title", like)
+        .neq("status", "cancelled")
+        .order("updated_at", { ascending: false })
+        .limit(LIMIT);
+      if (scope === "client") tq = tq.in("organization_id", orgIds);
+      const { data: tasks } = await tq;
+      groups.tasks = ((tasks as AnyRow[]) ?? []).map((t) => ({
+        type: "task" as const,
+        id: t.id,
+        label: t.title,
+        context: [t.task_type?.replace(/_/g, " "), t.blocking ? "blocking" : null, t.status]
+          .filter(Boolean)
+          .join(" · "),
+        href: scope === "admin" ? "/admin" : "/client/tasks",
+        search: scope === "client" ? { org: t.organization_id as string } : undefined,
+      }));
+    }
+
     return { scope, groups };
   });
+
