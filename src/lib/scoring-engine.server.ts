@@ -320,9 +320,13 @@ export function scoreCandidate(input: {
     .filter((a) => a.required && a.status !== "met")
     .slice(0, 5)
     .map((a) =>
-      a.status === "missing"
-        ? `No evidence of required: ${a.text}`
-        : `Only partial evidence for required: ${a.text}`,
+      a.status === "unknown"
+        ? `Insufficient evidence — validate: ${a.text}`
+        : a.status === "missing"
+          ? `No evidence of required: ${a.text}`
+          : a.status === "contradicted"
+            ? `Contradicting evidence for required: ${a.text}`
+            : `Only partial evidence for required: ${a.text}`,
     );
   if (contradiction_status !== "none") {
     concerns.unshift(`Screening/CV contradiction (${contradiction_status.replace(/_/g, " ")}).`);
