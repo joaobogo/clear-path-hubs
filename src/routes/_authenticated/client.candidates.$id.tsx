@@ -1231,44 +1231,6 @@ function AvailabilityAndComp({
   );
 }
 
-function SourceAndOutreach({
-  candidate,
-}: {
-  candidate: import("@/lib/client-kpi.server").ClientCandidateDTO;
-}) {
-  const s = candidate.source_trace;
-  if (!s.source_label && !s.applied_at) return null;
-  return (
-    <SectionCard
-      title="Source & outreach trace"
-      icon={<Radar className="h-4 w-4" />}
-      description="How this candidate arrived and who moved them forward."
-    >
-      <dl className="grid gap-3 text-sm sm:grid-cols-3">
-        <div>
-          <dt className="text-xs text-muted-foreground">Origin</dt>
-          <dd className="font-medium capitalize">{s.source_label ?? "Unknown"}</dd>
-        </div>
-        <div>
-          <dt className="text-xs text-muted-foreground">Applied</dt>
-          <dd className="font-medium">
-            {s.applied_at ? new Date(s.applied_at).toLocaleDateString() : "—"}
-          </dd>
-        </div>
-        <div>
-          <dt className="text-xs text-muted-foreground">Reference</dt>
-          <dd className="font-medium tabular-nums">
-            {s.application_reference ?? candidate.match_id.slice(0, 8).toUpperCase()}
-          </dd>
-        </div>
-      </dl>
-      <p className="mt-3 text-xs text-muted-foreground">
-        TaaSFlow recruiters review, screen, and shortlist before you see any profile —
-        every touchpoint is captured in the audit trail below.
-      </p>
-    </SectionCard>
-  );
-}
 
 function AuditTrailSection({
   candidate,
