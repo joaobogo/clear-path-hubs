@@ -247,6 +247,7 @@ export function WorkspaceShell(props: WorkspaceShellProps) {
     topBanner,
     linkSearch,
     searchScope,
+    primaryAction,
     children,
   } = props;
   const pathname = useRouterState({ select: (s) => s.location.pathname });
