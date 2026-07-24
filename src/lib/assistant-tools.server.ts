@@ -382,9 +382,9 @@ export async function roleBlockers(
     if (noReqs) blockers.push("Requirements list is empty");
     if (notPublished) blockers.push("Position is not published/active yet");
     if (noApps) blockers.push("No applications received yet");
-    if (stalled.length) blockers.push(`${stalled.length} candidate(s) stuck in processing`);
+    if (stalled.length) blockers.push(`${stalled.length} candidate(s) awaiting data refresh`);
     if (pendingAdmin.length)
-      blockers.push(`${pendingAdmin.length} candidate(s) awaiting admin approval`);
+      blockers.push(`${pendingAdmin.length} candidate(s) in system validation`);
 
     citations.push({
       kind: "position",
