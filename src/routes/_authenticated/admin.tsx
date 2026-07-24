@@ -11,6 +11,7 @@ import {
   Inbox,
   CalendarRange,
   Bot,
+  Radar,
 } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
