@@ -117,7 +117,7 @@ function Field({
           </button>
           <output
             htmlFor={id}
-            className="min-w-[5.5rem] text-right font-[family-name:var(--brand-font-display)] text-xl font-medium tabular-nums text-[color:var(--brand-navy)]"
+            className="min-w-[3.5rem] text-right font-[family-name:var(--brand-font-display)] text-lg font-medium tabular-nums text-[color:var(--brand-navy)] sm:min-w-[5.5rem] sm:text-xl"
             aria-live="polite"
           >
             {format(value)}
@@ -185,8 +185,8 @@ export function RoiCalculator({
 
   const headingSize =
     variant === "presentation"
-      ? "text-5xl sm:text-6xl"
-      : "text-4xl sm:text-5xl";
+      ? "text-4xl sm:text-6xl"
+      : "text-3xl sm:text-5xl";
 
   const savingsHeadline = result.isCustomPricing
     ? "Custom"
@@ -198,11 +198,12 @@ export function RoiCalculator({
     <section
       aria-labelledby="roi-calc-heading"
       className={cn(
-        "rounded-3xl border border-[color:var(--brand-navy)]/10 bg-white p-6 shadow-sm sm:p-10 lg:p-12 motion-safe:transition-colors",
+        "rounded-3xl border border-[color:var(--brand-navy)]/10 bg-white p-4 shadow-sm sm:p-10 lg:p-12 motion-safe:transition-colors",
         className,
       )}
     >
       <div className="grid gap-10 lg:grid-cols-12 lg:gap-14 items-start">
+
         {/* -------------------------------------------- Inputs column (5/12) */}
         <div className="lg:col-span-5 space-y-10 order-2 lg:order-1">
           {showHeading ? (
@@ -302,7 +303,7 @@ export function RoiCalculator({
               format={(v) => formatUsdCompact(v)}
               onChange={(v) => patch("averageSalaryUsd", v)}
             />
-            <div className="grid grid-cols-2 gap-8 pt-2">
+            <div className="grid grid-cols-1 gap-8 pt-2 xs:grid-cols-2 sm:grid-cols-2">
               <Field
                 id="roi-hourly"
                 label="Hourly rate"
@@ -332,7 +333,8 @@ export function RoiCalculator({
         {/* ---------------------------------------- Results column (7/12) */}
         <div className="lg:col-span-7 order-1 lg:order-2">
           <div
-            className="relative overflow-hidden bg-[color:var(--brand-navy)] p-8 text-white shadow-2xl sm:p-12 md:p-14 rounded-2xl"
+            className="relative overflow-hidden bg-[color:var(--brand-navy)] p-5 text-white shadow-2xl sm:p-12 md:p-14 rounded-2xl"
+
             aria-live="polite"
             aria-atomic="true"
           >
@@ -350,7 +352,7 @@ export function RoiCalculator({
               </span>
 
               <div className="mt-10">
-                <h3 className="font-[family-name:var(--brand-font-display)] italic tracking-tight leading-[0.95] text-6xl sm:text-7xl md:text-8xl tabular-nums">
+                <h3 className="font-[family-name:var(--brand-font-display)] italic tracking-tight leading-[0.95] text-5xl sm:text-7xl md:text-8xl tabular-nums break-words">
                   {savingsHeadline}
                 </h3>
                 <p className="mt-3 max-w-md text-base opacity-80 font-light">
@@ -368,7 +370,7 @@ export function RoiCalculator({
                   <span className="block text-[10px] uppercase tracking-[0.18em] opacity-45">
                     Traditional agency model
                   </span>
-                  <p className="mt-3 font-[family-name:var(--brand-font-display)] text-3xl md:text-4xl tabular-nums text-white/90">
+                  <p className="mt-3 font-[family-name:var(--brand-font-display)] text-2xl sm:text-3xl md:text-4xl tabular-nums text-white/90 break-words">
                     {formatUsdCompact(result.traditionalCostUsd)}
                   </p>
                   <p className="mt-1 text-xs opacity-50">
@@ -380,7 +382,7 @@ export function RoiCalculator({
                     TaaSFlow platform
                     {result.taasflowPackage ? ` · ${result.taasflowPackage.name}` : ""}
                   </span>
-                  <p className="mt-3 font-[family-name:var(--brand-font-display)] text-3xl md:text-4xl tabular-nums">
+                  <p className="mt-3 font-[family-name:var(--brand-font-display)] text-2xl sm:text-3xl md:text-4xl tabular-nums break-words">
                     {result.taasflowCostUsd == null
                       ? "Custom"
                       : formatUsdCompact(result.taasflowCostUsd)}

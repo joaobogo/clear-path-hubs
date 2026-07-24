@@ -182,9 +182,23 @@
     border-color: var(--color-border);
   }
 
+  /* Prevent stray horizontal scroll on small phones. Any intentionally
+   * horizontally-scrolling strip still works because it manages its own
+   * overflow-x on the inner container. */
+  html,
+  body {
+    overflow-x: hidden;
+  }
+
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
+  }
+
+  /* Long unbreakable strings (URLs, emails, long compound words) should
+   * never push the viewport wider on small screens. */
+  h1, h2, h3, h4, h5, h6, p, li, a, span {
+    overflow-wrap: anywhere;
   }
 }
 
