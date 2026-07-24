@@ -43,13 +43,13 @@ function BrandMark({ compact = false }: { compact?: boolean }) {
   // that so the browser reserves enough horizontal space for the full wordmark.
   const width = Math.round(height * 4.15);
   return (
-    <Link to="/" className="inline-flex items-center rounded-md" aria-label="TaaSFlow — Home">
+    <Link to="/" className="inline-flex shrink-0 items-center rounded-md" aria-label="TaaSFlow — Home">
       <img
         src={brand.logos.primary}
         alt="TaaSFlow"
         width={width}
         height={height}
-        className={cn(compact ? "h-7" : "h-8", "w-auto shrink-0")}
+        className={cn(compact ? "h-7" : "h-8", "w-auto max-w-none shrink-0")}
       />
     </Link>
   );
