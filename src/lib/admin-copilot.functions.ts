@@ -2,7 +2,7 @@
 // Same tool-loop pattern as the client assistant, but:
 //   - table set: admin_copilot_conversations / admin_copilot_messages
 //   - RLS enforced staff-only (see migration)
-//   - broader tool catalog (portfolio, outreach drafts, source performance)
+//   - broader tool catalog (portfolio, client update drafts)
 //   - draft actions are proposals; nothing is sent until the user approves
 //     via executeAdminCopilotAction.
 
