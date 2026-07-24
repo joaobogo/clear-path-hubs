@@ -539,12 +539,15 @@ export function CompareSheet({
 function ComparisonRow({
   label,
   cols,
+  hide = false,
   children,
 }: {
   label: string;
   cols: number;
+  hide?: boolean;
   children: React.ReactNode;
 }) {
+  if (hide) return null;
   return (
     <div
       className="grid gap-3 py-2 border-b"
@@ -555,6 +558,7 @@ function ComparisonRow({
     </div>
   );
 }
+
 
 /**
  * Visual ranking board — shows relative strength per axis using dots (●○○).
