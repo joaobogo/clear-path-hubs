@@ -15,6 +15,22 @@ import {
   Network,
   UserPlus,
   Archive,
+  Megaphone,
+  GraduationCap,
+  Mail,
+  Radar,
+  Radio,
+  Phone,
+  Briefcase,
+  Handshake,
+  Sparkles,
+  Signpost,
+  Mic,
+  Podcast,
+  MapPin,
+  Github,
+  Youtube,
+  Send,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
