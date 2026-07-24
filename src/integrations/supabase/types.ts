@@ -784,20 +784,26 @@ export type Database = {
           created_at: string
           engine_version: string
           id: string
+          integrity_ok: boolean
+          last_reviewed_at: string | null
           match_type: string
           model_version: string | null
           normalized_meaning: string
           organization_id: string
+          result: string | null
           reviewed_at: string | null
           reviewed_by: string | null
           reviewer_note: string | null
           reviewer_status: string
           rubric_criterion_key: string
           rubric_dimension_key: string
+          source_kind: string | null
           source_location: Json
           source_passage: string
+          source_ref: string | null
           supporting_role: string | null
           updated_at: string
+          validation_need: string | null
         }
         Insert: {
           candidate_evidence_id: string
@@ -806,20 +812,26 @@ export type Database = {
           created_at?: string
           engine_version: string
           id?: string
+          integrity_ok?: boolean
+          last_reviewed_at?: string | null
           match_type: string
           model_version?: string | null
           normalized_meaning: string
           organization_id: string
+          result?: string | null
           reviewed_at?: string | null
           reviewed_by?: string | null
           reviewer_note?: string | null
           reviewer_status?: string
           rubric_criterion_key: string
           rubric_dimension_key: string
+          source_kind?: string | null
           source_location?: Json
           source_passage: string
+          source_ref?: string | null
           supporting_role?: string | null
           updated_at?: string
+          validation_need?: string | null
         }
         Update: {
           candidate_evidence_id?: string
@@ -828,20 +840,26 @@ export type Database = {
           created_at?: string
           engine_version?: string
           id?: string
+          integrity_ok?: boolean
+          last_reviewed_at?: string | null
           match_type?: string
           model_version?: string | null
           normalized_meaning?: string
           organization_id?: string
+          result?: string | null
           reviewed_at?: string | null
           reviewed_by?: string | null
           reviewer_note?: string | null
           reviewer_status?: string
           rubric_criterion_key?: string
           rubric_dimension_key?: string
+          source_kind?: string | null
           source_location?: Json
           source_passage?: string
+          source_ref?: string | null
           supporting_role?: string | null
           updated_at?: string
+          validation_need?: string | null
         }
         Relationships: [
           {
@@ -940,6 +958,7 @@ export type Database = {
           evidence_confidence: number | null
           expires_at: string | null
           id: string
+          integrity_status: Database["public"]["Enums"]["integrity_status"]
           is_test_record: boolean | null
           last_processing_trace_id: string | null
           legacy_source_id: string | null
@@ -980,6 +999,7 @@ export type Database = {
           evidence_confidence?: number | null
           expires_at?: string | null
           id?: string
+          integrity_status?: Database["public"]["Enums"]["integrity_status"]
           is_test_record?: boolean | null
           last_processing_trace_id?: string | null
           legacy_source_id?: string | null
@@ -1020,6 +1040,7 @@ export type Database = {
           evidence_confidence?: number | null
           expires_at?: string | null
           id?: string
+          integrity_status?: Database["public"]["Enums"]["integrity_status"]
           is_test_record?: boolean | null
           last_processing_trace_id?: string | null
           legacy_source_id?: string | null
@@ -2145,6 +2166,127 @@ export type Database = {
           },
           {
             foreignKeyName: "eligibility_exceptions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_portfolio_rollup"
+            referencedColumns: ["organization_id"]
+          },
+        ]
+      }
+      evidence_overrides: {
+        Row: {
+          actor_user_id: string | null
+          after_state: Json
+          before_state: Json
+          candidate_match_id: string
+          created_at: string
+          evidence_item_id: string
+          id: string
+          organization_id: string
+          reason: string
+        }
+        Insert: {
+          actor_user_id?: string | null
+          after_state: Json
+          before_state: Json
+          candidate_match_id: string
+          created_at?: string
+          evidence_item_id: string
+          id?: string
+          organization_id: string
+          reason: string
+        }
+        Update: {
+          actor_user_id?: string | null
+          after_state?: Json
+          before_state?: Json
+          candidate_match_id?: string
+          created_at?: string
+          evidence_item_id?: string
+          id?: string
+          organization_id?: string
+          reason?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "evidence_overrides_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "admin_candidate_matches_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "evidence_overrides_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "admin_work_inbox"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "evidence_overrides_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_matches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "evidence_overrides_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "client_candidate_matches_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "evidence_overrides_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "client_kanban_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "evidence_overrides_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "client_visible_candidates"
+            referencedColumns: ["candidate_match_id"]
+          },
+          {
+            foreignKeyName: "evidence_overrides_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "v_source_attribution"
+            referencedColumns: ["match_id"]
+          },
+          {
+            foreignKeyName: "evidence_overrides_evidence_item_id_fkey"
+            columns: ["evidence_item_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_evidence_client"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "evidence_overrides_evidence_item_id_fkey"
+            columns: ["evidence_item_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_evidence_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "evidence_overrides_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "admin_clients_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "evidence_overrides_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "evidence_overrides_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
             referencedRelation: "v_portfolio_rollup"
@@ -7530,6 +7672,131 @@ export type Database = {
           },
         ]
       }
+      candidate_evidence_client: {
+        Row: {
+          candidate_match_id: string | null
+          confidence: number | null
+          factual_quote: string | null
+          id: string | null
+          interpretation: string | null
+          last_reviewed_at: string | null
+          match_type: string | null
+          organization_id: string | null
+          result: string | null
+          rubric_criterion_key: string | null
+          rubric_dimension_key: string | null
+          source_kind: string | null
+          source_location: Json | null
+          source_ref: string | null
+          validation_need: string | null
+        }
+        Insert: {
+          candidate_match_id?: string | null
+          confidence?: number | null
+          factual_quote?: string | null
+          id?: string | null
+          interpretation?: string | null
+          last_reviewed_at?: string | null
+          match_type?: string | null
+          organization_id?: string | null
+          result?: string | null
+          rubric_criterion_key?: string | null
+          rubric_dimension_key?: string | null
+          source_kind?: string | null
+          source_location?: Json | null
+          source_ref?: string | null
+          validation_need?: string | null
+        }
+        Update: {
+          candidate_match_id?: string | null
+          confidence?: number | null
+          factual_quote?: string | null
+          id?: string | null
+          interpretation?: string | null
+          last_reviewed_at?: string | null
+          match_type?: string | null
+          organization_id?: string | null
+          result?: string | null
+          rubric_criterion_key?: string | null
+          rubric_dimension_key?: string | null
+          source_kind?: string | null
+          source_location?: Json | null
+          source_ref?: string | null
+          validation_need?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "candidate_evidence_items_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "admin_candidate_matches_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "candidate_evidence_items_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "admin_work_inbox"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "candidate_evidence_items_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_matches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "candidate_evidence_items_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "client_candidate_matches_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "candidate_evidence_items_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "client_kanban_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "candidate_evidence_items_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "client_visible_candidates"
+            referencedColumns: ["candidate_match_id"]
+          },
+          {
+            foreignKeyName: "candidate_evidence_items_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "v_source_attribution"
+            referencedColumns: ["match_id"]
+          },
+          {
+            foreignKeyName: "candidate_evidence_items_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "admin_clients_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "candidate_evidence_items_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "candidate_evidence_items_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_portfolio_rollup"
+            referencedColumns: ["organization_id"]
+          },
+        ]
+      }
       candidate_messages_view: {
         Row: {
           body: string | null
@@ -8533,6 +8800,11 @@ export type Database = {
         | "offer_declined"
         | "hire_confirmed"
         | "closed_lost"
+      integrity_status:
+        | "ok"
+        | "missing_required"
+        | "contradictions"
+        | "manual_review"
       interview_status:
         | "requested"
         | "scheduling"
@@ -8923,6 +9195,12 @@ export const Constants = {
         "offer_declined",
         "hire_confirmed",
         "closed_lost",
+      ],
+      integrity_status: [
+        "ok",
+        "missing_required",
+        "contradictions",
+        "manual_review",
       ],
       interview_status: [
         "requested",
