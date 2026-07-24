@@ -2,6 +2,7 @@ import { createFileRoute, Link, useNavigate, notFound } from "@tanstack/react-ro
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { getPublicPosition } from "@/lib/jobs.functions";
+import { extractJobUuid } from "@/lib/marketing/job-slug";
 import { submitApplication } from "@/lib/apply.functions";
 import {
   ALLOWED_CV_EXT,
@@ -23,9 +24,10 @@ import { FormShell } from "@/components/marketing/form-shell";
 
 export const Route = createFileRoute("/jobs/$id/apply")({
   loader: async ({ context, params }) => {
+    const uuid = extractJobUuid(params.id);
     const data = await context.queryClient.ensureQueryData({
-      queryKey: ["public-position", params.id],
-      queryFn: () => getPublicPosition({ data: { id: params.id } }),
+      queryKey: ["public-position", uuid],
+      queryFn: () => getPublicPosition({ data: { id: uuid } }),
     });
     if (!data) throw notFound();
     return data;
@@ -62,7 +64,8 @@ const STEP_LABELS = [
 ] as const;
 
 function ApplyPage() {
-  const { id } = Route.useParams();
+  const { id: rawId } = Route.useParams();
+  const id = extractJobUuid(rawId);
   const navigate = useNavigate();
   const { data: pos } = useSuspenseQuery({
     queryKey: ["public-position", id],

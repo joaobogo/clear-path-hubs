@@ -100,7 +100,8 @@ function splitOverviewAndResponsibilities(description: string): {
 }
 
 function JobDetail() {
-  const { id } = Route.useParams();
+  const { id: rawId } = Route.useParams();
+  const id = extractJobUuid(rawId);
   const { data: pos } = useSuspenseQuery({
     queryKey: ["public-position", id],
     queryFn: () => getPublicPosition({ data: { id } }),
