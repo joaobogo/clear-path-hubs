@@ -25,6 +25,7 @@ import { CandidateCard } from "@/components/client/candidate-card";
 import { CompareTray, CompareSheet } from "@/components/client/candidate-comparison";
 import { ShareShortlistDialog } from "@/components/client/share-shortlist-dialog";
 import { Share2 } from "lucide-react";
+import { SavedViewsBar } from "@/components/workspace/saved-views-bar";
 import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
 
 const STAGE_OPTIONS = [
@@ -69,7 +70,9 @@ const searchSchema = z.object({
  filter: fallback(z.enum(["all", "top", "interview_pipeline"]), "all").default("all"),
  // Comma-separated match IDs for shareable comparison links.
  compare: fallback(z.string(), "").default(""),
-
+ // Score range filter (0–100). Empty string = unbounded on that end.
+ minScore: fallback(z.string(), "").default(""),
+ maxScore: fallback(z.string(), "").default(""),
 });
 
 export const Route = createFileRoute("/_authenticated/client/candidates/")({
@@ -145,8 +148,16 @@ function CandidatesPage() {
  } else if (search.filter === "interview_pipeline") {
  if (c.stage !== "interview_process" && c.stage !== "offer") return false;
  }
- if (search.stage !== "all" && c.stage !== search.stage) return false;
- if (search.fit !== "all" && c.fit.band !== search.fit) return false;
+  if (search.stage !== "all" && c.stage !== search.stage) return false;
+  if (search.fit !== "all" && c.fit.band !== search.fit) return false;
+  const min = search.minScore === "" ? null : Number(search.minScore);
+  const max = search.maxScore === "" ? null : Number(search.maxScore);
+  if (min != null && !Number.isNaN(min)) {
+   if (c.score == null || c.score < min) return false;
+  }
+  if (max != null && !Number.isNaN(max)) {
+   if (c.score == null || c.score > max) return false;
+  }
  if (loc && !(c.candidate.location ?? "").toLowerCase().includes(loc)) return false;
  if (q) {
  const hay = [
@@ -202,14 +213,14 @@ function CandidatesPage() {
  }
  });
  return rows;
- }, [rowsRaw, search.q, search.location, search.stage, search.fit, search.sort, search.filter]);
+ }, [rowsRaw, search.q, search.location, search.stage, search.fit, search.sort, search.filter, search.minScore, search.maxScore]);
 
  // Bounded pagination — clamp render to a fixed page size so no unbounded lists ship.
  const PAGE_SIZE = 24;
  const [page, setPage] = useState(1);
  useEffect(() => {
  setPage(1);
- }, [search.q, search.position, search.stage, search.fit, search.location, search.sort, search.filter, orgId]);
+ }, [search.q, search.position, search.stage, search.fit, search.location, search.sort, search.filter, search.minScore, search.maxScore, orgId]);
  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
  const currentPage = Math.min(page, totalPages);
  const paged = filtered.slice(
@@ -277,7 +288,7 @@ function CandidatesPage() {
 
  const clearFilters = () =>
  navigate({
- search: { ...search, q: "", position: "", stage: "all", fit: "all", location: "" } as never,
+ search: { ...search, q: "", position: "", stage: "all", fit: "all", location: "", minScore: "", maxScore: "" } as never,
  });
 
  return (
@@ -385,9 +396,55 @@ function CandidatesPage() {
  </section>
  )}
 
- {/* Search + filters */}
- <section aria-label="Search and filters" className="mb-4 rounded-xl border bg-card p-3 sm:p-4">
- <div className="grid grid-cols-1 md:grid-cols-[minmax(0,2fr)_repeat(4,minmax(0,1fr))_auto] gap-2">
+  {/* Search + filters */}
+  <section aria-label="Search and filters" className="mb-4 rounded-xl border bg-card p-3 sm:p-4">
+   <div className="mb-3 flex flex-wrap items-center gap-2">
+    <SavedViewsBar
+     surface="client_candidates"
+     organizationId={orgId ?? undefined}
+     currentFilters={{
+      q: search.q,
+      position: search.position,
+      stage: search.stage,
+      fit: search.fit,
+      location: search.location,
+      sort: search.sort,
+      view: search.view,
+      filter: search.filter,
+      minScore: search.minScore,
+      maxScore: search.maxScore,
+     }}
+     onApply={(f) => navigate({ search: { ...search, ...f } as never, replace: true })}
+     canShare={ctx?.active?.role === "client_admin"}
+    />
+    <div className="ml-auto flex items-center gap-1 text-xs text-muted-foreground">
+     <span className="whitespace-nowrap">Score</span>
+     <Input
+      className="h-8 w-16"
+      type="number"
+      inputMode="numeric"
+      min={0}
+      max={100}
+      placeholder="min"
+      value={search.minScore}
+      onChange={(e) => setF({ minScore: e.target.value })}
+      aria-label="Minimum score"
+     />
+     <span>–</span>
+     <Input
+      className="h-8 w-16"
+      type="number"
+      inputMode="numeric"
+      min={0}
+      max={100}
+      placeholder="max"
+      value={search.maxScore}
+      onChange={(e) => setF({ maxScore: e.target.value })}
+      aria-label="Maximum score"
+     />
+    </div>
+   </div>
+   <div className="grid grid-cols-1 md:grid-cols-[minmax(0,2fr)_repeat(4,minmax(0,1fr))_auto] gap-2">
  <Input
  placeholder="Search by name, skill, role, location…"
  value={search.q}
