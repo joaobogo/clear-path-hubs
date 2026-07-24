@@ -30,6 +30,7 @@ import {
  Settings,
  Award,
  Sparkles,
+ HandCoins,
 } from "lucide-react";
 import {
  WorkspaceShell,
