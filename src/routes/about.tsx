@@ -28,7 +28,7 @@ const LEADERS = [
     name: "Christian Brogger",
     title: "Co-founder & COO",
     location: "London · Global",
-    photoUrl: "https://taasflow.com/assets/christian-9Ad2XECQ.jpg",
+    photoUrl: "/__l5e/assets-v1/15766c52-abcb-4608-ada7-4a2c2a5b34e9/christian-brogger.jpg",
     linkedin: "https://www.linkedin.com/in/christian-brogger/",
     quote:
       "Great hiring starts with great process. We just made it repeatable.",
@@ -39,7 +39,7 @@ const LEADERS = [
     name: "João Bogo",
     title: "Co-founder & CMO",
     location: "Lisbon · LATAM & EMEA",
-    photoUrl: "https://taasflow.com/assets/joao-BvCqv2_l.jpg",
+    photoUrl: "/__l5e/assets-v1/be65771c-f2ae-41cd-b895-a60020362f38/joao-bogo.jpg",
     linkedin: "https://www.linkedin.com/in/joaomarcoscsilva/",
     quote:
       "The best candidates aren't looking. You need to know where they are and how to reach them.",
