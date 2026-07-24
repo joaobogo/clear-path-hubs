@@ -3,6 +3,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useMemo, useState } from "react";
 import { getClientContext, getClientOverview } from "@/lib/client.functions";
+import { countBlockingTasks } from "@/lib/tasks.functions";
 import { useClientOrgSearch } from "@/lib/use-client-org";
 import { CandidateCard } from "@/components/client/candidate-card";
 import { Button } from "@/components/ui/button";
@@ -134,10 +135,7 @@ function OverviewPage() {
   });
 
   // Blocking tasks — surfaces urgent approvals directly on the overview
-  const blockingFn = useServerFn(
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    require("@/lib/tasks.functions").countBlockingTasks,
-  );
+  const blockingFn = useServerFn(countBlockingTasks);
   const { data: blocking } = useQuery({
     queryKey: ["client", "blocking-tasks", orgId],
     queryFn: () => blockingFn({ data: { organization_id: orgId! } }),
