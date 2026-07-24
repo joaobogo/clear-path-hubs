@@ -222,13 +222,18 @@ function ClientLayout() {
  return (
  <SupportViewContext.Provider value={supportView}>
  <ClientCoordinator />
- <WorkspaceShell
+   <WorkspaceShell
  contextKicker="Workspace"
  contextLabel={active.name}
  contextSubLabel={`${effectiveRole.replace(/_/g, " ")}${supportView.active ? " · support view" : ""}`}
  navItems={navItems}
  linkSearch={linkSearch}
  topBanner={topBanner}
+ primaryAction={
+   canManage && !supportView.readOnly
+     ? { label: "Create role", shortLabel: "New role", to: "/intake", icon: Plus }
+     : undefined
+ }
  aboveNav={
  data && data.organizations.length > 1 ? (
  <OrgSwitcher
