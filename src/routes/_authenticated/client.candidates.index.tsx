@@ -25,6 +25,7 @@ import { CandidateCard } from "@/components/client/candidate-card";
 import { CompareTray, CompareSheet } from "@/components/client/candidate-comparison";
 import { ShareShortlistDialog } from "@/components/client/share-shortlist-dialog";
 import { Share2 } from "lucide-react";
+import { SavedViewsBar } from "@/components/workspace/saved-views-bar";
 import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
 
 const STAGE_OPTIONS = [
