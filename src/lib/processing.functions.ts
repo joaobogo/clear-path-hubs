@@ -769,3 +769,54 @@ export const getAdminMatch = createServerFn({ method: "GET" })
       })),
     };
   });
+
+// Download a consolidated evidence record as JSON (staff only).
+export const downloadEvidenceRecord = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => z.object({ id: z.string().uuid() }).parse(input))
+  .handler(async ({ data, context }) => {
+    if (!(await isStaff(context.userId))) throw new Error("forbidden");
+    const supabase = (await getAdmin()) as AnyRow;
+    const { data: m } = await supabase
+      .from("candidate_matches")
+      .select(
+        "id,position_id,candidate_profile_id,organization_id,processing_state,admin_status,client_visibility,current_score_run_id,created_at,updated_at,candidate_profiles(full_name,email,headline,location),positions(title,organizations(name))",
+      )
+      .eq("id", data.id)
+      .maybeSingle();
+    if (!m) throw new Error("not_found");
+    const [ev, runs, file, audit] = await Promise.all([
+      supabase
+        .from("candidate_evidence")
+        .select("id,engine_version,extracted,screening_normalized,raw_text_sample,created_at")
+        .eq("candidate_match_id", data.id)
+        .order("created_at", { ascending: false }),
+      supabase
+        .from("score_runs")
+        .select("id,score,fit_label,must_have_coverage,contradiction_status,engine_version,completed_at,explanation")
+        .eq("candidate_match_id", data.id)
+        .order("completed_at", { ascending: false }),
+      supabase
+        .from("files")
+        .select("id,filename,mime_type,size,ocr_used,extracted_text,extraction_completed_at,created_at")
+        .eq("candidate_profile_id", (m.candidate_profiles as AnyRow)?.id ?? m.candidate_profile_id)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle(),
+      supabase
+        .from("audit_events")
+        .select("id,event_type,payload,actor_user_id,created_at")
+        .eq("entity_type", "candidate_match")
+        .eq("entity_id", data.id)
+        .order("created_at", { ascending: false })
+        .limit(200),
+    ]);
+    return {
+      exported_at: new Date().toISOString(),
+      match: m,
+      evidence: ev.data ?? [],
+      score_runs: runs.data ?? [],
+      cv: file.data ?? null,
+      audit: audit.data ?? [],
+    } as Json;
+  });
