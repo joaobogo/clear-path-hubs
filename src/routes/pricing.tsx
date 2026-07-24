@@ -17,7 +17,7 @@ export const Route = createFileRoute("/pricing")({
     marketingHead(undefined, "/pricing", {
       title: "Pricing — Plans that scale with volume | TaaSFlow",
       description:
-        "Transparent one-off packages from $399. Ranked candidates in 14 days, no placement fees, no salary percentages. Higher volume = lower cost per role.",
+        `Transparent one-off packages from ${PRICE_PILOT_DISPLAY}. Ranked candidates in 14 days, no placement fees, no salary percentages. Higher volume = lower cost per role.`,
     }),
   component: PricingPage,
 });

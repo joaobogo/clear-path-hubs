@@ -9,6 +9,16 @@ import {
 import { marketingHead } from "@/lib/marketing/head";
 import { FoundersStrip } from "@/components/marketing/founders-strip";
 import { CheckCircle2, XCircle, Sparkles, ShieldCheck, LineChart, Users } from "lucide-react";
+import {
+  PRICE_PILOT_DISPLAY,
+  PRICE_MULTI_DISPLAY,
+  PRICE_SPRINT_DISPLAY,
+  PRICE_ENTERPRISE_DISPLAY,
+  PILOT_ROLES_LABEL,
+  MULTI_ROLES_LABEL,
+  SPRINT_ROLES_LABEL,
+  ENTERPRISE_ROLES_LABEL,
+} from "@/config/pricing-core";
 
 /**
  * /pitch — approved public overview page.
@@ -92,28 +102,42 @@ const DASHBOARDS = [
   { label: "Source Attribution", body: "Which channel converts. Application → shortlist → hire, by source, per role." },
 ];
 
-const ECONOMICS = [
+const ECONOMICS: Array<{
+  tier: string;
+  price: string;
+  unit: string;
+  fits: string;
+  line: string;
+  highlight?: boolean;
+}> = [
   {
-    tier: "Team",
-    price: "€1,900",
-    unit: "/month",
-    fits: "1 role at a time",
-    line: "Founder or head of talent running a single search.",
+    tier: "Pilot — Single Position",
+    price: PRICE_PILOT_DISPLAY,
+    unit: " one-time",
+    fits: PILOT_ROLES_LABEL,
+    line: "Test the model on one critical hire. 14-day turnaround.",
   },
   {
-    tier: "Growth",
-    price: "€4,900",
-    unit: "/month",
-    fits: "Up to 4 concurrent roles",
-    line: "Series A–C companies scaling multiple functions in parallel.",
+    tier: "Multi Position",
+    price: PRICE_MULTI_DISPLAY,
+    unit: " one-time",
+    fits: MULTI_ROLES_LABEL,
+    line: "Parallel searches with shared intake context. ≈ $600 per role.",
     highlight: true,
   },
   {
-    tier: "Enterprise",
-    price: "Custom",
+    tier: "Hiring Sprint",
+    price: PRICE_SPRINT_DISPLAY,
+    unit: " one-time",
+    fits: SPRINT_ROLES_LABEL,
+    line: "Concurrent hiring across functions with priority support.",
+  },
+  {
+    tier: "Custom Billing",
+    price: PRICE_ENTERPRISE_DISPLAY,
     unit: "",
-    fits: "Portfolio of searches",
-    line: "PE-backed and multi-BU orgs with regional hiring cadence.",
+    fits: ENTERPRISE_ROLES_LABEL,
+    line: "Continuous hiring across business units and geographies.",
   },
 ];
 
@@ -331,11 +355,11 @@ function PitchPage() {
               Priced like software. Delivered by people.
             </h2>
             <p className="mt-4 text-[color:var(--brand-navy)]/75">
-              A flat monthly subscription — not a percentage of salary. Cancel or
-              pause between roles. No placement fees, ever.
-            </p>
+            A flat one-time fee per package — no salary percentages, no placement
+            fees, ever. Move to a custom continuous plan when volume warrants it.
+          </p>
           </div>
-          <div className="mt-10 grid gap-5 md:grid-cols-3">
+          <div className="mt-10 grid gap-5 md:grid-cols-4">
             {ECONOMICS.map((t) => (
               <div
                 key={t.tier}
@@ -358,7 +382,7 @@ function PitchPage() {
             ))}
           </div>
           <p className="mt-6 text-sm text-[color:var(--brand-navy)]/65">
-            Compare to placement: a single €120k hire at a 20% fee equals more than a full year of Growth.
+            Compare to placement: a single €120k hire at a 20% fee equals more than five Hiring Sprints.
           </p>
         </PublicPage>
       </PublicSection>
