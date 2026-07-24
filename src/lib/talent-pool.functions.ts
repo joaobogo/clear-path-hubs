@@ -420,7 +420,7 @@ export const searchRediscovery = createServerFn({ method: "POST" })
       .order("updated_at", { ascending: false })
       .limit(2000);
     if (data.positionId) matchesQ = matchesQ.eq("position_id", data.positionId);
-    if (data.stage) matchesQ = matchesQ.eq("stage", data.stage);
+    if (data.stage) matchesQ = matchesQ.eq("stage", data.stage as never);
     if (data.recencyDays) {
       const since = new Date(Date.now() - data.recencyDays * 86400_000).toISOString();
       matchesQ = matchesQ.gte("updated_at", since);
