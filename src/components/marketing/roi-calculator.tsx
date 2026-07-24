@@ -333,7 +333,8 @@ export function RoiCalculator({
         {/* ---------------------------------------- Results column (7/12) */}
         <div className="lg:col-span-7 order-1 lg:order-2">
           <div
-            className="relative overflow-hidden bg-[color:var(--brand-navy)] p-8 text-white shadow-2xl sm:p-12 md:p-14 rounded-2xl"
+            className="relative overflow-hidden bg-[color:var(--brand-navy)] p-5 text-white shadow-2xl sm:p-12 md:p-14 rounded-2xl"
+
             aria-live="polite"
             aria-atomic="true"
           >
