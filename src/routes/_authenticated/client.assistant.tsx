@@ -139,7 +139,7 @@ function AssistantPage() {
 
   // Optimistic user echo
   const messages: MessageRow[] = useMemo(() => {
-    const base = (state.data?.messages ?? []) as MessageRow[];
+    const base = (state.data?.messages ?? []) as unknown as MessageRow[];
     if (!ask.isPending) return base;
     return [
       ...base,
