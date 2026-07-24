@@ -318,8 +318,8 @@ export function RoiCalculator({
 
 
       <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)]">
-        {/* Inputs */}
-        <div>
+        {/* Inputs — rendered second on mobile so the numbers land first */}
+        <div className="order-2 lg:order-1">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <p className="text-xs font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/55">
               Assumptions
