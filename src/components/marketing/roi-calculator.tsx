@@ -198,7 +198,7 @@ export function RoiCalculator({
     <section
       aria-labelledby="roi-calc-heading"
       className={cn(
-        "rounded-3xl border border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-paper)] p-6 shadow-sm sm:p-10 lg:p-12 motion-safe:transition-colors",
+        "rounded-3xl border border-[color:var(--brand-navy)]/10 bg-white p-6 shadow-sm sm:p-10 lg:p-12 motion-safe:transition-colors",
         className,
       )}
     >
@@ -332,7 +332,7 @@ export function RoiCalculator({
         {/* ---------------------------------------- Results column (7/12) */}
         <div className="lg:col-span-7 order-1 lg:order-2">
           <div
-            className="relative overflow-hidden bg-[color:var(--brand-navy)] p-8 text-[color:var(--brand-paper)] shadow-2xl sm:p-12 md:p-14 rounded-2xl"
+            className="relative overflow-hidden bg-[color:var(--brand-navy)] p-8 text-white shadow-2xl sm:p-12 md:p-14 rounded-2xl"
             aria-live="polite"
             aria-atomic="true"
           >
@@ -363,12 +363,12 @@ export function RoiCalculator({
               </div>
 
               {/* Traditional vs TaaSFlow ledger */}
-              <div className="mt-14 grid grid-cols-1 gap-10 border-t border-[color:var(--brand-paper)]/20 pt-10 md:grid-cols-2">
+              <div className="mt-14 grid grid-cols-1 gap-10 border-t border-white/20 pt-10 md:grid-cols-2">
                 <div>
                   <span className="block text-[10px] uppercase tracking-[0.18em] opacity-45">
                     Traditional agency model
                   </span>
-                  <p className="mt-3 font-[family-name:var(--brand-font-display)] text-3xl md:text-4xl tabular-nums text-[color:var(--brand-paper)]/90">
+                  <p className="mt-3 font-[family-name:var(--brand-font-display)] text-3xl md:text-4xl tabular-nums text-white/90">
                     {formatUsdCompact(result.traditionalCostUsd)}
                   </p>
                   <p className="mt-1 text-xs opacity-50">
@@ -376,7 +376,7 @@ export function RoiCalculator({
                   </p>
                 </div>
                 <div>
-                  <span className="block text-[10px] uppercase tracking-[0.18em] text-[color:var(--brand-paper)]/70">
+                  <span className="block text-[10px] uppercase tracking-[0.18em] text-white/70">
                     TaaSFlow platform
                     {result.taasflowPackage ? ` · ${result.taasflowPackage.name}` : ""}
                   </span>
@@ -413,7 +413,7 @@ export function RoiCalculator({
                         projected_savings_usd: result.projectedSavingsUsd ?? undefined,
                       })
                     }
-                    className="group inline-flex min-h-12 items-center justify-between gap-3 rounded-md bg-[color:var(--brand-paper)] px-6 py-4 text-sm font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)] transition-all hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-paper)]"
+                    className="group inline-flex min-h-12 items-center justify-between gap-3 rounded-md bg-white px-6 py-4 text-sm font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)] transition-all hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
                   >
                     <span>Start hiring</span>
                     <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden />
@@ -427,7 +427,7 @@ export function RoiCalculator({
                         positions: inputs.positions,
                       })
                     }
-                    className="inline-flex min-h-12 items-center justify-center gap-2 rounded-md border border-[color:var(--brand-paper)]/30 px-6 py-4 text-sm font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-paper)] transition-all hover:bg-[color:var(--brand-paper)] hover:text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-paper)]"
+                    className="inline-flex min-h-12 items-center justify-center gap-2 rounded-md border border-white/30 px-6 py-4 text-sm font-semibold uppercase tracking-[0.14em] text-white transition-all hover:bg-white hover:text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
                   >
                     {result.isCustomPricing ? "Talk to founders" : "View pricing"}
                   </Link>
