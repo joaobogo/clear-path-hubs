@@ -719,9 +719,8 @@ export const listAdminMatches = createServerFn({ method: "GET" })
     const { data: rows } = await q
       .order("updated_at", { ascending: false })
       .limit(200);
-    const data_rows = rows;
     return (
-      (data ?? []).map((m: AnyRow) => {
+      (rows ?? []).map((m: AnyRow) => {
         const cp = m.candidate_profiles;
         const pos = m.positions;
         const sr = m.score_runs;
