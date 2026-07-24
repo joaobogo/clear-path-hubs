@@ -582,6 +582,66 @@ export type Database = {
           },
         ]
       }
+      business_rules_audit: {
+        Row: {
+          action: string
+          actor_user_id: string | null
+          created_at: string
+          id: string
+          key: string
+          new_value: Json | null
+          note: string | null
+          previous_value: Json | null
+        }
+        Insert: {
+          action: string
+          actor_user_id?: string | null
+          created_at?: string
+          id?: string
+          key: string
+          new_value?: Json | null
+          note?: string | null
+          previous_value?: Json | null
+        }
+        Update: {
+          action?: string
+          actor_user_id?: string | null
+          created_at?: string
+          id?: string
+          key?: string
+          new_value?: Json | null
+          note?: string | null
+          previous_value?: Json | null
+        }
+        Relationships: []
+      }
+      business_rules_overrides: {
+        Row: {
+          created_at: string
+          key: string
+          notes: string | null
+          updated_at: string
+          updated_by: string | null
+          value: Json
+        }
+        Insert: {
+          created_at?: string
+          key: string
+          notes?: string | null
+          updated_at?: string
+          updated_by?: string | null
+          value: Json
+        }
+        Update: {
+          created_at?: string
+          key?: string
+          notes?: string | null
+          updated_at?: string
+          updated_by?: string | null
+          value?: Json
+        }
+        Relationships: []
+      }
       candidate_evidence: {
         Row: {
           candidate_match_id: string
