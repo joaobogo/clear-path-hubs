@@ -1,0 +1,405 @@
+{
+  "count": 57,
+  "generated_at": "2026-07-24",
+  "industries": [
+    {
+      "slug": "accounting",
+      "name": "Accounting",
+      "has_detail_page": true,
+      "on_homepage_index": true,
+      "content_status": "published"
+    },
+    {
+      "slug": "agriculture",
+      "name": "Agriculture & AgriTech",
+      "has_detail_page": false,
+      "on_homepage_index": false,
+      "content_status": "pending"
+    },
+    {
+      "slug": "ai-ml",
+      "name": "AI & ML",
+      "has_detail_page": false,
+      "on_homepage_index": false,
+      "content_status": "pending"
+    },
+    {
+      "slug": "architecture",
+      "name": "Architecture & Design",
+      "has_detail_page": false,
+      "on_homepage_index": false,
+      "content_status": "pending"
+    },
+    {
+      "slug": "automotive",
+      "name": "Automotive",
+      "has_detail_page": false,
+      "on_homepage_index": false,
+      "content_status": "pending"
+    },
+    {
+      "slug": "aviation",
+      "name": "Aviation",
+      "has_detail_page": false,
+      "on_homepage_index": false,
+      "content_status": "pending"
+    },
+    {
+      "slug": "biotech",
+      "name": "Biotech",
+      "has_detail_page": false,
+      "on_homepage_index": false,
+      "content_status": "pending"
+    },
+    {
+      "slug": "construction",
+      "name": "Construction",
+      "has_detail_page": true,
+      "on_homepage_index": true,
+      "content_status": "published"
+    },
+    {
+      "slug": "consulting",
+      "name": "Consulting",
+      "has_detail_page": true,
+      "on_homepage_index": true,
+      "content_status": "published"
+    },
+    {
+      "slug": "customer-success",
+      "name": "Customer Success",
+      "has_detail_page": false,
+      "on_homepage_index": false,
+      "content_status": "pending"
+    },
+    {
+      "slug": "cybersecurity",
+      "name": "Cybersecurity",
+      "has_detail_page": true,
+      "on_homepage_index": true,
+      "content_status": "published"
+    },
+    {
+      "slug": "data-analytics",
+      "name": "Data & Analytics",
+      "has_detail_page": true,
+      "on_homepage_index": true,
+      "content_status": "published"
+    },
+    {
+      "slug": "defense",
+      "name": "Defense",
+      "has_detail_page": false,
+      "on_homepage_index": false,
+      "content_status": "pending"
+    },
+    {
+      "slug": "design",
+      "name": "Design & Creative",
+      "has_detail_page": false,
+      "on_homepage_index": false,
+      "content_status": "pending"
+    },
+    {
+      "slug": "devops",
+      "name": "DevOps & Platform",
+      "has_detail_page": false,
+      "on_homepage_index": false,
+      "content_status": "pending"
+    },
+    {
+      "slug": "ecommerce",
+      "name": "E-commerce",
+      "has_detail_page": true,
+      "on_homepage_index": true,
+      "content_status": "published"
+    },
+    {
+      "slug": "edtech",
+      "name": "EdTech",
+      "has_detail_page": false,
+      "on_homepage_index": false,
+      "content_status": "pending"
+    },
+    {
+      "slug": "education",
+      "name": "Education",
+      "has_detail_page": false,
+      "on_homepage_index": false,
+      "content_status": "pending"
+    },
+    {
+      "slug": "energy",
+      "name": "Energy",
+      "has_detail_page": false,
+      "on_homepage_index": false,
+      "content_status": "pending"
+    },
+    {
+      "slug": "fashion",
+      "name": "Fashion & Apparel",
+      "has_detail_page": false,
+      "on_homepage_index": false,
+      "content_status": "pending"
+    },
+    {
+      "slug": "finance",
+      "name": "Finance",
+      "has_detail_page": true,
+      "on_homepage_index": true,
+      "content_status": "published"
+    },
+    {
+      "slug": "fintech",
+      "name": "Fintech",
+      "has_detail_page": false,
+      "on_homepage_index": false,
+      "content_status": "pending"
+    },
+    {
+      "slug": "food-beverage",
+      "name": "Food & Beverage",
+      "has_detail_page": false,
+      "on_homepage_index": false,
+      "content_status": "pending"
+    },
+    {
+      "slug": "gaming",
+      "name": "Gaming & Interactive",
+      "has_detail_page": false,
+      "on_homepage_index": false,
+      "content_status": "pending"
+    },
+    {
+      "slug": "healthcare",
+      "name": "Healthcare",
+      "has_detail_page": true,
+      "on_homepage_index": true,
+      "content_status": "published"
+    },
+    {
+      "slug": "healthtech",
+      "name": "Healthtech",
+      "has_detail_page": false,
+      "on_homepage_index": false,
+      "content_status": "pending"
+    },
+    {
+      "slug": "higher-education",
+      "name": "Higher Education",
+      "has_detail_page": false,
+      "on_homepage_index": false,
+      "content_status": "pending"
+    },
+    {
+      "slug": "hospitality",
+      "name": "Hospitality and Events",
+      "has_detail_page": true,
+      "on_homepage_index": true,
+      "content_status": "published"
+    },
+    {
+      "slug": "human-resources",
+      "name": "Human Resources",
+      "has_detail_page": true,
+      "on_homepage_index": true,
+      "content_status": "published"
+    },
+    {
+      "slug": "insurance",
+      "name": "Insurance",
+      "has_detail_page": true,
+      "on_homepage_index": true,
+      "content_status": "published"
+    },
+    {
+      "slug": "investment-banking",
+      "name": "Investment Banking",
+      "has_detail_page": false,
+      "on_homepage_index": false,
+      "content_status": "pending"
+    },
+    {
+      "slug": "legal",
+      "name": "Legal",
+      "has_detail_page": true,
+      "on_homepage_index": true,
+      "content_status": "published"
+    },
+    {
+      "slug": "logistics",
+      "name": "Logistics and Supply Chain",
+      "has_detail_page": false,
+      "on_homepage_index": false,
+      "content_status": "pending"
+    },
+    {
+      "slug": "manufacturing",
+      "name": "Manufacturing",
+      "has_detail_page": false,
+      "on_homepage_index": false,
+      "content_status": "pending"
+    },
+    {
+      "slug": "marketing",
+      "name": "Marketing",
+      "has_detail_page": true,
+      "on_homepage_index": true,
+      "content_status": "published"
+    },
+    {
+      "slug": "media",
+      "name": "Media",
+      "has_detail_page": true,
+      "on_homepage_index": true,
+      "content_status": "published"
+    },
+    {
+      "slug": "medical-devices",
+      "name": "Medical Devices",
+      "has_detail_page": false,
+      "on_homepage_index": false,
+      "content_status": "pending"
+    },
+    {
+      "slug": "nonprofit",
+      "name": "Nonprofit",
+      "has_detail_page": false,
+      "on_homepage_index": false,
+      "content_status": "pending"
+    },
+    {
+      "slug": "oil-gas",
+      "name": "Oil & Gas",
+      "has_detail_page": false,
+      "on_homepage_index": false,
+      "content_status": "pending"
+    },
+    {
+      "slug": "pharmaceuticals",
+      "name": "Pharmaceuticals",
+      "has_detail_page": false,
+      "on_homepage_index": false,
+      "content_status": "pending"
+    },
+    {
+      "slug": "private-equity",
+      "name": "Private Equity",
+      "has_detail_page": true,
+      "on_homepage_index": true,
+      "content_status": "published"
+    },
+    {
+      "slug": "product-management",
+      "name": "Product Management",
+      "has_detail_page": false,
+      "on_homepage_index": false,
+      "content_status": "pending"
+    },
+    {
+      "slug": "proptech",
+      "name": "PropTech",
+      "has_detail_page": false,
+      "on_homepage_index": false,
+      "content_status": "pending"
+    },
+    {
+      "slug": "public-sector",
+      "name": "Public Sector",
+      "has_detail_page": true,
+      "on_homepage_index": true,
+      "content_status": "published"
+    },
+    {
+      "slug": "real-estate",
+      "name": "Real Estate",
+      "has_detail_page": true,
+      "on_homepage_index": true,
+      "content_status": "published"
+    },
+    {
+      "slug": "renewable-energy",
+      "name": "Renewable Energy",
+      "has_detail_page": false,
+      "on_homepage_index": false,
+      "content_status": "pending"
+    },
+    {
+      "slug": "retail",
+      "name": "Retail",
+      "has_detail_page": false,
+      "on_homepage_index": false,
+      "content_status": "pending"
+    },
+    {
+      "slug": "saas",
+      "name": "SaaS",
+      "has_detail_page": true,
+      "on_homepage_index": true,
+      "content_status": "published"
+    },
+    {
+      "slug": "sales",
+      "name": "Sales",
+      "has_detail_page": true,
+      "on_homepage_index": true,
+      "content_status": "published"
+    },
+    {
+      "slug": "sports",
+      "name": "Sports & Entertainment",
+      "has_detail_page": false,
+      "on_homepage_index": false,
+      "content_status": "pending"
+    },
+    {
+      "slug": "staffing-agencies",
+      "name": "Staffing Agencies",
+      "has_detail_page": true,
+      "on_homepage_index": true,
+      "content_status": "published"
+    },
+    {
+      "slug": "tech",
+      "name": "Technology",
+      "has_detail_page": true,
+      "on_homepage_index": true,
+      "content_status": "published"
+    },
+    {
+      "slug": "telecom",
+      "name": "Telecommunications",
+      "has_detail_page": false,
+      "on_homepage_index": false,
+      "content_status": "pending"
+    },
+    {
+      "slug": "travel",
+      "name": "Travel & Tourism",
+      "has_detail_page": false,
+      "on_homepage_index": false,
+      "content_status": "pending"
+    },
+    {
+      "slug": "venture-capital",
+      "name": "Venture Capital",
+      "has_detail_page": false,
+      "on_homepage_index": false,
+      "content_status": "pending"
+    },
+    {
+      "slug": "wealth-management",
+      "name": "Wealth Management",
+      "has_detail_page": false,
+      "on_homepage_index": false,
+      "content_status": "pending"
+    },
+    {
+      "slug": "web3",
+      "name": "Web3 & Blockchain",
+      "has_detail_page": false,
+      "on_homepage_index": false,
+      "content_status": "pending"
+    }
+  ]
+}
