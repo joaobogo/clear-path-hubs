@@ -1323,18 +1323,19 @@ function Home() {
             <div className="flex min-w-0 flex-col justify-center gap-6">
               <span className="inline-flex w-fit items-center gap-2 rounded-full border border-[color:var(--brand-navy)]/12 bg-white/70 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/75 backdrop-blur">
                 <Sparkles className="h-3.5 w-3.5 text-[color:var(--brand-ocean)]" aria-hidden />
-                The hiring operating system
+                Subscription recruiting
               </span>
               <h1
                 id="home-hero-heading"
                 className="font-[family-name:var(--brand-font-display)] text-4xl font-semibold leading-[1.05] tracking-tight text-[color:var(--brand-navy)] sm:text-5xl lg:text-[3.5rem]"
               >
-                Recruiting,
-                <br className="hidden sm:block" /> run as a system.
+                Ranked shortlists in a week.
+                <br className="hidden sm:block" />{" "}
+                <span className="text-[color:var(--brand-ocean)]">Not a quarter.</span>
               </h1>
               <p className="max-w-xl text-lg text-[color:var(--brand-navy)]/75">
-                Every role is briefed, sourced, and scored against your rubric in one live workspace.{" "}
-                <span className="font-semibold text-[color:var(--brand-navy)]">Recruiters decide. The system carries the context.</span>
+                Every role briefed, sourced, and scored against your rubric — so you decide in days, not months.{" "}
+                <span className="font-semibold text-[color:var(--brand-navy)]">Cheaper than an agency. Better than a job post.</span>
               </p>
               <div className="flex flex-wrap items-center gap-3 pt-1">
                 <Link
