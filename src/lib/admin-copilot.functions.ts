@@ -194,7 +194,7 @@ export const getCopilotState = createServerFn({ method: "POST" })
     const conversationId = await ensureConversation(context.supabase, context.userId);
     const { data: rows, error } = await context.supabase
       .from("admin_copilot_messages")
-      .select("id, role, content, tool_trace, citations, proposed_actions, created_at")
+      .select("id, role, content, tool_trace, citations, proposed_actions, confidence, created_at")
       .eq("conversation_id", conversationId)
       .order("created_at", { ascending: true });
     if (error) throw new Error(error.message);
