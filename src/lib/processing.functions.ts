@@ -655,8 +655,8 @@ export const applyReviewDecision = createServerFn({ method: "POST" })
     return { ok: true as const, action: data.action };
   });
 
-// Hard-archive a candidate match. Works regardless of score state — admins can
-// remove a candidate at any point in the pipeline (no score run required).
+// Permanently purge a candidate match. Works regardless of score state — admins can
+// remove a candidate and its dependent application/profile/scoring data from the database.
 export const deleteCandidateMatch = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) =>
@@ -668,33 +668,32 @@ export const deleteCandidateMatch = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     if (!(await isStaff(context.userId))) throw new Error("forbidden");
     const supabase = (await getAdmin()) as AnyRow;
-    const { data: match } = await supabase
+    const { data: match, error: matchError } = await supabase
       .from("candidate_matches")
-      .select("id,current_score_run_id,approved_score_run_id")
+      .select("id,candidate_profile_id")
       .eq("id", data.match_id)
       .maybeSingle();
+    if (matchError) throw new Error(`delete_failed:${matchError.message}`);
     if (!match) throw new Error("match_not_found");
 
-    const runIdForDecision = match.current_score_run_id ?? match.approved_score_run_id ?? null;
-    if (runIdForDecision) {
-      await supabase.from("score_decisions").insert({
-        candidate_match_id: data.match_id,
-        score_run_id: runIdForDecision,
-        decision_type: "reject",
-        reason: "DELETE: " + (data.reason ?? ""),
-        actor_user_id: context.userId,
-      });
+    const { data: files } = await supabase
+      .from("files")
+      .select("storage_bucket,storage_path")
+      .eq("candidate_profile_id", match.candidate_profile_id);
+
+    for (const file of files ?? []) {
+      if (file.storage_bucket && file.storage_path) {
+        await supabase.storage.from(file.storage_bucket).remove([file.storage_path]);
+      }
     }
-    const { error } = await supabase
-      .from("candidate_matches")
-      .update({
-        admin_status: "rejected",
-        client_visibility: "archived",
-        stage: "archived",
-      })
-      .eq("id", data.match_id);
+
+    const { data: deleted, error } = await supabase.rpc("hard_delete_candidate_match", {
+      _match_id: data.match_id,
+      _actor_user_id: context.userId,
+      _reason: data.reason ?? null,
+    });
     if (error) throw new Error(`delete_failed:${error.message}`);
-    return { ok: true as const, action: "delete" as const };
+    return { ok: true as const, action: "delete" as const, deleted };
   });
 
 // ---------- admin queries ----------
