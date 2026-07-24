@@ -790,10 +790,8 @@ function SectionRoleExplorer({ ctx }: { ctx: Ctx }) {
 function SectionScoring({ ctx }: { ctx: Ctx }) {
   const { entry } = ctx;
   return (
-    <PublicSection
-      className="border-t border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-mist)]/40 py-14"
-      id="scoring"
-    >
+    <PublicSection className="border-t border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-mist)]/40 py-14">
+      <span id="scoring" className="sr-only" aria-hidden />
       <PublicPage>
         <SectionHeading
           eyebrow="How TaaSFlow scores talent"
@@ -836,7 +834,8 @@ function SectionProof({ ctx }: { ctx: Ctx }) {
     { title: "Structured comparison", body: "Candidates are shown side-by-side with the same rubric, so you can compare like-for-like and defend the decision." },
   ];
   return (
-    <PublicSection className="border-t border-[color:var(--brand-navy)]/10 bg-white py-14" id="proof">
+    <PublicSection className="border-t border-[color:var(--brand-navy)]/10 bg-white py-14">
+      <span id="proof" className="sr-only" aria-hidden />
       <PublicPage>
         <SectionHeading
           eyebrow="What you receive"
