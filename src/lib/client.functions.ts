@@ -99,6 +99,11 @@ export const getClientContext = createServerFn({ method: "GET" })
           name: string;
           industry: string | null;
           parent_organization_id: string | null;
+          logo_url: string | null;
+          brand_display_name: string | null;
+          brand_primary_color: string | null;
+          brand_accent_color: string | null;
+          parent_name: string | null;
         },
         organizations: memberships.map((m) => ({
           id: m.organization_id,
@@ -109,13 +114,28 @@ export const getClientContext = createServerFn({ method: "GET" })
         onboarding,
       };
     }
+    const parentId = (active.organizations?.parent_organization_id ?? null) as string | null;
+    let parentName: string | null = null;
+    if (parentId) {
+      const { data: parentOrg } = await context.supabase
+        .from("organizations")
+        .select("name")
+        .eq("id", parentId)
+        .maybeSingle();
+      parentName = (parentOrg as { name?: string | null } | null)?.name ?? null;
+    }
     return {
       active: {
         organization_id: active.organization_id,
         role: active.role as ClientRole,
         name: active.organizations?.name ?? "Organization",
         industry: (active.organizations?.industry ?? null) as string | null,
-        parent_organization_id: (active.organizations?.parent_organization_id ?? null) as string | null,
+        parent_organization_id: parentId,
+        logo_url: (active.organizations?.logo_url ?? null) as string | null,
+        brand_display_name: (active.organizations?.brand_display_name ?? null) as string | null,
+        brand_primary_color: (active.organizations?.brand_primary_color ?? null) as string | null,
+        brand_accent_color: (active.organizations?.brand_accent_color ?? null) as string | null,
+        parent_name: parentName,
       },
       organizations: memberships.map((m) => ({
         id: m.organization_id,
