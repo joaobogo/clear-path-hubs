@@ -77,11 +77,9 @@ import { Route as AuthenticatedMeApplicationsRouteImport } from './routes/_authe
 import { Route as AuthenticatedClientTeamRouteImport } from './routes/_authenticated/client.team'
 import { Route as AuthenticatedClientTalentPoolRouteImport } from './routes/_authenticated/client.talent-pool'
 import { Route as AuthenticatedClientTalentMemoryRouteImport } from './routes/_authenticated/client.talent-memory'
-import { Route as AuthenticatedClientSourcesRouteImport } from './routes/_authenticated/client.sources'
 import { Route as AuthenticatedClientSettingsRouteImport } from './routes/_authenticated/client.settings'
 import { Route as AuthenticatedClientPositionsRouteImport } from './routes/_authenticated/client.positions'
 import { Route as AuthenticatedClientPortfolioRouteImport } from './routes/_authenticated/client.portfolio'
-import { Route as AuthenticatedClientOutreachRouteImport } from './routes/_authenticated/client.outreach'
 import { Route as AuthenticatedClientOffersRouteImport } from './routes/_authenticated/client.offers'
 import { Route as AuthenticatedClientMessagesRouteImport } from './routes/_authenticated/client.messages'
 import { Route as AuthenticatedClientInterviewsRouteImport } from './routes/_authenticated/client.interviews'
@@ -90,11 +88,9 @@ import { Route as AuthenticatedClientCandidatesRouteImport } from './routes/_aut
 import { Route as AuthenticatedClientAssistantRouteImport } from './routes/_authenticated/client.assistant'
 import { Route as AuthenticatedAdminWbrRouteImport } from './routes/_authenticated/admin.wbr'
 import { Route as AuthenticatedAdminTeamRouteImport } from './routes/_authenticated/admin.team'
-import { Route as AuthenticatedAdminSourcesRouteImport } from './routes/_authenticated/admin.sources'
 import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin.settings'
 import { Route as AuthenticatedAdminPublishRouteImport } from './routes/_authenticated/admin.publish'
 import { Route as AuthenticatedAdminPositionsRouteImport } from './routes/_authenticated/admin.positions'
-import { Route as AuthenticatedAdminOutreachRouteImport } from './routes/_authenticated/admin.outreach'
 import { Route as AuthenticatedAdminOperationsRouteImport } from './routes/_authenticated/admin.operations'
 import { Route as AuthenticatedAdminNotificationsRouteImport } from './routes/_authenticated/admin.notifications'
 import { Route as AuthenticatedAdminMessagesRouteImport } from './routes/_authenticated/admin.messages'
@@ -469,12 +465,6 @@ const AuthenticatedClientTalentMemoryRoute =
     path: '/talent-memory',
     getParentRoute: () => AuthenticatedClientRoute,
   } as any)
-const AuthenticatedClientSourcesRoute =
-  AuthenticatedClientSourcesRouteImport.update({
-    id: '/sources',
-    path: '/sources',
-    getParentRoute: () => AuthenticatedClientRoute,
-  } as any)
 const AuthenticatedClientSettingsRoute =
   AuthenticatedClientSettingsRouteImport.update({
     id: '/settings',
@@ -491,12 +481,6 @@ const AuthenticatedClientPortfolioRoute =
   AuthenticatedClientPortfolioRouteImport.update({
     id: '/portfolio',
     path: '/portfolio',
-    getParentRoute: () => AuthenticatedClientRoute,
-  } as any)
-const AuthenticatedClientOutreachRoute =
-  AuthenticatedClientOutreachRouteImport.update({
-    id: '/outreach',
-    path: '/outreach',
     getParentRoute: () => AuthenticatedClientRoute,
   } as any)
 const AuthenticatedClientOffersRoute =
@@ -545,12 +529,6 @@ const AuthenticatedAdminTeamRoute = AuthenticatedAdminTeamRouteImport.update({
   path: '/team',
   getParentRoute: () => AuthenticatedAdminRoute,
 } as any)
-const AuthenticatedAdminSourcesRoute =
-  AuthenticatedAdminSourcesRouteImport.update({
-    id: '/sources',
-    path: '/sources',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
 const AuthenticatedAdminSettingsRoute =
   AuthenticatedAdminSettingsRouteImport.update({
     id: '/settings',
@@ -567,12 +545,6 @@ const AuthenticatedAdminPositionsRoute =
   AuthenticatedAdminPositionsRouteImport.update({
     id: '/positions',
     path: '/positions',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminOutreachRoute =
-  AuthenticatedAdminOutreachRouteImport.update({
-    id: '/outreach',
-    path: '/outreach',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 const AuthenticatedAdminOperationsRoute =
@@ -805,11 +777,9 @@ export interface FileRoutesByFullPath {
   '/admin/messages': typeof AuthenticatedAdminMessagesRoute
   '/admin/notifications': typeof AuthenticatedAdminNotificationsRoute
   '/admin/operations': typeof AuthenticatedAdminOperationsRoute
-  '/admin/outreach': typeof AuthenticatedAdminOutreachRoute
   '/admin/positions': typeof AuthenticatedAdminPositionsRouteWithChildren
   '/admin/publish': typeof AuthenticatedAdminPublishRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
-  '/admin/sources': typeof AuthenticatedAdminSourcesRoute
   '/admin/team': typeof AuthenticatedAdminTeamRoute
   '/admin/wbr': typeof AuthenticatedAdminWbrRoute
   '/client/assistant': typeof AuthenticatedClientAssistantRoute
@@ -818,11 +788,9 @@ export interface FileRoutesByFullPath {
   '/client/interviews': typeof AuthenticatedClientInterviewsRoute
   '/client/messages': typeof AuthenticatedClientMessagesRoute
   '/client/offers': typeof AuthenticatedClientOffersRoute
-  '/client/outreach': typeof AuthenticatedClientOutreachRoute
   '/client/portfolio': typeof AuthenticatedClientPortfolioRoute
   '/client/positions': typeof AuthenticatedClientPositionsRouteWithChildren
   '/client/settings': typeof AuthenticatedClientSettingsRoute
-  '/client/sources': typeof AuthenticatedClientSourcesRoute
   '/client/talent-memory': typeof AuthenticatedClientTalentMemoryRoute
   '/client/talent-pool': typeof AuthenticatedClientTalentPoolRoute
   '/client/team': typeof AuthenticatedClientTeamRoute
@@ -915,10 +883,8 @@ export interface FileRoutesByTo {
   '/admin/messages': typeof AuthenticatedAdminMessagesRoute
   '/admin/notifications': typeof AuthenticatedAdminNotificationsRoute
   '/admin/operations': typeof AuthenticatedAdminOperationsRoute
-  '/admin/outreach': typeof AuthenticatedAdminOutreachRoute
   '/admin/publish': typeof AuthenticatedAdminPublishRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
-  '/admin/sources': typeof AuthenticatedAdminSourcesRoute
   '/admin/team': typeof AuthenticatedAdminTeamRoute
   '/admin/wbr': typeof AuthenticatedAdminWbrRoute
   '/client/assistant': typeof AuthenticatedClientAssistantRoute
@@ -926,10 +892,8 @@ export interface FileRoutesByTo {
   '/client/interviews': typeof AuthenticatedClientInterviewsRoute
   '/client/messages': typeof AuthenticatedClientMessagesRoute
   '/client/offers': typeof AuthenticatedClientOffersRoute
-  '/client/outreach': typeof AuthenticatedClientOutreachRoute
   '/client/portfolio': typeof AuthenticatedClientPortfolioRoute
   '/client/settings': typeof AuthenticatedClientSettingsRoute
-  '/client/sources': typeof AuthenticatedClientSourcesRoute
   '/client/talent-memory': typeof AuthenticatedClientTalentMemoryRoute
   '/client/talent-pool': typeof AuthenticatedClientTalentPoolRoute
   '/client/team': typeof AuthenticatedClientTeamRoute
@@ -1029,11 +993,9 @@ export interface FileRoutesById {
   '/_authenticated/admin/messages': typeof AuthenticatedAdminMessagesRoute
   '/_authenticated/admin/notifications': typeof AuthenticatedAdminNotificationsRoute
   '/_authenticated/admin/operations': typeof AuthenticatedAdminOperationsRoute
-  '/_authenticated/admin/outreach': typeof AuthenticatedAdminOutreachRoute
   '/_authenticated/admin/positions': typeof AuthenticatedAdminPositionsRouteWithChildren
   '/_authenticated/admin/publish': typeof AuthenticatedAdminPublishRoute
   '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
-  '/_authenticated/admin/sources': typeof AuthenticatedAdminSourcesRoute
   '/_authenticated/admin/team': typeof AuthenticatedAdminTeamRoute
   '/_authenticated/admin/wbr': typeof AuthenticatedAdminWbrRoute
   '/_authenticated/client/assistant': typeof AuthenticatedClientAssistantRoute
@@ -1042,11 +1004,9 @@ export interface FileRoutesById {
   '/_authenticated/client/interviews': typeof AuthenticatedClientInterviewsRoute
   '/_authenticated/client/messages': typeof AuthenticatedClientMessagesRoute
   '/_authenticated/client/offers': typeof AuthenticatedClientOffersRoute
-  '/_authenticated/client/outreach': typeof AuthenticatedClientOutreachRoute
   '/_authenticated/client/portfolio': typeof AuthenticatedClientPortfolioRoute
   '/_authenticated/client/positions': typeof AuthenticatedClientPositionsRouteWithChildren
   '/_authenticated/client/settings': typeof AuthenticatedClientSettingsRoute
-  '/_authenticated/client/sources': typeof AuthenticatedClientSourcesRoute
   '/_authenticated/client/talent-memory': typeof AuthenticatedClientTalentMemoryRoute
   '/_authenticated/client/talent-pool': typeof AuthenticatedClientTalentPoolRoute
   '/_authenticated/client/team': typeof AuthenticatedClientTeamRoute
@@ -1147,11 +1107,9 @@ export interface FileRouteTypes {
     | '/admin/messages'
     | '/admin/notifications'
     | '/admin/operations'
-    | '/admin/outreach'
     | '/admin/positions'
     | '/admin/publish'
     | '/admin/settings'
-    | '/admin/sources'
     | '/admin/team'
     | '/admin/wbr'
     | '/client/assistant'
@@ -1160,11 +1118,9 @@ export interface FileRouteTypes {
     | '/client/interviews'
     | '/client/messages'
     | '/client/offers'
-    | '/client/outreach'
     | '/client/portfolio'
     | '/client/positions'
     | '/client/settings'
-    | '/client/sources'
     | '/client/talent-memory'
     | '/client/talent-pool'
     | '/client/team'
@@ -1257,10 +1213,8 @@ export interface FileRouteTypes {
     | '/admin/messages'
     | '/admin/notifications'
     | '/admin/operations'
-    | '/admin/outreach'
     | '/admin/publish'
     | '/admin/settings'
-    | '/admin/sources'
     | '/admin/team'
     | '/admin/wbr'
     | '/client/assistant'
@@ -1268,10 +1222,8 @@ export interface FileRouteTypes {
     | '/client/interviews'
     | '/client/messages'
     | '/client/offers'
-    | '/client/outreach'
     | '/client/portfolio'
     | '/client/settings'
-    | '/client/sources'
     | '/client/talent-memory'
     | '/client/talent-pool'
     | '/client/team'
@@ -1370,11 +1322,9 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/messages'
     | '/_authenticated/admin/notifications'
     | '/_authenticated/admin/operations'
-    | '/_authenticated/admin/outreach'
     | '/_authenticated/admin/positions'
     | '/_authenticated/admin/publish'
     | '/_authenticated/admin/settings'
-    | '/_authenticated/admin/sources'
     | '/_authenticated/admin/team'
     | '/_authenticated/admin/wbr'
     | '/_authenticated/client/assistant'
@@ -1383,11 +1333,9 @@ export interface FileRouteTypes {
     | '/_authenticated/client/interviews'
     | '/_authenticated/client/messages'
     | '/_authenticated/client/offers'
-    | '/_authenticated/client/outreach'
     | '/_authenticated/client/portfolio'
     | '/_authenticated/client/positions'
     | '/_authenticated/client/settings'
-    | '/_authenticated/client/sources'
     | '/_authenticated/client/talent-memory'
     | '/_authenticated/client/talent-pool'
     | '/_authenticated/client/team'
@@ -1966,13 +1914,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedClientTalentMemoryRouteImport
       parentRoute: typeof AuthenticatedClientRoute
     }
-    '/_authenticated/client/sources': {
-      id: '/_authenticated/client/sources'
-      path: '/sources'
-      fullPath: '/client/sources'
-      preLoaderRoute: typeof AuthenticatedClientSourcesRouteImport
-      parentRoute: typeof AuthenticatedClientRoute
-    }
     '/_authenticated/client/settings': {
       id: '/_authenticated/client/settings'
       path: '/settings'
@@ -1992,13 +1933,6 @@ declare module '@tanstack/react-router' {
       path: '/portfolio'
       fullPath: '/client/portfolio'
       preLoaderRoute: typeof AuthenticatedClientPortfolioRouteImport
-      parentRoute: typeof AuthenticatedClientRoute
-    }
-    '/_authenticated/client/outreach': {
-      id: '/_authenticated/client/outreach'
-      path: '/outreach'
-      fullPath: '/client/outreach'
-      preLoaderRoute: typeof AuthenticatedClientOutreachRouteImport
       parentRoute: typeof AuthenticatedClientRoute
     }
     '/_authenticated/client/offers': {
@@ -2057,13 +1991,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminTeamRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
-    '/_authenticated/admin/sources': {
-      id: '/_authenticated/admin/sources'
-      path: '/sources'
-      fullPath: '/admin/sources'
-      preLoaderRoute: typeof AuthenticatedAdminSourcesRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
     '/_authenticated/admin/settings': {
       id: '/_authenticated/admin/settings'
       path: '/settings'
@@ -2083,13 +2010,6 @@ declare module '@tanstack/react-router' {
       path: '/positions'
       fullPath: '/admin/positions'
       preLoaderRoute: typeof AuthenticatedAdminPositionsRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/outreach': {
-      id: '/_authenticated/admin/outreach'
-      path: '/outreach'
-      fullPath: '/admin/outreach'
-      preLoaderRoute: typeof AuthenticatedAdminOutreachRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
     '/_authenticated/admin/operations': {
@@ -2406,11 +2326,9 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminMessagesRoute: typeof AuthenticatedAdminMessagesRoute
   AuthenticatedAdminNotificationsRoute: typeof AuthenticatedAdminNotificationsRoute
   AuthenticatedAdminOperationsRoute: typeof AuthenticatedAdminOperationsRoute
-  AuthenticatedAdminOutreachRoute: typeof AuthenticatedAdminOutreachRoute
   AuthenticatedAdminPositionsRoute: typeof AuthenticatedAdminPositionsRouteWithChildren
   AuthenticatedAdminPublishRoute: typeof AuthenticatedAdminPublishRoute
   AuthenticatedAdminSettingsRoute: typeof AuthenticatedAdminSettingsRoute
-  AuthenticatedAdminSourcesRoute: typeof AuthenticatedAdminSourcesRoute
   AuthenticatedAdminTeamRoute: typeof AuthenticatedAdminTeamRoute
   AuthenticatedAdminWbrRoute: typeof AuthenticatedAdminWbrRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
@@ -2427,12 +2345,10 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminMessagesRoute: AuthenticatedAdminMessagesRoute,
   AuthenticatedAdminNotificationsRoute: AuthenticatedAdminNotificationsRoute,
   AuthenticatedAdminOperationsRoute: AuthenticatedAdminOperationsRoute,
-  AuthenticatedAdminOutreachRoute: AuthenticatedAdminOutreachRoute,
   AuthenticatedAdminPositionsRoute:
     AuthenticatedAdminPositionsRouteWithChildren,
   AuthenticatedAdminPublishRoute: AuthenticatedAdminPublishRoute,
   AuthenticatedAdminSettingsRoute: AuthenticatedAdminSettingsRoute,
-  AuthenticatedAdminSourcesRoute: AuthenticatedAdminSourcesRoute,
   AuthenticatedAdminTeamRoute: AuthenticatedAdminTeamRoute,
   AuthenticatedAdminWbrRoute: AuthenticatedAdminWbrRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
@@ -2498,11 +2414,9 @@ interface AuthenticatedClientRouteChildren {
   AuthenticatedClientInterviewsRoute: typeof AuthenticatedClientInterviewsRoute
   AuthenticatedClientMessagesRoute: typeof AuthenticatedClientMessagesRoute
   AuthenticatedClientOffersRoute: typeof AuthenticatedClientOffersRoute
-  AuthenticatedClientOutreachRoute: typeof AuthenticatedClientOutreachRoute
   AuthenticatedClientPortfolioRoute: typeof AuthenticatedClientPortfolioRoute
   AuthenticatedClientPositionsRoute: typeof AuthenticatedClientPositionsRouteWithChildren
   AuthenticatedClientSettingsRoute: typeof AuthenticatedClientSettingsRoute
-  AuthenticatedClientSourcesRoute: typeof AuthenticatedClientSourcesRoute
   AuthenticatedClientTalentMemoryRoute: typeof AuthenticatedClientTalentMemoryRoute
   AuthenticatedClientTalentPoolRoute: typeof AuthenticatedClientTalentPoolRoute
   AuthenticatedClientTeamRoute: typeof AuthenticatedClientTeamRoute
@@ -2518,12 +2432,10 @@ const AuthenticatedClientRouteChildren: AuthenticatedClientRouteChildren = {
   AuthenticatedClientInterviewsRoute: AuthenticatedClientInterviewsRoute,
   AuthenticatedClientMessagesRoute: AuthenticatedClientMessagesRoute,
   AuthenticatedClientOffersRoute: AuthenticatedClientOffersRoute,
-  AuthenticatedClientOutreachRoute: AuthenticatedClientOutreachRoute,
   AuthenticatedClientPortfolioRoute: AuthenticatedClientPortfolioRoute,
   AuthenticatedClientPositionsRoute:
     AuthenticatedClientPositionsRouteWithChildren,
   AuthenticatedClientSettingsRoute: AuthenticatedClientSettingsRoute,
-  AuthenticatedClientSourcesRoute: AuthenticatedClientSourcesRoute,
   AuthenticatedClientTalentMemoryRoute: AuthenticatedClientTalentMemoryRoute,
   AuthenticatedClientTalentPoolRoute: AuthenticatedClientTalentPoolRoute,
   AuthenticatedClientTeamRoute: AuthenticatedClientTeamRoute,
