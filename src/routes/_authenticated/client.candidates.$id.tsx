@@ -254,7 +254,7 @@ function CandidateDetailPage() {
               </dl>
             </SectionCard>
           )}
-          <SourceAndOutreach candidate={candidate} />
+          
           {(interviews.length > 0 || decisions.length > 0) && (
             <ActivitySection interviews={interviews} decisions={decisions} />
           )}
