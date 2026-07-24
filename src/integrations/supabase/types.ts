@@ -6016,11 +6016,15 @@ export type Database = {
       }
       tasks: {
         Row: {
+          approved_version_hash: string | null
           assignee_user_id: string | null
+          blocking: boolean
           candidate_match_id: string | null
           candidate_profile_id: string | null
+          collaborators: string[]
           completed_at: string | null
           completed_by: string | null
+          completion_evidence: string | null
           created_at: string
           created_by: string | null
           deleted_at: string | null
@@ -6031,16 +6035,22 @@ export type Database = {
           organization_id: string
           position_id: string | null
           priority: Database["public"]["Enums"]["task_priority"]
+          reminder_policy: string
           status: Database["public"]["Enums"]["task_status"]
+          task_type: string
           title: string
           updated_at: string
         }
         Insert: {
+          approved_version_hash?: string | null
           assignee_user_id?: string | null
+          blocking?: boolean
           candidate_match_id?: string | null
           candidate_profile_id?: string | null
+          collaborators?: string[]
           completed_at?: string | null
           completed_by?: string | null
+          completion_evidence?: string | null
           created_at?: string
           created_by?: string | null
           deleted_at?: string | null
@@ -6051,16 +6061,22 @@ export type Database = {
           organization_id: string
           position_id?: string | null
           priority?: Database["public"]["Enums"]["task_priority"]
+          reminder_policy?: string
           status?: Database["public"]["Enums"]["task_status"]
+          task_type?: string
           title: string
           updated_at?: string
         }
         Update: {
+          approved_version_hash?: string | null
           assignee_user_id?: string | null
+          blocking?: boolean
           candidate_match_id?: string | null
           candidate_profile_id?: string | null
+          collaborators?: string[]
           completed_at?: string | null
           completed_by?: string | null
+          completion_evidence?: string | null
           created_at?: string
           created_by?: string | null
           deleted_at?: string | null
@@ -6071,7 +6087,9 @@ export type Database = {
           organization_id?: string
           position_id?: string | null
           priority?: Database["public"]["Enums"]["task_priority"]
+          reminder_policy?: string
           status?: Database["public"]["Enums"]["task_status"]
+          task_type?: string
           title?: string
           updated_at?: string
         }
