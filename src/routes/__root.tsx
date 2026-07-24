@@ -12,6 +12,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Toaster } from "@/components/ui/sonner";
 import { PublicNotFound, PublicErrorState } from "@/components/marketing/site-shell";
+import { TaaSFlowEntryLoader } from "@/components/marketing/entry-loader";
 
 function NotFoundComponent() {
   return <PublicNotFound />;
