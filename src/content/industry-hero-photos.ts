@@ -70,7 +70,7 @@ const RAW: Record<string, Entry> = {
   retail: { src: U("1441986300917-64674bd600d8"), alt: "Elegant flagship retail interior with warm pendant lighting.", focal: "50% 40%" },
   fashion: { src: U("1490481651871-ab68de25d43d"), alt: "Atelier rack of curated garments in soft daylight.", focal: "50% 40%" },
   hospitality: { src: U("1566073771259-6a8506099945"), alt: "Boutique hotel lobby with warm brass fixtures and a lit reception.", focal: "50% 45%" },
-  travel: { src: U("1436491865332-7a61a109cc05"), alt: "Traveller silhouette in an airport terminal at first light.", focal: "50% 50%" },
+  travel: { src: U("1507525428034-b723cf961d3e"), alt: "Coastal traveller viewpoint at golden hour with soft ocean light.", focal: "50% 55%" },
   sports: { src: U("1461896836934-ffe607ba8211"), alt: "Empty modern stadium lit for the evening kickoff.", focal: "50% 45%" },
   media: { src: U("1478737270239-2f02b77fc618"), alt: "Broadcast studio with warm key lights and camera on a jib.", focal: "50% 40%" },
   marketing: { src: U("1552664730-d307ca884978"), alt: "Creative team reviewing campaign boards on a warm-toned wall.", focal: "50% 35%" },
