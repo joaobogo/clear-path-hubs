@@ -4010,6 +4010,276 @@ export type Database = {
           },
         ]
       }
+      talent_memory: {
+        Row: {
+          candidate_profile_id: string
+          consent_expires_at: string | null
+          consent_status: Database["public"]["Enums"]["silver_consent"]
+          consent_updated_at: string | null
+          created_at: string
+          headline_snapshot: string | null
+          id: string
+          last_reengaged_at: string | null
+          last_resurfaced_at: string | null
+          organization_id: string
+          owner_user_id: string | null
+          reason_category: Database["public"]["Enums"]["silver_reason"]
+          reason_notes: string | null
+          role_title_snapshot: string | null
+          score_snapshot: number | null
+          seniority_snapshot: string | null
+          skills_snapshot: Json
+          source_match_id: string | null
+          source_position_id: string | null
+          status: string
+          tagged_at: string
+          tagged_by: string | null
+          updated_at: string
+        }
+        Insert: {
+          candidate_profile_id: string
+          consent_expires_at?: string | null
+          consent_status?: Database["public"]["Enums"]["silver_consent"]
+          consent_updated_at?: string | null
+          created_at?: string
+          headline_snapshot?: string | null
+          id?: string
+          last_reengaged_at?: string | null
+          last_resurfaced_at?: string | null
+          organization_id: string
+          owner_user_id?: string | null
+          reason_category: Database["public"]["Enums"]["silver_reason"]
+          reason_notes?: string | null
+          role_title_snapshot?: string | null
+          score_snapshot?: number | null
+          seniority_snapshot?: string | null
+          skills_snapshot?: Json
+          source_match_id?: string | null
+          source_position_id?: string | null
+          status?: string
+          tagged_at?: string
+          tagged_by?: string | null
+          updated_at?: string
+        }
+        Update: {
+          candidate_profile_id?: string
+          consent_expires_at?: string | null
+          consent_status?: Database["public"]["Enums"]["silver_consent"]
+          consent_updated_at?: string | null
+          created_at?: string
+          headline_snapshot?: string | null
+          id?: string
+          last_reengaged_at?: string | null
+          last_resurfaced_at?: string | null
+          organization_id?: string
+          owner_user_id?: string | null
+          reason_category?: Database["public"]["Enums"]["silver_reason"]
+          reason_notes?: string | null
+          role_title_snapshot?: string | null
+          score_snapshot?: number | null
+          seniority_snapshot?: string | null
+          skills_snapshot?: Json
+          source_match_id?: string | null
+          source_position_id?: string | null
+          status?: string
+          tagged_at?: string
+          tagged_by?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "talent_memory_candidate_profile_id_fkey"
+            columns: ["candidate_profile_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_profile_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "talent_memory_candidate_profile_id_fkey"
+            columns: ["candidate_profile_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "talent_memory_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "admin_clients_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "talent_memory_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "talent_memory_source_match_id_fkey"
+            columns: ["source_match_id"]
+            isOneToOne: false
+            referencedRelation: "admin_candidate_matches_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "talent_memory_source_match_id_fkey"
+            columns: ["source_match_id"]
+            isOneToOne: false
+            referencedRelation: "admin_work_inbox"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "talent_memory_source_match_id_fkey"
+            columns: ["source_match_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_matches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "talent_memory_source_match_id_fkey"
+            columns: ["source_match_id"]
+            isOneToOne: false
+            referencedRelation: "client_candidate_matches_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "talent_memory_source_match_id_fkey"
+            columns: ["source_match_id"]
+            isOneToOne: false
+            referencedRelation: "client_kanban_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "talent_memory_source_position_id_fkey"
+            columns: ["source_position_id"]
+            isOneToOne: false
+            referencedRelation: "admin_pipeline_health"
+            referencedColumns: ["position_id"]
+          },
+          {
+            foreignKeyName: "talent_memory_source_position_id_fkey"
+            columns: ["source_position_id"]
+            isOneToOne: false
+            referencedRelation: "admin_positions_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "talent_memory_source_position_id_fkey"
+            columns: ["source_position_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_my_applications"
+            referencedColumns: ["position_id"]
+          },
+          {
+            foreignKeyName: "talent_memory_source_position_id_fkey"
+            columns: ["source_position_id"]
+            isOneToOne: false
+            referencedRelation: "client_positions_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "talent_memory_source_position_id_fkey"
+            columns: ["source_position_id"]
+            isOneToOne: false
+            referencedRelation: "positions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      talent_memory_events: {
+        Row: {
+          actor_user_id: string | null
+          created_at: string
+          event_type: string
+          id: string
+          metadata: Json
+          notes: string | null
+          organization_id: string
+          position_id: string | null
+          talent_memory_id: string
+        }
+        Insert: {
+          actor_user_id?: string | null
+          created_at?: string
+          event_type: string
+          id?: string
+          metadata?: Json
+          notes?: string | null
+          organization_id: string
+          position_id?: string | null
+          talent_memory_id: string
+        }
+        Update: {
+          actor_user_id?: string | null
+          created_at?: string
+          event_type?: string
+          id?: string
+          metadata?: Json
+          notes?: string | null
+          organization_id?: string
+          position_id?: string | null
+          talent_memory_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "talent_memory_events_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "admin_clients_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "talent_memory_events_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "talent_memory_events_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "admin_pipeline_health"
+            referencedColumns: ["position_id"]
+          },
+          {
+            foreignKeyName: "talent_memory_events_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "admin_positions_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "talent_memory_events_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_my_applications"
+            referencedColumns: ["position_id"]
+          },
+          {
+            foreignKeyName: "talent_memory_events_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "client_positions_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "talent_memory_events_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "positions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "talent_memory_events_talent_memory_id_fkey"
+            columns: ["talent_memory_id"]
+            isOneToOne: false
+            referencedRelation: "talent_memory"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       trace_index: {
         Row: {
           action: string
@@ -4882,6 +5152,16 @@ export type Database = {
         | "reject"
         | "request_recompute"
       score_status: "queued" | "running" | "completed" | "failed" | "cancelled"
+      silver_consent: "granted" | "pending" | "declined" | "withdrawn"
+      silver_reason:
+        | "role_filled"
+        | "timing"
+        | "comp_gap"
+        | "level_mismatch"
+        | "geo"
+        | "better_fit_selected"
+        | "skills_gap"
+        | "other"
       work_model: "remote" | "hybrid" | "onsite"
     }
     CompositeTypes: {
@@ -5155,6 +5435,17 @@ export const Constants = {
         "request_recompute",
       ],
       score_status: ["queued", "running", "completed", "failed", "cancelled"],
+      silver_consent: ["granted", "pending", "declined", "withdrawn"],
+      silver_reason: [
+        "role_filled",
+        "timing",
+        "comp_gap",
+        "level_mismatch",
+        "geo",
+        "better_fit_selected",
+        "skills_gap",
+        "other",
+      ],
       work_model: ["remote", "hybrid", "onsite"],
     },
   },
