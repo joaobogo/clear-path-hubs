@@ -40,8 +40,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { name: "twitter:card", content: "summary_large_image" },
       { property: "og:site_name", content: "TaaSFlow" },
-      { property: "og:image", content: "https://clear-path-hubs.lovable.app/og-image.png" },
-      { name: "twitter:image", content: "https://clear-path-hubs.lovable.app/og-image.png" },
+      { property: "og:image", content: "https://taasflow.com/og-image.png" },
+      { name: "twitter:image", content: "https://taasflow.com/og-image.png" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },

@@ -86,10 +86,10 @@ export const Route = createFileRoute("/sitemap")({
         property: "og:description",
         content: "Every public page on TaaSFlow, grouped by section.",
       },
-      { property: "og:url", content: "https://clear-path-hubs.lovable.app/sitemap" },
+      { property: "og:url", content: "https://taasflow.com/sitemap" },
     ],
     links: [
-      { rel: "canonical", href: "https://clear-path-hubs.lovable.app/sitemap" },
+      { rel: "canonical", href: "https://taasflow.com/sitemap" },
     ],
   }),
   component: SitemapPage,
