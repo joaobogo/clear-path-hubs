@@ -24,7 +24,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { CandidateCard } from "@/components/client/candidate-card";
 import { CompareTray, CompareSheet } from "@/components/client/candidate-comparison";
 import { ShareShortlistDialog } from "@/components/client/share-shortlist-dialog";
-import { Button } from "@/components/ui/button";
 import { Share2 } from "lucide-react";
 import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
 
