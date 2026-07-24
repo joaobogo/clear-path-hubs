@@ -82,7 +82,7 @@ const SCRIPT = `
   var done=false;
   function remove(){
     try{ localStorage.setItem(KEY,'1'); sessionStorage.setItem(KEY,'1'); }catch(e){}
-    if(iv1) clearInterval(iv1); if(iv2) clearInterval(iv2);
+    if(iv1) clearInterval(iv1); if(iv2) clearInterval(iv2); if(routeGuard) clearInterval(routeGuard);
     if(el&&el.parentNode) el.parentNode.removeChild(el);
   }
   function finish(){
