@@ -359,9 +359,19 @@ function Avatar({ role }: { role: "user" | "assistant" | "system" }) {
   );
 }
 
-function MessageBubble({ m }: { m: MessageRow }) {
+interface MessageBubbleProps {
+  m: MessageRow;
+  runAction: (a: ProposedAction) => void | Promise<void>;
+  runningActionId: string | null;
+  dismissed: Set<string>;
+  editedDrafts: Record<string, string>;
+  setDraft: (id: string, v: string) => void;
+}
+
+function MessageBubble({ m, runAction, runningActionId, dismissed, editedDrafts, setDraft }: MessageBubbleProps) {
   const isUser = m.role === "user";
   const rendered = useMemo(() => renderWithCitations(m.content, m.citations), [m.content, m.citations]);
+  const actions = (m.proposed_actions ?? []).filter((a) => !dismissed.has(a.action_id));
 
   return (
     <div className={`flex items-start gap-2 ${isUser ? "flex-row-reverse" : ""}`}>
