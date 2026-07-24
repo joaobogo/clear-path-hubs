@@ -34,7 +34,8 @@ import {
 	Bot,
 	Radar,
 	LineChart,
-	Share2,
+ 	Share2,
+ 	Building2,
 } from "lucide-react";
 import {
  WorkspaceShell,
@@ -82,6 +83,7 @@ type NavDef = WorkspaceNavItem & { everyone: boolean };
 const TABS: NavDef[] = [
 	{ to: "/client", label: "Overview", icon: LayoutDashboard, exact: true, everyone: true },
 	{ to: "/client/executive", label: "Executive", icon: LineChart, everyone: true },
+	{ to: "/client/portfolio", label: "Portfolio", icon: Building2, everyone: true },
  { to: "/client/assistant", label: "Assistant", icon: Bot, everyone: true },
  { to: "/client/positions", label: "Positions", icon: Briefcase, everyone: true },
  { to: "/client/candidates", label: "Candidates", icon: Users, everyone: true },

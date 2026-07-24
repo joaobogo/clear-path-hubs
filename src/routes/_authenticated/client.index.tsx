@@ -21,6 +21,7 @@ import {
   Trophy,
   Users,
 } from "lucide-react";
+import { IndustryPersonalizationPanel } from "@/components/client/industry-personalization-panel";
 
 export const Route = createFileRoute("/_authenticated/client/")({
   head: () => ({
@@ -239,6 +240,9 @@ function OverviewPage() {
         <EmptyWelcome canSubmit={canSubmit} />
       ) : (
         <>
+          {/* 0 · INDUSTRY PERSONALIZATION — vertical-tuned rubric + samples */}
+          <IndustryPersonalizationPanel industry={ctx?.active?.industry ?? null} />
+
           {/* 1 · PRIORITY ACTIONS — what needs me now, deduped */}
           <PriorityActions queue={priorityQueue} loading={!data && isFetching} />
 
