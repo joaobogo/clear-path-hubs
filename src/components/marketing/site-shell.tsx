@@ -115,7 +115,7 @@ function DesktopNavLink({ to, label }: { to: string; label: string }) {
 function GroupTrigger({ label }: { label: string }) {
   return (
     <NavigationMenuPrimitive.Trigger
-      className="group inline-flex h-9 items-center gap-1 rounded-md px-3 py-1.5 text-sm text-[color:var(--brand-navy)]/80 outline-none transition-colors hover:text-[color:var(--brand-navy)] focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)] data-[state=open]:text-[color:var(--brand-navy)]"
+      className="group inline-flex h-9 items-center gap-1 whitespace-nowrap rounded-md px-3 py-1.5 text-sm text-[color:var(--brand-navy)]/80 outline-none transition-colors hover:text-[color:var(--brand-navy)] focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)] data-[state=open]:text-[color:var(--brand-navy)]"
     >
       {label}
       <ChevronDown className="h-3.5 w-3.5 transition-transform group-data-[state=open]:rotate-180" aria-hidden />
