@@ -655,6 +655,48 @@ export const applyReviewDecision = createServerFn({ method: "POST" })
     return { ok: true as const, action: data.action };
   });
 
+// Hard-archive a candidate match. Works regardless of score state — admins can
+// remove a candidate at any point in the pipeline (no score run required).
+export const deleteCandidateMatch = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) =>
+    z.object({
+      match_id: z.string().uuid(),
+      reason: z.string().max(1000).optional(),
+    }).parse(input),
+  )
+  .handler(async ({ data, context }) => {
+    if (!(await isStaff(context.userId))) throw new Error("forbidden");
+    const supabase = (await getAdmin()) as AnyRow;
+    const { data: match } = await supabase
+      .from("candidate_matches")
+      .select("id,current_score_run_id,approved_score_run_id")
+      .eq("id", data.match_id)
+      .maybeSingle();
+    if (!match) throw new Error("match_not_found");
+
+    const runIdForDecision = match.current_score_run_id ?? match.approved_score_run_id ?? null;
+    if (runIdForDecision) {
+      await supabase.from("score_decisions").insert({
+        candidate_match_id: data.match_id,
+        score_run_id: runIdForDecision,
+        decision_type: "reject",
+        reason: "DELETE: " + (data.reason ?? ""),
+        actor_user_id: context.userId,
+      });
+    }
+    const { error } = await supabase
+      .from("candidate_matches")
+      .update({
+        admin_status: "rejected",
+        client_visibility: "archived",
+        stage: "archived",
+      })
+      .eq("id", data.match_id);
+    if (error) throw new Error(`delete_failed:${error.message}`);
+    return { ok: true as const, action: "delete" as const };
+  });
+
 // ---------- admin queries ----------
 
 export const listAdminMatches = createServerFn({ method: "GET" })
