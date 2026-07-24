@@ -13,7 +13,7 @@
 
 import * as React from "react";
 import { Link } from "@tanstack/react-router";
-import { Minus, Plus, ArrowRight, Info } from "lucide-react";
+import { Minus, Plus, ArrowRight, Info, Calculator } from "lucide-react";
 
 import { Slider } from "@/components/ui/slider";
 import { cn } from "@/lib/utils";
@@ -25,6 +25,7 @@ import {
   formatUsdCompact,
 } from "@/config/public-pricing";
 import { computeRoi, type CalculatorInputs } from "@/lib/roi-calculator";
+import { trackEvent } from "@/lib/analytics";
 
 export type RoiCalculatorVariant = "homepage" | "pricing" | "presentation";
 
