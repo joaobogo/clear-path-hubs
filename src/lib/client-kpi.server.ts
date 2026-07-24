@@ -204,6 +204,13 @@ export type ClientCandidateDTO = {
     at: string;
     summary: string | null;
   }>;
+  evaluation: {
+    engine_version: string | null;
+    blueprint_version: string | null;
+    contradiction: string | null;
+    completed_at: string | null;
+    category_breakdown: Array<{ label: string; value: number | null; weight: number | null }>;
+  };
 };
 
 
