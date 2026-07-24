@@ -113,29 +113,6 @@ const TOOL_DEFS: AnyRow[] = [
       },
     },
   },
-  {
-    type: "function",
-    function: {
-      name: "draft_candidate_outreach",
-      description: "Prepare (do NOT send) an outreach draft for a candidate match.",
-      parameters: {
-        type: "object",
-        properties: {
-          match_id: { type: "string" },
-          intent: { type: "string", description: "Short reason: 'interview scheduling', 'status update', etc." },
-        },
-        required: ["match_id"],
-      },
-    },
-  },
-  {
-    type: "function",
-    function: {
-      name: "source_performance",
-      description: "Applications, shortlist, interview, and hire rates by source over the last 90 days.",
-      parameters: { type: "object", properties: {}, required: [] },
-    },
-  },
 ];
 
 async function runTool(supabase: AnyRow, name: string, args: Record<string, unknown>) {
