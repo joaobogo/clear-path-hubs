@@ -232,6 +232,7 @@ function CandidateDetailPage() {
  {/* MAIN COLUMN */}
         <div className="space-y-6 lg:col-span-8">
           <FitHero candidate={candidate} />
+          <EvaluationProvenance candidate={candidate} />
           <RequirementCoverage candidate={candidate} />
           <WhyThisCandidate candidate={candidate} />
           <WhatNeedsValidation candidate={candidate} />
