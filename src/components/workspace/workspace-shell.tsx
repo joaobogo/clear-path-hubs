@@ -467,6 +467,17 @@ export function WorkspaceShell(props: WorkspaceShellProps) {
             <Search className="h-4 w-4" />
           </button>
 
+          {primaryAction && (
+            <Link
+              to={primaryAction.to}
+              search={primaryAction.search ? (primaryAction.search as never) : undefined}
+              className="hidden h-9 items-center gap-1.5 rounded-md bg-primary px-3 text-sm font-medium text-primary-foreground shadow-sm hover:opacity-90 md:inline-flex"
+            >
+              {primaryAction.icon && <primaryAction.icon className="h-4 w-4" />}
+              <span>{primaryAction.label}</span>
+            </Link>
+          )}
+
           <a
             href="/faq"
             className="hidden rounded-md p-2 text-muted-foreground hover:bg-muted hover:text-foreground md:inline-flex"
