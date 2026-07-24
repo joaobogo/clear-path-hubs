@@ -73,7 +73,19 @@ export const getPortfolioRollup = createServerFn({ method: "GET" })
       .eq("id", data.orgId)
       .maybeSingle();
     if (orgErr) throw new Error(orgErr.message);
-    if (!org) throw new Error("Organization not found or not accessible");
+    if (!org) {
+      // Org not visible to caller (or doesn't exist) — return a benign
+      // single-unit empty state so the UI shows the "not linked to a parent
+      // portfolio yet" message instead of a hard error.
+      return {
+        parent: { id: data.orgId, name: "", is_parent: false },
+        units: [],
+        regions: [],
+        business_units: [],
+        totals: { open_positions: 0, filled_positions: 0, candidates_in_flight: 0, hires: 0 },
+        rows: [],
+      };
+    }
 
     const rootId = org.parent_organization_id ?? org.id;
 
