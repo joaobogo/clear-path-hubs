@@ -11,7 +11,7 @@ const FOUNDERS = [
   {
     name: "João Luciano",
     title: "Co-founder & CEO",
-    photoUrl: "",
+    photoUrl: joaoLucianoPhoto.url,
     linkedin: "https://www.linkedin.com/in/joaoluciano/",
   },
   {
