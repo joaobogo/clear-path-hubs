@@ -187,6 +187,9 @@ export function scoreCandidate(input: {
 
   const cvLower = cv.toLowerCase();
   const cvTokens = new Set(tokenize(cv));
+  // "Insufficient parse" signal — CV is too short/garbled to draw negative conclusions.
+  // Missing keywords in this regime map to `unknown` (validate), never irrational zero.
+  const cvIsThin = cv.trim().length < 300 || cvTokens.size < 40;
 
   const evidence: EvidenceRef[] = [];
   const assessment: RequirementAssessment[] = requirements.map((r) => {
@@ -210,9 +213,21 @@ export function scoreCandidate(input: {
       }
     }
     let status: RequirementAssessment["status"];
-    if (matched.length === 0) status = "missing";
-    else if (matched.length >= Math.max(2, Math.ceil(r.keywords.length * 0.6))) status = "met";
-    else status = "partial";
+    let needs_validation = false;
+    if (matched.length === 0) {
+      // If the CV is too thin OR the requirement is one of many with no matches,
+      // treat as UNKNOWN (needs validation) rather than a hard MISSING zero.
+      if (cvIsThin) {
+        status = "unknown";
+        needs_validation = true;
+      } else {
+        status = "missing";
+      }
+    } else if (matched.length >= Math.max(2, Math.ceil(r.keywords.length * 0.6))) {
+      status = "met";
+    } else {
+      status = "partial";
+    }
     evidence.push(...localEvidence.slice(0, 2));
     return {
       id: r.id,
@@ -221,6 +236,7 @@ export function scoreCandidate(input: {
       status,
       matched_terms: matched,
       evidence: localEvidence.slice(0, 2),
+      needs_validation,
     };
   });
 
@@ -248,11 +264,17 @@ export function scoreCandidate(input: {
     contradiction_status = "screening_contradicts_cv";
   }
 
-  // Category breakdown
+  // Category breakdown — "unknown" contributes a neutral 0.4 (validate, not zero).
   const must = assessment.filter((a) => a.required);
   const pref = assessment.filter((a) => !a.required);
   const scoreOf = (a: RequirementAssessment) =>
-    a.status === "met" ? 1 : a.status === "partial" ? 0.5 : 0;
+    a.status === "met"
+      ? 1
+      : a.status === "partial"
+        ? 0.5
+        : a.status === "unknown"
+          ? 0.4
+          : 0;
   const must_have_coverage = must.length
     ? must.reduce((s, a) => s + scoreOf(a), 0) / must.length
     : 1;
