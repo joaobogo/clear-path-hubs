@@ -44,6 +44,7 @@ export type Database = {
       admin_copilot_messages: {
         Row: {
           citations: Json
+          confidence: string | null
           content: string
           conversation_id: string
           created_at: string
@@ -57,6 +58,7 @@ export type Database = {
         }
         Insert: {
           citations?: Json
+          confidence?: string | null
           content: string
           conversation_id: string
           created_at?: string
@@ -70,6 +72,7 @@ export type Database = {
         }
         Update: {
           citations?: Json
+          confidence?: string | null
           content?: string
           conversation_id?: string
           created_at?: string
@@ -292,6 +295,51 @@ export type Database = {
           },
         ]
       }
+      assistant_audit_events: {
+        Row: {
+          action_id: string | null
+          content_preview: string | null
+          conversation_id: string | null
+          created_at: string
+          event_type: string
+          id: string
+          message_id: string | null
+          organization_id: string | null
+          payload: Json
+          surface: string
+          tool_name: string | null
+          user_id: string
+        }
+        Insert: {
+          action_id?: string | null
+          content_preview?: string | null
+          conversation_id?: string | null
+          created_at?: string
+          event_type: string
+          id?: string
+          message_id?: string | null
+          organization_id?: string | null
+          payload?: Json
+          surface: string
+          tool_name?: string | null
+          user_id: string
+        }
+        Update: {
+          action_id?: string | null
+          content_preview?: string | null
+          conversation_id?: string | null
+          created_at?: string
+          event_type?: string
+          id?: string
+          message_id?: string | null
+          organization_id?: string | null
+          payload?: Json
+          surface?: string
+          tool_name?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       assistant_conversations: {
         Row: {
           archived_at: string | null
@@ -340,6 +388,7 @@ export type Database = {
       assistant_messages: {
         Row: {
           citations: Json
+          confidence: string | null
           content: string
           conversation_id: string
           created_at: string
@@ -354,6 +403,7 @@ export type Database = {
         }
         Insert: {
           citations?: Json
+          confidence?: string | null
           content?: string
           conversation_id: string
           created_at?: string
@@ -368,6 +418,7 @@ export type Database = {
         }
         Update: {
           citations?: Json
+          confidence?: string | null
           content?: string
           conversation_id?: string
           created_at?: string
