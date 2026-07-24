@@ -370,7 +370,7 @@ export function RoiCalculator({
                   <span className="block text-[10px] uppercase tracking-[0.18em] opacity-45">
                     Traditional agency model
                   </span>
-                  <p className="mt-3 font-[family-name:var(--brand-font-display)] text-3xl md:text-4xl tabular-nums text-white/90">
+                  <p className="mt-3 font-[family-name:var(--brand-font-display)] text-2xl sm:text-3xl md:text-4xl tabular-nums text-white/90 break-words">
                     {formatUsdCompact(result.traditionalCostUsd)}
                   </p>
                   <p className="mt-1 text-xs opacity-50">
