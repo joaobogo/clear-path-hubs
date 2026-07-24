@@ -232,7 +232,7 @@ function TrustPage() {
             ))}
           </nav>
         </PublicPage>
-      </PublicSection></div>
+      </PublicSection>
 
       {/* PRICING */}
       <div id="pricing"><PublicSection className="py-12">
