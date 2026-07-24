@@ -169,6 +169,44 @@ export const resetClientOnboarding = createServerFn({ method: "POST" })
     return { ok: true as const };
   });
 
+const HEX_COLOR = /^#[0-9a-fA-F]{6}$/;
+const brandingSchema = z.object({
+  orgId: z.string().uuid(),
+  logo_url: z.string().url().max(500).nullable(),
+  brand_display_name: z.string().trim().min(1).max(120).nullable(),
+  brand_primary_color: z.string().regex(HEX_COLOR).nullable(),
+  brand_accent_color: z.string().regex(HEX_COLOR).nullable(),
+});
+
+export const updateClientBranding = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: z.infer<typeof brandingSchema>) => brandingSchema.parse(input))
+  .handler(async ({ context, data }) => {
+    // Must be a client_admin of this org (or platform staff via RLS).
+    const { data: membership } = await context.supabase
+      .from("memberships")
+      .select("role, status")
+      .eq("user_id", context.userId)
+      .eq("organization_id", data.orgId)
+      .eq("status", "active")
+      .maybeSingle();
+    const role = (membership as { role?: string } | null)?.role;
+    if (role !== "client_admin" && role !== "platform_admin" && role !== "operations") {
+      throw new Error("Only client admins can update branding.");
+    }
+    const { error } = await context.supabase
+      .from("organizations")
+      .update({
+        logo_url: data.logo_url,
+        brand_display_name: data.brand_display_name,
+        brand_primary_color: data.brand_primary_color,
+        brand_accent_color: data.brand_accent_color,
+      })
+      .eq("id", data.orgId);
+    if (error) throw new Error(error.message);
+    return { ok: true as const };
+  });
+
 // ─── Canonical KPI service ──────────────────────────────────────────────────
 // Definitions live in `@/lib/client-kpi.server` (loadKpiRows, computeKpis,
 // isTopMatch, isInInterview). Everything below composes those primitives.
