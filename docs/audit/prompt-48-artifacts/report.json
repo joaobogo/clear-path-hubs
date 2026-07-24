@@ -1,8 +1,8 @@
 {
   "summary": {
     "total": 20,
-    "passed": 16,
-    "failed": 4
+    "passed": 19,
+    "failed": 1
   },
   "results": [
     {
@@ -24,9 +24,9 @@
       "route": "/jobs",
       "final_url": "http://localhost:8080/jobs",
       "failure_surface": false,
-      "retry_affordance": false,
+      "retry_affordance": true,
       "false_empty_state": false,
-      "ok": false
+      "ok": true
     },
     {
       "scenario": "image_failure",
@@ -61,9 +61,9 @@
       "route": "/jobs",
       "final_url": "http://localhost:8080/jobs",
       "failure_surface": false,
-      "retry_affordance": false,
+      "retry_affordance": true,
       "false_empty_state": false,
-      "ok": false
+      "ok": true
     },
     {
       "scenario": "image_failure",
@@ -98,9 +98,9 @@
       "route": "/jobs",
       "final_url": "http://localhost:8080/jobs",
       "failure_surface": false,
-      "retry_affordance": false,
+      "retry_affordance": true,
       "false_empty_state": false,
-      "ok": false
+      "ok": true
     },
     {
       "scenario": "image_failure",
