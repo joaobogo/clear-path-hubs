@@ -7,6 +7,13 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
+import {
+  CONFIDENCE_INSTRUCTIONS,
+  auditAssistantEvent,
+  extractConfidence,
+  resolveConfidence,
+  type Confidence,
+} from "./assistant-audit.server";
 
 const MODEL = "google/gemini-2.5-flash";
 const GATEWAY_URL = "https://ai.gateway.lovable.dev/v1/chat/completions";
@@ -36,7 +43,7 @@ Question areas you handle well:
 - Why was candidate Y ranked here — use explain_candidate_score.
 - What is blocking this role — use role_blockers.
 - What should I do next — use next_actions.
-- Open X / show me Y / compare A and B / draft interview request — use the matching action tool.`;
+- Open X / show me Y / compare A and B / draft interview request — use the matching action tool.` + CONFIDENCE_INSTRUCTIONS;
 
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -335,7 +342,7 @@ export const getAssistantState = createServerFn({ method: "POST" })
     );
     const { data: rows, error } = await context.supabase
       .from("assistant_messages")
-      .select("id, role, content, tool_trace, citations, proposed_actions, created_at")
+      .select("id, role, content, tool_trace, citations, proposed_actions, confidence, created_at")
       .eq("conversation_id", conversationId)
       .order("created_at", { ascending: true });
     if (error) throw new Error(error.message);
@@ -348,6 +355,7 @@ export const getAssistantState = createServerFn({ method: "POST" })
         tool_trace: Array<{ name: string; args: Record<string, string | number | boolean | null> }>;
         citations: Array<{ kind: string; id: string; label: string; href?: string }>;
         proposed_actions: Array<Record<string, string | number | boolean | null>>;
+        confidence: Confidence | null;
         created_at: string;
       }>,
     };
@@ -424,6 +432,17 @@ export const askAssistant = createServerFn({ method: "POST" })
       .single();
     if (userInsert.error) throw new Error(userInsert.error.message);
 
+    // Audit: user prompt
+    await auditAssistantEvent(context.supabase, {
+      surface: "client_assistant",
+      event_type: "prompt",
+      user_id: context.userId,
+      organization_id: data.orgId,
+      conversation_id: conversationId,
+      message_id: userInsert.data.id as string,
+      content_preview: data.message,
+    });
+
     // Build initial message list
     const messages: AnyRow[] = [
       { role: "system", content: SYSTEM_PROMPT },
@@ -455,6 +474,14 @@ export const askAssistant = createServerFn({ method: "POST" })
       });
       if (!res.ok) {
         const body = await res.text();
+        await auditAssistantEvent(context.supabase, {
+          surface: "client_assistant",
+          event_type: "gateway_error",
+          user_id: context.userId,
+          organization_id: data.orgId,
+          conversation_id: conversationId,
+          payload: { status: res.status, body_preview: body.slice(0, 200) },
+        });
         if (res.status === 429) {
           finalContent = "I'm hitting a rate limit right now — please try again in a moment.";
           break;
@@ -516,6 +543,36 @@ export const askAssistant = createServerFn({ method: "POST" })
               if (a && typeof a.action_id === "string") proposedActionsMap.set(a.action_id, a);
             }
           }
+          const resultRowCount = Array.isArray((result as AnyRow).data)
+            ? ((result as AnyRow).data as unknown[]).length
+            : Array.isArray(((result as AnyRow).data as AnyRow)?.rows)
+              ? (((result as AnyRow).data as AnyRow).rows as unknown[]).length
+              : null;
+          await auditAssistantEvent(context.supabase, {
+            surface: "client_assistant",
+            event_type: "tool_call",
+            user_id: context.userId,
+            organization_id: data.orgId,
+            conversation_id: conversationId,
+            tool_name: call.function.name,
+            payload: {
+              args,
+              citation_count: result.citations.length,
+              row_count: resultRowCount,
+              proposed_count: Array.isArray(proposals) ? proposals.length : 0,
+            },
+          });
+          if (resultRowCount === 0) {
+            await auditAssistantEvent(context.supabase, {
+              surface: "client_assistant",
+              event_type: "guardrail_missing_data",
+              user_id: context.userId,
+              organization_id: data.orgId,
+              conversation_id: conversationId,
+              tool_name: call.function.name,
+              payload: { args },
+            });
+          }
           messages.push({
             role: "tool",
             tool_call_id: call.id,
@@ -536,6 +593,17 @@ export const askAssistant = createServerFn({ method: "POST" })
     const citations = Array.from(citationsMap.values());
     const proposedActions = Array.from(proposedActionsMap.values());
 
+    // Extract [[confidence:xxx]] from the tail, then clamp to what the
+    // evidence actually supports (never upgrade over model's declaration).
+    const { text: cleaned, declared } = extractConfidence(finalContent);
+    const confidence: Confidence = resolveConfidence({
+      declared,
+      toolCount: tool_trace.length,
+      citationCount: citations.length,
+      content: cleaned,
+    });
+    finalContent = cleaned;
+
     const assistantInsert = await context.supabase
       .from("assistant_messages")
       .insert({
@@ -547,12 +615,32 @@ export const askAssistant = createServerFn({ method: "POST" })
         tool_trace: tool_trace as never,
         citations: citations as never,
         proposed_actions: proposedActions as never,
+        confidence,
         model: MODEL,
         latency_ms: Date.now() - start,
       } as never)
-      .select("id, created_at, role, content, tool_trace, citations, proposed_actions")
+      .select("id, created_at, role, content, tool_trace, citations, proposed_actions, confidence")
       .single();
     if (assistantInsert.error) throw new Error(assistantInsert.error.message);
+
+    // Audit each proposed action so we can later reconcile approvals vs. proposals.
+    for (const a of proposedActions) {
+      await auditAssistantEvent(context.supabase, {
+        surface: "client_assistant",
+        event_type: "action_proposed",
+        user_id: context.userId,
+        organization_id: data.orgId,
+        conversation_id: conversationId,
+        message_id: assistantInsert.data.id as string,
+        action_id: (a as AnyRow).action_id as string,
+        payload: {
+          kind: (a as AnyRow).kind,
+          label: (a as AnyRow).label,
+          match_id: (a as AnyRow).match_id ?? null,
+          href: (a as AnyRow).href ?? null,
+        },
+      });
+    }
 
     // Touch conversation
     await context.supabase
@@ -569,6 +657,7 @@ export const askAssistant = createServerFn({ method: "POST" })
         tool_trace: [] as Array<{ name: string; args: Record<string, string | number | boolean | null> }>,
         citations: [] as typeof citations,
         proposed_actions: [] as AnyRow[],
+        confidence: null as Confidence | null,
         created_at: userInsert.data.created_at as string,
       },
       assistant_message: {
@@ -578,6 +667,7 @@ export const askAssistant = createServerFn({ method: "POST" })
         tool_trace: assistantInsert.data.tool_trace as Array<{ name: string; args: Record<string, string | number | boolean | null> }>,
         citations: assistantInsert.data.citations as typeof citations,
         proposed_actions: (assistantInsert.data as AnyRow).proposed_actions as AnyRow[],
+        confidence: (assistantInsert.data as AnyRow).confidence as Confidence | null,
         created_at: (assistantInsert.data as AnyRow).created_at as string,
       },
     };
@@ -605,47 +695,94 @@ export const executeAssistantAction = createServerFn({ method: "POST" })
   )
   .handler(async ({ context, data }) => {
     const action = data.action;
+    const auditBase = {
+      surface: "client_assistant" as const,
+      user_id: context.userId,
+      organization_id: data.orgId,
+      action_id: action.action_id,
+      payload: { kind: action.kind, match_id: action.match_id ?? null, href: action.href ?? null },
+    };
 
-    if (action.kind === "navigate") {
-      // Navigation actions are client-side; server just acknowledges.
-      return { ok: true as const, kind: "navigate" as const, href: action.href ?? "/client" };
-    }
+    try {
+      if (action.kind === "navigate") {
+        await auditAssistantEvent(context.supabase, { ...auditBase, event_type: "action_executed" });
+        return { ok: true as const, kind: "navigate" as const, href: action.href ?? "/client" };
+      }
 
-    if (action.kind === "draft_interview_request") {
-      const matchId = action.match_id;
-      const body = action.draft_body;
-      if (!matchId || !body) throw new Error("Missing match_id or draft_body");
+      if (action.kind === "draft_interview_request") {
+        const matchId = action.match_id;
+        const body = action.draft_body;
+        if (!matchId || !body) {
+          await auditAssistantEvent(context.supabase, {
+            ...auditBase,
+            event_type: "action_failed",
+            payload: { ...auditBase.payload, reason: "missing_fields" },
+          });
+          throw new Error("Missing match_id or draft_body");
+        }
 
-      // Confirm the caller can actually see this match under RLS (belt & braces).
-      const { data: match } = await context.supabase
-        .from("candidate_matches")
-        .select("id, positions(title), candidate_profiles(full_name)")
-        .eq("organization_id", data.orgId)
-        .eq("id", matchId)
-        .maybeSingle();
-      if (!match) throw new Error("Match not accessible");
+        // Confirm the caller can actually see this match under RLS (belt & braces).
+        const { data: match } = await context.supabase
+          .from("candidate_matches")
+          .select("id, positions(title), candidate_profiles(full_name)")
+          .eq("organization_id", data.orgId)
+          .eq("id", matchId)
+          .maybeSingle();
+        if (!match) {
+          await auditAssistantEvent(context.supabase, {
+            ...auditBase,
+            event_type: "action_denied",
+            payload: { ...auditBase.payload, reason: "match_not_accessible" },
+          });
+          throw new Error("Match not accessible");
+        }
 
-      // Post as a message on the org thread — same table the client already
-      // uses for TaaSFlow team conversations.
-      const { error } = await context.supabase.from("messages").insert({
-        thread_id: data.orgId,
-        sender_user_id: context.userId,
-        body,
-        recipient_context: {
-          audience: "taasflow_ops",
-          from: "client_assistant",
+        const { error } = await context.supabase.from("messages").insert({
+          thread_id: data.orgId,
+          sender_user_id: context.userId,
+          body,
+          recipient_context: {
+            audience: "taasflow_ops",
+            from: "client_assistant",
+            match_id: matchId,
+            intent: "interview_request",
+          },
+        } as never);
+        if (error) {
+          await auditAssistantEvent(context.supabase, {
+            ...auditBase,
+            event_type: "action_failed",
+            payload: { ...auditBase.payload, reason: error.message },
+          });
+          throw new Error(error.message);
+        }
+
+        await auditAssistantEvent(context.supabase, {
+          ...auditBase,
+          event_type: "action_executed",
+          content_preview: body,
+        });
+
+        return {
+          ok: true as const,
+          kind: "draft_interview_request" as const,
           match_id: matchId,
-          intent: "interview_request",
-        },
-      } as never);
-      if (error) throw new Error(error.message);
+        };
+      }
 
-      return {
-        ok: true as const,
-        kind: "draft_interview_request" as const,
-        match_id: matchId,
-      };
+      await auditAssistantEvent(context.supabase, {
+        ...auditBase,
+        event_type: "action_failed",
+        payload: { ...auditBase.payload, reason: "unknown_kind" },
+      });
+      return { ok: false as const, error: "unknown_action_kind" };
+    } catch (err) {
+      // Ensure a failure event is written for any unexpected throw path.
+      await auditAssistantEvent(context.supabase, {
+        ...auditBase,
+        event_type: "action_failed",
+        payload: { ...auditBase.payload, reason: (err as Error).message },
+      });
+      throw err;
     }
-
-    return { ok: false as const, error: "unknown_action_kind" };
   });

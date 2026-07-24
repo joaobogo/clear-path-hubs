@@ -52,6 +52,7 @@ interface Msg {
   tool_trace: Array<{ name: string; args: Record<string, string | number | boolean | null> }>;
   citations: Citation[];
   proposed_actions?: ProposedAction[];
+  confidence?: "high" | "medium" | "low" | "none" | null;
   created_at: string;
 }
 
@@ -311,14 +312,15 @@ function Bubble({ m, runAction, runningActionId, dismissed, drafts, setDraft }: 
           <p className="whitespace-pre-wrap leading-relaxed">{m.content}</p>
         ) : (
           <>
-            {m.tool_trace.length > 0 && (
-              <div className="mb-2 flex flex-wrap gap-1">
+            {(m.tool_trace.length > 0 || m.confidence) && (
+              <div className="mb-2 flex flex-wrap items-center gap-1">
                 {m.tool_trace.map((t, i) => (
                   <Badge key={`${t.name}-${i}`} variant="outline" className="gap-1 border-primary/20 bg-primary/5 text-[10px] font-normal text-primary">
                     <Wrench className="h-2.5 w-2.5" />
                     {prettyTool(t.name)}
                   </Badge>
                 ))}
+                {m.confidence && <ConfidenceBadge level={m.confidence} />}
               </div>
             )}
             <div className="prose prose-sm max-w-none dark:prose-invert prose-p:my-1 prose-ul:my-1 prose-li:my-0">
@@ -410,4 +412,24 @@ function prettyTool(name: string) {
     case "source_performance": return "Source performance";
     default: return name;
   }
+}
+
+function ConfidenceBadge({ level }: { level: "high" | "medium" | "low" | "none" }) {
+  const styles: Record<string, string> = {
+    high: "border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400",
+    medium: "border-amber-500/30 bg-amber-500/10 text-amber-700 dark:text-amber-400",
+    low: "border-orange-500/30 bg-orange-500/10 text-orange-700 dark:text-orange-400",
+    none: "border-muted-foreground/30 bg-muted text-muted-foreground",
+  };
+  const labels: Record<string, string> = {
+    high: "High confidence",
+    medium: "Medium confidence",
+    low: "Low confidence",
+    none: "Insufficient data",
+  };
+  return (
+    <Badge variant="outline" className={`text-[10px] font-normal ${styles[level]}`}>
+      {labels[level]}
+    </Badge>
+  );
 }
