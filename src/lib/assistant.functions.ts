@@ -65,7 +65,7 @@ const TOOL_DEFS = [
     function: {
       name: "matches_needing_review",
       description:
-        "List candidate matches that need attention: pending admin approval, newly delivered to client, shortlist/interview/offer stages awaiting a decision.",
+        "List candidate matches that need attention: in system validation, newly delivered to workspace, or in shortlist/interview/offer stages awaiting a decision.",
       parameters: { type: "object", properties: {}, required: [] },
     },
   },

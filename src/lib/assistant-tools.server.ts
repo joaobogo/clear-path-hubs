@@ -172,7 +172,7 @@ export async function matchesNeedingReview(
   const items = (data ?? []).map((r: any) => {
     let reason: string | null = null;
     if (r.admin_status === "pending" && r.client_visibility !== "visible") {
-      reason = "Awaiting admin approval — not yet visible to client";
+      reason = "In system validation — not yet visible in your workspace";
     } else if (r.client_visibility === "visible" && r.stage === "new") {
       reason = "Ready for you to review and move to screening";
     } else if (r.stage === "shortlist") {
@@ -382,9 +382,9 @@ export async function roleBlockers(
     if (noReqs) blockers.push("Requirements list is empty");
     if (notPublished) blockers.push("Position is not published/active yet");
     if (noApps) blockers.push("No applications received yet");
-    if (stalled.length) blockers.push(`${stalled.length} candidate(s) stuck in processing`);
+    if (stalled.length) blockers.push(`${stalled.length} candidate(s) awaiting data refresh`);
     if (pendingAdmin.length)
-      blockers.push(`${pendingAdmin.length} candidate(s) awaiting admin approval`);
+      blockers.push(`${pendingAdmin.length} candidate(s) in system validation`);
 
     citations.push({
       kind: "position",
