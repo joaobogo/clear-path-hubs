@@ -263,6 +263,13 @@ function CandidateDetailPage() {
               onAct={(k) => act.mutate(k)}
               stage={candidate.stage}
             />
+            <TalentMemoryAction
+              orgId={orgId}
+              matchId={candidate.match_id}
+              candidateName={candidate.display_name}
+              roleTitle={candidate.position_title ?? null}
+              readOnly={readOnly}
+            />
             <ProfilePanel candidate={candidate} />
             <LinksPanel candidate={candidate} />
           </div>
