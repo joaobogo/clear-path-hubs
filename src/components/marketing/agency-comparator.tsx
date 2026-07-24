@@ -81,21 +81,22 @@ export function AgencyComparator() {
   const isCustom = tier.price == null;
 
   return (
-    <div className="rounded-3xl border border-[color:var(--brand-navy)]/10 bg-white p-6 shadow-sm sm:p-10 lg:p-12">
-      <div className="grid items-start gap-10 lg:grid-cols-12 lg:gap-14">
+    <div className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-4 shadow-sm sm:rounded-3xl sm:p-8 lg:p-12">
+      <div className="grid items-start gap-8 lg:grid-cols-12 lg:gap-14">
         {/* -------- Inputs column (5/12) -------- */}
-        <div className="order-2 space-y-10 lg:order-1 lg:col-span-5">
-          <header className="space-y-4">
+        <div className="order-2 space-y-8 lg:order-1 lg:col-span-5">
+          <header className="space-y-3 sm:space-y-4">
             <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[color:var(--brand-navy)]/60">
               For hiring teams · ROI Calculator
             </p>
-            <h3 className="font-[family-name:var(--brand-font-display)] text-4xl leading-[1.05] tracking-tight text-[color:var(--brand-navy)] sm:text-5xl">
-              Quantify your <br /><span className="italic">hiring advantage.</span>
+            <h3 className="font-[family-name:var(--brand-font-display)] text-3xl leading-[1.05] tracking-tight text-[color:var(--brand-navy)] sm:text-4xl md:text-5xl">
+              Quantify your <span className="italic">hiring advantage.</span>
             </h3>
-            <p className="max-w-sm text-[color:var(--brand-navy)]/60">
-              Adjust the variables to compare traditional recruitment costs against the TaaSFlow model. Defaults from SHRM & Ashby 2025 benchmarks.
+            <p className="max-w-sm text-sm text-[color:var(--brand-navy)]/60 sm:text-base">
+              Adjust the variables to compare traditional recruitment costs against the TaaSFlow model. Defaults from SHRM &amp; Ashby 2025 benchmarks.
             </p>
           </header>
+
 
           <div className="space-y-8">
             <SliderField
@@ -126,7 +127,7 @@ export function AgencyComparator() {
               display={formatCompact(salary)}
             />
 
-            <div className="grid grid-cols-2 gap-8 pt-2">
+            <div className="grid grid-cols-1 gap-6 pt-2 sm:grid-cols-2 sm:gap-8">
               <StaticField
                 label="Hourly rate"
                 value={hourly}
@@ -146,18 +147,19 @@ export function AgencyComparator() {
                 display={`${hours} hrs`}
               />
             </div>
+
           </div>
         </div>
 
         {/* -------- Results column (7/12) -------- */}
-        <div className="order-1 lg:order-2 lg:col-span-7">
+        <div className="order-1 min-w-0 lg:order-2 lg:col-span-7">
           <div
-            className="relative overflow-hidden rounded-2xl bg-[color:var(--brand-navy)] p-8 text-white shadow-2xl sm:p-12 md:p-14"
+            className="relative overflow-hidden rounded-2xl bg-[color:var(--brand-navy)] p-6 text-white shadow-2xl sm:p-10 md:p-12"
             aria-live="polite"
             aria-atomic="true"
           >
-            {/* Decorative crosshair */}
-            <div className="pointer-events-none absolute right-6 top-6 opacity-[0.08]" aria-hidden>
+            {/* Decorative crosshair — hidden on very small screens */}
+            <div className="pointer-events-none absolute right-4 top-4 hidden opacity-[0.08] sm:right-6 sm:top-6 sm:block" aria-hidden>
               <svg width="140" height="140" viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="0.5">
                 <circle cx="50" cy="50" r="45" />
                 <path d="M50 5 L50 95 M5 50 L95 50" />
@@ -169,11 +171,11 @@ export function AgencyComparator() {
                 {isCustom ? "Scoped quote required" : "Annual savings summary"}
               </span>
 
-              <div className="mt-10">
-                <h4 className="font-[family-name:var(--brand-font-display)] text-6xl italic leading-[0.95] tracking-tight tabular-nums sm:text-7xl md:text-8xl">
+              <div className="mt-6 sm:mt-10">
+                <h4 className="break-words font-[family-name:var(--brand-font-display)] text-5xl italic leading-[0.95] tracking-tight tabular-nums sm:text-6xl md:text-7xl lg:text-8xl">
                   {isCustom ? "Custom" : formatCompact(savings ?? 0)}
                 </h4>
-                <p className="mt-3 max-w-md text-base font-light opacity-80">
+                <p className="mt-3 max-w-md text-sm font-light opacity-80 sm:text-base">
                   {isCustom
                     ? "Volumes above 20 positions run on a scoped quote — no savings figure is invented."
                     : savings != null && savings > 0
@@ -183,23 +185,23 @@ export function AgencyComparator() {
               </div>
 
               {/* Ledger split */}
-              <div className="mt-14 grid grid-cols-1 gap-10 border-t border-white/20 pt-10 md:grid-cols-2">
-                <div>
+              <div className="mt-10 grid grid-cols-1 gap-6 border-t border-white/20 pt-8 sm:grid-cols-2 sm:gap-10 sm:pt-10 md:mt-14">
+                <div className="min-w-0">
                   <span className="block text-[10px] uppercase tracking-[0.18em] opacity-45">
                     Traditional agency model
                   </span>
-                  <p className="mt-3 font-[family-name:var(--brand-font-display)] text-3xl tabular-nums text-white/90 md:text-4xl">
+                  <p className="mt-3 break-words font-[family-name:var(--brand-font-display)] text-2xl tabular-nums text-white/90 sm:text-3xl md:text-4xl">
                     {formatCompact(traditionalCost)}
                   </p>
                   <p className="mt-1 text-xs opacity-50">
                     Agency {formatCompact(agencyCost)} · Sourcing {formatCompact(sourcingCost)}
                   </p>
                 </div>
-                <div>
+                <div className="min-w-0">
                   <span className="block text-[10px] uppercase tracking-[0.18em] text-white/70">
                     TaaSFlow · {tier.label}
                   </span>
-                  <p className="mt-3 font-[family-name:var(--brand-font-display)] text-3xl tabular-nums md:text-4xl">
+                  <p className="mt-3 break-words font-[family-name:var(--brand-font-display)] text-2xl tabular-nums sm:text-3xl md:text-4xl">
                     {isCustom ? "Custom" : formatCompact(taasCost)}
                   </p>
                   <p className="mt-1 text-xs opacity-50">{tier.detail}</p>
@@ -207,23 +209,24 @@ export function AgencyComparator() {
               </div>
 
               {/* CTAs */}
-              <div className="mt-14 grid gap-3 sm:grid-cols-2">
+              <div className="mt-10 grid gap-3 sm:mt-14 sm:grid-cols-2">
                 <Link
                   to="/intake"
-                  className="group inline-flex min-h-12 items-center justify-between gap-3 rounded-md bg-white px-6 py-4 text-sm font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)] transition-all hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                  className="group inline-flex min-h-12 items-center justify-between gap-3 rounded-md bg-white px-5 py-3 text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)] transition-all hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white sm:px-6 sm:py-4 sm:text-sm"
                 >
                   <span>Start hiring</span>
                   <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden />
                 </Link>
                 <Link
                   to={isCustom ? "/contact" : "/pricing"}
-                  className="inline-flex min-h-12 items-center justify-center gap-2 rounded-md border border-white/30 px-6 py-4 text-sm font-semibold uppercase tracking-[0.14em] text-white transition-all hover:bg-white hover:text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                  className="inline-flex min-h-12 items-center justify-center gap-2 rounded-md border border-white/30 px-5 py-3 text-xs font-semibold uppercase tracking-[0.14em] text-white transition-all hover:bg-white hover:text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white sm:px-6 sm:py-4 sm:text-sm"
                 >
                   {isCustom ? "Talk to founders" : "View pricing"}
                 </Link>
               </div>
             </div>
           </div>
+
 
           {/* Footnote rule */}
           <div className="mt-6 flex items-center gap-4 px-2">
