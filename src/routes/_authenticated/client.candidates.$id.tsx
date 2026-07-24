@@ -1017,12 +1017,14 @@ function ActionArea({
  pending,
  onAct,
  stage,
+ matchId,
 }: {
  actions: { primary: ActionDef | null; more: ActionDef[] };
  readOnly: boolean;
  pending: boolean;
  onAct: (k: ActionKey) => void;
  stage: MatchStage;
+ matchId: string;
 }) {
   return (
     <div className="rounded-xl border bg-card p-4 shadow-sm ring-1 ring-primary/5">
