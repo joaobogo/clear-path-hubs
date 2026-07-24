@@ -77,7 +77,7 @@ const SCRIPT = `
   var iv2=reduced?0:setInterval(function(){ msg=(msg+1)%MSGS.length; if(msgEl) msgEl.textContent=MSGS[msg]+'\u2026'; },900);
   var done=false;
   function remove(){
-    try{ sessionStorage.setItem(KEY,'1'); }catch(e){}
+    try{ localStorage.setItem(KEY,'1'); sessionStorage.setItem(KEY,'1'); }catch(e){}
     if(iv1) clearInterval(iv1); if(iv2) clearInterval(iv2);
     if(el&&el.parentNode) el.parentNode.removeChild(el);
   }
