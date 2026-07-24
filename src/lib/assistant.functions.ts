@@ -371,7 +371,11 @@ export const askAssistant = createServerFn({ method: "POST" })
             call.function.name,
             args,
           );
-          tool_trace.push({ name: call.function.name, args, note: result.note });
+          tool_trace.push({
+            name: call.function.name,
+            args: args as Record<string, string | number | boolean | null>,
+            note: result.note,
+          });
           for (const c of result.citations) {
             citationsMap.set(`${c.kind}:${c.id}`, c);
           }
