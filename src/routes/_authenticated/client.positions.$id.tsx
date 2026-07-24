@@ -187,15 +187,6 @@ function PositionDetailPage() {
  move.mutate({ matchId, toStage: to });
  };
 
- const mustHaves = Array.isArray(position.requirements)
- ? (position.requirements as AnyRow[])
- : [];
- const nice = Array.isArray(position.preferred_requirements)
- ? (position.preferred_requirements as AnyRow[])
- : [];
- const dealbreakers = Array.isArray(position.dealbreakers)
- ? (position.dealbreakers as AnyRow[])
- : [];
 
  const actionRequired: Array<{ label: string; href?: string }> = [];
  if (summary.delivered > 0) {
