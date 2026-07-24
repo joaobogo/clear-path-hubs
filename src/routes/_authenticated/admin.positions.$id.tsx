@@ -95,6 +95,7 @@ const TABS = [
   { id: "blueprint", label: "Scoring blueprint", icon: Gauge },
   { id: "pipeline", label: "Pipeline", icon: Users },
   { id: "memory", label: "Memory & handoff", icon: NotebookPen },
+  { id: "activity", label: "Activity", icon: History },
   { id: "audit", label: "Audit", icon: ShieldCheck },
   { id: "settings", label: "Settings", icon: Settings2 },
 ] as const;
