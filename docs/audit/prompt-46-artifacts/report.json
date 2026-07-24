@@ -6,28 +6,7 @@
       "url": "http://localhost:8080/",
       "a11y": {
         "critical": [],
-        "serious": [
-          {
-            "rule": "form-label",
-            "html": "<input type=\"range\" min=\"1\" max=\"25\" step=\"1\" class=\"w-full accent-[color:var(--brand-navy)]\" data-tsd-source=\"/src/comp"
-          },
-          {
-            "rule": "form-label",
-            "html": "<input type=\"range\" min=\"0\" max=\"40\" step=\"1\" class=\"w-full accent-[color:var(--brand-navy)]\" data-tsd-source=\"/src/comp"
-          },
-          {
-            "rule": "form-label",
-            "html": "<input type=\"range\" min=\"20000\" max=\"400000\" step=\"5000\" class=\"w-full accent-[color:var(--brand-navy)]\" data-tsd-source"
-          },
-          {
-            "rule": "form-label",
-            "html": "<input type=\"range\" min=\"0\" max=\"200\" step=\"5\" class=\"w-full accent-[color:var(--brand-navy)]\" data-tsd-source=\"/src/com"
-          },
-          {
-            "rule": "form-label",
-            "html": "<input type=\"range\" min=\"0\" max=\"120\" step=\"1\" class=\"w-full accent-[color:var(--brand-navy)]\" data-tsd-source=\"/src/com"
-          }
-        ],
+        "serious": [],
         "moderate": []
       },
       "hash": "f33f44b7680bcded",
@@ -66,28 +45,7 @@
       "url": "http://localhost:8080/pricing",
       "a11y": {
         "critical": [],
-        "serious": [
-          {
-            "rule": "form-label",
-            "html": "<input type=\"range\" min=\"1\" max=\"25\" step=\"1\" class=\"w-full accent-[color:var(--brand-navy)]\" data-tsd-source=\"/src/comp"
-          },
-          {
-            "rule": "form-label",
-            "html": "<input type=\"range\" min=\"0\" max=\"40\" step=\"1\" class=\"w-full accent-[color:var(--brand-navy)]\" data-tsd-source=\"/src/comp"
-          },
-          {
-            "rule": "form-label",
-            "html": "<input type=\"range\" min=\"20000\" max=\"400000\" step=\"5000\" class=\"w-full accent-[color:var(--brand-navy)]\" data-tsd-source"
-          },
-          {
-            "rule": "form-label",
-            "html": "<input type=\"range\" min=\"0\" max=\"200\" step=\"5\" class=\"w-full accent-[color:var(--brand-navy)]\" data-tsd-source=\"/src/com"
-          },
-          {
-            "rule": "form-label",
-            "html": "<input type=\"range\" min=\"0\" max=\"120\" step=\"1\" class=\"w-full accent-[color:var(--brand-navy)]\" data-tsd-source=\"/src/com"
-          }
-        ],
+        "serious": [],
         "moderate": []
       },
       "hash": "2c6b0f70b71d72f3",
@@ -100,12 +58,7 @@
       "url": "http://localhost:8080/industries",
       "a11y": {
         "critical": [],
-        "serious": [
-          {
-            "rule": "form-label",
-            "html": "<input type=\"search\" placeholder=\"Search industry, role, skill, certification\u2026\" class=\"w-full rounded-md border border-["
-          }
-        ],
+        "serious": [],
         "moderate": []
       },
       "hash": "f7c4ca0c7f10bf2d",
@@ -119,10 +72,6 @@
       "a11y": {
         "critical": [],
         "serious": [
-          {
-            "rule": "form-label",
-            "html": "<input type=\"text\" tabindex=\"-1\" autocomplete=\"off\" aria-hidden=\"true\" class=\"absolute left-[-9999px] h-0 w-0 opacity-0\""
-          },
           {
             "rule": "landmark-main",
             "count": 0
@@ -144,16 +93,7 @@
       "url": "http://localhost:8080/jobs",
       "a11y": {
         "critical": [],
-        "serious": [
-          {
-            "rule": "form-label",
-            "html": "<select aria-hidden=\"true\" tabindex=\"-1\" style=\"position:absolute;border:0;width:1px;height:1px;padding:0;margin:-1px;ov"
-          },
-          {
-            "rule": "form-label",
-            "html": "<select aria-hidden=\"true\" tabindex=\"-1\" style=\"position:absolute;border:0;width:1px;height:1px;padding:0;margin:-1px;ov"
-          }
-        ],
+        "serious": [],
         "moderate": []
       },
       "hash": "b1200568ff2267b7",
@@ -227,28 +167,7 @@
       "url": "http://localhost:8080/",
       "a11y": {
         "critical": [],
-        "serious": [
-          {
-            "rule": "form-label",
-            "html": "<input type=\"range\" min=\"1\" max=\"25\" step=\"1\" class=\"w-full accent-[color:var(--brand-navy)]\" data-tsd-source=\"/src/comp"
-          },
-          {
-            "rule": "form-label",
-            "html": "<input type=\"range\" min=\"0\" max=\"40\" step=\"1\" class=\"w-full accent-[color:var(--brand-navy)]\" data-tsd-source=\"/src/comp"
-          },
-          {
-            "rule": "form-label",
-            "html": "<input type=\"range\" min=\"20000\" max=\"400000\" step=\"5000\" class=\"w-full accent-[color:var(--brand-navy)]\" data-tsd-source"
-          },
-          {
-            "rule": "form-label",
-            "html": "<input type=\"range\" min=\"0\" max=\"200\" step=\"5\" class=\"w-full accent-[color:var(--brand-navy)]\" data-tsd-source=\"/src/com"
-          },
-          {
-            "rule": "form-label",
-            "html": "<input type=\"range\" min=\"0\" max=\"120\" step=\"1\" class=\"w-full accent-[color:var(--brand-navy)]\" data-tsd-source=\"/src/com"
-          }
-        ],
+        "serious": [],
         "moderate": []
       },
       "hash": "bdb84f09676f79b8",
@@ -287,28 +206,7 @@
       "url": "http://localhost:8080/pricing",
       "a11y": {
         "critical": [],
-        "serious": [
-          {
-            "rule": "form-label",
-            "html": "<input type=\"range\" min=\"1\" max=\"25\" step=\"1\" class=\"w-full accent-[color:var(--brand-navy)]\" data-tsd-source=\"/src/comp"
-          },
-          {
-            "rule": "form-label",
-            "html": "<input type=\"range\" min=\"0\" max=\"40\" step=\"1\" class=\"w-full accent-[color:var(--brand-navy)]\" data-tsd-source=\"/src/comp"
-          },
-          {
-            "rule": "form-label",
-            "html": "<input type=\"range\" min=\"20000\" max=\"400000\" step=\"5000\" class=\"w-full accent-[color:var(--brand-navy)]\" data-tsd-source"
-          },
-          {
-            "rule": "form-label",
-            "html": "<input type=\"range\" min=\"0\" max=\"200\" step=\"5\" class=\"w-full accent-[color:var(--brand-navy)]\" data-tsd-source=\"/src/com"
-          },
-          {
-            "rule": "form-label",
-            "html": "<input type=\"range\" min=\"0\" max=\"120\" step=\"1\" class=\"w-full accent-[color:var(--brand-navy)]\" data-tsd-source=\"/src/com"
-          }
-        ],
+        "serious": [],
         "moderate": []
       },
       "hash": "1faad2755ee2151b",
@@ -321,12 +219,7 @@
       "url": "http://localhost:8080/industries",
       "a11y": {
         "critical": [],
-        "serious": [
-          {
-            "rule": "form-label",
-            "html": "<input type=\"search\" placeholder=\"Search industry, role, skill, certification\u2026\" class=\"w-full rounded-md border border-["
-          }
-        ],
+        "serious": [],
         "moderate": []
       },
       "hash": "ef456281faedc5ff",
@@ -340,10 +233,6 @@
       "a11y": {
         "critical": [],
         "serious": [
-          {
-            "rule": "form-label",
-            "html": "<input type=\"text\" tabindex=\"-1\" autocomplete=\"off\" aria-hidden=\"true\" class=\"absolute left-[-9999px] h-0 w-0 opacity-0\""
-          },
           {
             "rule": "landmark-main",
             "count": 0
@@ -365,16 +254,7 @@
       "url": "http://localhost:8080/jobs",
       "a11y": {
         "critical": [],
-        "serious": [
-          {
-            "rule": "form-label",
-            "html": "<select aria-hidden=\"true\" tabindex=\"-1\" style=\"position:absolute;border:0;width:1px;height:1px;padding:0;margin:-1px;ov"
-          },
-          {
-            "rule": "form-label",
-            "html": "<select aria-hidden=\"true\" tabindex=\"-1\" style=\"position:absolute;border:0;width:1px;height:1px;padding:0;margin:-1px;ov"
-          }
-        ],
+        "serious": [],
         "moderate": []
       },
       "hash": "e74cbea06ba378c1",
@@ -448,28 +328,7 @@
       "url": "http://localhost:8080/",
       "a11y": {
         "critical": [],
-        "serious": [
-          {
-            "rule": "form-label",
-            "html": "<input type=\"range\" min=\"1\" max=\"25\" step=\"1\" class=\"w-full accent-[color:var(--brand-navy)]\" data-tsd-source=\"/src/comp"
-          },
-          {
-            "rule": "form-label",
-            "html": "<input type=\"range\" min=\"0\" max=\"40\" step=\"1\" class=\"w-full accent-[color:var(--brand-navy)]\" data-tsd-source=\"/src/comp"
-          },
-          {
-            "rule": "form-label",
-            "html": "<input type=\"range\" min=\"20000\" max=\"400000\" step=\"5000\" class=\"w-full accent-[color:var(--brand-navy)]\" data-tsd-source"
-          },
-          {
-            "rule": "form-label",
-            "html": "<input type=\"range\" min=\"0\" max=\"200\" step=\"5\" class=\"w-full accent-[color:var(--brand-navy)]\" data-tsd-source=\"/src/com"
-          },
-          {
-            "rule": "form-label",
-            "html": "<input type=\"range\" min=\"0\" max=\"120\" step=\"1\" class=\"w-full accent-[color:var(--brand-navy)]\" data-tsd-source=\"/src/com"
-          }
-        ],
+        "serious": [],
         "moderate": []
       },
       "hash": "61275468560a40c4",
@@ -508,28 +367,7 @@
       "url": "http://localhost:8080/pricing",
       "a11y": {
         "critical": [],
-        "serious": [
-          {
-            "rule": "form-label",
-            "html": "<input type=\"range\" min=\"1\" max=\"25\" step=\"1\" class=\"w-full accent-[color:var(--brand-navy)]\" data-tsd-source=\"/src/comp"
-          },
-          {
-            "rule": "form-label",
-            "html": "<input type=\"range\" min=\"0\" max=\"40\" step=\"1\" class=\"w-full accent-[color:var(--brand-navy)]\" data-tsd-source=\"/src/comp"
-          },
-          {
-            "rule": "form-label",
-            "html": "<input type=\"range\" min=\"20000\" max=\"400000\" step=\"5000\" class=\"w-full accent-[color:var(--brand-navy)]\" data-tsd-source"
-          },
-          {
-            "rule": "form-label",
-            "html": "<input type=\"range\" min=\"0\" max=\"200\" step=\"5\" class=\"w-full accent-[color:var(--brand-navy)]\" data-tsd-source=\"/src/com"
-          },
-          {
-            "rule": "form-label",
-            "html": "<input type=\"range\" min=\"0\" max=\"120\" step=\"1\" class=\"w-full accent-[color:var(--brand-navy)]\" data-tsd-source=\"/src/com"
-          }
-        ],
+        "serious": [],
         "moderate": []
       },
       "hash": "57ac7442bc362b40",
@@ -542,12 +380,7 @@
       "url": "http://localhost:8080/industries",
       "a11y": {
         "critical": [],
-        "serious": [
-          {
-            "rule": "form-label",
-            "html": "<input type=\"search\" placeholder=\"Search industry, role, skill, certification\u2026\" class=\"w-full rounded-md border border-["
-          }
-        ],
+        "serious": [],
         "moderate": []
       },
       "hash": "09ced9022d823feb",
@@ -561,10 +394,6 @@
       "a11y": {
         "critical": [],
         "serious": [
-          {
-            "rule": "form-label",
-            "html": "<input type=\"text\" tabindex=\"-1\" autocomplete=\"off\" aria-hidden=\"true\" class=\"absolute left-[-9999px] h-0 w-0 opacity-0\""
-          },
           {
             "rule": "landmark-main",
             "count": 0
@@ -586,16 +415,7 @@
       "url": "http://localhost:8080/jobs",
       "a11y": {
         "critical": [],
-        "serious": [
-          {
-            "rule": "form-label",
-            "html": "<select aria-hidden=\"true\" tabindex=\"-1\" style=\"position:absolute;border:0;width:1px;height:1px;padding:0;margin:-1px;ov"
-          },
-          {
-            "rule": "form-label",
-            "html": "<select aria-hidden=\"true\" tabindex=\"-1\" style=\"position:absolute;border:0;width:1px;height:1px;padding:0;margin:-1px;ov"
-          }
-        ],
+        "serious": [],
         "moderate": []
       },
       "hash": "0235bba73cda90fa",
@@ -669,28 +489,7 @@
       "url": "http://localhost:8080/",
       "a11y": {
         "critical": [],
-        "serious": [
-          {
-            "rule": "form-label",
-            "html": "<input type=\"range\" min=\"1\" max=\"25\" step=\"1\" class=\"w-full accent-[color:var(--brand-navy)]\" data-tsd-source=\"/src/comp"
-          },
-          {
-            "rule": "form-label",
-            "html": "<input type=\"range\" min=\"0\" max=\"40\" step=\"1\" class=\"w-full accent-[color:var(--brand-navy)]\" data-tsd-source=\"/src/comp"
-          },
-          {
-            "rule": "form-label",
-            "html": "<input type=\"range\" min=\"20000\" max=\"400000\" step=\"5000\" class=\"w-full accent-[color:var(--brand-navy)]\" data-tsd-source"
-          },
-          {
-            "rule": "form-label",
-            "html": "<input type=\"range\" min=\"0\" max=\"200\" step=\"5\" class=\"w-full accent-[color:var(--brand-navy)]\" data-tsd-source=\"/src/com"
-          },
-          {
-            "rule": "form-label",
-            "html": "<input type=\"range\" min=\"0\" max=\"120\" step=\"1\" class=\"w-full accent-[color:var(--brand-navy)]\" data-tsd-source=\"/src/com"
-          }
-        ],
+        "serious": [],
         "moderate": []
       },
       "hash": "a21de44bac63fa55",
@@ -729,28 +528,7 @@
       "url": "http://localhost:8080/pricing",
       "a11y": {
         "critical": [],
-        "serious": [
-          {
-            "rule": "form-label",
-            "html": "<input type=\"range\" min=\"1\" max=\"25\" step=\"1\" class=\"w-full accent-[color:var(--brand-navy)]\" data-tsd-source=\"/src/comp"
-          },
-          {
-            "rule": "form-label",
-            "html": "<input type=\"range\" min=\"0\" max=\"40\" step=\"1\" class=\"w-full accent-[color:var(--brand-navy)]\" data-tsd-source=\"/src/comp"
-          },
-          {
-            "rule": "form-label",
-            "html": "<input type=\"range\" min=\"20000\" max=\"400000\" step=\"5000\" class=\"w-full accent-[color:var(--brand-navy)]\" data-tsd-source"
-          },
-          {
-            "rule": "form-label",
-            "html": "<input type=\"range\" min=\"0\" max=\"200\" step=\"5\" class=\"w-full accent-[color:var(--brand-navy)]\" data-tsd-source=\"/src/com"
-          },
-          {
-            "rule": "form-label",
-            "html": "<input type=\"range\" min=\"0\" max=\"120\" step=\"1\" class=\"w-full accent-[color:var(--brand-navy)]\" data-tsd-source=\"/src/com"
-          }
-        ],
+        "serious": [],
         "moderate": []
       },
       "hash": "ec28ce53d3e51259",
@@ -763,12 +541,7 @@
       "url": "http://localhost:8080/industries",
       "a11y": {
         "critical": [],
-        "serious": [
-          {
-            "rule": "form-label",
-            "html": "<input type=\"search\" placeholder=\"Search industry, role, skill, certification\u2026\" class=\"w-full rounded-md border border-["
-          }
-        ],
+        "serious": [],
         "moderate": []
       },
       "hash": "38a00f878c9ab1db",
@@ -782,10 +555,6 @@
       "a11y": {
         "critical": [],
         "serious": [
-          {
-            "rule": "form-label",
-            "html": "<input type=\"text\" tabindex=\"-1\" autocomplete=\"off\" aria-hidden=\"true\" class=\"absolute left-[-9999px] h-0 w-0 opacity-0\""
-          },
           {
             "rule": "landmark-main",
             "count": 0
@@ -807,16 +576,7 @@
       "url": "http://localhost:8080/jobs",
       "a11y": {
         "critical": [],
-        "serious": [
-          {
-            "rule": "form-label",
-            "html": "<select aria-hidden=\"true\" tabindex=\"-1\" style=\"position:absolute;border:0;width:1px;height:1px;padding:0;margin:-1px;ov"
-          },
-          {
-            "rule": "form-label",
-            "html": "<select aria-hidden=\"true\" tabindex=\"-1\" style=\"position:absolute;border:0;width:1px;height:1px;padding:0;margin:-1px;ov"
-          }
-        ],
+        "serious": [],
         "moderate": []
       },
       "hash": "30a2a3c85e33abaf",
@@ -890,28 +650,7 @@
       "url": "http://localhost:8080/",
       "a11y": {
         "critical": [],
-        "serious": [
-          {
-            "rule": "form-label",
-            "html": "<input type=\"range\" min=\"1\" max=\"25\" step=\"1\" class=\"w-full accent-[color:var(--brand-navy)]\" data-tsd-source=\"/src/comp"
-          },
-          {
-            "rule": "form-label",
-            "html": "<input type=\"range\" min=\"0\" max=\"40\" step=\"1\" class=\"w-full accent-[color:var(--brand-navy)]\" data-tsd-source=\"/src/comp"
-          },
-          {
-            "rule": "form-label",
-            "html": "<input type=\"range\" min=\"20000\" max=\"400000\" step=\"5000\" class=\"w-full accent-[color:var(--brand-navy)]\" data-tsd-source"
-          },
-          {
-            "rule": "form-label",
-            "html": "<input type=\"range\" min=\"0\" max=\"200\" step=\"5\" class=\"w-full accent-[color:var(--brand-navy)]\" data-tsd-source=\"/src/com"
-          },
-          {
-            "rule": "form-label",
-            "html": "<input type=\"range\" min=\"0\" max=\"120\" step=\"1\" class=\"w-full accent-[color:var(--brand-navy)]\" data-tsd-source=\"/src/com"
-          }
-        ],
+        "serious": [],
         "moderate": []
       },
       "hash": "8aff7851f79c95b9",
@@ -950,28 +689,7 @@
       "url": "http://localhost:8080/pricing",
       "a11y": {
         "critical": [],
-        "serious": [
-          {
-            "rule": "form-label",
-            "html": "<input type=\"range\" min=\"1\" max=\"25\" step=\"1\" class=\"w-full accent-[color:var(--brand-navy)]\" data-tsd-source=\"/src/comp"
-          },
-          {
-            "rule": "form-label",
-            "html": "<input type=\"range\" min=\"0\" max=\"40\" step=\"1\" class=\"w-full accent-[color:var(--brand-navy)]\" data-tsd-source=\"/src/comp"
-          },
-          {
-            "rule": "form-label",
-            "html": "<input type=\"range\" min=\"20000\" max=\"400000\" step=\"5000\" class=\"w-full accent-[color:var(--brand-navy)]\" data-tsd-source"
-          },
-          {
-            "rule": "form-label",
-            "html": "<input type=\"range\" min=\"0\" max=\"200\" step=\"5\" class=\"w-full accent-[color:var(--brand-navy)]\" data-tsd-source=\"/src/com"
-          },
-          {
-            "rule": "form-label",
-            "html": "<input type=\"range\" min=\"0\" max=\"120\" step=\"1\" class=\"w-full accent-[color:var(--brand-navy)]\" data-tsd-source=\"/src/com"
-          }
-        ],
+        "serious": [],
         "moderate": []
       },
       "hash": "87296ad0672eba08",
@@ -984,12 +702,7 @@
       "url": "http://localhost:8080/industries",
       "a11y": {
         "critical": [],
-        "serious": [
-          {
-            "rule": "form-label",
-            "html": "<input type=\"search\" placeholder=\"Search industry, role, skill, certification\u2026\" class=\"w-full rounded-md border border-["
-          }
-        ],
+        "serious": [],
         "moderate": []
       },
       "hash": "508b1f76cd4f2f34",
@@ -1003,10 +716,6 @@
       "a11y": {
         "critical": [],
         "serious": [
-          {
-            "rule": "form-label",
-            "html": "<input type=\"text\" tabindex=\"-1\" autocomplete=\"off\" aria-hidden=\"true\" class=\"absolute left-[-9999px] h-0 w-0 opacity-0\""
-          },
           {
             "rule": "landmark-main",
             "count": 0
@@ -1028,16 +737,7 @@
       "url": "http://localhost:8080/jobs",
       "a11y": {
         "critical": [],
-        "serious": [
-          {
-            "rule": "form-label",
-            "html": "<select aria-hidden=\"true\" tabindex=\"-1\" style=\"position:absolute;border:0;width:1px;height:1px;padding:0;margin:-1px;ov"
-          },
-          {
-            "rule": "form-label",
-            "html": "<select aria-hidden=\"true\" tabindex=\"-1\" style=\"position:absolute;border:0;width:1px;height:1px;padding:0;margin:-1px;ov"
-          }
-        ],
+        "serious": [],
         "moderate": []
       },
       "hash": "2e342536401e08fa",
@@ -1111,28 +811,7 @@
       "url": "http://localhost:8080/",
       "a11y": {
         "critical": [],
-        "serious": [
-          {
-            "rule": "form-label",
-            "html": "<input type=\"range\" min=\"1\" max=\"25\" step=\"1\" class=\"w-full accent-[color:var(--brand-navy)]\" data-tsd-source=\"/src/comp"
-          },
-          {
-            "rule": "form-label",
-            "html": "<input type=\"range\" min=\"0\" max=\"40\" step=\"1\" class=\"w-full accent-[color:var(--brand-navy)]\" data-tsd-source=\"/src/comp"
-          },
-          {
-            "rule": "form-label",
-            "html": "<input type=\"range\" min=\"20000\" max=\"400000\" step=\"5000\" class=\"w-full accent-[color:var(--brand-navy)]\" data-tsd-source"
-          },
-          {
-            "rule": "form-label",
-            "html": "<input type=\"range\" min=\"0\" max=\"200\" step=\"5\" class=\"w-full accent-[color:var(--brand-navy)]\" data-tsd-source=\"/src/com"
-          },
-          {
-            "rule": "form-label",
-            "html": "<input type=\"range\" min=\"0\" max=\"120\" step=\"1\" class=\"w-full accent-[color:var(--brand-navy)]\" data-tsd-source=\"/src/com"
-          }
-        ],
+        "serious": [],
         "moderate": []
       },
       "hash": "c0b2757e3ff4814e",
@@ -1171,28 +850,7 @@
       "url": "http://localhost:8080/pricing",
       "a11y": {
         "critical": [],
-        "serious": [
-          {
-            "rule": "form-label",
-            "html": "<input type=\"range\" min=\"1\" max=\"25\" step=\"1\" class=\"w-full accent-[color:var(--brand-navy)]\" data-tsd-source=\"/src/comp"
-          },
-          {
-            "rule": "form-label",
-            "html": "<input type=\"range\" min=\"0\" max=\"40\" step=\"1\" class=\"w-full accent-[color:var(--brand-navy)]\" data-tsd-source=\"/src/comp"
-          },
-          {
-            "rule": "form-label",
-            "html": "<input type=\"range\" min=\"20000\" max=\"400000\" step=\"5000\" class=\"w-full accent-[color:var(--brand-navy)]\" data-tsd-source"
-          },
-          {
-            "rule": "form-label",
-            "html": "<input type=\"range\" min=\"0\" max=\"200\" step=\"5\" class=\"w-full accent-[color:var(--brand-navy)]\" data-tsd-source=\"/src/com"
-          },
-          {
-            "rule": "form-label",
-            "html": "<input type=\"range\" min=\"0\" max=\"120\" step=\"1\" class=\"w-full accent-[color:var(--brand-navy)]\" data-tsd-source=\"/src/com"
-          }
-        ],
+        "serious": [],
         "moderate": []
       },
       "hash": "8072b27497f670c9",
@@ -1205,12 +863,7 @@
       "url": "http://localhost:8080/industries",
       "a11y": {
         "critical": [],
-        "serious": [
-          {
-            "rule": "form-label",
-            "html": "<input type=\"search\" placeholder=\"Search industry, role, skill, certification\u2026\" class=\"w-full rounded-md border border-["
-          }
-        ],
+        "serious": [],
         "moderate": []
       },
       "hash": "6611fb38e346b962",
@@ -1224,10 +877,6 @@
       "a11y": {
         "critical": [],
         "serious": [
-          {
-            "rule": "form-label",
-            "html": "<input type=\"text\" tabindex=\"-1\" autocomplete=\"off\" aria-hidden=\"true\" class=\"absolute left-[-9999px] h-0 w-0 opacity-0\""
-          },
           {
             "rule": "landmark-main",
             "count": 0
@@ -1249,16 +898,7 @@
       "url": "http://localhost:8080/jobs",
       "a11y": {
         "critical": [],
-        "serious": [
-          {
-            "rule": "form-label",
-            "html": "<select aria-hidden=\"true\" tabindex=\"-1\" style=\"position:absolute;border:0;width:1px;height:1px;padding:0;margin:-1px;ov"
-          },
-          {
-            "rule": "form-label",
-            "html": "<select aria-hidden=\"true\" tabindex=\"-1\" style=\"position:absolute;border:0;width:1px;height:1px;padding:0;margin:-1px;ov"
-          }
-        ],
+        "serious": [],
         "moderate": []
       },
       "hash": "84a7025ebf1842a7",
@@ -1329,7 +969,7 @@
   ],
   "summary": {
     "critical": 0,
-    "serious": 96,
+    "serious": 12,
     "moderate": 12,
     "visualDiffs": 0
   }
