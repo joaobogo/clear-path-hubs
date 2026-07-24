@@ -1,0 +1,61 @@
+/* ============================================================
+ * Density modes for data-heavy workspace screens.
+ *
+ *   <div data-density="compact"> ... </div>
+ *   <div data-density="comfortable"> ... </div>  (default)
+ *
+ * Compact tightens paddings on the primitives most used in tables,
+ * filter bars, and dense dashboards without changing layout logic
+ * or component APIs. It is scoped, so nested compact regions inside
+ * a comfortable page work as expected.
+ * ============================================================ */
+
+[data-density="compact"] {
+  --taas-density-row-y: 6px;
+  --taas-density-cell-x: 10px;
+  --taas-density-btn-h: 30px;
+  --taas-density-input-h: 32px;
+  --taas-density-card-p: 12px;
+}
+
+[data-density="comfortable"],
+:root:not([data-density]) {
+  --taas-density-row-y: 10px;
+  --taas-density-cell-x: 14px;
+  --taas-density-btn-h: 36px;
+  --taas-density-input-h: 36px;
+  --taas-density-card-p: 20px;
+}
+
+/* Buttons */
+[data-density="compact"] button:where(.h-9),
+[data-density="compact"] a:where(.h-9) {
+  height: var(--taas-density-btn-h);
+  padding-inline: 10px;
+  font-size: 0.8125rem;
+}
+
+/* Inputs / selects / textareas within a compact region */
+[data-density="compact"] input:not([type="checkbox"]):not([type="radio"]),
+[data-density="compact"] select,
+[data-density="compact"] .taas-input {
+  height: var(--taas-density-input-h);
+  font-size: 0.8125rem;
+}
+
+/* Table rows */
+[data-density="compact"] table :where(th, td) {
+  padding-block: var(--taas-density-row-y);
+  padding-inline: var(--taas-density-cell-x);
+  font-size: 0.8125rem;
+}
+
+/* Cards */
+[data-density="compact"] :where(.taas-card, [data-slot="card"]) {
+  padding: var(--taas-density-card-p);
+}
+
+/* Reduced heading spacing in compact mode */
+[data-density="compact"] :where(h1, h2, h3) {
+  margin-bottom: 0.5rem;
+}

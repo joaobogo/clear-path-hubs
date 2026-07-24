@@ -4,6 +4,7 @@
 @import "./styles/brand-tokens.css";
 @import "./styles/motion.css";
 @import "./styles/industry-motion.css";
+@import "./styles/density.css";
 
 @custom-variant dark (&:is(.dark *));
 

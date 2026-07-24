@@ -96,6 +96,7 @@ import { Route as AuthenticatedAdminNotificationsRouteImport } from './routes/_a
 import { Route as AuthenticatedAdminMessagesRouteImport } from './routes/_authenticated/admin.messages'
 import { Route as AuthenticatedAdminIntakeRouteImport } from './routes/_authenticated/admin.intake'
 import { Route as AuthenticatedAdminHealthRouteImport } from './routes/_authenticated/admin.health'
+import { Route as AuthenticatedAdminDesignSystemRouteImport } from './routes/_authenticated/admin.design-system'
 import { Route as AuthenticatedAdminCopilotRouteImport } from './routes/_authenticated/admin.copilot'
 import { Route as AuthenticatedAdminClients_newRouteImport } from './routes/_authenticated/admin.clients_new'
 import { Route as AuthenticatedAdminClientsRouteImport } from './routes/_authenticated/admin.clients'
@@ -578,6 +579,12 @@ const AuthenticatedAdminHealthRoute =
     path: '/health',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminDesignSystemRoute =
+  AuthenticatedAdminDesignSystemRouteImport.update({
+    id: '/design-system',
+    path: '/design-system',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminCopilotRoute =
   AuthenticatedAdminCopilotRouteImport.update({
     id: '/copilot',
@@ -780,6 +787,7 @@ export interface FileRoutesByFullPath {
   '/admin/clients': typeof AuthenticatedAdminClientsRouteWithChildren
   '/admin/clients_new': typeof AuthenticatedAdminClients_newRoute
   '/admin/copilot': typeof AuthenticatedAdminCopilotRoute
+  '/admin/design-system': typeof AuthenticatedAdminDesignSystemRoute
   '/admin/health': typeof AuthenticatedAdminHealthRoute
   '/admin/intake': typeof AuthenticatedAdminIntakeRouteWithChildren
   '/admin/messages': typeof AuthenticatedAdminMessagesRoute
@@ -888,6 +896,7 @@ export interface FileRoutesByTo {
   '/admin/business-rules': typeof AuthenticatedAdminBusinessRulesRoute
   '/admin/clients_new': typeof AuthenticatedAdminClients_newRoute
   '/admin/copilot': typeof AuthenticatedAdminCopilotRoute
+  '/admin/design-system': typeof AuthenticatedAdminDesignSystemRoute
   '/admin/health': typeof AuthenticatedAdminHealthRoute
   '/admin/messages': typeof AuthenticatedAdminMessagesRoute
   '/admin/notifications': typeof AuthenticatedAdminNotificationsRoute
@@ -998,6 +1007,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/clients': typeof AuthenticatedAdminClientsRouteWithChildren
   '/_authenticated/admin/clients_new': typeof AuthenticatedAdminClients_newRoute
   '/_authenticated/admin/copilot': typeof AuthenticatedAdminCopilotRoute
+  '/_authenticated/admin/design-system': typeof AuthenticatedAdminDesignSystemRoute
   '/_authenticated/admin/health': typeof AuthenticatedAdminHealthRoute
   '/_authenticated/admin/intake': typeof AuthenticatedAdminIntakeRouteWithChildren
   '/_authenticated/admin/messages': typeof AuthenticatedAdminMessagesRoute
@@ -1113,6 +1123,7 @@ export interface FileRouteTypes {
     | '/admin/clients'
     | '/admin/clients_new'
     | '/admin/copilot'
+    | '/admin/design-system'
     | '/admin/health'
     | '/admin/intake'
     | '/admin/messages'
@@ -1221,6 +1232,7 @@ export interface FileRouteTypes {
     | '/admin/business-rules'
     | '/admin/clients_new'
     | '/admin/copilot'
+    | '/admin/design-system'
     | '/admin/health'
     | '/admin/messages'
     | '/admin/notifications'
@@ -1330,6 +1342,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/clients'
     | '/_authenticated/admin/clients_new'
     | '/_authenticated/admin/copilot'
+    | '/_authenticated/admin/design-system'
     | '/_authenticated/admin/health'
     | '/_authenticated/admin/intake'
     | '/_authenticated/admin/messages'
@@ -2060,6 +2073,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminHealthRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/design-system': {
+      id: '/_authenticated/admin/design-system'
+      path: '/design-system'
+      fullPath: '/admin/design-system'
+      preLoaderRoute: typeof AuthenticatedAdminDesignSystemRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/copilot': {
       id: '/_authenticated/admin/copilot'
       path: '/copilot'
@@ -2342,6 +2362,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminClientsRoute: typeof AuthenticatedAdminClientsRouteWithChildren
   AuthenticatedAdminClients_newRoute: typeof AuthenticatedAdminClients_newRoute
   AuthenticatedAdminCopilotRoute: typeof AuthenticatedAdminCopilotRoute
+  AuthenticatedAdminDesignSystemRoute: typeof AuthenticatedAdminDesignSystemRoute
   AuthenticatedAdminHealthRoute: typeof AuthenticatedAdminHealthRoute
   AuthenticatedAdminIntakeRoute: typeof AuthenticatedAdminIntakeRouteWithChildren
   AuthenticatedAdminMessagesRoute: typeof AuthenticatedAdminMessagesRoute
@@ -2362,6 +2383,7 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminClientsRoute: AuthenticatedAdminClientsRouteWithChildren,
   AuthenticatedAdminClients_newRoute: AuthenticatedAdminClients_newRoute,
   AuthenticatedAdminCopilotRoute: AuthenticatedAdminCopilotRoute,
+  AuthenticatedAdminDesignSystemRoute: AuthenticatedAdminDesignSystemRoute,
   AuthenticatedAdminHealthRoute: AuthenticatedAdminHealthRoute,
   AuthenticatedAdminIntakeRoute: AuthenticatedAdminIntakeRouteWithChildren,
   AuthenticatedAdminMessagesRoute: AuthenticatedAdminMessagesRoute,
