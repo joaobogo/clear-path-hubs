@@ -23,9 +23,10 @@ import { FormShell } from "@/components/marketing/form-shell";
 
 export const Route = createFileRoute("/jobs/$id/apply")({
   loader: async ({ context, params }) => {
+    const uuid = extractJobUuid(params.id);
     const data = await context.queryClient.ensureQueryData({
-      queryKey: ["public-position", params.id],
-      queryFn: () => getPublicPosition({ data: { id: params.id } }),
+      queryKey: ["public-position", uuid],
+      queryFn: () => getPublicPosition({ data: { id: uuid } }),
     });
     if (!data) throw notFound();
     return data;
