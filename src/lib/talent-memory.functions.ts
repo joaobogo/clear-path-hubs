@@ -264,7 +264,7 @@ export const tagSilverMedalist = createServerFn({ method: "POST" })
       reason_category: data.reason_category,
       reason_notes: data.reason_notes ?? null,
       headline_snapshot: (profile as AnyRow)?.headline ?? null,
-      seniority_snapshot: (profile as AnyRow)?.seniority ?? null,
+      seniority_snapshot: (position as AnyRow)?.seniority ?? null,
       role_title_snapshot: (position as AnyRow)?.title ?? null,
       skills_snapshot: (profile as AnyRow)?.skills ?? [],
       score_snapshot: (run as AnyRow)?.final_score ?? null,
