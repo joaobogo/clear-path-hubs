@@ -288,7 +288,7 @@ function CandidatesPage() {
 
  const clearFilters = () =>
  navigate({
- search: { ...search, q: "", position: "", stage: "all", fit: "all", location: "" } as never,
+ search: { ...search, q: "", position: "", stage: "all", fit: "all", location: "", minScore: "", maxScore: "" } as never,
  });
 
  return (
