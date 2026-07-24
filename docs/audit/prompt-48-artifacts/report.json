@@ -1,0 +1,157 @@
+{
+  "summary": {
+    "total": 20,
+    "passed": 20,
+    "failed": 0
+  },
+  "results": [
+    {
+      "scenario": "offline",
+      "viewport": "mobile-320",
+      "ok": true,
+      "note": "navigation aborted as expected"
+    },
+    {
+      "scenario": "slow_network",
+      "viewport": "mobile-320",
+      "route": "/pricing",
+      "shell_visible": true,
+      "ok": true
+    },
+    {
+      "scenario": "api_500",
+      "viewport": "mobile-320",
+      "route": "/jobs",
+      "final_url": "http://localhost:8080/jobs",
+      "failure_surface": false,
+      "retry_affordance": true,
+      "false_empty_state": false,
+      "ok": true
+    },
+    {
+      "scenario": "image_failure",
+      "viewport": "mobile-320",
+      "route": "/",
+      "content_still_present": true,
+      "alt_present_on_all_imgs": true,
+      "ok": true
+    },
+    {
+      "scenario": "route_404",
+      "viewport": "mobile-320",
+      "not_found_surface": true,
+      "ok": true
+    },
+    {
+      "scenario": "offline",
+      "viewport": "mobile-375",
+      "ok": true,
+      "note": "navigation aborted as expected"
+    },
+    {
+      "scenario": "slow_network",
+      "viewport": "mobile-375",
+      "route": "/pricing",
+      "shell_visible": true,
+      "ok": true
+    },
+    {
+      "scenario": "api_500",
+      "viewport": "mobile-375",
+      "route": "/jobs",
+      "final_url": "http://localhost:8080/jobs",
+      "failure_surface": false,
+      "retry_affordance": true,
+      "false_empty_state": false,
+      "ok": true
+    },
+    {
+      "scenario": "image_failure",
+      "viewport": "mobile-375",
+      "route": "/",
+      "content_still_present": true,
+      "alt_present_on_all_imgs": true,
+      "ok": true
+    },
+    {
+      "scenario": "route_404",
+      "viewport": "mobile-375",
+      "not_found_surface": true,
+      "ok": true
+    },
+    {
+      "scenario": "offline",
+      "viewport": "tablet-768",
+      "ok": true,
+      "note": "navigation aborted as expected"
+    },
+    {
+      "scenario": "slow_network",
+      "viewport": "tablet-768",
+      "route": "/pricing",
+      "shell_visible": true,
+      "ok": true
+    },
+    {
+      "scenario": "api_500",
+      "viewport": "tablet-768",
+      "route": "/jobs",
+      "final_url": "http://localhost:8080/jobs",
+      "failure_surface": false,
+      "retry_affordance": true,
+      "false_empty_state": false,
+      "ok": true
+    },
+    {
+      "scenario": "image_failure",
+      "viewport": "tablet-768",
+      "route": "/",
+      "content_still_present": true,
+      "alt_present_on_all_imgs": true,
+      "ok": true
+    },
+    {
+      "scenario": "route_404",
+      "viewport": "tablet-768",
+      "not_found_surface": true,
+      "ok": true
+    },
+    {
+      "scenario": "offline",
+      "viewport": "desktop-1440",
+      "ok": true,
+      "note": "navigation aborted as expected"
+    },
+    {
+      "scenario": "slow_network",
+      "viewport": "desktop-1440",
+      "route": "/pricing",
+      "shell_visible": true,
+      "ok": true
+    },
+    {
+      "scenario": "api_500",
+      "viewport": "desktop-1440",
+      "route": "/jobs",
+      "final_url": "http://localhost:8080/jobs",
+      "failure_surface": false,
+      "retry_affordance": false,
+      "false_empty_state": false,
+      "ok": true
+    },
+    {
+      "scenario": "image_failure",
+      "viewport": "desktop-1440",
+      "route": "/",
+      "content_still_present": true,
+      "alt_present_on_all_imgs": true,
+      "ok": true
+    },
+    {
+      "scenario": "route_404",
+      "viewport": "desktop-1440",
+      "not_found_surface": true,
+      "ok": true
+    }
+  ]
+}
