@@ -554,6 +554,13 @@ export function RoiCalculator({
                 </div>
                 <Link
                   to="/contact"
+                  onClick={() =>
+                    trackEvent("calculator.cta_clicked", {
+                      cta: "enterprise_quote_inline",
+                      variant,
+                      positions: inputs.positions,
+                    })
+                  }
                   className="mt-3 inline-flex min-h-11 items-center justify-center gap-1.5 rounded-md bg-white px-4 py-2 text-sm font-semibold text-[color:var(--brand-navy)] hover:bg-white/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
                 >
                   Talk to enterprise <ArrowRight className="h-4 w-4" aria-hidden />
