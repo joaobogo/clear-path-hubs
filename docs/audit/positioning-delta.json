@@ -2,12 +2,19 @@
   "prompt": "1 — Source-to-destination strategic audit",
   "generated_at": "2026-07-24",
   "implementation_files_changed": 0,
+  "sources": {
+    "source_site": "taasflow.com",
+    "source_project_ref": "qldhdrxdnrnwbkaxozno",
+    "overview_deck": "Gamma overview referenced in docs/migration/phase-01-*",
+    "destination_preview": "id-preview--1dc5ee7e-1294-441c-8288-850e79e443f6.lovable.app",
+    "destination_published": "clear-path-hubs.lovable.app"
+  },
   "positioning": {
     "category": {
-      "source": "Subscription recruiting operating system — not software, not agency",
-      "destination": "Hybrid Human + AI recruiting operating system",
-      "status": "aligned",
-      "action": "keep destination phrasing; do not regress to 'software vs agency' framing"
+      "source": "Not software, not agency — subscription recruiting operating system",
+      "destination": "Recruiting, run as a system. ATS + recruiting execution in one system.",
+      "status": "evolved",
+      "action": "Keep destination framing; retire 'subscription OS' copy on any legacy surface."
     },
     "core_promise": {
       "source": [
@@ -17,59 +24,116 @@
         "direct handover",
         "no placement fees"
       ],
-      "destination_coverage": ["home hero", "deliverable demo", "how-it-works", "pricing", "comparison"],
+      "destination_coverage": [
+        "index.tsx hero",
+        "how-it-works.tsx",
+        "system.tsx seven pillars",
+        "platform.tsx five pillars",
+        "pricing.tsx FAQ",
+        "trust.tsx"
+      ],
       "status": "aligned"
     },
     "audiences": {
-      "source": ["founders", "hr_talent", "staffing_agencies", "enterprise"],
-      "destination": ["home hero", "enterprise route", "staffing partnership route", "talent network"],
+      "source": ["founders", "hr_talent", "staffing_agencies", "enterprise", "candidates"],
+      "destination_routes": ["index.tsx", "enterprise.tsx", "partnerships.staffing.tsx", "talent-network.tsx", "candidate-join.tsx"],
       "status": "aligned"
     },
     "voice": {
       "source": "warm, direct, no hype",
-      "destination": "consistent",
+      "destination": "codified in docs/tone-of-voice.md; consistent on new copy",
       "status": "aligned"
+    },
+    "founders": {
+      "source_count": 2,
+      "source_names": ["Christian Brøgger", "João Bogo"],
+      "destination_count": 3,
+      "destination_names": ["João Luciano", "Christian Brøgger", "João Bogo"],
+      "status": "divergent",
+      "action": "Confirm intentional third founder; update source + deck or remove destination-side."
     }
   },
   "pricing": {
-    "pilot": {"source": "$399", "destination": "Pilot tier in pricing-core.ts", "status": "verify_display_string"},
-    "subscription_entry": {"source": "from $6,999/month", "destination": "Multi + Hiring Sprint tiers", "status": "verify_display_string"},
-    "no_placement_fees": {"status": "aligned"},
-    "timeline_7_14_days": {"status": "aligned"}
+    "canonical_source_of_truth": "src/config/pricing-core.ts",
+    "model": {
+      "source": "monthly subscription — 'from $6,999/month'",
+      "destination": "one-off packages (Pilot / Multi / Sprint / Enterprise)",
+      "status": "divergent",
+      "action": "Single decision required — packages vs subscription. Cascade to source, deck, calculator, proposals, intake."
+    },
+    "tiers": {
+      "pilot": { "source": "$399", "destination": "$399", "status": "aligned" },
+      "multi": { "source": "not present", "destination": "$2.1K · 2–5 roles", "status": "destination_only" },
+      "sprint": { "source": "not present", "destination": "$4.5K · 6–10 roles", "status": "destination_only" },
+      "enterprise": { "source": "Custom", "destination": "Custom · 11+ roles", "status": "aligned" }
+    },
+    "turnaround": {
+      "source": "7–14 day shortlist",
+      "destination": "14-day turnaround",
+      "status": "narrowed",
+      "action": "Confirm 14-day SLA; either update source or widen destination back to a band."
+    },
+    "currency": {
+      "source": "mixed EUR (legacy deck) / USD (new pages)",
+      "destination": "USD only",
+      "status": "reconcile",
+      "action": "Purge EUR strings from deck + legacy source pages."
+    },
+    "no_placement_fees": {
+      "source": "canonical claim",
+      "destination": "present on /, /pricing, /platform, /trust",
+      "status": "aligned"
+    }
+  },
+  "routes": {
+    "destination_public_files": 47,
+    "source_families_missing_from_destination": [],
+    "destination_only_pages": ["platform", "system", "trust", "pitch"],
+    "orphan_candidates": [
+      { "route": "/solutions", "action_required": "confirm link source or merge into /how-it-works or /industries" },
+      { "route": "/resources", "action_required": "confirm link source or merge into /knowledge-base or /blog" },
+      { "route": "/dev/catalogue", "action_required": "exclude from public sitemap; keep internal" },
+      { "route": "/industries/non-profit", "action_required": "confirm canonical slug vs /industries/$slug or redirect" }
+    ],
+    "duplicate_talent_surfaces": ["/talent-network", "/global-talent", "/talent-marketplace"]
+  },
+  "industries": {
+    "source_claim": "57 verticals",
+    "destination_json_records": 24,
+    "destination_module_slug_occurrences": {
+      "industries-v2.ts": 104,
+      "industries-batch2.ts": 108
+    },
+    "status": "reconcile",
+    "action": "Confirm effective published industry count via industries.$slug.tsx resolver; adjust the '57' marketing claim or ship missing pages with unique hero + copy + role focus."
   },
   "proof": {
-    "founders": {"source_names": ["Christian Brogger", "João Bogo"], "status": "verify_photos_and_bios"},
-    "case_studies": {"status": "aligned"},
-    "logos_press": {"status": "parity_ok"},
-    "testimonials": {"status": "verify_consent"}
+    "founders": "verify current titles + LinkedIn URLs + reconcile count",
+    "case_studies": "verify each numeric claim is sourced and consented",
+    "client_logos": "confirm logo usage rights or drop claim",
+    "testimonials": "verify quote provenance + written consent per quote",
+    "trust_pack": { "source": "not present", "destination": "/trust", "action": "port summary to source or link source → destination/trust" }
   },
-  "route_families": {
-    "covered": [
-      "/", "/pricing", "/how-it-works", "/industries", "/industries/:slug",
-      "/enterprise", "/staffing-partnership", "/talent-network", "/global-talent",
-      "/employer-onboarding", "/case-studies", "/blog", "/blog/:slug",
-      "/knowledge-base", "/faq", "/about", "/journey", "/contact",
-      "/privacy", "/terms", "/sitemap", "/jobs", "/jobs/:id", "/jobs/:id/apply",
-      "/pilot", "/candidate-join", "/intake"
+  "dashboard_promise_vs_reality": {
+    "advertised": [
+      "evidence-first scoring", "weekly ranked delivery", "role blueprint",
+      "candidate dossier", "comparison tableau", "silver medalist memory",
+      "WBR", "portfolio rollup", "offer/hire tracking", "source attribution",
+      "outreach engine", "journey timeline", "executive portfolio",
+      "evidence viewer", "AI copilot (client + admin)", "share tokens"
     ],
-    "orphans_to_review": ["/solutions", "/resources", "/dev/catalogue"],
-    "missing": []
+    "shipped_in_authenticated_product": true,
+    "action": "Do not advertise capabilities not yet shipped."
   },
-  "industry_system": {
-    "target_count": 57,
-    "requires": ["unique hero backdrop", "unique intro copy", "unique role focus", "cross-links"],
-    "risk": "any industry falling back to generic imagery"
-  },
-  "dashboard_marketing_parity": {
-    "status": "aligned",
-    "risk": "marketing copy must not promise workspace features not yet shipped"
-  },
-  "top_divergences": [
-    "verify pricing entry string on /pricing matches source wording",
-    "verify founder bios and photos on /about",
-    "audit 57 industry pages for unique imagery and copy",
-    "decide orphan routes: /solutions, /resources",
-    "purge any legacy 'software vs agency' language"
+  "top_divergences_ranked": [
+    "pricing model (packages vs subscription)",
+    "founder count (2 vs 3)",
+    "industry count claim (57 vs published)",
+    "turnaround SLA (band vs single number)",
+    "talent surfaces (3 vs 1)",
+    "orphan routes (/solutions, /resources, /dev/catalogue)",
+    "destination-only category pages (/platform, /system, /trust, /pitch)",
+    "client logos + testimonials consent audit"
   ],
   "pass_fail": "PASS"
 }

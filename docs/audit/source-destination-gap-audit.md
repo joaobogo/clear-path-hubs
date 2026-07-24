@@ -1,93 +1,115 @@
 # Source → Destination Gap Audit
 
-Prompt 1 · Master strategic audit. Docs only — no implementation changes.
+**Prompt 1 · Master strategic audit — Docs only, no implementation changes.**
+Generated: 2026-07-24 · Implementation files changed: **0**
 
-Scope: public marketing surface, pricing, industries, resources, about, job board entry points, and public references to the authenticated workspace. Sources: taasflow.com (live), Gamma overview deck, destination (this repo).
+**Sources**
+- Source site (live): `taasflow.com` (production of `sourcing-suite-ai.lovable.app`; owner project ref `qldhdrxdnrnwbkaxozno`).
+- Overview deck: Gamma overview referenced in prior migration notes (`docs/migration/phase-01-*`).
+- Destination (this repo): preview `id-preview--1dc5ee7e...lovable.app`, published `clear-path-hubs.lovable.app`.
+
+**Verdict legend** — ✅ aligned · ⚠️ needs reconciliation · ❌ divergent / missing decision.
 
 ---
 
 ## 1. Positioning message
 
-| Dimension | Source (taasflow.com + deck) | Destination (repo) | Verdict |
+| Dimension | Source (taasflow.com + deck) | Destination (this repo) | Verdict |
 | --- | --- | --- | --- |
-| Category | "Not software, not agency — subscription recruiting operating system" | "Hybrid Human + AI recruiting operating system" on home + how-it-works | **Aligned**, stronger on destination. Deck's "placement model is dead" line missing from home. |
-| Core promise | Ranked, pre-screened candidates + recruiter fit narrative + live dashboard + direct handover + no placement fees | All 4 pillars present (hero, deliverable demo, how-it-works, pricing) | **Aligned** |
-| Audiences | Founders, HR/talent, staffing agencies, enterprise | Home hero covers founders + HR; enterprise + staffing partnership routes exist; talent-network for candidates | **Aligned** |
-| Voice | Warm, direct, no hype | Consistent across new copy | **Aligned** |
+| Category label | "Not software, not agency — subscription recruiting operating system" | "Recruiting, run as a system" + "ATS + recruiting execution, in one system" (`index.tsx`, `platform.tsx`, `site-shell.tsx`) | ⚠️ Category framing evolved from *subscription OS* → *system of record + execution*. Deliberate; keep destination but retire any remaining "subscription OS" copy on legacy pages. |
+| Core promise | Ranked pre-screened candidates + fit narrative + live dashboard + direct handover + no placement fees | All 5 pillars present (`index.tsx` hero, `how-it-works.tsx`, `pricing.tsx` FAQ, `system.tsx` seven pillars) | ✅ |
+| Audiences | Founders, HR/talent, staffing agencies, enterprise, candidates | `index.tsx` hero + `enterprise.tsx` + `partnerships.staffing.tsx` + `talent-network.tsx` + `candidate-join.tsx` | ✅ |
+| Voice | Warm, direct, no hype | Codified in `docs/tone-of-voice.md`; consistent on new copy | ✅ |
+| Founders presence | Named on About + deck | `founders-strip.tsx` + `about.tsx` list **João Luciano, Christian Brøgger, João Bogo** | ⚠️ Source deck lists **two** founders (Brøgger + Bogo). Destination adds **João Luciano** as third. Confirm intentional and update deck if so; otherwise remove from public surfaces. |
 
-## 2. Pricing claim reconciliation
+## 2. Pricing claim reconciliation *(critical delta)*
 
-| Element | Source claim | Destination (`src/config/pricing-core.ts`, `/pricing`) | Verdict |
+Canonical source of truth: `src/config/pricing-core.ts`.
+
+| Element | Source claim (taasflow.com / deck) | Destination (`pricing-core.ts`, `/pricing`, `/pitch`, `/boardroom`) | Verdict |
 | --- | --- | --- | --- |
-| Pilot | $399 pilot mentioned in deck | Pilot tier exists | **Aligned** |
-| Subscription entry | "from $6,999/month" on source | Multi tier + Hiring Sprint tier per canonical `pricing-core.ts` | **Needs confirmation** — verify displayed entry price string on `/pricing` matches "from $X/month" wording from source. |
-| No placement fees | Repeated on source | Present in hero + comparison + pricing FAQ | **Aligned** |
-| Timeline | 7–14 days shortlist | Present on how-it-works and homepage | **Aligned** |
+| Pilot | "$399 pilot" | `PRICE_PILOT_USD = 399` — "Pilot · 1 active role · $399" | ✅ |
+| Mid tier | "From $6,999 / month" subscription (source) | `PRICE_MULTI_USD = 2,100` — "Multi Position · 2–5 roles · $2.1K one-off package" | ❌ **Model changed**: source sells **monthly subscription**; destination sells **one-off packages**. Every public surface must adopt one story. Prompt 29 already committed destination to the package model — update source site + deck OR restore subscription copy destination-side. Not both, not neither. |
+| Higher tier | Not present on source | `PRICE_SPRINT_USD = 4,500` — "Hiring Sprint · 6–10 roles · $4.5K" | ⚠️ New tier destination-only; add to source + deck if the package model wins. |
+| Enterprise | "Custom" on source | "Custom · 11+ roles or continuous hiring" | ✅ |
+| Turnaround | "7–14 day shortlist" (source) | `TURNAROUND_LABEL = "14-day turnaround"` | ⚠️ Destination narrows band to a single number. Confirm 14-day is guaranteed and update source; otherwise widen destination back to the band. |
+| No placement fees | Repeated across source | Present on `index.tsx`, `pricing.tsx`, `platform.tsx`, `trust.tsx` | ✅ |
+| Currency | EUR on legacy source deck slides; USD on newer source pages | USD everywhere destination-side (`pricing-core.ts` mandates USD) | ⚠️ Ensure no EUR strings remain in overview deck or legacy source pages. |
 
-Action: reconcile displayed monthly entry price wording with source. Any one-time packages introduced on `/pricing` must be labelled separately from the subscription entry price so buyers don't compare apples-to-oranges.
+**Action for Phase 2+**: publish a single pricing narrative decision (packages vs subscription) and cascade to source, deck, calculator, proposal templates, intake copy.
 
 ## 3. Proof and social evidence
 
 | Type | Source | Destination | Gap |
 | --- | --- | --- | --- |
-| Founder profiles | Christian Brogger, João Bogo on About | About page present with founders | **Verify photos + bios match** |
-| Case studies | Referenced on source | `/case-studies` implemented with metric bands + map | **Aligned** |
-| Logos / press | Sparse on source | Founders strip on home | **Parity** |
-| Testimonials | Some quotes on source | Selected quotes across product pages | **Verify quote provenance / consent** |
+| Founder bios/photos | Deck + `/about` on source | `about.tsx` + `founders-strip.tsx` show 3 founders with editorial B&W headshots | ⚠️ Reconcile founder count (see §1) and confirm current titles + LinkedIn URLs. |
+| Case studies | Referenced on source | `case-studies.tsx` implemented with metric bands | ⚠️ Verify each numeric claim is sourced and consented (Prop-1..5 in missing-proof list). |
+| Client logos | Sparse | `founders-strip.tsx` only — no client logo wall | ❌ If deck advertises named clients, decide whether logos are consented for public display or explicitly omit and drop the claim from the deck. |
+| Testimonials / quotes | Some on source | Scattered across marketing pages | ⚠️ Confirm quote provenance + written consent per quote. |
+| Data / analytics claims | ROI calculator + volume numbers on source | `roi-calculator.tsx` + `analytics.ts` non-blocking beacon | ✅ Calculator honest about negative-savings; keep. |
+| Trust pack | Not present on source | `/trust` route consolidates pricing, scoring, data ownership, security | ✅ Destination stronger; port summary block back to source or link source → destination `/trust`. |
 
 ## 4. Route coverage (public)
 
-Full manifest is in `public-route-manifest.md` (Prompt 2). Snapshot of source vs. destination coverage:
+Destination public routes counted from `src/routes/*.tsx` (47 total; excluding auth/protected). Full manifest in `docs/migration/public-route-manifest.md`. Snapshot vs source:
 
-| Source route family | Destination coverage |
-| --- | --- |
-| `/` | ✅ `src/routes/index.tsx` |
-| `/pricing` | ✅ `pricing.tsx` |
-| `/how-it-works` | ✅ `how-it-works.tsx` |
-| `/industries` + industry detail | ✅ `industries.index.tsx` + `industries.$slug.tsx` (57 verticals) + `industries.non-profit.tsx` |
-| `/enterprise` | ✅ `enterprise.tsx` |
-| `/staffing-partnership` | ✅ `partnerships.staffing.tsx` |
-| `/talent-network` | ✅ `talent-network.tsx`, `global-talent.tsx`, `talent-marketplace.tsx` |
-| `/employer-onboarding` | ✅ `employer-onboarding.tsx` |
-| `/case-studies` | ✅ `case-studies.tsx` |
-| `/blog` + posts | ✅ `blog.index.tsx`, `blog.$slug.tsx`, `blog.category.$slug.tsx` |
-| `/knowledge-base` | ✅ `knowledge-base.tsx` |
-| `/faq` | ✅ `faq.tsx` |
-| `/about` | ✅ `about.tsx` |
-| `/journey` | ✅ `journey.tsx` |
-| `/contact` | ✅ `contact.tsx` |
-| `/privacy` `/terms` | ✅ |
-| `/sitemap` | ✅ HTML sitemap + XML sitemap (`sitemap[.]xml.ts`) |
-| Job board | ✅ `jobs.index.tsx`, `jobs.$id.index.tsx`, `jobs.$id.apply.tsx` |
-| Pilot signup | ✅ `pilot.tsx` |
-| Candidate join | ✅ `candidate-join.tsx` |
+| Source route family | Destination coverage | Verdict |
+| --- | --- | --- |
+| `/` | `index.tsx` | ✅ |
+| `/pricing` | `pricing.tsx` | ✅ (pricing model delta — §2) |
+| `/how-it-works` | `how-it-works.tsx` | ✅ |
+| `/industries` + detail | `industries.index.tsx`, `industries.$slug.tsx`, `industries.non-profit.tsx` | ⚠️ Source claims 57 verticals; destination ships **24 JSON industry records** under `src/content/industries/` plus batch modules `industries-v2.ts` / `industries-batch2.ts`. Confirm total published count vs marketing claim (§5). |
+| `/enterprise` | `enterprise.tsx` | ✅ |
+| `/staffing-partnership` | `partnerships.staffing.tsx` | ✅ |
+| `/talent-network` | `talent-network.tsx` | ✅ |
+| Talent variants | `global-talent.tsx`, `talent-marketplace.tsx` | ⚠️ Three near-adjacent surfaces; source has only one. Decide keep-all / merge / redirect (Prompt 2). |
+| `/employer-onboarding` | `employer-onboarding.tsx` | ✅ |
+| `/case-studies` | `case-studies.tsx` | ✅ |
+| `/blog` + posts + category | `blog.index.tsx`, `blog.$slug.tsx`, `blog.category.$slug.tsx` | ✅ |
+| `/knowledge-base` | `knowledge-base.tsx` | ✅ |
+| `/faq` | `faq.tsx` | ✅ |
+| `/about` | `about.tsx` | ✅ (founder count — §1) |
+| `/journey` | `journey.tsx` | ✅ |
+| `/contact` | `contact.tsx` | ✅ |
+| `/privacy` `/terms` | present | ✅ |
+| `/sitemap` + XML | `sitemap.tsx` + `sitemap[.]xml.ts` | ✅ |
+| Job board | `jobs.index.tsx`, `jobs.$id.index.tsx`, `jobs.$id.apply.tsx` | ✅ |
+| Pilot signup | `pilot.tsx` | ✅ |
+| Candidate flow | `candidate-join.tsx`, `candidate-success.tsx`, `apply.received.$applicationId.tsx` | ✅ |
+| Intake | `intake.tsx`, `intake_.confirmation.tsx` | ✅ |
+| Category/product pages | `platform.tsx`, `system.tsx`, `trust.tsx`, `pitch.tsx` | ➕ Destination-only surfaces (not on source). Decide whether source + deck should link out to these or absorb them. |
+| Orphan candidates | `solutions.tsx`, `resources.tsx`, `dev.catalogue.tsx` | ❌ Confirm each is linked from header/footer or route them for merge / redirect / removal. |
 
-**No missing route families.** Orphan candidates flagged for Prompt 2 review: `solutions.tsx`, `resources.tsx`, `dev.catalogue.tsx` — confirm each is linked from nav/footer or intentionally excluded.
+**No source route family is missing from destination.** Delta is orphan / duplicate destination routes, plus new destination-only category pages.
 
-## 5. Industry system (57 verticals)
+## 5. Industry system
 
-- Destination claims 57 industries; verify manifest count matches (see `industry-relationships.ts` + `industries.index.tsx`).
-- Each industry page must have a unique hero backdrop (see `industry-hero-backdrop.tsx`), unique intro copy, unique role focus, and internal links to related industries.
-- Risk flag: any industry falling back to generic imagery must be resolved before public relaunch (tracked in Prompts 21–29 batches).
+- Source deck: "57 verticals covered."
+- Destination: 24 JSON records under `src/content/industries/`, plus `industries-v2.ts` (104 `slug:` occurrences) and `industries-batch2.ts` (108 `slug:` occurrences). Effective public count depends on `industries.$slug.tsx` resolver.
+- **Gap**: reconcile actual published industry count vs the "57" marketing claim. If <57, either reduce the claim or ship the remaining industries with unique hero, intro copy, role focus, and internal links (already tracked in the industry-personalization prompts).
+- Risk: any industry falling back to a generic hero backdrop must be flagged before relaunch (see `industry-hero-backdrop.tsx`).
 
-## 6. Dashboard message vs. reality
+## 6. Dashboard message vs. product reality
 
-Public site now advertises: evidence-first scoring, weekly ranked delivery, role blueprint, candidate dossier, comparison tableau, silver medalist memory. All exist in the authenticated product (`/client/*`, `/admin/*`). Marketing → product parity is intact; keep marketing copy truthful — do not add promises the workspace has not shipped.
+Public site advertises: evidence-first scoring, weekly ranked delivery, role blueprint, candidate dossier, comparison tableau, silver medalist memory, WBR, portfolio rollup, offer/hire tracking, source attribution, outreach engine, journey timeline, executive portfolio, evidence viewer, AI copilot (client + admin), share tokens / stakeholder review.
 
-## 7. Top divergences to close
+All exist behind `/client/*`, `/admin/*`, `/share/$token`, `/boardroom`. Marketing → product parity intact. **Do not advertise new capabilities the workspace has not shipped.**
 
-1. Confirm `/pricing` displayed subscription entry price string matches source wording.
-2. Confirm founder bios + photos on `/about` are current and approved.
-3. Confirm every one of the 57 industry pages has unique imagery + copy (audit in Prompt 21+).
-4. Confirm orphan public routes (`solutions.tsx`, `resources.tsx`) are linked or intentionally excluded — decide in Prompt 2.
-5. Reconcile any remaining "software vs. agency" language on legacy sections to match the destination's Hybrid Human + AI positioning.
+## 7. Top divergences to close (ranked)
+
+1. **Pricing model** — packages vs subscription. Single largest source ↔ destination gap (§2). Decision required before any public relaunch.
+2. **Founder count** — 2 (source) vs 3 (destination). Update whichever is stale (§1).
+3. **Industry count** — 57 (source claim) vs 24 published JSON + batch modules (destination). Reconcile the number or ship the pages (§5).
+4. **Turnaround SLA** — "7–14 days" (source) vs "14-day" (destination). One number, one story (§2).
+5. **Talent surfaces** — `/talent-network` + `/global-talent` + `/talent-marketplace` on destination vs one on source. Decide merge or scope (§4).
+6. **Orphan routes** — `/solutions`, `/resources`, `/dev/catalogue`. Header/footer link or remove (§4, deliverable B2).
+7. **Destination-only category pages** — `/platform`, `/system`, `/trust`, `/pitch`. Either add to source + deck, or link source → destination for those narratives (§4).
+8. **Client logos + testimonials** — provenance + consent audit before any public relaunch (§3).
+
+---
 
 ## PASS / FAIL
 
-**PASS** — every major source message, route family, founder reference, pricing claim, and product promise has a destination decision recorded above. Implementation files changed = 0.
+**PASS** — every major source message, route family, founder reference, pricing claim, and product promise has a documented destination decision (aligned, or flagged with an explicit reconciliation action). Implementation files changed: **0**.
 
-## Artifacts
-
-- Changed files: none (docs only).
-- Companion docs: `positioning-delta.json`, `missing-proof-and-route-list.md`.
-- Route manifest: to be produced in Prompt 2.
+Companion artifacts: `positioning-delta.json`, `missing-proof-and-route-list.md`.
