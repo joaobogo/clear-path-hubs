@@ -198,11 +198,12 @@ export function RoiCalculator({
     <section
       aria-labelledby="roi-calc-heading"
       className={cn(
-        "rounded-3xl border border-[color:var(--brand-navy)]/10 bg-white p-6 shadow-sm sm:p-10 lg:p-12 motion-safe:transition-colors",
+        "rounded-3xl border border-[color:var(--brand-navy)]/10 bg-white p-4 shadow-sm sm:p-10 lg:p-12 motion-safe:transition-colors",
         className,
       )}
     >
       <div className="grid gap-10 lg:grid-cols-12 lg:gap-14 items-start">
+
         {/* -------------------------------------------- Inputs column (5/12) */}
         <div className="lg:col-span-5 space-y-10 order-2 lg:order-1">
           {showHeading ? (
