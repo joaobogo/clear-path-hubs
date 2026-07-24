@@ -34,6 +34,7 @@ import {
 	Bot,
 	Radar,
 	LineChart,
+	Share2,
 } from "lucide-react";
 import {
  WorkspaceShell,
