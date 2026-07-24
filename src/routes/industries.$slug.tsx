@@ -1,6 +1,6 @@
 import { createFileRoute, notFound, redirect } from "@tanstack/react-router";
 import { ContentPage } from "@/components/marketing/content-page";
-import { IndustryTemplate } from "@/components/marketing/industry-template";
+import { IndustryPage } from "@/components/marketing/industry-page";
 import { getIndustry } from "@/lib/marketing/content";
 import { getIndustryEntry } from "@/content/industries-v2";
 import { marketingHead } from "@/lib/marketing/head";
@@ -68,6 +68,6 @@ export const Route = createFileRoute("/industries/$slug")({
 
 function IndustryDetail() {
   const { v2, legacy } = Route.useLoaderData();
-  if (v2) return <IndustryTemplate entry={v2} />;
+  if (v2) return <IndustryPage entry={v2} />;
   return <ContentPage entry={legacy} eyebrow="Industry" />;
 }
