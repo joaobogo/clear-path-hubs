@@ -9,6 +9,11 @@
  * All variants share the same math (see src/lib/roi-calculator.ts) and the
  * same canonical pricing (see src/config/public-pricing.ts). No database
  * reads or writes. No anonymous input persistence.
+ *
+ * Visual direction: Editorial ledger — inputs in a cream column on the left,
+ * a large navy "annual savings" card on the right with the winning number set
+ * in italic display serif. Traditional vs TaaSFlow split lives beneath the
+ * headline. Selected in the Phase 1 redesign ritual (see docs/brand-system.md).
  */
 
 import * as React from "react";
@@ -31,30 +36,19 @@ export type RoiCalculatorVariant = "homepage" | "pricing" | "presentation";
 
 export interface RoiCalculatorProps {
   variant?: RoiCalculatorVariant;
-  /** When false, the component renders results only (no eyebrow/heading). */
   showHeading?: boolean;
-  /** Override the default eyebrow. */
   eyebrow?: string;
-  /** Override the default heading. */
   heading?: string;
-  /** Override the default supporting copy. */
   supportingCopy?: string;
-  /** When false, hide the pair of CTAs beneath the results. */
   showCtas?: boolean;
-  /**
-   * Fires whenever the computed result changes. Downstream consumers use this
-   * to adapt CTA copy without duplicating pricing math (single source of truth
-   * = src/lib/roi-calculator.ts).
-   */
   onResultChange?: (result: import("@/lib/roi-calculator").CalculatorResult) => void;
   className?: string;
 }
 
-
 const DEFAULT_EYEBROW = "Recruiting Cost Calculator";
-const DEFAULT_HEADING = "Cut your cost-per-hire. See the math.";
+const DEFAULT_HEADING = "Quantify your hiring advantage.";
 const DEFAULT_COPY =
-  "Adjust the assumptions to reflect your hiring plan.";
+  "Adjust the variables to compare traditional recruitment costs against the TaaSFlow model.";
 
 function clamp(value: number, min: number, max: number) {
   if (!Number.isFinite(value)) return min;
@@ -70,9 +64,9 @@ function formatPercent(fraction: number) {
   return `${Math.round(fraction * 100)}%`;
 }
 
-/* --------------------------------------------------------------- Stepper */
+/* --------------------------------------------------------------- Field */
 
-interface StepperProps {
+interface FieldProps {
   id: string;
   label: string;
   ariaLabel?: string;
@@ -86,7 +80,7 @@ interface StepperProps {
   showSlider?: boolean;
 }
 
-function Stepper({
+function Field({
   id,
   label,
   ariaLabel,
@@ -98,16 +92,16 @@ function Stepper({
   format,
   helper,
   showSlider = true,
-}: StepperProps) {
+}: FieldProps) {
   const dec = () => onChange(clamp(value - step, min, max));
   const inc = () => onChange(clamp(value + step, min, max));
 
   return (
-    <div className="rounded-xl border border-[color:var(--brand-navy)]/10 bg-white p-4">
-      <div className="flex items-center justify-between gap-3">
+    <div className="space-y-3">
+      <div className="flex items-end justify-between gap-3">
         <label
           htmlFor={id}
-          className="text-xs font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/65"
+          className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/45"
         >
           {label}
         </label>
@@ -117,13 +111,13 @@ function Stepper({
             aria-label={`Decrease ${ariaLabel ?? label}`}
             onClick={dec}
             disabled={value <= min}
-            className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-[color:var(--brand-navy)]/15 bg-white text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)] disabled:cursor-not-allowed disabled:opacity-40"
+            className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-[color:var(--brand-navy)]/15 bg-white text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)] disabled:cursor-not-allowed disabled:opacity-40"
           >
-            <Minus className="h-4 w-4" aria-hidden />
+            <Minus className="h-3.5 w-3.5" aria-hidden />
           </button>
           <output
             htmlFor={id}
-            className="min-w-[4.5rem] rounded-md bg-[color:var(--brand-navy)]/5 px-3 py-1.5 text-center text-sm font-semibold tabular-nums text-[color:var(--brand-navy)]"
+            className="min-w-[5.5rem] text-right font-[family-name:var(--brand-font-display)] text-xl font-medium tabular-nums text-[color:var(--brand-navy)]"
             aria-live="polite"
           >
             {format(value)}
@@ -133,75 +127,28 @@ function Stepper({
             aria-label={`Increase ${ariaLabel ?? label}`}
             onClick={inc}
             disabled={value >= max}
-            className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-[color:var(--brand-navy)]/15 bg-white text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)] disabled:cursor-not-allowed disabled:opacity-40"
+            className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-[color:var(--brand-navy)]/15 bg-white text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)] disabled:cursor-not-allowed disabled:opacity-40"
           >
-            <Plus className="h-4 w-4" aria-hidden />
+            <Plus className="h-3.5 w-3.5" aria-hidden />
           </button>
         </div>
       </div>
       {showSlider ? (
-        <div className="mt-3">
-          <Slider
-            id={id}
-            aria-label={ariaLabel ?? label}
-            value={[value]}
-            min={min}
-            max={max}
-            step={step}
-            onValueChange={(v) => onChange(clamp(v[0] ?? min, min, max))}
-          />
-        </div>
-      ) : null}
-      {helper ? (
-        <p className="mt-2 text-[11px] text-[color:var(--brand-navy)]/55">{helper}</p>
-      ) : null}
-    </div>
-  );
-}
-
-/* --------------------------------------------------------------- ResultRow */
-
-function ResultRow({
-  label,
-  value,
-  emphasis = false,
-  muted = false,
-  hint,
-}: {
-  label: string;
-  value: React.ReactNode;
-  emphasis?: boolean;
-  muted?: boolean;
-  hint?: string;
-}) {
-  return (
-    <div
-      className={cn(
-        "flex items-baseline justify-between gap-4 border-b border-[color:var(--brand-navy)]/8 py-2.5 last:border-0",
-        muted && "text-[color:var(--brand-navy)]/55",
+        <Slider
+          id={id}
+          aria-label={ariaLabel ?? label}
+          value={[value]}
+          min={min}
+          max={max}
+          step={step}
+          onValueChange={(v) => onChange(clamp(v[0] ?? min, min, max))}
+        />
+      ) : (
+        <div className="h-px w-full bg-[color:var(--brand-navy)]/10" />
       )}
-    >
-      <div className="min-w-0">
-        <p className={cn(
-          "text-sm",
-          emphasis ? "font-semibold text-[color:var(--brand-navy)]" : "text-[color:var(--brand-navy)]/75",
-        )}>
-          {label}
-        </p>
-        {hint ? (
-          <p className="mt-0.5 text-[11px] text-[color:var(--brand-navy)]/55">{hint}</p>
-        ) : null}
-      </div>
-      <div
-        className={cn(
-          "shrink-0 text-right tabular-nums",
-          emphasis
-            ? "font-[family-name:var(--brand-font-display)] text-2xl font-semibold text-[color:var(--brand-navy)]"
-            : "text-sm font-semibold text-[color:var(--brand-navy)]",
-        )}
-      >
-        {value}
-      </div>
+      {helper ? (
+        <p className="text-[11px] text-[color:var(--brand-navy)]/55">{helper}</p>
+      ) : null}
     </div>
   );
 }
@@ -225,7 +172,7 @@ export function RoiCalculator({
     recruiterHourlyUsd: CALCULATOR_DEFAULTS.recruiterHourlyUsd,
     sourcingHoursPerRole: CALCULATOR_DEFAULTS.sourcingHoursPerRole,
   });
-  const [showHelper, setShowHelper] = React.useState(false);
+  const [showFormula, setShowFormula] = React.useState(false);
 
   const result = React.useMemo(() => computeRoi(inputs), [inputs]);
 
@@ -233,106 +180,59 @@ export function RoiCalculator({
     onResultChange?.(result);
   }, [result, onResultChange]);
 
-
   const patch = <K extends keyof CalculatorInputs>(key: K, v: number) =>
     setInputs((prev) => ({ ...prev, [key]: v }));
 
   const headingSize =
     variant === "presentation"
-      ? "text-4xl sm:text-5xl"
-      : variant === "pricing"
-        ? "text-3xl sm:text-4xl"
-        : "text-3xl sm:text-4xl";
+      ? "text-5xl sm:text-6xl"
+      : "text-4xl sm:text-5xl";
+
+  const savingsHeadline = result.isCustomPricing
+    ? "Custom"
+    : result.projectedSavingsUsd == null
+      ? "—"
+      : formatUsdCompact(result.projectedSavingsUsd);
 
   return (
     <section
       aria-labelledby="roi-calc-heading"
       className={cn(
-        "rounded-3xl border border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-cream)] p-6 shadow-sm sm:p-8 lg:p-10 motion-safe:transition-colors",
+        "rounded-3xl border border-[color:var(--brand-navy)]/10 bg-white p-6 shadow-sm sm:p-10 lg:p-12 motion-safe:transition-colors",
         className,
       )}
     >
-      {showHeading ? (
-        <header className="max-w-3xl">
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">
-            {eyebrow}
-          </p>
-          <h2
-            id="roi-calc-heading"
-            className={cn(
-              "mt-3 font-[family-name:var(--brand-font-display)] font-semibold tracking-tight text-[color:var(--brand-navy)]",
-              headingSize,
-            )}
-          >
-            {heading}
-          </h2>
-          <p className="mt-3 text-[color:var(--brand-navy)]/75">{supportingCopy}</p>
-
-          {/* How to read this — expandable helper (Prompt 12) */}
-          <div className="mt-4 rounded-xl border border-[color:var(--brand-navy)]/10 bg-white">
-            <button
-              type="button"
-              aria-expanded={showHelper}
-              aria-controls="roi-helper-body"
-              onClick={() => setShowHelper((s) => !s)}
-              className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left text-sm font-semibold text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/[0.03] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
-            >
-              <span className="inline-flex items-center gap-2">
-                <Info className="h-4 w-4 text-[color:var(--brand-ocean)]" aria-hidden />
-                How to read this calculator
-              </span>
-              <span className="text-xs font-medium text-[color:var(--brand-navy)]/55">
-                {showHelper ? "Hide" : "Show"}
-              </span>
-            </button>
-            {showHelper ? (
-              <div
-                id="roi-helper-body"
-                className="border-t border-[color:var(--brand-navy)]/8 px-4 py-3 text-sm leading-relaxed text-[color:var(--brand-navy)]/75"
+      <div className="grid gap-10 lg:grid-cols-12 lg:gap-14 items-start">
+        {/* -------------------------------------------- Inputs column (5/12) */}
+        <div className="lg:col-span-5 space-y-10 order-2 lg:order-1">
+          {showHeading ? (
+            <header className="space-y-4">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[color:var(--brand-navy)]/60">
+                {eyebrow}
+              </p>
+              <h2
+                id="roi-calc-heading"
+                className={cn(
+                  "font-[family-name:var(--brand-font-display)] leading-[1.05] tracking-tight text-[color:var(--brand-navy)]",
+                  headingSize,
+                )}
               >
-                <ul className="grid gap-2 sm:grid-cols-2">
-                  <li>
-                    <span className="font-semibold text-[color:var(--brand-navy)]">Traditional cost</span> = agency placement (positions × salary × fee) plus internal sourcing time (positions × hourly × hours).
-                  </li>
-                  <li>
-                    <span className="font-semibold text-[color:var(--brand-navy)]">TaaSFlow cost</span> comes from the approved package that covers your volume — never a fabricated number.
-                  </li>
-                  <li>
-                    <span className="font-semibold text-[color:var(--brand-navy)]">Presets</span> only change the inputs. The math still runs against the same approved pricing.
-                  </li>
-                  <li>
-                    <span className="font-semibold text-[color:var(--brand-navy)]">Custom quote</span> appears when your volume crosses into Subscription — no savings number is invented.
-                  </li>
-                  <li>
-                    <span className="font-semibold text-[color:var(--brand-navy)]">Negative savings</span> is shown honestly when your inputs don't favor us — we surface it instead of hiding it.
-                  </li>
-                  <li>
-                    <span className="font-semibold text-[color:var(--brand-navy)]">Sliders</span> respond to arrow keys, Page Up/Down, and Home/End for precise adjustment.
-                  </li>
-                </ul>
-              </div>
-            ) : null}
-          </div>
-        </header>
-      ) : null}
+                {heading.split(" ").slice(0, -2).join(" ")}{" "}
+                <span className="italic">
+                  {heading.split(" ").slice(-2).join(" ")}
+                </span>
+              </h2>
+              <p className="max-w-sm text-[color:var(--brand-navy)]/60">
+                {supportingCopy}
+              </p>
+            </header>
+          ) : null}
 
-
-      <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)]">
-        {/* Inputs — rendered second on mobile so the numbers land first */}
-        <div className="order-2 lg:order-1">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <p className="text-xs font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/55">
-              Assumptions
-            </p>
-            <p className="text-[11px] text-[color:var(--brand-navy)]/50">
-              Presets adjust inputs only — never results.
-            </p>
-          </div>
-
+          {/* Preset chips */}
           <div
             role="group"
             aria-label="Scenario presets"
-            className="mt-3 -mx-1 flex gap-2 overflow-x-auto px-1 pb-1 sm:flex-wrap sm:overflow-visible sm:pb-0"
+            className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1 sm:flex-wrap sm:overflow-visible sm:pb-0"
           >
             {CALCULATOR_PRESETS.map((preset) => {
               const active =
@@ -356,10 +256,10 @@ export function RoiCalculator({
                     });
                   }}
                   className={cn(
-                    "min-h-9 shrink-0 whitespace-nowrap rounded-full border px-3.5 py-1.5 text-xs font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]",
+                    "min-h-8 shrink-0 whitespace-nowrap rounded-full border px-3.5 py-1 text-[11px] font-semibold uppercase tracking-wider transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]",
                     active
                       ? "border-[color:var(--brand-navy)] bg-[color:var(--brand-navy)] text-white"
-                      : "border-[color:var(--brand-navy)]/15 bg-white text-[color:var(--brand-navy)] hover:border-[color:var(--brand-navy)]/30",
+                      : "border-[color:var(--brand-navy)]/20 bg-transparent text-[color:var(--brand-navy)]/75 hover:border-[color:var(--brand-navy)]/40 hover:text-[color:var(--brand-navy)]",
                   )}
                 >
                   {preset.label}
@@ -368,19 +268,31 @@ export function RoiCalculator({
             })}
           </div>
 
-          <div className="mt-4 grid gap-3">
-            <Stepper
+          {/* Inputs */}
+          <div className="space-y-8">
+            <Field
               id="roi-positions"
-              label="Positions to fill"
+              label="Number of positions"
               value={inputs.positions}
               min={CALCULATOR_LIMITS.positions.min}
               max={CALCULATOR_LIMITS.positions.max}
               step={CALCULATOR_LIMITS.positions.step}
-              format={(v) => `${v}`}
+              format={(v) => `${v} ${v === 1 ? "role" : "roles"}`}
               onChange={(v) => patch("positions", v)}
-              helper="Approved pricing tiers apply from 1 to 10 positions; 11+ moves to Subscription."
+              helper="1–10 maps to approved packages; 11+ moves to a scoped quote."
             />
-            <Stepper
+            <Field
+              id="roi-fee"
+              label="Agency fee percentage"
+              ariaLabel="agency fee percentage"
+              value={inputs.agencyFeePct}
+              min={CALCULATOR_LIMITS.agencyFeePct.min}
+              max={CALCULATOR_LIMITS.agencyFeePct.max}
+              step={CALCULATOR_LIMITS.agencyFeePct.step}
+              format={(v) => `${Math.round(v * 100)}%`}
+              onChange={(v) => patch("agencyFeePct", Math.round(v * 100) / 100)}
+            />
+            <Field
               id="roi-salary"
               label="Average salary"
               value={inputs.averageSalaryUsd}
@@ -390,37 +302,26 @@ export function RoiCalculator({
               format={(v) => formatUsdCompact(v)}
               onChange={(v) => patch("averageSalaryUsd", v)}
             />
-            <Stepper
-              id="roi-fee"
-              label="Typical agency fee"
-              ariaLabel="agency fee percentage"
-              value={inputs.agencyFeePct}
-              min={CALCULATOR_LIMITS.agencyFeePct.min}
-              max={CALCULATOR_LIMITS.agencyFeePct.max}
-              step={CALCULATOR_LIMITS.agencyFeePct.step}
-              format={(v) => `${Math.round(v * 100)}%`}
-              onChange={(v) => patch("agencyFeePct", Math.round(v * 100) / 100)}
-            />
-            <div className="grid gap-3 sm:grid-cols-2">
-              <Stepper
+            <div className="grid grid-cols-2 gap-8 pt-2">
+              <Field
                 id="roi-hourly"
-                label="Recruiter hourly cost"
+                label="Hourly rate"
                 value={inputs.recruiterHourlyUsd}
                 min={CALCULATOR_LIMITS.recruiterHourlyUsd.min}
                 max={CALCULATOR_LIMITS.recruiterHourlyUsd.max}
                 step={CALCULATOR_LIMITS.recruiterHourlyUsd.step}
-                format={(v) => `$${v}/hr`}
+                format={(v) => `$${v}`}
                 onChange={(v) => patch("recruiterHourlyUsd", v)}
                 showSlider={false}
               />
-              <Stepper
+              <Field
                 id="roi-hours"
-                label="Sourcing hours per role"
+                label="Hours per role"
                 value={inputs.sourcingHoursPerRole}
                 min={CALCULATOR_LIMITS.sourcingHoursPerRole.min}
                 max={CALCULATOR_LIMITS.sourcingHoursPerRole.max}
                 step={CALCULATOR_LIMITS.sourcingHoursPerRole.step}
-                format={(v) => `${v}h`}
+                format={(v) => `${v} hrs`}
                 onChange={(v) => patch("sourcingHoursPerRole", v)}
                 showSlider={false}
               />
@@ -428,282 +329,214 @@ export function RoiCalculator({
           </div>
         </div>
 
-        {/* Results */}
-        <div
-          className="order-1 rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-5 sm:p-6 lg:order-2"
-          aria-live="polite"
-          aria-atomic="true"
-        >
-          <p className="text-xs font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/55">
-            Estimated cost comparison
-          </p>
+        {/* ---------------------------------------- Results column (7/12) */}
+        <div className="lg:col-span-7 order-1 lg:order-2">
+          <div
+            className="relative overflow-hidden bg-[color:var(--brand-navy)] p-8 text-white shadow-2xl sm:p-12 md:p-14 rounded-2xl"
+            aria-live="polite"
+            aria-atomic="true"
+          >
+            {/* Decorative crosshair — echoes the ledger metaphor */}
+            <div className="pointer-events-none absolute right-6 top-6 opacity-[0.08]" aria-hidden>
+              <svg width="140" height="140" viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="0.5">
+                <circle cx="50" cy="50" r="45" />
+                <path d="M50 5 L50 95 M5 50 L95 50" />
+              </svg>
+            </div>
 
-          {/* Proportional cost bars */}
-          {(() => {
-            const maxCost = Math.max(
-              result.traditionalCostUsd,
-              result.taasflowCostUsd ?? 0,
-              1,
-            );
-            const tradPct = (result.traditionalCostUsd / maxCost) * 100;
-            const taasPct = result.taasflowCostUsd == null
-              ? 0
-              : (result.taasflowCostUsd / maxCost) * 100;
-            return (
-              <div className="mt-4 space-y-3" aria-hidden>
+            <div className="relative z-10">
+              <span className="block text-[11px] font-semibold uppercase tracking-[0.2em] opacity-60">
+                {result.isCustomPricing ? "Scoped quote required" : "Annual savings summary"}
+              </span>
+
+              <div className="mt-10">
+                <h3 className="font-[family-name:var(--brand-font-display)] italic tracking-tight leading-[0.95] text-6xl sm:text-7xl md:text-8xl tabular-nums">
+                  {savingsHeadline}
+                </h3>
+                <p className="mt-3 max-w-md text-base opacity-80 font-light">
+                  {result.isCustomPricing
+                    ? "Volumes above 10 positions run on a scoped quote — no savings figure is invented."
+                    : result.hasNegativeSavings
+                      ? "At these assumptions, TaaSFlow doesn't beat your traditional cost. Adjust volume, fee, or internal hours."
+                      : `Total projected annual savings with TaaSFlow${result.projectedReductionPct != null ? ` — ${formatPercent(result.projectedReductionPct)} reduction` : ""}.`}
+                </p>
+              </div>
+
+              {/* Traditional vs TaaSFlow ledger */}
+              <div className="mt-14 grid grid-cols-1 gap-10 border-t border-white/20 pt-10 md:grid-cols-2">
                 <div>
-                  <div className="flex justify-between text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/60">
-                    <span>Traditional</span>
-                    <span className="tabular-nums text-[color:var(--brand-navy)]">
-                      {formatUsdCompact(result.traditionalCostUsd)}
-                    </span>
-                  </div>
-                  <div className="mt-1 h-2.5 overflow-hidden rounded-full bg-[color:var(--brand-navy)]/8">
-                    <div
-                      className="h-full rounded-full bg-[color:var(--brand-navy)]/70 motion-safe:transition-all motion-safe:duration-500"
-                      style={{ width: `${Math.max(2, Math.min(100, tradPct))}%` }}
-                    />
-                  </div>
+                  <span className="block text-[10px] uppercase tracking-[0.18em] opacity-45">
+                    Traditional agency model
+                  </span>
+                  <p className="mt-3 font-[family-name:var(--brand-font-display)] text-3xl md:text-4xl tabular-nums text-white/90">
+                    {formatUsdCompact(result.traditionalCostUsd)}
+                  </p>
+                  <p className="mt-1 text-xs opacity-50">
+                    {inputs.positions} × {formatUsdCompact(inputs.averageSalaryUsd)} × {Math.round(inputs.agencyFeePct * 100)}% + internal sourcing.
+                  </p>
                 </div>
                 <div>
-                  <div className="flex justify-between text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/60">
-                    <span>TaaSFlow</span>
-                    <span className="tabular-nums text-[color:var(--brand-navy)]">
-                      {result.taasflowCostUsd == null
-                        ? "Custom"
-                        : formatUsdCompact(result.taasflowCostUsd)}
-                    </span>
-                  </div>
-                  <div className="mt-1 h-2.5 overflow-hidden rounded-full bg-[color:var(--brand-ocean)]/10">
-                    <div
-                      className="h-full rounded-full bg-[color:var(--brand-ocean)] motion-safe:transition-all motion-safe:duration-500"
-                      style={{
-                        width: result.taasflowCostUsd == null
-                          ? "8%"
-                          : `${Math.max(2, Math.min(100, taasPct))}%`,
-                      }}
-                    />
-                  </div>
+                  <span className="block text-[10px] uppercase tracking-[0.18em] text-white/70">
+                    TaaSFlow platform
+                    {result.taasflowPackage ? ` · ${result.taasflowPackage.name}` : ""}
+                  </span>
+                  <p className="mt-3 font-[family-name:var(--brand-font-display)] text-3xl md:text-4xl tabular-nums">
+                    {result.taasflowCostUsd == null
+                      ? "Custom"
+                      : formatUsdCompact(result.taasflowCostUsd)}
+                  </p>
+                  <p className="mt-1 text-xs opacity-50">
+                    {result.taasflowCostUsd == null
+                      ? "Scoped with founders — no fabricated number."
+                      : result.taasflowPackage?.billingType === "monthly-subscription"
+                        ? `Per month · annualized ${formatUsdCompact(result.taasflowCostUsd * 12)}`
+                        : "Flat package fee."}
+                  </p>
                 </div>
               </div>
-            );
-          })()}
 
-          <div className="mt-5">
-            <ResultRow
-              label="Traditional recruiting cost"
-              value={formatUsdCompact(result.traditionalCostUsd)}
-              emphasis
-            />
-            <ResultRow
-              label="Agency placement fees"
-              value={formatUsdCompact(result.agencyCostUsd)}
-              hint={`${inputs.positions} × ${formatUsdCompact(inputs.averageSalaryUsd)} × ${Math.round(inputs.agencyFeePct * 100)}%`}
-            />
-            <ResultRow
-              label="Internal sourcing cost"
-              value={formatUsdCompact(result.internalSourcingCostUsd)}
-              hint={`${inputs.positions} × $${inputs.recruiterHourlyUsd}/hr × ${inputs.sourcingHoursPerRole}h`}
-            />
+              {/* CTA */}
+              {showCtas ? (
+                <div className="mt-14 grid gap-3 sm:grid-cols-2">
+                  <Link
+                    to="/intake"
+                    onClick={() =>
+                      trackEvent("calculator.cta_clicked", {
+                        cta: "start_hiring",
+                        variant,
+                        mode: result.isCustomPricing
+                          ? "custom"
+                          : result.hasNegativeSavings
+                            ? "negative"
+                            : "standard",
+                        positions: inputs.positions,
+                        projected_savings_usd: result.projectedSavingsUsd ?? undefined,
+                      })
+                    }
+                    className="group inline-flex min-h-12 items-center justify-between gap-3 rounded-md bg-white px-6 py-4 text-sm font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)] transition-all hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                  >
+                    <span>Start hiring</span>
+                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden />
+                  </Link>
+                  <Link
+                    to={result.isCustomPricing ? "/contact" : "/pricing"}
+                    onClick={() =>
+                      trackEvent("calculator.cta_clicked", {
+                        cta: result.isCustomPricing ? "enterprise_quote" : "view_pricing",
+                        variant,
+                        positions: inputs.positions,
+                      })
+                    }
+                    className="inline-flex min-h-12 items-center justify-center gap-2 rounded-md border border-white/30 px-6 py-4 text-sm font-semibold uppercase tracking-[0.14em] text-white transition-all hover:bg-white hover:text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                  >
+                    {result.isCustomPricing ? "Talk to founders" : "View pricing"}
+                  </Link>
+                </div>
+              ) : null}
+            </div>
           </div>
 
-          <div className="mt-4 rounded-xl bg-[color:var(--brand-navy)] p-5 text-white">
-            <div className="flex items-baseline justify-between gap-4">
-              <p className="text-xs font-semibold uppercase tracking-wide text-white/70">
-                TaaSFlow cost
-              </p>
-              {result.taasflowPackage ? (
-                <p className="text-[11px] text-white/70">
-                  {result.taasflowPackage.name}
-                </p>
-              ) : null}
-            </div>
-            <div className="mt-2 flex items-baseline justify-between gap-4">
-              <p className="font-[family-name:var(--brand-font-display)] text-3xl font-semibold tabular-nums">
-                {result.taasflowCostUsd == null
-                  ? "Custom"
-                  : formatUsdCompact(result.taasflowCostUsd)}
-              </p>
-              {result.taasflowCostUsd != null ? (
-                <p className="text-xs text-white/70">
-                  {result.taasflowPackage?.billingType === "monthly-subscription"
-                    ? "per month"
-                    : "flat fee"}
-                </p>
-              ) : null}
-            </div>
-            {/* Annualized context — only meaningful for monthly billing */}
-            {result.taasflowCostUsd != null &&
-            result.taasflowPackage?.billingType === "monthly-subscription" ? (
-              <p className="mt-1 text-[11px] text-white/60">
-                Annualized reference: {formatUsdCompact(result.taasflowCostUsd * 12)} at 12 months.
-                Subscription is month-to-month — cancel anytime.
-              </p>
-            ) : null}
+          {/* Footnote rule */}
+          <div className="mt-6 flex items-center gap-4 px-2">
+            <div className="h-px flex-1 bg-[color:var(--brand-navy)]/10" />
+            <p className="text-[10px] uppercase tracking-[0.18em] text-[color:var(--brand-navy)]/45 whitespace-nowrap">
+              Directional · based on SHRM & Ashby 2025 benchmarks
+            </p>
+            <div className="h-px flex-1 bg-[color:var(--brand-navy)]/10" />
+          </div>
+        </div>
+      </div>
 
-
-            {result.isCustomPricing ? (
-              <div className="mt-4 rounded-lg bg-white/8 p-3 text-sm text-white/85">
-                <div className="flex items-start gap-2">
-                  <Info className="mt-0.5 h-4 w-4 shrink-0 text-white/80" aria-hidden />
-                  <p>
-                    This volume is scoped on a custom quote. Talk to Sales for
-                    an exact price — we don&rsquo;t fabricate a savings number
-                    when pricing isn&rsquo;t final.
-                  </p>
-                </div>
-                <Link
-                  to="/contact"
-                  onClick={() =>
-                    trackEvent("calculator.cta_clicked", {
-                      cta: "enterprise_quote_inline",
-                      variant,
-                      positions: inputs.positions,
-                    })
-                  }
-                  className="mt-3 inline-flex min-h-11 items-center justify-center gap-1.5 rounded-md bg-white px-4 py-2 text-sm font-semibold text-[color:var(--brand-navy)] hover:bg-white/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
-                >
-                  Talk to enterprise <ArrowRight className="h-4 w-4" aria-hidden />
-                </Link>
+      {/* Exact formula — collapsible */}
+      <div className="mt-10 rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white/70">
+        <button
+          type="button"
+          aria-expanded={showFormula}
+          aria-controls="roi-formula-body"
+          onClick={() => setShowFormula((s) => !s)}
+          className="flex w-full items-center justify-between gap-3 px-5 py-4 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)] sm:px-6"
+        >
+          <span className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-[color:var(--brand-navy)]/65">
+            <Calculator className="h-3.5 w-3.5" aria-hidden />
+            Exact formula, using your numbers
+          </span>
+          <span className="text-[11px] font-medium text-[color:var(--brand-navy)]/50">
+            {showFormula ? "Hide" : "Show"}
+          </span>
+        </button>
+        {showFormula ? (
+          <div
+            id="roi-formula-body"
+            className="border-t border-[color:var(--brand-navy)]/10 px-5 pb-6 pt-5 sm:px-6"
+          >
+            <dl className="grid gap-3 text-sm sm:grid-cols-2">
+              <div className="rounded-lg bg-[color:var(--brand-navy)]/5 p-3">
+                <dt className="text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/60">
+                  Agency placement
+                </dt>
+                <dd className="mt-1 font-mono text-[13px] tabular-nums text-[color:var(--brand-navy)]">
+                  {inputs.positions} × {formatUsdCompact(inputs.averageSalaryUsd)} × {Math.round(inputs.agencyFeePct * 100)}%
+                  <span className="mx-1 text-[color:var(--brand-navy)]/50">=</span>
+                  <span className="font-semibold">{formatUsdCompact(result.agencyCostUsd)}</span>
+                </dd>
               </div>
-            ) : (
-              <div className="mt-4 border-t border-white/15 pt-4">
-                <div className="flex items-baseline justify-between gap-4">
-                  <p className="text-xs font-semibold uppercase tracking-wide text-white/70">
-                    Projected savings
-                  </p>
-                  <p className="font-[family-name:var(--brand-font-display)] text-2xl font-semibold tabular-nums">
-                    {result.projectedSavingsUsd == null
-                      ? "—"
-                      : formatUsdCompact(result.projectedSavingsUsd)}
-                  </p>
-                </div>
-                <div className="mt-2 flex items-baseline justify-between gap-4">
-                  <p className="text-xs text-white/70">Projected reduction</p>
-                  <p className="text-sm font-semibold tabular-nums text-white/90">
-                    {result.projectedReductionPct == null
-                      ? "—"
-                      : formatPercent(result.projectedReductionPct)}
-                  </p>
-                </div>
-                {result.hasNegativeSavings ? (
-                  <p className="mt-3 rounded-md bg-white/10 p-2.5 text-xs text-white/85">
-                    At these assumptions, TaaSFlow does not show a cost
-                    reduction versus your inputs. Adjust volume, agency fee,
-                    or internal sourcing hours to compare a different scenario.
+              <div className="rounded-lg bg-[color:var(--brand-navy)]/5 p-3">
+                <dt className="text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/60">
+                  Internal sourcing
+                </dt>
+                <dd className="mt-1 font-mono text-[13px] tabular-nums text-[color:var(--brand-navy)]">
+                  {inputs.positions} × ${inputs.recruiterHourlyUsd}/hr × {inputs.sourcingHoursPerRole}h
+                  <span className="mx-1 text-[color:var(--brand-navy)]/50">=</span>
+                  <span className="font-semibold">{formatUsdCompact(result.internalSourcingCostUsd)}</span>
+                </dd>
+              </div>
+              <div className="rounded-lg bg-[color:var(--brand-navy)]/8 p-3 sm:col-span-2">
+                <dt className="text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/60">
+                  Traditional total vs TaaSFlow
+                </dt>
+                <dd className="mt-1 font-mono text-[13px] tabular-nums text-[color:var(--brand-navy)]">
+                  {formatUsdCompact(result.agencyCostUsd)} + {formatUsdCompact(result.internalSourcingCostUsd)}
+                  <span className="mx-1 text-[color:var(--brand-navy)]/50">=</span>
+                  <span className="font-semibold">{formatUsdCompact(result.traditionalCostUsd)}</span>
+                  <span className="mx-2 text-[color:var(--brand-navy)]/50">−</span>
+                  <span className="font-semibold">
+                    {result.taasflowCostUsd == null ? "Custom quote" : formatUsdCompact(result.taasflowCostUsd)}
+                  </span>
+                  {result.projectedSavingsUsd != null ? (
+                    <>
+                      <span className="mx-1 text-[color:var(--brand-navy)]/50">=</span>
+                      <span className="font-semibold text-[color:var(--brand-ocean)]">
+                        {formatUsdCompact(result.projectedSavingsUsd)} savings
+                      </span>
+                    </>
+                  ) : null}
+                </dd>
+                {result.isCustomPricing ? (
+                  <p className="mt-2 text-[11px] text-[color:var(--brand-navy)]/60">
+                    No savings figure is invented at this volume — the number comes from a scoped quote.
                   </p>
                 ) : null}
               </div>
-            )}
-          </div>
-
-          <p className="mt-4 text-[11px] text-[color:var(--brand-navy)]/55">
-            Traditional cost = agency placement + internal sourcing. TaaSFlow
-            cost comes from the current approved pricing tier for the selected
-            volume. Amounts shown to nearest hundred.
-          </p>
-        </div>
-      </div>
-
-      {/* Exact formula — no hidden math */}
-      <div className="mt-6 rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white/70 p-5 sm:p-6">
-        <p className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">
-          <Calculator className="h-3.5 w-3.5" aria-hidden />
-          Exact formula, using your numbers
-        </p>
-        <dl className="mt-3 grid gap-3 text-sm sm:grid-cols-2">
-          <div className="rounded-lg bg-[color:var(--brand-navy)]/5 p-3">
-            <dt className="text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/60">
-              Agency placement
-            </dt>
-            <dd className="mt-1 font-mono text-[13px] tabular-nums text-[color:var(--brand-navy)]">
-              {inputs.positions} × {formatUsdCompact(inputs.averageSalaryUsd)} × {Math.round(inputs.agencyFeePct * 100)}%
-              <span className="mx-1 text-[color:var(--brand-navy)]/50">=</span>
-              <span className="font-semibold">{formatUsdCompact(result.agencyCostUsd)}</span>
-            </dd>
-          </div>
-          <div className="rounded-lg bg-[color:var(--brand-navy)]/5 p-3">
-            <dt className="text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/60">
-              Internal sourcing
-            </dt>
-            <dd className="mt-1 font-mono text-[13px] tabular-nums text-[color:var(--brand-navy)]">
-              {inputs.positions} × ${inputs.recruiterHourlyUsd}/hr × {inputs.sourcingHoursPerRole}h
-              <span className="mx-1 text-[color:var(--brand-navy)]/50">=</span>
-              <span className="font-semibold">{formatUsdCompact(result.internalSourcingCostUsd)}</span>
-            </dd>
-          </div>
-          <div className="rounded-lg bg-[color:var(--brand-navy)]/8 p-3 sm:col-span-2">
-            <dt className="text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/60">
-              Traditional total vs TaaSFlow
-            </dt>
-            <dd className="mt-1 font-mono text-[13px] tabular-nums text-[color:var(--brand-navy)]">
-              {formatUsdCompact(result.agencyCostUsd)} + {formatUsdCompact(result.internalSourcingCostUsd)}
-              <span className="mx-1 text-[color:var(--brand-navy)]/50">=</span>
-              <span className="font-semibold">{formatUsdCompact(result.traditionalCostUsd)}</span>
-              <span className="mx-2 text-[color:var(--brand-navy)]/50">−</span>
-              <span className="font-semibold">
-                {result.taasflowCostUsd == null ? "Custom quote" : formatUsdCompact(result.taasflowCostUsd)}
-              </span>
-              {result.projectedSavingsUsd != null ? (
-                <>
-                  <span className="mx-1 text-[color:var(--brand-navy)]/50">=</span>
-                  <span className="font-semibold text-[color:var(--brand-ocean)]">
-                    {formatUsdCompact(result.projectedSavingsUsd)} savings
-                  </span>
-                </>
-              ) : null}
-            </dd>
+            </dl>
             {result.isCustomPricing ? (
-              <p className="mt-2 text-[11px] text-[color:var(--brand-navy)]/60">
-                No savings figure is invented at this volume — the number comes from a scoped quote.
-              </p>
+              <div className="mt-4 flex items-start gap-2 rounded-md bg-[color:var(--brand-navy)]/5 p-3 text-sm text-[color:var(--brand-navy)]/80">
+                <Info className="mt-0.5 h-4 w-4 shrink-0 text-[color:var(--brand-ocean)]" aria-hidden />
+                <p>
+                  This volume is scoped on a custom quote. Talk to the founders for an
+                  exact price — we don&rsquo;t fabricate a savings number when pricing
+                  isn&rsquo;t final.
+                </p>
+              </div>
             ) : null}
           </div>
-        </dl>
+        ) : null}
       </div>
-
-      {showCtas ? (
-        <div className="mt-8 flex flex-wrap items-center gap-3">
-          <Link
-            to="/intake"
-            onClick={() =>
-              trackEvent("calculator.cta_clicked", {
-                cta: "start_hiring",
-                variant,
-                mode: result.isCustomPricing
-                  ? "custom"
-                  : result.hasNegativeSavings
-                    ? "negative"
-                    : "standard",
-                positions: inputs.positions,
-                projected_savings_usd: result.projectedSavingsUsd ?? undefined,
-              })
-            }
-            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[color:var(--brand-navy-dark)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
-          >
-            Start Hiring <ArrowRight className="h-4 w-4" aria-hidden />
-          </Link>
-          <Link
-            to={result.isCustomPricing ? "/contact" : "/pricing"}
-            onClick={() =>
-              trackEvent("calculator.cta_clicked", {
-                cta: result.isCustomPricing ? "enterprise_quote" : "view_pricing",
-                variant,
-                positions: inputs.positions,
-              })
-            }
-            className="inline-flex min-h-11 items-center justify-center rounded-md border border-[color:var(--brand-navy)]/15 bg-white px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
-          >
-            {result.isCustomPricing ? "Get Enterprise Quote" : "View Pricing"}
-          </Link>
-        </div>
-      ) : null}
 
       <p className="mt-6 max-w-3xl text-xs text-[color:var(--brand-navy)]/55">
         {CALCULATOR_DISCLAIMER}
       </p>
 
-      {/* Belt-and-suspenders: expose exact figures for screen readers */}
+      {/* Belt-and-suspenders: exact figures for screen readers */}
       <p className="sr-only" aria-live="polite">
         Traditional recruiting cost {formatUsdExact(result.traditionalCostUsd)}.
         TaaSFlow cost{" "}
