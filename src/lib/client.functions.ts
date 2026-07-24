@@ -39,7 +39,7 @@ export type { MatchStage };
 async function resolveContext(supabase: AnyRow, userId: string, orgId?: string) {
   const { data: memberships, error } = await supabase
     .from("memberships")
-    .select("organization_id, role, status, organizations(id, name, industry, parent_organization_id)")
+    .select("organization_id, role, status, organizations(id, name, industry, parent_organization_id, logo_url, brand_display_name, brand_primary_color, brand_accent_color)")
     .eq("user_id", userId)
     .eq("status", "active");
   if (error) throw new Error(error.message);
