@@ -1363,7 +1363,7 @@ function Home() {
               </div>
               <ul className="flex flex-wrap gap-x-5 gap-y-1.5 text-xs text-[color:var(--brand-navy)]/65">
                 {[
-                  "Ranked shortlist within one week",
+                  "Ranked shortlist within 14 days",
                   "Package pricing, no placement fees",
                   "You keep the ATS, the candidates, the final call",
                 ].map((t) => (
