@@ -67,8 +67,7 @@ export const resolveScoringOrphan = createServerFn({ method: "POST" })
     z
       .object({
         orphan_id: z.string().uuid(),
-        action: z.enum(["relink", "mark_failed", "acknowledge"]),
-        rubric_version_id: z.string().uuid().optional(),
+        action: z.enum(["mark_failed", "acknowledge"]),
         note: z.string().max(1000).optional(),
       })
       .parse(input),
@@ -89,23 +88,11 @@ export const resolveScoringOrphan = createServerFn({ method: "POST" })
     if (readErr) throw readErr;
     if (!orphan) throw new Error("Orphan not found");
 
-    if (data.action === "relink") {
-      if (!data.rubric_version_id) {
-        throw new Error("rubric_version_id required for relink");
-      }
-      if (!orphan.score_run_id) {
-        throw new Error("Orphan has no score_run to relink");
-      }
-      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-      // score_runs immutability trigger blocks completed rows; the admin
-      // client bypasses RLS but not triggers. We use a small SQL round-trip
-      // that disables the trigger for this session-connection only.
-      await supabaseAdmin.rpc("admin_relink_score_run_rubric" as never, {
-        _score_run_id: orphan.score_run_id,
-        _rubric_version_id: data.rubric_version_id,
-      });
-    }
-
+    // Relinking a score_run's rubric_version_id is blocked by the
+    // score_runs immutability trigger and needs a dedicated
+    // SECURITY DEFINER SQL function; that ships in Prompt 2 alongside the
+    // rubric builder. For now, orphans can be acknowledged (left for
+    // supersession by a future run) or marked failed at the match level.
     if (data.action === "mark_failed" && orphan.candidate_match_id) {
       const { error: updErr } = await supabase
         .from("candidate_matches")
