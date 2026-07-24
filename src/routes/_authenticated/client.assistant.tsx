@@ -432,6 +432,41 @@ function MessageBubble({ m, runAction, runningActionId, dismissed, editedDrafts,
                 </ul>
               </div>
             )}
+            {actions.length > 0 && (
+              <div className="mt-3 space-y-2 border-t border-border/60 pt-3">
+                <p className="text-[10px] uppercase tracking-wide text-muted-foreground">
+                  Proposed actions — you approve
+                </p>
+                {actions.map((a) => {
+                  const running = runningActionId === a.action_id;
+                  const isDraft = a.kind === "draft_interview_request";
+                  return (
+                    <div key={a.action_id} className="rounded-lg border bg-muted/30 p-2.5">
+                      <p className="text-xs font-medium">{a.label}</p>
+                      <p className="mt-0.5 text-[11px] text-muted-foreground">{a.description}</p>
+                      {isDraft && (
+                        <Textarea
+                          rows={4}
+                          className="mt-2 text-[12px]"
+                          value={editedDrafts[a.action_id] ?? a.draft_body ?? ""}
+                          onChange={(e) => setDraft(a.action_id, e.target.value)}
+                          disabled={running}
+                        />
+                      )}
+                      <div className="mt-2 flex items-center gap-2">
+                        <Button
+                          size="sm"
+                          onClick={() => runAction(a)}
+                          disabled={running || runningActionId !== null}
+                        >
+                          {running ? "Running…" : isDraft ? "Approve & send" : "Approve"}
+                        </Button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </>
         )}
       </div>
