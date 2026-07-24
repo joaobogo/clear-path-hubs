@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Link, useSearch } from "@tanstack/react-router";
-import { Printer, Share2, Check } from "lucide-react";
+import { Printer, Share2 } from "lucide-react";
 import { toast } from "sonner";
 import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
 import type { RequirementRow } from "@/lib/client-fit-presentation";
