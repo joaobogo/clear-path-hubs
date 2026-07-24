@@ -98,7 +98,7 @@ function CopilotPage() {
   });
 
   const reset = useMutation({
-    mutationFn: () => resetFn({ data: {} }),
+    mutationFn: () => resetFn(),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["admin-copilot-state"] });
       setInput("");
