@@ -49,14 +49,30 @@ const ICONS: Record<SearchResult["type"], React.ComponentType<{ className?: stri
   position: Briefcase,
   candidate: Users,
   message: MessageSquare,
+  task: CheckSquare,
 };
 
-const TYPE_LABELS: Record<SearchResult["type"], string> = {
-  client: "Clients",
-  position: "Positions",
-  candidate: "Candidates",
-  messages: "Messages",
-} as unknown as Record<SearchResult["type"], string>;
+type QuickAction = {
+  id: string;
+  label: string;
+  keywords: string;
+  href: string;
+  icon: React.ComponentType<{ className?: string }>;
+};
+
+const CLIENT_QUICK_ACTIONS: QuickAction[] = [
+  { id: "qa-new-role", label: "Create new role", keywords: "create new role position intake", href: "/intake", icon: PlusCircle },
+  { id: "qa-overdue", label: "View overdue tasks", keywords: "overdue tasks approvals", href: "/client/tasks?view=overdue", icon: CheckSquare },
+  { id: "qa-blocking", label: "View blocking tasks", keywords: "blocking urgent approvals", href: "/client/tasks?view=blocking", icon: Zap },
+  { id: "qa-deliveries", label: "Go to latest delivery", keywords: "deliveries weekly delivery", href: "/client/deliveries", icon: Truck },
+  { id: "qa-analytics", label: "Open analytics", keywords: "analytics metrics conversion", href: "/client/analytics", icon: LineChart },
+  { id: "qa-inbox", label: "Open inbox", keywords: "messages notifications inbox", href: "/client/inbox", icon: MessageSquare },
+];
+
+const ADMIN_QUICK_ACTIONS: QuickAction[] = [
+  { id: "qa-admin-copilot", label: "Open Copilot", keywords: "copilot assistant admin", href: "/admin/copilot", icon: Zap },
+  { id: "qa-admin-clients", label: "Open clients list", keywords: "clients", href: "/admin/clients", icon: Building2 },
+];
 
 export function GlobalSearchDialog({
   open,
