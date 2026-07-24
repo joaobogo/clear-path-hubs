@@ -10,6 +10,7 @@ import {
   Settings,
   Inbox,
   CalendarRange,
+  Bot,
 } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
