@@ -98,6 +98,7 @@ import { Route as AuthenticatedAdminClients_newRouteImport } from './routes/_aut
 import { Route as AuthenticatedAdminClientsRouteImport } from './routes/_authenticated/admin.clients'
 import { Route as AuthenticatedAdminCandidatesRouteImport } from './routes/_authenticated/admin.candidates'
 import { Route as AuthenticatedMeApplicationsIndexRouteImport } from './routes/_authenticated/me.applications.index'
+import { Route as AuthenticatedClientSharesIndexRouteImport } from './routes/_authenticated/client.shares.index'
 import { Route as AuthenticatedClientPositionsIndexRouteImport } from './routes/_authenticated/client.positions.index'
 import { Route as AuthenticatedClientCandidatesIndexRouteImport } from './routes/_authenticated/client.candidates.index'
 import { Route as AuthenticatedAdminPositionsIndexRouteImport } from './routes/_authenticated/admin.positions.index'
@@ -590,6 +591,12 @@ const AuthenticatedMeApplicationsIndexRoute =
     path: '/',
     getParentRoute: () => AuthenticatedMeApplicationsRoute,
   } as any)
+const AuthenticatedClientSharesIndexRoute =
+  AuthenticatedClientSharesIndexRouteImport.update({
+    id: '/shares/',
+    path: '/shares/',
+    getParentRoute: () => AuthenticatedClientRoute,
+  } as any)
 const AuthenticatedClientPositionsIndexRoute =
   AuthenticatedClientPositionsIndexRouteImport.update({
     id: '/',
@@ -794,6 +801,7 @@ export interface FileRoutesByFullPath {
   '/admin/positions/': typeof AuthenticatedAdminPositionsIndexRoute
   '/client/candidates/': typeof AuthenticatedClientCandidatesIndexRoute
   '/client/positions/': typeof AuthenticatedClientPositionsIndexRoute
+  '/client/shares/': typeof AuthenticatedClientSharesIndexRoute
   '/me/applications/': typeof AuthenticatedMeApplicationsIndexRoute
   '/admin/positions/$id/edit': typeof AuthenticatedAdminPositionsIdEditRoute
   '/client/positions/$id/edit': typeof AuthenticatedClientPositionsIdEditRoute
@@ -891,6 +899,7 @@ export interface FileRoutesByTo {
   '/admin/positions': typeof AuthenticatedAdminPositionsIndexRoute
   '/client/candidates': typeof AuthenticatedClientCandidatesIndexRoute
   '/client/positions': typeof AuthenticatedClientPositionsIndexRoute
+  '/client/shares': typeof AuthenticatedClientSharesIndexRoute
   '/me/applications': typeof AuthenticatedMeApplicationsIndexRoute
   '/admin/positions/$id/edit': typeof AuthenticatedAdminPositionsIdEditRoute
   '/client/positions/$id/edit': typeof AuthenticatedClientPositionsIdEditRoute
@@ -1000,6 +1009,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/positions/': typeof AuthenticatedAdminPositionsIndexRoute
   '/_authenticated/client/candidates/': typeof AuthenticatedClientCandidatesIndexRoute
   '/_authenticated/client/positions/': typeof AuthenticatedClientPositionsIndexRoute
+  '/_authenticated/client/shares/': typeof AuthenticatedClientSharesIndexRoute
   '/_authenticated/me/applications/': typeof AuthenticatedMeApplicationsIndexRoute
   '/_authenticated/admin/positions/$id/edit': typeof AuthenticatedAdminPositionsIdEditRoute
   '/_authenticated/client/positions/$id/edit': typeof AuthenticatedClientPositionsIdEditRoute
@@ -1109,6 +1119,7 @@ export interface FileRouteTypes {
     | '/admin/positions/'
     | '/client/candidates/'
     | '/client/positions/'
+    | '/client/shares/'
     | '/me/applications/'
     | '/admin/positions/$id/edit'
     | '/client/positions/$id/edit'
@@ -1206,6 +1217,7 @@ export interface FileRouteTypes {
     | '/admin/positions'
     | '/client/candidates'
     | '/client/positions'
+    | '/client/shares'
     | '/me/applications'
     | '/admin/positions/$id/edit'
     | '/client/positions/$id/edit'
@@ -1314,6 +1326,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/positions/'
     | '/_authenticated/client/candidates/'
     | '/_authenticated/client/positions/'
+    | '/_authenticated/client/shares/'
     | '/_authenticated/me/applications/'
     | '/_authenticated/admin/positions/$id/edit'
     | '/_authenticated/client/positions/$id/edit'
@@ -1997,6 +2010,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedMeApplicationsIndexRouteImport
       parentRoute: typeof AuthenticatedMeApplicationsRoute
     }
+    '/_authenticated/client/shares/': {
+      id: '/_authenticated/client/shares/'
+      path: '/shares'
+      fullPath: '/client/shares/'
+      preLoaderRoute: typeof AuthenticatedClientSharesIndexRouteImport
+      parentRoute: typeof AuthenticatedClientRoute
+    }
     '/_authenticated/client/positions/': {
       id: '/_authenticated/client/positions/'
       path: '/'
@@ -2311,6 +2331,7 @@ interface AuthenticatedClientRouteChildren {
   AuthenticatedClientTalentPoolRoute: typeof AuthenticatedClientTalentPoolRoute
   AuthenticatedClientTeamRoute: typeof AuthenticatedClientTeamRoute
   AuthenticatedClientIndexRoute: typeof AuthenticatedClientIndexRoute
+  AuthenticatedClientSharesIndexRoute: typeof AuthenticatedClientSharesIndexRoute
 }
 
 const AuthenticatedClientRouteChildren: AuthenticatedClientRouteChildren = {
@@ -2330,6 +2351,7 @@ const AuthenticatedClientRouteChildren: AuthenticatedClientRouteChildren = {
   AuthenticatedClientTalentPoolRoute: AuthenticatedClientTalentPoolRoute,
   AuthenticatedClientTeamRoute: AuthenticatedClientTeamRoute,
   AuthenticatedClientIndexRoute: AuthenticatedClientIndexRoute,
+  AuthenticatedClientSharesIndexRoute: AuthenticatedClientSharesIndexRoute,
 }
 
 const AuthenticatedClientRouteWithChildren =

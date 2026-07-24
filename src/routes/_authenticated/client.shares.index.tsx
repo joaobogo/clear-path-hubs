@@ -22,7 +22,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 
-export const Route = createFileRoute("/_authenticated/client/shares")({
+export const Route = createFileRoute("/_authenticated/client/shares/")({
   head: () => ({
     meta: [
       { title: "Shared shortlists · TaaSFlow" },
