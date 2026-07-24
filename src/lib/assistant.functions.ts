@@ -342,7 +342,7 @@ export const getAssistantState = createServerFn({ method: "POST" })
     );
     const { data: rows, error } = await context.supabase
       .from("assistant_messages")
-      .select("id, role, content, tool_trace, citations, proposed_actions, created_at")
+      .select("id, role, content, tool_trace, citations, proposed_actions, confidence, created_at")
       .eq("conversation_id", conversationId)
       .order("created_at", { ascending: true });
     if (error) throw new Error(error.message);
@@ -355,6 +355,7 @@ export const getAssistantState = createServerFn({ method: "POST" })
         tool_trace: Array<{ name: string; args: Record<string, string | number | boolean | null> }>;
         citations: Array<{ kind: string; id: string; label: string; href?: string }>;
         proposed_actions: Array<Record<string, string | number | boolean | null>>;
+        confidence: Confidence | null;
         created_at: string;
       }>,
     };
