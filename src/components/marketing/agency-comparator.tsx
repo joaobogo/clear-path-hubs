@@ -81,21 +81,22 @@ export function AgencyComparator() {
   const isCustom = tier.price == null;
 
   return (
-    <div className="rounded-3xl border border-[color:var(--brand-navy)]/10 bg-white p-6 shadow-sm sm:p-10 lg:p-12">
-      <div className="grid items-start gap-10 lg:grid-cols-12 lg:gap-14">
+    <div className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-4 shadow-sm sm:rounded-3xl sm:p-8 lg:p-12">
+      <div className="grid items-start gap-8 lg:grid-cols-12 lg:gap-14">
         {/* -------- Inputs column (5/12) -------- */}
-        <div className="order-2 space-y-10 lg:order-1 lg:col-span-5">
-          <header className="space-y-4">
+        <div className="order-2 space-y-8 lg:order-1 lg:col-span-5">
+          <header className="space-y-3 sm:space-y-4">
             <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[color:var(--brand-navy)]/60">
               For hiring teams · ROI Calculator
             </p>
-            <h3 className="font-[family-name:var(--brand-font-display)] text-4xl leading-[1.05] tracking-tight text-[color:var(--brand-navy)] sm:text-5xl">
-              Quantify your <br /><span className="italic">hiring advantage.</span>
+            <h3 className="font-[family-name:var(--brand-font-display)] text-3xl leading-[1.05] tracking-tight text-[color:var(--brand-navy)] sm:text-4xl md:text-5xl">
+              Quantify your <span className="italic">hiring advantage.</span>
             </h3>
-            <p className="max-w-sm text-[color:var(--brand-navy)]/60">
-              Adjust the variables to compare traditional recruitment costs against the TaaSFlow model. Defaults from SHRM & Ashby 2025 benchmarks.
+            <p className="max-w-sm text-sm text-[color:var(--brand-navy)]/60 sm:text-base">
+              Adjust the variables to compare traditional recruitment costs against the TaaSFlow model. Defaults from SHRM &amp; Ashby 2025 benchmarks.
             </p>
           </header>
+
 
           <div className="space-y-8">
             <SliderField
