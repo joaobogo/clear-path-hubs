@@ -281,6 +281,7 @@ function PositionWorkspace() {
           <BlueprintTab position={p} screening={screening} />
         )}
         {tab === "pipeline" && <PipelineTab matches={matches} />}
+        {tab === "memory" && <RoleMemoryPanel positionId={id} canEdit={true} />}
         {tab === "activity" && <ActivityTab id={id} />}
         {tab === "audit" && <AuditTab id={id} />}
         {tab === "settings" && <SettingsTab position={p} onDone={invalidate} />}
