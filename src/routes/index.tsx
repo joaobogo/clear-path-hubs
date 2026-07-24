@@ -1462,12 +1462,24 @@ function Home() {
           <div className="mt-10">
             <ModelComparison />
           </div>
-          <div className="mt-8">
+          <div className="mt-8 flex flex-wrap items-center gap-3">
             <Link
               to="/pricing"
+              className="inline-flex min-h-11 items-center gap-2 rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-[color:var(--brand-navy-dark)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+            >
+              See package pricing <ArrowRight className="h-4 w-4" aria-hidden />
+            </Link>
+            <Link
+              to="/book-a-call"
+              className="inline-flex min-h-11 items-center gap-2 rounded-md border border-[color:var(--brand-navy)]/15 bg-white px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-navy)] hover:border-[color:var(--brand-navy)]/30"
+            >
+              Talk to founders
+            </Link>
+            <Link
+              to="/how-it-works"
               className="inline-flex items-center gap-1 text-sm font-semibold text-[color:var(--brand-ocean)] hover:text-[color:var(--brand-navy)]"
             >
-              View Pricing <ArrowRight className="h-4 w-4" aria-hidden />
+              How the model works <ArrowRight className="h-4 w-4" aria-hidden />
             </Link>
           </div>
         </PublicPage>
