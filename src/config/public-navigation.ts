@@ -41,6 +41,7 @@ export const SECONDARY_CTAS: NavLink[] = [
 /* -------------------------------------------------------------- Primary nav (ordered) */
 
 export const PRIMARY_ITEMS: PrimaryItem[] = [
+  { kind: "link", to: "/platform", label: "Platform" },
   { kind: "link", to: "/how-it-works", label: "How It Works" },
   {
     kind: "group",
@@ -110,6 +111,7 @@ export const FOOTER_GROUPS: NavGroup[] = [
   {
     label: "For Companies",
     links: [
+      { to: "/platform",              label: "Platform" },
       { to: "/how-it-works",          label: "How It Works" },
       { to: "/pricing",               label: "Pricing" },
       { to: "/enterprise",            label: "Enterprise" },
@@ -169,7 +171,7 @@ export const FOOTER_GROUPS: NavGroup[] = [
 ];
 
 export const FOOTER_DESCRIPTION =
-  "TaaSFlow is an on-demand recruiting function delivered as a subscription. Ranked candidates, recruiter-written evidence, and a transparent workspace your team owns.";
+  "TaaSFlow is the hiring operating system: ATS + recruiting execution + evidence-first scoring + persistent candidate memory, in one live workspace your team owns.";
 
 export const SOCIAL_LINKS = [
   { href: "https://www.linkedin.com/company/taasflow", label: "LinkedIn" },
