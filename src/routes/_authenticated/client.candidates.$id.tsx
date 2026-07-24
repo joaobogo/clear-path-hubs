@@ -1334,3 +1334,50 @@ function accentToSoftBg(accent: import("@/lib/client-fit-presentation").FitPrese
  return "bg-muted/30";
  }
 }
+
+function TalentMemoryAction({
+  orgId,
+  matchId,
+  candidateName,
+  roleTitle,
+  readOnly,
+}: {
+  orgId: string;
+  matchId: string;
+  candidateName: string;
+  roleTitle: string | null;
+  readOnly: boolean;
+}) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="rounded-xl border bg-card p-4 shadow-sm">
+      <div className="mb-2 flex items-center justify-between gap-2">
+        <h2 className="flex items-center gap-1.5 text-sm font-semibold uppercase tracking-[0.08em]">
+          <Award className="h-4 w-4 text-amber-500" aria-hidden />
+          Talent memory
+        </h2>
+        <SilverMedalistBadge orgId={orgId} matchId={matchId} />
+      </div>
+      <p className="mb-3 text-xs text-muted-foreground">
+        Keep this candidate accessible for future roles, even after this search closes.
+      </p>
+      <Button
+        variant="outline"
+        size="sm"
+        className="w-full"
+        disabled={readOnly}
+        onClick={() => setOpen(true)}
+      >
+        Tag as silver medalist
+      </Button>
+      <TagSilverMedalistDialog
+        open={open}
+        onOpenChange={setOpen}
+        orgId={orgId}
+        matchId={matchId}
+        candidateName={candidateName}
+        roleTitle={roleTitle}
+      />
+    </div>
+  );
+}
