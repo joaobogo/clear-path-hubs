@@ -104,7 +104,7 @@ function DesktopNavLink({ to, label }: { to: string; label: string }) {
   return (
     <Link
       to={to}
-      className="rounded-md px-2 py-1.5 text-sm text-[color:var(--brand-navy)]/75 transition-colors hover:text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+      className="whitespace-nowrap rounded-md px-2 py-1.5 text-sm text-[color:var(--brand-navy)]/75 transition-colors hover:text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
       activeProps={{ className: "text-[color:var(--brand-navy)] font-semibold" }}
     >
       {label}
@@ -115,7 +115,7 @@ function DesktopNavLink({ to, label }: { to: string; label: string }) {
 function GroupTrigger({ label }: { label: string }) {
   return (
     <NavigationMenuPrimitive.Trigger
-      className="group inline-flex h-9 items-center gap-1 rounded-md px-3 py-1.5 text-sm text-[color:var(--brand-navy)]/80 outline-none transition-colors hover:text-[color:var(--brand-navy)] focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)] data-[state=open]:text-[color:var(--brand-navy)]"
+      className="group inline-flex h-9 items-center gap-1 whitespace-nowrap rounded-md px-3 py-1.5 text-sm text-[color:var(--brand-navy)]/80 outline-none transition-colors hover:text-[color:var(--brand-navy)] focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)] data-[state=open]:text-[color:var(--brand-navy)]"
     >
       {label}
       <ChevronDown className="h-3.5 w-3.5 transition-transform group-data-[state=open]:rotate-180" aria-hidden />
@@ -196,25 +196,25 @@ function Header() {
           <div className="ml-auto hidden items-center gap-1 lg:flex">
             <Link
               to={browseJobs.to}
-              className="rounded-md px-2.5 py-1.5 text-sm font-medium text-[color:var(--brand-navy)]/80 hover:text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+              className="whitespace-nowrap rounded-md px-2.5 py-1.5 text-sm font-medium text-[color:var(--brand-navy)]/80 hover:text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
             >
               {browseJobs.label}
             </Link>
             <Link
               to={joinNetwork.to}
-              className="hidden rounded-md px-2.5 py-1.5 text-sm font-medium text-[color:var(--brand-navy)]/80 hover:text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)] xl:inline-flex"
+              className="hidden whitespace-nowrap rounded-md px-2.5 py-1.5 text-sm font-medium text-[color:var(--brand-navy)]/80 hover:text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)] xl:inline-flex"
             >
               Join Talent Network
             </Link>
             <Link
               to={signIn.to}
-              className="rounded-md px-2.5 py-1.5 text-sm font-medium text-[color:var(--brand-navy)]/80 hover:text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+              className="whitespace-nowrap rounded-md px-2.5 py-1.5 text-sm font-medium text-[color:var(--brand-navy)]/80 hover:text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
             >
               {signIn.label}
             </Link>
             <Link
               to={PRIMARY_CTA.to}
-              className="ml-1 rounded-md bg-[color:var(--brand-navy)] px-4 py-1.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-[color:var(--brand-navy-dark)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+              className="ml-1 whitespace-nowrap rounded-md bg-[color:var(--brand-navy)] px-4 py-1.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-[color:var(--brand-navy-dark)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
             >
               {PRIMARY_CTA.label}
             </Link>
