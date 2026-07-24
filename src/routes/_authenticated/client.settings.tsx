@@ -11,7 +11,7 @@ import {
  updateClientTimezone,
  updateClientBranding,
 } from "@/lib/client.functions";
-// (placeholder — replaced below)
+import { ClientBrandHeader } from "@/components/client/client-brand-header";
 import { useClientOrgSearch } from "@/lib/use-client-org";
 import { useSupportView } from "@/lib/support-view";
 import { supabase } from "@/integrations/supabase/client";
