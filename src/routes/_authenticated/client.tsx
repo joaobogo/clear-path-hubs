@@ -27,12 +27,13 @@ import {
  MessageSquare,
  // CalendarClock removed from nav; icon no longer needed here.
  UserCog,
- Settings,
- Award,
- Sparkles,
- HandCoins,
- Bot,
- Radar,
+	Settings,
+	Award,
+	Sparkles,
+	HandCoins,
+	Bot,
+	Radar,
+	LineChart,
 } from "lucide-react";
 import {
  WorkspaceShell,
@@ -78,7 +79,8 @@ export const Route = createFileRoute("/_authenticated/client")({
 type NavDef = WorkspaceNavItem & { everyone: boolean };
 
 const TABS: NavDef[] = [
- { to: "/client", label: "Overview", icon: LayoutDashboard, exact: true, everyone: true },
+	{ to: "/client", label: "Overview", icon: LayoutDashboard, exact: true, everyone: true },
+	{ to: "/client/executive", label: "Executive", icon: LineChart, everyone: true },
  { to: "/client/assistant", label: "Assistant", icon: Bot, everyone: true },
  { to: "/client/positions", label: "Positions", icon: Briefcase, everyone: true },
  { to: "/client/candidates", label: "Candidates", icon: Users, everyone: true },
