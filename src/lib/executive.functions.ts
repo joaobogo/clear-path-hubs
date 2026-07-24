@@ -250,17 +250,17 @@ export const getExecutiveReport = createServerFn({ method: "GET" })
       },
       {
         key: "stuck_processing",
-        label: "CVs stuck in processing >24h",
+        label: "CVs awaiting data refresh >24h",
         count: stuckProcessing,
         severity: (stuckProcessing > 0 ? "crit" : "info") as "info" | "crit",
-        hint: "Ops needs to re-run the pipeline",
+        hint: "TaaSFlow is reprocessing these — no action needed on your side",
       },
       {
         key: "blocked_matches",
-        label: "Failed CV extractions",
+        label: "CVs needing evidence review",
         count: blockedMatches,
         severity: (blockedMatches > 0 ? "warn" : "info") as "info" | "warn",
-        hint: "Manual review in Admin → Health",
+        hint: "TaaSFlow is running evidence review before delivery",
       },
       {
         key: "draft_positions",
