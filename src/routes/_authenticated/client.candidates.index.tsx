@@ -229,6 +229,7 @@ function CandidatesPage() {
  );
  const [compareIds, setCompareIds] = useState<string[]>(initialCompare);
  const [compareOpen, setCompareOpen] = useState(initialCompare.length >= 2);
+ const [shareOpen, setShareOpen] = useState(false);
  useEffect(() => {
   // Drop any selection that is no longer client-visible (tenant switch, filter change to hidden rows).
   setCompareIds((ids) => {
