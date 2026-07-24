@@ -561,9 +561,11 @@ function RequestDialog({
  type="button"
  variant="ghost"
  size="icon"
+ aria-label={`Remove time slot ${i + 1}`}
+ className="min-h-11 min-w-11"
  onClick={() => setTimes((arr) => arr.filter((_, idx) => idx !== i))}
  >
- <X className="h-4 w-4" />
+ <X className="h-4 w-4" aria-hidden />
  </Button>
  ) : null}
  </div>
@@ -623,11 +625,13 @@ function RequestDialog({
  type="button"
  variant="ghost"
  size="icon"
+ aria-label={`Remove participant ${i + 1}`}
+ className="min-h-11 min-w-11"
  onClick={() =>
  setParticipants((arr) => arr.filter((_, idx) => idx !== i))
  }
  >
- <X className="h-4 w-4" />
+ <X className="h-4 w-4" aria-hidden />
  </Button>
  ) : (
  <span />
@@ -991,9 +995,11 @@ function ProposeForm({
  type="button"
  variant="ghost"
  size="icon"
+ aria-label={`Remove time slot ${i + 1}`}
+ className="min-h-11 min-w-11"
  onClick={() => setTimes((arr) => arr.filter((_, idx) => idx !== i))}
  >
- <X className="h-4 w-4" />
+ <X className="h-4 w-4" aria-hidden />
  </Button>
  ) : null}
  </div>
