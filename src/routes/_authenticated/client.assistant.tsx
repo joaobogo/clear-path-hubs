@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import {
   askAssistant,
+  executeAssistantAction,
   getAssistantState,
   resetAssistant,
 } from "@/lib/assistant.functions";
