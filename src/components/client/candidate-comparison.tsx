@@ -105,10 +105,9 @@ export function CompareSheet({
   candidates: ClientCandidateDTO[];
 }) {
   const search = useSearch({ strict: false }) as { org?: string };
+  const [diffOnly, setDiffOnly] = useState(false);
 
   // Guard: never render a comparison if candidates span multiple positions.
-  // The parent already gates on `crossPosition`, but we defend at the render
-  // boundary so accidental misuse cannot leak cross-role cells.
   const positionIds = new Set(candidates.map((c) => c.position?.id).filter(Boolean));
   const positionSafe = positionIds.size <= 1;
 
@@ -133,12 +132,32 @@ export function CompareSheet({
   const cols = Math.max(1, candidates.length);
   const positionTitle = candidates[0]?.position?.title;
 
+  // Helper: are values across candidates identical? (for "differences only")
+  const allSame = (vals: (string | number | null | undefined)[]) => {
+    const first = vals[0];
+    return vals.every((v) => (v ?? "") === (first ?? ""));
+  };
+
+  const handleShare = async () => {
+    const url = new URL(window.location.href);
+    url.searchParams.set("compare", candidates.map((c) => c.match_id).join(","));
+    try {
+      await navigator.clipboard.writeText(url.toString());
+      toast.success("Share link copied", { description: "Same-role view, preserves context." });
+    } catch {
+      toast.error("Could not copy link");
+    }
+  };
+
+  const handlePrint = () => window.print();
+
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="right" className="w-full sm:max-w-5xl overflow-y-auto">
+      <SheetContent side="right" className="w-full sm:max-w-5xl overflow-y-auto print:!max-w-none print:!w-full">
         <SheetHeader>
           <SheetTitle>Candidate comparison</SheetTitle>
         </SheetHeader>
+
 
         {!positionSafe ? (
           <div className="mt-4 rounded-lg border border-warning/30 bg-warning/5 p-3 text-sm">
