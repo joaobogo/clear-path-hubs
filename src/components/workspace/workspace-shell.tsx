@@ -31,6 +31,17 @@ export type WorkspaceNavItem = {
   search?: Record<string, string | undefined>;
 };
 
+export type WorkspacePrimaryAction = {
+  label: string;
+  to: string;
+  /** Optional icon rendered before the label. */
+  icon?: ComponentType<{ className?: string }>;
+  /** Optional short label for the mobile sticky bar (defaults to `label`). */
+  shortLabel?: string;
+  /** Search params to preserve on nav (e.g. active org id). */
+  search?: Record<string, string | undefined>;
+};
+
 export type WorkspaceShellProps = {
   /** "Admin" | client org name | candidate name */
   contextLabel: string;
@@ -47,8 +58,11 @@ export type WorkspaceShellProps = {
   linkSearch?: Record<string, string | undefined>;
   /** Global search scope. Defaults to "client". Admin layout should pass "admin". */
   searchScope?: "admin" | "client";
+  /** Contextual page-level primary action (top-bar CTA + mobile sticky). */
+  primaryAction?: WorkspacePrimaryAction;
   children: ReactNode;
 };
+
 
 const COLLAPSED_KEY = "taasflow:sidebar:collapsed";
 
@@ -233,6 +247,7 @@ export function WorkspaceShell(props: WorkspaceShellProps) {
     topBanner,
     linkSearch,
     searchScope,
+    primaryAction,
     children,
   } = props;
   const pathname = useRouterState({ select: (s) => s.location.pathname });
@@ -452,6 +467,17 @@ export function WorkspaceShell(props: WorkspaceShellProps) {
             <Search className="h-4 w-4" />
           </button>
 
+          {primaryAction && (
+            <Link
+              to={primaryAction.to}
+              search={primaryAction.search ? (primaryAction.search as never) : undefined}
+              className="hidden h-9 items-center gap-1.5 rounded-md bg-primary px-3 text-sm font-medium text-primary-foreground shadow-sm hover:opacity-90 md:inline-flex"
+            >
+              {primaryAction.icon && <primaryAction.icon className="h-4 w-4" />}
+              <span>{primaryAction.label}</span>
+            </Link>
+          )}
+
           <a
             href="/faq"
             className="hidden rounded-md p-2 text-muted-foreground hover:bg-muted hover:text-foreground md:inline-flex"
@@ -518,10 +544,26 @@ export function WorkspaceShell(props: WorkspaceShellProps) {
           className="flex-1"
           aria-label={currentPage || contextLabel}
         >
-          <div className="mx-auto w-full max-w-[var(--brand-workspace-width,1440px)] px-4 py-6 md:px-8 md:py-8">
+          <div className="mx-auto w-full max-w-[var(--brand-workspace-width,1440px)] px-4 py-6 pb-24 md:px-8 md:py-8 md:pb-8">
             {children}
           </div>
         </main>
+
+        {primaryAction && (
+          <div
+            className="sticky bottom-0 z-30 border-t bg-background/95 px-4 py-3 backdrop-blur md:hidden"
+            style={{ paddingBottom: "max(0.75rem, env(safe-area-inset-bottom))" }}
+          >
+            <Link
+              to={primaryAction.to}
+              search={primaryAction.search ? (primaryAction.search as never) : undefined}
+              className="flex h-11 w-full items-center justify-center gap-2 rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground shadow"
+            >
+              {primaryAction.icon && <primaryAction.icon className="h-4 w-4" />}
+              <span>{primaryAction.shortLabel ?? primaryAction.label}</span>
+            </Link>
+          </div>
+        )}
       </div>
       <GlobalSearchDialog
         open={searchOpen}
