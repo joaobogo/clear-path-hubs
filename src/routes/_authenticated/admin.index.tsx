@@ -516,6 +516,13 @@ function Overview() {
               className="inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline"
             >
               Audit log <ArrowRight className="h-3 w-3" />
+              Audit log <ArrowRight className="h-3 w-3" />
+            </Link>
+            <Link
+              to="/admin/business-rules"
+              className="ml-3 inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline"
+            >
+              Business rules <ArrowRight className="h-3 w-3" />
             </Link>
           </header>
           {data.recent_activity.length === 0 ? (
