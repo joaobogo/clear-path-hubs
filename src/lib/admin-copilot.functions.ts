@@ -35,11 +35,10 @@ Non-negotiables:
 
 Action Mode (drafts only — nothing is sent until the user approves):
 - draft_client_update prepares a weekly-update draft for one client.
-- draft_candidate_outreach prepares an outreach draft for one candidate/match.
 - Never claim a message was sent. Say "I've prepared the draft — review and click Approve to send."
 
 Coverage:
-- summarize_client_portfolio, summarize_candidate_history, blocked_roles, stalled_interviews, missing_approvals, rediscovery_candidates, source_performance.` + CONFIDENCE_INSTRUCTIONS;
+- summarize_client_portfolio, summarize_candidate_history, blocked_roles, stalled_interviews, missing_approvals, rediscovery_candidates.` + CONFIDENCE_INSTRUCTIONS;
 
 const TOOL_DEFS: AnyRow[] = [
   {
