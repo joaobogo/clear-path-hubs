@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate, stripSearchParams } from "@tanstack/react-router";
 import { fallback, zodValidator } from "@tanstack/zod-adapter";
 import { z } from "zod";
 import { ArrowRight, Search, X } from "lucide-react";
@@ -38,6 +38,9 @@ const searchSchema = z.object({
 
 export const Route = createFileRoute("/industries/")({
   validateSearch: zodValidator(searchSchema),
+  search: {
+    middlewares: [stripSearchParams({ q: "", family: "" })],
+  },
   head: () =>
     marketingHead(undefined, "/industries", {
       title: "Industries — TaaSFlow",
