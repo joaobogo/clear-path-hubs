@@ -3,7 +3,6 @@ import {
   Outlet,
   createRootRouteWithContext,
   useRouter,
-  useRouterState,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
@@ -13,7 +12,6 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Toaster } from "@/components/ui/sonner";
 import { PublicNotFound, PublicErrorState } from "@/components/marketing/site-shell";
-import { TaaSFlowEntryLoader } from "@/components/marketing/entry-loader";
 
 function NotFoundComponent() {
   return <PublicNotFound />;
@@ -64,19 +62,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 });
 
 function RootShell({ children }: { children: ReactNode }) {
-  // Only mount the branded entry loader on the home route. Mounting it on
-  // inner routes causes React to re-inject the loader DOM whenever the root
-  // re-renders, without re-executing the inline dismissal script — which
-  // traps navigation under a stuck full-screen overlay.
-  const pathname = useRouterState({ select: (s) => s.location.pathname });
-  const isHome = pathname === "/";
   return (
     <html lang="en">
       <head>
         <HeadContent />
       </head>
       <body>
-        {isHome ? <TaaSFlowEntryLoader /> : null}
         {children}
         <Scripts />
       </body>
