@@ -14,13 +14,16 @@ import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import type { CanonicalScoringState } from "@/lib/scoring/canonical-state";
 
+// JSON-serializable so it survives TanStack's server-fn RPC boundary.
+type Json = string | number | boolean | null | Json[] | { [k: string]: Json };
+
 export type ScoringOrphan = {
   id: string;
   candidate_match_id: string | null;
   score_run_id: string | null;
   organization_id: string | null;
   reason: string;
-  detail: Record<string, unknown>;
+  detail: Json;
   resolved_at: string | null;
   resolved_by: string | null;
   resolution_note: string | null;
