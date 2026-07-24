@@ -6,6 +6,7 @@ import {
   SiteShell,
 } from "@/components/marketing/site-shell";
 import type { IndustryEntry } from "@/content/industries-v2";
+import { toPublicSlug } from "@/lib/marketing/industry-slug-aliases";
 import { getIndustryHeroImage } from "@/content/industry-hero-images";
 import { IndustryRoleExplorer } from "@/components/marketing/industry-role-explorer";
 import { IndustrySignalExplorer } from "@/components/marketing/industry-signal-explorer";
