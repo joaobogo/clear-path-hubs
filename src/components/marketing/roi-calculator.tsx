@@ -352,7 +352,7 @@ export function RoiCalculator({
               </span>
 
               <div className="mt-10">
-                <h3 className="font-[family-name:var(--brand-font-display)] italic tracking-tight leading-[0.95] text-6xl sm:text-7xl md:text-8xl tabular-nums">
+                <h3 className="font-[family-name:var(--brand-font-display)] italic tracking-tight leading-[0.95] text-5xl sm:text-7xl md:text-8xl tabular-nums break-words">
                   {savingsHeadline}
                 </h3>
                 <p className="mt-3 max-w-md text-base opacity-80 font-light">
