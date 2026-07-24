@@ -271,6 +271,10 @@ export const getShortlistShareByToken = createServerFn({ method: "GET" })
         .from("candidate_matches")
         .select(CANDIDATE_SELECT)
         .eq("organization_id", share.organization_id)
+        // Re-check publish state at read time. If admin later hides/retracts a match,
+        // an outstanding share token must not continue serving it. This closes the
+        // leak where visibility was only validated at share-creation time.
+        .eq("client_visibility", "visible")
         .in("id", matchIds),
       supabaseAdmin
         .from("shortlist_share_comments")
