@@ -776,6 +776,153 @@ export type Database = {
           },
         ]
       }
+      candidate_evidence_items: {
+        Row: {
+          candidate_evidence_id: string
+          candidate_match_id: string
+          confidence: number
+          created_at: string
+          engine_version: string
+          id: string
+          match_type: string
+          model_version: string | null
+          normalized_meaning: string
+          organization_id: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          reviewer_note: string | null
+          reviewer_status: string
+          rubric_criterion_key: string
+          rubric_dimension_key: string
+          source_location: Json
+          source_passage: string
+          supporting_role: string | null
+          updated_at: string
+        }
+        Insert: {
+          candidate_evidence_id: string
+          candidate_match_id: string
+          confidence: number
+          created_at?: string
+          engine_version: string
+          id?: string
+          match_type: string
+          model_version?: string | null
+          normalized_meaning: string
+          organization_id: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          reviewer_note?: string | null
+          reviewer_status?: string
+          rubric_criterion_key: string
+          rubric_dimension_key: string
+          source_location?: Json
+          source_passage: string
+          supporting_role?: string | null
+          updated_at?: string
+        }
+        Update: {
+          candidate_evidence_id?: string
+          candidate_match_id?: string
+          confidence?: number
+          created_at?: string
+          engine_version?: string
+          id?: string
+          match_type?: string
+          model_version?: string | null
+          normalized_meaning?: string
+          organization_id?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          reviewer_note?: string | null
+          reviewer_status?: string
+          rubric_criterion_key?: string
+          rubric_dimension_key?: string
+          source_location?: Json
+          source_passage?: string
+          supporting_role?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "candidate_evidence_items_candidate_evidence_id_fkey"
+            columns: ["candidate_evidence_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_evidence"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "candidate_evidence_items_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "admin_candidate_matches_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "candidate_evidence_items_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "admin_work_inbox"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "candidate_evidence_items_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_matches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "candidate_evidence_items_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "client_candidate_matches_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "candidate_evidence_items_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "client_kanban_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "candidate_evidence_items_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "client_visible_candidates"
+            referencedColumns: ["candidate_match_id"]
+          },
+          {
+            foreignKeyName: "candidate_evidence_items_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "v_source_attribution"
+            referencedColumns: ["match_id"]
+          },
+          {
+            foreignKeyName: "candidate_evidence_items_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "admin_clients_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "candidate_evidence_items_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "candidate_evidence_items_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_portfolio_rollup"
+            referencedColumns: ["organization_id"]
+          },
+        ]
+      }
       candidate_matches: {
         Row: {
           admin_status: Database["public"]["Enums"]["admin_review_status"]
@@ -4808,6 +4955,51 @@ export type Database = {
           },
         ]
       }
+      rubric_templates: {
+        Row: {
+          blueprint: Json
+          created_at: string
+          created_by: string | null
+          description: string | null
+          id: string
+          industry: string | null
+          is_active: boolean
+          name: string
+          role_family: string | null
+          slug: string
+          template_type: string
+          updated_at: string
+        }
+        Insert: {
+          blueprint?: Json
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          industry?: string | null
+          is_active?: boolean
+          name: string
+          role_family?: string | null
+          slug: string
+          template_type: string
+          updated_at?: string
+        }
+        Update: {
+          blueprint?: Json
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          industry?: string | null
+          is_active?: boolean
+          name?: string
+          role_family?: string | null
+          slug?: string
+          template_type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       rubric_versions: {
         Row: {
           anchors: Json
@@ -5090,6 +5282,7 @@ export type Database = {
           created_by_audit: boolean
           engine_version: string
           error_code: string | null
+          evaluation_method: string | null
           evidence: Json
           expires_at: string | null
           explanation: string | null
@@ -5135,6 +5328,7 @@ export type Database = {
           created_by_audit?: boolean
           engine_version: string
           error_code?: string | null
+          evaluation_method?: string | null
           evidence?: Json
           expires_at?: string | null
           explanation?: string | null
@@ -5180,6 +5374,7 @@ export type Database = {
           created_by_audit?: boolean
           engine_version?: string
           error_code?: string | null
+          evaluation_method?: string | null
           evidence?: Json
           expires_at?: string | null
           explanation?: string | null
@@ -5358,6 +5553,132 @@ export type Database = {
             columns: ["rubric_version_id"]
             isOneToOne: false
             referencedRelation: "rubric_versions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      scoring_debug_events: {
+        Row: {
+          candidate_match_id: string
+          created_at: string
+          detail: Json
+          duration_ms: number | null
+          engine_version: string
+          error_message: string | null
+          event_type: string
+          id: string
+          model_version: string | null
+          organization_id: string
+          retry_count: number
+          rubric_criterion_key: string | null
+          score_run_id: string
+        }
+        Insert: {
+          candidate_match_id: string
+          created_at?: string
+          detail?: Json
+          duration_ms?: number | null
+          engine_version: string
+          error_message?: string | null
+          event_type: string
+          id?: string
+          model_version?: string | null
+          organization_id: string
+          retry_count?: number
+          rubric_criterion_key?: string | null
+          score_run_id: string
+        }
+        Update: {
+          candidate_match_id?: string
+          created_at?: string
+          detail?: Json
+          duration_ms?: number | null
+          engine_version?: string
+          error_message?: string | null
+          event_type?: string
+          id?: string
+          model_version?: string | null
+          organization_id?: string
+          retry_count?: number
+          rubric_criterion_key?: string | null
+          score_run_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scoring_debug_events_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "admin_candidate_matches_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "scoring_debug_events_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "admin_work_inbox"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "scoring_debug_events_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_matches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "scoring_debug_events_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "client_candidate_matches_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "scoring_debug_events_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "client_kanban_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "scoring_debug_events_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "client_visible_candidates"
+            referencedColumns: ["candidate_match_id"]
+          },
+          {
+            foreignKeyName: "scoring_debug_events_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "v_source_attribution"
+            referencedColumns: ["match_id"]
+          },
+          {
+            foreignKeyName: "scoring_debug_events_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "admin_clients_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "scoring_debug_events_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "scoring_debug_events_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_portfolio_rollup"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "scoring_debug_events_score_run_id_fkey"
+            columns: ["score_run_id"]
+            isOneToOne: false
+            referencedRelation: "score_runs"
             referencedColumns: ["id"]
           },
         ]
@@ -8019,6 +8340,7 @@ export type Database = {
       rubric_version_status:
         | "draft"
         | "pending_approval"
+        | "pending_client_approval"
         | "approved"
         | "active"
         | "superseded"
@@ -8402,6 +8724,7 @@ export const Constants = {
       rubric_version_status: [
         "draft",
         "pending_approval",
+        "pending_client_approval",
         "approved",
         "active",
         "superseded",
