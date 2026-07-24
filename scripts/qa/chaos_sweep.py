@@ -92,17 +92,21 @@ async def scenario_api_500(ctx, viewport_name: str, results: list):
 
     await ctx.route("**/*", handle)
     try:
-        await page.evaluate("() => { window.location.href = '/jobs'; }")
+        # Click an in-page Link so the TanStack client router owns the nav —
+        # this is what actually exercises the client-side loader path.
+        link = page.locator('a[href="/jobs"]').first
+        await link.click(timeout=3000)
     except Exception:
-        pass
-    await page.wait_for_timeout(2500)
+        try:
+            await page.evaluate("() => history.pushState({}, '', '/jobs')")
+        except Exception:
+            pass
+    await page.wait_for_timeout(3000)
     failure, retry = await _has_retry_or_failure_copy(page)
     await _screenshot(page, f"api500-jobs-{viewport_name}")
     body = (await page.inner_text("body")).lower()
-    # False success = we're on /jobs with no jobs and no failure indication.
     on_jobs = "/jobs" in page.url
     false_empty = on_jobs and ("0 results" in body or "no positions" in body) and not failure
-    # PASS = we surface failure/retry copy OR the page didn't false-succeed.
     ok = (failure or retry or not on_jobs) and not false_empty
     results.append({
         "scenario": "api_500",
