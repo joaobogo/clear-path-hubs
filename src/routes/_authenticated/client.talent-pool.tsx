@@ -179,7 +179,7 @@ function TalentPoolPage() {
           <PoolButton
             active={!search.pool}
             onClick={() =>
-              navigate({ search: (s) => ({ ...s, pool: "", future: false }) })
+              navigate({ search: (s: z.infer<typeof searchSchema>) => ({ ...s, pool: "", future: false }) })
             }
             label="All past candidates"
             count={undefined}
@@ -189,7 +189,7 @@ function TalentPoolPage() {
               key={p.id}
               active={search.pool === p.id}
               onClick={() =>
-                navigate({ search: (s) => ({ ...s, pool: p.id, future: false }) })
+                navigate({ search: (s: z.infer<typeof searchSchema>) => ({ ...s, pool: p.id, future: false }) })
               }
               label={p.name}
               count={p.member_count}
@@ -200,7 +200,7 @@ function TalentPoolPage() {
             <CreatePoolDialog
               orgId={orgId}
               onCreated={(id) =>
-                navigate({ search: (s) => ({ ...s, pool: id }) })
+                navigate({ search: (s: z.infer<typeof searchSchema>) => ({ ...s, pool: id }) })
               }
             />
           )}
@@ -213,7 +213,7 @@ function TalentPoolPage() {
               className="relative"
               onSubmit={(e) => {
                 e.preventDefault();
-                navigate({ search: (s) => ({ ...s, q: qDraft }) });
+                navigate({ search: (s: z.infer<typeof searchSchema>) => ({ ...s, q: qDraft }) });
               }}
             >
               <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
@@ -228,7 +228,7 @@ function TalentPoolPage() {
             <FiltersPopover
               search={search}
               onChange={(patch) =>
-                navigate({ search: (s) => ({ ...s, ...patch }) })
+                navigate({ search: (s: z.infer<typeof searchSchema>) => ({ ...s, ...patch }) })
               }
               stages={facets?.stages ?? []}
               seniorities={facets?.seniorities ?? []}
@@ -238,14 +238,14 @@ function TalentPoolPage() {
 
             <QuickChip
               active={search.silver}
-              onClick={() => navigate({ search: (s) => ({ ...s, silver: !s.silver }) })}
+              onClick={() => navigate({ search: (s: z.infer<typeof searchSchema>) => ({ ...s, silver: !s.silver }) })}
               icon={<Star className="h-3 w-3" />}
               label="Silver medalists"
             />
             <QuickChip
               active={search.future}
               onClick={() =>
-                navigate({ search: (s) => ({ ...s, future: !s.future, pool: "" }) })
+                navigate({ search: (s: z.infer<typeof searchSchema>) => ({ ...s, future: !s.future, pool: "" }) })
               }
               icon={<Sparkles className="h-3 w-3" />}
               label="Good for future"
@@ -567,7 +567,7 @@ function DeletePoolButton({
     onSuccess: () => {
       toast.success(`Pool "${pool.name}" deleted`);
       qc.invalidateQueries({ queryKey: ["talent-pool", "pools", orgId] });
-      navigate({ search: (s) => ({ ...s, pool: "" }) });
+      navigate({ search: (s: z.infer<typeof searchSchema>) => ({ ...s, pool: "" }) });
     },
     onError: (e: Error) => toast.error(e.message),
   });
