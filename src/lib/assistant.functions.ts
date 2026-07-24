@@ -695,47 +695,94 @@ export const executeAssistantAction = createServerFn({ method: "POST" })
   )
   .handler(async ({ context, data }) => {
     const action = data.action;
+    const auditBase = {
+      surface: "client_assistant" as const,
+      user_id: context.userId,
+      organization_id: data.orgId,
+      action_id: action.action_id,
+      payload: { kind: action.kind, match_id: action.match_id ?? null, href: action.href ?? null },
+    };
 
-    if (action.kind === "navigate") {
-      // Navigation actions are client-side; server just acknowledges.
-      return { ok: true as const, kind: "navigate" as const, href: action.href ?? "/client" };
-    }
+    try {
+      if (action.kind === "navigate") {
+        await auditAssistantEvent(context.supabase, { ...auditBase, event_type: "action_executed" });
+        return { ok: true as const, kind: "navigate" as const, href: action.href ?? "/client" };
+      }
 
-    if (action.kind === "draft_interview_request") {
-      const matchId = action.match_id;
-      const body = action.draft_body;
-      if (!matchId || !body) throw new Error("Missing match_id or draft_body");
+      if (action.kind === "draft_interview_request") {
+        const matchId = action.match_id;
+        const body = action.draft_body;
+        if (!matchId || !body) {
+          await auditAssistantEvent(context.supabase, {
+            ...auditBase,
+            event_type: "action_failed",
+            payload: { ...auditBase.payload, reason: "missing_fields" },
+          });
+          throw new Error("Missing match_id or draft_body");
+        }
 
-      // Confirm the caller can actually see this match under RLS (belt & braces).
-      const { data: match } = await context.supabase
-        .from("candidate_matches")
-        .select("id, positions(title), candidate_profiles(full_name)")
-        .eq("organization_id", data.orgId)
-        .eq("id", matchId)
-        .maybeSingle();
-      if (!match) throw new Error("Match not accessible");
+        // Confirm the caller can actually see this match under RLS (belt & braces).
+        const { data: match } = await context.supabase
+          .from("candidate_matches")
+          .select("id, positions(title), candidate_profiles(full_name)")
+          .eq("organization_id", data.orgId)
+          .eq("id", matchId)
+          .maybeSingle();
+        if (!match) {
+          await auditAssistantEvent(context.supabase, {
+            ...auditBase,
+            event_type: "action_denied",
+            payload: { ...auditBase.payload, reason: "match_not_accessible" },
+          });
+          throw new Error("Match not accessible");
+        }
 
-      // Post as a message on the org thread — same table the client already
-      // uses for TaaSFlow team conversations.
-      const { error } = await context.supabase.from("messages").insert({
-        thread_id: data.orgId,
-        sender_user_id: context.userId,
-        body,
-        recipient_context: {
-          audience: "taasflow_ops",
-          from: "client_assistant",
+        const { error } = await context.supabase.from("messages").insert({
+          thread_id: data.orgId,
+          sender_user_id: context.userId,
+          body,
+          recipient_context: {
+            audience: "taasflow_ops",
+            from: "client_assistant",
+            match_id: matchId,
+            intent: "interview_request",
+          },
+        } as never);
+        if (error) {
+          await auditAssistantEvent(context.supabase, {
+            ...auditBase,
+            event_type: "action_failed",
+            payload: { ...auditBase.payload, reason: error.message },
+          });
+          throw new Error(error.message);
+        }
+
+        await auditAssistantEvent(context.supabase, {
+          ...auditBase,
+          event_type: "action_executed",
+          content_preview: body,
+        });
+
+        return {
+          ok: true as const,
+          kind: "draft_interview_request" as const,
           match_id: matchId,
-          intent: "interview_request",
-        },
-      } as never);
-      if (error) throw new Error(error.message);
+        };
+      }
 
-      return {
-        ok: true as const,
-        kind: "draft_interview_request" as const,
-        match_id: matchId,
-      };
+      await auditAssistantEvent(context.supabase, {
+        ...auditBase,
+        event_type: "action_failed",
+        payload: { ...auditBase.payload, reason: "unknown_kind" },
+      });
+      return { ok: false as const, error: "unknown_action_kind" };
+    } catch (err) {
+      // Ensure a failure event is written for any unexpected throw path.
+      await auditAssistantEvent(context.supabase, {
+        ...auditBase,
+        event_type: "action_failed",
+        payload: { ...auditBase.payload, reason: (err as Error).message },
+      });
+      throw err;
     }
-
-    return { ok: false as const, error: "unknown_action_kind" };
   });
