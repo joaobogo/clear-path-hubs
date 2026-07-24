@@ -6851,6 +6851,7 @@ export type Database = {
         Args: { _cp: string; _user: string }
         Returns: boolean
       }
+      is_platform_admin: { Args: { _user: string }; Returns: boolean }
       is_platform_staff: { Args: { _user: string }; Returns: boolean }
       scoring_readiness: { Args: { _match_id: string }; Returns: Json }
       show_limit: { Args: never; Returns: number }
