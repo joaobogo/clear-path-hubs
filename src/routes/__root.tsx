@@ -69,6 +69,7 @@ function RootShell({ children }: { children: ReactNode }) {
         <HeadContent />
       </head>
       <body>
+        <TaaSFlowEntryLoader />
         {children}
         <Scripts />
       </body>
@@ -100,7 +101,6 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <TaaSFlowEntryLoader />
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <Outlet />
       <Toaster />
