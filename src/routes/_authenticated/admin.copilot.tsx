@@ -52,6 +52,7 @@ interface Msg {
   tool_trace: Array<{ name: string; args: Record<string, string | number | boolean | null> }>;
   citations: Citation[];
   proposed_actions?: ProposedAction[];
+  confidence?: "high" | "medium" | "low" | "none" | null;
   created_at: string;
 }
 
