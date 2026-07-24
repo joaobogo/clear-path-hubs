@@ -396,9 +396,55 @@ function CandidatesPage() {
  </section>
  )}
 
- {/* Search + filters */}
- <section aria-label="Search and filters" className="mb-4 rounded-xl border bg-card p-3 sm:p-4">
- <div className="grid grid-cols-1 md:grid-cols-[minmax(0,2fr)_repeat(4,minmax(0,1fr))_auto] gap-2">
+  {/* Search + filters */}
+  <section aria-label="Search and filters" className="mb-4 rounded-xl border bg-card p-3 sm:p-4">
+   <div className="mb-3 flex flex-wrap items-center gap-2">
+    <SavedViewsBar
+     surface="client_candidates"
+     organizationId={orgId ?? undefined}
+     currentFilters={{
+      q: search.q,
+      position: search.position,
+      stage: search.stage,
+      fit: search.fit,
+      location: search.location,
+      sort: search.sort,
+      view: search.view,
+      filter: search.filter,
+      minScore: search.minScore,
+      maxScore: search.maxScore,
+     }}
+     onApply={(f) => navigate({ search: { ...search, ...f } as never, replace: true })}
+     canShare={ctx?.active?.role === "client_admin"}
+    />
+    <div className="ml-auto flex items-center gap-1 text-xs text-muted-foreground">
+     <span className="whitespace-nowrap">Score</span>
+     <Input
+      className="h-8 w-16"
+      type="number"
+      inputMode="numeric"
+      min={0}
+      max={100}
+      placeholder="min"
+      value={search.minScore}
+      onChange={(e) => setF({ minScore: e.target.value })}
+      aria-label="Minimum score"
+     />
+     <span>–</span>
+     <Input
+      className="h-8 w-16"
+      type="number"
+      inputMode="numeric"
+      min={0}
+      max={100}
+      placeholder="max"
+      value={search.maxScore}
+      onChange={(e) => setF({ maxScore: e.target.value })}
+      aria-label="Maximum score"
+     />
+    </div>
+   </div>
+   <div className="grid grid-cols-1 md:grid-cols-[minmax(0,2fr)_repeat(4,minmax(0,1fr))_auto] gap-2">
  <Input
  placeholder="Search by name, skill, role, location…"
  value={search.q}
