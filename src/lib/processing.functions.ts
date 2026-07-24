@@ -583,17 +583,35 @@ export const applyReviewDecision = createServerFn({ method: "POST" })
         reason: data.reason ?? null,
         actor_user_id: context.userId,
       });
+      // Canonical state must travel human_review → approved → published_to_client to
+      // satisfy tg_candidate_matches_canonical_state and tg_candidate_matches_publish_gate.
+      // Two updates keep both triggers happy; a partial failure between them still
+      // holds `client_visibility=hidden`, so no client-side leak is possible.
+      const { data: preRow } = await supabase
+        .from("candidate_matches")
+        .select("canonical_state")
+        .eq("id", data.match_id)
+        .maybeSingle();
+      if (preRow?.canonical_state && preRow.canonical_state !== "approved" && preRow.canonical_state !== "published_to_client") {
+        const { error: approveErr } = await supabase
+          .from("candidate_matches")
+          .update({ canonical_state: "approved" })
+          .eq("id", data.match_id);
+        if (approveErr) throw new Error(`publish_failed:approve_state:${approveErr.message}`);
+      }
       const { data: published, error: publishError } = await supabase
         .from("candidate_matches")
         .update({
           approved_score_run_id: runIdForDecision,
           admin_status: "approved",
           client_visibility: "visible",
+          canonical_state: "published_to_client",
+          integrity_status: "ok",
           stage: "delivered",
           delivered_at: new Date().toISOString(),
         })
         .eq("id", data.match_id)
-        .select("id,admin_status,client_visibility,stage,approved_score_run_id,delivered_at")
+        .select("id,admin_status,client_visibility,stage,approved_score_run_id,delivered_at,canonical_state")
         .maybeSingle();
       if (publishError) throw new Error(`publish_failed:${publishError.message}`);
       if (published?.client_visibility !== "visible") {

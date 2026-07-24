@@ -93,6 +93,7 @@ import { Route as AuthenticatedClientAnalyticsRouteImport } from './routes/_auth
 import { Route as AuthenticatedAdminWbrRouteImport } from './routes/_authenticated/admin.wbr'
 import { Route as AuthenticatedAdminTeamRouteImport } from './routes/_authenticated/admin.team'
 import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin.settings'
+import { Route as AuthenticatedAdminQaReportRouteImport } from './routes/_authenticated/admin.qa-report'
 import { Route as AuthenticatedAdminPublishRouteImport } from './routes/_authenticated/admin.publish'
 import { Route as AuthenticatedAdminPositionsRouteImport } from './routes/_authenticated/admin.positions'
 import { Route as AuthenticatedAdminOperationsRouteImport } from './routes/_authenticated/admin.operations'
@@ -566,6 +567,12 @@ const AuthenticatedAdminSettingsRoute =
     path: '/settings',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminQaReportRoute =
+  AuthenticatedAdminQaReportRouteImport.update({
+    id: '/qa-report',
+    path: '/qa-report',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminPublishRoute =
   AuthenticatedAdminPublishRouteImport.update({
     id: '/publish',
@@ -830,6 +837,7 @@ export interface FileRoutesByFullPath {
   '/admin/operations': typeof AuthenticatedAdminOperationsRoute
   '/admin/positions': typeof AuthenticatedAdminPositionsRouteWithChildren
   '/admin/publish': typeof AuthenticatedAdminPublishRoute
+  '/admin/qa-report': typeof AuthenticatedAdminQaReportRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/team': typeof AuthenticatedAdminTeamRoute
   '/admin/wbr': typeof AuthenticatedAdminWbrRoute
@@ -942,6 +950,7 @@ export interface FileRoutesByTo {
   '/admin/notifications': typeof AuthenticatedAdminNotificationsRoute
   '/admin/operations': typeof AuthenticatedAdminOperationsRoute
   '/admin/publish': typeof AuthenticatedAdminPublishRoute
+  '/admin/qa-report': typeof AuthenticatedAdminQaReportRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/team': typeof AuthenticatedAdminTeamRoute
   '/admin/wbr': typeof AuthenticatedAdminWbrRoute
@@ -1060,6 +1069,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/operations': typeof AuthenticatedAdminOperationsRoute
   '/_authenticated/admin/positions': typeof AuthenticatedAdminPositionsRouteWithChildren
   '/_authenticated/admin/publish': typeof AuthenticatedAdminPublishRoute
+  '/_authenticated/admin/qa-report': typeof AuthenticatedAdminQaReportRoute
   '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/_authenticated/admin/team': typeof AuthenticatedAdminTeamRoute
   '/_authenticated/admin/wbr': typeof AuthenticatedAdminWbrRoute
@@ -1181,6 +1191,7 @@ export interface FileRouteTypes {
     | '/admin/operations'
     | '/admin/positions'
     | '/admin/publish'
+    | '/admin/qa-report'
     | '/admin/settings'
     | '/admin/team'
     | '/admin/wbr'
@@ -1293,6 +1304,7 @@ export interface FileRouteTypes {
     | '/admin/notifications'
     | '/admin/operations'
     | '/admin/publish'
+    | '/admin/qa-report'
     | '/admin/settings'
     | '/admin/team'
     | '/admin/wbr'
@@ -1410,6 +1422,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/operations'
     | '/_authenticated/admin/positions'
     | '/_authenticated/admin/publish'
+    | '/_authenticated/admin/qa-report'
     | '/_authenticated/admin/settings'
     | '/_authenticated/admin/team'
     | '/_authenticated/admin/wbr'
@@ -2117,6 +2130,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminSettingsRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/qa-report': {
+      id: '/_authenticated/admin/qa-report'
+      path: '/qa-report'
+      fullPath: '/admin/qa-report'
+      preLoaderRoute: typeof AuthenticatedAdminQaReportRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/publish': {
       id: '/_authenticated/admin/publish'
       path: '/publish'
@@ -2470,6 +2490,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminOperationsRoute: typeof AuthenticatedAdminOperationsRoute
   AuthenticatedAdminPositionsRoute: typeof AuthenticatedAdminPositionsRouteWithChildren
   AuthenticatedAdminPublishRoute: typeof AuthenticatedAdminPublishRoute
+  AuthenticatedAdminQaReportRoute: typeof AuthenticatedAdminQaReportRoute
   AuthenticatedAdminSettingsRoute: typeof AuthenticatedAdminSettingsRoute
   AuthenticatedAdminTeamRoute: typeof AuthenticatedAdminTeamRoute
   AuthenticatedAdminWbrRoute: typeof AuthenticatedAdminWbrRoute
@@ -2493,6 +2514,7 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminPositionsRoute:
     AuthenticatedAdminPositionsRouteWithChildren,
   AuthenticatedAdminPublishRoute: AuthenticatedAdminPublishRoute,
+  AuthenticatedAdminQaReportRoute: AuthenticatedAdminQaReportRoute,
   AuthenticatedAdminSettingsRoute: AuthenticatedAdminSettingsRoute,
   AuthenticatedAdminTeamRoute: AuthenticatedAdminTeamRoute,
   AuthenticatedAdminWbrRoute: AuthenticatedAdminWbrRoute,
