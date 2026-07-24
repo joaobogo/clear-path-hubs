@@ -42,6 +42,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as JobsIndexRouteImport } from './routes/jobs.index'
 import { Route as IndustriesIndexRouteImport } from './routes/industries.index'
 import { Route as BlogIndexRouteImport } from './routes/blog.index'
+import { Route as ShareTokenRouteImport } from './routes/share.$token'
 import { Route as PartnershipsStaffingRouteImport } from './routes/partnerships.staffing'
 import { Route as IntakeConfirmationRouteImport } from './routes/intake_.confirmation'
 import { Route as IndustriesNonProfitRouteImport } from './routes/industries.non-profit'
@@ -277,6 +278,11 @@ const IndustriesIndexRoute = IndustriesIndexRouteImport.update({
 const BlogIndexRoute = BlogIndexRouteImport.update({
   id: '/blog/',
   path: '/blog/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ShareTokenRoute = ShareTokenRouteImport.update({
+  id: '/share/$token',
+  path: '/share/$token',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PartnershipsStaffingRoute = PartnershipsStaffingRouteImport.update({
@@ -724,6 +730,7 @@ export interface FileRoutesByFullPath {
   '/industries/non-profit': typeof IndustriesNonProfitRoute
   '/intake/confirmation': typeof IntakeConfirmationRoute
   '/partnerships/staffing': typeof PartnershipsStaffingRoute
+  '/share/$token': typeof ShareTokenRoute
   '/blog/': typeof BlogIndexRoute
   '/industries/': typeof IndustriesIndexRoute
   '/jobs/': typeof JobsIndexRoute
@@ -827,6 +834,7 @@ export interface FileRoutesByTo {
   '/industries/non-profit': typeof IndustriesNonProfitRoute
   '/intake/confirmation': typeof IntakeConfirmationRoute
   '/partnerships/staffing': typeof PartnershipsStaffingRoute
+  '/share/$token': typeof ShareTokenRoute
   '/blog': typeof BlogIndexRoute
   '/industries': typeof IndustriesIndexRoute
   '/jobs': typeof JobsIndexRoute
@@ -928,6 +936,7 @@ export interface FileRoutesById {
   '/industries/non-profit': typeof IndustriesNonProfitRoute
   '/intake_/confirmation': typeof IntakeConfirmationRoute
   '/partnerships/staffing': typeof PartnershipsStaffingRoute
+  '/share/$token': typeof ShareTokenRoute
   '/blog/': typeof BlogIndexRoute
   '/industries/': typeof IndustriesIndexRoute
   '/jobs/': typeof JobsIndexRoute
@@ -1036,6 +1045,7 @@ export interface FileRouteTypes {
     | '/industries/non-profit'
     | '/intake/confirmation'
     | '/partnerships/staffing'
+    | '/share/$token'
     | '/blog/'
     | '/industries/'
     | '/jobs/'
@@ -1139,6 +1149,7 @@ export interface FileRouteTypes {
     | '/industries/non-profit'
     | '/intake/confirmation'
     | '/partnerships/staffing'
+    | '/share/$token'
     | '/blog'
     | '/industries'
     | '/jobs'
@@ -1239,6 +1250,7 @@ export interface FileRouteTypes {
     | '/industries/non-profit'
     | '/intake_/confirmation'
     | '/partnerships/staffing'
+    | '/share/$token'
     | '/blog/'
     | '/industries/'
     | '/jobs/'
@@ -1344,6 +1356,7 @@ export interface RootRouteChildren {
   IndustriesNonProfitRoute: typeof IndustriesNonProfitRoute
   IntakeConfirmationRoute: typeof IntakeConfirmationRoute
   PartnershipsStaffingRoute: typeof PartnershipsStaffingRoute
+  ShareTokenRoute: typeof ShareTokenRoute
   BlogIndexRoute: typeof BlogIndexRoute
   IndustriesIndexRoute: typeof IndustriesIndexRoute
   JobsIndexRoute: typeof JobsIndexRoute
@@ -1590,6 +1603,13 @@ declare module '@tanstack/react-router' {
       path: '/blog'
       fullPath: '/blog/'
       preLoaderRoute: typeof BlogIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/share/$token': {
+      id: '/share/$token'
+      path: '/share/$token'
+      fullPath: '/share/$token'
+      preLoaderRoute: typeof ShareTokenRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/partnerships/staffing': {
@@ -2407,6 +2427,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndustriesNonProfitRoute: IndustriesNonProfitRoute,
   IntakeConfirmationRoute: IntakeConfirmationRoute,
   PartnershipsStaffingRoute: PartnershipsStaffingRoute,
+  ShareTokenRoute: ShareTokenRoute,
   BlogIndexRoute: BlogIndexRoute,
   IndustriesIndexRoute: IndustriesIndexRoute,
   JobsIndexRoute: JobsIndexRoute,
