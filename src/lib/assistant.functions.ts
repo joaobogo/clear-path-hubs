@@ -474,6 +474,14 @@ export const askAssistant = createServerFn({ method: "POST" })
       });
       if (!res.ok) {
         const body = await res.text();
+        await auditAssistantEvent(context.supabase, {
+          surface: "client_assistant",
+          event_type: "gateway_error",
+          user_id: context.userId,
+          organization_id: data.orgId,
+          conversation_id: conversationId,
+          payload: { status: res.status, body_preview: body.slice(0, 200) },
+        });
         if (res.status === 429) {
           finalContent = "I'm hitting a rate limit right now — please try again in a moment.";
           break;
