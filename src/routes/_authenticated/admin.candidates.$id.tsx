@@ -322,7 +322,12 @@ function WorkspaceHeader({
             )}
           </div>
         </div>
-        <div className="shrink-0">
+        <div className="flex shrink-0 items-center gap-2">
+          <Button variant="outline" size="sm" asChild>
+            <Link to="/admin/candidates/$id/evidence" params={{ id: m.id }}>
+              <ScanText className="mr-2 h-4 w-4" /> Evidence record
+            </Link>
+          </Button>
           <DownloadCvButton matchId={m.id} />
         </div>
       </div>
