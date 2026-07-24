@@ -38,6 +38,8 @@ import {
 import type { MatchStage } from "@/lib/client-kpi.server";
 import { DownloadCvButton } from "@/components/download-cv-button";
 import { useClientOrgSearch } from "@/lib/use-client-org";
+import { JourneyTimeline } from "@/components/candidate/journey-timeline";
+import { getCandidateJourney } from "@/lib/journey.functions";
 import { useSupportView } from "@/lib/support-view";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -255,6 +257,7 @@ function CandidateDetailPage() {
           {(interviews.length > 0 || decisions.length > 0) && (
             <ActivitySection interviews={interviews} decisions={decisions} />
           )}
+          <JourneySection matchId={candidate.match_id} />
           <AuditTrailSection candidate={candidate} />
         </div>
 
@@ -1379,5 +1382,20 @@ function TalentMemoryAction({
         roleTitle={roleTitle}
       />
     </div>
+  );
+}
+
+function JourneySection({ matchId }: { matchId: string }) {
+  const { data, isLoading } = useQuery({
+    queryKey: ["candidate-journey", matchId],
+    queryFn: () => getCandidateJourney({ data: { candidateMatchId: matchId } }),
+  });
+  if (isLoading) return null;
+  const events = data?.events ?? [];
+  if (events.length === 0) return null;
+  return (
+    <SectionCard title="Journey timeline" icon={<FileClock className="h-4 w-4" />}>
+      <JourneyTimeline events={events} />
+    </SectionCard>
   );
 }

@@ -46,9 +46,12 @@ import {
   ExternalLink,
   Wrench,
   MoreHorizontal,
+  Milestone,
 } from "lucide-react";
 import { DownloadCvButton } from "@/components/download-cv-button";
 import { ScoreExplainability } from "@/components/candidate/score-explainability";
+import { JourneyTimeline } from "@/components/candidate/journey-timeline";
+import { getCandidateJourney } from "@/lib/journey.functions";
 
 
 
@@ -97,6 +100,7 @@ type Any = any;
 
 const TABS = [
   { id: "profile", label: "Profile", icon: User },
+  { id: "journey", label: "Journey", icon: Milestone },
   { id: "cv", label: "CV & parsed", icon: FileText },
   { id: "enrichment", label: "Enrichment", icon: Sparkles },
   { id: "evidence", label: "Evidence", icon: ScanText },
@@ -204,6 +208,7 @@ function CandidateWorkspace() {
             {tab === "profile" && (
               <ProfileTab cp={cp} pos={pos} m={m} siblings={siblings} evidence={evidence} />
             )}
+            {tab === "journey" && <JourneyTab matchId={id} />}
             {tab === "cv" && <CvTab cv={cv} matchId={id} cp={cp} insights={evidence?.extracted?.insights ?? null} />}
             {tab === "enrichment" && <EnrichmentTab cp={cp} evidence={evidence} />}
             {tab === "evidence" && (
@@ -1784,3 +1789,23 @@ function ActionRail({
   );
 }
 
+
+function JourneyTab({ matchId }: { matchId: string }) {
+  const { data, isLoading } = useQuery({
+    queryKey: ["candidate-journey", matchId],
+    queryFn: () => getCandidateJourney({ data: { candidateMatchId: matchId } }),
+  });
+  if (isLoading) return <div className="text-sm text-muted-foreground">Loading timeline…</div>;
+  const events = data?.events ?? [];
+  return (
+    <div className="space-y-4">
+      <header>
+        <h2 className="text-base font-semibold">Candidate journey</h2>
+        <p className="text-xs text-muted-foreground">
+          Full relationship at a glance — from sourced or applied through rehire.
+        </p>
+      </header>
+      <JourneyTimeline events={events} />
+    </div>
+  );
+}
