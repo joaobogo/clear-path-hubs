@@ -408,6 +408,13 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "assistant_conversations_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_portfolio_rollup"
+            referencedColumns: ["organization_id"]
+          },
         ]
       }
       assistant_messages: {
@@ -477,6 +484,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "assistant_messages_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_portfolio_rollup"
+            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -558,6 +572,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "audit_events_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_portfolio_rollup"
+            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -853,6 +874,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "candidate_matches_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_portfolio_rollup"
+            referencedColumns: ["organization_id"]
+          },
+          {
             foreignKeyName: "candidate_matches_position_id_fkey"
             columns: ["position_id"]
             isOneToOne: false
@@ -1132,6 +1160,13 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "client_decisions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_portfolio_rollup"
+            referencedColumns: ["organization_id"]
+          },
         ]
       }
       client_notification_preferences: {
@@ -1188,6 +1223,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_notification_preferences_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_portfolio_rollup"
+            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -1486,6 +1528,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "export_jobs_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_portfolio_rollup"
+            referencedColumns: ["organization_id"]
           },
           {
             foreignKeyName: "export_jobs_output_file_id_fkey"
@@ -1791,6 +1840,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "hire_records_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_portfolio_rollup"
+            referencedColumns: ["organization_id"]
+          },
+          {
             foreignKeyName: "hire_records_position_id_fkey"
             columns: ["position_id"]
             isOneToOne: false
@@ -1923,6 +1979,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "intake_submissions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_portfolio_rollup"
+            referencedColumns: ["organization_id"]
           },
           {
             foreignKeyName: "intake_submissions_position_id_fkey"
@@ -2144,6 +2207,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "interviews_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_portfolio_rollup"
+            referencedColumns: ["organization_id"]
           },
           {
             foreignKeyName: "interviews_position_id_fkey"
@@ -2859,6 +2929,13 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "memberships_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_portfolio_rollup"
+            referencedColumns: ["organization_id"]
+          },
         ]
       }
       messages: {
@@ -3282,6 +3359,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "notification_events_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_portfolio_rollup"
+            referencedColumns: ["organization_id"]
+          },
+          {
             foreignKeyName: "notification_events_position_id_fkey"
             columns: ["position_id"]
             isOneToOne: false
@@ -3407,6 +3491,13 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "notifications_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_portfolio_rollup"
+            referencedColumns: ["organization_id"]
+          },
         ]
       }
       organizations: {
@@ -3435,6 +3526,7 @@ export type Database = {
           name: string
           name_normalized: string | null
           onboarding_status: string
+          parent_organization_id: string | null
           phone: string | null
           primary_contact_email: string | null
           primary_contact_name: string | null
@@ -3468,6 +3560,7 @@ export type Database = {
           name: string
           name_normalized?: string | null
           onboarding_status?: string
+          parent_organization_id?: string | null
           phone?: string | null
           primary_contact_email?: string | null
           primary_contact_name?: string | null
@@ -3501,6 +3594,7 @@ export type Database = {
           name?: string
           name_normalized?: string | null
           onboarding_status?: string
+          parent_organization_id?: string | null
           phone?: string | null
           primary_contact_email?: string | null
           primary_contact_name?: string | null
@@ -3509,7 +3603,29 @@ export type Database = {
           updated_at?: string
           website?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "organizations_parent_organization_id_fkey"
+            columns: ["parent_organization_id"]
+            isOneToOne: false
+            referencedRelation: "admin_clients_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "organizations_parent_organization_id_fkey"
+            columns: ["parent_organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "organizations_parent_organization_id_fkey"
+            columns: ["parent_organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_portfolio_rollup"
+            referencedColumns: ["organization_id"]
+          },
+        ]
       }
       outreach_campaigns: {
         Row: {
@@ -3574,6 +3690,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "outreach_campaigns_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_portfolio_rollup"
+            referencedColumns: ["organization_id"]
           },
           {
             foreignKeyName: "outreach_campaigns_position_id_fkey"
@@ -3743,11 +3866,19 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "outreach_touches_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_portfolio_rollup"
+            referencedColumns: ["organization_id"]
+          },
         ]
       }
       positions: {
         Row: {
           approved_at: string | null
+          business_unit: string | null
           closed_at: string | null
           compensation: Json
           created_at: string
@@ -3775,6 +3906,7 @@ export type Database = {
           organization_id: string
           preferred_requirements: Json
           published_at: string | null
+          region: string | null
           requirements: Json
           seniority: string | null
           status: Database["public"]["Enums"]["position_status"]
@@ -3788,6 +3920,7 @@ export type Database = {
         }
         Insert: {
           approved_at?: string | null
+          business_unit?: string | null
           closed_at?: string | null
           compensation?: Json
           created_at?: string
@@ -3817,6 +3950,7 @@ export type Database = {
           organization_id: string
           preferred_requirements?: Json
           published_at?: string | null
+          region?: string | null
           requirements?: Json
           seniority?: string | null
           status?: Database["public"]["Enums"]["position_status"]
@@ -3830,6 +3964,7 @@ export type Database = {
         }
         Update: {
           approved_at?: string | null
+          business_unit?: string | null
           closed_at?: string | null
           compensation?: Json
           created_at?: string
@@ -3859,6 +3994,7 @@ export type Database = {
           organization_id?: string
           preferred_requirements?: Json
           published_at?: string | null
+          region?: string | null
           requirements?: Json
           seniority?: string | null
           status?: Database["public"]["Enums"]["position_status"]
@@ -3884,6 +4020,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "positions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_portfolio_rollup"
+            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -4080,6 +4223,13 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "provider_usage_events_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_portfolio_rollup"
+            referencedColumns: ["organization_id"]
+          },
         ]
       }
       retention_policies: {
@@ -4207,6 +4357,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "saved_views_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_portfolio_rollup"
+            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -4519,6 +4676,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "score_runs_organization_fk"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_portfolio_rollup"
+            referencedColumns: ["organization_id"]
+          },
+          {
             foreignKeyName: "score_runs_position_id_fkey"
             columns: ["position_id"]
             isOneToOne: false
@@ -4775,6 +4939,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "shortlist_shares_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_portfolio_rollup"
+            referencedColumns: ["organization_id"]
+          },
+          {
             foreignKeyName: "shortlist_shares_position_id_fkey"
             columns: ["position_id"]
             isOneToOne: false
@@ -4870,6 +5041,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "support_actions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_portfolio_rollup"
+            referencedColumns: ["organization_id"]
+          },
+          {
             foreignKeyName: "support_actions_session_id_fkey"
             columns: ["session_id"]
             isOneToOne: false
@@ -4947,6 +5125,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "support_sessions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_portfolio_rollup"
+            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -5054,6 +5239,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "talent_memory_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_portfolio_rollup"
+            referencedColumns: ["organization_id"]
           },
           {
             foreignKeyName: "talent_memory_source_match_id_fkey"
@@ -5184,6 +5376,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "talent_memory_events_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_portfolio_rollup"
+            referencedColumns: ["organization_id"]
+          },
+          {
             foreignKeyName: "talent_memory_events_position_id_fkey"
             columns: ["position_id"]
             isOneToOne: false
@@ -5285,6 +5484,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "talent_pool_members_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_portfolio_rollup"
+            referencedColumns: ["organization_id"]
+          },
+          {
             foreignKeyName: "talent_pool_members_pool_id_fkey"
             columns: ["pool_id"]
             isOneToOne: false
@@ -5342,6 +5548,13 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "talent_pools_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_portfolio_rollup"
+            referencedColumns: ["organization_id"]
+          },
         ]
       }
       trace_index: {
@@ -5395,6 +5608,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "trace_index_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_portfolio_rollup"
+            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -5493,6 +5713,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "candidate_matches_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_portfolio_rollup"
+            referencedColumns: ["organization_id"]
           },
           {
             foreignKeyName: "candidate_matches_position_id_fkey"
@@ -5633,6 +5860,13 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "positions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_portfolio_rollup"
+            referencedColumns: ["organization_id"]
+          },
         ]
       }
       admin_work_inbox: {
@@ -5685,6 +5919,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "candidate_matches_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_portfolio_rollup"
+            referencedColumns: ["organization_id"]
           },
           {
             foreignKeyName: "candidate_matches_position_id_fkey"
@@ -5869,6 +6110,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "candidate_matches_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_portfolio_rollup"
+            referencedColumns: ["organization_id"]
+          },
+          {
             foreignKeyName: "candidate_matches_position_id_fkey"
             columns: ["position_id"]
             isOneToOne: false
@@ -5929,6 +6177,13 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "candidate_matches_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_portfolio_rollup"
+            referencedColumns: ["organization_id"]
+          },
         ]
       }
       client_kanban_view: {
@@ -5954,6 +6209,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "candidate_matches_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_portfolio_rollup"
+            referencedColumns: ["organization_id"]
           },
           {
             foreignKeyName: "candidate_matches_position_id_fkey"
@@ -6065,6 +6327,13 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "positions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_portfolio_rollup"
+            referencedColumns: ["organization_id"]
+          },
         ]
       }
       v_outreach_campaigns: {
@@ -6102,6 +6371,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "outreach_campaigns_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_portfolio_rollup"
+            referencedColumns: ["organization_id"]
           },
           {
             foreignKeyName: "outreach_campaigns_position_id_fkey"
@@ -6176,7 +6452,28 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "outreach_campaigns_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_portfolio_rollup"
+            referencedColumns: ["organization_id"]
+          },
         ]
+      }
+      v_portfolio_rollup: {
+        Row: {
+          business_unit: string | null
+          candidates_in_flight: number | null
+          filled_positions: number | null
+          hires: number | null
+          open_positions: number | null
+          organization_id: string | null
+          organization_name: string | null
+          portfolio_org_id: string | null
+          region: string | null
+        }
+        Relationships: []
       }
       v_source_attribution: {
         Row: {
@@ -6260,6 +6557,13 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "positions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_portfolio_rollup"
+            referencedColumns: ["organization_id"]
+          },
         ]
       }
       v_source_attribution_rollup: {
@@ -6292,6 +6596,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "positions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_portfolio_rollup"
+            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -6341,6 +6652,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hire_records_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_portfolio_rollup"
+            referencedColumns: ["organization_id"]
           },
           {
             foreignKeyName: "hire_records_position_id_fkey"
