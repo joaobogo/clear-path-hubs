@@ -38,6 +38,8 @@ import {
 import type { MatchStage } from "@/lib/client-kpi.server";
 import { DownloadCvButton } from "@/components/download-cv-button";
 import { useClientOrgSearch } from "@/lib/use-client-org";
+import { JourneyTimeline } from "@/components/candidate/journey-timeline";
+import { getCandidateJourney } from "@/lib/journey.functions";
 import { useSupportView } from "@/lib/support-view";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
