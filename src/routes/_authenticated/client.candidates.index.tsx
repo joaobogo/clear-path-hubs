@@ -557,11 +557,41 @@ function CandidatesPage() {
  crossPosition ? "Select candidates from the same position to compare" : null
  }
  />
- <CompareSheet
- open={compareOpen && selectedCandidates.length >= 2 && !crossPosition}
- onOpenChange={setCompareOpen}
- candidates={selectedCandidates}
- />
+  <CompareSheet
+  open={compareOpen && selectedCandidates.length >= 2 && !crossPosition}
+  onOpenChange={setCompareOpen}
+  candidates={selectedCandidates}
+  />
+
+  {selectedCandidates.length > 0 && (
+   <div className="fixed bottom-24 right-6 z-40">
+    <Button
+     size="lg"
+     className="shadow-lg"
+     onClick={() => setShareOpen(true)}
+     disabled={crossPosition}
+     title={crossPosition ? "Select candidates from the same position to share" : undefined}
+    >
+     <Share2 className="mr-2 h-4 w-4" />
+     Share shortlist ({selectedCandidates.length})
+    </Button>
+   </div>
+  )}
+
+  {orgId && (
+   <ShareShortlistDialog
+    open={shareOpen}
+    onOpenChange={setShareOpen}
+    orgId={orgId}
+    positionId={selectedCandidates[0]?.position?.id ?? null}
+    matchIds={selectedCandidates.map((c) => c.match_id)}
+    suggestedTitle={
+     selectedCandidates[0]?.position?.title
+      ? `Shortlist — ${selectedCandidates[0].position.title}`
+      : undefined
+    }
+   />
+  )}
  </main>
  );
 }
