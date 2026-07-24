@@ -98,14 +98,7 @@ export function trackEvent(name: string, props: AnalyticsProps = {}): void {
 
   if (isDuplicate(name, cleaned)) return;
 
-  for (const [k, v] of Object.entries(props)) {
-    const s = scrubValue(k, v);
-    if (s !== undefined) cleaned[k] = s;
-  }
-  cleaned.ts = Date.now();
-  cleaned.path = safe(() => window.location.pathname) ?? "";
 
-  if (isDuplicate(name, cleaned)) return;
 
 
   // 1. GTM dataLayer
