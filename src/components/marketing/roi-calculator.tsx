@@ -382,7 +382,7 @@ export function RoiCalculator({
                     TaaSFlow platform
                     {result.taasflowPackage ? ` · ${result.taasflowPackage.name}` : ""}
                   </span>
-                  <p className="mt-3 font-[family-name:var(--brand-font-display)] text-3xl md:text-4xl tabular-nums">
+                  <p className="mt-3 font-[family-name:var(--brand-font-display)] text-2xl sm:text-3xl md:text-4xl tabular-nums break-words">
                     {result.taasflowCostUsd == null
                       ? "Custom"
                       : formatUsdCompact(result.taasflowCostUsd)}
