@@ -1,194 +1,330 @@
-import { useMemo, useState } from "react";
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowUpRight, Search, Sparkles } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { createFileRoute, Link, useNavigate, stripSearchParams } from "@tanstack/react-router";
+import { fallback, zodValidator } from "@tanstack/zod-adapter";
+import { z } from "zod";
+import { ArrowRight, Search, X } from "lucide-react";
 import {
   SiteShell,
   PublicPage,
   PublicSection,
-  CtaSection,
 } from "@/components/marketing/site-shell";
 import { marketingHead } from "@/lib/marketing/head";
-import { PageConnections } from "@/components/marketing/page-connections";
 import { INDUSTRY_ENTRIES } from "@/content/industries-v2";
 import {
-  EXPLORER_CATEGORIES,
-  CATEGORY_BY_SLUG,
-  type ExplorerCategory,
-} from "@/components/marketing/industry-explorer";
-import { getIndustryVisualIdentity } from "@/content/industry-visual-identity";
+  ALL_FAMILIES,
+  FAMILY_LABEL,
+  FAMILY_TAGLINE,
+  type IndustryFamily,
+} from "@/content/industry-archetypes";
+import { getIndustryConfig } from "@/content/industry-config";
+import { toPublicSlug } from "@/lib/marketing/industry-slug-aliases";
+import {
+  BookACallDialog,
+} from "@/components/marketing/book-a-call";
+
+/**
+ * /industries — deep sector-expertise library entrance.
+ *
+ * Editorial hero (no giant decorative photo, no repetition of individual
+ * industry-page heroes), fast client search + family filters with URL
+ * state, ItemList JSON-LD for indexing, accessible reset, methodology
+ * explainer and a "can't find your industry?" contact CTA.
+ */
+
+const searchSchema = z.object({
+  q: fallback(z.string(), "").default(""),
+  family: fallback(z.string(), "").default(""),
+});
 
 export const Route = createFileRoute("/industries/")({
+  validateSearch: zodValidator(searchSchema),
+  search: {
+    middlewares: [stripSearchParams({ q: "", family: "" })],
+  },
   head: () =>
     marketingHead(undefined, "/industries", {
       title: "Industries — TaaSFlow",
       description:
-        "Fifty-seven industries. One recruiting model. Pick a vertical and see the rubric, roles and workspace built for it.",
+        "Fifty-seven industries, six page archetypes, one recruiting model. Search or filter to the vertical you hire for.",
     }),
   component: IndustriesIndex,
 });
 
 type Tile = {
   slug: string;
+  publicSlug: string;
   name: string;
-  category: ExplorerCategory;
   eyebrow: string;
-  roleCount: number;
-  summary: string;
-  gradient: string;
-  accent: string;
+  family: IndustryFamily;
+  familyLabel: string;
+  challenge: { title: string; body: string } | null;
+  roleGroups: string[];
+  motifSeed: number;
+  paletteToken: IndustryFamily;
 };
 
-const TILES: Tile[] = [...INDUSTRY_ENTRIES]
-  .map((e) => {
-    const v = getIndustryVisualIdentity(e.slug);
-    return {
-      slug: e.slug,
-      name: e.name,
-      category:
-        CATEGORY_BY_SLUG[e.slug] ??
-        ("Operations & Physical Industries" as ExplorerCategory),
-      eyebrow: e.eyebrow,
-      roleCount: e.roles?.length ?? 0,
-      summary: e.summary ?? e.hero?.subtitle ?? "",
-      gradient: v.gradient,
-      accent: v.accent,
-    };
-  })
-  .sort((a, b) => a.name.localeCompare(b.name));
-
-const FILTERS: Array<{ key: "All" | ExplorerCategory; label: string }> = [
-  { key: "All", label: "All industries" },
-  ...EXPLORER_CATEGORIES.map((c) => ({
-    key: c,
-    label: c.replace(" & ", " · "),
-  })),
-];
+const TILES: Tile[] = INDUSTRY_ENTRIES.map((entry) => {
+  const cfg = getIndustryConfig(entry);
+  const roleGroups =
+    entry.roleFamilies?.slice(0, 3).map((rf) => rf.name) ??
+    entry.roles.slice(0, 3);
+  return {
+    slug: entry.slug,
+    publicSlug: cfg.publicSlug,
+    name: entry.name,
+    eyebrow: entry.eyebrow,
+    family: cfg.family,
+    familyLabel: cfg.familyLabel,
+    challenge: entry.challenges?.[0] ?? null,
+    roleGroups,
+    motifSeed: hashSeed(entry.slug),
+    paletteToken: cfg.family,
+  };
+}).sort((a, b) => a.name.localeCompare(b.name));
 
 function IndustriesIndex() {
-  const [active, setActive] = useState<"All" | ExplorerCategory>("All");
-  const [q, setQ] = useState("");
+  const search = Route.useSearch();
+  const navigate = useNavigate({ from: "/industries" });
+  const resultsRef = useRef<HTMLHeadingElement>(null);
+  const [inputQ, setInputQ] = useState(search.q);
+
+  useEffect(() => {
+    setInputQ(search.q);
+  }, [search.q]);
+
+  const activeFamily: IndustryFamily | "all" = useMemo(() => {
+    const f = search.family as IndustryFamily;
+    return ALL_FAMILIES.includes(f) ? f : "all";
+  }, [search.family]);
 
   const filtered = useMemo(() => {
-    const needle = q.trim().toLowerCase();
+    const needle = inputQ.trim().toLowerCase();
     return TILES.filter((t) => {
-      if (active !== "All" && t.category !== active) return false;
+      if (activeFamily !== "all" && t.family !== activeFamily) return false;
       if (!needle) return true;
       return (
         t.name.toLowerCase().includes(needle) ||
-        t.category.toLowerCase().includes(needle) ||
-        t.summary.toLowerCase().includes(needle)
+        t.familyLabel.toLowerCase().includes(needle) ||
+        (t.challenge?.title.toLowerCase().includes(needle) ?? false) ||
+        t.roleGroups.some((r) => r.toLowerCase().includes(needle))
       );
     });
-  }, [active, q]);
+  }, [inputQ, activeFamily]);
 
   const counts = useMemo(() => {
-    const m = new Map<string, number>();
-    m.set("All", TILES.length);
-    for (const c of EXPLORER_CATEGORIES) m.set(c, 0);
-    for (const t of TILES) m.set(t.category, (m.get(t.category) ?? 0) + 1);
+    const m: Record<string, number> = { all: TILES.length };
+    for (const fam of ALL_FAMILIES) m[fam] = 0;
+    for (const t of TILES) m[t.family] = (m[t.family] ?? 0) + 1;
     return m;
   }, []);
 
+  function setFamily(fam: IndustryFamily | "all") {
+    navigate({
+      search: (prev: { q: string; family: string }) => ({ ...prev, family: fam === "all" ? "" : fam }),
+      resetScroll: false,
+    });
+    // Announce and focus the results heading for screen readers.
+    setTimeout(() => resultsRef.current?.focus(), 30);
+  }
+
+  function commitQuery(next: string) {
+    navigate({
+      search: (prev: { q: string; family: string }) => ({ ...prev, q: next.trim() }),
+      resetScroll: false,
+    });
+  }
+
+  function reset() {
+    setInputQ("");
+    navigate({ search: () => ({ q: "", family: "" }), resetScroll: false });
+    setTimeout(() => resultsRef.current?.focus(), 30);
+  }
+
+  const itemListJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    itemListElement: filtered.map((t, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      name: `${t.name} hiring — TaaSFlow`,
+      url: `https://clear-path-hubs.lovable.app/industries/${t.publicSlug}`,
+    })),
+  };
+
   return (
     <SiteShell>
-      {/* Cinematic hero */}
-      <section className="relative isolate overflow-hidden bg-[color:var(--brand-navy)] text-white">
-        {/* Backdrop mosaic */}
-        <div aria-hidden className="pointer-events-none absolute inset-0 opacity-70">
-          <div className="grid h-full w-full grid-cols-6 grid-rows-3">
-            {TILES.slice(0, 18).map((t, i) => (
-              <div
-                key={t.slug}
-                className={`bg-gradient-to-br ${t.gradient}`}
-                style={{ opacity: 0.55 + ((i * 17) % 5) * 0.06 }}
+      {/* ================================================================
+       *  EDITORIAL HERO
+       * ================================================================ */}
+      <PublicSection className="border-b border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-paper)] py-14 sm:py-20">
+        <PublicPage>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[color:var(--brand-ocean)]">
+            Industries · Sector expertise
+          </p>
+          <h1 className="mt-5 max-w-[24ch] font-[family-name:var(--brand-font-display)] text-4xl font-semibold leading-[1.05] tracking-tight text-balance sm:text-5xl md:text-6xl">
+            Hiring intelligence, tuned to the realities of each industry.
+          </h1>
+          <p className="mt-6 max-w-2xl text-lg text-[color:var(--brand-navy)]/75">
+            One recruiting model, six page archetypes, and a rubric calibrated to
+            the language, evidence and regulation of every sector we serve.
+          </p>
+          <div className="mt-8 flex flex-wrap items-center gap-3">
+            <BookACallDialog
+              trigger={
+                <button
+                  type="button"
+                  className="inline-flex min-h-11 items-center justify-center rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+                >
+                  Discuss your hiring needs
+                </button>
+              }
+            />
+            <Link
+              to="/how-it-works"
+              hash="scoring"
+              className="inline-flex min-h-11 items-center justify-center gap-1 rounded-md px-3 py-2.5 text-sm font-semibold text-[color:var(--brand-navy)]/70 hover:text-[color:var(--brand-navy)]"
+            >
+              See how scoring works <ArrowRight className="h-4 w-4" aria-hidden />
+            </Link>
+          </div>
+        </PublicPage>
+      </PublicSection>
+
+      {/* ================================================================
+       *  DISCOVERY BAR
+       * ================================================================ */}
+      <div className="sticky top-14 z-20 border-b border-[color:var(--brand-navy)]/10 bg-white/95 backdrop-blur-md">
+        <PublicPage className="py-4">
+          <form
+            role="search"
+            aria-label="Industries"
+            onSubmit={(e) => {
+              e.preventDefault();
+              commitQuery(inputQ);
+              setTimeout(() => resultsRef.current?.focus(), 30);
+            }}
+            className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center"
+          >
+            <label className="relative flex w-full items-center">
+              <Search
+                aria-hidden
+                className="absolute left-3 h-4 w-4 text-[color:var(--brand-navy)]/45"
+              />
+              <input
+                type="search"
+                value={inputQ}
+                onChange={(e) => {
+                  setInputQ(e.target.value);
+                  commitQuery(e.target.value);
+                }}
+                placeholder="Search by industry, role group or challenge"
+                aria-label="Search industries"
+                className="w-full rounded-full border border-[color:var(--brand-navy)]/15 bg-white py-2.5 pl-9 pr-9 text-sm text-[color:var(--brand-navy)] placeholder:text-[color:var(--brand-navy)]/40 focus:border-[color:var(--brand-navy)]/40 focus:outline-none focus:ring-2 focus:ring-[color:var(--brand-focus-ring)]"
+              />
+              {inputQ ? (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setInputQ("");
+                    commitQuery("");
+                  }}
+                  className="absolute right-2 grid h-7 w-7 place-items-center rounded-full text-[color:var(--brand-navy)]/50 hover:bg-[color:var(--brand-navy)]/5 hover:text-[color:var(--brand-navy)]"
+                  aria-label="Clear search"
+                >
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              ) : null}
+            </label>
+            {activeFamily !== "all" || inputQ ? (
+              <button
+                type="button"
+                onClick={reset}
+                className="justify-self-start rounded-full border border-[color:var(--brand-navy)]/15 px-4 py-2 text-xs font-semibold text-[color:var(--brand-navy)]/75 hover:bg-[color:var(--brand-navy)]/5"
+              >
+                View all industries
+              </button>
+            ) : null}
+          </form>
+
+          {/* Family filters */}
+          <div
+            role="tablist"
+            aria-label="Filter by industry family"
+            className="-mx-1 mt-3 flex gap-1.5 overflow-x-auto px-1 pb-1"
+          >
+            <FamilyChip
+              active={activeFamily === "all"}
+              onClick={() => setFamily("all")}
+              label="All industries"
+              count={counts.all}
+            />
+            {ALL_FAMILIES.map((fam) => (
+              <FamilyChip
+                key={fam}
+                active={activeFamily === fam}
+                onClick={() => setFamily(fam)}
+                label={FAMILY_LABEL[fam]}
+                count={counts[fam] ?? 0}
               />
             ))}
           </div>
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(6,12,32,0.55)_45%,rgba(6,12,32,0.92)_100%)]" />
-          <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(6,12,32,0.55)_0%,transparent_35%,rgba(6,12,32,0.85)_100%)]" />
-        </div>
-
-        <PublicPage className="relative py-24 sm:py-32 lg:py-40">
-          <div className="max-w-4xl">
-            <p className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-white/85 backdrop-blur">
-              <Sparkles className="h-3.5 w-3.5" aria-hidden />
-              57 industries · one model
-            </p>
-            <h1 className="mt-6 font-[family-name:var(--brand-font-display)] text-5xl font-semibold leading-[1.02] tracking-tight sm:text-6xl lg:text-7xl">
-              Every industry, its <em className="not-italic text-white/70">own rubric.</em>
-            </h1>
-            <p className="mt-6 max-w-2xl text-lg text-white/75 sm:text-xl">
-              Pick a vertical. See how we source, score and ship shortlists for it — with language, evidence and regulation tuned to the domain.
-            </p>
-          </div>
-        </PublicPage>
-      </section>
-
-      {/* Sticky filter + search bar */}
-      <div className="sticky top-14 z-20 border-b border-[color:var(--brand-navy)]/10 bg-white/85 backdrop-blur-md">
-        <PublicPage className="flex flex-col gap-3 py-4 sm:flex-row sm:items-center">
-          <div className="-mx-1 flex flex-1 gap-1.5 overflow-x-auto px-1 pb-1 sm:pb-0">
-            {FILTERS.map((f) => {
-              const isActive = active === f.key;
-              return (
-                <button
-                  key={f.key}
-                  type="button"
-                  onClick={() => setActive(f.key)}
-                  className={`whitespace-nowrap rounded-full border px-3.5 py-1.5 text-xs font-semibold transition-colors ${
-                    isActive
-                      ? "border-[color:var(--brand-navy)] bg-[color:var(--brand-navy)] text-white"
-                      : "border-[color:var(--brand-navy)]/15 bg-white text-[color:var(--brand-navy)]/75 hover:border-[color:var(--brand-navy)]/40 hover:text-[color:var(--brand-navy)]"
-                  }`}
-                  aria-pressed={isActive}
-                >
-                  <span>{f.label}</span>
-                  <span
-                    className={`ml-2 rounded-full px-1.5 py-0.5 text-[10px] ${
-                      isActive
-                        ? "bg-white/15 text-white"
-                        : "bg-[color:var(--brand-navy)]/8 text-[color:var(--brand-navy)]/60"
-                    }`}
-                  >
-                    {counts.get(f.key) ?? 0}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-          <label className="relative flex w-full items-center sm:w-72">
-            <Search
-              aria-hidden
-              className="absolute left-3 h-4 w-4 text-[color:var(--brand-navy)]/40"
-            />
-            <input
-              type="search"
-              value={q}
-              onChange={(e) => setQ(e.target.value)}
-              placeholder="Search industries"
-              className="w-full rounded-full border border-[color:var(--brand-navy)]/15 bg-white py-2 pl-9 pr-3 text-sm text-[color:var(--brand-navy)] placeholder:text-[color:var(--brand-navy)]/40 focus:border-[color:var(--brand-navy)]/40 focus:outline-none focus:ring-2 focus:ring-[color:var(--brand-focus-ring)]"
-            />
-          </label>
         </PublicPage>
       </div>
 
-      {/* Big magazine grid */}
-      <PublicSection className="py-12 sm:py-16">
+      {/* ================================================================
+       *  RESULTS
+       * ================================================================ */}
+      <PublicSection className="py-10 sm:py-14">
         <PublicPage>
+          <h2
+            ref={resultsRef}
+            tabIndex={-1}
+            className="sr-only focus:not-sr-only focus:mb-2 focus:block focus:text-sm focus:text-[color:var(--brand-navy)]/60 focus:outline-none"
+          >
+            {activeFamily === "all"
+              ? `Showing ${filtered.length} of ${TILES.length} industries`
+              : `Showing ${filtered.length} ${FAMILY_LABEL[activeFamily]} ${filtered.length === 1 ? "industry" : "industries"}`}
+          </h2>
+          <p
+            aria-live="polite"
+            className="mb-6 text-sm text-[color:var(--brand-navy)]/60"
+          >
+            {activeFamily === "all"
+              ? `${filtered.length} industries`
+              : `${filtered.length} in ${FAMILY_LABEL[activeFamily]}`}
+            {inputQ ? ` matching “${inputQ}”` : ""}
+          </p>
+
           {filtered.length === 0 ? (
             <div className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-mist)]/40 p-10 text-center">
               <p className="text-lg font-semibold text-[color:var(--brand-navy)]">
-                No industries match “{q}”.
+                No industries match your search.
               </p>
               <p className="mt-2 text-sm text-[color:var(--brand-navy)]/60">
-                Try a broader search or clear the filter.
+                Try a broader query, clear filters, or contact us — we may serve
+                the vertical without a dedicated page yet.
               </p>
+              <div className="mt-5 flex flex-wrap justify-center gap-3">
+                <button
+                  type="button"
+                  onClick={reset}
+                  className="rounded-full bg-[color:var(--brand-navy)] px-4 py-2 text-xs font-semibold text-white hover:opacity-90"
+                >
+                  View all industries
+                </button>
+                <Link
+                  to="/contact"
+                  className="rounded-full border border-[color:var(--brand-navy)]/20 px-4 py-2 text-xs font-semibold text-[color:var(--brand-navy)]/85 hover:bg-[color:var(--brand-navy)]/5"
+                >
+                  Talk to us about your industry
+                </Link>
+              </div>
             </div>
           ) : (
-            <ul className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-              {filtered.map((t, i) => (
-                <li key={t.slug} className={i === 0 ? "sm:col-span-2 lg:col-span-2 lg:row-span-2" : ""}>
-                  <IndustryTile tile={t} feature={i === 0} />
+            <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {filtered.map((t) => (
+                <li key={t.slug}>
+                  <IndustryCard tile={t} />
                 </li>
               ))}
             </ul>
@@ -196,194 +332,325 @@ function IndustriesIndex() {
         </PublicPage>
       </PublicSection>
 
-      {/* Enterprise strip */}
+      {/* ================================================================
+       *  METHODOLOGY EXPLAINER
+       * ================================================================ */}
+      <PublicSection className="border-t border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-paper)] py-14">
+        <PublicPage>
+          <div className="grid gap-10 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] lg:items-start">
+            <div>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[color:var(--brand-ocean)]">
+                Methodology
+              </p>
+              <h2 className="mt-3 max-w-2xl font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight sm:text-4xl">
+                How industry-specific evaluation works
+              </h2>
+              <p className="mt-4 max-w-xl text-[15px] leading-relaxed text-[color:var(--brand-navy)]/75">
+                Every industry gets a rubric calibrated to what actually matters
+                in that sector — the language on the CV, the credentials that
+                gate the role, the signals that predict delivery. Nothing is
+                borrowed from a generic template.
+              </p>
+              <div className="mt-6 flex flex-wrap gap-3">
+                <Link
+                  to="/how-it-works"
+                  hash="scoring"
+                  className="inline-flex min-h-11 items-center justify-center gap-1 rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-white hover:opacity-90"
+                >
+                  See the scoring methodology <ArrowRight className="h-4 w-4" aria-hidden />
+                </Link>
+                <Link
+                  to="/how-it-works"
+                  className="inline-flex min-h-11 items-center justify-center rounded-md px-3 py-2.5 text-sm font-semibold text-[color:var(--brand-navy)]/70 hover:text-[color:var(--brand-navy)]"
+                >
+                  How delivery works
+                </Link>
+              </div>
+            </div>
+            <ol className="space-y-3">
+              {[
+                { t: "Sector-specific rubric", b: "Signals, credentials and outcomes match the industry — not a generic sourcing template." },
+                { t: "Evidence quoted from the CV", b: "Every score point ties to a specific sentence pulled from the candidate's document." },
+                { t: "Reviewed before delivery", b: "A partner reviews each shortlist against the role, jurisdiction and delivery expectations." },
+                { t: "Same workflow across sectors", b: "One workspace, one intake, one commercial model — with content that adapts per industry." },
+              ].map((row, i) => (
+                <li
+                  key={row.t}
+                  className="flex items-start gap-3 rounded-xl border border-[color:var(--brand-navy)]/10 bg-white p-4"
+                >
+                  <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-[color:var(--brand-navy)] text-[10px] font-semibold text-white">
+                    0{i + 1}
+                  </span>
+                  <div>
+                    <p className="text-sm font-semibold text-[color:var(--brand-navy)]">
+                      {row.t}
+                    </p>
+                    <p className="mt-0.5 text-[13px] text-[color:var(--brand-navy)]/70">
+                      {row.b}
+                    </p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </PublicPage>
+      </PublicSection>
+
+      {/* ================================================================
+       *  "Can't find your industry?" CTA
+       * ================================================================ */}
       <PublicSection className="pb-16">
         <PublicPage>
-          <div className="relative overflow-hidden rounded-3xl bg-[color:var(--brand-navy)] p-8 text-white sm:p-12">
-            <div aria-hidden className="pointer-events-none absolute inset-0 opacity-40">
-              <div className="grid h-full w-full grid-cols-8">
-                {TILES.slice(20, 28).map((t) => (
-                  <div key={t.slug} className={`bg-gradient-to-b ${t.gradient}`} />
-                ))}
-              </div>
-              <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(6,12,32,0.95)_10%,rgba(6,12,32,0.4)_100%)]" />
+          <div className="flex flex-col gap-6 rounded-3xl border border-[color:var(--brand-navy)]/10 bg-white p-8 sm:flex-row sm:items-center sm:justify-between sm:p-10">
+            <div className="max-w-2xl">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[color:var(--brand-ocean)]">
+                Don't see your industry?
+              </p>
+              <h2 className="mt-2 font-[family-name:var(--brand-font-display)] text-2xl font-semibold tracking-tight sm:text-3xl">
+                We build custom rubrics for adjacent sectors.
+              </h2>
+              <p className="mt-3 text-[15px] text-[color:var(--brand-navy)]/70">
+                Tell us what you hire for. We'll confirm coverage, share a sample
+                rubric, and start a role if it's a fit.
+              </p>
             </div>
-            <div className="relative grid gap-6 md:grid-cols-[2fr_1fr] md:items-center">
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/70">
-                  For enterprise
-                </p>
-                <h2 className="mt-2 font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight sm:text-4xl">
-                  Hiring across multiple industries?
-                </h2>
-                <p className="mt-3 max-w-xl text-white/75">
-                  One workspace per business unit, one rubric per role, aggregate reporting on top. We run cross-industry programmes for enterprise account structures.
-                </p>
-              </div>
-              <div className="flex flex-col gap-3 md:items-end">
-                <Link
-                  to="/enterprise"
-                  className="inline-flex min-h-11 items-center justify-center rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-navy)] hover:bg-white/90"
-                >
-                  See the enterprise model
-                </Link>
-                <Link
-                  to="/contact"
-                  className="text-sm font-semibold text-white/85 hover:text-white"
-                >
-                  Book enterprise consultation →
-                </Link>
-              </div>
+            <div className="flex flex-col gap-3 sm:items-end">
+              <BookACallDialog
+                trigger={
+                  <button
+                    type="button"
+                    className="inline-flex min-h-11 items-center justify-center rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-white hover:opacity-90"
+                  >
+                    Discuss your hiring needs
+                  </button>
+                }
+              />
+              <Link
+                to="/contact"
+                className="text-sm font-semibold text-[color:var(--brand-navy)]/70 hover:text-[color:var(--brand-navy)]"
+              >
+                Or send us a message →
+              </Link>
             </div>
           </div>
         </PublicPage>
       </PublicSection>
 
-      <CtaSection
-        eyebrow="Ready to hire?"
-        title="Pick your industry. Start the intake."
-        description="Submit a role and your workspace is ready when you finish the guided intake."
-        primary={{ to: "/intake", label: "Start hiring" }}
-        secondary={{ to: "/how-it-works", label: "See how it works" }}
-      />
-      <PageConnections
-        commercial={{ to: "/intake", label: "Start hiring", desc: "Kick off a role in your industry." }}
-        explainer={{ to: "/how-it-works", label: "How delivery works", desc: "Role blueprints, sourcing, and ranking per vertical." }}
-        resource={{ to: "/case-studies", label: "Industry outcomes", desc: "Named hiring results across verticals." }}
-        audience={{ to: "/solutions", label: "By team stage", desc: "Series A–C operator playbooks." }}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }}
       />
     </SiteShell>
   );
 }
 
-function IndustryTile({ tile, feature }: { tile: Tile; feature?: boolean }) {
+/* ----------------------------------------------------------------- Family chip */
+
+function FamilyChip({
+  active,
+  onClick,
+  label,
+  count,
+}: {
+  active: boolean;
+  onClick: () => void;
+  label: string;
+  count: number;
+}) {
+  return (
+    <button
+      type="button"
+      role="tab"
+      aria-selected={active}
+      onClick={onClick}
+      className={`whitespace-nowrap rounded-full border px-3.5 py-1.5 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)] ${
+        active
+          ? "border-[color:var(--brand-navy)] bg-[color:var(--brand-navy)] text-white"
+          : "border-[color:var(--brand-navy)]/15 bg-white text-[color:var(--brand-navy)]/75 hover:border-[color:var(--brand-navy)]/40 hover:text-[color:var(--brand-navy)]"
+      }`}
+    >
+      <span>{label}</span>
+      <span
+        className={`ml-2 rounded-full px-1.5 py-0.5 text-[10px] ${
+          active
+            ? "bg-white/15 text-white"
+            : "bg-[color:var(--brand-navy)]/5 text-[color:var(--brand-navy)]/60"
+        }`}
+      >
+        {count}
+      </span>
+    </button>
+  );
+}
+
+/* ----------------------------------------------------------------- Industry card */
+
+function IndustryCard({ tile }: { tile: Tile }) {
   return (
     <Link
       to="/industries/$slug"
-      params={{ slug: tile.slug }}
-      className={`group relative flex ${feature ? "aspect-[16/11] lg:aspect-auto lg:h-full lg:min-h-[420px]" : "aspect-[4/5] sm:aspect-[5/6]"} overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br ${tile.gradient} text-white shadow-[0_20px_60px_-30px_rgba(10,20,50,0.55)] transition-transform duration-500 hover:-translate-y-1 hover:shadow-[0_30px_80px_-30px_rgba(10,20,50,0.7)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]`}
-      aria-label={`${tile.name} — open industry page`}
+      params={{ slug: tile.publicSlug }}
+      className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white transition-all duration-300 hover:-translate-y-0.5 hover:border-[color:var(--brand-ocean)]/50 hover:shadow-[0_20px_60px_-30px_rgba(10,20,50,0.25)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+      aria-label={`${tile.name} — ${tile.familyLabel}`}
     >
-      {/* Pattern layer */}
-      <div aria-hidden className={`absolute inset-0 ${tile.accent} opacity-70 mix-blend-screen`}>
-        <TilePattern seed={tile.slug} />
+      {/* Family-motif band */}
+      <div
+        className={`relative aspect-[16/6] w-full overflow-hidden ${FAMILY_BAND_BG[tile.family]}`}
+        aria-hidden
+      >
+        <FamilyMotif family={tile.family} seed={tile.motifSeed} />
       </div>
-
-      {/* Atmospheric orbs */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -left-16 -top-16 h-56 w-56 rounded-full bg-white/25 blur-3xl transition-transform duration-700 group-hover:scale-110"
-      />
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -bottom-20 -right-10 h-64 w-64 rounded-full bg-white/10 blur-3xl transition-transform duration-700 group-hover:scale-110"
-      />
-
-      {/* Vignette for legibility */}
-      <div aria-hidden className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0)_35%,rgba(0,0,0,0.55)_100%)]" />
-
-      {/* Content */}
-      <div className="relative z-10 flex h-full w-full flex-col justify-between p-6 sm:p-7">
-        <div className="flex items-start justify-between gap-3">
-          <span className="rounded-full border border-white/25 bg-white/10 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-white/90 backdrop-blur">
-            {tile.category.split(" & ")[0]}
-          </span>
-          <span className="grid h-9 w-9 place-items-center rounded-full border border-white/30 bg-white/10 text-white transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5">
-            <ArrowUpRight className="h-4 w-4" aria-hidden />
-          </span>
-        </div>
-
-        <div>
-          <h3
-            className={`font-[family-name:var(--brand-font-display)] font-semibold leading-[1.04] tracking-tight ${
-              feature ? "text-4xl sm:text-5xl lg:text-6xl" : "text-2xl sm:text-3xl"
-            }`}
-          >
-            {tile.name}
-          </h3>
-          {feature && tile.summary ? (
-            <p className="mt-4 max-w-xl text-base text-white/85 sm:text-lg">
-              {tile.summary}
-            </p>
-          ) : null}
-          <div className="mt-4 flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.16em] text-white/70">
-            <span>{tile.roleCount} role families</span>
-            <span aria-hidden>·</span>
-            <span>Dedicated page</span>
-          </div>
-        </div>
+      <div className="flex flex-1 flex-col p-5">
+        <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[color:var(--brand-ocean)]">
+          {tile.familyLabel}
+        </p>
+        <h3 className="mt-1 font-[family-name:var(--brand-font-display)] text-xl font-semibold text-[color:var(--brand-navy)] group-hover:text-[color:var(--brand-ocean)]">
+          {tile.name}
+        </h3>
+        {tile.challenge ? (
+          <p className="mt-2 line-clamp-2 text-sm text-[color:var(--brand-navy)]/75">
+            <span className="font-semibold text-[color:var(--brand-navy)]">
+              {tile.challenge.title}.
+            </span>{" "}
+            {tile.challenge.body}
+          </p>
+        ) : null}
+        {tile.roleGroups.length ? (
+          <ul className="mt-3 flex flex-wrap gap-1.5">
+            {tile.roleGroups.map((r) => (
+              <li
+                key={r}
+                className="rounded-full bg-[color:var(--brand-navy)]/5 px-2.5 py-0.5 text-[11px] font-medium text-[color:var(--brand-navy)]/80"
+              >
+                {r}
+              </li>
+            ))}
+          </ul>
+        ) : null}
+        <span className="mt-auto inline-flex items-center gap-1 pt-4 text-sm font-semibold text-[color:var(--brand-ocean)]">
+          Open industry page <ArrowRight className="h-4 w-4" aria-hidden />
+        </span>
       </div>
     </Link>
   );
 }
 
-// Deterministic seeded pseudo-random for tile motifs — same slug → same motif.
-function hash(s: string) {
+/* Family palette bands — subdued, editorial. Never a random stock photo. */
+const FAMILY_BAND_BG: Record<IndustryFamily, string> = {
+  "systems-capability": "bg-gradient-to-br from-[#0F1B3D] to-[#3B6FA0] text-white",
+  "trust-compliance": "bg-gradient-to-br from-[#E8F0F8] to-[#87A878] text-[#0c2340]",
+  "risk-judgment": "bg-gradient-to-br from-[#f5f3ee] to-[#1a4a6e] text-[#0d0d0d]",
+  "operations-delivery": "bg-gradient-to-br from-[#2d3748] to-[#d4842a] text-white",
+  "service-experience": "bg-gradient-to-br from-[#c4654a] to-[#e8a87c] text-white",
+  "expertise-growth": "bg-gradient-to-br from-[#f5f0e8] to-[#0d7a5f] text-[#0d0d0d]",
+};
+
+function FamilyMotif({
+  family,
+  seed,
+}: {
+  family: IndustryFamily;
+  seed: number;
+}) {
+  switch (family) {
+    case "systems-capability":
+      return (
+        <svg viewBox="0 0 400 100" preserveAspectRatio="none" className="absolute inset-0 h-full w-full opacity-40">
+          <defs>
+            <pattern id={`sc-${seed}`} x="0" y="0" width="24" height="24" patternUnits="userSpaceOnUse">
+              <path d="M24 0 L0 0 L0 24" fill="none" stroke="currentColor" strokeWidth="0.6" />
+            </pattern>
+          </defs>
+          <rect width="400" height="100" fill={`url(#sc-${seed})`} />
+        </svg>
+      );
+    case "trust-compliance":
+      return (
+        <svg viewBox="0 0 400 100" preserveAspectRatio="none" className="absolute inset-0 h-full w-full opacity-35">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <path
+              key={i}
+              d={`M0,${30 + i * 20} Q100,${10 + i * 20} 200,${30 + i * 20} T400,${30 + i * 20}`}
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={1.2}
+            />
+          ))}
+        </svg>
+      );
+    case "risk-judgment":
+      return (
+        <svg viewBox="0 0 400 100" preserveAspectRatio="none" className="absolute inset-0 h-full w-full opacity-30">
+          {Array.from({ length: 12 }).map((_, i) => (
+            <line
+              key={i}
+              x1={i * 34}
+              y1={0}
+              x2={i * 34}
+              y2={100}
+              stroke="currentColor"
+              strokeWidth={i % 3 === 0 ? 1.2 : 0.5}
+            />
+          ))}
+        </svg>
+      );
+    case "operations-delivery":
+      return (
+        <svg viewBox="0 0 400 100" preserveAspectRatio="none" className="absolute inset-0 h-full w-full opacity-30">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <rect
+              key={i}
+              x={20 + i * 46}
+              y={50 - ((i * 13 + seed) % 30)}
+              width={18}
+              height={40 + ((i * 17 + seed) % 30)}
+              fill="currentColor"
+              opacity={0.6}
+            />
+          ))}
+        </svg>
+      );
+    case "service-experience":
+      return (
+        <svg viewBox="0 0 400 100" preserveAspectRatio="none" className="absolute inset-0 h-full w-full opacity-40">
+          {Array.from({ length: 40 }).map((_, i) => (
+            <circle
+              key={i}
+              cx={(i * 47 + seed) % 400}
+              cy={(i * 29 + seed) % 100}
+              r={1 + ((i + seed) % 2)}
+              fill="currentColor"
+              opacity={0.7}
+            />
+          ))}
+        </svg>
+      );
+    case "expertise-growth":
+      return (
+        <svg viewBox="0 0 400 100" preserveAspectRatio="none" className="absolute inset-0 h-full w-full opacity-35">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <rect
+              key={i}
+              x={30 + i * 70}
+              y={70 - i * 12}
+              width={40}
+              height={20 + i * 12}
+              fill="currentColor"
+              opacity={0.55}
+            />
+          ))}
+        </svg>
+      );
+  }
+}
+
+// Family-tagline currently unused in the compact card, but exposed via a
+// small explainer if we ever want to render it — kept referenced so
+// consumers can lint on unused exports without breaking the API surface.
+export { FAMILY_TAGLINE as INDUSTRIES_FAMILY_TAGLINES };
+
+function hashSeed(s: string) {
   let h = 0;
   for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0;
   return Math.abs(h);
-}
-
-function TilePattern({ seed }: { seed: string }) {
-  const h = hash(seed);
-  const kind = h % 4;
-  if (kind === 0) {
-    return (
-      <svg viewBox="0 0 400 500" preserveAspectRatio="none" className="h-full w-full">
-        <defs>
-          <pattern id={`g-${seed}`} x="0" y="0" width="34" height="34" patternUnits="userSpaceOnUse">
-            <path d="M34 0 L0 0 L0 34" fill="none" stroke="currentColor" strokeWidth="0.9" />
-          </pattern>
-        </defs>
-        <rect width="400" height="500" fill={`url(#g-${seed})`} />
-      </svg>
-    );
-  }
-  if (kind === 1) {
-    return (
-      <svg viewBox="0 0 400 500" preserveAspectRatio="none" className="h-full w-full">
-        {Array.from({ length: 5 }).map((_, i) => (
-          <path
-            key={i}
-            d={`M0,${80 + i * 90} Q100,${40 + i * 90} 200,${80 + i * 90} T400,${80 + i * 90}`}
-            fill="none"
-            stroke="currentColor"
-            strokeWidth={1.4 - i * 0.2}
-            opacity={0.9 - i * 0.15}
-          />
-        ))}
-      </svg>
-    );
-  }
-  if (kind === 2) {
-    return (
-      <svg viewBox="0 0 400 500" preserveAspectRatio="none" className="h-full w-full">
-        {Array.from({ length: 60 }).map((_, i) => (
-          <circle
-            key={i}
-            cx={((i * 53 + h) % 400)}
-            cy={((i * 71 + h) % 500)}
-            r={1 + ((i + h) % 3)}
-            fill="currentColor"
-            opacity={0.55}
-          />
-        ))}
-      </svg>
-    );
-  }
-  return (
-    <svg viewBox="0 0 400 500" preserveAspectRatio="none" className="h-full w-full">
-      {Array.from({ length: 12 }).map((_, i) => (
-        <rect
-          key={i}
-          x={20 + i * 32}
-          y={20 + ((i * 37 + h) % 200)}
-          width="14"
-          height={80 + ((i * 41 + h) % 260)}
-          fill="currentColor"
-          opacity={0.35}
-        />
-      ))}
-    </svg>
-  );
 }
