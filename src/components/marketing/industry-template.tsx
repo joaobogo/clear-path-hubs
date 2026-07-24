@@ -452,7 +452,7 @@ export function IndustryTemplate({ entry }: { entry: IndustryEntry }) {
               <Link
                 key={r.slug}
                 to="/industries/$slug"
-                params={{ slug: r.slug }}
+                params={{ slug: toPublicSlug(r.slug) }}
                 style={{ animationDelay: `${i * 60}ms` }}
                 className="group rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6 transition-all hover:-translate-y-0.5 hover:border-[color:var(--brand-ocean)]/50 hover:shadow-md motion-safe:animate-[fade-in_320ms_ease-out_both]"
               >
