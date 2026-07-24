@@ -26,15 +26,25 @@ function prefersReducedMotion() {
  * - Respects prefers-reduced-motion.
  */
 export function TaaSFlowEntryLoader() {
-  const [mounted, setMounted] = useState<boolean>(() => {
-    if (typeof window === "undefined") return false;
+  // Start hidden on both SSR and first client render to avoid hydration mismatch.
+  // We decide visibility inside an effect (client-only).
+  const [mounted, setMounted] = useState(false);
+  const [exiting, setExiting] = useState(false);
+  const [stage, setStage] = useState(0);
+  const [msgIdx, setMsgIdx] = useState(0);
+  const startedAt = useRef<number>(0);
+  const reduced = useRef<boolean>(false);
+
+  // Client-only session check
+  useEffect(() => {
     try {
-      if (sessionStorage.getItem(SESSION_KEY)) return false;
+      if (sessionStorage.getItem(SESSION_KEY)) return;
     } catch {
       /* private mode */
     }
-    return true;
-  });
+    startedAt.current = performance.now();
+    setMounted(true);
+  }, []);
   const [exiting, setExiting] = useState(false);
   const [stage, setStage] = useState(0);
   const [msgIdx, setMsgIdx] = useState(0);
