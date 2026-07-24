@@ -3,6 +3,7 @@ import {
   PublicPage,
   PublicSection,
   Breadcrumbs,
+  SiteShell,
 } from "@/components/marketing/site-shell";
 import type { IndustryEntry } from "@/content/industries-v2";
 import { getIndustryHeroImage } from "@/content/industry-hero-images";
@@ -47,7 +48,7 @@ export function IndustryTemplate({ entry }: { entry: IndustryEntry }) {
     : null;
 
   return (
-    <>
+    <SiteShell>
       <Breadcrumbs
         items={[
           { label: "Home", to: "/" },
@@ -599,7 +600,7 @@ export function IndustryTemplate({ entry }: { entry: IndustryEntry }) {
         description={entry.cta.description}
       />
 
-    </>
+    </SiteShell>
   );
 }
 
