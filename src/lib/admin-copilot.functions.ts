@@ -2,7 +2,7 @@
 // Same tool-loop pattern as the client assistant, but:
 //   - table set: admin_copilot_conversations / admin_copilot_messages
 //   - RLS enforced staff-only (see migration)
-//   - broader tool catalog (portfolio, outreach drafts, source performance)
+//   - broader tool catalog (portfolio, client update drafts)
 //   - draft actions are proposals; nothing is sent until the user approves
 //     via executeAdminCopilotAction.
 
@@ -35,11 +35,10 @@ Non-negotiables:
 
 Action Mode (drafts only — nothing is sent until the user approves):
 - draft_client_update prepares a weekly-update draft for one client.
-- draft_candidate_outreach prepares an outreach draft for one candidate/match.
 - Never claim a message was sent. Say "I've prepared the draft — review and click Approve to send."
 
 Coverage:
-- summarize_client_portfolio, summarize_candidate_history, blocked_roles, stalled_interviews, missing_approvals, rediscovery_candidates, source_performance.` + CONFIDENCE_INSTRUCTIONS;
+- summarize_client_portfolio, summarize_candidate_history, blocked_roles, stalled_interviews, missing_approvals, rediscovery_candidates.` + CONFIDENCE_INSTRUCTIONS;
 
 const TOOL_DEFS: AnyRow[] = [
   {
@@ -114,29 +113,6 @@ const TOOL_DEFS: AnyRow[] = [
       },
     },
   },
-  {
-    type: "function",
-    function: {
-      name: "draft_candidate_outreach",
-      description: "Prepare (do NOT send) an outreach draft for a candidate match.",
-      parameters: {
-        type: "object",
-        properties: {
-          match_id: { type: "string" },
-          intent: { type: "string", description: "Short reason: 'interview scheduling', 'status update', etc." },
-        },
-        required: ["match_id"],
-      },
-    },
-  },
-  {
-    type: "function",
-    function: {
-      name: "source_performance",
-      description: "Applications, shortlist, interview, and hire rates by source over the last 90 days.",
-      parameters: { type: "object", properties: {}, required: [] },
-    },
-  },
 ];
 
 async function runTool(supabase: AnyRow, name: string, args: Record<string, unknown>) {
@@ -156,14 +132,6 @@ async function runTool(supabase: AnyRow, name: string, args: Record<string, unkn
       return t.rediscoveryCandidates(supabase, (args.position_id as string | undefined) ?? null);
     case "draft_client_update":
       return t.draftClientUpdate(supabase, String(args.org_id ?? ""));
-    case "draft_candidate_outreach":
-      return t.draftCandidateOutreach(
-        supabase,
-        String(args.match_id ?? ""),
-        (args.intent as string | undefined) ?? null,
-      );
-    case "source_performance":
-      return t.sourcePerformance(supabase);
     default:
       return { data: { error: `unknown_tool:${name}` }, citations: [] };
   }
@@ -425,7 +393,7 @@ export const executeCopilotAction = createServerFn({ method: "POST" })
       .object({
         action: z
           .object({
-            kind: z.enum(["navigate", "draft_client_update", "draft_candidate_outreach"]),
+            kind: z.enum(["navigate", "draft_client_update"]),
             action_id: z.string(),
             org_id: z.string().uuid().optional(),
             match_id: z.string().uuid().optional(),
@@ -505,56 +473,8 @@ export const executeCopilotAction = createServerFn({ method: "POST" })
         return { ok: true as const, kind: "draft_client_update" as const, org_id: a.org_id };
       }
 
-      if (a.kind === "draft_candidate_outreach") {
-        if (!a.match_id || !a.draft_body) {
-          await auditAssistantEvent(context.supabase, {
-            ...auditBase,
-            event_type: "action_failed",
-            payload: { ...auditBase.payload, reason: "missing_fields" },
-          });
-          throw new Error("Missing match_id or draft_body");
-        }
-        const { data: match } = await context.supabase
-          .from("candidate_matches")
-          .select("id, candidate_id, organization_id")
-          .eq("id", a.match_id)
-          .maybeSingle();
-        if (!match) {
-          await auditAssistantEvent(context.supabase, {
-            ...auditBase,
-            event_type: "action_denied",
-            payload: { ...auditBase.payload, reason: "match_not_accessible" },
-          });
-          throw new Error("Match not accessible");
-        }
-        const { error } = await context.supabase.from("messages").insert({
-          thread_id: (match as AnyRow).candidate_id,
-          sender_user_id: context.userId,
-          body: a.draft_body,
-          recipient_context: {
-            match_id: a.match_id,
-            candidate_id: (match as AnyRow).candidate_id,
-            organization_id: (match as AnyRow).organization_id,
-            from: "admin_copilot",
-            thread_kind: "candidate_outreach",
-          },
-        } as never);
-        if (error) {
-          await auditAssistantEvent(context.supabase, {
-            ...auditBase,
-            event_type: "action_failed",
-            payload: { ...auditBase.payload, reason: error.message },
-          });
-          throw new Error(error.message);
-        }
-        await auditAssistantEvent(context.supabase, {
-          ...auditBase,
-          event_type: "action_executed",
-          organization_id: (match as AnyRow).organization_id as string,
-          content_preview: a.draft_body,
-        });
-        return { ok: true as const, kind: "draft_candidate_outreach" as const, match_id: a.match_id };
-      }
+
+
 
       await auditAssistantEvent(context.supabase, {
         ...auditBase,
