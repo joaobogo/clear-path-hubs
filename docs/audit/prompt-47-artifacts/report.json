@@ -1,0 +1,157 @@
+{
+  "total": 30,
+  "passed": 30,
+  "failed": 0,
+  "results": [
+    {
+      "name": "[mobile] employer: home",
+      "status": "pass",
+      "ms": 437
+    },
+    {
+      "name": "[mobile] employer: platform",
+      "status": "pass",
+      "ms": 128
+    },
+    {
+      "name": "[mobile] employer: pricing",
+      "status": "pass",
+      "ms": 134
+    },
+    {
+      "name": "[mobile] employer: intake loads",
+      "status": "pass",
+      "ms": 111
+    },
+    {
+      "name": "[mobile] candidate: jobs list",
+      "status": "pass",
+      "ms": 335
+    },
+    {
+      "name": "[mobile] industry: hospitality",
+      "status": "pass",
+      "ms": 197
+    },
+    {
+      "name": "[mobile] resource: blog index",
+      "status": "pass",
+      "ms": 212
+    },
+    {
+      "name": "[mobile] pricing: ROI copy present",
+      "status": "pass",
+      "ms": 350
+    },
+    {
+      "name": "[mobile] auth: entry renders",
+      "status": "pass",
+      "ms": 2560
+    },
+    {
+      "name": "[mobile] refresh: industries index",
+      "status": "pass",
+      "ms": 328
+    },
+    {
+      "name": "[tablet] employer: home",
+      "status": "pass",
+      "ms": 367
+    },
+    {
+      "name": "[tablet] employer: platform",
+      "status": "pass",
+      "ms": 109
+    },
+    {
+      "name": "[tablet] employer: pricing",
+      "status": "pass",
+      "ms": 159
+    },
+    {
+      "name": "[tablet] employer: intake loads",
+      "status": "pass",
+      "ms": 134
+    },
+    {
+      "name": "[tablet] candidate: jobs list",
+      "status": "pass",
+      "ms": 335
+    },
+    {
+      "name": "[tablet] industry: hospitality",
+      "status": "pass",
+      "ms": 252
+    },
+    {
+      "name": "[tablet] resource: blog index",
+      "status": "pass",
+      "ms": 164
+    },
+    {
+      "name": "[tablet] pricing: ROI copy present",
+      "status": "pass",
+      "ms": 237
+    },
+    {
+      "name": "[tablet] auth: entry renders",
+      "status": "pass",
+      "ms": 2503
+    },
+    {
+      "name": "[tablet] refresh: industries index",
+      "status": "pass",
+      "ms": 351
+    },
+    {
+      "name": "[desktop] employer: home",
+      "status": "pass",
+      "ms": 296
+    },
+    {
+      "name": "[desktop] employer: platform",
+      "status": "pass",
+      "ms": 124
+    },
+    {
+      "name": "[desktop] employer: pricing",
+      "status": "pass",
+      "ms": 131
+    },
+    {
+      "name": "[desktop] employer: intake loads",
+      "status": "pass",
+      "ms": 124
+    },
+    {
+      "name": "[desktop] candidate: jobs list",
+      "status": "pass",
+      "ms": 325
+    },
+    {
+      "name": "[desktop] industry: hospitality",
+      "status": "pass",
+      "ms": 221
+    },
+    {
+      "name": "[desktop] resource: blog index",
+      "status": "pass",
+      "ms": 166
+    },
+    {
+      "name": "[desktop] pricing: ROI copy present",
+      "status": "pass",
+      "ms": 208
+    },
+    {
+      "name": "[desktop] auth: entry renders",
+      "status": "pass",
+      "ms": 2461
+    },
+    {
+      "name": "[desktop] refresh: industries index",
+      "status": "pass",
+      "ms": 312
+    }
+  ]
+}
