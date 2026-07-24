@@ -20,6 +20,7 @@ import { Route as ResourcesRouteImport } from './routes/resources'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PricingRouteImport } from './routes/pricing'
+import { Route as PitchRouteImport } from './routes/pitch'
 import { Route as PilotRouteImport } from './routes/pilot'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as KnowledgeBaseRouteImport } from './routes/knowledge-base'
@@ -170,6 +171,11 @@ const PrivacyRoute = PrivacyRouteImport.update({
 const PricingRoute = PricingRouteImport.update({
   id: '/pricing',
   path: '/pricing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PitchRoute = PitchRouteImport.update({
+  id: '/pitch',
+  path: '/pitch',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PilotRoute = PilotRouteImport.update({
@@ -717,6 +723,7 @@ export interface FileRoutesByFullPath {
   '/knowledge-base': typeof KnowledgeBaseRoute
   '/login': typeof LoginRoute
   '/pilot': typeof PilotRoute
+  '/pitch': typeof PitchRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -825,6 +832,7 @@ export interface FileRoutesByTo {
   '/knowledge-base': typeof KnowledgeBaseRoute
   '/login': typeof LoginRoute
   '/pilot': typeof PilotRoute
+  '/pitch': typeof PitchRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -925,6 +933,7 @@ export interface FileRoutesById {
   '/knowledge-base': typeof KnowledgeBaseRoute
   '/login': typeof LoginRoute
   '/pilot': typeof PilotRoute
+  '/pitch': typeof PitchRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -1035,6 +1044,7 @@ export interface FileRouteTypes {
     | '/knowledge-base'
     | '/login'
     | '/pilot'
+    | '/pitch'
     | '/pricing'
     | '/privacy'
     | '/reset-password'
@@ -1143,6 +1153,7 @@ export interface FileRouteTypes {
     | '/knowledge-base'
     | '/login'
     | '/pilot'
+    | '/pitch'
     | '/pricing'
     | '/privacy'
     | '/reset-password'
@@ -1242,6 +1253,7 @@ export interface FileRouteTypes {
     | '/knowledge-base'
     | '/login'
     | '/pilot'
+    | '/pitch'
     | '/pricing'
     | '/privacy'
     | '/reset-password'
@@ -1352,6 +1364,7 @@ export interface RootRouteChildren {
   KnowledgeBaseRoute: typeof KnowledgeBaseRoute
   LoginRoute: typeof LoginRoute
   PilotRoute: typeof PilotRoute
+  PitchRoute: typeof PitchRoute
   PricingRoute: typeof PricingRoute
   PrivacyRoute: typeof PrivacyRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
@@ -1462,6 +1475,13 @@ declare module '@tanstack/react-router' {
       path: '/pricing'
       fullPath: '/pricing'
       preLoaderRoute: typeof PricingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pitch': {
+      id: '/pitch'
+      path: '/pitch'
+      fullPath: '/pitch'
+      preLoaderRoute: typeof PitchRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/pilot': {
@@ -2432,6 +2452,7 @@ const rootRouteChildren: RootRouteChildren = {
   KnowledgeBaseRoute: KnowledgeBaseRoute,
   LoginRoute: LoginRoute,
   PilotRoute: PilotRoute,
+  PitchRoute: PitchRoute,
   PricingRoute: PricingRoute,
   PrivacyRoute: PrivacyRoute,
   ResetPasswordRoute: ResetPasswordRoute,
