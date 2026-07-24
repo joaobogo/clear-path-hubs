@@ -98,7 +98,10 @@ function BlogPost() {
   const category =
     BLOG_METADATA[slug]?.category ?? entryAny.category ?? "General";
   const tags = BLOG_METADATA[slug]?.tags ?? entryAny.tags ?? [];
-  const heroImage = meta["og:image"];
+  // Skip legacy taasflow.com asset URLs — those images aren't served here.
+  const rawHero = meta["og:image"];
+  const heroImage =
+    rawHero && !rawHero.startsWith("https://taasflow.com") ? rawHero : undefined;
   const progress = useReadingProgress();
   const toc = useMemo(() => extractToc(entry.markdown), [entry.markdown]);
   const [activeId, setActiveId] = useState<string | null>(null);
