@@ -20,6 +20,7 @@ import {
  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { AlertCircle, MessageSquare, Users } from "lucide-react";
+import { RoleBlueprint } from "@/components/product/role-blueprint";
 
 export const Route = createFileRoute("/_authenticated/client/positions/$id")({
  head: () => ({
@@ -186,15 +187,6 @@ function PositionDetailPage() {
  move.mutate({ matchId, toStage: to });
  };
 
- const mustHaves = Array.isArray(position.requirements)
- ? (position.requirements as AnyRow[])
- : [];
- const nice = Array.isArray(position.preferred_requirements)
- ? (position.preferred_requirements as AnyRow[])
- : [];
- const dealbreakers = Array.isArray(position.dealbreakers)
- ? (position.dealbreakers as AnyRow[])
- : [];
 
  const actionRequired: Array<{ label: string; href?: string }> = [];
  if (summary.delivered > 0) {
@@ -527,25 +519,8 @@ function PositionDetailPage() {
  )}
  </section>
 
- {/* 6. Role blueprint */}
- <section aria-label="Role blueprint" className="rounded-xl border bg-card p-4">
- <h2 className="text-lg font-semibold mb-3">Role blueprint</h2>
- {position.description && (
- <div className="mb-4">
- <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground mb-1">
- Summary
- </div>
- <p className="text-sm whitespace-pre-wrap text-foreground/90">
- {position.description}
- </p>
- </div>
- )}
- <div className="grid gap-4 md:grid-cols-3">
- <BlueprintList title="Must-haves" items={mustHaves} />
- <BlueprintList title="Nice-to-haves" items={nice} />
- <BlueprintList title="Dealbreakers" items={dealbreakers} />
- </div>
- </section>
+  {/* 6. Role blueprint — ATS-grade source of truth */}
+ <RoleBlueprint position={position} activity={activity} />
 
  {/* 7. Hiring process */}
  <section aria-label="Hiring process" className="rounded-xl border bg-card p-4">
@@ -674,33 +649,6 @@ function SummaryTile({
  );
 }
 
-function BlueprintList({ title, items }: { title: string; items: AnyRow[] }) {
- return (
- <div>
- <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground mb-1.5">
- {title}
- </div>
- {items.length === 0 ? (
- <div className="text-xs text-muted-foreground">Not specified</div>
- ) : (
- <ul className="space-y-1 text-sm">
- {items.map((r: AnyRow, i: number) => {
- const label =
- typeof r === "string"
- ? r
- : (r?.label ?? r?.name ?? r?.title ?? r?.text ?? "Requirement");
- return (
- <li key={i} className="flex gap-1.5">
- <span className="text-muted-foreground">•</span>
- <span>{label}</span>
- </li>
- );
- })}
- </ul>
- )}
- </div>
- );
-}
 
 function ProcessStep({
  n,
