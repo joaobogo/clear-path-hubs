@@ -88,6 +88,7 @@ import { Route as AuthenticatedClientExecutiveRouteImport } from './routes/_auth
 import { Route as AuthenticatedClientDeliveriesRouteImport } from './routes/_authenticated/client.deliveries'
 import { Route as AuthenticatedClientCandidatesRouteImport } from './routes/_authenticated/client.candidates'
 import { Route as AuthenticatedClientAssistantRouteImport } from './routes/_authenticated/client.assistant'
+import { Route as AuthenticatedClientAnalyticsRouteImport } from './routes/_authenticated/client.analytics'
 import { Route as AuthenticatedAdminWbrRouteImport } from './routes/_authenticated/admin.wbr'
 import { Route as AuthenticatedAdminTeamRouteImport } from './routes/_authenticated/admin.team'
 import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin.settings'
@@ -535,6 +536,12 @@ const AuthenticatedClientAssistantRoute =
     path: '/assistant',
     getParentRoute: () => AuthenticatedClientRoute,
   } as any)
+const AuthenticatedClientAnalyticsRoute =
+  AuthenticatedClientAnalyticsRouteImport.update({
+    id: '/analytics',
+    path: '/analytics',
+    getParentRoute: () => AuthenticatedClientRoute,
+  } as any)
 const AuthenticatedAdminWbrRoute = AuthenticatedAdminWbrRouteImport.update({
   id: '/wbr',
   path: '/wbr',
@@ -812,6 +819,7 @@ export interface FileRoutesByFullPath {
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/team': typeof AuthenticatedAdminTeamRoute
   '/admin/wbr': typeof AuthenticatedAdminWbrRoute
+  '/client/analytics': typeof AuthenticatedClientAnalyticsRoute
   '/client/assistant': typeof AuthenticatedClientAssistantRoute
   '/client/candidates': typeof AuthenticatedClientCandidatesRouteWithChildren
   '/client/deliveries': typeof AuthenticatedClientDeliveriesRoute
@@ -921,6 +929,7 @@ export interface FileRoutesByTo {
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/team': typeof AuthenticatedAdminTeamRoute
   '/admin/wbr': typeof AuthenticatedAdminWbrRoute
+  '/client/analytics': typeof AuthenticatedClientAnalyticsRoute
   '/client/assistant': typeof AuthenticatedClientAssistantRoute
   '/client/deliveries': typeof AuthenticatedClientDeliveriesRoute
   '/client/executive': typeof AuthenticatedClientExecutiveRoute
@@ -1036,6 +1045,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/_authenticated/admin/team': typeof AuthenticatedAdminTeamRoute
   '/_authenticated/admin/wbr': typeof AuthenticatedAdminWbrRoute
+  '/_authenticated/client/analytics': typeof AuthenticatedClientAnalyticsRoute
   '/_authenticated/client/assistant': typeof AuthenticatedClientAssistantRoute
   '/_authenticated/client/candidates': typeof AuthenticatedClientCandidatesRouteWithChildren
   '/_authenticated/client/deliveries': typeof AuthenticatedClientDeliveriesRoute
@@ -1154,6 +1164,7 @@ export interface FileRouteTypes {
     | '/admin/settings'
     | '/admin/team'
     | '/admin/wbr'
+    | '/client/analytics'
     | '/client/assistant'
     | '/client/candidates'
     | '/client/deliveries'
@@ -1263,6 +1274,7 @@ export interface FileRouteTypes {
     | '/admin/settings'
     | '/admin/team'
     | '/admin/wbr'
+    | '/client/analytics'
     | '/client/assistant'
     | '/client/deliveries'
     | '/client/executive'
@@ -1377,6 +1389,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/settings'
     | '/_authenticated/admin/team'
     | '/_authenticated/admin/wbr'
+    | '/_authenticated/client/analytics'
     | '/_authenticated/client/assistant'
     | '/_authenticated/client/candidates'
     | '/_authenticated/client/deliveries'
@@ -2043,6 +2056,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedClientAssistantRouteImport
       parentRoute: typeof AuthenticatedClientRoute
     }
+    '/_authenticated/client/analytics': {
+      id: '/_authenticated/client/analytics'
+      path: '/analytics'
+      fullPath: '/client/analytics'
+      preLoaderRoute: typeof AuthenticatedClientAnalyticsRouteImport
+      parentRoute: typeof AuthenticatedClientRoute
+    }
     '/_authenticated/admin/wbr': {
       id: '/_authenticated/admin/wbr'
       path: '/wbr'
@@ -2492,6 +2512,7 @@ const AuthenticatedClientPositionsRouteWithChildren =
   )
 
 interface AuthenticatedClientRouteChildren {
+  AuthenticatedClientAnalyticsRoute: typeof AuthenticatedClientAnalyticsRoute
   AuthenticatedClientAssistantRoute: typeof AuthenticatedClientAssistantRoute
   AuthenticatedClientCandidatesRoute: typeof AuthenticatedClientCandidatesRouteWithChildren
   AuthenticatedClientDeliveriesRoute: typeof AuthenticatedClientDeliveriesRoute
@@ -2511,6 +2532,7 @@ interface AuthenticatedClientRouteChildren {
 }
 
 const AuthenticatedClientRouteChildren: AuthenticatedClientRouteChildren = {
+  AuthenticatedClientAnalyticsRoute: AuthenticatedClientAnalyticsRoute,
   AuthenticatedClientAssistantRoute: AuthenticatedClientAssistantRoute,
   AuthenticatedClientCandidatesRoute:
     AuthenticatedClientCandidatesRouteWithChildren,
