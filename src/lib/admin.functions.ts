@@ -867,6 +867,48 @@ export const setPositionVisibility = createServerFn({ method: "POST" })
     return { ok: true as const, trace_id, position: after };
   });
 
+// Permanently purges a position and every dependent row (candidate matches,
+// applications, scoring runs, evidence, interviews, tasks, notifications,
+// screening questions, rubric versions, memory, audit traces, etc.).
+export const deletePosition = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: unknown) =>
+    z
+      .object({
+        id: z.string().uuid(),
+        reason: z.string().max(1000).optional(),
+      })
+      .parse(i),
+  )
+  .handler(async ({ data, context }) => {
+    await requireStaff(context.userId);
+    const trace_id = traceId();
+    const s = await getAdmin();
+    const { data: before } = await s
+      .from("positions")
+      .select("id,organization_id,title")
+      .eq("id", data.id)
+      .maybeSingle();
+    if (!before) throw new Error("position_not_found");
+    const { data: deleted, error } = await s.rpc("hard_delete_position", {
+      _position_id: data.id,
+      _actor_user_id: context.userId,
+      _reason: data.reason ?? null,
+    });
+    if (error) throw new Error(`delete_failed:${error.message}`);
+    await writeAudit({
+      actor: context.userId,
+      action: "position.hard_delete",
+      entity_type: "position",
+      entity_id: data.id,
+      organization_id: before.organization_id,
+      before,
+      after: deleted,
+      trace_id,
+    });
+    return { ok: true as const, trace_id, deleted };
+  });
+
 // ─── Publish Desk ────────────────────────────────────────────────────────────
 
 export const getPublishQueue = createServerFn({ method: "GET" })
