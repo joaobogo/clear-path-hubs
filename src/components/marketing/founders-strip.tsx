@@ -1,6 +1,8 @@
 import { Link } from "@tanstack/react-router";
 import { Linkedin } from "lucide-react";
 import joaoLucianoPhoto from "@/assets/founders/joao-luciano.jpg.asset.json";
+import christianPhoto from "@/assets/founders/christian-brogger.jpg.asset.json";
+import joaoBogoPhoto from "@/assets/founders/joao-bogo.jpg.asset.json";
 
 /**
  * Compact founders strip — homepage trust marker.
@@ -17,13 +19,13 @@ const FOUNDERS = [
   {
     name: "Christian Brogger",
     title: "Co-founder & COO",
-    photoUrl: "https://taasflow.com/assets/christian-9Ad2XECQ.jpg",
+    photoUrl: christianPhoto.url,
     linkedin: "https://www.linkedin.com/in/christian-brogger/",
   },
   {
     name: "João Bogo",
     title: "Co-founder & CMO",
-    photoUrl: "https://taasflow.com/assets/joao-BvCqv2_l.jpg",
+    photoUrl: joaoBogoPhoto.url,
     linkedin: "https://www.linkedin.com/in/joaomarcoscsilva/",
   },
 ] as const;
