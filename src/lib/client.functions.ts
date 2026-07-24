@@ -39,7 +39,7 @@ export type { MatchStage };
 async function resolveContext(supabase: AnyRow, userId: string, orgId?: string) {
   const { data: memberships, error } = await supabase
     .from("memberships")
-    .select("organization_id, role, status, organizations(id, name, industry, parent_organization_id)")
+    .select("organization_id, role, status, organizations(id, name, industry, parent_organization_id, logo_url, brand_display_name, brand_primary_color, brand_accent_color)")
     .eq("user_id", userId)
     .eq("status", "active");
   if (error) throw new Error(error.message);
@@ -56,7 +56,7 @@ async function resolveContext(supabase: AnyRow, userId: string, orgId?: string) 
   if (!active && isStaff && orgId) {
     const { data: org } = await supabase
       .from("organizations")
-      .select("id, name, industry, parent_organization_id")
+      .select("id, name, industry, parent_organization_id, logo_url, brand_display_name, brand_primary_color, brand_accent_color")
       .eq("id", orgId)
       .maybeSingle();
     if (org) {
@@ -99,6 +99,11 @@ export const getClientContext = createServerFn({ method: "GET" })
           name: string;
           industry: string | null;
           parent_organization_id: string | null;
+          logo_url: string | null;
+          brand_display_name: string | null;
+          brand_primary_color: string | null;
+          brand_accent_color: string | null;
+          parent_name: string | null;
         },
         organizations: memberships.map((m) => ({
           id: m.organization_id,
@@ -109,13 +114,28 @@ export const getClientContext = createServerFn({ method: "GET" })
         onboarding,
       };
     }
+    const parentId = (active.organizations?.parent_organization_id ?? null) as string | null;
+    let parentName: string | null = null;
+    if (parentId) {
+      const { data: parentOrg } = await context.supabase
+        .from("organizations")
+        .select("name")
+        .eq("id", parentId)
+        .maybeSingle();
+      parentName = (parentOrg as { name?: string | null } | null)?.name ?? null;
+    }
     return {
       active: {
         organization_id: active.organization_id,
         role: active.role as ClientRole,
         name: active.organizations?.name ?? "Organization",
         industry: (active.organizations?.industry ?? null) as string | null,
-        parent_organization_id: (active.organizations?.parent_organization_id ?? null) as string | null,
+        parent_organization_id: parentId,
+        logo_url: (active.organizations?.logo_url ?? null) as string | null,
+        brand_display_name: (active.organizations?.brand_display_name ?? null) as string | null,
+        brand_primary_color: (active.organizations?.brand_primary_color ?? null) as string | null,
+        brand_accent_color: (active.organizations?.brand_accent_color ?? null) as string | null,
+        parent_name: parentName,
       },
       organizations: memberships.map((m) => ({
         id: m.organization_id,
@@ -145,6 +165,44 @@ export const resetClientOnboarding = createServerFn({ method: "POST" })
       .from("profiles")
       .update({ client_onboarding_dismissed_at: null })
       .eq("auth_user_id", context.userId);
+    if (error) throw new Error(error.message);
+    return { ok: true as const };
+  });
+
+const HEX_COLOR = /^#[0-9a-fA-F]{6}$/;
+const brandingSchema = z.object({
+  orgId: z.string().uuid(),
+  logo_url: z.string().url().max(500).nullable(),
+  brand_display_name: z.string().trim().min(1).max(120).nullable(),
+  brand_primary_color: z.string().regex(HEX_COLOR).nullable(),
+  brand_accent_color: z.string().regex(HEX_COLOR).nullable(),
+});
+
+export const updateClientBranding = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: z.infer<typeof brandingSchema>) => brandingSchema.parse(input))
+  .handler(async ({ context, data }) => {
+    // Must be a client_admin of this org (or platform staff via RLS).
+    const { data: membership } = await context.supabase
+      .from("memberships")
+      .select("role, status")
+      .eq("user_id", context.userId)
+      .eq("organization_id", data.orgId)
+      .eq("status", "active")
+      .maybeSingle();
+    const role = (membership as { role?: string } | null)?.role;
+    if (role !== "client_admin" && role !== "platform_admin" && role !== "operations") {
+      throw new Error("Only client admins can update branding.");
+    }
+    const { error } = await context.supabase
+      .from("organizations")
+      .update({
+        logo_url: data.logo_url,
+        brand_display_name: data.brand_display_name,
+        brand_primary_color: data.brand_primary_color,
+        brand_accent_color: data.brand_accent_color,
+      })
+      .eq("id", data.orgId);
     if (error) throw new Error(error.message);
     return { ok: true as const };
   });
