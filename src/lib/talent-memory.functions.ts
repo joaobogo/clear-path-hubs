@@ -380,7 +380,7 @@ export const getSilverMedalist = createServerFn({ method: "GET" })
       actorIds.length
         ? context.supabase
             .from("profiles")
-            .select("auth_user_id, first_name, last_name, email")
+            .select("auth_user_id, full_name, email")
             .in("auth_user_id", actorIds)
         : Promise.resolve({ data: [] as AnyRow[] }),
       positionIds.length
