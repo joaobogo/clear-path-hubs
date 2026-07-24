@@ -549,9 +549,10 @@ export const getClientCandidate = createServerFn({ method: "GET" })
     const { data: match, error } = await context.supabase
       .from("candidate_matches")
       .select(
-        `id, stage, delivered_at, position_id, application_id,
-         candidate_profiles(id, full_name, headline, location, timezone, availability, years_experience, summary, experience, skills, education, languages, work_authorization, linkedin_url, portfolio_url, certifications),
-         positions(id, title, location, work_model, requirements, preferred_requirements),
+        `id, stage, delivered_at, position_id, application_id, candidate_profile_id,
+         candidate_profiles(id, full_name, headline, location, timezone, availability, years_experience, summary, experience, skills, education, languages, work_authorization, linkedin_url, portfolio_url, certifications, compensation_preferences),
+         positions(id, title, location, work_model, requirements, preferred_requirements, compensation),
+         applications(id, source, applied_at, created_at),
          score_runs:approved_score_run_id (score, fit_label, explanation, result, evidence, requirement_coverage, completed_at)`,
       )
       .eq("organization_id", data.orgId)
@@ -562,7 +563,9 @@ export const getClientCandidate = createServerFn({ method: "GET" })
     if (!match) return null;
 
     const applicationId = (match as AnyRow).application_id;
-    const [{ data: interviews }, { data: decisions }, answersRes] = await Promise.all([
+    const candidateProfileId = (match as AnyRow).candidate_profile_id;
+    const auditIds = [data.matchId, applicationId, candidateProfileId].filter(Boolean) as string[];
+    const [{ data: interviews }, { data: decisions }, answersRes, auditRes] = await Promise.all([
       context.supabase
         .from("interviews")
         .select("id, status, requested_at, scheduled_at, completed_at, notes")
@@ -579,6 +582,15 @@ export const getClientCandidate = createServerFn({ method: "GET" })
             .select("id, answer, screening_questions(question, display_order)")
             .eq("application_id", applicationId)
         : Promise.resolve({ data: [] as AnyRow[] }),
+      auditIds.length > 0
+        ? context.supabase
+            .from("audit_events")
+            .select("id, action, entity_type, entity_id, actor_user_id, before_state, after_state, created_at")
+            .eq("organization_id", data.orgId)
+            .in("entity_id", auditIds)
+            .order("created_at", { ascending: false })
+            .limit(30)
+        : Promise.resolve({ data: [] as AnyRow[] }),
     ]);
 
     const answers = ((answersRes as AnyRow).data as AnyRow[]) ?? [];
@@ -587,7 +599,11 @@ export const getClientCandidate = createServerFn({ method: "GET" })
         (a.screening_questions?.display_order ?? 0) -
         (b.screening_questions?.display_order ?? 0),
     );
-    const matchWithAnswers = { ...(match as AnyRow), application_answers: answers };
+    const matchWithAnswers = {
+      ...(match as AnyRow),
+      application_answers: answers,
+      audit_events: ((auditRes as AnyRow).data as AnyRow[]) ?? [],
+    };
 
     return {
       candidate: toClientCandidateDTO(matchWithAnswers),

@@ -181,6 +181,29 @@ export type ClientCandidateDTO = {
   certifications: Array<{ name: string; issuer: string | null; date: string | null }>;
   work_authorization: string | null;
   screening_answers: Array<{ question: string; answer: string }>;
+  compensation_alignment: {
+    role_range: string | null;
+    candidate_expectation: string | null;
+    currency: string | null;
+    cadence: string | null;
+    verdict: "aligned" | "over" | "under" | "unknown";
+    note: string | null;
+  };
+  source_trace: {
+    source_label: string | null;
+    applied_at: string | null;
+    application_reference: string | null;
+    channel: string | null;
+    notes: string | null;
+  };
+  audit_trail: Array<{
+    id: string;
+    action: string;
+    entity_type: string;
+    actor: string | null;
+    at: string;
+    summary: string | null;
+  }>;
 };
 
 
@@ -233,6 +256,122 @@ function normWorkAuth(raw: unknown): string | null {
   const r = raw as AnyRow;
   return normStr(r?.status ?? r?.summary ?? r?.value);
 }
+
+function formatMoney(v: unknown, currency?: string | null): string | null {
+  if (v == null) return null;
+  const n = typeof v === "number" ? v : Number(String(v).replace(/[^\d.-]/g, ""));
+  if (!Number.isFinite(n) || n <= 0) return typeof v === "string" && v.trim().length ? v.trim() : null;
+  const cur = (currency ?? "USD").toUpperCase();
+  try {
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: cur,
+      maximumFractionDigits: 0,
+    }).format(n);
+  } catch {
+    return `${cur} ${Math.round(n).toLocaleString()}`;
+  }
+}
+
+function normCompensationRange(raw: unknown): {
+  role_range: string | null;
+  currency: string | null;
+  cadence: string | null;
+  min: number | null;
+  max: number | null;
+} {
+  if (!raw || typeof raw !== "object") {
+    return { role_range: null, currency: null, cadence: null, min: null, max: null };
+  }
+  const r = raw as AnyRow;
+  const currency = normStr(r.currency) ?? "USD";
+  const cadence = normStr(r.cadence ?? r.period ?? r.frequency) ?? "annual";
+  const toNum = (v: unknown) => {
+    if (v == null) return null;
+    const n = typeof v === "number" ? v : Number(String(v).replace(/[^\d.-]/g, ""));
+    return Number.isFinite(n) && n > 0 ? n : null;
+  };
+  const min = toNum(r.min ?? r.min_amount ?? r.minimum ?? r.low);
+  const max = toNum(r.max ?? r.max_amount ?? r.maximum ?? r.high);
+  let role_range: string | null = null;
+  if (min != null && max != null) role_range = `${formatMoney(min, currency)} – ${formatMoney(max, currency)}`;
+  else if (min != null) role_range = `From ${formatMoney(min, currency)}`;
+  else if (max != null) role_range = `Up to ${formatMoney(max, currency)}`;
+  else if (typeof r.display === "string") role_range = r.display;
+  return { role_range, currency, cadence, min, max };
+}
+
+function normCandidateExpectation(raw: unknown): { text: string | null; amount: number | null; currency: string | null } {
+  if (!raw) return { text: null, amount: null, currency: null };
+  if (typeof raw === "string") return { text: raw.trim() || null, amount: null, currency: null };
+  const r = raw as AnyRow;
+  const currency = normStr(r.currency) ?? null;
+  const toNum = (v: unknown) => {
+    if (v == null) return null;
+    const n = typeof v === "number" ? v : Number(String(v).replace(/[^\d.-]/g, ""));
+    return Number.isFinite(n) && n > 0 ? n : null;
+  };
+  const target = toNum(r.target ?? r.expected ?? r.amount ?? r.value ?? r.min ?? r.desired);
+  const explicit = normStr(r.display ?? r.summary ?? r.note ?? r.text);
+  const text =
+    explicit ?? (target != null ? (formatMoney(target, currency) ?? String(target)) : null);
+  return { text, amount: target, currency };
+}
+
+function classifyCompensation(
+  role: { min: number | null; max: number | null },
+  cand: { amount: number | null },
+): "aligned" | "over" | "under" | "unknown" {
+  if (cand.amount == null || (role.min == null && role.max == null)) return "unknown";
+  const a = cand.amount;
+  const lo = role.min ?? -Infinity;
+  const hi = role.max ?? Infinity;
+  if (a < lo * 0.95) return "under";
+  if (a > hi * 1.05) return "over";
+  return "aligned";
+}
+
+function normSourceLabel(source: unknown): { label: string | null; channel: string | null } {
+  const s = normStr(source);
+  if (!s) return { label: null, channel: null };
+  const key = s.toLowerCase();
+  const map: Record<string, string> = {
+    job_board: "Job board",
+    website: "TaaSFlow job board",
+    referral: "Referral",
+    outreach: "TaaSFlow outreach",
+    talent_memory: "Talent memory",
+    partner: "Partner network",
+    direct: "Direct application",
+    linkedin: "LinkedIn",
+  };
+  return { label: map[key] ?? s.replace(/_/g, " "), channel: s };
+}
+
+function buildAuditTrail(rows: unknown): ClientCandidateDTO["audit_trail"] {
+  if (!Array.isArray(rows)) return [];
+  return rows.slice(0, 20).map((e: AnyRow) => {
+    const action = String(e.action ?? "event");
+    const entity = String(e.entity_type ?? "");
+    const before = e.before_state ?? null;
+    const after = e.after_state ?? null;
+    let summary: string | null = null;
+    if (after && typeof after === "object" && "stage" in after) {
+      summary = before && typeof before === "object" && "stage" in before
+        ? `${(before as AnyRow).stage} → ${(after as AnyRow).stage}`
+        : `Set to ${(after as AnyRow).stage}`;
+    }
+    return {
+      id: String(e.id),
+      action,
+      entity_type: entity,
+      actor: normStr(e.actor_user_id),
+      at: String(e.created_at ?? new Date().toISOString()),
+      summary,
+    };
+  });
+}
+
 
 function normScreeningAnswers(raw: unknown): ClientCandidateDTO["screening_answers"] {
   if (!Array.isArray(raw)) return [];
@@ -347,6 +486,32 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
 
   const fit = toFitPresentation(run?.fit_label ?? null, run?.score ?? null);
 
+  const roleComp = normCompensationRange(pos?.compensation);
+  const candExpect = normCandidateExpectation(cp.compensation_preferences);
+  const verdict = classifyCompensation(roleComp, candExpect);
+  const compNote =
+    verdict === "aligned"
+      ? "Candidate expectation sits inside the approved role range."
+      : verdict === "over"
+        ? "Candidate expectation exceeds the current range — negotiate or re-scope."
+        : verdict === "under"
+          ? "Candidate expectation is below range — validate before making an offer."
+          : candExpect.text
+            ? "Range not published for this role — confirm alignment directly."
+            : "Candidate has not shared an expectation yet.";
+
+  const app = (row as AnyRow).applications ?? null;
+  const source = normSourceLabel(app?.source);
+  const source_trace: ClientCandidateDTO["source_trace"] = {
+    source_label: source.label,
+    applied_at: app?.applied_at ?? app?.created_at ?? null,
+    application_reference: app?.reference_code ?? null,
+    channel: source.channel,
+    notes: null,
+  };
+
+  const audit_trail = buildAuditTrail((row as AnyRow).audit_events);
+
   return {
     match_id: row.id,
     stage: row.stage,
@@ -384,6 +549,16 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
     certifications,
     work_authorization: workAuth,
     screening_answers: normScreeningAnswers(row.application_answers),
+    compensation_alignment: {
+      role_range: roleComp.role_range,
+      candidate_expectation: candExpect.text,
+      currency: roleComp.currency ?? candExpect.currency,
+      cadence: roleComp.cadence,
+      verdict,
+      note: compNote,
+    },
+    source_trace,
+    audit_trail,
   };
 }
 
