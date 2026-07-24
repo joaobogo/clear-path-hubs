@@ -119,6 +119,7 @@ import { Route as ApiPublicIntakeStatusIdRouteImport } from './routes/api/public
 import { Route as AuthenticatedMeApplicationsIdRouteImport } from './routes/_authenticated/me.applications.$id'
 import { Route as AuthenticatedClientPositionsIdRouteImport } from './routes/_authenticated/client.positions.$id'
 import { Route as AuthenticatedClientCandidatesIdRouteImport } from './routes/_authenticated/client.candidates.$id'
+import { Route as AuthenticatedAdminScoringOrphansRouteImport } from './routes/_authenticated/admin.scoring.orphans'
 import { Route as AuthenticatedAdminPositionsIdRouteImport } from './routes/_authenticated/admin.positions.$id'
 import { Route as AuthenticatedAdminIntakeIdRouteImport } from './routes/_authenticated/admin.intake.$id'
 import { Route as AuthenticatedAdminClientsIdRouteImport } from './routes/_authenticated/admin.clients.$id'
@@ -719,6 +720,12 @@ const AuthenticatedClientCandidatesIdRoute =
     path: '/$id',
     getParentRoute: () => AuthenticatedClientCandidatesRoute,
   } as any)
+const AuthenticatedAdminScoringOrphansRoute =
+  AuthenticatedAdminScoringOrphansRouteImport.update({
+    id: '/scoring/orphans',
+    path: '/scoring/orphans',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminPositionsIdRoute =
   AuthenticatedAdminPositionsIdRouteImport.update({
     id: '/$id',
@@ -863,6 +870,7 @@ export interface FileRoutesByFullPath {
   '/admin/clients/$id': typeof AuthenticatedAdminClientsIdRoute
   '/admin/intake/$id': typeof AuthenticatedAdminIntakeIdRoute
   '/admin/positions/$id': typeof AuthenticatedAdminPositionsIdRouteWithChildren
+  '/admin/scoring/orphans': typeof AuthenticatedAdminScoringOrphansRoute
   '/client/candidates/$id': typeof AuthenticatedClientCandidatesIdRoute
   '/client/positions/$id': typeof AuthenticatedClientPositionsIdRouteWithChildren
   '/me/applications/$id': typeof AuthenticatedMeApplicationsIdRoute
@@ -971,6 +979,7 @@ export interface FileRoutesByTo {
   '/admin/clients/$id': typeof AuthenticatedAdminClientsIdRoute
   '/admin/intake/$id': typeof AuthenticatedAdminIntakeIdRoute
   '/admin/positions/$id': typeof AuthenticatedAdminPositionsIdRouteWithChildren
+  '/admin/scoring/orphans': typeof AuthenticatedAdminScoringOrphansRoute
   '/client/candidates/$id': typeof AuthenticatedClientCandidatesIdRoute
   '/client/positions/$id': typeof AuthenticatedClientPositionsIdRouteWithChildren
   '/me/applications/$id': typeof AuthenticatedMeApplicationsIdRoute
@@ -1091,6 +1100,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/clients/$id': typeof AuthenticatedAdminClientsIdRoute
   '/_authenticated/admin/intake/$id': typeof AuthenticatedAdminIntakeIdRoute
   '/_authenticated/admin/positions/$id': typeof AuthenticatedAdminPositionsIdRouteWithChildren
+  '/_authenticated/admin/scoring/orphans': typeof AuthenticatedAdminScoringOrphansRoute
   '/_authenticated/client/candidates/$id': typeof AuthenticatedClientCandidatesIdRoute
   '/_authenticated/client/positions/$id': typeof AuthenticatedClientPositionsIdRouteWithChildren
   '/_authenticated/me/applications/$id': typeof AuthenticatedMeApplicationsIdRoute
@@ -1211,6 +1221,7 @@ export interface FileRouteTypes {
     | '/admin/clients/$id'
     | '/admin/intake/$id'
     | '/admin/positions/$id'
+    | '/admin/scoring/orphans'
     | '/client/candidates/$id'
     | '/client/positions/$id'
     | '/me/applications/$id'
@@ -1319,6 +1330,7 @@ export interface FileRouteTypes {
     | '/admin/clients/$id'
     | '/admin/intake/$id'
     | '/admin/positions/$id'
+    | '/admin/scoring/orphans'
     | '/client/candidates/$id'
     | '/client/positions/$id'
     | '/me/applications/$id'
@@ -1438,6 +1450,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/clients/$id'
     | '/_authenticated/admin/intake/$id'
     | '/_authenticated/admin/positions/$id'
+    | '/_authenticated/admin/scoring/orphans'
     | '/_authenticated/client/candidates/$id'
     | '/_authenticated/client/positions/$id'
     | '/_authenticated/me/applications/$id'
@@ -2286,6 +2299,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedClientCandidatesIdRouteImport
       parentRoute: typeof AuthenticatedClientCandidatesRoute
     }
+    '/_authenticated/admin/scoring/orphans': {
+      id: '/_authenticated/admin/scoring/orphans'
+      path: '/scoring/orphans'
+      fullPath: '/admin/scoring/orphans'
+      preLoaderRoute: typeof AuthenticatedAdminScoringOrphansRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/positions/$id': {
       id: '/_authenticated/admin/positions/$id'
       path: '/$id'
@@ -2454,6 +2474,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminTeamRoute: typeof AuthenticatedAdminTeamRoute
   AuthenticatedAdminWbrRoute: typeof AuthenticatedAdminWbrRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
+  AuthenticatedAdminScoringOrphansRoute: typeof AuthenticatedAdminScoringOrphansRoute
 }
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
@@ -2476,6 +2497,7 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminTeamRoute: AuthenticatedAdminTeamRoute,
   AuthenticatedAdminWbrRoute: AuthenticatedAdminWbrRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
+  AuthenticatedAdminScoringOrphansRoute: AuthenticatedAdminScoringOrphansRoute,
 }
 
 const AuthenticatedAdminRouteWithChildren =
