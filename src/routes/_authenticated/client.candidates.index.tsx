@@ -65,6 +65,9 @@ const searchSchema = z.object({
  // "top" → isTopMatch (fit_label ∈ excellent|strong)
  // "interview_pipeline" → isInInterview (stage ∈ interview_process|offer OR active interview)
  filter: fallback(z.enum(["all", "top", "interview_pipeline"]), "all").default("all"),
+ // Comma-separated match IDs for shareable comparison links.
+ compare: fallback(z.string(), "").default(""),
+
 });
 
 export const Route = createFileRoute("/_authenticated/client/candidates/")({
