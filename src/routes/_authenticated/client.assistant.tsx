@@ -153,6 +153,7 @@ function AssistantPage() {
         content: ask.variables ?? "",
         tool_trace: [],
         citations: [],
+        proposed_actions: [],
         created_at: new Date().toISOString(),
       },
     ];
