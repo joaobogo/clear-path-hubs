@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { ArrowRight, MessageSquare, Info, AlertTriangle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { CalculatorResult } from "@/lib/roi-calculator";
+import { trackEvent } from "@/lib/analytics";
 
 /**
  * Calculator → CTA bridge (Prompt 13)
