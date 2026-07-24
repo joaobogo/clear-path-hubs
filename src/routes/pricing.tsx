@@ -103,6 +103,34 @@ function PricingPage() {
         </PublicPage>
       </PublicSection>
 
+      {/* Subscription section */}
+      <PublicSection className="pt-10">
+        <PublicPage>
+          <div className="flex flex-wrap items-end justify-between gap-3">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/55">
+                Subscription model
+              </p>
+              <h2 className="mt-2 font-[family-name:var(--brand-font-display)] text-2xl font-semibold tracking-tight sm:text-3xl">
+                Continuous hiring — a monthly programme.
+              </h2>
+            </div>
+            <p className="max-w-md text-sm text-[color:var(--brand-navy)]/65">
+              A steady pipeline of ranked candidates every week, with unfilled roles rolling over. Best when you always have something open.
+            </p>
+          </div>
+          <div className="mt-6 grid gap-5 md:grid-cols-3">
+            {SUBSCRIPTION_TIERS.map((tier) => (
+              <SubscriptionTierCard key={tier.id} tier={tier} />
+            ))}
+          </div>
+          <p className="mt-6 text-sm text-[color:var(--brand-navy)]/70">
+            <span className="font-semibold text-[color:var(--brand-navy)]">{SUBSCRIPTION_ANNUAL_DISCOUNT_LABEL}.</span>{" "}
+            Pause, resize, or cancel any month — you keep every candidate delivered.
+          </p>
+        </PublicPage>
+      </PublicSection>
+
 
       {/* Enterprise strip */}
       <PublicSection className="py-10">
