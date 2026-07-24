@@ -77,6 +77,7 @@ const TABS: NavDef[] = [
  { to: "/client", label: "Overview", icon: LayoutDashboard, exact: true, everyone: true },
  { to: "/client/positions", label: "Positions", icon: Briefcase, everyone: true },
  { to: "/client/candidates", label: "Candidates", icon: Users, everyone: true },
+ { to: "/client/talent-memory", label: "Talent memory", icon: Award, everyone: true },
  // Interviews merged into Positions / Candidates record pages — route stays reachable via deep links.
  { to: "/client/messages", label: "Messages", icon: MessageSquare, everyone: true },
  { to: "/client/team", label: "Team", icon: UserCog, everyone: false },
