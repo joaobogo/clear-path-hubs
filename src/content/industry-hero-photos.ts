@@ -85,6 +85,14 @@ const RAW: Record<string, Entry> = {
   "customer-success": { src: U("1560264280-88b68371db39"), alt: "Customer success manager on a call with a warm-lit dual-monitor desk.", focal: "50% 35%" },
   "product-management": { src: U("1531403009284-440f080d1e12"), alt: "PM at a wall of sticky-notes mapping a release plan.", focal: "50% 35%" },
   "staffing-agencies": { src: U("1600880292203-757bb62b4baf"), alt: "Recruiter interviewing a candidate in a warm meeting room.", focal: "50% 30%" },
+
+  // Core tech / data / horizontal verticals (previously missing)
+  tech: { src: U("1517430816045-df4b7de11d1d"), alt: "Software engineers pair-programming under warm studio pendants.", focal: "50% 40%" },
+  saas: { src: U("1551288049-bebda4e38f71"), alt: "Product analytics dashboard on a large curved monitor at a modern desk.", focal: "50% 40%" },
+  cybersecurity: { src: U("1550751827-4bd374c3f58b"), alt: "Security operations centre with dark-mode dashboards and warm accent lights.", focal: "50% 40%" },
+  "data-analytics": { src: U("1543286386-713bdd548da4"), alt: "Analyst reviewing cohort charts and pivot tables on a wide monitor.", focal: "50% 40%" },
+  finance: { src: U("1554224155-8d04cb21cd6c"), alt: "Trading floor at dawn with rows of quote monitors glowing warm.", focal: "50% 40%" },
+  healthcare: { src: U("1519494026892-80bbd2d6fd0d"), alt: "Clinician team consulting at a bright hospital nurse-station corridor.", focal: "50% 35%" },
 };
 
 const PHOTO_ENTRIES: Record<string, IndustryHeroImage> = Object.fromEntries(
