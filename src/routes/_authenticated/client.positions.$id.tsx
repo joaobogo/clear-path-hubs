@@ -22,6 +22,7 @@ import {
 import { AlertCircle, MessageSquare, Users } from "lucide-react";
 import { RoleBlueprint } from "@/components/product/role-blueprint";
 import { ResurfacePanel } from "@/components/client/resurface-panel";
+import { RoleMemoryPanel } from "@/components/role-memory-panel";
 
 export const Route = createFileRoute("/_authenticated/client/positions/$id")({
  head: () => ({
