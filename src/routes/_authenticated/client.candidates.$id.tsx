@@ -1488,3 +1488,89 @@ function JourneySection({ matchId }: { matchId: string }) {
     </SectionCard>
   );
 }
+
+// ─── Jump navigation ─────────────────────────────────────────────────────────
+
+function JumpNav({ items }: { items: Array<{ id: string; label: string }> }) {
+  return (
+    <nav
+      aria-label="Section navigation"
+      className="sticky top-14 z-20 -mx-4 overflow-x-auto border-y bg-background/85 px-4 py-2 backdrop-blur supports-[backdrop-filter]:bg-background/70 sm:mx-0 sm:rounded-lg sm:border"
+    >
+      <ul className="flex items-center gap-1 whitespace-nowrap text-xs">
+        {items.map((it) => (
+          <li key={it.id}>
+            <a
+              href={`#${it.id}`}
+              className="inline-flex items-center rounded-md px-2.5 py-1.5 font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+            >
+              {it.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  );
+}
+
+// ─── Mobile action bar ───────────────────────────────────────────────────────
+
+function MobileActionBar({
+  actions,
+  pending,
+  onAct,
+}: {
+  actions: { primary: ActionDef | null; more: ActionDef[] };
+  pending: boolean;
+  onAct: (k: ActionKey) => void;
+}) {
+  if (!actions.primary) return null;
+  return (
+    <div
+      role="toolbar"
+      aria-label="Candidate actions"
+      className="fixed inset-x-0 bottom-0 z-30 border-t bg-background/95 px-4 py-3 shadow-[0_-4px_16px_-8px_rgba(0,0,0,0.15)] backdrop-blur lg:hidden"
+      style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 0.75rem)" }}
+    >
+      <div className="mx-auto flex max-w-3xl items-center gap-2">
+        <Button
+          className="flex-1 min-h-11"
+          disabled={pending}
+          onClick={() => onAct(actions.primary!.key)}
+        >
+          {actions.primary.label}
+        </Button>
+        {actions.more.length > 0 && (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="outline"
+                size="icon"
+                aria-label="More actions"
+                className="min-h-11 min-w-11"
+              >
+                <MoreHorizontal className="h-4 w-4" aria-hidden />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" side="top" className="w-56">
+              {actions.more.map((a, i) => (
+                <div key={a.key}>
+                  {i > 0 && a.key === "not_moving_forward" && <DropdownMenuSeparator />}
+                  <DropdownMenuItem
+                    onSelect={() => onAct(a.key)}
+                    disabled={pending}
+                    className={cn(
+                      a.key === "not_moving_forward" && "text-destructive focus:text-destructive",
+                    )}
+                  >
+                    {a.label}
+                  </DropdownMenuItem>
+                </div>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
+      </div>
+    </div>
+  );
+}
