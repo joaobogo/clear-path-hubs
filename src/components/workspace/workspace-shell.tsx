@@ -544,10 +544,26 @@ export function WorkspaceShell(props: WorkspaceShellProps) {
           className="flex-1"
           aria-label={currentPage || contextLabel}
         >
-          <div className="mx-auto w-full max-w-[var(--brand-workspace-width,1440px)] px-4 py-6 md:px-8 md:py-8">
+          <div className="mx-auto w-full max-w-[var(--brand-workspace-width,1440px)] px-4 py-6 pb-24 md:px-8 md:py-8 md:pb-8">
             {children}
           </div>
         </main>
+
+        {primaryAction && (
+          <div
+            className="sticky bottom-0 z-30 border-t bg-background/95 px-4 py-3 backdrop-blur md:hidden"
+            style={{ paddingBottom: "max(0.75rem, env(safe-area-inset-bottom))" }}
+          >
+            <Link
+              to={primaryAction.to}
+              search={primaryAction.search ? (primaryAction.search as never) : undefined}
+              className="flex h-11 w-full items-center justify-center gap-2 rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground shadow"
+            >
+              {primaryAction.icon && <primaryAction.icon className="h-4 w-4" />}
+              <span>{primaryAction.shortLabel ?? primaryAction.label}</span>
+            </Link>
+          </div>
+        )}
       </div>
       <GlobalSearchDialog
         open={searchOpen}
