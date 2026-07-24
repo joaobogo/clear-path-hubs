@@ -111,8 +111,8 @@ function PositionDetailPage() {
  const [dragOver, setDragOver] = useState<MatchStage | null>(null);
 
  const move = useMutation({
- mutationFn: (v: { matchId: string; toStage: MatchStage }) =>
- moveFn({ data: { orgId: orgId!, matchId: v.matchId, toStage: v.toStage } }),
+  mutationFn: (v: { matchId: string; toStage: MatchStage; reason?: string }) =>
+   moveFn({ data: { orgId: orgId!, matchId: v.matchId, toStage: v.toStage, reason: v.reason } }),
  onMutate: async (v) => {
  await qc.cancelQueries({ queryKey });
  const snapshot = qc.getQueryData<AnyRow>(queryKey);
