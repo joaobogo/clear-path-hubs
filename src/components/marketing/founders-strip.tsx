@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { Linkedin } from "lucide-react";
+import joaoLucianoPhoto from "@/assets/founders/joao-luciano.jpg.asset.json";
 
 /**
  * Compact founders strip — homepage trust marker.
