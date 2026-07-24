@@ -31,6 +31,17 @@ export type WorkspaceNavItem = {
   search?: Record<string, string | undefined>;
 };
 
+export type WorkspacePrimaryAction = {
+  label: string;
+  to: string;
+  /** Optional icon rendered before the label. */
+  icon?: ComponentType<{ className?: string }>;
+  /** Optional short label for the mobile sticky bar (defaults to `label`). */
+  shortLabel?: string;
+  /** Search params to preserve on nav (e.g. active org id). */
+  search?: Record<string, string | undefined>;
+};
+
 export type WorkspaceShellProps = {
   /** "Admin" | client org name | candidate name */
   contextLabel: string;
@@ -47,8 +58,11 @@ export type WorkspaceShellProps = {
   linkSearch?: Record<string, string | undefined>;
   /** Global search scope. Defaults to "client". Admin layout should pass "admin". */
   searchScope?: "admin" | "client";
+  /** Contextual page-level primary action (top-bar CTA + mobile sticky). */
+  primaryAction?: WorkspacePrimaryAction;
   children: ReactNode;
 };
+
 
 const COLLAPSED_KEY = "taasflow:sidebar:collapsed";
 
