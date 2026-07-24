@@ -16,6 +16,23 @@ export const PRICE_PILOT_USD = 399;
 export const PRICE_MULTI_USD = 2_100;
 export const PRICE_SPRINT_USD = 4_500;
 
+/**
+ * Canonical display strings — every public surface (pricing page, homepage
+ * tiers, ROI calculator, pitch/boardroom decks, proposal templates, intake
+ * copy) MUST render prices via these constants. Never hard-code the string
+ * form elsewhere.
+ */
+export const PRICE_PILOT_DISPLAY = `$${PRICE_PILOT_USD}`;
+export const PRICE_MULTI_DISPLAY = "$2.1K";
+export const PRICE_SPRINT_DISPLAY = "$4.5K";
+export const PRICE_ENTERPRISE_DISPLAY = "Custom";
+
+/** Position-band descriptors — one source for tier subtitles/eyebrows. */
+export const PILOT_ROLES_LABEL = "1 active role";
+export const MULTI_ROLES_LABEL = "2–5 active roles";
+export const SPRINT_ROLES_LABEL = "6–10 active roles";
+export const ENTERPRISE_ROLES_LABEL = "11+ roles or continuous hiring";
+
 /** Multi Position is the reference package used for ROI comparisons. */
 export const ROI_REFERENCE_PACKAGE_USD = PRICE_MULTI_USD;
 export const ROI_REFERENCE_PACKAGE_LABEL =
