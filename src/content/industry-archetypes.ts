@@ -61,6 +61,8 @@ export type IndustrySectionKey =
   | "role-explorer"
   | "signal-explorer"
   | "skills-tools"
+  | "scoring"
+  | "proof"
   | "delivery-preview"
   | "process"
   | "keyword-links"
@@ -107,7 +109,20 @@ export const ARCHETYPE_SPECS: Record<IndustryArchetype, ArchetypeSpec> = {
     palette: "ink-electric",
     showDeliveryPreview: true,
     secondaryCta: SECONDARY_SCORING,
-    sections: ["hero", "challenges", "role-explorer", "signal-explorer", "skills-tools", "delivery-preview", "process", "related", "insights", "faq", "cta"],
+    // 10 sections · rhythm: immersive → grid → interactive → compact →
+    // narrative → list → visual → grid → grid → conversion
+    sections: [
+      "hero",
+      "challenges",
+      "role-explorer",
+      "skills-tools",
+      "scoring",
+      "process",
+      "proof",
+      "related",
+      "faq",
+      "cta",
+    ],
   },
   "trust-compliance": {
     archetype: "trust-compliance",
@@ -118,7 +133,20 @@ export const ARCHETYPE_SPECS: Record<IndustryArchetype, ArchetypeSpec> = {
     palette: "ivory-teal",
     showDeliveryPreview: false,
     secondaryCta: SECONDARY_PROCESS,
-    sections: ["hero", "role-explorer", "challenges", "skills-tools", "signal-explorer", "solutions", "process", "faq", "insights", "related", "cta"],
+    // 10 sections · gates-first rhythm — scoring precedes proof so
+    // credential expectations are visible before the deliverable.
+    sections: [
+      "hero",
+      "challenges",
+      "role-explorer",
+      "scoring",
+      "process",
+      "skills-tools",
+      "proof",
+      "faq",
+      "related",
+      "cta",
+    ],
   },
   "risk-judgment": {
     archetype: "risk-judgment",
@@ -129,7 +157,20 @@ export const ARCHETYPE_SPECS: Record<IndustryArchetype, ArchetypeSpec> = {
     palette: "paper-navy",
     showDeliveryPreview: true,
     secondaryCta: SECONDARY_SCORING,
-    sections: ["hero", "challenges", "skills-tools", "role-explorer", "signal-explorer", "delivery-preview", "process", "faq", "solutions", "related", "insights", "cta"],
+    // 10 sections · scoring moved up — jurisdiction and precedent scope
+    // are the reason clients read this page.
+    sections: [
+      "hero",
+      "challenges",
+      "scoring",
+      "role-explorer",
+      "skills-tools",
+      "process",
+      "proof",
+      "faq",
+      "related",
+      "cta",
+    ],
   },
   "operations-delivery": {
     archetype: "operations-delivery",
@@ -140,7 +181,20 @@ export const ARCHETYPE_SPECS: Record<IndustryArchetype, ArchetypeSpec> = {
     palette: "steel-amber",
     showDeliveryPreview: false,
     secondaryCta: SECONDARY_PROCESS,
-    sections: ["hero", "challenges", "role-explorer", "skills-tools", "process", "signal-explorer", "solutions", "related", "keyword-links", "insights", "cta"],
+    // 10 sections · process precedes scoring — delivery cadence and
+    // safety come before evaluation depth for site-driven buyers.
+    sections: [
+      "hero",
+      "challenges",
+      "role-explorer",
+      "process",
+      "skills-tools",
+      "scoring",
+      "proof",
+      "related",
+      "faq",
+      "cta",
+    ],
   },
   "service-experience": {
     archetype: "service-experience",
@@ -151,7 +205,19 @@ export const ARCHETYPE_SPECS: Record<IndustryArchetype, ArchetypeSpec> = {
     palette: "warm-editorial",
     showDeliveryPreview: false,
     secondaryCta: SECONDARY_ROLES,
-    sections: ["hero", "challenges", "role-explorer", "solutions", "signal-explorer", "process", "insights", "related", "faq", "cta"],
+    // 9 sections · skills-tools omitted — service leadership evidence
+    // lives inside scoring, not a chip cloud.
+    sections: [
+      "hero",
+      "challenges",
+      "role-explorer",
+      "scoring",
+      "process",
+      "proof",
+      "related",
+      "faq",
+      "cta",
+    ],
   },
   "expertise-growth": {
     archetype: "expertise-growth",
@@ -162,7 +228,18 @@ export const ARCHETYPE_SPECS: Record<IndustryArchetype, ArchetypeSpec> = {
     palette: "cream-emerald",
     showDeliveryPreview: true,
     secondaryCta: SECONDARY_ROLES,
-    sections: ["hero", "role-explorer", "challenges", "signal-explorer", "delivery-preview", "solutions", "process", "keyword-links", "related", "insights", "cta"],
+    // 9 sections · outcomes-first — proof is a competency demonstration.
+    sections: [
+      "hero",
+      "challenges",
+      "role-explorer",
+      "scoring",
+      "process",
+      "proof",
+      "related",
+      "faq",
+      "cta",
+    ],
   },
 };
 
