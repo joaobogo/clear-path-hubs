@@ -7,6 +7,13 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
+import {
+  CONFIDENCE_INSTRUCTIONS,
+  auditAssistantEvent,
+  extractConfidence,
+  resolveConfidence,
+  type Confidence,
+} from "./assistant-audit.server";
 
 const MODEL = "google/gemini-2.5-flash";
 const GATEWAY_URL = "https://ai.gateway.lovable.dev/v1/chat/completions";
@@ -36,7 +43,7 @@ Question areas you handle well:
 - Why was candidate Y ranked here — use explain_candidate_score.
 - What is blocking this role — use role_blockers.
 - What should I do next — use next_actions.
-- Open X / show me Y / compare A and B / draft interview request — use the matching action tool.`;
+- Open X / show me Y / compare A and B / draft interview request — use the matching action tool.` + CONFIDENCE_INSTRUCTIONS;
 
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
