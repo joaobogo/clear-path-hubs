@@ -389,7 +389,7 @@ export const upsertOfferDraft = createServerFn({ method: "POST" })
     if (existing) {
       const { error } = await context.supabase
         .from("hire_records")
-        .update(patch)
+        .update(patch as never)
         .eq("id", existing.id);
       if (error) throw new Error(error.message);
       await writeAudit(context.supabase, {
@@ -420,7 +420,7 @@ export const upsertOfferDraft = createServerFn({ method: "POST" })
     }
     const { data: created, error } = await context.supabase
       .from("hire_records")
-      .insert(insertRow)
+      .insert(insertRow as never)
       .select("id")
       .single();
     if (error) throw new Error(error.message);
@@ -598,7 +598,7 @@ export const getTimeToHireReport = createServerFn({ method: "POST" })
       const key = r.owner_user_id ?? "__unassigned__";
       const entry = ownerAgg.get(key) ?? {
         hires: 0,
-        days: [],
+        days: [] as number[],
         ownerId: r.owner_user_id ?? null,
       };
       entry.hires += 1;
@@ -638,7 +638,7 @@ export const getTimeToHireReport = createServerFn({ method: "POST" })
         title: r.position_title ?? "Role",
         hires: 0,
         open: 0,
-        days: [],
+        days: [] as number[],
       };
       if (r.status === "hire_confirmed") {
         entry.hires += 1;
