@@ -51,6 +51,7 @@ import { Route as PartnershipsStaffingRouteImport } from './routes/partnerships.
 import { Route as IntakeConfirmationRouteImport } from './routes/intake_.confirmation'
 import { Route as IndustriesNonProfitRouteImport } from './routes/industries.non-profit'
 import { Route as IndustriesSlugRouteImport } from './routes/industries.$slug'
+import { Route as DevIndustryCoverageRouteImport } from './routes/dev.industry-coverage'
 import { Route as DevCatalogueRouteImport } from './routes/dev.catalogue'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as AuthenticatedMeRouteImport } from './routes/_authenticated/me'
@@ -336,6 +337,11 @@ const IndustriesNonProfitRoute = IndustriesNonProfitRouteImport.update({
 const IndustriesSlugRoute = IndustriesSlugRouteImport.update({
   id: '/industries/$slug',
   path: '/industries/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DevIndustryCoverageRoute = DevIndustryCoverageRouteImport.update({
+  id: '/dev/industry-coverage',
+  path: '/dev/industry-coverage',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DevCatalogueRoute = DevCatalogueRouteImport.update({
@@ -816,6 +822,7 @@ export interface FileRoutesByFullPath {
   '/me': typeof AuthenticatedMeRouteWithChildren
   '/blog/$slug': typeof BlogSlugRoute
   '/dev/catalogue': typeof DevCatalogueRoute
+  '/dev/industry-coverage': typeof DevIndustryCoverageRoute
   '/industries/$slug': typeof IndustriesSlugRoute
   '/industries/non-profit': typeof IndustriesNonProfitRoute
   '/intake/confirmation': typeof IntakeConfirmationRoute
@@ -933,6 +940,7 @@ export interface FileRoutesByTo {
   '/boardroom': typeof AuthenticatedBoardroomRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/dev/catalogue': typeof DevCatalogueRoute
+  '/dev/industry-coverage': typeof DevIndustryCoverageRoute
   '/industries/$slug': typeof IndustriesSlugRoute
   '/industries/non-profit': typeof IndustriesNonProfitRoute
   '/intake/confirmation': typeof IntakeConfirmationRoute
@@ -1048,6 +1056,7 @@ export interface FileRoutesById {
   '/_authenticated/me': typeof AuthenticatedMeRouteWithChildren
   '/blog/$slug': typeof BlogSlugRoute
   '/dev/catalogue': typeof DevCatalogueRoute
+  '/dev/industry-coverage': typeof DevIndustryCoverageRoute
   '/industries/$slug': typeof IndustriesSlugRoute
   '/industries/non-profit': typeof IndustriesNonProfitRoute
   '/intake_/confirmation': typeof IntakeConfirmationRoute
@@ -1170,6 +1179,7 @@ export interface FileRouteTypes {
     | '/me'
     | '/blog/$slug'
     | '/dev/catalogue'
+    | '/dev/industry-coverage'
     | '/industries/$slug'
     | '/industries/non-profit'
     | '/intake/confirmation'
@@ -1287,6 +1297,7 @@ export interface FileRouteTypes {
     | '/boardroom'
     | '/blog/$slug'
     | '/dev/catalogue'
+    | '/dev/industry-coverage'
     | '/industries/$slug'
     | '/industries/non-profit'
     | '/intake/confirmation'
@@ -1401,6 +1412,7 @@ export interface FileRouteTypes {
     | '/_authenticated/me'
     | '/blog/$slug'
     | '/dev/catalogue'
+    | '/dev/industry-coverage'
     | '/industries/$slug'
     | '/industries/non-profit'
     | '/intake_/confirmation'
@@ -1519,6 +1531,7 @@ export interface RootRouteChildren {
   UnauthorizedRoute: typeof UnauthorizedRoute
   BlogSlugRoute: typeof BlogSlugRoute
   DevCatalogueRoute: typeof DevCatalogueRoute
+  DevIndustryCoverageRoute: typeof DevIndustryCoverageRoute
   IndustriesSlugRoute: typeof IndustriesSlugRoute
   IndustriesNonProfitRoute: typeof IndustriesNonProfitRoute
   IntakeConfirmationRoute: typeof IntakeConfirmationRoute
@@ -1834,6 +1847,13 @@ declare module '@tanstack/react-router' {
       path: '/industries/$slug'
       fullPath: '/industries/$slug'
       preLoaderRoute: typeof IndustriesSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dev/industry-coverage': {
+      id: '/dev/industry-coverage'
+      path: '/dev/industry-coverage'
+      fullPath: '/dev/industry-coverage'
+      preLoaderRoute: typeof DevIndustryCoverageRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dev/catalogue': {
@@ -2716,6 +2736,7 @@ const rootRouteChildren: RootRouteChildren = {
   UnauthorizedRoute: UnauthorizedRoute,
   BlogSlugRoute: BlogSlugRoute,
   DevCatalogueRoute: DevCatalogueRoute,
+  DevIndustryCoverageRoute: DevIndustryCoverageRoute,
   IndustriesSlugRoute: IndustriesSlugRoute,
   IndustriesNonProfitRoute: IndustriesNonProfitRoute,
   IntakeConfirmationRoute: IntakeConfirmationRoute,
@@ -2739,3 +2760,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
