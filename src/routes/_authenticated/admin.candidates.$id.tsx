@@ -208,6 +208,7 @@ function CandidateWorkspace() {
             {tab === "profile" && (
               <ProfileTab cp={cp} pos={pos} m={m} siblings={siblings} evidence={evidence} />
             )}
+            {tab === "journey" && <JourneyTab matchId={id} />}
             {tab === "cv" && <CvTab cv={cv} matchId={id} cp={cp} insights={evidence?.extracted?.insights ?? null} />}
             {tab === "enrichment" && <EnrichmentTab cp={cp} evidence={evidence} />}
             {tab === "evidence" && (
