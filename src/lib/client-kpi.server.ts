@@ -181,6 +181,29 @@ export type ClientCandidateDTO = {
   certifications: Array<{ name: string; issuer: string | null; date: string | null }>;
   work_authorization: string | null;
   screening_answers: Array<{ question: string; answer: string }>;
+  compensation_alignment: {
+    role_range: string | null;
+    candidate_expectation: string | null;
+    currency: string | null;
+    cadence: string | null;
+    verdict: "aligned" | "over" | "under" | "unknown";
+    note: string | null;
+  };
+  source_trace: {
+    source_label: string | null;
+    applied_at: string | null;
+    application_reference: string | null;
+    channel: string | null;
+    notes: string | null;
+  };
+  audit_trail: Array<{
+    id: string;
+    action: string;
+    entity_type: string;
+    actor: string | null;
+    at: string;
+    summary: string | null;
+  }>;
 };
 
 
