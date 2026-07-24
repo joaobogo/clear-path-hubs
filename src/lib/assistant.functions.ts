@@ -252,6 +252,40 @@ async function runTool(
       );
     case "next_actions":
       return tools.nextActions(supabase, orgId);
+    // Action Mode
+    case "open_role":
+    case "open_candidate":
+    case "prepare_compare_set":
+    case "generate_shortlist_summary":
+    case "surface_pending_approvals":
+    case "draft_interview_request": {
+      const actions = await import("./assistant-actions.server");
+      switch (name) {
+        case "open_role":
+          return actions.proposeOpenRole(supabase, orgId, String(args.position_id ?? ""));
+        case "open_candidate":
+          return actions.proposeOpenCandidate(supabase, orgId, String(args.match_id ?? ""));
+        case "prepare_compare_set":
+          return actions.prepareCompareSet(
+            supabase,
+            orgId,
+            Array.isArray(args.match_ids) ? (args.match_ids as string[]) : [],
+            (args.position_id as string | undefined) ?? null,
+          );
+        case "generate_shortlist_summary":
+          return actions.generateShortlistSummary(supabase, orgId, String(args.position_id ?? ""));
+        case "surface_pending_approvals":
+          return actions.surfacePendingApprovals(supabase, orgId);
+        case "draft_interview_request":
+          return actions.proposeDraftInterviewRequest(
+            supabase,
+            orgId,
+            String(args.match_id ?? ""),
+            (args.notes as string | undefined) ?? null,
+          );
+      }
+      return { data: {}, citations: [] };
+    }
     default:
       return { data: { error: `unknown_tool:${name}` }, citations: [] };
   }
