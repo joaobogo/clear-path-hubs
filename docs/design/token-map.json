@@ -1,0 +1,222 @@
+{
+  "$schema": "https://taasflow.dev/schemas/token-map.v1.json",
+  "meta": {
+    "version": "1.0.0",
+    "status": "locked",
+    "sources": {
+      "raw": "src/styles/brand-tokens.css",
+      "semantic_shadcn": "src/styles.css",
+      "motion": "src/styles/motion.css",
+      "industry_motion": "src/styles/industry-motion.css",
+      "logo": "src/config/brand.ts"
+    },
+    "rule": "Application code must never redeclare these values; consume via --taas-* or shadcn semantic class."
+  },
+  "palette": {
+    "brand": {
+      "navy":        { "token": "--brand-navy",        "role": "authority" },
+      "navyLight":   { "token": "--brand-navy-light",  "role": "authority-soft" },
+      "navyDark":    { "token": "--brand-navy-dark",   "role": "authority-pressed" },
+      "ocean":       { "token": "--brand-ocean",       "role": "action" },
+      "oceanLight":  { "token": "--brand-ocean-light", "role": "action-hover" },
+      "sky":         { "token": "--brand-sky",         "role": "surface-tint" },
+      "skyDark":     { "token": "--brand-sky-dark",    "role": "surface-tint-strong" },
+      "ink":         { "token": "--brand-ink",         "role": "text-primary-source" },
+      "paper":       { "token": "--brand-paper",       "role": "surface-page-source" },
+      "success":     { "token": "--brand-success" },
+      "warning":     { "token": "--brand-warning" },
+      "danger":      { "token": "--brand-danger" },
+      "info":        { "token": "--brand-info" }
+    },
+    "gradients": {
+      "hero":   "--brand-gradient-hero",
+      "cta":    "--brand-gradient-cta",
+      "accent": "--brand-gradient-accent"
+    }
+  },
+  "semantic": {
+    "brand": {
+      "primary":            "--taas-brand-primary",
+      "primaryHover":       "--taas-brand-primary-hover",
+      "primaryActive":      "--taas-brand-primary-active",
+      "primarySoft":        "--taas-brand-primary-soft",
+      "primarySofter":      "--taas-brand-primary-softer",
+      "primaryForeground":  "--taas-brand-primary-foreground",
+      "navy":               "--taas-brand-navy",
+      "navyForeground":     "--taas-brand-navy-foreground",
+      "accent":             "--taas-brand-accent",
+      "accentSoft":         "--taas-brand-accent-soft"
+    },
+    "surface": {
+      "page":     "--taas-surface-page",
+      "card":     "--taas-surface-card",
+      "elevated": "--taas-surface-elevated",
+      "muted":    "--taas-surface-muted",
+      "sunken":   "--taas-surface-sunken",
+      "inverse":  "--taas-surface-inverse"
+    },
+    "text": {
+      "primary":    "--taas-text-primary",
+      "secondary":  "--taas-text-secondary",
+      "tertiary":   "--taas-text-tertiary",
+      "disabled":   "--taas-text-disabled",
+      "inverse":    "--taas-text-inverse",
+      "link":       "--taas-text-link",
+      "linkHover":  "--taas-text-link-hover"
+    },
+    "border": {
+      "subtle":  "--taas-border-subtle",
+      "default": "--taas-border-default",
+      "strong":  "--taas-border-strong",
+      "focus":   "--taas-border-focus"
+    },
+    "interactive": {
+      "hover":     "--taas-interactive-hover",
+      "pressed":   "--taas-interactive-pressed",
+      "selected":  "--taas-interactive-selected",
+      "disabled":  "--taas-interactive-disabled",
+      "focusRing": "--taas-focus-ring"
+    },
+    "status": {
+      "success":  { "solid": "--taas-status-success",  "fg": "--taas-status-success-foreground",  "soft": "--taas-status-success-soft" },
+      "warning":  { "solid": "--taas-status-warning",  "fg": "--taas-status-warning-foreground",  "soft": "--taas-status-warning-soft" },
+      "danger":   { "solid": "--taas-status-danger",   "fg": "--taas-status-danger-foreground",   "soft": "--taas-status-danger-soft" },
+      "info":     { "solid": "--taas-status-info",     "fg": "--taas-status-info-foreground",     "soft": "--taas-status-info-soft" },
+      "neutral":  { "solid": "--taas-status-neutral",  "soft": "--taas-status-neutral-soft" }
+    }
+  },
+  "typography": {
+    "family": {
+      "sans":    "--taas-font-sans",
+      "display": "--taas-font-display",
+      "mono":    "--taas-font-mono"
+    },
+    "scale": {
+      "displayXl": { "token": "--taas-text-display-xl", "px": 72 },
+      "displayLg": { "token": "--taas-text-display-lg", "px": 56 },
+      "displayMd": { "token": "--taas-text-display-md", "px": 44 },
+      "displaySm": { "token": "--taas-text-display-sm", "px": 36 },
+      "h1":        { "token": "--taas-text-h1",         "px": 30 },
+      "h2":        { "token": "--taas-text-h2",         "px": 24 },
+      "h3":        { "token": "--taas-text-h3",         "px": 20 },
+      "h4":        { "token": "--taas-text-h4",         "px": 17 },
+      "bodyLg":    { "token": "--taas-text-body-lg",    "px": 17 },
+      "bodyMd":    { "token": "--taas-text-body-md",    "px": 15 },
+      "bodySm":    { "token": "--taas-text-body-sm",    "px": 14 },
+      "metaMd":    { "token": "--taas-text-meta-md",    "px": 13 },
+      "metaSm":    { "token": "--taas-text-meta-sm",    "px": 12 },
+      "caption":   { "token": "--taas-text-caption",    "px": 11 }
+    },
+    "leading": {
+      "tight":   "--taas-leading-tight",
+      "snug":    "--taas-leading-snug",
+      "normal":  "--taas-leading-normal",
+      "relaxed": "--taas-leading-relaxed"
+    }
+  },
+  "spacing": {
+    "scale":   ["--brand-space-1","--brand-space-2","--brand-space-3","--brand-space-4","--brand-space-5","--brand-space-6","--brand-space-8","--brand-space-10","--brand-space-12","--brand-space-16","--brand-space-20","--brand-space-24"],
+    "section": ["--brand-section-y-sm","--brand-section-y-md","--brand-section-y-lg","--brand-section-y-xl"],
+    "widths":  { "public": "--brand-public-width", "workspace": "--brand-workspace-width", "prose": "--brand-prose-width" }
+  },
+  "radii": {
+    "control": "--taas-radius-control",
+    "card":    "--taas-radius-card",
+    "surface": "--taas-radius-surface",
+    "pill":    "--taas-radius-pill"
+  },
+  "border": {
+    "hairline": "--taas-border-hairline",
+    "regular":  "--taas-border-regular",
+    "emphasis": "--taas-border-emphasis"
+  },
+  "elevation": {
+    "0": "--taas-shadow-0",
+    "1": "--taas-shadow-1",
+    "2": "--taas-shadow-2",
+    "3": "--taas-shadow-3",
+    "4": "--taas-shadow-4",
+    "5": "--taas-shadow-5",
+    "focus": "--taas-shadow-focus"
+  },
+  "motion": {
+    "duration": {
+      "instant": "--taas-motion-instant",
+      "fast":    "--taas-motion-fast",
+      "base":    "--taas-motion-base",
+      "slow":    "--taas-motion-slow",
+      "slower":  "--taas-motion-slower",
+      "story":   "600ms (storytelling ceiling)"
+    },
+    "ease": {
+      "standard":     "--taas-ease-standard",
+      "emphasized":   "--taas-ease-emphasized",
+      "outSoft":      "--taas-ease-out-soft",
+      "inOut":        "--taas-ease-in-out",
+      "springSubtle": "--taas-spring-subtle"
+    }
+  },
+  "charts": {
+    "categorical": ["--taas-chart-1","--taas-chart-2","--taas-chart-3","--taas-chart-4","--taas-chart-5","--taas-chart-6","--taas-chart-7"],
+    "score": {
+      "excellent": "--taas-score-excellent",
+      "strong":    "--taas-score-strong",
+      "moderate":  "--taas-score-moderate",
+      "weak":      "--taas-score-weak",
+      "poor":      "--taas-score-poor"
+    },
+    "stage": {
+      "new":         "--taas-stage-new",
+      "review":      "--taas-stage-review",
+      "shortlisted": "--taas-stage-shortlisted",
+      "interview":   "--taas-stage-interview",
+      "offer":       "--taas-stage-offer",
+      "hired":       "--taas-stage-hired",
+      "rejected":    "--taas-stage-rejected",
+      "withdrawn":   "--taas-stage-withdrawn"
+    }
+  },
+  "shell": {
+    "bg":               "--taas-shell-bg",
+    "bgGradient":       "--taas-shell-bg-gradient",
+    "sidebarBg":        "--taas-shell-sidebar-bg",
+    "sidebarBorder":    "--taas-shell-sidebar-border",
+    "topbarBg":         "--taas-shell-topbar-bg",
+    "topbarBorder":     "--taas-shell-topbar-border",
+    "navActiveBg":      "--taas-shell-nav-active-bg",
+    "navActiveFg":      "--taas-shell-nav-active-fg",
+    "navHoverBg":       "--taas-shell-nav-hover-bg",
+    "navRail":          "--taas-shell-nav-rail",
+    "logoGradient":     "--taas-shell-logo-gradient",
+    "logoShadow":       "--taas-shell-logo-shadow"
+  },
+  "icons": {
+    "library": "lucide-react",
+    "stroke":  { "default": 1.5, "marketingLarge": 1.75 },
+    "sizes":   [14, 16, 20, 24, 32]
+  },
+  "logo": {
+    "component": ["@/components/brand/BrandLogo", "@/components/brand/BrandMark"],
+    "assets": {
+      "onLight": "src/assets/brand/logo-on-white.png",
+      "onDark":  "src/assets/brand/logo-on-blue.png",
+      "icon":    "src/assets/brand/icon-white.png"
+    },
+    "rule": "Never <img src> a brand asset inline. Never import brand PNGs from feature code."
+  },
+  "darkMode": {
+    "selector": ".dark",
+    "reboundTokens": ["--brand-navy","--brand-navy-light","--brand-navy-dark","--brand-ocean","--brand-ocean-light","--brand-sky","--brand-sky-dark","--brand-ink","--brand-paper","--brand-gradient-hero","--brand-gradient-cta","--taas-shell-*"],
+    "note": "Component-level dark: variants are unnecessary; --taas-* automatically inherits."
+  },
+  "allowlist": {
+    "illustrationHex": [
+      "src/routes/case-studies.tsx",
+      "src/routes/index.tsx",
+      "src/components/marketing/workspace-tour.tsx",
+      "src/components/marketing/book-a-call.tsx",
+      "src/routes/_authenticated/client.settings.tsx"
+    ],
+    "reason": "Stylized illustration art or user-supplied brand-color inputs; not part of brand surface tokens."
+  }
+}

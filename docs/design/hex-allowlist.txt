@@ -1,0 +1,5 @@
+src/routes/case-studies.tsx
+src/routes/index.tsx
+src/components/marketing/workspace-tour.tsx
+src/components/marketing/book-a-call.tsx
+src/routes/_authenticated/client.settings.tsx
