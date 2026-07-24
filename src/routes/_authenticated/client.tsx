@@ -83,17 +83,17 @@ type NavDef = WorkspaceNavItem & { everyone: boolean };
 
 const TABS: NavDef[] = [
 	{ to: "/client", label: "Overview", icon: LayoutDashboard, exact: true, everyone: true },
-	{ to: "/client/executive", label: "Executive", icon: LineChart, everyone: true },
+	{ to: "/client/positions", label: "Positions", icon: Briefcase, everyone: true },
+	{ to: "/client/candidates", label: "Candidates", icon: Users, everyone: true },
+	{ to: "/client/tasks", label: "Tasks & Approvals", icon: CheckSquare, everyone: true },
+	{ to: "/client/executive", label: "Analytics", icon: LineChart, everyone: true },
 	{ to: "/client/portfolio", label: "Portfolio", icon: Building2, everyone: true },
  { to: "/client/assistant", label: "Assistant", icon: Bot, everyone: true },
- { to: "/client/positions", label: "Positions", icon: Briefcase, everyone: true },
- { to: "/client/candidates", label: "Candidates", icon: Users, everyone: true },
  { to: "/client/talent-memory", label: "Talent memory", icon: Award, everyone: true },
  { to: "/client/talent-pool", label: "Talent pool", icon: Sparkles, everyone: true },
  { to: "/client/offers", label: "Offers", icon: HandCoins, everyone: true },
  { to: "/client/shares", label: "Shares", icon: Share2, everyone: true },
  { to: "/boardroom", label: "Boardroom", icon: Sparkles, everyone: true },
- // Interviews merged into Positions / Candidates record pages — route stays reachable via deep links.
  { to: "/client/messages", label: "Messages", icon: MessageSquare, everyone: true },
  { to: "/client/team", label: "Team", icon: UserCog, everyone: false },
  { to: "/client/settings", label: "Settings", icon: Settings, everyone: false },
