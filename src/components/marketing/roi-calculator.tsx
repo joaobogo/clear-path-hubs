@@ -117,7 +117,7 @@ function Field({
           </button>
           <output
             htmlFor={id}
-            className="min-w-[5.5rem] text-right font-[family-name:var(--brand-font-display)] text-xl font-medium tabular-nums text-[color:var(--brand-navy)]"
+            className="min-w-[3.5rem] text-right font-[family-name:var(--brand-font-display)] text-lg font-medium tabular-nums text-[color:var(--brand-navy)] sm:min-w-[5.5rem] sm:text-xl"
             aria-live="polite"
           >
             {format(value)}
