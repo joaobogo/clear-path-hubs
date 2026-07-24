@@ -47,9 +47,7 @@ export const getClientAnalytics = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((raw) => filtersSchema.parse(raw))
   .handler(async ({ data, context }) => {
-    const { supabase, userId } = data.organization_id
-      ? { supabase: context.supabase, userId: context.userId }
-      : context;
+    const { supabase, userId } = context;
 
     // Verify caller has access
     const { data: membership } = await supabase
@@ -65,7 +63,8 @@ export const getClientAnalytics = createServerFn({ method: "POST" })
     const toISO = data.to ?? new Date().toISOString();
 
     // Base match query (scope: org + optional position + date window)
-    let matchQ = supabase
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let matchQ: any = supabase
       .from("candidate_matches")
       .select("id, position_id, stage, created_at, delivered_at, updated_at, client_visibility")
       .eq("organization_id", data.organization_id)
