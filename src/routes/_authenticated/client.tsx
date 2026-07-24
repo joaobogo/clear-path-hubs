@@ -28,6 +28,7 @@ import {
  // CalendarClock removed from nav; icon no longer needed here.
  UserCog,
  Settings,
+ Award,
 } from "lucide-react";
 import {
  WorkspaceShell,
