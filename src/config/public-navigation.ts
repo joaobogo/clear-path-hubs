@@ -42,6 +42,7 @@ export const SECONDARY_CTAS: NavLink[] = [
 
 export const PRIMARY_ITEMS: PrimaryItem[] = [
   { kind: "link", to: "/platform", label: "Platform" },
+  { kind: "link", to: "/system", label: "The System" },
   { kind: "link", to: "/how-it-works", label: "How It Works" },
   {
     kind: "group",
