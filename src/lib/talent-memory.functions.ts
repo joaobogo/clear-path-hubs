@@ -145,12 +145,12 @@ async function decorateMemories(
   const [{ data: profiles }, { data: profileProfiles }] = await Promise.all([
     supabase
       .from("candidate_profiles")
-      .select("id, first_name, last_name, email, headline, seniority, location")
+      .select("id, full_name, email, headline, location")
       .in("id", profileIds),
     userIds.length
       ? supabase
           .from("profiles")
-          .select("auth_user_id, first_name, last_name, email")
+          .select("auth_user_id, full_name, email")
           .in("auth_user_id", userIds)
       : Promise.resolve({ data: [] as AnyRow[] }),
   ]);
