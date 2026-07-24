@@ -230,15 +230,27 @@ function CandidateDetailPage() {
  <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-12">
  {/* MAIN COLUMN */}
         <div className="space-y-6 lg:col-span-8">
-          <FitHero candidate={candidate} />
+          <JumpNav
+            items={[
+              { id: "sec-fit", label: "Summary" },
+              { id: "sec-coverage", label: "Requirements" },
+              { id: "sec-strengths", label: "Strengths" },
+              { id: "sec-risks", label: "Risks" },
+              { id: "sec-interview", label: "Interview" },
+              { id: "sec-experience", label: "Experience" },
+              { id: "sec-skills", label: "Skills" },
+              { id: "sec-activity", label: "Activity" },
+            ]}
+          />
+          <div id="sec-fit" className="scroll-mt-24"><FitHero candidate={candidate} /></div>
           <EvaluationProvenance candidate={candidate} />
-          <RequirementCoverage candidate={candidate} />
-          <WhyThisCandidate candidate={candidate} />
-          <WhatNeedsValidation candidate={candidate} />
+          <div id="sec-coverage" className="scroll-mt-24"><RequirementCoverage candidate={candidate} /></div>
+          <div id="sec-strengths" className="scroll-mt-24"><WhyThisCandidate candidate={candidate} /></div>
+          <div id="sec-risks" className="scroll-mt-24"><WhatNeedsValidation candidate={candidate} /></div>
           <AvailabilityAndComp candidate={candidate} />
-          <InterviewGuide candidate={candidate} />
-          <ExperienceTimeline candidate={candidate} />
-          <SkillsAndEducation candidate={candidate} />
+          <div id="sec-interview" className="scroll-mt-24"><InterviewGuide candidate={candidate} /></div>
+          <div id="sec-experience" className="scroll-mt-24"><ExperienceTimeline candidate={candidate} /></div>
+          <div id="sec-skills" className="scroll-mt-24"><SkillsAndEducation candidate={candidate} /></div>
           {candidate.screening_answers.length > 0 && (
             <SectionCard title="Screening answers" icon={<MessageSquare className="h-4 w-4" />}>
               <dl className="space-y-3 text-sm">
@@ -253,16 +265,17 @@ function CandidateDetailPage() {
               </dl>
             </SectionCard>
           )}
-          
-          {(interviews.length > 0 || decisions.length > 0) && (
-            <ActivitySection interviews={interviews} decisions={decisions} />
-          )}
-          <JourneySection matchId={candidate.match_id} />
-          <AuditTrailSection candidate={candidate} />
+          <div id="sec-activity" className="scroll-mt-24 space-y-6">
+            {(interviews.length > 0 || decisions.length > 0) && (
+              <ActivitySection interviews={interviews} decisions={decisions} />
+            )}
+            <JourneySection matchId={candidate.match_id} />
+            <AuditTrailSection candidate={candidate} />
+          </div>
         </div>
 
         {/* SIDE PANEL — Decision cockpit (sticky on desktop) */}
-        <aside className="space-y-6 lg:col-span-4">
+        <aside className="space-y-6 lg:col-span-8 lg:col-span-4">
           <div className="lg:sticky lg:top-20 space-y-6">
             <ActionArea
               actions={actions}
@@ -270,6 +283,7 @@ function CandidateDetailPage() {
               pending={act.isPending}
               onAct={(k) => act.mutate(k)}
               stage={candidate.stage}
+              matchId={candidate.match_id}
             />
             <TalentMemoryAction
               orgId={orgId}
@@ -283,6 +297,15 @@ function CandidateDetailPage() {
           </div>
         </aside>
       </div>
+
+      {/* MOBILE ACTION BAR — visible only on small screens */}
+      {!readOnly && actions.primary && candidate.stage !== "hired" && (
+        <MobileActionBar
+          actions={actions}
+          pending={act.isPending}
+          onAct={(k) => act.mutate(k)}
+        />
+      )}
     </main>
   );
 }
