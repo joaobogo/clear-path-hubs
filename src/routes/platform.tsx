@@ -368,7 +368,7 @@ function PlatformPage() {
       <CtaSection
         eyebrow="Ready to see it"
         title="Open a role. Watch the system run."
-        body="Submit intake and see the rubric, sourcing plan, and first ranked shortlist appear inside your workspace within one week."
+        description="Submit intake and see the rubric, sourcing plan, and first ranked shortlist appear inside your workspace within one week."
         primary={{ to: "/intake", label: "Start Hiring" }}
         secondary={{ to: "/pricing", label: "View Pricing" }}
       />

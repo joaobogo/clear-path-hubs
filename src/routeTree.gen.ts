@@ -20,6 +20,7 @@ import { Route as ResourcesRouteImport } from './routes/resources'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PricingRouteImport } from './routes/pricing'
+import { Route as PlatformRouteImport } from './routes/platform'
 import { Route as PitchRouteImport } from './routes/pitch'
 import { Route as PilotRouteImport } from './routes/pilot'
 import { Route as LoginRouteImport } from './routes/login'
@@ -172,6 +173,11 @@ const PrivacyRoute = PrivacyRouteImport.update({
 const PricingRoute = PricingRouteImport.update({
   id: '/pricing',
   path: '/pricing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PlatformRoute = PlatformRouteImport.update({
+  id: '/platform',
+  path: '/platform',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PitchRoute = PitchRouteImport.update({
@@ -730,6 +736,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/pilot': typeof PilotRoute
   '/pitch': typeof PitchRoute
+  '/platform': typeof PlatformRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -840,6 +847,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/pilot': typeof PilotRoute
   '/pitch': typeof PitchRoute
+  '/platform': typeof PlatformRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -942,6 +950,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/pilot': typeof PilotRoute
   '/pitch': typeof PitchRoute
+  '/platform': typeof PlatformRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -1054,6 +1063,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/pilot'
     | '/pitch'
+    | '/platform'
     | '/pricing'
     | '/privacy'
     | '/reset-password'
@@ -1164,6 +1174,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/pilot'
     | '/pitch'
+    | '/platform'
     | '/pricing'
     | '/privacy'
     | '/reset-password'
@@ -1265,6 +1276,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/pilot'
     | '/pitch'
+    | '/platform'
     | '/pricing'
     | '/privacy'
     | '/reset-password'
@@ -1377,6 +1389,7 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   PilotRoute: typeof PilotRoute
   PitchRoute: typeof PitchRoute
+  PlatformRoute: typeof PlatformRoute
   PricingRoute: typeof PricingRoute
   PrivacyRoute: typeof PrivacyRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
@@ -1487,6 +1500,13 @@ declare module '@tanstack/react-router' {
       path: '/pricing'
       fullPath: '/pricing'
       preLoaderRoute: typeof PricingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/platform': {
+      id: '/platform'
+      path: '/platform'
+      fullPath: '/platform'
+      preLoaderRoute: typeof PlatformRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/pitch': {
@@ -2474,6 +2494,7 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   PilotRoute: PilotRoute,
   PitchRoute: PitchRoute,
+  PlatformRoute: PlatformRoute,
   PricingRoute: PricingRoute,
   PrivacyRoute: PrivacyRoute,
   ResetPasswordRoute: ResetPasswordRoute,
