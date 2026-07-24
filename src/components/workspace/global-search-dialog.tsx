@@ -102,6 +102,8 @@ export function GlobalSearchDialog({
     staleTime: 15_000,
   });
 
+  const quickActions = scope === "admin" ? ADMIN_QUICK_ACTIONS : CLIENT_QUICK_ACTIONS;
+
   const allResults: SearchResult[] = useMemo(() => {
     if (!data) return [];
     return [
@@ -109,6 +111,7 @@ export function GlobalSearchDialog({
       ...data.groups.positions,
       ...data.groups.candidates,
       ...data.groups.messages,
+      ...data.groups.tasks,
     ];
   }, [data]);
 
