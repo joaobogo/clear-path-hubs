@@ -20,6 +20,7 @@ import { Route as ResourcesRouteImport } from './routes/resources'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PricingRouteImport } from './routes/pricing'
+import { Route as PitchRouteImport } from './routes/pitch'
 import { Route as PilotRouteImport } from './routes/pilot'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as KnowledgeBaseRouteImport } from './routes/knowledge-base'
@@ -51,6 +52,7 @@ import { Route as DevCatalogueRouteImport } from './routes/dev.catalogue'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as AuthenticatedMeRouteImport } from './routes/_authenticated/me'
 import { Route as AuthenticatedClientRouteImport } from './routes/_authenticated/client'
+import { Route as AuthenticatedBoardroomRouteImport } from './routes/_authenticated/boardroom'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as JobsIdIndexRouteImport } from './routes/jobs.$id.index'
 import { Route as AuthenticatedMeIndexRouteImport } from './routes/_authenticated/me.index'
@@ -170,6 +172,11 @@ const PrivacyRoute = PrivacyRouteImport.update({
 const PricingRoute = PricingRouteImport.update({
   id: '/pricing',
   path: '/pricing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PitchRoute = PitchRouteImport.update({
+  id: '/pitch',
+  path: '/pitch',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PilotRoute = PilotRouteImport.update({
@@ -324,6 +331,11 @@ const AuthenticatedMeRoute = AuthenticatedMeRouteImport.update({
 const AuthenticatedClientRoute = AuthenticatedClientRouteImport.update({
   id: '/client',
   path: '/client',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedBoardroomRoute = AuthenticatedBoardroomRouteImport.update({
+  id: '/boardroom',
+  path: '/boardroom',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
@@ -717,6 +729,7 @@ export interface FileRoutesByFullPath {
   '/knowledge-base': typeof KnowledgeBaseRoute
   '/login': typeof LoginRoute
   '/pilot': typeof PilotRoute
+  '/pitch': typeof PitchRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -729,6 +742,7 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/unauthorized': typeof UnauthorizedRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
+  '/boardroom': typeof AuthenticatedBoardroomRoute
   '/client': typeof AuthenticatedClientRouteWithChildren
   '/me': typeof AuthenticatedMeRouteWithChildren
   '/blog/$slug': typeof BlogSlugRoute
@@ -825,6 +839,7 @@ export interface FileRoutesByTo {
   '/knowledge-base': typeof KnowledgeBaseRoute
   '/login': typeof LoginRoute
   '/pilot': typeof PilotRoute
+  '/pitch': typeof PitchRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -836,6 +851,7 @@ export interface FileRoutesByTo {
   '/talent-network': typeof TalentNetworkRoute
   '/terms': typeof TermsRoute
   '/unauthorized': typeof UnauthorizedRoute
+  '/boardroom': typeof AuthenticatedBoardroomRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/dev/catalogue': typeof DevCatalogueRoute
   '/industries/$slug': typeof IndustriesSlugRoute
@@ -925,6 +941,7 @@ export interface FileRoutesById {
   '/knowledge-base': typeof KnowledgeBaseRoute
   '/login': typeof LoginRoute
   '/pilot': typeof PilotRoute
+  '/pitch': typeof PitchRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -937,6 +954,7 @@ export interface FileRoutesById {
   '/terms': typeof TermsRoute
   '/unauthorized': typeof UnauthorizedRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
+  '/_authenticated/boardroom': typeof AuthenticatedBoardroomRoute
   '/_authenticated/client': typeof AuthenticatedClientRouteWithChildren
   '/_authenticated/me': typeof AuthenticatedMeRouteWithChildren
   '/blog/$slug': typeof BlogSlugRoute
@@ -1035,6 +1053,7 @@ export interface FileRouteTypes {
     | '/knowledge-base'
     | '/login'
     | '/pilot'
+    | '/pitch'
     | '/pricing'
     | '/privacy'
     | '/reset-password'
@@ -1047,6 +1066,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/unauthorized'
     | '/admin'
+    | '/boardroom'
     | '/client'
     | '/me'
     | '/blog/$slug'
@@ -1143,6 +1163,7 @@ export interface FileRouteTypes {
     | '/knowledge-base'
     | '/login'
     | '/pilot'
+    | '/pitch'
     | '/pricing'
     | '/privacy'
     | '/reset-password'
@@ -1154,6 +1175,7 @@ export interface FileRouteTypes {
     | '/talent-network'
     | '/terms'
     | '/unauthorized'
+    | '/boardroom'
     | '/blog/$slug'
     | '/dev/catalogue'
     | '/industries/$slug'
@@ -1242,6 +1264,7 @@ export interface FileRouteTypes {
     | '/knowledge-base'
     | '/login'
     | '/pilot'
+    | '/pitch'
     | '/pricing'
     | '/privacy'
     | '/reset-password'
@@ -1254,6 +1277,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/unauthorized'
     | '/_authenticated/admin'
+    | '/_authenticated/boardroom'
     | '/_authenticated/client'
     | '/_authenticated/me'
     | '/blog/$slug'
@@ -1352,6 +1376,7 @@ export interface RootRouteChildren {
   KnowledgeBaseRoute: typeof KnowledgeBaseRoute
   LoginRoute: typeof LoginRoute
   PilotRoute: typeof PilotRoute
+  PitchRoute: typeof PitchRoute
   PricingRoute: typeof PricingRoute
   PrivacyRoute: typeof PrivacyRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
@@ -1462,6 +1487,13 @@ declare module '@tanstack/react-router' {
       path: '/pricing'
       fullPath: '/pricing'
       preLoaderRoute: typeof PricingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pitch': {
+      id: '/pitch'
+      path: '/pitch'
+      fullPath: '/pitch'
+      preLoaderRoute: typeof PitchRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/pilot': {
@@ -1679,6 +1711,13 @@ declare module '@tanstack/react-router' {
       path: '/client'
       fullPath: '/client'
       preLoaderRoute: typeof AuthenticatedClientRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/boardroom': {
+      id: '/_authenticated/boardroom'
+      path: '/boardroom'
+      fullPath: '/boardroom'
+      preLoaderRoute: typeof AuthenticatedBoardroomRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/admin': {
@@ -2399,12 +2438,14 @@ const AuthenticatedMeRouteWithChildren = AuthenticatedMeRoute._addFileChildren(
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRouteWithChildren
+  AuthenticatedBoardroomRoute: typeof AuthenticatedBoardroomRoute
   AuthenticatedClientRoute: typeof AuthenticatedClientRouteWithChildren
   AuthenticatedMeRoute: typeof AuthenticatedMeRouteWithChildren
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRouteWithChildren,
+  AuthenticatedBoardroomRoute: AuthenticatedBoardroomRoute,
   AuthenticatedClientRoute: AuthenticatedClientRouteWithChildren,
   AuthenticatedMeRoute: AuthenticatedMeRouteWithChildren,
 }
@@ -2432,6 +2473,7 @@ const rootRouteChildren: RootRouteChildren = {
   KnowledgeBaseRoute: KnowledgeBaseRoute,
   LoginRoute: LoginRoute,
   PilotRoute: PilotRoute,
+  PitchRoute: PitchRoute,
   PricingRoute: PricingRoute,
   PrivacyRoute: PrivacyRoute,
   ResetPasswordRoute: ResetPasswordRoute,

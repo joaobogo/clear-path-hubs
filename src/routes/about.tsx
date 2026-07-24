@@ -7,6 +7,7 @@ import {
 } from "@/components/marketing/site-shell";
 import { marketingHead } from "@/lib/marketing/head";
 import { PageConnections } from "@/components/marketing/page-connections";
+import joaoLucianoPhoto from "@/assets/founders/joao-luciano.jpg.asset.json";
 
 // ─── LEADERSHIP — Edit this block to publish the named founder narrative ────
 // The rest of the About page reads from this constant. Update once, publish.
@@ -16,7 +17,7 @@ const LEADERS = [
     name: "João Luciano",
     title: "Co-founder & CEO",
     location: "Lisbon · Global",
-    photoUrl: "",
+    photoUrl: joaoLucianoPhoto.url,
     linkedin: "https://www.linkedin.com/in/joaoluciano/",
     quote:
       "We built TaaSFlow because we were tired of hiring being the least explainable part of running a company.",
