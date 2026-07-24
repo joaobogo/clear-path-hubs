@@ -226,7 +226,7 @@ export const askCopilot = createServerFn({ method: "POST" })
 
     await auditAssistantEvent(context.supabase, {
       surface: "admin_copilot",
-      event_type: "prompt_submitted",
+      event_type: "prompt",
       user_id: context.userId,
       conversation_id: conversationId,
       content_preview: data.message,
