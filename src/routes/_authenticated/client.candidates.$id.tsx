@@ -394,16 +394,19 @@ function FitHero({
  >
  <div className="flex flex-wrap items-start justify-between gap-6">
  <div className="min-w-0 flex-1">
- <div className="flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">
- <Sparkles className="h-3.5 w-3.5" aria-hidden />
- Fit recommendation
- </div>
- <h2 id="fit-heading" className="mt-1 text-2xl font-semibold tracking-tight">
- {fit.headline}
- </h2>
- <p className={cn("mt-0.5 text-sm font-medium", ring.text)}>
- {fit.recommendation}
- </p>
+  <div className="flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+  <Sparkles className="h-3.5 w-3.5" aria-hidden />
+  Fit for {candidate.position?.title ?? "this role"}
+  </div>
+  <h2 id="fit-heading" className="mt-1 text-2xl font-semibold tracking-tight">
+  {fit.headline}
+  </h2>
+  <p className={cn("mt-0.5 text-sm font-medium", ring.text)}>
+  {fit.recommendation}
+  </p>
+  <p className="mt-1 text-[11px] text-muted-foreground">
+  Role-specific fit. This candidate carries no global rating.
+  </p>
  {candidate.summary && (
  <p className="mt-3 text-sm leading-relaxed text-foreground/90">
  {candidate.summary}
