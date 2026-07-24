@@ -166,6 +166,43 @@ function AssistantPage() {
     composerRef.current?.focus();
   }, [orgId]);
 
+  const runAction = async (action: ProposedAction) => {
+    if (!orgId) return;
+    setRunningActionId(action.action_id);
+    try {
+      if (action.kind === "navigate") {
+        if (action.href) window.location.assign(action.href);
+        setDismissedActions((s) => new Set(s).add(action.action_id));
+        return;
+      }
+      if (action.kind === "draft_interview_request") {
+        const body = editedDrafts[action.action_id] ?? action.draft_body ?? "";
+        if (!body.trim()) {
+          toast.error("Draft is empty");
+          return;
+        }
+        await execFn({
+          data: {
+            orgId,
+            action: {
+              kind: "draft_interview_request",
+              action_id: action.action_id,
+              match_id: action.match_id!,
+              draft_body: body,
+            },
+          },
+        });
+        toast.success("Interview request sent to the TaaSFlow team");
+        setDismissedActions((s) => new Set(s).add(action.action_id));
+      }
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Action failed");
+    } finally {
+      setRunningActionId(null);
+    }
+  };
+
+
   const submit = () => {
     const trimmed = input.trim();
     if (!trimmed || !orgId || ask.isPending) return;
