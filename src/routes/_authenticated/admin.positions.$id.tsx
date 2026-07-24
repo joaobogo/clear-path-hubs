@@ -10,6 +10,7 @@ import {
   setPositionVisibility,
   saveScreeningQuestions,
   getPositionActivity,
+  deletePosition,
 } from "@/lib/admin.functions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -1140,6 +1141,9 @@ function ActivityTab({ id }: { id: string }) {
 function SettingsTab({ position, onDone }: { position: Any; onDone: () => Promise<void> }) {
   const visibilityFn = useServerFn(setPositionVisibility);
   const statusFn = useServerFn(setPositionStatus);
+  const deleteFn = useServerFn(deletePosition);
+  const router = useRouter();
+  const [busy, setBusy] = useState(false);
 
   const setVis = async (v: Any) => {
     try {
@@ -1158,6 +1162,23 @@ function SettingsTab({ position, onDone }: { position: Any; onDone: () => Promis
       await onDone();
     } catch (e) {
       toast.error((e as Error).message);
+    }
+  };
+
+  const hardDelete = async () => {
+    const confirmed = window.confirm(
+      `Permanently delete "${position.title}"?\n\nThis removes the position, every linked candidate, application, CV, scoring run, evidence record, interview, task, notification, and memory entry. It cannot be undone.`,
+    );
+    if (!confirmed) return;
+    setBusy(true);
+    try {
+      const r = await deleteFn({ data: { id: position.id, reason: "admin_hard_delete" } });
+      toast.success(`Position deleted · trace ${r.trace_id}`);
+      router.navigate({ to: "/admin/positions" });
+    } catch (e) {
+      toast.error((e as Error).message);
+    } finally {
+      setBusy(false);
     }
   };
 
@@ -1194,19 +1215,33 @@ function SettingsTab({ position, onDone }: { position: Any; onDone: () => Promis
 
       <div className="rounded-lg border border-destructive/30 bg-destructive/5 p-5 text-sm lg:col-span-2">
         <h2 className="font-semibold text-destructive">Danger zone</h2>
-        <p className="text-xs text-muted-foreground">
-          Archive hides the position from every workspace and removes it from job board and pipelines.
-          Candidates on the position are retained.
+        <p className="mt-1 text-xs text-muted-foreground">
+          <strong>Archive</strong> hides the position from every workspace and removes it from the
+          job board and pipelines. Candidates on the position are retained.
         </p>
-        <div className="mt-3">
+        <p className="mt-1 text-xs text-muted-foreground">
+          <strong>Delete permanently</strong> purges the position and every linked candidate,
+          application, CV, scoring run, evidence record, interview, task, and memory entry from the
+          database. This cannot be undone.
+        </p>
+        <div className="mt-3 flex flex-wrap gap-2">
           <Button
-            variant="destructive"
+            variant="outline"
             size="sm"
-            disabled={position.status === "archived"}
+            disabled={position.status === "archived" || busy}
             onClick={archive}
             data-qa-action="archive-position"
           >
             {position.status === "archived" ? "Already archived" : "Archive position"}
+          </Button>
+          <Button
+            variant="destructive"
+            size="sm"
+            disabled={busy}
+            onClick={hardDelete}
+            data-qa-action="delete-position"
+          >
+            {busy ? "Deleting…" : "Delete permanently"}
           </Button>
         </div>
       </div>
