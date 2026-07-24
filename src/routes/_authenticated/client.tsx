@@ -41,6 +41,7 @@ import {
  WorkspaceShell,
  type WorkspaceNavItem,
 } from "@/components/workspace/workspace-shell";
+import { ClientBrandHeader } from "@/components/client/client-brand-header";
 import { OrgSwitcher } from "@/components/workspace/org-switcher";
 
 const emptyToUndef = (v: unknown) => (v === "" ? undefined : v);
