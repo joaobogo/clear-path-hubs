@@ -543,6 +543,36 @@ export const askAssistant = createServerFn({ method: "POST" })
               if (a && typeof a.action_id === "string") proposedActionsMap.set(a.action_id, a);
             }
           }
+          const resultRowCount = Array.isArray((result as AnyRow).data)
+            ? ((result as AnyRow).data as unknown[]).length
+            : Array.isArray(((result as AnyRow).data as AnyRow)?.rows)
+              ? (((result as AnyRow).data as AnyRow).rows as unknown[]).length
+              : null;
+          await auditAssistantEvent(context.supabase, {
+            surface: "client_assistant",
+            event_type: "tool_call",
+            user_id: context.userId,
+            organization_id: data.orgId,
+            conversation_id: conversationId,
+            tool_name: call.function.name,
+            payload: {
+              args,
+              citation_count: result.citations.length,
+              row_count: resultRowCount,
+              proposed_count: Array.isArray(proposals) ? proposals.length : 0,
+            },
+          });
+          if (resultRowCount === 0) {
+            await auditAssistantEvent(context.supabase, {
+              surface: "client_assistant",
+              event_type: "guardrail_missing_data",
+              user_id: context.userId,
+              organization_id: data.orgId,
+              conversation_id: conversationId,
+              tool_name: call.function.name,
+              payload: { args },
+            });
+          }
           messages.push({
             role: "tool",
             tool_call_id: call.id,
