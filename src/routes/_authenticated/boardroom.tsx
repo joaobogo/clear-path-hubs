@@ -63,7 +63,7 @@ function BoardroomPage() {
     queryKey: ["boardroom-ctx"],
     queryFn: () => ctx({ data: {} }),
   });
-  const resolvedOrgId = orgId ?? contextQ.data?.orgs?.[0]?.id;
+  const resolvedOrgId = orgId ?? contextQ.data?.organizations?.[0]?.id;
 
   const overviewQ = useQuery({
     queryKey: ["boardroom-overview", resolvedOrgId],
@@ -71,16 +71,29 @@ function BoardroomPage() {
     enabled: !!resolvedOrgId,
   });
 
-  const orgName = contextQ.data?.orgs?.find((o) => o.id === resolvedOrgId)?.name ?? "Your workspace";
-  const kpis = overviewQ.data?.kpis;
-  const activePositions = overviewQ.data?.active_positions ?? [];
-  const latestCandidates = overviewQ.data?.latest_candidates ?? [];
+  const orgName =
+    contextQ.data?.organizations?.find((o: { id: string; name: string }) => o.id === resolvedOrgId)?.name ??
+    "Your workspace";
+  const kpis = overviewQ.data?.kpis as
+    | { active_positions?: number; delivered_this_month?: number; time_to_shortlist_days?: number }
+    | undefined;
+  const whatsNext = (overviewQ.data?.whats_next ?? []) as Array<{
+    position_id: string;
+    title: string;
+    status: string;
+    delivered_pending: number;
+  }>;
+  const latestCandidates = (overviewQ.data?.latest_candidates ?? []) as Array<{
+    full_name?: string;
+    fit_score?: number;
+    strengths?: string[];
+  }>;
 
-  const usingDemo = !overviewQ.data || activePositions.length === 0;
+  const usingDemo = !overviewQ.data || whatsNext.length === 0;
 
   const positions = usingDemo
     ? DEMO_POSITIONS
-    : activePositions.slice(0, 6).map((p: { title: string; status: string; delivered_pending?: number }) => ({
+    : whatsNext.slice(0, 6).map((p) => ({
         title: p.title,
         status: p.status,
         pending: p.delivered_pending ?? 0,
@@ -88,11 +101,11 @@ function BoardroomPage() {
 
   const candidates = usingDemo
     ? DEMO_CANDIDATES
-    : latestCandidates.slice(0, 3).map((c: { full_name?: string; fit_score?: number; strengths?: string[] }, i: number) => ({
+    : latestCandidates.slice(0, 3).map((c, i) => ({
         rank: i + 1,
         name: c.full_name ?? `Candidate ${i + 1}`,
         score: c.fit_score ?? 0,
-        note: (c.strengths?.[0] as string | undefined) ?? "Evidence available in workspace.",
+        note: c.strengths?.[0] ?? "Evidence available in workspace.",
       }));
 
   /* Slides */
