@@ -3,6 +3,7 @@ import {
   PublicPage,
   PublicSection,
   Breadcrumbs,
+  SiteShell,
 } from "@/components/marketing/site-shell";
 import type { IndustryEntry } from "@/content/industries-v2";
 import { getIndustryHeroImage } from "@/content/industry-hero-images";
