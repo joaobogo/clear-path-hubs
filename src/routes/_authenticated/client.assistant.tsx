@@ -249,7 +249,17 @@ function AssistantPage() {
         ) : messages.length === 0 ? (
           <EmptyState onPick={(t) => setInput(t)} />
         ) : (
-          messages.map((m) => <MessageBubble key={m.id} m={m} />)
+          messages.map((m) => (
+            <MessageBubble
+              key={m.id}
+              m={m}
+              runAction={runAction}
+              runningActionId={runningActionId}
+              dismissed={dismissedActions}
+              editedDrafts={editedDrafts}
+              setDraft={(id, v) => setEditedDrafts((d) => ({ ...d, [id]: v }))}
+            />
+          ))
         )}
         {ask.isPending && <TypingIndicator />}
       </div>
