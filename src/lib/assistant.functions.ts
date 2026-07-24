@@ -24,13 +24,20 @@ Non-negotiables:
 - If the user asks something unrelated to their TaaSFlow pipeline (e.g. general knowledge, code help), politely redirect: this assistant only answers questions about their positions, candidates, matches, and hires inside TaaSFlow.
 - Respect the user's role: you already only see what they can see; do not speculate about hidden data.
 
+Actions (Action Mode):
+- You may PROPOSE actions using the action tools (open_role, open_candidate, prepare_compare_set, generate_shortlist_summary, surface_pending_approvals, draft_interview_request).
+- Action tools NEVER mutate on their own — they return a proposal. The UI shows the user a confirmation card; the user clicks Approve to execute.
+- Never claim an action was performed. Say "I've prepared X — click Approve below to run it." Do NOT propose stage changes, silent outreach, or any mutation not in the allowed list above.
+
 Question areas you handle well:
 - What changed this week — use weekly_pipeline_changes.
-- Who needs review — use matches_needing_review.
+- Who needs review — use matches_needing_review or surface_pending_approvals.
 - Who best fits requirement X — use find_candidates_for_requirement.
 - Why was candidate Y ranked here — use explain_candidate_score.
 - What is blocking this role — use role_blockers.
-- What should I do next — use next_actions.`;
+- What should I do next — use next_actions.
+- Open X / show me Y / compare A and B / draft interview request — use the matching action tool.`;
+
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 type AnyRow = any;
@@ -122,6 +129,94 @@ const TOOL_DEFS = [
       parameters: { type: "object", properties: {}, required: [] },
     },
   },
+  // ─── Action Mode tools (return proposals; NEVER mutate) ─────────────────
+  {
+    type: "function",
+    function: {
+      name: "open_role",
+      description:
+        "Propose opening the workspace for a specific position. Returns a navigation action the user can approve.",
+      parameters: {
+        type: "object",
+        properties: { position_id: { type: "string", description: "positions.id UUID" } },
+        required: ["position_id"],
+      },
+    },
+  },
+  {
+    type: "function",
+    function: {
+      name: "open_candidate",
+      description:
+        "Propose opening a specific candidate match dossier. Returns a navigation action the user can approve.",
+      parameters: {
+        type: "object",
+        properties: { match_id: { type: "string", description: "candidate_matches.id UUID" } },
+        required: ["match_id"],
+      },
+    },
+  },
+  {
+    type: "function",
+    function: {
+      name: "prepare_compare_set",
+      description:
+        "Propose comparing 2–6 candidate matches side-by-side. Returns a navigation action to the compare view.",
+      parameters: {
+        type: "object",
+        properties: {
+          match_ids: {
+            type: "array",
+            items: { type: "string" },
+            description: "2 to 6 candidate_matches.id UUIDs.",
+          },
+          position_id: {
+            type: "string",
+            description: "Optional scoping position UUID.",
+          },
+        },
+        required: ["match_ids"],
+      },
+    },
+  },
+  {
+    type: "function",
+    function: {
+      name: "generate_shortlist_summary",
+      description:
+        "Compute a shortlist snapshot (candidates on shortlist/interview/offer stages for one position) with scores.",
+      parameters: {
+        type: "object",
+        properties: { position_id: { type: "string" } },
+        required: ["position_id"],
+      },
+    },
+  },
+  {
+    type: "function",
+    function: {
+      name: "surface_pending_approvals",
+      description:
+        "List candidate matches currently awaiting a client-side decision (shortlist / interview / offer stages).",
+      parameters: { type: "object", properties: {}, required: [] },
+    },
+  },
+  {
+    type: "function",
+    function: {
+      name: "draft_interview_request",
+      description:
+        "Draft — but do NOT send — an interview request message to the TaaSFlow team for a specific candidate match. Returns an editable, user-approvable draft.",
+      parameters: {
+        type: "object",
+        properties: {
+          match_id: { type: "string" },
+          notes: { type: "string", description: "Optional context for scheduling." },
+        },
+        required: ["match_id"],
+      },
+    },
+  },
 ];
 
 async function runTool(
@@ -157,6 +252,40 @@ async function runTool(
       );
     case "next_actions":
       return tools.nextActions(supabase, orgId);
+    // Action Mode
+    case "open_role":
+    case "open_candidate":
+    case "prepare_compare_set":
+    case "generate_shortlist_summary":
+    case "surface_pending_approvals":
+    case "draft_interview_request": {
+      const actions = await import("./assistant-actions.server");
+      switch (name) {
+        case "open_role":
+          return actions.proposeOpenRole(supabase, orgId, String(args.position_id ?? ""));
+        case "open_candidate":
+          return actions.proposeOpenCandidate(supabase, orgId, String(args.match_id ?? ""));
+        case "prepare_compare_set":
+          return actions.prepareCompareSet(
+            supabase,
+            orgId,
+            Array.isArray(args.match_ids) ? (args.match_ids as string[]) : [],
+            (args.position_id as string | undefined) ?? null,
+          );
+        case "generate_shortlist_summary":
+          return actions.generateShortlistSummary(supabase, orgId, String(args.position_id ?? ""));
+        case "surface_pending_approvals":
+          return actions.surfacePendingApprovals(supabase, orgId);
+        case "draft_interview_request":
+          return actions.proposeDraftInterviewRequest(
+            supabase,
+            orgId,
+            String(args.match_id ?? ""),
+            (args.notes as string | undefined) ?? null,
+          );
+      }
+      return { data: {}, citations: [] };
+    }
     default:
       return { data: { error: `unknown_tool:${name}` }, citations: [] };
   }
@@ -206,7 +335,7 @@ export const getAssistantState = createServerFn({ method: "POST" })
     );
     const { data: rows, error } = await context.supabase
       .from("assistant_messages")
-      .select("id, role, content, tool_trace, citations, created_at")
+      .select("id, role, content, tool_trace, citations, proposed_actions, created_at")
       .eq("conversation_id", conversationId)
       .order("created_at", { ascending: true });
     if (error) throw new Error(error.message);
@@ -218,6 +347,7 @@ export const getAssistantState = createServerFn({ method: "POST" })
         content: string;
         tool_trace: Array<{ name: string; args: Record<string, string | number | boolean | null> }>;
         citations: Array<{ kind: string; id: string; label: string; href?: string }>;
+        proposed_actions: Array<Record<string, string | number | boolean | null>>;
         created_at: string;
       }>,
     };
@@ -306,6 +436,7 @@ export const askAssistant = createServerFn({ method: "POST" })
     const citationsMap = new Map<string, {
       kind: string; id: string; label: string; href?: string;
     }>();
+    const proposedActionsMap = new Map<string, AnyRow>();
 
     let finalContent = "";
     for (let step = 0; step < MAX_STEPS; step++) {
@@ -379,6 +510,12 @@ export const askAssistant = createServerFn({ method: "POST" })
           for (const c of result.citations) {
             citationsMap.set(`${c.kind}:${c.id}`, c);
           }
+          const proposals = (result as AnyRow).proposed_actions as AnyRow[] | undefined;
+          if (Array.isArray(proposals)) {
+            for (const a of proposals) {
+              if (a && typeof a.action_id === "string") proposedActionsMap.set(a.action_id, a);
+            }
+          }
           messages.push({
             role: "tool",
             tool_call_id: call.id,
@@ -397,6 +534,7 @@ export const askAssistant = createServerFn({ method: "POST" })
     }
 
     const citations = Array.from(citationsMap.values());
+    const proposedActions = Array.from(proposedActionsMap.values());
 
     const assistantInsert = await context.supabase
       .from("assistant_messages")
@@ -408,10 +546,11 @@ export const askAssistant = createServerFn({ method: "POST" })
         content: finalContent,
         tool_trace: tool_trace as never,
         citations: citations as never,
+        proposed_actions: proposedActions as never,
         model: MODEL,
         latency_ms: Date.now() - start,
       } as never)
-      .select("id, created_at, role, content, tool_trace, citations")
+      .select("id, created_at, role, content, tool_trace, citations, proposed_actions")
       .single();
     if (assistantInsert.error) throw new Error(assistantInsert.error.message);
 
@@ -429,6 +568,7 @@ export const askAssistant = createServerFn({ method: "POST" })
         content: data.message,
         tool_trace: [] as Array<{ name: string; args: Record<string, string | number | boolean | null> }>,
         citations: [] as typeof citations,
+        proposed_actions: [] as AnyRow[],
         created_at: userInsert.data.created_at as string,
       },
       assistant_message: {
@@ -437,7 +577,75 @@ export const askAssistant = createServerFn({ method: "POST" })
         content: assistantInsert.data.content as string,
         tool_trace: assistantInsert.data.tool_trace as Array<{ name: string; args: Record<string, string | number | boolean | null> }>,
         citations: assistantInsert.data.citations as typeof citations,
+        proposed_actions: (assistantInsert.data as AnyRow).proposed_actions as AnyRow[],
         created_at: (assistantInsert.data as AnyRow).created_at as string,
       },
     };
+  });
+
+// ─── executeAssistantAction — the ONLY mutation path ────────────────────────
+// The client sends the action payload that was previously shown as a
+// confirmation card. We re-verify authority (RLS via context.supabase) and
+// perform the specific mutation. Nothing else in the assistant path can write.
+export const executeAssistantAction = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: { orgId: string; action: AnyRow }) =>
+    z
+      .object({
+        orgId: z.string().uuid(),
+        action: z.object({
+          kind: z.enum(["navigate", "draft_interview_request"]),
+          action_id: z.string(),
+          match_id: z.string().uuid().optional(),
+          draft_body: z.string().min(1).max(4000).optional(),
+          href: z.string().optional(),
+        }).passthrough(),
+      })
+      .parse(input),
+  )
+  .handler(async ({ context, data }) => {
+    const action = data.action;
+
+    if (action.kind === "navigate") {
+      // Navigation actions are client-side; server just acknowledges.
+      return { ok: true as const, kind: "navigate" as const, href: action.href ?? "/client" };
+    }
+
+    if (action.kind === "draft_interview_request") {
+      const matchId = action.match_id;
+      const body = action.draft_body;
+      if (!matchId || !body) throw new Error("Missing match_id or draft_body");
+
+      // Confirm the caller can actually see this match under RLS (belt & braces).
+      const { data: match } = await context.supabase
+        .from("candidate_matches")
+        .select("id, positions(title), candidate_profiles(full_name)")
+        .eq("organization_id", data.orgId)
+        .eq("id", matchId)
+        .maybeSingle();
+      if (!match) throw new Error("Match not accessible");
+
+      // Post as a message on the org thread — same table the client already
+      // uses for TaaSFlow team conversations.
+      const { error } = await context.supabase.from("messages").insert({
+        thread_id: data.orgId,
+        sender_user_id: context.userId,
+        body,
+        recipient_context: {
+          audience: "taasflow_ops",
+          from: "client_assistant",
+          match_id: matchId,
+          intent: "interview_request",
+        },
+      } as never);
+      if (error) throw new Error(error.message);
+
+      return {
+        ok: true as const,
+        kind: "draft_interview_request" as const,
+        match_id: matchId,
+      };
+    }
+
+    return { ok: false as const, error: "unknown_action_kind" };
   });

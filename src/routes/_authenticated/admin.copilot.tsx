@@ -4,36 +4,25 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import ReactMarkdown from "react-markdown";
 import { toast } from "sonner";
+import { Bot, Send, RotateCcw, User2, Wrench, ExternalLink, Sparkles, ShieldCheck } from "lucide-react";
 import {
-  Bot,
-  Send,
-  RotateCcw,
-  User2,
-  Wrench,
-  ExternalLink,
-  Sparkles,
-  ShieldCheck,
-} from "lucide-react";
-import {
-  askAssistant,
-  executeAssistantAction,
-  getAssistantState,
-  resetAssistant,
-} from "@/lib/assistant.functions";
-import { getClientContext } from "@/lib/client.functions";
-import { useClientOrgSearch } from "@/lib/use-client-org";
+  askCopilot,
+  executeCopilotAction,
+  getCopilotState,
+  resetCopilot,
+} from "@/lib/admin-copilot.functions";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 
-export const Route = createFileRoute("/_authenticated/client/assistant")({
+export const Route = createFileRoute("/_authenticated/admin/copilot")({
   head: () => ({
     meta: [
-      { title: "Pipeline assistant · TaaSFlow" },
+      { title: "Admin copilot · TaaSFlow" },
       {
         name: "description",
         content:
-          "Ask TaaSFlow's grounded assistant about weekly changes, review queues, best-fit candidates, score explainability, role blockers, and what to do next — every answer cites source records.",
+          "Internal recruiting copilot for the TaaSFlow ops team — client portfolios, candidate histories, blocked roles, stalled interviews, missing approvals, rediscovery, drafts, source performance.",
       },
       { name: "robots", content: "noindex" },
     ],
@@ -41,88 +30,66 @@ export const Route = createFileRoute("/_authenticated/client/assistant")({
   errorComponent: ({ error }) => (
     <div className="p-8 text-sm text-destructive">Failed to load: {error.message}</div>
   ),
-  notFoundComponent: () => (
-    <div className="p-8 text-sm text-muted-foreground">Not found.</div>
-  ),
-  component: AssistantPage,
+  notFoundComponent: () => <div className="p-8 text-sm text-muted-foreground">Not found.</div>,
+  component: CopilotPage,
 });
 
-interface Citation {
-  kind: string;
-  id: string;
-  label: string;
-  href?: string;
-}
+interface Citation { kind: string; id: string; label: string; href?: string }
 interface ProposedAction {
-  kind: "navigate" | "draft_interview_request";
+  kind: "navigate" | "draft_client_update" | "draft_candidate_outreach";
   action_id: string;
   label: string;
   description: string;
   href?: string;
+  org_id?: string;
   match_id?: string;
-  candidate_name?: string;
-  position_title?: string;
   draft_body?: string;
 }
-interface MessageRow {
+interface Msg {
   id: string;
   role: "user" | "assistant" | "system";
   content: string;
-  tool_trace: Array<{
-    name: string;
-    args: Record<string, string | number | boolean | null>;
-  }>;
+  tool_trace: Array<{ name: string; args: Record<string, string | number | boolean | null> }>;
   citations: Citation[];
   proposed_actions?: ProposedAction[];
   created_at: string;
 }
 
 const SUGGESTED = [
-  "What changed this week?",
-  "Who needs review right now?",
-  "What should I do next?",
-  "What is blocking my open roles?",
-  "Who best fits SQL experience?",
+  "Summarize my top 5 clients this week",
+  "Which roles are blocked?",
+  "Find stalled interviews",
+  "Show me pending client approvals",
+  "Suggest rediscovery candidates",
+  "How is each source performing?",
 ];
 
-function AssistantPage() {
-  const orgSearch = useClientOrgSearch();
-  const ctxFn = useServerFn(getClientContext);
-  const stateFn = useServerFn(getAssistantState);
-  const askFn = useServerFn(askAssistant);
-  const resetFn = useServerFn(resetAssistant);
-  const execFn = useServerFn(executeAssistantAction);
+function CopilotPage() {
+  const stateFn = useServerFn(getCopilotState);
+  const askFn = useServerFn(askCopilot);
+  const resetFn = useServerFn(resetCopilot);
+  const execFn = useServerFn(executeCopilotAction);
   const qc = useQueryClient();
-  const [runningActionId, setRunningActionId] = useState<string | null>(null);
-  const [dismissedActions, setDismissedActions] = useState<Set<string>>(new Set());
-  const [editedDrafts, setEditedDrafts] = useState<Record<string, string>>({});
 
   const [input, setInput] = useState("");
+  const [runningActionId, setRunningActionId] = useState<string | null>(null);
+  const [dismissed, setDismissed] = useState<Set<string>>(new Set());
+  const [drafts, setDrafts] = useState<Record<string, string>>({});
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const composerRef = useRef<HTMLTextAreaElement | null>(null);
 
-  const { data: ctx } = useQuery({
-    queryKey: ["client-context", orgSearch ?? null],
-    queryFn: () => ctxFn({ data: orgSearch ? { orgId: orgSearch } : {} }),
-  });
-  const orgId = ctx?.active?.organization_id;
-
   const state = useQuery({
-    queryKey: ["assistant-state", orgId],
-    queryFn: () => stateFn({ data: { orgId: orgId! } }),
-    enabled: !!orgId,
+    queryKey: ["admin-copilot-state"],
+    queryFn: () => stateFn(),
   });
 
   const ask = useMutation({
-    mutationFn: (message: string) => askFn({ data: { orgId: orgId!, message } }),
+    mutationFn: (message: string) => askFn({ data: { message } }),
     onSuccess: (res) => {
-      qc.setQueryData(["assistant-state", orgId], (prev: unknown) => {
-        const p = prev as { conversation_id: string; messages: MessageRow[] } | undefined;
+      qc.setQueryData(["admin-copilot-state"], (prev: unknown) => {
+        const p = prev as { conversation_id: string; messages: Msg[] } | undefined;
         if (!p) return prev;
-        return {
-          ...p,
-          messages: [...p.messages, res.user_message as unknown as MessageRow, res.assistant_message as unknown as MessageRow],
-        };
+        return { ...p, messages: [...p.messages, res.user_message as unknown as Msg, res.assistant_message as unknown as Msg] };
       });
       setInput("");
       setTimeout(() => composerRef.current?.focus(), 30);
@@ -131,9 +98,9 @@ function AssistantPage() {
   });
 
   const reset = useMutation({
-    mutationFn: () => resetFn({ data: { orgId: orgId! } }),
+    mutationFn: () => resetFn(),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["assistant-state", orgId] });
+      qc.invalidateQueries({ queryKey: ["admin-copilot-state"] });
       setInput("");
       toast.success("Started a new conversation");
       setTimeout(() => composerRef.current?.focus(), 30);
@@ -141,9 +108,8 @@ function AssistantPage() {
     onError: (e: Error) => toast.error(e.message),
   });
 
-  // Optimistic user echo
-  const messages: MessageRow[] = useMemo(() => {
-    const base = (state.data?.messages ?? []) as unknown as MessageRow[];
+  const messages: Msg[] = useMemo(() => {
+    const base = (state.data?.messages ?? []) as unknown as Msg[];
     if (!ask.isPending) return base;
     return [
       ...base,
@@ -163,39 +129,31 @@ function AssistantPage() {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
   }, [messages.length, ask.isPending]);
 
-  useEffect(() => {
-    composerRef.current?.focus();
-  }, [orgId]);
+  useEffect(() => { composerRef.current?.focus(); }, []);
 
-  const runAction = async (action: ProposedAction) => {
-    if (!orgId) return;
-    setRunningActionId(action.action_id);
+  const runAction = async (a: ProposedAction) => {
+    setRunningActionId(a.action_id);
     try {
-      if (action.kind === "navigate") {
-        if (action.href) window.location.assign(action.href);
-        setDismissedActions((s) => new Set(s).add(action.action_id));
+      if (a.kind === "navigate") {
+        if (a.href) window.location.assign(a.href);
+        setDismissed((s) => new Set(s).add(a.action_id));
         return;
       }
-      if (action.kind === "draft_interview_request") {
-        const body = editedDrafts[action.action_id] ?? action.draft_body ?? "";
-        if (!body.trim()) {
-          toast.error("Draft is empty");
-          return;
-        }
-        await execFn({
-          data: {
-            orgId,
-            action: {
-              kind: "draft_interview_request",
-              action_id: action.action_id,
-              match_id: action.match_id!,
-              draft_body: body,
-            },
+      const body = drafts[a.action_id] ?? a.draft_body ?? "";
+      if (!body.trim()) { toast.error("Draft is empty"); return; }
+      await execFn({
+        data: {
+          action: {
+            kind: a.kind,
+            action_id: a.action_id,
+            org_id: a.org_id,
+            match_id: a.match_id,
+            draft_body: body,
           },
-        });
-        toast.success("Interview request sent to the TaaSFlow team");
-        setDismissedActions((s) => new Set(s).add(action.action_id));
-      }
+        },
+      });
+      toast.success(a.kind === "draft_client_update" ? "Update sent to client thread" : "Outreach sent to candidate thread");
+      setDismissed((s) => new Set(s).add(a.action_id));
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Action failed");
     } finally {
@@ -203,14 +161,11 @@ function AssistantPage() {
     }
   };
 
-
   const submit = () => {
-    const trimmed = input.trim();
-    if (!trimmed || !orgId || ask.isPending) return;
-    ask.mutate(trimmed);
+    const t = input.trim();
+    if (!t || ask.isPending) return;
+    ask.mutate(t);
   };
-
-  if (!orgId) return <div className="p-8 text-sm text-muted-foreground">Loading…</div>;
 
   return (
     <main className="mx-auto flex h-[calc(100vh-var(--workspace-header-h,72px))] max-w-4xl flex-col px-4 sm:px-6">
@@ -218,50 +173,41 @@ function AssistantPage() {
         <div>
           <h1 className="flex items-center gap-2 text-2xl font-semibold tracking-tight sm:text-3xl">
             <Bot className="h-6 w-6 text-primary" aria-hidden />
-            Pipeline assistant
+            Admin copilot
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Grounded in your TaaSFlow data. Permission-aware. Every answer cites the
-            records it used.
+            Recruiting copilot for the ops team. Grounded in TaaSFlow data. Drafts require your approval.
           </p>
         </div>
         <div className="flex items-center gap-2">
           <span className="inline-flex items-center gap-1 rounded-full border bg-muted/40 px-2 py-0.5 text-[11px] text-muted-foreground">
-            <ShieldCheck className="h-3 w-3" /> Sees only what you can see
+            <ShieldCheck className="h-3 w-3" /> Staff-only
           </span>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => reset.mutate()}
-            disabled={reset.isPending}
-          >
+          <Button variant="outline" size="sm" onClick={() => reset.mutate()} disabled={reset.isPending}>
             <RotateCcw className="mr-1 h-3.5 w-3.5" /> New conversation
           </Button>
         </div>
       </header>
 
-      <div
-        ref={scrollRef}
-        className="flex-1 space-y-4 overflow-y-auto rounded-xl border bg-card/50 p-4 sm:p-6"
-      >
+      <div ref={scrollRef} className="flex-1 space-y-4 overflow-y-auto rounded-xl border bg-card/50 p-4 sm:p-6">
         {state.isPending ? (
           <p className="text-sm text-muted-foreground">Loading history…</p>
         ) : messages.length === 0 ? (
           <EmptyState onPick={(t) => setInput(t)} />
         ) : (
           messages.map((m) => (
-            <MessageBubble
+            <Bubble
               key={m.id}
               m={m}
               runAction={runAction}
               runningActionId={runningActionId}
-              dismissed={dismissedActions}
-              editedDrafts={editedDrafts}
-              setDraft={(id, v) => setEditedDrafts((d) => ({ ...d, [id]: v }))}
+              dismissed={dismissed}
+              drafts={drafts}
+              setDraft={(id, v) => setDrafts((d) => ({ ...d, [id]: v }))}
             />
           ))
         )}
-        {ask.isPending && <TypingIndicator />}
+        {ask.isPending && <Typing />}
       </div>
 
       <div className="sticky bottom-0 mt-3 rounded-xl border bg-background/95 p-3 shadow-sm backdrop-blur">
@@ -271,10 +217,7 @@ function AssistantPage() {
               key={q}
               type="button"
               disabled={ask.isPending}
-              onClick={() => {
-                setInput(q);
-                composerRef.current?.focus();
-              }}
+              onClick={() => { setInput(q); composerRef.current?.focus(); }}
               className="rounded-full border border-border/60 bg-muted/40 px-2.5 py-1 text-[11px] text-muted-foreground transition hover:bg-muted disabled:opacity-50"
             >
               {q}
@@ -286,14 +229,9 @@ function AssistantPage() {
             ref={composerRef}
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && !e.shiftKey) {
-                e.preventDefault();
-                submit();
-              }
-            }}
+            onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); submit(); } }}
             rows={1}
-            placeholder="Ask about weekly changes, review queues, best-fit candidates, blockers, or next steps…"
+            placeholder="Ask about clients, candidates, blocked roles, stalled interviews, source performance…"
             className="min-h-[42px] flex-1 resize-none"
             disabled={ask.isPending}
           />
@@ -310,18 +248,14 @@ function EmptyState({ onPick }: { onPick: (t: string) => void }) {
   return (
     <div className="mx-auto max-w-lg py-10 text-center">
       <Sparkles className="mx-auto h-8 w-8 text-primary" aria-hidden />
-      <h2 className="mt-3 text-lg font-medium">Ask about your pipeline</h2>
+      <h2 className="mt-3 text-lg font-medium">Ask the admin copilot</h2>
       <p className="mt-1 text-sm text-muted-foreground">
-        The assistant only answers using your TaaSFlow records — it will cite each
-        one so you can jump straight to the source.
+        Grounded answers, cited records, and reviewable drafts — nothing is sent until you approve.
       </p>
       <ul className="mt-5 grid gap-2 text-left">
         {SUGGESTED.map((q) => (
           <li key={q}>
-            <button
-              className="w-full rounded-lg border bg-background px-3 py-2 text-sm transition hover:bg-muted"
-              onClick={() => onPick(q)}
-            >
+            <button className="w-full rounded-lg border bg-background px-3 py-2 text-sm transition hover:bg-muted" onClick={() => onPick(q)}>
               {q}
             </button>
           </li>
@@ -331,7 +265,7 @@ function EmptyState({ onPick }: { onPick: (t: string) => void }) {
   );
 }
 
-function TypingIndicator() {
+function Typing() {
   return (
     <div className="flex items-start gap-2">
       <Avatar role="assistant" />
@@ -349,26 +283,22 @@ function TypingIndicator() {
 function Avatar({ role }: { role: "user" | "assistant" | "system" }) {
   const isUser = role === "user";
   return (
-    <div
-      className={`grid h-7 w-7 shrink-0 place-items-center rounded-full border text-xs ${
-        isUser ? "bg-muted" : "bg-primary/10 text-primary"
-      }`}
-    >
+    <div className={`grid h-7 w-7 shrink-0 place-items-center rounded-full border text-xs ${isUser ? "bg-muted" : "bg-primary/10 text-primary"}`}>
       {isUser ? <User2 className="h-3.5 w-3.5" /> : <Bot className="h-3.5 w-3.5" />}
     </div>
   );
 }
 
-interface MessageBubbleProps {
-  m: MessageRow;
+interface BubbleProps {
+  m: Msg;
   runAction: (a: ProposedAction) => void | Promise<void>;
   runningActionId: string | null;
   dismissed: Set<string>;
-  editedDrafts: Record<string, string>;
+  drafts: Record<string, string>;
   setDraft: (id: string, v: string) => void;
 }
 
-function MessageBubble({ m, runAction, runningActionId, dismissed, editedDrafts, setDraft }: MessageBubbleProps) {
+function Bubble({ m, runAction, runningActionId, dismissed, drafts, setDraft }: BubbleProps) {
   const isUser = m.role === "user";
   const rendered = useMemo(() => renderWithCitations(m.content, m.citations), [m.content, m.citations]);
   const actions = (m.proposed_actions ?? []).filter((a) => !dismissed.has(a.action_id));
@@ -376,13 +306,7 @@ function MessageBubble({ m, runAction, runningActionId, dismissed, editedDrafts,
   return (
     <div className={`flex items-start gap-2 ${isUser ? "flex-row-reverse" : ""}`}>
       <Avatar role={m.role} />
-      <div
-        className={`max-w-[85%] rounded-2xl border px-3 py-2 text-sm ${
-          isUser
-            ? "rounded-tr-sm bg-primary text-primary-foreground"
-            : "rounded-tl-sm bg-background"
-        }`}
-      >
+      <div className={`max-w-[85%] rounded-2xl border px-3 py-2 text-sm ${isUser ? "rounded-tr-sm bg-primary text-primary-foreground" : "rounded-tl-sm bg-background"}`}>
         {isUser ? (
           <p className="whitespace-pre-wrap leading-relaxed">{m.content}</p>
         ) : (
@@ -390,11 +314,7 @@ function MessageBubble({ m, runAction, runningActionId, dismissed, editedDrafts,
             {m.tool_trace.length > 0 && (
               <div className="mb-2 flex flex-wrap gap-1">
                 {m.tool_trace.map((t, i) => (
-                  <Badge
-                    key={`${t.name}-${i}`}
-                    variant="outline"
-                    className="gap-1 border-primary/20 bg-primary/5 text-[10px] font-normal text-primary"
-                  >
+                  <Badge key={`${t.name}-${i}`} variant="outline" className="gap-1 border-primary/20 bg-primary/5 text-[10px] font-normal text-primary">
                     <Wrench className="h-2.5 w-2.5" />
                     {prettyTool(t.name)}
                   </Badge>
@@ -406,17 +326,12 @@ function MessageBubble({ m, runAction, runningActionId, dismissed, editedDrafts,
             </div>
             {rendered.used.length > 0 && (
               <div className="mt-2 border-t border-border/60 pt-2">
-                <p className="text-[10px] uppercase tracking-wide text-muted-foreground">
-                  Sources
-                </p>
+                <p className="text-[10px] uppercase tracking-wide text-muted-foreground">Sources</p>
                 <ul className="mt-1 flex flex-wrap gap-1.5">
                   {rendered.used.map((c) => (
                     <li key={`${c.kind}:${c.id}`}>
                       {c.href ? (
-                        <a
-                          href={c.href}
-                          className="inline-flex items-center gap-1 rounded-md border bg-muted/40 px-2 py-0.5 text-[11px] hover:bg-muted"
-                        >
+                        <a href={c.href} className="inline-flex items-center gap-1 rounded-md border bg-muted/40 px-2 py-0.5 text-[11px] hover:bg-muted">
                           <span className="text-muted-foreground">{c.kind}</span>
                           <span className="truncate max-w-[220px]">{c.label}</span>
                           <ExternalLink className="h-2.5 w-2.5 text-muted-foreground" />
@@ -434,31 +349,25 @@ function MessageBubble({ m, runAction, runningActionId, dismissed, editedDrafts,
             )}
             {actions.length > 0 && (
               <div className="mt-3 space-y-2 border-t border-border/60 pt-3">
-                <p className="text-[10px] uppercase tracking-wide text-muted-foreground">
-                  Proposed actions — you approve
-                </p>
+                <p className="text-[10px] uppercase tracking-wide text-muted-foreground">Proposed actions — you approve</p>
                 {actions.map((a) => {
                   const running = runningActionId === a.action_id;
-                  const isDraft = a.kind === "draft_interview_request";
+                  const isDraft = a.kind !== "navigate";
                   return (
                     <div key={a.action_id} className="rounded-lg border bg-muted/30 p-2.5">
                       <p className="text-xs font-medium">{a.label}</p>
                       <p className="mt-0.5 text-[11px] text-muted-foreground">{a.description}</p>
                       {isDraft && (
                         <Textarea
-                          rows={4}
+                          rows={5}
                           className="mt-2 text-[12px]"
-                          value={editedDrafts[a.action_id] ?? a.draft_body ?? ""}
+                          value={drafts[a.action_id] ?? a.draft_body ?? ""}
                           onChange={(e) => setDraft(a.action_id, e.target.value)}
                           disabled={running}
                         />
                       )}
                       <div className="mt-2 flex items-center gap-2">
-                        <Button
-                          size="sm"
-                          onClick={() => runAction(a)}
-                          disabled={running || runningActionId !== null}
-                        >
+                        <Button size="sm" onClick={() => runAction(a)} disabled={running || runningActionId !== null}>
                           {running ? "Running…" : isDraft ? "Approve & send" : "Approve"}
                         </Button>
                       </div>
@@ -474,8 +383,6 @@ function MessageBubble({ m, runAction, runningActionId, dismissed, editedDrafts,
   );
 }
 
-// Replace inline [[kind:id]] tokens with a compact [n] marker, and return
-// the ordered list of cited records so we can render them as source pills.
 function renderWithCitations(content: string, citations: Citation[]) {
   const byKey = new Map(citations.map((c) => [`${c.kind}:${c.id}`, c]));
   const used: Citation[] = [];
@@ -484,10 +391,7 @@ function renderWithCitations(content: string, citations: Citation[]) {
     const key = `${kind.toLowerCase()}:${id}`;
     const c = byKey.get(key);
     if (!c) return "";
-    if (!seen.has(key)) {
-      used.push(c);
-      seen.set(key, used.length);
-    }
+    if (!seen.has(key)) { used.push(c); seen.set(key, used.length); }
     return ` [${seen.get(key)}]`;
   });
   return { text, used };
@@ -495,19 +399,15 @@ function renderWithCitations(content: string, citations: Citation[]) {
 
 function prettyTool(name: string) {
   switch (name) {
-    case "weekly_pipeline_changes":
-      return "Weekly changes";
-    case "matches_needing_review":
-      return "Review queue";
-    case "find_candidates_for_requirement":
-      return "Candidate search";
-    case "explain_candidate_score":
-      return "Score explainability";
-    case "role_blockers":
-      return "Role blockers";
-    case "next_actions":
-      return "Next actions";
-    default:
-      return name;
+    case "summarize_client_portfolio": return "Client portfolio";
+    case "summarize_candidate_history": return "Candidate history";
+    case "blocked_roles": return "Blocked roles";
+    case "stalled_interviews": return "Stalled interviews";
+    case "missing_approvals": return "Missing approvals";
+    case "rediscovery_candidates": return "Rediscovery";
+    case "draft_client_update": return "Client update draft";
+    case "draft_candidate_outreach": return "Outreach draft";
+    case "source_performance": return "Source performance";
+    default: return name;
   }
 }
