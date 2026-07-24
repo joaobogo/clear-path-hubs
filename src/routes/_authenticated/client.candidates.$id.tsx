@@ -275,7 +275,7 @@ function CandidateDetailPage() {
         </div>
 
         {/* SIDE PANEL — Decision cockpit (sticky on desktop) */}
-        <aside className="space-y-6 lg:col-span-8 lg:col-span-4">
+        <aside className="space-y-6 lg:col-span-4">
           <div className="lg:sticky lg:top-20 space-y-6">
             <ActionArea
               actions={actions}
