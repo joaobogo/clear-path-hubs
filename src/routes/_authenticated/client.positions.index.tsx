@@ -6,6 +6,7 @@ import { z } from "zod";
 import { fallback, zodValidator } from "@tanstack/zod-adapter";
 import { getClientContext, getClientPositions } from "@/lib/client.functions";
 import { useClientOrgSearch } from "@/lib/use-client-org";
+import { SavedViewsBar } from "@/components/workspace/saved-views-bar";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import {
