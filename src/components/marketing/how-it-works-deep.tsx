@@ -151,41 +151,107 @@ export function RoleBlueprintMock() {
 /* ─────────────────────── 2 · Sourcing ecosystem map ──────────────────── */
 
 export function SourcingEcosystemMap() {
-  const channels: Array<{ label: string; note: string; icon: React.ReactNode }> = [
-    { label: "Direct outreach", note: "Named targets from the search plan", icon: <UserPlus className="h-4 w-4" aria-hidden /> },
-    { label: "Talent network", note: "Curated pool from previous roles", icon: <Network className="h-4 w-4" aria-hidden /> },
-    { label: "LinkedIn sourcing", note: "Boolean + narrative screens", icon: <Linkedin className="h-4 w-4" aria-hidden /> },
-    { label: "Community & referrals", note: "Domain-specific communities", icon: <Users className="h-4 w-4" aria-hidden /> },
-    { label: "Inbound job board", note: "Public applications, same rubric", icon: <Globe className="h-4 w-4" aria-hidden /> },
-    { label: "Prior candidates", note: "Rehydrated with new evidence", icon: <Archive className="h-4 w-4" aria-hidden /> },
+  const groups: Array<{
+    heading: string;
+    caption: string;
+    channels: Array<{ label: string; note: string; icon: React.ReactNode }>;
+  }> = [
+    {
+      heading: "Digital & professional networks",
+      caption: "Where the passive market lives.",
+      channels: [
+        { label: "LinkedIn deep sourcing", note: "Boolean + narrative screens across 900M profiles", icon: <Linkedin className="h-4 w-4" aria-hidden /> },
+        { label: "LinkedIn sponsored ads", note: "Targeted role-specific campaigns to passive talent", icon: <Megaphone className="h-4 w-4" aria-hidden /> },
+        { label: "GitHub / Stack Overflow", note: "Signal-based sourcing for technical roles", icon: <Github className="h-4 w-4" aria-hidden /> },
+        { label: "Niche communities", note: "Slack, Discord, sub-industry forums", icon: <Users className="h-4 w-4" aria-hidden /> },
+      ],
+    },
+    {
+      heading: "Direct & proprietary",
+      caption: "Recruiter-owned reach, not rented lists.",
+      channels: [
+        { label: "Named-target outreach", note: "Precision headhunting by named account", icon: <UserPlus className="h-4 w-4" aria-hidden /> },
+        { label: "Talent network", note: "Curated pool from 20,000+ prior placements", icon: <Network className="h-4 w-4" aria-hidden /> },
+        { label: "Silver medalists", note: "Rehydrated finalists from previous roles", icon: <Archive className="h-4 w-4" aria-hidden /> },
+        { label: "Executive recruiter bench", note: "20+ senior recruiters across geographies", icon: <Briefcase className="h-4 w-4" aria-hidden /> },
+      ],
+    },
+    {
+      heading: "AI & intent intelligence",
+      caption: "Where high-intent signals surface first.",
+      channels: [
+        { label: "Web-scale intent scanning", note: "Public signals: posts, layoffs, moves, launches", icon: <Radar className="h-4 w-4" aria-hidden /> },
+        { label: "AI passive-market mining", note: "Semantic match across 2M+ candidate data points", icon: <Sparkles className="h-4 w-4" aria-hidden /> },
+        { label: "Compensation & market data", note: "Live benchmarks per region and function", icon: <BarChart3 className="h-4 w-4" aria-hidden /> },
+      ],
+    },
+    {
+      heading: "Inbound & marketing",
+      caption: "A funnel that keeps compounding.",
+      channels: [
+        { label: "Public job board", note: "Applicants scored on the same rubric", icon: <Globe className="h-4 w-4" aria-hidden /> },
+        { label: "Email marketing", note: "Segmented nurture to opted-in talent", icon: <Mail className="h-4 w-4" aria-hidden /> },
+        { label: "Employer branding campaigns", note: "Client-branded landing pages and creative", icon: <Send className="h-4 w-4" aria-hidden /> },
+        { label: "YouTube & podcast presence", note: "Founders and clients on relevant shows", icon: <Podcast className="h-4 w-4" aria-hidden /> },
+      ],
+    },
+    {
+      heading: "Partnerships & offline",
+      caption: "Real-world reach most tech tools skip.",
+      channels: [
+        { label: "University partnerships", note: "Early-career pipelines with target schools", icon: <GraduationCap className="h-4 w-4" aria-hidden /> },
+        { label: "Staffing & agency partners", note: "Whitelabel bench across 50+ countries", icon: <Handshake className="h-4 w-4" aria-hidden /> },
+        { label: "Cold outreach team", note: "Phone, WhatsApp, email — human, calibrated", icon: <Phone className="h-4 w-4" aria-hidden /> },
+        { label: "Job boards & aggregators", note: "Indeed, Otta, Wellfound, regional boards", icon: <Signpost className="h-4 w-4" aria-hidden /> },
+        { label: "Referrals & network intros", note: "Curated warm intros with attribution", icon: <MessagesSquare className="h-4 w-4" aria-hidden /> },
+        { label: "Events, meetups, conferences", note: "In-person sourcing where the domain gathers", icon: <MapPin className="h-4 w-4" aria-hidden /> },
+        { label: "Radio, billboards & OOH", note: "For high-volume, geo-anchored campaigns", icon: <Radio className="h-4 w-4" aria-hidden /> },
+        { label: "PR & industry press", note: "Signal to senior talent through trusted outlets", icon: <Mic className="h-4 w-4" aria-hidden /> },
+      ],
+    },
   ];
+
+  const total = groups.reduce((n, g) => n + g.channels.length, 0);
+
   return (
-    <MockChrome title="Sourcing · Channels feeding one rubric" tint="cream">
-      <div className="grid gap-6 md:grid-cols-[1fr_auto_1fr] md:items-center">
-        <ul className="grid gap-2">
-          {channels.slice(0, 3).map((c) => (
-            <ChannelPill key={c.label} {...c} />
-          ))}
-        </ul>
-
-        <div className="flex flex-col items-center gap-1 text-[color:var(--brand-navy)]/55">
-          <span className="hidden h-6 w-px bg-[color:var(--brand-navy)]/20 md:block" />
-          <div className="rounded-full border border-[color:var(--brand-navy)]/15 bg-white px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]">
-            One rubric
-          </div>
-          <span className="hidden h-6 w-px bg-[color:var(--brand-navy)]/20 md:block" />
+    <MockChrome title={`Sourcing · ${total}+ channels feeding one rubric`} tint="cream">
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+        <div className="inline-flex items-center gap-2 rounded-full border border-[color:var(--brand-navy)]/15 bg-white px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]">
+          <Sparkles className="h-3 w-3" aria-hidden />
+          {total} channels · one scoring bar
         </div>
+        <div className="text-[11px] text-[color:var(--brand-navy)]/60">
+          Grouped by how candidates surface
+        </div>
+      </div>
 
-        <ul className="grid gap-2">
-          {channels.slice(3).map((c) => (
-            <ChannelPill key={c.label} {...c} />
-          ))}
-        </ul>
+      <div className="grid gap-4 md:grid-cols-2">
+        {groups.map((g) => (
+          <div
+            key={g.heading}
+            className="rounded-xl border border-[color:var(--brand-navy)]/10 bg-white p-3"
+          >
+            <div className="mb-2">
+              <div className="text-[11px] font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/70">
+                {g.heading}
+              </div>
+              <div className="text-[11px] text-[color:var(--brand-navy)]/55">
+                {g.caption}
+              </div>
+            </div>
+            <ul className="grid gap-1.5">
+              {g.channels.map((c) => (
+                <ChannelPill key={c.label} {...c} />
+              ))}
+            </ul>
+          </div>
+        ))}
       </div>
 
       <p className="mt-4 text-xs text-[color:var(--brand-navy)]/65">
         Every candidate — regardless of channel — is evaluated against the same
-        approved rubric. No side-doors that skip evidence.
+        approved rubric. No side-doors that skip evidence. No channel gets a
+        shortcut past the scoring bar.
       </p>
     </MockChrome>
   );
