@@ -112,6 +112,8 @@ export const getClientContext = createServerFn({ method: "GET" })
         organization_id: active.organization_id,
         role: active.role as ClientRole,
         name: active.organizations?.name ?? "Organization",
+        industry: (active.organizations?.industry ?? null) as string | null,
+        parent_organization_id: (active.organizations?.parent_organization_id ?? null) as string | null,
       },
       organizations: memberships.map((m) => ({
         id: m.organization_id,
