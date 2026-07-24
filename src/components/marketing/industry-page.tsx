@@ -111,11 +111,16 @@ function SectionRenderer({
     case "role-explorer":
       return <SectionRoleExplorer ctx={ctx} />;
     case "signal-explorer":
-      return <SectionSignalExplorer ctx={ctx} />;
+      // Legacy alias — the scoring slot is the canonical placement.
+      return <SectionScoring ctx={ctx} />;
+    case "scoring":
+      return <SectionScoring ctx={ctx} />;
     case "skills-tools":
       return hasSkillsBlock(ctx.entry) ? <SectionSkillsTools ctx={ctx} /> : null;
     case "delivery-preview":
       return ctx.config.spec.showDeliveryPreview ? <SectionDeliveryPreview ctx={ctx} /> : null;
+    case "proof":
+      return <SectionProof ctx={ctx} />;
     case "process":
       return <SectionProcess ctx={ctx} />;
     case "keyword-links":
