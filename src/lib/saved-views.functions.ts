@@ -20,7 +20,7 @@ export type SavedView = {
   id: string;
   surface: SavedViewSurface;
   name: string;
-  filters: Record<string, unknown>;
+  filters: Record<string, string>;
   is_shared: boolean;
   is_default: boolean;
   organization_id: string | null;
