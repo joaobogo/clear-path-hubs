@@ -9,7 +9,9 @@ import {
  updateClientCompanyProfile,
  updateClientNotificationPreferences,
  updateClientTimezone,
+ updateClientBranding,
 } from "@/lib/client.functions";
+// (placeholder — replaced below)
 import { useClientOrgSearch } from "@/lib/use-client-org";
 import { useSupportView } from "@/lib/support-view";
 import { supabase } from "@/integrations/supabase/client";
