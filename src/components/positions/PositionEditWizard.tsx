@@ -1,6 +1,7 @@
 // Wizard-style position editor UI, shared by admin and client edit routes.
-// Mirrors the 4 role-related steps of the public intake wizard so users
-// edit positions with the same form they use to create them.
+// Mirrors the public /intake wizard 1:1 (Role Definition → Candidate Profile
+// → Compensation → Search Criteria → Review) so admins and clients edit
+// positions with the same questions asked at intake.
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -27,14 +28,35 @@ import {
 } from "@/lib/position-edit.functions";
 
 const STEPS = [
-  { id: 1, label: "Role overview" },
-  { id: 2, label: "Requirements & profile" },
+  { id: 1, label: "Role Definition" },
+  { id: 2, label: "Candidate Profile" },
   { id: 3, label: "Compensation" },
-  { id: 4, label: "Search criteria" },
-  { id: 5, label: "Review & save" },
+  { id: 4, label: "Search Criteria" },
+  { id: 5, label: "Review & Save" },
 ];
 const LAST_STEP = STEPS.length;
 
+const DISQUALIFIER_OPTIONS = [
+  "Compensation above budget",
+  "No degree or certification",
+  "No distributed/remote experience",
+  "No relevant industry experience",
+  "No work authorization",
+  "Overqualified for the level",
+  "Weak communication skills",
+  "Currently at a competitor",
+] as const;
+
+const COMPANY_TYPE_OPTIONS = [
+  "Startups (Seed - Series B)",
+  "Growth-stage (Series C+)",
+  "Public / Enterprise",
+  "Big Tech (FAANG)",
+  "Consulting firms",
+  "Agencies",
+  "Non-profit",
+  "Government",
+] as const;
 
 type State = Omit<PositionEditInitial, "organization_id" | "organization_name" | "status">;
 
@@ -53,14 +75,22 @@ function validateStep(step: number, s: State): Record<string, string> {
   const e: Record<string, string> = {};
   if (step === 1) {
     if (!s.title.trim()) e.title = "Role title is required";
-    if (!s.work_model) e.work_model = "Select a work model";
+    if (!s.work_model) e.work_model = "Select a work arrangement";
+    if (!s.employment_type) e.employment_type = "Select an employment type";
+    if (!s.seniority) e.seniority = "Select a seniority level";
+    if (!s.headcount || (typeof s.headcount === "number" && s.headcount < 1))
+      e.headcount = "At least 1 position";
+    if (!s.open_worldwide && s.target_countries.length === 0)
+      e.target_countries = "Add at least one target country, or mark as open worldwide";
   }
   if (step === 2) {
-    const skills = unique(s.must_have_skills);
-    if (skills.length < 3 && s.description.trim().length < 40) {
+    if (s.must_have_skills.length < 3 && s.description.trim().length < 40) {
       e.must_have_skills =
-        "Provide at least 3 must-have skills or a description of at least 40 characters";
+        "Add at least 3 must-have skills or a job description of 40+ characters on Step 1";
     }
+  }
+  if (step === 4) {
+    if (s.target_titles.length === 0) e.target_titles = "Add at least one target job title";
   }
   return e;
 }
@@ -91,38 +121,49 @@ export function PositionEditWizard({
     seniority: initial.seniority,
     headcount: initial.headcount,
     description: initial.description,
-    must_have_skills: initial.must_have_skills,
-    preferred_requirements: initial.preferred_requirements,
-    dealbreakers: initial.dealbreakers,
-    compensation: initial.compensation,
-    hiring_urgency: initial.hiring_urgency,
+    open_worldwide: initial.open_worldwide,
     target_countries: initial.target_countries,
-    work_authorization: initial.work_authorization,
-    target_titles: initial.target_titles,
-    screening_questions: initial.screening_questions,
-    responsibilities: initial.responsibilities,
+    states_regions: initial.states_regions,
+    metro_areas: initial.metro_areas,
+    search_radius: initial.search_radius,
+    hiring_urgency: initial.hiring_urgency,
+    target_start_date: initial.target_start_date,
+    time_to_hire: initial.time_to_hire,
+    must_have_skills: initial.must_have_skills,
+    nice_to_have_skills: initial.nice_to_have_skills,
+    certifications_list: initial.certifications_list,
+    tools_platforms: initial.tools_platforms,
     experience: initial.experience,
     education: initial.education,
-    certifications: initial.certifications,
-    languages: initial.languages,
-    industry_experience: initial.industry_experience,
-    hiring_timeline: initial.hiring_timeline,
     timezone_requirements: initial.timezone_requirements,
-    reason_for_hiring: initial.reason_for_hiring,
-    hiring_challenges: initial.hiring_challenges,
+    responsibilities: initial.responsibilities,
+    additional_requirements: initial.additional_requirements,
+    currency: initial.currency,
+    budget_min: initial.budget_min,
+    budget_max: initial.budget_max,
+    compensation: initial.compensation,
+    target_titles: initial.target_titles,
+    title_match_timing: initial.title_match_timing,
+    target_company_types: initial.target_company_types,
+    include_keywords: initial.include_keywords,
+    exclude_keywords: initial.exclude_keywords,
+    disqualifier_tags: initial.disqualifier_tags,
     interview_process: initial.interview_process,
-    decision_makers: initial.decision_makers,
     additional_context: initial.additional_context,
+    screening_questions: initial.screening_questions,
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [skillDraft, setSkillDraft] = useState("");
-  const [countryDraft, setCountryDraft] = useState("");
-  const [titleDraft, setTitleDraft] = useState("");
   const [qDraft, setQDraft] = useState("");
 
   const set = <K extends keyof State>(k: K, v: State[K]) =>
     setState((s) => ({ ...s, [k]: v }));
+
+  const toggleIn = (key: keyof State, opt: string) => {
+    const arr = state[key] as string[];
+    const next = arr.includes(opt) ? arr.filter((x) => x !== opt) : [...arr, opt];
+    set(key, next as State[typeof key]);
+  };
 
   const next = () => {
     const e = validateStep(step, state);
@@ -133,11 +174,17 @@ export function PositionEditWizard({
 
   const saveMutation = useMutation({
     mutationFn: async () => {
-      const all = { ...validateStep(1, state), ...validateStep(2, state) };
+      const all = {
+        ...validateStep(1, state),
+        ...validateStep(2, state),
+        ...validateStep(4, state),
+      };
       if (Object.keys(all).length > 0) {
         setErrors(all);
-        if (all.title || all.work_model) setStep(1);
+        if (all.title || all.work_model || all.employment_type || all.seniority || all.headcount || all.target_countries)
+          setStep(1);
         else if (all.must_have_skills) setStep(2);
+        else if (all.target_titles) setStep(4);
         throw new Error("Please fix the highlighted fields");
       }
       return save({
@@ -151,34 +198,41 @@ export function PositionEditWizard({
           seniority: state.seniority.trim(),
           headcount: typeof state.headcount === "number" ? state.headcount : null,
           description: state.description.trim(),
-          must_have_skills: unique(state.must_have_skills),
-          preferred_requirements: state.preferred_requirements,
-          dealbreakers: state.dealbreakers,
-          compensation: state.compensation.trim(),
-          hiring_urgency: state.hiring_urgency.trim(),
+          open_worldwide: state.open_worldwide,
           target_countries: unique(state.target_countries),
-          work_authorization: state.work_authorization.trim(),
+          states_regions: unique(state.states_regions),
+          metro_areas: unique(state.metro_areas),
+          search_radius: state.search_radius.trim(),
+          hiring_urgency: state.hiring_urgency.trim(),
+          target_start_date: state.target_start_date.trim(),
+          time_to_hire: state.time_to_hire.trim(),
+          must_have_skills: unique(state.must_have_skills),
+          nice_to_have_skills: unique(state.nice_to_have_skills),
+          certifications_list: unique(state.certifications_list),
+          tools_platforms: unique(state.tools_platforms),
+          experience: state.experience.trim(),
+          education: state.education.trim(),
+          timezone_requirements: state.timezone_requirements.trim(),
+          responsibilities: state.responsibilities,
+          additional_requirements: state.additional_requirements,
+          currency: state.currency.trim() || "USD",
+          budget_min: state.budget_min.trim(),
+          budget_max: state.budget_max.trim(),
+          compensation: state.compensation.trim(),
           target_titles: unique(state.target_titles),
+          title_match_timing: state.title_match_timing,
+          target_company_types: unique(state.target_company_types),
+          include_keywords: unique(state.include_keywords),
+          exclude_keywords: unique(state.exclude_keywords),
+          disqualifier_tags: unique(state.disqualifier_tags),
+          interview_process: state.interview_process,
+          additional_context: state.additional_context,
           screening_questions: state.screening_questions.filter(
             (q) => q.question.trim().length >= 3,
           ),
-          responsibilities: state.responsibilities,
-          experience: state.experience.trim(),
-          education: state.education.trim(),
-          certifications: state.certifications.trim(),
-          languages: state.languages.trim(),
-          industry_experience: state.industry_experience.trim(),
-          hiring_timeline: state.hiring_timeline.trim(),
-          timezone_requirements: state.timezone_requirements.trim(),
-          reason_for_hiring: state.reason_for_hiring,
-          hiring_challenges: state.hiring_challenges,
-          interview_process: state.interview_process,
-          decision_makers: state.decision_makers.trim(),
-          additional_context: state.additional_context,
         },
       });
     },
-
     onSuccess: async () => {
       toast.success("Position saved");
       await Promise.all(invalidateKeys.map((k) => qc.invalidateQueries({ queryKey: k })));
@@ -235,467 +289,544 @@ export function PositionEditWizard({
             Step {step}: {STEPS[step - 1].label}
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-5">
+        <CardContent className="space-y-6">
+          {/* STEP 1 — Role Definition */}
           {step === 1 && (
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <Field label="Role title" error={errors.title} required className="sm:col-span-2">
-                <Input
-                  data-field="title"
-                  value={state.title}
-                  onChange={(e) => set("title", e.target.value)}
-                />
-              </Field>
-              <Field label="Department">
-                <Input
-                  value={state.department}
-                  onChange={(e) => set("department", e.target.value)}
-                />
-              </Field>
-              <Field label="Location">
-                <Input value={state.location} onChange={(e) => set("location", e.target.value)} />
-              </Field>
-              <Field label="Work model" error={errors.work_model} required>
-                <Select
-                  value={state.work_model}
-                  onValueChange={(v) => set("work_model", v as State["work_model"])}
-                >
-                  <SelectTrigger data-field="work_model">
-                    <SelectValue placeholder="Select…" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="remote">Remote</SelectItem>
-                    <SelectItem value="hybrid">Hybrid</SelectItem>
-                    <SelectItem value="onsite">Onsite</SelectItem>
-                  </SelectContent>
-                </Select>
-              </Field>
-              <Field label="Employment type">
-                <Select
-                  value={state.employment_type}
-                  onValueChange={(v) => set("employment_type", v as State["employment_type"])}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select…" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="full_time">Full time</SelectItem>
-                    <SelectItem value="part_time">Part time</SelectItem>
-                    <SelectItem value="contract">Contract</SelectItem>
-                    <SelectItem value="temporary">Temporary</SelectItem>
-                    <SelectItem value="internship">Internship</SelectItem>
-                  </SelectContent>
-                </Select>
-              </Field>
-              <Field label="Seniority">
-                <Input
-                  value={state.seniority}
-                  onChange={(e) => set("seniority", e.target.value)}
-                  placeholder="Senior, Lead, Principal…"
-                />
-              </Field>
-              <Field label="Openings">
-                <Input
-                  type="number"
-                  min={1}
-                  max={999}
-                  value={state.headcount}
-                  onChange={(e) =>
-                    set("headcount", e.target.value === "" ? "" : Number(e.target.value))
-                  }
-                />
-              </Field>
-            </div>
-          )}
-
-          {step === 2 && (
-            <div className="space-y-4">
-              <Field
-                label="Must-have skills"
-                hint="Add at least 3 or write a description of 40+ characters."
-                error={errors.must_have_skills}
-              >
-                <div className="flex gap-2">
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <Field label="Role Title" error={errors.title} required className="sm:col-span-2">
                   <Input
-                    data-field="must_have_skills"
-                    value={skillDraft}
-                    onChange={(e) => setSkillDraft(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" || e.key === ",") {
-                        e.preventDefault();
-                        const v = skillDraft.trim().replace(/,$/, "");
-                        if (v) set("must_have_skills", unique([...state.must_have_skills, v]));
-                        setSkillDraft("");
-                      }
-                    }}
-                    placeholder="Type a skill and press Enter"
+                    data-field="title"
+                    value={state.title}
+                    onChange={(e) => set("title", e.target.value)}
+                    placeholder="e.g. Senior Backend Engineer"
                   />
-                  <Button
-                    type="button"
-                    variant="secondary"
-                    onClick={() => {
-                      const v = skillDraft.trim();
-                      if (v) set("must_have_skills", unique([...state.must_have_skills, v]));
-                      setSkillDraft("");
-                    }}
+                </Field>
+                <Field label="Department">
+                  <Input
+                    value={state.department}
+                    onChange={(e) => set("department", e.target.value)}
+                  />
+                </Field>
+                <Field label="Location">
+                  <Input value={state.location} onChange={(e) => set("location", e.target.value)} />
+                </Field>
+                <Field label="Employment Type" error={errors.employment_type} required>
+                  <Select
+                    value={state.employment_type}
+                    onValueChange={(v) => set("employment_type", v as State["employment_type"])}
                   >
-                    Add
-                  </Button>
-                </div>
-                <ChipList
-                  items={state.must_have_skills}
-                  onRemove={(i) =>
-                    set(
-                      "must_have_skills",
-                      state.must_have_skills.filter((_, idx) => idx !== i),
-                    )
-                  }
-                />
-              </Field>
-              <Field label="Description">
+                    <SelectTrigger data-field="employment_type">
+                      <SelectValue placeholder="Select…" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="full_time">Full time</SelectItem>
+                      <SelectItem value="part_time">Part time</SelectItem>
+                      <SelectItem value="contract">Contract</SelectItem>
+                      <SelectItem value="temporary">Temporary</SelectItem>
+                      <SelectItem value="internship">Internship</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </Field>
+                <Field label="Work Arrangement" error={errors.work_model} required>
+                  <Select
+                    value={state.work_model}
+                    onValueChange={(v) => set("work_model", v as State["work_model"])}
+                  >
+                    <SelectTrigger data-field="work_model">
+                      <SelectValue placeholder="Select…" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="remote">Remote</SelectItem>
+                      <SelectItem value="hybrid">Hybrid</SelectItem>
+                      <SelectItem value="onsite">Onsite</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </Field>
+                <Field label="Seniority Level" error={errors.seniority} required>
+                  <Select value={state.seniority} onValueChange={(v) => set("seniority", v)}>
+                    <SelectTrigger data-field="seniority">
+                      <SelectValue placeholder="Select…" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Intern">Intern</SelectItem>
+                      <SelectItem value="Junior">Junior</SelectItem>
+                      <SelectItem value="Mid">Mid</SelectItem>
+                      <SelectItem value="Senior">Senior</SelectItem>
+                      <SelectItem value="Lead">Lead</SelectItem>
+                      <SelectItem value="Staff">Staff</SelectItem>
+                      <SelectItem value="Principal">Principal</SelectItem>
+                      <SelectItem value="Director">Director</SelectItem>
+                      <SelectItem value="VP">VP</SelectItem>
+                      <SelectItem value="C-Level">C-Level</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </Field>
+                <Field label="Positions to Fill" error={errors.headcount} required>
+                  <Input
+                    data-field="headcount"
+                    type="number"
+                    min={1}
+                    max={999}
+                    value={state.headcount}
+                    onChange={(e) =>
+                      set("headcount", e.target.value === "" ? "" : Number(e.target.value))
+                    }
+                  />
+                </Field>
+              </div>
+
+              <Field
+                label="Job Description"
+                hint="Paste the JD or write it here. We use this to enrich matching."
+              >
                 <Textarea
-                  data-field="description"
                   rows={6}
                   value={state.description}
                   onChange={(e) => set("description", e.target.value)}
+                  placeholder="Paste the full job description or describe the role, responsibilities, and success criteria."
                 />
                 <p className="mt-1 text-xs text-muted-foreground">
-                  {state.description.trim().length} / 40 minimum characters
+                  {state.description.trim().length} characters
                 </p>
               </Field>
-              <Field label="Key responsibilities" hint="Top outcomes and day-to-day scope.">
-                <Textarea
-                  rows={3}
-                  value={state.responsibilities}
-                  onChange={(e) => set("responsibilities", e.target.value)}
-                  placeholder="Own X. Lead Y. Deliver Z."
+
+              <SectionHeader
+                title="Geographic Requirements"
+                subtitle="Where the role can be based."
+              />
+              <label className="flex items-center gap-2 text-sm">
+                <Checkbox
+                  checked={state.open_worldwide}
+                  onCheckedChange={(v) => set("open_worldwide", Boolean(v))}
                 />
-              </Field>
-              <Field label="Preferred skills" hint="One per line.">
-                <Textarea
-                  rows={3}
-                  value={state.preferred_requirements}
-                  onChange={(e) => set("preferred_requirements", e.target.value)}
-                />
-              </Field>
+                <span>Open worldwide (fully remote — anywhere)</span>
+              </label>
+              {!state.open_worldwide && (
+                <div className="space-y-4">
+                  <ChipInput
+                    label="Target Countries"
+                    hint="Countries where the role can be based."
+                    error={errors.target_countries}
+                    values={state.target_countries}
+                    onChange={(v) => set("target_countries", v)}
+                    placeholder="e.g. United States, Portugal, Germany"
+                    dataField="target_countries"
+                  />
+                  <ChipInput
+                    label="States / Regions"
+                    values={state.states_regions}
+                    onChange={(v) => set("states_regions", v)}
+                    placeholder="e.g. California, Bavaria, Ontario"
+                  />
+                  <ChipInput
+                    label="Metro Areas"
+                    values={state.metro_areas}
+                    onChange={(v) => set("metro_areas", v)}
+                    placeholder="e.g. San Francisco Bay Area, Berlin, Lisbon"
+                  />
+                  <Field label="Search Radius" hint="Optional. e.g. 25 miles, 50 km">
+                    <Input
+                      value={state.search_radius}
+                      onChange={(e) => set("search_radius", e.target.value)}
+                      placeholder="25 miles"
+                    />
+                  </Field>
+                </div>
+              )}
+
+              <SectionHeader title="Timeline & Availability" subtitle="Optional." />
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                <Field label="Hiring Timeline">
+                  <Select
+                    value={state.hiring_urgency}
+                    onValueChange={(v) => set("hiring_urgency", v)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Indicate your hiring timeline" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="asap">ASAP</SelectItem>
+                      <SelectItem value="30_days">Within 30 days</SelectItem>
+                      <SelectItem value="60_days">Within 60 days</SelectItem>
+                      <SelectItem value="90_days">Within 90 days</SelectItem>
+                      <SelectItem value="exploratory">Exploratory</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </Field>
+                <Field label="Target Start Date">
+                  <Input
+                    type="date"
+                    value={state.target_start_date}
+                    onChange={(e) => set("target_start_date", e.target.value)}
+                  />
+                </Field>
+                <Field label="Time to Hire" hint="How fast do you need to close?">
+                  <Input
+                    value={state.time_to_hire}
+                    onChange={(e) => set("time_to_hire", e.target.value)}
+                    placeholder="e.g. 4 weeks"
+                  />
+                </Field>
+              </div>
+            </div>
+          )}
+
+          {/* STEP 2 — Candidate Profile */}
+          {step === 2 && (
+            <div className="space-y-6">
+              <ChipInput
+                label="Must-have skills"
+                hint="Add at least 3 or provide a job description of at least 40 characters on Step 1."
+                error={errors.must_have_skills}
+                values={state.must_have_skills}
+                onChange={(v) => set("must_have_skills", v)}
+                placeholder="Type a skill and press Enter"
+                dataField="must_have_skills"
+              />
+              <ChipInput
+                label="Nice-to-have skills"
+                hint="Bonus skills that strengthen a candidate."
+                values={state.nice_to_have_skills}
+                onChange={(v) => set("nice_to_have_skills", v)}
+                placeholder="e.g. GraphQL, Terraform"
+              />
+              <ChipInput
+                label="Required Certifications"
+                values={state.certifications_list}
+                onChange={(v) => set("certifications_list", v)}
+                placeholder="e.g. AWS SA, PMP, CFA"
+              />
+              <ChipInput
+                label="Required Tools & Platforms"
+                values={state.tools_platforms}
+                onChange={(v) => set("tools_platforms", v)}
+                placeholder="e.g. Salesforce, Snowflake, Figma"
+              />
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <Field label="Experience">
+                <Field label="Minimum Experience" hint="Years of relevant experience.">
                   <Input
                     value={state.experience}
                     onChange={(e) => set("experience", e.target.value)}
                     placeholder="e.g. 5+ years"
                   />
                 </Field>
-                <Field label="Education">
+                <Field label="Education Requirement">
                   <Input
                     value={state.education}
                     onChange={(e) => set("education", e.target.value)}
                     placeholder="e.g. BSc CS or equivalent"
                   />
                 </Field>
-                <Field label="Certifications">
+                <Field label="Required Timezone Coverage" className="sm:col-span-2">
                   <Input
-                    value={state.certifications}
-                    onChange={(e) => set("certifications", e.target.value)}
-                    placeholder="AWS SA, PMP…"
-                  />
-                </Field>
-                <Field label="Languages">
-                  <Input
-                    value={state.languages}
-                    onChange={(e) => set("languages", e.target.value)}
-                    placeholder="English (fluent), German (B2)…"
-                  />
-                </Field>
-                <Field label="Industry experience" className="sm:col-span-2">
-                  <Input
-                    value={state.industry_experience}
-                    onChange={(e) => set("industry_experience", e.target.value)}
-                    placeholder="Fintech, healthcare, gaming…"
+                    value={state.timezone_requirements}
+                    onChange={(e) => set("timezone_requirements", e.target.value)}
+                    placeholder="e.g. Must overlap CET 10:00–14:00"
                   />
                 </Field>
               </div>
-              <Field label="Dealbreakers" hint="One per line.">
+              <Field label="Core Responsibilities" hint="Top outcomes and day-to-day scope.">
                 <Textarea
-                  rows={3}
-                  value={state.dealbreakers}
-                  onChange={(e) => set("dealbreakers", e.target.value)}
-                />
-              </Field>
-            </div>
-          )}
-
-
-          {step === 3 && (
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <Field label="Compensation">
-                <Input
-                  value={state.compensation}
-                  onChange={(e) => set("compensation", e.target.value)}
-                  placeholder="e.g. €80k–€110k + equity"
-                />
-              </Field>
-              <Field label="Hiring urgency">
-                <Select
-                  value={state.hiring_urgency}
-                  onValueChange={(v) => set("hiring_urgency", v)}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select…" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="asap">ASAP</SelectItem>
-                    <SelectItem value="30_days">Within 30 days</SelectItem>
-                    <SelectItem value="60_days">Within 60 days</SelectItem>
-                    <SelectItem value="90_days">Within 90 days</SelectItem>
-                    <SelectItem value="exploratory">Exploratory</SelectItem>
-                  </SelectContent>
-                </Select>
-              </Field>
-              <Field label="Hiring timeline" hint="Target start date or key milestones.">
-                <Input
-                  value={state.hiring_timeline}
-                  onChange={(e) => set("hiring_timeline", e.target.value)}
-                  placeholder="Start by Q3, onboarding by Sept…"
-                />
-              </Field>
-              <Field label="Reason for hiring">
-                <Select
-                  value={state.reason_for_hiring}
-                  onValueChange={(v) =>
-                    set("reason_for_hiring", v as State["reason_for_hiring"])
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select…" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="growth">Growth — new headcount</SelectItem>
-                    <SelectItem value="replacement">Replacement</SelectItem>
-                    <SelectItem value="backfill">Backfill</SelectItem>
-                    <SelectItem value="new_team">New team / function</SelectItem>
-                  </SelectContent>
-                </Select>
-              </Field>
-            </div>
-          )}
-
-          {step === 4 && (
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <Field label="Work authorization">
-                <Input
-                  value={state.work_authorization}
-                  onChange={(e) => set("work_authorization", e.target.value)}
-                  placeholder="EU, US, sponsor…"
-                />
-              </Field>
-              <Field label="Timezone requirements">
-                <Input
-                  value={state.timezone_requirements}
-                  onChange={(e) => set("timezone_requirements", e.target.value)}
-                  placeholder="CET ±3h"
-                />
-              </Field>
-              <Field label="Target countries" hint="Enter to add." className="sm:col-span-2">
-                <div className="flex gap-2">
-                  <Input
-                    value={countryDraft}
-                    onChange={(e) => setCountryDraft(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        e.preventDefault();
-                        const v = countryDraft.trim();
-                        if (v) set("target_countries", unique([...state.target_countries, v]));
-                        setCountryDraft("");
-                      }
-                    }}
-                  />
-                  <Button
-                    type="button"
-                    variant="secondary"
-                    onClick={() => {
-                      const v = countryDraft.trim();
-                      if (v) set("target_countries", unique([...state.target_countries, v]));
-                      setCountryDraft("");
-                    }}
-                  >
-                    Add
-                  </Button>
-                </div>
-                <ChipList
-                  items={state.target_countries}
-                  onRemove={(i) =>
-                    set(
-                      "target_countries",
-                      state.target_countries.filter((_, idx) => idx !== i),
-                    )
-                  }
-                />
-              </Field>
-              <Field label="Target titles" hint="Similar titles to consider." className="sm:col-span-2">
-                <div className="flex gap-2">
-                  <Input
-                    value={titleDraft}
-                    onChange={(e) => setTitleDraft(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        e.preventDefault();
-                        const v = titleDraft.trim();
-                        if (v) set("target_titles", unique([...state.target_titles, v]));
-                        setTitleDraft("");
-                      }
-                    }}
-                  />
-                  <Button
-                    type="button"
-                    variant="secondary"
-                    onClick={() => {
-                      const v = titleDraft.trim();
-                      if (v) set("target_titles", unique([...state.target_titles, v]));
-                      setTitleDraft("");
-                    }}
-                  >
-                    Add
-                  </Button>
-                </div>
-                <ChipList
-                  items={state.target_titles}
-                  onRemove={(i) =>
-                    set(
-                      "target_titles",
-                      state.target_titles.filter((_, idx) => idx !== i),
-                    )
-                  }
-                />
-              </Field>
-              <Field label="Screening questions" className="sm:col-span-2">
-                <div className="flex gap-2">
-                  <Input
-                    value={qDraft}
-                    onChange={(e) => setQDraft(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        e.preventDefault();
-                        const v = qDraft.trim();
-                        if (v.length >= 3) {
-                          set("screening_questions", [
-                            ...state.screening_questions,
-                            { question: v, answer_type: "text", required: false, dealbreaker: false },
-                          ]);
-                          setQDraft("");
-                        }
-                      }
-                    }}
-                    placeholder="Add a question and press Enter"
-                  />
-                  <Button
-                    type="button"
-                    variant="secondary"
-                    onClick={() => {
-                      const v = qDraft.trim();
-                      if (v.length >= 3) {
-                        set("screening_questions", [
-                          ...state.screening_questions,
-                          { question: v, answer_type: "text", required: false, dealbreaker: false },
-                        ]);
-                        setQDraft("");
-                      }
-                    }}
-                  >
-                    Add
-                  </Button>
-                </div>
-                {state.screening_questions.length > 0 && (
-                  <ul className="mt-3 space-y-2">
-                    {state.screening_questions.map((q, i) => (
-                      <li
-                        key={q.id ?? `new-${i}`}
-                        className="flex items-start justify-between gap-2 rounded-md border p-3 text-sm"
-                      >
-                        <span className="flex-1">{q.question}</span>
-                        <button
-                          type="button"
-                          className="text-xs text-muted-foreground underline"
-                          aria-label={`Remove ${q.question}`}
-                          onClick={() =>
-                            set(
-                              "screening_questions",
-                              state.screening_questions.filter((_, idx) => idx !== i),
-                            )
-                          }
-                        >
-                          Remove
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </Field>
-              <Field label="Current hiring challenges" className="sm:col-span-2">
-                <Textarea
-                  rows={2}
-                  value={state.hiring_challenges}
-                  onChange={(e) => set("hiring_challenges", e.target.value)}
-                  placeholder="What has made this role hard to fill?"
+                  rows={4}
+                  value={state.responsibilities}
+                  onChange={(e) => set("responsibilities", e.target.value)}
+                  placeholder="Own X. Lead Y. Deliver Z."
                 />
               </Field>
               <Field
-                label="Interview process"
-                hint="Number of rounds, format, panel."
-                className="sm:col-span-2"
+                label="Additional Requirements"
+                hint="Anything else the candidate must have."
               >
                 <Textarea
-                  rows={2}
+                  rows={3}
+                  value={state.additional_requirements}
+                  onChange={(e) => set("additional_requirements", e.target.value)}
+                />
+              </Field>
+            </div>
+          )}
+
+          {/* STEP 3 — Compensation */}
+          {step === 3 && (
+            <div className="space-y-6">
+              <SectionHeader
+                title="Budget range"
+                subtitle="Give us a realistic band. We use this to filter candidates."
+              />
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                <Field label="Currency">
+                  <Select value={state.currency} onValueChange={(v) => set("currency", v)}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select…" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="USD">USD</SelectItem>
+                      <SelectItem value="EUR">EUR</SelectItem>
+                      <SelectItem value="GBP">GBP</SelectItem>
+                      <SelectItem value="CAD">CAD</SelectItem>
+                      <SelectItem value="AUD">AUD</SelectItem>
+                      <SelectItem value="BRL">BRL</SelectItem>
+                      <SelectItem value="INR">INR</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </Field>
+                <Field label="Minimum" hint="Base salary or contract rate.">
+                  <Input
+                    type="number"
+                    min={0}
+                    value={state.budget_min}
+                    onChange={(e) => set("budget_min", e.target.value)}
+                    placeholder="80000"
+                  />
+                </Field>
+                <Field label="Maximum">
+                  <Input
+                    type="number"
+                    min={0}
+                    value={state.budget_max}
+                    onChange={(e) => set("budget_max", e.target.value)}
+                    placeholder="120000"
+                  />
+                </Field>
+              </div>
+              <Field label="Notes" hint="Bonus, equity, benefits, structure — anything relevant.">
+                <Textarea
+                  rows={3}
+                  value={state.compensation}
+                  onChange={(e) => set("compensation", e.target.value)}
+                  placeholder="e.g. Base + 20% bonus + equity. Fully remote stipend."
+                />
+              </Field>
+            </div>
+          )}
+
+          {/* STEP 4 — Search Criteria */}
+          {step === 4 && (
+            <div className="space-y-6">
+              <ChipInput
+                label="Target Job Titles"
+                hint="Titles to source from (current or previous roles)."
+                error={errors.target_titles}
+                values={state.target_titles}
+                onChange={(v) => set("target_titles", v)}
+                placeholder="e.g. Senior Software Engineer, Staff Engineer"
+                required
+                dataField="target_titles"
+              />
+              <Field
+                label="Title Match Timing"
+                hint="Should the target title be their current, previous, or either role?"
+              >
+                <Select
+                  value={state.title_match_timing}
+                  onValueChange={(v) =>
+                    set("title_match_timing", v as State["title_match_timing"])
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select…" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="current">Current role only</SelectItem>
+                    <SelectItem value="previous">Previous role only</SelectItem>
+                    <SelectItem value="either">Either — current or previous</SelectItem>
+                  </SelectContent>
+                </Select>
+              </Field>
+
+              <div>
+                <Label className="mb-2 block text-sm">Target Company Types</Label>
+                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                  {COMPANY_TYPE_OPTIONS.map((opt) => (
+                    <label key={opt} className="flex items-center gap-2 text-sm">
+                      <Checkbox
+                        checked={state.target_company_types.includes(opt)}
+                        onCheckedChange={() => toggleIn("target_company_types", opt)}
+                      />
+                      <span>{opt}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              <ChipInput
+                label="Include Keywords"
+                hint="Boost candidates whose profiles contain these terms."
+                values={state.include_keywords}
+                onChange={(v) => set("include_keywords", v)}
+                placeholder="e.g. Kubernetes, distributed systems"
+              />
+              <ChipInput
+                label="Exclude Keywords"
+                hint="Filter out candidates whose profiles contain these terms."
+                values={state.exclude_keywords}
+                onChange={(v) => set("exclude_keywords", v)}
+                placeholder="e.g. bootcamp only, agency"
+              />
+
+              <div>
+                <Label className="mb-2 block text-sm">Immediate disqualification criteria</Label>
+                <p className="mb-3 text-xs text-muted-foreground">
+                  Select conditions that automatically disqualify a candidate.
+                </p>
+                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                  {DISQUALIFIER_OPTIONS.map((opt) => (
+                    <label key={opt} className="flex items-center gap-2 text-sm">
+                      <Checkbox
+                        checked={state.disqualifier_tags.includes(opt)}
+                        onCheckedChange={() => toggleIn("disqualifier_tags", opt)}
+                      />
+                      <span>{opt}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              <Field label="Interview Process" hint="Number of rounds, format, panel.">
+                <Textarea
+                  rows={3}
                   value={state.interview_process}
                   onChange={(e) => set("interview_process", e.target.value)}
                   placeholder="Screen → Technical → Panel → Offer"
                 />
               </Field>
-              <Field
-                label="Decision makers"
-                hint="Who signs off on the hire?"
-                className="sm:col-span-2"
-              >
-                <Input
-                  value={state.decision_makers}
-                  onChange={(e) => set("decision_makers", e.target.value)}
-                  placeholder="Hiring manager, VP Eng, CEO…"
-                />
-              </Field>
-              <Field label="Additional context" className="sm:col-span-2">
+              <Field label="Additional Context" hint="Anything else we should know?">
                 <Textarea
                   rows={3}
                   value={state.additional_context}
                   onChange={(e) => set("additional_context", e.target.value)}
-                  placeholder="Anything else we should know?"
                 />
               </Field>
+
+              <SectionHeader
+                title="Screening Questions"
+                subtitle="Optional. Shown to candidates when they apply."
+              />
+              <div className="flex gap-2">
+                <Input
+                  value={qDraft}
+                  onChange={(e) => setQDraft(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      const v = qDraft.trim();
+                      if (v.length >= 3) {
+                        set("screening_questions", [
+                          ...state.screening_questions,
+                          {
+                            question: v,
+                            answer_type: "text",
+                            required: false,
+                            dealbreaker: false,
+                          } satisfies ScreeningInput,
+                        ]);
+                        setQDraft("");
+                      }
+                    }
+                  }}
+                  placeholder="Add a question and press Enter"
+                />
+                <Button
+                  type="button"
+                  variant="secondary"
+                  onClick={() => {
+                    const v = qDraft.trim();
+                    if (v.length >= 3) {
+                      set("screening_questions", [
+                        ...state.screening_questions,
+                        {
+                          question: v,
+                          answer_type: "text",
+                          required: false,
+                          dealbreaker: false,
+                        } satisfies ScreeningInput,
+                      ]);
+                      setQDraft("");
+                    }
+                  }}
+                >
+                  Add
+                </Button>
+              </div>
+              {state.screening_questions.length > 0 && (
+                <ul className="mt-1 space-y-2">
+                  {state.screening_questions.map((q, i) => (
+                    <li
+                      key={q.id ?? `new-${i}`}
+                      className="flex items-start justify-between gap-2 rounded-md border p-3 text-sm"
+                    >
+                      <span className="flex-1">{q.question}</span>
+                      <button
+                        type="button"
+                        className="text-xs text-muted-foreground underline"
+                        aria-label={`Remove ${q.question}`}
+                        onClick={() =>
+                          set(
+                            "screening_questions",
+                            state.screening_questions.filter((_, idx) => idx !== i),
+                          )
+                        }
+                      >
+                        Remove
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
           )}
 
+          {/* STEP 5 — Review */}
           {step === 5 && (
-
             <div className="space-y-3 text-sm">
               <ReviewBlock title="Role">
                 <div>
-                  {state.title || "—"} · {state.work_model || "—"}
-                  {state.location ? ` · ${state.location}` : ""}
+                  {state.title || "—"} · {state.work_model || "—"} · {state.employment_type || "—"}
                 </div>
                 <div className="text-muted-foreground">
-                  {state.seniority || "—"} · {state.employment_type || "—"} · Openings{" "}
-                  {state.headcount || "—"}
+                  {state.seniority || "—"} · Positions: {state.headcount || "—"}
+                  {state.location ? ` · ${state.location}` : ""}
                 </div>
               </ReviewBlock>
-              <ReviewBlock title="Requirements">
-                <div>Must-have: {unique(state.must_have_skills).join(", ") || "—"}</div>
-                <div className="whitespace-pre-wrap text-muted-foreground">
-                  {state.description || "—"}
+              <ReviewBlock title="Geography">
+                <div>
+                  {state.open_worldwide
+                    ? "Open worldwide"
+                    : state.target_countries.join(", ") || "—"}
+                </div>
+                {state.metro_areas.length > 0 && (
+                  <div className="text-muted-foreground">
+                    Metros: {state.metro_areas.join(", ")}
+                  </div>
+                )}
+              </ReviewBlock>
+              <ReviewBlock title="Candidate profile">
+                <div>Must-have: {state.must_have_skills.join(", ") || "—"}</div>
+                <div>Nice-to-have: {state.nice_to_have_skills.join(", ") || "—"}</div>
+                <div className="text-muted-foreground">
+                  Experience: {state.experience || "—"} · Education: {state.education || "—"}
                 </div>
               </ReviewBlock>
-              <ReviewBlock title="Hiring context">
-                <div>Compensation: {state.compensation || "—"}</div>
-                <div>Urgency: {state.hiring_urgency || "—"}</div>
-                <div>Countries: {state.target_countries.join(", ") || "—"}</div>
-                <div>Screening questions: {state.screening_questions.length}</div>
+              <ReviewBlock title="Compensation">
+                <div>
+                  {state.budget_min || "—"}
+                  {state.budget_max ? ` – ${state.budget_max}` : ""} {state.currency}
+                </div>
+                {state.compensation && (
+                  <div className="text-muted-foreground">{state.compensation}</div>
+                )}
+              </ReviewBlock>
+              <ReviewBlock title="Search criteria">
+                <div>Titles: {state.target_titles.join(", ") || "—"}</div>
+                {state.disqualifier_tags.length > 0 && (
+                  <div className="text-muted-foreground">
+                    Disqualifiers: {state.disqualifier_tags.join(", ")}
+                  </div>
+                )}
+                <div className="text-muted-foreground">
+                  Screening questions: {state.screening_questions.length}
+                </div>
               </ReviewBlock>
             </div>
           )}
@@ -763,27 +894,88 @@ function Field({
   );
 }
 
-function ChipList({ items, onRemove }: { items: string[]; onRemove: (i: number) => void }) {
-  if (items.length === 0) return null;
+function SectionHeader({ title, subtitle }: { title: string; subtitle?: string }) {
   return (
-    <ul className="mt-2 flex flex-wrap gap-2">
-      {items.map((v, i) => (
-        <li
-          key={`${v}-${i}`}
-          className="inline-flex items-center gap-1 rounded-full bg-secondary px-2.5 py-1 text-xs"
-        >
-          <span>{v}</span>
-          <button
-            type="button"
-            aria-label={`Remove ${v}`}
-            className="text-muted-foreground"
-            onClick={() => onRemove(i)}
-          >
-            ×
-          </button>
-        </li>
-      ))}
-    </ul>
+    <div className="border-b pb-2">
+      <div className="text-sm font-semibold">{title}</div>
+      {subtitle && <div className="mt-0.5 text-xs text-muted-foreground">{subtitle}</div>}
+    </div>
+  );
+}
+
+function ChipInput({
+  label,
+  hint,
+  error,
+  values,
+  onChange,
+  placeholder,
+  required,
+  dataField,
+}: {
+  label: string;
+  hint?: string;
+  error?: string;
+  values: string[];
+  onChange: (v: string[]) => void;
+  placeholder?: string;
+  required?: boolean;
+  dataField?: string;
+}) {
+  const [draft, setDraft] = useState("");
+  const add = () => {
+    const v = draft.trim().replace(/,$/, "");
+    if (!v) return;
+    const map = new Map<string, string>();
+    for (const x of [...values, v]) {
+      const t = x.trim();
+      if (!t) continue;
+      const k = t.toLowerCase();
+      if (!map.has(k)) map.set(k, t);
+    }
+    onChange(Array.from(map.values()));
+    setDraft("");
+  };
+  return (
+    <Field label={label} hint={hint} error={error} required={required}>
+      <div className="flex gap-2">
+        <Input
+          data-field={dataField}
+          value={draft}
+          onChange={(e) => setDraft(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === ",") {
+              e.preventDefault();
+              add();
+            }
+          }}
+          placeholder={placeholder}
+        />
+        <Button type="button" variant="secondary" onClick={add}>
+          Add
+        </Button>
+      </div>
+      {values.length > 0 && (
+        <ul className="mt-2 flex flex-wrap gap-2">
+          {values.map((v, i) => (
+            <li
+              key={`${v}-${i}`}
+              className="inline-flex items-center gap-1 rounded-full bg-secondary px-2.5 py-1 text-xs"
+            >
+              <span>{v}</span>
+              <button
+                type="button"
+                aria-label={`Remove ${v}`}
+                className="text-muted-foreground"
+                onClick={() => onChange(values.filter((_, idx) => idx !== i))}
+              >
+                ×
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+    </Field>
   );
 }
 
@@ -797,6 +989,3 @@ function ReviewBlock({ title, children }: { title: string; children: React.React
     </div>
   );
 }
-
-// Unused import guard for tsc
-void Checkbox;
