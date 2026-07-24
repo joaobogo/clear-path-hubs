@@ -1,0 +1,75 @@
+{
+  "prompt": "1 — Source-to-destination strategic audit",
+  "generated_at": "2026-07-24",
+  "implementation_files_changed": 0,
+  "positioning": {
+    "category": {
+      "source": "Subscription recruiting operating system — not software, not agency",
+      "destination": "Hybrid Human + AI recruiting operating system",
+      "status": "aligned",
+      "action": "keep destination phrasing; do not regress to 'software vs agency' framing"
+    },
+    "core_promise": {
+      "source": [
+        "ranked pre-screened candidates",
+        "recruiter fit narrative",
+        "live dashboard control",
+        "direct handover",
+        "no placement fees"
+      ],
+      "destination_coverage": ["home hero", "deliverable demo", "how-it-works", "pricing", "comparison"],
+      "status": "aligned"
+    },
+    "audiences": {
+      "source": ["founders", "hr_talent", "staffing_agencies", "enterprise"],
+      "destination": ["home hero", "enterprise route", "staffing partnership route", "talent network"],
+      "status": "aligned"
+    },
+    "voice": {
+      "source": "warm, direct, no hype",
+      "destination": "consistent",
+      "status": "aligned"
+    }
+  },
+  "pricing": {
+    "pilot": {"source": "$399", "destination": "Pilot tier in pricing-core.ts", "status": "verify_display_string"},
+    "subscription_entry": {"source": "from $6,999/month", "destination": "Multi + Hiring Sprint tiers", "status": "verify_display_string"},
+    "no_placement_fees": {"status": "aligned"},
+    "timeline_7_14_days": {"status": "aligned"}
+  },
+  "proof": {
+    "founders": {"source_names": ["Christian Brogger", "João Bogo"], "status": "verify_photos_and_bios"},
+    "case_studies": {"status": "aligned"},
+    "logos_press": {"status": "parity_ok"},
+    "testimonials": {"status": "verify_consent"}
+  },
+  "route_families": {
+    "covered": [
+      "/", "/pricing", "/how-it-works", "/industries", "/industries/:slug",
+      "/enterprise", "/staffing-partnership", "/talent-network", "/global-talent",
+      "/employer-onboarding", "/case-studies", "/blog", "/blog/:slug",
+      "/knowledge-base", "/faq", "/about", "/journey", "/contact",
+      "/privacy", "/terms", "/sitemap", "/jobs", "/jobs/:id", "/jobs/:id/apply",
+      "/pilot", "/candidate-join", "/intake"
+    ],
+    "orphans_to_review": ["/solutions", "/resources", "/dev/catalogue"],
+    "missing": []
+  },
+  "industry_system": {
+    "target_count": 57,
+    "requires": ["unique hero backdrop", "unique intro copy", "unique role focus", "cross-links"],
+    "risk": "any industry falling back to generic imagery"
+  },
+  "dashboard_marketing_parity": {
+    "status": "aligned",
+    "risk": "marketing copy must not promise workspace features not yet shipped"
+  },
+  "top_divergences": [
+    "verify pricing entry string on /pricing matches source wording",
+    "verify founder bios and photos on /about",
+    "audit 57 industry pages for unique imagery and copy",
+    "decide orphan routes: /solutions, /resources",
+    "purge any legacy 'software vs agency' language"
+  ],
+  "pass_fail": "PASS"
+}
