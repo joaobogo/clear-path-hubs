@@ -534,6 +534,7 @@ export const askAssistant = createServerFn({ method: "POST" })
     }
 
     const citations = Array.from(citationsMap.values());
+    const proposedActions = Array.from(proposedActionsMap.values());
 
     const assistantInsert = await context.supabase
       .from("assistant_messages")
@@ -545,10 +546,11 @@ export const askAssistant = createServerFn({ method: "POST" })
         content: finalContent,
         tool_trace: tool_trace as never,
         citations: citations as never,
+        proposed_actions: proposedActions as never,
         model: MODEL,
         latency_ms: Date.now() - start,
       } as never)
-      .select("id, created_at, role, content, tool_trace, citations")
+      .select("id, created_at, role, content, tool_trace, citations, proposed_actions")
       .single();
     if (assistantInsert.error) throw new Error(assistantInsert.error.message);
 
@@ -566,6 +568,7 @@ export const askAssistant = createServerFn({ method: "POST" })
         content: data.message,
         tool_trace: [] as Array<{ name: string; args: Record<string, string | number | boolean | null> }>,
         citations: [] as typeof citations,
+        proposed_actions: [] as AnyRow[],
         created_at: userInsert.data.created_at as string,
       },
       assistant_message: {
@@ -574,7 +577,75 @@ export const askAssistant = createServerFn({ method: "POST" })
         content: assistantInsert.data.content as string,
         tool_trace: assistantInsert.data.tool_trace as Array<{ name: string; args: Record<string, string | number | boolean | null> }>,
         citations: assistantInsert.data.citations as typeof citations,
+        proposed_actions: (assistantInsert.data as AnyRow).proposed_actions as AnyRow[],
         created_at: (assistantInsert.data as AnyRow).created_at as string,
       },
     };
+  });
+
+// ─── executeAssistantAction — the ONLY mutation path ────────────────────────
+// The client sends the action payload that was previously shown as a
+// confirmation card. We re-verify authority (RLS via context.supabase) and
+// perform the specific mutation. Nothing else in the assistant path can write.
+export const executeAssistantAction = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: { orgId: string; action: AnyRow }) =>
+    z
+      .object({
+        orgId: z.string().uuid(),
+        action: z.object({
+          kind: z.enum(["navigate", "draft_interview_request"]),
+          action_id: z.string(),
+          match_id: z.string().uuid().optional(),
+          draft_body: z.string().min(1).max(4000).optional(),
+          href: z.string().optional(),
+        }).passthrough(),
+      })
+      .parse(input),
+  )
+  .handler(async ({ context, data }) => {
+    const action = data.action;
+
+    if (action.kind === "navigate") {
+      // Navigation actions are client-side; server just acknowledges.
+      return { ok: true as const, kind: "navigate" as const, href: action.href ?? "/client" };
+    }
+
+    if (action.kind === "draft_interview_request") {
+      const matchId = action.match_id;
+      const body = action.draft_body;
+      if (!matchId || !body) throw new Error("Missing match_id or draft_body");
+
+      // Confirm the caller can actually see this match under RLS (belt & braces).
+      const { data: match } = await context.supabase
+        .from("candidate_matches")
+        .select("id, positions(title), candidate_profiles(full_name)")
+        .eq("organization_id", data.orgId)
+        .eq("id", matchId)
+        .maybeSingle();
+      if (!match) throw new Error("Match not accessible");
+
+      // Post as a message on the org thread — same table the client already
+      // uses for TaaSFlow team conversations.
+      const { error } = await context.supabase.from("messages").insert({
+        thread_id: data.orgId,
+        sender_user_id: context.userId,
+        body,
+        recipient_context: {
+          audience: "taasflow_ops",
+          from: "client_assistant",
+          match_id: matchId,
+          intent: "interview_request",
+        },
+      } as never);
+      if (error) throw new Error(error.message);
+
+      return {
+        ok: true as const,
+        kind: "draft_interview_request" as const,
+        match_id: matchId,
+      };
+    }
+
+    return { ok: false as const, error: "unknown_action_kind" };
   });
