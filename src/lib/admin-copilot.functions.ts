@@ -437,57 +437,137 @@ export const executeCopilotAction = createServerFn({ method: "POST" })
       .parse(input),
   )
   .handler(async ({ context, data }) => {
-    // Staff-only enforcement: the RLS policies on admin_copilot_* already
-    // require is_platform_staff, but this executor writes into general tables
-    // (messages), so re-check role explicitly.
-    const { data: staff } = await context.supabase.rpc("is_platform_staff", { _user: context.userId });
-    if (!staff) throw new Error("Forbidden");
-
     const a = data.action;
-    if (a.kind === "navigate") {
-      return { ok: true as const, kind: "navigate" as const, href: a.href ?? "/admin" };
-    }
+    const auditBase = {
+      surface: "admin_copilot" as const,
+      user_id: context.userId,
+      action_id: a.action_id,
+      organization_id: (a.org_id as string | undefined) ?? null,
+      payload: {
+        kind: a.kind,
+        org_id: a.org_id ?? null,
+        match_id: a.match_id ?? null,
+        href: a.href ?? null,
+      },
+    };
 
-    if (a.kind === "draft_client_update") {
-      if (!a.org_id || !a.draft_body) throw new Error("Missing org_id or draft_body");
-      const { error } = await context.supabase.from("messages").insert({
-        thread_id: a.org_id,
-        sender_user_id: context.userId,
-        body: a.draft_body,
-        recipient_context: {
-          org_id: a.org_id,
-          thread_kind: "client_workspace",
-          from: "admin_copilot",
-        },
-      } as never);
-      if (error) throw new Error(error.message);
-      return { ok: true as const, kind: "draft_client_update" as const, org_id: a.org_id };
-    }
+    try {
+      // Staff-only enforcement: the RLS policies on admin_copilot_* already
+      // require is_platform_staff, but this executor writes into general tables
+      // (messages), so re-check role explicitly.
+      const { data: staff } = await context.supabase.rpc("is_platform_staff", { _user: context.userId });
+      if (!staff) {
+        await auditAssistantEvent(context.supabase, {
+          ...auditBase,
+          event_type: "action_denied",
+          payload: { ...auditBase.payload, reason: "not_staff" },
+        });
+        throw new Error("Forbidden");
+      }
 
-    if (a.kind === "draft_candidate_outreach") {
-      if (!a.match_id || !a.draft_body) throw new Error("Missing match_id or draft_body");
-      // Look up the candidate + org to route outreach into the candidate thread.
-      const { data: match } = await context.supabase
-        .from("candidate_matches")
-        .select("id, candidate_id, organization_id")
-        .eq("id", a.match_id)
-        .maybeSingle();
-      if (!match) throw new Error("Match not accessible");
-      const { error } = await context.supabase.from("messages").insert({
-        thread_id: (match as AnyRow).candidate_id,
-        sender_user_id: context.userId,
-        body: a.draft_body,
-        recipient_context: {
-          match_id: a.match_id,
-          candidate_id: (match as AnyRow).candidate_id,
-          organization_id: (match as AnyRow).organization_id,
-          from: "admin_copilot",
-          thread_kind: "candidate_outreach",
-        },
-      } as never);
-      if (error) throw new Error(error.message);
-      return { ok: true as const, kind: "draft_candidate_outreach" as const, match_id: a.match_id };
-    }
+      if (a.kind === "navigate") {
+        await auditAssistantEvent(context.supabase, { ...auditBase, event_type: "action_executed" });
+        return { ok: true as const, kind: "navigate" as const, href: a.href ?? "/admin" };
+      }
 
-    return { ok: false as const, error: "unknown_action_kind" };
+      if (a.kind === "draft_client_update") {
+        if (!a.org_id || !a.draft_body) {
+          await auditAssistantEvent(context.supabase, {
+            ...auditBase,
+            event_type: "action_failed",
+            payload: { ...auditBase.payload, reason: "missing_fields" },
+          });
+          throw new Error("Missing org_id or draft_body");
+        }
+        const { error } = await context.supabase.from("messages").insert({
+          thread_id: a.org_id,
+          sender_user_id: context.userId,
+          body: a.draft_body,
+          recipient_context: {
+            org_id: a.org_id,
+            thread_kind: "client_workspace",
+            from: "admin_copilot",
+          },
+        } as never);
+        if (error) {
+          await auditAssistantEvent(context.supabase, {
+            ...auditBase,
+            event_type: "action_failed",
+            payload: { ...auditBase.payload, reason: error.message },
+          });
+          throw new Error(error.message);
+        }
+        await auditAssistantEvent(context.supabase, {
+          ...auditBase,
+          event_type: "action_executed",
+          content_preview: a.draft_body,
+        });
+        return { ok: true as const, kind: "draft_client_update" as const, org_id: a.org_id };
+      }
+
+      if (a.kind === "draft_candidate_outreach") {
+        if (!a.match_id || !a.draft_body) {
+          await auditAssistantEvent(context.supabase, {
+            ...auditBase,
+            event_type: "action_failed",
+            payload: { ...auditBase.payload, reason: "missing_fields" },
+          });
+          throw new Error("Missing match_id or draft_body");
+        }
+        const { data: match } = await context.supabase
+          .from("candidate_matches")
+          .select("id, candidate_id, organization_id")
+          .eq("id", a.match_id)
+          .maybeSingle();
+        if (!match) {
+          await auditAssistantEvent(context.supabase, {
+            ...auditBase,
+            event_type: "action_denied",
+            payload: { ...auditBase.payload, reason: "match_not_accessible" },
+          });
+          throw new Error("Match not accessible");
+        }
+        const { error } = await context.supabase.from("messages").insert({
+          thread_id: (match as AnyRow).candidate_id,
+          sender_user_id: context.userId,
+          body: a.draft_body,
+          recipient_context: {
+            match_id: a.match_id,
+            candidate_id: (match as AnyRow).candidate_id,
+            organization_id: (match as AnyRow).organization_id,
+            from: "admin_copilot",
+            thread_kind: "candidate_outreach",
+          },
+        } as never);
+        if (error) {
+          await auditAssistantEvent(context.supabase, {
+            ...auditBase,
+            event_type: "action_failed",
+            payload: { ...auditBase.payload, reason: error.message },
+          });
+          throw new Error(error.message);
+        }
+        await auditAssistantEvent(context.supabase, {
+          ...auditBase,
+          event_type: "action_executed",
+          organization_id: (match as AnyRow).organization_id as string,
+          content_preview: a.draft_body,
+        });
+        return { ok: true as const, kind: "draft_candidate_outreach" as const, match_id: a.match_id };
+      }
+
+      await auditAssistantEvent(context.supabase, {
+        ...auditBase,
+        event_type: "action_failed",
+        payload: { ...auditBase.payload, reason: "unknown_kind" },
+      });
+      return { ok: false as const, error: "unknown_action_kind" };
+    } catch (err) {
+      await auditAssistantEvent(context.supabase, {
+        ...auditBase,
+        event_type: "action_failed",
+        payload: { ...auditBase.payload, reason: (err as Error).message },
+      });
+      throw err;
+    }
   });
