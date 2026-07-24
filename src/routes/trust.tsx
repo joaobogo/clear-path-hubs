@@ -232,10 +232,10 @@ function TrustPage() {
             ))}
           </nav>
         </PublicPage>
-      </PublicSection>
+      </PublicSection></div>
 
       {/* PRICING */}
-      <PublicSection id="pricing" className="py-12">
+      <div id="pricing"><PublicSection className="py-12">
         <PublicPage>
           <SectionHeader
             icon={Gauge}
@@ -284,10 +284,10 @@ function TrustPage() {
             </div>
           </div>
         </PublicPage>
-      </PublicSection>
+      </PublicSection></div>
 
       {/* WHAT YOU KEEP */}
-      <PublicSection id="what-you-keep" className="py-12">
+      <div id="what-you-keep"><PublicSection className="py-12">
         <PublicPage>
           <SectionHeader
             icon={Layers}
@@ -304,10 +304,10 @@ function TrustPage() {
             ))}
           </ul>
         </PublicPage>
-      </PublicSection>
+      </PublicSection></div>
 
       {/* SCORING */}
-      <PublicSection id="scoring" className="py-12">
+      <div id="scoring"><PublicSection className="py-12">
         <PublicPage>
           <SectionHeader
             icon={Gauge}
@@ -324,10 +324,10 @@ function TrustPage() {
             ))}
           </div>
         </PublicPage>
-      </PublicSection>
+      </PublicSection></div>
 
       {/* PRIVACY */}
-      <PublicSection id="privacy" className="py-12">
+      <div id="privacy"><PublicSection className="py-12">
         <PublicPage>
           <SectionHeader
             icon={Lock}
@@ -348,10 +348,10 @@ function TrustPage() {
             the full policy language.
           </p>
         </PublicPage>
-      </PublicSection>
+      </PublicSection></div>
 
       {/* SPLIT */}
-      <PublicSection id="split" className="py-12">
+      <div id="split"><PublicSection className="py-12">
         <PublicPage>
           <SectionHeader
             icon={Scale}
@@ -380,10 +380,10 @@ function TrustPage() {
             </table>
           </div>
         </PublicPage>
-      </PublicSection>
+      </PublicSection></div>
 
       {/* FAQ */}
-      <PublicSection id="faq" className="py-12">
+      <div id="faq"><PublicSection className="py-12">
         <PublicPage>
           <SectionHeader
             icon={FileText}
@@ -403,10 +403,10 @@ function TrustPage() {
             ))}
           </div>
         </PublicPage>
-      </PublicSection>
+      </PublicSection></div>
 
       {/* SECURITY */}
-      <PublicSection id="security" className="py-12">
+      <div id="security"><PublicSection className="py-12">
         <PublicPage>
           <SectionHeader
             icon={ShieldCheck}
@@ -430,10 +430,10 @@ function TrustPage() {
             review as part of onboarding.
           </p>
         </PublicPage>
-      </PublicSection>
+      </PublicSection></div>
 
       {/* FOUNDERS */}
-      <PublicSection id="founders" className="py-12">
+      <div id="founders"><PublicSection className="py-12">
         <PublicPage>
           <SectionHeader
             icon={Users}
@@ -445,7 +445,7 @@ function TrustPage() {
             <FoundersStrip />
           </div>
         </PublicPage>
-      </PublicSection>
+      </PublicSection></div>
 
       <CtaSection
         eyebrow="Buy with your eyes open"

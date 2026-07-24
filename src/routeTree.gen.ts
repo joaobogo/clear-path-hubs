@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as UnauthorizedRouteImport } from './routes/unauthorized'
+import { Route as TrustRouteImport } from './routes/trust'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as TalentNetworkRouteImport } from './routes/talent-network'
 import { Route as TalentMarketplaceRouteImport } from './routes/talent-marketplace'
@@ -125,6 +126,11 @@ import { Route as AuthenticatedAdminCandidatesIdEvidenceRouteImport } from './ro
 const UnauthorizedRoute = UnauthorizedRouteImport.update({
   id: '/unauthorized',
   path: '/unauthorized',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TrustRoute = TrustRouteImport.update({
+  id: '/trust',
+  path: '/trust',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TermsRoute = TermsRouteImport.update({
@@ -761,6 +767,7 @@ export interface FileRoutesByFullPath {
   '/talent-marketplace': typeof TalentMarketplaceRoute
   '/talent-network': typeof TalentNetworkRoute
   '/terms': typeof TermsRoute
+  '/trust': typeof TrustRoute
   '/unauthorized': typeof UnauthorizedRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/boardroom': typeof AuthenticatedBoardroomRoute
@@ -874,6 +881,7 @@ export interface FileRoutesByTo {
   '/talent-marketplace': typeof TalentMarketplaceRoute
   '/talent-network': typeof TalentNetworkRoute
   '/terms': typeof TermsRoute
+  '/trust': typeof TrustRoute
   '/unauthorized': typeof UnauthorizedRoute
   '/boardroom': typeof AuthenticatedBoardroomRoute
   '/blog/$slug': typeof BlogSlugRoute
@@ -979,6 +987,7 @@ export interface FileRoutesById {
   '/talent-marketplace': typeof TalentMarketplaceRoute
   '/talent-network': typeof TalentNetworkRoute
   '/terms': typeof TermsRoute
+  '/trust': typeof TrustRoute
   '/unauthorized': typeof UnauthorizedRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/boardroom': typeof AuthenticatedBoardroomRoute
@@ -1094,6 +1103,7 @@ export interface FileRouteTypes {
     | '/talent-marketplace'
     | '/talent-network'
     | '/terms'
+    | '/trust'
     | '/unauthorized'
     | '/admin'
     | '/boardroom'
@@ -1207,6 +1217,7 @@ export interface FileRouteTypes {
     | '/talent-marketplace'
     | '/talent-network'
     | '/terms'
+    | '/trust'
     | '/unauthorized'
     | '/boardroom'
     | '/blog/$slug'
@@ -1311,6 +1322,7 @@ export interface FileRouteTypes {
     | '/talent-marketplace'
     | '/talent-network'
     | '/terms'
+    | '/trust'
     | '/unauthorized'
     | '/_authenticated/admin'
     | '/_authenticated/boardroom'
@@ -1426,6 +1438,7 @@ export interface RootRouteChildren {
   TalentMarketplaceRoute: typeof TalentMarketplaceRoute
   TalentNetworkRoute: typeof TalentNetworkRoute
   TermsRoute: typeof TermsRoute
+  TrustRoute: typeof TrustRoute
   UnauthorizedRoute: typeof UnauthorizedRoute
   BlogSlugRoute: typeof BlogSlugRoute
   DevCatalogueRoute: typeof DevCatalogueRoute
@@ -1456,6 +1469,13 @@ declare module '@tanstack/react-router' {
       path: '/unauthorized'
       fullPath: '/unauthorized'
       preLoaderRoute: typeof UnauthorizedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/trust': {
+      id: '/trust'
+      path: '/trust'
+      fullPath: '/trust'
+      preLoaderRoute: typeof TrustRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/terms': {
@@ -2563,6 +2583,7 @@ const rootRouteChildren: RootRouteChildren = {
   TalentMarketplaceRoute: TalentMarketplaceRoute,
   TalentNetworkRoute: TalentNetworkRoute,
   TermsRoute: TermsRoute,
+  TrustRoute: TrustRoute,
   UnauthorizedRoute: UnauthorizedRoute,
   BlogSlugRoute: BlogSlugRoute,
   DevCatalogueRoute: DevCatalogueRoute,
