@@ -45,11 +45,8 @@ export function TaaSFlowEntryLoader() {
     startedAt.current = performance.now();
     setMounted(true);
   }, []);
-  const [exiting, setExiting] = useState(false);
-  const [stage, setStage] = useState(0);
-  const [msgIdx, setMsgIdx] = useState(0);
-  const startedAt = useRef<number>(typeof performance !== "undefined" ? performance.now() : Date.now());
-  const reduced = useRef<boolean>(false);
+
+
 
   useEffect(() => {
     if (!mounted) return;
