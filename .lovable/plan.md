@@ -1,67 +1,81 @@
-# Prompt 1 — Scoring becomes a canonical product system
+# Phase 6 — Explainable Scoring, Review Center, Client Presentation (Prompts 6–9)
 
-## Audit findings (what already exists, what does not)
+Four connected surfaces powered by one canonical evidence layer. Delivered as 4 slices in this order.
 
-Identity spine that already works:
-- `candidate_matches` binds `application_id + candidate_profile_id + position_id + organization_id` and holds `current_score_run_id` and `approved_score_run_id`.
-- `score_runs` carries the same identity columns and is protected by `tg_score_runs_identity` (mismatch = FK-violation error) and `tg_score_runs_immutable` (no edits after completed/failed/cancelled).
-- `tg_candidate_matches_publish_gate` already blocks `client_visibility='visible'` unless an approved run exists whose identity matches the match, status is `completed`, and math invariants hold.
-- `position_versions` is the versioned brief snapshot.
+## Slice A — Evidence Layer (Prompt 6)
 
-Real gaps:
-1. No dedicated `rubric_versions` table. Today `score_runs.blueprint_version` is a free-text string with no FK, so we cannot pin "which exact rubric produced this score" and cannot recalc reproducibly.
-2. `score_runs.status` and `candidate_matches.processing_state` do not map cleanly to the 9 canonical states (ingestion / evidence_extraction / provisional_scoring / human_review / approved / published_to_client / returned_for_correction / superseded / failed).
-3. No single client-visible view. 40+ files query `candidate_matches` directly; most filter by `client_visibility='visible'` but a handful (dashboards, analytics, comparison suggestions, saved views facets) do not. UI filtering is the current shield.
-4. No orphan detector for legacy rows whose `score_run` identity does not match its match (would be caught today only at write time).
+Foundation everything else reads from.
 
-## What this prompt ships
+**Database (migration `evidence_layer_v1`)**
+- Extend `candidate_evidence_items` with the fields still missing to cover the full spec: `result` (enum: strong, partial, weak, missing, contradictory, not_applicable, needs_validation), `source_kind` (cv, application_answer, interview, manual), `source_ref` (file_id or answer_id), `source_locator` (page/line/section JSON), `factual_quote` (verbatim), `interpretation` (TaaSFlow reading), `validation_need` (what to confirm in interview), `confidence` (0-100), `reviewer_id`, `last_reviewed_at`, `integrity_ok` (bool).
+- New `evidence_overrides` table: append-only before/after snapshots, reason, actor, timestamp.
+- Add `integrity_status` column on `candidate_matches`: `ok | missing_required | contradictions | manual_review`.
+- View `public.candidate_evidence_client` exposing only client-safe fields (no debug/rejected/prompts/private notes).
+- Trigger blocks `canonical_state -> approved` when any `required=true` criterion has `integrity_ok=false`.
 
-### 1. Migration `scoring_canonical_v1`
-- New table `rubric_versions` (id, position_id, organization_id, version_number, status enum draft/pending_approval/approved/active/superseded, dimensions jsonb, weights jsonb, anchors jsonb, created_by, approved_by, approved_at, snapshot jsonb, immutable-after-approved trigger). GRANTs + RLS scoped by org via `is_org_member` / `is_platform_staff`.
-- Add `rubric_version_id uuid REFERENCES rubric_versions(id)` to `score_runs` (nullable during migration, `NOT NULL` after backfill).
-- New enum `canonical_scoring_state` with the 9 states. Add `canonical_state canonical_scoring_state NOT NULL DEFAULT 'ingestion'` to `candidate_matches` with a transition-guard trigger `tg_candidate_matches_canonical_state` (state machine identical to the one you described).
-- Extend `tg_candidate_matches_publish_gate` so `client_visibility='visible'` also requires `canonical_state='published_to_client'` and `approved_score_run_id.rubric_version_id IS NOT NULL`.
-- New SQL view `public.client_visible_candidates` = candidate_matches JOIN score_runs (approved) JOIN rubric_versions WHERE canonical_state='published_to_client' AND client_visibility='visible'. All client-side reads route through this view.
-- New table `scoring_orphans` (candidate_match_id, reason, detected_at) + one-time backfill scan that flags rows whose approved run identity does not match the match, or whose `blueprint_version` cannot be resolved to a rubric version. No deletions.
-- Backfill: create one `rubric_versions` row per distinct `(position_id, blueprint_version)` seen on completed score_runs, mark status='superseded' except the latest per position which becomes 'active'. Point `score_runs.rubric_version_id` at the correct row. Historical scores stay reproducible.
-- Deliberately NOT touched: `candidate_evidence`, `applications`, `positions`, `position_versions` (already correct).
+**Server**
+- `src/lib/evidence/evidence.functions.ts` — CRUD + `overrideEvidence` (writes to `evidence_overrides`), `flagForCorrection`, `getEvidenceForCriterion`.
+- `src/lib/evidence/insight-generator.ts` — deterministic derivation of strengths, true gaps, contradictions, and personalized interview questions from approved evidence only. Falls back gracefully; never fabricates. If no role-specific uncertainty, returns empty (not generic).
+- `src/lib/scoring/publish-gate.ts` — integrity checks that must pass to publish.
 
-### 2. Server authorization boundary
-- New `src/lib/scoring-authz.server.ts` with a single `assertClientCanRead(matchId, ctx)` guard used by every client-facing server fn returning candidate data. Reads only from the `client_visible_candidates` view.
-- Update these files to query the view (not `candidate_matches` directly) for client-facing lists, counts, dashboards, filters, analytics, comparison, exports, notifications:
-  `client.functions.ts`, `client-kpi.server.ts`, `analytics.functions.ts`, `deliveries.functions.ts`, `portfolio.functions.ts`, `executive.functions.ts`, `wbr.functions.ts`, `hires.functions.ts`, `tasks.functions.ts`, `journey.functions.ts`, `shares.functions.ts`, `global-search.functions.ts`, `notifications.functions.ts`, `talent-pool.functions.ts`, `talent-memory.functions.ts`, `assistant-tools.server.ts`.
-- Admin/reviewer functions keep reading `candidate_matches` directly (they need to see all states).
-- Candidate-facing functions (`candidate.functions.ts`, `apply.functions.ts`) get a separate `assertCandidateCanRead(applicationId, candidateAuthId)` that scopes to the candidate's own applications only.
+**UI primitives**
+- `src/components/evidence/EvidenceCard.tsx` — visually splits Source Fact / TaaSFlow Interpretation / Validation Need with distinct treatments.
+- `src/components/evidence/CriterionRow.tsx` — result pill, weight, score (perm-gated), confidence, expand for evidence.
 
-### 3. Types & display invariants
-- New `src/lib/scoring/canonical-state.ts` = state enum, allowed transitions, human labels (used by admin only).
-- New `src/lib/scoring/identity.ts` = `ScoringIdentity` type `{ candidate_id, position_id, application_id, rubric_version_id, score_run_id, published_score_version_id }` returned by every scoring server fn so UI cannot reconstruct identity from partial keys.
-- Delete the local score-band constants scattered across list/detail/comparison views (kept them for Prompt 5 which formalizes bands — leave a TODO comment pointing to `src/config/scoring-bands.ts` to be created in Prompt 5).
+## Slice B — Admin Scoring Review Center (Prompt 7)
 
-### 4. Admin orphan review
-- New route `/_authenticated/admin.scoring.orphans.tsx` listing `scoring_orphans` rows with match preview, detected reason, and a "resolve" action that either re-links to the correct rubric_version or marks the match `canonical_state='failed'` with reason. Platform_admin only.
+Route: `/admin/scoring/review` (queue) and `/admin/scoring/review/$matchId` (three-panel).
 
-## Explicitly out of scope for this prompt (belongs to later prompts in the sequence)
-- Rubric builder UI, dimension/criterion editing, industry templates → Prompt 2.
-- Semantic evidence matching engine → Prompt 3.
-- Eligibility / Fit / Confidence / Recommendation / Stage split → Prompt 4.
-- Score bands & ranking math → Prompt 5.
-- Evidence detail UI → Prompt 6.
-- Reviewer center → Prompt 7.
-- Client presentation surfaces → Prompts 8–11.
+**Layout (desktop 3-panel, responsive stacking)**
+- Left: candidate context, applied position pinned, CV/document viewer, prev/next in queue.
+- Center: rubric criteria list, per-criterion evidence w/ semantic match type, score anchors, contradiction flags, qualifiers, duplicate warning.
+- Right: eligibility, recommendation, quality checks, integrity status, publish readiness checklist, client-visible preview button, action bar.
 
-## Acceptance for Prompt 1
-- Every `score_runs` row has a resolvable `rubric_version_id` after backfill.
-- No client-facing query can return a match unless it is in `client_visible_candidates`.
-- `canonical_state` transitions are enforced at the DB, not just UI.
-- Historical scores unchanged (immutability triggers still fire).
-- `scoring_orphans` non-empty on first run is expected and surfaced in admin — not silently swallowed.
-- Build passes; existing client dashboards render the same candidates they render today.
+**Actions**
+- Approve internally · Return for correction (reason required) · Not suitable for delivery · Escalate · Publish to client.
+- Publish is transactional: single server fn wraps `canonical_state -> published_to_client` + `client_visibility=visible` + notification event; rolls back on any failure. Idempotent by `approved_score_run_id`.
+
+**Keyboard**: `j/k` next/prev, `a` approve, `r` return, `p` publish, `?` help.
+
+**Server**
+- `src/lib/review/review-queue.functions.ts` — queue query, cursor pagination, filters (role, state, oldest first).
+- `src/lib/review/publish.functions.ts` — transactional publish + rollback + audit event.
+
+## Slice C — Client Ranked Candidates (Prompt 8)
+
+Rewrite `client.candidates.index.tsx` around progressive disclosure. Reads only from `client_visible_candidates`, so unpublished never leaks and ranks are always contiguous (1..N).
+
+**Row/card data**
+Rank · name/anon · applied position · fit + band · eligibility (only when relevant) · confidence · recommendation · strongest strength (1 line, evidence-backed) · main true gap or validation need · location/work model · availability · comp alignment · stage · review state · last scored.
+
+**Layouts**: table (dense), compact (list), mobile cards. Same data source; column definitions in `src/config/candidate-columns.ts`.
+
+**Interactions**: click opens detail without losing filters/scroll (query-state via search params). Tooltips on score, confidence, recommendation, evidence coverage.
+
+**Rank**: computed client-side over the already-filtered published set, deterministic tie-break via `ranking.ts` comparator.
+
+## Slice D — Client Candidate Detail (Prompt 9)
+
+Rewrite `client.candidates.$id.tsx` with the exact header hierarchy and sections from the prompt.
+
+**Header**: identity + applied position → recommendation pill → fit + band → confidence → stage → primary actions.
+
+**Sections** (anchor nav, whitespace, consistent evidence pattern):
+Executive Fit Summary · Requirement Coverage (criterion picker → EvidenceCard on right) · Category Breakdown · Evidence by Criterion · Top Strengths · True Gaps · Contradictions & Risks · Logistics & Eligibility · Validate in Interview · Personalized Interview Questions · Experience Timeline · CV/Documents · Client Comments & Decisions · Score/Stage History (client-permitted subset).
+
+**Sticky decision panel** (desktop) / mobile bottom action bar: Shortlist · Interview · Hold · Pass · Add to Comparison · Add to Talent Pool · Comment. Each hits permission-checked server fn, emits notification event, invalidates queries.
+
+**Guarantees**: reads exclusively via `client_visible_candidates` + `candidate_evidence_client`. Numbers reconcile with ranked list + comparison because they share the same view.
+
+## Cross-cutting
+
+- **Permissions**: numeric criterion scores gated to admin/staff via `is_platform_staff`; client sees band/result/evidence only.
+- **Audit**: every override, publish, and client decision writes to `audit_events` via existing trigger.
+- **Tests**: unit tests for insight-generator (no hallucination on empty evidence), publish-gate (blocks on integrity fail), ranking (contiguous ranks over published set).
+- **No new deps.**
 
 ## Technical notes
-- Migration is one file, four ordered blocks: create rubric_versions → add columns/enum → backfill in a transaction → add view/triggers/orphan scan.
-- View is `SECURITY INVOKER` so RLS on the underlying tables still applies.
-- No downtime: the view exists alongside old queries; server-fn switches happen file by file, each covered by the same view guarantee.
-- Rollback path: `rubric_version_id` starts nullable; the state-machine trigger has a "legacy" branch that accepts any state during a 24h grace window controlled by a config row in a new `scoring_config` singleton.
+Reuses `candidate_evidence_items`, `candidate_matches`, `score_runs`, `rubric_versions`, and `client_visible_candidates` established in prior slices. Extends triggers `tg_candidate_matches_publish_gate` and `tg_candidate_matches_canonical_state` — does not replace them. All new tables get GRANTs + RLS in the same migration per project rules.
 
-After you approve, I ship the migration first (it needs your approval anyway) and then the server-fn / route changes as follow-up edits in the same turn.
+## Order & checkpoints
+A → B → C → D. After each slice: build passes, targeted preview check on the relevant route, then continue. Say **"go"** to start Slice A, or name a slice to jump.
