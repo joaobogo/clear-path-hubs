@@ -62,6 +62,25 @@ function PricingPage() {
         </PublicPage>
       </PublicSection>
 
+      {/* Section header — one-off packages */}
+      <PublicSection className="pt-4">
+        <PublicPage>
+          <div className="flex flex-wrap items-end justify-between gap-3">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/55">
+                One-off packages
+              </p>
+              <h2 className="mt-2 font-[family-name:var(--brand-font-display)] text-2xl font-semibold tracking-tight sm:text-3xl">
+                Pay once — hire for a defined batch of roles.
+              </h2>
+            </div>
+            <p className="max-w-md text-sm text-[color:var(--brand-navy)]/65">
+              Flat fee, delivered weekly for the length of the search. Best when you know the roles you need to fill right now.
+            </p>
+          </div>
+        </PublicPage>
+      </PublicSection>
+
       {/* Three tier cards */}
       <PublicSection className="pt-4">
         <PublicPage>
