@@ -68,6 +68,7 @@ import { Route as AuthenticatedMeMessagesRouteImport } from './routes/_authentic
 import { Route as AuthenticatedMeCvRouteImport } from './routes/_authenticated/me.cv'
 import { Route as AuthenticatedMeApplicationsRouteImport } from './routes/_authenticated/me.applications'
 import { Route as AuthenticatedClientTeamRouteImport } from './routes/_authenticated/client.team'
+import { Route as AuthenticatedClientTalentPoolRouteImport } from './routes/_authenticated/client.talent-pool'
 import { Route as AuthenticatedClientTalentMemoryRouteImport } from './routes/_authenticated/client.talent-memory'
 import { Route as AuthenticatedClientSettingsRouteImport } from './routes/_authenticated/client.settings'
 import { Route as AuthenticatedClientPositionsRouteImport } from './routes/_authenticated/client.positions'
@@ -403,6 +404,12 @@ const AuthenticatedClientTeamRoute = AuthenticatedClientTeamRouteImport.update({
   path: '/team',
   getParentRoute: () => AuthenticatedClientRoute,
 } as any)
+const AuthenticatedClientTalentPoolRoute =
+  AuthenticatedClientTalentPoolRouteImport.update({
+    id: '/talent-pool',
+    path: '/talent-pool',
+    getParentRoute: () => AuthenticatedClientRoute,
+  } as any)
 const AuthenticatedClientTalentMemoryRoute =
   AuthenticatedClientTalentMemoryRouteImport.update({
     id: '/talent-memory',
@@ -683,6 +690,7 @@ export interface FileRoutesByFullPath {
   '/client/positions': typeof AuthenticatedClientPositionsRouteWithChildren
   '/client/settings': typeof AuthenticatedClientSettingsRoute
   '/client/talent-memory': typeof AuthenticatedClientTalentMemoryRoute
+  '/client/talent-pool': typeof AuthenticatedClientTalentPoolRoute
   '/client/team': typeof AuthenticatedClientTeamRoute
   '/me/applications': typeof AuthenticatedMeApplicationsRouteWithChildren
   '/me/cv': typeof AuthenticatedMeCvRoute
@@ -771,6 +779,7 @@ export interface FileRoutesByTo {
   '/client/messages': typeof AuthenticatedClientMessagesRoute
   '/client/settings': typeof AuthenticatedClientSettingsRoute
   '/client/talent-memory': typeof AuthenticatedClientTalentMemoryRoute
+  '/client/talent-pool': typeof AuthenticatedClientTalentPoolRoute
   '/client/team': typeof AuthenticatedClientTeamRoute
   '/me/cv': typeof AuthenticatedMeCvRoute
   '/me/messages': typeof AuthenticatedMeMessagesRoute
@@ -869,6 +878,7 @@ export interface FileRoutesById {
   '/_authenticated/client/positions': typeof AuthenticatedClientPositionsRouteWithChildren
   '/_authenticated/client/settings': typeof AuthenticatedClientSettingsRoute
   '/_authenticated/client/talent-memory': typeof AuthenticatedClientTalentMemoryRoute
+  '/_authenticated/client/talent-pool': typeof AuthenticatedClientTalentPoolRoute
   '/_authenticated/client/team': typeof AuthenticatedClientTeamRoute
   '/_authenticated/me/applications': typeof AuthenticatedMeApplicationsRouteWithChildren
   '/_authenticated/me/cv': typeof AuthenticatedMeCvRoute
@@ -968,6 +978,7 @@ export interface FileRouteTypes {
     | '/client/positions'
     | '/client/settings'
     | '/client/talent-memory'
+    | '/client/talent-pool'
     | '/client/team'
     | '/me/applications'
     | '/me/cv'
@@ -1056,6 +1067,7 @@ export interface FileRouteTypes {
     | '/client/messages'
     | '/client/settings'
     | '/client/talent-memory'
+    | '/client/talent-pool'
     | '/client/team'
     | '/me/cv'
     | '/me/messages'
@@ -1153,6 +1165,7 @@ export interface FileRouteTypes {
     | '/_authenticated/client/positions'
     | '/_authenticated/client/settings'
     | '/_authenticated/client/talent-memory'
+    | '/_authenticated/client/talent-pool'
     | '/_authenticated/client/team'
     | '/_authenticated/me/applications'
     | '/_authenticated/me/cv'
@@ -1657,6 +1670,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedClientTeamRouteImport
       parentRoute: typeof AuthenticatedClientRoute
     }
+    '/_authenticated/client/talent-pool': {
+      id: '/_authenticated/client/talent-pool'
+      path: '/talent-pool'
+      fullPath: '/client/talent-pool'
+      preLoaderRoute: typeof AuthenticatedClientTalentPoolRouteImport
+      parentRoute: typeof AuthenticatedClientRoute
+    }
     '/_authenticated/client/talent-memory': {
       id: '/_authenticated/client/talent-memory'
       path: '/talent-memory'
@@ -2097,6 +2117,7 @@ interface AuthenticatedClientRouteChildren {
   AuthenticatedClientPositionsRoute: typeof AuthenticatedClientPositionsRouteWithChildren
   AuthenticatedClientSettingsRoute: typeof AuthenticatedClientSettingsRoute
   AuthenticatedClientTalentMemoryRoute: typeof AuthenticatedClientTalentMemoryRoute
+  AuthenticatedClientTalentPoolRoute: typeof AuthenticatedClientTalentPoolRoute
   AuthenticatedClientTeamRoute: typeof AuthenticatedClientTeamRoute
   AuthenticatedClientIndexRoute: typeof AuthenticatedClientIndexRoute
 }
@@ -2110,6 +2131,7 @@ const AuthenticatedClientRouteChildren: AuthenticatedClientRouteChildren = {
     AuthenticatedClientPositionsRouteWithChildren,
   AuthenticatedClientSettingsRoute: AuthenticatedClientSettingsRoute,
   AuthenticatedClientTalentMemoryRoute: AuthenticatedClientTalentMemoryRoute,
+  AuthenticatedClientTalentPoolRoute: AuthenticatedClientTalentPoolRoute,
   AuthenticatedClientTeamRoute: AuthenticatedClientTeamRoute,
   AuthenticatedClientIndexRoute: AuthenticatedClientIndexRoute,
 }
