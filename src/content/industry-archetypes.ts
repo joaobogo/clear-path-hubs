@@ -1,39 +1,61 @@
 /**
- * Industry Archetypes — composition presets for the public industry pages.
+ * Industry Archetypes — the six canonical page experiences.
  *
- * Replaces the single cloned `industry-template.tsx` layout. Each archetype
- * has a distinct hero composition, section order, and visual rhythm so
- * pages feel native to their industry while sharing one design system.
+ * Every public industry page maps to exactly one archetype. Each archetype
+ * has a distinct hero composition, section order, storytelling section,
+ * process treatment, and (optional) proof layout. Missing data hides
+ * silently — an archetype never invents copy to fill a component.
  *
- * ┌──────────────────────────┬────────────────────────────────────────────────┐
- * │ Archetype                │ Character                                       │
- * ├──────────────────────────┼────────────────────────────────────────────────┤
- * │ cinematic-editorial      │ Full-bleed photograph, quiet chrome, one hero  │
- * │                          │ subject. For guest / consumer / lifestyle.     │
- * │ field-report             │ Blueprint split, KPI tiles, process-first.     │
- * │                          │ For built environment & industrial.            │
- * │ data-dense               │ Dashboard-forward, condensed grid, minimal     │
- * │                          │ photography. For technology & data verticals.  │
- * │ regulated-serif          │ Serif display, credentials-forward, columns    │
- * │                          │ backdrop. For legal, finance, public sector.   │
- * │ human-portrait           │ Warm portrait hero, storytelling copy, roles   │
- * │                          │ before signals. For care & mission verticals.  │
- * │ commercial-momentum      │ Typographic hero + kinetic pace, revenue-tilt. │
- * │                          │ For go-to-market and services.                 │
- * └──────────────────────────┴────────────────────────────────────────────────┘
+ * ┌────────────────────────┬────────────────────────────────────────────────┐
+ * │ Archetype              │ For                                             │
+ * ├────────────────────────┼────────────────────────────────────────────────┤
+ * │ systems-capability     │ Technology, data, AI, security, product        │
+ * │ trust-compliance       │ Healthcare, life sciences, public sector       │
+ * │ risk-judgment          │ Legal, finance, insurance, accounting          │
+ * │ operations-delivery    │ Construction, manufacturing, logistics, energy │
+ * │ service-experience     │ Hospitality, retail, travel, media, consumer   │
+ * │ expertise-growth       │ Consulting, sales, marketing, education, HR    │
+ * └────────────────────────┴────────────────────────────────────────────────┘
  */
 
 export type IndustryArchetype =
-  | "cinematic-editorial"
-  | "field-report"
-  | "data-dense"
-  | "regulated-serif"
-  | "human-portrait"
-  | "commercial-momentum";
+  | "systems-capability"
+  | "trust-compliance"
+  | "risk-judgment"
+  | "operations-delivery"
+  | "service-experience"
+  | "expertise-growth";
+
+/** Higher-level filter families for the /industries hub. Aligned 1:1 with
+ * archetypes so hub filters and page treatments never drift apart. */
+export type IndustryFamily = IndustryArchetype;
+
+export const FAMILY_LABEL: Record<IndustryFamily, string> = {
+  "systems-capability": "Digital Systems",
+  "trust-compliance": "Health & Life Sciences",
+  "risk-judgment": "Finance & Regulated Professions",
+  "operations-delivery": "Built Environment & Operations",
+  "service-experience": "Consumer & Service",
+  "expertise-growth": "Knowledge, Growth & Creative",
+};
+
+export const FAMILY_TAGLINE: Record<IndustryFamily, string> = {
+  "systems-capability":
+    "Technical roles evaluated against real systems built, scale handled and stacks used in production.",
+  "trust-compliance":
+    "Care and mission-critical hiring with credential, licence and continuity checks before shortlist.",
+  "risk-judgment":
+    "Regulated and judgment-heavy roles where jurisdiction, precedent and risk scope must be verified.",
+  "operations-delivery":
+    "Site-aware sourcing for the industries that deliver physical outcomes — safety and cadence first.",
+  "service-experience":
+    "Guest, customer and audience-facing hiring where service moment, coverage and cadence lead.",
+  "expertise-growth":
+    "Roles that compound skills into outcomes — sourcing calibrated to competencies and progression.",
+};
 
 export type IndustrySectionKey =
   | "hero"
-  | "key-tiles"
   | "challenges"
   | "solutions"
   | "role-explorer"
@@ -47,238 +69,190 @@ export type IndustrySectionKey =
   | "faq"
   | "cta";
 
+export type SecondaryCta = {
+  label: "Explore roles" | "See how scoring works" | "View the process";
+  to: string;
+};
+
 export type ArchetypeSpec = {
   archetype: IndustryArchetype;
-  /** Hero variant renderer key. */
-  heroVariant:
-    | "cinematic"
-    | "field-report"
-    | "data-dense"
-    | "regulated-serif"
-    | "human-portrait"
-    | "commercial-momentum";
+  family: IndustryFamily;
+  heroVariant: IndustryArchetype;
+  /** Storytelling section variant. */
+  storytelling: "capability-map" | "credential-gates" | "risk-matrix" | "role-outcome-flow" | "service-moments" | "competency-framework";
   /** Process visual style. */
   processStyle: "numbered-cards" | "stepped-timeline" | "list-compact";
   /** Sections rendered in this exact order — missing data hides silently. */
   sections: IndustrySectionKey[];
-  /** Show the animated key-tiles band (replaces old repeated metric strip). */
-  showKeyTiles: boolean;
-  /** Show the delivery-visual preview block. */
+  /** Explicit product demonstration ("What a shortlist looks like").
+   * Always clearly labelled "Example data" — never claimed as live. */
   showDeliveryPreview: boolean;
-  /** Copy tone descriptor — read by hero variants for micro-copy. */
-  toneLabel: string;
+  /** Fallback secondary CTA for hero. Overridable per industry. */
+  secondaryCta: SecondaryCta;
+  /** Family palette hint (Tailwind tokens live in brand-tokens.css). */
+  palette: "ink-electric" | "ivory-teal" | "paper-navy" | "steel-amber" | "warm-editorial" | "cream-emerald";
 };
 
+const SECONDARY_SCORING: SecondaryCta = { label: "See how scoring works", to: "/how-it-works#scoring" };
+const SECONDARY_ROLES: SecondaryCta = { label: "Explore roles", to: "#role-explorer" };
+const SECONDARY_PROCESS: SecondaryCta = { label: "View the process", to: "#process" };
+
 export const ARCHETYPE_SPECS: Record<IndustryArchetype, ArchetypeSpec> = {
-  "cinematic-editorial": {
-    archetype: "cinematic-editorial",
-    heroVariant: "cinematic",
-    processStyle: "stepped-timeline",
-    showKeyTiles: false,
-    showDeliveryPreview: false,
-    toneLabel: "Editorial",
-    sections: [
-      "hero",
-      "challenges",
-      "role-explorer",
-      "solutions",
-      "signal-explorer",
-      "process",
-      "insights",
-      "related",
-      "faq",
-      "cta",
-    ],
-  },
-  "field-report": {
-    archetype: "field-report",
-    heroVariant: "field-report",
-    processStyle: "numbered-cards",
-    showKeyTiles: true,
-    showDeliveryPreview: false,
-    toneLabel: "Field report",
-    sections: [
-      "hero",
-      "key-tiles",
-      "challenges",
-      "skills-tools",
-      "role-explorer",
-      "process",
-      "solutions",
-      "signal-explorer",
-      "related",
-      "keyword-links",
-      "insights",
-      "cta",
-    ],
-  },
-  "data-dense": {
-    archetype: "data-dense",
-    heroVariant: "data-dense",
+  "systems-capability": {
+    archetype: "systems-capability",
+    family: "systems-capability",
+    heroVariant: "systems-capability",
+    storytelling: "capability-map",
     processStyle: "list-compact",
-    showKeyTiles: true,
+    palette: "ink-electric",
     showDeliveryPreview: true,
-    toneLabel: "Signal-first",
-    sections: [
-      "hero",
-      "key-tiles",
-      "signal-explorer",
-      "role-explorer",
-      "skills-tools",
-      "delivery-preview",
-      "challenges",
-      "solutions",
-      "process",
-      "related",
-      "insights",
-      "faq",
-      "cta",
-    ],
+    secondaryCta: SECONDARY_SCORING,
+    sections: ["hero", "challenges", "role-explorer", "signal-explorer", "skills-tools", "delivery-preview", "process", "related", "insights", "faq", "cta"],
   },
-  "regulated-serif": {
-    archetype: "regulated-serif",
-    heroVariant: "regulated-serif",
-    processStyle: "list-compact",
-    showKeyTiles: false,
-    showDeliveryPreview: true,
-    toneLabel: "Considered",
-    sections: [
-      "hero",
-      "challenges",
-      "skills-tools",
-      "role-explorer",
-      "signal-explorer",
-      "delivery-preview",
-      "solutions",
-      "process",
-      "faq",
-      "related",
-      "insights",
-      "cta",
-    ],
-  },
-  "human-portrait": {
-    archetype: "human-portrait",
-    heroVariant: "human-portrait",
+  "trust-compliance": {
+    archetype: "trust-compliance",
+    family: "trust-compliance",
+    heroVariant: "trust-compliance",
+    storytelling: "credential-gates",
     processStyle: "stepped-timeline",
-    showKeyTiles: false,
+    palette: "ivory-teal",
     showDeliveryPreview: false,
-    toneLabel: "Care & mission",
-    sections: [
-      "hero",
-      "role-explorer",
-      "challenges",
-      "skills-tools",
-      "signal-explorer",
-      "solutions",
-      "process",
-      "insights",
-      "faq",
-      "related",
-      "cta",
-    ],
+    secondaryCta: SECONDARY_PROCESS,
+    sections: ["hero", "role-explorer", "challenges", "skills-tools", "signal-explorer", "solutions", "process", "faq", "insights", "related", "cta"],
   },
-  "commercial-momentum": {
-    archetype: "commercial-momentum",
-    heroVariant: "commercial-momentum",
-    processStyle: "numbered-cards",
-    showKeyTiles: true,
+  "risk-judgment": {
+    archetype: "risk-judgment",
+    family: "risk-judgment",
+    heroVariant: "risk-judgment",
+    storytelling: "risk-matrix",
+    processStyle: "list-compact",
+    palette: "paper-navy",
     showDeliveryPreview: true,
-    toneLabel: "Momentum",
-    sections: [
-      "hero",
-      "key-tiles",
-      "role-explorer",
-      "challenges",
-      "delivery-preview",
-      "signal-explorer",
-      "solutions",
-      "process",
-      "keyword-links",
-      "related",
-      "insights",
-      "cta",
-    ],
+    secondaryCta: SECONDARY_SCORING,
+    sections: ["hero", "challenges", "skills-tools", "role-explorer", "signal-explorer", "delivery-preview", "process", "faq", "solutions", "related", "insights", "cta"],
+  },
+  "operations-delivery": {
+    archetype: "operations-delivery",
+    family: "operations-delivery",
+    heroVariant: "operations-delivery",
+    storytelling: "role-outcome-flow",
+    processStyle: "numbered-cards",
+    palette: "steel-amber",
+    showDeliveryPreview: false,
+    secondaryCta: SECONDARY_PROCESS,
+    sections: ["hero", "challenges", "role-explorer", "skills-tools", "process", "signal-explorer", "solutions", "related", "keyword-links", "insights", "cta"],
+  },
+  "service-experience": {
+    archetype: "service-experience",
+    family: "service-experience",
+    heroVariant: "service-experience",
+    storytelling: "service-moments",
+    processStyle: "stepped-timeline",
+    palette: "warm-editorial",
+    showDeliveryPreview: false,
+    secondaryCta: SECONDARY_ROLES,
+    sections: ["hero", "challenges", "role-explorer", "solutions", "signal-explorer", "process", "insights", "related", "faq", "cta"],
+  },
+  "expertise-growth": {
+    archetype: "expertise-growth",
+    family: "expertise-growth",
+    heroVariant: "expertise-growth",
+    storytelling: "competency-framework",
+    processStyle: "numbered-cards",
+    palette: "cream-emerald",
+    showDeliveryPreview: true,
+    secondaryCta: SECONDARY_ROLES,
+    sections: ["hero", "role-explorer", "challenges", "signal-explorer", "delivery-preview", "solutions", "process", "keyword-links", "related", "insights", "cta"],
   },
 };
 
 /**
- * Map every industry slug (data-side keys) to an archetype. All 57 industries
- * are covered — new industries added to `industries-v2` fall through to
- * `data-dense` if missing here.
+ * Every industry slug (data-side keys from `industries-v2.ts` /
+ * `industries-batch2.ts`) is mapped to one archetype. Missing slugs fall
+ * through to `expertise-growth` — the dev coverage check
+ * (`/dev/industry-coverage`) will warn if that fallback fires.
  */
 export const INDUSTRY_ARCHETYPE: Record<string, IndustryArchetype> = {
-  // Tech & Data — data-dense
-  tech: "data-dense",
-  saas: "data-dense",
-  "data-analytics": "data-dense",
-  "ai-ml": "data-dense",
-  fintech: "data-dense",
-  devops: "data-dense",
-  web3: "data-dense",
-  gaming: "data-dense",
-  "product-management": "data-dense",
-  cybersecurity: "commercial-momentum",
-  telecom: "commercial-momentum",
+  // Systems & Capability
+  tech: "systems-capability",
+  saas: "systems-capability",
+  "data-analytics": "systems-capability",
+  "ai-ml": "systems-capability",
+  fintech: "systems-capability",
+  devops: "systems-capability",
+  web3: "systems-capability",
+  "product-management": "systems-capability",
+  cybersecurity: "systems-capability",
 
-  // Built environment & industrial — field-report
-  construction: "field-report",
-  manufacturing: "field-report",
-  energy: "field-report",
-  "renewable-energy": "field-report",
-  "oil-gas": "field-report",
-  logistics: "field-report",
-  automotive: "field-report",
-  architecture: "field-report",
-  agriculture: "field-report",
-  aviation: "field-report",
-  defense: "field-report",
+  // Trust & Compliance
+  healthcare: "trust-compliance",
+  pharmaceuticals: "trust-compliance",
+  biotech: "trust-compliance",
+  "medical-devices": "trust-compliance",
+  healthtech: "trust-compliance",
+  "public-sector": "trust-compliance",
+  nonprofit: "trust-compliance",
 
-  // Regulated / considered — regulated-serif
-  legal: "regulated-serif",
-  finance: "regulated-serif",
-  "investment-banking": "regulated-serif",
-  insurance: "regulated-serif",
-  "private-equity": "regulated-serif",
-  "wealth-management": "regulated-serif",
-  "venture-capital": "regulated-serif",
-  accounting: "regulated-serif",
-  "public-sector": "regulated-serif",
+  // Risk & Judgment
+  legal: "risk-judgment",
+  finance: "risk-judgment",
+  "investment-banking": "risk-judgment",
+  insurance: "risk-judgment",
+  "private-equity": "risk-judgment",
+  "wealth-management": "risk-judgment",
+  "venture-capital": "risk-judgment",
+  accounting: "risk-judgment",
 
-  // Care & mission — human-portrait
-  healthcare: "human-portrait",
-  nonprofit: "human-portrait",
-  education: "human-portrait",
-  "higher-education": "human-portrait",
-  pharmaceuticals: "human-portrait",
-  biotech: "human-portrait",
-  "medical-devices": "human-portrait",
-  healthtech: "human-portrait",
-  edtech: "human-portrait",
-  "human-resources": "human-portrait",
+  // Operations & Delivery
+  construction: "operations-delivery",
+  manufacturing: "operations-delivery",
+  energy: "operations-delivery",
+  "renewable-energy": "operations-delivery",
+  "oil-gas": "operations-delivery",
+  logistics: "operations-delivery",
+  automotive: "operations-delivery",
+  architecture: "operations-delivery",
+  agriculture: "operations-delivery",
+  aviation: "operations-delivery",
+  defense: "operations-delivery",
+  "real-estate": "operations-delivery",
+  proptech: "operations-delivery",
+  telecom: "operations-delivery",
 
-  // Go-to-market & services — commercial-momentum
-  sales: "commercial-momentum",
-  marketing: "commercial-momentum",
-  consulting: "commercial-momentum",
-  "staffing-agencies": "commercial-momentum",
-  ecommerce: "commercial-momentum",
-  "real-estate": "commercial-momentum",
-  proptech: "commercial-momentum",
-  "customer-success": "commercial-momentum",
-  design: "commercial-momentum",
+  // Service & Experience
+  hospitality: "service-experience",
+  retail: "service-experience",
+  travel: "service-experience",
+  sports: "service-experience",
+  fashion: "service-experience",
+  "food-beverage": "service-experience",
+  media: "service-experience",
+  ecommerce: "service-experience",
 
-  // Consumer & lifestyle — cinematic-editorial
-  hospitality: "cinematic-editorial",
-  retail: "cinematic-editorial",
-  media: "cinematic-editorial",
-  travel: "cinematic-editorial",
-  sports: "cinematic-editorial",
-  fashion: "cinematic-editorial",
-  "food-beverage": "cinematic-editorial",
+  // Expertise & Growth
+  sales: "expertise-growth",
+  marketing: "expertise-growth",
+  consulting: "expertise-growth",
+  "staffing-agencies": "expertise-growth",
+  "customer-success": "expertise-growth",
+  design: "expertise-growth",
+  education: "expertise-growth",
+  "higher-education": "expertise-growth",
+  edtech: "expertise-growth",
+  "human-resources": "expertise-growth",
+  gaming: "expertise-growth",
 };
 
 export function getArchetypeForSlug(slug: string): ArchetypeSpec {
-  const key = INDUSTRY_ARCHETYPE[slug] ?? "data-dense";
+  const key = INDUSTRY_ARCHETYPE[slug] ?? "expertise-growth";
   return ARCHETYPE_SPECS[key];
 }
+
+export const ALL_FAMILIES: IndustryFamily[] = [
+  "systems-capability",
+  "trust-compliance",
+  "risk-judgment",
+  "operations-delivery",
+  "service-experience",
+  "expertise-growth",
+];
