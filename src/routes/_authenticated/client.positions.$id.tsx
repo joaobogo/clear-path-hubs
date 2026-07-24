@@ -20,6 +20,7 @@ import {
  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { AlertCircle, MessageSquare, Users } from "lucide-react";
+import { RoleBlueprint } from "@/components/product/role-blueprint";
 
 export const Route = createFileRoute("/_authenticated/client/positions/$id")({
  head: () => ({
@@ -527,25 +528,8 @@ function PositionDetailPage() {
  )}
  </section>
 
- {/* 6. Role blueprint */}
- <section aria-label="Role blueprint" className="rounded-xl border bg-card p-4">
- <h2 className="text-lg font-semibold mb-3">Role blueprint</h2>
- {position.description && (
- <div className="mb-4">
- <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground mb-1">
- Summary
- </div>
- <p className="text-sm whitespace-pre-wrap text-foreground/90">
- {position.description}
- </p>
- </div>
- )}
- <div className="grid gap-4 md:grid-cols-3">
- <BlueprintList title="Must-haves" items={mustHaves} />
- <BlueprintList title="Nice-to-haves" items={nice} />
- <BlueprintList title="Dealbreakers" items={dealbreakers} />
- </div>
- </section>
+  {/* 6. Role blueprint — ATS-grade source of truth */}
+ <RoleBlueprint position={position} activity={activity} />
 
  {/* 7. Hiring process */}
  <section aria-label="Hiring process" className="rounded-xl border bg-card p-4">
