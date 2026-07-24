@@ -1440,8 +1440,9 @@ function Home() {
             <SectionHead
               eyebrow="What it costs"
               title="Do the math on your next hire."
-              lead="Compare the flat TaaSFlow subscription against contingency placement fees and internal recruiter loading for your actual role mix."
+              lead="Compare package-based TaaSFlow pricing against contingency placement fees and internal recruiter loading — for your actual role mix. Numbers reference SHRM & Ashby 2025 benchmarks; adjust to your reality."
             />
+
             <div className="mt-8">
               <HomeCalculator />
             </div>
