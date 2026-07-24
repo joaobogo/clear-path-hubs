@@ -260,13 +260,13 @@ export function WorkspaceShell(props: WorkspaceShellProps) {
 
   return (
     <div
-      className="flex min-h-screen w-full"
+      className="flex min-h-dvh w-full"
       style={{ background: "var(--taas-shell-bg-gradient)" }}
     >
       {/* Desktop sidebar */}
       <aside
         className={cn(
-          "sticky top-0 hidden h-screen shrink-0 flex-col border-r md:flex transition-[width] duration-200 ease-out",
+          "sticky top-0 hidden h-dvh shrink-0 flex-col border-r md:flex transition-[width] duration-200 ease-out",
           collapsed ? "w-14" : "w-64",
         )}
         style={{
