@@ -24,10 +24,8 @@ describe("scoring engine — unknown vs missing (F-003)", () => {
   });
 
   it("substantial CV with no keyword match returns 'missing' (not unknown)", () => {
-    // >300 chars, >40 tokens, but no react/typescript/postgres/aws terms.
-    const cv = Array.from({ length: 12 }, () =>
-      "Built distributed microservices across event-driven pipelines with strong ownership on backend reliability, latency, and observability.",
-    ).join(" ");
+    // Rich, varied CV (>300 chars, >40 unique tokens) with none of react/typescript/postgres/aws.
+    const cv = `Senior backend engineer with 9 years shipping distributed microservices across event-driven pipelines. Owned reliability, latency budgets, and observability tooling. Deep experience with Kafka streams, gRPC contracts, protobuf schemas, service meshes, canary deployments, blue green rollouts, feature flags, chaos testing, load shedding, backpressure, saga orchestration, idempotency keys, retries, circuit breakers, and rate limiting. Mentored junior engineers, drove incident reviews, wrote architecture decision records, ran migration playbooks, and improved deploy frequency across four product squads.`;
     const r = scoreCandidate({ cv_text: cv, requirements: reqs, screening: [] });
     const req1 = r.requirement_assessment.find((a) => a.id === "r1");
     expect(req1?.status).toBe("missing");
