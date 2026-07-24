@@ -68,8 +68,8 @@ function TasksPage() {
   const [assignee, setAssignee] = useState<AssigneeFilter>("any");
 
   const ctxQuery = useQuery({
-    queryKey: ["client-context", orgSearch?.org ?? null],
-    queryFn: () => ctxFn({ data: orgSearch?.org ? { orgId: orgSearch.org } : {} }),
+    queryKey: ["client-context", orgSearch ?? null],
+    queryFn: () => ctxFn({ data: orgSearch ? { orgId: orgSearch } : {} }),
   });
   const orgId = ctxQuery.data?.active?.organization_id ?? null;
 
