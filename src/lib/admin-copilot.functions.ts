@@ -9,6 +9,13 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
+import {
+  CONFIDENCE_INSTRUCTIONS,
+  auditAssistantEvent,
+  extractConfidence,
+  resolveConfidence,
+  type Confidence,
+} from "./assistant-audit.server";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 type AnyRow = any;
@@ -32,7 +39,7 @@ Action Mode (drafts only — nothing is sent until the user approves):
 - Never claim a message was sent. Say "I've prepared the draft — review and click Approve to send."
 
 Coverage:
-- summarize_client_portfolio, summarize_candidate_history, blocked_roles, stalled_interviews, missing_approvals, rediscovery_candidates, source_performance.`;
+- summarize_client_portfolio, summarize_candidate_history, blocked_roles, stalled_interviews, missing_approvals, rediscovery_candidates, source_performance.` + CONFIDENCE_INSTRUCTIONS;
 
 const TOOL_DEFS: AnyRow[] = [
   {
