@@ -58,9 +58,15 @@ const SCRIPT = `
   var KEY=${JSON.stringify(SESSION_KEY)};
   var el=document.getElementById('tf-entry-loader');
   if(!el) return;
-  try{ if(sessionStorage.getItem(KEY)){ el.parentNode&&el.parentNode.removeChild(el); return; } }catch(e){}
+  function kill(){ try{ sessionStorage.setItem(KEY,'1'); }catch(e){} if(el&&el.parentNode) el.parentNode.removeChild(el); }
+  // Only show the branded entry animation on the home route. Any other
+  // page (hard refresh on /jobs, /pricing, dashboard, etc.) dismisses
+  // immediately so the loader can never trap navigation.
+  if(location.pathname!=='/'){ kill(); return; }
+  try{ if(sessionStorage.getItem(KEY)){ kill(); return; } }catch(e){}
   var started=performance.now();
   var MAX=2500, MIN=550, FAST=180, EXIT=380;
+
   var reduced=(matchMedia('(prefers-reduced-motion: reduce)').matches);
   var stages=el.querySelectorAll('.tf-stage');
   var links=el.querySelectorAll('.tf-link');
