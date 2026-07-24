@@ -14,6 +14,7 @@ import { Route as TrustRouteImport } from './routes/trust'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as TalentNetworkRouteImport } from './routes/talent-network'
 import { Route as TalentMarketplaceRouteImport } from './routes/talent-marketplace'
+import { Route as SystemRouteImport } from './routes/system'
 import { Route as SolutionsRouteImport } from './routes/solutions'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SitemapRouteImport } from './routes/sitemap'
@@ -146,6 +147,11 @@ const TalentNetworkRoute = TalentNetworkRouteImport.update({
 const TalentMarketplaceRoute = TalentMarketplaceRouteImport.update({
   id: '/talent-marketplace',
   path: '/talent-marketplace',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SystemRoute = SystemRouteImport.update({
+  id: '/system',
+  path: '/system',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SolutionsRoute = SolutionsRouteImport.update({
@@ -764,6 +770,7 @@ export interface FileRoutesByFullPath {
   '/sitemap': typeof SitemapRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/solutions': typeof SolutionsRoute
+  '/system': typeof SystemRoute
   '/talent-marketplace': typeof TalentMarketplaceRoute
   '/talent-network': typeof TalentNetworkRoute
   '/terms': typeof TermsRoute
@@ -878,6 +885,7 @@ export interface FileRoutesByTo {
   '/sitemap': typeof SitemapRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/solutions': typeof SolutionsRoute
+  '/system': typeof SystemRoute
   '/talent-marketplace': typeof TalentMarketplaceRoute
   '/talent-network': typeof TalentNetworkRoute
   '/terms': typeof TermsRoute
@@ -984,6 +992,7 @@ export interface FileRoutesById {
   '/sitemap': typeof SitemapRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/solutions': typeof SolutionsRoute
+  '/system': typeof SystemRoute
   '/talent-marketplace': typeof TalentMarketplaceRoute
   '/talent-network': typeof TalentNetworkRoute
   '/terms': typeof TermsRoute
@@ -1100,6 +1109,7 @@ export interface FileRouteTypes {
     | '/sitemap'
     | '/sitemap.xml'
     | '/solutions'
+    | '/system'
     | '/talent-marketplace'
     | '/talent-network'
     | '/terms'
@@ -1214,6 +1224,7 @@ export interface FileRouteTypes {
     | '/sitemap'
     | '/sitemap.xml'
     | '/solutions'
+    | '/system'
     | '/talent-marketplace'
     | '/talent-network'
     | '/terms'
@@ -1319,6 +1330,7 @@ export interface FileRouteTypes {
     | '/sitemap'
     | '/sitemap.xml'
     | '/solutions'
+    | '/system'
     | '/talent-marketplace'
     | '/talent-network'
     | '/terms'
@@ -1435,6 +1447,7 @@ export interface RootRouteChildren {
   SitemapRoute: typeof SitemapRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SolutionsRoute: typeof SolutionsRoute
+  SystemRoute: typeof SystemRoute
   TalentMarketplaceRoute: typeof TalentMarketplaceRoute
   TalentNetworkRoute: typeof TalentNetworkRoute
   TermsRoute: typeof TermsRoute
@@ -1497,6 +1510,13 @@ declare module '@tanstack/react-router' {
       path: '/talent-marketplace'
       fullPath: '/talent-marketplace'
       preLoaderRoute: typeof TalentMarketplaceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/system': {
+      id: '/system'
+      path: '/system'
+      fullPath: '/system'
+      preLoaderRoute: typeof SystemRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/solutions': {
@@ -2580,6 +2600,7 @@ const rootRouteChildren: RootRouteChildren = {
   SitemapRoute: SitemapRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   SolutionsRoute: SolutionsRoute,
+  SystemRoute: SystemRoute,
   TalentMarketplaceRoute: TalentMarketplaceRoute,
   TalentNetworkRoute: TalentNetworkRoute,
   TermsRoute: TermsRoute,
