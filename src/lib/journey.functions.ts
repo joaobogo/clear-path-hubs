@@ -89,30 +89,59 @@ export const getCandidateJourney = createServerFn({ method: "GET" })
     let candidateMatchId = data.candidateMatchId ?? null;
     let candidateProfileId: string | null = null;
     let positionId: string | null = null;
+    let organizationId: string | null = null;
 
     if (candidateMatchId && !applicationId) {
       const { data: m } = await supabase
         .from("candidate_matches")
-        .select("id, application_id, candidate_profile_id, position_id")
+        .select("id, application_id, candidate_profile_id, position_id, organization_id, client_visibility")
         .eq("id", candidateMatchId)
         .maybeSingle();
       if (!m) return { events: [] };
       applicationId = m.application_id;
       candidateProfileId = m.candidate_profile_id;
       positionId = m.position_id;
+      organizationId = m.organization_id;
     }
 
     // Load application
     const { data: app } = await supabase
       .from("applications")
       .select(
-        "id, candidate_profile_id, position_id, source, source_kind, source_channel, applied_at, withdrawn_at, outreach_sent_at, outreach_replied_at, created_at",
+        "id, candidate_profile_id, position_id, organization_id, source, source_kind, source_channel, applied_at, withdrawn_at, outreach_sent_at, outreach_replied_at, created_at",
       )
       .eq("id", applicationId!)
       .maybeSingle();
     if (!app) return { events: [] };
     candidateProfileId = candidateProfileId ?? app.candidate_profile_id;
     positionId = positionId ?? app.position_id;
+    organizationId = organizationId ?? app.organization_id;
+
+    // Tenant/role gate. Staff can read any journey; non-staff must be a member of
+    // the owning org AND (for non-editors) the underlying match must be visible.
+    if (organizationId) {
+      const [{ data: isStaff }, { data: isMember }] = await Promise.all([
+        supabase.rpc("is_platform_staff", { _user: context.userId }),
+        supabase.rpc("is_org_member", { _user: context.userId, _org: organizationId }),
+      ]);
+      if (!isStaff && !isMember) return { events: [] };
+      if (!isStaff) {
+        const { data: isEditor } = await supabase.rpc("is_org_editor", {
+          _user: context.userId,
+          _org: organizationId,
+        });
+        if (!isEditor) {
+          // Viewer role: only expose journey when the match is client-visible.
+          const { data: vm } = await supabase
+            .from("candidate_matches")
+            .select("id, client_visibility")
+            .eq("application_id", applicationId!)
+            .eq("client_visibility", "visible")
+            .maybeSingle();
+          if (!vm) return { events: [] };
+        }
+      }
+    }
 
     // Load match (screened/enriched/delivered/stage)
     const { data: match } = await supabase
