@@ -430,7 +430,7 @@ export function RoiCalculator({
 
         {/* Results */}
         <div
-          className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-5 sm:p-6"
+          className="order-1 rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-5 sm:p-6 lg:order-2"
           aria-live="polite"
           aria-atomic="true"
         >
