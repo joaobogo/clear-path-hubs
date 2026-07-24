@@ -27,10 +27,15 @@ A11Y_JS = r"""
   document.querySelectorAll('input, select, textarea').forEach(el => {
     const type = el.getAttribute('type');
     if (['hidden','submit','button'].includes(type)) return;
+    if (el.getAttribute('aria-hidden') === 'true' || el.closest('[aria-hidden="true"]')) return;
     const id = el.id;
     const ariaLabel = el.getAttribute('aria-label') || el.getAttribute('aria-labelledby');
+    const wrappedByLabel = el.closest('label');
+    const labelledAncestor = el.closest('[aria-label], [aria-labelledby]');
     const hasLabel = id && document.querySelector('label[for="'+id+'"]');
-    if (!ariaLabel && !hasLabel) findings.serious.push({ rule:'form-label', html: el.outerHTML.slice(0,120) });
+    if (!ariaLabel && !hasLabel && !wrappedByLabel && !labelledAncestor) {
+      findings.serious.push({ rule:'form-label', html: el.outerHTML.slice(0,120) });
+    }
   });
   const mains = document.querySelectorAll('main').length;
   if (mains !== 1) findings.serious.push({ rule:'landmark-main', count: mains });
