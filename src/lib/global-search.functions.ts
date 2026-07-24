@@ -25,7 +25,8 @@ export type SearchResultType =
   | "client"
   | "position"
   | "candidate"
-  | "message";
+  | "message"
+  | "task";
 
 export type SearchResult = {
   type: SearchResultType;
@@ -43,6 +44,7 @@ export type SearchResponse = {
     positions: SearchResult[];
     candidates: SearchResult[];
     messages: SearchResult[];
+    tasks: SearchResult[];
   };
 };
 
