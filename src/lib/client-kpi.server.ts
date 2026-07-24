@@ -486,6 +486,32 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
 
   const fit = toFitPresentation(run?.fit_label ?? null, run?.score ?? null);
 
+  const roleComp = normCompensationRange(pos?.compensation);
+  const candExpect = normCandidateExpectation(cp.compensation_preferences);
+  const verdict = classifyCompensation(roleComp, candExpect);
+  const compNote =
+    verdict === "aligned"
+      ? "Candidate expectation sits inside the approved role range."
+      : verdict === "over"
+        ? "Candidate expectation exceeds the current range — negotiate or re-scope."
+        : verdict === "under"
+          ? "Candidate expectation is below range — validate before making an offer."
+          : candExpect.text
+            ? "Range not published for this role — confirm alignment directly."
+            : "Candidate has not shared an expectation yet.";
+
+  const app = (row as AnyRow).applications ?? null;
+  const source = normSourceLabel(app?.source);
+  const source_trace: ClientCandidateDTO["source_trace"] = {
+    source_label: source.label,
+    applied_at: app?.applied_at ?? app?.created_at ?? null,
+    application_reference: app?.reference_code ?? null,
+    channel: source.channel,
+    notes: null,
+  };
+
+  const audit_trail = buildAuditTrail((row as AnyRow).audit_events);
+
   return {
     match_id: row.id,
     stage: row.stage,
@@ -523,6 +549,16 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
     certifications,
     work_authorization: workAuth,
     screening_answers: normScreeningAnswers(row.application_answers),
+    compensation_alignment: {
+      role_range: roleComp.role_range,
+      candidate_expectation: candExpect.text,
+      currency: roleComp.currency ?? candExpect.currency,
+      cadence: roleComp.cadence,
+      verdict,
+      note: compNote,
+    },
+    source_trace,
+    audit_trail,
   };
 }
 
