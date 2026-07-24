@@ -57,6 +57,11 @@ import {
  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
+import {
+  TagSilverMedalistDialog,
+  SilverMedalistBadge,
+} from "@/components/client/tag-silver-medalist-dialog";
+import { Award } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/client/candidates/$id")({
  head: () => ({
