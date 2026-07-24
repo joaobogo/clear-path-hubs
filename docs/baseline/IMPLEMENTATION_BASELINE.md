@@ -340,3 +340,14 @@ foundation"). Recommended shape for the next prompt:
 - Baseline technical failures known — ✅ (§9).
 
 Next prompt can safely start Phase 1 improvements against this baseline.
+
+## Prompt 2 — Canonical business rules
+
+- Added `src/config/business-rules.ts` — typed defaults + Zod validation for delivery, retention, packages, subscriptions, scoring dimensions/bands, CTA destinations, contacts, legal paths. Weights must sum to 100; role/subscription bands cannot overlap; all six CTA destinations required.
+- Runtime overrides in `public.business_rules_overrides` (platform_admin only); every write appended to `public.business_rules_audit`.
+- Server API in `src/lib/business-rules.functions.ts`: `getBusinessRules`, `listBusinessRuleOverrides`, `setBusinessRuleOverride`, `clearBusinessRuleOverride`.
+- Admin editor at `/admin/business-rules` (linked from admin overview). JSON-per-section edit with validation before save; reset-to-default per key; recent-changes log.
+- Reconciled prior copy conflicts by canonicalizing:
+  - Delivery first shortlist → **within 14 days** (was "48 hours" / "one week" / "7–14 days" in various places).
+  - Retention narrative → 3 months workspace access + candidates owned forever via talent pool (was "3 months" vs "forever" contradictions).
+- Updated occurrences in `intake.tsx`, `platform.tsx`, `index.tsx`, `knowledge-base.tsx`, `straight-answers.tsx`.

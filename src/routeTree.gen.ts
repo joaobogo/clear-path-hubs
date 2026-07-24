@@ -100,6 +100,7 @@ import { Route as AuthenticatedAdminCopilotRouteImport } from './routes/_authent
 import { Route as AuthenticatedAdminClients_newRouteImport } from './routes/_authenticated/admin.clients_new'
 import { Route as AuthenticatedAdminClientsRouteImport } from './routes/_authenticated/admin.clients'
 import { Route as AuthenticatedAdminCandidatesRouteImport } from './routes/_authenticated/admin.candidates'
+import { Route as AuthenticatedAdminBusinessRulesRouteImport } from './routes/_authenticated/admin.business-rules'
 import { Route as AuthenticatedMeApplicationsIndexRouteImport } from './routes/_authenticated/me.applications.index'
 import { Route as AuthenticatedClientSharesIndexRouteImport } from './routes/_authenticated/client.shares.index'
 import { Route as AuthenticatedClientPositionsIndexRouteImport } from './routes/_authenticated/client.positions.index'
@@ -601,6 +602,12 @@ const AuthenticatedAdminCandidatesRoute =
     path: '/candidates',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminBusinessRulesRoute =
+  AuthenticatedAdminBusinessRulesRouteImport.update({
+    id: '/business-rules',
+    path: '/business-rules',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedMeApplicationsIndexRoute =
   AuthenticatedMeApplicationsIndexRouteImport.update({
     id: '/',
@@ -768,6 +775,7 @@ export interface FileRoutesByFullPath {
   '/blog/': typeof BlogIndexRoute
   '/industries/': typeof IndustriesIndexRoute
   '/jobs/': typeof JobsIndexRoute
+  '/admin/business-rules': typeof AuthenticatedAdminBusinessRulesRoute
   '/admin/candidates': typeof AuthenticatedAdminCandidatesRouteWithChildren
   '/admin/clients': typeof AuthenticatedAdminClientsRouteWithChildren
   '/admin/clients_new': typeof AuthenticatedAdminClients_newRoute
@@ -877,6 +885,7 @@ export interface FileRoutesByTo {
   '/blog': typeof BlogIndexRoute
   '/industries': typeof IndustriesIndexRoute
   '/jobs': typeof JobsIndexRoute
+  '/admin/business-rules': typeof AuthenticatedAdminBusinessRulesRoute
   '/admin/clients_new': typeof AuthenticatedAdminClients_newRoute
   '/admin/copilot': typeof AuthenticatedAdminCopilotRoute
   '/admin/health': typeof AuthenticatedAdminHealthRoute
@@ -984,6 +993,7 @@ export interface FileRoutesById {
   '/blog/': typeof BlogIndexRoute
   '/industries/': typeof IndustriesIndexRoute
   '/jobs/': typeof JobsIndexRoute
+  '/_authenticated/admin/business-rules': typeof AuthenticatedAdminBusinessRulesRoute
   '/_authenticated/admin/candidates': typeof AuthenticatedAdminCandidatesRouteWithChildren
   '/_authenticated/admin/clients': typeof AuthenticatedAdminClientsRouteWithChildren
   '/_authenticated/admin/clients_new': typeof AuthenticatedAdminClients_newRoute
@@ -1098,6 +1108,7 @@ export interface FileRouteTypes {
     | '/blog/'
     | '/industries/'
     | '/jobs/'
+    | '/admin/business-rules'
     | '/admin/candidates'
     | '/admin/clients'
     | '/admin/clients_new'
@@ -1207,6 +1218,7 @@ export interface FileRouteTypes {
     | '/blog'
     | '/industries'
     | '/jobs'
+    | '/admin/business-rules'
     | '/admin/clients_new'
     | '/admin/copilot'
     | '/admin/health'
@@ -1313,6 +1325,7 @@ export interface FileRouteTypes {
     | '/blog/'
     | '/industries/'
     | '/jobs/'
+    | '/_authenticated/admin/business-rules'
     | '/_authenticated/admin/candidates'
     | '/_authenticated/admin/clients'
     | '/_authenticated/admin/clients_new'
@@ -2075,6 +2088,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminCandidatesRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/business-rules': {
+      id: '/_authenticated/admin/business-rules'
+      path: '/business-rules'
+      fullPath: '/admin/business-rules'
+      preLoaderRoute: typeof AuthenticatedAdminBusinessRulesRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/me/applications/': {
       id: '/_authenticated/me/applications/'
       path: '/'
@@ -2317,6 +2337,7 @@ const AuthenticatedAdminPositionsRouteWithChildren =
   )
 
 interface AuthenticatedAdminRouteChildren {
+  AuthenticatedAdminBusinessRulesRoute: typeof AuthenticatedAdminBusinessRulesRoute
   AuthenticatedAdminCandidatesRoute: typeof AuthenticatedAdminCandidatesRouteWithChildren
   AuthenticatedAdminClientsRoute: typeof AuthenticatedAdminClientsRouteWithChildren
   AuthenticatedAdminClients_newRoute: typeof AuthenticatedAdminClients_newRoute
@@ -2335,6 +2356,7 @@ interface AuthenticatedAdminRouteChildren {
 }
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
+  AuthenticatedAdminBusinessRulesRoute: AuthenticatedAdminBusinessRulesRoute,
   AuthenticatedAdminCandidatesRoute:
     AuthenticatedAdminCandidatesRouteWithChildren,
   AuthenticatedAdminClientsRoute: AuthenticatedAdminClientsRouteWithChildren,

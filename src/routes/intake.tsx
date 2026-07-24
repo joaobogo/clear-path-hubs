@@ -24,13 +24,13 @@ export const Route = createFileRoute("/intake")({
       {
         name: "description",
         content:
-          "Tell us who you need to hire. TaaSFlow returns evidence-scored shortlists — usually within 48 hours.",
+          "Tell us who you need to hire. TaaSFlow returns evidence-scored shortlists — with a first ranked shortlist within 14 days.",
       },
       { property: "og:title", content: "Start a hiring engagement — TaaSFlow" },
       {
         property: "og:description",
         content:
-          "Tell us who you need to hire. TaaSFlow returns evidence-scored shortlists — usually within 48 hours.",
+          "Tell us who you need to hire. TaaSFlow returns evidence-scored shortlists — with a first ranked shortlist within 14 days.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -456,7 +456,7 @@ function IntakePage() {
       width="lg"
       eyebrow="Employer intake"
       title="Start a hiring engagement"
-      description="Tell us who you need to hire. TaaSFlow returns evidence-scored shortlists — usually within 48 hours. No account required. Your progress is saved as you go."
+      description="Tell us who you need to hire. TaaSFlow returns evidence-scored shortlists — with a first ranked shortlist within 14 days. No account required. Your progress is saved as you go."
     >
       <div className="mb-6" aria-label="Progress">
         <Progress value={progress} />
