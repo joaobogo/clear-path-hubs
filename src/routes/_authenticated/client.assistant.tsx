@@ -53,6 +53,17 @@ interface Citation {
   label: string;
   href?: string;
 }
+interface ProposedAction {
+  kind: "navigate" | "draft_interview_request";
+  action_id: string;
+  label: string;
+  description: string;
+  href?: string;
+  match_id?: string;
+  candidate_name?: string;
+  position_title?: string;
+  draft_body?: string;
+}
 interface MessageRow {
   id: string;
   role: "user" | "assistant" | "system";
@@ -62,6 +73,7 @@ interface MessageRow {
     args: Record<string, string | number | boolean | null>;
   }>;
   citations: Citation[];
+  proposed_actions?: ProposedAction[];
   created_at: string;
 }
 
