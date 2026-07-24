@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { marketingHead } from "@/lib/marketing/head";
-import { PublicPage, PublicSection } from "@/components/marketing/site-shell";
+import { PublicPage, PublicSection, SiteShell } from "@/components/marketing/site-shell";
 import {
   Accordion,
   AccordionContent,
