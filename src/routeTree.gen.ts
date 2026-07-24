@@ -52,6 +52,7 @@ import { Route as DevCatalogueRouteImport } from './routes/dev.catalogue'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as AuthenticatedMeRouteImport } from './routes/_authenticated/me'
 import { Route as AuthenticatedClientRouteImport } from './routes/_authenticated/client'
+import { Route as AuthenticatedBoardroomRouteImport } from './routes/_authenticated/boardroom'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as JobsIdIndexRouteImport } from './routes/jobs.$id.index'
 import { Route as AuthenticatedMeIndexRouteImport } from './routes/_authenticated/me.index'
@@ -330,6 +331,11 @@ const AuthenticatedMeRoute = AuthenticatedMeRouteImport.update({
 const AuthenticatedClientRoute = AuthenticatedClientRouteImport.update({
   id: '/client',
   path: '/client',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedBoardroomRoute = AuthenticatedBoardroomRouteImport.update({
+  id: '/boardroom',
+  path: '/boardroom',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
@@ -736,6 +742,7 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/unauthorized': typeof UnauthorizedRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
+  '/boardroom': typeof AuthenticatedBoardroomRoute
   '/client': typeof AuthenticatedClientRouteWithChildren
   '/me': typeof AuthenticatedMeRouteWithChildren
   '/blog/$slug': typeof BlogSlugRoute
@@ -844,6 +851,7 @@ export interface FileRoutesByTo {
   '/talent-network': typeof TalentNetworkRoute
   '/terms': typeof TermsRoute
   '/unauthorized': typeof UnauthorizedRoute
+  '/boardroom': typeof AuthenticatedBoardroomRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/dev/catalogue': typeof DevCatalogueRoute
   '/industries/$slug': typeof IndustriesSlugRoute
@@ -946,6 +954,7 @@ export interface FileRoutesById {
   '/terms': typeof TermsRoute
   '/unauthorized': typeof UnauthorizedRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
+  '/_authenticated/boardroom': typeof AuthenticatedBoardroomRoute
   '/_authenticated/client': typeof AuthenticatedClientRouteWithChildren
   '/_authenticated/me': typeof AuthenticatedMeRouteWithChildren
   '/blog/$slug': typeof BlogSlugRoute
@@ -1057,6 +1066,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/unauthorized'
     | '/admin'
+    | '/boardroom'
     | '/client'
     | '/me'
     | '/blog/$slug'
@@ -1165,6 +1175,7 @@ export interface FileRouteTypes {
     | '/talent-network'
     | '/terms'
     | '/unauthorized'
+    | '/boardroom'
     | '/blog/$slug'
     | '/dev/catalogue'
     | '/industries/$slug'
@@ -1266,6 +1277,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/unauthorized'
     | '/_authenticated/admin'
+    | '/_authenticated/boardroom'
     | '/_authenticated/client'
     | '/_authenticated/me'
     | '/blog/$slug'
@@ -1699,6 +1711,13 @@ declare module '@tanstack/react-router' {
       path: '/client'
       fullPath: '/client'
       preLoaderRoute: typeof AuthenticatedClientRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/boardroom': {
+      id: '/_authenticated/boardroom'
+      path: '/boardroom'
+      fullPath: '/boardroom'
+      preLoaderRoute: typeof AuthenticatedBoardroomRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/admin': {
@@ -2419,12 +2438,14 @@ const AuthenticatedMeRouteWithChildren = AuthenticatedMeRoute._addFileChildren(
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRouteWithChildren
+  AuthenticatedBoardroomRoute: typeof AuthenticatedBoardroomRoute
   AuthenticatedClientRoute: typeof AuthenticatedClientRouteWithChildren
   AuthenticatedMeRoute: typeof AuthenticatedMeRouteWithChildren
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRouteWithChildren,
+  AuthenticatedBoardroomRoute: AuthenticatedBoardroomRoute,
   AuthenticatedClientRoute: AuthenticatedClientRouteWithChildren,
   AuthenticatedMeRoute: AuthenticatedMeRouteWithChildren,
 }
