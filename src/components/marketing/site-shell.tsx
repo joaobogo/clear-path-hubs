@@ -43,14 +43,25 @@ function BrandMark({ compact = false }: { compact?: boolean }) {
   // that so the browser reserves enough horizontal space for the full wordmark.
   const width = Math.round(height * 4.15);
   return (
-    <Link to="/" className="inline-flex items-center gap-2 rounded-md" aria-label="TaaSFlow — Home">
+    <Link to="/" className="inline-flex min-w-28 items-center rounded-md" aria-label="TaaSFlow — Home">
       <img
         src={brand.logos.primary}
-        alt="TaaSFlow"
+        alt=""
         width={width}
         height={height}
+        aria-hidden="true"
         className={cn(compact ? "h-7" : "h-8", "w-auto shrink-0")}
       />
+      <span className="sr-only">TaaSFlow</span>
+      <span
+        aria-hidden="true"
+        className={cn(
+          "-ml-[999px] inline-flex items-baseline font-black leading-none text-[color:var(--brand-navy)]",
+          compact ? "text-xl" : "text-2xl",
+        )}
+      >
+        TAAS<span className="font-semibold italic text-[color:var(--brand-ocean)]">Flow</span>
+      </span>
     </Link>
   );
 }
