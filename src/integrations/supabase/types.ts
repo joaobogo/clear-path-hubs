@@ -4663,6 +4663,154 @@ export type Database = {
           },
         ]
       }
+      shortlist_share_comments: {
+        Row: {
+          author_email: string | null
+          author_name: string
+          body: string
+          created_at: string
+          id: string
+          match_id: string | null
+          sentiment: string | null
+          share_id: string
+        }
+        Insert: {
+          author_email?: string | null
+          author_name: string
+          body: string
+          created_at?: string
+          id?: string
+          match_id?: string | null
+          sentiment?: string | null
+          share_id: string
+        }
+        Update: {
+          author_email?: string | null
+          author_name?: string
+          body?: string
+          created_at?: string
+          id?: string
+          match_id?: string | null
+          sentiment?: string | null
+          share_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shortlist_share_comments_share_id_fkey"
+            columns: ["share_id"]
+            isOneToOne: false
+            referencedRelation: "shortlist_shares"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      shortlist_shares: {
+        Row: {
+          allow_comments: boolean
+          created_at: string
+          created_by: string
+          default_mode: Database["public"]["Enums"]["shortlist_share_mode"]
+          expires_at: string
+          id: string
+          last_viewed_at: string | null
+          match_ids: string[]
+          message: string | null
+          organization_id: string
+          position_id: string | null
+          revoked_at: string | null
+          title: string | null
+          token: string
+          updated_at: string
+          view_count: number
+        }
+        Insert: {
+          allow_comments?: boolean
+          created_at?: string
+          created_by: string
+          default_mode?: Database["public"]["Enums"]["shortlist_share_mode"]
+          expires_at: string
+          id?: string
+          last_viewed_at?: string | null
+          match_ids: string[]
+          message?: string | null
+          organization_id: string
+          position_id?: string | null
+          revoked_at?: string | null
+          title?: string | null
+          token: string
+          updated_at?: string
+          view_count?: number
+        }
+        Update: {
+          allow_comments?: boolean
+          created_at?: string
+          created_by?: string
+          default_mode?: Database["public"]["Enums"]["shortlist_share_mode"]
+          expires_at?: string
+          id?: string
+          last_viewed_at?: string | null
+          match_ids?: string[]
+          message?: string | null
+          organization_id?: string
+          position_id?: string | null
+          revoked_at?: string | null
+          title?: string | null
+          token?: string
+          updated_at?: string
+          view_count?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shortlist_shares_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "admin_clients_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shortlist_shares_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shortlist_shares_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "admin_pipeline_health"
+            referencedColumns: ["position_id"]
+          },
+          {
+            foreignKeyName: "shortlist_shares_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "admin_positions_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shortlist_shares_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_my_applications"
+            referencedColumns: ["position_id"]
+          },
+          {
+            foreignKeyName: "shortlist_shares_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "client_positions_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shortlist_shares_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "positions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       support_actions: {
         Row: {
           action: string
@@ -6451,6 +6599,7 @@ export type Database = {
         | "reject"
         | "request_recompute"
       score_status: "queued" | "running" | "completed" | "failed" | "cancelled"
+      shortlist_share_mode: "review" | "presentation" | "compare"
       silver_consent: "granted" | "pending" | "declined" | "withdrawn"
       silver_reason:
         | "role_filled"
@@ -6806,6 +6955,7 @@ export const Constants = {
         "request_recompute",
       ],
       score_status: ["queued", "running", "completed", "failed", "cancelled"],
+      shortlist_share_mode: ["review", "presentation", "compare"],
       silver_consent: ["granted", "pending", "declined", "withdrawn"],
       silver_reason: [
         "role_filled",
