@@ -149,7 +149,7 @@ function TalentMemoryPage() {
           className="relative"
           onSubmit={(e) => {
             e.preventDefault();
-            navigate({ search: (s) => ({ ...s, q: qDraft || undefined }) });
+            navigate({ search: (s: z.infer<typeof searchSchema>) => ({ ...s, q: qDraft || undefined }) });
           }}
         >
           <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
@@ -165,7 +165,7 @@ function TalentMemoryPage() {
           value={search.reason ?? "all"}
           onValueChange={(v) =>
             navigate({
-              search: (s) => ({
+              search: (s: z.infer<typeof searchSchema>) => ({
                 ...s,
                 reason: v === "all" ? undefined : (v as SilverReason),
               }),
@@ -191,7 +191,7 @@ function TalentMemoryPage() {
                 key={s}
                 onClick={() =>
                   navigate({
-                    search: (cur) => ({
+                    search: (cur: z.infer<typeof searchSchema>) => ({
                       ...cur,
                       status: s === "active" ? undefined : s,
                     }),
@@ -220,7 +220,7 @@ function TalentMemoryPage() {
               <MemoryCard
                 key={m.id}
                 memory={m}
-                onOpen={() => navigate({ search: (s) => ({ ...s, id: m.id }) })}
+                onOpen={() => navigate({ search: (s: z.infer<typeof searchSchema>) => ({ ...s, id: m.id }) })}
               />
             ))}
           </ul>
@@ -232,7 +232,7 @@ function TalentMemoryPage() {
         orgId={orgId}
         id={search.id ?? null}
         readOnly={readOnly}
-        onClose={() => navigate({ search: (s) => ({ ...s, id: undefined }) })}
+        onClose={() => navigate({ search: (s: z.infer<typeof searchSchema>) => ({ ...s, id: undefined }) })}
       />
     </main>
   );
