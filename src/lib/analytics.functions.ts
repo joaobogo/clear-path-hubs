@@ -105,8 +105,8 @@ export const getClientAnalytics = createServerFn({ method: "POST" })
         .gte("created_at", fromISO)
         .lte("created_at", toISO);
       if (data.position_id) hq = hq.eq("position_id", data.position_id);
-      const { data } = await hq;
-      hires = (data as Row[]) ?? [];
+      const { data: hd } = await hq;
+      hires = (hd as Row[]) ?? [];
     }
 
     // Interviews within match set
