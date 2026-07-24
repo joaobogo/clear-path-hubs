@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
 import { z } from "zod";
+import { Eye, EyeOff } from "lucide-react";
 import {
   getSessionContext,
   getQaPersonaConfig,
@@ -40,6 +41,11 @@ export const Route = createFileRoute("/login")({
   component: LoginPage,
 });
 
+// Generic messages — never disclose whether an email exists.
+const GENERIC_SIGNIN_ERROR = "Email or password is incorrect.";
+const GENERIC_RESET_MESSAGE =
+  "If an account exists for that email, we've sent a password reset link.";
+
 function LoginPage() {
   const navigate = useNavigate();
   const { redirect } = Route.useSearch();
@@ -50,12 +56,12 @@ function LoginPage() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [mode, setMode] = useState<"signin" | "forgot" | "signup">("signin");
-  const [fullName, setFullName] = useState("");
+  const [mode, setMode] = useState<"signin" | "forgot">("signin");
   const [pickerFor, setPickerFor] = useState<SessionMembership[] | null>(null);
 
-  // Already signed in? Redirect immediately.
+  // Already signed in? Route accordingly.
   useEffect(() => {
     let cancelled = false;
     (async () => {
@@ -63,13 +69,16 @@ function LoginPage() {
       if (!data.session) return;
       try {
         let ctx = await runSession();
-        // Newly-confirmed signup landing here with no memberships and no
-        // candidate profile → auto-provision as client_admin of a new workspace.
+        // If the user has no memberships yet (e.g. just accepted an invite by
+        // clicking the email link), try to activate any invited memberships or
+        // attach staff to the platform org. Never provisions new workspaces.
         if (!ctx.primary_role && ctx.memberships.length === 0) {
           try {
             await runProvision({ data: {} });
             ctx = await runSession();
-          } catch { /* fall through to routing */ }
+          } catch {
+            /* ignore */
+          }
         }
         if (cancelled) return;
         routeToDest(ctx.memberships, ctx.primary_role);
@@ -89,7 +98,6 @@ function LoginPage() {
       return;
     }
     const active = mems.filter((m) => m.status === "active");
-    // Candidate: no org membership, primary_role derived from candidate_profiles.
     if (primary === "candidate") {
       window.location.assign("/me");
       return;
@@ -98,7 +106,6 @@ function LoginPage() {
       navigate({ to: "/access-denied" });
       return;
     }
-    // Multiple orgs of client-side roles → picker
     const clientOrgs = active.filter(
       (m) => m.role === "client_admin" || m.role === "client_editor" || m.role === "client_viewer",
     );
@@ -119,11 +126,25 @@ function LoginPage() {
     setLoading(true);
     try {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) throw error;
+      if (error) {
+        toast.error(GENERIC_SIGNIN_ERROR);
+        return;
+      }
       const ctx = await runSession();
+      // Best-effort membership activation for freshly-invited users.
+      if (!ctx.primary_role && ctx.memberships.length === 0) {
+        try {
+          await runProvision({ data: {} });
+        } catch {
+          /* ignore */
+        }
+        const ctx2 = await runSession();
+        routeToDest(ctx2.memberships, ctx2.primary_role);
+        return;
+      }
       routeToDest(ctx.memberships, ctx.primary_role);
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Sign in failed");
+    } catch {
+      toast.error(GENERIC_SIGNIN_ERROR);
     } finally {
       setLoading(false);
     }
@@ -133,59 +154,21 @@ function LoginPage() {
     e.preventDefault();
     setLoading(true);
     try {
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: `${window.location.origin}/reset-password`,
       });
-      if (error) throw error;
-      toast.success("Password reset email sent (if the account exists).");
+    } catch {
+      /* swallow — always return generic message */
+    } finally {
+      toast.success(GENERIC_RESET_MESSAGE);
       setMode("signin");
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Reset failed");
-    } finally {
       setLoading(false);
     }
   };
 
-  const onSignUp = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      const { error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          emailRedirectTo: `${window.location.origin}/login`,
-          data: { full_name: fullName },
-        },
-      });
-      if (error) throw error;
-      // Try immediate sign-in in case email confirmation is disabled.
-      const { error: signInErr } = await supabase.auth.signInWithPassword({ email, password });
-      if (signInErr) {
-        toast.success("Account created. Check your email to confirm, then sign in.");
-        setMode("signin");
-        return;
-      }
-      // Provision a client workspace + client_admin membership for the new user.
-      try {
-        await runProvision({ data: { full_name: fullName } });
-      } catch {
-        /* non-fatal: session context will report no memberships → access-denied */
-      }
-      try {
-        const ctx = await runSession();
-        routeToDest(ctx.memberships, ctx.primary_role);
-      } catch {
-        navigate({ to: "/access-denied" });
-      }
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Sign up failed");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const onPersona = async (key: "platform_admin" | "operations" | "client_admin" | "client_editor" | "client_viewer") => {
+  const onPersona = async (
+    key: "platform_admin" | "operations" | "client_admin" | "client_editor" | "client_viewer",
+  ) => {
     setLoading(true);
     try {
       const { action_link } = await runPersona({ data: { persona: key } });
@@ -202,9 +185,13 @@ function LoginPage() {
         <Card className="p-6 space-y-4">
           <div>
             <h1 className="text-xl font-semibold">
-              {mode === "signin" ? "Sign in" : mode === "signup" ? "Create your account" : "Reset your password"}
+              {mode === "signin" ? "Sign in to TaaSFlow" : "Reset your password"}
             </h1>
-            <p className="text-sm text-muted-foreground">TaaSFlow admin & client portal</p>
+            <p className="text-sm text-muted-foreground">
+              {mode === "signin"
+                ? "Sign in with the email your team invited or your candidate account."
+                : "We'll email you a secure reset link."}
+            </p>
           </div>
 
           {pickerFor ? (
@@ -241,15 +228,27 @@ function LoginPage() {
               </div>
               <div className="space-y-1.5">
                 <Label htmlFor="password">Password</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  autoComplete="current-password"
-                  required
-                  minLength={6}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
+                <div className="relative">
+                  <Input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    autoComplete="current-password"
+                    required
+                    minLength={8}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="pr-10"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((s) => !s)}
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                    className="absolute inset-y-0 right-0 flex items-center px-3 text-muted-foreground hover:text-foreground"
+                    tabIndex={-1}
+                  >
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
               </div>
               <Button type="submit" className="w-full" disabled={loading}>
                 {loading ? "Signing in…" : "Sign in"}
@@ -262,39 +261,21 @@ function LoginPage() {
                 >
                   Forgot password?
                 </button>
-                <button
-                  type="button"
+                <Link
+                  to="/candidate-join"
                   className="text-xs text-muted-foreground hover:underline"
-                  onClick={() => setMode("signup")}
                 >
-                  Create account
-                </button>
+                  Apply as a candidate →
+                </Link>
               </div>
-            </form>
-          ) : mode === "signup" ? (
-            <form onSubmit={onSignUp} className="space-y-3">
-              <div className="space-y-1.5">
-                <Label htmlFor="sname">Full name</Label>
-                <Input id="sname" type="text" autoComplete="name" required value={fullName} onChange={(e) => setFullName(e.target.value)} />
-              </div>
-              <div className="space-y-1.5">
-                <Label htmlFor="semail">Email</Label>
-                <Input id="semail" type="email" autoComplete="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
-              </div>
-              <div className="space-y-1.5">
-                <Label htmlFor="spassword">Password</Label>
-                <Input id="spassword" type="password" autoComplete="new-password" required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} />
-              </div>
-              <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? "Creating account…" : "Create account"}
-              </Button>
-              <button
-                type="button"
-                className="text-xs text-muted-foreground hover:underline"
-                onClick={() => setMode("signin")}
-              >
-                ← Already have an account? Sign in
-              </button>
+              <p className="pt-1 text-[11px] leading-relaxed text-muted-foreground">
+                TaaSFlow is invitation-only for client workspaces. If you were invited, use the
+                email address on the invitation. Employers can{" "}
+                <Link to="/intake" className="underline">
+                  start an intake
+                </Link>{" "}
+                to talk to our team.
+              </p>
             </form>
           ) : (
             <form onSubmit={onForgot} className="space-y-3">
@@ -332,17 +313,22 @@ function LoginPage() {
               QA persona access (non-production)
             </p>
             <div className="mt-2 grid gap-2">
-              {qa.personas.map((p: { key: "platform_admin" | "operations" | "client_admin" | "client_editor" | "client_viewer"; label: string }) => (
-                <Button
-                  key={p.key}
-                  variant="outline"
-                  size="sm"
-                  disabled={loading}
-                  onClick={() => onPersona(p.key)}
-                >
-                  Continue as {p.label}
-                </Button>
-              ))}
+              {qa.personas.map(
+                (p: {
+                  key: "platform_admin" | "operations" | "client_admin" | "client_editor" | "client_viewer";
+                  label: string;
+                }) => (
+                  <Button
+                    key={p.key}
+                    variant="outline"
+                    size="sm"
+                    disabled={loading}
+                    onClick={() => onPersona(p.key)}
+                  >
+                    Continue as {p.label}
+                  </Button>
+                ),
+              )}
             </div>
           </Card>
         )}

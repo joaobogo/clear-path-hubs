@@ -582,10 +582,19 @@ const provisionSelfInput = z.object({
   company_name: z.string().min(1).max(200).optional().nullable(),
 });
 
+// Self-provisioning is intentionally restricted. It NEVER creates a new
+// workspace for a stranger. It only:
+//   1. Activates any pending `invited` memberships when the invitee signs
+//      in for the first time.
+//   2. Attaches verified @taasflow.* staff to the canonical TaaSFlow
+//      Platform org as platform_admin.
+//
+// A user with no invitation and no staff email lands on /access-denied.
+// Client and admin access are never granted by public self-signup.
 export const provisionClientMembershipForSelf = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((raw) => provisionSelfInput.parse(raw))
-  .handler(async ({ data, context }) => {
+  .handler(async ({ context }) => {
     const { userId, claims } = context;
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
@@ -596,33 +605,11 @@ export const provisionClientMembershipForSelf = createServerFn({ method: "POST" 
       false;
     const metaName =
       (claims?.user_metadata as { full_name?: string } | undefined)?.full_name ?? null;
-    const fullName = data.full_name?.trim() || metaName || (email ? email.split("@")[0] : "New user");
-
-    // Verified TaaSFlow employees are promoted to platform_admin automatically.
+    const fullName = metaName || (email ? email.split("@")[0] : "New user");
     const domain = email ? email.split("@")[1] ?? "" : "";
     const isTaasflowStaff = emailVerified && /^taasflow\.[a-z.]+$/i.test(domain);
 
-    // If any active membership already exists, do nothing.
-    const { data: existingMems } = await supabaseAdmin
-      .from("memberships")
-      .select("id, role, organization_id, status")
-      .eq("user_id", userId)
-      .eq("status", "active");
-    if (existingMems && existingMems.length > 0) {
-      return { ok: true, provisioned: false as const };
-    }
-
-    // If this auth user is already a candidate, do not turn them into a client.
-    const { data: candProfile } = await supabaseAdmin
-      .from("candidate_profiles")
-      .select("id")
-      .eq("user_id", userId)
-      .maybeSingle();
-    if (candProfile) {
-      return { ok: true, provisioned: false as const, reason: "candidate" as const };
-    }
-
-    // Ensure a profile row exists.
+    // Ensure a profile row exists (harmless, grants no privilege).
     const { data: existingProfile } = await supabaseAdmin
       .from("profiles")
       .select("id")
@@ -637,20 +624,49 @@ export const provisionClientMembershipForSelf = createServerFn({ method: "POST" 
       });
     }
 
-    let orgId: string;
-    let role: "platform_admin" | "client_admin";
+    const { data: activeMems } = await supabaseAdmin
+      .from("memberships")
+      .select("id")
+      .eq("user_id", userId)
+      .eq("status", "active");
+    if (activeMems && activeMems.length > 0) {
+      return { ok: true, provisioned: false as const, reason: "already_active" as const };
+    }
 
+    // Activate pending invited memberships (invitation acceptance).
+    const { data: invited } = await supabaseAdmin
+      .from("memberships")
+      .select("id, organization_id, role")
+      .eq("user_id", userId)
+      .eq("status", "invited");
+    if (invited && invited.length > 0) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { error: upErr } = await (supabaseAdmin as any)
+        .from("memberships")
+        .update({ status: "active" })
+        .eq("user_id", userId)
+        .eq("status", "invited");
+      if (upErr) throw upErr;
+      await supabaseAdmin.from("audit_events").insert({
+        actor_user_id: userId,
+        organization_id: invited[0].organization_id,
+        entity_type: "memberships",
+        entity_id: invited[0].id,
+        action: "invitation.accepted",
+        after_state: { count: invited.length },
+      });
+      return { ok: true, provisioned: true as const, reason: "invitation" as const };
+    }
+
+    // Verified TaaSFlow staff → platform_admin on the platform org.
     if (isTaasflowStaff) {
-      // Attach to the canonical TaaSFlow Platform org as platform_admin.
-      const { data: platformOrg, error: pErr } = await supabaseAdmin
+      const { data: platformOrg } = await supabaseAdmin
         .from("organizations")
         .select("id")
         .eq("name", "TaaSFlow Platform")
         .maybeSingle();
-      if (pErr) throw pErr;
-      if (platformOrg?.id) {
-        orgId = platformOrg.id as string;
-      } else {
+      let orgId = platformOrg?.id as string | undefined;
+      if (!orgId) {
         const { data: newPlatform, error: newPErr } = await supabaseAdmin
           .from("organizations")
           .insert({ name: "TaaSFlow Platform", status: "active" })
@@ -659,40 +675,27 @@ export const provisionClientMembershipForSelf = createServerFn({ method: "POST" 
         if (newPErr) throw newPErr;
         orgId = newPlatform.id as string;
       }
-      role = "platform_admin";
-    } else {
-      // Create a workspace named after the company (or derived from email/name).
-      const derived =
-        data.company_name?.trim() ||
-        (email ? `${email.split("@")[0]}'s workspace` : `${fullName}'s workspace`);
-      const { data: newOrg, error: orgErr } = await supabaseAdmin
-        .from("organizations")
-        .insert({ name: derived, status: "active" })
-        .select("id")
-        .single();
-      if (orgErr) throw orgErr;
-      orgId = newOrg.id as string;
-      role = "client_admin";
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { error: memErr } = await (supabaseAdmin as any)
+        .from("memberships")
+        .upsert(
+          { user_id: userId, organization_id: orgId, role: "platform_admin", status: "active" },
+          { onConflict: "user_id,organization_id,role" },
+        );
+      if (memErr) throw memErr;
+      await supabaseAdmin.from("audit_events").insert({
+        actor_user_id: userId,
+        organization_id: orgId,
+        entity_type: "organizations",
+        entity_id: orgId,
+        action: "self.staff_provision_platform_admin",
+        after_state: { email },
+      });
+      return { ok: true, provisioned: true as const, reason: "staff" as const };
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { error: memErr } = await (supabaseAdmin as any)
-      .from("memberships")
-      .upsert(
-        { user_id: userId, organization_id: orgId, role, status: "active" },
-        { onConflict: "user_id,organization_id,role" },
-      );
-    if (memErr) throw memErr;
-
-    await supabaseAdmin.from("audit_events").insert({
-      actor_user_id: userId,
-      organization_id: orgId,
-      entity_type: "organizations",
-      entity_id: orgId,
-      action: isTaasflowStaff ? "self.signup_provision_platform_admin" : "self.signup_provision_client",
-      after_state: { email, role },
-    });
-
-    return { ok: true, provisioned: true as const, organization_id: orgId, role };
+    // No invitation, not staff, not a candidate: grant nothing.
+    return { ok: true, provisioned: false as const, reason: "no_grant" as const };
   });
+
 
