@@ -39,7 +39,9 @@ import {
   Settings2,
   ShieldCheck,
   MoreHorizontal,
+  NotebookPen,
 } from "lucide-react";
+import { RoleMemoryPanel } from "@/components/role-memory-panel";
 import {
   DropdownMenu,
   DropdownMenuContent,
