@@ -90,6 +90,7 @@ const TABS: NavDef[] = [
  { to: "/client/offers", label: "Offers", icon: HandCoins, everyone: true },
  { to: "/client/outreach", label: "Outreach", icon: Radar, everyone: true },
  { to: "/client/sources", label: "Source of Hire", icon: Radar, everyone: true },
+ { to: "/client/shares", label: "Shares", icon: Share2, everyone: true },
  // Interviews merged into Positions / Candidates record pages — route stays reachable via deep links.
  { to: "/client/messages", label: "Messages", icon: MessageSquare, everyone: true },
  { to: "/client/team", label: "Team", icon: UserCog, everyone: false },
