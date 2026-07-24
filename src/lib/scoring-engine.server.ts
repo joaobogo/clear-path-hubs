@@ -33,9 +33,12 @@ export interface RequirementAssessment {
   id: string;
   text: string;
   required: boolean;
-  status: "met" | "partial" | "missing" | "contradicted";
+  // "unknown" = insufficient CV text / no evidence yet — needs human validation.
+  // Never contributes an irrational 0 to must-have coverage.
+  status: "met" | "partial" | "missing" | "unknown" | "contradicted";
   matched_terms: string[];
   evidence: EvidenceRef[];
+  needs_validation?: boolean;
 }
 
 export interface ScoringResult {
