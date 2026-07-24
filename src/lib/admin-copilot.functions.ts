@@ -275,6 +275,13 @@ export const askCopilot = createServerFn({ method: "POST" })
       });
       if (!res.ok) {
         const body = await res.text();
+        await auditAssistantEvent(context.supabase, {
+          surface: "admin_copilot",
+          event_type: "gateway_error",
+          user_id: context.userId,
+          conversation_id: conversationId,
+          payload: { status: res.status, body: body.slice(0, 400) },
+        });
         if (res.status === 429) { finalContent = "Rate-limited — please try again shortly."; break; }
         if (res.status === 402) { finalContent = "Workspace is out of AI credits."; break; }
         finalContent = `Copilot error (${res.status}): ${body.slice(0, 160)}`;
@@ -300,6 +307,34 @@ export const askCopilot = createServerFn({ method: "POST" })
           if (Array.isArray(proposals)) {
             for (const a of proposals) if (a?.action_id) proposedMap.set(a.action_id, a);
           }
+          const resultRowCount = Array.isArray((result as AnyRow).data)
+            ? ((result as AnyRow).data as unknown[]).length
+            : Array.isArray(((result as AnyRow).data as AnyRow)?.rows)
+              ? (((result as AnyRow).data as AnyRow).rows as unknown[]).length
+              : null;
+          await auditAssistantEvent(context.supabase, {
+            surface: "admin_copilot",
+            event_type: "tool_call",
+            user_id: context.userId,
+            conversation_id: conversationId,
+            tool_name: call.function.name,
+            payload: {
+              args,
+              citation_count: result.citations?.length ?? 0,
+              row_count: resultRowCount,
+              proposed_count: Array.isArray(proposals) ? proposals.length : 0,
+            },
+          });
+          if (resultRowCount === 0) {
+            await auditAssistantEvent(context.supabase, {
+              surface: "admin_copilot",
+              event_type: "guardrail_missing_data",
+              user_id: context.userId,
+              conversation_id: conversationId,
+              tool_name: call.function.name,
+              payload: { args },
+            });
+          }
           messages.push({
             role: "tool",
             tool_call_id: call.id,
@@ -316,6 +351,15 @@ export const askCopilot = createServerFn({ method: "POST" })
     const citations = Array.from(citationsMap.values());
     const proposedActions = Array.from(proposedMap.values());
 
+    const { text: cleaned, declared } = extractConfidence(finalContent);
+    const confidence: Confidence = resolveConfidence({
+      declared,
+      toolCount: tool_trace.length,
+      citationCount: citations.length,
+      content: cleaned,
+    });
+    finalContent = cleaned;
+
     const assistantInsert = await context.supabase
       .from("admin_copilot_messages")
       .insert({
@@ -326,12 +370,31 @@ export const askCopilot = createServerFn({ method: "POST" })
         tool_trace: tool_trace as never,
         citations: citations as never,
         proposed_actions: proposedActions as never,
+        confidence,
         model: MODEL,
         latency_ms: Date.now() - start,
       } as never)
-      .select("id, created_at, role, content, tool_trace, citations, proposed_actions")
+      .select("id, created_at, role, content, tool_trace, citations, proposed_actions, confidence")
       .single();
     if (assistantInsert.error) throw new Error(assistantInsert.error.message);
+
+    for (const a of proposedActions) {
+      await auditAssistantEvent(context.supabase, {
+        surface: "admin_copilot",
+        event_type: "action_proposed",
+        user_id: context.userId,
+        conversation_id: conversationId,
+        message_id: assistantInsert.data.id as string,
+        action_id: (a as AnyRow).action_id as string,
+        payload: {
+          kind: (a as AnyRow).kind,
+          label: (a as AnyRow).label,
+          org_id: (a as AnyRow).org_id ?? null,
+          match_id: (a as AnyRow).match_id ?? null,
+          href: (a as AnyRow).href ?? null,
+        },
+      });
+    }
 
     await context.supabase
       .from("admin_copilot_conversations")
@@ -347,6 +410,7 @@ export const askCopilot = createServerFn({ method: "POST" })
         tool_trace: [],
         citations: [],
         proposed_actions: [],
+        confidence: null as Confidence | null,
         created_at: userInsert.data.created_at as string,
       },
       assistant_message: assistantInsert.data as AnyRow,
