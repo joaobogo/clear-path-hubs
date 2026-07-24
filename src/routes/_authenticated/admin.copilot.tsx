@@ -408,8 +408,6 @@ function prettyTool(name: string) {
     case "missing_approvals": return "Missing approvals";
     case "rediscovery_candidates": return "Rediscovery";
     case "draft_client_update": return "Client update draft";
-    case "draft_candidate_outreach": return "Outreach draft";
-    case "source_performance": return "Source performance";
     default: return name;
   }
 }
