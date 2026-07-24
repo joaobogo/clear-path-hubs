@@ -257,6 +257,7 @@ function CandidateDetailPage() {
           {(interviews.length > 0 || decisions.length > 0) && (
             <ActivitySection interviews={interviews} decisions={decisions} />
           )}
+          <JourneySection matchId={candidate.match_id} />
           <AuditTrailSection candidate={candidate} />
         </div>
 
