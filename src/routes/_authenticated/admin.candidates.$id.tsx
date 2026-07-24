@@ -46,9 +46,12 @@ import {
   ExternalLink,
   Wrench,
   MoreHorizontal,
+  Milestone,
 } from "lucide-react";
 import { DownloadCvButton } from "@/components/download-cv-button";
 import { ScoreExplainability } from "@/components/candidate/score-explainability";
+import { JourneyTimeline } from "@/components/candidate/journey-timeline";
+import { getCandidateJourney } from "@/lib/journey.functions";
 
 
 
