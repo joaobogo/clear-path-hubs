@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import {
   advanceProcessing,
   applyReviewDecision,
+  deleteCandidateMatch,
   getAdminMatch,
   markOcrDone,
   rescore,
