@@ -91,8 +91,6 @@ const TABS: NavDef[] = [
  { to: "/client/talent-memory", label: "Talent memory", icon: Award, everyone: true },
  { to: "/client/talent-pool", label: "Talent pool", icon: Sparkles, everyone: true },
  { to: "/client/offers", label: "Offers", icon: HandCoins, everyone: true },
- { to: "/client/outreach", label: "Outreach", icon: Radar, everyone: true },
- { to: "/client/sources", label: "Source of Hire", icon: Radar, everyone: true },
  { to: "/client/shares", label: "Shares", icon: Share2, everyone: true },
  { to: "/boardroom", label: "Boardroom", icon: Sparkles, everyone: true },
  // Interviews merged into Positions / Candidates record pages — route stays reachable via deep links.
