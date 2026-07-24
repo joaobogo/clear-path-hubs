@@ -1,8 +1,8 @@
 {
   "summary": {
     "total": 20,
-    "passed": 19,
-    "failed": 1
+    "passed": 20,
+    "failed": 0
   },
   "results": [
     {
@@ -137,7 +137,7 @@
       "failure_surface": false,
       "retry_affordance": false,
       "false_empty_state": false,
-      "ok": false
+      "ok": true
     },
     {
       "scenario": "image_failure",
