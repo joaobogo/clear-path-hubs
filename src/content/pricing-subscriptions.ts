@@ -1,93 +1,116 @@
 /**
- * Subscription pricing — continuous hiring programmes.
+ * Subscription pricing — mirrors taasflow.com/pricing (Subscription tab).
+ * Bronze / Silver / Gold / Enterprise volume-based monthly plans.
  * Numeric values come from src/config/pricing-core.ts.
  */
 import {
-  PRICE_SUB_GROWTH_USD,
-  PRICE_SUB_SCALE_USD,
-  PRICE_SUB_GROWTH_DISPLAY,
-  PRICE_SUB_SCALE_DISPLAY,
+  PRICE_SUB_BRONZE_USD,
+  PRICE_SUB_SILVER_FROM_USD,
+  PRICE_SUB_GOLD_FROM_USD,
+  PRICE_SUB_BRONZE_DISPLAY,
+  PRICE_SUB_SILVER_DISPLAY,
+  PRICE_SUB_GOLD_DISPLAY,
   PRICE_SUB_ENTERPRISE_DISPLAY,
-  TURNAROUND_LABEL,
 } from "@/config/pricing-core";
 
 export type SubscriptionTier = {
-  id: "growth" | "scale" | "enterprise";
+  id: "bronze" | "silver" | "gold" | "enterprise";
   name: string;
   eyebrow: string;
   monthly: number | null;
   priceDisplay: string;
-  pricePer?: string;
+  priceSuffix: string;
+  billingNote: string;
   bestFor: string;
   rolesIncluded: string;
-  turnaround: string;
   included: string[];
   ctaLabel: string;
   ctaTo: string;
   highlight?: boolean;
 };
 
-const SUB_BASE = [
-  "Delivered weekly",
-  "Top 10 candidates per active role",
-  "Ranked shortlists with fit notes",
-  "Criteria-based ethical scoring",
-  "Rollover of unfilled roles month-to-month",
-  "Persistent talent pool + silver medalists",
-  "Dedicated workspace + Slack channel",
-];
-
 export const SUBSCRIPTION_TIERS: SubscriptionTier[] = [
   {
-    id: "growth",
-    name: "Growth Subscription",
-    eyebrow: "Up to 3 concurrent roles",
-    monthly: PRICE_SUB_GROWTH_USD,
-    priceDisplay: PRICE_SUB_GROWTH_DISPLAY,
-    pricePer: "≈ $633 per active role / month",
-    bestFor: "Steady pipeline for scale-ups hiring 2–3 roles at a time.",
-    rolesIncluded: "Up to 3 concurrent roles",
-    turnaround: TURNAROUND_LABEL,
-    included: SUB_BASE,
+    id: "bronze",
+    name: "Bronze",
+    eyebrow: "Up to 15 positions per month",
+    monthly: PRICE_SUB_BRONZE_USD,
+    priceDisplay: PRICE_SUB_BRONZE_DISPLAY,
+    priceSuffix: "per month",
+    billingNote: "Billed at start of month",
+    bestFor: "Up to 15 positions per month",
+    rolesIncluded: "Up to 15 positions per month",
+    included: [
+      "Top 10 candidates per position",
+      "Weekly ranked shortlists",
+      "Scoring with fit notes",
+      "Pipeline reporting",
+      "Dedicated support",
+      "3 months access to candidate data",
+    ],
     ctaLabel: "Book a discovery call",
     ctaTo: "/contact",
   },
   {
-    id: "scale",
-    name: "Scale Subscription",
-    eyebrow: "Up to 6 concurrent roles",
-    monthly: PRICE_SUB_SCALE_USD,
-    priceDisplay: PRICE_SUB_SCALE_DISPLAY,
-    pricePer: "≈ $600 per active role / month",
-    bestFor: "Continuous multi-function hiring across teams and geographies.",
-    rolesIncluded: "Up to 6 concurrent roles",
-    turnaround: TURNAROUND_LABEL,
+    id: "silver",
+    name: "Silver",
+    eyebrow: "16–30 positions per month",
+    monthly: PRICE_SUB_SILVER_FROM_USD,
+    priceDisplay: PRICE_SUB_SILVER_DISPLAY,
+    priceSuffix: "per month",
+    billingNote: "Billed at start of month",
+    bestFor: "16 to 30 positions per month",
+    rolesIncluded: "16 to 30 positions per month",
     included: [
-      ...SUB_BASE,
-      "Priority delivery + named recruiter",
-      "Quarterly hiring review",
+      "Top 10 candidates per position",
+      "Everything in Bronze",
+      "Priority support",
+      "Faster calibration cycles",
+      "3 months access to candidate data",
     ],
     ctaLabel: "Book a discovery call",
     ctaTo: "/contact",
     highlight: true,
   },
   {
+    id: "gold",
+    name: "Gold",
+    eyebrow: "31–50 positions per month",
+    monthly: PRICE_SUB_GOLD_FROM_USD,
+    priceDisplay: PRICE_SUB_GOLD_DISPLAY,
+    priceSuffix: "per month",
+    billingNote: "Billed at start of month",
+    bestFor: "31 to 50 positions per month",
+    rolesIncluded: "31 to 50 positions per month",
+    included: [
+      "Top 10 candidates per position",
+      "Everything in Silver",
+      "Dedicated account manager",
+      "Custom reporting",
+      "3 months access to candidate data",
+    ],
+    ctaLabel: "Book a discovery call",
+    ctaTo: "/contact",
+  },
+  {
     id: "enterprise",
-    name: "Enterprise Subscription",
-    eyebrow: "7+ concurrent roles or multi-BU",
+    name: "Enterprise",
+    eyebrow: "50+ positions per month",
     monthly: null,
     priceDisplay: PRICE_SUB_ENTERPRISE_DISPLAY,
-    bestFor: "Programmatic hiring across business units with procurement, SSO, and MSA.",
-    rolesIncluded: "Custom scope",
-    turnaround: "Custom delivery cadence",
+    priceSuffix: "Tailored to your needs",
+    billingNote: "50+ positions per month",
+    bestFor: "50+ positions per month",
+    rolesIncluded: "50+ positions per month",
     included: [
-      "Everything in Scale",
-      "Dedicated account team + executive sponsor",
-      "SSO, custom data residency, security review",
-      "Tailored SLA and reporting cadence",
-      "Volume + multi-year pricing",
+      "Top 10 candidates per position",
+      "Everything in Gold",
+      "Custom pricing based on industry and volume",
+      "White-glove onboarding",
+      "Strategic planning sessions",
+      "3 months access to candidate data",
     ],
-    ctaLabel: "Talk to Enterprise",
+    ctaLabel: "Contact Sales",
     ctaTo: "/enterprise",
   },
 ];
