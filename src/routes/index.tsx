@@ -1340,10 +1340,8 @@ function Home() {
                 <br className="hidden sm:block" /> On demand.
               </h1>
               <p className="max-w-xl text-lg text-[color:var(--brand-navy)]/75">
-                Open a role Monday. See a{" "}
-                <span className="font-semibold text-[color:var(--brand-navy)]">ranked shortlist with evidence</span>{" "}
-                by Friday. One flat subscription — no placement fees. You keep the
-                recruiter, the ATS, and the final call.
+                Human recruiters + AI + your own ATS.{" "}
+                <span className="font-semibold text-[color:var(--brand-navy)]">Cheaper. Better. Faster.</span>
               </p>
               <div className="flex flex-wrap items-center gap-3 pt-1">
                 <Link
@@ -1361,11 +1359,9 @@ function Home() {
               </div>
               <ul className="flex flex-wrap gap-x-5 gap-y-1.5 text-xs text-[color:var(--brand-navy)]/65">
                 {[
-                  "5–12 ranked candidates per role, week 1",
-                  "Evidence cited for every requirement",
-                  "Flat subscription vs. 20–25% contingency fees",
-                  "Human recruiters + AI-supported structure",
-                  "You own the pipeline and the decisions",
+                  "Ranked shortlist by Friday",
+                  "Flat subscription — no placement fees",
+                  "You keep the ATS and the final call",
                 ].map((t) => (
                   <li key={t} className="inline-flex items-center gap-1.5">
                     <CheckCircle2 className="h-3.5 w-3.5 text-[color:var(--brand-ocean)]" aria-hidden />
@@ -1373,6 +1369,7 @@ function Home() {
                   </li>
                 ))}
               </ul>
+
             </div>
             <div className="min-w-0">
               <HeroWorkspacePreview />
