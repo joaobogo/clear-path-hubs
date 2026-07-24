@@ -13,7 +13,7 @@
 
 import * as React from "react";
 import { Link } from "@tanstack/react-router";
-import { Minus, Plus, ArrowRight, Info } from "lucide-react";
+import { Minus, Plus, ArrowRight, Info, Calculator } from "lucide-react";
 
 import { Slider } from "@/components/ui/slider";
 import { cn } from "@/lib/utils";
@@ -25,6 +25,7 @@ import {
   formatUsdCompact,
 } from "@/config/public-pricing";
 import { computeRoi, type CalculatorInputs } from "@/lib/roi-calculator";
+import { trackEvent } from "@/lib/analytics";
 
 export type RoiCalculatorVariant = "homepage" | "pricing" | "presentation";
 
@@ -317,8 +318,8 @@ export function RoiCalculator({
 
 
       <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)]">
-        {/* Inputs */}
-        <div>
+        {/* Inputs — rendered second on mobile so the numbers land first */}
+        <div className="order-2 lg:order-1">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <p className="text-xs font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/55">
               Assumptions
@@ -331,7 +332,7 @@ export function RoiCalculator({
           <div
             role="group"
             aria-label="Scenario presets"
-            className="mt-3 flex flex-wrap gap-2"
+            className="mt-3 -mx-1 flex gap-2 overflow-x-auto px-1 pb-1 sm:flex-wrap sm:overflow-visible sm:pb-0"
           >
             {CALCULATOR_PRESETS.map((preset) => {
               const active =
@@ -346,9 +347,16 @@ export function RoiCalculator({
                   type="button"
                   aria-pressed={active}
                   title={preset.description}
-                  onClick={() => setInputs({ ...preset.inputs })}
+                  onClick={() => {
+                    setInputs({ ...preset.inputs });
+                    trackEvent("calculator.preset_selected", {
+                      preset_id: preset.id,
+                      variant,
+                      positions: preset.inputs.positions,
+                    });
+                  }}
                   className={cn(
-                    "min-h-9 rounded-full border px-3.5 py-1.5 text-xs font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]",
+                    "min-h-9 shrink-0 whitespace-nowrap rounded-full border px-3.5 py-1.5 text-xs font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]",
                     active
                       ? "border-[color:var(--brand-navy)] bg-[color:var(--brand-navy)] text-white"
                       : "border-[color:var(--brand-navy)]/15 bg-white text-[color:var(--brand-navy)] hover:border-[color:var(--brand-navy)]/30",
@@ -422,7 +430,7 @@ export function RoiCalculator({
 
         {/* Results */}
         <div
-          className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-5 sm:p-6"
+          className="order-1 rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-5 sm:p-6 lg:order-2"
           aria-live="polite"
           aria-atomic="true"
         >
@@ -546,6 +554,13 @@ export function RoiCalculator({
                 </div>
                 <Link
                   to="/contact"
+                  onClick={() =>
+                    trackEvent("calculator.cta_clicked", {
+                      cta: "enterprise_quote_inline",
+                      variant,
+                      positions: inputs.positions,
+                    })
+                  }
                   className="mt-3 inline-flex min-h-11 items-center justify-center gap-1.5 rounded-md bg-white px-4 py-2 text-sm font-semibold text-[color:var(--brand-navy)] hover:bg-white/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
                 >
                   Talk to enterprise <ArrowRight className="h-4 w-4" aria-hidden />
@@ -590,19 +605,96 @@ export function RoiCalculator({
         </div>
       </div>
 
+      {/* Exact formula — no hidden math */}
+      <div className="mt-6 rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white/70 p-5 sm:p-6">
+        <p className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">
+          <Calculator className="h-3.5 w-3.5" aria-hidden />
+          Exact formula, using your numbers
+        </p>
+        <dl className="mt-3 grid gap-3 text-sm sm:grid-cols-2">
+          <div className="rounded-lg bg-[color:var(--brand-navy)]/5 p-3">
+            <dt className="text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/60">
+              Agency placement
+            </dt>
+            <dd className="mt-1 font-mono text-[13px] tabular-nums text-[color:var(--brand-navy)]">
+              {inputs.positions} × {formatUsdCompact(inputs.averageSalaryUsd)} × {Math.round(inputs.agencyFeePct * 100)}%
+              <span className="mx-1 text-[color:var(--brand-navy)]/50">=</span>
+              <span className="font-semibold">{formatUsdCompact(result.agencyCostUsd)}</span>
+            </dd>
+          </div>
+          <div className="rounded-lg bg-[color:var(--brand-navy)]/5 p-3">
+            <dt className="text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/60">
+              Internal sourcing
+            </dt>
+            <dd className="mt-1 font-mono text-[13px] tabular-nums text-[color:var(--brand-navy)]">
+              {inputs.positions} × ${inputs.recruiterHourlyUsd}/hr × {inputs.sourcingHoursPerRole}h
+              <span className="mx-1 text-[color:var(--brand-navy)]/50">=</span>
+              <span className="font-semibold">{formatUsdCompact(result.internalSourcingCostUsd)}</span>
+            </dd>
+          </div>
+          <div className="rounded-lg bg-[color:var(--brand-navy)]/8 p-3 sm:col-span-2">
+            <dt className="text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/60">
+              Traditional total vs TaaSFlow
+            </dt>
+            <dd className="mt-1 font-mono text-[13px] tabular-nums text-[color:var(--brand-navy)]">
+              {formatUsdCompact(result.agencyCostUsd)} + {formatUsdCompact(result.internalSourcingCostUsd)}
+              <span className="mx-1 text-[color:var(--brand-navy)]/50">=</span>
+              <span className="font-semibold">{formatUsdCompact(result.traditionalCostUsd)}</span>
+              <span className="mx-2 text-[color:var(--brand-navy)]/50">−</span>
+              <span className="font-semibold">
+                {result.taasflowCostUsd == null ? "Custom quote" : formatUsdCompact(result.taasflowCostUsd)}
+              </span>
+              {result.projectedSavingsUsd != null ? (
+                <>
+                  <span className="mx-1 text-[color:var(--brand-navy)]/50">=</span>
+                  <span className="font-semibold text-[color:var(--brand-ocean)]">
+                    {formatUsdCompact(result.projectedSavingsUsd)} savings
+                  </span>
+                </>
+              ) : null}
+            </dd>
+            {result.isCustomPricing ? (
+              <p className="mt-2 text-[11px] text-[color:var(--brand-navy)]/60">
+                No savings figure is invented at this volume — the number comes from a scoped quote.
+              </p>
+            ) : null}
+          </div>
+        </dl>
+      </div>
+
       {showCtas ? (
         <div className="mt-8 flex flex-wrap items-center gap-3">
           <Link
             to="/intake"
+            onClick={() =>
+              trackEvent("calculator.cta_clicked", {
+                cta: "start_hiring",
+                variant,
+                mode: result.isCustomPricing
+                  ? "custom"
+                  : result.hasNegativeSavings
+                    ? "negative"
+                    : "standard",
+                positions: inputs.positions,
+                projected_savings_usd: result.projectedSavingsUsd ?? undefined,
+              })
+            }
             className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[color:var(--brand-navy-dark)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
           >
             Start Hiring <ArrowRight className="h-4 w-4" aria-hidden />
           </Link>
           <Link
-            to="/pricing"
+            to={result.isCustomPricing ? "/contact" : "/pricing"}
+            onClick={() =>
+              trackEvent("calculator.cta_clicked", {
+                cta: result.isCustomPricing ? "enterprise_quote" : "view_pricing",
+                variant,
+                positions: inputs.positions,
+              })
+            }
             className="inline-flex min-h-11 items-center justify-center rounded-md border border-[color:var(--brand-navy)]/15 bg-white px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
           >
-            View Pricing
+            {result.isCustomPricing ? "Get Enterprise Quote" : "View Pricing"}
           </Link>
         </div>
       ) : null}
