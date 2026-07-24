@@ -70,7 +70,9 @@ const searchSchema = z.object({
  filter: fallback(z.enum(["all", "top", "interview_pipeline"]), "all").default("all"),
  // Comma-separated match IDs for shareable comparison links.
  compare: fallback(z.string(), "").default(""),
-
+ // Score range filter (0–100). Empty string = unbounded on that end.
+ minScore: fallback(z.string(), "").default(""),
+ maxScore: fallback(z.string(), "").default(""),
 });
 
 export const Route = createFileRoute("/_authenticated/client/candidates/")({
