@@ -146,23 +146,36 @@ export function GlobalSearchDialog({
       <CommandList>
         {debounced.length < 2 && (
           <>
-            {recent.length > 0 ? (
-              <CommandGroup heading="Recent searches">
-                {recent.map((r) => (
+            <CommandGroup heading="Quick actions">
+              {quickActions.map((qa) => {
+                const Icon = qa.icon;
+                return (
                   <CommandItem
-                    key={r}
-                    value={`recent:${r}`}
-                    onSelect={() => setQ(r)}
+                    key={qa.id}
+                    value={`qa:${qa.id}:${qa.keywords}`}
+                    onSelect={() => {
+                      onOpenChange(false);
+                      navigate({ to: qa.href });
+                    }}
                   >
-                    <Clock className="mr-2 h-4 w-4 text-muted-foreground" />
-                    {r}
+                    <Icon className="mr-2 h-4 w-4 text-muted-foreground" />
+                    {qa.label}
                   </CommandItem>
-                ))}
-              </CommandGroup>
-            ) : (
-              <div className="px-4 py-8 text-center text-sm text-muted-foreground">
-                Type at least 2 characters to search.
-              </div>
+                );
+              })}
+            </CommandGroup>
+            {recent.length > 0 && (
+              <>
+                <CommandSeparator />
+                <CommandGroup heading="Recent searches">
+                  {recent.map((r) => (
+                    <CommandItem key={r} value={`recent:${r}`} onSelect={() => setQ(r)}>
+                      <Clock className="mr-2 h-4 w-4 text-muted-foreground" />
+                      {r}
+                    </CommandItem>
+                  ))}
+                </CommandGroup>
+              </>
             )}
           </>
         )}
@@ -181,7 +194,7 @@ export function GlobalSearchDialog({
             )}
 
             {groups &&
-              (["clients", "positions", "candidates", "messages"] as const).map((key, idx) => {
+              (["clients", "positions", "candidates", "tasks", "messages"] as const).map((key, idx) => {
                 const items = groups[key];
                 if (!items || items.length === 0) return null;
                 return (
@@ -219,5 +232,3 @@ export function GlobalSearchDialog({
   );
 }
 
-// Suppress unused-var lint on the labels helper (kept for reference / future i18n).
-void TYPE_LABELS;
