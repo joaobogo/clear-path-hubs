@@ -230,15 +230,27 @@ function CandidateDetailPage() {
  <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-12">
  {/* MAIN COLUMN */}
         <div className="space-y-6 lg:col-span-8">
-          <FitHero candidate={candidate} />
+          <JumpNav
+            items={[
+              { id: "sec-fit", label: "Summary" },
+              { id: "sec-coverage", label: "Requirements" },
+              { id: "sec-strengths", label: "Strengths" },
+              { id: "sec-risks", label: "Risks" },
+              { id: "sec-interview", label: "Interview" },
+              { id: "sec-experience", label: "Experience" },
+              { id: "sec-skills", label: "Skills" },
+              { id: "sec-activity", label: "Activity" },
+            ]}
+          />
+          <div id="sec-fit" className="scroll-mt-24"><FitHero candidate={candidate} /></div>
           <EvaluationProvenance candidate={candidate} />
-          <RequirementCoverage candidate={candidate} />
-          <WhyThisCandidate candidate={candidate} />
-          <WhatNeedsValidation candidate={candidate} />
+          <div id="sec-coverage" className="scroll-mt-24"><RequirementCoverage candidate={candidate} /></div>
+          <div id="sec-strengths" className="scroll-mt-24"><WhyThisCandidate candidate={candidate} /></div>
+          <div id="sec-risks" className="scroll-mt-24"><WhatNeedsValidation candidate={candidate} /></div>
           <AvailabilityAndComp candidate={candidate} />
-          <InterviewGuide candidate={candidate} />
-          <ExperienceTimeline candidate={candidate} />
-          <SkillsAndEducation candidate={candidate} />
+          <div id="sec-interview" className="scroll-mt-24"><InterviewGuide candidate={candidate} /></div>
+          <div id="sec-experience" className="scroll-mt-24"><ExperienceTimeline candidate={candidate} /></div>
+          <div id="sec-skills" className="scroll-mt-24"><SkillsAndEducation candidate={candidate} /></div>
           {candidate.screening_answers.length > 0 && (
             <SectionCard title="Screening answers" icon={<MessageSquare className="h-4 w-4" />}>
               <dl className="space-y-3 text-sm">
@@ -253,12 +265,13 @@ function CandidateDetailPage() {
               </dl>
             </SectionCard>
           )}
-          
-          {(interviews.length > 0 || decisions.length > 0) && (
-            <ActivitySection interviews={interviews} decisions={decisions} />
-          )}
-          <JourneySection matchId={candidate.match_id} />
-          <AuditTrailSection candidate={candidate} />
+          <div id="sec-activity" className="scroll-mt-24 space-y-6">
+            {(interviews.length > 0 || decisions.length > 0) && (
+              <ActivitySection interviews={interviews} decisions={decisions} />
+            )}
+            <JourneySection matchId={candidate.match_id} />
+            <AuditTrailSection candidate={candidate} />
+          </div>
         </div>
 
         {/* SIDE PANEL — Decision cockpit (sticky on desktop) */}
@@ -270,6 +283,7 @@ function CandidateDetailPage() {
               pending={act.isPending}
               onAct={(k) => act.mutate(k)}
               stage={candidate.stage}
+              matchId={candidate.match_id}
             />
             <TalentMemoryAction
               orgId={orgId}
@@ -283,6 +297,15 @@ function CandidateDetailPage() {
           </div>
         </aside>
       </div>
+
+      {/* MOBILE ACTION BAR — visible only on small screens */}
+      {!readOnly && actions.primary && candidate.stage !== "hired" && (
+        <MobileActionBar
+          actions={actions}
+          pending={act.isPending}
+          onAct={(k) => act.mutate(k)}
+        />
+      )}
     </main>
   );
 }
@@ -994,12 +1017,14 @@ function ActionArea({
  pending,
  onAct,
  stage,
+ matchId,
 }: {
  actions: { primary: ActionDef | null; more: ActionDef[] };
  readOnly: boolean;
  pending: boolean;
  onAct: (k: ActionKey) => void;
  stage: MatchStage;
+ matchId: string;
 }) {
   return (
     <div className="rounded-xl border bg-card p-4 shadow-sm ring-1 ring-primary/5">
@@ -1057,10 +1082,18 @@ function ActionArea({
           Actions unavailable in read-only preview.
         </p>
       )}
-      <div className="mt-3 border-t pt-3">
+      <div className="mt-3 flex flex-wrap items-center gap-3 border-t pt-3 text-sm">
+        <Link
+          to="/client/candidates"
+          search={{ compare: matchId } as never}
+          className="inline-flex items-center gap-1.5 font-medium text-primary hover:underline"
+        >
+          <Sparkles className="h-3.5 w-3.5" />
+          Add to comparison
+        </Link>
         <Link
           to="/client/messages"
-          className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
+          className="inline-flex items-center gap-1.5 font-medium text-primary hover:underline"
         >
           <MessageSquare className="h-3.5 w-3.5" />
           Message TaaSFlow
@@ -1453,5 +1486,91 @@ function JourneySection({ matchId }: { matchId: string }) {
     <SectionCard title="Journey timeline" icon={<FileClock className="h-4 w-4" />}>
       <JourneyTimeline events={events} />
     </SectionCard>
+  );
+}
+
+// ─── Jump navigation ─────────────────────────────────────────────────────────
+
+function JumpNav({ items }: { items: Array<{ id: string; label: string }> }) {
+  return (
+    <nav
+      aria-label="Section navigation"
+      className="sticky top-14 z-20 -mx-4 overflow-x-auto border-y bg-background/85 px-4 py-2 backdrop-blur supports-[backdrop-filter]:bg-background/70 sm:mx-0 sm:rounded-lg sm:border"
+    >
+      <ul className="flex items-center gap-1 whitespace-nowrap text-xs">
+        {items.map((it) => (
+          <li key={it.id}>
+            <a
+              href={`#${it.id}`}
+              className="inline-flex items-center rounded-md px-2.5 py-1.5 font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+            >
+              {it.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  );
+}
+
+// ─── Mobile action bar ───────────────────────────────────────────────────────
+
+function MobileActionBar({
+  actions,
+  pending,
+  onAct,
+}: {
+  actions: { primary: ActionDef | null; more: ActionDef[] };
+  pending: boolean;
+  onAct: (k: ActionKey) => void;
+}) {
+  if (!actions.primary) return null;
+  return (
+    <div
+      role="toolbar"
+      aria-label="Candidate actions"
+      className="fixed inset-x-0 bottom-0 z-30 border-t bg-background/95 px-4 py-3 shadow-[0_-4px_16px_-8px_rgba(0,0,0,0.15)] backdrop-blur lg:hidden"
+      style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 0.75rem)" }}
+    >
+      <div className="mx-auto flex max-w-3xl items-center gap-2">
+        <Button
+          className="flex-1 min-h-11"
+          disabled={pending}
+          onClick={() => onAct(actions.primary!.key)}
+        >
+          {actions.primary.label}
+        </Button>
+        {actions.more.length > 0 && (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="outline"
+                size="icon"
+                aria-label="More actions"
+                className="min-h-11 min-w-11"
+              >
+                <MoreHorizontal className="h-4 w-4" aria-hidden />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" side="top" className="w-56">
+              {actions.more.map((a, i) => (
+                <div key={a.key}>
+                  {i > 0 && a.key === "not_moving_forward" && <DropdownMenuSeparator />}
+                  <DropdownMenuItem
+                    onSelect={() => onAct(a.key)}
+                    disabled={pending}
+                    className={cn(
+                      a.key === "not_moving_forward" && "text-destructive focus:text-destructive",
+                    )}
+                  >
+                    {a.label}
+                  </DropdownMenuItem>
+                </div>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
+      </div>
+    </div>
   );
 }
