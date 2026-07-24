@@ -247,37 +247,30 @@ const AGENCY_COMPARE = [
 const HOMEPAGE_FAQ = [
   {
     q: "What is TaaSFlow?",
-    a: "TaaSFlow is an on-demand recruiting function delivered as a subscription. A recruiter runs sourcing and evaluation for your roles inside a live workspace your team can see at any time.",
+    a: "TaaSFlow is an on-demand recruiting function delivered as scoped packages. A recruiter runs sourcing and evaluation for your roles inside a live workspace your team can see at any time.",
   },
   {
     q: "How is TaaSFlow different from a recruiting agency?",
-    a: "Agencies charge a percentage of salary per hire and forward CVs by email. TaaSFlow is a flat monthly subscription with ranked candidates, evidence per requirement, and a transparent workspace — no placement fees.",
+    a: "Agencies charge a percentage of salary per hire and forward CVs by email. TaaSFlow is a package-based engagement with ranked candidates, evidence per requirement, and a transparent workspace — no placement fees.",
   },
   {
-    q: "What does the Client actually receive?",
+    q: "What does the client actually receive?",
     a: "A ranked shortlist, recruiter-written evidence tied to each requirement, CV quotes, a live pipeline across every stage, and one workspace thread with your recruiter — all owned by your team.",
   },
   {
-    q: "Who runs the interviews?",
-    a: "Your team runs interviews and the offer conversation directly with the candidate. TaaSFlow prepares the shortlist and stays available in the workspace for support — we do not gate access to candidates.",
-  },
-  {
     q: "How does pricing work?",
-    a: "Flat monthly subscription per active role. No percentage-of-salary fees and no per-hire fees. Specific plans are shared on request so we can match capacity to your open roles.",
+    a: "Fixed package pricing scoped to volume. Higher volume lowers cost per role, and annual commitment saves 10%. No percentage-of-salary fees, no per-hire fees.",
   },
   {
     q: "Who owns the candidates and pipeline?",
     a: "You do. Every candidate, note, evidence quote, and message stays in your workspace so past pipelines are reusable when new roles open.",
   },
   {
-    q: "What types of hiring do you support?",
-    a: "Individual contributor and manager roles across the industries listed on the Industries page — including SaaS, Tech, Finance, Healthcare, Sales, HR, Consulting, and Skilled Trades. Executive search is scoped case by case.",
-  },
-  {
     q: "How do we start?",
     a: "Open a role with the intake wizard or book a conversation. We confirm the requirements with you before any sourcing begins so evidence is scored against what you actually approved.",
   },
 ] as const;
+
 
 const APPROVED_PROOF = [
   {
