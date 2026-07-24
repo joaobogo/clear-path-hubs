@@ -432,6 +432,17 @@ export const askAssistant = createServerFn({ method: "POST" })
       .single();
     if (userInsert.error) throw new Error(userInsert.error.message);
 
+    // Audit: user prompt
+    await auditAssistantEvent(context.supabase, {
+      surface: "client_assistant",
+      event_type: "prompt",
+      user_id: context.userId,
+      organization_id: data.orgId,
+      conversation_id: conversationId,
+      message_id: userInsert.data.id as string,
+      content_preview: data.message,
+    });
+
     // Build initial message list
     const messages: AnyRow[] = [
       { role: "system", content: SYSTEM_PROMPT },
