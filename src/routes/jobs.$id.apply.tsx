@@ -64,7 +64,8 @@ const STEP_LABELS = [
 ] as const;
 
 function ApplyPage() {
-  const { id } = Route.useParams();
+  const { id: rawId } = Route.useParams();
+  const id = extractJobUuid(rawId);
   const navigate = useNavigate();
   const { data: pos } = useSuspenseQuery({
     queryKey: ["public-position", id],
