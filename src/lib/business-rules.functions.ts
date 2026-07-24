@@ -1,11 +1,5 @@
 /**
  * Server functions for the canonical business rules.
- * ---------------------------------------------------
- * • getBusinessRules — merged defaults + platform overrides. Safe for any
- *   authenticated call site; the payload is not sensitive but changes require
- *   admin auth.
- * • listBusinessRuleOverrides — raw overrides + audit for the admin editor.
- * • setBusinessRuleOverride / clearBusinessRuleOverride — platform admin only.
  */
 
 import { createServerFn } from "@tanstack/react-start";
@@ -18,38 +12,43 @@ import {
   type BusinessRules,
 } from "@/config/business-rules";
 
-type OverrideRow = {
+type Json = null | string | number | boolean | { [k: string]: Json } | Json[];
+
+export type BusinessRuleOverride = {
   key: string;
-  value: unknown;
+  value: Json;
   notes: string | null;
   updated_by: string | null;
   updated_at: string;
 };
 
-async function readOverrides(
-  supabase: Awaited<ReturnType<typeof requireSupabaseAuth.server>>["context"]["supabase"],
-): Promise<Record<string, unknown>> {
-  const { data, error } = await supabase
-    .from("business_rules_overrides")
-    .select("key, value");
-  if (error) {
-    // A read failure must never take down the site — fall back to defaults.
-    console.warn("[business-rules] override read failed:", error.message);
-    return {};
-  }
-  const map: Record<string, unknown> = {};
-  for (const row of (data ?? []) as { key: string; value: unknown }[]) {
-    map[row.key] = row.value;
-  }
-  return map;
-}
+export type BusinessRuleAudit = {
+  id: string;
+  key: string;
+  previous_value: Json;
+  new_value: Json;
+  actor_user_id: string | null;
+  action: string;
+  note: string | null;
+  created_at: string;
+};
 
 export const getBusinessRules = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }): Promise<BusinessRules> => {
-    const overrides = await readOverrides(context.supabase);
+    const { data, error } = await context.supabase
+      .from("business_rules_overrides")
+      .select("key, value");
+    if (error) {
+      console.warn("[business-rules] override read failed:", error.message);
+      return BUSINESS_RULES_DEFAULTS;
+    }
+    const map: Record<string, unknown> = {};
+    for (const row of (data ?? []) as Array<{ key: string; value: unknown }>) {
+      map[row.key] = row.value;
+    }
     try {
-      return mergeBusinessRules(overrides);
+      return mergeBusinessRules(map);
     } catch (err) {
       console.warn("[business-rules] overrides invalid, falling back:", err);
       return BUSINESS_RULES_DEFAULTS;
@@ -64,7 +63,7 @@ export const listBusinessRuleOverrides = createServerFn({ method: "GET" })
     });
     if (!isAdmin) throw new Error("Forbidden");
 
-    const [{ data: overrides }, { data: audit }] = await Promise.all([
+    const [overridesResp, auditResp] = await Promise.all([
       context.supabase
         .from("business_rules_overrides")
         .select("*")
@@ -76,19 +75,13 @@ export const listBusinessRuleOverrides = createServerFn({ method: "GET" })
         .limit(50),
     ]);
 
+    const overrides = (overridesResp.data ?? []) as BusinessRuleOverride[];
+    const audit = (auditResp.data ?? []) as BusinessRuleAudit[];
+
     return {
-      defaults: BUSINESS_RULES_DEFAULTS,
-      overrides: (overrides ?? []) as OverrideRow[],
-      audit: (audit ?? []) as Array<{
-        id: string;
-        key: string;
-        previous_value: unknown;
-        new_value: unknown;
-        actor_user_id: string | null;
-        action: string;
-        note: string | null;
-        created_at: string;
-      }>,
+      defaults: BUSINESS_RULES_DEFAULTS as unknown as Json,
+      overrides,
+      audit,
     };
   });
 
@@ -107,10 +100,14 @@ export const setBusinessRuleOverride = createServerFn({ method: "POST" })
     });
     if (!isAdmin) throw new Error("Forbidden");
 
-    // Validate the merged result before persisting.
-    const current = await readOverrides(context.supabase);
-    const next = { ...current, [data.key]: data.value };
-    validateBusinessRules(mergeBusinessRules(next));
+    const { data: currentRows } = await context.supabase
+      .from("business_rules_overrides")
+      .select("key, value");
+    const current: Record<string, unknown> = {};
+    for (const row of (currentRows ?? []) as Array<{ key: string; value: unknown }>) {
+      current[row.key] = row.value;
+    }
+    validateBusinessRules(mergeBusinessRules({ ...current, [data.key]: data.value }));
 
     const { data: previous } = await context.supabase
       .from("business_rules_overrides")
