@@ -104,7 +104,7 @@ function DesktopNavLink({ to, label }: { to: string; label: string }) {
   return (
     <Link
       to={to}
-      className="rounded-md px-2 py-1.5 text-sm text-[color:var(--brand-navy)]/75 transition-colors hover:text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+      className="whitespace-nowrap rounded-md px-2 py-1.5 text-sm text-[color:var(--brand-navy)]/75 transition-colors hover:text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
       activeProps={{ className: "text-[color:var(--brand-navy)] font-semibold" }}
     >
       {label}
