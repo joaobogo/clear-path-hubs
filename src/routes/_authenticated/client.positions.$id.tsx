@@ -130,15 +130,17 @@ function PositionDetailPage() {
  onError: (e: Error, _v, ctx) => {
  if (ctx?.snapshot) qc.setQueryData(queryKey, ctx.snapshot);
  const raw = e.message.replace(/^Error: /, "");
- const msg = raw.startsWith("invalid_transition")
- ? "That move is not allowed for this stage."
- : raw === "SUPPORT_VIEW_READ_ONLY"
- ? "Unavailable while viewing this workspace in read-only support mode."
- : raw === "forbidden"
- ? "You do not have permission to move candidates."
- : raw === "match_not_visible"
- ? "This candidate is no longer available."
- : raw;
+  const msg = raw.startsWith("invalid_transition")
+  ? "That move is not allowed for this stage."
+  : raw === "reason_required"
+  ? "A reason is required to mark a candidate as not moving forward."
+  : raw === "SUPPORT_VIEW_READ_ONLY"
+  ? "Unavailable while viewing this workspace in read-only support mode."
+  : raw === "forbidden"
+  ? "You do not have permission to move candidates."
+  : raw === "match_not_visible"
+  ? "This candidate is no longer available."
+  : raw;
  toast.error(msg);
  },
  onSuccess: () => {
