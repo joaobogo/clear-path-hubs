@@ -12,6 +12,16 @@ import {
   Minimize2,
   Sparkles,
 } from "lucide-react";
+import {
+  PRICE_PILOT_DISPLAY,
+  PRICE_MULTI_DISPLAY,
+  PRICE_SPRINT_DISPLAY,
+  PRICE_ENTERPRISE_DISPLAY,
+  PILOT_ROLES_LABEL,
+  MULTI_ROLES_LABEL,
+  SPRINT_ROLES_LABEL,
+  ENTERPRISE_ROLES_LABEL,
+} from "@/config/pricing-core";
 
 /**
  * /boardroom — in-product Boardroom Mode.
@@ -341,11 +351,12 @@ function SlideEconomics() {
       <h2 className="mt-3 font-[family-name:var(--brand-font-display)] text-4xl font-semibold tracking-tight sm:text-5xl">
         Priced like software. Delivered by people.
       </h2>
-      <div className="mt-10 grid gap-6 sm:grid-cols-3">
+      <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
         {[
-          { tier: "Team", price: "€1,900", body: "1 role at a time." },
-          { tier: "Growth", price: "€4,900", body: "Up to 4 concurrent roles.", highlight: true },
-          { tier: "Enterprise", price: "Custom", body: "Portfolio of searches." },
+          { tier: "Pilot", price: PRICE_PILOT_DISPLAY, unit: " one-time", body: PILOT_ROLES_LABEL + ". Test the model on one critical hire." },
+          { tier: "Multi Position", price: PRICE_MULTI_DISPLAY, unit: " one-time", body: MULTI_ROLES_LABEL + ". Parallel searches, shared context.", highlight: true },
+          { tier: "Hiring Sprint", price: PRICE_SPRINT_DISPLAY, unit: " one-time", body: SPRINT_ROLES_LABEL + ". Concurrent, priority support." },
+          { tier: "Custom", price: PRICE_ENTERPRISE_DISPLAY, unit: "", body: ENTERPRISE_ROLES_LABEL + ". Continuous portfolio hiring." },
         ].map((t) => (
           <div
             key={t.tier}
@@ -356,14 +367,14 @@ function SlideEconomics() {
             <p className="text-xs uppercase tracking-widest text-white/60">{t.tier}</p>
             <p className="mt-3 font-[family-name:var(--brand-font-display)] text-4xl font-semibold">
               {t.price}
-              <span className="text-sm font-normal text-white/60">/mo</span>
+              <span className="text-sm font-normal text-white/60">{t.unit}</span>
             </p>
             <p className="mt-3 text-sm text-white/70">{t.body}</p>
           </div>
         ))}
       </div>
       <p className="mt-8 text-sm text-white/60">
-        A single €120k placement at a 20% fee equals more than a year of Growth.
+        A single €120k placement at a 20% fee equals more than five Hiring Sprints — with no candidate ownership.
       </p>
     </div>
   );
@@ -408,7 +419,7 @@ function SlideNext() {
       <ol className="mt-10 space-y-4">
         {[
           "Confirm the roles for the next 90 days.",
-          "Set subscription tier and start date.",
+          "Select the package (Pilot, Multi, Sprint, or Custom) and start date.",
           "Kick off intake — first shortlist within 14 days.",
           "Weekly operating review starts week two.",
         ].map((t, idx) => (
