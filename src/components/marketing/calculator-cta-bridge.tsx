@@ -129,12 +129,26 @@ export function CalculatorCtaBridge({ result, className }: CalculatorCtaBridgePr
         <div className="flex shrink-0 flex-col gap-2 sm:flex-row md:flex-col md:items-stretch">
           <Link
             to={config.primary.to}
+            onClick={() =>
+              trackEvent("calculator.bridge_cta_clicked", {
+                cta: "primary",
+                mode,
+                to: config.primary.to,
+              })
+            }
             className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[color:var(--brand-navy-dark)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
           >
             {config.primary.label} <ArrowRight className="h-4 w-4" aria-hidden />
           </Link>
           <Link
             to={config.secondary.to}
+            onClick={() =>
+              trackEvent("calculator.bridge_cta_clicked", {
+                cta: "secondary",
+                mode,
+                to: config.secondary.to,
+              })
+            }
             className="inline-flex min-h-11 items-center justify-center rounded-md border border-[color:var(--brand-navy)]/15 bg-white px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
           >
             {config.secondary.label}
