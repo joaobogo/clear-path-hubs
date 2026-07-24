@@ -39,7 +39,7 @@ export type { MatchStage };
 async function resolveContext(supabase: AnyRow, userId: string, orgId?: string) {
   const { data: memberships, error } = await supabase
     .from("memberships")
-    .select("organization_id, role, status, organizations(id, name)")
+    .select("organization_id, role, status, organizations(id, name, industry, parent_organization_id)")
     .eq("user_id", userId)
     .eq("status", "active");
   if (error) throw new Error(error.message);
@@ -56,7 +56,7 @@ async function resolveContext(supabase: AnyRow, userId: string, orgId?: string) 
   if (!active && isStaff && orgId) {
     const { data: org } = await supabase
       .from("organizations")
-      .select("id, name")
+      .select("id, name, industry, parent_organization_id")
       .eq("id", orgId)
       .maybeSingle();
     if (org) {
@@ -97,6 +97,8 @@ export const getClientContext = createServerFn({ method: "GET" })
           organization_id: string;
           role: ClientRole;
           name: string;
+          industry: string | null;
+          parent_organization_id: string | null;
         },
         organizations: memberships.map((m) => ({
           id: m.organization_id,
@@ -112,6 +114,8 @@ export const getClientContext = createServerFn({ method: "GET" })
         organization_id: active.organization_id,
         role: active.role as ClientRole,
         name: active.organizations?.name ?? "Organization",
+        industry: (active.organizations?.industry ?? null) as string | null,
+        parent_organization_id: (active.organizations?.parent_organization_id ?? null) as string | null,
       },
       organizations: memberships.map((m) => ({
         id: m.organization_id,
