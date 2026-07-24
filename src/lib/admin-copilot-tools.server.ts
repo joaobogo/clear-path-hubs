@@ -27,15 +27,6 @@ export type CopilotAction =
       org_id: string;
       client_name: string;
       draft_body: string;
-    }
-  | {
-      kind: "draft_candidate_outreach";
-      action_id: string;
-      label: string;
-      description: string;
-      match_id: string;
-      candidate_name: string;
-      draft_body: string;
     };
 
 export interface CopilotToolResult {
