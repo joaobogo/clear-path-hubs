@@ -1330,18 +1330,18 @@ function Home() {
             <div className="flex min-w-0 flex-col justify-center gap-6">
               <span className="inline-flex w-fit items-center gap-2 rounded-full border border-[color:var(--brand-navy)]/12 bg-white/70 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/75 backdrop-blur">
                 <Sparkles className="h-3.5 w-3.5 text-[color:var(--brand-ocean)]" aria-hidden />
-                On-demand recruiting function
+                The hiring operating system
               </span>
               <h1
                 id="home-hero-heading"
                 className="font-[family-name:var(--brand-font-display)] text-4xl font-semibold leading-[1.05] tracking-tight text-[color:var(--brand-navy)] sm:text-5xl lg:text-[3.5rem]"
               >
-                Your hiring team.
-                <br className="hidden sm:block" /> On demand.
+                Recruiting,
+                <br className="hidden sm:block" /> run as a system.
               </h1>
               <p className="max-w-xl text-lg text-[color:var(--brand-navy)]/75">
-                Human recruiters + AI + your own ATS.{" "}
-                <span className="font-semibold text-[color:var(--brand-navy)]">Cheaper. Better. Faster.</span>
+                Every role is briefed, sourced, and scored against your rubric in one live workspace.{" "}
+                <span className="font-semibold text-[color:var(--brand-navy)]">Recruiters decide. The system carries the context.</span>
               </p>
               <div className="flex flex-wrap items-center gap-3 pt-1">
                 <Link
@@ -1351,17 +1351,17 @@ function Home() {
                   Start Hiring <ArrowRight className="h-4 w-4" aria-hidden />
                 </Link>
                 <Link
-                  to="/how-it-works"
+                  to="/platform"
                   className="inline-flex min-h-11 items-center justify-center rounded-md border border-[color:var(--brand-navy)]/15 bg-white px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
                 >
-                  See How It Works
+                  See the Platform
                 </Link>
               </div>
               <ul className="flex flex-wrap gap-x-5 gap-y-1.5 text-xs text-[color:var(--brand-navy)]/65">
                 {[
-                  "Ranked shortlist by Friday",
-                  "Flat subscription — no placement fees",
-                  "You keep the ATS and the final call",
+                  "Ranked shortlist within one week",
+                  "Flat subscription, no placement fees",
+                  "You keep the ATS, the candidates, the final call",
                 ].map((t) => (
                   <li key={t} className="inline-flex items-center gap-1.5">
                     <CheckCircle2 className="h-3.5 w-3.5 text-[color:var(--brand-ocean)]" aria-hidden />
