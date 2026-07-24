@@ -7,9 +7,11 @@ import {
   CtaSection,
 } from "@/components/marketing/site-shell";
 import { PricingTierCard } from "@/components/marketing/pricing-tier-card";
+import { SubscriptionTierCard } from "@/components/marketing/subscription-tier-card";
 import { AgencyComparator } from "@/components/marketing/agency-comparator";
 import { PRICING_TIERS, NEVER_CHARGED, PRICING_GUARANTEES } from "@/content/pricing";
-import { PRICE_PILOT_DISPLAY } from "@/config/pricing-core";
+import { SUBSCRIPTION_TIERS } from "@/content/pricing-subscriptions";
+import { PRICE_PILOT_DISPLAY, SUBSCRIPTION_ANNUAL_DISCOUNT_LABEL } from "@/config/pricing-core";
 import { Check, X } from "lucide-react";
 import { PageConnections } from "@/components/marketing/page-connections";
 
