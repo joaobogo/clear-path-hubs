@@ -80,7 +80,7 @@ function CopilotPage() {
 
   const state = useQuery({
     queryKey: ["admin-copilot-state"],
-    queryFn: () => stateFn({ data: {} }),
+    queryFn: () => stateFn(),
   });
 
   const ask = useMutation({
