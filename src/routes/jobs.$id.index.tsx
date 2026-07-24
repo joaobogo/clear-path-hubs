@@ -1,17 +1,30 @@
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { createFileRoute, Link, notFound, redirect } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { getPublicPosition } from "@/lib/jobs.functions";
+import { buildJobSlug, extractJobUuid } from "@/lib/marketing/job-slug";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { SiteShell } from "@/components/marketing/site-shell";
 
 export const Route = createFileRoute("/jobs/$id/")({
   loader: async ({ context, params }) => {
+    // Support both slugged (`title-uuid`) and bare UUID URLs. The DB
+    // lookup always uses the trailing UUID; a bare-UUID visit 301s
+    // to the canonical slugged URL for SEO consolidation.
+    const uuid = extractJobUuid(params.id);
     const data = await context.queryClient.ensureQueryData({
-      queryKey: ["public-position", params.id],
-      queryFn: () => getPublicPosition({ data: { id: params.id } }),
+      queryKey: ["public-position", uuid],
+      queryFn: () => getPublicPosition({ data: { id: uuid } }),
     });
     if (!data) throw notFound();
+    const canonicalParam = buildJobSlug(data);
+    if (params.id !== canonicalParam) {
+      throw redirect({
+        to: "/jobs/$id",
+        params: { id: canonicalParam },
+        statusCode: 301,
+      });
+    }
     return data;
   },
   head: ({ loaderData }) => {
@@ -25,6 +38,7 @@ export const Route = createFileRoute("/jobs/$id/")({
     }
     const title = `${loaderData.title} — ${loaderData.organization_name} · TaaSFlow`;
     const desc = loaderData.description.slice(0, 155);
+    const canonical = `https://taasflow.com/jobs/${buildJobSlug(loaderData)}`;
     return {
       meta: [
         { title },
@@ -32,8 +46,10 @@ export const Route = createFileRoute("/jobs/$id/")({
         { property: "og:title", content: title },
         { property: "og:description", content: desc },
         { property: "og:type", content: "article" },
+        { property: "og:url", content: canonical },
         { name: "twitter:card", content: "summary" },
       ],
+      links: [{ rel: "canonical", href: canonical }],
     };
   },
   errorComponent: ({ error }) => (

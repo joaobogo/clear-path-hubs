@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/select";
 import { X } from "lucide-react";
 import { SiteShell } from "@/components/marketing/site-shell";
+import { buildJobSlug } from "@/lib/marketing/job-slug";
 
 const positionsQuery = queryOptions({
   queryKey: ["public-positions"],
@@ -263,7 +264,7 @@ function JobsPage() {
                 <li key={p.id}>
                   <Link
                     to="/jobs/$id"
-                    params={{ id: p.id }}
+                    params={{ id: buildJobSlug(p) }}
                     className="block rounded-lg border bg-card p-4 md:p-5 hover:border-foreground/40 hover:shadow-sm transition-all"
                   >
                     <div className="flex flex-wrap items-start justify-between gap-3">
