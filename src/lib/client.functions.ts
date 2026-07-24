@@ -97,6 +97,8 @@ export const getClientContext = createServerFn({ method: "GET" })
           organization_id: string;
           role: ClientRole;
           name: string;
+          industry: string | null;
+          parent_organization_id: string | null;
         },
         organizations: memberships.map((m) => ({
           id: m.organization_id,
