@@ -81,13 +81,13 @@ export const globalSearch = createServerFn({ method: "POST" })
     if (scope === "client" && orgIds.length === 0) {
       return {
         scope,
-        groups: { clients: [], positions: [], candidates: [], messages: [] },
+        groups: { clients: [], positions: [], candidates: [], messages: [], tasks: [] },
       };
     }
 
     // Bounded per-group limits.
     const LIMIT = 6;
-    const empty = { clients: [], positions: [], candidates: [], messages: [] } as SearchResponse["groups"];
+    const empty = { clients: [], positions: [], candidates: [], messages: [], tasks: [] } as SearchResponse["groups"];
     const groups: SearchResponse["groups"] = { ...empty };
 
     // Clients — admin only.
