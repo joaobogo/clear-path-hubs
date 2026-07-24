@@ -100,6 +100,7 @@ type Any = any;
 
 const TABS = [
   { id: "profile", label: "Profile", icon: User },
+  { id: "journey", label: "Journey", icon: Milestone },
   { id: "cv", label: "CV & parsed", icon: FileText },
   { id: "enrichment", label: "Enrichment", icon: Sparkles },
   { id: "evidence", label: "Evidence", icon: ScanText },
