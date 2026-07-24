@@ -148,8 +148,16 @@ function CandidatesPage() {
  } else if (search.filter === "interview_pipeline") {
  if (c.stage !== "interview_process" && c.stage !== "offer") return false;
  }
- if (search.stage !== "all" && c.stage !== search.stage) return false;
- if (search.fit !== "all" && c.fit.band !== search.fit) return false;
+  if (search.stage !== "all" && c.stage !== search.stage) return false;
+  if (search.fit !== "all" && c.fit.band !== search.fit) return false;
+  const min = search.minScore === "" ? null : Number(search.minScore);
+  const max = search.maxScore === "" ? null : Number(search.maxScore);
+  if (min != null && !Number.isNaN(min)) {
+   if (c.score == null || c.score < min) return false;
+  }
+  if (max != null && !Number.isNaN(max)) {
+   if (c.score == null || c.score > max) return false;
+  }
  if (loc && !(c.candidate.location ?? "").toLowerCase().includes(loc)) return false;
  if (q) {
  const hay = [
