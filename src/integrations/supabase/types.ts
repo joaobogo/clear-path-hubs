@@ -162,6 +162,13 @@ export type Database = {
             referencedColumns: ["application_id"]
           },
           {
+            foreignKeyName: "application_answers_application_id_fkey"
+            columns: ["application_id"]
+            isOneToOne: false
+            referencedRelation: "v_source_attribution"
+            referencedColumns: ["application_id"]
+          },
+          {
             foreignKeyName: "application_answers_question_id_fkey"
             columns: ["question_id"]
             isOneToOne: false
@@ -188,8 +195,14 @@ export type Database = {
             | Database["public"]["Enums"]["migration_row_status"]
             | null
           migration_version: string | null
+          outreach_replied_at: string | null
+          outreach_sent_at: string | null
           position_id: string
           source: string | null
+          source_campaign: string | null
+          source_channel: string | null
+          source_cost_cents: number | null
+          source_kind: Database["public"]["Enums"]["source_kind"] | null
           status: Database["public"]["Enums"]["application_status"]
           test_run_id: string | null
           updated_at: string
@@ -212,8 +225,14 @@ export type Database = {
             | Database["public"]["Enums"]["migration_row_status"]
             | null
           migration_version?: string | null
+          outreach_replied_at?: string | null
+          outreach_sent_at?: string | null
           position_id: string
           source?: string | null
+          source_campaign?: string | null
+          source_channel?: string | null
+          source_cost_cents?: number | null
+          source_kind?: Database["public"]["Enums"]["source_kind"] | null
           status?: Database["public"]["Enums"]["application_status"]
           test_run_id?: string | null
           updated_at?: string
@@ -236,8 +255,14 @@ export type Database = {
             | Database["public"]["Enums"]["migration_row_status"]
             | null
           migration_version?: string | null
+          outreach_replied_at?: string | null
+          outreach_sent_at?: string | null
           position_id?: string
           source?: string | null
+          source_campaign?: string | null
+          source_channel?: string | null
+          source_cost_cents?: number | null
+          source_kind?: Database["public"]["Enums"]["source_kind"] | null
           status?: Database["public"]["Enums"]["application_status"]
           test_run_id?: string | null
           updated_at?: string
@@ -634,6 +659,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "candidate_evidence_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "v_source_attribution"
+            referencedColumns: ["match_id"]
+          },
+          {
             foreignKeyName: "candidate_evidence_candidate_profile_id_fkey"
             columns: ["candidate_profile_id"]
             isOneToOne: false
@@ -769,6 +801,13 @@ export type Database = {
             columns: ["application_id"]
             isOneToOne: true
             referencedRelation: "candidate_my_applications"
+            referencedColumns: ["application_id"]
+          },
+          {
+            foreignKeyName: "candidate_matches_application_id_fkey"
+            columns: ["application_id"]
+            isOneToOne: true
+            referencedRelation: "v_source_attribution"
             referencedColumns: ["application_id"]
           },
           {
@@ -1071,6 +1110,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "client_kanban_view"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_decisions_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "v_source_attribution"
+            referencedColumns: ["match_id"]
           },
           {
             foreignKeyName: "client_decisions_organization_id_fkey"
@@ -1668,6 +1714,13 @@ export type Database = {
             referencedColumns: ["application_id"]
           },
           {
+            foreignKeyName: "hire_records_application_id_fkey"
+            columns: ["application_id"]
+            isOneToOne: false
+            referencedRelation: "v_source_attribution"
+            referencedColumns: ["application_id"]
+          },
+          {
             foreignKeyName: "hire_records_candidate_match_id_fkey"
             columns: ["candidate_match_id"]
             isOneToOne: true
@@ -1701,6 +1754,13 @@ export type Database = {
             isOneToOne: true
             referencedRelation: "client_kanban_view"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hire_records_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: true
+            referencedRelation: "v_source_attribution"
+            referencedColumns: ["match_id"]
           },
           {
             foreignKeyName: "hire_records_candidate_profile_id_fkey"
@@ -2044,6 +2104,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "interviews_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "v_source_attribution"
+            referencedColumns: ["match_id"]
+          },
+          {
             foreignKeyName: "interviews_candidate_submission_id_fkey"
             columns: ["candidate_submission_id"]
             isOneToOne: false
@@ -2055,6 +2122,13 @@ export type Database = {
             columns: ["candidate_submission_id"]
             isOneToOne: false
             referencedRelation: "candidate_my_applications"
+            referencedColumns: ["application_id"]
+          },
+          {
+            foreignKeyName: "interviews_candidate_submission_id_fkey"
+            columns: ["candidate_submission_id"]
+            isOneToOne: false
+            referencedRelation: "v_source_attribution"
             referencedColumns: ["application_id"]
           },
           {
@@ -3131,6 +3205,13 @@ export type Database = {
             referencedColumns: ["application_id"]
           },
           {
+            foreignKeyName: "notification_events_application_id_fkey"
+            columns: ["application_id"]
+            isOneToOne: false
+            referencedRelation: "v_source_attribution"
+            referencedColumns: ["application_id"]
+          },
+          {
             foreignKeyName: "notification_events_candidate_match_id_fkey"
             columns: ["candidate_match_id"]
             isOneToOne: false
@@ -3164,6 +3245,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "client_kanban_view"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notification_events_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "v_source_attribution"
+            referencedColumns: ["match_id"]
           },
           {
             foreignKeyName: "notification_events_candidate_profile_id_fkey"
@@ -3956,6 +4044,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "score_decisions_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "v_source_attribution"
+            referencedColumns: ["match_id"]
+          },
+          {
             foreignKeyName: "score_decisions_score_run_id_fkey"
             columns: ["score_run_id"]
             isOneToOne: false
@@ -4113,6 +4208,13 @@ export type Database = {
             referencedColumns: ["application_id"]
           },
           {
+            foreignKeyName: "score_runs_application_fk"
+            columns: ["application_id"]
+            isOneToOne: false
+            referencedRelation: "v_source_attribution"
+            referencedColumns: ["application_id"]
+          },
+          {
             foreignKeyName: "score_runs_candidate_match_id_fkey"
             columns: ["candidate_match_id"]
             isOneToOne: false
@@ -4146,6 +4248,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "client_kanban_view"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "score_runs_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "v_source_attribution"
+            referencedColumns: ["match_id"]
           },
           {
             foreignKeyName: "score_runs_candidate_profile_fk"
@@ -4600,6 +4709,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "talent_memory_source_match_id_fkey"
+            columns: ["source_match_id"]
+            isOneToOne: false
+            referencedRelation: "v_source_attribution"
+            referencedColumns: ["match_id"]
+          },
+          {
             foreignKeyName: "talent_memory_source_position_id_fkey"
             columns: ["source_position_id"]
             isOneToOne: false
@@ -4962,6 +5078,13 @@ export type Database = {
             referencedColumns: ["application_id"]
           },
           {
+            foreignKeyName: "candidate_matches_application_id_fkey"
+            columns: ["application_id"]
+            isOneToOne: true
+            referencedRelation: "v_source_attribution"
+            referencedColumns: ["application_id"]
+          },
+          {
             foreignKeyName: "candidate_matches_candidate_profile_id_fkey"
             columns: ["candidate_profile_id"]
             isOneToOne: false
@@ -5158,6 +5281,13 @@ export type Database = {
             columns: ["application_id"]
             isOneToOne: true
             referencedRelation: "candidate_my_applications"
+            referencedColumns: ["application_id"]
+          },
+          {
+            foreignKeyName: "candidate_matches_application_id_fkey"
+            columns: ["application_id"]
+            isOneToOne: true
+            referencedRelation: "v_source_attribution"
             referencedColumns: ["application_id"]
           },
           {
@@ -5555,6 +5685,123 @@ export type Database = {
           },
         ]
       }
+      v_source_attribution: {
+        Row: {
+          application_id: string | null
+          applied_at: string | null
+          candidate_profile_id: string | null
+          channel: string | null
+          hire_status: Database["public"]["Enums"]["hire_status"] | null
+          hired_at: string | null
+          kind: string | null
+          match_id: string | null
+          organization_id: string | null
+          outreach_replied_at: string | null
+          outreach_sent_at: string | null
+          position_id: string | null
+          source_campaign: string | null
+          source_cost_cents: number | null
+          stage: Database["public"]["Enums"]["match_stage"] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "applications_candidate_profile_id_fkey"
+            columns: ["candidate_profile_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_profile_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "applications_candidate_profile_id_fkey"
+            columns: ["candidate_profile_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "applications_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "admin_pipeline_health"
+            referencedColumns: ["position_id"]
+          },
+          {
+            foreignKeyName: "applications_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "admin_positions_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "applications_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_my_applications"
+            referencedColumns: ["position_id"]
+          },
+          {
+            foreignKeyName: "applications_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "client_positions_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "applications_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "positions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "positions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "admin_clients_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "positions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      v_source_attribution_rollup: {
+        Row: {
+          applications: number | null
+          channel: string | null
+          first_applied_at: string | null
+          hired: number | null
+          interviewed: number | null
+          kind: string | null
+          last_applied_at: string | null
+          offered: number | null
+          organization_id: string | null
+          outreach_replied: number | null
+          outreach_sent: number | null
+          shortlisted: number | null
+          total_cost_cents: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "positions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "admin_clients_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "positions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       v_time_to_hire: {
         Row: {
           applied_at: string | null
@@ -5830,6 +6077,14 @@ export type Database = {
         | "geo"
         | "better_fit_selected"
         | "skills_gap"
+        | "other"
+      source_kind:
+        | "inbound"
+        | "sourced"
+        | "referral"
+        | "agency"
+        | "rehire"
+        | "event"
         | "other"
       work_model: "remote" | "hybrid" | "onsite"
     }
@@ -6134,6 +6389,15 @@ export const Constants = {
         "geo",
         "better_fit_selected",
         "skills_gap",
+        "other",
+      ],
+      source_kind: [
+        "inbound",
+        "sourced",
+        "referral",
+        "agency",
+        "rehire",
+        "event",
         "other",
       ],
       work_model: ["remote", "hybrid", "onsite"],
