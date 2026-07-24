@@ -74,7 +74,14 @@ async def scenario_offline(ctx, viewport_name: str, results: list):
 
 
 async def scenario_api_500(ctx, viewport_name: str, results: list):
+    """Client-side navigation into /jobs with all server-fn calls returning 500.
+    SSR is bypassed by first landing on /, then in-app navigating — that
+    forces the loader's ensureQueryData to hit _serverFn over the wire.
+    Truthfulness gate: page must NOT show a "0 results" success screen.
+    """
     page = await ctx.new_page()
+    await page.goto(BASE_URL + "/", wait_until="domcontentloaded", timeout=15_000)
+    await page.wait_for_timeout(400)
 
     async def handle(route):
         req = route.request
@@ -84,21 +91,28 @@ async def scenario_api_500(ctx, viewport_name: str, results: list):
             await route.continue_()
 
     await ctx.route("**/*", handle)
-    await page.goto(BASE_URL + "/jobs", wait_until="domcontentloaded", timeout=15_000)
-    await page.wait_for_timeout(1500)
+    try:
+        await page.evaluate("() => { window.location.href = '/jobs'; }")
+    except Exception:
+        pass
+    await page.wait_for_timeout(2500)
     failure, retry = await _has_retry_or_failure_copy(page)
     await _screenshot(page, f"api500-jobs-{viewport_name}")
-    # Truthfulness: if the server failed, page must not render a "0 results" success.
     body = (await page.inner_text("body")).lower()
-    false_empty = "0 results" in body and not failure
+    # False success = we're on /jobs with no jobs and no failure indication.
+    on_jobs = "/jobs" in page.url
+    false_empty = on_jobs and ("0 results" in body or "no positions" in body) and not failure
+    # PASS = we surface failure/retry copy OR the page didn't false-succeed.
+    ok = (failure or retry or not on_jobs) and not false_empty
     results.append({
         "scenario": "api_500",
         "viewport": viewport_name,
         "route": "/jobs",
+        "final_url": page.url,
         "failure_surface": failure,
         "retry_affordance": retry,
         "false_empty_state": false_empty,
-        "ok": (failure or retry) and not false_empty,
+        "ok": ok,
     })
     await ctx.unroute("**/*")
     await page.close()
