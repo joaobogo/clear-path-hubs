@@ -23,6 +23,8 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { CandidateCard } from "@/components/client/candidate-card";
 import { CompareTray, CompareSheet } from "@/components/client/candidate-comparison";
+import { ShareShortlistDialog } from "@/components/client/share-shortlist-dialog";
+import { Share2 } from "lucide-react";
 import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
 
 const STAGE_OPTIONS = [
@@ -227,6 +229,7 @@ function CandidatesPage() {
  );
  const [compareIds, setCompareIds] = useState<string[]>(initialCompare);
  const [compareOpen, setCompareOpen] = useState(initialCompare.length >= 2);
+ const [shareOpen, setShareOpen] = useState(false);
  useEffect(() => {
   // Drop any selection that is no longer client-visible (tenant switch, filter change to hidden rows).
   setCompareIds((ids) => {
@@ -554,11 +557,41 @@ function CandidatesPage() {
  crossPosition ? "Select candidates from the same position to compare" : null
  }
  />
- <CompareSheet
- open={compareOpen && selectedCandidates.length >= 2 && !crossPosition}
- onOpenChange={setCompareOpen}
- candidates={selectedCandidates}
- />
+  <CompareSheet
+  open={compareOpen && selectedCandidates.length >= 2 && !crossPosition}
+  onOpenChange={setCompareOpen}
+  candidates={selectedCandidates}
+  />
+
+  {selectedCandidates.length > 0 && (
+   <div className="fixed bottom-24 right-6 z-40">
+    <Button
+     size="lg"
+     className="shadow-lg"
+     onClick={() => setShareOpen(true)}
+     disabled={crossPosition}
+     title={crossPosition ? "Select candidates from the same position to share" : undefined}
+    >
+     <Share2 className="mr-2 h-4 w-4" />
+     Share shortlist ({selectedCandidates.length})
+    </Button>
+   </div>
+  )}
+
+  {orgId && (
+   <ShareShortlistDialog
+    open={shareOpen}
+    onOpenChange={setShareOpen}
+    orgId={orgId}
+    positionId={selectedCandidates[0]?.position?.id ?? null}
+    matchIds={selectedCandidates.map((c) => c.match_id)}
+    suggestedTitle={
+     selectedCandidates[0]?.position?.title
+      ? `Shortlist — ${selectedCandidates[0].position.title}`
+      : undefined
+    }
+   />
+  )}
  </main>
  );
 }
