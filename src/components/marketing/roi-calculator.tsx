@@ -302,7 +302,7 @@ export function RoiCalculator({
               format={(v) => formatUsdCompact(v)}
               onChange={(v) => patch("averageSalaryUsd", v)}
             />
-            <div className="grid grid-cols-2 gap-8 pt-2">
+            <div className="grid grid-cols-1 gap-8 pt-2 xs:grid-cols-2 sm:grid-cols-2">
               <Field
                 id="roi-hourly"
                 label="Hourly rate"
