@@ -134,8 +134,6 @@ async function runTool(supabase: AnyRow, name: string, args: Record<string, unkn
       return t.draftClientUpdate(supabase, String(args.org_id ?? ""));
     default:
       return { data: { error: `unknown_tool:${name}` }, citations: [] };
-    default:
-      return { data: { error: `unknown_tool:${name}` }, citations: [] };
   }
 }
 
