@@ -129,6 +129,94 @@ const TOOL_DEFS = [
       parameters: { type: "object", properties: {}, required: [] },
     },
   },
+  // ─── Action Mode tools (return proposals; NEVER mutate) ─────────────────
+  {
+    type: "function",
+    function: {
+      name: "open_role",
+      description:
+        "Propose opening the workspace for a specific position. Returns a navigation action the user can approve.",
+      parameters: {
+        type: "object",
+        properties: { position_id: { type: "string", description: "positions.id UUID" } },
+        required: ["position_id"],
+      },
+    },
+  },
+  {
+    type: "function",
+    function: {
+      name: "open_candidate",
+      description:
+        "Propose opening a specific candidate match dossier. Returns a navigation action the user can approve.",
+      parameters: {
+        type: "object",
+        properties: { match_id: { type: "string", description: "candidate_matches.id UUID" } },
+        required: ["match_id"],
+      },
+    },
+  },
+  {
+    type: "function",
+    function: {
+      name: "prepare_compare_set",
+      description:
+        "Propose comparing 2–6 candidate matches side-by-side. Returns a navigation action to the compare view.",
+      parameters: {
+        type: "object",
+        properties: {
+          match_ids: {
+            type: "array",
+            items: { type: "string" },
+            description: "2 to 6 candidate_matches.id UUIDs.",
+          },
+          position_id: {
+            type: "string",
+            description: "Optional scoping position UUID.",
+          },
+        },
+        required: ["match_ids"],
+      },
+    },
+  },
+  {
+    type: "function",
+    function: {
+      name: "generate_shortlist_summary",
+      description:
+        "Compute a shortlist snapshot (candidates on shortlist/interview/offer stages for one position) with scores.",
+      parameters: {
+        type: "object",
+        properties: { position_id: { type: "string" } },
+        required: ["position_id"],
+      },
+    },
+  },
+  {
+    type: "function",
+    function: {
+      name: "surface_pending_approvals",
+      description:
+        "List candidate matches currently awaiting a client-side decision (shortlist / interview / offer stages).",
+      parameters: { type: "object", properties: {}, required: [] },
+    },
+  },
+  {
+    type: "function",
+    function: {
+      name: "draft_interview_request",
+      description:
+        "Draft — but do NOT send — an interview request message to the TaaSFlow team for a specific candidate match. Returns an editable, user-approvable draft.",
+      parameters: {
+        type: "object",
+        properties: {
+          match_id: { type: "string" },
+          notes: { type: "string", description: "Optional context for scheduling." },
+        },
+        required: ["match_id"],
+      },
+    },
+  },
 ];
 
 async function runTool(
