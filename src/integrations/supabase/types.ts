@@ -935,6 +935,9 @@ export type Database = {
           created_by_audit: boolean | null
           current_score_run_id: string | null
           delivered_at: string | null
+          eligibility_status: Database["public"]["Enums"]["eligibility_status"]
+          eligibility_updated_at: string | null
+          evidence_confidence: number | null
           expires_at: string | null
           id: string
           is_test_record: boolean | null
@@ -954,6 +957,9 @@ export type Database = {
           processing_error_message: string | null
           processing_state: Database["public"]["Enums"]["processing_state"]
           processing_updated_at: string
+          recommendation: Database["public"]["Enums"]["recommendation_status"]
+          recommendation_reason: string | null
+          recommendation_updated_at: string | null
           stage: Database["public"]["Enums"]["match_stage"]
           test_run_id: string | null
           updated_at: string
@@ -969,6 +975,9 @@ export type Database = {
           created_by_audit?: boolean | null
           current_score_run_id?: string | null
           delivered_at?: string | null
+          eligibility_status?: Database["public"]["Enums"]["eligibility_status"]
+          eligibility_updated_at?: string | null
+          evidence_confidence?: number | null
           expires_at?: string | null
           id?: string
           is_test_record?: boolean | null
@@ -988,6 +997,9 @@ export type Database = {
           processing_error_message?: string | null
           processing_state?: Database["public"]["Enums"]["processing_state"]
           processing_updated_at?: string
+          recommendation?: Database["public"]["Enums"]["recommendation_status"]
+          recommendation_reason?: string | null
+          recommendation_updated_at?: string | null
           stage?: Database["public"]["Enums"]["match_stage"]
           test_run_id?: string | null
           updated_at?: string
@@ -1003,6 +1015,9 @@ export type Database = {
           created_by_audit?: boolean | null
           current_score_run_id?: string | null
           delivered_at?: string | null
+          eligibility_status?: Database["public"]["Enums"]["eligibility_status"]
+          eligibility_updated_at?: string | null
+          evidence_confidence?: number | null
           expires_at?: string | null
           id?: string
           is_test_record?: boolean | null
@@ -1022,6 +1037,9 @@ export type Database = {
           processing_error_message?: string | null
           processing_state?: Database["public"]["Enums"]["processing_state"]
           processing_updated_at?: string
+          recommendation?: Database["public"]["Enums"]["recommendation_status"]
+          recommendation_reason?: string | null
+          recommendation_updated_at?: string | null
           stage?: Database["public"]["Enums"]["match_stage"]
           test_run_id?: string | null
           updated_at?: string
@@ -1854,6 +1872,283 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "files"
             referencedColumns: ["id"]
+          },
+        ]
+      }
+      eligibility_checks: {
+        Row: {
+          actor_user_id: string | null
+          candidate_match_id: string
+          created_at: string
+          evidence: Json
+          id: string
+          organization_id: string
+          position_id: string
+          qualifier_key: string
+          qualifier_kind: string
+          qualifier_label: string
+          reason: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          actor_user_id?: string | null
+          candidate_match_id: string
+          created_at?: string
+          evidence?: Json
+          id?: string
+          organization_id: string
+          position_id: string
+          qualifier_key: string
+          qualifier_kind: string
+          qualifier_label: string
+          reason?: string | null
+          status: string
+          updated_at?: string
+        }
+        Update: {
+          actor_user_id?: string | null
+          candidate_match_id?: string
+          created_at?: string
+          evidence?: Json
+          id?: string
+          organization_id?: string
+          position_id?: string
+          qualifier_key?: string
+          qualifier_kind?: string
+          qualifier_label?: string
+          reason?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "eligibility_checks_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "admin_candidate_matches_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "eligibility_checks_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "admin_work_inbox"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "eligibility_checks_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_matches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "eligibility_checks_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "client_candidate_matches_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "eligibility_checks_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "client_kanban_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "eligibility_checks_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "client_visible_candidates"
+            referencedColumns: ["candidate_match_id"]
+          },
+          {
+            foreignKeyName: "eligibility_checks_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "v_source_attribution"
+            referencedColumns: ["match_id"]
+          },
+          {
+            foreignKeyName: "eligibility_checks_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "admin_clients_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "eligibility_checks_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "eligibility_checks_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_portfolio_rollup"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "eligibility_checks_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "admin_pipeline_health"
+            referencedColumns: ["position_id"]
+          },
+          {
+            foreignKeyName: "eligibility_checks_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "admin_positions_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "eligibility_checks_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_my_applications"
+            referencedColumns: ["position_id"]
+          },
+          {
+            foreignKeyName: "eligibility_checks_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "client_positions_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "eligibility_checks_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "positions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      eligibility_exceptions: {
+        Row: {
+          candidate_match_id: string
+          created_at: string
+          eligibility_check_id: string
+          expires_at: string | null
+          granted_by: string
+          id: string
+          organization_id: string
+          reason: string
+          revoked_at: string | null
+          revoked_by: string | null
+          revoked_reason: string | null
+          updated_at: string
+        }
+        Insert: {
+          candidate_match_id: string
+          created_at?: string
+          eligibility_check_id: string
+          expires_at?: string | null
+          granted_by: string
+          id?: string
+          organization_id: string
+          reason: string
+          revoked_at?: string | null
+          revoked_by?: string | null
+          revoked_reason?: string | null
+          updated_at?: string
+        }
+        Update: {
+          candidate_match_id?: string
+          created_at?: string
+          eligibility_check_id?: string
+          expires_at?: string | null
+          granted_by?: string
+          id?: string
+          organization_id?: string
+          reason?: string
+          revoked_at?: string | null
+          revoked_by?: string | null
+          revoked_reason?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "eligibility_exceptions_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "admin_candidate_matches_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "eligibility_exceptions_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "admin_work_inbox"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "eligibility_exceptions_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_matches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "eligibility_exceptions_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "client_candidate_matches_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "eligibility_exceptions_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "client_kanban_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "eligibility_exceptions_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "client_visible_candidates"
+            referencedColumns: ["candidate_match_id"]
+          },
+          {
+            foreignKeyName: "eligibility_exceptions_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "v_source_attribution"
+            referencedColumns: ["match_id"]
+          },
+          {
+            foreignKeyName: "eligibility_exceptions_eligibility_check_id_fkey"
+            columns: ["eligibility_check_id"]
+            isOneToOne: false
+            referencedRelation: "eligibility_checks"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "eligibility_exceptions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "admin_clients_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "eligibility_exceptions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "eligibility_exceptions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_portfolio_rollup"
+            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -5284,6 +5579,7 @@ export type Database = {
           error_code: string | null
           evaluation_method: string | null
           evidence: Json
+          evidence_confidence: number | null
           expires_at: string | null
           explanation: string | null
           final_score: number
@@ -5330,6 +5626,7 @@ export type Database = {
           error_code?: string | null
           evaluation_method?: string | null
           evidence?: Json
+          evidence_confidence?: number | null
           expires_at?: string | null
           explanation?: string | null
           final_score: number
@@ -5376,6 +5673,7 @@ export type Database = {
           error_code?: string | null
           evaluation_method?: string | null
           evidence?: Json
+          evidence_confidence?: number | null
           expires_at?: string | null
           explanation?: string | null
           final_score?: number
@@ -8132,6 +8430,10 @@ export type Database = {
       }
       is_platform_admin: { Args: { _user: string }; Returns: boolean }
       is_platform_staff: { Args: { _user: string }; Returns: boolean }
+      score_band: {
+        Args: { _score: number }
+        Returns: Database["public"]["Enums"]["score_band"]
+      }
       scoring_readiness: { Args: { _match_id: string }; Returns: Json }
       show_limit: { Args: never; Returns: number }
       show_trgm: { Args: { "": string }; Returns: string[] }
@@ -8181,6 +8483,12 @@ export type Database = {
         | "failed"
         | "bounced"
         | "suppressed"
+      eligibility_status:
+        | "not_evaluated"
+        | "eligible"
+        | "not_eligible"
+        | "needs_validation"
+        | "excepted"
       employment_type:
         | "full_time"
         | "part_time"
@@ -8329,6 +8637,12 @@ export type Database = {
         | "provider_blocked"
         | "failed"
       profile_status: "active" | "suspended" | "deleted"
+      recommendation_status:
+        | "pending"
+        | "shortlist"
+        | "review"
+        | "hold_for_validation"
+        | "do_not_recommend"
       role_memory_kind:
         | "brief"
         | "rationale"
@@ -8344,6 +8658,13 @@ export type Database = {
         | "approved"
         | "active"
         | "superseded"
+      score_band:
+        | "exceptional"
+        | "top"
+        | "strong"
+        | "consider"
+        | "not_recommended"
+        | "unscored"
       score_decision_type:
         | "approve"
         | "override"
@@ -8548,6 +8869,13 @@ export const Constants = {
         "bounced",
         "suppressed",
       ],
+      eligibility_status: [
+        "not_evaluated",
+        "eligible",
+        "not_eligible",
+        "needs_validation",
+        "excepted",
+      ],
       employment_type: [
         "full_time",
         "part_time",
@@ -8712,6 +9040,13 @@ export const Constants = {
         "failed",
       ],
       profile_status: ["active", "suspended", "deleted"],
+      recommendation_status: [
+        "pending",
+        "shortlist",
+        "review",
+        "hold_for_validation",
+        "do_not_recommend",
+      ],
       role_memory_kind: [
         "brief",
         "rationale",
@@ -8728,6 +9063,14 @@ export const Constants = {
         "approved",
         "active",
         "superseded",
+      ],
+      score_band: [
+        "exceptional",
+        "top",
+        "strong",
+        "consider",
+        "not_recommended",
+        "unscored",
       ],
       score_decision_type: [
         "approve",
