@@ -473,56 +473,8 @@ export const executeCopilotAction = createServerFn({ method: "POST" })
         return { ok: true as const, kind: "draft_client_update" as const, org_id: a.org_id };
       }
 
-      if (a.kind === "draft_candidate_outreach") {
-        if (!a.match_id || !a.draft_body) {
-          await auditAssistantEvent(context.supabase, {
-            ...auditBase,
-            event_type: "action_failed",
-            payload: { ...auditBase.payload, reason: "missing_fields" },
-          });
-          throw new Error("Missing match_id or draft_body");
-        }
-        const { data: match } = await context.supabase
-          .from("candidate_matches")
-          .select("id, candidate_id, organization_id")
-          .eq("id", a.match_id)
-          .maybeSingle();
-        if (!match) {
-          await auditAssistantEvent(context.supabase, {
-            ...auditBase,
-            event_type: "action_denied",
-            payload: { ...auditBase.payload, reason: "match_not_accessible" },
-          });
-          throw new Error("Match not accessible");
-        }
-        const { error } = await context.supabase.from("messages").insert({
-          thread_id: (match as AnyRow).candidate_id,
-          sender_user_id: context.userId,
-          body: a.draft_body,
-          recipient_context: {
-            match_id: a.match_id,
-            candidate_id: (match as AnyRow).candidate_id,
-            organization_id: (match as AnyRow).organization_id,
-            from: "admin_copilot",
-            thread_kind: "candidate_outreach",
-          },
-        } as never);
-        if (error) {
-          await auditAssistantEvent(context.supabase, {
-            ...auditBase,
-            event_type: "action_failed",
-            payload: { ...auditBase.payload, reason: error.message },
-          });
-          throw new Error(error.message);
-        }
-        await auditAssistantEvent(context.supabase, {
-          ...auditBase,
-          event_type: "action_executed",
-          organization_id: (match as AnyRow).organization_id as string,
-          content_preview: a.draft_body,
-        });
-        return { ok: true as const, kind: "draft_candidate_outreach" as const, match_id: a.match_id };
-      }
+
+
 
       await auditAssistantEvent(context.supabase, {
         ...auditBase,
