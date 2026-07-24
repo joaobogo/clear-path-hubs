@@ -298,7 +298,6 @@ function PositionsPage() {
  ))}
  </div>
 
- <div className="mb-4 flex flex-wrap items-center gap-2">
   <div className="mb-4 flex flex-wrap items-center gap-2">
    <SavedViewsBar
     surface="client_positions"
