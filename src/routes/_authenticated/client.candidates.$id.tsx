@@ -1384,3 +1384,18 @@ function TalentMemoryAction({
     </div>
   );
 }
+
+function JourneySection({ matchId }: { matchId: string }) {
+  const { data, isLoading } = useQuery({
+    queryKey: ["candidate-journey", matchId],
+    queryFn: () => getCandidateJourney({ data: { candidateMatchId: matchId } }),
+  });
+  if (isLoading) return null;
+  const events = data?.events ?? [];
+  if (events.length === 0) return null;
+  return (
+    <SectionCard title="Journey timeline" icon={<FileClock className="h-4 w-4" />}>
+      <JourneyTimeline events={events} />
+    </SectionCard>
+  );
+}
