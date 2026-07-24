@@ -238,7 +238,11 @@ export function CompareSheet({
             </div>
 
             {/* Fit recommendation row */}
-            <ComparisonRow label="Recommendation" cols={cols}>
+            <ComparisonRow
+              label="Recommendation"
+              cols={cols}
+              hide={diffOnly && allSame(candidates.map((c) => c.fit.recommendation))}
+            >
               {candidates.map((c) => (
                 <div key={c.match_id} className="text-xs text-foreground/90">
                   {c.fit.recommendation}
@@ -247,7 +251,11 @@ export function CompareSheet({
             </ComparisonRow>
 
             {/* Stage */}
-            <ComparisonRow label="Stage" cols={cols}>
+            <ComparisonRow
+              label="Stage"
+              cols={cols}
+              hide={diffOnly && allSame(candidates.map((c) => c.stage))}
+            >
               {candidates.map((c) => (
                 <div key={c.match_id} className="text-xs capitalize">
                   {String(c.stage).replace(/_/g, " ")}
@@ -256,7 +264,11 @@ export function CompareSheet({
             </ComparisonRow>
 
             {/* Availability */}
-            <ComparisonRow label="Availability" cols={cols}>
+            <ComparisonRow
+              label="Availability"
+              cols={cols}
+              hide={diffOnly && allSame(candidates.map((c) => c.candidate.availability ?? ""))}
+            >
               {candidates.map((c) => (
                 <div key={c.match_id} className="text-xs">
                   {c.candidate.availability || (
@@ -266,8 +278,81 @@ export function CompareSheet({
               ))}
             </ComparisonRow>
 
+            {/* Logistics — location + timezone + work authorization */}
+            <ComparisonRow
+              label="Logistics"
+              cols={cols}
+              hide={
+                diffOnly &&
+                allSame(
+                  candidates.map(
+                    (c) =>
+                      `${c.candidate.location ?? ""}|${c.candidate.timezone ?? ""}|${c.work_authorization ?? ""}`,
+                  ),
+                )
+              }
+            >
+              {candidates.map((c) => (
+                <div key={c.match_id} className="text-xs">
+                  <div>{c.candidate.location ?? <span className="text-muted-foreground">Location N/A</span>}</div>
+                  {c.candidate.timezone && (
+                    <div className="text-muted-foreground">TZ {c.candidate.timezone}</div>
+                  )}
+                  <div className="text-muted-foreground">
+                    Auth: {c.work_authorization ?? "not confirmed"}
+                  </div>
+                </div>
+              ))}
+            </ComparisonRow>
+
+            {/* Compensation alignment */}
+            <ComparisonRow
+              label="Compensation"
+              cols={cols}
+              hide={
+                diffOnly &&
+                allSame(
+                  candidates.map(
+                    (c) =>
+                      `${c.compensation_alignment.verdict}|${c.compensation_alignment.candidate_expectation ?? ""}`,
+                  ),
+                )
+              }
+            >
+              {candidates.map((c) => {
+                const comp = c.compensation_alignment;
+                const tone: Record<typeof comp.verdict, string> = {
+                  aligned: "taas-bg-success-soft taas-fg-success",
+                  over: "taas-bg-warning-soft taas-fg-warning",
+                  under: "taas-bg-info-soft taas-fg-info",
+                  unknown: "taas-bg-neutral-soft taas-fg-neutral",
+                };
+                const labels: Record<typeof comp.verdict, string> = {
+                  aligned: "In range",
+                  over: "Above range",
+                  under: "Below range",
+                  unknown: "Not confirmed",
+                };
+                return (
+                  <div key={c.match_id} className="text-xs space-y-1">
+                    <span className={`inline-flex rounded-full px-2 py-0.5 text-[10px] font-semibold ${tone[comp.verdict]}`}>
+                      {labels[comp.verdict]}
+                    </span>
+                    <div>{comp.candidate_expectation ?? <span className="text-muted-foreground">Not shared</span>}</div>
+                    {comp.role_range && (
+                      <div className="text-muted-foreground">Role: {comp.role_range}</div>
+                    )}
+                  </div>
+                );
+              })}
+            </ComparisonRow>
+
             {/* Experience */}
-            <ComparisonRow label="Experience" cols={cols}>
+            <ComparisonRow
+              label="Experience"
+              cols={cols}
+              hide={diffOnly && allSame(candidates.map((c) => c.candidate.years_experience ?? -1))}
+            >
               {candidates.map((c) => (
                 <div key={c.match_id} className="text-xs">
                   {c.candidate.years_experience != null ? (
@@ -286,7 +371,11 @@ export function CompareSheet({
             </ComparisonRow>
 
             {/* Coverage summary */}
-            <ComparisonRow label="Must-have coverage" cols={cols}>
+            <ComparisonRow
+              label="Must-have coverage"
+              cols={cols}
+              hide={diffOnly && allSame(candidates.map((c) => `${c.coverage.must_met}/${c.coverage.must_total}`))}
+            >
               {candidates.map((c) => (
                 <div key={c.match_id} className="text-xs">
                   <span className="font-medium">
@@ -298,6 +387,7 @@ export function CompareSheet({
                 </div>
               ))}
             </ComparisonRow>
+
 
             {/* Strengths */}
             <ComparisonRow label="Strengths" cols={cols}>
