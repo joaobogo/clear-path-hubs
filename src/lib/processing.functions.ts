@@ -701,16 +701,25 @@ export const deleteCandidateMatch = createServerFn({ method: "POST" })
 
 export const listAdminMatches = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
-  .handler(async ({ context }) => {
+  .inputValidator((input: unknown) =>
+    z.object({ include_archived: z.boolean().optional() }).partial().parse(input ?? {}),
+  )
+  .handler(async ({ data, context }) => {
     if (!(await isStaff(context.userId))) throw new Error("forbidden");
     const supabase = (await getAdmin()) as AnyRow;
-    const { data } = await supabase
+    let q = supabase
       .from("candidate_matches")
       .select(
         "id,processing_state,admin_status,client_visibility,updated_at,current_score_run_id,candidate_profiles(full_name,email),positions(title,organizations(name)),score_runs!candidate_matches_current_score_run_id_fkey(score,fit_label,must_have_coverage,contradiction_status)",
-      )
+      );
+    if (!data.include_archived) {
+      // Hide deleted/archived rows so the admin list reflects the delete action.
+      q = q.neq("client_visibility", "archived").neq("admin_status", "rejected");
+    }
+    const { data: rows } = await q
       .order("updated_at", { ascending: false })
       .limit(200);
+    const data_rows = rows;
     return (
       (data ?? []).map((m: AnyRow) => {
         const cp = m.candidate_profiles;
