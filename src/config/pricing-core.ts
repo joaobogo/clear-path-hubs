@@ -17,14 +17,17 @@ export const PRICE_MULTI_USD = 2_100;
 export const PRICE_SPRINT_USD = 4_500;
 
 /**
- * Monthly subscription anchors — for continuous hiring programmes.
+ * Monthly subscription anchors — volume-based programmes.
+ * Mirrors taasflow.com/pricing (Subscription tab): Bronze / Silver / Gold / Enterprise.
  * Annual commit saves 10% (applied at checkout / on invoice).
  */
-export const PRICE_SUB_GROWTH_USD = 1_900;
-export const PRICE_SUB_SCALE_USD = 3_600;
-export const PRICE_SUB_GROWTH_DISPLAY = `$${PRICE_SUB_GROWTH_USD.toLocaleString()}/mo`;
-export const PRICE_SUB_SCALE_DISPLAY = `$${PRICE_SUB_SCALE_USD.toLocaleString()}/mo`;
-export const PRICE_SUB_ENTERPRISE_DISPLAY = "Custom /mo";
+export const PRICE_SUB_BRONZE_USD = 7_000;
+export const PRICE_SUB_SILVER_FROM_USD = 7_500;
+export const PRICE_SUB_GOLD_FROM_USD = 15_000;
+export const PRICE_SUB_BRONZE_DISPLAY = "$7.0K";
+export const PRICE_SUB_SILVER_DISPLAY = "From $7.5K";
+export const PRICE_SUB_GOLD_DISPLAY = "From $15.0K";
+export const PRICE_SUB_ENTERPRISE_DISPLAY = "Custom";
 export const SUBSCRIPTION_ANNUAL_DISCOUNT_LABEL = "Save 10% with annual commit";
 
 /**
