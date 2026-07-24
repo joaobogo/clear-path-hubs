@@ -1043,7 +1043,158 @@ function LinksPanel({
  );
 }
 
+// ─── Dossier extensions ──────────────────────────────────────────────────────
+
+function AvailabilityAndComp({
+  candidate,
+}: {
+  candidate: import("@/lib/client-kpi.server").ClientCandidateDTO;
+}) {
+  const comp = candidate.compensation_alignment;
+  const av = candidate.candidate.availability;
+  const tz = candidate.candidate.timezone;
+  const auth = candidate.work_authorization;
+
+  const verdictTone: Record<typeof comp.verdict, { label: string; className: string }> = {
+    aligned: { label: "In range", className: "taas-bg-success-soft taas-fg-success" },
+    over: { label: "Above range", className: "taas-bg-warning-soft taas-fg-warning" },
+    under: { label: "Below range", className: "taas-bg-info-soft taas-fg-info" },
+    unknown: { label: "Not confirmed", className: "taas-bg-neutral-soft taas-fg-neutral" },
+  };
+  const v = verdictTone[comp.verdict];
+
+  return (
+    <SectionCard
+      title="Availability & compensation"
+      icon={<Coins className="h-4 w-4" />}
+      description="How this candidate lines up against the approved role terms."
+    >
+      <div className="grid gap-3 sm:grid-cols-2">
+        <div className="rounded-md border bg-background/40 p-3">
+          <div className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+            Availability
+          </div>
+          <div className="mt-1 text-sm font-medium">{av ?? "Not specified"}</div>
+          {tz && <div className="text-xs text-muted-foreground">Timezone {tz}</div>}
+        </div>
+        <div className="rounded-md border bg-background/40 p-3">
+          <div className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+            Work authorization
+          </div>
+          <div className="mt-1 text-sm font-medium">{auth ?? "Not confirmed"}</div>
+        </div>
+        <div className="rounded-md border bg-background/40 p-3 sm:col-span-2">
+          <div className="flex items-center justify-between gap-2">
+            <div className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+              Compensation alignment
+            </div>
+            <span
+              className={cn(
+                "inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-semibold",
+                v.className,
+              )}
+            >
+              {v.label}
+            </span>
+          </div>
+          <div className="mt-2 grid gap-3 sm:grid-cols-2 text-sm">
+            <div>
+              <div className="text-xs text-muted-foreground">Role range</div>
+              <div className="font-medium">
+                {comp.role_range ?? "Not published"}
+                {comp.cadence && comp.role_range && (
+                  <span className="ml-1 text-xs text-muted-foreground">/ {comp.cadence}</span>
+                )}
+              </div>
+            </div>
+            <div>
+              <div className="text-xs text-muted-foreground">Candidate expectation</div>
+              <div className="font-medium">{comp.candidate_expectation ?? "Not shared"}</div>
+            </div>
+          </div>
+          {comp.note && (
+            <p className="mt-2 text-xs text-muted-foreground">{comp.note}</p>
+          )}
+        </div>
+      </div>
+    </SectionCard>
+  );
+}
+
+function SourceAndOutreach({
+  candidate,
+}: {
+  candidate: import("@/lib/client-kpi.server").ClientCandidateDTO;
+}) {
+  const s = candidate.source_trace;
+  if (!s.source_label && !s.applied_at) return null;
+  return (
+    <SectionCard
+      title="Source & outreach trace"
+      icon={<Radar className="h-4 w-4" />}
+      description="How this candidate arrived and who moved them forward."
+    >
+      <dl className="grid gap-3 text-sm sm:grid-cols-3">
+        <div>
+          <dt className="text-xs text-muted-foreground">Origin</dt>
+          <dd className="font-medium capitalize">{s.source_label ?? "Unknown"}</dd>
+        </div>
+        <div>
+          <dt className="text-xs text-muted-foreground">Applied</dt>
+          <dd className="font-medium">
+            {s.applied_at ? new Date(s.applied_at).toLocaleDateString() : "—"}
+          </dd>
+        </div>
+        <div>
+          <dt className="text-xs text-muted-foreground">Reference</dt>
+          <dd className="font-medium tabular-nums">
+            {s.application_reference ?? candidate.match_id.slice(0, 8).toUpperCase()}
+          </dd>
+        </div>
+      </dl>
+      <p className="mt-3 text-xs text-muted-foreground">
+        TaaSFlow recruiters review, screen, and shortlist before you see any profile —
+        every touchpoint is captured in the audit trail below.
+      </p>
+    </SectionCard>
+  );
+}
+
+function AuditTrailSection({
+  candidate,
+}: {
+  candidate: import("@/lib/client-kpi.server").ClientCandidateDTO;
+}) {
+  const rows = candidate.audit_trail;
+  if (rows.length === 0) return null;
+  return (
+    <SectionCard
+      title="Audit trail"
+      icon={<FileClock className="h-4 w-4" />}
+      description="Every recorded action tied to this candidate on this role."
+    >
+      <ol className="space-y-2 text-sm">
+        {rows.map((e) => (
+          <li key={e.id} className="flex items-start justify-between gap-3 border-b pb-2 last:border-b-0">
+            <div className="min-w-0">
+              <div className="font-medium capitalize">{e.action.replace(/_/g, " ")}</div>
+              <div className="text-xs text-muted-foreground">
+                {e.entity_type.replace(/_/g, " ")}
+                {e.summary ? ` · ${e.summary}` : ""}
+              </div>
+            </div>
+            <div className="whitespace-nowrap text-xs text-muted-foreground">
+              {new Date(e.at).toLocaleString()}
+            </div>
+          </li>
+        ))}
+      </ol>
+    </SectionCard>
+  );
+}
+
 // ─── Small helpers ───────────────────────────────────────────────────────────
+
 
 function SectionCard({
  title,
