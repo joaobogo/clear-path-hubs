@@ -510,6 +510,12 @@ export const askAssistant = createServerFn({ method: "POST" })
           for (const c of result.citations) {
             citationsMap.set(`${c.kind}:${c.id}`, c);
           }
+          const proposals = (result as AnyRow).proposed_actions as AnyRow[] | undefined;
+          if (Array.isArray(proposals)) {
+            for (const a of proposals) {
+              if (a && typeof a.action_id === "string") proposedActionsMap.set(a.action_id, a);
+            }
+          }
           messages.push({
             role: "tool",
             tool_call_id: call.id,
