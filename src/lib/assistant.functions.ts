@@ -593,6 +593,17 @@ export const askAssistant = createServerFn({ method: "POST" })
     const citations = Array.from(citationsMap.values());
     const proposedActions = Array.from(proposedActionsMap.values());
 
+    // Extract [[confidence:xxx]] from the tail, then clamp to what the
+    // evidence actually supports (never upgrade over model's declaration).
+    const { text: cleaned, declared } = extractConfidence(finalContent);
+    const confidence: Confidence = resolveConfidence({
+      declared,
+      toolCount: tool_trace.length,
+      citationCount: citations.length,
+      content: cleaned,
+    });
+    finalContent = cleaned;
+
     const assistantInsert = await context.supabase
       .from("assistant_messages")
       .insert({
@@ -604,12 +615,32 @@ export const askAssistant = createServerFn({ method: "POST" })
         tool_trace: tool_trace as never,
         citations: citations as never,
         proposed_actions: proposedActions as never,
+        confidence,
         model: MODEL,
         latency_ms: Date.now() - start,
       } as never)
-      .select("id, created_at, role, content, tool_trace, citations, proposed_actions")
+      .select("id, created_at, role, content, tool_trace, citations, proposed_actions, confidence")
       .single();
     if (assistantInsert.error) throw new Error(assistantInsert.error.message);
+
+    // Audit each proposed action so we can later reconcile approvals vs. proposals.
+    for (const a of proposedActions) {
+      await auditAssistantEvent(context.supabase, {
+        surface: "client_assistant",
+        event_type: "action_proposed",
+        user_id: context.userId,
+        organization_id: data.orgId,
+        conversation_id: conversationId,
+        message_id: assistantInsert.data.id as string,
+        action_id: (a as AnyRow).action_id as string,
+        payload: {
+          kind: (a as AnyRow).kind,
+          label: (a as AnyRow).label,
+          match_id: (a as AnyRow).match_id ?? null,
+          href: (a as AnyRow).href ?? null,
+        },
+      });
+    }
 
     // Touch conversation
     await context.supabase
@@ -626,6 +657,7 @@ export const askAssistant = createServerFn({ method: "POST" })
         tool_trace: [] as Array<{ name: string; args: Record<string, string | number | boolean | null> }>,
         citations: [] as typeof citations,
         proposed_actions: [] as AnyRow[],
+        confidence: null as Confidence | null,
         created_at: userInsert.data.created_at as string,
       },
       assistant_message: {
@@ -635,6 +667,7 @@ export const askAssistant = createServerFn({ method: "POST" })
         tool_trace: assistantInsert.data.tool_trace as Array<{ name: string; args: Record<string, string | number | boolean | null> }>,
         citations: assistantInsert.data.citations as typeof citations,
         proposed_actions: (assistantInsert.data as AnyRow).proposed_actions as AnyRow[],
+        confidence: (assistantInsert.data as AnyRow).confidence as Confidence | null,
         created_at: (assistantInsert.data as AnyRow).created_at as string,
       },
     };
