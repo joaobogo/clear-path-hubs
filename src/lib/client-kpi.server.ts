@@ -566,6 +566,38 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
     },
     source_trace,
     audit_trail,
+    evaluation: {
+      engine_version: run?.engine_version ?? null,
+      blueprint_version: run?.blueprint_version ?? null,
+      contradiction:
+        run?.contradiction_status && run.contradiction_status !== "none"
+          ? String(run.contradiction_status)
+          : null,
+      completed_at: run?.completed_at ?? null,
+      category_breakdown: [
+        {
+          label: "Must-have coverage",
+          value:
+            run?.must_have_coverage ??
+            run?.result?.category_breakdown?.must_have ??
+            null,
+          weight: 0.5,
+        },
+        {
+          label: "Preferred coverage",
+          value:
+            run?.preferred_coverage ??
+            run?.result?.category_breakdown?.preferred ??
+            null,
+          weight: 0.3,
+        },
+        {
+          label: "Screening alignment",
+          value: run?.result?.category_breakdown?.screening_alignment ?? null,
+          weight: 0.2,
+        },
+      ],
+    },
   };
 }
 
