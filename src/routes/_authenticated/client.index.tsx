@@ -3,6 +3,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useMemo, useState } from "react";
 import { getClientContext, getClientOverview } from "@/lib/client.functions";
+import { countBlockingTasks } from "@/lib/tasks.functions";
 import { useClientOrgSearch } from "@/lib/use-client-org";
 import { CandidateCard } from "@/components/client/candidate-card";
 import { Button } from "@/components/ui/button";
@@ -133,6 +134,14 @@ function OverviewPage() {
     placeholderData: (prev) => prev,
   });
 
+  // Blocking tasks — surfaces urgent approvals directly on the overview
+  const blockingFn = useServerFn(countBlockingTasks);
+  const { data: blocking } = useQuery({
+    queryKey: ["client", "blocking-tasks", orgId],
+    queryFn: () => blockingFn({ data: { organization_id: orgId! } }),
+    enabled: !!orgId,
+  });
+
   useEffect(() => {
     const onRefresh = () => refetch();
     window.addEventListener("client:refresh", onRefresh);
@@ -243,8 +252,24 @@ function OverviewPage() {
           {/* 0 · INDUSTRY PERSONALIZATION — vertical-tuned rubric + samples */}
           <IndustryPersonalizationPanel industry={ctx?.active?.industry ?? null} />
 
+          {/* 0.5 · BLOCKING APPROVALS — urgent tasks that hold delivery */}
+          {blocking && blocking.count > 0 && (
+            <Link
+              to="/client/tasks"
+              search={{ view: "blocking" }}
+              className="flex items-center gap-3 rounded-lg border border-destructive/40 bg-destructive/5 px-4 py-3 text-sm hover:bg-destructive/10"
+            >
+              <AlertTriangle className="h-4 w-4 text-destructive" />
+              <span className="flex-1 font-medium">
+                {blocking.count} task{blocking.count === 1 ? "" : "s"} blocking delivery — needs approval or decision
+              </span>
+              <ArrowRight className="h-4 w-4 text-destructive" />
+            </Link>
+          )}
+
           {/* 1 · PRIORITY ACTIONS — what needs me now, deduped */}
           <PriorityActions queue={priorityQueue} loading={!data && isFetching} />
+
 
           {/* 2 · HOTTEST ROLE + WEEKLY PROGRESS */}
           <section className="grid gap-4 lg:grid-cols-5">
