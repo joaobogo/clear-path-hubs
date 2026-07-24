@@ -66,6 +66,7 @@ import { Route as BlogCategorySlugRouteImport } from './routes/blog.category.$sl
 import { Route as ApplyReceivedApplicationIdRouteImport } from './routes/apply.received.$applicationId'
 import { Route as ApiPublicQaSeedRouteImport } from './routes/api/public/qa-seed'
 import { Route as ApiPublicIntakeRouteImport } from './routes/api/public/intake'
+import { Route as ApiPublicEventsRouteImport } from './routes/api/public/events'
 import { Route as ApiPublicContactRouteImport } from './routes/api/public/contact'
 import { Route as ApiPublicBootstrapAdminRouteImport } from './routes/api/public/bootstrap-admin'
 import { Route as AuthenticatedMeSettingsRouteImport } from './routes/_authenticated/me.settings'
@@ -408,6 +409,11 @@ const ApiPublicQaSeedRoute = ApiPublicQaSeedRouteImport.update({
 const ApiPublicIntakeRoute = ApiPublicIntakeRouteImport.update({
   id: '/api/public/intake',
   path: '/api/public/intake',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicEventsRoute = ApiPublicEventsRouteImport.update({
+  id: '/api/public/events',
+  path: '/api/public/events',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPublicContactRoute = ApiPublicContactRouteImport.update({
@@ -827,6 +833,7 @@ export interface FileRoutesByFullPath {
   '/me/settings': typeof AuthenticatedMeSettingsRoute
   '/api/public/bootstrap-admin': typeof ApiPublicBootstrapAdminRoute
   '/api/public/contact': typeof ApiPublicContactRoute
+  '/api/public/events': typeof ApiPublicEventsRoute
   '/api/public/intake': typeof ApiPublicIntakeRoute
   '/api/public/qa-seed': typeof ApiPublicQaSeedRoute
   '/apply/received/$applicationId': typeof ApplyReceivedApplicationIdRoute
@@ -932,6 +939,7 @@ export interface FileRoutesByTo {
   '/me/settings': typeof AuthenticatedMeSettingsRoute
   '/api/public/bootstrap-admin': typeof ApiPublicBootstrapAdminRoute
   '/api/public/contact': typeof ApiPublicContactRoute
+  '/api/public/events': typeof ApiPublicEventsRoute
   '/api/public/intake': typeof ApiPublicIntakeRoute
   '/api/public/qa-seed': typeof ApiPublicQaSeedRoute
   '/apply/received/$applicationId': typeof ApplyReceivedApplicationIdRoute
@@ -1049,6 +1057,7 @@ export interface FileRoutesById {
   '/_authenticated/me/settings': typeof AuthenticatedMeSettingsRoute
   '/api/public/bootstrap-admin': typeof ApiPublicBootstrapAdminRoute
   '/api/public/contact': typeof ApiPublicContactRoute
+  '/api/public/events': typeof ApiPublicEventsRoute
   '/api/public/intake': typeof ApiPublicIntakeRoute
   '/api/public/qa-seed': typeof ApiPublicQaSeedRoute
   '/apply/received/$applicationId': typeof ApplyReceivedApplicationIdRoute
@@ -1166,6 +1175,7 @@ export interface FileRouteTypes {
     | '/me/settings'
     | '/api/public/bootstrap-admin'
     | '/api/public/contact'
+    | '/api/public/events'
     | '/api/public/intake'
     | '/api/public/qa-seed'
     | '/apply/received/$applicationId'
@@ -1271,6 +1281,7 @@ export interface FileRouteTypes {
     | '/me/settings'
     | '/api/public/bootstrap-admin'
     | '/api/public/contact'
+    | '/api/public/events'
     | '/api/public/intake'
     | '/api/public/qa-seed'
     | '/apply/received/$applicationId'
@@ -1387,6 +1398,7 @@ export interface FileRouteTypes {
     | '/_authenticated/me/settings'
     | '/api/public/bootstrap-admin'
     | '/api/public/contact'
+    | '/api/public/events'
     | '/api/public/intake'
     | '/api/public/qa-seed'
     | '/apply/received/$applicationId'
@@ -1465,6 +1477,7 @@ export interface RootRouteChildren {
   JobsIndexRoute: typeof JobsIndexRoute
   ApiPublicBootstrapAdminRoute: typeof ApiPublicBootstrapAdminRoute
   ApiPublicContactRoute: typeof ApiPublicContactRoute
+  ApiPublicEventsRoute: typeof ApiPublicEventsRoute
   ApiPublicIntakeRoute: typeof ApiPublicIntakeRoute
   ApiPublicQaSeedRoute: typeof ApiPublicQaSeedRoute
   ApplyReceivedApplicationIdRoute: typeof ApplyReceivedApplicationIdRoute
@@ -1874,6 +1887,13 @@ declare module '@tanstack/react-router' {
       path: '/api/public/intake'
       fullPath: '/api/public/intake'
       preLoaderRoute: typeof ApiPublicIntakeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/events': {
+      id: '/api/public/events'
+      path: '/api/public/events'
+      fullPath: '/api/public/events'
+      preLoaderRoute: typeof ApiPublicEventsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/contact': {
@@ -2618,6 +2638,7 @@ const rootRouteChildren: RootRouteChildren = {
   JobsIndexRoute: JobsIndexRoute,
   ApiPublicBootstrapAdminRoute: ApiPublicBootstrapAdminRoute,
   ApiPublicContactRoute: ApiPublicContactRoute,
+  ApiPublicEventsRoute: ApiPublicEventsRoute,
   ApiPublicIntakeRoute: ApiPublicIntakeRoute,
   ApiPublicQaSeedRoute: ApiPublicQaSeedRoute,
   ApplyReceivedApplicationIdRoute: ApplyReceivedApplicationIdRoute,
@@ -2630,3 +2651,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
