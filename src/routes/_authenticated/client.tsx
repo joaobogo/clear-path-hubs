@@ -25,7 +25,6 @@ import {
  Briefcase,
  Users,
  MessageSquare,
- // CalendarClock removed from nav; icon no longer needed here.
  UserCog,
 	Settings,
 	Award,
@@ -35,6 +34,8 @@ import {
 	LineChart,
  	Share2,
  	Building2,
+ 	CheckSquare,
+ 	Plus,
 } from "lucide-react";
 import {
  WorkspaceShell,
