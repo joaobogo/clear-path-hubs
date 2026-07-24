@@ -700,31 +700,189 @@ function HeroExpertiseGrowth({ ctx }: { ctx: Ctx }) {
 
 function SectionChallenges({ ctx }: { ctx: Ctx }) {
   const { entry, config } = ctx;
-  const columns =
-    config.archetype === "systems-capability" ? "lg:grid-cols-4" : "lg:grid-cols-3";
-  return (
-    <PublicSection className="py-12">
-      <PublicPage>
-        <SectionHeading
-          eyebrow="Hiring reality"
-          title={`${entry.name} hiring challenges`}
-          intro={`What we hear from ${entry.name} teams before they switch to a structured, evidence-based workflow.`}
-        />
-        <div className={`mt-8 grid gap-5 md:grid-cols-2 ${columns}`}>
-          {entry.challenges.map((c) => (
-            <div
-              key={c.title}
-              className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6"
-            >
-              <h3 className="font-[family-name:var(--brand-font-display)] text-lg font-semibold">
-                {c.title}
-              </h3>
-              <p className="mt-3 text-sm leading-relaxed text-[color:var(--brand-navy)]/75">
-                {c.body}
-              </p>
+  const signals = entry.signals ?? [];
+  const evidenceFor = (i: number) => signals[i]?.replace(/^[A-Z]/, (c) => c.toLowerCase());
+
+  const heading = (
+    <SectionHeading
+      eyebrow="Hiring reality"
+      title={`${entry.name} hiring challenges`}
+      intro={`What ${entry.name} teams tell us before switching to a structured, evidence-based workflow — and how TaaSFlow turns each risk into a scoring signal.`}
+    />
+  );
+
+  // Shared eyebrow for the "evidence" line beneath each challenge body.
+  const EvidenceLine = ({ text }: { text?: string }) =>
+    text ? (
+      <div className="mt-4 flex items-start gap-2 border-t border-current/10 pt-3 text-xs leading-relaxed opacity-80">
+        <span aria-hidden className="mt-0.5 inline-block h-1.5 w-1.5 shrink-0 rounded-full bg-[color:var(--brand-gold)]" />
+        <span><span className="font-semibold uppercase tracking-wider">Signal captured · </span>{text}</span>
+      </div>
+    ) : null;
+
+  // 1. SYSTEMS-CAPABILITY → dependency map (nodes joined by faint rails)
+  if (config.archetype === "systems-capability") {
+    return (
+      <PublicSection className="bg-[color:var(--brand-mist)]/30 py-14">
+        <PublicPage>
+          {heading}
+          <div className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            {entry.challenges.map((c, i) => (
+              <div key={c.title} className="relative">
+                {i < entry.challenges.length - 1 && (
+                  <span aria-hidden className="pointer-events-none absolute left-full top-8 hidden h-px w-4 -translate-y-1/2 bg-[color:var(--brand-navy)]/20 lg:block" />
+                )}
+                <div className="h-full rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6 text-[color:var(--brand-navy)] shadow-[0_1px_0_rgba(0,0,0,0.02)]">
+                  <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-[color:var(--brand-navy)]/55">
+                    <span aria-hidden className="grid h-5 w-5 place-items-center rounded-full bg-[color:var(--brand-navy)] text-[10px] text-white">{i + 1}</span>
+                    Node
+                  </div>
+                  <h3 className="mt-3 font-[family-name:var(--brand-font-display)] text-base font-semibold leading-snug">{c.title}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-[color:var(--brand-navy)]/75">{c.body}</p>
+                  <EvidenceLine text={evidenceFor(i)} />
+                </div>
+              </div>
+            ))}
+          </div>
+        </PublicPage>
+      </PublicSection>
+    );
+  }
+
+  // 2. RISK-JUDGMENT → decision gates: parchment cards on ink with a gate badge
+  if (config.archetype === "risk-judgment") {
+    return (
+      <PublicSection className="bg-[color:var(--brand-navy)] py-16 text-[color:var(--brand-cream)]">
+        <PublicPage>
+          <div className="text-[color:var(--brand-cream)]">
+            <SectionHeading
+              eyebrow="Decision record"
+              title={`${entry.name} hiring — where judgment is tested`}
+              intro={`Each challenge maps to a gate we test explicitly, so aggregate fit never overrides a disqualifying regulatory or qualification requirement.`}
+            />
+          </div>
+          <ol className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {entry.challenges.map((c, i) => (
+              <li key={c.title} className="rounded-2xl border border-[color:var(--brand-cream)]/15 bg-[color:var(--brand-cream)] p-6 text-[color:var(--brand-navy)]">
+                <div className="flex items-center justify-between text-[10px] font-semibold uppercase tracking-[0.18em] text-[color:var(--brand-navy)]/60">
+                  <span>Gate {String(i + 1).padStart(2, "0")}</span>
+                  <span className="rounded-sm border border-current/25 px-1.5 py-0.5">Mandatory judgment</span>
+                </div>
+                <h3 className="mt-3 font-[family-name:var(--brand-font-display)] text-base font-semibold leading-snug">{c.title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-[color:var(--brand-navy)]/80">{c.body}</p>
+                <EvidenceLine text={evidenceFor(i)} />
+              </li>
+            ))}
+          </ol>
+          <p className="mt-6 max-w-2xl text-xs leading-relaxed text-[color:var(--brand-cream)]/70">
+            TaaSFlow does not provide legal or regulatory advice. Jurisdiction, qualification and licence status appear as mandatory gates on the candidate record; downstream scoring only ranks candidates who clear them.
+          </p>
+        </PublicPage>
+      </PublicSection>
+    );
+  }
+
+  // 3. TRUST-COMPLIANCE → controls matrix (3 columns: check / why / evidence)
+  if (config.archetype === "trust-compliance") {
+    return (
+      <PublicSection className="py-14">
+        <PublicPage>
+          {heading}
+          <div className="mt-10 overflow-hidden rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white">
+            <div className="hidden grid-cols-[1.5fr_2fr_1.2fr] gap-6 border-b border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-mist)]/40 px-6 py-3 text-[10px] font-semibold uppercase tracking-[0.16em] text-[color:var(--brand-navy)]/60 md:grid">
+              <span>Control</span>
+              <span>Why it matters clinically</span>
+              <span>Evidence captured</span>
             </div>
+            <ul className="divide-y divide-[color:var(--brand-navy)]/10">
+              {entry.challenges.map((c, i) => (
+                <li key={c.title} className="grid gap-2 px-6 py-5 md:grid-cols-[1.5fr_2fr_1.2fr] md:gap-6">
+                  <h3 className="font-[family-name:var(--brand-font-display)] text-sm font-semibold text-[color:var(--brand-navy)]">{c.title}</h3>
+                  <p className="text-sm leading-relaxed text-[color:var(--brand-navy)]/75">{c.body}</p>
+                  <p className="text-xs leading-relaxed text-[color:var(--brand-navy)]/70">
+                    <span className="mr-1 font-semibold uppercase tracking-wider text-[color:var(--brand-gold)]">Signal · </span>
+                    {evidenceFor(i) ?? "Evidence quoted from the CV and verified before shortlist."}
+                  </p>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </PublicPage>
+      </PublicSection>
+    );
+  }
+
+  // 4. OPERATIONS-DELIVERY → delivery stages ribbon
+  if (config.archetype === "operations-delivery") {
+    return (
+      <PublicSection className="bg-[color:var(--brand-mist)]/40 py-14">
+        <PublicPage>
+          {heading}
+          <div className="mt-10 relative">
+            <span aria-hidden className="pointer-events-none absolute left-0 right-0 top-10 hidden h-px bg-gradient-to-r from-transparent via-[color:var(--brand-navy)]/25 to-transparent lg:block" />
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+              {entry.challenges.map((c, i) => (
+                <div key={c.title} className="relative rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6">
+                  <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-[color:var(--brand-navy)]/60">
+                    <span aria-hidden className="grid h-6 w-6 place-items-center rounded-full border border-[color:var(--brand-navy)]/30 bg-white text-[10px] text-[color:var(--brand-navy)]">{i + 1}</span>
+                    Stage
+                  </div>
+                  <h3 className="mt-3 font-[family-name:var(--brand-font-display)] text-base font-semibold leading-snug text-[color:var(--brand-navy)]">{c.title}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-[color:var(--brand-navy)]/75">{c.body}</p>
+                  <EvidenceLine text={evidenceFor(i)} />
+                </div>
+              ))}
+            </div>
+          </div>
+        </PublicPage>
+      </PublicSection>
+    );
+  }
+
+  // 5. SERVICE-EXPERIENCE → guest / customer journey ribbon (warm palette)
+  if (config.archetype === "service-experience") {
+    return (
+      <PublicSection className="py-14" style={{ background: "linear-gradient(180deg, #fbf6ee 0%, #ffffff 100%)" }}>
+        <PublicPage>
+          {heading}
+          <ol className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {entry.challenges.map((c, i) => (
+              <li key={c.title} className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6">
+                <div className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[color:var(--brand-gold)]">Moment {String(i + 1).padStart(2, "0")}</div>
+                <h3 className="mt-2 font-[family-name:var(--brand-font-display)] text-base font-semibold leading-snug text-[color:var(--brand-navy)]">{c.title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-[color:var(--brand-navy)]/75">{c.body}</p>
+                <EvidenceLine text={evidenceFor(i)} />
+              </li>
+            ))}
+          </ol>
+        </PublicPage>
+      </PublicSection>
+    );
+  }
+
+  // 6. EXPERTISE-GROWTH → competency ladder (rows with rung numbering + accent)
+  return (
+    <PublicSection className="py-14">
+      <PublicPage>
+        {heading}
+        <ul className="mt-10 space-y-3">
+          {entry.challenges.map((c, i) => (
+            <li key={c.title} className="grid gap-4 rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6 md:grid-cols-[auto_1fr_1fr] md:items-start md:gap-6">
+              <div className="flex items-center gap-3 md:flex-col md:items-start">
+                <span aria-hidden className="grid h-9 w-9 place-items-center rounded-full bg-[color:var(--brand-navy)] font-[family-name:var(--brand-font-display)] text-sm font-semibold text-white">{i + 1}</span>
+                <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[color:var(--brand-navy)]/60">Rung</span>
+              </div>
+              <div>
+                <h3 className="font-[family-name:var(--brand-font-display)] text-base font-semibold leading-snug text-[color:var(--brand-navy)]">{c.title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-[color:var(--brand-navy)]/75">{c.body}</p>
+              </div>
+              <div className="rounded-xl bg-[color:var(--brand-mist)]/50 p-4 text-xs leading-relaxed text-[color:var(--brand-navy)]/80">
+                <span className="mr-1 font-semibold uppercase tracking-wider text-[color:var(--brand-gold)]">Evidence · </span>
+                {evidenceFor(i) ?? "Portfolio, work samples, or measurable outcomes captured on the shortlist."}
+              </div>
+            </li>
           ))}
-        </div>
+        </ul>
       </PublicPage>
     </PublicSection>
   );
