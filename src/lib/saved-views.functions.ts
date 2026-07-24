@@ -54,7 +54,7 @@ export const listSavedViews = createServerFn({ method: "GET" })
       id: r.id as string,
       surface: r.surface as SavedViewSurface,
       name: r.name as string,
-      filters: (r.filters as Record<string, unknown>) ?? {},
+      filters: ((r.filters as unknown) as Record<string, string>) ?? {},
       is_shared: !!r.is_shared,
       is_default: !!r.is_default,
       organization_id: (r.organization_id as string | null) ?? null,
