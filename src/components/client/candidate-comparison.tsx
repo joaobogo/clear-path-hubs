@@ -165,11 +165,31 @@ export function CompareSheet({
           </div>
         ) : (
           <>
-            {positionTitle && (
-              <p className="mt-3 text-xs text-muted-foreground">
-                Position: <span className="font-medium text-foreground">{positionTitle}</span> · {candidates.length} candidates
-              </p>
-            )}
+            <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
+              <div className="min-w-0 text-xs text-muted-foreground">
+                {positionTitle && (
+                  <>Position: <span className="font-medium text-foreground">{positionTitle}</span> · {candidates.length} candidates</>
+                )}
+              </div>
+              <div className="flex items-center gap-2 print:hidden">
+                <label className="flex items-center gap-1.5 text-xs cursor-pointer select-none">
+                  <input
+                    type="checkbox"
+                    checked={diffOnly}
+                    onChange={(e) => setDiffOnly(e.target.checked)}
+                    className="h-3.5 w-3.5 rounded border-input"
+                  />
+                  Show only differences
+                </label>
+                <Button size="sm" variant="outline" onClick={handleShare}>
+                  <Share2 className="h-3.5 w-3.5 mr-1.5" /> Share
+                </Button>
+                <Button size="sm" variant="outline" onClick={handlePrint}>
+                  <Printer className="h-3.5 w-3.5 mr-1.5" /> Export PDF
+                </Button>
+              </div>
+            </div>
+
 
             {/* Visual ranking bands — relative strength per axis, not a single winner. */}
             <RelativeStrengthBoard candidates={candidates} />
