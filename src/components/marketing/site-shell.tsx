@@ -39,17 +39,17 @@ const SOCIAL_ICONS: Record<string, typeof Linkedin> = {
 
 function BrandMark({ compact = false }: { compact?: boolean }) {
   const height = compact ? 28 : 32;
-  // Logo intrinsic aspect ratio is 3:1 (1920x640). Width attribute must reflect
-  // that so the browser doesn't reserve a square box and squash the wordmark.
-  const width = height * 3;
+  // Cropped logo intrinsic aspect ratio is ~4.15:1. Width attribute must reflect
+  // that so the browser reserves enough horizontal space for the full wordmark.
+  const width = Math.round(height * 4.15);
   return (
-    <Link to="/" className="inline-flex items-center gap-2 rounded-md" aria-label="TaaSFlow — Home">
+    <Link to="/" className="inline-flex shrink-0 items-center rounded-md" aria-label="TaaSFlow — Home">
       <img
         src={brand.logos.primary}
         alt="TaaSFlow"
         width={width}
         height={height}
-        className="h-8 w-auto shrink-0"
+        className={cn(compact ? "h-7" : "h-8", "w-auto max-w-none shrink-0")}
       />
     </Link>
   );

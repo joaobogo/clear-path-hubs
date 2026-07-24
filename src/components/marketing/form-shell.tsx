@@ -47,9 +47,9 @@ export function FormShell({
           <Link
             to="/"
             aria-label="TaaSFlow — Home"
-            className="inline-flex items-center gap-2 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+            className="inline-flex shrink-0 items-center gap-2 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
           >
-            <img src={brand.logos.primary} alt="TaaSFlow" width={28} height={28} className="h-7 w-auto" />
+            <img src={brand.logos.primary} alt="TaaSFlow" width={116} height={28} className="h-7 w-auto max-w-none shrink-0" />
           </Link>
           {progress && (
             <div className="hidden items-center gap-3 sm:flex" aria-live="polite">
