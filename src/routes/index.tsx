@@ -1546,6 +1546,13 @@ function Home() {
         </PublicPage>
       </PublicSection>
 
+      {/* 8b — FOUNDER PREVIEW (early trust marker) */}
+      <PublicSection>
+        <PublicPage>
+          <FoundersStrip />
+        </PublicPage>
+      </PublicSection>
+
       {/* 9 — INDUSTRY PREVIEW */}
       <section className="border-y border-[color:var(--brand-navy)]/8 bg-white">
         <PublicSection>
@@ -1663,12 +1670,6 @@ function Home() {
         </PublicSection>
       </section>
 
-      {/* 11.5 — FOUNDERS STRIP */}
-      <PublicSection>
-        <PublicPage>
-          <FoundersStrip />
-        </PublicPage>
-      </PublicSection>
 
       {/* 12 — FAQ */}
       <PublicSection>
