@@ -28,23 +28,25 @@ export const Route = createFileRoute("/pricing")({
 
 function PricingPage() {
   const paid = PRICING_TIERS.filter((t) => t.id !== "enterprise");
-  const enterprise = PRICING_TIERS.find((t) => t.id === "enterprise")!;
+  const [mode, setMode] = useState<"oneoff" | "subscription">("oneoff");
 
   return (
     <SiteShell>
       {/* Hero — mirrors taasflow.com/pricing */}
       <PublicSection className="pb-6 pt-16 sm:pt-20">
         <PublicPage>
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">
-            Transparent Pricing
-          </p>
-          <h1 className="mt-3 max-w-3xl font-[family-name:var(--brand-font-display)] text-4xl font-semibold tracking-tight sm:text-5xl">
-            Plans that scale with volume.
-          </h1>
-          <p className="mt-5 max-w-2xl text-lg text-[color:var(--brand-navy)]/70">
-            Higher volume = lower cost per role. Annual commitment saves 10%.
-          </p>
-          <ul className="mt-6 grid gap-3 text-sm text-[color:var(--brand-navy)]/75 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="text-center">
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">
+              Transparent Pricing
+            </p>
+            <h1 className="mt-3 font-[family-name:var(--brand-font-display)] text-4xl font-semibold tracking-tight sm:text-5xl">
+              Plans that scale with volume
+            </h1>
+            <p className="mt-5 max-w-2xl mx-auto text-lg text-[color:var(--brand-navy)]/70">
+              Higher volume = lower cost per role. Annual commitment saves 10%.
+            </p>
+          </div>
+          <ul className="mt-8 flex flex-wrap justify-center gap-x-8 gap-y-3 text-sm text-[color:var(--brand-navy)]/75">
             {[
               "No salary percentage fees",
               "Ranked candidates in 14 days",
@@ -63,37 +65,75 @@ function PricingPage() {
         </PublicPage>
       </PublicSection>
 
-      {/* Section header — one-off packages */}
+      {/* Tab toggle — One-Off Package / Subscription (mirrors taasflow.com) */}
       <PublicSection className="pt-4">
         <PublicPage>
-          <div className="flex flex-wrap items-end justify-between gap-3">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/55">
-                One-off packages
-              </p>
-              <h2 className="mt-2 font-[family-name:var(--brand-font-display)] text-2xl font-semibold tracking-tight sm:text-3xl">
-                Pay once — hire for a defined batch of roles.
-              </h2>
-            </div>
-            <p className="max-w-md text-sm text-[color:var(--brand-navy)]/65">
-              Flat fee, delivered weekly for the length of the search. Best when you know the roles you need to fill right now.
-            </p>
+          <div
+            role="tablist"
+            aria-label="Billing model"
+            className="mx-auto inline-flex w-full max-w-md items-center rounded-full border border-[color:var(--brand-navy)]/12 bg-white p-1 sm:mx-0 sm:mx-auto sm:flex"
+          >
+            <button
+              type="button"
+              role="tab"
+              aria-selected={mode === "oneoff"}
+              onClick={() => setMode("oneoff")}
+              className={
+                "flex-1 rounded-full px-4 py-2 text-sm font-semibold transition-colors " +
+                (mode === "oneoff"
+                  ? "bg-[color:var(--brand-navy)] text-white shadow-sm"
+                  : "text-[color:var(--brand-navy)]/70 hover:text-[color:var(--brand-navy)]")
+              }
+            >
+              One-Off Package
+            </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={mode === "subscription"}
+              onClick={() => setMode("subscription")}
+              className={
+                "flex-1 rounded-full px-4 py-2 text-sm font-semibold transition-colors " +
+                (mode === "subscription"
+                  ? "bg-[color:var(--brand-navy)] text-white shadow-sm"
+                  : "text-[color:var(--brand-navy)]/70 hover:text-[color:var(--brand-navy)]")
+              }
+            >
+              Subscription
+            </button>
           </div>
+          <p className="mt-4 text-center text-sm text-[color:var(--brand-navy)]/65">
+            {mode === "oneoff"
+              ? "Flat fee, delivered weekly. Best when you know the roles you need to fill right now."
+              : "Continuous monthly hiring at volume — Bronze through Enterprise."}
+          </p>
         </PublicPage>
       </PublicSection>
 
-      {/* Three tier cards */}
-      <PublicSection className="pt-4">
+      {/* Tier cards — swap based on mode */}
+      <PublicSection className="pt-6">
         <PublicPage>
-          <div className="grid gap-5 md:grid-cols-3">
-            {paid.map((tier) => (
-              <PricingTierCard key={tier.id} tier={tier} />
-            ))}
-          </div>
-          <p className="mt-6 text-sm text-[color:var(--brand-navy)]/70">
-            Deliveries include the <span className="font-semibold text-[color:var(--brand-navy)]">top 10</span> ranked candidates per position each week.
-          </p>
-          <div className="mt-4 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-[color:var(--brand-navy)]/80">
+          {mode === "oneoff" ? (
+            <>
+              <div className="grid gap-5 md:grid-cols-3">
+                {paid.map((tier) => (
+                  <PricingTierCard key={tier.id} tier={tier} />
+                ))}
+              </div>
+              <p className="mt-6 text-sm text-[color:var(--brand-navy)]/70">
+                Deliveries include the{" "}
+                <span className="font-semibold text-[color:var(--brand-navy)]">top 10</span>{" "}
+                ranked candidates per position each week.
+              </p>
+            </>
+          ) : (
+            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+              {SUBSCRIPTION_TIERS.map((tier) => (
+                <SubscriptionTierCard key={tier.id} tier={tier} />
+              ))}
+            </div>
+          )}
+          <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-[color:var(--brand-navy)]/80">
             {PRICING_GUARANTEES.map((g) => (
               <span key={g} className="inline-flex items-center gap-2">
                 <Check className="h-4 w-4 text-[color:var(--brand-navy)]" aria-hidden />
@@ -104,74 +144,13 @@ function PricingPage() {
         </PublicPage>
       </PublicSection>
 
-      {/* Subscription section */}
-      <PublicSection className="pt-10">
-        <PublicPage>
-          <div className="flex flex-wrap items-end justify-between gap-3">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/55">
-                Subscription model
-              </p>
-              <h2 className="mt-2 font-[family-name:var(--brand-font-display)] text-2xl font-semibold tracking-tight sm:text-3xl">
-                Continuous hiring — a monthly programme.
-              </h2>
-            </div>
-            <p className="max-w-md text-sm text-[color:var(--brand-navy)]/65">
-              A steady pipeline of ranked candidates every week, with unfilled roles rolling over. Best when you always have something open.
-            </p>
-          </div>
-          <div className="mt-6 grid gap-5 md:grid-cols-3">
-            {SUBSCRIPTION_TIERS.map((tier) => (
-              <SubscriptionTierCard key={tier.id} tier={tier} />
-            ))}
-          </div>
-          <p className="mt-6 text-sm text-[color:var(--brand-navy)]/70">
-            <span className="font-semibold text-[color:var(--brand-navy)]">{SUBSCRIPTION_ANNUAL_DISCOUNT_LABEL}.</span>{" "}
-            Pause, resize, or cancel any month — you keep every candidate delivered.
-          </p>
-        </PublicPage>
-      </PublicSection>
-
-
-      {/* Enterprise strip */}
-      <PublicSection className="py-10">
-        <PublicPage>
-          <div className="grid gap-6 rounded-2xl border border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-navy)] p-6 text-white sm:p-10 md:grid-cols-[2fr_1fr] md:items-center">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-white/60">
-                {enterprise.eyebrow}
-              </p>
-              <h2 className="mt-2 font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight sm:text-4xl">
-                {enterprise.name}
-              </h2>
-              <p className="mt-3 max-w-xl text-white/80">{enterprise.bestFor}</p>
-              <ul className="mt-5 grid gap-2 text-sm text-white/85 sm:grid-cols-2">
-                {enterprise.included.slice(0, 6).map((x) => (
-                  <li key={x} className="flex gap-2">
-                    <Check className="mt-0.5 h-4 w-4 shrink-0 text-white/80" aria-hidden />
-                    <span>{x}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div className="md:justify-self-end">
-              <Link
-                to={enterprise.ctaTo}
-                className="inline-flex min-h-11 items-center justify-center rounded-md bg-white px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-navy)] hover:opacity-90"
-              >
-                {enterprise.ctaLabel}
-              </Link>
-            </div>
-          </div>
-        </PublicPage>
-      </PublicSection>
-
       {/* Live agency comparator */}
       <PublicSection className="py-10">
         <PublicPage>
           <AgencyComparator />
         </PublicPage>
       </PublicSection>
+
 
       {/* Never charged */}
       <PublicSection className="py-10">
