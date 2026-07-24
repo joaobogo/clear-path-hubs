@@ -9,6 +9,7 @@ import {
 import { PricingTierCard } from "@/components/marketing/pricing-tier-card";
 import { AgencyComparator } from "@/components/marketing/agency-comparator";
 import { PRICING_TIERS, NEVER_CHARGED, PRICING_GUARANTEES } from "@/content/pricing";
+import { PRICE_PILOT_DISPLAY } from "@/config/pricing-core";
 import { Check, X } from "lucide-react";
 import { PageConnections } from "@/components/marketing/page-connections";
 
@@ -17,7 +18,7 @@ export const Route = createFileRoute("/pricing")({
     marketingHead(undefined, "/pricing", {
       title: "Pricing — Plans that scale with volume | TaaSFlow",
       description:
-        "Transparent one-off packages from $399. Ranked candidates in 14 days, no placement fees, no salary percentages. Higher volume = lower cost per role.",
+        `Transparent one-off packages from ${PRICE_PILOT_DISPLAY}. Ranked candidates in 14 days, no placement fees, no salary percentages. Higher volume = lower cost per role.`,
     }),
   component: PricingPage,
 });
