@@ -8671,6 +8671,10 @@ export type Database = {
       }
     }
     Functions: {
+      hard_delete_candidate_match: {
+        Args: { _actor_user_id: string; _match_id: string; _reason?: string }
+        Returns: Json
+      }
       has_org_role: {
         Args: {
           _org: string
