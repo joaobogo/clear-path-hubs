@@ -779,18 +779,84 @@ function SectionRoleExplorer({ ctx }: { ctx: Ctx }) {
   );
 }
 
-function SectionSignalExplorer({ ctx }: { ctx: Ctx }) {
+/**
+ * Scoring section — Prompt 9 will replace this body with archetype-specific
+ * scoring visuals (evidence map / decision gates / risk matrix / delivery
+ * scorecard / service-journey score / competency framework). This
+ * placeholder already meets the story-architecture contract: distinct
+ * buyer question, reading-width intro, working link to the full
+ * methodology, no decorative "Fit 92" number.
+ */
+function SectionScoring({ ctx }: { ctx: Ctx }) {
   const { entry } = ctx;
   return (
-    <PublicSection className="border-t border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-mist)]/40 py-14">
+    <PublicSection
+      className="border-t border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-mist)]/40 py-14"
+      id="scoring"
+    >
       <PublicPage>
         <SectionHeading
-          eyebrow="Candidate signals"
-          title={`What TaaSFlow evaluates for ${entry.name}`}
-          intro="Every point of the score maps to a specific evidence quote from the CV. Tap a signal to see what it means and how we validate it."
+          eyebrow="How TaaSFlow scores talent"
+          title={`Scoring priorities for ${entry.name}`}
+          intro="Every point of the score maps to an evidence quote from the CV. Dimensions, weights and critical requirements are shown alongside each candidate — the score supports judgment, it doesn't replace it."
         />
         <div className="mt-8">
           <IndustrySignalExplorer entry={entry} />
+        </div>
+        <p className="mt-6 max-w-[65ch] text-sm text-[color:var(--brand-navy)]/70">
+          See the full methodology on{" "}
+          <Link
+            to="/how-it-works"
+            hash="scoring"
+            className="font-semibold underline underline-offset-4"
+          >
+            how scoring works
+          </Link>
+          .
+        </p>
+      </PublicPage>
+    </PublicSection>
+  );
+}
+
+/**
+ * Proof section — Prompt 10 will replace this body with an approved-proof
+ * router (verified / anonymized case / methodology fallback). Today it
+ * shows the example-data shortlist card when the archetype opts in, and a
+ * clearly-labelled "what you receive" methodology block otherwise.
+ */
+function SectionProof({ ctx }: { ctx: Ctx }) {
+  if (ctx.config.spec.showDeliveryPreview) {
+    return <SectionDeliveryPreview ctx={ctx} />;
+  }
+  const { entry } = ctx;
+  const items = [
+    { title: "Weekly ranked shortlist", body: `A partner-reviewed shortlist of ${entry.name} candidates with evidence quotes and requirement coverage — delivered on a weekly cadence.` },
+    { title: "Evidence, not adjectives", body: "Every scored dimension links back to a line from the CV. No hidden precision, no invented numbers." },
+    { title: "Structured comparison", body: "Candidates are shown side-by-side with the same rubric, so you can compare like-for-like and defend the decision." },
+  ];
+  return (
+    <PublicSection className="border-t border-[color:var(--brand-navy)]/10 bg-white py-14" id="proof">
+      <PublicPage>
+        <SectionHeading
+          eyebrow="What you receive"
+          title={`Proof of what a ${entry.name} search delivers`}
+          intro="No fabricated logos, no unverified success rates. Here is the actual deliverable and the methodology behind it."
+        />
+        <div className="mt-8 grid gap-5 md:grid-cols-3">
+          {items.map((it) => (
+            <div
+              key={it.title}
+              className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-mist)]/40 p-6"
+            >
+              <h3 className="font-[family-name:var(--brand-font-display)] text-lg font-semibold text-[color:var(--brand-navy)]">
+                {it.title}
+              </h3>
+              <p className="mt-3 max-w-[52ch] text-sm leading-relaxed text-[color:var(--brand-navy)]/75">
+                {it.body}
+              </p>
+            </div>
+          ))}
         </div>
       </PublicPage>
     </PublicSection>
@@ -1029,11 +1095,6 @@ function SectionKeywordLinks({ ctx }: { ctx: Ctx }) {
           </Link>
           .
         </p>
-        <SubtleCta
-          variant="hire"
-          headline={`Hiring for ${entry.name}? Get ranked ${entry.name} candidates every week.`}
-          className="mt-6"
-        />
       </PublicPage>
     </PublicSection>
   );
