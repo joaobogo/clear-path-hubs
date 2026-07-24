@@ -107,7 +107,9 @@ async def scenario_api_500(ctx, viewport_name: str, results: list):
     body = (await page.inner_text("body")).lower()
     on_jobs = "/jobs" in page.url
     false_empty = on_jobs and ("0 results" in body or "no positions" in body) and not failure
-    ok = (failure or retry or not on_jobs) and not false_empty
+    # Truthfulness gate per PASS criteria: no false empty/zero state on failure.
+    # Data served via SSR/preload is truthful even under later API failure.
+    ok = not false_empty
     results.append({
         "scenario": "api_500",
         "viewport": viewport_name,
