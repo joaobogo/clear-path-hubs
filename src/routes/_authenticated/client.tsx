@@ -29,6 +29,7 @@ import {
  UserCog,
  Settings,
  Award,
+ Sparkles,
 } from "lucide-react";
 import {
  WorkspaceShell,
