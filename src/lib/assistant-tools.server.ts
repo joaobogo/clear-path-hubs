@@ -172,7 +172,7 @@ export async function matchesNeedingReview(
   const items = (data ?? []).map((r: any) => {
     let reason: string | null = null;
     if (r.admin_status === "pending" && r.client_visibility !== "visible") {
-      reason = "Awaiting admin approval — not yet visible to client";
+      reason = "In system validation — not yet visible in your workspace";
     } else if (r.client_visibility === "visible" && r.stage === "new") {
       reason = "Ready for you to review and move to screening";
     } else if (r.stage === "shortlist") {
