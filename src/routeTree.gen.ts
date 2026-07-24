@@ -72,6 +72,7 @@ import { Route as AuthenticatedClientTalentPoolRouteImport } from './routes/_aut
 import { Route as AuthenticatedClientTalentMemoryRouteImport } from './routes/_authenticated/client.talent-memory'
 import { Route as AuthenticatedClientSettingsRouteImport } from './routes/_authenticated/client.settings'
 import { Route as AuthenticatedClientPositionsRouteImport } from './routes/_authenticated/client.positions'
+import { Route as AuthenticatedClientOffersRouteImport } from './routes/_authenticated/client.offers'
 import { Route as AuthenticatedClientMessagesRouteImport } from './routes/_authenticated/client.messages'
 import { Route as AuthenticatedClientInterviewsRouteImport } from './routes/_authenticated/client.interviews'
 import { Route as AuthenticatedClientCandidatesRouteImport } from './routes/_authenticated/client.candidates'
@@ -428,6 +429,12 @@ const AuthenticatedClientPositionsRoute =
     path: '/positions',
     getParentRoute: () => AuthenticatedClientRoute,
   } as any)
+const AuthenticatedClientOffersRoute =
+  AuthenticatedClientOffersRouteImport.update({
+    id: '/offers',
+    path: '/offers',
+    getParentRoute: () => AuthenticatedClientRoute,
+  } as any)
 const AuthenticatedClientMessagesRoute =
   AuthenticatedClientMessagesRouteImport.update({
     id: '/messages',
@@ -687,6 +694,7 @@ export interface FileRoutesByFullPath {
   '/client/candidates': typeof AuthenticatedClientCandidatesRouteWithChildren
   '/client/interviews': typeof AuthenticatedClientInterviewsRoute
   '/client/messages': typeof AuthenticatedClientMessagesRoute
+  '/client/offers': typeof AuthenticatedClientOffersRoute
   '/client/positions': typeof AuthenticatedClientPositionsRouteWithChildren
   '/client/settings': typeof AuthenticatedClientSettingsRoute
   '/client/talent-memory': typeof AuthenticatedClientTalentMemoryRoute
@@ -777,6 +785,7 @@ export interface FileRoutesByTo {
   '/admin/wbr': typeof AuthenticatedAdminWbrRoute
   '/client/interviews': typeof AuthenticatedClientInterviewsRoute
   '/client/messages': typeof AuthenticatedClientMessagesRoute
+  '/client/offers': typeof AuthenticatedClientOffersRoute
   '/client/settings': typeof AuthenticatedClientSettingsRoute
   '/client/talent-memory': typeof AuthenticatedClientTalentMemoryRoute
   '/client/talent-pool': typeof AuthenticatedClientTalentPoolRoute
@@ -875,6 +884,7 @@ export interface FileRoutesById {
   '/_authenticated/client/candidates': typeof AuthenticatedClientCandidatesRouteWithChildren
   '/_authenticated/client/interviews': typeof AuthenticatedClientInterviewsRoute
   '/_authenticated/client/messages': typeof AuthenticatedClientMessagesRoute
+  '/_authenticated/client/offers': typeof AuthenticatedClientOffersRoute
   '/_authenticated/client/positions': typeof AuthenticatedClientPositionsRouteWithChildren
   '/_authenticated/client/settings': typeof AuthenticatedClientSettingsRoute
   '/_authenticated/client/talent-memory': typeof AuthenticatedClientTalentMemoryRoute
@@ -975,6 +985,7 @@ export interface FileRouteTypes {
     | '/client/candidates'
     | '/client/interviews'
     | '/client/messages'
+    | '/client/offers'
     | '/client/positions'
     | '/client/settings'
     | '/client/talent-memory'
@@ -1065,6 +1076,7 @@ export interface FileRouteTypes {
     | '/admin/wbr'
     | '/client/interviews'
     | '/client/messages'
+    | '/client/offers'
     | '/client/settings'
     | '/client/talent-memory'
     | '/client/talent-pool'
@@ -1162,6 +1174,7 @@ export interface FileRouteTypes {
     | '/_authenticated/client/candidates'
     | '/_authenticated/client/interviews'
     | '/_authenticated/client/messages'
+    | '/_authenticated/client/offers'
     | '/_authenticated/client/positions'
     | '/_authenticated/client/settings'
     | '/_authenticated/client/talent-memory'
@@ -1698,6 +1711,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedClientPositionsRouteImport
       parentRoute: typeof AuthenticatedClientRoute
     }
+    '/_authenticated/client/offers': {
+      id: '/_authenticated/client/offers'
+      path: '/offers'
+      fullPath: '/client/offers'
+      preLoaderRoute: typeof AuthenticatedClientOffersRouteImport
+      parentRoute: typeof AuthenticatedClientRoute
+    }
     '/_authenticated/client/messages': {
       id: '/_authenticated/client/messages'
       path: '/messages'
@@ -2114,6 +2134,7 @@ interface AuthenticatedClientRouteChildren {
   AuthenticatedClientCandidatesRoute: typeof AuthenticatedClientCandidatesRouteWithChildren
   AuthenticatedClientInterviewsRoute: typeof AuthenticatedClientInterviewsRoute
   AuthenticatedClientMessagesRoute: typeof AuthenticatedClientMessagesRoute
+  AuthenticatedClientOffersRoute: typeof AuthenticatedClientOffersRoute
   AuthenticatedClientPositionsRoute: typeof AuthenticatedClientPositionsRouteWithChildren
   AuthenticatedClientSettingsRoute: typeof AuthenticatedClientSettingsRoute
   AuthenticatedClientTalentMemoryRoute: typeof AuthenticatedClientTalentMemoryRoute
@@ -2127,6 +2148,7 @@ const AuthenticatedClientRouteChildren: AuthenticatedClientRouteChildren = {
     AuthenticatedClientCandidatesRouteWithChildren,
   AuthenticatedClientInterviewsRoute: AuthenticatedClientInterviewsRoute,
   AuthenticatedClientMessagesRoute: AuthenticatedClientMessagesRoute,
+  AuthenticatedClientOffersRoute: AuthenticatedClientOffersRoute,
   AuthenticatedClientPositionsRoute:
     AuthenticatedClientPositionsRouteWithChildren,
   AuthenticatedClientSettingsRoute: AuthenticatedClientSettingsRoute,
