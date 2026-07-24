@@ -71,20 +71,11 @@
       "url": "http://localhost:8080/industries/hospitality",
       "a11y": {
         "critical": [],
-        "serious": [
-          {
-            "rule": "landmark-main",
-            "count": 0
-          }
-        ],
-        "moderate": [
-          {
-            "rule": "skip-link"
-          }
-        ]
+        "serious": [],
+        "moderate": []
       },
-      "hash": "39af676305feb15d",
-      "baseline": "39af676305feb15d",
+      "hash": "47b47223b979a8f7",
+      "baseline": "47b47223b979a8f7",
       "drift": false
     },
     {
@@ -106,20 +97,11 @@
       "url": "http://localhost:8080/faq",
       "a11y": {
         "critical": [],
-        "serious": [
-          {
-            "rule": "landmark-main",
-            "count": 0
-          }
-        ],
-        "moderate": [
-          {
-            "rule": "skip-link"
-          }
-        ]
+        "serious": [],
+        "moderate": []
       },
-      "hash": "e6feafb5e37786bb",
-      "baseline": "e6feafb5e37786bb",
+      "hash": "4b7d186486a56f77",
+      "baseline": "4b7d186486a56f77",
       "drift": false
     },
     {
@@ -232,20 +214,11 @@
       "url": "http://localhost:8080/industries/hospitality",
       "a11y": {
         "critical": [],
-        "serious": [
-          {
-            "rule": "landmark-main",
-            "count": 0
-          }
-        ],
-        "moderate": [
-          {
-            "rule": "skip-link"
-          }
-        ]
+        "serious": [],
+        "moderate": []
       },
-      "hash": "340601dcb0db2586",
-      "baseline": "340601dcb0db2586",
+      "hash": "005b3c6af851f74c",
+      "baseline": "005b3c6af851f74c",
       "drift": false
     },
     {
@@ -267,20 +240,11 @@
       "url": "http://localhost:8080/faq",
       "a11y": {
         "critical": [],
-        "serious": [
-          {
-            "rule": "landmark-main",
-            "count": 0
-          }
-        ],
-        "moderate": [
-          {
-            "rule": "skip-link"
-          }
-        ]
+        "serious": [],
+        "moderate": []
       },
-      "hash": "100cbec3df7897b6",
-      "baseline": "100cbec3df7897b6",
+      "hash": "0301dff37da609d8",
+      "baseline": "0301dff37da609d8",
       "drift": false
     },
     {
@@ -393,20 +357,11 @@
       "url": "http://localhost:8080/industries/hospitality",
       "a11y": {
         "critical": [],
-        "serious": [
-          {
-            "rule": "landmark-main",
-            "count": 0
-          }
-        ],
-        "moderate": [
-          {
-            "rule": "skip-link"
-          }
-        ]
+        "serious": [],
+        "moderate": []
       },
-      "hash": "8dcdfd2f4f884b25",
-      "baseline": "8dcdfd2f4f884b25",
+      "hash": "998f7375915f1e24",
+      "baseline": "998f7375915f1e24",
       "drift": false
     },
     {
@@ -428,20 +383,11 @@
       "url": "http://localhost:8080/faq",
       "a11y": {
         "critical": [],
-        "serious": [
-          {
-            "rule": "landmark-main",
-            "count": 0
-          }
-        ],
-        "moderate": [
-          {
-            "rule": "skip-link"
-          }
-        ]
+        "serious": [],
+        "moderate": []
       },
-      "hash": "2acec8bbc9ac04c8",
-      "baseline": "2acec8bbc9ac04c8",
+      "hash": "89db026c309afda5",
+      "baseline": "89db026c309afda5",
       "drift": false
     },
     {
@@ -554,20 +500,11 @@
       "url": "http://localhost:8080/industries/hospitality",
       "a11y": {
         "critical": [],
-        "serious": [
-          {
-            "rule": "landmark-main",
-            "count": 0
-          }
-        ],
-        "moderate": [
-          {
-            "rule": "skip-link"
-          }
-        ]
+        "serious": [],
+        "moderate": []
       },
-      "hash": "461d1b2bc6bf26aa",
-      "baseline": "461d1b2bc6bf26aa",
+      "hash": "a3305f4e381dc150",
+      "baseline": "a3305f4e381dc150",
       "drift": false
     },
     {
@@ -589,20 +526,11 @@
       "url": "http://localhost:8080/faq",
       "a11y": {
         "critical": [],
-        "serious": [
-          {
-            "rule": "landmark-main",
-            "count": 0
-          }
-        ],
-        "moderate": [
-          {
-            "rule": "skip-link"
-          }
-        ]
+        "serious": [],
+        "moderate": []
       },
-      "hash": "a685df3aabb5a905",
-      "baseline": "a685df3aabb5a905",
+      "hash": "62c94d4bd9d4619e",
+      "baseline": "62c94d4bd9d4619e",
       "drift": false
     },
     {
@@ -715,20 +643,11 @@
       "url": "http://localhost:8080/industries/hospitality",
       "a11y": {
         "critical": [],
-        "serious": [
-          {
-            "rule": "landmark-main",
-            "count": 0
-          }
-        ],
-        "moderate": [
-          {
-            "rule": "skip-link"
-          }
-        ]
+        "serious": [],
+        "moderate": []
       },
-      "hash": "729525a7c8e006f9",
-      "baseline": "729525a7c8e006f9",
+      "hash": "dc7f7d10a4ae0464",
+      "baseline": "dc7f7d10a4ae0464",
       "drift": false
     },
     {
@@ -750,20 +669,11 @@
       "url": "http://localhost:8080/faq",
       "a11y": {
         "critical": [],
-        "serious": [
-          {
-            "rule": "landmark-main",
-            "count": 0
-          }
-        ],
-        "moderate": [
-          {
-            "rule": "skip-link"
-          }
-        ]
+        "serious": [],
+        "moderate": []
       },
-      "hash": "391190e75014918b",
-      "baseline": "391190e75014918b",
+      "hash": "9f56db261b9ef647",
+      "baseline": "9f56db261b9ef647",
       "drift": false
     },
     {
@@ -876,20 +786,11 @@
       "url": "http://localhost:8080/industries/hospitality",
       "a11y": {
         "critical": [],
-        "serious": [
-          {
-            "rule": "landmark-main",
-            "count": 0
-          }
-        ],
-        "moderate": [
-          {
-            "rule": "skip-link"
-          }
-        ]
+        "serious": [],
+        "moderate": []
       },
-      "hash": "9d4952a433ea9786",
-      "baseline": "9d4952a433ea9786",
+      "hash": "2f8a4a5e82385a82",
+      "baseline": "2f8a4a5e82385a82",
       "drift": false
     },
     {
@@ -911,20 +812,11 @@
       "url": "http://localhost:8080/faq",
       "a11y": {
         "critical": [],
-        "serious": [
-          {
-            "rule": "landmark-main",
-            "count": 0
-          }
-        ],
-        "moderate": [
-          {
-            "rule": "skip-link"
-          }
-        ]
+        "serious": [],
+        "moderate": []
       },
-      "hash": "0d87fa53918bfcbe",
-      "baseline": "0d87fa53918bfcbe",
+      "hash": "ecca351a796c46ff",
+      "baseline": "ecca351a796c46ff",
       "drift": false
     },
     {
@@ -969,8 +861,8 @@
   ],
   "summary": {
     "critical": 0,
-    "serious": 12,
-    "moderate": 12,
+    "serious": 0,
+    "moderate": 0,
     "visualDiffs": 0
   }
 }
