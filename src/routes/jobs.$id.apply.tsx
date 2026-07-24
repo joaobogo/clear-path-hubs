@@ -2,6 +2,7 @@ import { createFileRoute, Link, useNavigate, notFound } from "@tanstack/react-ro
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { getPublicPosition } from "@/lib/jobs.functions";
+import { extractJobUuid } from "@/lib/marketing/job-slug";
 import { submitApplication } from "@/lib/apply.functions";
 import {
   ALLOWED_CV_EXT,
