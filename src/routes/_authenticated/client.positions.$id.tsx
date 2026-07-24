@@ -180,15 +180,29 @@ function PositionDetailPage() {
  }
 
  const attemptMove = (matchId: string, from: MatchStage, to: MatchStage) => {
- if (from === to) return;
- const allowed = STAGE_GRAPH[from] ?? [];
- if (!allowed.includes(to)) {
- toast.error(
- `Cannot move from ${from.replace("_", " ")} to ${to.replace("_", " ")}.`,
- );
- return;
- }
- move.mutate({ matchId, toStage: to });
+  if (from === to) return;
+  const allowed = STAGE_GRAPH[from] ?? [];
+  if (!allowed.includes(to)) {
+   toast.error(
+    `Cannot move from ${from.replace("_", " ")} to ${to.replace("_", " ")}.`,
+   );
+   return;
+  }
+  if (to === "not_moving_forward") {
+   const reason =
+    typeof window !== "undefined"
+     ? window.prompt(
+        "Reason for not moving this candidate forward (required, visible to your team):",
+       )
+     : null;
+   if (!reason || !reason.trim()) {
+    toast.error("A reason is required to reject a candidate.");
+    return;
+   }
+   move.mutate({ matchId, toStage: to, reason: reason.trim() });
+   return;
+  }
+  move.mutate({ matchId, toStage: to });
  };
 
 
