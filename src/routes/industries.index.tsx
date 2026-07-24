@@ -120,7 +120,7 @@ function IndustriesIndex() {
 
   function setFamily(fam: IndustryFamily | "all") {
     navigate({
-      search: (prev) => ({ ...prev, family: fam === "all" ? "" : fam }),
+      search: (prev: { q: string; family: string }) => ({ ...prev, family: fam === "all" ? "" : fam }),
       resetScroll: false,
     });
     // Announce and focus the results heading for screen readers.
@@ -129,7 +129,7 @@ function IndustriesIndex() {
 
   function commitQuery(next: string) {
     navigate({
-      search: (prev) => ({ ...prev, q: next.trim() }),
+      search: (prev: { q: string; family: string }) => ({ ...prev, q: next.trim() }),
       resetScroll: false,
     });
   }
