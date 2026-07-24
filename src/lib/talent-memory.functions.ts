@@ -192,7 +192,7 @@ async function decorateMemories(
         display_name: displayName(p),
         email_masked: maskEmail(p.email),
         headline: p.headline ?? r.headline_snapshot ?? null,
-        seniority: p.seniority ?? r.seniority_snapshot ?? null,
+        seniority: r.seniority_snapshot ?? null,
         location: p.location ?? null,
       },
     };
