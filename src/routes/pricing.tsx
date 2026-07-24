@@ -1,4 +1,5 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
+import { useState } from "react";
 import { marketingHead } from "@/lib/marketing/head";
 import {
   SiteShell,
@@ -11,7 +12,7 @@ import { SubscriptionTierCard } from "@/components/marketing/subscription-tier-c
 import { AgencyComparator } from "@/components/marketing/agency-comparator";
 import { PRICING_TIERS, NEVER_CHARGED, PRICING_GUARANTEES } from "@/content/pricing";
 import { SUBSCRIPTION_TIERS } from "@/content/pricing-subscriptions";
-import { PRICE_PILOT_DISPLAY, SUBSCRIPTION_ANNUAL_DISCOUNT_LABEL } from "@/config/pricing-core";
+import { PRICE_PILOT_DISPLAY } from "@/config/pricing-core";
 import { Check, X } from "lucide-react";
 import { PageConnections } from "@/components/marketing/page-connections";
 
