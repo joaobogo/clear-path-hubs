@@ -47,7 +47,7 @@ export function IndustryTemplate({ entry }: { entry: IndustryEntry }) {
     : null;
 
   return (
-    <>
+    <SiteShell>
       <Breadcrumbs
         items={[
           { label: "Home", to: "/" },
@@ -599,7 +599,7 @@ export function IndustryTemplate({ entry }: { entry: IndustryEntry }) {
         description={entry.cta.description}
       />
 
-    </>
+    </SiteShell>
   );
 }
 
