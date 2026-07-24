@@ -31,6 +31,7 @@ import {
  Award,
  Sparkles,
  HandCoins,
+ Bot,
 } from "lucide-react";
 import {
  WorkspaceShell,
