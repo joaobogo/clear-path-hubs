@@ -220,7 +220,7 @@ function CandidatesPage() {
   () =>
    (search.compare ?? "")
     .split(",")
-    .map((s) => s.trim())
+    .map((s: string) => s.trim())
     .filter(Boolean),
   // eslint-disable-next-line react-hooks/exhaustive-deps
   [],
