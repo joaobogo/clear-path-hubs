@@ -300,7 +300,7 @@ export const getClientAnalytics = createServerFn({ method: "POST" })
   });
 
 // Available positions for filter dropdown
-export const getAnalyticsFilterOptions = createServerFn({ method: "GET" })
+export const getAnalyticsFilterOptions = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((raw) => z.object({ organization_id: z.string().uuid() }).parse(raw))
   .handler(async ({ data, context }) => {
