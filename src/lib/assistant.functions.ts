@@ -216,7 +216,7 @@ export const getAssistantState = createServerFn({ method: "POST" })
         id: string;
         role: "user" | "assistant" | "system";
         content: string;
-        tool_trace: Array<{ name: string; args: unknown }>;
+        tool_trace: Array<{ name: string; args: Record<string, string | number | boolean | null> }>;
         citations: Array<{ kind: string; id: string; label: string; href?: string }>;
         created_at: string;
       }>,
@@ -302,7 +302,7 @@ export const askAssistant = createServerFn({ method: "POST" })
     ];
 
     const start = Date.now();
-    const tool_trace: Array<{ name: string; args: unknown; note?: string }> = [];
+    const tool_trace: Array<{ name: string; args: Record<string, string | number | boolean | null>; note?: string }> = [];
     const citationsMap = new Map<string, {
       kind: string; id: string; label: string; href?: string;
     }>();
@@ -423,7 +423,7 @@ export const askAssistant = createServerFn({ method: "POST" })
         id: userInsert.data.id as string,
         role: "user" as const,
         content: data.message,
-        tool_trace: [] as Array<{ name: string; args: unknown }>,
+        tool_trace: [] as Array<{ name: string; args: Record<string, string | number | boolean | null> }>,
         citations: [] as typeof citations,
         created_at: userInsert.data.created_at as string,
       },
@@ -431,7 +431,7 @@ export const askAssistant = createServerFn({ method: "POST" })
         id: assistantInsert.data.id as string,
         role: "assistant" as const,
         content: assistantInsert.data.content as string,
-        tool_trace: assistantInsert.data.tool_trace as Array<{ name: string; args: unknown }>,
+        tool_trace: assistantInsert.data.tool_trace as Array<{ name: string; args: Record<string, string | number | boolean | null> }>,
         citations: assistantInsert.data.citations as typeof citations,
         created_at: (assistantInsert.data as AnyRow).created_at as string,
       },
