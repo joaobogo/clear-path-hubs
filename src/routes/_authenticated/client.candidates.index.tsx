@@ -215,19 +215,29 @@ function CandidatesPage() {
  currentPage * PAGE_SIZE,
  );
 
- // Comparison state
- const [compareIds, setCompareIds] = useState<string[]>([]);
- const [compareOpen, setCompareOpen] = useState(false);
+ // Comparison state — seed from ?compare= for shareable links.
+ const initialCompare = useMemo(
+  () =>
+   (search.compare ?? "")
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean),
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  [],
+ );
+ const [compareIds, setCompareIds] = useState<string[]>(initialCompare);
+ const [compareOpen, setCompareOpen] = useState(initialCompare.length >= 2);
  useEffect(() => {
- // Drop any selection that is no longer client-visible (tenant switch, filter change to hidden rows).
- setCompareIds((ids) => {
- const rows = rowsRaw as ClientCandidateDTO[];
- const next = ids.filter((id) => rows.some((r) => r.match_id === id));
- // Bail out if unchanged to avoid render loops (rowsRaw default `[]` is a fresh ref each render).
- if (next.length === ids.length && next.every((v, i) => v === ids[i])) return ids;
- return next;
- });
+  // Drop any selection that is no longer client-visible (tenant switch, filter change to hidden rows).
+  setCompareIds((ids) => {
+   const rows = rowsRaw as ClientCandidateDTO[];
+   const next = ids.filter((id) => rows.some((r) => r.match_id === id));
+   // Bail out if unchanged to avoid render loops (rowsRaw default `[]` is a fresh ref each render).
+   if (next.length === ids.length && next.every((v, i) => v === ids[i])) return ids;
+   return next;
+  });
  }, [rowsRaw, orgId]);
+
 
  const selectedCandidates = useMemo(
  () =>
