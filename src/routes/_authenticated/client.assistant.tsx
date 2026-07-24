@@ -388,8 +388,8 @@ function MessageBubble({ m, runAction, runningActionId, dismissed, editedDrafts,
           <p className="whitespace-pre-wrap leading-relaxed">{m.content}</p>
         ) : (
           <>
-            {m.tool_trace.length > 0 && (
-              <div className="mb-2 flex flex-wrap gap-1">
+            {(m.tool_trace.length > 0 || m.confidence) && (
+              <div className="mb-2 flex flex-wrap items-center gap-1">
                 {m.tool_trace.map((t, i) => (
                   <Badge
                     key={`${t.name}-${i}`}
@@ -400,6 +400,7 @@ function MessageBubble({ m, runAction, runningActionId, dismissed, editedDrafts,
                     {prettyTool(t.name)}
                   </Badge>
                 ))}
+                {m.confidence && <ConfidenceBadge level={m.confidence} />}
               </div>
             )}
             <div className="prose prose-sm max-w-none dark:prose-invert prose-p:my-1 prose-ul:my-1 prose-li:my-0">
