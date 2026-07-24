@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { AlertCircle, MessageSquare, Users } from "lucide-react";
 import { RoleBlueprint } from "@/components/product/role-blueprint";
+import { ResurfacePanel } from "@/components/client/resurface-panel";
 
 export const Route = createFileRoute("/_authenticated/client/positions/$id")({
  head: () => ({
