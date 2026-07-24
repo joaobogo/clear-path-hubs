@@ -312,14 +312,15 @@ function Bubble({ m, runAction, runningActionId, dismissed, drafts, setDraft }: 
           <p className="whitespace-pre-wrap leading-relaxed">{m.content}</p>
         ) : (
           <>
-            {m.tool_trace.length > 0 && (
-              <div className="mb-2 flex flex-wrap gap-1">
+            {(m.tool_trace.length > 0 || m.confidence) && (
+              <div className="mb-2 flex flex-wrap items-center gap-1">
                 {m.tool_trace.map((t, i) => (
                   <Badge key={`${t.name}-${i}`} variant="outline" className="gap-1 border-primary/20 bg-primary/5 text-[10px] font-normal text-primary">
                     <Wrench className="h-2.5 w-2.5" />
                     {prettyTool(t.name)}
                   </Badge>
                 ))}
+                {m.confidence && <ConfidenceBadge level={m.confidence} />}
               </div>
             )}
             <div className="prose prose-sm max-w-none dark:prose-invert prose-p:my-1 prose-ul:my-1 prose-li:my-0">
