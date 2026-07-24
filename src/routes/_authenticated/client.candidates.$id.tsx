@@ -220,32 +220,35 @@ function CandidateDetailPage() {
 
  <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-12">
  {/* MAIN COLUMN */}
- <div className="space-y-6 lg:col-span-8">
- <FitHero candidate={candidate} />
- <RequirementCoverage candidate={candidate} />
- <WhyThisCandidate candidate={candidate} />
- <WhatNeedsValidation candidate={candidate} />
- <InterviewGuide candidate={candidate} />
- <ExperienceTimeline candidate={candidate} />
- <SkillsAndEducation candidate={candidate} />
- {candidate.screening_answers.length > 0 && (
- <SectionCard title="Screening answers" icon={<MessageSquare className="h-4 w-4" />}>
- <dl className="space-y-3 text-sm">
- {candidate.screening_answers.map((a, i) => (
- <div key={i}>
- <dt className="text-xs font-medium text-muted-foreground">
- {a.question}
- </dt>
- <dd className="mt-0.5 whitespace-pre-wrap">{a.answer || "Not provided"}</dd>
- </div>
- ))}
- </dl>
- </SectionCard>
- )}
- {(interviews.length > 0 || decisions.length > 0) && (
- <ActivitySection interviews={interviews} decisions={decisions} />
- )}
- </div>
+        <div className="space-y-6 lg:col-span-8">
+          <FitHero candidate={candidate} />
+          <RequirementCoverage candidate={candidate} />
+          <WhyThisCandidate candidate={candidate} />
+          <WhatNeedsValidation candidate={candidate} />
+          <AvailabilityAndComp candidate={candidate} />
+          <InterviewGuide candidate={candidate} />
+          <ExperienceTimeline candidate={candidate} />
+          <SkillsAndEducation candidate={candidate} />
+          {candidate.screening_answers.length > 0 && (
+            <SectionCard title="Screening answers" icon={<MessageSquare className="h-4 w-4" />}>
+              <dl className="space-y-3 text-sm">
+                {candidate.screening_answers.map((a, i) => (
+                  <div key={i}>
+                    <dt className="text-xs font-medium text-muted-foreground">
+                      {a.question}
+                    </dt>
+                    <dd className="mt-0.5 whitespace-pre-wrap">{a.answer || "Not provided"}</dd>
+                  </div>
+                ))}
+              </dl>
+            </SectionCard>
+          )}
+          <SourceAndOutreach candidate={candidate} />
+          {(interviews.length > 0 || decisions.length > 0) && (
+            <ActivitySection interviews={interviews} decisions={decisions} />
+          )}
+          <AuditTrailSection candidate={candidate} />
+        </div>
 
         {/* SIDE PANEL — Decision cockpit (sticky on desktop) */}
         <aside className="space-y-6 lg:col-span-4">
