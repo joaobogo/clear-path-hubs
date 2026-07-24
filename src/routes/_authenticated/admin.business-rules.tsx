@@ -92,29 +92,21 @@ function BusinessRulesEditor() {
             onSave={async (value, note) => {
               try {
                 await save({ data: { key, value, note } });
-                toast({ title: `Saved ${key}` });
+                toast.success(`Saved ${key}`);
                 await qc.invalidateQueries({ queryKey: ["business-rules-overrides"] });
                 await qc.invalidateQueries({ queryKey: ["business-rules"] });
               } catch (err) {
-                toast({
-                  title: `Invalid override for ${key}`,
-                  description: err instanceof Error ? err.message : String(err),
-                  variant: "destructive",
-                });
+                toast.error(`Invalid override for ${key}`, { description: err instanceof Error ? err.message : String(err) });
               }
             }}
             onReset={async () => {
               try {
                 await reset({ data: { key } });
-                toast({ title: `Reset ${key} to default` });
+                toast.success(`Reset ${key} to default`);
                 await qc.invalidateQueries({ queryKey: ["business-rules-overrides"] });
                 await qc.invalidateQueries({ queryKey: ["business-rules"] });
               } catch (err) {
-                toast({
-                  title: `Reset failed`,
-                  description: err instanceof Error ? err.message : String(err),
-                  variant: "destructive",
-                });
+                toast.error(`Reset failed`, { description: err instanceof Error ? err.message : String(err) });
               }
             }}
           />
