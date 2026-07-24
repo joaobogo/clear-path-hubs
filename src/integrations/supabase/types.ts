@@ -3503,6 +3503,9 @@ export type Database = {
       organizations: {
         Row: {
           archived_at: string | null
+          brand_accent_color: string | null
+          brand_display_name: string | null
+          brand_primary_color: string | null
           created_at: string
           created_by_audit: boolean | null
           dashboard_status: string
@@ -3517,6 +3520,7 @@ export type Database = {
           legacy_source_system: string | null
           legacy_source_table: string | null
           locations: string | null
+          logo_url: string | null
           migrated_at: string | null
           migration_run_id: string | null
           migration_status:
@@ -3537,6 +3541,9 @@ export type Database = {
         }
         Insert: {
           archived_at?: string | null
+          brand_accent_color?: string | null
+          brand_display_name?: string | null
+          brand_primary_color?: string | null
           created_at?: string
           created_by_audit?: boolean | null
           dashboard_status?: string
@@ -3551,6 +3558,7 @@ export type Database = {
           legacy_source_system?: string | null
           legacy_source_table?: string | null
           locations?: string | null
+          logo_url?: string | null
           migrated_at?: string | null
           migration_run_id?: string | null
           migration_status?:
@@ -3571,6 +3579,9 @@ export type Database = {
         }
         Update: {
           archived_at?: string | null
+          brand_accent_color?: string | null
+          brand_display_name?: string | null
+          brand_primary_color?: string | null
           created_at?: string
           created_by_audit?: boolean | null
           dashboard_status?: string
@@ -3585,6 +3596,7 @@ export type Database = {
           legacy_source_system?: string | null
           legacy_source_table?: string | null
           locations?: string | null
+          logo_url?: string | null
           migrated_at?: string | null
           migration_run_id?: string | null
           migration_status?:
