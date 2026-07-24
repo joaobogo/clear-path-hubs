@@ -1,0 +1,709 @@
+{
+  "version": "1.0",
+  "generated": "2026-07-24",
+  "canonicalCount": 57,
+  "coverage": 57,
+  "source": "Unsplash (editorial license, free commercial use, no attribution required)",
+  "responsiveWidths": [
+    640,
+    960,
+    1280,
+    1600
+  ],
+  "targetViewports": [
+    320,
+    375,
+    768,
+    1440
+  ],
+  "aspectRatio": "16:9 (1600x900 base)",
+  "quality": 80,
+  "format": "auto (webp/avif with jpeg fallback via Unsplash CDN)",
+  "cropStrategy": "focal-point object-position with 16:9 hero + 4:3 tablet + 1:1 mobile crops",
+  "industries": {
+    "accounting": {
+      "name": "Accounting",
+      "category": "Financial Services",
+      "hero": {
+        "unsplashId": "1554224154-26032ffc0d07",
+        "urlTemplate": "https://images.unsplash.com/photo-1554224154-26032ffc0d07?w={w}&q=80&auto=format&fit=crop",
+        "alt": "Ledger, laptop and calculator on a warm oak desk with reading light.",
+        "focalPoint": "50% 45%",
+        "license": "Unsplash License (unsplash.com/license)",
+        "approvalStatus": "approved"
+      }
+    },
+    "agriculture": {
+      "name": "Agriculture & AgriTech",
+      "category": "Operations & Services",
+      "hero": {
+        "unsplashId": "1500595046743-cd271d694d30",
+        "urlTemplate": "https://images.unsplash.com/photo-1500595046743-cd271d694d30?w={w}&q=80&auto=format&fit=crop",
+        "alt": "Rolling farmland at golden hour with a lone tractor track.",
+        "focalPoint": "50% 55%",
+        "license": "Unsplash License (unsplash.com/license)",
+        "approvalStatus": "approved"
+      }
+    },
+    "ai-ml": {
+      "name": "AI & Machine Learning",
+      "category": "Tech & Data",
+      "hero": {
+        "unsplashId": "1677442136019-21780ecad995",
+        "urlTemplate": "https://images.unsplash.com/photo-1677442136019-21780ecad995?w={w}&q=80&auto=format&fit=crop",
+        "alt": "Neural network visualisation on a dark studio monitor \u2014 AI & ML hiring.",
+        "focalPoint": "50% 40%",
+        "license": "Unsplash License (unsplash.com/license)",
+        "approvalStatus": "approved"
+      }
+    },
+    "architecture": {
+      "name": "Architecture & Design",
+      "category": "Professional Services",
+      "hero": {
+        "unsplashId": "1487958449943-2429e8be8625",
+        "urlTemplate": "https://images.unsplash.com/photo-1487958449943-2429e8be8625?w={w}&q=80&auto=format&fit=crop",
+        "alt": "Modern architectural interior with concrete, timber and daylight.",
+        "focalPoint": "50% 45%",
+        "license": "Unsplash License (unsplash.com/license)",
+        "approvalStatus": "approved"
+      }
+    },
+    "automotive": {
+      "name": "Automotive",
+      "category": "Operations & Services",
+      "hero": {
+        "unsplashId": "1493238792000-8113da705763",
+        "urlTemplate": "https://images.unsplash.com/photo-1493238792000-8113da705763?w={w}&q=80&auto=format&fit=crop",
+        "alt": "Automotive design studio with clay model and daylight from skylights.",
+        "focalPoint": "50% 40%",
+        "license": "Unsplash License (unsplash.com/license)",
+        "approvalStatus": "approved"
+      }
+    },
+    "aviation": {
+      "name": "Aviation",
+      "category": "Operations & Services",
+      "hero": {
+        "unsplashId": "1436491865332-7a61a109cc05",
+        "urlTemplate": "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w={w}&q=80&auto=format&fit=crop",
+        "alt": "Wide-body aircraft on tarmac at soft dawn \u2014 aviation hiring.",
+        "focalPoint": "50% 50%",
+        "license": "Unsplash License (unsplash.com/license)",
+        "approvalStatus": "approved"
+      }
+    },
+    "biotech": {
+      "name": "Biotechnology",
+      "category": "Regulated & Public",
+      "hero": {
+        "unsplashId": "1581093588401-fbb62a02f120",
+        "urlTemplate": "https://images.unsplash.com/photo-1581093588401-fbb62a02f120?w={w}&q=80&auto=format&fit=crop",
+        "alt": "Bench scientist pipetting into a rack in a clean, warm-lit lab.",
+        "focalPoint": "50% 40%",
+        "license": "Unsplash License (unsplash.com/license)",
+        "approvalStatus": "approved"
+      }
+    },
+    "construction": {
+      "name": "Construction",
+      "category": "Built Environment & Industrial",
+      "hero": {
+        "unsplashId": "1541888946425-d81bb19240f5",
+        "urlTemplate": "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w={w}&q=80&auto=format&fit=crop",
+        "alt": "Superintendent on a mid-rise jobsite reviewing drawings at sunrise.",
+        "focalPoint": "50% 40%",
+        "license": "Unsplash License (unsplash.com/license)",
+        "approvalStatus": "approved"
+      }
+    },
+    "consulting": {
+      "name": "Consulting",
+      "category": "People & Advisory",
+      "hero": {
+        "unsplashId": "1517502884422-41eaead166d4",
+        "urlTemplate": "https://images.unsplash.com/photo-1517502884422-41eaead166d4?w={w}&q=80&auto=format&fit=crop",
+        "alt": "Consultants at a whiteboard sketching a value tree \u2014 advisory work.",
+        "focalPoint": "50% 35%",
+        "license": "Unsplash License (unsplash.com/license)",
+        "approvalStatus": "approved"
+      }
+    },
+    "customer-success": {
+      "name": "Customer Success",
+      "category": "People & GTM",
+      "hero": {
+        "unsplashId": "1560264280-88b68371db39",
+        "urlTemplate": "https://images.unsplash.com/photo-1560264280-88b68371db39?w={w}&q=80&auto=format&fit=crop",
+        "alt": "Customer success manager on a call with a warm-lit dual-monitor desk.",
+        "focalPoint": "50% 35%",
+        "license": "Unsplash License (unsplash.com/license)",
+        "approvalStatus": "approved"
+      }
+    },
+    "cybersecurity": {
+      "name": "Cybersecurity",
+      "category": "Tech & Data",
+      "hero": {
+        "unsplashId": "1550751827-4bd374c3f58b",
+        "urlTemplate": "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w={w}&q=80&auto=format&fit=crop",
+        "alt": "Security operations centre with dark-mode dashboards and warm accent lights.",
+        "focalPoint": "50% 40%",
+        "license": "Unsplash License (unsplash.com/license)",
+        "approvalStatus": "approved"
+      }
+    },
+    "data-analytics": {
+      "name": "Data & Analytics",
+      "category": "Tech & Data",
+      "hero": {
+        "unsplashId": "1543286386-713bdd548da4",
+        "urlTemplate": "https://images.unsplash.com/photo-1543286386-713bdd548da4?w={w}&q=80&auto=format&fit=crop",
+        "alt": "Analyst reviewing cohort charts and pivot tables on a wide monitor.",
+        "focalPoint": "50% 40%",
+        "license": "Unsplash License (unsplash.com/license)",
+        "approvalStatus": "approved"
+      }
+    },
+    "defense": {
+      "name": "Defense & Aerospace",
+      "category": "Regulated & Public",
+      "hero": {
+        "unsplashId": "1541185933-ef5d8ed016c2",
+        "urlTemplate": "https://images.unsplash.com/photo-1541185933-ef5d8ed016c2?w={w}&q=80&auto=format&fit=crop",
+        "alt": "Aerospace hangar interior with dawn light across polished floor.",
+        "focalPoint": "50% 45%",
+        "license": "Unsplash License (unsplash.com/license)",
+        "approvalStatus": "approved"
+      }
+    },
+    "design": {
+      "name": "Design & Creative",
+      "category": "People & GTM",
+      "hero": {
+        "unsplashId": "1558655146-9f40138edfeb",
+        "urlTemplate": "https://images.unsplash.com/photo-1558655146-9f40138edfeb?w={w}&q=80&auto=format&fit=crop",
+        "alt": "Designer's desk with sketches, swatches and a large iMac.",
+        "focalPoint": "50% 40%",
+        "license": "Unsplash License (unsplash.com/license)",
+        "approvalStatus": "approved"
+      }
+    },
+    "devops": {
+      "name": "DevOps & Cloud Infrastructure",
+      "category": "Tech & Data",
+      "hero": {
+        "unsplashId": "1573164713714-d95e436ab8d6",
+        "urlTemplate": "https://images.unsplash.com/photo-1573164713714-d95e436ab8d6?w={w}&q=80&auto=format&fit=crop",
+        "alt": "Server room aisle with cool blue LEDs \u2014 infrastructure & DevOps.",
+        "focalPoint": "50% 40%",
+        "license": "Unsplash License (unsplash.com/license)",
+        "approvalStatus": "approved"
+      }
+    },
+    "ecommerce": {
+      "name": "E-commerce",
+      "category": "Consumer & Operations",
+      "hero": {
+        "unsplashId": "1607082349566-187342175e2f",
+        "urlTemplate": "https://images.unsplash.com/photo-1607082349566-187342175e2f?w={w}&q=80&auto=format&fit=crop",
+        "alt": "Warehouse fulfilment desk with product photography and packaging.",
+        "focalPoint": "50% 40%",
+        "license": "Unsplash License (unsplash.com/license)",
+        "approvalStatus": "approved"
+      }
+    },
+    "edtech": {
+      "name": "EdTech",
+      "category": "Tech & Data",
+      "hero": {
+        "unsplashId": "1522202176988-66273c2fd55f",
+        "urlTemplate": "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w={w}&q=80&auto=format&fit=crop",
+        "alt": "Small cohort of learners around a bright collaborative workspace.",
+        "focalPoint": "50% 40%",
+        "license": "Unsplash License (unsplash.com/license)",
+        "approvalStatus": "approved"
+      }
+    },
+    "education": {
+      "name": "Education",
+      "category": "Regulated & Public",
+      "hero": {
+        "unsplashId": "1503676260728-1c00da094a0b",
+        "urlTemplate": "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w={w}&q=80&auto=format&fit=crop",
+        "alt": "Sunlit classroom with warm wood desks and open notebooks.",
+        "focalPoint": "50% 40%",
+        "license": "Unsplash License (unsplash.com/license)",
+        "approvalStatus": "approved"
+      }
+    },
+    "energy": {
+      "name": "Energy & Utilities",
+      "category": "Operations & Services",
+      "hero": {
+        "unsplashId": "1466611653911-95081537e5b7",
+        "urlTemplate": "https://images.unsplash.com/photo-1466611653911-95081537e5b7?w={w}&q=80&auto=format&fit=crop",
+        "alt": "Grid substation transmission towers under a wide open sky.",
+        "focalPoint": "50% 45%",
+        "license": "Unsplash License (unsplash.com/license)",
+        "approvalStatus": "approved"
+      }
+    },
+    "fashion": {
+      "name": "Fashion & Apparel",
+      "category": "Operations & Services",
+      "hero": {
+        "unsplashId": "1490481651871-ab68de25d43d",
+        "urlTemplate": "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w={w}&q=80&auto=format&fit=crop",
+        "alt": "Atelier rack of curated garments in soft daylight.",
+        "focalPoint": "50% 40%",
+        "license": "Unsplash License (unsplash.com/license)",
+        "approvalStatus": "approved"
+      }
+    },
+    "finance": {
+      "name": "Finance",
+      "category": "Financial Services",
+      "hero": {
+        "unsplashId": "1554224155-8d04cb21cd6c",
+        "urlTemplate": "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w={w}&q=80&auto=format&fit=crop",
+        "alt": "Trading floor at dawn with rows of quote monitors glowing warm.",
+        "focalPoint": "50% 40%",
+        "license": "Unsplash License (unsplash.com/license)",
+        "approvalStatus": "approved"
+      }
+    },
+    "fintech": {
+      "name": "FinTech",
+      "category": "Tech & Data",
+      "hero": {
+        "unsplashId": "1611974789855-9c2a0a7236a3",
+        "urlTemplate": "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w={w}&q=80&auto=format&fit=crop",
+        "alt": "Fintech engineer beside a wall of live market and payment dashboards.",
+        "focalPoint": "50% 35%",
+        "license": "Unsplash License (unsplash.com/license)",
+        "approvalStatus": "approved"
+      }
+    },
+    "food-beverage": {
+      "name": "Food & Beverage",
+      "category": "Operations & Services",
+      "hero": {
+        "unsplashId": "1504674900247-0877df9cc836",
+        "urlTemplate": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w={w}&q=80&auto=format&fit=crop",
+        "alt": "Chef plating a refined course under warm kitchen pass light.",
+        "focalPoint": "50% 40%",
+        "license": "Unsplash License (unsplash.com/license)",
+        "approvalStatus": "approved"
+      }
+    },
+    "gaming": {
+      "name": "Gaming & Interactive",
+      "category": "Tech & Data",
+      "hero": {
+        "unsplashId": "1542751371-adc38448a05e",
+        "urlTemplate": "https://images.unsplash.com/photo-1542751371-adc38448a05e?w={w}&q=80&auto=format&fit=crop",
+        "alt": "Game studio workstation with multi-monitor engine and character art.",
+        "focalPoint": "50% 40%",
+        "license": "Unsplash License (unsplash.com/license)",
+        "approvalStatus": "approved"
+      }
+    },
+    "healthcare": {
+      "name": "Healthcare",
+      "category": "Regulated & Public",
+      "hero": {
+        "unsplashId": "1519494026892-80bbd2d6fd0d",
+        "urlTemplate": "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w={w}&q=80&auto=format&fit=crop",
+        "alt": "Clinician team consulting at a bright hospital nurse-station corridor.",
+        "focalPoint": "50% 35%",
+        "license": "Unsplash License (unsplash.com/license)",
+        "approvalStatus": "approved"
+      }
+    },
+    "healthtech": {
+      "name": "HealthTech",
+      "category": "Tech & Data",
+      "hero": {
+        "unsplashId": "1584982751601-97dcc096659c",
+        "urlTemplate": "https://images.unsplash.com/photo-1584982751601-97dcc096659c?w={w}&q=80&auto=format&fit=crop",
+        "alt": "Clinician reviewing patient data on a modern healthtech tablet interface.",
+        "focalPoint": "50% 35%",
+        "license": "Unsplash License (unsplash.com/license)",
+        "approvalStatus": "approved"
+      }
+    },
+    "higher-education": {
+      "name": "Higher Education",
+      "category": "Regulated & Public",
+      "hero": {
+        "unsplashId": "1541339907198-e08756dedf3f",
+        "urlTemplate": "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w={w}&q=80&auto=format&fit=crop",
+        "alt": "Historic university quadrangle in late afternoon light.",
+        "focalPoint": "50% 45%",
+        "license": "Unsplash License (unsplash.com/license)",
+        "approvalStatus": "approved"
+      }
+    },
+    "hospitality": {
+      "name": "Hospitality and Events",
+      "category": "Consumer & Operations",
+      "hero": {
+        "unsplashId": "1566073771259-6a8506099945",
+        "urlTemplate": "https://images.unsplash.com/photo-1566073771259-6a8506099945?w={w}&q=80&auto=format&fit=crop",
+        "alt": "Boutique hotel lobby with warm brass fixtures and a lit reception.",
+        "focalPoint": "50% 45%",
+        "license": "Unsplash License (unsplash.com/license)",
+        "approvalStatus": "approved"
+      }
+    },
+    "human-resources": {
+      "name": "Human Resources",
+      "category": "People & Advisory",
+      "hero": {
+        "unsplashId": "1573497019940-1c28c88b4f3e",
+        "urlTemplate": "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w={w}&q=80&auto=format&fit=crop",
+        "alt": "HR partner in a one-to-one at a bright meeting nook.",
+        "focalPoint": "50% 30%",
+        "license": "Unsplash License (unsplash.com/license)",
+        "approvalStatus": "approved"
+      }
+    },
+    "insurance": {
+      "name": "Insurance",
+      "category": "Financial Services",
+      "hero": {
+        "unsplashId": "1450101499163-c8848c66ca85",
+        "urlTemplate": "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w={w}&q=80&auto=format&fit=crop",
+        "alt": "Umbrella of daylight across a modern corporate atrium \u2014 insurance.",
+        "focalPoint": "50% 40%",
+        "license": "Unsplash License (unsplash.com/license)",
+        "approvalStatus": "approved"
+      }
+    },
+    "investment-banking": {
+      "name": "Investment Banking",
+      "category": "Professional Services",
+      "hero": {
+        "unsplashId": "1554224155-6726b3ff858f",
+        "urlTemplate": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w={w}&q=80&auto=format&fit=crop",
+        "alt": "Wall Street era stone facade with morning light \u2014 investment banking.",
+        "focalPoint": "50% 40%",
+        "license": "Unsplash License (unsplash.com/license)",
+        "approvalStatus": "approved"
+      }
+    },
+    "legal": {
+      "name": "Legal",
+      "category": "Regulated & Public",
+      "hero": {
+        "unsplashId": "1589994965851-a8f479c573a9",
+        "urlTemplate": "https://images.unsplash.com/photo-1589994965851-a8f479c573a9?w={w}&q=80&auto=format&fit=crop",
+        "alt": "Law library shelves with rolling ladder and warm brass lamps.",
+        "focalPoint": "50% 40%",
+        "license": "Unsplash License (unsplash.com/license)",
+        "approvalStatus": "approved"
+      }
+    },
+    "logistics": {
+      "name": "Logistics and Supply Chain",
+      "category": "Consumer & Operations",
+      "hero": {
+        "unsplashId": "1601584115197-04ecc0da31d1",
+        "urlTemplate": "https://images.unsplash.com/photo-1601584115197-04ecc0da31d1?w={w}&q=80&auto=format&fit=crop",
+        "alt": "Container port cranes lit by amber sunset \u2014 logistics & freight.",
+        "focalPoint": "50% 55%",
+        "license": "Unsplash License (unsplash.com/license)",
+        "approvalStatus": "approved"
+      }
+    },
+    "manufacturing": {
+      "name": "Manufacturing",
+      "category": "Built Environment & Industrial",
+      "hero": {
+        "unsplashId": "1565043666747-69f6646db940",
+        "urlTemplate": "https://images.unsplash.com/photo-1565043666747-69f6646db940?w={w}&q=80&auto=format&fit=crop",
+        "alt": "Modern robotic assembly cell with orange-arm robots and clean floor.",
+        "focalPoint": "50% 45%",
+        "license": "Unsplash License (unsplash.com/license)",
+        "approvalStatus": "approved"
+      }
+    },
+    "marketing": {
+      "name": "Marketing & Advertising",
+      "category": "Go-to-Market",
+      "hero": {
+        "unsplashId": "1552664730-d307ca884978",
+        "urlTemplate": "https://images.unsplash.com/photo-1552664730-d307ca884978?w={w}&q=80&auto=format&fit=crop",
+        "alt": "Creative team reviewing campaign boards on a warm-toned wall.",
+        "focalPoint": "50% 35%",
+        "license": "Unsplash License (unsplash.com/license)",
+        "approvalStatus": "approved"
+      }
+    },
+    "media": {
+      "name": "Media",
+      "category": "Go-to-Market",
+      "hero": {
+        "unsplashId": "1478737270239-2f02b77fc618",
+        "urlTemplate": "https://images.unsplash.com/photo-1478737270239-2f02b77fc618?w={w}&q=80&auto=format&fit=crop",
+        "alt": "Broadcast studio with warm key lights and camera on a jib.",
+        "focalPoint": "50% 40%",
+        "license": "Unsplash License (unsplash.com/license)",
+        "approvalStatus": "approved"
+      }
+    },
+    "medical-devices": {
+      "name": "Medical Devices",
+      "category": "Regulated & Public",
+      "hero": {
+        "unsplashId": "1580281657527-47f249e8f4df",
+        "urlTemplate": "https://images.unsplash.com/photo-1580281657527-47f249e8f4df?w={w}&q=80&auto=format&fit=crop",
+        "alt": "Precision-machined medical device on a bright inspection bench.",
+        "focalPoint": "50% 40%",
+        "license": "Unsplash License (unsplash.com/license)",
+        "approvalStatus": "approved"
+      }
+    },
+    "nonprofit": {
+      "name": "Nonprofit",
+      "category": "Regulated & Public",
+      "hero": {
+        "unsplashId": "1593113646773-028c64a8f1b8",
+        "urlTemplate": "https://images.unsplash.com/photo-1593113646773-028c64a8f1b8?w={w}&q=80&auto=format&fit=crop",
+        "alt": "Community volunteers packing supplies at a warm-lit distribution hub.",
+        "focalPoint": "50% 40%",
+        "license": "Unsplash License (unsplash.com/license)",
+        "approvalStatus": "approved"
+      }
+    },
+    "oil-gas": {
+      "name": "Oil & Gas",
+      "category": "Operations & Services",
+      "hero": {
+        "unsplashId": "1518623489648-a173ef7824f3",
+        "urlTemplate": "https://images.unsplash.com/photo-1518623489648-a173ef7824f3?w={w}&q=80&auto=format&fit=crop",
+        "alt": "Refinery skyline silhouetted against golden-hour light.",
+        "focalPoint": "50% 55%",
+        "license": "Unsplash License (unsplash.com/license)",
+        "approvalStatus": "approved"
+      }
+    },
+    "pharmaceuticals": {
+      "name": "Pharmaceuticals",
+      "category": "Regulated & Public",
+      "hero": {
+        "unsplashId": "1587854692152-cbe660dbde88",
+        "urlTemplate": "https://images.unsplash.com/photo-1587854692152-cbe660dbde88?w={w}&q=80&auto=format&fit=crop",
+        "alt": "Blister-pack production line under soft factory light \u2014 pharma.",
+        "focalPoint": "50% 40%",
+        "license": "Unsplash License (unsplash.com/license)",
+        "approvalStatus": "approved"
+      }
+    },
+    "private-equity": {
+      "name": "Private Equity",
+      "category": "Financial Services",
+      "hero": {
+        "unsplashId": "1519389950473-47ba0277781c",
+        "urlTemplate": "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w={w}&q=80&auto=format&fit=crop",
+        "alt": "Executive team reviewing a deal model on a large boardroom monitor.",
+        "focalPoint": "50% 35%",
+        "license": "Unsplash License (unsplash.com/license)",
+        "approvalStatus": "approved"
+      }
+    },
+    "product-management": {
+      "name": "Product Management",
+      "category": "People & GTM",
+      "hero": {
+        "unsplashId": "1531403009284-440f080d1e12",
+        "urlTemplate": "https://images.unsplash.com/photo-1531403009284-440f080d1e12?w={w}&q=80&auto=format&fit=crop",
+        "alt": "PM at a wall of sticky-notes mapping a release plan.",
+        "focalPoint": "50% 35%",
+        "license": "Unsplash License (unsplash.com/license)",
+        "approvalStatus": "approved"
+      }
+    },
+    "proptech": {
+      "name": "PropTech",
+      "category": "Tech & Data",
+      "hero": {
+        "unsplashId": "1486406146926-c627a92ad1ab",
+        "urlTemplate": "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w={w}&q=80&auto=format&fit=crop",
+        "alt": "Modern high-rise glass facade at golden hour \u2014 PropTech hiring.",
+        "focalPoint": "50% 45%",
+        "license": "Unsplash License (unsplash.com/license)",
+        "approvalStatus": "approved"
+      }
+    },
+    "public-sector": {
+      "name": "Public Sector",
+      "category": "Regulated & Public",
+      "hero": {
+        "unsplashId": "1541872703-74c5e44368f9",
+        "urlTemplate": "https://images.unsplash.com/photo-1541872703-74c5e44368f9?w={w}&q=80&auto=format&fit=crop",
+        "alt": "Neoclassical civic building steps at soft morning light.",
+        "focalPoint": "50% 45%",
+        "license": "Unsplash License (unsplash.com/license)",
+        "approvalStatus": "approved"
+      }
+    },
+    "real-estate": {
+      "name": "Real Estate",
+      "category": "Built Environment & Industrial",
+      "hero": {
+        "unsplashId": "1512917774080-9991f1c4c750",
+        "urlTemplate": "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w={w}&q=80&auto=format&fit=crop",
+        "alt": "Modern residential home exterior at dusk with warm interior glow.",
+        "focalPoint": "50% 50%",
+        "license": "Unsplash License (unsplash.com/license)",
+        "approvalStatus": "approved"
+      }
+    },
+    "renewable-energy": {
+      "name": "Renewable Energy",
+      "category": "Operations & Services",
+      "hero": {
+        "unsplashId": "1509390874189-d75d5b71a9c9",
+        "urlTemplate": "https://images.unsplash.com/photo-1509390874189-d75d5b71a9c9?w={w}&q=80&auto=format&fit=crop",
+        "alt": "Rows of solar panels stretching toward a warm horizon.",
+        "focalPoint": "50% 50%",
+        "license": "Unsplash License (unsplash.com/license)",
+        "approvalStatus": "approved"
+      }
+    },
+    "retail": {
+      "name": "Retail",
+      "category": "Consumer & Operations",
+      "hero": {
+        "unsplashId": "1441986300917-64674bd600d8",
+        "urlTemplate": "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w={w}&q=80&auto=format&fit=crop",
+        "alt": "Elegant flagship retail interior with warm pendant lighting.",
+        "focalPoint": "50% 40%",
+        "license": "Unsplash License (unsplash.com/license)",
+        "approvalStatus": "approved"
+      }
+    },
+    "saas": {
+      "name": "SaaS",
+      "category": "Tech & Data",
+      "hero": {
+        "unsplashId": "1551288049-bebda4e38f71",
+        "urlTemplate": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w={w}&q=80&auto=format&fit=crop",
+        "alt": "Product analytics dashboard on a large curved monitor at a modern desk.",
+        "focalPoint": "50% 40%",
+        "license": "Unsplash License (unsplash.com/license)",
+        "approvalStatus": "approved"
+      }
+    },
+    "sales": {
+      "name": "Sales",
+      "category": "Go-to-Market",
+      "hero": {
+        "unsplashId": "1552581234-26160f608093",
+        "urlTemplate": "https://images.unsplash.com/photo-1552581234-26160f608093?w={w}&q=80&auto=format&fit=crop",
+        "alt": "Sales team on a call with a pipeline board in soft afternoon light.",
+        "focalPoint": "50% 35%",
+        "license": "Unsplash License (unsplash.com/license)",
+        "approvalStatus": "approved"
+      }
+    },
+    "sports": {
+      "name": "Sports & Entertainment",
+      "category": "Operations & Services",
+      "hero": {
+        "unsplashId": "1461896836934-ffe607ba8211",
+        "urlTemplate": "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w={w}&q=80&auto=format&fit=crop",
+        "alt": "Empty modern stadium lit for the evening kickoff.",
+        "focalPoint": "50% 45%",
+        "license": "Unsplash License (unsplash.com/license)",
+        "approvalStatus": "approved"
+      }
+    },
+    "staffing-agencies": {
+      "name": "Staffing Agencies",
+      "category": "People & Advisory",
+      "hero": {
+        "unsplashId": "1600880292203-757bb62b4baf",
+        "urlTemplate": "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w={w}&q=80&auto=format&fit=crop",
+        "alt": "Recruiter interviewing a candidate in a warm meeting room.",
+        "focalPoint": "50% 30%",
+        "license": "Unsplash License (unsplash.com/license)",
+        "approvalStatus": "approved"
+      }
+    },
+    "tech": {
+      "name": "Technology",
+      "category": "Tech & Data",
+      "hero": {
+        "unsplashId": "1517430816045-df4b7de11d1d",
+        "urlTemplate": "https://images.unsplash.com/photo-1517430816045-df4b7de11d1d?w={w}&q=80&auto=format&fit=crop",
+        "alt": "Software engineers pair-programming under warm studio pendants.",
+        "focalPoint": "50% 40%",
+        "license": "Unsplash License (unsplash.com/license)",
+        "approvalStatus": "approved"
+      }
+    },
+    "telecom": {
+      "name": "Telecommunications",
+      "category": "Operations & Services",
+      "hero": {
+        "unsplashId": "1451187580459-43490279c0fa",
+        "urlTemplate": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w={w}&q=80&auto=format&fit=crop",
+        "alt": "Fibre-optic backbone glowing across a data corridor at night.",
+        "focalPoint": "50% 40%",
+        "license": "Unsplash License (unsplash.com/license)",
+        "approvalStatus": "approved"
+      }
+    },
+    "travel": {
+      "name": "Travel & Tourism",
+      "category": "Operations & Services",
+      "hero": {
+        "unsplashId": "1436491865332-7a61a109cc05",
+        "urlTemplate": "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w={w}&q=80&auto=format&fit=crop",
+        "alt": "Traveller silhouette in an airport terminal at first light.",
+        "focalPoint": "50% 50%",
+        "license": "Unsplash License (unsplash.com/license)",
+        "approvalStatus": "approved"
+      }
+    },
+    "venture-capital": {
+      "name": "Venture Capital",
+      "category": "Professional Services",
+      "hero": {
+        "unsplashId": "1556761175-5973dc0f32e7",
+        "urlTemplate": "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w={w}&q=80&auto=format&fit=crop",
+        "alt": "Founder pitching to a VC partner over espresso and a laptop.",
+        "focalPoint": "50% 35%",
+        "license": "Unsplash License (unsplash.com/license)",
+        "approvalStatus": "approved"
+      }
+    },
+    "wealth-management": {
+      "name": "Wealth Management",
+      "category": "Professional Services",
+      "hero": {
+        "unsplashId": "1560520653-9e0e4c89eb11",
+        "urlTemplate": "https://images.unsplash.com/photo-1560520653-9e0e4c89eb11?w={w}&q=80&auto=format&fit=crop",
+        "alt": "Advisor and client reviewing a portfolio at a wood-panelled desk.",
+        "focalPoint": "50% 35%",
+        "license": "Unsplash License (unsplash.com/license)",
+        "approvalStatus": "approved"
+      }
+    },
+    "web3": {
+      "name": "Web3 & Blockchain",
+      "category": "Tech & Data",
+      "hero": {
+        "unsplashId": "1639762681485-074b7f938ba0",
+        "urlTemplate": "https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w={w}&q=80&auto=format&fit=crop",
+        "alt": "Abstract blockchain ledger visualisation with soft cyan light.",
+        "focalPoint": "50% 40%",
+        "license": "Unsplash License (unsplash.com/license)",
+        "approvalStatus": "approved"
+      }
+    }
+  }
+}
