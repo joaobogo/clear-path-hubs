@@ -1,0 +1,349 @@
+{
+  "version": "1.0",
+  "generated": "2026-07-24",
+  "canonicalCount": 57,
+  "nodes": {
+    "tech": {
+      "category": "Tech & Data",
+      "related": [
+        "saas"
+      ]
+    },
+    "saas": {
+      "category": "Tech & Data",
+      "related": [
+        "tech"
+      ]
+    },
+    "data-analytics": {
+      "category": "Tech & Data",
+      "related": [
+        "tech"
+      ]
+    },
+    "cybersecurity": {
+      "category": "Tech & Data",
+      "related": [
+        "tech"
+      ]
+    },
+    "finance": {
+      "category": "Financial Services",
+      "related": [
+        "accounting"
+      ]
+    },
+    "accounting": {
+      "category": "Financial Services",
+      "related": [
+        "finance"
+      ]
+    },
+    "insurance": {
+      "category": "Financial Services",
+      "related": [
+        "finance"
+      ]
+    },
+    "private-equity": {
+      "category": "Financial Services",
+      "related": []
+    },
+    "healthcare": {
+      "category": "Regulated & Public",
+      "related": [
+        "insurance"
+      ]
+    },
+    "legal": {
+      "category": "Regulated & Public",
+      "related": [
+        "finance"
+      ]
+    },
+    "public-sector": {
+      "category": "Regulated & Public",
+      "related": [
+        "healthcare"
+      ]
+    },
+    "nonprofit": {
+      "category": "Regulated & Public",
+      "related": []
+    },
+    "sales": {
+      "category": "Go-to-Market",
+      "related": [
+        "saas"
+      ]
+    },
+    "marketing": {
+      "category": "Go-to-Market",
+      "related": [
+        "sales"
+      ]
+    },
+    "media": {
+      "category": "Go-to-Market",
+      "related": [
+        "marketing"
+      ]
+    },
+    "human-resources": {
+      "category": "People & Advisory",
+      "related": [
+        "staffing-agencies"
+      ]
+    },
+    "staffing-agencies": {
+      "category": "People & Advisory",
+      "related": [
+        "human-resources"
+      ]
+    },
+    "consulting": {
+      "category": "People & Advisory",
+      "related": [
+        "human-resources"
+      ]
+    },
+    "construction": {
+      "category": "Built Environment & Industrial",
+      "related": [
+        "real-estate"
+      ]
+    },
+    "real-estate": {
+      "category": "Built Environment & Industrial",
+      "related": [
+        "construction"
+      ]
+    },
+    "manufacturing": {
+      "category": "Built Environment & Industrial",
+      "related": [
+        "logistics"
+      ]
+    },
+    "hospitality": {
+      "category": "Consumer & Operations",
+      "related": [
+        "real-estate"
+      ]
+    },
+    "retail": {
+      "category": "Consumer & Operations",
+      "related": [
+        "ecommerce"
+      ]
+    },
+    "logistics": {
+      "category": "Consumer & Operations",
+      "related": [
+        "manufacturing"
+      ]
+    },
+    "ecommerce": {
+      "category": "Consumer & Operations",
+      "related": []
+    },
+    "ai-ml": {
+      "category": "Tech & Data",
+      "related": [
+        "tech"
+      ]
+    },
+    "fintech": {
+      "category": "Tech & Data",
+      "related": [
+        "finance"
+      ]
+    },
+    "healthtech": {
+      "category": "Tech & Data",
+      "related": [
+        "healthcare"
+      ]
+    },
+    "edtech": {
+      "category": "Tech & Data",
+      "related": [
+        "education"
+      ]
+    },
+    "proptech": {
+      "category": "Tech & Data",
+      "related": [
+        "real-estate"
+      ]
+    },
+    "gaming": {
+      "category": "Tech & Data",
+      "related": [
+        "media"
+      ]
+    },
+    "web3": {
+      "category": "Tech & Data",
+      "related": [
+        "fintech"
+      ]
+    },
+    "devops": {
+      "category": "Tech & Data",
+      "related": [
+        "tech"
+      ]
+    },
+    "investment-banking": {
+      "category": "Professional Services",
+      "related": [
+        "finance"
+      ]
+    },
+    "wealth-management": {
+      "category": "Professional Services",
+      "related": [
+        "finance"
+      ]
+    },
+    "venture-capital": {
+      "category": "Professional Services",
+      "related": [
+        "private-equity"
+      ]
+    },
+    "architecture": {
+      "category": "Professional Services",
+      "related": [
+        "construction"
+      ]
+    },
+    "pharmaceuticals": {
+      "category": "Regulated & Public",
+      "related": [
+        "biotech"
+      ]
+    },
+    "biotech": {
+      "category": "Regulated & Public",
+      "related": [
+        "pharmaceuticals"
+      ]
+    },
+    "medical-devices": {
+      "category": "Regulated & Public",
+      "related": [
+        "pharmaceuticals"
+      ]
+    },
+    "defense": {
+      "category": "Regulated & Public",
+      "related": [
+        "aviation"
+      ]
+    },
+    "education": {
+      "category": "Regulated & Public",
+      "related": [
+        "edtech"
+      ]
+    },
+    "higher-education": {
+      "category": "Regulated & Public",
+      "related": [
+        "education"
+      ]
+    },
+    "customer-success": {
+      "category": "People & GTM",
+      "related": [
+        "saas"
+      ]
+    },
+    "product-management": {
+      "category": "People & GTM",
+      "related": [
+        "saas"
+      ]
+    },
+    "design": {
+      "category": "People & GTM",
+      "related": [
+        "saas"
+      ]
+    },
+    "automotive": {
+      "category": "Operations & Services",
+      "related": [
+        "manufacturing"
+      ]
+    },
+    "energy": {
+      "category": "Operations & Services",
+      "related": [
+        "renewable-energy"
+      ]
+    },
+    "renewable-energy": {
+      "category": "Operations & Services",
+      "related": [
+        "energy"
+      ]
+    },
+    "oil-gas": {
+      "category": "Operations & Services",
+      "related": [
+        "energy"
+      ]
+    },
+    "agriculture": {
+      "category": "Operations & Services",
+      "related": [
+        "food-beverage"
+      ]
+    },
+    "food-beverage": {
+      "category": "Operations & Services",
+      "related": [
+        "retail"
+      ]
+    },
+    "telecom": {
+      "category": "Operations & Services",
+      "related": [
+        "tech"
+      ]
+    },
+    "aviation": {
+      "category": "Operations & Services",
+      "related": [
+        "defense"
+      ]
+    },
+    "travel": {
+      "category": "Operations & Services",
+      "related": [
+        "hospitality"
+      ]
+    },
+    "sports": {
+      "category": "Operations & Services",
+      "related": [
+        "media"
+      ]
+    },
+    "fashion": {
+      "category": "Operations & Services",
+      "related": [
+        "retail"
+      ]
+    }
+  },
+  "rules": {
+    "maxRelatedPerPage": 4,
+    "minRelatedPerPage": 1,
+    "bidirectional": "preferred, not required",
+    "crossCategoryAllowed": true
+  }
+}
