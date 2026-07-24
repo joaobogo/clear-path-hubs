@@ -17,7 +17,7 @@ const LEADERS = [
     name: "João Luciano",
     title: "Co-founder & CEO",
     location: "Lisbon · Global",
-    photoUrl: "",
+    photoUrl: joaoLucianoPhoto.url,
     linkedin: "https://www.linkedin.com/in/joaoluciano/",
     quote:
       "We built TaaSFlow because we were tired of hiring being the least explainable part of running a company.",
