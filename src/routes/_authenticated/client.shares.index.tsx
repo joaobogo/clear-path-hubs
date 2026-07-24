@@ -55,7 +55,7 @@ function SharesPage() {
 
   const revoke = useServerFn(revokeShortlistShare);
   const revokeMut = useMutation({
-    mutationFn: (id: string) => revoke({ data: { orgId: orgId!, shareId: id } }),
+    mutationFn: (id: string) => revoke({ data: { orgId: orgId!, id } }),
     onSuccess: () => {
       toast.success("Share link revoked");
       qc.invalidateQueries({ queryKey: ["shares-list", orgId] });
