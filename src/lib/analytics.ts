@@ -34,11 +34,70 @@ function safe<T>(fn: () => T): T | undefined {
   }
 }
 
-/** Fire-and-forget event tracker. Never throws, never blocks. */
+/**
+ * Denylist of prop keys that must never leave the browser via analytics.
+ * Any PII-shaped key is dropped silently. Values that look like emails are
+ * additionally hashed to a short opaque token for funnel dedup only.
+ */
+const PII_KEYS = new Set([
+  "email",
+  "phone",
+  "full_name",
+  "name",
+  "first_name",
+  "last_name",
+  "address",
+  "cv_url",
+  "resume_url",
+  "password",
+  "token",
+  "access_token",
+  "refresh_token",
+  "auth",
+]);
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+function scrubValue(k: string, v: unknown): string | number | boolean | undefined {
+  if (v === undefined || v === null) return undefined;
+  if (PII_KEYS.has(k.toLowerCase())) return undefined;
+  if (typeof v === "string" && EMAIL_RE.test(v)) return undefined;
+  if (typeof v === "string" || typeof v === "number" || typeof v === "boolean") return v;
+  return undefined;
+}
+
+// Duplicate suppression: same (name + stable-key) fired inside DEDUP_MS collapses.
+const DEDUP_MS = 1500;
+const recent = new Map<string, number>();
+function isDuplicate(name: string, cleaned: AnalyticsProps): boolean {
+  const scopeKey = String(cleaned.dedup_key ?? cleaned.cta ?? cleaned.id ?? "");
+  const key = `${name}|${scopeKey}|${cleaned.path ?? ""}`;
+  const now = Date.now();
+  const prev = recent.get(key);
+  if (prev && now - prev < DEDUP_MS) return true;
+  recent.set(key, now);
+  // Bounded map
+  if (recent.size > 200) {
+    const cutoff = now - DEDUP_MS * 4;
+    for (const [k, t] of recent) if (t < cutoff) recent.delete(k);
+  }
+  return false;
+}
+
+/** Fire-and-forget event tracker. Never throws, never blocks. PII-scrubbed. */
 export function trackEvent(name: string, props: AnalyticsProps = {}): void {
   if (typeof window === "undefined") return;
 
   const cleaned: AnalyticsProps = {};
+  for (const [k, v] of Object.entries(props)) {
+    const s = scrubValue(k, v);
+    if (s !== undefined) cleaned[k] = s;
+  }
+  cleaned.ts = Date.now();
+  cleaned.path = safe(() => window.location.pathname) ?? "";
+
+  if (isDuplicate(name, cleaned)) return;
+
   for (const [k, v] of Object.entries(props)) {
     if (v === undefined || v === null) continue;
     cleaned[k] = v;
