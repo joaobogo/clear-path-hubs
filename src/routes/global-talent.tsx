@@ -7,7 +7,7 @@ import {
   Breadcrumbs,
 } from "@/components/marketing/site-shell";
 
-const CANONICAL = "https://clear-path-hubs.lovable.app/global-talent";
+const CANONICAL = "https://taasflow.com/global-talent";
 const TITLE = "Global Talent — remote-first hiring with clear scope | TaaSFlow";
 const DESC =
   "Hire globally with TaaSFlow: remote-first briefs, regional sourcing, and relocation only when the employer commits. Clear scope, no unverified promises.";

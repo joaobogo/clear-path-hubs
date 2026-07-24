@@ -6,6 +6,7 @@ import {
   SiteShell,
 } from "@/components/marketing/site-shell";
 import type { IndustryEntry } from "@/content/industries-v2";
+import { toPublicSlug } from "@/lib/marketing/industry-slug-aliases";
 import { getIndustryHeroImage } from "@/content/industry-hero-images";
 import { IndustryRoleExplorer } from "@/components/marketing/industry-role-explorer";
 import { IndustrySignalExplorer } from "@/components/marketing/industry-signal-explorer";
@@ -452,7 +453,7 @@ export function IndustryTemplate({ entry }: { entry: IndustryEntry }) {
               <Link
                 key={r.slug}
                 to="/industries/$slug"
-                params={{ slug: r.slug }}
+                params={{ slug: toPublicSlug(r.slug) }}
                 style={{ animationDelay: `${i * 60}ms` }}
                 className="group rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6 transition-all hover:-translate-y-0.5 hover:border-[color:var(--brand-ocean)]/50 hover:shadow-md motion-safe:animate-[fade-in_320ms_ease-out_both]"
               >

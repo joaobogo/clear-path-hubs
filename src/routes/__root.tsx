@@ -40,8 +40,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { name: "twitter:card", content: "summary_large_image" },
       { property: "og:site_name", content: "TaaSFlow" },
-      { property: "og:image", content: "https://clear-path-hubs.lovable.app/og-image.png" },
-      { name: "twitter:image", content: "https://clear-path-hubs.lovable.app/og-image.png" },
+      { property: "og:image", content: "https://taasflow.com/og-image.png" },
+      { name: "twitter:image", content: "https://taasflow.com/og-image.png" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
@@ -77,6 +77,25 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+
+  // Preview / non-production hosts (e.g. *.lovable.app) must not
+  // compete with taasflow.com in search. Inject a robots noindex
+  // meta on the client for any host that isn't the canonical one.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const host = window.location.hostname;
+    const isCanonical = host === "taasflow.com" || host === "www.taasflow.com";
+    if (isCanonical) return;
+    const existing = document.querySelector<HTMLMetaElement>(
+      'meta[name="robots"][data-preview-guard]',
+    );
+    if (existing) return;
+    const meta = document.createElement("meta");
+    meta.setAttribute("name", "robots");
+    meta.setAttribute("content", "noindex,follow");
+    meta.setAttribute("data-preview-guard", "1");
+    document.head.appendChild(meta);
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>

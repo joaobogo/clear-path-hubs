@@ -7,7 +7,7 @@ import {
   Breadcrumbs,
 } from "@/components/marketing/site-shell";
 
-const CANONICAL = "https://clear-path-hubs.lovable.app/candidate-join";
+const CANONICAL = "https://taasflow.com/candidate-join";
 const TITLE = "Join TaaSFlow — how to become a candidate | TaaSFlow";
 const DESC =
   "Everything you need to join TaaSFlow as a candidate: what to prepare, how the application works, what to expect after applying, and how to sign in later.";

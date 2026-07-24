@@ -1,9 +1,16 @@
 import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
 import { listBlogSlugs, listIndustrySlugs } from "@/lib/marketing/content";
+import { toPublicSlug } from "@/lib/marketing/industry-slug-aliases";
 
-const BASE_URL = "https://clear-path-hubs.lovable.app";
+// Canonical production origin. Keep in sync with `src/lib/marketing/head.ts`.
+const BASE_URL = "https://taasflow.com";
 
+// Intentional exclusions:
+// - /login, /reset-password, /access-denied, /unauthorized, /admin/*, /_authenticated/*
+//   are gated or private and carry `noindex,follow`.
+// - /auth 308 → /login (no need to advertise the redirect target twice).
+// - /jobs/$id/apply is per-role and `noindex`.
 const STATIC_PATHS = [
   "/",
   "/solutions",
@@ -28,7 +35,6 @@ const STATIC_PATHS = [
   "/industries",
   "/blog",
   "/jobs",
-  "/auth",
 ] as const;
 
 export const Route = createFileRoute("/sitemap.xml")({
@@ -39,8 +45,14 @@ export const Route = createFileRoute("/sitemap.xml")({
         for (const p of STATIC_PATHS) {
           urls.push(entry(p, p === "/" ? "1.0" : "0.8"));
         }
+        // Emit only canonical (public) industry slugs. Legacy short
+        // slugs 301 to these at the route layer.
+        const seenIndustry = new Set<string>();
         for (const slug of listIndustrySlugs()) {
-          urls.push(entry(`/industries/${slug}`, "0.7"));
+          const publicSlug = toPublicSlug(slug);
+          if (seenIndustry.has(publicSlug)) continue;
+          seenIndustry.add(publicSlug);
+          urls.push(entry(`/industries/${publicSlug}`, "0.7"));
         }
         for (const slug of listBlogSlugs()) {
           urls.push(entry(`/blog/${slug}`, "0.6"));
