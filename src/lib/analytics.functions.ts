@@ -98,7 +98,8 @@ export const getClientAnalytics = createServerFn({ method: "POST" })
     // Hire records in window (for rejection reasons + offer/hire counts)
     let hires: Row[] = [];
     {
-      let hq = supabase
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      let hq: any = supabase
         .from("hire_records")
         .select("id, status, close_reason, close_reason_notes, position_id, drafted_at, sent_at, accepted_at, hired_at, closed_at, created_at")
         .eq("organization_id", data.organization_id)
