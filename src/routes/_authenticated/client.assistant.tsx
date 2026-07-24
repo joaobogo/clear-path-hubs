@@ -91,7 +91,11 @@ function AssistantPage() {
   const stateFn = useServerFn(getAssistantState);
   const askFn = useServerFn(askAssistant);
   const resetFn = useServerFn(resetAssistant);
+  const execFn = useServerFn(executeAssistantAction);
   const qc = useQueryClient();
+  const [runningActionId, setRunningActionId] = useState<string | null>(null);
+  const [dismissedActions, setDismissedActions] = useState<Set<string>>(new Set());
+  const [editedDrafts, setEditedDrafts] = useState<Record<string, string>>({});
 
   const [input, setInput] = useState("");
   const scrollRef = useRef<HTMLDivElement | null>(null);
