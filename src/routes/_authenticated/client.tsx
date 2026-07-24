@@ -27,12 +27,13 @@ import {
  MessageSquare,
  // CalendarClock removed from nav; icon no longer needed here.
  UserCog,
- Settings,
- Award,
- Sparkles,
- HandCoins,
- Bot,
- Radar,
+	Settings,
+	Award,
+	Sparkles,
+	HandCoins,
+	Bot,
+	Radar,
+	LineChart,
 } from "lucide-react";
 import {
  WorkspaceShell,
