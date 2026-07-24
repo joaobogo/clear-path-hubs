@@ -69,6 +69,7 @@ function RootShell({ children }: { children: ReactNode }) {
         <HeadContent />
       </head>
       <body>
+        <TaaSFlowEntryLoader />
         {children}
         <Scripts />
       </body>
