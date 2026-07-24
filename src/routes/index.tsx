@@ -1663,12 +1663,6 @@ function Home() {
         </PublicSection>
       </section>
 
-      {/* 11.5 — FOUNDERS STRIP */}
-      <PublicSection>
-        <PublicPage>
-          <FoundersStrip />
-        </PublicPage>
-      </PublicSection>
 
       {/* 12 — FAQ */}
       <PublicSection>
