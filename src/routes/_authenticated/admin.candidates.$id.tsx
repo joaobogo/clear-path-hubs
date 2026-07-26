@@ -25,6 +25,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { useConfirmAction } from "@/components/ds";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -1496,6 +1497,7 @@ function ActionRail({
     onError: (e: Error) => toast.error(e.message),
   });
 
+  const { confirm, confirmDialog } = useConfirmAction();
   const scored = m.processing_state === "scored";
   const isPublished = m.client_visibility === "visible";
   const approved = m.admin_status === "approved";
@@ -1550,6 +1552,7 @@ function ActionRail({
 
   return (
     <aside className="space-y-4 lg:sticky lg:top-4 lg:self-start">
+      {confirmDialog}
       {/* Context-aware primary action bar */}
       <div className="rounded-lg border bg-card p-4">
         <h2 className="text-sm font-semibold">Next step</h2>
@@ -1653,11 +1656,32 @@ function ActionRail({
               </DropdownMenuItem>
               <DropdownMenuItem
                 disabled={!!busy}
-                onSelect={() => {
-                  if (!window.confirm("Delete this candidate? They will be removed from the client view and archived.")) return;
+                onSelect={(event) => {
+                  event.preventDefault();
+                  void (async () => {
+                  const c = await confirm({
+                    title: "Delete candidate from this position",
+                    object: (m.full_name as string | null) ?? "This candidate",
+                    description:
+                      "The candidate is removed from the client view and archived on this position.",
+                    impact: [
+                      "The client immediately loses access to this profile",
+                      "Scoring runs and evidence stay on the audit trail",
+                      "You are returned to the candidate list",
+                    ],
+                    reason: {
+                      label: "Reason for deletion",
+                      required: true,
+                      placeholder: "e.g. duplicate application",
+                    },
+                    typedConfirmation: "DELETE",
+                    confirmLabel: "Delete candidate",
+                    tone: "destructive",
+                  });
+                  if (!c.confirmed) return;
                   onRun("delete", async () => {
                     const r = await deleteCandidateMatch({
-                      data: { match_id: m.id, reason },
+                      data: { match_id: m.id, reason: c.reason || reason },
                     });
                     // Navigate back to the admin list after delete
                     setTimeout(() => {
@@ -1665,6 +1689,7 @@ function ActionRail({
                     }, 400);
                     return r;
                   });
+                  })();
                 }}
                 data-qa-action="overflow-delete"
                 className="text-destructive"

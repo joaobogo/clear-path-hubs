@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { CANDIDATE_STATUS_TONE } from "@/lib/candidate-status";
+import { useConfirmAction } from "@/components/ds";
 
 
 export const Route = createFileRoute("/_authenticated/me/applications/")({
@@ -51,6 +52,8 @@ function MyApplicationsPage() {
  queryFn: () => listFn(),
  initialData: data,
  });
+
+ const { confirm, confirmDialog } = useConfirmAction();
 
  const withdraw = useMutation({
  mutationFn: (id: string) => withdrawFn({ data: { id } }),
@@ -178,14 +181,26 @@ function MyApplicationsPage() {
  <Button
  variant="ghost"
  size="sm"
- onClick={() => {
- if (confirm("Withdraw this application?")) {
- withdraw.mutate(a.id);
- }
+ className="min-h-11"
+ onClick={async () => {
+ const r = await confirm({
+ title: "Withdraw application",
+ object: `${a.role_title}${a.company ? ` · ${a.company}` : ""}`,
+ description:
+ "We'll stop reviewing this application and let the hiring team know.",
+ impact: [
+ "You can't undo this for the same role",
+ "Your profile stays with us for other roles",
+ ],
+ confirmLabel: "Withdraw application",
+ tone: "destructive",
+ });
+ if (r.confirmed) withdraw.mutate(a.id);
  }}
  disabled={withdraw.isPending}
+ aria-busy={withdraw.isPending || undefined}
  >
- Withdraw
+ {withdraw.isPending ? "Withdrawing…" : "Withdraw"}
  </Button>
  )}
  </div>
@@ -193,6 +208,7 @@ function MyApplicationsPage() {
  </Card>
  ))}
  </div>
+ {confirmDialog}
  </main>
  );
 }

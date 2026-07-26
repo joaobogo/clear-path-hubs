@@ -21,6 +21,7 @@ import { useClientOrgSearch } from "@/lib/use-client-org";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useConfirmAction } from "@/components/ds";
 
 export const Route = createFileRoute("/_authenticated/client/shares/")({
   head: () => ({
@@ -54,6 +55,8 @@ function SharesPage() {
   });
 
   const revoke = useServerFn(revokeShortlistShare);
+  const { confirm, confirmDialog } = useConfirmAction();
+
   const revokeMut = useMutation({
     mutationFn: (id: string) => revoke({ data: { orgId: orgId!, id } }),
     onSuccess: () => {
@@ -208,15 +211,29 @@ function SharesPage() {
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={() => {
-                        if (
-                          window.confirm(
-                            "Revoke this link? Anyone who has it will lose access immediately.",
-                          )
-                        )
-                          revokeMut.mutate(s.id);
+                      className="min-h-11"
+                      onClick={async () => {
+                        const r = await confirm({
+                          title: "Revoke share link",
+                          object:
+                            s.title ??
+                            (s.position?.title
+                              ? `Shortlist — ${s.position.title}`
+                              : "Shortlist review"),
+                          description:
+                            "Anyone holding this link loses access immediately.",
+                          impact: [
+                            "The link stops working for every recipient",
+                            "Views already recorded stay on the audit trail",
+                            "You can create a fresh link at any time",
+                          ],
+                          confirmLabel: "Revoke link",
+                          tone: "destructive",
+                        });
+                        if (r.confirmed) revokeMut.mutate(s.id);
                       }}
                       disabled={revokeMut.isPending}
+                      aria-busy={revokeMut.isPending || undefined}
                     >
                       <ShieldX className="mr-2 h-4 w-4" /> Revoke
                     </Button>
@@ -227,6 +244,7 @@ function SharesPage() {
           })}
         </div>
       )}
+      {confirmDialog}
     </main>
   );
 }

@@ -19,6 +19,7 @@ import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { FileText } from "lucide-react";
 import { CandidateInterviews } from "@/components/candidate/CandidateInterviews";
+import { useConfirmAction } from "@/components/ds";
 
 export const Route = createFileRoute("/_authenticated/me/applications/$id")({
   head: () => ({
@@ -121,6 +122,8 @@ function TrackPage() {
     qc.invalidateQueries({ queryKey: ["me-dashboard"] });
   };
 
+  const { confirm, confirmDialog } = useConfirmAction();
+
   const withdraw = useMutation({
     mutationFn: () => withdrawFn({ data: { id } }),
     onSuccess: (r) => {
@@ -196,9 +199,21 @@ function TrackPage() {
               size="sm"
               className="min-h-11"
               onClick={() => {
-                if (confirm("Withdraw this application? This can't be undone.")) {
-                  withdraw.mutate();
-                }
+                void (async () => {
+                  const r = await confirm({
+                    title: "Withdraw application",
+                    object: data.role_title,
+                    description:
+                      "We'll stop reviewing this application and let the hiring team know.",
+                    impact: [
+                      "This can't be undone for the same role",
+                      "Your profile stays with us for future roles",
+                    ],
+                    confirmLabel: "Withdraw application",
+                    tone: "destructive",
+                  });
+                  if (r.confirmed) withdraw.mutate();
+                })();
               }}
               disabled={withdraw.isPending}
             >
@@ -363,6 +378,7 @@ function TrackPage() {
           </p>
         </section>
       ) : null}
+      {confirmDialog}
     </main>
   );
 }

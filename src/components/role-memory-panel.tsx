@@ -32,6 +32,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Pin, PinOff, Trash2, NotebookPen, ArrowRightLeft } from "lucide-react";
+import { useConfirmAction } from "@/components/ds";
 
 const KIND_LABEL: Record<RoleMemoryKind, string> = {
   brief: "Brief anchor",
@@ -309,6 +310,7 @@ function MemoryCard({
   onDelete: () => void;
   onSave: (patch: Partial<RoleMemoryDTO>) => void;
 }) {
+  const { confirm, confirmDialog } = useConfirmAction();
   const [editing, setEditing] = useState(false);
   const [title, setTitle] = useState(row.title);
   const [body, setBody] = useState(row.body);
@@ -384,14 +386,23 @@ function MemoryCard({
             size="sm"
             variant="ghost"
             className="text-destructive hover:text-destructive"
-            onClick={() => {
-              if (confirm("Delete this memory entry?")) onDelete();
+            onClick={async () => {
+              const r = await confirm({
+                title: "Delete memory entry",
+                object: row.title ?? undefined,
+                description: "This note is removed from the role's memory.",
+                impact: ["Future summaries stop using this note"],
+                confirmLabel: "Delete entry",
+                tone: "destructive",
+              });
+              if (r.confirmed) onDelete();
             }}
           >
             <Trash2 className="mr-1 h-3.5 w-3.5" /> Delete
           </Button>
         </div>
       )}
+      {confirmDialog}
     </article>
   );
 }
