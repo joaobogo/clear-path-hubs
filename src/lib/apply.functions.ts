@@ -29,9 +29,7 @@ function b64ToBytes(b64: string): Uint8Array {
   return out;
 }
 
-function safeName(name: string): string {
-  return name.replace(/[^a-zA-Z0-9._-]+/g, "_").slice(0, 120) || "cv";
-}
+
 
 function ref6(id: string): string {
   return id.replace(/-/g, "").slice(0, 6).toUpperCase();
