@@ -850,7 +850,7 @@ function IntakePage() {
             </div>
           )}
 
-          {/* ================= STEP 4: COMPENSATION ================= */}
+          {/* ================= STEP 4b: COMPENSATION ================= */}
           {step === 4 && (
             <div className="space-y-6">
               <SectionHeader
