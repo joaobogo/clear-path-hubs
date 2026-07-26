@@ -374,7 +374,7 @@ export const getCandidateDossier = createServerFn({ method: "POST" })
       .maybeSingle();
     if (!m) throw new Error("not_found");
 
-    const [profileRes, appRes, answersRes, notesRes, auditRes, interviewsRes, messagesRes, filesRes] =
+    const [profileRes, appRes, answersRes, notesRes, auditRes, interviewsRes, filesRes] =
       await Promise.all([
         s
           .from("candidate_profiles")
@@ -392,7 +392,7 @@ export const getCandidateDossier = createServerFn({ method: "POST" })
           .maybeSingle(),
         s
           .from("application_answers")
-          .select("id,question_id,question_text,answer,created_at")
+          .select("id,question_id,answer,created_at,screening_questions(question,answer_type,required,dealbreaker,preferred_answer)")
           .eq("application_id", m.application_id)
           .order("created_at", { ascending: true }),
         s
@@ -410,12 +410,6 @@ export const getCandidateDossier = createServerFn({ method: "POST" })
         s
           .from("interviews")
           .select("id,status,scheduled_at,completed_at,interview_type,created_at")
-          .eq("candidate_match_id", data.match_id)
-          .order("created_at", { ascending: false })
-          .limit(20),
-        s
-          .from("messages")
-          .select("id,body,sender_user_id,created_at")
           .eq("candidate_match_id", data.match_id)
           .order("created_at", { ascending: false })
           .limit(20),
@@ -461,7 +455,6 @@ export const getCandidateDossier = createServerFn({ method: "POST" })
       notes: (notesRes.data ?? []) as AnyRow[],
       audit: (auditRes.data ?? []) as AnyRow[],
       interviews: (interviewsRes.data ?? []) as AnyRow[],
-      messages: (messagesRes.data ?? []) as AnyRow[],
       documents: (filesRes.data ?? []) as AnyRow[],
       duplicates,
     };
