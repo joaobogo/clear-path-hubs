@@ -145,8 +145,8 @@ export const Route = createFileRoute("/api/public/intake")({
           return Response.json({ ok: true, trace_id: traceId, intakeId: null, skipped: true });
         }
 
-        const data2 = data;
-        void data2;
+
+
 
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
