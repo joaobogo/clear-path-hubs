@@ -95,10 +95,12 @@ export function CandidateInterviews({ applicationId }: Props) {
 
               {i.scheduled_at ? (
                 <>
-                  <p className="font-medium">{dualZone(i.scheduled_at, tz, i.timezone).primary}</p>
-                  <p className="text-xs text-muted-foreground">
-                    {dualZone(i.scheduled_at, tz, i.timezone).secondary}
-                  </p>
+                  <p className="font-medium">{dualZone(i.scheduled_at, i.timezone, tz).primary}</p>
+                  {dualZone(i.scheduled_at, i.timezone, tz).viewer ? (
+                    <p className="text-xs text-muted-foreground">
+                      Your time: {dualZone(i.scheduled_at, i.timezone, tz).viewer}
+                    </p>
+                  ) : null}
                   <p className="mt-1 text-xs text-muted-foreground">
                     {i.interview_type ?? "Interview"} · {i.duration_minutes} minutes
                   </p>
@@ -143,7 +145,7 @@ export function CandidateInterviews({ applicationId }: Props) {
                   </p>
                   <div className="grid gap-2 sm:grid-cols-2">
                     {slots.map((s) => {
-                      const z = dualZone(s, tz, i.timezone);
+                      const z = dualZone(s, i.timezone, tz);
                       const active = selected[i.id] === s;
                       return (
                         <button
@@ -156,9 +158,11 @@ export function CandidateInterviews({ applicationId }: Props) {
                           } disabled:opacity-60`}
                         >
                           <span className="block text-sm font-medium">{z.primary}</span>
-                          <span className="block text-xs text-muted-foreground">
-                            {z.secondary}
-                          </span>
+                          {z.viewer ? (
+                            <span className="block text-xs text-muted-foreground">
+                              Your time: {z.viewer}
+                            </span>
+                          ) : null}
                         </button>
                       );
                     })}
@@ -172,12 +176,17 @@ export function CandidateInterviews({ applicationId }: Props) {
                 </p>
               ) : null}
 
-              {i.scheduling_method === "calendly" && i.calendly_url ? (
+              {i.scheduling_method === "calendly" && calendlyLink(i.calendly_url ?? "", {
+                positionTitle: i.position_title,
+                returnTo: `/me/applications/${applicationId}`,
+              }) ? (
                 <a
-                  href={calendlyLink(i.calendly_url, {
-                    role: i.position_title,
-                    interviewId: i.id,
-                  })}
+                  href={
+                    calendlyLink(i.calendly_url ?? "", {
+                      positionTitle: i.position_title,
+                      returnTo: `/me/applications/${applicationId}`,
+                    })!
+                  }
                   target="_blank"
                   rel="noreferrer noopener"
                   className="mt-3 inline-block text-xs text-primary underline underline-offset-2"
