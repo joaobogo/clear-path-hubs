@@ -479,48 +479,110 @@ function HottestRoleCard({ role }: { role: Any | null }) {
   );
 }
 
-function WeeklyProgress({
+/**
+ * Next steps — plain-language expectations. Deliberately not a chart:
+ * every line is derived from real authorized records, never a target or
+ * a projected number.
+ */
+function NextSteps({
+  roles,
   newThisWeek,
-  delivered,
-  activePositions,
+  deliveredTotal,
 }: {
+  roles: Any[];
   newThisWeek: number;
-  delivered: number;
-  activePositions: number;
+  deliveredTotal: number;
 }) {
-  // Rolling target: ~2 candidates per active role per week.
-  const target = Math.max(activePositions * 2, 4);
-  const pct = target > 0 ? Math.min(100, Math.round((newThisWeek / target) * 100)) : 0;
+  const steps: string[] = [];
+  const pending = roles.reduce((s, r) => s + (r.delivered_pending ?? 0), 0);
+  if (pending > 0) {
+    steps.push(
+      `Review ${pending} approved candidate${pending === 1 ? "" : "s"} awaiting your decision.`,
+    );
+  }
+  const awaitingFirst = roles.filter((r) => (r.delivered_pending ?? 0) === 0 && r.next === "Awaiting first candidates");
+  if (awaitingFirst.length > 0) {
+    steps.push(
+      `${awaitingFirst.length} role${awaitingFirst.length === 1 ? " is" : "s are"} still in sourcing — candidates appear here once approved for you.`,
+    );
+  }
+  const interviewing = roles.filter((r) => r.next === "Interview outcome");
+  if (interviewing.length > 0) {
+    steps.push(`Share interview feedback for ${interviewing.length} role${interviewing.length === 1 ? "" : "s"}.`);
+  }
+  if (steps.length === 0) {
+    steps.push("Nothing is waiting on you. We'll notify you when new candidates are approved.");
+  }
+
   return (
-    <div className="flex h-full flex-col justify-between rounded-xl border bg-card p-5">
-      <div>
-        <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
-          <Trophy className="h-3.5 w-3.5" /> This week
-        </div>
-        <div className="mt-3 flex items-baseline gap-2">
-          <span className="text-4xl font-semibold tabular-nums">{newThisWeek}</span>
-          <span className="text-sm text-muted-foreground">
-            new candidate{newThisWeek === 1 ? "" : "s"} delivered
-          </span>
-        </div>
-        <p className="mt-1 text-xs text-muted-foreground">
-          Target ≈ {target} across {activePositions || 0} active role{activePositions === 1 ? "" : "s"}
-        </p>
+    <div className="flex h-full flex-col rounded-xl border bg-card p-5">
+      <SectionHeader icon={<CheckCircle2 className="h-4 w-4" />} title="Next steps" size="sm" />
+      <ul className="mt-3 space-y-2.5 text-sm">
+        {steps.map((s) => (
+          <li key={s} className="flex gap-2.5 leading-relaxed">
+            <span className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-primary/70" />
+            <span>{s}</span>
+          </li>
+        ))}
+      </ul>
+      <div className="mt-auto border-t pt-3 text-xs text-muted-foreground tabular-nums">
+        {newThisWeek} approved in the last 7 days · {deliveredTotal.toLocaleString()} approved in total
       </div>
-      <div className="mt-4">
-        <div className="h-2 overflow-hidden rounded-full bg-muted">
-          <div
-            className={`h-full rounded-full transition-all ${
-              pct >= 80 ? "bg-emerald-500" : pct >= 40 ? "bg-primary" : "bg-amber-500"
-            }`}
-            style={{ width: `${Math.max(pct, 4)}%` }}
-          />
-        </div>
-        <div className="mt-2 flex justify-between text-[11px] text-muted-foreground">
-          <span>{pct}% of weekly target</span>
-          <span>{delivered.toLocaleString()} lifetime</span>
-        </div>
+    </div>
+  );
+}
+
+/** Team members and their permissions — only rendered when authorized. */
+function TeamPanel({ members, canManage, org }: { members: Any[]; canManage: boolean; org?: string }) {
+  const roleLabel = (r: string) =>
+    r === "client_admin" ? "Admin — full access" : r === "client_editor" ? "Editor — can decide" : "Viewer — read only";
+  return (
+    <div className="rounded-xl border bg-card p-4 sm:p-5">
+      <div className="flex items-center justify-between gap-3">
+        <SectionHeader icon={<Users className="h-4 w-4" />} title="Your team" size="sm" />
+        {canManage && (
+          <Link
+            to="/client/team"
+            search={(org ? { org } : undefined) as never}
+            className="text-sm font-medium text-primary hover:underline"
+          >
+            Manage
+          </Link>
+        )}
       </div>
+      {members.length === 0 ? (
+        <p className="mt-3 text-sm text-muted-foreground">No teammates yet.</p>
+      ) : (
+        <ul className="mt-3 divide-y">
+          {members.slice(0, 5).map((m) => (
+            <li key={m.user_id} className="flex items-center justify-between gap-3 py-2 first:pt-0 last:pb-0">
+              <span className="min-w-0 truncate text-sm">
+                {m.profiles?.full_name ?? m.profiles?.email ?? "Team member"}
+              </span>
+              <span className="shrink-0 text-xs text-muted-foreground">{roleLabel(String(m.role))}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+
+/** Clear route to a human. */
+function HelpCard({ org }: { org?: string }) {
+  return (
+    <div className="rounded-xl border bg-muted/20 p-4 sm:p-5">
+      <SectionHeader icon={<LifeBuoy className="h-4 w-4" />} title="Need help deciding?" size="sm" />
+      <p className="mt-2 text-sm text-muted-foreground">
+        Your TaaSFlow team answers questions about any candidate, requirement, or timeline.
+      </p>
+      <Link
+        to="/client/messages"
+        search={(org ? { org } : undefined) as never}
+        className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
+      >
+        Message your team <ChevronRight className="h-3.5 w-3.5" />
+      </Link>
     </div>
   );
 }
