@@ -114,134 +114,6 @@ function Overview() {
     navigate({ search: { org: "", position: "", owner: "", status: "", from: "", to: "" } });
 
   const L = data.lists;
-  const totalAction =
-
-    L.candidates_pending_review.length +
-    L.candidates_ready_to_publish.length +
-    L.positions_review.length +
-    L.processing_issues.length +
-    (L.urgent_interviews?.length ?? 0) +
-    (L.intake_inbox?.length ?? 0) +
-    L.client_requests.length;
-
-  // Prioritized Action Required — one panel that surfaces the top items
-  // waiting on the platform team, in urgency order. Every row deep-links
-  // to the exact record and disappears from here once actioned.
-  type ActionRow = {
-    key: string;
-    priority: number;
-    label: string;
-    detail: string;
-    to: string;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    params?: any;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    search?: any;
-    tone: "danger" | "warn" | "info";
-    time?: string | null;
-  };
-  const actions: ActionRow[] = [];
-  // 1. Processing incidents — grouped into a single primary card, ordered by newest.
-  if (L.processing_issues.length > 0) {
-    const top = L.processing_issues[0] as Row;
-    actions.push({
-      key: "processing",
-      priority: 1,
-      label: `${L.processing_issues.length} processing incident${L.processing_issues.length === 1 ? "" : "s"}`,
-      detail: `Latest: ${fmtErr(top.processing_error_code ?? top.processing_state)} · ${top.candidate_profiles?.full_name ?? "Candidate"}`,
-      to: "/admin/operations",
-      tone: "danger",
-      time: top.processing_updated_at,
-    });
-  }
-  // 2. Urgent interviews — requested / imminent, blocking client trust.
-  for (const iv of (L.urgent_interviews ?? []).slice(0, 3) as Row[]) {
-    const cand = iv.candidate_matches?.candidate_profiles?.full_name ?? "Candidate";
-    const pos = iv.candidate_matches?.positions?.title ?? "—";
-    const org = iv.candidate_matches?.positions?.organizations?.name ?? "—";
-    actions.push({
-      key: `iv:${iv.id}`,
-      priority: 2,
-      label:
-        iv.status === "requested"
-          ? `Schedule interview — ${cand}`
-          : `Interview soon — ${cand}`,
-      detail: `${pos} · ${org}`,
-      to: "/admin/candidates/$id",
-      params: { id: iv.candidate_match_id },
-      tone: iv.status === "requested" ? "warn" : "danger",
-      time: iv.scheduled_at ?? iv.requested_at,
-    });
-  }
-  // 3. Intake inbox — submissions that still need conversion / review.
-  for (const it of (L.intake_inbox ?? []).slice(0, 3) as Row[]) {
-    actions.push({
-      key: `intake:${it.id}`,
-      priority: 3,
-      label: it.requisition_pending
-        ? `Convert intake — ${it.company_name}`
-        : `Review intake — ${it.company_name}`,
-      detail: it.role_title,
-      to: "/admin/intake/$id",
-      params: { id: it.id },
-      tone: it.requisition_pending ? "warn" : "info",
-      time: it.created_at,
-    });
-  }
-  // 4. Candidates ready to publish — approved, blocking delivery.
-  for (const m of L.candidates_ready_to_publish.slice(0, 3) as Row[]) {
-    actions.push({
-      key: `publish:${m.id}`,
-      priority: 4,
-      label: `Publish ${m.candidate_profiles?.full_name ?? "candidate"}`,
-      detail: `${m.positions?.title ?? "—"} · ${m.positions?.organizations?.name ?? "—"}`,
-      to: "/admin/candidates/$id",
-      params: { id: m.id },
-      tone: "warn",
-      time: m.updated_at,
-    });
-  }
-  // 5. Candidates pending review — blocking client delivery.
-  for (const m of L.candidates_pending_review.slice(0, 3) as Row[]) {
-    actions.push({
-      key: `review:${m.id}`,
-      priority: 5,
-      label: `Review ${m.candidate_profiles?.full_name ?? "candidate"}`,
-      detail: `${m.positions?.title ?? "—"} · ${m.positions?.organizations?.name ?? "—"}`,
-      to: "/admin/candidates/$id",
-      params: { id: m.id },
-      tone: "info",
-      time: m.updated_at,
-    });
-  }
-  // 6. Positions awaiting approval.
-  for (const p of L.positions_review.slice(0, 2) as Row[]) {
-    actions.push({
-      key: `pos:${p.id}`,
-      priority: 6,
-      label: `Approve position — ${p.title}`,
-      detail: p.organizations?.name ?? "—",
-      to: "/admin/positions/$id",
-      params: { id: p.id },
-      tone: "info",
-      time: p.created_at,
-    });
-  }
-  // 7. Client-initiated recompute / feedback.
-  for (const d of L.client_requests.slice(0, 2) as Row[]) {
-    actions.push({
-      key: `req:${d.id}`,
-      priority: 7,
-      label: `Client decision — ${d.candidate_matches?.candidate_profiles?.full_name ?? "Candidate"}`,
-      detail: `${String(d.decision_type).replace(/_/g, " ")} · ${d.candidate_matches?.positions?.title ?? "—"}`,
-      to: "/admin/candidates/$id",
-      params: { id: d.candidate_match_id },
-      tone: "info",
-      time: d.created_at,
-    });
-  }
-  actions.sort((a, b) => a.priority - b.priority);
-  const topActions = actions.slice(0, 10);
 
 
   return (
@@ -269,71 +141,49 @@ function Overview() {
         </div>
       </header>
 
-      {/* ─── Triage summary: what matters in 10 seconds. ─── */}
-      <TriageStrip
-        blocked={L.processing_issues.length}
-        review={L.candidates_pending_review.length}
-        publish={L.candidates_ready_to_publish.length}
-        urgent={(L.urgent_interviews ?? []).length}
-        intake={(L.intake_inbox ?? []).length}
-        positions={L.positions_review.length}
+      {/* ─── Filters — persisted in the URL so views are shareable. ─── */}
+      <CommandFilters
+        options={command.data?.options}
+        search={search}
+        onChange={setFilter}
+        onClear={clearFilters}
+        activeCount={
+          [search.org, search.position, search.owner, search.status, search.from, search.to].filter(
+            Boolean,
+          ).length
+        }
       />
 
+      {/* ─── Triage summary: platform-wide exact counts. ─── */}
+      <TriageStrip
+        blocked={data.processing_failures}
+        review={data.candidates_review}
+        publish={data.candidates_ready}
+        urgent={data.urgent_interviews ?? 0}
+        intake={data.new_intakes}
+        positions={data.positions_review}
+      />
 
-      {/* Action Required — prioritized single panel. */}
-      {topActions.length > 0 ? (
-        <section className="rounded-xl border-2 border-primary/30 bg-primary/[0.03] shadow-sm">
-          <header className="flex items-center justify-between border-b border-primary/20 px-4 py-3">
-            <div className="flex items-center gap-2">
-              <AlertOctagon className="h-4 w-4 text-primary" />
-              <h2 className="text-sm font-semibold">Action required</h2>
-              <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1.5 text-[11px] font-semibold text-primary-foreground tabular-nums">
-                {totalAction}
-              </span>
-            </div>
-            <span className="text-xs text-muted-foreground">Prioritized by urgency</span>
-          </header>
-          <ul className="divide-y divide-primary/10">
-            {topActions.map((a) => (
-              <li key={a.key}>
-                <Link
-                  to={a.to}
-                  params={a.params}
-                  search={a.search}
-                  className="flex items-center gap-3 px-4 py-2.5 outline-none transition-colors hover:bg-primary/[0.06] focus-visible:bg-primary/[0.06]"
-                >
-                  <span
-                    className={`h-1.5 w-1.5 shrink-0 rounded-full ${
-                      a.tone === "danger"
-                        ? "bg-destructive"
-                        : a.tone === "warn"
-                          ? "bg-warning"
-                          : "bg-primary"
-                    }`}
-                    aria-hidden
-                  />
-                  <div className="min-w-0 flex-1">
-                    <div className="truncate text-sm font-medium">{a.label}</div>
-                    <div className="truncate text-xs text-muted-foreground">{a.detail}</div>
-                  </div>
-                  <span className="hidden w-16 shrink-0 text-right text-[11px] tabular-nums text-muted-foreground sm:inline">
-                    {relTime(a.time)}
-                  </span>
-                  <ArrowRight className="h-3.5 w-3.5 shrink-0 text-muted-foreground/60" />
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </section>
-      ) : (
-        <div className="rounded-lg border border-dashed bg-card p-8 text-center">
-          <ClipboardCheck className="mx-auto h-6 w-6 text-muted-foreground" />
-          <h2 className="mt-3 text-sm font-semibold">Inbox zero</h2>
-          <p className="mt-1 text-xs text-muted-foreground">
-            No positions, candidates, or processing incidents need attention right now.
-          </p>
-        </div>
-      )}
+      {/* ─── Urgent queue — filter aware, every row deep-links. ─── */}
+      <UrgentQueue
+        loading={command.isLoading}
+        error={command.error ? String((command.error as Error).message) : null}
+        items={command.data?.urgent ?? []}
+        counts={command.data?.urgent_counts ?? {}}
+        filtersActive={command.data?.filters_active ?? false}
+        platformHasWork={command.data?.platform_has_work ?? true}
+        onClear={clearFilters}
+      />
+
+      {/* ─── Workload by client and job. ─── */}
+      <Workload
+        loading={command.isLoading}
+        clients={command.data?.workload ?? []}
+        filtersActive={command.data?.filters_active ?? false}
+        platformHasWork={command.data?.platform_has_work ?? true}
+        onClear={clearFilters}
+      />
+
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <Section
