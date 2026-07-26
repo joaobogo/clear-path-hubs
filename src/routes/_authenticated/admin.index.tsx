@@ -558,6 +558,7 @@ function Overview() {
             </ul>
           )}
         </section>
+        <ActivityFeed limit={10} title="Platform activity" />
       </div>
     </div>
   );
