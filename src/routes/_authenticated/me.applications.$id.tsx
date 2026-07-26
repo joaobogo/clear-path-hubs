@@ -7,7 +7,9 @@ import {
   getMyApplication,
   respondToInfoRequest,
   withdrawApplication,
+  type CandidateSafeStatus,
 } from "@/lib/candidate.functions";
+
 import {
   CANDIDATE_STATUS_MEANING,
   CANDIDATE_STATUS_TONE,
