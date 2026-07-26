@@ -19,6 +19,21 @@ export const EVENT_TYPES = [
   "position_filled",
   "position_closed",
   "message_sent",
+  "position_updated",
+  "position_reopened",
+  "cv_parsed",
+  "cv_parse_failed",
+  "screening_completed",
+  "screening_needs_review",
+  "contact_released",
+  "contact_revoked",
+  "client_viewed_candidate",
+  "interview_completed",
+  "interview_cancelled",
+  "candidate_stage_changed",
+  "document_added",
+  "member_invited",
+  "member_removed",
 ] as const;
 
 export type EventType = (typeof EVENT_TYPES)[number];
