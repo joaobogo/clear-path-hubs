@@ -160,7 +160,7 @@ async function loadCtx(s: Any, matchId: string) {
   ]);
   const file = profRes.data?.current_cv_file_id
     ? (await s.from("files")
-        .select("id,storage_bucket,storage_path,mime_type,filename,extracted_text,ocr_used,extraction_attempts")
+        .select("id,storage_bucket,storage_path,mime_type,filename,extracted_text,ocr_used,extraction_attempts,parse_state")
         .eq("id", profRes.data.current_cv_file_id).maybeSingle()).data
     : null;
   return { match, position: posRes.data, profile: profRes.data, file, answers: (ansRes.data ?? []) as Any[] };
