@@ -724,7 +724,9 @@ function CvTab({ cv, matchId, cp, insights }: { cv: Any; matchId: string; cp: An
                     Open original <ExternalLink className="h-3.5 w-3.5" />
                   </a>
                 )}
+                <DownloadCvButton matchId={matchId} mode="preview" />
                 <DownloadCvButton matchId={matchId} />
+
               </div>
             </div>
             <pre className="mt-3 max-h-[600px] overflow-auto whitespace-pre-wrap rounded-md bg-muted/40 p-3 text-xs">
