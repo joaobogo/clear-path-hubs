@@ -38,10 +38,6 @@ export const Route = createFileRoute("/_authenticated/me")({
  queryKey: ["me-context"],
  queryFn: () => getMyContext(),
  }),
- errorComponent: ({ error }) => (
- <main className="p-8 text-destructive">Failed to load: {error.message}</main>
- ),
- notFoundComponent: () => <main className="p-8">Not found.</main>,
  component: MeLayout,
 });
 
