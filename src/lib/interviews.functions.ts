@@ -565,7 +565,19 @@ export const cancelInterview = createServerFn({ method: "POST" })
       after: { status: "cancelled", reason: data.reason ?? null },
       trace_id: trace,
     });
+    try {
+      const { emitInterviewEvent } = await import("./interview-events.server");
+      await emitInterviewEvent({
+        interviewId: data.id,
+        event: "interview_cancelled",
+        actorUserId: context.userId,
+        scopeSuffix: prev.scheduled_at ?? prev.status,
+      });
+    } catch (e) {
+      console.error("[cancelInterview] emit failed", trace, e);
+    }
     return { ok: true, trace_id: trace };
+
   });
 
 export const markInterviewCompleted = createServerFn({ method: "POST" })
