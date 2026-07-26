@@ -1198,6 +1198,19 @@ export const inviteClientMember = createServerFn({ method: "POST" })
       status: "invited",
     });
     if (mErr) throw new Error(mErr.message);
+    try {
+      const { emitEventFromServer } = await import("./notifications.functions");
+      await emitEventFromServer({
+        event: "member_invited",
+        scope: `member:${data.orgId}:${authUserId}:invited`,
+        organization_id: data.orgId,
+        actor_user_id: context.userId,
+        link_path: "/client/settings",
+        payload: { role: data.role },
+      });
+    } catch (e) {
+      console.error("[inviteClientMember] emit failed", e);
+    }
     return { ok: true };
   });
 
