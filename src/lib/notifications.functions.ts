@@ -188,15 +188,50 @@ export const listDeliveryFailures = createServerFn({ method: "GET" })
     const { data: isStaff } = await context.supabase.rpc("is_platform_staff", { _user: context.userId });
     if (!isStaff) throw new Error("Forbidden");
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data, error } = await supabaseAdmin
-      .from("notification_deliveries")
-      .select("id, channel, status, error_code, error_message, updated_at, notification_id, notifications:notification_id(title, audience, recipient_user_id, event_type)")
-      .in("status", ["failed", "bounced", "suppressed"])
-      .order("updated_at", { ascending: false })
-      .limit(100);
-    if (error) throw error;
-    return { items: data ?? [] };
+    const { readEmailConfig } = await import("./notification-email.server");
+    const [failuresRes, recentRes] = await Promise.all([
+      supabaseAdmin
+        .from("notification_deliveries")
+        .select(
+          "id, channel, status, error_code, error_message, attempt_count, last_attempt_at, updated_at, notification_id, notifications:notification_id(title, audience, recipient_user_id, event_type)",
+        )
+        .in("status", ["failed", "bounced", "suppressed"])
+        .order("updated_at", { ascending: false })
+        .limit(100),
+      supabaseAdmin
+        .from("notification_deliveries")
+        .select("status, channel")
+        .gte("created_at", new Date(Date.now() - 7 * 86_400_000).toISOString())
+        .limit(2000),
+    ]);
+    if (failuresRes.error) throw failuresRes.error;
+
+    const counts: Record<string, number> = {};
+    for (const row of recentRes.data ?? []) {
+      const k = `${row.channel}:${row.status}`;
+      counts[k] = (counts[k] ?? 0) + 1;
+    }
+    const cfg = readEmailConfig();
+    return {
+      items: failuresRes.data ?? [],
+      counts,
+      // Never expose keys — only whether a provider is usable and why not.
+      email: { configured: cfg.configured, reason: cfg.reason },
+    };
   });
+
+export const retryFailedDelivery = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((raw) => z.object({ deliveryId: z.string().uuid() }).parse(raw))
+  .handler(async ({ context, data }) => {
+    const { data: isStaff } = await context.supabase.rpc("is_platform_staff", { _user: context.userId });
+    if (!isStaff) throw new Error("Forbidden");
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { retryDelivery } = await import("./notification-email.server");
+    const result = await retryDelivery(supabaseAdmin, data.deliveryId);
+    return { ok: true, result };
+  });
+
 
 export const listEventCatalogue = createServerFn({ method: "GET" }).handler(async () => {
   return { events: EVENT_TYPES };
