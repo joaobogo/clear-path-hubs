@@ -5,6 +5,8 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
+import { CLIENT_PERMISSIONS, type ClientPermission } from "@/lib/authz";
+
 import {
   loadKpiRows,
   computeKpis,
@@ -39,7 +41,8 @@ export type { MatchStage };
 async function resolveContext(supabase: AnyRow, userId: string, orgId?: string) {
   const { data: memberships, error } = await supabase
     .from("memberships")
-    .select("organization_id, role, status, organizations(id, name, industry, parent_organization_id, logo_url, brand_display_name, brand_primary_color, brand_accent_color)")
+    .select("organization_id, role, status, permissions, organizations(id, name, industry, parent_organization_id, logo_url, brand_display_name, brand_primary_color, brand_accent_color)")
+
     .eq("user_id", userId)
     .eq("status", "active");
   if (error) throw new Error(error.message);
@@ -63,8 +66,11 @@ async function resolveContext(supabase: AnyRow, userId: string, orgId?: string) 
       active = {
         organization_id: org.id,
         role: "client_admin" as const,
+        // Staff impersonating an org context get the full client permission set.
+        permissions: [...CLIENT_PERMISSIONS],
         organizations: org,
       };
+
     }
   }
   return { active, memberships: clientMemberships, isStaff };
@@ -104,7 +110,9 @@ export const getClientContext = createServerFn({ method: "GET" })
           brand_primary_color: string | null;
           brand_accent_color: string | null;
           parent_name: string | null;
+          permissions: ClientPermission[];
         },
+
         organizations: memberships.map((m) => ({
           id: m.organization_id,
           role: m.role as ClientRole,
@@ -136,7 +144,11 @@ export const getClientContext = createServerFn({ method: "GET" })
         brand_primary_color: (active.organizations?.brand_primary_color ?? null) as string | null,
         brand_accent_color: (active.organizations?.brand_accent_color ?? null) as string | null,
         parent_name: parentName,
+        // Server-verified seat permissions. UI uses these to hide controls;
+        // RLS + server assertions independently enforce the same rules.
+        permissions: ((active.permissions ?? []) as ClientPermission[]),
       },
+
       organizations: memberships.map((m) => ({
         id: m.organization_id,
         role: m.role as ClientRole,

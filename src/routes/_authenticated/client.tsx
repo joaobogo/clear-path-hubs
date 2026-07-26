@@ -65,11 +65,23 @@ export const Route = createFileRoute("/_authenticated/client")({
  queryFn: () =>
  getClientContext({ data: deps.org ? { orgId: deps.org } : {} }),
  });
+ // Route-level organization guard. `getClientContext` only ever resolves an
+ // active organization the caller is an active member of (or any org when the
+ // caller is platform staff), so a missing `active` here means the requested
+ // ?org= is not theirs — or they have no client membership at all. Both fail
+ // closed to the intentional access-denied screen rather than a silent bounce.
+ // This is supplementary: RLS blocks the underlying data either way.
  if (!ctx.active && ctx.organizations.length === 0 && !ctx.isStaff) {
- throw redirect({ to: "/" });
+ throw redirect({ to: "/access-denied", search: { reason: "membership" } });
  }
+ // A named ?org= that did not resolve means the caller is not a member of it.
+ if (!ctx.active && deps.org) {
+ throw redirect({ to: "/access-denied", search: { reason: "organization" } });
+ }
+
  return ctx;
  },
+
  errorComponent: ({ error }) => (
  <div className="p-8 text-destructive">Failed to load workspace: {error.message}</div>
  ),
