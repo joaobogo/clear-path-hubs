@@ -48,11 +48,13 @@ import {
   Wrench,
   MoreHorizontal,
   Milestone,
+  ClipboardList,
 } from "lucide-react";
 import { DownloadCvButton } from "@/components/download-cv-button";
 import { ScoreExplainability } from "@/components/candidate/score-explainability";
 import { JourneyTimeline } from "@/components/candidate/journey-timeline";
 import { getCandidateJourney } from "@/lib/journey.functions";
+import { AdminDossier } from "@/components/candidate/admin-dossier";
 
 
 
@@ -101,6 +103,7 @@ type Any = any;
 
 const TABS = [
   { id: "profile", label: "Profile", icon: User },
+  { id: "dossier", label: "Intake & notes", icon: ClipboardList },
   { id: "journey", label: "Journey", icon: Milestone },
   { id: "cv", label: "CV & parsed", icon: FileText },
   { id: "enrichment", label: "Enrichment", icon: Sparkles },
@@ -209,6 +212,7 @@ function CandidateWorkspace() {
             {tab === "profile" && (
               <ProfileTab cp={cp} pos={pos} m={m} siblings={siblings} evidence={evidence} />
             )}
+            {tab === "dossier" && <AdminDossier matchId={id} />}
             {tab === "journey" && <JourneyTab matchId={id} />}
             {tab === "cv" && <CvTab cv={cv} matchId={id} cp={cp} insights={evidence?.extracted?.insights ?? null} />}
             {tab === "enrichment" && <EnrichmentTab cp={cp} evidence={evidence} />}
