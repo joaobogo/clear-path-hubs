@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, stripSearchParams } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useState, useEffect, useMemo } from "react";
@@ -58,8 +58,19 @@ const searchSchema = z.object({
 
 type SearchState = z.infer<typeof searchSchema>;
 
+const FILTER_KEYS = [
+  "q", "organization_id", "position_id", "stage", "admin_status", "processing_state",
+  "client_visibility", "eligibility_status", "score_band", "confidence",
+  "contact_released", "critical", "country", "source", "date_from", "date_to",
+] as const;
+
+const EMPTY_DEFAULTS = Object.fromEntries(FILTER_KEYS.map((k) => [k, ""]));
+
+const SEARCH_DEFAULTS = { ...(EMPTY_DEFAULTS as Record<string, string>), sort: "updated_desc", page: 1 };
+
 export const Route = createFileRoute("/_authenticated/admin/candidates/")({
   validateSearch: zodValidator(searchSchema),
+  search: { middlewares: [stripSearchParams(SEARCH_DEFAULTS)] },
   head: () => ({
     meta: [
       { title: "Candidate database · TaaSFlow admin" },
@@ -131,9 +142,7 @@ const FILTER_LABELS: Partial<Record<keyof SearchState, string>> = {
   date_to: "To",
 };
 
-const EMPTY: Partial<SearchState> = Object.fromEntries(
-  Object.keys(FILTER_LABELS).map((k) => [k, ""]),
-) as Partial<SearchState>;
+const EMPTY = EMPTY_DEFAULTS as Partial<SearchState>;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
