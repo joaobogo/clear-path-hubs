@@ -22,6 +22,8 @@ import {
   type SessionMembership,
 } from "@/lib/roles";
 
+import { sanitizeRedirect } from "@/lib/safe-redirect";
+
 const searchSchema = z.object({ redirect: z.string().optional() });
 
 export const Route = createFileRoute("/login")({
