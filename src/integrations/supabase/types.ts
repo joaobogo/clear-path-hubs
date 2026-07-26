@@ -186,6 +186,7 @@ export type Database = {
           cover_letter: string | null
           created_at: string
           created_by_audit: boolean | null
+          cv_file_id: string | null
           expires_at: string | null
           id: string
           is_test_record: boolean | null
@@ -221,6 +222,7 @@ export type Database = {
           cover_letter?: string | null
           created_at?: string
           created_by_audit?: boolean | null
+          cv_file_id?: string | null
           expires_at?: string | null
           id?: string
           is_test_record?: boolean | null
@@ -256,6 +258,7 @@ export type Database = {
           cover_letter?: string | null
           created_at?: string
           created_by_audit?: boolean | null
+          cv_file_id?: string | null
           expires_at?: string | null
           id?: string
           is_test_record?: boolean | null
@@ -296,6 +299,13 @@ export type Database = {
             columns: ["candidate_profile_id"]
             isOneToOne: false
             referencedRelation: "candidate_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "applications_cv_file_id_fkey"
+            columns: ["cv_file_id"]
+            isOneToOne: false
+            referencedRelation: "files"
             referencedColumns: ["id"]
           },
           {
@@ -977,6 +987,108 @@ export type Database = {
           },
           {
             foreignKeyName: "candidate_evidence_items_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_portfolio_rollup"
+            referencedColumns: ["organization_id"]
+          },
+        ]
+      }
+      candidate_info_requests: {
+        Row: {
+          application_id: string
+          candidate_profile_id: string
+          created_at: string
+          due_at: string | null
+          id: string
+          organization_id: string | null
+          prompt: string
+          requested_by: string | null
+          responded_at: string | null
+          response: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          application_id: string
+          candidate_profile_id: string
+          created_at?: string
+          due_at?: string | null
+          id?: string
+          organization_id?: string | null
+          prompt: string
+          requested_by?: string | null
+          responded_at?: string | null
+          response?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          application_id?: string
+          candidate_profile_id?: string
+          created_at?: string
+          due_at?: string | null
+          id?: string
+          organization_id?: string | null
+          prompt?: string
+          requested_by?: string | null
+          responded_at?: string | null
+          response?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "candidate_info_requests_application_id_fkey"
+            columns: ["application_id"]
+            isOneToOne: false
+            referencedRelation: "applications"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "candidate_info_requests_application_id_fkey"
+            columns: ["application_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_my_applications"
+            referencedColumns: ["application_id"]
+          },
+          {
+            foreignKeyName: "candidate_info_requests_application_id_fkey"
+            columns: ["application_id"]
+            isOneToOne: false
+            referencedRelation: "v_source_attribution"
+            referencedColumns: ["application_id"]
+          },
+          {
+            foreignKeyName: "candidate_info_requests_candidate_profile_id_fkey"
+            columns: ["candidate_profile_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_profile_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "candidate_info_requests_candidate_profile_id_fkey"
+            columns: ["candidate_profile_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "candidate_info_requests_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "admin_clients_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "candidate_info_requests_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "candidate_info_requests_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
             referencedRelation: "v_portfolio_rollup"
