@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
+import { useConfirmAction } from "@/components/ds";
 
 export const Route = createFileRoute("/_authenticated/me/settings")({
  head: () => ({
@@ -52,6 +53,7 @@ function SettingsPage() {
  const [smsNotif, setSmsNotif] = useState<boolean>(!!consent.notifications_sms);
  const [marketing, setMarketing] = useState<boolean>(!!consent.marketing_opt_in);
  const [correction, setCorrection] = useState("");
+ const { confirm, confirmDialog } = useConfirmAction();
  const [deleteReason, setDeleteReason] = useState("");
 
  useEffect(() => {
@@ -193,16 +195,30 @@ function SettingsPage() {
  />
  <Button
  variant="destructive"
+ className="min-h-11"
  disabled={requestDelete.isPending}
- onClick={() => {
- if (confirm("Request account deletion? Our team will follow up.")) {
- requestDelete.mutate(deleteReason.trim());
- }
+ aria-busy={requestDelete.isPending || undefined}
+ onClick={async () => {
+ const r = await confirm({
+ title: "Request account deletion",
+ description:
+ "We'll email you to confirm before anything is removed.",
+ impact: [
+ "Open applications are withdrawn",
+ "Your CV and profile are deleted once confirmed",
+ "Records we must keep by law are retained, minimised",
+ ],
+ typedConfirmation: "DELETE",
+ confirmLabel: "Request deletion",
+ tone: "destructive",
+ });
+ if (r.confirmed) requestDelete.mutate(deleteReason.trim());
  }}
  >
- Request deletion
+ {requestDelete.isPending ? "Sending…" : "Request deletion"}
  </Button>
  </section>
+ {confirmDialog}
  </main>
  );
 }
