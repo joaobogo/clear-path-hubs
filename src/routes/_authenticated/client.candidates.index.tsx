@@ -185,7 +185,7 @@ function CandidatesPage() {
   if (search.fit !== "all" && c.fit.band !== search.fit) return false;
   if (search.critical !== "all") {
    const missingEvidence = c.requirement_rows.some(
-    (r) => r.critical && (r.status === "unknown" || r.status === "missing_evidence"),
+    (r) => r.importance === "must_have" && r.status === "not_evidenced",
    );
    const gaps = c.coverage.must_total > 0 && c.coverage.must_met < c.coverage.must_total;
    if (search.critical === "met" && (gaps || missingEvidence)) return false;
