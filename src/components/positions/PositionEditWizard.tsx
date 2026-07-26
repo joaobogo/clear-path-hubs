@@ -6,7 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { useNavigate } from "@tanstack/react-router";
+import { useBlocker, useNavigate } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -74,6 +74,11 @@ function unique(arr: string[]) {
     if (!map.has(k)) map.set(k, t);
   }
   return Array.from(map.values());
+}
+
+function initialState(initial: PositionEditInitial): State {
+  const { organization_id: _o, organization_name: _n, status: _s, ...rest } = initial;
+  return { ...rest };
 }
 
 function validateStep(step: number, s: State): Record<string, string> {
