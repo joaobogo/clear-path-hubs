@@ -283,6 +283,7 @@ export function WorkspaceShell(props: WorkspaceShellProps) {
 
   return (
     <div
+      data-workspace-role={role}
       className="flex min-h-dvh w-full"
       style={{ background: "var(--taas-shell-bg-gradient)" }}
     >
