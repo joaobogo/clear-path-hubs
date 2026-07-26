@@ -1,4 +1,10 @@
 export { StatusBadge } from "./status-badge";
+export { ActionButton, type ActionButtonProps } from "./action-button";
+export {
+  useConfirmAction,
+  type ConfirmActionOptions,
+  type ConfirmResult,
+} from "./confirm-action";
 export { PageHeader, PageBody, PageShell } from "./page-header";
 export { KpiCard } from "./kpi-card";
 export { EmptyState } from "./empty-state";
