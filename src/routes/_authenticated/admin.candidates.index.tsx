@@ -472,7 +472,16 @@ function CandidatesPage() {
                   aria-label="Select all rows on this page"
                 />
               </th>
-              <th className="px-3 py-2">{sortHeader("Candidate", "name_asc", "name_asc")}</th>
+              <th className="px-3 py-2">
+                <button
+                  type="button"
+                  className="inline-flex items-center gap-1 hover:text-foreground"
+                  onClick={() => setF({ sort: "name_asc" })}
+                >
+                  Candidate
+                  <ArrowUpDown className="h-3 w-3 opacity-60" />
+                </button>
+              </th>
               <th className="px-3 py-2">Client</th>
               <th className="px-3 py-2">Job</th>
               <th className="px-3 py-2">Screening</th>
