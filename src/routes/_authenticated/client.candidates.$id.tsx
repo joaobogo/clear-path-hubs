@@ -59,6 +59,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import {
+  DecisionDialog,
+  type DecisionPayload,
+} from "@/components/client/decision-dialog";
+import { reasonLabel } from "@/lib/client-decision-reasons";
+import {
   TagSilverMedalistDialog,
   SilverMedalistBadge,
 } from "@/components/client/tag-silver-medalist-dialog";
