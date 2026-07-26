@@ -139,6 +139,19 @@ const ACTIONS_BY_STAGE: Record<MatchStage, { primary: ActionDef | null; more: Ac
 };
 
 
+// Plain-English names for recorded decisions.
+const DECISION_LABELS: Record<string, string> = {
+ shortlist: "Shortlisted",
+ request_interview: "Interview requested",
+ request_information: "More information requested",
+ hold: "Placed on hold",
+ request_contact_release: "Contact details requested",
+ feedback: "Feedback added",
+ not_moving_forward: "Declined for this role",
+ offer: "Offer extended",
+ hire: "Hired",
+};
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
 
