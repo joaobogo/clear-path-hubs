@@ -511,7 +511,46 @@ function CandidatesPage() {
  </button>
  </div>
  </div>
- </div>
+  </div>
+
+  {/* Secondary, permitted dimensions */}
+  <div className="mt-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2">
+   <Select value={search.critical} onValueChange={(v) => setF({ critical: v })}>
+    <SelectTrigger aria-label="Critical requirements"><SelectValue /></SelectTrigger>
+    <SelectContent>
+     {CRITICAL_OPTIONS.map((o) => (
+      <SelectItem key={o.key} value={o.key}>{o.label}</SelectItem>
+     ))}
+    </SelectContent>
+   </Select>
+   <Select value={search.availability} onValueChange={(v) => setF({ availability: v })}>
+    <SelectTrigger aria-label="Availability"><SelectValue /></SelectTrigger>
+    <SelectContent>
+     <SelectItem value="all">Any availability</SelectItem>
+     {availabilityOptions.map((a) => (
+      <SelectItem key={a} value={a}>{a}</SelectItem>
+     ))}
+    </SelectContent>
+   </Select>
+   <Select value={search.minExp} onValueChange={(v) => setF({ minExp: v === "all" ? "" : v })}>
+    <SelectTrigger aria-label="Minimum experience"><SelectValue placeholder="Any experience" /></SelectTrigger>
+    <SelectContent>
+     <SelectItem value="all">Any experience</SelectItem>
+     <SelectItem value="2">2+ years</SelectItem>
+     <SelectItem value="5">5+ years</SelectItem>
+     <SelectItem value="8">8+ years</SelectItem>
+     <SelectItem value="12">12+ years</SelectItem>
+    </SelectContent>
+   </Select>
+   <Select value={search.review} onValueChange={(v) => setF({ review: v })}>
+    <SelectTrigger aria-label="Review status"><SelectValue /></SelectTrigger>
+    <SelectContent>
+     {REVIEW_OPTIONS.map((o) => (
+      <SelectItem key={o.key} value={o.key}>{o.label}</SelectItem>
+     ))}
+    </SelectContent>
+   </Select>
+  </div>
 
  {activeFilters.length > 0 && (
  <div className="mt-3 flex items-center gap-2 flex-wrap">
