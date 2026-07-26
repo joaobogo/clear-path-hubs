@@ -364,23 +364,187 @@ export const getMyApplication = createServerFn({ method: "GET" })
     };
   });
 
+// ─── Information requests ───────────────────────────────────────────────────
 
-function decisionLabel(decision: string): string | null {
-  switch (decision) {
-    case "shortlist":
-      return "Shortlisted";
-    case "request_interview":
-      return "Interview requested";
-    case "request_information":
-      return "Additional information requested";
-    case "not_moving_forward":
-      return "Not moving forward";
-    case "hire":
-      return "Hired";
-    default:
-      return null;
-  }
-}
+export const listMyInfoRequests = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const supabase = context.supabase as AnyRow;
+    const cpId = await myProfileId(supabase, context.userId);
+    if (!cpId) return { requests: [] as AnyRow[] };
+    const { data, error } = await supabase
+      .from("candidate_info_requests")
+      .select(
+        "id, application_id, prompt, status, response, responded_at, due_at, created_at, applications:application_id ( id, positions:position_id ( title ) )",
+      )
+      .eq("candidate_profile_id", cpId)
+      .order("created_at", { ascending: false })
+      .limit(50);
+    if (error) throw new Error(error.message);
+    const requests = (data ?? []).map((r: AnyRow) => ({
+      id: r.id as string,
+      application_id: r.application_id as string,
+      role_title: r.applications?.positions?.title ?? "Role",
+      prompt: r.prompt as string,
+      status: r.status as string,
+      response: (r.response as string | null) ?? null,
+      responded_at: (r.responded_at as string | null) ?? null,
+      due_at: (r.due_at as string | null) ?? null,
+      created_at: r.created_at as string,
+      expired:
+        r.status === "open" && !!r.due_at && new Date(r.due_at).getTime() < Date.now(),
+    }));
+    return { requests };
+  });
+
+export const respondToInfoRequest = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: { id: string; response: string }) =>
+    z
+      .object({
+        id: z.string().uuid(),
+        response: z.string().trim().min(1, "Please write a reply").max(4000),
+      })
+      .parse(input),
+  )
+  .handler(async ({ context, data }) => {
+    const trace = traceId();
+    const supabase = context.supabase as AnyRow;
+    const cpId = await myProfileId(supabase, context.userId);
+    if (!cpId) return { ok: false as const, trace_id: trace, message: "No profile" };
+
+    const { data: req } = await supabase
+      .from("candidate_info_requests")
+      .select("id, status, due_at, application_id")
+      .eq("id", data.id)
+      .eq("candidate_profile_id", cpId)
+      .maybeSingle();
+    if (!req) return { ok: false as const, trace_id: trace, message: "Request not found" };
+    if (req.status !== "open") {
+      return {
+        ok: false as const,
+        trace_id: trace,
+        message: "This request is already closed.",
+      };
+    }
+    if (req.due_at && new Date(req.due_at).getTime() < Date.now()) {
+      return {
+        ok: false as const,
+        trace_id: trace,
+        message: "This request has expired. Send a message instead and we'll pick it up.",
+      };
+    }
+
+    const { error } = await supabase
+      .from("candidate_info_requests")
+      .update({
+        response: data.response,
+        status: "answered",
+        responded_at: new Date().toISOString(),
+      })
+      .eq("id", data.id)
+      .eq("status", "open");
+    if (error) return { ok: false as const, trace_id: trace, message: error.message };
+
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    await supabaseAdmin.from("audit_events").insert({
+      actor_user_id: context.userId,
+      entity_type: "candidate_info_requests",
+      entity_id: data.id,
+      action: "candidate_info_response",
+      trace_id: trace,
+    });
+    return { ok: true as const, trace_id: trace };
+  });
+
+// ─── Dashboard summary ──────────────────────────────────────────────────────
+
+export const getMyDashboard = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const supabase = context.supabase as AnyRow;
+    const cpId = await myProfileId(supabase, context.userId);
+    if (!cpId) {
+      return {
+        open_requests: 0,
+        upcoming_interviews: [] as AnyRow[],
+        unread_messages: 0,
+        document: null as AnyRow | null,
+      };
+    }
+
+    const [{ count: openCount }, { data: profile }, { count: unread }] = await Promise.all([
+      supabase
+        .from("candidate_info_requests")
+        .select("id", { count: "exact", head: true })
+        .eq("candidate_profile_id", cpId)
+        .eq("status", "open"),
+      supabase
+        .from("candidate_profiles")
+        .select("current_cv_file_id")
+        .eq("id", cpId)
+        .maybeSingle(),
+      supabase
+        .from("messages")
+        .select("id", { count: "exact", head: true })
+        .eq("recipient_context->>candidate_user_id", context.userId)
+        .is("read_at", null),
+    ]);
+
+    const { data: matches } = await supabase
+      .from("candidate_matches")
+      .select(
+        "id, application_id, positions:position_id ( title ), interviews ( id, status, scheduled_at, duration_minutes, interview_type, location, meeting_url, timezone )",
+      )
+      .eq("candidate_profile_id", cpId);
+
+    const now = Date.now();
+    const upcoming = (matches ?? [])
+      .flatMap((m: AnyRow) =>
+        asArray(m.interviews).map((i: AnyRow) => ({
+          ...i,
+          application_id: m.application_id as string,
+          role_title: m.positions?.title ?? "Role",
+        })),
+      )
+      .filter(
+        (i: AnyRow) =>
+          i.scheduled_at &&
+          i.status !== "cancelled" &&
+          new Date(i.scheduled_at).getTime() > now,
+      )
+      .sort((a: AnyRow, b: AnyRow) =>
+        String(a.scheduled_at).localeCompare(String(b.scheduled_at)),
+      )
+      .slice(0, 3);
+
+    let document: AnyRow | null = null;
+    if (profile?.current_cv_file_id) {
+      const { data: f } = await supabase
+        .from("files")
+        .select("id, filename, size, created_at, parse_state")
+        .eq("id", profile.current_cv_file_id)
+        .maybeSingle();
+      if (f) {
+        document = {
+          id: f.id,
+          filename: f.filename,
+          size: f.size,
+          uploaded_at: f.created_at,
+          received: f.parse_state !== "failed",
+        };
+      }
+    }
+
+    return {
+      open_requests: openCount ?? 0,
+      upcoming_interviews: upcoming,
+      unread_messages: unread ?? 0,
+      document,
+    };
+  });
+
+
 
 // ─── Withdraw application ───────────────────────────────────────────────────
 
