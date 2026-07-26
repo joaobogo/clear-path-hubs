@@ -22,65 +22,67 @@ const traceId = () =>
   `cd_${Math.random().toString(36).slice(2, 10)}${Date.now().toString(36)}`;
 
 // ─── Candidate-safe status vocabulary ───────────────────────────────────────
+// Canonical, candidate-facing only. Never exposes scores, rankings, client
+// identity decisions, admin notes, or internal processing states.
 export type CandidateSafeStatus =
-  | "Application received"
-  | "Information being reviewed"
+  | "Submitted"
+  | "Under review"
   | "Additional information requested"
-  | "Under consideration"
-  | "Shortlisted"
+  | "Progressing"
   | "Interview requested"
-  | "Decision pending"
-  | "Not selected for this role"
-  | "Role closed"
-  | "Withdrawn"
-  | "Hired";
+  | "Interview scheduled"
+  | "Closed"
+  | "Withdrawn";
 
 export const CANDIDATE_SAFE_STATUSES: CandidateSafeStatus[] = [
-  "Application received",
-  "Information being reviewed",
+  "Submitted",
+  "Under review",
   "Additional information requested",
-  "Under consideration",
-  "Shortlisted",
+  "Progressing",
   "Interview requested",
-  "Decision pending",
-  "Not selected for this role",
-  "Role closed",
+  "Interview scheduled",
+  "Closed",
   "Withdrawn",
-  "Hired",
 ];
 
-// Map internal state → single candidate-safe label. Never leaks scores/ranks.
+export const TERMINAL_STATUSES: CandidateSafeStatus[] = ["Closed", "Withdrawn"];
+
+// Map internal workflow state → single candidate-safe label.
 function mapStatus(input: {
   applicationStatus: string;
   positionStatus: string;
   visibleStage: string | null;
   infoRequested: boolean;
+  interviewState: "none" | "requested" | "scheduled";
 }): CandidateSafeStatus {
-  if (input.applicationStatus === "withdrawn") return "Withdrawn";
-  if (input.applicationStatus === "archived") return "Withdrawn";
-  if (input.applicationStatus === "rejected") return "Not selected for this role";
-  if (input.positionStatus === "closed") return "Role closed";
+  if (input.applicationStatus === "withdrawn" || input.applicationStatus === "archived") {
+    return "Withdrawn";
+  }
+  if (input.applicationStatus === "rejected") return "Closed";
+  if (input.positionStatus === "closed" || input.positionStatus === "filled") return "Closed";
+  if (input.infoRequested) return "Additional information requested";
+  if (input.interviewState === "scheduled") return "Interview scheduled";
+  if (input.interviewState === "requested") return "Interview requested";
   if (input.visibleStage) {
     switch (input.visibleStage) {
-      case "hired":
-        return "Hired";
-      case "offer":
-        return "Decision pending";
+      case "not_moving_forward":
+        return "Closed";
       case "interview_process":
         return "Interview requested";
+      case "hired":
+      case "offer":
       case "shortlisted":
-        return "Shortlisted";
-      case "not_moving_forward":
-        return "Not selected for this role";
+        return "Progressing";
       default:
-        return "Under consideration";
+        return "Under review";
     }
   }
-  if (input.infoRequested) return "Additional information requested";
-  if (input.applicationStatus === "ready_for_review") return "Under consideration";
-  if (input.applicationStatus === "processing") return "Information being reviewed";
-  return "Application received";
+  if (input.applicationStatus === "ready_for_review") return "Under review";
+  if (input.applicationStatus === "processing") return "Under review";
+  return "Submitted";
 }
+
+
 
 // ─── Context: link auth user to candidate profile (auto-claim by email) ─────
 
