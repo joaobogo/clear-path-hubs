@@ -730,8 +730,32 @@ export const updatePosition = createServerFn({ method: "POST" })
       after,
       trace_id,
     });
+    // One source event per meaningful change. The scope hashes the patch so a
+    // double-click (identical payload) collapses into a single event row.
+    try {
+      const { emitEventFromServer } = await import("./notifications.functions");
+      await emitEventFromServer({
+        event: "position_updated" as EventType,
+        scope: `${data.id}:updated:${stableHash(data.patch)}`,
+        organization_id: before.organization_id,
+        position_id: data.id,
+        actor_user_id: context.userId,
+        link_path: `/client/positions/${data.id}`,
+        payload: { fields: Object.keys(data.patch ?? {}) },
+      });
+    } catch (e) {
+      console.error("[updatePosition] emit failed", trace_id, e);
+    }
     return { ok: true as const, trace_id, position: after };
   });
+
+/** Deterministic short hash used to build idempotent event scopes. */
+function stableHash(value: unknown): string {
+  const json = JSON.stringify(value ?? null);
+  let h = 5381;
+  for (let i = 0; i < json.length; i++) h = ((h << 5) + h + json.charCodeAt(i)) | 0;
+  return (h >>> 0).toString(36);
+}
 
 const statusTransition = z.object({
   id: z.string().uuid(),
