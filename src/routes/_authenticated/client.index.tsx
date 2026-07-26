@@ -407,7 +407,9 @@ function PriorityActions({ queue, loading }: { queue: Priority[]; loading: boole
           <Link
             key={p.type}
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            to={p.href as any}
+            to={p.to as any}
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            search={p.search as any}
             className="group relative flex flex-col gap-3 rounded-xl border taas-bd-warning bg-card p-4 transition hover:border-primary/60 hover:shadow-sm"
           >
             <div className="flex items-center gap-2">
