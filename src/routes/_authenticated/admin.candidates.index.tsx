@@ -256,7 +256,12 @@ function CandidatesPage() {
 
       <SavedViewsBar
         surface="admin_candidates"
-        currentFilters={{ ...search, page: 1 }}
+        currentFilters={Object.fromEntries(
+          (Object.keys(FILTER_LABELS) as Array<keyof SearchState>).map((k) => [
+            k,
+            String(search[k] ?? ""),
+          ]),
+        )}
         onApply={(f) =>
           navigate({ search: { ...search, ...EMPTY, ...(f as Partial<SearchState>), page: 1 } })
         }
