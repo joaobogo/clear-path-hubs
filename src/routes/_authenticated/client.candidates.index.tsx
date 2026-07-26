@@ -269,7 +269,7 @@ function CandidatesPage() {
  }
  });
  return rows;
- }, [rowsRaw, search.q, search.location, search.stage, search.fit, search.sort, search.filter, search.minScore, search.maxScore]);
+ }, [rowsRaw, search.q, search.location, search.stage, search.fit, search.critical, search.review, search.availability, search.minExp, search.sort, search.filter, search.minScore, search.maxScore]);
 
  // Bounded pagination — clamp render to a fixed page size so no unbounded lists ship.
  const PAGE_SIZE = 24;
@@ -648,7 +648,7 @@ function CandidatesPage() {
  >
  {f.label}
  <button
- onClick={() => setF({ [f.key]: f.key === "stage" || f.key === "fit" ? "all" : "" } as never)}
+ onClick={() => setF({ [f.key]: RESET_TO_ALL.has(f.key) ? "all" : "" } as never)}
  className="text-muted-foreground hover:text-foreground"
  aria-label={`Remove ${f.label}`}
  >
