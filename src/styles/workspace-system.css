@@ -1,0 +1,242 @@
+/* ============================================================
+ * TaaSFlow Workspace System — authenticated surfaces
+ * ============================================================
+ * Extends brand-tokens.css. Defines:
+ *   1. the restrained brass accent
+ *   2. per-role density / accent themes (admin | client | candidate)
+ *   3. accessibility guarantees: focus, reduced motion, zoom, overflow
+ *   4. responsive table → card conversion
+ * No new colour literals: everything derives from --taas-* tokens.
+ * ============================================================ */
+
+:root {
+  /* Restrained brass accent. Used for emphasis and earned moments only —
+     never as a background wash and never as the sole meaning carrier. */
+  --taas-accent-brass:        oklch(0.72 0.09 85);
+  --taas-accent-brass-strong: oklch(0.60 0.09 82);
+  --taas-accent-brass-soft:   oklch(0.96 0.028 88);
+  --taas-accent-brass-line:   oklch(0.86 0.05 86);
+
+  /* Workspace rhythm. Roles override these three, nothing else. */
+  --ws-density-y: 0.625rem;   /* vertical padding inside rows/controls */
+  --ws-density-x: 0.875rem;   /* horizontal padding inside rows/controls */
+  --ws-gap: 1rem;             /* gap between blocks on a page */
+  --ws-text-body: var(--taas-text-body-md);
+  --ws-radius: var(--taas-radius-card);
+  --ws-accent: var(--taas-brand-primary);
+  --ws-accent-soft: var(--taas-brand-primary-soft);
+}
+
+.dark {
+  --taas-accent-brass:        oklch(0.80 0.09 86);
+  --taas-accent-brass-strong: oklch(0.86 0.08 88);
+  --taas-accent-brass-soft:   oklch(0.26 0.035 84);
+  --taas-accent-brass-line:   oklch(0.40 0.05 85);
+}
+
+/* ─── Role themes ────────────────────────────────────────────
+ * Same system, three postures. Set via data-workspace-role on
+ * the shell root, so every descendant inherits the rhythm.
+ * ─────────────────────────────────────────────────────────── */
+
+/* Admin — command centre: dense, squared, audit-legible. */
+[data-workspace-role="admin"] {
+  --ws-density-y: 0.4375rem;
+  --ws-density-x: 0.75rem;
+  --ws-gap: 0.75rem;
+  --ws-text-body: var(--taas-text-body-sm);
+  --ws-radius: var(--brand-radius-md);
+  --ws-accent: var(--taas-brand-navy);
+  --ws-accent-soft: var(--taas-surface-muted);
+}
+
+/* Client — decision surface: roomier, calmer, scannable. */
+[data-workspace-role="client"] {
+  --ws-density-y: 0.625rem;
+  --ws-density-x: 0.9375rem;
+  --ws-gap: 1.125rem;
+  --ws-text-body: var(--taas-text-body-md);
+  --ws-radius: var(--taas-radius-card);
+  --ws-accent: var(--taas-brand-primary);
+  --ws-accent-soft: var(--taas-brand-primary-soft);
+}
+
+/* Candidate — reassuring: generous, larger type, softer edges. */
+[data-workspace-role="candidate"] {
+  --ws-density-y: 0.8125rem;
+  --ws-density-x: 1.0625rem;
+  --ws-gap: 1.375rem;
+  --ws-text-body: var(--taas-text-body-lg);
+  --ws-radius: var(--taas-radius-surface);
+  --ws-accent: var(--taas-brand-primary);
+  --ws-accent-soft: var(--taas-brand-primary-softer);
+}
+
+/* ─── Surfaces ─────────────────────────────────────────────── */
+
+.ws-surface {
+  background-color: var(--taas-surface-card);
+  border: var(--taas-border-hairline) solid var(--taas-border-subtle);
+  border-radius: var(--ws-radius);
+  box-shadow: var(--taas-shadow-1);
+}
+
+.ws-surface-sunken {
+  background-color: var(--taas-surface-sunken);
+  border: var(--taas-border-hairline) solid var(--taas-border-subtle);
+  border-radius: var(--ws-radius);
+}
+
+/* A surface the user can act on: hover and focus both read as "clickable". */
+.ws-interactive {
+  transition:
+    background-color var(--taas-motion-base) var(--taas-ease-standard),
+    border-color var(--taas-motion-base) var(--taas-ease-standard),
+    box-shadow var(--taas-motion-base) var(--taas-ease-standard),
+    transform var(--taas-motion-base) var(--taas-ease-standard);
+  cursor: pointer;
+}
+.ws-interactive:hover {
+  border-color: var(--taas-border-strong);
+  box-shadow: var(--taas-shadow-2);
+  transform: translateY(-1px);
+}
+.ws-interactive:active {
+  transform: translateY(0);
+  background-color: var(--taas-interactive-pressed);
+}
+
+/* Earned emphasis: a single brass hairline, no glow. */
+.ws-accent-edge {
+  box-shadow: inset 3px 0 0 0 var(--taas-accent-brass);
+}
+
+/* ─── Focus: always visible, never colour-only ─────────────── */
+
+:where([data-workspace-role]) :where(a, button, [role="button"], [role="tab"],
+  input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 2px solid var(--taas-border-focus);
+  outline-offset: 2px;
+  box-shadow: var(--taas-focus-ring);
+  border-radius: var(--taas-radius-control);
+}
+
+/* ─── Responsive table → card list ──────────────────────────
+ * Applied by <DataTable>. Below `md` each row becomes a stacked
+ * card and each cell is labelled by its column header, so no
+ * horizontal scrolling and no lost context.
+ * ────────────────────────────────────────────────────────── */
+
+@media (max-width: 767px) {
+  .ws-table-responsive thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .ws-table-responsive,
+  .ws-table-responsive tbody,
+  .ws-table-responsive tr,
+  .ws-table-responsive td {
+    display: block;
+    width: 100%;
+  }
+  .ws-table-responsive tr {
+    background-color: var(--taas-surface-card);
+    border: var(--taas-border-hairline) solid var(--taas-border-subtle);
+    border-radius: var(--ws-radius);
+    padding: var(--ws-density-x);
+    margin-bottom: 0.625rem;
+  }
+  .ws-table-responsive td {
+    display: grid;
+    grid-template-columns: minmax(0, 8rem) minmax(0, 1fr);
+    align-items: baseline;
+    gap: 0.75rem;
+    border: 0;
+    padding: 0.25rem 0;
+  }
+  /* Column header echoed in front of the value. */
+  .ws-table-responsive td[data-label]::before {
+    content: attr(data-label);
+    font-size: var(--taas-text-caption);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--taas-text-tertiary);
+  }
+  /* The first cell reads as the card title. */
+  .ws-table-responsive td[data-primary="true"] {
+    grid-template-columns: minmax(0, 1fr);
+    font-size: var(--taas-text-body-md);
+    font-weight: 600;
+    padding-bottom: 0.5rem;
+  }
+  .ws-table-responsive td[data-primary="true"]::before {
+    display: none;
+  }
+}
+
+/* ─── Zoom & overflow safety ────────────────────────────────
+ * At 200% zoom the viewport behaves like a narrow phone; nothing
+ * inside the workspace may push a horizontal scrollbar.
+ * ────────────────────────────────────────────────────────── */
+
+[data-workspace-role] {
+  overflow-x: clip;
+}
+[data-workspace-role] :where(pre, table:not(.ws-table-responsive)) {
+  max-width: 100%;
+  overflow-x: auto;
+}
+[data-workspace-role] :where(h1, h2, h3, p, td, th, li, dd, dt) {
+  overflow-wrap: anywhere;
+}
+
+/* ─── Motion: explains state, never decorates ──────────────── */
+
+.ws-enter {
+  animation: ws-enter var(--taas-motion-slow) var(--taas-ease-standard) both;
+}
+@keyframes ws-enter {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: none; }
+}
+
+.ws-skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--taas-surface-muted) 25%,
+    var(--taas-interactive-hover) 37%,
+    var(--taas-surface-muted) 63%
+  );
+  background-size: 400% 100%;
+  animation: ws-shimmer 1.4s ease-in-out infinite;
+  border-radius: var(--taas-radius-control);
+}
+@keyframes ws-shimmer {
+  from { background-position: 100% 50%; }
+  to   { background-position: 0 50%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-workspace-role] *,
+  [data-workspace-role] *::before,
+  [data-workspace-role] *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+    scroll-behavior: auto !important;
+  }
+  .ws-interactive:hover {
+    transform: none;
+  }
+  .ws-skeleton {
+    animation: none;
+    background: var(--taas-surface-muted);
+  }
+}

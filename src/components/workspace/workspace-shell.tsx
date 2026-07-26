@@ -42,7 +42,14 @@ export type WorkspacePrimaryAction = {
   search?: Record<string, string | undefined>;
 };
 
+export type WorkspaceRole = "admin" | "client" | "candidate";
+
 export type WorkspaceShellProps = {
+  /**
+   * Which workspace posture to render. Drives density, accent and rhythm
+   * through `data-workspace-role` (see src/styles/workspace-system.css).
+   */
+  role?: WorkspaceRole;
   /** "Admin" | client org name | candidate name */
   contextLabel: string;
   /** Small line under contextLabel (role, email, "support view"). */
@@ -239,6 +246,7 @@ function ContextHeader({
 
 export function WorkspaceShell(props: WorkspaceShellProps) {
   const {
+    role = "client",
     contextLabel,
     contextSubLabel,
     contextKicker,
@@ -275,6 +283,7 @@ export function WorkspaceShell(props: WorkspaceShellProps) {
 
   return (
     <div
+      data-workspace-role={role}
       className="flex min-h-dvh w-full"
       style={{ background: "var(--taas-shell-bg-gradient)" }}
     >

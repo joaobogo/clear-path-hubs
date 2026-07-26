@@ -5,6 +5,7 @@
 @import "./styles/motion.css";
 @import "./styles/industry-motion.css";
 @import "./styles/density.css";
+@import "./styles/workspace-system.css";
 
 @custom-variant dark (&:is(.dark *));
 
