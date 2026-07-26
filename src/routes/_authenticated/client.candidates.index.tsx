@@ -535,17 +535,29 @@ function CandidatesPage() {
  )}
  </section>
 
- {/* Results */}
+ {/* Results — loading, failure and "none approved yet" are distinct states */}
  {isLoading && (rowsRaw as ClientCandidateDTO[]).length === 0 ? (
  <div className="grid gap-3 md:grid-cols-2">
  {Array.from({ length: 4 }).map((_, i) => (
  <Skeleton key={i} className="h-52 rounded-xl" />
  ))}
  </div>
+ ) : isError && (rowsRaw as ClientCandidateDTO[]).length === 0 ? (
+ <div className="rounded-xl border taas-bd-warning taas-bg-warning-soft p-10 text-center">
+ <div className="text-base font-medium">We couldn't load your candidates.</div>
+ <p className="mt-1 text-sm text-muted-foreground">
+ This is a temporary problem on our side — your data is unchanged.
+ </p>
+ <Button size="sm" variant="outline" className="mt-4" onClick={() => refetch()}>
+ Try again
+ </Button>
+ </div>
  ) : filtered.length === 0 ? (
- <EmptyState hasCandidates={(rowsRaw as ClientCandidateDTO[]).length > 0} onClear={clearFilters} />
- ) : filtered.length === 0 ? (
- <EmptyState hasCandidates={(rowsRaw as ClientCandidateDTO[]).length > 0} onClear={clearFilters} />
+ <EmptyState
+ hasCandidates={(rowsRaw as ClientCandidateDTO[]).length > 0}
+ activeFilters={activeFilters}
+ onClear={clearFilters}
+ />
  ) : search.view === "list" ? (
  <CompactList
  rows={paged}
