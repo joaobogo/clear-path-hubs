@@ -559,6 +559,27 @@ function IntakePage() {
                   {state.jobDescription.trim().length} characters
                 </p>
               </Field>
+            </div>
+          )}
+
+          {/* ================= STEP 3: LOCATION & WORK MODEL ================= */}
+          {step === 3 && (
+            <div className="space-y-6">
+              <Field label="Work Arrangement" error={errors.workModel} required>
+                <Select
+                  value={state.workModel}
+                  onValueChange={(v) => set("workModel", v as FormState["workModel"])}
+                >
+                  <SelectTrigger data-field="workModel">
+                    <SelectValue placeholder="Select…" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="remote">Remote</SelectItem>
+                    <SelectItem value="hybrid">Hybrid</SelectItem>
+                    <SelectItem value="onsite">Onsite</SelectItem>
+                  </SelectContent>
+                </Select>
+              </Field>
 
               <SectionHeader
                 title="Geographic Requirements"
