@@ -1,0 +1,245 @@
+// Scheduling coordination surface: candidate responses, org scheduling
+// configuration, and canonical interview status history.
+import { createServerFn } from "@tanstack/react-start";
+import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { z } from "zod";
+import { isValidTimezone } from "./scheduling";
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type AnyRow = any;
+
+/** Interviews the signed-in candidate is a party to. Contact-safe fields only. */
+export const listMyInterviews = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { data: profile } = await context.supabase
+      .from("candidate_profiles")
+      .select("id")
+      .eq("user_id", context.userId)
+      .maybeSingle();
+    if (!profile) return { items: [] };
+
+    const { data: matches } = await context.supabase
+      .from("candidate_matches")
+      .select("id, application_id")
+      .eq("candidate_profile_id", (profile as AnyRow).id);
+    const ids = ((matches as AnyRow[]) ?? []).map((m) => m.id as string);
+    if (!ids.length) return { items: [] };
+    const appByMatch = new Map(
+      ((matches as AnyRow[]) ?? []).map((m) => [m.id as string, m.application_id as string | null]),
+    );
+
+    const { data, error } = await context.supabase
+      .from("interviews")
+      .select(
+        "id, candidate_match_id, status, interview_type, scheduled_at, timezone, duration_minutes, meeting_url, location, proposed_times, availability_expires_at, candidate_response, calendly_url, scheduling_method, positions:position_id(title)",
+      )
+      .in("candidate_match_id", ids)
+      .order("scheduled_at", { ascending: true, nullsFirst: false });
+    if (error) throw new Error(error.message);
+
+    return {
+      items: ((data as AnyRow[]) ?? []).map((r) => ({
+        id: r.id as string,
+        application_id: appByMatch.get(r.candidate_match_id as string) ?? null,
+        status: r.status as string,
+        interview_type: r.interview_type as string,
+        scheduled_at: r.scheduled_at as string | null,
+        timezone: (r.timezone as string | null) ?? "UTC",
+        duration_minutes: (r.duration_minutes as number | null) ?? 60,
+        meeting_url: (r.meeting_url as string | null) ?? null,
+        location: (r.location as string | null) ?? null,
+        proposed_times: (r.proposed_times as string[] | null) ?? [],
+        availability_expires_at: (r.availability_expires_at as string | null) ?? null,
+        candidate_response: (r.candidate_response as string | null) ?? null,
+        calendly_url: (r.calendly_url as string | null) ?? null,
+        scheduling_method: (r.scheduling_method as string | null) ?? "manual",
+        position_title: (r.positions?.title as string) ?? "Position",
+      })),
+    };
+  });
+
+/**
+ * Candidate replies to a request. Accepting a specific slot records the
+ * preference only — the coordinator still confirms the canonical time, so the
+ * candidate never sees a meeting that was never actually booked.
+ */
+export const respondToInterview = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((raw) =>
+    z
+      .object({
+        interviewId: z.string().uuid(),
+        response: z.enum(["accepted", "declined", "reschedule_requested"]),
+        preferredTime: z.string().datetime().optional(),
+        note: z.string().max(1000).optional(),
+      })
+      .parse(raw),
+  )
+  .handler(async ({ context, data }) => {
+    const { data: profile } = await context.supabase
+      .from("candidate_profiles")
+      .select("id")
+      .eq("user_id", context.userId)
+      .maybeSingle();
+    if (!profile) throw new Error("Forbidden");
+
+    const { data: iv } = await context.supabase
+      .from("interviews")
+      .select(
+        "id, organization_id, candidate_match_id, status, proposed_times, availability_expires_at",
+      )
+      .eq("id", data.interviewId)
+      .maybeSingle();
+    if (!iv) throw new Error("not_found");
+
+    const { data: match } = await context.supabase
+      .from("candidate_matches")
+      .select("id")
+      .eq("id", (iv as AnyRow).candidate_match_id)
+      .eq("candidate_profile_id", (profile as AnyRow).id)
+      .maybeSingle();
+    if (!match) throw new Error("Forbidden");
+
+    if (["cancelled", "completed"].includes((iv as AnyRow).status)) {
+      throw new Error("interview_closed");
+    }
+    const expiry = (iv as AnyRow).availability_expires_at as string | null;
+    if (expiry && new Date(expiry).getTime() < Date.now()) {
+      throw new Error("availability_expired");
+    }
+    if (data.preferredTime) {
+      const slots = ((iv as AnyRow).proposed_times as string[] | null) ?? [];
+      if (!slots.includes(data.preferredTime)) throw new Error("slot_not_offered");
+      if (new Date(data.preferredTime).getTime() < Date.now()) throw new Error("slot_in_past");
+    }
+
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin
+      .from("interviews")
+      .update({
+        candidate_response: data.response,
+        candidate_response_at: new Date().toISOString(),
+        candidate_selected_time: data.preferredTime ?? null,
+        candidate_note: data.note ?? null,
+        status: (iv as AnyRow).status === "requested" ? "scheduling" : (iv as AnyRow).status,
+      })
+      .eq("id", data.interviewId);
+
+    if (error) throw new Error(error.message);
+
+    // Coordinators get one notification per distinct response.
+    try {
+      const { emitInterviewEvent } = await import("./interview-events.server");
+      await emitInterviewEvent({
+        interviewId: data.interviewId,
+        event: "interview_requested",
+        actorUserId: context.userId,
+        scopeSuffix: `response:${data.response}:${data.preferredTime ?? "none"}`,
+      });
+    } catch (e) {
+      console.error("[respondToInterview] emit failed", e);
+    }
+    return { ok: true };
+  });
+
+/** Canonical status history for one interview, for any authorized viewer. */
+export const getInterviewHistory = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((raw) => z.object({ interviewId: z.string().uuid() }).parse(raw))
+  .handler(async ({ context, data }) => {
+    // RLS on interviews decides visibility; history is keyed off that read.
+    const { data: iv } = await context.supabase
+      .from("interviews")
+      .select("id")
+      .eq("id", data.interviewId)
+      .maybeSingle();
+    if (!iv) return { items: [] };
+    const { data: rows, error } = await context.supabase
+      .from("interview_status_history")
+      .select("id, from_status, to_status, changed_at, reason, scheduled_at")
+      .eq("interview_id", data.interviewId)
+      .order("changed_at", { ascending: true });
+    if (error) throw new Error(error.message);
+    return { items: (rows as AnyRow[]) ?? [] };
+  });
+
+export const getSchedulingSettings = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((raw) => z.object({ orgId: z.string().uuid() }).parse(raw))
+  .handler(async ({ context, data }) => {
+    const { data: row, error } = await context.supabase
+      .from("org_scheduling_settings")
+      .select(
+        "organization_id, scheduling_method, calendly_url, default_timezone, availability_window_days, require_admin_coordination",
+      )
+      .eq("organization_id", data.orgId)
+      .maybeSingle();
+    if (error) throw new Error(error.message);
+    return {
+      settings:
+        (row as AnyRow) ?? {
+          organization_id: data.orgId,
+          scheduling_method: "manual",
+          calendly_url: null,
+          default_timezone: "UTC",
+          availability_window_days: 14,
+          require_admin_coordination: true,
+        },
+
+    };
+  });
+
+export const saveSchedulingSettings = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((raw) =>
+    z
+      .object({
+        orgId: z.string().uuid(),
+        schedulingMethod: z.enum(["manual", "calendly"]),
+        calendlyUrl: z
+          .string()
+          .trim()
+          .url()
+          .max(500)
+          .refine((u) => u.startsWith("https://calendly.com/"), "must_be_calendly_url")
+          .nullable()
+          .optional(),
+        defaultTimezone: z.string().min(1).max(80).optional(),
+        availabilityWindowDays: z.number().int().min(1).max(90),
+        requireAdminCoordination: z.boolean(),
+      })
+      .parse(raw),
+  )
+  .handler(async ({ context, data }) => {
+    if (data.defaultTimezone && !isValidTimezone(data.defaultTimezone)) {
+      throw new Error("invalid_timezone");
+    }
+    // Calendly can only be selected when a real URL is configured.
+    if (data.schedulingMethod === "calendly" && !data.calendlyUrl) {
+      throw new Error("calendly_url_required");
+    }
+    const { data: canEdit } = await context.supabase.rpc("is_org_editor", {
+      _user: context.userId,
+      _org: data.orgId,
+    });
+    if (!canEdit) throw new Error("Forbidden");
+
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin.from("org_scheduling_settings").upsert(
+      {
+        organization_id: data.orgId,
+        scheduling_method: data.schedulingMethod,
+        calendly_url: data.calendlyUrl ?? null,
+        default_timezone: data.defaultTimezone ?? "UTC",
+
+        availability_window_days: data.availabilityWindowDays,
+        require_admin_coordination: data.requireAdminCoordination,
+        updated_at: new Date().toISOString(),
+        updated_by: context.userId,
+      },
+      { onConflict: "organization_id" },
+    );
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });

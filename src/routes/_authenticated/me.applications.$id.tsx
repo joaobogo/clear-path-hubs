@@ -17,7 +17,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
-import { CalendarClock, FileText, Link2, MapPin } from "lucide-react";
+import { FileText } from "lucide-react";
+import { CandidateInterviews } from "@/components/candidate/CandidateInterviews";
 
 export const Route = createFileRoute("/_authenticated/me/applications/$id")({
   head: () => ({
@@ -150,7 +151,6 @@ function TrackPage() {
 
   const openRequests = data.info_requests.filter((r) => r.status === "open");
   const answeredRequests = data.info_requests.filter((r) => r.status !== "open");
-  const liveInterviews = data.interviews.filter((i) => i.status !== "cancelled");
 
   return (
     <main className="mx-auto max-w-3xl px-4 sm:px-6 py-8">
@@ -273,44 +273,8 @@ function TrackPage() {
         </section>
       ) : null}
 
-      {liveInterviews.length > 0 ? (
-        <section className="rounded-lg border bg-card p-5 mb-6">
-          <h2 className="text-sm font-medium mb-3 flex items-center gap-2">
-            <CalendarClock className="h-4 w-4 text-primary" /> Interviews
-          </h2>
-          <ul className="space-y-3">
-            {liveInterviews.map((i) => (
-              <li key={i.id} className="rounded-md border p-4 text-sm">
-                <p className="font-medium">
-                  {i.scheduled_at
-                    ? new Date(i.scheduled_at).toLocaleString()
-                    : "Time to be confirmed"}
-                  {i.timezone ? ` · ${i.timezone}` : ""}
-                </p>
-                <p className="mt-1 text-xs text-muted-foreground">
-                  {i.interview_type ?? "Interview"}
-                  {i.duration_minutes ? ` · ${i.duration_minutes} minutes` : ""}
-                </p>
-                {i.location ? (
-                  <p className="mt-2 flex items-center gap-1.5 text-xs text-muted-foreground">
-                    <MapPin className="h-3.5 w-3.5" /> {i.location}
-                  </p>
-                ) : null}
-                {i.meeting_url ? (
-                  <a
-                    href={i.meeting_url}
-                    target="_blank"
-                    rel="noreferrer noopener"
-                    className="mt-2 inline-flex items-center gap-1.5 text-xs text-primary underline underline-offset-2"
-                  >
-                    <Link2 className="h-3.5 w-3.5" /> Join link
-                  </a>
-                ) : null}
-              </li>
-            ))}
-          </ul>
-        </section>
-      ) : null}
+      <CandidateInterviews applicationId={id} />
+
 
       <section className="rounded-lg border bg-card p-5 mb-6">
         <h2 className="text-sm font-medium mb-3 flex items-center gap-2">

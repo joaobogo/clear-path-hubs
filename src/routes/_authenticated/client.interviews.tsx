@@ -776,15 +776,46 @@ function DetailDialog({
  </ul>
  )}
  </DetailRow>
- {interview.proposed_times.length > 0 && interview.status !== "scheduled" ? (
- <DetailRow icon={<CalendarClock className="h-4 w-4" />} label="Proposed times">
- <ul className="space-y-0.5">
- {interview.proposed_times.map((t, i) => (
- <li key={i}>{formatWhen(t, interview.timezone)}</li>
- ))}
- </ul>
- </DetailRow>
- ) : null}
+{interview.proposed_times.length > 0 && interview.status !== "scheduled" ? (
+<DetailRow icon={<CalendarClock className="h-4 w-4" />} label="Proposed times">
+<ul className="space-y-0.5">
+{interview.proposed_times.map((t, i) => (
+<li key={i}>
+{formatWhen(t, interview.timezone)}
+{interview.candidate_selected_time === t ? (
+<span className="ml-2 text-xs font-medium text-primary">candidate's pick</span>
+) : null}
+</li>
+))}
+</ul>
+{interview.availability_expires_at ? (
+<p className="mt-1 text-xs text-muted-foreground">
+{new Date(interview.availability_expires_at).getTime() < Date.now()
+? "These times have expired — propose new ones."
+: `Valid until ${formatWhen(interview.availability_expires_at, interview.timezone)}`}
+</p>
+) : null}
+</DetailRow>
+) : null}
+{interview.candidate_response ? (
+<DetailRow icon={<Users2 className="h-4 w-4" />} label="Candidate reply">
+<p className="capitalize">{interview.candidate_response.replace(/_/g, " ")}</p>
+{interview.candidate_note ? (
+<p className="mt-1 whitespace-pre-wrap text-muted-foreground">{interview.candidate_note}</p>
+) : null}
+{interview.candidate_response_at ? (
+<p className="mt-1 text-xs text-muted-foreground">
+{new Date(interview.candidate_response_at).toLocaleString()}
+</p>
+) : null}
+</DetailRow>
+) : null}
+{interview.reschedule_count > 0 ? (
+<DetailRow icon={<Clock className="h-4 w-4" />} label="Rescheduled">
+{interview.reschedule_count} time{interview.reschedule_count === 1 ? "" : "s"}
+</DetailRow>
+) : null}
+
  {interview.notes ? (
  <DetailRow icon={<Circle className="h-4 w-4" />} label="Notes">
  <p className="whitespace-pre-wrap">{interview.notes}</p>

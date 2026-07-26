@@ -5,6 +5,8 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
+import { isValidTimezone } from "./scheduling";
+
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
@@ -146,6 +148,14 @@ export type InterviewDTO = {
   created_at: string;
   updated_at: string;
   next_action: string;
+  candidate_response: string | null;
+  candidate_response_at: string | null;
+  candidate_selected_time: string | null;
+  candidate_note: string | null;
+  availability_expires_at: string | null;
+  reschedule_count: number;
+  scheduling_method: string;
+  calendly_url: string | null;
   candidate: { id: string; name: string; email: string | null } | null;
   position: { id: string; title: string; reference: string | null } | null;
 };
@@ -186,6 +196,14 @@ function toDTO(row: AnyRow, candidate: AnyRow | null, position: AnyRow | null): 
     created_at: row.created_at,
     updated_at: row.updated_at,
     next_action: nextAction,
+    candidate_response: row.candidate_response ?? null,
+    candidate_response_at: row.candidate_response_at ?? null,
+    candidate_selected_time: row.candidate_selected_time ?? null,
+    candidate_note: row.candidate_note ?? null,
+    availability_expires_at: row.availability_expires_at ?? null,
+    reschedule_count: Number(row.reschedule_count ?? 0),
+    scheduling_method: (row.scheduling_method as string) ?? "manual",
+    calendly_url: row.calendly_url ?? null,
     candidate: candidate
       ? {
           id: candidate.id as string,
@@ -295,6 +313,15 @@ export const requestInterview = createServerFn({ method: "POST" })
     await assertEditor(context.supabase, context.userId, data.orgId);
     const match = await loadMatch(context.supabase, data.orgId, data.matchId);
 
+    if (!isValidTimezone(data.timezone)) throw new Error("invalid_timezone");
+
+    // Never accept a slot in the past — the request would be dead on arrival.
+    const now = Date.now();
+    const times = Array.from(new Set(data.proposedTimes)).sort();
+    if (times.some((t) => new Date(t).getTime() < now + 60_000)) {
+      throw new Error("proposed_time_in_past");
+    }
+
     const { data: existing } = await context.supabase
       .from("interviews")
       .select("id")
@@ -302,6 +329,21 @@ export const requestInterview = createServerFn({ method: "POST" })
       .in("status", ["requested", "scheduling", "scheduled"])
       .maybeSingle();
     if (existing) throw new Error("interview_already_active");
+
+    // Real configured scheduling settings only — no invented Calendly links.
+    const { data: settings } = await context.supabase
+      .from("org_scheduling_settings")
+      .select("scheduling_method, calendly_url, require_admin_coordination, availability_window_days")
+      .eq("organization_id", data.orgId)
+      .maybeSingle();
+    const s = (settings as AnyRow) ?? null;
+    const method = s?.calendly_url && s?.scheduling_method === "calendly" ? "calendly" : "manual";
+    const windowDays = Math.max(1, Number(s?.availability_window_days ?? 14));
+    // Availability expires at the last proposed slot or the configured window,
+    // whichever comes first — expired requests stop being actionable.
+    const lastSlot = new Date(times[times.length - 1]).getTime();
+    const windowEnd = now + windowDays * 86_400_000;
+    const expiresAt = new Date(Math.min(lastSlot, windowEnd)).toISOString();
 
     const { data: inserted, error } = await context.supabase
       .from("interviews")
@@ -314,10 +356,15 @@ export const requestInterview = createServerFn({ method: "POST" })
         interview_type: data.interviewType,
         timezone: data.timezone,
         duration_minutes: data.durationMinutes,
-        proposed_times: data.proposedTimes as never,
+        proposed_times: times as never,
         participants: data.participants as never,
         notes: data.notes ?? null,
         requested_at: new Date().toISOString(),
+        requested_by_user_id: context.userId,
+        scheduling_method: method,
+        calendly_url: method === "calendly" ? s.calendly_url : null,
+        availability_expires_at: expiresAt,
+        admin_coordination_required: s?.require_admin_coordination ?? true,
         created_by: context.userId,
         updated_by: context.userId,
       })
@@ -337,8 +384,20 @@ export const requestInterview = createServerFn({ method: "POST" })
       trace_id: trace,
     });
 
+    try {
+      const { emitInterviewEvent } = await import("./interview-events.server");
+      await emitInterviewEvent({
+        interviewId: (inserted as AnyRow).id as string,
+        event: "interview_requested",
+        actorUserId: context.userId,
+      });
+    } catch (e) {
+      console.error("[requestInterview] emit failed", trace, e);
+    }
+
     return { ok: true, id: (inserted as AnyRow).id as string, trace_id: trace };
   });
+
 
 export const proposeInterviewTimes = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -413,15 +472,40 @@ export const confirmInterviewTime = createServerFn({ method: "POST" })
     if (!["requested", "scheduling", "scheduled"].includes(prev.status)) {
       throw new Error(`invalid_transition:${prev.status}->scheduled`);
     }
+    if (!isValidTimezone(data.timezone)) throw new Error("invalid_timezone");
     const scheduledAt = new Date(data.scheduledAt);
     if (scheduledAt.getTime() < Date.now() - 60 * 1000) {
       throw new Error("scheduled_in_past");
     }
+    const isReschedule = prev.status === "scheduled";
+    // Confirming the identical time again is a no-op, not a new event.
+    if (isReschedule && prev.scheduled_at === scheduledAt.toISOString()) {
+      return { ok: true, trace_id: trace, unchanged: true };
+    }
+    const expiry = (prev as AnyRow).availability_expires_at as string | null;
+    if (!isReschedule && expiry && new Date(expiry).getTime() < Date.now()) {
+      throw new Error("availability_expired");
+    }
+
+    // Guard against two live meetings for the same candidate.
+    const { data: clash } = await context.supabase
+      .from("interviews")
+      .select("id")
+      .eq("candidate_match_id", prev.candidate_match_id)
+      .eq("status", "scheduled")
+      .neq("id", data.id)
+      .maybeSingle();
+    if (clash) throw new Error("duplicate_scheduled_interview");
+
     const { error } = await context.supabase
       .from("interviews")
       .update({
         status: "scheduled",
         scheduled_at: scheduledAt.toISOString(),
+        previous_scheduled_at: isReschedule ? prev.scheduled_at : null,
+        reschedule_count: isReschedule
+          ? Number((prev as AnyRow).reschedule_count ?? 0) + 1
+          : Number((prev as AnyRow).reschedule_count ?? 0),
         timezone: data.timezone,
         duration_minutes: data.durationMinutes,
         meeting_url: data.meetingUrl ?? null,
@@ -434,62 +518,28 @@ export const confirmInterviewTime = createServerFn({ method: "POST" })
 
     await writeAudit(context.supabase, {
       actor: context.userId,
-      action: prev.status === "scheduled" ? "interview.rescheduled" : "interview.scheduled",
+      action: isReschedule ? "interview.rescheduled" : "interview.scheduled",
       entity_id: data.id,
       organization_id: data.orgId,
       before: { status: prev.status, scheduled_at: prev.scheduled_at },
       after: { status: "scheduled", scheduled_at: scheduledAt.toISOString() },
       trace_id: trace,
     });
-    // Emit interview_scheduled so client/admin/candidate dashboards refresh.
+
     try {
-      const { emitEventFromServer } = await import("./notifications.functions");
-      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-      const { data: match } = await supabaseAdmin
-        .from("candidate_matches")
-        .select("id, application_id, position_id, candidate_profile_id, candidate_profiles:candidate_profile_id(user_id)")
-        .eq("id", prev.candidate_match_id ?? "")
-        .maybeSingle();
-      const cpUser = (match?.candidate_profiles as { user_id: string | null } | null)?.user_id ?? null;
-      const recipients = cpUser
-        ? [{
-            user_id: cpUser,
-            audience: "candidate" as const,
-            link_path: `/me/applications/${match?.application_id ?? ""}`,
-          }]
-        : [];
-      // Org fanout (client + admin audiences)
-      await emitEventFromServer({
+      const { emitInterviewEvent } = await import("./interview-events.server");
+      await emitInterviewEvent({
+        interviewId: data.id,
         event: "interview_scheduled",
-        scope: `${data.id}:${scheduledAt.toISOString()}`,
-        organization_id: data.orgId,
-        position_id: match?.position_id ?? null,
-        application_id: match?.application_id ?? null,
-        candidate_match_id: match?.id ?? null,
-        candidate_profile_id: match?.candidate_profile_id ?? null,
-        actor_user_id: context.userId,
-        link_path: `/client/interviews`,
-        payload: { scheduled_at: scheduledAt.toISOString(), timezone: data.timezone },
+        actorUserId: context.userId,
+        scopeSuffix: scheduledAt.toISOString(),
       });
-      // Explicit candidate delivery (auto-fanout only reaches org members).
-      if (recipients.length) {
-        await emitEventFromServer({
-          event: "interview_scheduled",
-          scope: `${data.id}:${scheduledAt.toISOString()}:candidate`,
-          organization_id: data.orgId,
-          position_id: match?.position_id ?? null,
-          application_id: match?.application_id ?? null,
-          candidate_match_id: match?.id ?? null,
-          candidate_profile_id: match?.candidate_profile_id ?? null,
-          actor_user_id: context.userId,
-          recipients,
-        });
-      }
     } catch (e) {
       console.error("[confirmInterviewTime] emit failed", trace, e);
     }
-    return { ok: true, trace_id: trace };
+    return { ok: true, trace_id: trace, rescheduled: isReschedule };
   });
+
 
 export const cancelInterview = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -531,7 +581,19 @@ export const cancelInterview = createServerFn({ method: "POST" })
       after: { status: "cancelled", reason: data.reason ?? null },
       trace_id: trace,
     });
+    try {
+      const { emitInterviewEvent } = await import("./interview-events.server");
+      await emitInterviewEvent({
+        interviewId: data.id,
+        event: "interview_cancelled",
+        actorUserId: context.userId,
+        scopeSuffix: prev.scheduled_at ?? prev.status,
+      });
+    } catch (e) {
+      console.error("[cancelInterview] emit failed", trace, e);
+    }
     return { ok: true, trace_id: trace };
+
   });
 
 export const markInterviewCompleted = createServerFn({ method: "POST" })
@@ -574,7 +636,18 @@ export const markInterviewCompleted = createServerFn({ method: "POST" })
       after: { status: "completed" },
       trace_id: trace,
     });
+    try {
+      const { emitInterviewEvent } = await import("./interview-events.server");
+      await emitInterviewEvent({
+        interviewId: data.id,
+        event: "interview_completed",
+        actorUserId: context.userId,
+      });
+    } catch (e) {
+      console.error("[markInterviewCompleted] emit failed", trace, e);
+    }
     return { ok: true, trace_id: trace };
+
   });
 
 export type SchedulableCandidate = {

@@ -3296,11 +3296,89 @@ export type Database = {
           },
         ]
       }
+      interview_status_history: {
+        Row: {
+          actor_role: string | null
+          actor_user_id: string | null
+          created_at: string
+          from_status: string | null
+          id: string
+          interview_id: string
+          organization_id: string
+          reason: string | null
+          scheduled_at: string | null
+          timezone: string | null
+          to_status: string
+        }
+        Insert: {
+          actor_role?: string | null
+          actor_user_id?: string | null
+          created_at?: string
+          from_status?: string | null
+          id?: string
+          interview_id: string
+          organization_id: string
+          reason?: string | null
+          scheduled_at?: string | null
+          timezone?: string | null
+          to_status: string
+        }
+        Update: {
+          actor_role?: string | null
+          actor_user_id?: string | null
+          created_at?: string
+          from_status?: string | null
+          id?: string
+          interview_id?: string
+          organization_id?: string
+          reason?: string | null
+          scheduled_at?: string | null
+          timezone?: string | null
+          to_status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "interview_status_history_interview_id_fkey"
+            columns: ["interview_id"]
+            isOneToOne: false
+            referencedRelation: "interviews"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "interview_status_history_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "admin_clients_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "interview_status_history_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "interview_status_history_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_portfolio_rollup"
+            referencedColumns: ["organization_id"]
+          },
+        ]
+      }
       interviews: {
         Row: {
+          admin_coordination_required: boolean
+          availability_expires_at: string | null
+          calendly_url: string | null
           cancel_reason: string | null
           cancelled_at: string | null
           candidate_match_id: string
+          candidate_note: string | null
+          candidate_response: string
+          candidate_response_at: string | null
+          candidate_selected_time: string | null
           candidate_submission_id: string | null
           completed_at: string | null
           created_at: string
@@ -3324,18 +3402,29 @@ export type Database = {
           organization_id: string
           participants: Json
           position_id: string
+          previous_scheduled_at: string | null
           proposed_times: Json
           requested_at: string
+          requested_by_user_id: string | null
+          reschedule_count: number
           scheduled_at: string | null
+          scheduling_method: string
           status: Database["public"]["Enums"]["interview_status"]
           timezone: string | null
           updated_at: string
           updated_by: string | null
         }
         Insert: {
+          admin_coordination_required?: boolean
+          availability_expires_at?: string | null
+          calendly_url?: string | null
           cancel_reason?: string | null
           cancelled_at?: string | null
           candidate_match_id: string
+          candidate_note?: string | null
+          candidate_response?: string
+          candidate_response_at?: string | null
+          candidate_selected_time?: string | null
           candidate_submission_id?: string | null
           completed_at?: string | null
           created_at?: string
@@ -3359,18 +3448,29 @@ export type Database = {
           organization_id: string
           participants?: Json
           position_id: string
+          previous_scheduled_at?: string | null
           proposed_times?: Json
           requested_at?: string
+          requested_by_user_id?: string | null
+          reschedule_count?: number
           scheduled_at?: string | null
+          scheduling_method?: string
           status?: Database["public"]["Enums"]["interview_status"]
           timezone?: string | null
           updated_at?: string
           updated_by?: string | null
         }
         Update: {
+          admin_coordination_required?: boolean
+          availability_expires_at?: string | null
+          calendly_url?: string | null
           cancel_reason?: string | null
           cancelled_at?: string | null
           candidate_match_id?: string
+          candidate_note?: string | null
+          candidate_response?: string
+          candidate_response_at?: string | null
+          candidate_selected_time?: string | null
           candidate_submission_id?: string | null
           completed_at?: string | null
           created_at?: string
@@ -3394,9 +3494,13 @@ export type Database = {
           organization_id?: string
           participants?: Json
           position_id?: string
+          previous_scheduled_at?: string | null
           proposed_times?: Json
           requested_at?: string
+          requested_by_user_id?: string | null
+          reschedule_count?: number
           scheduled_at?: string | null
+          scheduling_method?: string
           status?: Database["public"]["Enums"]["interview_status"]
           timezone?: string | null
           updated_at?: string
@@ -4480,35 +4584,47 @@ export type Database = {
       }
       notification_deliveries: {
         Row: {
+          attempt_count: number
           channel: Database["public"]["Enums"]["delivery_channel"]
           created_at: string
           error_code: string | null
           error_message: string | null
           id: string
+          idempotency_key: string | null
+          last_attempt_at: string
           notification_id: string
           provider_message_id: string | null
+          recipient_address: string | null
           status: Database["public"]["Enums"]["delivery_status"]
           updated_at: string
         }
         Insert: {
+          attempt_count?: number
           channel: Database["public"]["Enums"]["delivery_channel"]
           created_at?: string
           error_code?: string | null
           error_message?: string | null
           id?: string
+          idempotency_key?: string | null
+          last_attempt_at?: string
           notification_id: string
           provider_message_id?: string | null
+          recipient_address?: string | null
           status?: Database["public"]["Enums"]["delivery_status"]
           updated_at?: string
         }
         Update: {
+          attempt_count?: number
           channel?: Database["public"]["Enums"]["delivery_channel"]
           created_at?: string
           error_code?: string | null
           error_message?: string | null
           id?: string
+          idempotency_key?: string | null
+          last_attempt_at?: string
           notification_id?: string
           provider_message_id?: string | null
+          recipient_address?: string | null
           status?: Database["public"]["Enums"]["delivery_status"]
           updated_at?: string
         }
@@ -4819,6 +4935,64 @@ export type Database = {
             foreignKeyName: "notifications_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "v_portfolio_rollup"
+            referencedColumns: ["organization_id"]
+          },
+        ]
+      }
+      org_scheduling_settings: {
+        Row: {
+          availability_window_days: number
+          calendly_url: string | null
+          created_at: string
+          default_timezone: string
+          organization_id: string
+          require_admin_coordination: boolean
+          scheduling_method: string
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          availability_window_days?: number
+          calendly_url?: string | null
+          created_at?: string
+          default_timezone?: string
+          organization_id: string
+          require_admin_coordination?: boolean
+          scheduling_method?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          availability_window_days?: number
+          calendly_url?: string | null
+          created_at?: string
+          default_timezone?: string
+          organization_id?: string
+          require_admin_coordination?: boolean
+          scheduling_method?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "org_scheduling_settings_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: true
+            referencedRelation: "admin_clients_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "org_scheduling_settings_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: true
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "org_scheduling_settings_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: true
             referencedRelation: "v_portfolio_rollup"
             referencedColumns: ["organization_id"]
           },
