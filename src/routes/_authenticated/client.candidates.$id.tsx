@@ -405,7 +405,9 @@ function CandidateHeader({
  </a>
  </Button>
  )}
+ <DownloadCvButton matchId={candidate.match_id} mode="preview" />
  <DownloadCvButton matchId={candidate.match_id} />
+
  {readOnly && (
  <Badge variant="secondary" className="hidden sm:inline-flex">
  Preview

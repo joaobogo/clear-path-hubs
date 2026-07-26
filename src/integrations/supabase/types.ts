@@ -2436,10 +2436,18 @@ export type Database = {
           mime_type: string | null
           ocr_used: boolean
           owner_user_id: string | null
+          page_count: number | null
+          parse_error: string | null
+          parse_error_code: string | null
+          parse_started_at: string | null
+          parse_state: string
+          parser: string | null
+          parser_version: string | null
           size: number | null
           storage_bucket: string
           storage_path: string
           test_run_id: string | null
+          upload_source: string | null
         }
         Insert: {
           candidate_profile_id?: string | null
@@ -2466,10 +2474,18 @@ export type Database = {
           mime_type?: string | null
           ocr_used?: boolean
           owner_user_id?: string | null
+          page_count?: number | null
+          parse_error?: string | null
+          parse_error_code?: string | null
+          parse_started_at?: string | null
+          parse_state?: string
+          parser?: string | null
+          parser_version?: string | null
           size?: number | null
           storage_bucket: string
           storage_path: string
           test_run_id?: string | null
+          upload_source?: string | null
         }
         Update: {
           candidate_profile_id?: string | null
@@ -2496,10 +2512,18 @@ export type Database = {
           mime_type?: string | null
           ocr_used?: boolean
           owner_user_id?: string | null
+          page_count?: number | null
+          parse_error?: string | null
+          parse_error_code?: string | null
+          parse_started_at?: string | null
+          parse_state?: string
+          parser?: string | null
+          parser_version?: string | null
           size?: number | null
           storage_bucket?: string
           storage_path?: string
           test_run_id?: string | null
+          upload_source?: string | null
         }
         Relationships: [
           {

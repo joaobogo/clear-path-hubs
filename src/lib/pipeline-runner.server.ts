@@ -160,7 +160,7 @@ async function loadCtx(s: Any, matchId: string) {
   ]);
   const file = profRes.data?.current_cv_file_id
     ? (await s.from("files")
-        .select("id,storage_bucket,storage_path,mime_type,filename,extracted_text,ocr_used,extraction_attempts")
+        .select("id,storage_bucket,storage_path,mime_type,filename,extracted_text,ocr_used,extraction_attempts,parse_state")
         .eq("id", profRes.data.current_cv_file_id).maybeSingle()).data
     : null;
   return { match, position: posRes.data, profile: profRes.data, file, answers: (ansRes.data ?? []) as Any[] };
@@ -225,25 +225,48 @@ export async function runPipelineForMatch(matchId: string, opts: { force?: boole
     }
 
     await setState(s, matchId, "parsing", { trace_id });
+    // File-level state machine: uploaded → queued → parsing → parsed |
+    // review_required | failed. Retries are idempotent: re-running simply
+    // re-enters `parsing` on the same canonical file, which is never mutated.
+    const fileId = ctx.file.id;
+    const setFile = async (patch: Record<string, unknown>) => {
+      await s.from("files").update(patch).eq("id", fileId);
+    };
     let cvText = ctx.file.extracted_text ?? "";
     if (!cvText || cvText.length < 200) {
+      await setFile({
+        parse_state: "parsing",
+        parse_started_at: new Date().toISOString(),
+        parse_error: null,
+        parse_error_code: null,
+      });
       const dl = await s.storage.from(ctx.file.storage_bucket).download(ctx.file.storage_path);
       if (dl.error || !dl.data) {
         const msg = dl.error?.message ?? "download_failed";
+        await setFile({ parse_state: "failed", parse_error_code: "storage_unreadable", parse_error: msg });
         await setState(s, matchId, "failed", { trace_id, code: "cv_unreadable", message: msg });
         await recordJob(s, matchId, "parse", "failed", trace_id, { code: "cv_unreadable", message: msg });
         return { match_id: matchId, trace_id, final_state: "failed", steps: [{ step: "parse", ok: false, note: msg }] };
       }
       const bytes = new Uint8Array(await dl.data.arrayBuffer());
       const ext = await extractCvText(bytes, ctx.file.mime_type ?? "", ctx.file.filename ?? "");
-      await s.from("files").update({
+      // Provenance: which extractor produced this text, when, and how many tries.
+      await setFile({
         extracted_text: ext.text,
         extraction_completed_at: new Date().toISOString(),
         extraction_attempts: (ctx.file.extraction_attempts ?? 0) + 1,
-      }).eq("id", ctx.file.id);
+        parser: ext.extractor,
+        parser_version: ENGINE_VERSION,
+        page_count: ext.page_count ?? null,
+      });
       cvText = ext.text;
 
       if (ext.needs_ocr) {
+        await setFile({
+          parse_state: "review_required",
+          parse_error_code: "text_layer_missing",
+          parse_error: ext.reason ?? "Text layer missing — OCR needed.",
+        });
         await setState(s, matchId, "ocr_required", {
           trace_id, code: "cv_unreadable",
           message: ext.reason ?? "Text layer missing — OCR needed.",
@@ -252,6 +275,11 @@ export async function runPipelineForMatch(matchId: string, opts: { force?: boole
         return { match_id: matchId, trace_id, final_state: "ocr_required", steps: [{ step: "parse", ok: true, note: "ocr_required" }] };
       }
       if (!cvText || cvText.length < 60) {
+        await setFile({
+          parse_state: "failed",
+          parse_error_code: "extract_empty",
+          parse_error: ext.reason ?? `Unable to extract text (${ext.extractor}).`,
+        });
         await setState(s, matchId, "failed", {
           trace_id, code: "cv_unreadable",
           message: ext.reason ?? `Unable to extract text (${ext.extractor}).`,
@@ -261,9 +289,13 @@ export async function runPipelineForMatch(matchId: string, opts: { force?: boole
         });
         return { match_id: matchId, trace_id, final_state: "failed", steps: [{ step: "parse", ok: false, note: ext.reason }] };
       }
+      await setFile({ parse_state: "parsed", parse_error: null, parse_error_code: null });
+    } else if (ctx.file.parse_state !== "parsed") {
+      await setFile({ parse_state: "parsed", parse_error: null, parse_error_code: null });
     }
     await setState(s, matchId, "parsed", { trace_id });
     await recordJob(s, matchId, "parse", "completed", trace_id);
+
     steps.push({ step: "parse", ok: true, note: `${cvText.length} chars` });
 
     // ─── HYDRATE ──────────────────────────────────────────────────────────────

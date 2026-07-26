@@ -143,7 +143,7 @@ function ApplyPage() {
     return null;
   };
 
-  const onFile = (f: File | null) => {
+  const onFile = async (f: File | null) => {
     setCvError(null);
     setCvFile(null);
     if (!f) return;
@@ -152,8 +152,23 @@ function ApplyPage() {
       setCvError(err);
       return;
     }
+    // Same signature/structure checks the server runs — catch renamed Word docs,
+    // images and corrupt PDFs before the applicant waits on an upload.
+    try {
+      const bytes = new Uint8Array(await f.arrayBuffer());
+      const { validateCv } = await import("@/lib/cv-validation");
+      const res = await validateCv(bytes, f.name, f.type || "application/pdf");
+      if (!res.ok) {
+        setCvError(res.message ?? CV_MESSAGES.unknown);
+        return;
+      }
+    } catch {
+      setCvError(CV_MESSAGES.corrupt);
+      return;
+    }
     setCvFile(f);
   };
+
 
   const setAnswer = (qid: string, v: AnswerValue) =>
     setAnswers((a) => ({ ...a, [qid]: v }));
