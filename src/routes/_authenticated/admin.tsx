@@ -12,6 +12,12 @@ import {
   Inbox,
   CalendarRange,
   Bot,
+  Bell,
+  ClipboardCheck,
+  HeartPulse,
+  Scale,
+  ShieldCheck,
+  UserCog,
 } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
@@ -48,17 +54,41 @@ export const Route = createFileRoute("/_authenticated/admin")({
 });
 
 const NAV: WorkspaceNavItem[] = [
-  { to: "/admin", label: "Overview", icon: LayoutDashboard, exact: true },
-  { to: "/admin/intake", label: "Intake", icon: Inbox },
-  { to: "/admin/clients", label: "Clients", icon: Building2 },
-  { to: "/admin/positions", label: "Positions", icon: Briefcase },
-  { to: "/admin/candidates", label: "Candidates", icon: Users },
-  { to: "/admin/publish", label: "Publish Desk", icon: Send },
-  { to: "/admin/operations", label: "Operations", icon: Activity },
-  { to: "/admin/wbr", label: "Weekly Review", icon: CalendarRange },
-  { to: "/admin/copilot", label: "Copilot", icon: Bot },
-  { to: "/admin/messages", label: "Messages", icon: MessageSquare },
-  { to: "/admin/settings", label: "Settings", icon: Settings },
+  {
+    to: "/admin",
+    label: "Overview",
+    icon: LayoutDashboard,
+    exact: true,
+    group: "Command",
+    hint: "Urgent queue and workload",
+  },
+
+  { to: "/admin/intake", label: "Intake", icon: Inbox, group: "Delivery", hint: "New client requests" },
+  { to: "/admin/clients", label: "Clients", icon: Building2, group: "Delivery", hint: "Organizations and seats" },
+  { to: "/admin/positions", label: "Positions", icon: Briefcase, group: "Delivery", hint: "Requisitions and jobs" },
+  { to: "/admin/candidates", label: "Candidates", icon: Users, group: "Delivery", hint: "Applications and screening" },
+  { to: "/admin/publish", label: "Publish Desk", icon: Send, group: "Delivery", hint: "Release candidates to clients" },
+
+  {
+    to: "/admin/scoring/orphans",
+    label: "Scoring Review",
+    icon: ClipboardCheck,
+    group: "Quality",
+    hint: "Unmatched and unresolved score runs",
+  },
+  { to: "/admin/business-rules", label: "Business Rules", icon: Scale, group: "Quality", hint: "Thresholds and overrides" },
+  { to: "/admin/qa-report", label: "QA Report", icon: ShieldCheck, group: "Quality", hint: "Release checks" },
+
+  { to: "/admin/messages", label: "Messages", icon: MessageSquare, group: "Comms" },
+  { to: "/admin/notifications", label: "Notifications", icon: Bell, group: "Comms" },
+  { to: "/admin/copilot", label: "Copilot", icon: Bot, group: "Comms", hint: "Admin AI assistant" },
+
+  { to: "/admin/wbr", label: "Weekly Review", icon: CalendarRange, group: "Insight" },
+  { to: "/admin/operations", label: "Operations", icon: Activity, group: "Insight", hint: "Pipeline and job health" },
+  { to: "/admin/health", label: "System Health", icon: HeartPulse, group: "Insight" },
+
+  { to: "/admin/team", label: "Team & Access", icon: UserCog, group: "Platform" },
+  { to: "/admin/settings", label: "Settings", icon: Settings, group: "Platform" },
 ];
 
 
