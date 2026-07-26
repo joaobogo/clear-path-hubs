@@ -779,9 +779,16 @@ export function PositionEditWizard({
             </div>
           )}
 
-          {/* STEP 5 — Review */}
+          {/* STEP 5 — Locations, ownership, evaluation priorities */}
           {step === 5 && (
+            <RequisitionEditor positionId={state.id} onDirtyChange={setReqDirty} />
+          )}
+
+          {/* STEP 6 — Review */}
+          {step === 6 && (
             <div className="space-y-3 text-sm">
+              <JobQualityPanel positionId={state.id} onJumpToStep={setStep} />
+
               <ReviewBlock title="Role">
                 <div>
                   {state.title || "—"} · {state.work_model || "—"} · {state.employment_type || "—"}
