@@ -79,6 +79,8 @@ function fmtErr(code: string | null): string {
 
 function Overview() {
   const qc = useQueryClient();
+  const search = Route.useSearch();
+  const navigate = useNavigate({ from: "/admin" });
   const { data, isFetching } = useSuspenseQuery({
     queryKey: ["admin-overview"],
     queryFn: () => getAdminOverview(),
@@ -86,8 +88,30 @@ function Overview() {
     staleTime: 30_000,
   });
 
+  const filters = {
+    org_id: search.org || undefined,
+    position_id: search.position || undefined,
+    owner_id: search.owner || undefined,
+    status: search.status || undefined,
+    from: search.from ? new Date(search.from).toISOString() : undefined,
+    to: search.to ? new Date(`${search.to}T23:59:59`).toISOString() : undefined,
+  };
+  const command = useQuery({
+    queryKey: ["admin-command", filters],
+    queryFn: () => getCommandCenter({ data: filters }),
+    staleTime: 30_000,
+  });
+
+  const setFilter = (key: keyof typeof search, value: string) =>
+    navigate({
+      search: (prev) => ({ ...prev, [key]: value, ...(key === "org" ? { position: "" } : {}) }),
+    });
+  const clearFilters = () =>
+    navigate({ search: { org: "", position: "", owner: "", status: "", from: "", to: "" } });
+
   const L = data.lists;
   const totalAction =
+
     L.candidates_pending_review.length +
     L.candidates_ready_to_publish.length +
     L.positions_review.length +
