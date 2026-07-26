@@ -318,7 +318,7 @@ function OverviewPage() {
                 id="role-focus"
                 value={selectedRole}
                 onChange={(e) =>
-                  navigate({ search: (prev: Any) => ({ ...prev, role: e.target.value || undefined }) })
+                  navigate({ search: ((prev: Any) => ({ ...prev, role: e.target.value || undefined })) as never })
                 }
                 className="min-h-10 rounded-md border bg-card px-3 text-sm"
               >
@@ -331,7 +331,7 @@ function OverviewPage() {
               </select>
               {selectedRole && (
                 <button
-                  onClick={() => navigate({ search: (prev: Any) => ({ ...prev, role: undefined }) })}
+                  onClick={() => navigate({ search: ((prev: Any) => ({ ...prev, role: undefined })) as never })}
                   className="text-xs font-medium text-primary hover:underline"
                 >
                   Clear
