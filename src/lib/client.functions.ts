@@ -1332,6 +1332,18 @@ export const removeClientMember = createServerFn({ method: "POST" })
       .eq("organization_id", data.orgId)
       .eq("user_id", data.userId);
     if (error) throw new Error(error.message);
+    try {
+      const { emitEventFromServer } = await import("./notifications.functions");
+      await emitEventFromServer({
+        event: "member_removed",
+        scope: `member:${data.orgId}:${data.userId}:removed`,
+        organization_id: data.orgId,
+        actor_user_id: context.userId,
+        link_path: "/client/settings",
+      });
+    } catch (e) {
+      console.error("[removeClientMember] emit failed", e);
+    }
     return { ok: true };
   });
 
