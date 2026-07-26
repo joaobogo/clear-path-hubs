@@ -127,12 +127,25 @@ function MyApplicationsPage() {
  {a.work_model ? ` · ${a.work_model}` : ""}
  </CardDescription>
  </div>
+ <div className="flex shrink-0 flex-col items-end gap-1">
  <Badge className={STATUS_TONE[a.status]} variant="outline">
  {a.status}
  </Badge>
+ {a.info_requested ? (
+ <span className="text-[10px] uppercase tracking-wide taas-fg-warning">
+ Reply needed
+ </span>
+ ) : null}
+ {a.next_interview_at ? (
+ <span className="text-[10px] text-muted-foreground">
+ {new Date(a.next_interview_at).toLocaleDateString()}
+ </span>
+ ) : null}
+ </div>
  </div>
  </CardHeader>
  <CardContent className="pt-0">
+
  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs text-muted-foreground mb-3">
  <div>
  <div className="uppercase tracking-wide">Applied</div>
