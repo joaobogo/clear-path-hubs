@@ -1,6 +1,15 @@
 User-agent: *
 Allow: /
 Disallow: /admin
+Disallow: /client
+Disallow: /me
+Disallow: /boardroom
+Disallow: /login
+Disallow: /auth
+Disallow: /signup
+Disallow: /share/
+Disallow: /shortlist/
+Disallow: /api/
 Disallow: /_authenticated/
 Disallow: /reset-password
 Disallow: /access-denied
