@@ -57,16 +57,26 @@ type Priority = {
   type: "offer_pending" | "interview_scheduled" | "new_delivered";
   count: number;
   label: string;
-  href: string;
+  to: string;
+  search?: Record<string, string>;
   icon: React.ReactNode;
   cta: string;
 };
-function buildPriorityQueue(actions: Any[]): Priority[] {
+function buildPriorityQueue(
+  actions: Any[],
+  scope: { org?: string; position?: string } = {},
+): Priority[] {
   const offers = actions.find((a) => a.type === "offer_pending");
   const interviews = actions.find((a) => a.type === "interview_scheduled");
   const deliveries = actions.filter((a) => a.type === "new_delivered");
   const deliveryTotal = deliveries.reduce((s, a) => s + (a.count ?? 0), 0);
   const deliveryRoles = deliveries.length;
+  // Every metric links to the matching filtered candidate view, scoped to the
+  // same org + role the overview is currently showing.
+  const base: Record<string, string> = {
+    ...(scope.org ? { org: scope.org } : {}),
+    ...(scope.position ? { position: scope.position } : {}),
+  };
 
   const q: Priority[] = [];
   if (offers && offers.count > 0) {
@@ -74,7 +84,8 @@ function buildPriorityQueue(actions: Any[]): Priority[] {
       type: "offer_pending",
       count: offers.count,
       label: `${offers.count} offer${offers.count === 1 ? "" : "s"} awaiting response`,
-      href: "/client/candidates?stage=offer",
+      to: "/client/candidates",
+      search: { ...base, stage: "offer" },
       icon: <Handshake className="h-4 w-4" />,
       cta: "Follow up",
     });
@@ -84,7 +95,8 @@ function buildPriorityQueue(actions: Any[]): Priority[] {
       type: "interview_scheduled",
       count: interviews.count,
       label: `${interviews.count} interview${interviews.count === 1 ? "" : "s"} to confirm or debrief`,
-      href: "/client/interviews",
+      to: "/client/interviews",
+      search: scope.org ? { org: scope.org } : undefined,
       icon: <CalendarClock className="h-4 w-4" />,
       cta: "Open interviews",
     });
@@ -97,7 +109,8 @@ function buildPriorityQueue(actions: Any[]): Priority[] {
         deliveryRoles === 1
           ? deliveries[0].label
           : `${deliveryTotal} new candidate${deliveryTotal === 1 ? "" : "s"} to review across ${deliveryRoles} role${deliveryRoles === 1 ? "" : "s"}`,
-      href: "/client/candidates?stage=delivered",
+      to: "/client/candidates",
+      search: { ...base, stage: "delivered" },
       icon: <Users className="h-4 w-4" />,
       cta: "Review",
     });
