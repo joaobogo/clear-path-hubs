@@ -140,6 +140,14 @@ export const Route = createFileRoute("/api/public/intake")({
         }
         const data = parsed.data;
 
+        // Honeypot: bots fill hidden fields. Respond like a success, persist nothing.
+        if ((data.companyFax ?? "").trim() !== "") {
+          return Response.json({ ok: true, trace_id: traceId, intakeId: null, skipped: true });
+        }
+
+        const data2 = data;
+        void data2;
+
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
         // ---------- Idempotency ----------
