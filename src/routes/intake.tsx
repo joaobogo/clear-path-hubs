@@ -264,6 +264,7 @@ function IntakePage() {
   const [submitting, setSubmitting] = useState(false);
   const idemRef = useRef<string>("");
   const firstErrRef = useRef<HTMLElement | null>(null);
+  const hpRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     try {
