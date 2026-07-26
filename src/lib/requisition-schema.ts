@@ -374,7 +374,7 @@ export function assessJobQuality(i: QualityInput): {
   const needsTz = i.locations.some((l) => l.work_model === "remote");
   if (needsTz && !i.primary_timezone.trim() && i.timezone_overlap_hours === null)
     add({ id: "timezone", severity: "degrades", label: "Timezone anchor or overlap", why: "Remote hiring across countries fails on collaboration hours more often than on skills.", step: 2 });
-  if (!i.headcount || i.headcount === "")
+  if (!i.headcount)
     add({ id: "headcount", severity: "degrades", label: "Hiring volume", why: "Volume drives pipeline sizing and delivery commitments.", step: 1 });
   if (!i.owner_user_id)
     add({ id: "owner", severity: "degrades", label: "Responsible admin", why: "Unowned requisitions stall — nobody is accountable for delivery.", step: 5 });
