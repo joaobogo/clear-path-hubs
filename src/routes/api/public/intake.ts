@@ -93,6 +93,8 @@ const intakePayloadSchema = z
     password: z.string().min(8).max(128).optional(),
     source: z.string().trim().max(80).default("public_form"),
     submittedAt: z.string().datetime().optional(),
+    // Spam trap — must stay empty for real submissions.
+    companyFax: z.string().max(200).optional().or(z.literal("")),
   })
   .refine(
     (v) => {
