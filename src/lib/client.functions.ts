@@ -937,36 +937,73 @@ const ACTION_TO_STAGE: Partial<Record<string, MatchStage>> = {
   hire: "hired",
 };
 
+export type ClientActionKey =
+  | "shortlist"
+  | "request_interview"
+  | "request_more_information"
+  | "hold"
+  | "request_contact_release"
+  | "not_moving_forward"
+  | "submit_feedback"
+  | "offer"
+  | "hire";
+
+const CLIENT_ACTION_KEYS = [
+  "shortlist",
+  "request_interview",
+  "request_more_information",
+  "hold",
+  "request_contact_release",
+  "not_moving_forward",
+  "submit_feedback",
+  "offer",
+  "hire",
+] as const;
+
+// Actions that must carry a structured reason, so admins always know *why*.
+const REASON_REQUIRED: ReadonlySet<string> = new Set([
+  "not_moving_forward",
+  "request_more_information",
+  "hold",
+]);
+
 export const clientAction = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator(
     (input: {
       orgId: string;
       matchId: string;
-      action:
-        | "shortlist"
-        | "request_interview"
-        | "request_more_information"
-        | "not_moving_forward"
-        | "submit_feedback"
-        | "offer"
-        | "hire";
+      action: ClientActionKey;
       feedback?: string;
+      reasonCode?: string;
+      signals?: string[];
+      rating?: number;
     }) =>
       z
         .object({
           orgId: z.string().uuid(),
           matchId: z.string().uuid(),
-          action: z.enum([
-            "shortlist",
-            "request_interview",
-            "request_more_information",
-            "not_moving_forward",
-            "submit_feedback",
-            "offer",
-            "hire",
-          ]),
+          action: z.enum(CLIENT_ACTION_KEYS),
           feedback: z.string().max(4000).optional(),
+          reasonCode: z.string().max(64).optional(),
+          signals: z.array(z.string().max(64)).max(12).optional(),
+          rating: z.number().int().min(1).max(5).optional(),
+        })
+        .superRefine((v, ctx) => {
+          if (REASON_REQUIRED.has(v.action) && !v.reasonCode) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              path: ["reasonCode"],
+              message: "A reason is required for this action.",
+            });
+          }
+          if (v.reasonCode === "other" && !(v.feedback ?? "").trim()) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              path: ["feedback"],
+              message: "Please add a short explanation.",
+            });
+          }
         })
         .parse(input),
   )
@@ -1006,6 +1043,9 @@ export const clientAction = createServerFn({ method: "POST" })
       shortlist: "shortlist",
       request_interview: "request_interview",
       request_more_information: "request_information",
+      hold: "hold",
+      request_contact_release: "request_contact_release",
+      submit_feedback: "feedback",
       not_moving_forward: "not_moving_forward",
       offer: "offer",
       hire: "hire",
@@ -1016,7 +1056,11 @@ export const clientAction = createServerFn({ method: "POST" })
         candidate_match_id: data.matchId,
         organization_id: data.orgId,
         decision: decision as never,
-        feedback: data.feedback ?? null,
+        feedback: data.feedback?.trim() || null,
+        reason_code: data.reasonCode ?? null,
+        details: (data.signals?.length || data.rating
+          ? { signals: data.signals ?? [], rating: data.rating ?? null }
+          : null) as never,
         actor_user_id: context.userId,
       });
     }
@@ -1028,12 +1072,59 @@ export const clientAction = createServerFn({ method: "POST" })
       entity_id: data.matchId,
       organization_id: data.orgId,
       before: { stage: match.stage },
-      after: { stage: nextStage ?? match.stage, feedback: data.feedback ?? null },
+      after: {
+        stage: nextStage ?? match.stage,
+        feedback: data.feedback ?? null,
+        reason_code: data.reasonCode ?? null,
+      },
       trace_id: trace,
     });
 
+    // Notify the TaaSFlow team so every client action lands on the admin side.
+    try {
+      const { emitEventFromServer } = await import("./notifications.functions");
+      const actionToEvent: Partial<Record<string, string>> = {
+        shortlist: "client_shortlisted",
+        request_interview: "interview_requested",
+        request_more_information: "client_information_requested",
+        hold: "client_hold",
+        request_contact_release: "contact_release_requested",
+        submit_feedback: "client_feedback_submitted",
+        not_moving_forward: "client_declined",
+        hire: "candidate_hired",
+      };
+      const evt = actionToEvent[data.action];
+      if (evt) {
+        const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+        const { data: staff } = await supabaseAdmin
+          .from("memberships")
+          .select("user_id")
+          .in("role", ["platform_admin", "operations"])
+          .eq("status", "active");
+        await emitEventFromServer({
+          event: evt as never,
+          scope: `${data.matchId}:${data.action}:${Date.now()}`,
+          organization_id: data.orgId,
+          position_id: (match.position_id as string) ?? null,
+          application_id: (match.application_id as string) ?? null,
+          candidate_match_id: data.matchId,
+          candidate_profile_id: (match.candidate_profile_id as string) ?? null,
+          actor_user_id: context.userId,
+          payload: { reason_code: data.reasonCode ?? null },
+          recipients: (staff ?? []).map((s) => ({
+            user_id: s.user_id as string,
+            audience: "admin" as const,
+            link_path: `/admin/candidates`,
+          })),
+        });
+      }
+    } catch (emitErr) {
+      console.error("[clientAction] emit failed", trace, emitErr);
+    }
+
     return { ok: true, trace_id: trace };
   });
+
 
 // ─── Messages ───────────────────────────────────────────────────────────────
 // Threads are org-scoped; we key them on the organization id itself so a client

@@ -59,6 +59,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import {
+  DecisionDialog,
+  type DecisionPayload,
+} from "@/components/client/decision-dialog";
+import { reasonLabel } from "@/lib/client-decision-reasons";
+import {
   TagSilverMedalistDialog,
   SilverMedalistBadge,
 } from "@/components/client/tag-silver-medalist-dialog";
@@ -86,6 +91,8 @@ type ActionKey =
  | "shortlist"
  | "request_interview"
  | "request_more_information"
+ | "hold"
+ | "request_contact_release"
  | "submit_feedback"
  | "not_moving_forward"
  | "offer"
@@ -93,38 +100,56 @@ type ActionKey =
 
 type ActionDef = { key: ActionKey; label: string };
 
+const COMMON_MORE: ActionDef[] = [
+ { key: "request_more_information", label: "Request more information" },
+ { key: "hold", label: "Put on hold" },
+ { key: "submit_feedback", label: "Add feedback" },
+ { key: "request_contact_release", label: "Request contact details" },
+];
+
 const ACTIONS_BY_STAGE: Record<MatchStage, { primary: ActionDef | null; more: ActionDef[] }> = {
  delivered: {
  primary: { key: "shortlist", label: "Shortlist" },
  more: [
  { key: "request_interview", label: "Request interview" },
- { key: "request_more_information", label: "Request more information" },
- { key: "not_moving_forward", label: "Not moving forward" },
+ ...COMMON_MORE,
+ { key: "not_moving_forward", label: "Decline for this role" },
  ],
  },
  shortlisted: {
  primary: { key: "request_interview", label: "Request interview" },
- more: [
- { key: "request_more_information", label: "Request more information" },
- { key: "not_moving_forward", label: "Not moving forward" },
- ],
+ more: [...COMMON_MORE, { key: "not_moving_forward", label: "Decline for this role" }],
  },
  interview_process: {
  primary: { key: "offer", label: "Extend offer" },
- more: [
- { key: "submit_feedback", label: "Submit feedback" },
- { key: "not_moving_forward", label: "Not moving forward" },
- ],
+ more: [...COMMON_MORE, { key: "not_moving_forward", label: "Decline for this role" }],
  },
  offer: {
  primary: { key: "hire", label: "Mark hired" },
- more: [{ key: "not_moving_forward", label: "Not moving forward" }],
+ more: [
+ { key: "submit_feedback", label: "Add feedback" },
+ { key: "not_moving_forward", label: "Decline for this role" },
+ ],
  },
- hired: { primary: null, more: [{ key: "submit_feedback", label: "Submit feedback" }] },
+ hired: { primary: null, more: [{ key: "submit_feedback", label: "Add feedback" }] },
  not_moving_forward: {
  primary: { key: "shortlist", label: "Re-open — shortlist" },
- more: [],
+ more: [{ key: "submit_feedback", label: "Add feedback" }],
  },
+};
+
+
+// Plain-English names for recorded decisions.
+const DECISION_LABELS: Record<string, string> = {
+ shortlist: "Shortlisted",
+ request_interview: "Interview requested",
+ request_information: "More information requested",
+ hold: "Placed on hold",
+ request_contact_release: "Contact details requested",
+ feedback: "Feedback added",
+ not_moving_forward: "Declined for this role",
+ offer: "Offer extended",
+ hire: "Hired",
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -156,11 +181,23 @@ function CandidateDetailPage() {
  enabled: !!orgId,
  });
 
+ const [dialogAction, setDialogAction] = useState<ActionKey | null>(null);
+
  const act = useMutation({
- mutationFn: (a: ActionKey) =>
- actionFn({ data: { orgId: orgId!, matchId: id, action: a } }),
+ mutationFn: (p: DecisionPayload) =>
+ actionFn({
+ data: {
+ orgId: orgId!,
+ matchId: id,
+ action: p.action,
+ feedback: p.feedback,
+ reasonCode: p.reasonCode,
+ signals: p.signals,
+ },
+ }),
  onSuccess: () => {
- toast.success("Recorded");
+ toast.success("Recorded — the TaaSFlow team has been notified.");
+ setDialogAction(null);
  qc.invalidateQueries({ queryKey: ["client-candidate", orgId, id] });
  qc.invalidateQueries({ queryKey: ["client-overview", orgId] });
  qc.invalidateQueries({ queryKey: ["client-positions", orgId] });
@@ -168,6 +205,7 @@ function CandidateDetailPage() {
  },
  onError: (e: Error) => toast.error(e.message.replace(/^Error: /, "")),
  });
+
 
  if (!orgId || detailPending || (data === undefined && detailFetching)) {
  return <div className="p-8 text-sm text-muted-foreground">Loading candidate…</div>;
@@ -281,7 +319,7 @@ function CandidateDetailPage() {
               actions={actions}
               readOnly={readOnly}
               pending={act.isPending}
-              onAct={(k) => act.mutate(k)}
+              onAct={(k) => setDialogAction(k)}
               stage={candidate.stage}
               matchId={candidate.match_id}
             />
@@ -303,9 +341,22 @@ function CandidateDetailPage() {
         <MobileActionBar
           actions={actions}
           pending={act.isPending}
-          onAct={(k) => act.mutate(k)}
+          onAct={(k) => setDialogAction(k)}
         />
       )}
+
+      {/* Every consequential decision is confirmed, reasoned, and logged. */}
+      <DecisionDialog
+        action={dialogAction}
+        open={dialogAction !== null}
+        pending={act.isPending}
+        onOpenChange={(v) => !v && setDialogAction(null)}
+        onConfirm={(payload) => {
+          if (act.isPending) return; // guard against double submission
+          act.mutate(payload);
+        }}
+      />
+
     </main>
   );
 }
@@ -988,23 +1039,36 @@ function ActivitySection({
  {decisions.length > 0 && (
  <div>
  <h3 className="mb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
- Decisions
+ Your team&apos;s decisions and feedback
  </h3>
  <ul className="space-y-2 text-sm">
  {decisions.map((d) => (
  <li key={d.id} className="border-b pb-2 last:border-b-0">
  <div className="flex items-center justify-between">
- <span className="font-medium capitalize">
- {String(d.decision).replace(/_/g, " ")}
- </span>
+ <span className="font-medium">{DECISION_LABELS[String(d.decision)] ?? String(d.decision).replace(/_/g, " ")}</span>
  <span className="text-xs text-muted-foreground">
  {new Date(d.created_at).toLocaleString()}
  </span>
  </div>
+ {d.reason_code && (
+ <div className="mt-1 text-xs text-muted-foreground">
+ Reason: {reasonLabel(String(d.reason_code))}
+ </div>
+ )}
+ {Array.isArray(d.details?.signals) && d.details.signals.length > 0 && (
+ <div className="mt-1 flex flex-wrap gap-1">
+ {(d.details.signals as string[]).map((s) => (
+ <Badge key={s} variant="secondary" className="text-[10px]">
+ {s.replace(/_/g, " ")}
+ </Badge>
+ ))}
+ </div>
+ )}
  {d.feedback && (
  <div className="mt-1 text-muted-foreground">{d.feedback}</div>
  )}
  </li>
+
  ))}
  </ul>
  </div>

@@ -1699,6 +1699,7 @@ export type Database = {
           candidate_match_id: string
           created_at: string
           decision: Database["public"]["Enums"]["client_decision_type"]
+          details: Json | null
           feedback: string | null
           id: string
           legacy_source_id: string | null
@@ -1711,6 +1712,7 @@ export type Database = {
             | null
           migration_version: string | null
           organization_id: string
+          reason_code: string | null
           updated_at: string
         }
         Insert: {
@@ -1718,6 +1720,7 @@ export type Database = {
           candidate_match_id: string
           created_at?: string
           decision: Database["public"]["Enums"]["client_decision_type"]
+          details?: Json | null
           feedback?: string | null
           id?: string
           legacy_source_id?: string | null
@@ -1730,6 +1733,7 @@ export type Database = {
             | null
           migration_version?: string | null
           organization_id: string
+          reason_code?: string | null
           updated_at?: string
         }
         Update: {
@@ -1737,6 +1741,7 @@ export type Database = {
           candidate_match_id?: string
           created_at?: string
           decision?: Database["public"]["Enums"]["client_decision_type"]
+          details?: Json | null
           feedback?: string | null
           id?: string
           legacy_source_id?: string | null
@@ -1749,6 +1754,7 @@ export type Database = {
             | null
           migration_version?: string | null
           organization_id?: string
+          reason_code?: string | null
           updated_at?: string
         }
         Relationships: [
@@ -9910,6 +9916,9 @@ export type Database = {
         | "not_moving_forward"
         | "hire"
         | "offer"
+        | "hold"
+        | "feedback"
+        | "request_contact_release"
       client_permission:
         | "view_candidates"
         | "add_feedback"
@@ -9972,6 +9981,10 @@ export type Database = {
         | "document_added"
         | "member_invited"
         | "member_removed"
+        | "client_hold"
+        | "client_declined"
+        | "client_information_requested"
+        | "contact_release_requested"
       file_status: "uploading" | "ready" | "failed" | "deleted"
       hire_close_reason:
         | "candidate_declined"
@@ -10321,6 +10334,9 @@ export const Constants = {
         "not_moving_forward",
         "hire",
         "offer",
+        "hold",
+        "feedback",
+        "request_contact_release",
       ],
       client_permission: [
         "view_candidates",
@@ -10388,6 +10404,10 @@ export const Constants = {
         "document_added",
         "member_invited",
         "member_removed",
+        "client_hold",
+        "client_declined",
+        "client_information_requested",
+        "contact_release_requested",
       ],
       file_status: ["uploading", "ready", "failed", "deleted"],
       hire_close_reason: [

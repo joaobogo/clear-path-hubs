@@ -34,6 +34,10 @@ export const EVENT_TYPES = [
   "document_added",
   "member_invited",
   "member_removed",
+  "client_hold",
+  "client_declined",
+  "client_information_requested",
+  "contact_release_requested",
 ] as const;
 
 export type EventType = (typeof EVENT_TYPES)[number];
@@ -56,6 +60,10 @@ export const ADMIN_COPY: Partial<Record<EventType, CopyEntry>> = {
   message_sent: { title: "New client message" },
   cv_parse_failed: { title: "CV parsing failed", body: "A CV could not be parsed and needs attention." },
   screening_needs_review: { title: "Screening needs review", body: "A screening result requires a human decision." },
+  client_hold: { title: "Client placed a candidate on hold" },
+  client_declined: { title: "Client declined a candidate", body: "A client decided not to move forward." },
+  client_information_requested: { title: "Client requested more information" },
+  contact_release_requested: { title: "Client requested contact details", body: "Review and release contact details if approved." },
 };
 
 export const CLIENT_COPY: Partial<Record<EventType, CopyEntry>> = {
@@ -129,6 +137,10 @@ export const ACTIVITY_LABELS: Record<EventType, string> = {
   document_added: "Document added",
   member_invited: "Team member invited",
   member_removed: "Team member removed",
+  client_hold: "Candidate placed on hold",
+  client_declined: "Candidate declined for this role",
+  client_information_requested: "More information requested",
+  contact_release_requested: "Contact details requested",
 };
 
 /**
@@ -165,6 +177,10 @@ const CLIENT_ACTIVITY: readonly EventType[] = [
   "document_added",
   "member_invited",
   "member_removed",
+  "client_hold",
+  "client_declined",
+  "client_information_requested",
+  "contact_release_requested",
 ];
 
 const CANDIDATE_ACTIVITY: readonly EventType[] = [
