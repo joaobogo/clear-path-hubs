@@ -908,6 +908,19 @@ export const moveMatchStage = createServerFn({ method: "POST" })
           recipients: [...adminRecipients, ...candidateRecipients],
         });
       }
+      // Always record the canonical status change itself, even when it has no
+      // notification copy. Scope keys on the exact transition, so replaying the
+      // same move never produces a second activity row.
+      await emitEventFromServer({
+        event: "candidate_stage_changed",
+        scope: `${data.matchId}:${from}->${data.toStage}`,
+        organization_id: data.orgId,
+        position_id: (match.position_id as string) ?? null,
+        application_id: (match.application_id as string) ?? null,
+        candidate_match_id: data.matchId,
+        actor_user_id: context.userId,
+        payload: { from, to: data.toStage },
+      });
     } catch (emitErr) {
       console.error("[moveMatchStage] emit failed", trace, emitErr);
     }
