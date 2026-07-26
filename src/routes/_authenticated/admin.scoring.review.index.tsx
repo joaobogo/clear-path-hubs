@@ -24,6 +24,8 @@ const searchSchema = z.object({
   page: fallback(z.number().int(), 1).default(1),
 });
 
+type SearchState = z.infer<typeof searchSchema>;
+
 const PAGE_SIZE = 25;
 
 export const Route = createFileRoute("/_authenticated/admin/scoring/review/")({
@@ -100,7 +102,7 @@ function ReviewCenter() {
                 key={id}
                 type="button"
                 onClick={() =>
-                  navigate({ search: (p) => ({ ...p, queue: id, page: 1 }) })
+                  navigate({ search: (p: SearchState) => ({ ...p, queue: id, page: 1 }) })
                 }
                 aria-current={active ? "true" : undefined}
                 className={`flex w-full items-start justify-between gap-2 rounded-lg border px-3 py-2 text-left text-sm transition ${
@@ -135,7 +137,7 @@ function ReviewCenter() {
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
                     navigate({
-                      search: (p) => ({ ...p, q: (e.target as HTMLInputElement).value, page: 1 }),
+                      search: (p: SearchState) => ({ ...p, q: (e.target as HTMLInputElement).value, page: 1 }),
                     });
                   }
                 }}
@@ -146,7 +148,7 @@ function ReviewCenter() {
               className="h-9 rounded-md border bg-background px-2 text-sm"
               value={sort}
               onChange={(e) =>
-                navigate({ search: (p) => ({ ...p, sort: e.target.value, page: 1 }) })
+                navigate({ search: (p: SearchState) => ({ ...p, sort: e.target.value, page: 1 }) })
               }
             >
               <option value="oldest_first">Oldest waiting first</option>
@@ -159,7 +161,7 @@ function ReviewCenter() {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => navigate({ search: (p) => ({ ...p, q: "", page: 1 }) })}
+                onClick={() => navigate({ search: (p: SearchState) => ({ ...p, q: "", page: 1 }) })}
               >
                 <X className="mr-1 size-3.5" /> Clear search
               </Button>
@@ -225,7 +227,7 @@ function ReviewCenter() {
                 variant="outline"
                 size="sm"
                 disabled={page <= 1}
-                onClick={() => navigate({ search: (p) => ({ ...p, page: page - 1 }) })}
+                onClick={() => navigate({ search: (p: SearchState) => ({ ...p, page: page - 1 }) })}
               >
                 Previous
               </Button>
@@ -236,7 +238,7 @@ function ReviewCenter() {
                 variant="outline"
                 size="sm"
                 disabled={page >= pages}
-                onClick={() => navigate({ search: (p) => ({ ...p, page: page + 1 }) })}
+                onClick={() => navigate({ search: (p: SearchState) => ({ ...p, page: page + 1 }) })}
               >
                 Next
               </Button>
