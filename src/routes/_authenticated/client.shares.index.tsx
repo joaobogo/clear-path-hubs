@@ -208,15 +208,25 @@ function SharesPage() {
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={() => {
-                        if (
-                          window.confirm(
-                            "Revoke this link? Anyone who has it will lose access immediately.",
-                          )
-                        )
-                          revokeMut.mutate(s.id);
+                      className="min-h-11"
+                      onClick={async () => {
+                        const r = await confirm({
+                          title: "Revoke share link",
+                          object: s.label ?? url,
+                          description:
+                            "Anyone holding this link loses access immediately.",
+                          impact: [
+                            "The link stops working for every recipient",
+                            "Views already recorded stay on the audit trail",
+                            "You can create a fresh link at any time",
+                          ],
+                          confirmLabel: "Revoke link",
+                          tone: "destructive",
+                        });
+                        if (r.confirmed) revokeMut.mutate(s.id);
                       }}
                       disabled={revokeMut.isPending}
+                      aria-busy={revokeMut.isPending || undefined}
                     >
                       <ShieldX className="mr-2 h-4 w-4" /> Revoke
                     </Button>
