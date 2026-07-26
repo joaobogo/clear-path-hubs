@@ -201,6 +201,14 @@ export function CompareSheet({
             </div>
 
 
+            {mixedScoringVersions && (
+              <div className="mt-3 rounded-lg border border-warning/30 bg-warning/5 p-3 text-sm">
+                These candidates were assessed with different scoring versions
+                ({scoringVersions.join(", ")}). Dimensions and weights may not line up —
+                compare the evidence rather than the totals.
+              </div>
+            )}
+
             {/* Visual ranking bands — relative strength per axis, not a single winner. */}
             <RelativeStrengthBoard candidates={candidates} />
 
