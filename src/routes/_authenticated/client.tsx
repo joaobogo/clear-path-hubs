@@ -1,4 +1,5 @@
 import {
+import { ACTIVITY_QUERY_KEY } from "@/components/activity/ActivityFeed";
  createFileRoute,
  Link,
  Outlet,
@@ -276,6 +277,7 @@ function ClientLayout() {
 }
 
 const CLIENT_REFRESH_KEYS = [
+  ACTIVITY_QUERY_KEY,
  ["client-context"],
  ["client", "kpis"],
  ["client", "positions"],
