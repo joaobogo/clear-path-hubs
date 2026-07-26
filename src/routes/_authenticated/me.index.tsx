@@ -3,13 +3,17 @@ import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import {
   getMyContext,
+  getMyDashboard,
   listMyApplications,
   listMyCvVersions,
+  TERMINAL_STATUSES,
   type CandidateSafeStatus,
 } from "@/lib/candidate.functions";
+import { CANDIDATE_STATUS_TONE } from "@/lib/candidate-status";
 import { Badge } from "@/components/ui/badge";
 import {
   ArrowRight,
+  CalendarClock,
   CheckCircle2,
   FileText,
   FileUp,
@@ -27,7 +31,7 @@ export const Route = createFileRoute("/_authenticated/me/")({
     ],
   }),
   loader: async ({ context }) => {
-    const [ctx, apps, cvs] = await Promise.all([
+    const [ctx, apps, cvs, dash] = await Promise.all([
       context.queryClient.ensureQueryData({
         queryKey: ["me-context"],
         queryFn: () => getMyContext(),
@@ -42,8 +46,14 @@ export const Route = createFileRoute("/_authenticated/me/")({
           queryFn: () => listMyCvVersions(),
         })
         .catch(() => ({ versions: [] as unknown[] })),
+      context.queryClient
+        .ensureQueryData({
+          queryKey: ["me-dashboard"],
+          queryFn: () => getMyDashboard(),
+        })
+        .catch(() => null),
     ]);
-    return { ctx, apps, cvs };
+    return { ctx, apps, cvs, dash };
   },
   errorComponent: ({ error }) => (
     <main className="p-8 text-destructive">Failed to load: {error.message}</main>
@@ -51,19 +61,8 @@ export const Route = createFileRoute("/_authenticated/me/")({
   component: MeHome,
 });
 
-const STATUS_TONE: Record<CandidateSafeStatus, string> = {
-  "Application received": "bg-secondary text-secondary-foreground",
-  "Information being reviewed": "bg-secondary text-secondary-foreground",
-  "Additional information requested": "taas-bg-warning-soft taas-fg-warning",
-  "Under consideration": "taas-bg-info-soft taas-fg-info",
-  Shortlisted: "taas-bg-info-soft taas-fg-info",
-  "Interview requested": "taas-bg-info-soft taas-fg-info",
-  "Decision pending": "bg-primary/15 text-primary",
-  Hired: "taas-bg-success-soft taas-fg-success",
-  "Not selected for this role": "bg-muted text-muted-foreground",
-  "Role closed": "bg-muted text-muted-foreground",
-  Withdrawn: "bg-muted text-muted-foreground",
-};
+const STATUS_TONE = CANDIDATE_STATUS_TONE;
+
 
 type App = {
   id: string;
