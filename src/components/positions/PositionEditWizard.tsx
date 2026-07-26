@@ -6,7 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { useNavigate } from "@tanstack/react-router";
+import { useBlocker, useNavigate } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -26,15 +26,21 @@ import {
   type PositionEditInitial,
   type ScreeningInput,
 } from "@/lib/position-edit.functions";
+import { checkRequisitionDuplicate } from "@/lib/requisition.functions";
+import { RequisitionEditor } from "@/components/positions/RequisitionEditor";
+import { JobQualityPanel } from "@/components/positions/JobQualityPanel";
+
 
 const STEPS = [
   { id: 1, label: "Role Definition" },
   { id: 2, label: "Candidate Profile" },
   { id: 3, label: "Compensation" },
   { id: 4, label: "Search Criteria" },
-  { id: 5, label: "Review & Save" },
+  { id: 5, label: "Locations & Priorities" },
+  { id: 6, label: "Review & Save" },
 ];
 const LAST_STEP = STEPS.length;
+
 
 const DISQUALIFIER_OPTIONS = [
   "Compensation above budget",
@@ -69,6 +75,11 @@ function unique(arr: string[]) {
     if (!map.has(k)) map.set(k, t);
   }
   return Array.from(map.values());
+}
+
+function initialState(initial: PositionEditInitial): State {
+  const { organization_id: _o, organization_name: _n, status: _s, ...rest } = initial;
+  return { ...rest };
 }
 
 function validateStep(step: number, s: State): Record<string, string> {
@@ -111,50 +122,92 @@ export function PositionEditWizard({
   const save = useServerFn(savePositionEdit);
 
   const [step, setStep] = useState(1);
-  const [state, setState] = useState<State>({
-    id: initial.id,
-    title: initial.title,
-    department: initial.department,
-    location: initial.location,
-    work_model: initial.work_model,
-    employment_type: initial.employment_type,
-    seniority: initial.seniority,
-    headcount: initial.headcount,
-    description: initial.description,
-    open_worldwide: initial.open_worldwide,
-    target_countries: initial.target_countries,
-    states_regions: initial.states_regions,
-    metro_areas: initial.metro_areas,
-    search_radius: initial.search_radius,
-    hiring_urgency: initial.hiring_urgency,
-    target_start_date: initial.target_start_date,
-    time_to_hire: initial.time_to_hire,
-    must_have_skills: initial.must_have_skills,
-    nice_to_have_skills: initial.nice_to_have_skills,
-    certifications_list: initial.certifications_list,
-    tools_platforms: initial.tools_platforms,
-    experience: initial.experience,
-    education: initial.education,
-    timezone_requirements: initial.timezone_requirements,
-    responsibilities: initial.responsibilities,
-    additional_requirements: initial.additional_requirements,
-    currency: initial.currency,
-    budget_min: initial.budget_min,
-    budget_max: initial.budget_max,
-    compensation: initial.compensation,
-    target_titles: initial.target_titles,
-    title_match_timing: initial.title_match_timing,
-    target_company_types: initial.target_company_types,
-    include_keywords: initial.include_keywords,
-    exclude_keywords: initial.exclude_keywords,
-    disqualifier_tags: initial.disqualifier_tags,
-    interview_process: initial.interview_process,
-    additional_context: initial.additional_context,
-    screening_questions: initial.screening_questions,
-  });
+  const [state, setState] = useState<State>(() => initialState(initial));
+
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [qDraft, setQDraft] = useState("");
+  const [reqDirty, setReqDirty] = useState(false);
+  const [savedAt, setSavedAt] = useState<number | null>(null);
+
+  const draftKey = `taasflow.position-draft.${initial.id}`;
+  const baseline = useMemo(() => JSON.stringify(initialState(initial)), [initial]);
+  const contentDirty = JSON.stringify(state) !== baseline;
+  const dirty = contentDirty || reqDirty;
+
+  // --- Draft saving: local, per position, restored on return ---------------
+  const [draftFound, setDraftFound] = useState<State | null>(null);
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      const raw = window.localStorage.getItem(draftKey);
+      if (!raw) return;
+      const parsed = JSON.parse(raw) as { savedAt: number; state: State };
+      if (parsed?.state && JSON.stringify(parsed.state) !== baseline) {
+        setDraftFound(parsed.state);
+        setSavedAt(parsed.savedAt);
+      }
+    } catch {
+      /* ignore malformed drafts */
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [draftKey]);
+
+  useEffect(() => {
+    if (typeof window === "undefined" || !contentDirty) return;
+    const t = window.setTimeout(() => {
+      window.localStorage.setItem(draftKey, JSON.stringify({ savedAt: Date.now(), state }));
+      setSavedAt(Date.now());
+    }, 800);
+    return () => window.clearTimeout(t);
+  }, [state, contentDirty, draftKey]);
+
+  // --- Warn before leaving unsaved work ------------------------------------
+  useEffect(() => {
+    if (typeof window === "undefined" || !dirty) return;
+    const handler = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = "";
+    };
+    window.addEventListener("beforeunload", handler);
+    return () => window.removeEventListener("beforeunload", handler);
+  }, [dirty]);
+
+  // --- Duplicate requisition detection (debounced) -------------------------
+  const checkDup = useServerFn(checkRequisitionDuplicate);
+  const [dupWarning, setDupWarning] = useState<
+    { id: string; title: string; department: string; status: string; reference_code: string }[]
+  >([]);
+  useEffect(() => {
+    if (!state.title.trim()) {
+      setDupWarning([]);
+      return;
+    }
+    const t = window.setTimeout(async () => {
+      try {
+        const res = await checkDup({
+          data: {
+            organization_id: initial.organization_id,
+            title: state.title,
+            department: state.department ?? "",
+            reference_code: "",
+            exclude_id: initial.id,
+          },
+        });
+        setDupWarning(res.duplicate ? res.matches : []);
+      } catch {
+        setDupWarning([]);
+      }
+    }, 600);
+    return () => window.clearTimeout(t);
+  }, [state.title, state.department, initial.organization_id, initial.id, checkDup]);
+
+  useBlocker({
+    shouldBlockFn: () =>
+      dirty && !window.confirm("You have unsaved changes to this job. Leave without saving?"),
+    enableBeforeUnload: dirty,
+  });
+
 
   const set = <K extends keyof State>(k: K, v: State[K]) =>
     setState((s) => ({ ...s, [k]: v }));
@@ -235,6 +288,9 @@ export function PositionEditWizard({
     },
     onSuccess: async () => {
       toast.success("Position saved");
+      if (typeof window !== "undefined") window.localStorage.removeItem(draftKey);
+      setSavedAt(null);
+      setState((cur) => ({ ...cur }));
       await Promise.all(invalidateKeys.map((k) => qc.invalidateQueries({ queryKey: k })));
       navigate({ to: returnTo });
     },
@@ -268,6 +324,37 @@ export function PositionEditWizard({
         </Button>
       </header>
 
+      {draftFound && (
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-md border bg-muted/50 p-3">
+          <p className="text-sm">
+            An unsaved draft of this job was found
+            {savedAt ? ` from ${new Date(savedAt).toLocaleString()}` : ""}.
+          </p>
+          <div className="flex gap-2">
+            <Button
+              size="sm"
+              onClick={() => {
+                setState(draftFound);
+                setDraftFound(null);
+              }}
+            >
+              Restore draft
+            </Button>
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={() => {
+                window.localStorage.removeItem(draftKey);
+                setDraftFound(null);
+                setSavedAt(null);
+              }}
+            >
+              Discard
+            </Button>
+          </div>
+        </div>
+      )}
+
       <div aria-label="Progress">
         <Progress value={progress} />
         <ol className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
@@ -293,6 +380,24 @@ export function PositionEditWizard({
           {/* STEP 1 — Role Definition */}
           {step === 1 && (
             <div className="space-y-6">
+              {dupWarning.length > 0 && (
+                <div className="rounded-md border border-amber-500/40 bg-amber-500/5 p-3 text-sm">
+                  <p className="font-medium">Possible duplicate requisition</p>
+                  <ul className="mt-1 space-y-0.5 text-muted-foreground">
+                    {dupWarning.map((m) => (
+                      <li key={m.id}>
+                        {m.title}
+                        {m.department ? ` · ${m.department}` : ""} · {m.status}
+                        {m.reference_code ? ` · ${m.reference_code}` : ""}
+                      </li>
+                    ))}
+                  </ul>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    Check this isn't the same role before saving — duplicates split candidates
+                    across two pipelines.
+                  </p>
+                </div>
+              )}
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <Field label="Role Title" error={errors.title} required className="sm:col-span-2">
                   <Input
@@ -777,9 +882,16 @@ export function PositionEditWizard({
             </div>
           )}
 
-          {/* STEP 5 — Review */}
+          {/* STEP 5 — Locations, ownership, evaluation priorities */}
           {step === 5 && (
+            <RequisitionEditor positionId={state.id} onDirtyChange={setReqDirty} />
+          )}
+
+          {/* STEP 6 — Review */}
+          {step === 6 && (
             <div className="space-y-3 text-sm">
+              <JobQualityPanel positionId={state.id} onJumpToStep={setStep} />
+
               <ReviewBlock title="Role">
                 <div>
                   {state.title || "—"} · {state.work_model || "—"} · {state.employment_type || "—"}

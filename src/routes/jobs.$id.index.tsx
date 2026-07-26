@@ -128,10 +128,35 @@ function JobDetail() {
           {[pos.location, pos.compensation_display].filter(Boolean).join(" · ") || null}
         </div>
 
+        {pos.locations.length > 0 && (
+          <div className="mt-4 flex flex-wrap gap-2">
+            {pos.locations.map((l, i) => (
+              <Badge key={i} variant="secondary">
+                {[l.city, l.region, l.country].filter(Boolean).join(", ")}
+                {l.work_model ? ` · ${l.work_model}` : ""}
+                {l.headcount && l.headcount > 1 ? ` · ${l.headcount} hires` : ""}
+              </Badge>
+            ))}
+          </div>
+        )}
+
+        {!pos.accepting_applications && (
+          <div className="mt-6 rounded-md border border-amber-500/40 bg-amber-500/5 p-4 text-sm">
+            This role is paused — applications are temporarily closed. The listing stays up so you
+            can review the requirements, and applications reopen if hiring resumes.
+          </div>
+        )}
+
         <div className="mt-6">
-          <Button asChild size="lg">
-            <Link to="/jobs/$id/apply" params={{ id: pos.id }}>Apply for this role</Link>
-          </Button>
+          {pos.accepting_applications ? (
+            <Button asChild size="lg">
+              <Link to="/jobs/$id/apply" params={{ id: pos.id }}>Apply for this role</Link>
+            </Button>
+          ) : (
+            <Button size="lg" disabled>
+              Applications paused
+            </Button>
+          )}
         </div>
 
         <section className="mt-10">
@@ -189,9 +214,11 @@ function JobDetail() {
         </section>
 
         <div className="mt-12 border-t pt-8 flex flex-wrap gap-3">
-          <Button asChild size="lg">
-            <Link to="/jobs/$id/apply" params={{ id: pos.id }}>Apply now</Link>
-          </Button>
+          {pos.accepting_applications && (
+            <Button asChild size="lg">
+              <Link to="/jobs/$id/apply" params={{ id: pos.id }}>Apply now</Link>
+            </Button>
+          )}
           <Button asChild variant="outline" size="lg">
             <Link to="/jobs">Back to job board</Link>
           </Button>

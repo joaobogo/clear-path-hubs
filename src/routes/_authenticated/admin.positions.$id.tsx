@@ -42,6 +42,7 @@ import {
   MoreHorizontal,
   NotebookPen,
 } from "lucide-react";
+import { JobQualityPanel } from "@/components/positions/JobQualityPanel";
 import { RoleMemoryPanel } from "@/components/role-memory-panel";
 import {
   DropdownMenu,
@@ -214,6 +215,9 @@ function PositionWorkspace() {
             </Button>
             <LifecycleBar position={p} onDone={invalidate} />
           </div>
+        </div>
+        <div className="mt-4">
+          <JobQualityPanel positionId={p.id} />
         </div>
       </header>
 

@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate, notFound } from "@tanstack/react-router";
+import { createFileRoute, Link, redirect, useNavigate, notFound } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { getPublicPosition } from "@/lib/jobs.functions";
@@ -30,6 +30,10 @@ export const Route = createFileRoute("/jobs/$id/apply")({
       queryFn: () => getPublicPosition({ data: { id: uuid } }),
     });
     if (!data) throw notFound();
+    // Paused roles keep a readable listing but must not accept applications.
+    if (!data.accepting_applications) {
+      throw redirect({ to: "/jobs/$id", params: { id: params.id } });
+    }
     return data;
   },
   head: ({ loaderData }) => {

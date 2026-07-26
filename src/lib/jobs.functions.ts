@@ -111,10 +111,10 @@ export const getPublicPosition = createServerFn({ method: "GET" })
     const { data: pos, error } = await supabase
       .from("positions")
       .select(
-        "id,title,department,location,work_model,employment_type,seniority,description,requirements,preferred_requirements,compensation,published_at,openings,organizations(name)",
+        "id,title,department,location,work_model,employment_type,seniority,description,requirements,preferred_requirements,compensation,published_at,openings,status,organizations(name)",
       )
       .eq("id", data.id)
-      .eq("status", "active")
+      .in("status", ["active", "paused"])
       .eq("visibility", "public")
       .maybeSingle();
     if (error) throw new Error(error.message);
@@ -130,6 +130,12 @@ export const getPublicPosition = createServerFn({ method: "GET" })
       .eq("position_id", data.id)
       .order("display_order", { ascending: true });
     if (qErr) throw new Error(qErr.message);
+
+    const { data: locs } = await supabase
+      .from("position_locations")
+      .select("city,region,country,work_model,headcount,is_primary,display_order")
+      .eq("position_id", data.id)
+      .order("display_order", { ascending: true });
 
     const comp = (pos.compensation ?? {}) as { approved?: boolean; display?: string };
 
@@ -147,6 +153,15 @@ export const getPublicPosition = createServerFn({ method: "GET" })
       compensation_display: comp.approved && comp.display ? comp.display : null,
       published_at: pos.published_at,
       openings: (pos as { openings?: number }).openings ?? 1,
+      accepting_applications: (pos as { status?: string }).status === "active",
+      locations: (locs ?? []).map((l) => ({
+        city: l.city,
+        region: l.region,
+        country: l.country,
+        work_model: l.work_model,
+        headcount: l.headcount,
+        is_primary: l.is_primary,
+      })),
       organization_name:
         (pos.organizations as unknown as { name?: string } | null)?.name ?? "TaaSFlow client",
       questions: (questions ?? []).map((q) => ({
