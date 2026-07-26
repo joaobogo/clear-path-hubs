@@ -169,6 +169,67 @@ function MeHome() {
         </p>
       </header>
 
+      {/* Outstanding actions — only shown when something needs the candidate */}
+      {openRequests > 0 ? (
+        <section className="rounded-2xl border taas-bg-warning-soft p-5 motion-surface">
+          <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4 sm:flex sm:justify-between">
+            <div className="min-w-0">
+              <p className="text-xs uppercase tracking-wider taas-fg-warning">
+                Needs your reply
+              </p>
+              <h2 className="mt-1 text-base font-semibold">
+                {openRequests === 1
+                  ? "The team asked you a question"
+                  : `${openRequests} questions are waiting for you`}
+              </h2>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Open the application to read and reply. There&apos;s no rush — take the time you need.
+              </p>
+            </div>
+            <Link
+              to="/me/applications"
+              className="shrink-0 inline-flex items-center gap-1.5 rounded-md bg-primary px-3.5 py-2 text-sm font-medium text-primary-foreground min-h-11"
+            >
+              Review <ArrowRight className="h-3.5 w-3.5" />
+            </Link>
+          </div>
+        </section>
+      ) : null}
+
+      {upcoming.length > 0 ? (
+        <section className="rounded-2xl border bg-card p-5 motion-surface">
+          <div className="flex items-center gap-2 text-xs uppercase tracking-wider text-muted-foreground">
+            <span className="grid h-6 w-6 place-items-center rounded-full bg-primary/10 text-primary">
+              <CalendarClock className="h-3.5 w-3.5" />
+            </span>
+            Upcoming interviews
+          </div>
+          <ul className="mt-3 space-y-2">
+            {upcoming.map((i) => (
+              <li key={i.id}>
+                <Link
+                  to="/me/applications/$id"
+                  params={{ id: i.application_id }}
+                  className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 rounded-lg border p-3 text-sm hover:bg-muted transition-colors"
+                >
+                  <span className="min-w-0">
+                    <span className="block truncate font-medium">{i.role_title}</span>
+                    <span className="block text-xs text-muted-foreground">
+                      {new Date(i.scheduled_at).toLocaleString()}
+                      {i.timezone ? ` · ${i.timezone}` : ""}
+                      {i.interview_type ? ` · ${i.interview_type}` : ""}
+                    </span>
+                  </span>
+                  <ArrowRight className="h-4 w-4 shrink-0 text-muted-foreground" />
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
+
+
       {/* Application status spotlight */}
       {spotlight ? (
         <section className="rounded-2xl border bg-card p-5 sm:p-6 motion-surface">
