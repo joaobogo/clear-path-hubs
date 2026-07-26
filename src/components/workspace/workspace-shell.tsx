@@ -246,6 +246,7 @@ function ContextHeader({
 
 export function WorkspaceShell(props: WorkspaceShellProps) {
   const {
+    role = "client",
     contextLabel,
     contextSubLabel,
     contextKicker,
