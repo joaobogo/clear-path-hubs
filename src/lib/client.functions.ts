@@ -1072,6 +1072,19 @@ export const sendClientMessage = createServerFn({ method: "POST" })
       .select("id, sender_user_id, body, created_at, recipient_context")
       .single();
     if (error) throw new Error(error.message);
+    // The message row id is the natural idempotency scope: one message, one event.
+    try {
+      const { emitEventFromServer } = await import("./notifications.functions");
+      await emitEventFromServer({
+        event: "message_sent",
+        scope: `message:${(row as AnyRow).id}`,
+        organization_id: data.orgId,
+        actor_user_id: context.userId,
+        link_path: "/client/messages",
+      });
+    } catch (e) {
+      console.error("[sendClientMessage] emit failed", e);
+    }
     return row as AnyRow;
   });
 
