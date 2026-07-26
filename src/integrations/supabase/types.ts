@@ -4759,6 +4759,120 @@ export type Database = {
           },
         ]
       }
+      position_locations: {
+        Row: {
+          city: string | null
+          country: string
+          country_code: string
+          created_at: string
+          display_order: number
+          headcount: number | null
+          id: string
+          is_primary: boolean
+          notes: string | null
+          onsite_days_per_week: number | null
+          organization_id: string
+          position_id: string
+          region: string | null
+          timezone: string | null
+          updated_at: string
+          work_model: Database["public"]["Enums"]["work_model"]
+        }
+        Insert: {
+          city?: string | null
+          country: string
+          country_code: string
+          created_at?: string
+          display_order?: number
+          headcount?: number | null
+          id?: string
+          is_primary?: boolean
+          notes?: string | null
+          onsite_days_per_week?: number | null
+          organization_id: string
+          position_id: string
+          region?: string | null
+          timezone?: string | null
+          updated_at?: string
+          work_model?: Database["public"]["Enums"]["work_model"]
+        }
+        Update: {
+          city?: string | null
+          country?: string
+          country_code?: string
+          created_at?: string
+          display_order?: number
+          headcount?: number | null
+          id?: string
+          is_primary?: boolean
+          notes?: string | null
+          onsite_days_per_week?: number | null
+          organization_id?: string
+          position_id?: string
+          region?: string | null
+          timezone?: string | null
+          updated_at?: string
+          work_model?: Database["public"]["Enums"]["work_model"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "position_locations_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "admin_clients_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "position_locations_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "position_locations_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_portfolio_rollup"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "position_locations_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "admin_pipeline_health"
+            referencedColumns: ["position_id"]
+          },
+          {
+            foreignKeyName: "position_locations_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "admin_positions_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "position_locations_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_my_applications"
+            referencedColumns: ["position_id"]
+          },
+          {
+            foreignKeyName: "position_locations_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "client_positions_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "position_locations_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "positions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       position_versions: {
         Row: {
           compensation: Json | null
@@ -4873,6 +4987,9 @@ export type Database = {
           business_unit: string | null
           closed_at: string | null
           compensation: Json
+          compensation_collected: boolean
+          compensation_visibility: string
+          content_version: number
           created_at: string
           created_by: string | null
           created_by_audit: boolean | null
@@ -4880,6 +4997,7 @@ export type Database = {
           department: string | null
           description: string | null
           employment_type: Database["public"]["Enums"]["employment_type"] | null
+          evaluation_weights: Json
           expires_at: string | null
           id: string
           intake_context: Json
@@ -4896,15 +5014,24 @@ export type Database = {
           migration_version: string | null
           openings: number
           organization_id: string
+          owner_user_id: string | null
           preferred_requirements: Json
+          primary_timezone: string | null
           published_at: string | null
+          reference_code: string | null
           region: string | null
           requirements: Json
+          rescore_requested_at: string | null
+          rescore_state: string
+          scoring_signature: string | null
           seniority: string | null
           status: Database["public"]["Enums"]["position_status"]
           submitted_at: string | null
+          target_start_date: string | null
           test_run_id: string | null
+          timezone_overlap_hours: number | null
           title: string
+          travel_expectation: string | null
           updated_at: string
           visibility: Database["public"]["Enums"]["position_visibility"]
           work_authorization: Json
@@ -4915,6 +5042,9 @@ export type Database = {
           business_unit?: string | null
           closed_at?: string | null
           compensation?: Json
+          compensation_collected?: boolean
+          compensation_visibility?: string
+          content_version?: number
           created_at?: string
           created_by?: string | null
           created_by_audit?: boolean | null
@@ -4924,6 +5054,7 @@ export type Database = {
           employment_type?:
             | Database["public"]["Enums"]["employment_type"]
             | null
+          evaluation_weights?: Json
           expires_at?: string | null
           id?: string
           intake_context?: Json
@@ -4940,15 +5071,24 @@ export type Database = {
           migration_version?: string | null
           openings?: number
           organization_id: string
+          owner_user_id?: string | null
           preferred_requirements?: Json
+          primary_timezone?: string | null
           published_at?: string | null
+          reference_code?: string | null
           region?: string | null
           requirements?: Json
+          rescore_requested_at?: string | null
+          rescore_state?: string
+          scoring_signature?: string | null
           seniority?: string | null
           status?: Database["public"]["Enums"]["position_status"]
           submitted_at?: string | null
+          target_start_date?: string | null
           test_run_id?: string | null
+          timezone_overlap_hours?: number | null
           title: string
+          travel_expectation?: string | null
           updated_at?: string
           visibility?: Database["public"]["Enums"]["position_visibility"]
           work_authorization?: Json
@@ -4959,6 +5099,9 @@ export type Database = {
           business_unit?: string | null
           closed_at?: string | null
           compensation?: Json
+          compensation_collected?: boolean
+          compensation_visibility?: string
+          content_version?: number
           created_at?: string
           created_by?: string | null
           created_by_audit?: boolean | null
@@ -4968,6 +5111,7 @@ export type Database = {
           employment_type?:
             | Database["public"]["Enums"]["employment_type"]
             | null
+          evaluation_weights?: Json
           expires_at?: string | null
           id?: string
           intake_context?: Json
@@ -4984,15 +5128,24 @@ export type Database = {
           migration_version?: string | null
           openings?: number
           organization_id?: string
+          owner_user_id?: string | null
           preferred_requirements?: Json
+          primary_timezone?: string | null
           published_at?: string | null
+          reference_code?: string | null
           region?: string | null
           requirements?: Json
+          rescore_requested_at?: string | null
+          rescore_state?: string
+          scoring_signature?: string | null
           seniority?: string | null
           status?: Database["public"]["Enums"]["position_status"]
           submitted_at?: string | null
+          target_start_date?: string | null
           test_run_id?: string | null
+          timezone_overlap_hours?: number | null
           title?: string
+          travel_expectation?: string | null
           updated_at?: string
           visibility?: Database["public"]["Enums"]["position_visibility"]
           work_authorization?: Json
