@@ -171,7 +171,7 @@ export const getSchedulingSettings = createServerFn({ method: "POST" })
     const { data: row, error } = await context.supabase
       .from("org_scheduling_settings")
       .select(
-        "organization_id, scheduling_method, calendly_url, default_timezone, default_duration_minutes, availability_window_days, require_admin_coordination",
+        "organization_id, scheduling_method, calendly_url, default_timezone, availability_window_days, require_admin_coordination",
       )
       .eq("organization_id", data.orgId)
       .maybeSingle();
@@ -182,11 +182,11 @@ export const getSchedulingSettings = createServerFn({ method: "POST" })
           organization_id: data.orgId,
           scheduling_method: "manual",
           calendly_url: null,
-          default_timezone: null,
-          default_duration_minutes: 60,
+          default_timezone: "UTC",
           availability_window_days: 14,
           require_admin_coordination: true,
         },
+
     };
   });
 
