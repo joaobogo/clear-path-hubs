@@ -16,6 +16,8 @@ import {
  CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { CANDIDATE_STATUS_TONE } from "@/lib/candidate-status";
+
 
 export const Route = createFileRoute("/_authenticated/me/applications/")({
  head: () => ({
