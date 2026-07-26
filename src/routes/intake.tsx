@@ -579,6 +579,8 @@ function IntakePage() {
                     error={errors.targetCountries}
                     values={state.targetCountries}
                     onChange={(v) => set("targetCountries", v)}
+                    required
+                    dataField="targetCountries"
                     placeholder="e.g. United States, Portugal, Germany"
                   />
                   <ChipInput
@@ -602,7 +604,12 @@ function IntakePage() {
                   </Field>
                 </div>
               )}
+            </div>
+          )}
 
+          {/* ================= STEP 5: PROCESS & TIMELINE ================= */}
+          {step === 5 && (
+            <div className="space-y-6">
               <SectionHeader title="Timeline & Availability" subtitle="Optional." />
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
                 <Field label="Hiring Timeline">
