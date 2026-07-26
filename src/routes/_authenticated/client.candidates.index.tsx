@@ -137,6 +137,7 @@ function CandidatesPage() {
  data: rowsRaw = [],
  isFetching,
  isLoading,
+ isError,
  refetch,
  } = useQuery({
  queryKey: ["client-candidates", orgId, search.position],
@@ -154,6 +155,20 @@ function CandidatesPage() {
  return () => window.removeEventListener("client:refresh", onRefresh);
  }, [refetch]);
 
+ // Availability values are derived from the authorized set only — never a fixed
+ // list, so the filter can't hint at candidates the client cannot see.
+ const availabilityOptions = useMemo(
+ () =>
+ Array.from(
+ new Set(
+ (rowsRaw as ClientCandidateDTO[])
+ .map((c) => c.candidate.availability?.trim())
+ .filter((v): v is string => !!v),
+ ),
+ ).sort((a, b) => a.localeCompare(b)),
+ [rowsRaw],
+ );
+
  // Client-side filter + sort applied to the sanitized DTOs.
  const filtered = useMemo(() => {
  const q = search.q.trim().toLowerCase();
@@ -168,6 +183,29 @@ function CandidatesPage() {
  }
   if (search.stage !== "all" && c.stage !== search.stage) return false;
   if (search.fit !== "all" && c.fit.band !== search.fit) return false;
+  if (search.critical !== "all") {
+   const missingEvidence = c.requirement_rows.some(
+    (r) => r.critical && (r.status === "unknown" || r.status === "missing_evidence"),
+   );
+   const gaps = c.coverage.must_total > 0 && c.coverage.must_met < c.coverage.must_total;
+   if (search.critical === "met" && (gaps || missingEvidence)) return false;
+   if (search.critical === "gaps" && !gaps) return false;
+   if (search.critical === "missing_evidence" && !missingEvidence) return false;
+  }
+  if (search.review !== "all") {
+   const group =
+    c.stage === "delivered"
+     ? "awaiting"
+     : c.stage === "hired" || c.stage === "not_moving_forward"
+       ? "closed"
+       : "in_progress";
+   if (group !== search.review) return false;
+  }
+  if (search.availability !== "all" && (c.candidate.availability ?? "") !== search.availability) return false;
+  if (search.minExp) {
+   const min = Number(search.minExp);
+   if (!Number.isNaN(min) && (c.candidate.years_experience ?? -1) < min) return false;
+  }
   const min = search.minScore === "" ? null : Number(search.minScore);
   const max = search.maxScore === "" ? null : Number(search.maxScore);
   if (min != null && !Number.isNaN(min)) {
