@@ -152,17 +152,40 @@ function OverviewPage() {
   const kpis = data?.kpis;
   const actions: Any[] = data?.action_required ?? [];
   const whatsNext: Any[] = data?.whats_next ?? [];
-  const latest = data?.latest_candidates ?? [];
   const messages: Any[] = data?.recent_messages ?? [];
   const activity: Any[] = data?.recent_activity ?? [];
   const newThisWeek: number = data?.new_this_week ?? 0;
 
-  const priorityQueue = useMemo(() => buildPriorityQueue(actions), [actions]);
-  const hottestRole = useMemo(() => pickHottestRole(whatsNext), [whatsNext]);
-  const otherRoles = useMemo(
-    () => (whatsNext ?? []).filter((r) => r.position_id !== hottestRole?.position_id),
-    [whatsNext, hottestRole],
+  // Role focus — preserved in the URL so refresh/deep links keep the selection.
+  const selectedRole = (search as Any)?.role ?? "";
+  const visibleRoles = useMemo(
+    () => (selectedRole ? whatsNext.filter((r) => r.position_id === selectedRole) : whatsNext),
+    [whatsNext, selectedRole],
   );
+  const latest = useMemo(() => {
+    const all = data?.latest_candidates ?? [];
+    return selectedRole ? all.filter((c: Any) => c.position?.id === selectedRole) : all;
+  }, [data, selectedRole]);
+
+  const priorityQueue = useMemo(
+    () => buildPriorityQueue(actions, { org: orgSearch, position: selectedRole || undefined }),
+    [actions, orgSearch, selectedRole],
+  );
+  const hottestRole = useMemo(() => pickHottestRole(visibleRoles), [visibleRoles]);
+  const otherRoles = useMemo(
+    () => visibleRoles.filter((r) => r.position_id !== hottestRole?.position_id),
+    [visibleRoles, hottestRole],
+  );
+
+  // Team members and permissions — server enforces who may read this.
+  const teamFn = useServerFn(getClientTeam);
+  const canViewTeam = role === "client_admin" || role === "client_editor" || !!ctx?.isStaff;
+  const { data: team = [] } = useQuery({
+    queryKey: ["client-team", orgId],
+    queryFn: () => teamFn({ data: { orgId: orgId! } }),
+    enabled: !!orgId && canViewTeam,
+  });
+
 
   // "Since last visit" — activity newer than the last time the user viewed
   // this org's overview. Persist per-org in localStorage.
