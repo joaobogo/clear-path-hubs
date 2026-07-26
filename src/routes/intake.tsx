@@ -665,8 +665,8 @@ function IntakePage() {
             </div>
           )}
 
-          {/* ================= STEP 2: HIRING CONTACT ================= */}
-          {step === 2 && (
+          {/* ================= STEP 1: ORGANIZATION & CONTACT ================= */}
+          {step === 1 && (
             <div className="space-y-6">
               <SectionHeader title="Organization" />
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
