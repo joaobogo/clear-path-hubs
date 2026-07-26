@@ -20,6 +20,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { useConfirmAction } from "@/components/ds";
 
 const searchSchema = z.object({ org: z.string().uuid().optional() });
 
@@ -258,6 +259,7 @@ function OrgTeamList({ organizationId }: { organizationId: string }) {
   const react = mut((i: { membership_id: string }) => runReact({ data: i }), "Reactivated");
   const rem = mut((i: { membership_id: string }) => runRemove({ data: i }), "Removed");
 
+  const { confirm, confirmDialog } = useConfirmAction();
   const [resetShown, setResetShown] = useState<{ email: string; password: string } | null>(null);
   const reset = useMutation({
     mutationFn: (i: { auth_user_id: string; email: string }) =>
@@ -325,10 +327,22 @@ function OrgTeamList({ organizationId }: { organizationId: string }) {
                   <Button
                     size="sm"
                     variant="ghost"
-                    onClick={() => {
-                      if (confirm("Remove this member from the client?")) {
-                        rem.mutate({ membership_id: m.membership_id });
-                      }
+                    disabled={rem.isPending}
+                    onClick={async () => {
+                      const r = await confirm({
+                        title: "Remove member",
+                        object: `${m.full_name ?? m.email} · ${m.role}`,
+                        description:
+                          "This person loses access to this client workspace immediately.",
+                        impact: [
+                          "Their seat is freed for another teammate",
+                          "Shortlists, decisions and comments they made are kept",
+                          "You can invite them again at any time",
+                        ],
+                        confirmLabel: "Remove member",
+                        tone: "destructive",
+                      });
+                      if (r.confirmed) rem.mutate({ membership_id: m.membership_id });
                     }}
                   >
                     Remove
@@ -347,6 +361,7 @@ function OrgTeamList({ organizationId }: { organizationId: string }) {
         </table>
       </div>
 
+      {confirmDialog}
       {resetShown && (
         <Card className="mt-4 border-warning/40 bg-warning/5 p-4">
           <p className="text-sm font-medium">New temporary password</p>
