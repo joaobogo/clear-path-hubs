@@ -57,10 +57,11 @@ export const releaseCandidateContact = createServerFn({ method: "POST" })
     }
     if (before.contact_released_at) return { ok: true, already: true };
 
+    const releasedAt = new Date().toISOString();
     const { error } = await supabaseAdmin
       .from("candidate_matches")
       .update({
-        contact_released_at: new Date().toISOString(),
+        contact_released_at: releasedAt,
         contact_released_by: context.userId,
         contact_release_reason: data.reason,
       })
@@ -77,7 +78,7 @@ export const releaseCandidateContact = createServerFn({ method: "POST" })
       after: { contact_released_at: new Date().toISOString() },
       reason: data.reason,
     });
-    await emitContactEvent("contact_released", data.match_id, before.organization_id, context.userId);
+    await emitContactEvent("contact_released", data.match_id, before.organization_id, context.userId, releasedAt);
     return { ok: true, already: false };
   });
 
@@ -91,12 +92,14 @@ async function emitContactEvent(
   matchId: string,
   organizationId: string | null,
   actorUserId: string,
+  /** State-derived key: identical state ⇒ identical scope ⇒ no duplicate row. */
+  stateKey: string,
 ) {
   try {
     const { emitEventFromServer } = await import("./notifications.functions");
     await emitEventFromServer({
       event,
-      scope: `${matchId}:${event}:${Date.now()}`,
+      scope: `${matchId}:${event}:${stateKey}`,
       organization_id: organizationId,
       candidate_match_id: matchId,
       actor_user_id: actorUserId,
@@ -143,6 +146,15 @@ export const revokeCandidateContact = createServerFn({ method: "POST" })
       after: { contact_released_at: null },
       reason: data.reason ?? null,
     });
+    if (before.contact_released_at) {
+      await emitContactEvent(
+        "contact_revoked",
+        data.match_id,
+        before.organization_id,
+        context.userId,
+        before.contact_released_at as string,
+      );
+    }
     return { ok: true };
   });
 
@@ -264,6 +276,15 @@ export const setSeatStatus = createServerFn({ method: "POST" })
       after: { status: data.status },
       reason: data.reason ?? null,
     });
+    if (before.contact_released_at) {
+      await emitContactEvent(
+        "contact_revoked",
+        data.match_id,
+        before.organization_id,
+        context.userId,
+        before.contact_released_at as string,
+      );
+    }
     return { ok: true };
   });
 
