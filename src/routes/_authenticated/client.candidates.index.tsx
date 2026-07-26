@@ -47,6 +47,20 @@ const FIT_OPTIONS = [
  { key: "limited", label: "Limited" },
 ] as const;
 
+const CRITICAL_OPTIONS = [
+ { key: "all", label: "Any critical status" },
+ { key: "met", label: "All critical requirements met" },
+ { key: "gaps", label: "Has critical gaps" },
+ { key: "missing_evidence", label: "Missing evidence" },
+] as const;
+
+const REVIEW_OPTIONS = [
+ { key: "all", label: "Any review status" },
+ { key: "awaiting", label: "Awaiting your review" },
+ { key: "in_progress", label: "In progress with your team" },
+ { key: "closed", label: "Closed" },
+] as const;
+
 const SORT_OPTIONS = [
  { key: "recent", label: "Recently delivered" },
  { key: "score", label: "Highest approved fit" },
@@ -60,6 +74,10 @@ const searchSchema = z.object({
  position: fallback(z.string(), "").default(""),
  stage: fallback(z.string(), "all").default("all"),
  fit: fallback(z.string(), "all").default("all"),
+ critical: fallback(z.string(), "all").default("all"),
+ review: fallback(z.string(), "all").default("all"),
+ availability: fallback(z.string(), "all").default("all"),
+ minExp: fallback(z.string(), "").default(""),
  location: fallback(z.string(), "").default(""),
  sort: fallback(z.string(), "recent").default("recent"),
  view: fallback(z.enum(["cards", "list"]), "cards").default("cards"),
@@ -119,6 +137,7 @@ function CandidatesPage() {
  data: rowsRaw = [],
  isFetching,
  isLoading,
+ isError,
  refetch,
  } = useQuery({
  queryKey: ["client-candidates", orgId, search.position],
@@ -136,6 +155,20 @@ function CandidatesPage() {
  return () => window.removeEventListener("client:refresh", onRefresh);
  }, [refetch]);
 
+ // Availability values are derived from the authorized set only — never a fixed
+ // list, so the filter can't hint at candidates the client cannot see.
+ const availabilityOptions = useMemo(
+ () =>
+ Array.from(
+ new Set(
+ (rowsRaw as ClientCandidateDTO[])
+ .map((c) => c.candidate.availability?.trim())
+ .filter((v): v is string => !!v),
+ ),
+ ).sort((a, b) => a.localeCompare(b)),
+ [rowsRaw],
+ );
+
  // Client-side filter + sort applied to the sanitized DTOs.
  const filtered = useMemo(() => {
  const q = search.q.trim().toLowerCase();
@@ -150,6 +183,29 @@ function CandidatesPage() {
  }
   if (search.stage !== "all" && c.stage !== search.stage) return false;
   if (search.fit !== "all" && c.fit.band !== search.fit) return false;
+  if (search.critical !== "all") {
+   const missingEvidence = c.requirement_rows.some(
+    (r) => r.importance === "must_have" && r.status === "not_evidenced",
+   );
+   const gaps = c.coverage.must_total > 0 && c.coverage.must_met < c.coverage.must_total;
+   if (search.critical === "met" && (gaps || missingEvidence)) return false;
+   if (search.critical === "gaps" && !gaps) return false;
+   if (search.critical === "missing_evidence" && !missingEvidence) return false;
+  }
+  if (search.review !== "all") {
+   const group =
+    c.stage === "delivered"
+     ? "awaiting"
+     : c.stage === "hired" || c.stage === "not_moving_forward"
+       ? "closed"
+       : "in_progress";
+   if (group !== search.review) return false;
+  }
+  if (search.availability !== "all" && (c.candidate.availability ?? "") !== search.availability) return false;
+  if (search.minExp) {
+   const min = Number(search.minExp);
+   if (!Number.isNaN(min) && (c.candidate.years_experience ?? -1) < min) return false;
+  }
   const min = search.minScore === "" ? null : Number(search.minScore);
   const max = search.maxScore === "" ? null : Number(search.maxScore);
   if (min != null && !Number.isNaN(min)) {
@@ -213,7 +269,7 @@ function CandidatesPage() {
  }
  });
  return rows;
- }, [rowsRaw, search.q, search.location, search.stage, search.fit, search.sort, search.filter, search.minScore, search.maxScore]);
+ }, [rowsRaw, search.q, search.location, search.stage, search.fit, search.critical, search.review, search.availability, search.minExp, search.sort, search.filter, search.minScore, search.maxScore]);
 
  // Bounded pagination — clamp render to a fixed page size so no unbounded lists ship.
  const PAGE_SIZE = 24;
@@ -282,13 +338,44 @@ function CandidatesPage() {
  key: "fit",
  label: FIT_OPTIONS.find((s) => s.key === search.fit)?.label,
  },
+ search.critical !== "all" && {
+ key: "critical",
+ label: CRITICAL_OPTIONS.find((s) => s.key === search.critical)?.label,
+ },
+ search.review !== "all" && {
+ key: "review",
+ label: REVIEW_OPTIONS.find((s) => s.key === search.review)?.label,
+ },
+ search.availability !== "all" && {
+ key: "availability",
+ label: `Availability: ${search.availability}`,
+ },
+ search.minExp && { key: "minExp", label: `${search.minExp}+ years experience` },
+ search.minScore && { key: "minScore", label: `Match ≥ ${search.minScore}` },
+ search.maxScore && { key: "maxScore", label: `Match ≤ ${search.maxScore}` },
  search.location && { key: "location", label: `Location: ${search.location}` },
  search.q && { key: "q", label: `Search: ${search.q}` },
  ].filter(Boolean) as { key: string; label: string }[];
 
+ const RESET_TO_ALL = new Set(["stage", "fit", "critical", "review", "availability"]);
+
  const clearFilters = () =>
  navigate({
- search: { ...search, q: "", position: "", stage: "all", fit: "all", location: "", minScore: "", maxScore: "" } as never,
+ search: {
+ ...search,
+ q: "",
+ position: "",
+ stage: "all",
+ fit: "all",
+ critical: "all",
+ review: "all",
+ availability: "all",
+ minExp: "",
+ location: "",
+ minScore: "",
+ maxScore: "",
+ filter: "all",
+ } as never,
  });
 
  return (
@@ -511,7 +598,46 @@ function CandidatesPage() {
  </button>
  </div>
  </div>
- </div>
+  </div>
+
+  {/* Secondary, permitted dimensions */}
+  <div className="mt-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2">
+   <Select value={search.critical} onValueChange={(v) => setF({ critical: v })}>
+    <SelectTrigger aria-label="Critical requirements"><SelectValue /></SelectTrigger>
+    <SelectContent>
+     {CRITICAL_OPTIONS.map((o) => (
+      <SelectItem key={o.key} value={o.key}>{o.label}</SelectItem>
+     ))}
+    </SelectContent>
+   </Select>
+   <Select value={search.availability} onValueChange={(v) => setF({ availability: v })}>
+    <SelectTrigger aria-label="Availability"><SelectValue /></SelectTrigger>
+    <SelectContent>
+     <SelectItem value="all">Any availability</SelectItem>
+     {availabilityOptions.map((a) => (
+      <SelectItem key={a} value={a}>{a}</SelectItem>
+     ))}
+    </SelectContent>
+   </Select>
+   <Select value={search.minExp} onValueChange={(v) => setF({ minExp: v === "all" ? "" : v })}>
+    <SelectTrigger aria-label="Minimum experience"><SelectValue placeholder="Any experience" /></SelectTrigger>
+    <SelectContent>
+     <SelectItem value="all">Any experience</SelectItem>
+     <SelectItem value="2">2+ years</SelectItem>
+     <SelectItem value="5">5+ years</SelectItem>
+     <SelectItem value="8">8+ years</SelectItem>
+     <SelectItem value="12">12+ years</SelectItem>
+    </SelectContent>
+   </Select>
+   <Select value={search.review} onValueChange={(v) => setF({ review: v })}>
+    <SelectTrigger aria-label="Review status"><SelectValue /></SelectTrigger>
+    <SelectContent>
+     {REVIEW_OPTIONS.map((o) => (
+      <SelectItem key={o.key} value={o.key}>{o.label}</SelectItem>
+     ))}
+    </SelectContent>
+   </Select>
+  </div>
 
  {activeFilters.length > 0 && (
  <div className="mt-3 flex items-center gap-2 flex-wrap">
@@ -522,7 +648,7 @@ function CandidatesPage() {
  >
  {f.label}
  <button
- onClick={() => setF({ [f.key]: f.key === "stage" || f.key === "fit" ? "all" : "" } as never)}
+ onClick={() => setF({ [f.key]: RESET_TO_ALL.has(f.key) ? "all" : "" } as never)}
  className="text-muted-foreground hover:text-foreground"
  aria-label={`Remove ${f.label}`}
  >
@@ -535,17 +661,29 @@ function CandidatesPage() {
  )}
  </section>
 
- {/* Results */}
+ {/* Results — loading, failure and "none approved yet" are distinct states */}
  {isLoading && (rowsRaw as ClientCandidateDTO[]).length === 0 ? (
  <div className="grid gap-3 md:grid-cols-2">
  {Array.from({ length: 4 }).map((_, i) => (
  <Skeleton key={i} className="h-52 rounded-xl" />
  ))}
  </div>
+ ) : isError && (rowsRaw as ClientCandidateDTO[]).length === 0 ? (
+ <div className="rounded-xl border taas-bd-warning taas-bg-warning-soft p-10 text-center">
+ <div className="text-base font-medium">We couldn't load your candidates.</div>
+ <p className="mt-1 text-sm text-muted-foreground">
+ This is a temporary problem on our side — your data is unchanged.
+ </p>
+ <Button size="sm" variant="outline" className="mt-4" onClick={() => refetch()}>
+ Try again
+ </Button>
+ </div>
  ) : filtered.length === 0 ? (
- <EmptyState hasCandidates={(rowsRaw as ClientCandidateDTO[]).length > 0} onClear={clearFilters} />
- ) : filtered.length === 0 ? (
- <EmptyState hasCandidates={(rowsRaw as ClientCandidateDTO[]).length > 0} onClear={clearFilters} />
+ <EmptyState
+ hasCandidates={(rowsRaw as ClientCandidateDTO[]).length > 0}
+ activeFilters={activeFilters}
+ onClear={clearFilters}
+ />
  ) : search.view === "list" ? (
  <CompactList
  rows={paged}
@@ -696,24 +834,38 @@ function SnapshotTile({
 
 function EmptyState({
  hasCandidates,
+ activeFilters,
  onClear,
 }: {
  hasCandidates: boolean;
+ activeFilters: { key: string; label: string }[];
  onClear: () => void;
 }) {
+ const filtered = hasCandidates && activeFilters.length > 0;
  return (
  <div className="rounded-xl border bg-card p-10 text-center">
  <div className="text-base font-medium">
- {hasCandidates ? "No candidates match the selected filters." : "No candidates delivered yet."}
+ {filtered
+ ? "No candidates match the selected filters."
+ : hasCandidates
+ ? "No candidates to show."
+ : "No candidates approved for you yet."}
  </div>
  <div className="text-sm text-muted-foreground mt-1 max-w-md mx-auto">
- {hasCandidates
- ? "Try clearing filters or selecting another position."
- : "TaaSFlow is building the candidate pipeline for your positions. New candidates will appear here after review."}
+ {filtered ? (
+ <>
+ These filters removed every result:{" "}
+ <span className="font-medium text-foreground">
+ {activeFilters.map((f) => f.label).join(" · ")}
+ </span>
+ </>
+ ) : (
+ "Your TaaSFlow team is building the pipeline for your roles. Candidates appear here once they're approved for you."
+ )}
  </div>
- {hasCandidates && (
+ {filtered && (
  <Button size="sm" variant="outline" className="mt-4" onClick={onClear}>
- Clear filters
+ Clear all filters
  </Button>
  )}
  </div>
