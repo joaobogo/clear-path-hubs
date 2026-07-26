@@ -778,8 +778,8 @@ function IntakePage() {
             </div>
           )}
 
-          {/* ================= STEP 3: CANDIDATE PROFILE ================= */}
-          {step === 3 && (
+          {/* ================= STEP 4: REQUIREMENTS & PRIORITIES ================= */}
+          {step === 4 && (
             <div className="space-y-6">
               <ChipInput
                 label="Must-have skills"
