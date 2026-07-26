@@ -1,3 +1,4 @@
+import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery, useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -43,9 +44,7 @@ export const Route = createFileRoute("/_authenticated/admin/operations")({
       { name: "robots", content: "noindex" },
     ],
   }),
-  errorComponent: ({ error }) => (
-    <div className="p-8 text-destructive">Operations unavailable: {error.message}</div>
-  ),
+  errorComponent: makeRouteErrorComponent("admin", "src/routes/_authenticated/admin.operations.tsx"),
   notFoundComponent: () => <div className="p-8">Not found.</div>,
   component: OperationsPage,
 });

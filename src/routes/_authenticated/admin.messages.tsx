@@ -1,3 +1,4 @@
+import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { listAdminMessages } from "@/lib/admin.functions";
@@ -16,9 +17,7 @@ export const Route = createFileRoute("/_authenticated/admin/messages")({
       { name: "robots", content: "noindex" },
     ],
   }),
-  errorComponent: ({ error }) => (
-    <div className="p-8 text-destructive">Messages unavailable: {error.message}</div>
-  ),
+  errorComponent: makeRouteErrorComponent("admin", "src/routes/_authenticated/admin.messages.tsx"),
   component: MessagesPage,
 });
 

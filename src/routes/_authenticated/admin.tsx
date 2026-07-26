@@ -1,3 +1,7 @@
+import {
+  makeRouteErrorComponent,
+  makeRouteNotFoundComponent,
+} from "@/components/workspace/route-states";
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import { ACTIVITY_QUERY_KEY } from "@/components/activity/ActivityFeed";
 import {
@@ -31,6 +35,8 @@ import {
 } from "@/components/workspace/workspace-shell";
 
 export const Route = createFileRoute("/_authenticated/admin")({
+  errorComponent: makeRouteErrorComponent("admin", "/_authenticated/admin"),
+  notFoundComponent: makeRouteNotFoundComponent("admin"),
   beforeLoad: async () => {
     try {
       const ctx = await getSessionContext();

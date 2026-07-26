@@ -1,3 +1,4 @@
+import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { createFileRoute, Link, notFound, useRouter } from "@tanstack/react-router";
 import { useSuspenseQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -65,23 +66,7 @@ export const Route = createFileRoute("/_authenticated/admin/positions/$id")({
   notFoundComponent: () => (
     <div className="p-10 text-center text-muted-foreground">Position not found.</div>
   ),
-  errorComponent: ({ error, reset }) => {
-    const router = useRouter();
-    return (
-      <div className="mx-auto max-w-xl space-y-3 p-10 text-center">
-        <h1 className="text-lg font-semibold text-destructive">Couldn't load position</h1>
-        <p className="text-sm text-muted-foreground">{error.message}</p>
-        <Button
-          onClick={() => {
-            reset();
-            router.invalidate();
-          }}
-        >
-          Try again
-        </Button>
-      </div>
-    );
-  },
+  errorComponent: makeRouteErrorComponent("admin", "src/routes/_authenticated/admin.positions.$id.tsx"),
   head: () => ({ meta: [{ title: "Position workspace · TaaSFlow admin" }] }),
   component: PositionWorkspace,
 });

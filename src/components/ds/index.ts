@@ -10,6 +10,8 @@ export { KpiCard } from "./kpi-card";
 export { EmptyState } from "./empty-state";
 export { ErrorState } from "./error-state";
 export { PermissionState, SuccessState } from "./state-views";
+export { ComponentErrorBoundary } from "./component-error-boundary";
+export { QueryState, type QueryStateProps } from "./query-state";
 export { Skeleton, TableSkeleton, KpiRowSkeleton } from "./loading-skeleton";
 export { Section } from "./section";
 export { DataTable, type DataTableColumn } from "./data-table";

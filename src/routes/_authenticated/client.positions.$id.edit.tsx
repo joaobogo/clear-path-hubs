@@ -1,3 +1,4 @@
+import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { createFileRoute, notFound, useRouter } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { PositionEditWizard } from "@/components/positions/PositionEditWizard";
@@ -15,23 +16,7 @@ export const Route = createFileRoute("/_authenticated/client/positions/$id/edit"
  notFoundComponent: () => (
  <div className="p-10 text-center text-muted-foreground">Position not found.</div>
  ),
- errorComponent: ({ error, reset }) => {
- const router = useRouter();
- return (
- <div className="mx-auto max-w-xl space-y-3 p-10 text-center">
- <h1 className="text-lg font-semibold text-destructive">Couldn't load position</h1>
- <p className="text-sm text-muted-foreground">{error.message}</p>
- <Button
- onClick={() => {
- reset();
- router.invalidate();
- }}
- >
- Try again
- </Button>
- </div>
- );
- },
+ errorComponent: makeRouteErrorComponent("client", "src/routes/_authenticated/client.positions.$id.edit.tsx"),
  head: () => ({ meta: [{ title: "Edit position · TaaSFlow" }] }),
  component: Page,
 });

@@ -3,6 +3,7 @@ import { createRouter } from "@tanstack/react-router";
 import { routerWithQueryClient } from "@tanstack/react-router-with-query";
 import { routeTree } from "./routeTree.gen";
 import { GlobalRouteError } from "./components/global-error";
+import { PublicNotFound } from "./components/marketing/site-shell";
 
 export const getRouter = () => {
   const queryClient = new QueryClient({
@@ -30,6 +31,8 @@ export const getRouter = () => {
     scrollRestoration: true,
     defaultPreloadStaleTime: 0,
     defaultErrorComponent: GlobalRouteError,
+    // Any route without its own 404 surface still gets a designed page.
+    defaultNotFoundComponent: PublicNotFound,
   });
 
   return routerWithQueryClient(router, queryClient);

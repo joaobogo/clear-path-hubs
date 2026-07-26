@@ -1,3 +1,4 @@
+import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useState } from "react";
@@ -12,11 +13,7 @@ export const Route = createFileRoute("/_authenticated/admin/intake/")({
       queryKey: ["admin", "intake-inbox", { filter: "pending", q: "" }],
       queryFn: () => listIntakeInbox({ data: { filter: "pending" } }),
     }),
-  errorComponent: ({ error }) => (
-    <div className="rounded-lg border bg-card p-6 text-sm text-destructive">
-      Intake inbox unavailable: {error.message}
-    </div>
-  ),
+  errorComponent: makeRouteErrorComponent("admin", "src/routes/_authenticated/admin.intake.index.tsx"),
   head: () => ({
     meta: [
       { title: "Intake inbox · TaaSFlow admin" },

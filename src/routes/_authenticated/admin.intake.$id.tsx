@@ -1,3 +1,4 @@
+import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useSuspenseQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -20,11 +21,7 @@ export const Route = createFileRoute("/_authenticated/admin/intake/$id")({
       queryKey: ["admin", "intake", params.id],
       queryFn: () => getIntakeSubmission({ data: { id: params.id } }),
     }),
-  errorComponent: ({ error }) => (
-    <div className="rounded-lg border bg-card p-6 text-sm text-destructive">
-      Intake unavailable: {error.message}
-    </div>
-  ),
+  errorComponent: makeRouteErrorComponent("admin", "src/routes/_authenticated/admin.intake.$id.tsx"),
   notFoundComponent: () => (
     <div className="rounded-lg border bg-card p-6 text-sm text-muted-foreground">
       Intake not found.

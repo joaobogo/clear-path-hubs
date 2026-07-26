@@ -1,3 +1,4 @@
+import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { createFileRoute, Link, notFound, useNavigate, useRouter } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { zodValidator, fallback } from "@tanstack/zod-adapter";
@@ -65,16 +66,7 @@ export const Route = createFileRoute("/_authenticated/admin/scoring/review/$matc
   notFoundComponent: () => (
     <div className="p-10 text-center text-muted-foreground">Submission not found.</div>
   ),
-  errorComponent: ({ error }) => {
-    const router = useRouter();
-    return (
-      <div className="mx-auto max-w-xl space-y-3 p-10 text-center">
-        <h1 className="text-lg font-semibold text-destructive">Couldn't load this review</h1>
-        <p className="text-sm text-muted-foreground">{error.message}</p>
-        <Button onClick={() => router.invalidate()}>Try again</Button>
-      </div>
-    );
-  },
+  errorComponent: makeRouteErrorComponent("admin", "src/routes/_authenticated/admin.scoring.review.$matchId.tsx"),
   component: ReviewWorkspace,
 });
 

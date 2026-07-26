@@ -4,6 +4,10 @@ import {
   Outlet,
   redirect,
 } from "@tanstack/react-router";
+import {
+  makeRouteErrorComponent,
+  makeRouteNotFoundComponent,
+} from "@/components/workspace/route-states";
 import { ACTIVITY_QUERY_KEY } from "@/components/activity/ActivityFeed";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -52,6 +56,8 @@ const searchSchema = z.object({
 });
 
 export const Route = createFileRoute("/_authenticated/client")({
+  errorComponent: makeRouteErrorComponent("client", "/_authenticated/client"),
+  notFoundComponent: makeRouteNotFoundComponent("client"),
  validateSearch: searchSchema,
  loaderDeps: ({ search }) => ({ org: search.org ?? null }),
  head: () => ({
@@ -83,9 +89,6 @@ export const Route = createFileRoute("/_authenticated/client")({
  return ctx;
  },
 
- errorComponent: ({ error }) => (
- <div className="p-8 text-destructive">Failed to load workspace: {error.message}</div>
- ),
  component: ClientLayout,
 });
 

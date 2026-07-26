@@ -1,0 +1,106 @@
+import { useEffect } from "react";
+import { useRouter, Link } from "@tanstack/react-router";
+import { ErrorState, PermissionState } from "@/components/ds";
+import { Button } from "@/components/ui/button";
+import { normalizeError, logTechnical, type AudienceTone } from "@/lib/error-taxonomy";
+
+const HOME: Record<AudienceTone, { to: string; label: string }> = {
+  admin: { to: "/admin", label: "Back to overview" },
+  client: { to: "/client", label: "Back to dashboard" },
+  candidate: { to: "/me", label: "Go to my applications" },
+  public: { to: "/", label: "Go home" },
+};
+
+/**
+ * Section-level route error boundary. Any child route without its own
+ * errorComponent lands here, so a failing page never blanks the workspace.
+ * Copy tone follows the audience; technical detail stays in private logs.
+ */
+export function makeRouteErrorComponent(tone: AudienceTone, surface: string) {
+  return function RouteError({ error, reset }: { error: Error; reset: () => void }) {
+    const router = useRouter();
+    const normalized = normalizeError(error, { tone });
+
+    useEffect(() => {
+      logTechnical(error, normalized, { surface });
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [error]);
+
+    if (normalized.kind === "permission_denied") {
+      // Never confirms whether the underlying record exists.
+      return (
+        <div className="p-6">
+          <PermissionState
+            title={normalized.title}
+            description={normalized.description}
+            action={
+              <Button asChild variant="outline" size="sm">
+                <Link to={HOME[tone].to}>{HOME[tone].label}</Link>
+              </Button>
+            }
+          />
+        </div>
+      );
+    }
+
+    if (normalized.kind === "session_expired") {
+      return (
+        <div className="p-6">
+          <ErrorState
+            title={normalized.title}
+            description={normalized.description}
+            traceId={normalized.correlationId}
+            action={
+              <Button asChild size="sm">
+                <Link to="/login">Sign in again</Link>
+              </Button>
+            }
+          />
+        </div>
+      );
+    }
+
+    return (
+      <div className="p-6">
+        <ErrorState
+          title={normalized.title}
+          description={normalized.description}
+          traceId={normalized.correlationId}
+          onRetry={
+            normalized.retryable
+              ? () => {
+                  router.invalidate();
+                  reset();
+                }
+              : undefined
+          }
+          action={
+            <Button asChild variant="outline" size="sm">
+              <Link to={HOME[tone].to}>{HOME[tone].label}</Link>
+            </Button>
+          }
+        />
+      </div>
+    );
+  };
+}
+
+/** Missing or deleted record — designed, never a blank page or raw 404. */
+export function makeRouteNotFoundComponent(tone: AudienceTone) {
+  return function RouteNotFound() {
+    const normalized = normalizeError({ status: 404 }, { tone });
+    return (
+      <div className="p-6">
+        <ErrorState
+          title={normalized.title}
+          description={normalized.description}
+          action={
+            <Button asChild variant="outline" size="sm">
+              <Link to={HOME[tone].to}>{HOME[tone].label}</Link>
+            </Button>
+          }
+        />
+      </div>
+    );
+  };
+}
