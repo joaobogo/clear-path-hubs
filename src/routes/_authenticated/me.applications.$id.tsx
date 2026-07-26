@@ -53,6 +53,48 @@ export const Route = createFileRoute("/_authenticated/me/applications/$id")({
   component: TrackPage,
 });
 
+type InfoRequest = {
+  id: string;
+  prompt: string;
+  status: string;
+  response: string | null;
+  responded_at: string | null;
+  due_at: string | null;
+  created_at: string;
+};
+
+type Interview = {
+  id: string;
+  status: string;
+  scheduled_at: string | null;
+  duration_minutes: number | null;
+  interview_type: string | null;
+  location: string | null;
+  meeting_url: string | null;
+  timezone: string | null;
+};
+
+type MyApplication = {
+  role_title: string;
+  role_description: string;
+  company: string | null;
+  location: string | null;
+  work_model: string | null;
+  role_closed: boolean;
+  status: CandidateSafeStatus;
+  next_step: string | null;
+  can_withdraw: boolean;
+  portfolio_url: string | null;
+  document: {
+    filename: string;
+    uploaded_at: string;
+    received: boolean;
+  } | null;
+  info_requests: InfoRequest[];
+  interviews: Interview[];
+  events: Array<{ at: string; label: string }>;
+};
+
 function TrackPage() {
   const { id } = Route.useParams();
   const initial = Route.useLoaderData();
@@ -62,11 +104,13 @@ function TrackPage() {
   const qc = useQueryClient();
   const [replies, setReplies] = useState<Record<string, string>>({});
 
-  const { data = initial } = useQuery({
+  const { data: raw = initial } = useQuery({
     queryKey: ["me-application", id],
     queryFn: () => fn({ data: { id } }),
     initialData: initial,
   });
+  const data = raw as MyApplication;
+
 
   const refresh = () => {
     qc.invalidateQueries({ queryKey: ["me-application", id] });
