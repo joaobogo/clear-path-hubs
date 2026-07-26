@@ -120,7 +120,7 @@ export async function loadFilterOptions() {
       .limit(500),
     s
       .from("memberships")
-      .select("user_id,role,profiles(full_name,email)")
+      .select("user_id,role,profiles:user_id(full_name,email)")
       .in("role", ["platform_admin", "operations"])
       .eq("status", "active")
       .limit(200),
