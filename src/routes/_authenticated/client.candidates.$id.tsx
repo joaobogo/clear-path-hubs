@@ -1026,23 +1026,36 @@ function ActivitySection({
  {decisions.length > 0 && (
  <div>
  <h3 className="mb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
- Decisions
+ Your team&apos;s decisions and feedback
  </h3>
  <ul className="space-y-2 text-sm">
  {decisions.map((d) => (
  <li key={d.id} className="border-b pb-2 last:border-b-0">
  <div className="flex items-center justify-between">
- <span className="font-medium capitalize">
- {String(d.decision).replace(/_/g, " ")}
- </span>
+ <span className="font-medium">{DECISION_LABELS[String(d.decision)] ?? String(d.decision).replace(/_/g, " ")}</span>
  <span className="text-xs text-muted-foreground">
  {new Date(d.created_at).toLocaleString()}
  </span>
  </div>
+ {d.reason_code && (
+ <div className="mt-1 text-xs text-muted-foreground">
+ Reason: {reasonLabel(String(d.reason_code))}
+ </div>
+ )}
+ {Array.isArray(d.details?.signals) && d.details.signals.length > 0 && (
+ <div className="mt-1 flex flex-wrap gap-1">
+ {(d.details.signals as string[]).map((s) => (
+ <Badge key={s} variant="secondary" className="text-[10px]">
+ {s.replace(/_/g, " ")}
+ </Badge>
+ ))}
+ </div>
+ )}
  {d.feedback && (
  <div className="mt-1 text-muted-foreground">{d.feedback}</div>
  )}
  </li>
+
  ))}
  </ul>
  </div>
