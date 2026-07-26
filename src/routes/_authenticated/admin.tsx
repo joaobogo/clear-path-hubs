@@ -88,6 +88,7 @@ function AdminLayout() {
 
   return (
     <WorkspaceShell
+      role="admin"
       contextKicker="TaaSFlow"
       contextLabel="Admin"
       contextSubLabel={email ?? undefined}

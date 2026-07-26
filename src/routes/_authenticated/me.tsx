@@ -87,6 +87,7 @@ function MeLayout() {
 
  return (
  <WorkspaceShell
+ role="candidate"
  contextKicker="Signed in as"
  contextLabel={data.profile.full_name || data.profile.email || "Candidate"}
  contextSubLabel={data.profile.email ?? undefined}

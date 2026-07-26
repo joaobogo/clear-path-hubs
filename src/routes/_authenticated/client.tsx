@@ -229,6 +229,7 @@ function ClientLayout() {
  <SupportViewContext.Provider value={supportView}>
  <ClientCoordinator />
    <WorkspaceShell
+ role="client"
  contextKicker="Workspace"
  contextLabel={active.name}
  contextSubLabel={`${effectiveRole.replace(/_/g, " ")}${supportView.active ? " · support view" : ""}`}
