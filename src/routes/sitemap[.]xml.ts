@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
-import { listBlogSlugs, listIndustrySlugs } from "@/lib/marketing/content";
+import { listIndustrySlugs } from "@/lib/marketing/content";
+import { listAllBlogRows } from "@/lib/marketing/blog-catalog";
 import { toPublicSlug } from "@/lib/marketing/industry-slug-aliases";
 
 // Canonical production origin. Keep in sync with `src/lib/marketing/head.ts`.
@@ -54,8 +55,11 @@ export const Route = createFileRoute("/sitemap.xml")({
           seenIndustry.add(publicSlug);
           urls.push(entry(`/industries/${publicSlug}`, "0.7"));
         }
-        for (const slug of listBlogSlugs()) {
-          urls.push(entry(`/blog/${slug}`, "0.6"));
+        // Only posts the blog actually publishes. A JSON file on disk is not
+        // enough: /blog/$slug 404s for unpublished slugs, so listing them here
+        // would advertise soft-404s to crawlers.
+        for (const row of listAllBlogRows()) {
+          urls.push(entry(`/blog/${row.slug}`, "0.6"));
         }
         const xml = [
           `<?xml version="1.0" encoding="UTF-8"?>`,

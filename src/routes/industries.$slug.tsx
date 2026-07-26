@@ -1,4 +1,5 @@
-import { createFileRoute, notFound, redirect } from "@tanstack/react-router";
+import { createFileRoute, Link, notFound, redirect } from "@tanstack/react-router";
+import { SiteShell } from "@/components/marketing/site-shell";
 import { ContentPage } from "@/components/marketing/content-page";
 import { IndustryPage } from "@/components/marketing/industry-page";
 import { getIndustry } from "@/lib/marketing/content";
@@ -51,18 +52,34 @@ export const Route = createFileRoute("/industries/$slug")({
         { title: v2.meta.title, description: v2.meta.description },
       );
     }
-    return marketingHead(loaderData?.legacy, `/industries/${params.slug}`, {
+    if (!loaderData?.legacy) {
+      // Unknown slug: the loader threw notFound(). Never let a soft-404 be
+      // indexed under a slug-derived title.
+      return {
+        meta: [
+          { title: "Industry not found — TaaSFlow" },
+          { name: "robots", content: "noindex" },
+        ],
+      };
+    }
+    return marketingHead(loaderData.legacy, `/industries/${params.slug}`, {
       title: `${params.slug} — TaaSFlow`,
       description: "Industry-focused subscription recruiting.",
     });
   },
   component: IndustryDetail,
   notFoundComponent: () => (
-    <ContentPage
-      entry={undefined}
-      eyebrow="Industry"
-      fallbackTitle="Industry not found"
-    />
+    <SiteShell>
+      <div className="mx-auto max-w-2xl px-4 py-24 text-center">
+        <h1 className="text-3xl font-semibold">Industry not found</h1>
+        <p className="mt-3 text-muted-foreground">
+          That industry page doesn't exist or has been renamed.
+        </p>
+        <Link to="/industries" className="mt-6 inline-block text-primary hover:underline">
+          ← Browse all industries
+        </Link>
+      </div>
+    </SiteShell>
   ),
 });
 
