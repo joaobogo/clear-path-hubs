@@ -22,65 +22,67 @@ const traceId = () =>
   `cd_${Math.random().toString(36).slice(2, 10)}${Date.now().toString(36)}`;
 
 // ─── Candidate-safe status vocabulary ───────────────────────────────────────
+// Canonical, candidate-facing only. Never exposes scores, rankings, client
+// identity decisions, admin notes, or internal processing states.
 export type CandidateSafeStatus =
-  | "Application received"
-  | "Information being reviewed"
+  | "Submitted"
+  | "Under review"
   | "Additional information requested"
-  | "Under consideration"
-  | "Shortlisted"
+  | "Progressing"
   | "Interview requested"
-  | "Decision pending"
-  | "Not selected for this role"
-  | "Role closed"
-  | "Withdrawn"
-  | "Hired";
+  | "Interview scheduled"
+  | "Closed"
+  | "Withdrawn";
 
 export const CANDIDATE_SAFE_STATUSES: CandidateSafeStatus[] = [
-  "Application received",
-  "Information being reviewed",
+  "Submitted",
+  "Under review",
   "Additional information requested",
-  "Under consideration",
-  "Shortlisted",
+  "Progressing",
   "Interview requested",
-  "Decision pending",
-  "Not selected for this role",
-  "Role closed",
+  "Interview scheduled",
+  "Closed",
   "Withdrawn",
-  "Hired",
 ];
 
-// Map internal state → single candidate-safe label. Never leaks scores/ranks.
+export const TERMINAL_STATUSES: CandidateSafeStatus[] = ["Closed", "Withdrawn"];
+
+// Map internal workflow state → single candidate-safe label.
 function mapStatus(input: {
   applicationStatus: string;
   positionStatus: string;
   visibleStage: string | null;
   infoRequested: boolean;
+  interviewState: "none" | "requested" | "scheduled";
 }): CandidateSafeStatus {
-  if (input.applicationStatus === "withdrawn") return "Withdrawn";
-  if (input.applicationStatus === "archived") return "Withdrawn";
-  if (input.applicationStatus === "rejected") return "Not selected for this role";
-  if (input.positionStatus === "closed") return "Role closed";
+  if (input.applicationStatus === "withdrawn" || input.applicationStatus === "archived") {
+    return "Withdrawn";
+  }
+  if (input.applicationStatus === "rejected") return "Closed";
+  if (input.positionStatus === "closed" || input.positionStatus === "filled") return "Closed";
+  if (input.infoRequested) return "Additional information requested";
+  if (input.interviewState === "scheduled") return "Interview scheduled";
+  if (input.interviewState === "requested") return "Interview requested";
   if (input.visibleStage) {
     switch (input.visibleStage) {
-      case "hired":
-        return "Hired";
-      case "offer":
-        return "Decision pending";
+      case "not_moving_forward":
+        return "Closed";
       case "interview_process":
         return "Interview requested";
+      case "hired":
+      case "offer":
       case "shortlisted":
-        return "Shortlisted";
-      case "not_moving_forward":
-        return "Not selected for this role";
+        return "Progressing";
       default:
-        return "Under consideration";
+        return "Under review";
     }
   }
-  if (input.infoRequested) return "Additional information requested";
-  if (input.applicationStatus === "ready_for_review") return "Under consideration";
-  if (input.applicationStatus === "processing") return "Information being reviewed";
-  return "Application received";
+  if (input.applicationStatus === "ready_for_review") return "Under review";
+  if (input.applicationStatus === "processing") return "Under review";
+  return "Submitted";
 }
+
+
 
 // ─── Context: link auth user to candidate profile (auto-claim by email) ─────
 
@@ -130,49 +132,75 @@ export const getMyContext = createServerFn({ method: "GET" })
 
 // ─── Applications list + detail ─────────────────────────────────────────────
 
+type InterviewState = "none" | "requested" | "scheduled";
+
+function interviewStateOf(rows: AnyRow[]): InterviewState {
+  const live = rows.filter(
+    (i) => i.status !== "cancelled" && i.status !== "declined",
+  );
+  if (live.some((i) => i.scheduled_at)) return "scheduled";
+  if (live.length > 0) return "requested";
+  return "none";
+}
+
+function canWithdraw(status: CandidateSafeStatus): boolean {
+  return !TERMINAL_STATUSES.includes(status);
+}
+
+async function myProfileId(supabase: AnyRow, userId: string): Promise<string | null> {
+  const { data } = await supabase
+    .from("candidate_profiles")
+    .select("id")
+    .eq("user_id", userId)
+    .maybeSingle();
+  return data?.id ?? null;
+}
+
 export const listMyApplications = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     const supabase = context.supabase as AnyRow;
-    // Get candidate profile id first (RLS on applications requires ownership).
-    const { data: cp } = await supabase
-      .from("candidate_profiles")
-      .select("id")
-      .eq("user_id", context.userId)
-      .maybeSingle();
-    if (!cp) return { applications: [] as AnyRow[] };
+    const cpId = await myProfileId(supabase, context.userId);
+    if (!cpId) return { applications: [] as AnyRow[] };
 
     const { data: apps, error } = await supabase
       .from("applications")
       .select(
-        `id, position_id, status, applied_at, updated_at, withdrawn_at,
+        `id, position_id, status, applied_at, updated_at, withdrawn_at, cv_file_id,
          positions:position_id ( id, title, status, organization_id, employment_type, work_model, location, organizations:organization_id ( id, name ) ),
          candidate_matches ( id, stage, client_visibility, updated_at,
-           client_decisions ( decision, created_at ) )`,
+           interviews ( id, status, scheduled_at, interview_type, timezone ) )`,
       )
-      .eq("candidate_profile_id", cp.id)
+      .eq("candidate_profile_id", cpId)
       .order("applied_at", { ascending: false });
     if (error) throw new Error(error.message);
+
+    // Open information requests are the canonical source for that status.
+    const { data: openReqs } = await supabase
+      .from("candidate_info_requests")
+      .select("id, application_id")
+      .eq("candidate_profile_id", cpId)
+      .eq("status", "open");
+    const openByApp = new Set((openReqs ?? []).map((r: AnyRow) => r.application_id));
 
     const shaped = (apps ?? []).map((a: AnyRow) => {
       const pos = a.positions ?? {};
       const org = pos.organizations ?? {};
-      const visibleMatch = (asArray(a.candidate_matches)).find(
-        (m: AnyRow) => m.client_visibility === "visible",
-      );
-      const infoRequested = (asArray(a.candidate_matches)).some((m: AnyRow) =>
-        (asArray(m.client_decisions)).some(
-          (d: AnyRow) => d.decision === "request_information",
-        ),
-      );
+      const matches = asArray(a.candidate_matches);
+      const visibleMatch = matches.find((m: AnyRow) => m.client_visibility === "visible");
+      const interviews = matches.flatMap((m: AnyRow) => asArray(m.interviews));
+      const interviewState = interviewStateOf(interviews);
+      const infoRequested = openByApp.has(a.id);
       const status = mapStatus({
         applicationStatus: a.status,
         positionStatus: pos.status ?? "active",
         visibleStage: visibleMatch?.stage ?? null,
         infoRequested,
+        interviewState,
       });
-      const lastUpdate =
-        visibleMatch?.updated_at ?? a.updated_at ?? a.applied_at;
+      const nextInterview = interviews
+        .filter((i: AnyRow) => i.scheduled_at && i.status !== "cancelled")
+        .sort((x: AnyRow, y: AnyRow) => String(x.scheduled_at).localeCompare(String(y.scheduled_at)))[0];
       return {
         id: a.id,
         position_id: pos.id,
@@ -182,13 +210,13 @@ export const listMyApplications = createServerFn({ method: "GET" })
         work_model: pos.work_model ?? null,
         location: pos.location ?? null,
         applied_at: a.applied_at,
-        last_update: lastUpdate,
+        last_update: visibleMatch?.updated_at ?? a.updated_at ?? a.applied_at,
         status,
-        can_withdraw:
-          status !== "Withdrawn" &&
-          status !== "Not selected for this role" &&
-          status !== "Role closed" &&
-          status !== "Hired",
+        role_closed: (pos.status ?? "active") === "closed" || (pos.status ?? "") === "filled",
+        info_requested: infoRequested,
+        next_interview_at: nextInterview?.scheduled_at ?? null,
+        has_document: !!a.cv_file_id,
+        can_withdraw: canWithdraw(status),
         next_step: nextStepHint(status),
       };
     });
@@ -197,24 +225,20 @@ export const listMyApplications = createServerFn({ method: "GET" })
 
 function nextStepHint(status: CandidateSafeStatus): string | null {
   switch (status) {
-    case "Application received":
-      return "We'll review your details and get back to you.";
-    case "Information being reviewed":
-      return "The team is looking over your submission.";
+    case "Submitted":
+      return "We have your application. Nothing to do right now.";
+    case "Under review":
+      return "The team is reading through your application.";
     case "Additional information requested":
-      return "Please check your messages and reply when you can.";
-    case "Under consideration":
-      return "Your profile is with the hiring team.";
-    case "Shortlisted":
-      return "You've been shortlisted. Expect to hear about interviews soon.";
+      return "There's a question waiting for you below.";
+    case "Progressing":
+      return "Your application is moving forward with the hiring team.";
     case "Interview requested":
-      return "An interview has been requested. Watch your messages for scheduling.";
-    case "Decision pending":
-      return "The hiring team is finalizing their decision.";
-    case "Hired":
-      return "Congratulations — welcome aboard.";
-    case "Not selected for this role":
-    case "Role closed":
+      return "An interview has been requested. Times will appear here once confirmed.";
+    case "Interview scheduled":
+      return "Your interview details are below.";
+    case "Closed":
+      return "This application is closed. You can apply to other open roles.";
     case "Withdrawn":
       return null;
   }
@@ -225,54 +249,91 @@ export const getMyApplication = createServerFn({ method: "GET" })
   .inputValidator((input: { id: string }) => z.object({ id: z.string().uuid() }).parse(input))
   .handler(async ({ context, data }) => {
     const supabase = context.supabase as AnyRow;
-    const { data: cp } = await supabase
-      .from("candidate_profiles")
-      .select("id")
-      .eq("user_id", context.userId)
-      .maybeSingle();
-    if (!cp) throw new Error("No candidate profile");
+    const cpId = await myProfileId(supabase, context.userId);
+    if (!cpId) throw new Error("No candidate profile");
 
     const { data: a, error } = await supabase
       .from("applications")
       .select(
         `id, position_id, status, applied_at, updated_at, withdrawn_at, candidate_profile_id,
+         cover_letter, portfolio_url, cv_file_id,
          positions:position_id ( id, title, description, status, organization_id, employment_type, work_model, location, organizations:organization_id ( id, name ) ),
          candidate_matches ( id, stage, client_visibility, updated_at,
-           client_decisions ( decision, feedback, created_at ) )`,
+           interviews ( id, status, scheduled_at, duration_minutes, interview_type, location, meeting_url, timezone, requested_at, cancelled_at ) )`,
       )
       .eq("id", data.id)
-      .eq("candidate_profile_id", cp.id)
+      .eq("candidate_profile_id", cpId)
       .maybeSingle();
     if (error) throw new Error(error.message);
     if (!a) throw new Error("Not found");
 
+    const [{ data: reqs }, { data: cvFile }] = await Promise.all([
+      supabase
+        .from("candidate_info_requests")
+        .select("id, prompt, status, response, responded_at, due_at, created_at")
+        .eq("application_id", a.id)
+        .order("created_at", { ascending: false }),
+      a.cv_file_id
+        ? supabase
+            .from("files")
+            .select("id, filename, size, created_at, parse_state")
+            .eq("id", a.cv_file_id)
+            .maybeSingle()
+        : Promise.resolve({ data: null }),
+    ]);
+
     const pos = a.positions ?? {};
     const org = pos.organizations ?? {};
-    const visibleMatch = (asArray(a.candidate_matches)).find(
-      (m: AnyRow) => m.client_visibility === "visible",
-    );
-    const infoRequested = (asArray(a.candidate_matches)).some((m: AnyRow) =>
-      (asArray(m.client_decisions)).some(
-        (d: AnyRow) => d.decision === "request_information",
-      ),
-    );
+    const matches = asArray(a.candidate_matches);
+    const visibleMatch = matches.find((m: AnyRow) => m.client_visibility === "visible");
+    const interviews = matches
+      .flatMap((m: AnyRow) => asArray(m.interviews))
+      .map((i: AnyRow) => ({
+        id: i.id,
+        status: i.status as string,
+        scheduled_at: i.scheduled_at as string | null,
+        duration_minutes: i.duration_minutes as number | null,
+        interview_type: i.interview_type as string | null,
+        location: i.location as string | null,
+        meeting_url: i.meeting_url as string | null,
+        timezone: i.timezone as string | null,
+        requested_at: i.requested_at as string,
+        cancelled_at: i.cancelled_at as string | null,
+      }));
+    const infoRequests = (reqs ?? []) as Array<{
+      id: string;
+      prompt: string;
+      status: string;
+      response: string | null;
+      responded_at: string | null;
+      due_at: string | null;
+      created_at: string;
+    }>;
+    const infoRequested = infoRequests.some((r) => r.status === "open");
+
     const status = mapStatus({
       applicationStatus: a.status,
       positionStatus: pos.status ?? "active",
       visibleStage: visibleMatch?.stage ?? null,
       infoRequested,
+      interviewState: interviewStateOf(interviews),
     });
+
     const events: { at: string; label: string }[] = [
-      { at: a.applied_at, label: "Application received" },
+      { at: a.applied_at, label: "Application submitted" },
     ];
-    for (const m of asArray(a.candidate_matches)) {
-      for (const d of asArray(m.client_decisions)) {
-        const label = decisionLabel(d.decision);
-        if (label) events.push({ at: d.created_at, label });
-      }
+    for (const r of infoRequests) {
+      events.push({ at: r.created_at, label: "Information requested" });
+      if (r.responded_at) events.push({ at: r.responded_at, label: "You replied" });
+    }
+    for (const i of interviews) {
+      events.push({ at: i.requested_at, label: "Interview requested" });
+      if (i.scheduled_at) events.push({ at: i.scheduled_at, label: "Interview scheduled" });
+      if (i.cancelled_at) events.push({ at: i.cancelled_at, label: "Interview cancelled" });
     }
     if (a.withdrawn_at) events.push({ at: a.withdrawn_at, label: "Withdrawn" });
     events.sort((x, y) => x.at.localeCompare(y.at));
+
     return {
       id: a.id,
       role_title: pos.title ?? "Role",
@@ -281,34 +342,209 @@ export const getMyApplication = createServerFn({ method: "GET" })
       employment_type: pos.employment_type ?? null,
       work_model: pos.work_model ?? null,
       location: pos.location ?? null,
+      role_closed: (pos.status ?? "active") === "closed" || (pos.status ?? "") === "filled",
       applied_at: a.applied_at,
+      cover_letter: (a.cover_letter as string | null) ?? null,
+      portfolio_url: (a.portfolio_url as string | null) ?? null,
+      document: cvFile
+        ? {
+            id: cvFile.id as string,
+            filename: cvFile.filename as string,
+            size: (cvFile.size as number | null) ?? null,
+            uploaded_at: cvFile.created_at as string,
+            received: cvFile.parse_state !== "failed",
+          }
+        : null,
       status,
       next_step: nextStepHint(status),
-      can_withdraw:
-        status !== "Withdrawn" &&
-        status !== "Not selected for this role" &&
-        status !== "Role closed" &&
-        status !== "Hired",
+      can_withdraw: canWithdraw(status),
+      info_requests: infoRequests,
+      interviews,
       events,
     };
   });
 
-function decisionLabel(decision: string): string | null {
-  switch (decision) {
-    case "shortlist":
-      return "Shortlisted";
-    case "request_interview":
-      return "Interview requested";
-    case "request_information":
-      return "Additional information requested";
-    case "not_moving_forward":
-      return "Not moving forward";
-    case "hire":
-      return "Hired";
-    default:
-      return null;
-  }
-}
+// ─── Information requests ───────────────────────────────────────────────────
+
+export const listMyInfoRequests = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const supabase = context.supabase as AnyRow;
+    const cpId = await myProfileId(supabase, context.userId);
+    if (!cpId) return { requests: [] as AnyRow[] };
+    const { data, error } = await supabase
+      .from("candidate_info_requests")
+      .select(
+        "id, application_id, prompt, status, response, responded_at, due_at, created_at, applications:application_id ( id, positions:position_id ( title ) )",
+      )
+      .eq("candidate_profile_id", cpId)
+      .order("created_at", { ascending: false })
+      .limit(50);
+    if (error) throw new Error(error.message);
+    const requests = (data ?? []).map((r: AnyRow) => ({
+      id: r.id as string,
+      application_id: r.application_id as string,
+      role_title: r.applications?.positions?.title ?? "Role",
+      prompt: r.prompt as string,
+      status: r.status as string,
+      response: (r.response as string | null) ?? null,
+      responded_at: (r.responded_at as string | null) ?? null,
+      due_at: (r.due_at as string | null) ?? null,
+      created_at: r.created_at as string,
+      expired:
+        r.status === "open" && !!r.due_at && new Date(r.due_at).getTime() < Date.now(),
+    }));
+    return { requests };
+  });
+
+export const respondToInfoRequest = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: { id: string; response: string }) =>
+    z
+      .object({
+        id: z.string().uuid(),
+        response: z.string().trim().min(1, "Please write a reply").max(4000),
+      })
+      .parse(input),
+  )
+  .handler(async ({ context, data }) => {
+    const trace = traceId();
+    const supabase = context.supabase as AnyRow;
+    const cpId = await myProfileId(supabase, context.userId);
+    if (!cpId) return { ok: false as const, trace_id: trace, message: "No profile" };
+
+    const { data: req } = await supabase
+      .from("candidate_info_requests")
+      .select("id, status, due_at, application_id")
+      .eq("id", data.id)
+      .eq("candidate_profile_id", cpId)
+      .maybeSingle();
+    if (!req) return { ok: false as const, trace_id: trace, message: "Request not found" };
+    if (req.status !== "open") {
+      return {
+        ok: false as const,
+        trace_id: trace,
+        message: "This request is already closed.",
+      };
+    }
+    if (req.due_at && new Date(req.due_at).getTime() < Date.now()) {
+      return {
+        ok: false as const,
+        trace_id: trace,
+        message: "This request has expired. Send a message instead and we'll pick it up.",
+      };
+    }
+
+    const { error } = await supabase
+      .from("candidate_info_requests")
+      .update({
+        response: data.response,
+        status: "answered",
+        responded_at: new Date().toISOString(),
+      })
+      .eq("id", data.id)
+      .eq("status", "open");
+    if (error) return { ok: false as const, trace_id: trace, message: error.message };
+
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    await supabaseAdmin.from("audit_events").insert({
+      actor_user_id: context.userId,
+      entity_type: "candidate_info_requests",
+      entity_id: data.id,
+      action: "candidate_info_response",
+      trace_id: trace,
+    });
+    return { ok: true as const, trace_id: trace };
+  });
+
+// ─── Dashboard summary ──────────────────────────────────────────────────────
+
+export const getMyDashboard = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const supabase = context.supabase as AnyRow;
+    const cpId = await myProfileId(supabase, context.userId);
+    if (!cpId) {
+      return {
+        open_requests: 0,
+        upcoming_interviews: [] as AnyRow[],
+        unread_messages: 0,
+        document: null as AnyRow | null,
+      };
+    }
+
+    const [{ count: openCount }, { data: profile }, { count: unread }] = await Promise.all([
+      supabase
+        .from("candidate_info_requests")
+        .select("id", { count: "exact", head: true })
+        .eq("candidate_profile_id", cpId)
+        .eq("status", "open"),
+      supabase
+        .from("candidate_profiles")
+        .select("current_cv_file_id")
+        .eq("id", cpId)
+        .maybeSingle(),
+      supabase
+        .from("messages")
+        .select("id", { count: "exact", head: true })
+        .eq("recipient_context->>candidate_user_id", context.userId)
+        .is("read_at", null),
+    ]);
+
+    const { data: matches } = await supabase
+      .from("candidate_matches")
+      .select(
+        "id, application_id, positions:position_id ( title ), interviews ( id, status, scheduled_at, duration_minutes, interview_type, location, meeting_url, timezone )",
+      )
+      .eq("candidate_profile_id", cpId);
+
+    const now = Date.now();
+    const upcoming = (matches ?? [])
+      .flatMap((m: AnyRow) =>
+        asArray(m.interviews).map((i: AnyRow) => ({
+          ...i,
+          application_id: m.application_id as string,
+          role_title: m.positions?.title ?? "Role",
+        })),
+      )
+      .filter(
+        (i: AnyRow) =>
+          i.scheduled_at &&
+          i.status !== "cancelled" &&
+          new Date(i.scheduled_at).getTime() > now,
+      )
+      .sort((a: AnyRow, b: AnyRow) =>
+        String(a.scheduled_at).localeCompare(String(b.scheduled_at)),
+      )
+      .slice(0, 3);
+
+    let document: AnyRow | null = null;
+    if (profile?.current_cv_file_id) {
+      const { data: f } = await supabase
+        .from("files")
+        .select("id, filename, size, created_at, parse_state")
+        .eq("id", profile.current_cv_file_id)
+        .maybeSingle();
+      if (f) {
+        document = {
+          id: f.id,
+          filename: f.filename,
+          size: f.size,
+          uploaded_at: f.created_at,
+          received: f.parse_state !== "failed",
+        };
+      }
+    }
+
+    return {
+      open_requests: openCount ?? 0,
+      upcoming_interviews: upcoming,
+      unread_messages: unread ?? 0,
+      document,
+    };
+  });
+
+
 
 // ─── Withdraw application ───────────────────────────────────────────────────
 

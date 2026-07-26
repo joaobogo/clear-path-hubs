@@ -16,6 +16,8 @@ import {
  CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { CANDIDATE_STATUS_TONE } from "@/lib/candidate-status";
+
 
 export const Route = createFileRoute("/_authenticated/me/applications/")({
  head: () => ({
@@ -36,19 +38,8 @@ export const Route = createFileRoute("/_authenticated/me/applications/")({
  component: MyApplicationsPage,
 });
 
-const STATUS_TONE: Record<CandidateSafeStatus, string> = {
- "Application received": "bg-secondary text-secondary-foreground",
- "Information being reviewed": "bg-secondary text-secondary-foreground",
- "Additional information requested": "taas-bg-warning-soft taas-fg-warning ",
- "Under consideration": "taas-bg-info-soft taas-fg-info ",
- Shortlisted: "taas-bg-info-soft taas-fg-info ",
- "Interview requested": "taas-bg-info-soft taas-fg-info ",
- "Decision pending": "bg-primary/15 text-primary",
- Hired: "taas-bg-success-soft taas-fg-success ",
- "Not selected for this role": "bg-muted text-muted-foreground",
- "Role closed": "bg-muted text-muted-foreground",
- Withdrawn: "bg-muted text-muted-foreground",
-};
+const STATUS_TONE = CANDIDATE_STATUS_TONE;
+
 
 function MyApplicationsPage() {
  const data = Route.useLoaderData();
@@ -118,7 +109,10 @@ function MyApplicationsPage() {
  status: CandidateSafeStatus;
  next_step: string | null;
  can_withdraw: boolean;
+ info_requested: boolean;
+ next_interview_at: string | null;
  }>).map((a) => (
+
  <Card key={a.id}>
  <CardHeader className="pb-3">
  <div className="flex items-start justify-between gap-4">
@@ -133,12 +127,25 @@ function MyApplicationsPage() {
  {a.work_model ? ` · ${a.work_model}` : ""}
  </CardDescription>
  </div>
+ <div className="flex shrink-0 flex-col items-end gap-1">
  <Badge className={STATUS_TONE[a.status]} variant="outline">
  {a.status}
  </Badge>
+ {a.info_requested ? (
+ <span className="text-[10px] uppercase tracking-wide taas-fg-warning">
+ Reply needed
+ </span>
+ ) : null}
+ {a.next_interview_at ? (
+ <span className="text-[10px] text-muted-foreground">
+ {new Date(a.next_interview_at).toLocaleDateString()}
+ </span>
+ ) : null}
+ </div>
  </div>
  </CardHeader>
  <CardContent className="pt-0">
+
  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs text-muted-foreground mb-3">
  <div>
  <div className="uppercase tracking-wide">Applied</div>

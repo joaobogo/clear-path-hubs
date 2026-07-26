@@ -103,15 +103,34 @@ function CvPage() {
  <Upload className="h-4 w-4" /> Upload new CV
  </h2>
  <p className="text-xs text-muted-foreground">
- PDF or DOCX, up to 10 MB. Uploading a new file replaces your current
- CV on new submissions; older versions stay available below.
+ PDF only, up to 10 MB. A new file becomes your current CV for future
+ submissions. Applications you already sent keep the CV they were sent
+ with, so your history stays intact.
  </p>
+ <label htmlFor="cv-upload" className="sr-only">
+ Choose a PDF CV to upload
+ </label>
  <input
+ id="cv-upload"
  type="file"
- accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+ accept="application/pdf,.pdf"
+ className="min-h-11 text-sm"
  onChange={(e) => {
  const f = e.target.files?.[0];
- if (f) upload.mutate(f);
+ if (!f) return;
+ const isPdf =
+ f.type === "application/pdf" || f.name.toLowerCase().endsWith(".pdf");
+ if (!isPdf) {
+ toast.error("Please upload a PDF. Other formats aren't accepted.");
+ e.target.value = "";
+ return;
+ }
+ if (f.size > 10 * 1024 * 1024) {
+ toast.error("That file is over 10 MB. Please upload a smaller PDF.");
+ e.target.value = "";
+ return;
+ }
+ upload.mutate(f);
  }}
  disabled={upload.isPending}
  />
@@ -119,6 +138,7 @@ function CvPage() {
  <div className="text-xs text-muted-foreground">Uploading…</div>
  )}
  </section>
+
 
  <section className="rounded-lg border bg-card p-5">
  <h2 className="text-sm font-medium mb-3 flex items-center gap-2">

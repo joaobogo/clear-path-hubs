@@ -243,7 +243,11 @@ export const submitApplication = createServerFn({ method: "POST" })
         .insert({
           candidate_profile_id: candidateProfileId,
           position_id: data.position_id,
+          // Pin the exact CV version submitted with this application so a later
+          // CV replacement never rewrites this application's history.
+          cv_file_id: fileRow.id,
           source: `${data.source}:${data.idempotency_key}`,
+
           source_channel: data.source,
           status: "submitted",
           cover_letter: data.cover_letter || null,
