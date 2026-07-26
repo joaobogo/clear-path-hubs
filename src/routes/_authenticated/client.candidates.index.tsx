@@ -47,6 +47,20 @@ const FIT_OPTIONS = [
  { key: "limited", label: "Limited" },
 ] as const;
 
+const CRITICAL_OPTIONS = [
+ { key: "all", label: "Any critical status" },
+ { key: "met", label: "All critical requirements met" },
+ { key: "gaps", label: "Has critical gaps" },
+ { key: "missing_evidence", label: "Missing evidence" },
+] as const;
+
+const REVIEW_OPTIONS = [
+ { key: "all", label: "Any review status" },
+ { key: "awaiting", label: "Awaiting your review" },
+ { key: "in_progress", label: "In progress with your team" },
+ { key: "closed", label: "Closed" },
+] as const;
+
 const SORT_OPTIONS = [
  { key: "recent", label: "Recently delivered" },
  { key: "score", label: "Highest approved fit" },
@@ -60,6 +74,10 @@ const searchSchema = z.object({
  position: fallback(z.string(), "").default(""),
  stage: fallback(z.string(), "all").default("all"),
  fit: fallback(z.string(), "all").default("all"),
+ critical: fallback(z.string(), "all").default("all"),
+ review: fallback(z.string(), "all").default("all"),
+ availability: fallback(z.string(), "all").default("all"),
+ minExp: fallback(z.string(), "").default(""),
  location: fallback(z.string(), "").default(""),
  sort: fallback(z.string(), "recent").default("recent"),
  view: fallback(z.enum(["cards", "list"]), "cards").default("cards"),
