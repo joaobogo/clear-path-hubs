@@ -258,6 +258,9 @@ export function PositionEditWizard({
     },
     onSuccess: async () => {
       toast.success("Position saved");
+      if (typeof window !== "undefined") window.localStorage.removeItem(draftKey);
+      setSavedAt(null);
+      setState((cur) => ({ ...cur }));
       await Promise.all(invalidateKeys.map((k) => qc.invalidateQueries({ queryKey: k })));
       navigate({ to: returnTo });
     },
@@ -290,6 +293,37 @@ export function PositionEditWizard({
           Cancel
         </Button>
       </header>
+
+      {draftFound && (
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-md border bg-muted/50 p-3">
+          <p className="text-sm">
+            An unsaved draft of this job was found
+            {savedAt ? ` from ${new Date(savedAt).toLocaleString()}` : ""}.
+          </p>
+          <div className="flex gap-2">
+            <Button
+              size="sm"
+              onClick={() => {
+                setState(draftFound);
+                setDraftFound(null);
+              }}
+            >
+              Restore draft
+            </Button>
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={() => {
+                window.localStorage.removeItem(draftKey);
+                setDraftFound(null);
+                setSavedAt(null);
+              }}
+            >
+              Discard
+            </Button>
+          </div>
+        </div>
+      )}
 
       <div aria-label="Progress">
         <Progress value={progress} />
