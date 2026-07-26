@@ -98,9 +98,10 @@ function firstName(full?: string | null, email?: string | null): string {
 }
 
 function MeHome() {
-  const { ctx, apps, cvs } = Route.useLoaderData();
+  const { ctx, apps, cvs, dash } = Route.useLoaderData();
   const ctxFn = useServerFn(getMyContext);
   const appsFn = useServerFn(listMyApplications);
+  const dashFn = useServerFn(getMyDashboard);
 
   const { data: ctxLive = ctx } = useQuery({
     queryKey: ["me-context"],
@@ -112,6 +113,11 @@ function MeHome() {
     queryFn: () => appsFn(),
     initialData: apps,
   });
+  const { data: dashLive = dash } = useQuery({
+    queryKey: ["me-dashboard"],
+    queryFn: () => dashFn(),
+    initialData: dash ?? undefined,
+  });
 
   const profile = (ctxLive?.profile ?? null) as Record<string, unknown> | null;
   const applications = (appsLive?.applications ?? []) as App[];
@@ -119,11 +125,27 @@ function MeHome() {
     created_at: string;
     filename?: string | null;
   }>;
+  const openRequests = dashLive?.open_requests ?? 0;
+  const unread = dashLive?.unread_messages ?? 0;
+  const upcoming = (dashLive?.upcoming_interviews ?? []) as Array<{
+    id: string;
+    application_id: string;
+    role_title: string;
+    scheduled_at: string;
+    interview_type: string | null;
+    timezone: string | null;
+  }>;
+  const doc = (dashLive?.document ?? null) as {
+    filename: string;
+    uploaded_at: string;
+    received: boolean;
+  } | null;
 
   const active = applications.filter(
-    (a) => !["Withdrawn", "Not selected for this role", "Role closed", "Hired"].includes(a.status),
+    (a) => !TERMINAL_STATUSES.includes(a.status),
   );
   const spotlight = active[0] ?? applications[0] ?? null;
+
   const pct = completeness(profile);
   const cv = cvVersions[0] ?? null;
   const name = firstName(
