@@ -608,7 +608,18 @@ export const markInterviewCompleted = createServerFn({ method: "POST" })
       after: { status: "completed" },
       trace_id: trace,
     });
+    try {
+      const { emitInterviewEvent } = await import("./interview-events.server");
+      await emitInterviewEvent({
+        interviewId: data.id,
+        event: "interview_completed",
+        actorUserId: context.userId,
+      });
+    } catch (e) {
+      console.error("[markInterviewCompleted] emit failed", trace, e);
+    }
     return { ok: true, trace_id: trace };
+
   });
 
 export type SchedulableCandidate = {
