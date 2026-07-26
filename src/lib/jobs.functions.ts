@@ -133,9 +133,9 @@ export const getPublicPosition = createServerFn({ method: "GET" })
 
     const { data: locs } = await supabase
       .from("position_locations")
-      .select("city,state_region,country,work_model,headcount,is_primary")
+      .select("city,region,country,work_model,headcount,is_primary,display_order")
       .eq("position_id", data.id)
-      .order("is_primary", { ascending: false });
+      .order("display_order", { ascending: true });
 
     const comp = (pos.compensation ?? {}) as { approved?: boolean; display?: string };
 
@@ -156,7 +156,7 @@ export const getPublicPosition = createServerFn({ method: "GET" })
       accepting_applications: (pos as { status?: string }).status === "active",
       locations: (locs ?? []).map((l) => ({
         city: l.city,
-        state_region: l.state_region,
+        region: l.region,
         country: l.country,
         work_model: l.work_model,
         headcount: l.headcount,
