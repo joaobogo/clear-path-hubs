@@ -70,8 +70,15 @@ const NAV: WorkspaceNavItem[] = [
   { to: "/admin/publish", label: "Publish Desk", icon: Send, group: "Delivery", hint: "Release candidates to clients" },
 
   {
-    to: "/admin/scoring/orphans",
+    to: "/admin/scoring/review",
     label: "Scoring Review",
+    icon: ClipboardCheck,
+    group: "Quality",
+    hint: "Evidence QC and approval decisions",
+  },
+  {
+    to: "/admin/scoring/orphans",
+    label: "Scoring Orphans",
     icon: ClipboardCheck,
     group: "Quality",
     hint: "Unmatched and unresolved score runs",
