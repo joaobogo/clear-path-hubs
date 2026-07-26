@@ -36,19 +36,8 @@ export const Route = createFileRoute("/_authenticated/me/applications/")({
  component: MyApplicationsPage,
 });
 
-const STATUS_TONE: Record<CandidateSafeStatus, string> = {
- "Application received": "bg-secondary text-secondary-foreground",
- "Information being reviewed": "bg-secondary text-secondary-foreground",
- "Additional information requested": "taas-bg-warning-soft taas-fg-warning ",
- "Under consideration": "taas-bg-info-soft taas-fg-info ",
- Shortlisted: "taas-bg-info-soft taas-fg-info ",
- "Interview requested": "taas-bg-info-soft taas-fg-info ",
- "Decision pending": "bg-primary/15 text-primary",
- Hired: "taas-bg-success-soft taas-fg-success ",
- "Not selected for this role": "bg-muted text-muted-foreground",
- "Role closed": "bg-muted text-muted-foreground",
- Withdrawn: "bg-muted text-muted-foreground",
-};
+const STATUS_TONE = CANDIDATE_STATUS_TONE;
+
 
 function MyApplicationsPage() {
  const data = Route.useLoaderData();
