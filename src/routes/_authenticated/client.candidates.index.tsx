@@ -282,13 +282,44 @@ function CandidatesPage() {
  key: "fit",
  label: FIT_OPTIONS.find((s) => s.key === search.fit)?.label,
  },
+ search.critical !== "all" && {
+ key: "critical",
+ label: CRITICAL_OPTIONS.find((s) => s.key === search.critical)?.label,
+ },
+ search.review !== "all" && {
+ key: "review",
+ label: REVIEW_OPTIONS.find((s) => s.key === search.review)?.label,
+ },
+ search.availability !== "all" && {
+ key: "availability",
+ label: `Availability: ${search.availability}`,
+ },
+ search.minExp && { key: "minExp", label: `${search.minExp}+ years experience` },
+ search.minScore && { key: "minScore", label: `Match ≥ ${search.minScore}` },
+ search.maxScore && { key: "maxScore", label: `Match ≤ ${search.maxScore}` },
  search.location && { key: "location", label: `Location: ${search.location}` },
  search.q && { key: "q", label: `Search: ${search.q}` },
  ].filter(Boolean) as { key: string; label: string }[];
 
+ const RESET_TO_ALL = new Set(["stage", "fit", "critical", "review", "availability"]);
+
  const clearFilters = () =>
  navigate({
- search: { ...search, q: "", position: "", stage: "all", fit: "all", location: "", minScore: "", maxScore: "" } as never,
+ search: {
+ ...search,
+ q: "",
+ position: "",
+ stage: "all",
+ fit: "all",
+ critical: "all",
+ review: "all",
+ availability: "all",
+ minExp: "",
+ location: "",
+ minScore: "",
+ maxScore: "",
+ filter: "all",
+ } as never,
  });
 
  return (
