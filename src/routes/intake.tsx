@@ -189,11 +189,11 @@ const EMPTY: FormState = {
 };
 
 const STEPS = [
-  { id: 1, label: "Role Definition" },
-  { id: 2, label: "Hiring Contact" },
-  { id: 3, label: "Candidate Profile" },
-  { id: 4, label: "Compensation" },
-  { id: 5, label: "Search Criteria" },
+  { id: 1, label: "Organization & Contact" },
+  { id: 2, label: "Role & Objective" },
+  { id: 3, label: "Location & Work Model" },
+  { id: 4, label: "Requirements & Priorities" },
+  { id: 5, label: "Process & Timeline" },
   { id: 6, label: "Review & Submit" },
 ];
 
@@ -215,14 +215,6 @@ function uniqueLower(arr: string[]) {
 function validateStep(step: number, s: FormState): Record<string, string> {
   const e: Record<string, string> = {};
   if (step === 1) {
-    if (!s.roleTitle.trim()) e.roleTitle = "Role title is required";
-    if (!s.employmentType) e.employmentType = "Select an employment type";
-    if (!s.workModel) e.workModel = "Select a work arrangement";
-    if (!s.seniority.trim()) e.seniority = "Select a seniority level";
-    const n = Number(s.headcount);
-    if (!s.headcount || !Number.isFinite(n) || n < 1) e.headcount = "At least 1 position required";
-  }
-  if (step === 2) {
     if (!s.companyName.trim()) e.companyName = "Organization name is required";
     if (!s.companyWebsite.trim()) e.companyWebsite = "Company website is required";
     if (!s.companySize) e.companySize = "Select company size";
@@ -232,7 +224,20 @@ function validateStep(step: number, s: FormState): Record<string, string> {
     if (!s.lastName.trim()) e.lastName = "Last name is required";
     if (!emailIsValid(s.workEmail)) e.workEmail = "Enter a valid work email";
   }
+  if (step === 2) {
+    if (!s.roleTitle.trim()) e.roleTitle = "Role title is required";
+    if (!s.employmentType) e.employmentType = "Select an employment type";
+    if (!s.seniority.trim()) e.seniority = "Select a seniority level";
+    const n = Number(s.headcount);
+    if (!s.headcount || !Number.isFinite(n) || n < 1) e.headcount = "At least 1 position required";
+  }
   if (step === 3) {
+    if (!s.workModel) e.workModel = "Select a work arrangement";
+    if (!s.openWorldwide && s.targetCountries.length === 0) {
+      e.targetCountries = "Add at least one country, or mark the role as open worldwide";
+    }
+  }
+  if (step === 4) {
     const skills = uniqueLower(s.mustHaveSkills);
     const desc = s.jobDescription.trim();
     if (skills.length < 3 && desc.length < 40) {
@@ -480,8 +485,8 @@ function IntakePage() {
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
-          {/* ================= STEP 1: ROLE DEFINITION ================= */}
-          {step === 1 && (
+          {/* ================= STEP 2: ROLE & OBJECTIVE ================= */}
+          {step === 2 && (
             <div className="space-y-6">
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <Field label="Role Title" error={errors.roleTitle} required className="sm:col-span-2">
@@ -506,21 +511,6 @@ function IntakePage() {
                       <SelectItem value="contract">Contract</SelectItem>
                       <SelectItem value="temporary">Temporary</SelectItem>
                       <SelectItem value="internship">Internship</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </Field>
-                <Field label="Work Arrangement" error={errors.workModel} required>
-                  <Select
-                    value={state.workModel}
-                    onValueChange={(v) => set("workModel", v as FormState["workModel"])}
-                  >
-                    <SelectTrigger data-field="workModel">
-                      <SelectValue placeholder="Select…" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="remote">Remote</SelectItem>
-                      <SelectItem value="hybrid">Hybrid</SelectItem>
-                      <SelectItem value="onsite">Onsite</SelectItem>
                     </SelectContent>
                   </Select>
                 </Field>

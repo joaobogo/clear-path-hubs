@@ -179,8 +179,11 @@ export type Database = {
       }
       applications: {
         Row: {
+          accommodation_request: string | null
           applied_at: string
           candidate_profile_id: string
+          consent: Json
+          cover_letter: string | null
           created_at: string
           created_by_audit: boolean | null
           expires_at: string | null
@@ -197,7 +200,9 @@ export type Database = {
           migration_version: string | null
           outreach_replied_at: string | null
           outreach_sent_at: string | null
+          portfolio_url: string | null
           position_id: string
+          question_version: number
           source: string | null
           source_campaign: string | null
           source_channel: string | null
@@ -209,8 +214,11 @@ export type Database = {
           withdrawn_at: string | null
         }
         Insert: {
+          accommodation_request?: string | null
           applied_at?: string
           candidate_profile_id: string
+          consent?: Json
+          cover_letter?: string | null
           created_at?: string
           created_by_audit?: boolean | null
           expires_at?: string | null
@@ -227,7 +235,9 @@ export type Database = {
           migration_version?: string | null
           outreach_replied_at?: string | null
           outreach_sent_at?: string | null
+          portfolio_url?: string | null
           position_id: string
+          question_version?: number
           source?: string | null
           source_campaign?: string | null
           source_channel?: string | null
@@ -239,8 +249,11 @@ export type Database = {
           withdrawn_at?: string | null
         }
         Update: {
+          accommodation_request?: string | null
           applied_at?: string
           candidate_profile_id?: string
+          consent?: Json
+          cover_letter?: string | null
           created_at?: string
           created_by_audit?: boolean | null
           expires_at?: string | null
@@ -257,7 +270,9 @@ export type Database = {
           migration_version?: string | null
           outreach_replied_at?: string | null
           outreach_sent_at?: string | null
+          portfolio_url?: string | null
           position_id?: string
+          question_version?: number
           source?: string | null
           source_campaign?: string | null
           source_channel?: string | null
@@ -1186,8 +1201,10 @@ export type Database = {
         Row: {
           availability: Json
           certifications: Json
+          city: string | null
           compensation_preferences: Json
           consent: Json
+          country: string | null
           created_at: string
           created_by_audit: boolean | null
           current_cv_file_id: string | null
@@ -1213,20 +1230,24 @@ export type Database = {
           migration_version: string | null
           phone: string | null
           portfolio_url: string | null
+          region: string | null
           skills: Json
           summary: string | null
           test_run_id: string | null
           timezone: string | null
           updated_at: string
           user_id: string | null
+          website_url: string | null
           work_authorization: Json
           years_experience: number | null
         }
         Insert: {
           availability?: Json
           certifications?: Json
+          city?: string | null
           compensation_preferences?: Json
           consent?: Json
+          country?: string | null
           created_at?: string
           created_by_audit?: boolean | null
           current_cv_file_id?: string | null
@@ -1252,20 +1273,24 @@ export type Database = {
           migration_version?: string | null
           phone?: string | null
           portfolio_url?: string | null
+          region?: string | null
           skills?: Json
           summary?: string | null
           test_run_id?: string | null
           timezone?: string | null
           updated_at?: string
           user_id?: string | null
+          website_url?: string | null
           work_authorization?: Json
           years_experience?: number | null
         }
         Update: {
           availability?: Json
           certifications?: Json
+          city?: string | null
           compensation_preferences?: Json
           consent?: Json
+          country?: string | null
           created_at?: string
           created_by_audit?: boolean | null
           current_cv_file_id?: string | null
@@ -1291,12 +1316,14 @@ export type Database = {
           migration_version?: string | null
           phone?: string | null
           portfolio_url?: string | null
+          region?: string | null
           skills?: Json
           summary?: string | null
           test_run_id?: string | null
           timezone?: string | null
           updated_at?: string
           user_id?: string | null
+          website_url?: string | null
           work_authorization?: Json
           years_experience?: number | null
         }

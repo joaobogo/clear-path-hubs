@@ -30,9 +30,9 @@ export const CV_MESSAGES: Record<CvIssueCode, string> = {
   empty: "That file looks empty. Please choose your CV file.",
   too_large: "Your CV is larger than 10 MB. Please upload a smaller file.",
   bad_extension:
-    "Please upload a PDF, DOC, or DOCX. Other file types are not accepted.",
+    "Please upload a PDF. Other file types are not accepted.",
   bad_mime:
-    "That file does not look like a PDF, DOC, or DOCX. Please upload one of these formats.",
+    "That file does not look like a PDF. Please upload a PDF version of your CV.",
   corrupt:
     "We could not read that file. It may be damaged — please try re-saving or uploading again.",
   encrypted:
