@@ -276,15 +276,6 @@ export const setSeatStatus = createServerFn({ method: "POST" })
       after: { status: data.status },
       reason: data.reason ?? null,
     });
-    if (before.contact_released_at) {
-      await emitContactEvent(
-        "contact_revoked",
-        data.match_id,
-        before.organization_id,
-        context.userId,
-        before.contact_released_at as string,
-      );
-    }
     return { ok: true };
   });
 
