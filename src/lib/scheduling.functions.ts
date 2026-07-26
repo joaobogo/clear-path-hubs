@@ -119,12 +119,13 @@ export const respondToInterview = createServerFn({ method: "POST" })
       .from("interviews")
       .update({
         candidate_response: data.response,
-        candidate_responded_at: new Date().toISOString(),
-        candidate_preferred_time: data.preferredTime ?? null,
-        candidate_response_note: data.note ?? null,
+        candidate_response_at: new Date().toISOString(),
+        candidate_selected_time: data.preferredTime ?? null,
+        candidate_note: data.note ?? null,
         status: (iv as AnyRow).status === "requested" ? "scheduling" : (iv as AnyRow).status,
       })
       .eq("id", data.interviewId);
+
     if (error) throw new Error(error.message);
 
     // Coordinators get one notification per distinct response.
