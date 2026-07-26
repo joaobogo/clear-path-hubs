@@ -33,7 +33,9 @@ export function ContentPage({
         {entry ? (
           <Markdown>{entry.markdown}</Markdown>
         ) : (
-          <p className="text-muted-foreground">Content coming soon.</p>
+          <p className="text-muted-foreground">
+            This page is unavailable right now. Please try again shortly.
+          </p>
         )}
       </article>
     </SiteShell>
