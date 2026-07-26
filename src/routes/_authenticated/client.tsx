@@ -52,6 +52,8 @@ const searchSchema = z.object({
 });
 
 export const Route = createFileRoute("/_authenticated/client")({
+  errorComponent: makeRouteErrorComponent("client", "/_authenticated/client"),
+  notFoundComponent: makeRouteNotFoundComponent("client"),
  validateSearch: searchSchema,
  loaderDeps: ({ search }) => ({ org: search.org ?? null }),
  head: () => ({

@@ -1,3 +1,7 @@
+import {
+  makeRouteErrorComponent,
+  makeRouteNotFoundComponent,
+} from "@/components/workspace/route-states";
 import { createFileRoute, Link, Outlet } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -21,6 +25,8 @@ const CANDIDATE_REFRESH_KEYS = [
 ] as const;
 
 export const Route = createFileRoute("/_authenticated/me")({
+  errorComponent: makeRouteErrorComponent("candidate", "/_authenticated/me"),
+  notFoundComponent: makeRouteNotFoundComponent("candidate"),
  head: () => ({
  meta: [
  { title: "My account · TaaSFlow" },
