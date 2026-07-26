@@ -765,6 +765,13 @@ export type Database = {
             foreignKeyName: "candidate_evidence_candidate_match_id_fkey"
             columns: ["candidate_match_id"]
             isOneToOne: false
+            referencedRelation: "v_admin_candidate_index"
+            referencedColumns: ["match_id"]
+          },
+          {
+            foreignKeyName: "candidate_evidence_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
             referencedRelation: "v_source_attribution"
             referencedColumns: ["match_id"]
           },
@@ -925,6 +932,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "client_visible_candidates"
             referencedColumns: ["candidate_match_id"]
+          },
+          {
+            foreignKeyName: "candidate_evidence_items_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "v_admin_candidate_index"
+            referencedColumns: ["match_id"]
           },
           {
             foreignKeyName: "candidate_evidence_items_candidate_match_id_fkey"
@@ -1119,6 +1133,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "candidate_matches_approved_score_run_id_fkey"
+            columns: ["approved_score_run_id"]
+            isOneToOne: false
+            referencedRelation: "v_admin_candidate_index"
+            referencedColumns: ["score_run_id"]
+          },
+          {
             foreignKeyName: "candidate_matches_candidate_profile_id_fkey"
             columns: ["candidate_profile_id"]
             isOneToOne: false
@@ -1138,6 +1159,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "score_runs"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "candidate_matches_current_score_run_id_fkey"
+            columns: ["current_score_run_id"]
+            isOneToOne: false
+            referencedRelation: "v_admin_candidate_index"
+            referencedColumns: ["score_run_id"]
           },
           {
             foreignKeyName: "candidate_matches_organization_id_fkey"
@@ -1194,6 +1222,117 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "positions"
             referencedColumns: ["id"]
+          },
+        ]
+      }
+      candidate_notes: {
+        Row: {
+          author_user_id: string | null
+          body: string
+          candidate_match_id: string
+          created_at: string
+          id: string
+          organization_id: string
+          updated_at: string
+          visibility: string
+        }
+        Insert: {
+          author_user_id?: string | null
+          body: string
+          candidate_match_id: string
+          created_at?: string
+          id?: string
+          organization_id: string
+          updated_at?: string
+          visibility?: string
+        }
+        Update: {
+          author_user_id?: string | null
+          body?: string
+          candidate_match_id?: string
+          created_at?: string
+          id?: string
+          organization_id?: string
+          updated_at?: string
+          visibility?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "candidate_notes_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "admin_candidate_matches_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "candidate_notes_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "admin_work_inbox"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "candidate_notes_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_matches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "candidate_notes_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "client_candidate_matches_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "candidate_notes_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "client_kanban_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "candidate_notes_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "client_visible_candidates"
+            referencedColumns: ["candidate_match_id"]
+          },
+          {
+            foreignKeyName: "candidate_notes_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "v_admin_candidate_index"
+            referencedColumns: ["match_id"]
+          },
+          {
+            foreignKeyName: "candidate_notes_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "v_source_attribution"
+            referencedColumns: ["match_id"]
+          },
+          {
+            foreignKeyName: "candidate_notes_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "admin_clients_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "candidate_notes_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "candidate_notes_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_portfolio_rollup"
+            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -1430,6 +1569,13 @@ export type Database = {
             foreignKeyName: "candidate_stage_history_candidate_match_id_fkey"
             columns: ["candidate_match_id"]
             isOneToOne: false
+            referencedRelation: "v_admin_candidate_index"
+            referencedColumns: ["match_id"]
+          },
+          {
+            foreignKeyName: "candidate_stage_history_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
             referencedRelation: "v_source_attribution"
             referencedColumns: ["match_id"]
           },
@@ -1605,6 +1751,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "client_visible_candidates"
             referencedColumns: ["candidate_match_id"]
+          },
+          {
+            foreignKeyName: "client_decisions_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "v_admin_candidate_index"
+            referencedColumns: ["match_id"]
           },
           {
             foreignKeyName: "client_decisions_candidate_match_id_fkey"
@@ -2025,6 +2178,13 @@ export type Database = {
             foreignKeyName: "eligibility_checks_candidate_match_id_fkey"
             columns: ["candidate_match_id"]
             isOneToOne: false
+            referencedRelation: "v_admin_candidate_index"
+            referencedColumns: ["match_id"]
+          },
+          {
+            foreignKeyName: "eligibility_checks_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
             referencedRelation: "v_source_attribution"
             referencedColumns: ["match_id"]
           },
@@ -2176,6 +2336,13 @@ export type Database = {
             foreignKeyName: "eligibility_exceptions_candidate_match_id_fkey"
             columns: ["candidate_match_id"]
             isOneToOne: false
+            referencedRelation: "v_admin_candidate_index"
+            referencedColumns: ["match_id"]
+          },
+          {
+            foreignKeyName: "eligibility_exceptions_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
             referencedRelation: "v_source_attribution"
             referencedColumns: ["match_id"]
           },
@@ -2285,6 +2452,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "client_visible_candidates"
             referencedColumns: ["candidate_match_id"]
+          },
+          {
+            foreignKeyName: "evidence_overrides_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "v_admin_candidate_index"
+            referencedColumns: ["match_id"]
           },
           {
             foreignKeyName: "evidence_overrides_candidate_match_id_fkey"
@@ -2704,6 +2878,13 @@ export type Database = {
             foreignKeyName: "hire_records_candidate_match_id_fkey"
             columns: ["candidate_match_id"]
             isOneToOne: true
+            referencedRelation: "v_admin_candidate_index"
+            referencedColumns: ["match_id"]
+          },
+          {
+            foreignKeyName: "hire_records_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: true
             referencedRelation: "v_source_attribution"
             referencedColumns: ["match_id"]
           },
@@ -3068,6 +3249,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "client_visible_candidates"
             referencedColumns: ["candidate_match_id"]
+          },
+          {
+            foreignKeyName: "interviews_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "v_admin_candidate_index"
+            referencedColumns: ["match_id"]
           },
           {
             foreignKeyName: "interviews_candidate_match_id_fkey"
@@ -4235,6 +4423,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "client_visible_candidates"
             referencedColumns: ["candidate_match_id"]
+          },
+          {
+            foreignKeyName: "notification_events_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "v_admin_candidate_index"
+            referencedColumns: ["match_id"]
           },
           {
             foreignKeyName: "notification_events_candidate_match_id_fkey"
@@ -5919,6 +6114,13 @@ export type Database = {
             foreignKeyName: "score_decisions_candidate_match_id_fkey"
             columns: ["candidate_match_id"]
             isOneToOne: false
+            referencedRelation: "v_admin_candidate_index"
+            referencedColumns: ["match_id"]
+          },
+          {
+            foreignKeyName: "score_decisions_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
             referencedRelation: "v_source_attribution"
             referencedColumns: ["match_id"]
           },
@@ -5928,6 +6130,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "score_runs"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "score_decisions_score_run_id_fkey"
+            columns: ["score_run_id"]
+            isOneToOne: false
+            referencedRelation: "v_admin_candidate_index"
+            referencedColumns: ["score_run_id"]
           },
         ]
       }
@@ -6141,6 +6350,13 @@ export type Database = {
             foreignKeyName: "score_runs_candidate_match_id_fkey"
             columns: ["candidate_match_id"]
             isOneToOne: false
+            referencedRelation: "v_admin_candidate_index"
+            referencedColumns: ["match_id"]
+          },
+          {
+            foreignKeyName: "score_runs_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
             referencedRelation: "v_source_attribution"
             referencedColumns: ["match_id"]
           },
@@ -6316,6 +6532,13 @@ export type Database = {
             foreignKeyName: "scoring_debug_events_candidate_match_id_fkey"
             columns: ["candidate_match_id"]
             isOneToOne: false
+            referencedRelation: "v_admin_candidate_index"
+            referencedColumns: ["match_id"]
+          },
+          {
+            foreignKeyName: "scoring_debug_events_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
             referencedRelation: "v_source_attribution"
             referencedColumns: ["match_id"]
           },
@@ -6346,6 +6569,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "score_runs"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "scoring_debug_events_score_run_id_fkey"
+            columns: ["score_run_id"]
+            isOneToOne: false
+            referencedRelation: "v_admin_candidate_index"
+            referencedColumns: ["score_run_id"]
           },
         ]
       }
@@ -6433,6 +6663,13 @@ export type Database = {
             foreignKeyName: "scoring_orphans_candidate_match_id_fkey"
             columns: ["candidate_match_id"]
             isOneToOne: false
+            referencedRelation: "v_admin_candidate_index"
+            referencedColumns: ["match_id"]
+          },
+          {
+            foreignKeyName: "scoring_orphans_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
             referencedRelation: "v_source_attribution"
             referencedColumns: ["match_id"]
           },
@@ -6442,6 +6679,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "score_runs"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "scoring_orphans_score_run_id_fkey"
+            columns: ["score_run_id"]
+            isOneToOne: false
+            referencedRelation: "v_admin_candidate_index"
+            referencedColumns: ["score_run_id"]
           },
         ]
       }
@@ -7019,6 +7263,13 @@ export type Database = {
             foreignKeyName: "talent_memory_source_match_id_fkey"
             columns: ["source_match_id"]
             isOneToOne: false
+            referencedRelation: "v_admin_candidate_index"
+            referencedColumns: ["match_id"]
+          },
+          {
+            foreignKeyName: "talent_memory_source_match_id_fkey"
+            columns: ["source_match_id"]
+            isOneToOne: false
             referencedRelation: "v_source_attribution"
             referencedColumns: ["match_id"]
           },
@@ -7411,6 +7662,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "client_visible_candidates"
             referencedColumns: ["candidate_match_id"]
+          },
+          {
+            foreignKeyName: "tasks_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "v_admin_candidate_index"
+            referencedColumns: ["match_id"]
           },
           {
             foreignKeyName: "tasks_candidate_match_id_fkey"
@@ -7997,6 +8255,13 @@ export type Database = {
             foreignKeyName: "candidate_evidence_items_candidate_match_id_fkey"
             columns: ["candidate_match_id"]
             isOneToOne: false
+            referencedRelation: "v_admin_candidate_index"
+            referencedColumns: ["match_id"]
+          },
+          {
+            foreignKeyName: "candidate_evidence_items_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
             referencedRelation: "v_source_attribution"
             referencedColumns: ["match_id"]
           },
@@ -8456,6 +8721,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "candidate_matches_approved_score_run_id_fkey"
+            columns: ["approved_score_run_id"]
+            isOneToOne: false
+            referencedRelation: "v_admin_candidate_index"
+            referencedColumns: ["score_run_id"]
+          },
+          {
             foreignKeyName: "candidate_matches_candidate_profile_id_fkey"
             columns: ["candidate_profile_id"]
             isOneToOne: false
@@ -8618,6 +8890,13 @@ export type Database = {
             foreignKeyName: "notification_events_candidate_match_id_fkey"
             columns: ["candidate_match_id"]
             isOneToOne: false
+            referencedRelation: "v_admin_candidate_index"
+            referencedColumns: ["match_id"]
+          },
+          {
+            foreignKeyName: "notification_events_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
             referencedRelation: "v_source_attribution"
             referencedColumns: ["match_id"]
           },
@@ -8686,6 +8965,144 @@ export type Database = {
           },
           {
             foreignKeyName: "notification_events_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "positions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      v_admin_candidate_index: {
+        Row: {
+          admin_status: string | null
+          application_id: string | null
+          applied_at: string | null
+          candidate_profile_id: string | null
+          canonical_state: string | null
+          city: string | null
+          client_visibility: string | null
+          confidence: number | null
+          contact_released: boolean | null
+          contact_released_at: string | null
+          contradiction_status: string | null
+          country: string | null
+          created_at: string | null
+          eligibility_status: string | null
+          email: string | null
+          evidence_confidence: number | null
+          final_score: number | null
+          fit_band: string | null
+          fit_label: string | null
+          full_name: string | null
+          has_critical_flag: boolean | null
+          integrity_status: string | null
+          location: string | null
+          match_id: string | null
+          org_name: string | null
+          organization_id: string | null
+          phone: string | null
+          position_id: string | null
+          position_title: string | null
+          processing_state: string | null
+          recommendation: string | null
+          region: string | null
+          score: number | null
+          score_band: string | null
+          score_run_id: string | null
+          search_text: string | null
+          source: string | null
+          source_channel: string | null
+          source_kind: string | null
+          stage: string | null
+          updated_at: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "candidate_matches_application_id_fkey"
+            columns: ["application_id"]
+            isOneToOne: true
+            referencedRelation: "applications"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "candidate_matches_application_id_fkey"
+            columns: ["application_id"]
+            isOneToOne: true
+            referencedRelation: "candidate_my_applications"
+            referencedColumns: ["application_id"]
+          },
+          {
+            foreignKeyName: "candidate_matches_application_id_fkey"
+            columns: ["application_id"]
+            isOneToOne: true
+            referencedRelation: "v_source_attribution"
+            referencedColumns: ["application_id"]
+          },
+          {
+            foreignKeyName: "candidate_matches_candidate_profile_id_fkey"
+            columns: ["candidate_profile_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_profile_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "candidate_matches_candidate_profile_id_fkey"
+            columns: ["candidate_profile_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "candidate_matches_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "admin_clients_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "candidate_matches_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "candidate_matches_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_portfolio_rollup"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "candidate_matches_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "admin_pipeline_health"
+            referencedColumns: ["position_id"]
+          },
+          {
+            foreignKeyName: "candidate_matches_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "admin_positions_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "candidate_matches_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_my_applications"
+            referencedColumns: ["position_id"]
+          },
+          {
+            foreignKeyName: "candidate_matches_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "client_positions_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "candidate_matches_position_id_fkey"
             columns: ["position_id"]
             isOneToOne: false
             referencedRelation: "positions"
