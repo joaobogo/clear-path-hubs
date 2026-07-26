@@ -10,6 +10,7 @@ import {
   normalizeWeights,
   requisitionMetaSchema,
   type EvaluationWeights,
+  countryName,
   type RequisitionLocation,
 } from "@/lib/requisition-schema";
 
@@ -283,7 +284,7 @@ export const saveRequisitionMeta = createServerFn({ method: "POST" })
         position_id: data.position_id,
         organization_id: pos.organization_id,
         country_code: l.country_code,
-        country: l.country_code,
+        country: countryName(l.country_code),
         region: l.region || null,
         city: l.city || null,
         work_model: l.work_model,
