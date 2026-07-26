@@ -29,7 +29,12 @@ export type WorkspaceNavItem = {
   exact?: boolean;
   /** Query search params to preserve on nav (support-view etc.). */
   search?: Record<string, string | undefined>;
+  /** Optional section heading this item belongs to (sidebar grouping). */
+  group?: string;
+  /** Longer description used as the collapsed tooltip. */
+  hint?: string;
 };
+
 
 export type WorkspacePrimaryAction = {
   label: string;
