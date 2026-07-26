@@ -582,3 +582,10 @@ export async function hasAnyWork(): Promise<boolean> {
   const { count } = await s.from("positions").select("id", { count: "exact", head: true });
   return (count ?? 0) > 0;
 }
+
+/** Staff gate — mirrors admin.functions.ts, kept server-only. */
+export async function requireStaffUser(userId: string) {
+  const s = await admin();
+  const { data } = await s.rpc("is_platform_staff", { _user: userId });
+  if (data !== true) throw new Error("forbidden");
+}
