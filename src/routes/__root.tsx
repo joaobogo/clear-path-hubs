@@ -78,6 +78,7 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const router = useRouter();
 
   // Preview / non-production hosts (e.g. *.lovable.app) must not
   // compete with taasflow.com in search. Inject a robots noindex
