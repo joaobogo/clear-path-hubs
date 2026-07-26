@@ -268,20 +268,52 @@ function OverviewPage() {
             </Link>
           )}
 
+          {/* 0.75 · ROLE FOCUS — multi-position selector, preserved in the URL */}
+          {whatsNext.length > 0 && (
+            <div className="flex flex-wrap items-center gap-2">
+              <label htmlFor="role-focus" className="text-xs font-medium text-muted-foreground">
+                Role
+              </label>
+              <select
+                id="role-focus"
+                value={selectedRole}
+                onChange={(e) =>
+                  navigate({ search: (prev: Any) => ({ ...prev, role: e.target.value || undefined }) })
+                }
+                className="min-h-10 rounded-md border bg-card px-3 text-sm"
+              >
+                <option value="">All active roles ({whatsNext.length})</option>
+                {whatsNext.map((r) => (
+                  <option key={r.position_id} value={r.position_id}>
+                    {r.title}
+                  </option>
+                ))}
+              </select>
+              {selectedRole && (
+                <button
+                  onClick={() => navigate({ search: (prev: Any) => ({ ...prev, role: undefined }) })}
+                  className="text-xs font-medium text-primary hover:underline"
+                >
+                  Clear
+                </button>
+              )}
+            </div>
+          )}
+
           {/* 1 · PRIORITY ACTIONS — what needs me now, deduped */}
           <PriorityActions queue={priorityQueue} loading={!data && isFetching} />
 
 
-          {/* 2 · HOTTEST ROLE + WEEKLY PROGRESS */}
+          {/* 2 · FOCUS ROLE + NEXT STEPS */}
           <section className="grid gap-4 lg:grid-cols-5">
             <div className="lg:col-span-3">
               <HottestRoleCard role={hottestRole} />
             </div>
             <div className="lg:col-span-2">
-              <WeeklyProgress
+              <NextSteps
+                roles={visibleRoles}
                 newThisWeek={newThisWeek}
-                delivered={kpis?.delivered ?? 0}
-                activePositions={kpis?.active_positions ?? 0}
+                deliveredTotal={kpis?.delivered ?? 0}
               />
             </div>
           </section>
