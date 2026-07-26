@@ -198,17 +198,20 @@ export const submitApplication = createServerFn({ method: "POST" })
         };
       }
 
-      // 5. Upload CV to storage (admin bypasses RLS).
-      const storagePath = `candidate/${candidateProfileId}/${Date.now()}-${safeName(data.cv.filename)}`;
+      // 5. Upload CV to private storage. The storage key is fully server-generated;
+      //    the sanitised original name is only a trailing, path-free label.
+      const { sanitizeFilename } = await import("./cv-validation");
+      const cleanName = sanitizeFilename(data.cv.filename);
+      const storagePath = `candidate/${candidateProfileId}/${crypto.randomUUID()}-${cleanName}`;
       const upload = await supabaseAdmin.storage
         .from("cvs")
         .upload(storagePath, bytes, {
-          contentType: v.detected_mime ?? data.cv.mime,
+          contentType: "application/pdf",
           upsert: false,
         });
       if (upload.error) throw upload.error;
 
-      // 6. Insert files row.
+      // 6. Insert files row — canonical original PDF, queued for parsing.
       const { data: fileRow, error: fileErr } = await supabaseAdmin
         .from("files")
         .insert({
@@ -216,15 +219,19 @@ export const submitApplication = createServerFn({ method: "POST" })
           candidate_profile_id: candidateProfileId,
           storage_bucket: "cvs",
           storage_path: storagePath,
-          filename: data.cv.filename,
-          mime_type: v.detected_mime ?? data.cv.mime,
+          filename: cleanName,
+          mime_type: "application/pdf",
           size: bytes.length,
           checksum: v.sha256 ?? null,
           file_status: "ready",
+          parse_state: "queued",
+          page_count: v.page_count ?? null,
+          upload_source: "candidate_application",
         })
         .select("id")
         .single();
       if (fileErr) throw fileErr;
+
 
       // Point candidate profile at latest CV.
       await supabaseAdmin
