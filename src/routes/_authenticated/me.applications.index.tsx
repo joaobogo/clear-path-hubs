@@ -109,7 +109,10 @@ function MyApplicationsPage() {
  status: CandidateSafeStatus;
  next_step: string | null;
  can_withdraw: boolean;
+ info_requested: boolean;
+ next_interview_at: string | null;
  }>).map((a) => (
+
  <Card key={a.id}>
  <CardHeader className="pb-3">
  <div className="flex items-start justify-between gap-4">
