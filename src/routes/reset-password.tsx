@@ -68,8 +68,17 @@ function ResetPasswordPage() {
       }
 
       const { data } = await supabase.auth.getSession();
-      if (!cancelled && data.session) setHasRecoverySession(true);
+      if (cancelled) return;
+      if (data.session) {
+        setHasRecoverySession(true);
+        return;
+      }
+      // No session, no error in the hash: the link was already used, has
+      // expired, or the page was opened directly. Say so instead of leaving
+      // the form disabled under a permanent "Verifying…" label.
+      setErrorMsg((prev) => prev ?? EXPIRED_LINK_MESSAGE);
     })();
+
 
     return () => {
       cancelled = true;
