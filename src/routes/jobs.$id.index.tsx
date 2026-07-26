@@ -1,3 +1,4 @@
+import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { createFileRoute, Link, notFound, redirect } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { getPublicPosition } from "@/lib/jobs.functions";
@@ -52,11 +53,7 @@ export const Route = createFileRoute("/jobs/$id/")({
       links: [{ rel: "canonical", href: canonical }],
     };
   },
-  errorComponent: ({ error }) => (
-    <div className="p-8 text-center text-muted-foreground">
-      Couldn't load this role. {error.message}
-    </div>
-  ),
+  errorComponent: makeRouteErrorComponent("public", "src/routes/jobs.$id.index.tsx"),
   notFoundComponent: () => (
     <div className="p-16 text-center">
       <h1 className="text-2xl font-semibold">Role not available</h1>

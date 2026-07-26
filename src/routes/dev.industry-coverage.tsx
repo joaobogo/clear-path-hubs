@@ -1,3 +1,4 @@
+import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 /**
  * /dev/industry-coverage — development-only route coverage report.
  *
@@ -100,13 +101,7 @@ export const Route = createFileRoute("/dev/industry-coverage")({
       </PublicPage>
     </SiteShell>
   ),
-  errorComponent: ({ error }) => (
-    <SiteShell>
-      <PublicPage>
-        <p className="py-24 text-sm text-red-600">Coverage check failed: {String(error)}</p>
-      </PublicPage>
-    </SiteShell>
-  ),
+  errorComponent: makeRouteErrorComponent("public", "src/routes/dev.industry-coverage.tsx"),
 });
 
 function IndustryCoverage() {

@@ -1,3 +1,4 @@
+import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { createFileRoute } from "@tanstack/react-router";
 import { useSuspenseQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -23,9 +24,7 @@ export const Route = createFileRoute("/_authenticated/admin/scoring/orphans")({
       },
     ],
   }),
-  errorComponent: ({ error }) => (
-    <div className="p-8 text-destructive">{error.message}</div>
-  ),
+  errorComponent: makeRouteErrorComponent("admin", "src/routes/_authenticated/admin.scoring.orphans.tsx"),
   component: OrphansPage,
 });
 

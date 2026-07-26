@@ -1,3 +1,4 @@
+import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
 import { useSuspenseQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
@@ -94,9 +95,7 @@ export const Route = createFileRoute("/_authenticated/admin/clients/")({
       queryKey: ["admin-clients", deps],
       queryFn: () => listClients({ data: toServerInput(deps) }),
     }),
-  errorComponent: ({ error }) => (
-    <div className="p-8 text-destructive">Clients unavailable: {error.message}</div>
-  ),
+  errorComponent: makeRouteErrorComponent("admin", "src/routes/_authenticated/admin.clients.index.tsx"),
   notFoundComponent: () => <div className="p-8">Not found.</div>,
   component: ClientsPage,
 });

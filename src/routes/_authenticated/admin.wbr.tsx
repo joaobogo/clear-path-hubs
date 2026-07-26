@@ -1,3 +1,4 @@
+import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -46,11 +47,7 @@ export const Route = createFileRoute("/_authenticated/admin/wbr")({
     });
     return { report, commitments };
   },
-  errorComponent: ({ error }) => (
-    <div className="rounded-lg border bg-card p-6 text-sm text-destructive">
-      WBR unavailable: {error.message}
-    </div>
-  ),
+  errorComponent: makeRouteErrorComponent("admin", "src/routes/_authenticated/admin.wbr.tsx"),
   head: () => ({
     meta: [
       { title: "Weekly Business Review · TaaSFlow admin" },

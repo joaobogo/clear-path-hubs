@@ -1,3 +1,4 @@
+import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -39,18 +40,7 @@ export const Route = createFileRoute("/_authenticated/me/applications/$id")({
       <div className="h-32 animate-pulse rounded-lg bg-muted" />
     </main>
   ),
-  errorComponent: ({ error }) => (
-    <main className="mx-auto max-w-3xl px-4 sm:px-6 py-8">
-      <h1 className="text-lg font-semibold">We couldn&apos;t load this application</h1>
-      <p className="mt-1 text-sm text-muted-foreground">{error.message}</p>
-      <Link
-        to="/me/applications"
-        className="mt-4 inline-flex min-h-11 items-center rounded-md border px-4 text-sm"
-      >
-        Back to my applications
-      </Link>
-    </main>
-  ),
+  errorComponent: makeRouteErrorComponent("candidate", "src/routes/_authenticated/me.applications.$id.tsx"),
   notFoundComponent: () => (
     <main className="p-8">This application isn&apos;t available.</main>
   ),

@@ -1,3 +1,4 @@
+import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import {
@@ -41,9 +42,7 @@ export const Route = createFileRoute("/_authenticated/admin/design-system")({
       { name: "robots", content: "noindex" },
     ],
   }),
-  errorComponent: ({ error }) => (
-    <div className="p-6 text-sm text-destructive">Gallery unavailable: {error.message}</div>
-  ),
+  errorComponent: makeRouteErrorComponent("admin", "src/routes/_authenticated/admin.design-system.tsx"),
   notFoundComponent: () => <div className="p-6 text-sm">Not found.</div>,
   component: DesignSystemGallery,
 });

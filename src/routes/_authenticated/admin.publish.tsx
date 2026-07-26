@@ -1,3 +1,4 @@
+import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -15,9 +16,7 @@ export const Route = createFileRoute("/_authenticated/admin/publish")({
       queryKey: ["publish-desk-groups"],
       queryFn: () => getPublishDeskGroups(),
     }),
-  errorComponent: ({ error }) => (
-    <div className="p-8 text-destructive">Publish desk unavailable: {error.message}</div>
-  ),
+  errorComponent: makeRouteErrorComponent("admin", "src/routes/_authenticated/admin.publish.tsx"),
   notFoundComponent: () => <div className="p-8">Not found.</div>,
   head: () => ({
     meta: [

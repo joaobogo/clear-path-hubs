@@ -1,3 +1,4 @@
+import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { ActivityFeed } from "@/components/activity/ActivityFeed";
 import { useSuspenseQuery, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -49,11 +50,7 @@ export const Route = createFileRoute("/_authenticated/admin/")({
       queryKey: ["admin-overview"],
       queryFn: () => getAdminOverview(),
     }),
-  errorComponent: ({ error }) => (
-    <div className="rounded-lg border bg-card p-6 text-sm text-destructive">
-      Overview unavailable: {error.message}
-    </div>
-  ),
+  errorComponent: makeRouteErrorComponent("admin", "src/routes/_authenticated/admin.index.tsx"),
   head: () => ({
     meta: [
       { title: "Overview · TaaSFlow admin" },

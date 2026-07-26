@@ -1,3 +1,4 @@
+import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -38,11 +39,7 @@ export const Route = createFileRoute("/_authenticated/admin/business-rules")({
       { name: "robots", content: "noindex" },
     ],
   }),
-  errorComponent: ({ error }) => (
-    <div className="p-6 text-sm text-destructive">
-      Business rules unavailable: {error.message}
-    </div>
-  ),
+  errorComponent: makeRouteErrorComponent("admin", "src/routes/_authenticated/admin.business-rules.tsx"),
   notFoundComponent: () => <div className="p-6 text-sm">Not found.</div>,
   component: BusinessRulesEditor,
 });

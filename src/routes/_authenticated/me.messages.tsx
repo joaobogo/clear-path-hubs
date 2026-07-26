@@ -1,3 +1,4 @@
+import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -20,9 +21,7 @@ export const Route = createFileRoute("/_authenticated/me/messages")({
  queryKey: ["me-messages"],
  queryFn: () => listMyMessages(),
  }),
- errorComponent: ({ error }) => (
- <main className="p-8 text-destructive">Failed to load: {error.message}</main>
- ),
+ errorComponent: makeRouteErrorComponent("candidate", "src/routes/_authenticated/me.messages.tsx"),
  notFoundComponent: () => <main className="p-8">Not found.</main>,
  component: MyMessages,
 });

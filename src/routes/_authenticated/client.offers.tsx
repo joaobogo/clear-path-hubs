@@ -1,3 +1,4 @@
+import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -64,9 +65,7 @@ export const Route = createFileRoute("/_authenticated/client/offers")({
       { name: "robots", content: "noindex" },
     ],
   }),
-  errorComponent: ({ error }) => (
-    <div className="p-8 text-sm text-destructive">Failed to load: {error.message}</div>
-  ),
+  errorComponent: makeRouteErrorComponent("client", "src/routes/_authenticated/client.offers.tsx"),
   notFoundComponent: () => (
     <div className="p-8 text-sm text-muted-foreground">Not found.</div>
   ),

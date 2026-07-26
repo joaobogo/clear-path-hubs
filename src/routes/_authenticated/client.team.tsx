@@ -1,3 +1,4 @@
+import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -102,9 +103,7 @@ export const Route = createFileRoute("/_authenticated/client/team")({
  { name: "robots", content: "noindex" },
  ],
  }),
- errorComponent: ({ error }) => (
- <div className="p-8 text-destructive">Failed to load: {error.message}</div>
- ),
+ errorComponent: makeRouteErrorComponent("client", "src/routes/_authenticated/client.team.tsx"),
  component: TeamPage,
 });
 

@@ -1,3 +1,4 @@
+import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -32,9 +33,7 @@ export const Route = createFileRoute("/_authenticated/me/applications/")({
  queryKey: ["me-applications"],
  queryFn: () => listMyApplications(),
  }),
- errorComponent: ({ error }) => (
- <main className="p-8 text-destructive">Failed to load: {error.message}</main>
- ),
+ errorComponent: makeRouteErrorComponent("candidate", "src/routes/_authenticated/me.applications.index.tsx"),
  notFoundComponent: () => <main className="p-8">Not found.</main>,
  component: MyApplicationsPage,
 });

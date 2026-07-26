@@ -1,3 +1,4 @@
+import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { createFileRoute, Link, notFound, useRouter } from "@tanstack/react-router";
 import { useSuspenseQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
@@ -99,9 +100,7 @@ export const Route = createFileRoute("/_authenticated/admin/clients/$id")({
     return d;
   },
   notFoundComponent: () => <div className="p-8">Organization not found.</div>,
-  errorComponent: ({ error }) => (
-    <div className="p-8 text-destructive">{error.message}</div>
-  ),
+  errorComponent: makeRouteErrorComponent("admin", "src/routes/_authenticated/admin.clients.$id.tsx"),
   component: ClientDetail,
 });
 
