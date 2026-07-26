@@ -116,47 +116,8 @@ export function PositionEditWizard({
   const save = useServerFn(savePositionEdit);
 
   const [step, setStep] = useState(1);
-  const [state, setState] = useState<State>({
-    id: initial.id,
-    title: initial.title,
-    department: initial.department,
-    location: initial.location,
-    work_model: initial.work_model,
-    employment_type: initial.employment_type,
-    seniority: initial.seniority,
-    headcount: initial.headcount,
-    description: initial.description,
-    open_worldwide: initial.open_worldwide,
-    target_countries: initial.target_countries,
-    states_regions: initial.states_regions,
-    metro_areas: initial.metro_areas,
-    search_radius: initial.search_radius,
-    hiring_urgency: initial.hiring_urgency,
-    target_start_date: initial.target_start_date,
-    time_to_hire: initial.time_to_hire,
-    must_have_skills: initial.must_have_skills,
-    nice_to_have_skills: initial.nice_to_have_skills,
-    certifications_list: initial.certifications_list,
-    tools_platforms: initial.tools_platforms,
-    experience: initial.experience,
-    education: initial.education,
-    timezone_requirements: initial.timezone_requirements,
-    responsibilities: initial.responsibilities,
-    additional_requirements: initial.additional_requirements,
-    currency: initial.currency,
-    budget_min: initial.budget_min,
-    budget_max: initial.budget_max,
-    compensation: initial.compensation,
-    target_titles: initial.target_titles,
-    title_match_timing: initial.title_match_timing,
-    target_company_types: initial.target_company_types,
-    include_keywords: initial.include_keywords,
-    exclude_keywords: initial.exclude_keywords,
-    disqualifier_tags: initial.disqualifier_tags,
-    interview_process: initial.interview_process,
-    additional_context: initial.additional_context,
-    screening_questions: initial.screening_questions,
-  });
+  const [state, setState] = useState<State>(() => initialState(initial));
+
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [qDraft, setQDraft] = useState("");
