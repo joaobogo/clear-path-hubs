@@ -32,9 +32,11 @@ const STEPS = [
   { id: 2, label: "Candidate Profile" },
   { id: 3, label: "Compensation" },
   { id: 4, label: "Search Criteria" },
-  { id: 5, label: "Review & Save" },
+  { id: 5, label: "Locations & Priorities" },
+  { id: 6, label: "Review & Save" },
 ];
 const LAST_STEP = STEPS.length;
+
 
 const DISQUALIFIER_OPTIONS = [
   "Compensation above budget",
