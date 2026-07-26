@@ -8,6 +8,10 @@ import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
 
+/** Shown when the recovery link is missing, already used, or expired. */
+const EXPIRED_LINK_MESSAGE =
+  "This reset link is invalid or has expired. Request a new one from the sign-in page.";
+
 export const Route = createFileRoute("/reset-password")({
   ssr: false,
   head: () => ({
