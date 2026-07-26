@@ -8,6 +8,10 @@ import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
 
+/** Shown when the recovery link is missing, already used, or expired. */
+const EXPIRED_LINK_MESSAGE =
+  "This reset link is invalid or has expired. Request a new one from the sign-in page.";
+
 export const Route = createFileRoute("/reset-password")({
   ssr: false,
   head: () => ({
@@ -68,8 +72,17 @@ function ResetPasswordPage() {
       }
 
       const { data } = await supabase.auth.getSession();
-      if (!cancelled && data.session) setHasRecoverySession(true);
+      if (cancelled) return;
+      if (data.session) {
+        setHasRecoverySession(true);
+        return;
+      }
+      // No session, no error in the hash: the link was already used, has
+      // expired, or the page was opened directly. Say so instead of leaving
+      // the form disabled under a permanent "Verifying…" label.
+      setErrorMsg((prev) => prev ?? EXPIRED_LINK_MESSAGE);
     })();
+
 
     return () => {
       cancelled = true;

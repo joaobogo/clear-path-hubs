@@ -22,6 +22,8 @@ import {
   type SessionMembership,
 } from "@/lib/roles";
 
+import { sanitizeRedirect } from "@/lib/safe-redirect";
+
 const searchSchema = z.object({ redirect: z.string().optional() });
 
 export const Route = createFileRoute("/login")({
@@ -93,8 +95,9 @@ function LoginPage() {
   }, []);
 
   function routeToDest(mems: SessionMembership[], primary: MembershipRole | null) {
-    if (redirect && redirect.startsWith("/")) {
-      window.location.assign(redirect);
+    const dest = sanitizeRedirect(redirect);
+    if (dest) {
+      window.location.assign(dest);
       return;
     }
     const active = mems.filter((m) => m.status === "active");

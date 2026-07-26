@@ -10,6 +10,7 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { supabase } from "@/integrations/supabase/client";
 import { Toaster } from "@/components/ui/sonner";
 import { PublicNotFound, PublicErrorState } from "@/components/marketing/site-shell";
 
@@ -77,6 +78,7 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const router = useRouter();
 
   // Preview / non-production hosts (e.g. *.lovable.app) must not
   // compete with taasflow.com in search. Inject a robots noindex
@@ -97,8 +99,28 @@ function RootComponent() {
     document.head.appendChild(meta);
   }, []);
 
+  // Single, app-wide auth subscriber. Keeps every open tab consistent:
+  // signing out in one tab drops the others out of protected routes, and a
+  // sign-in elsewhere refreshes this tab's data instead of showing stale
+  // content from the previous identity. Filtered to identity transitions —
+  // unfiltered it also fires on TOKEN_REFRESHED (~hourly, plus tab focus)
+  // and INITIAL_SESSION (every mount), which would thrash router and cache.
+  useEffect(() => {
+    const { data: sub } = supabase.auth.onAuthStateChange((event) => {
+      if (event !== "SIGNED_IN" && event !== "SIGNED_OUT" && event !== "USER_UPDATED") return;
+      // The _authenticated gate re-runs on invalidate and bounces to /login
+      // when the session is gone, so expired sessions self-correct here too.
+      router.invalidate();
+      // Never refetch on SIGNED_OUT: those queries would 401 against a
+      // cleared session. The sign-out path clears the cache itself.
+      if (event !== "SIGNED_OUT") queryClient.invalidateQueries();
+    });
+    return () => sub.subscription.unsubscribe();
+  }, [router, queryClient]);
+
   return (
     <QueryClientProvider client={queryClient}>
+
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <Outlet />
       <Toaster />
