@@ -487,6 +487,15 @@ function IntakePage() {
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
+          <input
+            ref={hpRef}
+            type="text"
+            name="companyFax"
+            tabIndex={-1}
+            autoComplete="off"
+            aria-hidden="true"
+            className="hidden"
+          />
           {/* ================= STEP 2: ROLE & OBJECTIVE ================= */}
           {step === 2 && (
             <div className="space-y-6">
