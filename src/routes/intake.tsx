@@ -404,6 +404,7 @@ function IntakePage() {
         consent: state.consent,
         password: state.password,
         source: "public_form",
+        companyFax: hpRef.current?.value ?? "",
         submittedAt: new Date().toISOString(),
       };
 
