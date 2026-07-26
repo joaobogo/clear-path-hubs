@@ -1,9 +1,12 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { ActivityFeed } from "@/components/activity/ActivityFeed";
-import { useSuspenseQuery, useQueryClient } from "@tanstack/react-query";
+import { useSuspenseQuery, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getAdminOverview } from "@/lib/admin.functions";
+import { getCommandCenter } from "@/lib/admin-command.functions";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { zodValidator, fallback } from "@tanstack/zod-adapter";
+import { z } from "zod";
 import {
   Inbox,
   Briefcase,
@@ -17,11 +20,23 @@ import {
   RefreshCw,
   Building2,
   CalendarClock,
+  Filter,
+  Layers,
 } from "lucide-react";
 
 import type { ComponentType, ReactNode } from "react";
 
+const searchSchema = z.object({
+  org: fallback(z.string(), "").default(""),
+  position: fallback(z.string(), "").default(""),
+  owner: fallback(z.string(), "").default(""),
+  status: fallback(z.string(), "").default(""),
+  from: fallback(z.string(), "").default(""),
+  to: fallback(z.string(), "").default(""),
+});
+
 export const Route = createFileRoute("/_authenticated/admin/")({
+  validateSearch: zodValidator(searchSchema),
   loader: ({ context }) =>
     context.queryClient.ensureQueryData({
       queryKey: ["admin-overview"],
@@ -43,6 +58,7 @@ export const Route = createFileRoute("/_authenticated/admin/")({
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Row = any;
+
 
 function relTime(iso: string | null | undefined): string {
   if (!iso) return "—";
