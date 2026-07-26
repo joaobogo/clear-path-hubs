@@ -949,6 +949,9 @@ export type Database = {
           candidate_profile_id: string
           canonical_state: Database["public"]["Enums"]["canonical_scoring_state"]
           client_visibility: Database["public"]["Enums"]["client_visibility"]
+          contact_release_reason: string | null
+          contact_released_at: string | null
+          contact_released_by: string | null
           created_at: string
           created_by_audit: boolean | null
           current_score_run_id: string | null
@@ -990,6 +993,9 @@ export type Database = {
           candidate_profile_id: string
           canonical_state?: Database["public"]["Enums"]["canonical_scoring_state"]
           client_visibility?: Database["public"]["Enums"]["client_visibility"]
+          contact_release_reason?: string | null
+          contact_released_at?: string | null
+          contact_released_by?: string | null
           created_at?: string
           created_by_audit?: boolean | null
           current_score_run_id?: string | null
@@ -1031,6 +1037,9 @@ export type Database = {
           candidate_profile_id?: string
           canonical_state?: Database["public"]["Enums"]["canonical_scoring_state"]
           client_visibility?: Database["public"]["Enums"]["client_visibility"]
+          contact_release_reason?: string | null
+          contact_released_at?: string | null
+          contact_released_by?: string | null
           created_at?: string
           created_by_audit?: boolean | null
           current_score_run_id?: string | null
@@ -3708,6 +3717,7 @@ export type Database = {
             | null
           migration_version: string | null
           organization_id: string
+          permissions: Database["public"]["Enums"]["client_permission"][]
           role: Database["public"]["Enums"]["membership_role"]
           status: Database["public"]["Enums"]["membership_status"]
           test_run_id: string | null
@@ -3730,6 +3740,7 @@ export type Database = {
             | null
           migration_version?: string | null
           organization_id: string
+          permissions?: Database["public"]["Enums"]["client_permission"][]
           role: Database["public"]["Enums"]["membership_role"]
           status?: Database["public"]["Enums"]["membership_status"]
           test_run_id?: string | null
@@ -3752,6 +3763,7 @@ export type Database = {
             | null
           migration_version?: string | null
           organization_id?: string
+          permissions?: Database["public"]["Enums"]["client_permission"][]
           role?: Database["public"]["Enums"]["membership_role"]
           status?: Database["public"]["Enums"]["membership_status"]
           test_run_id?: string | null
@@ -4356,6 +4368,7 @@ export type Database = {
           brand_accent_color: string | null
           brand_display_name: string | null
           brand_primary_color: string | null
+          client_seat_limit: number
           created_at: string
           created_by_audit: boolean | null
           dashboard_status: string
@@ -4394,6 +4407,7 @@ export type Database = {
           brand_accent_color?: string | null
           brand_display_name?: string | null
           brand_primary_color?: string | null
+          client_seat_limit?: number
           created_at?: string
           created_by_audit?: boolean | null
           dashboard_status?: string
@@ -4432,6 +4446,7 @@ export type Database = {
           brand_accent_color?: string | null
           brand_display_name?: string | null
           brand_primary_color?: string | null
+          client_seat_limit?: number
           created_at?: string
           created_by_audit?: boolean | null
           dashboard_status?: string
@@ -8671,6 +8686,10 @@ export type Database = {
       }
     }
     Functions: {
+      default_permissions_for_role: {
+        Args: { _role: Database["public"]["Enums"]["membership_role"] }
+        Returns: Database["public"]["Enums"]["client_permission"][]
+      }
       hard_delete_candidate_match: {
         Args: { _actor_user_id: string; _match_id: string; _reason?: string }
         Returns: Json
@@ -8678,6 +8697,14 @@ export type Database = {
       hard_delete_position: {
         Args: { _actor_user_id: string; _position_id: string; _reason?: string }
         Returns: Json
+      }
+      has_client_permission: {
+        Args: {
+          _org: string
+          _perm: Database["public"]["Enums"]["client_permission"]
+          _user: string
+        }
+        Returns: boolean
       }
       has_org_role: {
         Args: {
@@ -8695,6 +8722,22 @@ export type Database = {
         Returns: boolean
       }
       is_active_user: { Args: { _user: string }; Returns: boolean }
+      is_candidate_contact_released_to_org: {
+        Args: { _cp: string; _org: string; _user: string }
+        Returns: boolean
+      }
+      is_candidate_visible_to_org: {
+        Args: { _cp: string; _org: string; _user: string }
+        Returns: boolean
+      }
+      is_match_client_visible: {
+        Args: { _match: string; _user: string }
+        Returns: boolean
+      }
+      is_match_contact_released: {
+        Args: { _match: string; _user: string }
+        Returns: boolean
+      }
       is_org_admin: { Args: { _org: string; _user: string }; Returns: boolean }
       is_org_editor: { Args: { _org: string; _user: string }; Returns: boolean }
       is_org_member: { Args: { _org: string; _user: string }; Returns: boolean }
@@ -8705,6 +8748,7 @@ export type Database = {
       }
       is_platform_admin: { Args: { _user: string }; Returns: boolean }
       is_platform_staff: { Args: { _user: string }; Returns: boolean }
+      run_authz_tests: { Args: never; Returns: string[] }
       score_band: {
         Args: { _score: number }
         Returns: Database["public"]["Enums"]["score_band"]
@@ -8748,6 +8792,13 @@ export type Database = {
         | "not_moving_forward"
         | "hire"
         | "offer"
+      client_permission:
+        | "view_candidates"
+        | "add_feedback"
+        | "request_interviews"
+        | "manage_jobs"
+        | "invite_members"
+        | "view_reports"
       client_visibility: "hidden" | "visible" | "archived"
       delivery_channel: "in_app" | "email" | "sms"
       delivery_status:
@@ -9137,6 +9188,14 @@ export const Constants = {
         "not_moving_forward",
         "hire",
         "offer",
+      ],
+      client_permission: [
+        "view_candidates",
+        "add_feedback",
+        "request_interviews",
+        "manage_jobs",
+        "invite_members",
+        "view_reports",
       ],
       client_visibility: ["hidden", "visible", "archived"],
       delivery_channel: ["in_app", "email", "sms"],
