@@ -113,7 +113,7 @@ export async function emitEventFromServer(args: {
   const { data: notifs, error: nerr } = await supabaseAdmin
     .from("notifications")
     .upsert(rows, { onConflict: "event_id,recipient_user_id", ignoreDuplicates: true })
-    .select("id");
+    .select("id, recipient_user_id, organization_id, event_type, title, body, link_path");
   if (nerr) throw nerr;
 
   // Record in_app delivery as delivered for each new notification
@@ -126,10 +126,30 @@ export async function emitEventFromServer(args: {
     await supabaseAdmin
       .from("notification_deliveries")
       .upsert(deliveries, { onConflict: "notification_id,channel", ignoreDuplicates: true });
+
+    // Email channel: at most one per notification, preference-aware, logged.
+    try {
+      const { dispatchEmails } = await import("./notification-email.server");
+      await dispatchEmails(
+        supabaseAdmin,
+        notifs.map((n) => ({
+          id: n.id as string,
+          recipient_user_id: n.recipient_user_id as string,
+          organization_id: (n.organization_id as string | null) ?? null,
+          event_type: n.event_type as EventType,
+          title: n.title as string,
+          body: (n.body as string | null) ?? null,
+          link_path: (n.link_path as string | null) ?? null,
+        })),
+      );
+    } catch (e) {
+      console.error("[emitEventFromServer] email dispatch failed", e);
+    }
   }
 
   return { event_id: eventId, delivered: notifs?.length ?? 0 };
 }
+
 
 // ---------- Client-callable server functions ----------
 
