@@ -132,6 +132,16 @@ export function CompareSheet({
   const cols = Math.max(1, candidates.length);
   const positionTitle = candidates[0]?.position?.title;
 
+  // Scoring versions must align for dimensions and weights to be comparable.
+  const scoringVersions = Array.from(
+    new Set(
+      candidates.map(
+        (c) => `${c.evaluation.blueprint_version ?? "—"}·${c.evaluation.engine_version ?? "—"}`,
+      ),
+    ),
+  );
+  const mixedScoringVersions = scoringVersions.length > 1;
+
   // Helper: are values across candidates identical? (for "differences only")
   const allSame = (vals: (string | number | null | undefined)[]) => {
     const first = vals[0];
