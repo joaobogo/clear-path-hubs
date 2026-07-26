@@ -133,6 +133,10 @@ export const ACTIVITY_LABELS: Record<EventType, string> = {
   document_added: "Document added",
   member_invited: "Team member invited",
   member_removed: "Team member removed",
+  client_hold: "Candidate placed on hold",
+  client_declined: "Candidate declined for this role",
+  client_information_requested: "More information requested",
+  contact_release_requested: "Contact details requested",
 };
 
 /**
