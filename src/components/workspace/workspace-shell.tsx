@@ -29,7 +29,12 @@ export type WorkspaceNavItem = {
   exact?: boolean;
   /** Query search params to preserve on nav (support-view etc.). */
   search?: Record<string, string | undefined>;
+  /** Optional section heading this item belongs to (sidebar grouping). */
+  group?: string;
+  /** Longer description used as the collapsed tooltip. */
+  hint?: string;
 };
+
 
 export type WorkspacePrimaryAction = {
   label: string;
@@ -133,49 +138,76 @@ function NavList({
   linkSearch?: Record<string, string | undefined>;
   onNavigate?: () => void;
 }) {
+  // Preserve declaration order while collecting items under their section.
+  const groups: { name: string | null; items: WorkspaceNavItem[] }[] = [];
+  for (const item of navItems) {
+    const name = item.group ?? null;
+    const last = groups[groups.length - 1];
+    if (last && last.name === name) last.items.push(item);
+    else groups.push({ name, items: [item] });
+  }
+
   return (
     <nav className="flex-1 overflow-y-auto p-2" aria-label="Primary">
-      <ul className="space-y-1">
-        {navItems.map((item) => {
-          const active = item.exact
-            ? pathname === item.to
-            : pathname === item.to || pathname.startsWith(item.to + "/");
-          const search = { ...(linkSearch ?? {}), ...(item.search ?? {}) };
-          const hasSearch = Object.keys(search).length > 0;
-          return (
-            <li key={item.to}>
-              <Link
-                to={item.to}
-                search={hasSearch ? (search as never) : undefined}
-                onClick={onNavigate}
-                aria-current={active ? "page" : undefined}
-                title={collapsed ? item.label : undefined}
-                className={cn(
-                  "group relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium outline-none transition-all duration-150",
-                  "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background",
-                  active
-                    ? "text-[color:var(--taas-shell-nav-active-fg)] bg-[color:var(--taas-shell-nav-active-bg)] shadow-[inset_0_0_0_1px_color-mix(in_oklab,var(--taas-brand-primary)_18%,transparent)]"
-                    : "text-muted-foreground hover:bg-[color:var(--taas-shell-nav-hover-bg)] hover:text-foreground",
-                  collapsed && "justify-center px-2",
-                )}
-              >
-                {active && (
-                  <span
-                    aria-hidden
-                    className="absolute left-0 top-1/2 h-6 w-[3px] -translate-y-1/2 rounded-r-full"
-                    style={{ background: "var(--taas-shell-nav-rail)" }}
-                  />
-                )}
-                <item.icon className="h-4 w-4 shrink-0" />
-                {!collapsed && <span className="truncate">{item.label}</span>}
-              </Link>
-            </li>
-          );
-        })}
-      </ul>
+      {groups.map((group, gi) => (
+        <div key={group.name ?? `g${gi}`} className={gi > 0 ? "mt-4" : undefined}>
+          {group.name && !collapsed && (
+            <p className="px-3 pb-1 text-[0.65rem] font-semibold uppercase tracking-[0.14em] text-muted-foreground/70">
+              {group.name}
+            </p>
+          )}
+          {group.name && collapsed && gi > 0 && (
+            <div aria-hidden className="mx-3 mb-2 border-t border-border/60" />
+          )}
+          <ul className="space-y-1" aria-label={group.name ?? undefined}>
+            {group.items.map((item) => {
+              const active = item.exact
+                ? pathname === item.to
+                : pathname === item.to || pathname.startsWith(item.to + "/");
+              const search = { ...(linkSearch ?? {}), ...(item.search ?? {}) };
+              const hasSearch = Object.keys(search).length > 0;
+              return (
+                <li key={item.to}>
+                  <Link
+                    to={item.to}
+                    search={hasSearch ? (search as never) : undefined}
+                    onClick={onNavigate}
+                    aria-current={active ? "page" : undefined}
+                    title={
+                      collapsed
+                        ? [group.name, item.label, item.hint].filter(Boolean).join(" · ")
+                        : item.hint
+                    }
+                    className={cn(
+                      "group relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium outline-none transition-all duration-150",
+                      "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background",
+                      active
+                        ? "text-[color:var(--taas-shell-nav-active-fg)] bg-[color:var(--taas-shell-nav-active-bg)] shadow-[inset_0_0_0_1px_color-mix(in_oklab,var(--taas-brand-primary)_18%,transparent)]"
+                        : "text-muted-foreground hover:bg-[color:var(--taas-shell-nav-hover-bg)] hover:text-foreground",
+                      collapsed && "justify-center px-2",
+                    )}
+                  >
+                    {active && (
+                      <span
+                        aria-hidden
+                        className="absolute left-0 top-1/2 h-6 w-[3px] -translate-y-1/2 rounded-r-full"
+                        style={{ background: "var(--taas-shell-nav-rail)" }}
+                      />
+                    )}
+                    <item.icon className="h-4 w-4 shrink-0" />
+                    {!collapsed && <span className="truncate">{item.label}</span>}
+                    {collapsed && <span className="sr-only">{item.label}</span>}
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      ))}
     </nav>
   );
 }
+
 
 function ContextHeader({
   kicker,
