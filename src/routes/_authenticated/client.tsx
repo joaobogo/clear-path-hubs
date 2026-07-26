@@ -1,10 +1,10 @@
 import {
-import { ACTIVITY_QUERY_KEY } from "@/components/activity/ActivityFeed";
- createFileRoute,
- Link,
- Outlet,
- redirect,
+  createFileRoute,
+  Link,
+  Outlet,
+  redirect,
 } from "@tanstack/react-router";
+import { ACTIVITY_QUERY_KEY } from "@/components/activity/ActivityFeed";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useMemo, useState } from "react";
