@@ -494,11 +494,13 @@ export const requestCandidateInformation = createServerFn({ method: "POST" })
       try {
         const { emitEventFromServer } = await import("./notifications.functions");
         await emitEventFromServer({
-          event: "information_requested",
-          scope: `candidate:${data.match_id}`,
+          event: "clarification_requested",
+          scope: `review:${data.match_id}:${Date.now()}`,
           candidate_match_id: data.match_id,
           candidate_profile_id: m.candidate_profile_id,
+          organization_id: m.organization_id,
           actor_user_id: context.userId,
+          payload: { message: data.message },
           recipients: [
             {
               user_id: candidateUser,
