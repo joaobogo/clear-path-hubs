@@ -177,6 +177,10 @@ const CLIENT_ACTIVITY: readonly EventType[] = [
   "document_added",
   "member_invited",
   "member_removed",
+  "client_hold",
+  "client_declined",
+  "client_information_requested",
+  "contact_release_requested",
 ];
 
 const CANDIDATE_ACTIVITY: readonly EventType[] = [
