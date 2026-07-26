@@ -77,8 +77,35 @@ export const releaseCandidateContact = createServerFn({ method: "POST" })
       after: { contact_released_at: new Date().toISOString() },
       reason: data.reason,
     });
+    await emitContactEvent("contact_released", data.match_id, before.organization_id, context.userId);
     return { ok: true, already: false };
   });
+
+/**
+ * Contact release/revocation is a visibility change clients must see in their
+ * activity. The scope keys on the match + direction, so repeated calls (which
+ * short-circuit above anyway) cannot duplicate the event.
+ */
+async function emitContactEvent(
+  event: "contact_released" | "contact_revoked",
+  matchId: string,
+  organizationId: string | null,
+  actorUserId: string,
+) {
+  try {
+    const { emitEventFromServer } = await import("./notifications.functions");
+    await emitEventFromServer({
+      event,
+      scope: `${matchId}:${event}:${Date.now()}`,
+      organization_id: organizationId,
+      candidate_match_id: matchId,
+      actor_user_id: actorUserId,
+      link_path: `/client/candidates/${matchId}`,
+    });
+  } catch (e) {
+    console.error(`[${event}] emit failed`, e);
+  }
+}
 
 /** Immediately withdraws released contact details. */
 export const revokeCandidateContact = createServerFn({ method: "POST" })
