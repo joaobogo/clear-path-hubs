@@ -3,7 +3,7 @@
 // because applicants are unauthenticated at this point.
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { applySchema, type ApplyInput } from "./apply-schema";
+import { applySchema, composeLocation, type ApplyInput } from "./apply-schema";
 
 export type SubmitApplicationResult =
   | {
@@ -83,9 +83,16 @@ export const submitApplication = createServerFn({ method: "POST" })
       // 2. Validate screening answers reference this position's questions and cover all required.
       const { data: questions, error: qErr } = await supabaseAdmin
         .from("screening_questions")
-        .select("id,required,answer_type")
+        .select("id,required,answer_type,updated_at")
         .eq("position_id", data.position_id);
       if (qErr) throw qErr;
+      // Stamp which revision of the question set the candidate actually answered.
+      const questionVersion = Math.max(
+        1,
+        ...(questions ?? []).map((q) =>
+          Math.floor(new Date(q.updated_at as string).getTime() / 1000),
+        ),
+      );
       const qMap = new Map((questions ?? []).map((q) => [q.id, q]));
       for (const q of questions ?? []) {
         if (!q.required) continue;
@@ -116,6 +123,21 @@ export const submitApplication = createServerFn({ method: "POST" })
         .maybeSingle();
       if (cpFindErr) throw cpFindErr;
 
+      const locationText = composeLocation({
+        city: data.city,
+        region: data.region,
+        country: data.country,
+      });
+      const locationFields = {
+        location: locationText || null,
+        country: data.country || null,
+        region: data.region || null,
+        city: data.city || null,
+        linkedin_url: data.linkedin_url || null,
+        portfolio_url: data.portfolio_url || null,
+        website_url: data.website_url || null,
+      };
+
       let candidateProfileId: string;
       if (existingCp) {
         candidateProfileId = existingCp.id;
@@ -125,7 +147,7 @@ export const submitApplication = createServerFn({ method: "POST" })
           .update({
             full_name: data.full_name,
             phone: data.phone || null,
-            location: data.location || null,
+            ...locationFields,
             consent: {
               terms: true,
               network_opt_in: data.network_opt_in,
@@ -140,7 +162,7 @@ export const submitApplication = createServerFn({ method: "POST" })
             full_name: data.full_name,
             email: emailLower,
             phone: data.phone || null,
-            location: data.location || null,
+            ...locationFields,
             consent: {
               terms: true,
               network_opt_in: data.network_opt_in,
@@ -152,6 +174,7 @@ export const submitApplication = createServerFn({ method: "POST" })
         if (cpErr) throw cpErr;
         candidateProfileId = cpNew.id;
       }
+
 
       // 4. Idempotency short-circuit: if a matching application already exists for this
       // (candidate, position) that is not withdrawn/rejected/archived, treat as duplicate.
@@ -215,8 +238,20 @@ export const submitApplication = createServerFn({ method: "POST" })
         .insert({
           candidate_profile_id: candidateProfileId,
           position_id: data.position_id,
-          source: `public_job_board:${data.idempotency_key}`,
+          source: `${data.source}:${data.idempotency_key}`,
+          source_channel: data.source,
           status: "submitted",
+          cover_letter: data.cover_letter || null,
+          portfolio_url: data.portfolio_url || null,
+          accommodation_request: data.accommodation_request || null,
+          question_version: questionVersion,
+          consent: {
+            terms: true,
+            network_opt_in: data.network_opt_in,
+            source: data.source,
+            question_version: questionVersion,
+            accepted_at: new Date().toISOString(),
+          },
         })
         .select("id")
         .single();

@@ -10,6 +10,7 @@ import {
   APPLY_IDEMPOTENCY_KEY,
   MAX_CV_BYTES,
   applySchema,
+  composeLocation,
   fileExt,
 } from "@/lib/apply-schema";
 import { CV_MESSAGES } from "@/lib/cv-validation";
@@ -84,7 +85,14 @@ function ApplyPage() {
     full_name: "",
     email: "",
     phone: "",
-    location: "",
+    country: "",
+    region: "",
+    city: "",
+    cover_letter: "",
+    portfolio_url: "",
+    linkedin_url: "",
+    website_url: "",
+    accommodation_request: "",
   });
   const [cvFile, setCvFile] = useState<File | null>(null);
   const [cvError, setCvError] = useState<string | null>(null);
@@ -165,15 +173,23 @@ function ApplyPage() {
   // Per-step validation used to gate Continue.
   const stepIssues = (n: number): Record<string, string> => {
     const errs: Record<string, string> = {};
+    const url = (v: string) => !v.trim() || /^https?:\/\/\S+\.\S+/.test(v.trim());
     if (n === 1) {
       if (!form.full_name.trim() || form.full_name.trim().length < 2)
         errs.full_name = "Enter your full name";
       if (!/^\S+@\S+\.\S+$/.test(form.email.trim()))
         errs.email = "Enter a valid email";
+      if (form.phone.trim().length < 6) errs.phone = "Enter a phone number we can reach you on";
+      if (form.country.trim().length < 2) errs.country = "Enter your country";
+      if (!form.region.trim()) errs.region = "Enter your state or region";
+      if (!form.city.trim()) errs.city = "Enter your city";
     }
     if (n === 2) {
       if (!cvFile) errs.cv = "Attach your CV to continue";
       if (cvError) errs.cv = cvError;
+      if (!url(form.portfolio_url)) errs.portfolio_url = "Enter a full link starting with https://";
+      if (!url(form.linkedin_url)) errs.linkedin_url = "Enter a full link starting with https://";
+      if (!url(form.website_url)) errs.website_url = "Enter a full link starting with https://";
     }
     if (n === 3) {
       pos!.questions.forEach((q) => {
@@ -211,8 +227,17 @@ function ApplyPage() {
     setFieldErrors(allErrs);
     if (Object.keys(allErrs).length > 0) {
       // Jump to earliest failing step.
-      if (allErrs.full_name || allErrs.email) setStep(1);
-      else if (allErrs.cv) setStep(2);
+      if (
+        allErrs.full_name ||
+        allErrs.email ||
+        allErrs.phone ||
+        allErrs.country ||
+        allErrs.region ||
+        allErrs.city
+      )
+        setStep(1);
+      else if (allErrs.cv || allErrs.portfolio_url || allErrs.linkedin_url || allErrs.website_url)
+        setStep(2);
       else if (Object.keys(allErrs).some((k) => k.startsWith("q:"))) setStep(3);
       else if (allErrs.consent_terms) setStep(4);
       return;
@@ -231,7 +256,15 @@ function ApplyPage() {
         full_name: form.full_name,
         email: form.email,
         phone: form.phone,
-        location: form.location,
+        country: form.country,
+        region: form.region,
+        city: form.city,
+        cover_letter: form.cover_letter,
+        portfolio_url: form.portfolio_url,
+        linkedin_url: form.linkedin_url,
+        website_url: form.website_url,
+        accommodation_request: form.accommodation_request,
+        source: "public_job_board",
         cv: {
           filename: cvFile.name,
           mime: cvFile.type || "application/octet-stream",
@@ -382,28 +415,61 @@ function ApplyPage() {
                   )}
                 </div>
                 <div>
-                  <Label htmlFor="phone">Phone</Label>
+                  <Label htmlFor="phone">Phone *</Label>
                   <Input
                     id="phone"
                     type="tel"
                     autoComplete="tel"
                     data-field="phone"
+                    placeholder="+1 555 123 4567"
                     value={form.phone}
                     onChange={(e) => setForm({ ...form, phone: e.target.value })}
                   />
-                  <p className="mt-1 text-xs text-muted-foreground">Optional.</p>
+                  {fieldErrors.phone && (
+                    <p className="mt-1 text-xs text-destructive">{fieldErrors.phone}</p>
+                  )}
                 </div>
                 <div>
-                  <Label htmlFor="location">Location</Label>
+                  <Label htmlFor="country">Country *</Label>
                   <Input
-                    id="location"
-                    autoComplete="address-level2"
-                    data-field="location"
-                    placeholder="City, Country"
-                    value={form.location}
-                    onChange={(e) => setForm({ ...form, location: e.target.value })}
+                    id="country"
+                    autoComplete="country-name"
+                    data-field="country"
+                    placeholder="e.g. Portugal"
+                    value={form.country}
+                    onChange={(e) => setForm({ ...form, country: e.target.value })}
                   />
-                  <p className="mt-1 text-xs text-muted-foreground">Optional.</p>
+                  {fieldErrors.country && (
+                    <p className="mt-1 text-xs text-destructive">{fieldErrors.country}</p>
+                  )}
+                </div>
+                <div>
+                  <Label htmlFor="region">State / region *</Label>
+                  <Input
+                    id="region"
+                    autoComplete="address-level1"
+                    data-field="region"
+                    placeholder="e.g. Lisbon District"
+                    value={form.region}
+                    onChange={(e) => setForm({ ...form, region: e.target.value })}
+                  />
+                  {fieldErrors.region && (
+                    <p className="mt-1 text-xs text-destructive">{fieldErrors.region}</p>
+                  )}
+                </div>
+                <div>
+                  <Label htmlFor="city">City *</Label>
+                  <Input
+                    id="city"
+                    autoComplete="address-level2"
+                    data-field="city"
+                    placeholder="e.g. Lisbon"
+                    value={form.city}
+                    onChange={(e) => setForm({ ...form, city: e.target.value })}
+                  />
+                  {fieldErrors.city && (
+                    <p className="mt-1 text-xs text-destructive">{fieldErrors.city}</p>
+                  )}
                 </div>
               </div>
             </div>
@@ -414,16 +480,16 @@ function ApplyPage() {
               <div>
                 <h2 className="text-lg font-semibold">Upload your CV</h2>
                 <p className="text-sm text-muted-foreground">
-                  PDF, DOC, or DOCX up to 10 MB. Unicode filenames welcome.
+                  PDF only, up to 10 MB. Unicode filenames welcome.
                 </p>
               </div>
               <div>
-                <Label htmlFor="cv">CV file *</Label>
+                <Label htmlFor="cv">CV file (PDF) *</Label>
                 <Input
                   id="cv"
                   type="file"
                   data-field="cv"
-                  accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                  accept=".pdf,application/pdf"
                   onChange={(e) => onFile(e.target.files?.[0] ?? null)}
                 />
                 {cvError ? (
@@ -440,10 +506,75 @@ function ApplyPage() {
                   </p>
                 )}
                 <ul className="mt-3 text-xs text-muted-foreground list-disc pl-4 space-y-0.5">
-                  <li>Accepted formats: .pdf, .doc, .docx</li>
+                  <li>Accepted format: .pdf only</li>
                   <li>Max size: 10 MB</li>
+                  <li>Password-protected PDFs can't be reviewed — upload an unlocked copy</li>
                   <li>We store your CV securely; only the hiring team can access it.</li>
                 </ul>
+              </div>
+
+              <div className="space-y-4 border-t pt-5">
+                <div>
+                  <h3 className="text-sm font-semibold">Optional extras</h3>
+                  <p className="text-xs text-muted-foreground">
+                    Only add what's relevant — none of these are required.
+                  </p>
+                </div>
+                <div>
+                  <Label htmlFor="cover_letter">Cover letter</Label>
+                  <Textarea
+                    id="cover_letter"
+                    rows={4}
+                    data-field="cover_letter"
+                    placeholder="A short note on why this role fits you."
+                    value={form.cover_letter}
+                    onChange={(e) => setForm({ ...form, cover_letter: e.target.value })}
+                  />
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="linkedin_url">LinkedIn</Label>
+                    <Input
+                      id="linkedin_url"
+                      inputMode="url"
+                      data-field="linkedin_url"
+                      placeholder="https://linkedin.com/in/…"
+                      value={form.linkedin_url}
+                      onChange={(e) => setForm({ ...form, linkedin_url: e.target.value })}
+                    />
+                    {fieldErrors.linkedin_url && (
+                      <p className="mt-1 text-xs text-destructive">{fieldErrors.linkedin_url}</p>
+                    )}
+                  </div>
+                  <div>
+                    <Label htmlFor="portfolio_url">Portfolio or Loom link</Label>
+                    <Input
+                      id="portfolio_url"
+                      inputMode="url"
+                      data-field="portfolio_url"
+                      placeholder="https://…"
+                      value={form.portfolio_url}
+                      onChange={(e) => setForm({ ...form, portfolio_url: e.target.value })}
+                    />
+                    {fieldErrors.portfolio_url && (
+                      <p className="mt-1 text-xs text-destructive">{fieldErrors.portfolio_url}</p>
+                    )}
+                  </div>
+                  <div className="md:col-span-2">
+                    <Label htmlFor="website_url">Personal website</Label>
+                    <Input
+                      id="website_url"
+                      inputMode="url"
+                      data-field="website_url"
+                      placeholder="https://…"
+                      value={form.website_url}
+                      onChange={(e) => setForm({ ...form, website_url: e.target.value })}
+                    />
+                    {fieldErrors.website_url && (
+                      <p className="mt-1 text-xs text-destructive">{fieldErrors.website_url}</p>
+                    )}
+                  </div>
+                </div>
               </div>
             </div>
           )}
@@ -541,8 +672,23 @@ function ApplyPage() {
                 />
                 <ReviewRow
                   label="Location"
-                  value={form.location || "—"}
+                  value={
+                    composeLocation({
+                      city: form.city,
+                      region: form.region,
+                      country: form.country,
+                    }) || "—"
+                  }
                   onEdit={() => setStep(1)}
+                />
+                <ReviewRow
+                  label="Links"
+                  value={
+                    [form.linkedin_url, form.portfolio_url, form.website_url]
+                      .filter(Boolean)
+                      .join("  ·  ") || "—"
+                  }
+                  onEdit={() => setStep(2)}
                 />
                 <ReviewRow
                   label="CV"
@@ -589,6 +735,24 @@ function ApplyPage() {
                     consider me for future matching roles.
                   </span>
                 </label>
+              </div>
+
+              <div className="space-y-2 rounded-lg border p-4">
+                <Label htmlFor="accommodation_request">
+                  Accessibility or interview adjustments (private)
+                </Label>
+                <Textarea
+                  id="accommodation_request"
+                  rows={3}
+                  data-field="accommodation_request"
+                  placeholder="Let us know if you need any adjustments during the process."
+                  value={form.accommodation_request}
+                  onChange={(e) => setForm({ ...form, accommodation_request: e.target.value })}
+                />
+                <p className="text-xs text-muted-foreground">
+                  Optional. Handled privately by the TaaSFlow team and never shared with the
+                  employer without your say-so. It plays no part in your application review.
+                </p>
               </div>
             </div>
           )}
