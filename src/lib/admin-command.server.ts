@@ -72,6 +72,7 @@ const AGING_HOURS = 24;
 
 const PIPELINE_STATES = ["queued", "parsing", "enriching", "ready_to_score", "parsed"];
 const FAILED_STATES = ["failed", "provider_blocked", "ocr_required", "manual_review_required"];
+const OPEN_POSITION_STATES = ["approved", "active"];
 
 function iso(d: Date) {
   return d.toISOString();
@@ -145,7 +146,17 @@ export async function loadFilterOptions() {
       organization_id: p.organization_id,
     })),
     owners: ownerList,
-    statuses: ["draft", "submitted", "needs_clarification", "approved", "published", "closed"],
+    statuses: [
+      "draft",
+      "submitted",
+      "under_review",
+      "needs_clarification",
+      "approved",
+      "active",
+      "paused",
+      "filled",
+      "closed",
+    ],
   };
 }
 
@@ -224,7 +235,7 @@ export async function loadUrgentQueue(f: CommandFilters): Promise<UrgentItem[]> 
         .from("candidate_matches")
         .select(matchSelect)
         .eq("client_visibility", "visible")
-        .in("stage", ["new", "screening", "review", "shortlisted"])
+        .in("stage", ["new", "reviewing", "delivered"])
         .lt("delivered_at", overdueCut),
       f,
       "delivered_at",
@@ -249,7 +260,7 @@ export async function loadUrgentQueue(f: CommandFilters): Promise<UrgentItem[]> 
       let q = s
         .from("positions")
         .select("id,title,status,created_at,organization_id,organizations(name)")
-        .in("status", ["approved", "published"]);
+        .in("status", OPEN_POSITION_STATES);
       if (f.org_id) q = q.eq("organization_id", f.org_id);
       if (f.owner_id) q = q.eq("created_by", f.owner_id);
       if (f.position_id) q = q.eq("id", f.position_id);
@@ -258,7 +269,7 @@ export async function loadUrgentQueue(f: CommandFilters): Promise<UrgentItem[]> 
 
     s
       .from("processing_jobs")
-      .select("id,job_type,status,error_code,attempts,created_at,candidate_match_id")
+      .select("id,job_type,status,error_code,error_message,attempts,created_at,entity_type,entity_id")
       .eq("status", "failed")
       .gte("created_at", iso(new Date(now - 7 * 86400_000)))
       .order("created_at", { ascending: false })
@@ -477,7 +488,7 @@ export async function loadWorkload(f: CommandFilters): Promise<WorkloadClient[]>
   let posQ = s
     .from("positions")
     .select("id,title,status,organization_id,organizations(name)")
-    .not("status", "in", "(closed,draft)");
+    .not("status", "in", "(closed,draft,archived,filled)");
   if (f.org_id) posQ = posQ.eq("organization_id", f.org_id);
   if (f.status) posQ = posQ.eq("status", f.status);
   if (f.owner_id) posQ = posQ.eq("created_by", f.owner_id);
