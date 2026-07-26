@@ -298,8 +298,8 @@ function MeHome() {
           to="/me/messages"
           icon={<MessageSquare className="h-4 w-4" />}
           eyebrow="Messages"
-          title="Hiring team conversations"
-          body="Direct replies from clients and our team appear here. We&apos;ll notify you — you don&apos;t need to refresh."
+          title={unread > 0 ? `${unread} unread message${unread === 1 ? "" : "s"}` : "Hiring team conversations"}
+          body="Direct replies from our team appear here. We&apos;ll notify you — you don&apos;t need to refresh."
           cta="Open messages"
         />
         <Tile
@@ -319,14 +319,21 @@ function MeHome() {
           to="/me/cv"
           icon={<FileUp className="h-4 w-4" />}
           eyebrow="CV"
-          title={cv ? "CV on file" : "No CV uploaded"}
+          title={doc ?? cv ? "CV on file" : "No CV uploaded"}
           body={
-            cv
-              ? `Last updated ${new Date(cv.created_at).toLocaleDateString()}. You can replace it any time.`
-              : "Upload your CV so clients can review your experience privately."
+            doc
+              ? `${doc.filename} · uploaded ${new Date(doc.uploaded_at).toLocaleDateString()}. ${
+                  doc.received
+                    ? "Received and readable."
+                    : "We couldn't read this file — please upload a fresh PDF."
+                }`
+              : cv
+                ? `Last updated ${new Date(cv.created_at).toLocaleDateString()}. You can replace it any time.`
+                : "Upload your CV (PDF) so hiring teams can review your experience privately."
           }
-          cta={cv ? "Manage CV" : "Upload CV"}
+          cta={doc ?? cv ? "Manage CV" : "Upload CV"}
         />
+
         <Tile
           to="/me/settings"
           icon={<Shield className="h-4 w-4" />}
