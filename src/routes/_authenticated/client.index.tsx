@@ -358,23 +358,51 @@ function OverviewPage() {
             </div>
           </section>
 
-          {/* 3 · OPEN THIS CANDIDATE FIRST — top-ranked, ready to review */}
+          {/* 3 · OPEN THIS CANDIDATE FIRST — approved candidates awaiting review */}
           <section aria-labelledby="open-first-heading" className="space-y-3">
             <SectionHeader
               id="open-first-heading"
               icon={<Sparkles className="h-4 w-4 text-primary" />}
-              title="Open this candidate first"
+              title="Approved candidates awaiting review"
               action={
-                <Link to="/client/candidates" className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline">
+                <Link
+                  to="/client/candidates"
+                  search={
+                    {
+                      ...(orgSearch ? { org: orgSearch } : {}),
+                      ...(selectedRole ? { position: selectedRole } : {}),
+                    } as never
+                  }
+                  className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
+                >
                   All candidates <ChevronRight className="h-3.5 w-3.5" />
                 </Link>
               }
             />
-            {latest.length === 0 ? (
-              <EmptyBlock text="Reviewed candidates will appear here when they are ready." />
+            {!data && isFetching ? (
+              <div className="grid gap-3">
+                {[0, 1].map((i) => (
+                  <div key={i} className="h-24 animate-pulse rounded-xl border bg-muted/40" />
+                ))}
+              </div>
+            ) : isError && !data ? (
+              <div className="rounded-lg border taas-bd-warning taas-bg-warning-soft p-6 text-center text-sm">
+                We couldn't load your candidates just now.{" "}
+                <button onClick={() => refetch()} className="font-medium text-primary hover:underline">
+                  Try again
+                </button>
+              </div>
+            ) : latest.length === 0 ? (
+              <EmptyBlock
+                text={
+                  selectedRole
+                    ? "No candidates approved for this role yet. You'll see them here as soon as they're released to you."
+                    : "No candidates approved for you yet. You'll see them here as soon as they're released to you."
+                }
+              />
             ) : (
               <div className="grid gap-3">
-                {latest.slice(0, 3).map((c) => (
+                {latest.slice(0, 3).map((c: Any) => (
                   <CandidateCard key={c.match_id} candidate={c} />
                 ))}
               </div>
@@ -402,7 +430,7 @@ function OverviewPage() {
             </section>
           )}
 
-          {/* 5 · SINCE LAST VISIT + RECENT MESSAGES */}
+          {/* 5 · RECENT AUTHORIZED ACTIVITY + MESSAGES */}
           <section className="grid gap-4 lg:grid-cols-5">
             <div className="lg:col-span-3">
               <SinceLastVisit events={sinceLastVisit} fallback={activity} lastSeen={lastSeen} />
@@ -413,7 +441,21 @@ function OverviewPage() {
             </div>
           </section>
 
-          {/* 6 · SECONDARY SNAPSHOT — moved below the decision surfaces */}
+          {/* 6 · TEAM + HELP */}
+          <section className="grid gap-4 lg:grid-cols-2">
+            {canViewTeam ? (
+              <TeamPanel
+                members={team as Any[]}
+                canManage={role === "client_admin"}
+                org={orgSearch}
+              />
+            ) : (
+              <div />
+            )}
+            <HelpCard org={orgSearch} />
+          </section>
+
+          {/* 7 · SECONDARY SNAPSHOT — moved below the decision surfaces */}
           <SnapshotFooter kpis={kpis} />
 
           {data?.last_updated && (
