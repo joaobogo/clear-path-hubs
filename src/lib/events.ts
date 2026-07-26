@@ -54,16 +54,24 @@ export const ADMIN_COPY: Partial<Record<EventType, CopyEntry>> = {
   client_feedback_submitted: { title: "Client feedback received" },
   interview_requested: { title: "Client requested an interview" },
   message_sent: { title: "New client message" },
+  cv_parse_failed: { title: "CV parsing failed", body: "A CV could not be parsed and needs attention." },
+  screening_needs_review: { title: "Screening needs review", body: "A screening result requires a human decision." },
 };
 
 export const CLIENT_COPY: Partial<Record<EventType, CopyEntry>> = {
   clarification_requested: { title: "We need a quick clarification", body: "Please review the open question on your role." },
   position_approved: { title: "Your role is approved", body: "We are preparing your position for launch." },
   position_activated: { title: "Your role is live", body: "Candidates can now apply." },
+  position_reopened: { title: "Your role is open again", body: "We resumed sourcing for this position." },
   candidate_published: { title: "New candidate delivered", body: "A vetted candidate is available in your workspace." },
   interview_scheduled: { title: "Interview scheduled" },
+  interview_completed: { title: "Interview completed" },
+  interview_cancelled: { title: "Interview cancelled" },
+  contact_released: { title: "Contact details available", body: "You can now reach this candidate directly." },
   message_sent: { title: "New message from TaaSFlow" },
   position_closed: { title: "Position closed" },
+  member_invited: { title: "Team member invited" },
+  member_removed: { title: "Team member removed" },
 };
 
 export const CANDIDATE_COPY: Partial<Record<EventType, CopyEntry>> = {
@@ -73,6 +81,8 @@ export const CANDIDATE_COPY: Partial<Record<EventType, CopyEntry>> = {
   client_shortlisted: { title: "You have been shortlisted", body: "The client has shortlisted you for their role." },
   interview_requested: { title: "Interview request", body: "The client would like to interview you." },
   interview_scheduled: { title: "Your interview is scheduled" },
+  interview_completed: { title: "Interview completed", body: "Thanks for your time — we will follow up." },
+  interview_cancelled: { title: "Interview cancelled", body: "We will be in touch with next steps." },
   candidate_hired: { title: "Congratulations — offer stage", body: "The client has moved forward with an offer." },
   message_sent: { title: "New message" },
 };
@@ -82,7 +92,178 @@ export function copyFor(audience: Audience, event: EventType): CopyEntry | null 
   return map[event] ?? null;
 }
 
+// ─── Activity feed (derived view over the same source events) ───────────────
+// Notifications are "you must know now". Activity is "what happened here".
+// Both derive from a single persisted row in notification_events.
+
+export const ACTIVITY_LABELS: Record<EventType, string> = {
+  intake_submitted: "Client intake submitted",
+  clarification_requested: "Clarification requested",
+  position_approved: "Job approved",
+  position_activated: "Job activated",
+  position_updated: "Job updated",
+  position_paused: "Job paused",
+  position_reopened: "Job reopened",
+  position_filled: "Job filled",
+  position_closed: "Job closed",
+  application_received: "Application submitted",
+  cv_parsed: "CV parsed",
+  cv_parse_failed: "CV parsing failed",
+  candidate_processing_completed: "Processing completed",
+  screening_completed: "Screening completed",
+  screening_needs_review: "Screening needs review",
+  candidate_ready_for_admin_review: "Ready for review",
+  candidate_published: "Approved for client view",
+  contact_released: "Contact details released",
+  contact_revoked: "Contact details revoked",
+  client_viewed_candidate: "Client viewed candidate",
+  client_shortlisted: "Candidate shortlisted",
+  client_feedback_submitted: "Feedback added",
+  candidate_stage_changed: "Status changed",
+  interview_requested: "Interview requested",
+  interview_scheduled: "Interview scheduled",
+  interview_completed: "Interview completed",
+  interview_cancelled: "Interview cancelled",
+  candidate_hired: "Placement confirmed",
+  message_sent: "Message sent",
+  document_added: "Document added",
+  member_invited: "Team member invited",
+  member_removed: "Team member removed",
+};
+
+/**
+ * Which audiences may see an event *in the activity feed*.
+ * Row-level security already limits the rows a user can read; this is the
+ * second, editorial gate that keeps internal operational noise out of client
+ * and candidate views. Nothing outside these sets is ever rendered.
+ */
+const ADMIN_ACTIVITY: readonly EventType[] = EVENT_TYPES;
+
+const CLIENT_ACTIVITY: readonly EventType[] = [
+  "intake_submitted",
+  "clarification_requested",
+  "position_approved",
+  "position_activated",
+  "position_updated",
+  "position_paused",
+  "position_reopened",
+  "position_filled",
+  "position_closed",
+  "candidate_published",
+  "contact_released",
+  "contact_revoked",
+  "client_viewed_candidate",
+  "client_shortlisted",
+  "client_feedback_submitted",
+  "candidate_stage_changed",
+  "interview_requested",
+  "interview_scheduled",
+  "interview_completed",
+  "interview_cancelled",
+  "candidate_hired",
+  "message_sent",
+  "document_added",
+  "member_invited",
+  "member_removed",
+];
+
+const CANDIDATE_ACTIVITY: readonly EventType[] = [
+  "application_received",
+  "clarification_requested",
+  "candidate_published",
+  "client_shortlisted",
+  "interview_requested",
+  "interview_scheduled",
+  "interview_completed",
+  "interview_cancelled",
+  "candidate_hired",
+  "message_sent",
+  "document_added",
+];
+
+export function isVisibleActivity(audience: Audience, event: EventType): boolean {
+  const set =
+    audience === "admin" ? ADMIN_ACTIVITY : audience === "client" ? CLIENT_ACTIVITY : CANDIDATE_ACTIVITY;
+  return set.includes(event);
+}
+
+// ─── Canonical state machines (mirrored by database triggers) ───────────────
+// Source of truth for UI affordances. The server rejects anything not listed
+// here via triggers: tg_positions_lifecycle_guard, tg_candidate_matches_*,
+// tg_interviews_lifecycle, tg_hire_records_lifecycle.
+
+export const JOB_STATES = {
+  draft: ["submitted", "archived"],
+  submitted: ["under_review", "needs_clarification", "approved", "archived"],
+  under_review: ["approved", "needs_clarification", "archived"],
+  needs_clarification: ["submitted", "under_review", "approved", "archived"],
+  approved: ["active", "archived"],
+  active: ["paused", "filled", "closed", "archived"],
+  paused: ["active", "closed", "archived"],
+  filled: ["active", "closed", "archived"],
+  closed: ["active", "archived"],
+  archived: [],
+} as const;
+
+export const APPLICATION_STATES = {
+  submitted: ["processing", "withdrawn", "rejected", "archived"],
+  processing: ["ready_for_review", "rejected", "archived"],
+  ready_for_review: ["withdrawn", "rejected", "archived"],
+  withdrawn: [],
+  rejected: ["archived"],
+  archived: [],
+} as const;
+
+export const SCREENING_STATES = {
+  ingestion: ["evidence_extraction", "failed"],
+  evidence_extraction: ["provisional_scoring", "failed", "returned_for_correction"],
+  provisional_scoring: ["human_review", "failed", "returned_for_correction"],
+  human_review: ["approved", "returned_for_correction", "failed"],
+  returned_for_correction: ["evidence_extraction", "provisional_scoring", "human_review", "failed"],
+  approved: ["published_to_client", "returned_for_correction", "superseded"],
+  published_to_client: ["superseded", "returned_for_correction"],
+  superseded: ["returned_for_correction"],
+  failed: ["ingestion", "returned_for_correction"],
+} as const;
+
+export const PIPELINE_STAGE_STATES = {
+  new: ["reviewing", "delivered", "not_moving_forward", "archived"],
+  reviewing: ["delivered", "not_moving_forward", "archived"],
+  delivered: ["shortlisted", "interview_process", "not_moving_forward", "archived", "reviewing"],
+  shortlisted: ["interview_process", "offer", "not_moving_forward", "archived", "delivered"],
+  interview_process: ["offer", "not_moving_forward", "archived", "shortlisted"],
+  offer: ["hired", "not_moving_forward", "archived", "interview_process"],
+  hired: ["archived"],
+  not_moving_forward: ["delivered", "shortlisted", "archived"],
+  archived: ["delivered"],
+} as const;
+
+export const INTERVIEW_STATES = {
+  requested: ["scheduling", "scheduled", "cancelled"],
+  scheduling: ["scheduled", "cancelled"],
+  scheduled: ["completed", "cancelled", "scheduling"],
+  completed: [],
+  cancelled: ["requested", "scheduling"],
+} as const;
+
+export const PLACEMENT_STATES = {
+  offer_drafted: ["offer_sent", "closed_lost"],
+  offer_sent: ["offer_accepted", "offer_declined", "closed_lost"],
+  offer_accepted: ["hire_confirmed", "closed_lost"],
+  offer_declined: ["offer_drafted", "closed_lost"],
+  hire_confirmed: ["closed_lost"],
+  closed_lost: ["offer_drafted"],
+} as const;
+
+/** Client approval and contact release are two separate, ordered permissions. */
+export const CLIENT_ACCESS_STATES = {
+  hidden: ["approved"],
+  approved: ["hidden", "contact_released"],
+  contact_released: ["approved", "hidden"],
+} as const;
+
 // Idempotency keys are deterministic. Same real-world event => same key => single row.
 export function eventKey(event: EventType, scope: string): string {
   return `${event}:${scope}`;
 }
+
