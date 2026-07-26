@@ -44,6 +44,7 @@ import {
 } from "lucide-react";
 import { JobQualityPanel } from "@/components/positions/JobQualityPanel";
 import { RoleMemoryPanel } from "@/components/role-memory-panel";
+import { useConfirmAction } from "@/components/ds";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -1148,6 +1149,7 @@ function SettingsTab({ position, onDone }: { position: Any; onDone: () => Promis
   const deleteFn = useServerFn(deletePosition);
   const router = useRouter();
   const [busy, setBusy] = useState(false);
+  const { confirm, confirmDialog } = useConfirmAction();
 
   const setVis = async (v: Any) => {
     try {
@@ -1160,12 +1162,27 @@ function SettingsTab({ position, onDone }: { position: Any; onDone: () => Promis
   };
 
   const archive = async () => {
+    const result = await confirm({
+      title: "Archive position",
+      object: position.title,
+      description: "The position is hidden from every workspace and the public job board.",
+      impact: [
+        "Candidates already on the position are kept",
+        "Open applications stop receiving new submissions",
+        "You can restore the position later",
+      ],
+      confirmLabel: "Archive position",
+    });
+    if (!result.confirmed) return;
+    setBusy(true);
     try {
       const r = await statusFn({ data: { id: position.id, action: "archive" } });
       toast.success(`Archived · trace ${r.trace_id}`);
       await onDone();
     } catch (e) {
       toast.error((e as Error).message);
+    } finally {
+      setBusy(false);
     }
   };
 
@@ -1246,7 +1263,13 @@ function SettingsTab({ position, onDone }: { position: Any; onDone: () => Promis
           <Button
             variant="outline"
             size="sm"
+            className="min-h-11"
             disabled={position.status === "archived" || busy}
+            title={
+              position.status === "archived"
+                ? "This position is already archived"
+                : undefined
+            }
             onClick={archive}
             data-qa-action="archive-position"
           >
@@ -1255,7 +1278,9 @@ function SettingsTab({ position, onDone }: { position: Any; onDone: () => Promis
           <Button
             variant="destructive"
             size="sm"
+            className="min-h-11"
             disabled={busy}
+            aria-busy={busy || undefined}
             onClick={hardDelete}
             data-qa-action="delete-position"
           >
@@ -1263,6 +1288,7 @@ function SettingsTab({ position, onDone }: { position: Any; onDone: () => Promis
           </Button>
         </div>
       </div>
+      {confirmDialog}
     </div>
   );
 }
