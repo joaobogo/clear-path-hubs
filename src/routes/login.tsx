@@ -93,8 +93,9 @@ function LoginPage() {
   }, []);
 
   function routeToDest(mems: SessionMembership[], primary: MembershipRole | null) {
-    if (redirect && redirect.startsWith("/")) {
-      window.location.assign(redirect);
+    const dest = sanitizeRedirect(redirect);
+    if (dest) {
+      window.location.assign(dest);
       return;
     }
     const active = mems.filter((m) => m.status === "active");
