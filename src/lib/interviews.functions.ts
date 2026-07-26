@@ -148,6 +148,14 @@ export type InterviewDTO = {
   created_at: string;
   updated_at: string;
   next_action: string;
+  candidate_response: string | null;
+  candidate_response_at: string | null;
+  candidate_selected_time: string | null;
+  candidate_note: string | null;
+  availability_expires_at: string | null;
+  reschedule_count: number;
+  scheduling_method: string;
+  calendly_url: string | null;
   candidate: { id: string; name: string; email: string | null } | null;
   position: { id: string; title: string; reference: string | null } | null;
 };
@@ -188,6 +196,14 @@ function toDTO(row: AnyRow, candidate: AnyRow | null, position: AnyRow | null): 
     created_at: row.created_at,
     updated_at: row.updated_at,
     next_action: nextAction,
+    candidate_response: row.candidate_response ?? null,
+    candidate_response_at: row.candidate_response_at ?? null,
+    candidate_selected_time: row.candidate_selected_time ?? null,
+    candidate_note: row.candidate_note ?? null,
+    availability_expires_at: row.availability_expires_at ?? null,
+    reschedule_count: Number(row.reschedule_count ?? 0),
+    scheduling_method: (row.scheduling_method as string) ?? "manual",
+    calendly_url: row.calendly_url ?? null,
     candidate: candidate
       ? {
           id: candidate.id as string,
