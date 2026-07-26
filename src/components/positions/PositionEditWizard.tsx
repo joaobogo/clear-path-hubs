@@ -26,6 +26,7 @@ import {
   type PositionEditInitial,
   type ScreeningInput,
 } from "@/lib/position-edit.functions";
+import { checkRequisitionDuplicate } from "@/lib/requisition.functions";
 import { RequisitionEditor } from "@/components/positions/RequisitionEditor";
 import { JobQualityPanel } from "@/components/positions/JobQualityPanel";
 
@@ -171,6 +172,35 @@ export function PositionEditWizard({
     window.addEventListener("beforeunload", handler);
     return () => window.removeEventListener("beforeunload", handler);
   }, [dirty]);
+
+  // --- Duplicate requisition detection (debounced) -------------------------
+  const checkDup = useServerFn(checkRequisitionDuplicate);
+  const [dupWarning, setDupWarning] = useState<
+    { id: string; title: string; department: string; status: string; reference_code: string }[]
+  >([]);
+  useEffect(() => {
+    if (!state.title.trim()) {
+      setDupWarning([]);
+      return;
+    }
+    const t = window.setTimeout(async () => {
+      try {
+        const res = await checkDup({
+          data: {
+            organization_id: initial.organization_id,
+            title: state.title,
+            department: state.department ?? "",
+            reference_code: "",
+            exclude_id: initial.id,
+          },
+        });
+        setDupWarning(res.duplicate ? res.matches : []);
+      } catch {
+        setDupWarning([]);
+      }
+    }, 600);
+    return () => window.clearTimeout(t);
+  }, [state.title, state.department, initial.organization_id, initial.id, checkDup]);
 
   useBlocker({
     shouldBlockFn: () =>
@@ -350,6 +380,24 @@ export function PositionEditWizard({
           {/* STEP 1 — Role Definition */}
           {step === 1 && (
             <div className="space-y-6">
+              {dupWarning.length > 0 && (
+                <div className="rounded-md border border-amber-500/40 bg-amber-500/5 p-3 text-sm">
+                  <p className="font-medium">Possible duplicate requisition</p>
+                  <ul className="mt-1 space-y-0.5 text-muted-foreground">
+                    {dupWarning.map((m) => (
+                      <li key={m.id}>
+                        {m.title}
+                        {m.department ? ` · ${m.department}` : ""} · {m.status}
+                        {m.reference_code ? ` · ${m.reference_code}` : ""}
+                      </li>
+                    ))}
+                  </ul>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    Check this isn't the same role before saving — duplicates split candidates
+                    across two pipelines.
+                  </p>
+                </div>
+              )}
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <Field label="Role Title" error={errors.title} required className="sm:col-span-2">
                   <Input
