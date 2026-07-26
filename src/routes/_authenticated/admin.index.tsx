@@ -104,7 +104,11 @@ function Overview() {
 
   const setFilter = (key: keyof typeof search, value: string) =>
     navigate({
-      search: (prev) => ({ ...prev, [key]: value, ...(key === "org" ? { position: "" } : {}) }),
+      search: (prev: Record<string, string>) => ({
+        ...prev,
+        [key]: value,
+        ...(key === "org" ? { position: "" } : {}),
+      }),
     });
   const clearFilters = () =>
     navigate({ search: { org: "", position: "", owner: "", status: "", from: "", to: "" } });
