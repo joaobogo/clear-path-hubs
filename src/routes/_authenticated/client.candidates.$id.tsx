@@ -306,7 +306,7 @@ function CandidateDetailPage() {
               actions={actions}
               readOnly={readOnly}
               pending={act.isPending}
-              onAct={(k) => act.mutate(k)}
+              onAct={(k) => setDialogAction(k)}
               stage={candidate.stage}
               matchId={candidate.match_id}
             />
@@ -328,9 +328,22 @@ function CandidateDetailPage() {
         <MobileActionBar
           actions={actions}
           pending={act.isPending}
-          onAct={(k) => act.mutate(k)}
+          onAct={(k) => setDialogAction(k)}
         />
       )}
+
+      {/* Every consequential decision is confirmed, reasoned, and logged. */}
+      <DecisionDialog
+        action={dialogAction}
+        open={dialogAction !== null}
+        pending={act.isPending}
+        onOpenChange={(v) => !v && setDialogAction(null)}
+        onConfirm={(payload) => {
+          if (act.isPending) return; // guard against double submission
+          act.mutate(payload);
+        }}
+      />
+
     </main>
   );
 }
