@@ -1,9 +1,10 @@
 import {
- createFileRoute,
- Link,
- Outlet,
- redirect,
+  createFileRoute,
+  Link,
+  Outlet,
+  redirect,
 } from "@tanstack/react-router";
+import { ACTIVITY_QUERY_KEY } from "@/components/activity/ActivityFeed";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useMemo, useState } from "react";
@@ -276,6 +277,7 @@ function ClientLayout() {
 }
 
 const CLIENT_REFRESH_KEYS = [
+  ACTIVITY_QUERY_KEY,
  ["client-context"],
  ["client", "kpis"],
  ["client", "positions"],

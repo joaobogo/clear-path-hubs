@@ -23,6 +23,7 @@ import {
   Users,
 } from "lucide-react";
 import { IndustryPersonalizationPanel } from "@/components/client/industry-personalization-panel";
+import { ActivityFeed } from "@/components/activity/ActivityFeed";
 
 export const Route = createFileRoute("/_authenticated/client/")({
   head: () => ({
@@ -334,8 +335,9 @@ function OverviewPage() {
             <div className="lg:col-span-3">
               <SinceLastVisit events={sinceLastVisit} fallback={activity} lastSeen={lastSeen} />
             </div>
-            <div className="lg:col-span-2">
+            <div className="lg:col-span-2 grid gap-4">
               <RecentMessages messages={messages} />
+              <ActivityFeed organizationId={orgId ?? undefined} limit={8} />
             </div>
           </section>
 

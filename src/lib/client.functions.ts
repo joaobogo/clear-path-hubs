@@ -908,6 +908,19 @@ export const moveMatchStage = createServerFn({ method: "POST" })
           recipients: [...adminRecipients, ...candidateRecipients],
         });
       }
+      // Always record the canonical status change itself, even when it has no
+      // notification copy. Scope keys on the exact transition, so replaying the
+      // same move never produces a second activity row.
+      await emitEventFromServer({
+        event: "candidate_stage_changed",
+        scope: `${data.matchId}:${from}->${data.toStage}`,
+        organization_id: data.orgId,
+        position_id: (match.position_id as string) ?? null,
+        application_id: (match.application_id as string) ?? null,
+        candidate_match_id: data.matchId,
+        actor_user_id: context.userId,
+        payload: { from, to: data.toStage },
+      });
     } catch (emitErr) {
       console.error("[moveMatchStage] emit failed", trace, emitErr);
     }
@@ -1059,6 +1072,19 @@ export const sendClientMessage = createServerFn({ method: "POST" })
       .select("id, sender_user_id, body, created_at, recipient_context")
       .single();
     if (error) throw new Error(error.message);
+    // The message row id is the natural idempotency scope: one message, one event.
+    try {
+      const { emitEventFromServer } = await import("./notifications.functions");
+      await emitEventFromServer({
+        event: "message_sent",
+        scope: `message:${(row as AnyRow).id}`,
+        organization_id: data.orgId,
+        actor_user_id: context.userId,
+        link_path: "/client/messages",
+      });
+    } catch (e) {
+      console.error("[sendClientMessage] emit failed", e);
+    }
     return row as AnyRow;
   });
 
@@ -1172,6 +1198,19 @@ export const inviteClientMember = createServerFn({ method: "POST" })
       status: "invited",
     });
     if (mErr) throw new Error(mErr.message);
+    try {
+      const { emitEventFromServer } = await import("./notifications.functions");
+      await emitEventFromServer({
+        event: "member_invited",
+        scope: `member:${data.orgId}:${authUserId}:invited`,
+        organization_id: data.orgId,
+        actor_user_id: context.userId,
+        link_path: "/client/settings",
+        payload: { role: data.role },
+      });
+    } catch (e) {
+      console.error("[inviteClientMember] emit failed", e);
+    }
     return { ok: true };
   });
 
@@ -1293,6 +1332,18 @@ export const removeClientMember = createServerFn({ method: "POST" })
       .eq("organization_id", data.orgId)
       .eq("user_id", data.userId);
     if (error) throw new Error(error.message);
+    try {
+      const { emitEventFromServer } = await import("./notifications.functions");
+      await emitEventFromServer({
+        event: "member_removed",
+        scope: `member:${data.orgId}:${data.userId}:removed`,
+        organization_id: data.orgId,
+        actor_user_id: context.userId,
+        link_path: "/client/settings",
+      });
+    } catch (e) {
+      console.error("[removeClientMember] emit failed", e);
+    }
     return { ok: true };
   });
 

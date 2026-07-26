@@ -57,10 +57,11 @@ export const releaseCandidateContact = createServerFn({ method: "POST" })
     }
     if (before.contact_released_at) return { ok: true, already: true };
 
+    const releasedAt = new Date().toISOString();
     const { error } = await supabaseAdmin
       .from("candidate_matches")
       .update({
-        contact_released_at: new Date().toISOString(),
+        contact_released_at: releasedAt,
         contact_released_by: context.userId,
         contact_release_reason: data.reason,
       })
@@ -77,8 +78,37 @@ export const releaseCandidateContact = createServerFn({ method: "POST" })
       after: { contact_released_at: new Date().toISOString() },
       reason: data.reason,
     });
+    await emitContactEvent("contact_released", data.match_id, before.organization_id, context.userId, releasedAt);
     return { ok: true, already: false };
   });
+
+/**
+ * Contact release/revocation is a visibility change clients must see in their
+ * activity. The scope keys on the match + direction, so repeated calls (which
+ * short-circuit above anyway) cannot duplicate the event.
+ */
+async function emitContactEvent(
+  event: "contact_released" | "contact_revoked",
+  matchId: string,
+  organizationId: string | null,
+  actorUserId: string,
+  /** State-derived key: identical state ⇒ identical scope ⇒ no duplicate row. */
+  stateKey: string,
+) {
+  try {
+    const { emitEventFromServer } = await import("./notifications.functions");
+    await emitEventFromServer({
+      event,
+      scope: `${matchId}:${event}:${stateKey}`,
+      organization_id: organizationId,
+      candidate_match_id: matchId,
+      actor_user_id: actorUserId,
+      link_path: `/client/candidates/${matchId}`,
+    });
+  } catch (e) {
+    console.error(`[${event}] emit failed`, e);
+  }
+}
 
 /** Immediately withdraws released contact details. */
 export const revokeCandidateContact = createServerFn({ method: "POST" })
@@ -116,6 +146,15 @@ export const revokeCandidateContact = createServerFn({ method: "POST" })
       after: { contact_released_at: null },
       reason: data.reason ?? null,
     });
+    if (before.contact_released_at) {
+      await emitContactEvent(
+        "contact_revoked",
+        data.match_id,
+        before.organization_id,
+        context.userId,
+        before.contact_released_at as string,
+      );
+    }
     return { ok: true };
   });
 

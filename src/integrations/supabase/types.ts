@@ -4340,6 +4340,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "notifications_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "v_activity_feed"
+            referencedColumns: ["event_id"]
+          },
+          {
             foreignKeyName: "notifications_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
@@ -8323,6 +8330,165 @@ export type Database = {
           },
         ]
       }
+      v_activity_feed: {
+        Row: {
+          actor_name: string | null
+          actor_user_id: string | null
+          application_id: string | null
+          candidate_match_id: string | null
+          candidate_profile_id: string | null
+          event_id: string | null
+          event_type: Database["public"]["Enums"]["event_type"] | null
+          occurred_at: string | null
+          organization_id: string | null
+          payload: Json | null
+          position_id: string | null
+          position_status: string | null
+          position_title: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notification_events_application_id_fkey"
+            columns: ["application_id"]
+            isOneToOne: false
+            referencedRelation: "applications"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notification_events_application_id_fkey"
+            columns: ["application_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_my_applications"
+            referencedColumns: ["application_id"]
+          },
+          {
+            foreignKeyName: "notification_events_application_id_fkey"
+            columns: ["application_id"]
+            isOneToOne: false
+            referencedRelation: "v_source_attribution"
+            referencedColumns: ["application_id"]
+          },
+          {
+            foreignKeyName: "notification_events_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "admin_candidate_matches_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notification_events_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "admin_work_inbox"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notification_events_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_matches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notification_events_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "client_candidate_matches_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notification_events_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "client_kanban_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notification_events_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "client_visible_candidates"
+            referencedColumns: ["candidate_match_id"]
+          },
+          {
+            foreignKeyName: "notification_events_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "v_source_attribution"
+            referencedColumns: ["match_id"]
+          },
+          {
+            foreignKeyName: "notification_events_candidate_profile_id_fkey"
+            columns: ["candidate_profile_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_profile_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notification_events_candidate_profile_id_fkey"
+            columns: ["candidate_profile_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notification_events_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "admin_clients_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notification_events_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notification_events_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_portfolio_rollup"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "notification_events_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "admin_pipeline_health"
+            referencedColumns: ["position_id"]
+          },
+          {
+            foreignKeyName: "notification_events_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "admin_positions_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notification_events_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_my_applications"
+            referencedColumns: ["position_id"]
+          },
+          {
+            foreignKeyName: "notification_events_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "client_positions_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notification_events_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "positions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       v_outreach_campaigns: {
         Row: {
           bounced: number | null
@@ -8839,6 +9005,21 @@ export type Database = {
         | "position_filled"
         | "position_closed"
         | "message_sent"
+        | "position_updated"
+        | "position_reopened"
+        | "cv_parsed"
+        | "cv_parse_failed"
+        | "screening_completed"
+        | "screening_needs_review"
+        | "contact_released"
+        | "contact_revoked"
+        | "client_viewed_candidate"
+        | "interview_completed"
+        | "interview_cancelled"
+        | "candidate_stage_changed"
+        | "document_added"
+        | "member_invited"
+        | "member_removed"
       file_status: "uploading" | "ready" | "failed" | "deleted"
       hire_close_reason:
         | "candidate_declined"
@@ -9240,6 +9421,21 @@ export const Constants = {
         "position_filled",
         "position_closed",
         "message_sent",
+        "position_updated",
+        "position_reopened",
+        "cv_parsed",
+        "cv_parse_failed",
+        "screening_completed",
+        "screening_needs_review",
+        "contact_released",
+        "contact_revoked",
+        "client_viewed_candidate",
+        "interview_completed",
+        "interview_cancelled",
+        "candidate_stage_changed",
+        "document_added",
+        "member_invited",
+        "member_removed",
       ],
       file_status: ["uploading", "ready", "failed", "deleted"],
       hire_close_reason: [

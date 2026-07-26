@@ -1,4 +1,5 @@
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
+import { ACTIVITY_QUERY_KEY } from "@/components/activity/ActivityFeed";
 import {
   LayoutDashboard,
   Building2,
@@ -62,6 +63,7 @@ const NAV: WorkspaceNavItem[] = [
 
 
 const ADMIN_REFRESH_KEYS = [
+  ACTIVITY_QUERY_KEY,
   ["admin-overview"],
   ["admin", "intakes"],
   ["admin", "matches"],

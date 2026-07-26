@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { ActivityFeed } from "@/components/activity/ActivityFeed";
 import { useSuspenseQuery, useQueryClient } from "@tanstack/react-query";
 import { getAdminOverview } from "@/lib/admin.functions";
 import { Badge } from "@/components/ui/badge";
@@ -558,6 +559,7 @@ function Overview() {
             </ul>
           )}
         </section>
+        <ActivityFeed limit={10} title="Platform activity" />
       </div>
     </div>
   );
