@@ -26,7 +26,7 @@ const searchSchema = z.object({
 
 const PAGE_SIZE = 25;
 
-export const Route = createFileRoute("/_authenticated/admin/scoring/review")({
+export const Route = createFileRoute("/_authenticated/admin/scoring/review/")({
   validateSearch: zodValidator(searchSchema),
   head: () => ({
     meta: [
