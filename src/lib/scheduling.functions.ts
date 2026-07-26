@@ -205,8 +205,7 @@ export const saveSchedulingSettings = createServerFn({ method: "POST" })
           .refine((u) => u.startsWith("https://calendly.com/"), "must_be_calendly_url")
           .nullable()
           .optional(),
-        defaultTimezone: z.string().min(1).max(80).nullable().optional(),
-        defaultDurationMinutes: z.number().int().min(15).max(480),
+        defaultTimezone: z.string().min(1).max(80).optional(),
         availabilityWindowDays: z.number().int().min(1).max(90),
         requireAdminCoordination: z.boolean(),
       })
@@ -232,8 +231,8 @@ export const saveSchedulingSettings = createServerFn({ method: "POST" })
         organization_id: data.orgId,
         scheduling_method: data.schedulingMethod,
         calendly_url: data.calendlyUrl ?? null,
-        default_timezone: data.defaultTimezone ?? null,
-        default_duration_minutes: data.defaultDurationMinutes,
+        default_timezone: data.defaultTimezone ?? "UTC",
+
         availability_window_days: data.availabilityWindowDays,
         require_admin_coordination: data.requireAdminCoordination,
         updated_at: new Date().toISOString(),
