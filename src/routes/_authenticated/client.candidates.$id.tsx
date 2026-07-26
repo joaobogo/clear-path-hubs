@@ -163,11 +163,23 @@ function CandidateDetailPage() {
  enabled: !!orgId,
  });
 
+ const [dialogAction, setDialogAction] = useState<ActionKey | null>(null);
+
  const act = useMutation({
- mutationFn: (a: ActionKey) =>
- actionFn({ data: { orgId: orgId!, matchId: id, action: a } }),
+ mutationFn: (p: DecisionPayload) =>
+ actionFn({
+ data: {
+ orgId: orgId!,
+ matchId: id,
+ action: p.action,
+ feedback: p.feedback,
+ reasonCode: p.reasonCode,
+ signals: p.signals,
+ },
+ }),
  onSuccess: () => {
- toast.success("Recorded");
+ toast.success("Recorded — the TaaSFlow team has been notified.");
+ setDialogAction(null);
  qc.invalidateQueries({ queryKey: ["client-candidate", orgId, id] });
  qc.invalidateQueries({ queryKey: ["client-overview", orgId] });
  qc.invalidateQueries({ queryKey: ["client-positions", orgId] });
@@ -175,6 +187,7 @@ function CandidateDetailPage() {
  },
  onError: (e: Error) => toast.error(e.message.replace(/^Error: /, "")),
  });
+
 
  if (!orgId || detailPending || (data === undefined && detailFetching)) {
  return <div className="p-8 text-sm text-muted-foreground">Loading candidate…</div>;
