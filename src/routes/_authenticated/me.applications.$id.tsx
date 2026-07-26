@@ -17,7 +17,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
-import { CalendarClock, FileText, Link2, MapPin } from "lucide-react";
+import { FileText } from "lucide-react";
+import { CandidateInterviews } from "@/components/candidate/CandidateInterviews";
 
 export const Route = createFileRoute("/_authenticated/me/applications/$id")({
   head: () => ({
@@ -150,7 +151,6 @@ function TrackPage() {
 
   const openRequests = data.info_requests.filter((r) => r.status === "open");
   const answeredRequests = data.info_requests.filter((r) => r.status !== "open");
-  const liveInterviews = data.interviews.filter((i) => i.status !== "cancelled");
 
   return (
     <main className="mx-auto max-w-3xl px-4 sm:px-6 py-8">
