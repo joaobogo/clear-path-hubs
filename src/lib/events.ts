@@ -34,6 +34,10 @@ export const EVENT_TYPES = [
   "document_added",
   "member_invited",
   "member_removed",
+  "client_hold",
+  "client_declined",
+  "client_information_requested",
+  "contact_release_requested",
 ] as const;
 
 export type EventType = (typeof EVENT_TYPES)[number];
