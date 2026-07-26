@@ -828,11 +828,12 @@ export const setPositionStatus = createServerFn({ method: "POST" })
     // Emit lifecycle events so Client + Admin dashboards refresh in real time.
     const eventMap: Record<string, string> = {
       activate: "position_activated",
-      reopen: "position_activated",
+      reopen: "position_reopened",
       approve: "position_approved",
       close: "position_closed",
       mark_filled: "position_filled",
       pause: "position_paused",
+      request_clarification: "clarification_requested",
     };
     if (eventMap[data.action]) {
       try {
