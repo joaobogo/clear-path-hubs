@@ -26,6 +26,9 @@ import {
   type PositionEditInitial,
   type ScreeningInput,
 } from "@/lib/position-edit.functions";
+import { RequisitionEditor } from "@/components/positions/RequisitionEditor";
+import { JobQualityPanel } from "@/components/positions/JobQualityPanel";
+
 
 const STEPS = [
   { id: 1, label: "Role Definition" },
