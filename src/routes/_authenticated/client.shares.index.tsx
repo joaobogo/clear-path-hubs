@@ -21,6 +21,7 @@ import { useClientOrgSearch } from "@/lib/use-client-org";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useConfirmAction } from "@/components/ds";
 
 export const Route = createFileRoute("/_authenticated/client/shares/")({
   head: () => ({
@@ -54,6 +55,8 @@ function SharesPage() {
   });
 
   const revoke = useServerFn(revokeShortlistShare);
+  const { confirm, confirmDialog } = useConfirmAction();
+
   const revokeMut = useMutation({
     mutationFn: (id: string) => revoke({ data: { orgId: orgId!, id } }),
     onSuccess: () => {
@@ -212,7 +215,11 @@ function SharesPage() {
                       onClick={async () => {
                         const r = await confirm({
                           title: "Revoke share link",
-                          object: s.label ?? url,
+                          object:
+                            s.title ??
+                            (s.position?.title
+                              ? `Shortlist — ${s.position.title}`
+                              : "Shortlist review"),
                           description:
                             "Anyone holding this link loses access immediately.",
                           impact: [
@@ -237,6 +244,7 @@ function SharesPage() {
           })}
         </div>
       )}
+      {confirmDialog}
     </main>
   );
 }
