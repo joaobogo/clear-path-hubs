@@ -6,6 +6,7 @@ import { getCommandCenter } from "@/lib/admin-command.functions";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { zodValidator, fallback } from "@tanstack/zod-adapter";
+import { stripSearchParams } from "@tanstack/react-router";
 import { z } from "zod";
 import {
   Inbox,
@@ -37,6 +38,12 @@ const searchSchema = z.object({
 
 export const Route = createFileRoute("/_authenticated/admin/")({
   validateSearch: zodValidator(searchSchema),
+  search: {
+    // Keep the URL clean: only non-default filters appear.
+    middlewares: [
+      stripSearchParams({ org: "", position: "", owner: "", status: "", from: "", to: "" }),
+    ],
+  },
   loader: ({ context }) =>
     context.queryClient.ensureQueryData({
       queryKey: ["admin-overview"],
