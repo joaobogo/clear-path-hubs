@@ -25,6 +25,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Lock, Unlock, Trash2, Users, AlertTriangle } from "lucide-react";
+import { useConfirmAction } from "@/components/ds";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Any = any;
@@ -93,6 +94,7 @@ export function AdminDossier({ matchId }: { matchId: string }) {
     onError: (e: Error) => toast.error(e.message),
   });
 
+  const { confirm, confirmDialog } = useConfirmAction();
   const release = useMutation({
     mutationFn: (released: boolean) =>
       releaseFn({ data: { match_id: matchId, released, reason: releaseReason.trim() || undefined } }),
@@ -116,9 +118,11 @@ export function AdminDossier({ matchId }: { matchId: string }) {
   const clientNotes = (notes as Any[]).filter((n) => n.visibility === "client_visible");
   const released = Boolean(match.contact_released_at);
   const published = match.client_visibility === "visible";
+  const candidateLabel = (profile?.full_name as string | null) ?? "This candidate";
 
   return (
     <div className="space-y-4">
+      {confirmDialog}
       {/* Identity & contact */}
       <Section
         title="Identity and contact"
