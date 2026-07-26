@@ -86,6 +86,8 @@ type ActionKey =
  | "shortlist"
  | "request_interview"
  | "request_more_information"
+ | "hold"
+ | "request_contact_release"
  | "submit_feedback"
  | "not_moving_forward"
  | "offer"
@@ -93,39 +95,44 @@ type ActionKey =
 
 type ActionDef = { key: ActionKey; label: string };
 
+const COMMON_MORE: ActionDef[] = [
+ { key: "request_more_information", label: "Request more information" },
+ { key: "hold", label: "Put on hold" },
+ { key: "submit_feedback", label: "Add feedback" },
+ { key: "request_contact_release", label: "Request contact details" },
+];
+
 const ACTIONS_BY_STAGE: Record<MatchStage, { primary: ActionDef | null; more: ActionDef[] }> = {
  delivered: {
  primary: { key: "shortlist", label: "Shortlist" },
  more: [
  { key: "request_interview", label: "Request interview" },
- { key: "request_more_information", label: "Request more information" },
- { key: "not_moving_forward", label: "Not moving forward" },
+ ...COMMON_MORE,
+ { key: "not_moving_forward", label: "Decline for this role" },
  ],
  },
  shortlisted: {
  primary: { key: "request_interview", label: "Request interview" },
- more: [
- { key: "request_more_information", label: "Request more information" },
- { key: "not_moving_forward", label: "Not moving forward" },
- ],
+ more: [...COMMON_MORE, { key: "not_moving_forward", label: "Decline for this role" }],
  },
  interview_process: {
  primary: { key: "offer", label: "Extend offer" },
- more: [
- { key: "submit_feedback", label: "Submit feedback" },
- { key: "not_moving_forward", label: "Not moving forward" },
- ],
+ more: [...COMMON_MORE, { key: "not_moving_forward", label: "Decline for this role" }],
  },
  offer: {
  primary: { key: "hire", label: "Mark hired" },
- more: [{ key: "not_moving_forward", label: "Not moving forward" }],
+ more: [
+ { key: "submit_feedback", label: "Add feedback" },
+ { key: "not_moving_forward", label: "Decline for this role" },
+ ],
  },
- hired: { primary: null, more: [{ key: "submit_feedback", label: "Submit feedback" }] },
+ hired: { primary: null, more: [{ key: "submit_feedback", label: "Add feedback" }] },
  not_moving_forward: {
  primary: { key: "shortlist", label: "Re-open — shortlist" },
- more: [],
+ more: [{ key: "submit_feedback", label: "Add feedback" }],
  },
 };
+
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
