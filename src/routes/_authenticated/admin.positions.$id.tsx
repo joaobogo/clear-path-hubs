@@ -1170,13 +1170,27 @@ function SettingsTab({ position, onDone }: { position: Any; onDone: () => Promis
   };
 
   const hardDelete = async () => {
-    const confirmed = window.confirm(
-      `Permanently delete "${position.title}"?\n\nThis removes the position, every linked candidate, application, CV, scoring run, evidence record, interview, task, notification, and memory entry. It cannot be undone.`,
-    );
-    if (!confirmed) return;
+    const result = await confirm({
+      title: "Permanently delete position",
+      object: position.title,
+      description:
+        "This erases the position and everything attached to it. It cannot be undone — archive instead if you only want it hidden.",
+      impact: [
+        "Every linked candidate match, application and CV file is purged",
+        "Scoring runs, evidence records and interviews are destroyed",
+        "Tasks, notifications and memory entries are removed",
+      ],
+      typedConfirmation: "DELETE",
+      reason: { label: "Reason for deletion", required: true, placeholder: "e.g. duplicate requisition created in error" },
+      confirmLabel: "Permanently delete",
+      tone: "destructive",
+    });
+    if (!result.confirmed) return;
     setBusy(true);
     try {
-      const r = await deleteFn({ data: { id: position.id, reason: "admin_hard_delete" } });
+      const r = await deleteFn({
+        data: { id: position.id, reason: result.reason || "admin_hard_delete" },
+      });
       toast.success(`Position deleted · trace ${r.trace_id}`);
       router.navigate({ to: "/admin/positions" });
     } catch (e) {

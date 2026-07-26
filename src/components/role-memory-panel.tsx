@@ -310,6 +310,7 @@ function MemoryCard({
   onDelete: () => void;
   onSave: (patch: Partial<RoleMemoryDTO>) => void;
 }) {
+  const { confirm, confirmDialog } = useConfirmAction();
   const [editing, setEditing] = useState(false);
   const [title, setTitle] = useState(row.title);
   const [body, setBody] = useState(row.body);
