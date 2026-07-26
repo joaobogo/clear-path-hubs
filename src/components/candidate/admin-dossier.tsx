@@ -165,10 +165,29 @@ export function AdminDossier({ matchId }: { matchId: string }) {
             <Button
               variant="outline"
               size="sm"
+              className="min-h-11"
               disabled={release.isPending}
-              onClick={() => release.mutate(false)}
+              aria-busy={release.isPending || undefined}
+              onClick={async () => {
+                const r = await confirm({
+                  title: "Revoke contact release",
+                  object: candidateLabel,
+                  description:
+                    "The client loses access to this candidate's direct contact details.",
+                  impact: [
+                    "Email and phone are masked again in the client workspace",
+                    "The revocation is recorded with your name and time",
+                  ],
+                  reason: { label: "Reason", required: true, placeholder: "e.g. released in error" },
+                  confirmLabel: "Revoke release",
+                  tone: "destructive",
+                });
+                if (!r.confirmed) return;
+                setReleaseReason(r.reason);
+                release.mutate(false);
+              }}
             >
-              Revoke contact release
+              {release.isPending ? "Revoking…" : "Revoke contact release"}
             </Button>
           </div>
         ) : (
@@ -193,10 +212,33 @@ export function AdminDossier({ matchId }: { matchId: string }) {
             </div>
             <Button
               size="sm"
+              className="min-h-11"
               disabled={!published || !releaseReason.trim() || release.isPending}
-              onClick={() => release.mutate(true)}
+              aria-busy={release.isPending || undefined}
+              title={
+                !published
+                  ? "Publish this candidate to the client first"
+                  : !releaseReason.trim()
+                    ? "Add a reason — it is recorded in the audit trail"
+                    : undefined
+              }
+              onClick={async () => {
+                const r = await confirm({
+                  title: "Release contact details",
+                  object: candidateLabel,
+                  description:
+                    "The client will see this candidate's direct email and phone number.",
+                  impact: [
+                    "This cannot be un-seen once the client has viewed it",
+                    "Your name, the time and the reason are recorded",
+                    "You can revoke access later, but not recall what was seen",
+                  ],
+                  confirmLabel: "Release contact details",
+                });
+                if (r.confirmed) release.mutate(true);
+              }}
             >
-              Release contact details
+              {release.isPending ? "Releasing…" : "Release contact details"}
             </Button>
           </div>
         )}
