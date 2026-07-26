@@ -19,6 +19,7 @@ import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { FileText } from "lucide-react";
 import { CandidateInterviews } from "@/components/candidate/CandidateInterviews";
+import { useConfirmAction } from "@/components/ds";
 
 export const Route = createFileRoute("/_authenticated/me/applications/$id")({
   head: () => ({
@@ -120,6 +121,8 @@ function TrackPage() {
     qc.invalidateQueries({ queryKey: ["me-applications"] });
     qc.invalidateQueries({ queryKey: ["me-dashboard"] });
   };
+
+  const { confirm, confirmDialog } = useConfirmAction();
 
   const withdraw = useMutation({
     mutationFn: () => withdrawFn({ data: { id } }),
@@ -375,6 +378,7 @@ function TrackPage() {
           </p>
         </section>
       ) : null}
+      {confirmDialog}
     </main>
   );
 }
