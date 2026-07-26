@@ -295,6 +295,15 @@ export const requestInterview = createServerFn({ method: "POST" })
     await assertEditor(context.supabase, context.userId, data.orgId);
     const match = await loadMatch(context.supabase, data.orgId, data.matchId);
 
+    if (!isValidTimezone(data.timezone)) throw new Error("invalid_timezone");
+
+    // Never accept a slot in the past — the request would be dead on arrival.
+    const now = Date.now();
+    const times = Array.from(new Set(data.proposedTimes)).sort();
+    if (times.some((t) => new Date(t).getTime() < now + 60_000)) {
+      throw new Error("proposed_time_in_past");
+    }
+
     const { data: existing } = await context.supabase
       .from("interviews")
       .select("id")
@@ -302,6 +311,21 @@ export const requestInterview = createServerFn({ method: "POST" })
       .in("status", ["requested", "scheduling", "scheduled"])
       .maybeSingle();
     if (existing) throw new Error("interview_already_active");
+
+    // Real configured scheduling settings only — no invented Calendly links.
+    const { data: settings } = await context.supabase
+      .from("org_scheduling_settings")
+      .select("scheduling_method, calendly_url, require_admin_coordination, availability_window_days")
+      .eq("organization_id", data.orgId)
+      .maybeSingle();
+    const s = (settings as AnyRow) ?? null;
+    const method = s?.calendly_url && s?.scheduling_method === "calendly" ? "calendly" : "manual";
+    const windowDays = Math.max(1, Number(s?.availability_window_days ?? 14));
+    // Availability expires at the last proposed slot or the configured window,
+    // whichever comes first — expired requests stop being actionable.
+    const lastSlot = new Date(times[times.length - 1]).getTime();
+    const windowEnd = now + windowDays * 86_400_000;
+    const expiresAt = new Date(Math.min(lastSlot, windowEnd)).toISOString();
 
     const { data: inserted, error } = await context.supabase
       .from("interviews")
@@ -314,10 +338,15 @@ export const requestInterview = createServerFn({ method: "POST" })
         interview_type: data.interviewType,
         timezone: data.timezone,
         duration_minutes: data.durationMinutes,
-        proposed_times: data.proposedTimes as never,
+        proposed_times: times as never,
         participants: data.participants as never,
         notes: data.notes ?? null,
         requested_at: new Date().toISOString(),
+        requested_by_user_id: context.userId,
+        scheduling_method: method,
+        calendly_url: method === "calendly" ? s.calendly_url : null,
+        availability_expires_at: expiresAt,
+        admin_coordination_required: s?.require_admin_coordination ?? true,
         created_by: context.userId,
         updated_by: context.userId,
       })
@@ -337,8 +366,20 @@ export const requestInterview = createServerFn({ method: "POST" })
       trace_id: trace,
     });
 
+    try {
+      const { emitInterviewEvent } = await import("./interview-events.server");
+      await emitInterviewEvent({
+        interviewId: (inserted as AnyRow).id as string,
+        event: "interview_requested",
+        actorUserId: context.userId,
+      });
+    } catch (e) {
+      console.error("[requestInterview] emit failed", trace, e);
+    }
+
     return { ok: true, id: (inserted as AnyRow).id as string, trace_id: trace };
   });
+
 
 export const proposeInterviewTimes = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
