@@ -160,6 +160,58 @@ export function PositionEditWizard({
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [qDraft, setQDraft] = useState("");
+  const [reqDirty, setReqDirty] = useState(false);
+  const [savedAt, setSavedAt] = useState<number | null>(null);
+
+  const draftKey = `taasflow.position-draft.${initial.id}`;
+  const baseline = useMemo(() => JSON.stringify(initialState(initial)), [initial]);
+  const contentDirty = JSON.stringify(state) !== baseline;
+  const dirty = contentDirty || reqDirty;
+
+  // --- Draft saving: local, per position, restored on return ---------------
+  const [draftFound, setDraftFound] = useState<State | null>(null);
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      const raw = window.localStorage.getItem(draftKey);
+      if (!raw) return;
+      const parsed = JSON.parse(raw) as { savedAt: number; state: State };
+      if (parsed?.state && JSON.stringify(parsed.state) !== baseline) {
+        setDraftFound(parsed.state);
+        setSavedAt(parsed.savedAt);
+      }
+    } catch {
+      /* ignore malformed drafts */
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [draftKey]);
+
+  useEffect(() => {
+    if (typeof window === "undefined" || !contentDirty) return;
+    const t = window.setTimeout(() => {
+      window.localStorage.setItem(draftKey, JSON.stringify({ savedAt: Date.now(), state }));
+      setSavedAt(Date.now());
+    }, 800);
+    return () => window.clearTimeout(t);
+  }, [state, contentDirty, draftKey]);
+
+  // --- Warn before leaving unsaved work ------------------------------------
+  useEffect(() => {
+    if (typeof window === "undefined" || !dirty) return;
+    const handler = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = "";
+    };
+    window.addEventListener("beforeunload", handler);
+    return () => window.removeEventListener("beforeunload", handler);
+  }, [dirty]);
+
+  useBlocker({
+    shouldBlockFn: () =>
+      dirty && !window.confirm("You have unsaved changes to this job. Leave without saving?"),
+    enableBeforeUnload: dirty,
+  });
+
 
   const set = <K extends keyof State>(k: K, v: State[K]) =>
     setState((s) => ({ ...s, [k]: v }));
