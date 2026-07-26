@@ -118,7 +118,10 @@ function OverviewPage() {
   const ctxFn = useServerFn(getClientContext);
   const overviewFn = useServerFn(getClientOverview);
   const orgSearch = useClientOrgSearch();
+  const search = useSearch({ strict: false }) as Any;
+  const navigate = useNavigate();
   const qc = useQueryClient();
+
 
   const { data: ctx } = useQuery({
     queryKey: ["client-context", orgSearch ?? null],
