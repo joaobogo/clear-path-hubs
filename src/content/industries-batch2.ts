@@ -251,6 +251,12 @@ export const INDUSTRY_ENTRIES_BATCH2: IndustryEntry[] = [
       { title: "Segment fluency", body: "Residential brokerage, CRE, iBuying, multi-family and building-ops are different worlds. Rubrics separate them." },
       { title: "Data-partnership depth", body: "MLS, CoStar, county-record and IoT-sensor integrations belong in engineering rubrics." },
       { title: "Field vs software", body: "Field ops and software often collide. Rubrics capture on-site experience alongside product delivery." },
+      { title: "Compliance and disclosure", body: "iBuying and lending-adjacent PropTech carry fair-housing, RESPA and licensing exposure that generic tech rubrics miss." },
+    ],
+    solutions: [
+      { title: "Segment-specific rubric", body: "Residential, CRE, iBuying, multi-family and building-ops each scored on the buyer, data source and workflow that segment actually runs on." },
+      { title: "Data-partnership evidence", body: "MLS, CoStar, county-record and IoT-sensor integrations are quoted from the CV, not assumed from a tools list." },
+      { title: "Field-and-software blend", body: "For hybrid roles, on-site inspection or leasing experience is scored alongside shipped product, so field credibility isn't lost to a software-only rubric." },
     ],
     roleFamilies: [
       { name: "Product & engineering", roles: ["PropTech PMs", "Full-stack engineers", "Data engineers", "GIS specialists"] },
@@ -258,6 +264,11 @@ export const INDUSTRY_ENTRIES_BATCH2: IndustryEntry[] = [
       { name: "Commercial", roles: ["Broker-partnership leads", "Enterprise CRE sales", "Landlord sales"] },
     ],
     roles: ["PropTech PMs", "Full-stack engineers", "GIS specialists", "Broker-partnership leads", "Underwriting analysts"],
+    candidateSignals: [
+      { title: "Segment named", body: "Residential, CRE, multi-family, iBuying or building-ops — with the platforms and portfolio size worked against." },
+      { title: "Data integrations shipped", body: "MLS feeds, CoStar, county records or IoT sensor networks actually connected, not just referenced." },
+      { title: "Field credibility", body: "For ops-adjacent roles, site visits, inspections or leasing volume handled alongside the software they used." },
+    ],
     skills: ["GIS", "Property valuation", "IoT sensor integration", "Real-estate data"],
     tools: ["MLS", "CoStar", "Yardi", "MRI Software", "AppFolio", "Procore"],
     signals: ["Segment-specific rubric", "Data-partnership evidence", "Field vs software separation"],
@@ -268,6 +279,9 @@ export const INDUSTRY_ENTRIES_BATCH2: IndustryEntry[] = [
     resources: DEFAULT_RESOURCES,
     faqs: [
       { q: "Do you cover ConTech?", a: "Yes — construction-tech hires get rubrics that weight field-ops fluency alongside software." },
+      { q: "Can you tell iBuying operators from listing-portal engineers?", a: "Yes. Segment is an intake field, and the rubric never mixes valuation-model engineers with listing-search engineers." },
+      { q: "Do you screen for fair-housing or RESPA exposure?", a: "Where the role touches consumer-facing pricing or lending workflows, we surface any compliance ownership named on the CV." },
+      { q: "Can you hire for building-operations software specifically?", a: "Yes. BMS/IoT integration experience and named building portfolios are captured as first-class signals." },
     ],
     cta: { title: "Hiring in PropTech?", description: "Submit the role — segment scored, data partnerships surfaced." },
   },
