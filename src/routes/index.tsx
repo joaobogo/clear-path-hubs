@@ -68,10 +68,11 @@ void getPage;
 export const Route = createFileRoute("/")({
   head: () =>
     marketingHead(undefined, "/", {
-      title: "TaaSFlow | Your Hiring Team, On Demand",
+      title: "TaaSFlow | ATS + Recruiting + Outreach, All in One",
       description:
-        "Subscription recruiting: ranked, pre-screened candidate shortlists through a live dashboard for one flat monthly fee. No placement fees.",
+        "Your ATS, recruiting team, and outreach engine in one subscription. Ranked, pre-screened candidates in a live dashboard — no placement fees.",
     }),
+
   component: Home,
 });
 
