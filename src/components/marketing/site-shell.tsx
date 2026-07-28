@@ -16,6 +16,9 @@ import {
   PRIMARY_CTA,
   BOOK_CALL_CTA,
   SECONDARY_CTAS,
+  CANDIDATE_PRIMARY_CTA,
+  CANDIDATE_SECONDARY_CTA,
+  isCandidateJourneyPath,
   FOOTER_GROUPS,
   FOOTER_DESCRIPTION,
   SOCIAL_LINKS,
@@ -162,6 +165,10 @@ function Header() {
   // Close mobile sheet when route changes.
   useEffect(() => { setOpen(false); }, [pathname]);
 
+  const candidateMode = isCandidateJourneyPath(pathname);
+  const ctaPrimary = candidateMode ? CANDIDATE_PRIMARY_CTA : PRIMARY_CTA;
+  const ctaSecondary = candidateMode ? CANDIDATE_SECONDARY_CTA : BOOK_CALL_CTA;
+
   const signIn = SECONDARY_CTAS.find((c) => c.label === "Sign in") ?? { to: "/login", label: "Sign in" };
   const browseJobs = SECONDARY_CTAS.find((c) => c.label === "Browse Jobs") ?? { to: "/jobs", label: "Browse Jobs" };
   const joinNetwork = SECONDARY_CTAS.find((c) => c.label === "Join the Talent Network") ?? { to: "/candidate-join", label: "Join the Talent Network" };
@@ -200,10 +207,10 @@ function Header() {
 
           <div className="ml-auto hidden items-center gap-1 lg:flex">
             <Link
-              to={browseJobs.to}
+              to={candidateMode ? "/" : browseJobs.to}
               className="whitespace-nowrap rounded-md px-2.5 py-1.5 text-sm font-medium text-[color:var(--brand-navy)]/70 hover:text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
             >
-              For candidates
+              {candidateMode ? "For employers" : "For candidates"}
             </Link>
             <Link
               to={signIn.to}
@@ -212,16 +219,16 @@ function Header() {
               {signIn.label}
             </Link>
             <Link
-              to={BOOK_CALL_CTA.to}
+              to={ctaSecondary.to}
               className="ml-1 whitespace-nowrap rounded-md border border-[color:var(--brand-navy)]/15 bg-white px-3.5 py-1.5 text-sm font-semibold text-[color:var(--brand-navy)] transition-colors hover:border-[color:var(--brand-navy)]/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
             >
-              {BOOK_CALL_CTA.label}
+              {ctaSecondary.label}
             </Link>
             <Link
-              to={PRIMARY_CTA.to}
+              to={ctaPrimary.to}
               className="whitespace-nowrap rounded-md bg-[color:var(--brand-navy)] px-4 py-1.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-[color:var(--brand-navy-dark)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
             >
-              {PRIMARY_CTA.label}
+              {ctaPrimary.label}
             </Link>
           </div>
 
@@ -298,26 +305,28 @@ function Header() {
                   >
                     {joinNetwork.label}
                   </Link>
-                  <Link
-                    to="/intake"
-                    className="mt-2 flex min-h-11 items-center rounded-md px-3 py-2.5 text-base font-semibold text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5"
-                  >
-                    Start hiring
-                  </Link>
+                  {!candidateMode ? (
+                    <Link
+                      to="/intake"
+                      className="mt-2 flex min-h-11 items-center rounded-md px-3 py-2.5 text-base font-semibold text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5"
+                    >
+                      Start hiring
+                    </Link>
+                  ) : null}
                 </div>
               </div>
               <div className="space-y-2 border-t border-[color:var(--brand-navy)]/10 p-4">
                 <Link
-                  to={PRIMARY_CTA.to}
+                  to={ctaPrimary.to}
                   className="flex min-h-11 items-center justify-center rounded-md bg-[color:var(--brand-navy)] px-4 py-2.5 text-sm font-semibold text-white"
                 >
-                  {PRIMARY_CTA.label}
+                  {ctaPrimary.label}
                 </Link>
                 <Link
-                  to={BOOK_CALL_CTA.to}
+                  to={ctaSecondary.to}
                   className="flex min-h-11 items-center justify-center rounded-md border border-[color:var(--brand-navy)]/15 px-3 py-2 text-sm font-semibold text-[color:var(--brand-navy)]"
                 >
-                  {BOOK_CALL_CTA.label}
+                  {ctaSecondary.label}
                 </Link>
                 <Link
                   to={signIn.to}

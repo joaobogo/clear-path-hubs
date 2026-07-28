@@ -47,6 +47,37 @@ export const SECONDARY_CTAS: NavLink[] = [
   { to: "/login",          label: "Sign in" },
 ];
 
+/** Candidate-journey CTAs — used on candidate-facing public pages so the
+ *  header never pushes an employer offer at a job seeker. */
+export const CANDIDATE_PRIMARY_CTA: NavLink = {
+  to: "/jobs",
+  label: "Browse open roles",
+  description: "Live roles we are hiring for right now",
+};
+
+export const CANDIDATE_SECONDARY_CTA: NavLink = {
+  to: "/candidate-join",
+  label: "Join the talent network",
+  description: "Be considered for roles before they are advertised",
+};
+
+/** Public routes that belong to the candidate journey, not the employer one. */
+const CANDIDATE_PATH_PREFIXES = [
+  "/jobs",
+  "/apply",
+  "/candidate-join",
+  "/candidate-success",
+  "/talent-network",
+  "/talent-marketplace",
+  "/global-talent",
+];
+
+export function isCandidateJourneyPath(pathname: string): boolean {
+  return CANDIDATE_PATH_PREFIXES.some(
+    (p) => pathname === p || pathname.startsWith(`${p}/`),
+  );
+}
+
 /* -------------------------------------------------------------- Primary nav (ordered) */
 
 export const PRIMARY_ITEMS: PrimaryItem[] = [
