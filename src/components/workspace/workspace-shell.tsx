@@ -295,6 +295,9 @@ export function WorkspaceShell(props: WorkspaceShellProps) {
   const crumbs = buildBreadcrumbs(pathname, navItems);
   const currentPage = crumbs[crumbs.length - 1]?.label ?? "";
   const [searchOpen, setSearchOpen] = useState(false);
+  const [railHover, setRailHover] = useState(false);
+  const railCollapsed = collapsed && !railHover;
+
 
   // Cmd/Ctrl-K opens search from anywhere.
   useEffect(() => {
