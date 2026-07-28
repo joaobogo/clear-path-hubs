@@ -45,288 +45,61 @@ export const Route = createFileRoute("/case-studies")({
 // written client approval are added individually as clients sign off.
 // -----------------------------------------------------------------------------
 
-type Metric = { label: string; value: string; sub?: string };
-type Timeline = { day: string; label: string };
-type Study = {
-  slug: string;
+type VisualMeta = {
   icon: typeof Hotel;
-  industry: string;
-  region: string;
-  headline: string;
-  challenge: string;
-  approach: string;
-  metrics: Metric[];
-  roles: string[];
-  timeline: Timeline[];
-  testimonial: { quote: string; author: string; role: string };
   gradient: string;
   accent: string;
   pattern: React.ReactNode;
 };
 
-// --- Patterns -----------------------------------------------------------------
-
-const HotelPattern = (
-  <svg aria-hidden className="absolute inset-0 h-full w-full opacity-[0.18]" viewBox="0 0 400 240" preserveAspectRatio="none">
-    <defs>
-      <pattern id="hotel-windows" x="0" y="0" width="28" height="34" patternUnits="userSpaceOnUse">
-        <rect x="6" y="8" width="16" height="20" rx="1.5" fill="currentColor" opacity="0.7" />
-      </pattern>
-    </defs>
-    <rect width="400" height="240" fill="url(#hotel-windows)" />
-  </svg>
-);
-
-const FinancePattern = (
-  <svg aria-hidden className="absolute inset-0 h-full w-full opacity-[0.22]" viewBox="0 0 400 240" preserveAspectRatio="none">
-    <polyline points="0,180 40,160 80,170 120,120 160,140 200,90 240,110 280,70 320,85 360,40 400,55" fill="none" stroke="currentColor" strokeWidth="2" />
-    {Array.from({ length: 12 }).map((_, i) => (
-      <rect key={i} x={i * 34 + 6} y={200 - (i % 4) * 12 - 8} width="14" height={(i % 4) * 12 + 8} fill="currentColor" opacity="0.35" />
-    ))}
-  </svg>
-);
-
-const HealthPattern = (
-  <svg aria-hidden className="absolute inset-0 h-full w-full opacity-[0.20]" viewBox="0 0 400 240" preserveAspectRatio="none">
-    <path d="M0,140 L60,140 L75,110 L95,170 L115,90 L135,180 L155,130 L400,130" fill="none" stroke="currentColor" strokeWidth="2" />
-    <path d="M0,80 L400,80" stroke="currentColor" strokeWidth="0.5" strokeDasharray="2 4" opacity="0.6" />
-    <path d="M0,200 L400,200" stroke="currentColor" strokeWidth="0.5" strokeDasharray="2 4" opacity="0.6" />
-  </svg>
-);
-
-const TechPattern = (
-  <svg aria-hidden className="absolute inset-0 h-full w-full opacity-[0.20]" viewBox="0 0 400 240" preserveAspectRatio="none">
-    {Array.from({ length: 8 }).map((_, r) =>
-      Array.from({ length: 14 }).map((_, c) => (
-        <circle key={`${r}-${c}`} cx={c * 30 + 15} cy={r * 30 + 15} r={((r + c) % 3) + 1} fill="currentColor" opacity={0.4} />
-      ))
-    )}
-    <path d="M0,120 Q100,60 200,120 T400,120" fill="none" stroke="currentColor" strokeWidth="1.5" opacity="0.7" />
-  </svg>
-);
-
-const RetailPattern = (
-  <svg aria-hidden className="absolute inset-0 h-full w-full opacity-[0.20]" viewBox="0 0 400 240" preserveAspectRatio="none">
-    <defs>
-      <pattern id="retail-bags" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
-        <rect x="10" y="14" width="20" height="20" rx="2" fill="none" stroke="currentColor" strokeWidth="1.5" />
-        <path d="M14 14 Q14 8 20 8 Q26 8 26 14" fill="none" stroke="currentColor" strokeWidth="1.5" />
-      </pattern>
-    </defs>
-    <rect width="400" height="240" fill="url(#retail-bags)" />
-  </svg>
-);
-
-const IndustrialPattern = (
-  <svg aria-hidden className="absolute inset-0 h-full w-full opacity-[0.20]" viewBox="0 0 400 240" preserveAspectRatio="none">
-    {Array.from({ length: 6 }).map((_, i) => (
-      <g key={i} transform={`translate(${i * 70 + 30},${120})`}>
-        <circle r="18" fill="none" stroke="currentColor" strokeWidth="1.5" />
-        <circle r="6" fill="currentColor" opacity="0.6" />
-        {Array.from({ length: 8 }).map((_, j) => (
-          <rect key={j} x="-2" y="-24" width="4" height="8" fill="currentColor" transform={`rotate(${j * 45})`} />
-        ))}
-      </g>
-    ))}
-  </svg>
-);
-
-// --- Studies ------------------------------------------------------------------
-
-const STUDIES: Study[] = [
-  {
-    slug: "hospitality-luxury-group",
+// Visual treatment per engagement, keyed by slug. Text/data content lives in
+// the shared @/content/case-studies module (single source of truth used by
+// both this page and the CaseStudyPreviews component).
+const VISUALS: Record<string, VisualMeta> = {
+  "hospitality-luxury-group": {
     icon: Hotel,
-    industry: "Hospitality",
-    region: "Europe · Middle East",
-    headline: "Staffing a luxury hotel group across 6 properties",
-    challenge:
-      "Pre-opening pipeline for 6 flagship properties. Front-of-house, F&B leadership, revenue management, spa — all under one calendar with a hard opening date.",
-    approach:
-      "Parallel intake per property. Shared candidate pool with location-scored ranking. Evidence-based hospitality fit criteria replaced CV keyword matching entirely.",
-    metrics: [
-      { label: "Positions filled", value: "42", sub: "across 6 properties" },
-      { label: "Time to shortlist", value: "6d", sub: "median per role" },
-      { label: "Offer acceptance", value: "88%", sub: "shortlist → hire" },
-      { label: "12-mo retention", value: "91%", sub: "of placements" },
-    ],
-    roles: ["Hotel General Manager", "F&B Director", "Revenue Manager", "Executive Chef", "Spa Director", "Front Office Manager", "Director of Sales", "Rooms Division Manager"],
-    timeline: [
-      { day: "Day 0", label: "Intake · 6 briefs captured" },
-      { day: "Day 4", label: "First evidence-scored shortlists" },
-      { day: "Day 12", label: "First 8 offers signed" },
-      { day: "Day 84", label: "All 42 roles closed" },
-    ],
-    testimonial: {
-      quote: "TaaSFlow ran six pre-openings in parallel without a single missed calendar. We stopped reading CVs — we read evidence.",
-      author: "Group Talent Director",
-      role: "European hospitality group",
-    },
     gradient: "from-[#7c4a1e] via-[#a56a3b] to-[#d4a15a]",
     accent: "text-[#d4a15a]",
     pattern: HotelPattern,
   },
-  {
-    slug: "finance-mid-market-pe",
+  "finance-mid-market-pe": {
     icon: Landmark,
-    industry: "Finance",
-    region: "Americas · APAC",
-    headline: "Building a mid-market private equity investment team",
-    challenge:
-      "A newly-raised $400M fund needed a senior investment team stood up in 12 weeks, plus operating partners across two portfolio companies.",
-    approach:
-      "Deal-experience evidence scoring, sector-specific screening panels, and reference validation woven directly into the shortlist gate.",
-    metrics: [
-      { label: "Positions filled", value: "18", sub: "senior + operating" },
-      { label: "Days to first hire", value: "21", sub: "signed offer" },
-      { label: "Shortlist quality", value: "9.1/10", sub: "client rating" },
-      { label: "Diversity mix", value: "44%", sub: "underrepresented" },
-    ],
-    roles: ["Investment Director", "Vice President, Investments", "Portfolio Operating Partner", "Head of Value Creation", "Senior Associate", "Deal Origination Lead", "Head of IR"],
-    timeline: [
-      { day: "Day 0", label: "Fund charter → role scoping" },
-      { day: "Day 7", label: "First shortlist delivered" },
-      { day: "Day 21", label: "First signed offer" },
-      { day: "Day 84", label: "Full team + operating partners in seat" },
-    ],
-    testimonial: {
-      quote: "The shortlists were dense with deal evidence, not resumes. Our IC could go straight to reference conversations by week two.",
-      author: "Founding Partner",
-      role: "Mid-market PE fund",
-    },
     gradient: "from-[#0b2740] via-[#144670] to-[#2b7fb8]",
     accent: "text-[#7dc5ef]",
     pattern: FinancePattern,
   },
-  {
-    slug: "healthcare-clinical-network",
+  "healthcare-clinical-network": {
     icon: HeartPulse,
-    industry: "Healthcare",
-    region: "Europe · North America",
-    headline: "Scaling a multi-site clinical network",
-    challenge:
-      "A specialty clinic network needed clinical, operational, and digital-health leadership across 11 sites — with credentialing verified before shortlist.",
-    approach:
-      "Credential-first pipeline. Board certifications, licensure, and patient-outcome evidence surfaced before the client ever opened a profile.",
-    metrics: [
-      { label: "Positions filled", value: "34", sub: "clinical + ops" },
-      { label: "Credential pass", value: "100%", sub: "pre-shortlist gate" },
-      { label: "Retention @ 12mo", value: "94%", sub: "of placements" },
-      { label: "Sites covered", value: "11", sub: "across 3 countries" },
-    ],
-    roles: ["Chief Medical Officer", "Clinic Director", "Head of Digital Health", "Director of Nursing", "Head of Patient Operations", "Regulatory & Compliance Lead"],
-    timeline: [
-      { day: "Day 0", label: "Credential taxonomy locked" },
-      { day: "Day 9", label: "First site director shortlisted" },
-      { day: "Day 30", label: "8 sites fully staffed at leadership" },
-      { day: "Day 120", label: "All 11 sites live" },
-    ],
-    testimonial: {
-      quote: "Every shortlisted candidate had verified credentials before we spoke to them. That alone gave us back six weeks per hire.",
-      author: "Chief People Officer",
-      role: "Specialty clinic network",
-    },
     gradient: "from-[#0f3d3a] via-[#137a63] to-[#4fbfa1]",
     accent: "text-[#7fe0c4]",
     pattern: HealthPattern,
   },
-  {
-    slug: "tech-series-c-platform",
+  "tech-series-c-platform": {
     icon: Cpu,
-    industry: "Technology",
-    region: "North America · Europe",
-    headline: "Series C platform team — engineers, PMs, and design",
-    challenge:
-      "A Series C infra platform company needed to double engineering and stand up a product-led design org in two quarters, without diluting their bar.",
-    approach:
-      "Skill-graph evidence scoring on real project artifacts (PRs, RFCs, portfolios). Structured hiring panels standardized across regions.",
-    metrics: [
-      { label: "Positions filled", value: "27", sub: "eng · PM · design" },
-      { label: "Interview-to-offer", value: "3.2x", sub: "vs. prior baseline" },
-      { label: "Pass through loop", value: "62%", sub: "shortlist → onsite" },
-      { label: "Diversity mix", value: "48%", sub: "underrepresented" },
-    ],
-    roles: ["Staff Engineer, Platform", "Principal PM", "Head of Design", "Engineering Manager", "Senior Backend Engineer", "Design Systems Lead"],
-    timeline: [
-      { day: "Day 0", label: "Skill graph + rubric locked" },
-      { day: "Day 5", label: "First shortlist across 3 tracks" },
-      { day: "Day 42", label: "12 offers signed" },
-      { day: "Day 90", label: "Full 27 seats closed" },
-    ],
-    testimonial: {
-      quote: "The candidate loop finally felt like engineering — evidence in, decisions out. We stopped debating vibes and started debating trade-offs.",
-      author: "VP of Engineering",
-      role: "Series C infra company",
-    },
     gradient: "from-[#1a1440] via-[#3b2e8c] to-[#7c5cff]",
     accent: "text-[#b8a6ff]",
     pattern: TechPattern,
   },
-  {
-    slug: "consumer-dtc-scaleup",
+  "consumer-dtc-scaleup": {
     icon: ShoppingBag,
-    industry: "Consumer & Retail",
-    region: "Europe · Americas",
-    headline: "Scaling a DTC brand into omnichannel retail",
-    challenge:
-      "A fast-growing DTC brand needed leadership across retail expansion, supply chain, brand, and performance marketing — while protecting margin discipline.",
-    approach:
-      "P&L-owner evidence gate. Every senior shortlist required documented category ownership, margin, and channel results at comparable scale.",
-    metrics: [
-      { label: "Positions filled", value: "23", sub: "commercial + ops" },
-      { label: "Median time-to-hire", value: "31d", sub: "brief → signed" },
-      { label: "Cost-per-hire", value: "-42%", sub: "vs. prior agency" },
-      { label: "Markets opened", value: "4", sub: "in 9 months" },
-    ],
-    roles: ["Chief Retail Officer", "VP Supply Chain", "Head of Brand", "Director of Performance Marketing", "Head of Category", "Regional GM"],
-    timeline: [
-      { day: "Day 0", label: "Growth plan → role map" },
-      { day: "Day 6", label: "First commercial shortlist" },
-      { day: "Day 45", label: "Retail leadership in seat" },
-      { day: "Day 180", label: "4 new markets operational" },
-    ],
-    testimonial: {
-      quote: "We halved our cost per senior hire and doubled offer acceptance. The shortlists actually understood our margin model.",
-      author: "Chief Executive Officer",
-      role: "DTC consumer brand",
-    },
     gradient: "from-[#5c1c3a] via-[#a02d5d] to-[#e77aa8]",
     accent: "text-[#f7c2d9]",
     pattern: RetailPattern,
   },
-  {
-    slug: "industrial-energy-transition",
+  "industrial-energy-transition": {
     icon: Factory,
-    industry: "Industrial & Energy",
-    region: "Europe · Middle East · APAC",
-    headline: "Energy-transition leadership across 3 continents",
-    challenge:
-      "A heavy-industry group building out a low-carbon business needed engineering, EPC, and commercial leadership across sites on three continents.",
-    approach:
-      "Regulated-industry evidence scoring — safety records, EPC delivery track record, and commissioning experience were mandatory shortlist gates.",
-    metrics: [
-      { label: "Positions filled", value: "31", sub: "engineering + commercial" },
-      { label: "Sites staffed", value: "9", sub: "on 3 continents" },
-      { label: "Time to shortlist", value: "7d", sub: "median per role" },
-      { label: "Offer acceptance", value: "84%", sub: "shortlist → hire" },
-    ],
-    roles: ["Head of Low-Carbon Projects", "VP Engineering", "EPC Program Director", "Commissioning Manager", "Head of HSE", "Commercial Director"],
-    timeline: [
-      { day: "Day 0", label: "Program charter · 3 regions" },
-      { day: "Day 10", label: "First regional shortlists" },
-      { day: "Day 60", label: "18 senior seats filled" },
-      { day: "Day 150", label: "All 31 roles closed" },
-    ],
-    testimonial: {
-      quote: "The shortlist gate for safety and EPC delivery experience is what won us the confidence of our board.",
-      author: "Group HR Director",
-      role: "Industrial energy group",
-    },
     gradient: "from-[#1e1a12] via-[#4a3a1f] to-[#c8933a]",
     accent: "text-[#f5cf7a]",
     pattern: IndustrialPattern,
   },
-];
+};
+
+type Study = CaseStudy & VisualMeta;
+
+const STUDIES: Study[] = CASE_STUDIES.map((study) => ({
+  ...study,
+  ...VISUALS[study.slug],
+}));
 
 // --- Global reach -------------------------------------------------------------
 
