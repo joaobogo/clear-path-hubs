@@ -48,8 +48,49 @@ export function AgencyFeeComparison() {
         </p>
       </div>
 
-      <div className="mt-8 overflow-x-auto rounded-2xl border border-[color:var(--brand-navy)]/12 bg-white shadow-[var(--brand-shadow-sm)]" tabIndex={0} role="region" aria-label="Comparison table, scroll horizontally">
+      {/* Mobile: one card per scenario */}
+      <ul className="mt-8 space-y-3 md:hidden">
+        {SCENARIOS.map((s) => (
+          <li
+            key={s.hires}
+            className="rounded-2xl border border-[color:var(--brand-navy)]/12 bg-white p-4 shadow-[var(--brand-shadow-sm)]"
+          >
+            <p className="text-base font-semibold text-[color:var(--brand-navy)]">
+              {s.label}
+            </p>
+            <p className="text-xs text-[color:var(--brand-navy)]/80">
+              {usd(EXAMPLE_SALARY)} average salary
+            </p>
+            <div className="mt-3 space-y-2 text-sm">
+              <div className="flex items-baseline justify-between gap-3">
+                <span className="text-[color:var(--brand-navy)]/80">Agency fee (20–25%)</span>
+                <span className="shrink-0 tabular-nums text-[color:var(--brand-navy)]">
+                  {usd(s.low)} – {usd(s.high)}
+                </span>
+              </div>
+              <div className="flex items-baseline justify-between gap-3">
+                <span className="text-[color:var(--brand-navy)]/80">TaaSFlow flat fee</span>
+                <span className="shrink-0 tabular-nums font-semibold text-[color:var(--brand-navy)]">
+                  {usd(s.cost)}
+                </span>
+              </div>
+              <p className="text-xs text-[color:var(--brand-navy)]/80">{s.package}</p>
+              <div className="rounded-xl bg-[color:var(--brand-navy)]/[0.04] p-3">
+                <p className="text-[11px] font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/80">
+                  Difference
+                </p>
+                <p className="mt-0.5 tabular-nums font-semibold text-[color:var(--brand-ocean-text)]">
+                  {usd(s.savingLow)} – {usd(s.savingHigh)} less
+                </p>
+              </div>
+            </div>
+          </li>
+        ))}
+      </ul>
+
+      <div className="mt-8 hidden overflow-x-auto rounded-2xl border border-[color:var(--brand-navy)]/12 bg-white shadow-[var(--brand-shadow-sm)] md:block" tabIndex={0} role="region" aria-label="Comparison table, scroll horizontally">
         <table className="w-full min-w-[44rem] border-collapse text-left text-sm">
+
           <caption className="sr-only">
             Example cost comparison between agency placement fees at 20 to 25
             percent of a {usd(EXAMPLE_SALARY)} salary and flat-fee TaaSFlow
