@@ -154,6 +154,14 @@ function PricingPage() {
         </PublicPage>
       </PublicSection>
 
+      {/* Operating-model comparison — agency vs sourcing tools vs TaaSFlow */}
+      <PublicSection className="py-10">
+        <PublicPage>
+          <ModelComparison />
+        </PublicPage>
+      </PublicSection>
+
+
       {/* Live agency comparator */}
       <PublicSection className="py-10">
         <PublicPage>
