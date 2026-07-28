@@ -76,7 +76,7 @@ export function HiddenCostOfWaiting() {
           {/* Column headers */}
           <div className="grid grid-cols-1 border-b border-white/10 bg-white/5 md:grid-cols-2">
             <div className="border-b border-white/10 p-5 md:border-b-0 md:border-r">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-white/50">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-white/75">
                 Old model
               </p>
               <p className="mt-1 text-sm text-white/70">

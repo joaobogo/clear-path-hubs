@@ -302,11 +302,11 @@ function StudyCard({ study }: { study: Study }) {
       </div>
 
       {/* Candidate quality signal */}
-      <dl className="grid grid-cols-2 divide-x divide-y divide-border/60 border-b border-border/60 bg-background sm:grid-cols-4 sm:divide-y-0">
+      <div className="grid grid-cols-2 divide-x divide-y divide-border/60 border-b border-border/60 bg-background sm:grid-cols-4 sm:divide-y-0">
         {study.qualitySignal.map((m) => (
           <div key={m.label} className="p-5 text-center">
-            <dd className="font-display text-2xl font-semibold tracking-tight sm:text-3xl">{m.value}</dd>
-            <dt className="mt-1 text-[10px] font-semibold uppercase tracking-widest text-[color:var(--brand-navy)]/80">{m.label}</dt>
+            <p className="font-display text-2xl font-semibold tracking-tight sm:text-3xl">{m.value}</p>
+            <p className="mt-1 text-[10px] font-semibold uppercase tracking-widest text-[color:var(--brand-navy)]/80">{m.label}</p>
             {m.sub && <p className="mt-0.5 text-[11px] text-[color:var(--brand-navy)]/80">{m.sub}</p>}
           </div>
         ))}
@@ -532,7 +532,7 @@ function CaseStudiesPage() {
             workspace in under 10 days.
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
-            <Link to="/intake" className="rounded-md bg-primary px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-ocean-text)]-foreground hover:bg-primary/90">
+            <Link to="/intake" className="rounded-md bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90">
               Start hiring
             </Link>
             <Link to="/how-it-works" className="rounded-md border border-border/60 bg-background px-5 py-2.5 text-sm font-semibold hover:bg-muted">
