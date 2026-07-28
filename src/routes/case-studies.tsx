@@ -310,7 +310,7 @@ function StudyCard({ study }: { study: Study }) {
             {m.sub && <p className="mt-0.5 text-[11px] text-[color:var(--brand-navy)]/80">{m.sub}</p>}
           </div>
         ))}
-      </dl>
+      </div>
 
       {/* Situation + roles needed */}
       <div className="grid gap-6 p-6 md:grid-cols-2 md:p-8">
