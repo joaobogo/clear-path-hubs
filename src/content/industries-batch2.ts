@@ -876,12 +876,23 @@ export const INDUSTRY_ENTRIES_BATCH2: IndustryEntry[] = [
       { title: "Phase specialisation", body: "Primary and secondary reward different signal. Rubrics separate them." },
       { title: "Subject fluency", body: "STEM, humanities and vocational subjects captured with named exam boards." },
       { title: "Safeguarding & DBS", body: "Enhanced DBS, safeguarding training and prohibition-list checks are baseline." },
+      { title: "Supply vs permanent", body: "Short-notice supply cover and permanent contracted posts need different vetting speed without cutting safeguarding corners." },
+    ],
+    solutions: [
+      { title: "Phase-and-subject rubric", body: "Primary, secondary and SEND roles are scored on separate rubrics with named exam boards and phase-specific pedagogy." },
+      { title: "Safeguarding-first screening", body: "Enhanced DBS status, safeguarding training and prohibition-list checks are verified before a candidate reaches shortlist." },
+      { title: "Leadership pipeline separation", body: "Middle-leader and headteacher searches are scored on strategic and people-leadership evidence, not classroom performance alone." },
     ],
     roleFamilies: [
       { name: "Teaching", roles: ["Primary teachers", "Secondary teachers", "SEND specialists", "TAs and HLTAs"] },
       { name: "Leadership", roles: ["Middle leaders", "Deputies", "Headteachers", "MAT executives"] },
     ],
     roles: ["Teachers (all phases)", "SEND specialists", "School leaders", "MAT central-team roles"],
+    candidateSignals: [
+      { title: "Phase and subject", body: "Named phase, subject and exam board, with named results outcomes where evidenced." },
+      { title: "Safeguarding baseline", body: "Enhanced DBS status, safeguarding training currency and prohibition-list clearance." },
+      { title: "Leadership evidence", body: "For leadership posts, named responsibility areas, staff managed and school-improvement outcomes." },
+    ],
     skills: ["Curriculum planning", "Assessment", "Safeguarding", "Behaviour management"],
     tools: ["SIMS", "Arbor", "Bromcom", "Google Classroom", "Microsoft Teams for Education"],
     certifications: ["QTS", "NPQ suite", "Enhanced DBS"],
@@ -894,6 +905,9 @@ export const INDUSTRY_ENTRIES_BATCH2: IndustryEntry[] = [
     resources: DEFAULT_RESOURCES,
     faqs: [
       { q: "Do you cover MAT central teams?", a: "Yes. School-improvement, HR and finance roles at MAT level are captured with sector context." },
+      { q: "Do you verify DBS and safeguarding status?", a: "Yes — enhanced DBS and safeguarding-training currency are captured as baseline intake fields." },
+      { q: "Can you fill short-notice supply cover?", a: "Yes, with the same safeguarding verification applied regardless of contract length." },
+      { q: "Do you screen for SEND specialism specifically?", a: "Yes. SEND qualifications and named needs experience (e.g. autism, EBD) are captured explicitly." },
     ],
     cta: { title: "Hiring in Education?", description: "Submit the role — phase, subject and safeguarding captured." },
   },
@@ -913,6 +927,12 @@ export const INDUSTRY_ENTRIES_BATCH2: IndustryEntry[] = [
       { title: "Academic vs professional", body: "Academic and professional-services roles are governed differently. Rubrics separate them." },
       { title: "Research portfolio", body: "Publications, grants, PhD supervision and REF/RAE outputs captured as first-class signals for academic roles." },
       { title: "Mission fit", body: "Research-intensive, teaching-focused, applied and vocational institutions reward different signal." },
+      { title: "REF/RAE cycle pressure", body: "Research-output timing against national assessment cycles shapes who's hireable when — captured rather than ignored." },
+    ],
+    solutions: [
+      { title: "Academic-vs-professional split", body: "Academic appointments and professional-services roles are governed and evidenced differently, so rubrics never blend the two." },
+      { title: "Research-portfolio extraction", body: "Publications, grant income, PhD supervision and REF-eligible outputs are quoted from the CV, not assumed from institution prestige." },
+      { title: "Mission-matched scoring", body: "Research-intensive, teaching-focused and vocational institutions get rubrics weighted to what each mission actually rewards." },
     ],
     roleFamilies: [
       { name: "Academic", roles: ["Lecturers", "Senior lecturers", "Readers", "Professors", "Chairs"] },
@@ -921,6 +941,11 @@ export const INDUSTRY_ENTRIES_BATCH2: IndustryEntry[] = [
       { name: "Leadership", roles: ["Deans", "Pro-vice-chancellors", "Vice-chancellors"] },
     ],
     roles: ["Academic staff (all grades)", "Postdocs and research fellows", "Registry and admissions leaders", "Deans and PVCs"],
+    candidateSignals: [
+      { title: "Research portfolio", body: "Named publications, grant income secured, PhD supervision load and REF-eligible outputs." },
+      { title: "Teaching evidence", body: "Modules led, student outcomes and named curriculum-design contributions." },
+      { title: "Institutional fit", body: "Mission type (research-intensive, teaching-focused, vocational) matched against the candidate's prior institution profile." },
+    ],
     skills: ["Teaching", "Research design", "Grant writing", "Curriculum design"],
     tools: ["Blackboard", "Canvas", "SITS", "Banner", "Symplectic Elements"],
     signals: ["Academic vs professional separated", "Research portfolio captured", "Mission fit scored"],
@@ -932,6 +957,9 @@ export const INDUSTRY_ENTRIES_BATCH2: IndustryEntry[] = [
     resources: DEFAULT_RESOURCES,
     faqs: [
       { q: "Can you cover professorial appointments?", a: "Yes — with rubrics that weight research portfolio, teaching outcomes and citizenship." },
+      { q: "Do you separate academic and professional-services searches?", a: "Yes — different governance, different rubric, never blended." },
+      { q: "Can you weight for grant-income track record?", a: "Yes. Named grants secured and funding bodies are captured as first-class evidence for research-heavy posts." },
+      { q: "Do you account for REF timing?", a: "Yes. Output timing against the assessment cycle is captured so panels understand what's realistically portable." },
     ],
     cta: { title: "Hiring in Higher Education?", description: "Submit the role — track separated, portfolio and mission scored." },
   },
