@@ -1,4 +1,5 @@
 import * as React from "react";
+import { PRICE_PILOT_USD } from "@/config/pricing-core";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   Activity,
