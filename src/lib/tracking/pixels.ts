@@ -86,9 +86,13 @@ function initGA4() {
   if (loaded.has("ga4") || !GA_ID) return;
   loaded.add("ga4");
   window.dataLayer = window.dataLayer || [];
-  window.gtag = function gtag(...args: unknown[]) {
-    window.dataLayer!.push(args);
+  // gtag.js only processes dataLayer entries that are real `arguments`
+  // objects — pushing a plain array is silently ignored and nothing is sent.
+  window.gtag = function gtag() {
+    // eslint-disable-next-line prefer-rest-params
+    window.dataLayer!.push(arguments);
   };
+
   window.gtag("js", new Date());
   // SPA: page views are dispatched manually on route change.
   window.gtag("config", GA_ID, { send_page_view: false });
