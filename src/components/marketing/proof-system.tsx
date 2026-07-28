@@ -102,7 +102,7 @@ const FAQ = [
   },
   {
     q: "Do we have to switch our ATS?",
-    a: "No. TaaSFlow sits alongside Greenhouse, Ashby, Lever, Workday, or an internal system. You keep the ATS; we deliver the shortlist and the evidence.",
+    a: "No. TaaSFlow includes its own ATS, and it also sits alongside Greenhouse, Ashby, Lever, or Workday. Use ours or keep yours — either way you get the recruiting, the outreach, and the evidence in one place.",
   },
   {
     q: "What happens if we cancel?",

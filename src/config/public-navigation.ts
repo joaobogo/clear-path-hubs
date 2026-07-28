@@ -207,7 +207,7 @@ export const FOOTER_GROUPS: NavGroup[] = [
 ];
 
 export const FOOTER_DESCRIPTION =
-  "TaaSFlow is subscription recruiting. We deliver ranked, pre-screened candidate shortlists through a live dashboard for one flat monthly fee.";
+  "TaaSFlow is your ATS, recruiting team, and outreach engine in one. Ranked, pre-screened candidates in a live dashboard for one flat fee.";
 
 export const SOCIAL_LINKS = [
   { href: "https://www.linkedin.com/company/taasflow", label: "LinkedIn" },

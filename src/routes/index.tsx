@@ -68,10 +68,11 @@ void getPage;
 export const Route = createFileRoute("/")({
   head: () =>
     marketingHead(undefined, "/", {
-      title: "TaaSFlow | Your Hiring Team, On Demand",
+      title: "TaaSFlow | ATS + Recruiting + Outreach, All in One",
       description:
-        "Subscription recruiting: ranked, pre-screened candidate shortlists through a live dashboard for one flat monthly fee. No placement fees.",
+        "Your ATS, recruiting team, and outreach engine in one subscription. Ranked, pre-screened candidates in a live dashboard — no placement fees.",
     }),
+
   component: Home,
 });
 
@@ -1327,20 +1328,36 @@ function Home() {
             <div className="flex min-w-0 flex-col justify-center gap-6">
               <span className="inline-flex w-fit items-center gap-2 rounded-full border border-[color:var(--brand-navy)]/12 bg-white/70 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/80 backdrop-blur">
                 <Sparkles className="h-3.5 w-3.5 text-[color:var(--brand-ocean-text)]" aria-hidden />
-                Subscription recruiting
+                ATS + recruiting + outreach
               </span>
               <h1
                 id="home-hero-heading"
                 className="font-[family-name:var(--brand-font-display)] text-4xl font-semibold leading-[1.05] tracking-tight text-[color:var(--brand-navy)] sm:text-5xl lg:text-[3.5rem]"
               >
-                Your hiring team,
+                Your whole hiring stack,
                 <br className="hidden sm:block" />{" "}
-                <span className="text-[color:var(--brand-ocean-text)]">on demand.</span>
+                <span className="text-[color:var(--brand-ocean-text)]">all in one.</span>
               </h1>
               <p className="max-w-xl text-base text-[color:var(--brand-navy)]/80 sm:text-lg">
-                Subscription recruiting for Series A–C teams: ranked, enriched
-                candidates in a live dashboard — one flat monthly fee.
+                ATS, recruiting team, and candidate outreach in a single
+                subscription — one dashboard, one flat fee.
               </p>
+              <ul className="grid gap-2 pt-1 sm:grid-cols-3">
+                {[
+                  { t: "Your own ATS", d: "Roles, pipeline, and candidate records you keep." },
+                  { t: "Recruiting", d: "Sourced, screened, ranked shortlists every week." },
+                  { t: "Outreach", d: "Campaigns and follow-ups run for you, tracked live." },
+                ].map((p) => (
+                  <li
+                    key={p.t}
+                    className="rounded-lg border border-[color:var(--brand-navy)]/12 bg-white/70 p-3 backdrop-blur"
+                  >
+                    <p className="text-sm font-semibold text-[color:var(--brand-navy)]">{p.t}</p>
+                    <p className="mt-0.5 text-xs text-[color:var(--brand-navy)]/75">{p.d}</p>
+                  </li>
+                ))}
+              </ul>
+
               <ul className="flex flex-wrap gap-2 pt-1">
                 {[
                   "First shortlist in 7–14 days",
@@ -1381,7 +1398,7 @@ function Home() {
                 </Link>
               </div>
               <p className="text-xs text-[color:var(--brand-navy)]/80">
-                You keep the ATS, the candidates, and the final call.
+                Use our ATS or keep yours — you own the candidates and the final call.
               </p>
 
 
