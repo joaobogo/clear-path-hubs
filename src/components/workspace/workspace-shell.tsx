@@ -322,56 +322,74 @@ export function WorkspaceShell(props: WorkspaceShellProps) {
       {/* Desktop sidebar */}
       <aside
         className={cn(
-          "sticky top-0 hidden h-dvh shrink-0 flex-col border-r md:flex transition-[width] duration-200 ease-out",
+          "sticky top-0 z-40 hidden h-dvh shrink-0 md:block transition-[width] duration-200 ease-out",
           collapsed ? "w-14" : "w-64",
         )}
-        style={{
-          background: "var(--taas-shell-sidebar-bg)",
-          borderColor: "var(--taas-shell-sidebar-border)",
-          boxShadow: "1px 0 0 0 var(--taas-shell-sidebar-border)",
-        }}
         aria-label="Workspace navigation"
+        onMouseEnter={() => collapsed && setRailHover(true)}
+        onMouseLeave={() => setRailHover(false)}
       >
-        <ContextHeader
-          kicker={contextKicker}
-          label={contextLabel}
-          sub={contextSubLabel}
-          collapsed={collapsed}
-        />
-        {aboveNav && !collapsed && (
+        <div
+          onFocus={() => collapsed && setRailHover(true)}
+          onBlur={(e) => {
+            if (!e.currentTarget.contains(e.relatedTarget as Node)) setRailHover(false);
+          }}
+          className={cn(
+            "absolute inset-y-0 left-0 flex h-full flex-col overflow-hidden border-r transition-[width] duration-200 ease-out",
+            collapsed ? (railHover ? "w-64 shadow-xl" : "w-14") : "w-full",
+          )}
+          style={{
+            background: "var(--taas-shell-sidebar-bg)",
+            borderColor: "var(--taas-shell-sidebar-border)",
+          }}
+        >
+          <ContextHeader
+            kicker={contextKicker}
+            label={contextLabel}
+            sub={contextSubLabel}
+            collapsed={railCollapsed}
+          />
+          {aboveNav && !railCollapsed && (
+            <div
+              className="border-b px-3 py-2"
+              style={{ borderColor: "var(--taas-shell-sidebar-border)" }}
+            >
+              {aboveNav}
+            </div>
+          )}
+          <NavList
+            navItems={navItems}
+            pathname={pathname}
+            collapsed={railCollapsed}
+            linkSearch={linkSearch}
+          />
           <div
-            className="border-b px-3 py-2"
+            className="border-t p-2"
             style={{ borderColor: "var(--taas-shell-sidebar-border)" }}
           >
-            {aboveNav}
+            <button
+              type="button"
+              onClick={toggle}
+              className="flex w-full items-center justify-center gap-2 rounded-md px-2 py-1.5 text-xs text-muted-foreground hover:bg-[color:var(--taas-shell-nav-hover-bg)] hover:text-foreground transition-colors"
+              aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+              aria-pressed={collapsed}
+            >
+              {collapsed ? (
+                <>
+                  <ChevronRight className="h-4 w-4 shrink-0" />
+                  {railHover && <span className="truncate">Pin open</span>}
+                </>
+              ) : (
+                <>
+                  <ChevronLeft className="h-4 w-4" />
+                  <span>Collapse</span>
+                </>
+              )}
+            </button>
           </div>
-        )}
-        <NavList
-          navItems={navItems}
-          pathname={pathname}
-          collapsed={collapsed}
-          linkSearch={linkSearch}
-        />
-        <div
-          className="border-t p-2"
-          style={{ borderColor: "var(--taas-shell-sidebar-border)" }}
-        >
-          <button
-            type="button"
-            onClick={toggle}
-            className="flex w-full items-center justify-center gap-2 rounded-md px-2 py-1.5 text-xs text-muted-foreground hover:bg-[color:var(--taas-shell-nav-hover-bg)] hover:text-foreground transition-colors"
-            aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-            aria-pressed={collapsed}
-          >
-            {collapsed ? <ChevronRight className="h-4 w-4" /> : (
-              <>
-                <ChevronLeft className="h-4 w-4" />
-                <span>Collapse</span>
-              </>
-            )}
-          </button>
         </div>
       </aside>
+
 
       {/* Mobile drawer */}
       {mobileOpen && (
