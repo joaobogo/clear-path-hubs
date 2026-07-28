@@ -268,12 +268,11 @@ export function trackEvent(name: string, params: Record<string, unknown> = {}) {
 }
 
 export function trackPageView(params: Record<string, unknown>) {
-  if (typeof window === "undefined") return;
-  safe(() => {
-    window.gtag?.("event", "page_view", clean(params));
-  });
+  // Single dispatch — trackEvent already fans out to GA4 and every other tag,
+  // with duplicate suppression on (name + page_path).
   trackEvent("page_view", params);
 }
+
 
 export function trackCtaClick(cta: string, params: Record<string, unknown> = {}) {
   trackEvent("cta_click", { cta, ...params });
