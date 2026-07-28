@@ -18,7 +18,7 @@ import { PageConnections } from "@/components/marketing/page-connections";
 export const Route = createFileRoute("/talent-network")({
   head: () =>
     marketingHead(undefined, "/talent-network", {
-      title: "Talent Network — TaaSFlow",
+      title: "Join the TaaSFlow Talent Network",
       description:
         "Join the TaaSFlow Talent Network. Browse open roles, join for private matching to future briefs, and stay in control of your visibility and data.",
     }),
