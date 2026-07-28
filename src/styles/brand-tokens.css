@@ -96,7 +96,7 @@
    * ============================================================ */
 
   /* Brand — blues */
-  --taas-brand-primary:         var(--brand-ocean);         /* Ocean 221 83% 53% */
+  --taas-brand-primary:         var(--brand-ocean-text);         /* Ocean 221 83% 53% */
   --taas-brand-primary-hover:   oklch(0.55 0.19 258);       /* darker ocean */
   --taas-brand-primary-active:  oklch(0.50 0.19 258);       /* pressed */
   --taas-brand-primary-soft:    var(--brand-sky);           /* tinted surface */

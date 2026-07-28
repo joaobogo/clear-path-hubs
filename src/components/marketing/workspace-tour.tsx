@@ -100,7 +100,7 @@ export function WorkspaceTour() {
               onClick={() => setActive(v.key)}
               className={`inline-flex shrink-0 snap-start items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition ${
                 isActive
-                  ? "border-[color:var(--brand-ocean)] bg-[color:var(--brand-ocean)] text-white"
+                  ? "border-[color:var(--brand-ocean-text)] bg-[color:var(--brand-ocean-text)] text-white"
                   : "border-[color:var(--brand-navy)]/15 bg-white text-[color:var(--brand-navy)]/80 hover:border-[color:var(--brand-ocean)]/40 hover:text-[color:var(--brand-navy)]"
               }`}
             >
