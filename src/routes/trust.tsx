@@ -200,13 +200,13 @@ function TrustPage() {
     <SiteShell>
       <PublicSection className="pb-6 pt-16 sm:pt-20">
         <PublicPage>
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
             Commercial Trust Pack
           </p>
           <h1 className="mt-3 max-w-3xl font-[family-name:var(--brand-font-display)] text-4xl font-semibold tracking-tight sm:text-5xl">
             Everything a buyer needs, in one place.
           </h1>
-          <p className="mt-5 max-w-2xl text-lg text-[color:var(--brand-navy)]/75">
+          <p className="mt-5 max-w-2xl text-lg text-[color:var(--brand-navy)]/80">
             How pricing works. What you keep. How scoring works. How candidate
             privacy works. Where the line runs between what we do and what your
             team controls.
@@ -246,24 +246,24 @@ function TrustPage() {
           <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             {PRICING_LINES.map((p) => (
               <div key={p.label} className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-5">
-                <div className="text-xs font-semibold uppercase tracking-wide text-[color:var(--brand-ocean)]">
+                <div className="text-xs font-semibold uppercase tracking-wide text-[color:var(--brand-ocean-text)]">
                   {p.label}
                 </div>
                 <div className="mt-2 font-[family-name:var(--brand-font-display)] text-3xl font-semibold text-[color:var(--brand-navy)]">
                   {p.price}
                 </div>
-                <div className="mt-1 text-xs text-[color:var(--brand-navy)]/60">{p.scope}</div>
-                <p className="mt-3 text-sm text-[color:var(--brand-navy)]/75">{p.detail}</p>
+                <div className="mt-1 text-xs text-[color:var(--brand-navy)]/80">{p.scope}</div>
+                <p className="mt-3 text-sm text-[color:var(--brand-navy)]/80">{p.detail}</p>
               </div>
             ))}
           </div>
           <div className="mt-6 grid gap-3 rounded-2xl border border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-navy)]/[0.03] p-5 sm:grid-cols-2">
             <div>
               <h4 className="text-sm font-semibold text-[color:var(--brand-navy)]">Never charged</h4>
-              <ul className="mt-2 space-y-1.5 text-sm text-[color:var(--brand-navy)]/75">
+              <ul className="mt-2 space-y-1.5 text-sm text-[color:var(--brand-navy)]/80">
                 {NEVER_CHARGED.map((x) => (
                   <li key={x} className="flex items-start gap-2">
-                    <CircleDot className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[color:var(--brand-ocean)]" />
+                    <CircleDot className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[color:var(--brand-ocean-text)]" />
                     {x}
                   </li>
                 ))}
@@ -271,13 +271,13 @@ function TrustPage() {
             </div>
             <div>
               <h4 className="text-sm font-semibold text-[color:var(--brand-navy)]">Full pricing detail</h4>
-              <p className="mt-2 text-sm text-[color:var(--brand-navy)]/75">
+              <p className="mt-2 text-sm text-[color:var(--brand-navy)]/80">
                 Tier feature lists, ROI math, and the calculator live on the
                 pricing page. Every public surface reads from the same source.
               </p>
               <Link
                 to="/pricing"
-                className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-[color:var(--brand-ocean)] hover:text-[color:var(--brand-navy)]"
+                className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-[color:var(--brand-ocean-text)] hover:text-[color:var(--brand-navy)]"
               >
                 See pricing detail →
               </Link>
@@ -298,7 +298,7 @@ function TrustPage() {
           <ul className="mt-6 grid gap-3 sm:grid-cols-2">
             {CLIENT_KEEPS.map((c) => (
               <li key={c} className="flex items-start gap-3 rounded-xl border border-[color:var(--brand-navy)]/10 bg-white p-4 text-sm text-[color:var(--brand-navy)]/80">
-                <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-[color:var(--brand-ocean)]" />
+                <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-[color:var(--brand-ocean-text)]" />
                 {c}
               </li>
             ))}
@@ -319,7 +319,7 @@ function TrustPage() {
             {SCORING_LINES.map((s) => (
               <div key={s.title} className="rounded-xl border border-[color:var(--brand-navy)]/10 bg-white p-5">
                 <h4 className="text-sm font-semibold text-[color:var(--brand-navy)]">{s.title}</h4>
-                <p className="mt-2 text-sm text-[color:var(--brand-navy)]/75">{s.body}</p>
+                <p className="mt-2 text-sm text-[color:var(--brand-navy)]/80">{s.body}</p>
               </div>
             ))}
           </div>
@@ -338,12 +338,12 @@ function TrustPage() {
           <ul className="mt-6 space-y-3">
             {PRIVACY_LINES.map((p) => (
               <li key={p} className="flex items-start gap-3 rounded-xl border border-[color:var(--brand-navy)]/10 bg-white p-4 text-sm text-[color:var(--brand-navy)]/80">
-                <Lock className="mt-0.5 h-4 w-4 shrink-0 text-[color:var(--brand-ocean)]" />
+                <Lock className="mt-0.5 h-4 w-4 shrink-0 text-[color:var(--brand-ocean-text)]" />
                 {p}
               </li>
             ))}
           </ul>
-          <p className="mt-4 text-xs text-[color:var(--brand-navy)]/60">
+          <p className="mt-4 text-xs text-[color:var(--brand-navy)]/80">
             See the <Link to="/privacy" className="underline">privacy notice</Link> for
             the full policy language.
           </p>
@@ -361,7 +361,7 @@ function TrustPage() {
           />
           <div className="mt-6 overflow-x-auto rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white">
             <table className="w-full min-w-[720px] text-left text-sm">
-              <thead className="bg-[color:var(--brand-navy)]/[0.03] text-[color:var(--brand-navy)]/70">
+              <thead className="bg-[color:var(--brand-navy)]/[0.03] text-[color:var(--brand-navy)]/80">
                 <tr>
                   <th className="px-4 py-3 font-semibold">Area</th>
                   <th className="px-4 py-3 font-semibold">TaaSFlow</th>
@@ -372,8 +372,8 @@ function TrustPage() {
                 {SPLIT.map((row) => (
                   <tr key={row.area} className="border-t border-[color:var(--brand-navy)]/10 align-top">
                     <td className="px-4 py-3 font-semibold text-[color:var(--brand-navy)]">{row.area}</td>
-                    <td className="px-4 py-3 text-[color:var(--brand-navy)]/75">{row.taasflow}</td>
-                    <td className="px-4 py-3 text-[color:var(--brand-navy)]/75">{row.client}</td>
+                    <td className="px-4 py-3 text-[color:var(--brand-navy)]/80">{row.taasflow}</td>
+                    <td className="px-4 py-3 text-[color:var(--brand-navy)]/80">{row.client}</td>
                   </tr>
                 ))}
               </tbody>
@@ -395,10 +395,10 @@ function TrustPage() {
             {FAQ.map((f) => (
               <details key={f.q} className="group p-5">
                 <summary className="cursor-pointer list-none text-sm font-semibold text-[color:var(--brand-navy)]">
-                  <span className="mr-2 text-[color:var(--brand-ocean)]">›</span>
+                  <span className="mr-2 text-[color:var(--brand-ocean-text)]">›</span>
                   {f.q}
                 </summary>
-                <p className="mt-3 text-sm text-[color:var(--brand-navy)]/75">{f.a}</p>
+                <p className="mt-3 text-sm text-[color:var(--brand-navy)]/80">{f.a}</p>
               </details>
             ))}
           </div>
@@ -417,13 +417,13 @@ function TrustPage() {
           <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {SECURITY_LINES.map((s) => (
               <div key={s.title} className="rounded-xl border border-[color:var(--brand-navy)]/10 bg-white p-5">
-                <s.icon className="h-5 w-5 text-[color:var(--brand-ocean)]" />
+                <s.icon className="h-5 w-5 text-[color:var(--brand-ocean-text)]" />
                 <h4 className="mt-3 text-sm font-semibold text-[color:var(--brand-navy)]">{s.title}</h4>
-                <p className="mt-2 text-sm text-[color:var(--brand-navy)]/75">{s.body}</p>
+                <p className="mt-2 text-sm text-[color:var(--brand-navy)]/80">{s.body}</p>
               </div>
             ))}
           </div>
-          <p className="mt-5 text-xs text-[color:var(--brand-navy)]/60">
+          <p className="mt-5 text-xs text-[color:var(--brand-navy)]/80">
             This page is maintained by the TaaSFlow team to answer common
             security and privacy questions about the platform. It is not a
             certification. Enterprise buyers can request a full security
@@ -471,14 +471,14 @@ function SectionHeader({
 }) {
   return (
     <div className="max-w-3xl">
-      <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean)]">
+      <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean-text)]">
         <Icon className="h-3.5 w-3.5" /> {eyebrow}
       </div>
       <h2 className="mt-2 font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight text-[color:var(--brand-navy)] sm:text-4xl">
         {title}
       </h2>
       {lede ? (
-        <p className="mt-3 text-base text-[color:var(--brand-navy)]/75">{lede}</p>
+        <p className="mt-3 text-base text-[color:var(--brand-navy)]/80">{lede}</p>
       ) : null}
     </div>
   );

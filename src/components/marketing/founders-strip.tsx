@@ -51,19 +51,19 @@ export function FoundersStrip() {
     <div className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6 sm:p-8">
       <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
         <div className="max-w-md">
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean)]">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean-text)]">
             Built by operators
           </p>
           <h3 className="mt-2 font-[family-name:var(--brand-font-display)] text-2xl font-semibold tracking-tight text-[color:var(--brand-navy)]">
             The founders behind TaaSFlow.
           </h3>
-          <p className="mt-2 text-sm text-[color:var(--brand-navy)]/70">
+          <p className="mt-2 text-sm text-[color:var(--brand-navy)]/80">
             Three operators who ran hiring at scale before building a recruiting
             function that behaves like software.
           </p>
           <Link
             to="/about"
-            className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-[color:var(--brand-ocean)] hover:text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+            className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-[color:var(--brand-ocean-text)] hover:text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
           >
             Meet the founders →
           </Link>
@@ -86,7 +86,7 @@ export function FoundersStrip() {
                 <p className="text-sm font-semibold text-[color:var(--brand-navy)]">
                   {f.name}
                 </p>
-                <p className="text-xs text-[color:var(--brand-navy)]/65">
+                <p className="text-xs text-[color:var(--brand-navy)]/80">
                   {f.title}
                 </p>
                 <a
@@ -94,7 +94,7 @@ export function FoundersStrip() {
                   target="_blank"
                   rel="noreferrer noopener"
                   aria-label={`${f.name} on LinkedIn`}
-                  className="mt-1 inline-flex items-center gap-1 text-xs font-medium text-[color:var(--brand-ocean)] hover:text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+                  className="mt-1 inline-flex items-center gap-1 text-xs font-medium text-[color:var(--brand-ocean-text)] hover:text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
                 >
                   <Linkedin className="h-3 w-3" aria-hidden />
                   LinkedIn

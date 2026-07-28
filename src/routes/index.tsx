@@ -525,7 +525,7 @@ const FEATURED_INDUSTRIES = [
 
 function Eyebrow({ children }: { children: React.ReactNode }) {
   return (
-    <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">
+    <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
       {children}
     </p>
   );
@@ -549,7 +549,7 @@ function SectionHead({
         {title}
       </h2>
       {lead && (
-        <p className="mt-4 text-base text-[color:var(--brand-navy)]/70">{lead}</p>
+        <p className="mt-4 text-base text-[color:var(--brand-navy)]/80">{lead}</p>
       )}
     </div>
   );
@@ -678,11 +678,11 @@ function HeroWorkspacePreview() {
             <span className="h-2.5 w-2.5 rounded-full bg-[#febc2e]" />
             <span className="h-2.5 w-2.5 rounded-full bg-[#28c840]" />
           </div>
-          <span className="truncate text-xs font-medium text-[color:var(--brand-navy)]/60">
+          <span className="truncate text-xs font-medium text-[color:var(--brand-navy)]/80">
             client workspace · Senior Product Designer · Sample data
           </span>
         </div>
-        <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-[color:var(--brand-ocean)]/10 px-2.5 py-1 text-[11px] font-semibold text-[color:var(--brand-ocean)]">
+        <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-[color:var(--brand-ocean)]/10 px-2.5 py-1 text-[11px] font-semibold text-[color:var(--brand-ocean-text)]">
           <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[color:var(--brand-ocean)]" aria-hidden />
           Live
         </span>
@@ -691,10 +691,10 @@ function HeroWorkspacePreview() {
       {/* Ranked candidates — interactive selector */}
       <div className="mt-4">
         <div className="flex items-center justify-between">
-          <div className="text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/55">
+          <div className="text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/80">
             Ranked candidates
           </div>
-          <div className="text-[11px] font-medium text-[color:var(--brand-navy)]/55">3 of 12</div>
+          <div className="text-[11px] font-medium text-[color:var(--brand-navy)]/80">3 of 12</div>
         </div>
 
         <div
@@ -731,24 +731,24 @@ function HeroWorkspacePreview() {
                         className={
                           "shrink-0 rounded-full px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide " +
                           (c.band === "Top fit"
-                            ? "bg-[color:var(--brand-ocean)]/12 text-[color:var(--brand-ocean)]"
+                            ? "bg-[color:var(--brand-ocean)]/12 text-[color:var(--brand-ocean-text)]"
                             : c.band === "Strong fit"
-                              ? "bg-[color:var(--brand-navy)]/8 text-[color:var(--brand-navy)]/75"
-                              : "bg-[color:var(--brand-navy)]/6 text-[color:var(--brand-navy)]/60")
+                              ? "bg-[color:var(--brand-navy)]/8 text-[color:var(--brand-navy)]/80"
+                              : "bg-[color:var(--brand-navy)]/6 text-[color:var(--brand-navy)]/80")
                         }
                       >
                         {c.band}
                       </span>
                     </div>
-                    <div className="truncate text-[11px] text-[color:var(--brand-navy)]/60">
+                    <div className="truncate text-[11px] text-[color:var(--brand-navy)]/80">
                       {c.headline}
                     </div>
                   </div>
                   <div className="flex shrink-0 items-center gap-2">
-                    <span className="rounded-full border border-[color:var(--brand-navy)]/12 bg-white px-2 py-0.5 text-[10px] font-medium text-[color:var(--brand-navy)]/70">
+                    <span className="rounded-full border border-[color:var(--brand-navy)]/12 bg-white px-2 py-0.5 text-[10px] font-medium text-[color:var(--brand-navy)]/80">
                       {c.stage}
                     </span>
-                    <div className="rounded-md bg-[color:var(--brand-ocean)]/12 px-2.5 py-1 text-sm font-semibold tabular-nums text-[color:var(--brand-ocean)]">
+                    <div className="rounded-md bg-[color:var(--brand-ocean)]/12 px-2.5 py-1 text-sm font-semibold tabular-nums text-[color:var(--brand-ocean-text)]">
                       {c.score}
                     </div>
                   </div>
@@ -761,7 +761,7 @@ function HeroWorkspacePreview() {
 
       {/* Fit summary — updates with candidate */}
       <div className="mt-4 rounded-xl border border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-paper)] p-3">
-        <div className="text-[10px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/55">
+        <div className="text-[10px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/80">
           Fit summary
         </div>
         <p
@@ -774,7 +774,7 @@ function HeroWorkspacePreview() {
 
       {/* Requirement coverage — click a requirement to reveal evidence */}
       <div className="mt-4">
-        <div className="text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/55">
+        <div className="text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/80">
           Requirement coverage · tap a requirement
         </div>
         <div className="mt-2 space-y-1.5" role="listbox" aria-label="Requirements">
@@ -794,7 +794,7 @@ function HeroWorkspacePreview() {
                     : "hover:bg-[color:var(--brand-navy)]/[0.04]")
                 }
               >
-                <span className="w-32 shrink-0 truncate text-[color:var(--brand-navy)]/75">
+                <span className="w-32 shrink-0 truncate text-[color:var(--brand-navy)]/80">
                   {c.label}
                 </span>
                 <div className="h-1.5 min-w-0 flex-1 overflow-hidden rounded-full bg-[color:var(--brand-navy)]/8">
@@ -820,7 +820,7 @@ function HeroWorkspacePreview() {
           className="mt-2 rounded-md border border-dashed border-[color:var(--brand-ocean)]/30 bg-white px-3 py-2 text-[11px] italic leading-snug text-[color:var(--brand-navy)]/80"
           aria-live="polite"
         >
-          <span className="mr-1 not-italic font-semibold text-[color:var(--brand-ocean)]">
+          <span className="mr-1 not-italic font-semibold text-[color:var(--brand-ocean-text)]">
             Evidence ·
           </span>
           {req.evidence}
@@ -830,7 +830,7 @@ function HeroWorkspacePreview() {
       {/* Stage rail — click to reveal next Client action */}
       <div className="mt-4">
         <div className="flex items-center justify-between">
-          <div className="text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/55">
+          <div className="text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/80">
             Stage · tap for next action
           </div>
         </div>
@@ -879,8 +879,8 @@ function HeroWorkspacePreview() {
 
       {/* Recent delivery + one clear Client action */}
       <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-[color:var(--brand-navy)]/8 pt-3">
-        <div className="min-w-0 text-[11px] text-[color:var(--brand-navy)]/60">
-          <span className="font-semibold text-[color:var(--brand-navy)]/75">Recent delivery ·</span>{" "}
+        <div className="min-w-0 text-[11px] text-[color:var(--brand-navy)]/80">
+          <span className="font-semibold text-[color:var(--brand-navy)]/80">Recent delivery ·</span>{" "}
           3 ranked candidates added this week
         </div>
         <button
@@ -1064,23 +1064,23 @@ function ClientCandidateDelivery() {
                   className={
                     "shrink-0 rounded-full px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide " +
                     (c.band === "Top fit"
-                      ? "bg-[color:var(--brand-ocean)]/12 text-[color:var(--brand-ocean)]"
+                      ? "bg-[color:var(--brand-ocean)]/12 text-[color:var(--brand-ocean-text)]"
                       : c.band === "Strong fit"
-                        ? "bg-[color:var(--brand-navy)]/8 text-[color:var(--brand-navy)]/75"
-                        : "bg-[color:var(--brand-navy)]/6 text-[color:var(--brand-navy)]/60")
+                        ? "bg-[color:var(--brand-navy)]/8 text-[color:var(--brand-navy)]/80"
+                        : "bg-[color:var(--brand-navy)]/6 text-[color:var(--brand-navy)]/80")
                   }
                 >
                   {c.band}
                 </span>
               </div>
-              <div className="mt-0.5 truncate text-[11px] text-[color:var(--brand-navy)]/65">
+              <div className="mt-0.5 truncate text-[11px] text-[color:var(--brand-navy)]/80">
                 {c.headline}
               </div>
-              <div className="mt-1 flex items-center gap-2 text-[10px] text-[color:var(--brand-navy)]/55">
+              <div className="mt-1 flex items-center gap-2 text-[10px] text-[color:var(--brand-navy)]/80">
                 <MapPin className="h-3 w-3" aria-hidden />
                 <span className="truncate">{c.location}</span>
               </div>
-              <div className="mt-1.5 inline-flex items-center rounded-full border border-[color:var(--brand-navy)]/12 bg-white px-2 py-0.5 text-[10px] font-medium text-[color:var(--brand-navy)]/70">
+              <div className="mt-1.5 inline-flex items-center rounded-full border border-[color:var(--brand-navy)]/12 bg-white px-2 py-0.5 text-[10px] font-medium text-[color:var(--brand-navy)]/80">
                 Stage · {c.stage}
               </div>
             </button>
@@ -1094,7 +1094,7 @@ function ClientCandidateDelivery() {
         aria-live="polite"
       >
         <div className="min-w-0">
-          <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/55">
+          <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/80">
             <span
               className="inline-flex h-1.5 w-1.5 rounded-full bg-[color:var(--brand-ocean)]"
               aria-hidden
@@ -1104,10 +1104,10 @@ function ClientCandidateDelivery() {
           <div className="mt-1 text-lg font-semibold text-[color:var(--brand-navy)]">
             {candidate.name}
           </div>
-          <div className="truncate text-sm text-[color:var(--brand-navy)]/70">
+          <div className="truncate text-sm text-[color:var(--brand-navy)]/80">
             {candidate.headline}
           </div>
-          <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-[color:var(--brand-navy)]/60">
+          <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-[color:var(--brand-navy)]/80">
             <span className="inline-flex items-center gap-1">
               <MapPin className="h-3.5 w-3.5" aria-hidden /> {candidate.location}
             </span>
@@ -1116,17 +1116,17 @@ function ClientCandidateDelivery() {
             </span>
             <button
               type="button"
-              className="inline-flex items-center gap-1 rounded-md border border-[color:var(--brand-navy)]/15 bg-white px-2 py-0.5 font-medium text-[color:var(--brand-navy)]/75 hover:bg-[color:var(--brand-navy)]/[0.04] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+              className="inline-flex items-center gap-1 rounded-md border border-[color:var(--brand-navy)]/15 bg-white px-2 py-0.5 font-medium text-[color:var(--brand-navy)]/80 hover:bg-[color:var(--brand-navy)]/[0.04] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
             >
               <FileText className="h-3.5 w-3.5" aria-hidden /> View CV
             </button>
           </div>
         </div>
         <div className="flex shrink-0 flex-col items-end gap-1.5">
-          <div className="rounded-md bg-[color:var(--brand-ocean)]/12 px-3 py-1 text-lg font-semibold tabular-nums text-[color:var(--brand-ocean)]">
+          <div className="rounded-md bg-[color:var(--brand-ocean)]/12 px-3 py-1 text-lg font-semibold tabular-nums text-[color:var(--brand-ocean-text)]">
             {candidate.score}
           </div>
-          <span className="inline-flex items-center gap-1 rounded-full bg-[color:var(--brand-ocean)]/10 px-2 py-0.5 text-[11px] font-semibold text-[color:var(--brand-ocean)]">
+          <span className="inline-flex items-center gap-1 rounded-full bg-[color:var(--brand-ocean)]/10 px-2 py-0.5 text-[11px] font-semibold text-[color:var(--brand-ocean-text)]">
             <Sparkles className="h-3 w-3" aria-hidden /> {candidate.band}
           </span>
         </div>
@@ -1134,7 +1134,7 @@ function ClientCandidateDelivery() {
 
       {/* Recommendation */}
       <div className="mt-4 rounded-xl border border-[color:var(--brand-ocean)]/20 bg-[color:var(--brand-ocean)]/[0.04] p-3.5">
-        <div className="text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-ocean)]">
+        <div className="text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-ocean-text)]">
           Recommendation
         </div>
         <p className="mt-1 text-sm text-[color:var(--brand-navy)]/85">{candidate.recommendation}</p>
@@ -1143,7 +1143,7 @@ function ClientCandidateDelivery() {
       {/* Requirement coverage — click for evidence */}
       <div className="mt-4">
         <div className="flex items-center justify-between">
-          <div className="text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/55">
+          <div className="text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/80">
             Requirement coverage · tap a requirement
           </div>
         </div>
@@ -1164,7 +1164,7 @@ function ClientCandidateDelivery() {
                     : "hover:bg-[color:var(--brand-navy)]/[0.04]")
                 }
               >
-                <span className="w-40 shrink-0 truncate text-[color:var(--brand-navy)]/75 sm:w-52">
+                <span className="w-40 shrink-0 truncate text-[color:var(--brand-navy)]/80 sm:w-52">
                   {c.label}
                 </span>
                 <div className="h-1.5 min-w-0 flex-1 overflow-hidden rounded-full bg-[color:var(--brand-navy)]/8">
@@ -1183,8 +1183,8 @@ function ClientCandidateDelivery() {
                   className={
                     "w-16 shrink-0 text-right text-[10px] font-semibold uppercase tracking-wide " +
                     (c.verdict === "Strong"
-                      ? "text-[color:var(--brand-ocean)]"
-                      : "text-[color:var(--brand-navy)]/60")
+                      ? "text-[color:var(--brand-ocean-text)]"
+                      : "text-[color:var(--brand-navy)]/80")
                   }
                 >
                   {c.verdict}
@@ -1197,7 +1197,7 @@ function ClientCandidateDelivery() {
           className="mt-2 rounded-md border border-dashed border-[color:var(--brand-ocean)]/30 bg-white px-3 py-2 text-xs italic leading-snug text-[color:var(--brand-navy)]/80"
           aria-live="polite"
         >
-          <span className="mr-1 not-italic font-semibold text-[color:var(--brand-ocean)]">
+          <span className="mr-1 not-italic font-semibold text-[color:var(--brand-ocean-text)]">
             Evidence ·
           </span>
           {req.evidence}
@@ -1207,8 +1207,8 @@ function ClientCandidateDelivery() {
       {/* Strengths + Validation areas */}
       <div className="mt-4 grid gap-3 sm:grid-cols-2">
         <div className="rounded-xl border border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-paper)] p-3.5">
-          <div className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/60">
-            <CheckCircle2 className="h-3.5 w-3.5 text-[color:var(--brand-ocean)]" aria-hidden />
+          <div className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/80">
+            <CheckCircle2 className="h-3.5 w-3.5 text-[color:var(--brand-ocean-text)]" aria-hidden />
             Strengths
           </div>
           <ul className="mt-2 space-y-1.5 text-xs text-[color:var(--brand-navy)]/80">
@@ -1224,8 +1224,8 @@ function ClientCandidateDelivery() {
           </ul>
         </div>
         <div className="rounded-xl border border-[color:var(--brand-navy)]/10 bg-white p-3.5">
-          <div className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/60">
-            <Target className="h-3.5 w-3.5 text-[color:var(--brand-navy)]/60" aria-hidden />
+          <div className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/80">
+            <Target className="h-3.5 w-3.5 text-[color:var(--brand-navy)]/80" aria-hidden />
             Validate in interview
           </div>
           <ul className="mt-2 space-y-1.5 text-xs text-[color:var(--brand-navy)]/80">
@@ -1244,8 +1244,8 @@ function ClientCandidateDelivery() {
 
       {/* Professional experience */}
       <div className="mt-4 rounded-xl border border-[color:var(--brand-navy)]/10 bg-white p-3.5">
-        <div className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/60">
-          <Briefcase className="h-3.5 w-3.5 text-[color:var(--brand-navy)]/60" aria-hidden />
+        <div className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/80">
+          <Briefcase className="h-3.5 w-3.5 text-[color:var(--brand-navy)]/80" aria-hidden />
           Professional experience
         </div>
         <ul className="mt-2 space-y-1.5 text-xs text-[color:var(--brand-navy)]/80">
@@ -1255,7 +1255,7 @@ function ClientCandidateDelivery() {
                 <span className="font-semibold text-[color:var(--brand-navy)]">{e.role}</span> ·{" "}
                 {e.org}
               </span>
-              <span className="shrink-0 text-[color:var(--brand-navy)]/55">{e.period}</span>
+              <span className="shrink-0 text-[color:var(--brand-navy)]/80">{e.period}</span>
             </li>
           ))}
         </ul>
@@ -1263,14 +1263,14 @@ function ClientCandidateDelivery() {
 
       {/* Personalized interview questions */}
       <div className="mt-4 rounded-xl border border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-sky)]/25 p-3.5">
-        <div className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/65">
+        <div className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/80">
           <MessageCircle className="h-3.5 w-3.5" aria-hidden />
           Personalized interview questions
         </div>
         <ul className="mt-2 space-y-1.5 text-sm italic text-[color:var(--brand-navy)]/85">
           {candidate.questions.map((q) => (
             <li key={q} className="flex gap-2">
-              <Quote className="mt-1 h-3.5 w-3.5 shrink-0 text-[color:var(--brand-navy)]/50" aria-hidden />
+              <Quote className="mt-1 h-3.5 w-3.5 shrink-0 text-[color:var(--brand-navy)]/80" aria-hidden />
               <span>{q}</span>
             </li>
           ))}
@@ -1293,7 +1293,7 @@ function ClientCandidateDelivery() {
         </button>
         <button
           type="button"
-          className="rounded-md border border-[color:var(--brand-navy)]/15 bg-white px-3 py-2 text-center text-sm font-semibold text-[color:var(--brand-navy)]/70 hover:bg-[color:var(--brand-navy)]/[0.04] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+          className="rounded-md border border-[color:var(--brand-navy)]/15 bg-white px-3 py-2 text-center text-sm font-semibold text-[color:var(--brand-navy)]/80 hover:bg-[color:var(--brand-navy)]/[0.04] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
         >
           Pass
         </button>
@@ -1325,8 +1325,8 @@ function Home() {
         <PublicPage>
           <div className="grid grid-cols-1 gap-12 py-16 sm:py-20 lg:grid-cols-[1.05fr_1fr] lg:py-24">
             <div className="flex min-w-0 flex-col justify-center gap-6">
-              <span className="inline-flex w-fit items-center gap-2 rounded-full border border-[color:var(--brand-navy)]/12 bg-white/70 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/75 backdrop-blur">
-                <Sparkles className="h-3.5 w-3.5 text-[color:var(--brand-ocean)]" aria-hidden />
+              <span className="inline-flex w-fit items-center gap-2 rounded-full border border-[color:var(--brand-navy)]/12 bg-white/70 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/80 backdrop-blur">
+                <Sparkles className="h-3.5 w-3.5 text-[color:var(--brand-ocean-text)]" aria-hidden />
                 Subscription recruiting
               </span>
               <h1
@@ -1335,9 +1335,9 @@ function Home() {
               >
                 Your hiring team,
                 <br className="hidden sm:block" />{" "}
-                <span className="text-[color:var(--brand-ocean)]">on demand.</span>
+                <span className="text-[color:var(--brand-ocean-text)]">on demand.</span>
               </h1>
-              <p className="max-w-xl text-lg text-[color:var(--brand-navy)]/75">
+              <p className="max-w-xl text-lg text-[color:var(--brand-navy)]/80">
                 TaaSFlow is subscription recruiting for Series A–C teams. Get ranked, enriched candidates through a live dashboard for one flat monthly fee.{" "}
                 <span className="font-semibold text-[color:var(--brand-navy)]">Pre-screened, ranked candidates in 7–14 days. No placement fees.</span>
               </p>
@@ -1351,7 +1351,7 @@ function Home() {
                     key={t}
                     className="inline-flex items-center gap-1.5 rounded-full border border-[color:var(--brand-navy)]/12 bg-white/70 px-3 py-1.5 text-xs font-semibold text-[color:var(--brand-navy)]/80 backdrop-blur"
                   >
-                    <CheckCircle2 className="h-3.5 w-3.5 text-[color:var(--brand-ocean)]" aria-hidden />
+                    <CheckCircle2 className="h-3.5 w-3.5 text-[color:var(--brand-ocean-text)]" aria-hidden />
                     {t}
                   </li>
                 ))}
@@ -1371,16 +1371,16 @@ function Home() {
                   See the Platform
                 </Link>
               </div>
-              <div className="text-xs text-[color:var(--brand-navy)]/60">
+              <div className="text-xs text-[color:var(--brand-navy)]/80">
                 Hiring for a candidate seat?{" "}
                 <Link
                   to="/jobs"
-                  className="inline-flex items-center gap-1 font-semibold text-[color:var(--brand-ocean)] underline-offset-4 hover:text-[color:var(--brand-navy)] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)] rounded"
+                  className="inline-flex items-center gap-1 font-semibold text-[color:var(--brand-ocean-text)] underline-offset-4 hover:text-[color:var(--brand-navy)] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)] rounded"
                 >
                   Browse open jobs <ArrowRight className="h-3 w-3" aria-hidden />
                 </Link>
               </div>
-              <p className="text-xs text-[color:var(--brand-navy)]/60">
+              <p className="text-xs text-[color:var(--brand-navy)]/80">
                 You keep the ATS, the candidates, and the final call.
               </p>
 
@@ -1405,13 +1405,13 @@ function Home() {
           <div className="rounded-3xl border border-[color:var(--brand-navy)]/10 bg-white p-6 sm:p-10">
             <div className="grid gap-8 lg:grid-cols-[1fr_1.2fr]">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[color:var(--brand-ocean)]">
+                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[color:var(--brand-ocean-text)]">
                   ${PRICE_PILOT_USD} pilot
                 </p>
                 <h2 className="mt-2 font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight text-[color:var(--brand-navy)]">
                   Try one role before you subscribe.
                 </h2>
-                <p className="mt-3 text-[color:var(--brand-navy)]/70">
+                <p className="mt-3 text-[color:var(--brand-navy)]/80">
                   One role, run end-to-end: intake, sourcing and scoring, then a ranked shortlist in
                   your dashboard. No placement fees, no commitment afterwards.
                 </p>
@@ -1437,12 +1437,12 @@ function Home() {
                       <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-[color:var(--brand-navy)]/5 text-xs font-semibold text-[color:var(--brand-navy)]">
                         {s.n}
                       </span>
-                      <span className="text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-ocean)]">
+                      <span className="text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-ocean-text)]">
                         {s.when}
                       </span>
                     </div>
                     <h3 className="mt-3 text-sm font-semibold text-[color:var(--brand-navy)]">{s.t}</h3>
-                    <p className="mt-1 text-xs text-[color:var(--brand-navy)]/70">{s.b}</p>
+                    <p className="mt-1 text-xs text-[color:var(--brand-navy)]/80">{s.b}</p>
                   </li>
                 ))}
               </ol>
@@ -1457,13 +1457,13 @@ function Home() {
       <PublicSection>
         <PublicPage>
           <div className="mx-auto max-w-3xl text-center">
-            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[color:var(--brand-ocean)]">
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[color:var(--brand-ocean-text)]">
               What you receive
             </p>
             <h2 className="mt-2 font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight text-[color:var(--brand-navy)] sm:text-4xl">
               This is the deliverable. Not a stack of CVs.
             </h2>
-            <p className="mt-3 text-[color:var(--brand-navy)]/70">
+            <p className="mt-3 text-[color:var(--brand-navy)]/80">
               Pick a candidate. The fit recommendation, requirement coverage,
               strengths, validations, interview prompts, and stage controls
               update together — the same layout your team works in every week.
@@ -1471,7 +1471,7 @@ function Home() {
           </div>
 
           <div className="mx-auto mt-8 max-w-4xl">
-            <div className="mb-3 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/55">
+            <div className="mb-3 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/80">
               <span className="inline-flex items-center gap-1.5">
                 <span className="inline-block h-1.5 w-1.5 rounded-full bg-[color:var(--brand-ocean)]" aria-hidden />
                 Interactive · fictional data
@@ -1550,7 +1550,7 @@ function Home() {
             </Link>
             <Link
               to="/how-it-works"
-              className="inline-flex items-center gap-1 text-sm font-semibold text-[color:var(--brand-ocean)] hover:text-[color:var(--brand-navy)]"
+              className="inline-flex items-center gap-1 text-sm font-semibold text-[color:var(--brand-ocean-text)] hover:text-[color:var(--brand-navy)]"
             >
               How the model works <ArrowRight className="h-4 w-4" aria-hidden />
             </Link>
@@ -1653,25 +1653,25 @@ function Home() {
                   >
                     <div className="flex items-center gap-2">
                       <Building2
-                        className="h-4 w-4 text-[color:var(--brand-ocean)]"
+                        className="h-4 w-4 text-[color:var(--brand-ocean-text)]"
                         aria-hidden
                       />
                       <h3 className="text-base font-semibold text-[color:var(--brand-navy)]">
                         {ind.name}
                       </h3>
                     </div>
-                    <p className="mt-3 text-sm text-[color:var(--brand-navy)]/75">
+                    <p className="mt-3 text-sm text-[color:var(--brand-navy)]/80">
                       {ind.context}
                     </p>
                     <div className="mt-4 border-t border-[color:var(--brand-navy)]/8 pt-3">
-                      <div className="text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/55">
+                      <div className="text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/80">
                         Example roles
                       </div>
                       <div className="mt-1 text-sm text-[color:var(--brand-navy)]/85">
                         {ind.roles}
                       </div>
                     </div>
-                    <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-[color:var(--brand-ocean)] group-hover:text-[color:var(--brand-navy)]">
+                    <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-[color:var(--brand-ocean-text)] group-hover:text-[color:var(--brand-navy)]">
                       View industry <ArrowRight className="h-4 w-4" aria-hidden />
                     </span>
                   </Link>
@@ -1725,13 +1725,13 @@ function Home() {
                       </span>
                     </div>
                     <div className="flex flex-1 flex-col p-5">
-                      <h3 className="text-base font-semibold leading-snug text-[color:var(--brand-navy)] group-hover:text-[color:var(--brand-ocean)]">
+                      <h3 className="text-base font-semibold leading-snug text-[color:var(--brand-navy)] group-hover:text-[color:var(--brand-ocean-text)]">
                         {r.title}
                       </h3>
-                      <p className="mt-2 flex-1 text-sm leading-relaxed text-[color:var(--brand-navy)]/70">
+                      <p className="mt-2 flex-1 text-sm leading-relaxed text-[color:var(--brand-navy)]/80">
                         {r.description}
                       </p>
-                      <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-[color:var(--brand-ocean)]">
+                      <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-[color:var(--brand-ocean-text)]">
                         Read {r.type.toLowerCase()} <ArrowRight className="h-4 w-4" aria-hidden />
                       </span>
                     </div>
@@ -1742,7 +1742,7 @@ function Home() {
             <div className="mt-8">
               <Link
                 to="/resources"
-                className="inline-flex items-center gap-1 text-sm font-semibold text-[color:var(--brand-ocean)] hover:text-[color:var(--brand-navy)]"
+                className="inline-flex items-center gap-1 text-sm font-semibold text-[color:var(--brand-ocean-text)] hover:text-[color:var(--brand-navy)]"
               >
                 Browse all resources <ArrowRight className="h-4 w-4" aria-hidden />
               </Link>
@@ -1766,7 +1766,7 @@ function Home() {
                 <dt className="text-base font-semibold text-[color:var(--brand-navy)]">
                   {item.q}
                 </dt>
-                <dd className="mt-2 text-sm leading-relaxed text-[color:var(--brand-navy)]/70">
+                <dd className="mt-2 text-sm leading-relaxed text-[color:var(--brand-navy)]/80">
                   {item.a}
                 </dd>
               </Card>
@@ -1775,7 +1775,7 @@ function Home() {
           <div className="mt-8">
             <Link
               to="/faq"
-              className="inline-flex items-center gap-1 text-sm font-semibold text-[color:var(--brand-ocean)] hover:text-[color:var(--brand-navy)]"
+              className="inline-flex items-center gap-1 text-sm font-semibold text-[color:var(--brand-ocean-text)] hover:text-[color:var(--brand-navy)]"
             >
               View all FAQs <ArrowRight className="h-4 w-4" aria-hidden />
             </Link>

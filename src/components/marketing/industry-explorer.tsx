@@ -169,7 +169,7 @@ export function IndustryExplorer({ compact = false }: { compact?: boolean }) {
                   className={`rounded-full px-1.5 text-[10px] font-bold ${
                     isActive
                       ? "bg-white/20 text-white"
-                      : "bg-[color:var(--brand-mist)] text-[color:var(--brand-navy)]/70"
+                      : "bg-[color:var(--brand-mist)] text-[color:var(--brand-navy)]/80"
                   }`}
                 >
                   {counts[c]}
@@ -182,7 +182,7 @@ export function IndustryExplorer({ compact = false }: { compact?: boolean }) {
         <label className="relative block max-w-md">
           <span className="sr-only">Search industries, roles, skills</span>
           <Search
-            className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[color:var(--brand-navy)]/50"
+            className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[color:var(--brand-navy)]/80"
             aria-hidden
           />
           <input
@@ -190,7 +190,7 @@ export function IndustryExplorer({ compact = false }: { compact?: boolean }) {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search industry, role, skill, certification or alias"
-            className="w-full rounded-full border border-[color:var(--brand-navy)]/15 bg-white py-2.5 pl-9 pr-4 text-sm text-[color:var(--brand-navy)] placeholder:text-[color:var(--brand-navy)]/50 focus:border-[color:var(--brand-ocean)] focus:outline-none focus:ring-2 focus:ring-[color:var(--brand-focus-ring)]"
+            className="w-full rounded-full border border-[color:var(--brand-navy)]/15 bg-white py-2.5 pl-9 pr-4 text-sm text-[color:var(--brand-navy)] placeholder:text-[color:var(--brand-navy)]/80 focus:border-[color:var(--brand-ocean)] focus:outline-none focus:ring-2 focus:ring-[color:var(--brand-focus-ring)]"
           />
         </label>
       </div>
@@ -199,7 +199,7 @@ export function IndustryExplorer({ compact = false }: { compact?: boolean }) {
       <div className="mt-6 grid gap-5 lg:grid-cols-[280px_minmax(0,1fr)]">
         {/* Industry list */}
         <div className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white">
-          <div className="border-b border-[color:var(--brand-navy)]/10 px-4 py-3 text-[11px] font-semibold uppercase tracking-widest text-[color:var(--brand-navy)]/60">
+          <div className="border-b border-[color:var(--brand-navy)]/10 px-4 py-3 text-[11px] font-semibold uppercase tracking-widest text-[color:var(--brand-navy)]/80">
             {q ? `${filtered.length} matches` : `${filtered.length} industries`}
           </div>
           <ul
@@ -208,7 +208,7 @@ export function IndustryExplorer({ compact = false }: { compact?: boolean }) {
             className="max-h-[420px] overflow-y-auto py-1"
           >
             {filtered.length === 0 ? (
-              <li className="px-4 py-6 text-sm text-[color:var(--brand-navy)]/60">
+              <li className="px-4 py-6 text-sm text-[color:var(--brand-navy)]/80">
                 No matches. Try a role, skill or certification.
               </li>
             ) : (
@@ -229,7 +229,7 @@ export function IndustryExplorer({ compact = false }: { compact?: boolean }) {
                       <span className="truncate">{e.name}</span>
                       {isActive ? (
                         <ArrowRight
-                          className="h-3.5 w-3.5 shrink-0 text-[color:var(--brand-ocean)]"
+                          className="h-3.5 w-3.5 shrink-0 text-[color:var(--brand-ocean-text)]"
                           aria-hidden
                         />
                       ) : null}
@@ -266,14 +266,14 @@ function IndustryDetail({
     <div className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6 sm:p-7">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="text-[10px] font-semibold uppercase tracking-widest text-[color:var(--brand-ocean)]">
+          <p className="text-[10px] font-semibold uppercase tracking-widest text-[color:var(--brand-ocean-text)]">
             {entry.explorerCategory}
           </p>
           <h3 className="mt-1 font-[family-name:var(--brand-font-display)] text-2xl font-semibold text-[color:var(--brand-navy)] sm:text-3xl">
             {entry.name}
           </h3>
           {entry.aliases && entry.aliases.length > 0 ? (
-            <p className="mt-1 text-xs text-[color:var(--brand-navy)]/55">
+            <p className="mt-1 text-xs text-[color:var(--brand-navy)]/80">
               Also: {entry.aliases.slice(0, 4).join(" · ")}
             </p>
           ) : null}
@@ -315,7 +315,7 @@ function IndustryDetail({
 
       <div className="mt-5 grid gap-4 md:grid-cols-2">
         <div>
-          <div className="text-[10px] font-semibold uppercase tracking-widest text-[color:var(--brand-navy)]/55">
+          <div className="text-[10px] font-semibold uppercase tracking-widest text-[color:var(--brand-navy)]/80">
             Typical roles
           </div>
           <ul className="mt-2 grid grid-cols-1 gap-1.5">
@@ -325,7 +325,7 @@ function IndustryDetail({
                 className="flex items-start gap-2 text-sm text-[color:var(--brand-navy)]/85"
               >
                 <CheckCircle2
-                  className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[color:var(--brand-ocean)]"
+                  className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[color:var(--brand-ocean-text)]"
                   aria-hidden
                 />
                 <span>{r}</span>
@@ -337,7 +337,7 @@ function IndustryDetail({
         <div className="space-y-4">
           {signals.length > 0 ? (
             <div>
-              <div className="text-[10px] font-semibold uppercase tracking-widest text-[color:var(--brand-navy)]/55">
+              <div className="text-[10px] font-semibold uppercase tracking-widest text-[color:var(--brand-navy)]/80">
                 Candidate signals evaluated
               </div>
               <ul className="mt-2 space-y-1.5">
@@ -347,7 +347,7 @@ function IndustryDetail({
                     className="flex items-start gap-2 text-xs text-[color:var(--brand-navy)]/80"
                   >
                     <Sparkles
-                      className="mt-0.5 h-3 w-3 shrink-0 text-[color:var(--brand-ocean)]"
+                      className="mt-0.5 h-3 w-3 shrink-0 text-[color:var(--brand-ocean-text)]"
                       aria-hidden
                     />
                     <span>
@@ -364,7 +364,7 @@ function IndustryDetail({
 
           {skills.length > 0 ? (
             <div>
-              <div className="text-[10px] font-semibold uppercase tracking-widest text-[color:var(--brand-navy)]/55">
+              <div className="text-[10px] font-semibold uppercase tracking-widest text-[color:var(--brand-navy)]/80">
                 Relevant skills
               </div>
               <div className="mt-2 flex flex-wrap gap-1.5">
@@ -382,7 +382,7 @@ function IndustryDetail({
 
           {certs.length > 0 ? (
             <div>
-              <div className="text-[10px] font-semibold uppercase tracking-widest text-[color:var(--brand-navy)]/55">
+              <div className="text-[10px] font-semibold uppercase tracking-widest text-[color:var(--brand-navy)]/80">
                 Certifications
               </div>
               <ul className="mt-2 space-y-1">
@@ -392,7 +392,7 @@ function IndustryDetail({
                     className="flex items-center gap-2 text-xs text-[color:var(--brand-navy)]/80"
                   >
                     <Award
-                      className="h-3 w-3 shrink-0 text-[color:var(--brand-ocean)]"
+                      className="h-3 w-3 shrink-0 text-[color:var(--brand-ocean-text)]"
                       aria-hidden
                     />
                     {c}
@@ -429,8 +429,8 @@ function Panel({
       <div
         className={`text-[10px] font-semibold uppercase tracking-widest ${
           tone === "ocean"
-            ? "text-[color:var(--brand-ocean)]"
-            : "text-[color:var(--brand-navy)]/60"
+            ? "text-[color:var(--brand-ocean-text)]"
+            : "text-[color:var(--brand-navy)]/80"
         }`}
       >
         {eyebrow}
@@ -438,7 +438,7 @@ function Panel({
       <div className="mt-1 text-sm font-semibold text-[color:var(--brand-navy)]">
         {title}
       </div>
-      <p className="mt-1.5 text-xs leading-relaxed text-[color:var(--brand-navy)]/75">
+      <p className="mt-1.5 text-xs leading-relaxed text-[color:var(--brand-navy)]/80">
         {body}
       </p>
     </div>

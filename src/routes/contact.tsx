@@ -136,13 +136,13 @@ function ContactPage() {
       {/* Hero */}
       <PublicSection className="pb-6 pt-16 sm:pt-20">
         <PublicPage>
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
             Contact
           </p>
           <h1 className="mt-3 max-w-3xl font-[family-name:var(--brand-font-display)] text-4xl font-semibold tracking-tight sm:text-5xl">
             Pick your path. We route from there.
           </h1>
-          <p className="mt-5 max-w-2xl text-lg text-[color:var(--brand-navy)]/70">
+          <p className="mt-5 max-w-2xl text-lg text-[color:var(--brand-navy)]/80">
             Five paths, five teams. Choose the one that fits and you'll see the right CTA,
             an honest response time, and a backup channel — before you fill a single field.
           </p>
@@ -172,7 +172,7 @@ function ContactPage() {
                 >
                   <opt.icon className="h-5 w-5 shrink-0" />
                   <span className="text-sm font-semibold leading-snug">{opt.label}</span>
-                  <span className={"text-xs leading-snug " + (active ? "text-white/75" : "text-[color:var(--brand-navy)]/60")}>
+                  <span className={"text-xs leading-snug " + (active ? "text-white/75" : "text-[color:var(--brand-navy)]/80")}>
                     {opt.tagline}
                   </span>
                 </button>
@@ -200,7 +200,7 @@ function ContactPage() {
                     {intent.label}
                   </h2>
                 </div>
-                <p className="mt-3 text-[color:var(--brand-navy)]/70">{intent.tagline}</p>
+                <p className="mt-3 text-[color:var(--brand-navy)]/80">{intent.tagline}</p>
 
                 <div className="mt-6 flex flex-wrap gap-2.5">
                   {intent.primaryCta.to ? (
@@ -243,24 +243,24 @@ function ContactPage() {
 
                 <dl className="mt-8 space-y-4 border-t border-[color:var(--brand-navy)]/10 pt-6 text-sm">
                   <div className="flex items-start gap-3">
-                    <Clock className="mt-0.5 h-4 w-4 text-[color:var(--brand-navy)]/60" />
+                    <Clock className="mt-0.5 h-4 w-4 text-[color:var(--brand-navy)]/80" />
                     <div>
                       <dt className="font-semibold text-[color:var(--brand-navy)]">Expected response</dt>
-                      <dd className="text-[color:var(--brand-navy)]/70">{intent.responseSla}</dd>
+                      <dd className="text-[color:var(--brand-navy)]/80">{intent.responseSla}</dd>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
-                    <CheckCircle2 className="mt-0.5 h-4 w-4 text-[color:var(--brand-navy)]/60" />
+                    <CheckCircle2 className="mt-0.5 h-4 w-4 text-[color:var(--brand-navy)]/80" />
                     <div>
                       <dt className="font-semibold text-[color:var(--brand-navy)]">Responded to by</dt>
-                      <dd className="text-[color:var(--brand-navy)]/70">{intent.respondsFrom}</dd>
+                      <dd className="text-[color:var(--brand-navy)]/80">{intent.respondsFrom}</dd>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
-                    <Mail className="mt-0.5 h-4 w-4 text-[color:var(--brand-navy)]/60" />
+                    <Mail className="mt-0.5 h-4 w-4 text-[color:var(--brand-navy)]/80" />
                     <div>
                       <dt className="font-semibold text-[color:var(--brand-navy)]">Backup channel</dt>
-                      <dd className="text-[color:var(--brand-navy)]/70">{intent.backup}</dd>
+                      <dd className="text-[color:var(--brand-navy)]/80">{intent.backup}</dd>
                     </div>
                   </div>
                 </dl>
@@ -376,12 +376,12 @@ function ContactForm({ intent }: { intent: IntentSpec }) {
         <h3 className="font-[family-name:var(--brand-font-display)] text-xl font-semibold">
           Thanks — we've got it.
         </h3>
-        <p className="mt-2 text-sm text-[color:var(--brand-navy)]/70">
+        <p className="mt-2 text-sm text-[color:var(--brand-navy)]/80">
           Expected response: <span className="font-semibold">{intent.responseSla}</span>, from{" "}
           <span className="font-semibold">{intent.respondsFrom}</span>. We'll reply to the email
           you provided.
         </p>
-        <p className="mt-2 text-xs text-[color:var(--brand-navy)]/60">
+        <p className="mt-2 text-xs text-[color:var(--brand-navy)]/80">
           Reference: <span className="font-mono">{done.traceId.slice(0, 8) || "—"}</span>
         </p>
       </div>
@@ -394,7 +394,7 @@ function ContactForm({ intent }: { intent: IntentSpec }) {
         <h3 className="font-[family-name:var(--brand-font-display)] text-xl font-semibold">
           {formHeading}
         </h3>
-        <p className="mt-1 text-sm text-[color:var(--brand-navy)]/70">{formDescription}</p>
+        <p className="mt-1 text-sm text-[color:var(--brand-navy)]/80">{formDescription}</p>
       </div>
 
       {/* Honeypot */}
@@ -491,7 +491,7 @@ function ContactForm({ intent }: { intent: IntentSpec }) {
         >
           {submitting ? "Sending…" : "Send message"}
         </Button>
-        <span className="text-xs text-[color:var(--brand-navy)]/50">
+        <span className="text-xs text-[color:var(--brand-navy)]/80">
           Expected reply: {intent.responseSla.toLowerCase()}.
         </span>
       </div>

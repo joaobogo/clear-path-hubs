@@ -101,13 +101,13 @@ function AboutPage() {
       {/* Purpose */}
       <PublicSection className="pt-24">
         <PublicPage className="max-w-4xl">
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
             About TaaSFlow
           </p>
           <h1 className="mt-3 font-[family-name:var(--brand-font-display)] text-4xl font-semibold tracking-tight sm:text-5xl lg:text-6xl">
             We exist to make recruiting explainable again.
           </h1>
-          <p className="mt-6 max-w-2xl text-lg text-[color:var(--brand-navy)]/70">
+          <p className="mt-6 max-w-2xl text-lg text-[color:var(--brand-navy)]/80">
             TaaSFlow is an on-demand recruiting function delivered through a
             transparent product — human recruiters, AI-supported structure,
             and a live workspace on a flat subscription. Every shortlist,
@@ -120,13 +120,13 @@ function AboutPage() {
       {/* Leadership */}
       <PublicSection className="border-t border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-mist)]/40 py-16">
         <PublicPage>
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
             Leadership
           </p>
           <h2 className="mt-3 max-w-2xl font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight sm:text-4xl">
             Meet the founders
           </h2>
-          <p className="mt-4 max-w-2xl text-[color:var(--brand-navy)]/70">
+          <p className="mt-4 max-w-2xl text-[color:var(--brand-navy)]/80">
             Careers built advising global enterprises. Now applying the same
             rigor to the world of hiring.
           </p>
@@ -163,11 +163,11 @@ function AboutPage() {
                       <p className="font-[family-name:var(--brand-font-display)] text-xl font-semibold text-[color:var(--brand-navy)]">
                         {leader.name}
                       </p>
-                      <p className="text-sm font-medium text-[color:var(--brand-navy)]/70">
+                      <p className="text-sm font-medium text-[color:var(--brand-navy)]/80">
                         {leader.title}
                       </p>
                       {leader.location ? (
-                        <p className="mt-0.5 text-xs text-[color:var(--brand-navy)]/55">
+                        <p className="mt-0.5 text-xs text-[color:var(--brand-navy)]/80">
                           {leader.location}
                         </p>
                       ) : null}
@@ -178,7 +178,7 @@ function AboutPage() {
                     <p className="text-base leading-relaxed">"{leader.quote}"</p>
                   </blockquote>
 
-                  <p className="mt-5 text-sm text-[color:var(--brand-navy)]/75">
+                  <p className="mt-5 text-sm text-[color:var(--brand-navy)]/80">
                     {leader.bio}
                   </p>
 
@@ -186,7 +186,7 @@ function AboutPage() {
                     {leader.tags.map((tag) => (
                       <li
                         key={tag}
-                        className="rounded-full border border-[color:var(--brand-navy)]/12 bg-[color:var(--brand-mist)]/60 px-2.5 py-1 text-xs font-medium text-[color:var(--brand-navy)]/75"
+                        className="rounded-full border border-[color:var(--brand-navy)]/12 bg-[color:var(--brand-mist)]/60 px-2.5 py-1 text-xs font-medium text-[color:var(--brand-navy)]/80"
                       >
                         {tag}
                       </li>
@@ -212,7 +212,7 @@ function AboutPage() {
             <h3 className="font-[family-name:var(--brand-font-display)] text-2xl font-semibold tracking-tight text-[color:var(--brand-navy)] sm:text-3xl">
               Why TaaSFlow, why now
             </h3>
-            <p className="mt-4 text-[color:var(--brand-navy)]/75">{WHY_NOW}</p>
+            <p className="mt-4 text-[color:var(--brand-navy)]/80">{WHY_NOW}</p>
             <div className="mt-6 flex flex-wrap gap-3">
               <Link
                 to="/journey"
@@ -234,7 +234,7 @@ function AboutPage() {
       {/* Operating principles */}
       <PublicSection>
         <PublicPage>
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
             Operating principles
           </p>
           <h2 className="mt-3 max-w-2xl font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight sm:text-4xl">
@@ -246,14 +246,14 @@ function AboutPage() {
                 key={p.title}
                 className="flex gap-5 rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6"
               >
-                <span className="font-[family-name:var(--brand-font-display)] text-3xl font-semibold text-[color:var(--brand-navy)]/25">
+                <span className="font-[family-name:var(--brand-font-display)] text-3xl font-semibold text-[color:var(--brand-navy)]/80">
                   0{i + 1}
                 </span>
                 <div>
                   <h3 className="text-lg font-semibold text-[color:var(--brand-navy)]">
                     {p.title}
                   </h3>
-                  <p className="mt-2 text-sm text-[color:var(--brand-navy)]/75">{p.body}</p>
+                  <p className="mt-2 text-sm text-[color:var(--brand-navy)]/80">{p.body}</p>
                 </div>
               </div>
             ))}
@@ -276,7 +276,7 @@ function AboutPage() {
                 <h3 className="text-lg font-semibold text-[color:var(--brand-navy)]">
                   {s.who}
                 </h3>
-                <p className="mt-3 text-sm text-[color:var(--brand-navy)]/75">{s.body}</p>
+                <p className="mt-3 text-sm text-[color:var(--brand-navy)]/80">{s.body}</p>
               </div>
             ))}
           </div>

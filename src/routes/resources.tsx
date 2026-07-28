@@ -265,22 +265,22 @@ function InsightCard({ i }: { i: Insight }) {
   return (
     <article className="group flex flex-col rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6 transition hover:border-[color:var(--brand-ocean)]/40 hover:shadow-sm">
       <div className="flex items-center gap-3">
-        <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-[color:var(--brand-ocean)]/10 text-[color:var(--brand-ocean)]">
+        <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-[color:var(--brand-ocean)]/10 text-[color:var(--brand-ocean-text)]">
           <Icon className="h-5 w-5" aria-hidden />
         </div>
-        <span className="text-[10px] font-semibold uppercase tracking-widest text-[color:var(--brand-ocean)]">
+        <span className="text-[10px] font-semibold uppercase tracking-widest text-[color:var(--brand-ocean-text)]">
           {i.eyebrow}
         </span>
       </div>
       <h3 className="mt-4 text-lg font-semibold leading-snug text-[color:var(--brand-navy)]">
         {i.headline}
       </h3>
-      <p className="mt-2 flex-1 text-sm text-[color:var(--brand-navy)]/75">
+      <p className="mt-2 flex-1 text-sm text-[color:var(--brand-navy)]/80">
         {i.takeaway}
       </p>
       <Link
         to={i.href}
-        className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-[color:var(--brand-ocean)] hover:text-[color:var(--brand-navy)]"
+        className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-[color:var(--brand-ocean-text)] hover:text-[color:var(--brand-navy)]"
       >
         {i.hrefLabel}
         <ArrowRight className="h-4 w-4" aria-hidden />
@@ -302,7 +302,7 @@ function ChecklistCard({ c }: { c: Checklist }) {
             className="flex items-start gap-2 text-sm text-[color:var(--brand-navy)]/85"
           >
             <CheckCircle2
-              className="mt-0.5 h-4 w-4 shrink-0 text-[color:var(--brand-ocean)]"
+              className="mt-0.5 h-4 w-4 shrink-0 text-[color:var(--brand-ocean-text)]"
               aria-hidden
             />
             <span>{item}</span>
@@ -311,7 +311,7 @@ function ChecklistCard({ c }: { c: Checklist }) {
       </ul>
       <Link
         to={c.href}
-        className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-[color:var(--brand-ocean)] hover:underline"
+        className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-[color:var(--brand-ocean-text)] hover:underline"
       >
         {c.hrefLabel}
         <ArrowRight className="h-4 w-4" aria-hidden />
@@ -327,7 +327,7 @@ function BenchmarkCard({ b }: { b: Benchmark }) {
       className="group flex min-w-0 items-center justify-between gap-3 rounded-xl border border-[color:var(--brand-navy)]/10 bg-white px-4 py-3 transition hover:border-[color:var(--brand-ocean)]/40"
     >
       <div className="min-w-0 flex-1">
-        <div className="text-[10px] font-semibold uppercase tracking-widest text-[color:var(--brand-ocean)]">
+        <div className="text-[10px] font-semibold uppercase tracking-widest text-[color:var(--brand-ocean-text)]">
           {b.label}
         </div>
         <div className="mt-0.5 text-sm text-[color:var(--brand-navy)]/85">
@@ -335,7 +335,7 @@ function BenchmarkCard({ b }: { b: Benchmark }) {
         </div>
       </div>
       <ArrowRight
-        className="h-4 w-4 shrink-0 text-[color:var(--brand-navy)]/40 transition group-hover:text-[color:var(--brand-ocean)]"
+        className="h-4 w-4 shrink-0 text-[color:var(--brand-navy)]/80 transition group-hover:text-[color:var(--brand-ocean-text)]"
         aria-hidden
       />
     </Link>
@@ -352,18 +352,18 @@ function CardGrid({ items }: { items: Card[] }) {
             key={r.title}
             className="flex flex-col rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6 transition hover:border-[color:var(--brand-ocean)]/40"
           >
-            <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-lg bg-[color:var(--brand-ocean)]/10 text-[color:var(--brand-ocean)]">
+            <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-lg bg-[color:var(--brand-ocean)]/10 text-[color:var(--brand-ocean-text)]">
               <Icon className="h-5 w-5" aria-hidden />
             </div>
             <h3 className="text-lg font-semibold tracking-tight text-[color:var(--brand-navy)]">
               {r.title}
             </h3>
-            <p className="mt-2 flex-1 text-sm text-[color:var(--brand-navy)]/75">
+            <p className="mt-2 flex-1 text-sm text-[color:var(--brand-navy)]/80">
               {r.description}
             </p>
             <Link
               to={r.href}
-              className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-[color:var(--brand-ocean)] hover:underline"
+              className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-[color:var(--brand-ocean-text)] hover:underline"
             >
               {r.cta} <ArrowRight className="h-4 w-4" aria-hidden />
             </Link>
@@ -390,13 +390,13 @@ function Section({
   return (
     <section id={id} className="mt-20 scroll-mt-24">
       <header className="max-w-3xl">
-        <p className="text-xs font-semibold uppercase tracking-widest text-[color:var(--brand-ocean)]">
+        <p className="text-xs font-semibold uppercase tracking-widest text-[color:var(--brand-ocean-text)]">
           {eyebrow}
         </p>
         <h2 className="mt-2 font-[family-name:var(--brand-font-display)] text-2xl font-semibold tracking-tight text-[color:var(--brand-navy)] sm:text-3xl">
           {title}
         </h2>
-        <p className="mt-2 text-[color:var(--brand-navy)]/70">{description}</p>
+        <p className="mt-2 text-[color:var(--brand-navy)]/80">{description}</p>
       </header>
       <div className="mt-8">{children}</div>
     </section>
@@ -423,7 +423,7 @@ function CollectionsNav() {
         <a
           key={c.id}
           href={`#${c.id}`}
-          className="inline-flex items-center rounded-full border border-[color:var(--brand-navy)]/15 bg-white px-3 py-1.5 text-xs font-semibold text-[color:var(--brand-navy)]/80 transition hover:border-[color:var(--brand-ocean)]/40 hover:text-[color:var(--brand-ocean)]"
+          className="inline-flex items-center rounded-full border border-[color:var(--brand-navy)]/15 bg-white px-3 py-1.5 text-xs font-semibold text-[color:var(--brand-navy)]/80 transition hover:border-[color:var(--brand-ocean)]/40 hover:text-[color:var(--brand-ocean-text)]"
         >
           {c.label}
         </a>
@@ -437,13 +437,13 @@ function ResourcesPage() {
     <SiteShell>
       <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         <header className="max-w-3xl">
-          <p className="text-xs font-semibold uppercase tracking-widest text-[color:var(--brand-ocean)]">
+          <p className="text-xs font-semibold uppercase tracking-widest text-[color:var(--brand-ocean-text)]">
             Resources
           </p>
           <h1 className="mt-3 font-[family-name:var(--brand-font-display)] text-4xl font-semibold tracking-tight sm:text-5xl">
             Guides, insights, and tools
           </h1>
-          <p className="mt-4 text-lg text-[color:var(--brand-navy)]/70">
+          <p className="mt-4 text-lg text-[color:var(--brand-navy)]/80">
             Short, visual, and linked. Every insight leads to a full source
             article, calculator, or industry destination.
           </p>
@@ -491,7 +491,7 @@ function ResourcesPage() {
           <div className="mt-6">
             <Link
               to="/industries"
-              className="inline-flex items-center gap-1.5 text-sm font-semibold text-[color:var(--brand-ocean)] hover:underline"
+              className="inline-flex items-center gap-1.5 text-sm font-semibold text-[color:var(--brand-ocean-text)] hover:underline"
             >
               Open the full industry explorer
               <ArrowRight className="h-4 w-4" aria-hidden />
@@ -539,7 +539,7 @@ function ResourcesPage() {
           <h2 className="font-[family-name:var(--brand-font-display)] text-2xl font-semibold tracking-tight text-[color:var(--brand-navy)]">
             Ready to see delivery in your own workspace?
           </h2>
-          <p className="mt-3 max-w-2xl text-[color:var(--brand-navy)]/70">
+          <p className="mt-3 max-w-2xl text-[color:var(--brand-navy)]/80">
             Start hiring with TaaSFlow and get a scored, ranked shortlist
             delivered inside your dedicated workspace.
           </p>

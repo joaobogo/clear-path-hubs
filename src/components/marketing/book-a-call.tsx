@@ -64,7 +64,7 @@ export function BookACallDialog({
               ? `Talk to us about ${common.industryName} hiring`
               : "Talk to a TaaSFlow recruiter"}
           </DialogTitle>
-          <DialogDescription className="text-sm text-[color:var(--brand-navy)]/70">
+          <DialogDescription className="text-sm text-[color:var(--brand-navy)]/80">
             Pick a call slot or send a message — we reply within one business day.
           </DialogDescription>
         </DialogHeader>
@@ -272,7 +272,7 @@ function CallForm({
   return (
     <form onSubmit={onSubmit} className="space-y-5">
       <div>
-        <Label className="text-xs font-semibold uppercase tracking-[0.12em] text-[color:var(--brand-navy)]/60">
+        <Label className="text-xs font-semibold uppercase tracking-[0.12em] text-[color:var(--brand-navy)]/80">
           Pick a day
         </Label>
         <div className="mt-2 grid grid-cols-5 gap-1.5">
@@ -284,7 +284,7 @@ function CallForm({
               className={`rounded-lg border px-2 py-2 text-center text-xs font-medium transition-all ${
                 i === dayIdx
                   ? "border-[color:var(--brand-ocean)] bg-[color:var(--brand-ocean)]/10 text-[color:var(--brand-navy)]"
-                  : "border-[color:var(--brand-navy)]/15 text-[color:var(--brand-navy)]/70 hover:border-[color:var(--brand-navy)]/40"
+                  : "border-[color:var(--brand-navy)]/15 text-[color:var(--brand-navy)]/80 hover:border-[color:var(--brand-navy)]/40"
               }`}
             >
               {dayFmt.format(d)}
@@ -293,9 +293,9 @@ function CallForm({
         </div>
       </div>
       <div>
-        <Label className="text-xs font-semibold uppercase tracking-[0.12em] text-[color:var(--brand-navy)]/60">
+        <Label className="text-xs font-semibold uppercase tracking-[0.12em] text-[color:var(--brand-navy)]/80">
           Available time
-          <span className="ml-2 inline-flex items-center gap-1 rounded-full bg-[color:var(--brand-navy)]/5 px-2 py-0.5 text-[10px] font-medium text-[color:var(--brand-navy)]/60">
+          <span className="ml-2 inline-flex items-center gap-1 rounded-full bg-[color:var(--brand-navy)]/5 px-2 py-0.5 text-[10px] font-medium text-[color:var(--brand-navy)]/80">
             <Clock className="h-3 w-3" /> 20 min
           </span>
         </Label>
@@ -348,7 +348,7 @@ function CallForm({
       ) : null}
       <div>
         <Label htmlFor="call-message" className="text-sm font-medium">
-          Anything we should know? <span className="text-[color:var(--brand-navy)]/50">(optional)</span>
+          Anything we should know? <span className="text-[color:var(--brand-navy)]/80">(optional)</span>
         </Label>
         <Textarea
           id="call-message"
@@ -386,7 +386,7 @@ function CallForm({
           </>
         )}
       </Button>
-      <p className="text-center text-[11px] text-[color:var(--brand-navy)]/55">
+      <p className="text-center text-[11px] text-[color:var(--brand-navy)]/80">
         We reply within one business day. You'll get a calendar invite once confirmed.
       </p>
     </form>
@@ -531,7 +531,7 @@ function Field({
     <div>
       <Label htmlFor={`inq-${name}`} className="text-sm font-medium">
         {label}
-        {required ? <span className="ml-0.5 text-[color:var(--brand-ocean)]">*</span> : null}
+        {required ? <span className="ml-0.5 text-[color:var(--brand-ocean-text)]">*</span> : null}
       </Label>
       <Input
         id={`inq-${name}`}

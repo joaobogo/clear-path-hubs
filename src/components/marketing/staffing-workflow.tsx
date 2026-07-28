@@ -129,7 +129,7 @@ const ACTOR_STYLE: Record<
     label: "Your agency",
   },
   taasflow: {
-    chip: "bg-[color:var(--brand-ocean)]/10 text-[color:var(--brand-ocean)]",
+    chip: "bg-[color:var(--brand-ocean)]/10 text-[color:var(--brand-ocean-text)]",
     ring: "border-[color:var(--brand-ocean)]/40",
     label: "TaaSFlow",
   },
@@ -156,7 +156,7 @@ export function StaffingWorkflow() {
                 className={`flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-semibold transition ${
                   isActive
                     ? `${st.ring} bg-[color:var(--brand-navy)]/[0.03] text-[color:var(--brand-navy)] shadow-sm`
-                    : "border-[color:var(--brand-navy)]/15 text-[color:var(--brand-navy)]/70 hover:border-[color:var(--brand-navy)]/40"
+                    : "border-[color:var(--brand-navy)]/15 text-[color:var(--brand-navy)]/80 hover:border-[color:var(--brand-navy)]/40"
                 }`}
                 aria-pressed={isActive}
               >
@@ -170,7 +170,7 @@ export function StaffingWorkflow() {
               {i < STEPS.length - 1 ? (
                 <ArrowRight
                   aria-hidden
-                  className="h-4 w-4 shrink-0 text-[color:var(--brand-navy)]/30"
+                  className="h-4 w-4 shrink-0 text-[color:var(--brand-navy)]/80"
                 />
               ) : null}
             </li>
@@ -202,7 +202,7 @@ export function StaffingWorkflow() {
           <p className="mt-2 text-sm text-[color:var(--brand-navy)]/80">
             {active.detail}
           </p>
-          <p className="mt-3 text-xs font-semibold text-[color:var(--brand-navy)]/60">
+          <p className="mt-3 text-xs font-semibold text-[color:var(--brand-navy)]/80">
             Ownership · {active.owner}
           </p>
         </div>
@@ -214,7 +214,7 @@ export function StaffingWorkflow() {
 export function StaffingOwnershipMatrix() {
   return (
     <div className="overflow-hidden rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white">
-      <div className="grid grid-cols-[1.2fr_1.4fr_1.4fr] gap-0 border-b border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-mist)]/60 text-xs font-semibold uppercase tracking-widest text-[color:var(--brand-navy)]/70">
+      <div className="grid grid-cols-[1.2fr_1.4fr_1.4fr] gap-0 border-b border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-mist)]/60 text-xs font-semibold uppercase tracking-widest text-[color:var(--brand-navy)]/80">
         <div className="px-4 py-3">Area</div>
         <div className="px-4 py-3">Your agency</div>
         <div className="px-4 py-3">TaaSFlow</div>

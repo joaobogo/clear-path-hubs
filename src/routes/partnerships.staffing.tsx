@@ -33,13 +33,13 @@ function PartnershipsStaffingPage() {
       {/* ── Hero ─────────────────────────────────────────────────── */}
       <PublicSection className="pb-10 pt-16 sm:pt-20">
         <PublicPage>
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
             Staffing partnerships
           </p>
           <h1 className="mt-3 max-w-3xl font-[family-name:var(--brand-font-display)] text-4xl font-semibold tracking-tight sm:text-5xl">
             White-label recruiting execution behind your agency.
           </h1>
-          <p className="mt-5 max-w-2xl text-lg text-[color:var(--brand-navy)]/70">
+          <p className="mt-5 max-w-2xl text-lg text-[color:var(--brand-navy)]/80">
             TaaSFlow extends staffing and search firms with ranked delivery,
             evidence per requirement, and a workspace clients can see into —
             while you keep the relationship and the fee. Human recruiters +
@@ -68,7 +68,7 @@ function PartnershipsStaffingPage() {
           <h2 className="max-w-2xl font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight">
             Why staffing firms partner with TaaSFlow
           </h2>
-          <p className="mt-4 max-w-2xl text-[color:var(--brand-navy)]/70">
+          <p className="mt-4 max-w-2xl text-[color:var(--brand-navy)]/80">
             Agencies work with us when they need more delivery bandwidth, structured evidence
             for hiring managers, or coverage on role types outside their usual specialisation —
             without changing who owns the client.
@@ -102,7 +102,7 @@ function PartnershipsStaffingPage() {
               >
                 <item.icon className="h-6 w-6 text-[color:var(--brand-navy)]" />
                 <h3 className="mt-4 text-lg font-semibold">{item.title}</h3>
-                <p className="mt-2 text-sm text-[color:var(--brand-navy)]/70">{item.body}</p>
+                <p className="mt-2 text-sm text-[color:var(--brand-navy)]/80">{item.body}</p>
               </div>
             ))}
           </div>
@@ -114,13 +114,13 @@ function PartnershipsStaffingPage() {
         <PublicPage>
           <div className="grid gap-10 lg:grid-cols-2">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
                 For your agency
               </p>
               <h2 className="mt-3 font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight">
                 Delivery leverage without the overhead
               </h2>
-              <p className="mt-4 text-[color:var(--brand-navy)]/70">
+              <p className="mt-4 text-[color:var(--brand-navy)]/80">
                 Partner delivery is designed to slot into how your team already operates. You
                 bring the client and the brief; we run structured sourcing, screening, and
                 evidence work inside the same workspace you review in.
@@ -150,13 +150,13 @@ function PartnershipsStaffingPage() {
         <PublicPage>
           <div className="grid gap-10 lg:grid-cols-2">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
                 For your clients
               </p>
               <h2 className="mt-3 font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight">
                 A better hiring experience they attribute to you
               </h2>
-              <p className="mt-4 text-[color:var(--brand-navy)]/70">
+              <p className="mt-4 text-[color:var(--brand-navy)]/80">
                 Your clients get ranked candidates with visible evidence, a shared review
                 surface, and a consistent process across every role — while the account and
                 commercial relationship stay with your agency.
@@ -184,13 +184,13 @@ function PartnershipsStaffingPage() {
       {/* ── Interactive workflow ────────────────────────────────── */}
       <PublicSection className="bg-[color:var(--brand-cream)] py-16">
         <PublicPage>
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
             The workflow
           </p>
           <h2 className="mt-3 max-w-2xl font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight">
             Client request → agency → TaaSFlow → shortlist → your review → client delivery
           </h2>
-          <p className="mt-4 max-w-2xl text-[color:var(--brand-navy)]/70">
+          <p className="mt-4 max-w-2xl text-[color:var(--brand-navy)]/80">
             Click any step to see what happens and who owns it. The client relationship
             stays with your agency at every stage.
           </p>
@@ -203,13 +203,13 @@ function PartnershipsStaffingPage() {
       {/* ── Ownership matrix ────────────────────────────────────── */}
       <PublicSection className="py-16">
         <PublicPage>
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
             Who owns what
           </p>
           <h2 className="mt-3 max-w-2xl font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight">
             The line is drawn cleanly.
           </h2>
-          <p className="mt-4 max-w-2xl text-[color:var(--brand-navy)]/70">
+          <p className="mt-4 max-w-2xl text-[color:var(--brand-navy)]/80">
             No ambiguity about relationship, communication, presentation, or decision
             rights. The line is documented per partnership and enforced by the workspace.
           </p>
@@ -226,7 +226,7 @@ function PartnershipsStaffingPage() {
           <h2 className="max-w-2xl font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight">
             White-label or co-branded — where approved
           </h2>
-          <p className="mt-4 max-w-2xl text-[color:var(--brand-navy)]/70">
+          <p className="mt-4 max-w-2xl text-[color:var(--brand-navy)]/80">
             Depending on the partnership, delivery can be positioned in a few ways. The exact
             model is agreed together and documented per account.
           </p>
@@ -255,13 +255,13 @@ function PartnershipsStaffingPage() {
                 <opt.icon className="h-6 w-6 text-[color:var(--brand-navy)]" />
                 <h3 className="mt-4 text-lg font-semibold">{opt.title}</h3>
                 <p
-                  className="mt-2 text-sm text-[color:var(--brand-navy)]/70"
+                  className="mt-2 text-sm text-[color:var(--brand-navy)]/80"
                   dangerouslySetInnerHTML={{ __html: opt.body }}
                 />
               </div>
             ))}
           </div>
-          <p className="mt-6 text-xs text-[color:var(--brand-navy)]/50">
+          <p className="mt-6 text-xs text-[color:var(--brand-navy)]/80">
             Positioning, branding, and exclusivity are confirmed in the partnership agreement.
           </p>
         </PublicPage>
@@ -273,7 +273,7 @@ function PartnershipsStaffingPage() {
           <h2 className="max-w-2xl font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight">
             Ways to engage
           </h2>
-          <p className="mt-4 max-w-2xl text-[color:var(--brand-navy)]/70">
+          <p className="mt-4 max-w-2xl text-[color:var(--brand-navy)]/80">
             Partnerships are shaped to your book of business. Most agencies start narrow and
             expand once the delivery model is proven inside their account.
           </p>
@@ -298,7 +298,7 @@ function PartnershipsStaffingPage() {
               >
                 <h3 className="text-lg font-semibold">{path.title}</h3>
                 <p
-                  className="mt-2 text-sm text-[color:var(--brand-navy)]/70"
+                  className="mt-2 text-sm text-[color:var(--brand-navy)]/80"
                   dangerouslySetInnerHTML={{ __html: path.body }}
                 />
               </div>

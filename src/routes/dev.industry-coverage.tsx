@@ -97,7 +97,7 @@ export const Route = createFileRoute("/dev/industry-coverage")({
   notFoundComponent: () => (
     <SiteShell>
       <PublicPage>
-        <p className="py-24 text-sm text-[color:var(--brand-navy)]/60">Not found.</p>
+        <p className="py-24 text-sm text-[color:var(--brand-navy)]/80">Not found.</p>
       </PublicPage>
     </SiteShell>
   ),
@@ -117,13 +117,13 @@ function IndustryCoverage() {
     <SiteShell>
       <PublicSection className="border-b border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-paper)] py-10">
         <PublicPage>
-          <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[color:var(--brand-ocean)]">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[color:var(--brand-ocean-text)]">
             Dev · not indexed
           </p>
           <h1 className="mt-3 font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight">
             Industry coverage report
           </h1>
-          <p className="mt-3 max-w-2xl text-sm text-[color:var(--brand-navy)]/70">
+          <p className="mt-3 max-w-2xl text-sm text-[color:var(--brand-navy)]/80">
             {rows.length} industries · {ALL_FAMILIES.length} archetypes ·{" "}
             <span className={totalErrors ? "font-semibold text-red-600" : "text-emerald-700"}>
               {totalErrors} errors
@@ -136,7 +136,7 @@ function IndustryCoverage() {
           <div className="mt-4">
             <Link
               to="/industries"
-              className="text-sm font-semibold text-[color:var(--brand-ocean)] underline underline-offset-4"
+              className="text-sm font-semibold text-[color:var(--brand-ocean-text)] underline underline-offset-4"
             >
               ← Back to /industries
             </Link>
@@ -150,7 +150,7 @@ function IndustryCoverage() {
             <div key={family} className="mb-10">
               <h2 className="font-[family-name:var(--brand-font-display)] text-xl font-semibold text-[color:var(--brand-navy)]">
                 {family}{" "}
-                <span className="text-sm font-normal text-[color:var(--brand-navy)]/50">
+                <span className="text-sm font-normal text-[color:var(--brand-navy)]/80">
                   {list.length} industries
                 </span>
               </h2>
@@ -161,7 +161,7 @@ function IndustryCoverage() {
                       <p className="text-sm font-semibold text-[color:var(--brand-navy)]">
                         {r.name}
                       </p>
-                      <p className="text-[11px] uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/50">
+                      <p className="text-[11px] uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
                         {r.slug} · {r.archetype}
                       </p>
                     </div>
@@ -184,7 +184,7 @@ function IndustryCoverage() {
                       <Link
                         to="/industries/$slug"
                         params={{ slug: r.slug }}
-                        className="font-semibold text-[color:var(--brand-ocean)] underline underline-offset-4"
+                        className="font-semibold text-[color:var(--brand-ocean-text)] underline underline-offset-4"
                       >
                         View →
                       </Link>

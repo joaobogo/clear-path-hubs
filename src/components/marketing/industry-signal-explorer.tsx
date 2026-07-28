@@ -33,10 +33,10 @@ export function IndustrySignalExplorer({ entry }: { entry: IndustryEntry }) {
   return (
     <div>
       <div className="mb-4 flex flex-wrap items-baseline gap-2">
-        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean)]">
+        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean-text)]">
           {pack.label}
         </p>
-        <p className="text-xs text-[color:var(--brand-navy)]/60">
+        <p className="text-xs text-[color:var(--brand-navy)]/80">
           Dimensions specific to {entry.name} — not a generic checklist.
         </p>
       </div>
@@ -69,7 +69,7 @@ export function IndustrySignalExplorer({ entry }: { entry: IndustryEntry }) {
 
       <div className="mt-6 grid gap-5 lg:grid-cols-[minmax(0,1fr)_320px]">
         <div className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6">
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean)]">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean-text)]">
             Dimension
           </p>
           <h3 className="mt-1 font-[family-name:var(--brand-font-display)] text-2xl font-semibold text-[color:var(--brand-navy)]">
@@ -93,7 +93,7 @@ export function IndustrySignalExplorer({ entry }: { entry: IndustryEntry }) {
           </div>
 
           <div className="mt-5 rounded-xl bg-[color:var(--brand-mist)]/60 p-4">
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/55">
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
               How TaaSFlow validates
             </p>
             <p className="mt-2 text-sm text-[color:var(--brand-navy)]/80">{active.validation}</p>
@@ -101,7 +101,7 @@ export function IndustrySignalExplorer({ entry }: { entry: IndustryEntry }) {
         </div>
 
         <div className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-5">
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/55">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
             Other {entry.name} dimensions
           </p>
           <ul className="mt-3 space-y-2 text-sm text-[color:var(--brand-navy)]/85">
@@ -116,7 +116,7 @@ export function IndustrySignalExplorer({ entry }: { entry: IndustryEntry }) {
                   />
                   <button
                     onClick={() => setActiveIdx(idx)}
-                    className="text-left hover:text-[color:var(--brand-ocean)]"
+                    className="text-left hover:text-[color:var(--brand-ocean-text)]"
                   >
                     {s.title}
                   </button>

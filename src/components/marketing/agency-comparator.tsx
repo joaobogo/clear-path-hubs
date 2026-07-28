@@ -86,13 +86,13 @@ export function AgencyComparator() {
         {/* -------- Inputs column (5/12) -------- */}
         <div className="order-2 space-y-8 lg:order-1 lg:col-span-5">
           <header className="space-y-3 sm:space-y-4">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[color:var(--brand-navy)]/60">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[color:var(--brand-navy)]/80">
               For hiring teams · ROI Calculator
             </p>
             <h3 className="font-[family-name:var(--brand-font-display)] text-3xl leading-[1.05] tracking-tight text-[color:var(--brand-navy)] sm:text-4xl md:text-5xl">
               Quantify your <span className="italic">hiring advantage.</span>
             </h3>
-            <p className="max-w-sm text-sm text-[color:var(--brand-navy)]/60 sm:text-base">
+            <p className="max-w-sm text-sm text-[color:var(--brand-navy)]/80 sm:text-base">
               Adjust the variables to compare traditional recruitment costs against the TaaSFlow model. Defaults from SHRM &amp; Ashby 2025 benchmarks.
             </p>
           </header>
@@ -231,7 +231,7 @@ export function AgencyComparator() {
           {/* Footnote rule */}
           <div className="mt-6 flex items-center gap-4 px-2">
             <div className="h-px flex-1 bg-[color:var(--brand-navy)]/10" />
-            <p className="whitespace-nowrap text-[10px] uppercase tracking-[0.18em] text-[color:var(--brand-navy)]/45">
+            <p className="whitespace-nowrap text-[10px] uppercase tracking-[0.18em] text-[color:var(--brand-navy)]/80">
               Directional · SHRM & Ashby 2025 benchmarks
             </p>
             <div className="h-px flex-1 bg-[color:var(--brand-navy)]/10" />
@@ -264,7 +264,7 @@ function SliderField({
   return (
     <label className="block space-y-3">
       <div className="flex items-end justify-between gap-3">
-        <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/45">
+        <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
           {label}
         </span>
         <span className="font-[family-name:var(--brand-font-display)] text-xl font-medium tabular-nums text-[color:var(--brand-navy)]">
@@ -304,7 +304,7 @@ function StaticField({
   return (
     <label className="block space-y-3">
       <div className="flex items-end justify-between gap-2">
-        <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/45">
+        <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
           {label}
         </span>
         <span className="font-[family-name:var(--brand-font-display)] text-xl font-medium tabular-nums text-[color:var(--brand-navy)]">

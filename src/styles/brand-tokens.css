@@ -16,6 +16,9 @@
   --brand-navy-light:  oklch(0.45 0.055 262);
   --brand-navy-dark:   oklch(0.22 0.055 262);
   --brand-ocean:       oklch(0.60 0.19 258);
+  /* Text-safe ocean: meets WCAG AA (4.5:1) for small text on white/paper.
+     Use for links and accents rendered as text; --brand-ocean stays for fills. */
+  --brand-ocean-text:  oklch(0.52 0.19 258);
   --brand-ocean-light: oklch(0.68 0.16 258);
   --brand-sky:         oklch(0.92 0.017 245);
   --brand-sky-dark:    oklch(0.87 0.020 245);
@@ -269,6 +272,7 @@
   --brand-navy-light:  oklch(0.78 0.020 245);
   --brand-navy-dark:   oklch(0.98 0.005 245);
   --brand-ocean:       oklch(0.68 0.19 258);
+  --brand-ocean-text:  oklch(0.78 0.16 258);
   --brand-ocean-light: oklch(0.75 0.16 258);
   --brand-sky:         oklch(0.20 0.030 262);
   --brand-sky-dark:    oklch(0.16 0.030 262);

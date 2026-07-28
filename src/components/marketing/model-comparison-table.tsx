@@ -67,13 +67,13 @@ export function ModelComparisonTable({ className }: { className?: string }) {
   return (
     <div className={className}>
       <div className="max-w-2xl">
-        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">
+        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
           Operating models
         </p>
         <h2 className="mt-3 font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight text-[color:var(--brand-navy)] sm:text-4xl">
           TaaSFlow vs. agencies vs. sourcing tools.
         </h2>
-        <p className="mt-4 text-[color:var(--brand-navy)]/75">
+        <p className="mt-4 text-[color:var(--brand-navy)]/80">
           All three can fill a role. They differ in who does the screening, what
           arrives at the end, and what it costs when you hire again.
         </p>
@@ -87,13 +87,13 @@ export function ModelComparisonTable({ className }: { className?: string }) {
           </caption>
           <thead>
             <tr className="border-b border-[color:var(--brand-navy)]/12 bg-[color:var(--brand-navy)]/[0.03]">
-              <th scope="col" className={`${COL_HEAD} text-[color:var(--brand-navy)]/60`}>
+              <th scope="col" className={`${COL_HEAD} text-[color:var(--brand-navy)]/80`}>
                 <span className="sr-only">Dimension</span>
               </th>
-              <th scope="col" className={`${COL_HEAD} text-[color:var(--brand-navy)]/70`}>
+              <th scope="col" className={`${COL_HEAD} text-[color:var(--brand-navy)]/80`}>
                 Contingency agency
               </th>
-              <th scope="col" className={`${COL_HEAD} text-[color:var(--brand-navy)]/70`}>
+              <th scope="col" className={`${COL_HEAD} text-[color:var(--brand-navy)]/80`}>
                 Sourcing tools &amp; job boards
               </th>
               <th scope="col" className={`${COL_HEAD} text-[color:var(--brand-navy)]`}>
@@ -113,8 +113,8 @@ export function ModelComparisonTable({ className }: { className?: string }) {
                 >
                   {r.dimension}
                 </th>
-                <td className="px-4 py-4 text-[color:var(--brand-navy)]/70">{r.agency}</td>
-                <td className="px-4 py-4 text-[color:var(--brand-navy)]/70">{r.tools}</td>
+                <td className="px-4 py-4 text-[color:var(--brand-navy)]/80">{r.agency}</td>
+                <td className="px-4 py-4 text-[color:var(--brand-navy)]/80">{r.tools}</td>
                 <td className="bg-[color:var(--brand-navy)]/[0.03] px-4 py-4 font-medium text-[color:var(--brand-navy)]">
                   {r.taasflow}
                 </td>
@@ -125,7 +125,7 @@ export function ModelComparisonTable({ className }: { className?: string }) {
       </div>
 
       <div className="mt-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <p className="max-w-xl text-sm text-[color:var(--brand-navy)]/70">
+        <p className="max-w-xl text-sm text-[color:var(--brand-navy)]/80">
           TaaSFlow is not access to profiles. It is the screening work, the
           written judgement behind it, and the workflow to act on it — for a
           flat fee.

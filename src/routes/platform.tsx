@@ -163,8 +163,8 @@ function PlatformPage() {
       >
         <PublicPage>
           <div className="py-16 sm:py-20 lg:py-24">
-            <span className="inline-flex w-fit items-center gap-2 rounded-full border border-[color:var(--brand-navy)]/12 bg-white/70 px-3 py-1 text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/75 backdrop-blur">
-              <Sparkles className="h-3.5 w-3.5 text-[color:var(--brand-ocean)]" aria-hidden />
+            <span className="inline-flex w-fit items-center gap-2 rounded-full border border-[color:var(--brand-navy)]/12 bg-white/70 px-3 py-1 text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80 backdrop-blur">
+              <Sparkles className="h-3.5 w-3.5 text-[color:var(--brand-ocean-text)]" aria-hidden />
               A category, not a tool
             </span>
             <h1
@@ -173,7 +173,7 @@ function PlatformPage() {
             >
               ATS + recruiting execution, in one system.
             </h1>
-            <p className="mt-5 max-w-2xl text-lg text-[color:var(--brand-navy)]/75">
+            <p className="mt-5 max-w-2xl text-lg text-[color:var(--brand-navy)]/80">
               Not only an ATS. Not only an agency. Not only AI sourcing. Not only a CRM.
               TaaSFlow runs all five jobs — record-keeping, execution, scoring, control,
               and memory — on the same workspace.
@@ -192,7 +192,7 @@ function PlatformPage() {
                   className="inline-flex items-center gap-2 rounded-lg border border-[color:var(--brand-navy)]/10 bg-white px-3 py-2 text-sm font-semibold text-[color:var(--brand-navy)]"
                 >
                   <Minus
-                    className="h-4 w-4 shrink-0 text-[color:var(--brand-navy)]/40"
+                    className="h-4 w-4 shrink-0 text-[color:var(--brand-navy)]/80"
                     aria-hidden
                   />
                   {t}
@@ -222,13 +222,13 @@ function PlatformPage() {
       <PublicSection className="bg-white">
         <PublicPage>
           <div className="max-w-3xl">
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean)]">
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean-text)]">
               Five jobs, one system
             </p>
             <h2 className="mt-2 font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight text-[color:var(--brand-navy)] sm:text-4xl">
               What the platform does.
             </h2>
-            <p className="mt-3 text-[color:var(--brand-navy)]/70">
+            <p className="mt-3 text-[color:var(--brand-navy)]/80">
               Each pillar is a working surface — not a slide. Below is what it delivers
               and how you'd notice it inside the workspace.
             </p>
@@ -243,11 +243,11 @@ function PlatformPage() {
                   className="flex flex-col rounded-2xl border border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-paper)] p-6"
                 >
                   <div className="flex items-center gap-3">
-                    <span className="grid h-10 w-10 place-items-center rounded-lg bg-[color:var(--brand-ocean)]/10 text-[color:var(--brand-ocean)]">
+                    <span className="grid h-10 w-10 place-items-center rounded-lg bg-[color:var(--brand-ocean)]/10 text-[color:var(--brand-ocean-text)]">
                       <Icon className="h-5 w-5" aria-hidden />
                     </span>
                     <div>
-                      <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/55">
+                      <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
                         {p.eyebrow}
                       </p>
                       <h3 className="text-lg font-semibold text-[color:var(--brand-navy)]">
@@ -255,7 +255,7 @@ function PlatformPage() {
                       </h3>
                     </div>
                   </div>
-                  <p className="mt-4 text-sm leading-relaxed text-[color:var(--brand-navy)]/75">
+                  <p className="mt-4 text-sm leading-relaxed text-[color:var(--brand-navy)]/80">
                     {p.lead}
                   </p>
                   <ul className="mt-4 space-y-2 border-t border-[color:var(--brand-navy)]/8 pt-4">
@@ -265,7 +265,7 @@ function PlatformPage() {
                         className="flex items-start gap-2 text-sm text-[color:var(--brand-navy)]/80"
                       >
                         <Check
-                          className="mt-0.5 h-4 w-4 shrink-0 text-[color:var(--brand-ocean)]"
+                          className="mt-0.5 h-4 w-4 shrink-0 text-[color:var(--brand-ocean-text)]"
                           aria-hidden
                         />
                         <span>{line}</span>
@@ -283,20 +283,20 @@ function PlatformPage() {
       <PublicSection className="border-y border-[color:var(--brand-navy)]/8 bg-[color:var(--brand-paper)]">
         <PublicPage>
           <div className="max-w-3xl">
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean)]">
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean-text)]">
               Where the neighbors stop
             </p>
             <h2 className="mt-2 font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight text-[color:var(--brand-navy)] sm:text-4xl">
               Adjacent categories, and the gap they leave.
             </h2>
-            <p className="mt-3 text-[color:var(--brand-navy)]/70">
+            <p className="mt-3 text-[color:var(--brand-navy)]/80">
               Each of these tools solves one piece well. None of them runs the whole loop.
             </p>
           </div>
 
           <div className="mt-10 overflow-hidden rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white">
             <table className="w-full text-left text-sm">
-              <thead className="bg-[color:var(--brand-navy)]/[0.04] text-[11px] font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">
+              <thead className="bg-[color:var(--brand-navy)]/[0.04] text-[11px] font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
                 <tr>
                   <th scope="col" className="px-4 py-3 sm:px-6">Category</th>
                   <th scope="col" className="px-4 py-3 sm:px-6">What it does</th>
@@ -315,10 +315,10 @@ function PlatformPage() {
                     >
                       {c.label}
                     </th>
-                    <td className="px-4 py-4 text-[color:var(--brand-navy)]/75 sm:px-6">
+                    <td className="px-4 py-4 text-[color:var(--brand-navy)]/80 sm:px-6">
                       {c.role}
                     </td>
-                    <td className="px-4 py-4 text-[color:var(--brand-navy)]/75 sm:px-6">
+                    <td className="px-4 py-4 text-[color:var(--brand-navy)]/80 sm:px-6">
                       {c.gap}
                     </td>
                   </tr>
@@ -348,7 +348,7 @@ function PlatformPage() {
       <PublicSection className="bg-white">
         <PublicPage>
           <div className="mx-auto max-w-3xl text-center">
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean)]">
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean-text)]">
               The 30-second version
             </p>
             <h2 className="mt-2 font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight text-[color:var(--brand-navy)] sm:text-4xl">

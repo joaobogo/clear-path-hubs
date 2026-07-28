@@ -158,13 +158,13 @@ function IndustriesIndex() {
        * ================================================================ */}
       <PublicSection className="border-b border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-paper)] py-14 sm:py-20">
         <PublicPage>
-          <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[color:var(--brand-ocean)]">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[color:var(--brand-ocean-text)]">
             Industries · Sector expertise
           </p>
           <h1 className="mt-5 max-w-[24ch] font-[family-name:var(--brand-font-display)] text-4xl font-semibold leading-[1.05] tracking-tight text-balance sm:text-5xl md:text-6xl">
             Hiring intelligence, tuned to the realities of each industry.
           </h1>
-          <p className="mt-6 max-w-2xl text-lg text-[color:var(--brand-navy)]/75">
+          <p className="mt-6 max-w-2xl text-lg text-[color:var(--brand-navy)]/80">
             One recruiting model, six page archetypes, and a rubric calibrated to
             the language, evidence and regulation of every sector we serve.
           </p>
@@ -182,7 +182,7 @@ function IndustriesIndex() {
             <Link
               to="/how-it-works"
               hash="scoring"
-              className="inline-flex min-h-11 items-center justify-center gap-1 rounded-md px-3 py-2.5 text-sm font-semibold text-[color:var(--brand-navy)]/70 hover:text-[color:var(--brand-navy)]"
+              className="inline-flex min-h-11 items-center justify-center gap-1 rounded-md px-3 py-2.5 text-sm font-semibold text-[color:var(--brand-navy)]/80 hover:text-[color:var(--brand-navy)]"
             >
               See how scoring works <ArrowRight className="h-4 w-4" aria-hidden />
             </Link>
@@ -208,7 +208,7 @@ function IndustriesIndex() {
             <label className="relative flex w-full items-center">
               <Search
                 aria-hidden
-                className="absolute left-3 h-4 w-4 text-[color:var(--brand-navy)]/45"
+                className="absolute left-3 h-4 w-4 text-[color:var(--brand-navy)]/80"
               />
               <input
                 type="search"
@@ -219,7 +219,7 @@ function IndustriesIndex() {
                 }}
                 placeholder="Search by industry, role group or challenge"
                 aria-label="Search industries"
-                className="w-full rounded-full border border-[color:var(--brand-navy)]/15 bg-white py-2.5 pl-9 pr-9 text-sm text-[color:var(--brand-navy)] placeholder:text-[color:var(--brand-navy)]/40 focus:border-[color:var(--brand-navy)]/40 focus:outline-none focus:ring-2 focus:ring-[color:var(--brand-focus-ring)]"
+                className="w-full rounded-full border border-[color:var(--brand-navy)]/15 bg-white py-2.5 pl-9 pr-9 text-sm text-[color:var(--brand-navy)] placeholder:text-[color:var(--brand-navy)]/80 focus:border-[color:var(--brand-navy)]/40 focus:outline-none focus:ring-2 focus:ring-[color:var(--brand-focus-ring)]"
               />
               {inputQ ? (
                 <button
@@ -228,7 +228,7 @@ function IndustriesIndex() {
                     setInputQ("");
                     commitQuery("");
                   }}
-                  className="absolute right-2 grid h-7 w-7 place-items-center rounded-full text-[color:var(--brand-navy)]/50 hover:bg-[color:var(--brand-navy)]/5 hover:text-[color:var(--brand-navy)]"
+                  className="absolute right-2 grid h-7 w-7 place-items-center rounded-full text-[color:var(--brand-navy)]/80 hover:bg-[color:var(--brand-navy)]/5 hover:text-[color:var(--brand-navy)]"
                   aria-label="Clear search"
                 >
                   <X className="h-3.5 w-3.5" />
@@ -239,7 +239,7 @@ function IndustriesIndex() {
               <button
                 type="button"
                 onClick={reset}
-                className="justify-self-start rounded-full border border-[color:var(--brand-navy)]/15 px-4 py-2 text-xs font-semibold text-[color:var(--brand-navy)]/75 hover:bg-[color:var(--brand-navy)]/5"
+                className="justify-self-start rounded-full border border-[color:var(--brand-navy)]/15 px-4 py-2 text-xs font-semibold text-[color:var(--brand-navy)]/80 hover:bg-[color:var(--brand-navy)]/5"
               >
                 View all industries
               </button>
@@ -279,7 +279,7 @@ function IndustriesIndex() {
           <h2
             ref={resultsRef}
             tabIndex={-1}
-            className="sr-only focus:not-sr-only focus:mb-2 focus:block focus:text-sm focus:text-[color:var(--brand-navy)]/60 focus:outline-none"
+            className="sr-only focus:not-sr-only focus:mb-2 focus:block focus:text-sm focus:text-[color:var(--brand-navy)]/80 focus:outline-none"
           >
             {activeFamily === "all"
               ? `Showing ${filtered.length} of ${TILES.length} industries`
@@ -287,7 +287,7 @@ function IndustriesIndex() {
           </h2>
           <p
             aria-live="polite"
-            className="mb-6 text-sm text-[color:var(--brand-navy)]/60"
+            className="mb-6 text-sm text-[color:var(--brand-navy)]/80"
           >
             {activeFamily === "all"
               ? `${filtered.length} industries`
@@ -300,7 +300,7 @@ function IndustriesIndex() {
               <p className="text-lg font-semibold text-[color:var(--brand-navy)]">
                 No industries match your search.
               </p>
-              <p className="mt-2 text-sm text-[color:var(--brand-navy)]/60">
+              <p className="mt-2 text-sm text-[color:var(--brand-navy)]/80">
                 Try a broader query, clear filters, or contact us — we may serve
                 the vertical without a dedicated page yet.
               </p>
@@ -339,13 +339,13 @@ function IndustriesIndex() {
         <PublicPage>
           <div className="grid gap-10 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] lg:items-start">
             <div>
-              <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[color:var(--brand-ocean)]">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[color:var(--brand-ocean-text)]">
                 Methodology
               </p>
               <h2 className="mt-3 max-w-2xl font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight sm:text-4xl">
                 How industry-specific evaluation works
               </h2>
-              <p className="mt-4 max-w-xl text-[15px] leading-relaxed text-[color:var(--brand-navy)]/75">
+              <p className="mt-4 max-w-xl text-[15px] leading-relaxed text-[color:var(--brand-navy)]/80">
                 Every industry gets a rubric calibrated to what actually matters
                 in that sector — the language on the CV, the credentials that
                 gate the role, the signals that predict delivery. Nothing is
@@ -361,7 +361,7 @@ function IndustriesIndex() {
                 </Link>
                 <Link
                   to="/how-it-works"
-                  className="inline-flex min-h-11 items-center justify-center rounded-md px-3 py-2.5 text-sm font-semibold text-[color:var(--brand-navy)]/70 hover:text-[color:var(--brand-navy)]"
+                  className="inline-flex min-h-11 items-center justify-center rounded-md px-3 py-2.5 text-sm font-semibold text-[color:var(--brand-navy)]/80 hover:text-[color:var(--brand-navy)]"
                 >
                   How delivery works
                 </Link>
@@ -385,7 +385,7 @@ function IndustriesIndex() {
                     <p className="text-sm font-semibold text-[color:var(--brand-navy)]">
                       {row.t}
                     </p>
-                    <p className="mt-0.5 text-[13px] text-[color:var(--brand-navy)]/70">
+                    <p className="mt-0.5 text-[13px] text-[color:var(--brand-navy)]/80">
                       {row.b}
                     </p>
                   </div>
@@ -403,13 +403,13 @@ function IndustriesIndex() {
         <PublicPage>
           <div className="flex flex-col gap-6 rounded-3xl border border-[color:var(--brand-navy)]/10 bg-white p-8 sm:flex-row sm:items-center sm:justify-between sm:p-10">
             <div className="max-w-2xl">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[color:var(--brand-ocean)]">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[color:var(--brand-ocean-text)]">
                 Don't see your industry?
               </p>
               <h2 className="mt-2 font-[family-name:var(--brand-font-display)] text-2xl font-semibold tracking-tight sm:text-3xl">
                 We build custom rubrics for adjacent sectors.
               </h2>
-              <p className="mt-3 text-[15px] text-[color:var(--brand-navy)]/70">
+              <p className="mt-3 text-[15px] text-[color:var(--brand-navy)]/80">
                 Tell us what you hire for. We'll confirm coverage, share a sample
                 rubric, and start a role if it's a fit.
               </p>
@@ -427,7 +427,7 @@ function IndustriesIndex() {
               />
               <Link
                 to="/contact"
-                className="text-sm font-semibold text-[color:var(--brand-navy)]/70 hover:text-[color:var(--brand-navy)]"
+                className="text-sm font-semibold text-[color:var(--brand-navy)]/80 hover:text-[color:var(--brand-navy)]"
               >
                 Or send us a message →
               </Link>
@@ -466,7 +466,7 @@ function FamilyChip({
       className={`whitespace-nowrap rounded-full border px-3.5 py-1.5 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)] ${
         active
           ? "border-[color:var(--brand-navy)] bg-[color:var(--brand-navy)] text-white"
-          : "border-[color:var(--brand-navy)]/15 bg-white text-[color:var(--brand-navy)]/75 hover:border-[color:var(--brand-navy)]/40 hover:text-[color:var(--brand-navy)]"
+          : "border-[color:var(--brand-navy)]/15 bg-white text-[color:var(--brand-navy)]/80 hover:border-[color:var(--brand-navy)]/40 hover:text-[color:var(--brand-navy)]"
       }`}
     >
       <span>{label}</span>
@@ -474,7 +474,7 @@ function FamilyChip({
         className={`ml-2 rounded-full px-1.5 py-0.5 text-[10px] ${
           active
             ? "bg-white/15 text-white"
-            : "bg-[color:var(--brand-navy)]/5 text-[color:var(--brand-navy)]/60"
+            : "bg-[color:var(--brand-navy)]/5 text-[color:var(--brand-navy)]/80"
         }`}
       >
         {count}
@@ -501,14 +501,14 @@ function IndustryCard({ tile }: { tile: Tile }) {
         <FamilyMotif family={tile.family} seed={tile.motifSeed} />
       </div>
       <div className="flex flex-1 flex-col p-5">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[color:var(--brand-ocean)]">
+        <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[color:var(--brand-ocean-text)]">
           {tile.familyLabel}
         </p>
-        <h3 className="mt-1 font-[family-name:var(--brand-font-display)] text-xl font-semibold text-[color:var(--brand-navy)] group-hover:text-[color:var(--brand-ocean)]">
+        <h3 className="mt-1 font-[family-name:var(--brand-font-display)] text-xl font-semibold text-[color:var(--brand-navy)] group-hover:text-[color:var(--brand-ocean-text)]">
           {tile.name}
         </h3>
         {tile.challenge ? (
-          <p className="mt-2 line-clamp-2 text-sm text-[color:var(--brand-navy)]/75">
+          <p className="mt-2 line-clamp-2 text-sm text-[color:var(--brand-navy)]/80">
             <span className="font-semibold text-[color:var(--brand-navy)]">
               {tile.challenge.title}.
             </span>{" "}
@@ -527,7 +527,7 @@ function IndustryCard({ tile }: { tile: Tile }) {
             ))}
           </ul>
         ) : null}
-        <span className="mt-auto inline-flex items-center gap-1 pt-4 text-sm font-semibold text-[color:var(--brand-ocean)]">
+        <span className="mt-auto inline-flex items-center gap-1 pt-4 text-sm font-semibold text-[color:var(--brand-ocean-text)]">
           Open industry page <ArrowRight className="h-4 w-4" aria-hidden />
         </span>
       </div>

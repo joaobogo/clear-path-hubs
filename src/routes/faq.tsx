@@ -317,13 +317,13 @@ function FaqPage() {
       {/* ── Hero ─────────────────────────────────────────────────── */}
       <PublicSection className="pb-6 pt-16 sm:pt-20">
         <PublicPage>
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
             FAQ
           </p>
           <h1 className="mt-3 max-w-3xl font-[family-name:var(--brand-font-display)] text-4xl font-semibold tracking-tight sm:text-5xl">
             Straight answers, before you ask.
           </h1>
-          <p className="mt-5 max-w-2xl text-lg text-[color:var(--brand-navy)]/70">
+          <p className="mt-5 max-w-2xl text-lg text-[color:var(--brand-navy)]/80">
             The nine things buyers and candidates ask most, answered without hedging. If you need
             depth, expand the deeper explanation on any answer.
           </p>
@@ -334,7 +334,7 @@ function FaqPage() {
               Search FAQ
             </label>
             <div className="relative">
-              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[color:var(--brand-navy)]/50" />
+              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[color:var(--brand-navy)]/80" />
               <input
                 id="faq-search"
                 type="search"
@@ -345,7 +345,7 @@ function FaqPage() {
               />
             </div>
             {q && (
-              <p className="mt-2 text-xs text-[color:var(--brand-navy)]/60">
+              <p className="mt-2 text-xs text-[color:var(--brand-navy)]/80">
                 {totalMatches} answer{totalMatches === 1 ? "" : "s"} match &ldquo;{query}&rdquo;
               </p>
             )}
@@ -376,7 +376,7 @@ function FaqPage() {
           {filteredGroups.length === 0 ? (
             <div className="rounded-2xl border border-dashed border-[color:var(--brand-navy)]/20 bg-white p-10 text-center">
               <p className="text-base font-semibold">No answers match that search.</p>
-              <p className="mt-2 text-sm text-[color:var(--brand-navy)]/70">
+              <p className="mt-2 text-sm text-[color:var(--brand-navy)]/80">
                 Try a broader term, or send us the question directly.
               </p>
               <button
@@ -397,7 +397,7 @@ function FaqPage() {
                     >
                       {group.title}
                     </h2>
-                    <p className="mt-1 text-sm text-[color:var(--brand-navy)]/65">
+                    <p className="mt-1 text-sm text-[color:var(--brand-navy)]/80">
                       {group.blurb}
                     </p>
                   </div>
@@ -417,17 +417,17 @@ function FaqPage() {
                           <p className="text-[color:var(--brand-navy)]/80">{it.a}</p>
                           {it.more && (
                             <details className="mt-3">
-                              <summary className="cursor-pointer text-xs font-medium text-[color:var(--brand-navy)]/70 hover:text-[color:var(--brand-navy)]">
+                              <summary className="cursor-pointer text-xs font-medium text-[color:var(--brand-navy)]/80 hover:text-[color:var(--brand-navy)]">
                                 Read the deeper explanation
                               </summary>
-                              <p className="mt-2 text-sm text-[color:var(--brand-navy)]/75">
+                              <p className="mt-2 text-sm text-[color:var(--brand-navy)]/80">
                                 {it.more}
                               </p>
                             </details>
                           )}
                           <a
                             href={`#${it.id}`}
-                            className="mt-3 inline-flex items-center gap-1 text-xs text-[color:var(--brand-navy)]/55 hover:text-[color:var(--brand-navy)]"
+                            className="mt-3 inline-flex items-center gap-1 text-xs text-[color:var(--brand-navy)]/80 hover:text-[color:var(--brand-navy)]"
                             aria-label={`Link to question: ${it.q}`}
                           >
                             <LinkIcon className="h-3 w-3" />

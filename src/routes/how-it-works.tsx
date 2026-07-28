@@ -36,14 +36,14 @@ function SectionHead({
 }) {
   return (
     <div className="max-w-3xl">
-      <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[color:var(--brand-ocean)]">
+      <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[color:var(--brand-ocean-text)]">
         {eyebrow}
       </p>
       <h2 className="mt-2 font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight text-[color:var(--brand-navy)] sm:text-4xl">
         {title}
       </h2>
       {lead ? (
-        <p className="mt-3 text-[color:var(--brand-navy)]/75">{lead}</p>
+        <p className="mt-3 text-[color:var(--brand-navy)]/80">{lead}</p>
       ) : null}
     </div>
   );
@@ -55,13 +55,13 @@ function HowItWorksPage() {
       {/* ── Hero ────────────────────────────────────────────────── */}
       <PublicSection className="pb-8 pt-16 sm:pt-20">
         <PublicPage>
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
             How it works
           </p>
           <h1 className="mt-3 max-w-3xl font-[family-name:var(--brand-font-display)] text-4xl font-semibold tracking-tight sm:text-5xl">
             The operational anatomy of a TaaSFlow hire.
           </h1>
-          <p className="mt-5 max-w-2xl text-lg text-[color:var(--brand-navy)]/70">
+          <p className="mt-5 max-w-2xl text-lg text-[color:var(--brand-navy)]/80">
             Not a marketing overview — the actual mechanics. Blueprint, sourcing
             map, evidence review, ranking, workspace delivery, and who owns
             what. If you're evaluating us seriously, this is the page.

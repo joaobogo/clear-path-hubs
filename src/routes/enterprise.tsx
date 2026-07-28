@@ -166,13 +166,13 @@ function EnterprisePage() {
       {/* ── Hero ─────────────────────────────────────────────────── */}
       <PublicSection className="pb-10 pt-16 sm:pt-20">
         <PublicPage>
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
             Enterprise
           </p>
           <h1 className="mt-3 max-w-3xl font-[family-name:var(--brand-font-display)] text-4xl font-semibold tracking-tight sm:text-5xl">
             Your hiring function. Scaled. On one workspace.
           </h1>
-          <p className="mt-5 max-w-2xl text-lg text-[color:var(--brand-navy)]/70">
+          <p className="mt-5 max-w-2xl text-lg text-[color:var(--brand-navy)]/80">
             Every open role, every ranked candidate, every piece of evidence —
             in a single account your TA, hiring managers, and executives share.
             Human recruiters + AI-supported structure. Flat subscription;
@@ -194,7 +194,7 @@ function EnterprisePage() {
           </div>
 
           <nav aria-label="Enterprise decision path" className="mt-10">
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
               What enterprise buyers ask
             </p>
             <ul className="mt-3 flex flex-wrap gap-2">
@@ -216,7 +216,7 @@ function EnterprisePage() {
       {/* ── Challenges of scale hiring ───────────────────────────── */}
       <PublicSection className="py-10">
         <PublicPage>
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
             The challenge
           </p>
           <h2 className="mt-3 max-w-3xl font-[family-name:var(--brand-font-display)] text-3xl font-semibold sm:text-4xl">
@@ -254,13 +254,13 @@ function EnterprisePage() {
       {/* ── Hiring volume ────────────────────────────────────────── */}
       <PublicSection id="volume" className="scroll-mt-24 py-10">
         <PublicPage>
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
             Hiring volume
           </p>
           <h2 className="mt-3 max-w-3xl font-[family-name:var(--brand-font-display)] text-3xl font-semibold sm:text-4xl">
             How the model scales with your requisition count.
           </h2>
-          <p className="mt-4 max-w-2xl text-[color:var(--brand-navy)]/75">
+          <p className="mt-4 max-w-2xl text-[color:var(--brand-navy)]/80">
             Capacity is expressed in active roles, not headcount promises. Volume can move
             up or down between review cycles — {SUBSCRIPTION_ANNUAL_DISCOUNT_LABEL.toLowerCase()}.
           </p>
@@ -272,10 +272,10 @@ function EnterprisePage() {
               </caption>
               <thead>
                 <tr className="border-b border-[color:var(--brand-navy)]/12 bg-[color:var(--brand-navy)]/[0.03]">
-                  <th scope="col" className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/60">Active roles</th>
-                  <th scope="col" className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/60">Monthly</th>
-                  <th scope="col" className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/60">Delivery cadence</th>
-                  <th scope="col" className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/60">Recruiter coverage</th>
+                  <th scope="col" className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/80">Active roles</th>
+                  <th scope="col" className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/80">Monthly</th>
+                  <th scope="col" className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/80">Delivery cadence</th>
+                  <th scope="col" className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/80">Recruiter coverage</th>
                 </tr>
               </thead>
               <tbody>
@@ -283,17 +283,17 @@ function EnterprisePage() {
                   <tr key={b.band} className="border-b border-[color:var(--brand-navy)]/8 align-top">
                     <td className="px-4 py-4">
                       <span className="font-semibold text-[color:var(--brand-navy)]">{b.band}</span>
-                      <span className="mt-1 block text-xs text-[color:var(--brand-navy)]/65">{b.fit}</span>
+                      <span className="mt-1 block text-xs text-[color:var(--brand-navy)]/80">{b.fit}</span>
                     </td>
                     <td className="whitespace-nowrap px-4 py-4 font-semibold text-[color:var(--brand-navy)]">{b.price}</td>
-                    <td className="px-4 py-4 text-[color:var(--brand-navy)]/75">{b.cadence}</td>
-                    <td className="px-4 py-4 text-[color:var(--brand-navy)]/75">{b.pod}</td>
+                    <td className="px-4 py-4 text-[color:var(--brand-navy)]/80">{b.cadence}</td>
+                    <td className="px-4 py-4 text-[color:var(--brand-navy)]/80">{b.pod}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
-          <p className="mt-4 text-xs text-[color:var(--brand-navy)]/55">
+          <p className="mt-4 text-xs text-[color:var(--brand-navy)]/80">
             Bands are indicative. Your plan is scoped to your role families and approved before anything starts.
           </p>
         </PublicPage>
@@ -302,13 +302,13 @@ function EnterprisePage() {
       {/* ── TaaSFlow enterprise operating model ──────────────────── */}
       <PublicSection className="py-10">
         <PublicPage>
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
             The operating model
           </p>
           <h2 className="mt-3 max-w-3xl font-[family-name:var(--brand-font-display)] text-3xl font-semibold sm:text-4xl">
             One account. Many searches. Same standard of evidence.
           </h2>
-          <p className="mt-4 max-w-2xl text-[color:var(--brand-navy)]/75">
+          <p className="mt-4 max-w-2xl text-[color:var(--brand-navy)]/80">
             An enterprise account is structured around your organization — business units,
             role families, and hiring teams — with recruiter pods aligned to them. Every
             search follows the same intake, sourcing, and ranked-delivery workflow, so
@@ -337,13 +337,13 @@ function EnterprisePage() {
       {/* ── Stakeholder selector ─────────────────────────────────── */}
       <PublicSection className="py-10">
         <PublicPage>
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
             Stakeholder view
           </p>
           <h2 className="mt-3 max-w-3xl font-[family-name:var(--brand-font-display)] text-3xl font-semibold sm:text-4xl">
             Pick your seat at the table.
           </h2>
-          <p className="mt-4 max-w-2xl text-[color:var(--brand-navy)]/75">
+          <p className="mt-4 max-w-2xl text-[color:var(--brand-navy)]/80">
             The same account looks different depending on who is signed in.
             Choose your role to see what the workspace shows you, what matters
             to you, and why it holds up in review.
@@ -359,13 +359,13 @@ function EnterprisePage() {
         <PublicPage>
           <div className="grid gap-10 lg:grid-cols-[1fr_1.05fr] lg:items-center">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
                 Multi-role visibility
               </p>
               <h2 className="mt-3 font-[family-name:var(--brand-font-display)] text-3xl font-semibold sm:text-4xl">
                 Every stakeholder sees the same picture.
               </h2>
-              <p className="mt-4 text-[color:var(--brand-navy)]/75">
+              <p className="mt-4 text-[color:var(--brand-navy)]/80">
                 TA leaders see the full requisition portfolio. Hiring managers see their own
                 pipelines. Business partners see progress across their org. Nobody is stuck
                 asking a recruiter for a status update in a DM.
@@ -395,13 +395,13 @@ function EnterprisePage() {
           <div className="grid gap-10 lg:grid-cols-[1.05fr_1fr] lg:items-center">
             <RankedEvidenceMock />
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
                 Ranking & evidence at scale
               </p>
               <h2 className="mt-3 font-[family-name:var(--brand-font-display)] text-3xl font-semibold sm:text-4xl">
                 Every candidate. Every requirement. Every role.
               </h2>
-              <p className="mt-4 text-[color:var(--brand-navy)]/75">
+              <p className="mt-4 text-[color:var(--brand-navy)]/80">
                 Candidates arrive scored against the requirements your team actually
                 approved at intake — with recruiter-written fit notes and quotes from the CV
                 that make the score defensible in a hiring committee.
@@ -432,7 +432,7 @@ function EnterprisePage() {
                   <ListChecks className="mt-0.5 h-4 w-4 shrink-0 text-[color:var(--brand-navy)]" aria-hidden />
                   <h4 className="text-sm font-semibold text-[color:var(--brand-navy)]">{c.title}</h4>
                 </div>
-                <p className="mt-2 text-sm text-[color:var(--brand-navy)]/75">{c.body}</p>
+                <p className="mt-2 text-sm text-[color:var(--brand-navy)]/80">{c.body}</p>
               </div>
             ))}
           </div>
@@ -444,13 +444,13 @@ function EnterprisePage() {
         <PublicPage>
           <div className="grid gap-10 lg:grid-cols-[1fr_1fr] lg:items-center">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
                 Transparency & reporting
               </p>
               <h2 className="mt-3 font-[family-name:var(--brand-font-display)] text-3xl font-semibold sm:text-4xl">
                 Live account view — not a monthly export.
               </h2>
-              <p className="mt-4 text-[color:var(--brand-navy)]/75">
+              <p className="mt-4 text-[color:var(--brand-navy)]/80">
                 The workspace is the report. Requisition health, stage distribution,
                 sourcing throughput and decision reasons update as work happens — and
                 everything is exportable for board reviews and internal reviews.
@@ -486,13 +486,13 @@ function EnterprisePage() {
       {/* ── Collaboration across hiring teams ────────────────────── */}
       <PublicSection className="py-10">
         <PublicPage>
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
             Collaboration
           </p>
           <h2 className="mt-3 max-w-3xl font-[family-name:var(--brand-font-display)] text-3xl font-semibold sm:text-4xl">
             One thread per role. No forwarded emails.
           </h2>
-          <p className="mt-4 max-w-2xl text-[color:var(--brand-navy)]/75">
+          <p className="mt-4 max-w-2xl text-[color:var(--brand-navy)]/80">
             TA, hiring managers, and the TaaSFlow pod work in the same workspace with the
             same context. Decisions and reasons are captured next to the candidate they
             apply to — not lost in email threads.
@@ -520,7 +520,7 @@ function EnterprisePage() {
       {/* ── Regions served ───────────────────────────────────────── */}
       <PublicSection id="regions" className="scroll-mt-24 py-10">
         <PublicPage>
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
             Regions served
           </p>
           <h2 className="mt-3 max-w-3xl font-[family-name:var(--brand-font-display)] text-3xl font-semibold sm:text-4xl">
@@ -531,7 +531,7 @@ function EnterprisePage() {
               <Pillar key={r.title} icon={<Globe2 className="h-5 w-5" aria-hidden />} title={r.title} body={r.body} />
             ))}
           </div>
-          <p className="mt-6 max-w-2xl text-sm text-[color:var(--brand-navy)]/70">
+          <p className="mt-6 max-w-2xl text-sm text-[color:var(--brand-navy)]/80">
             Time-zone and right-to-work constraints are captured at intake and enforced in scoring, so
             a candidate who cannot legally or practically work the role never reaches your shortlist.{" "}
             <Link to="/global-talent" className="font-semibold underline underline-offset-4">
@@ -544,13 +544,13 @@ function EnterprisePage() {
       {/* ── Security & support positioning ───────────────────────── */}
       <PublicSection id="compliance" className="scroll-mt-24 py-10 bg-[color:var(--brand-cream)]">
         <PublicPage>
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
             Security & support
           </p>
           <h2 className="mt-3 max-w-3xl font-[family-name:var(--brand-font-display)] text-3xl font-semibold sm:text-4xl">
             Compliance and privacy posture, stated plainly.
           </h2>
-          <p className="mt-4 max-w-2xl text-[color:var(--brand-navy)]/75">
+          <p className="mt-4 max-w-2xl text-[color:var(--brand-navy)]/80">
             What holds today, and what gets confirmed in writing before you sign.
           </p>
           <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -560,7 +560,7 @@ function EnterprisePage() {
                   <Lock className="mt-0.5 h-4 w-4 shrink-0 text-[color:var(--brand-navy)]" aria-hidden />
                   <h3 className="text-sm font-semibold text-[color:var(--brand-navy)]">{c.title}</h3>
                 </div>
-                <p className="mt-2 text-sm text-[color:var(--brand-navy)]/75">{c.body}</p>
+                <p className="mt-2 text-sm text-[color:var(--brand-navy)]/80">{c.body}</p>
               </div>
             ))}
           </div>
@@ -581,7 +581,7 @@ function EnterprisePage() {
               body="We complete your questionnaire, DPA and sub-processor review as part of onboarding, not after go-live."
             />
           </div>
-          <p className="mt-6 text-xs text-[color:var(--brand-navy)]/55">
+          <p className="mt-6 text-xs text-[color:var(--brand-navy)]/80">
             Specific security certifications, integrations, and support SLAs are confirmed
             during your enterprise consultation and scoped to your account.
           </p>
@@ -593,7 +593,7 @@ function EnterprisePage() {
         <PublicPage>
           <div className="flex items-start gap-3">
             <Scale className="mt-1 h-5 w-5 shrink-0 text-[color:var(--brand-navy)]" aria-hidden />
-            <p className="text-sm text-[color:var(--brand-navy)]/75">
+            <p className="text-sm text-[color:var(--brand-navy)]/80">
               At enterprise volume the difference is structural: a placement fee scales with every
               hire and every salary. A subscription does not.
             </p>
@@ -615,13 +615,13 @@ function EnterprisePage() {
       {/* ── Enterprise engagement path ───────────────────────────── */}
       <PublicSection id="timeline" className="scroll-mt-24 py-10">
         <PublicPage>
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
             Implementation timeline
           </p>
           <h2 className="mt-3 max-w-3xl font-[family-name:var(--brand-font-display)] text-3xl font-semibold sm:text-4xl">
             From first call to first shortlist in weeks, not quarters.
           </h2>
-          <p className="mt-4 max-w-2xl text-[color:var(--brand-navy)]/75">
+          <p className="mt-4 max-w-2xl text-[color:var(--brand-navy)]/80">
             No integration project, no data migration, no implementation fee. Your team logs into a
             workspace that is already configured.
           </p>
@@ -630,7 +630,7 @@ function EnterprisePage() {
               <Step key={s.step} step={s.step} title={s.title} body={s.body} />
             ))}
           </ol>
-          <p className="mt-6 flex items-start gap-2 text-sm text-[color:var(--brand-navy)]/70">
+          <p className="mt-6 flex items-start gap-2 text-sm text-[color:var(--brand-navy)]/80">
             <CalendarClock className="mt-0.5 h-4 w-4 shrink-0" aria-hidden />
             Timings assume criteria are approved on schedule; scoping calls are usually booked within a week.
           </p>
@@ -663,7 +663,7 @@ function IssueCard({ title, body }: { title: string; body: string }) {
       <h3 className="font-[family-name:var(--brand-font-display)] text-lg font-semibold">
         {title}
       </h3>
-      <p className="mt-2 text-sm text-[color:var(--brand-navy)]/75">{body}</p>
+      <p className="mt-2 text-sm text-[color:var(--brand-navy)]/80">{body}</p>
     </div>
   );
 }
@@ -685,7 +685,7 @@ function Pillar({
       <h3 className="mt-4 font-[family-name:var(--brand-font-display)] text-lg font-semibold">
         {title}
       </h3>
-      <p className="mt-2 text-sm text-[color:var(--brand-navy)]/75">{body}</p>
+      <p className="mt-2 text-sm text-[color:var(--brand-navy)]/80">{body}</p>
     </div>
   );
 }
@@ -705,7 +705,7 @@ function MiniCard({
         {icon}
         <span className="text-sm font-semibold">{label}</span>
       </div>
-      <p className="mt-1.5 text-xs text-[color:var(--brand-navy)]/70">{body}</p>
+      <p className="mt-1.5 text-xs text-[color:var(--brand-navy)]/80">{body}</p>
     </div>
   );
 }
@@ -721,13 +721,13 @@ function Step({
 }) {
   return (
     <li className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6">
-      <span className="text-xs font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/50">
+      <span className="text-xs font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/80">
         {step}
       </span>
       <h3 className="mt-3 font-[family-name:var(--brand-font-display)] text-lg font-semibold">
         {title}
       </h3>
-      <p className="mt-2 text-sm text-[color:var(--brand-navy)]/75">{body}</p>
+      <p className="mt-2 text-sm text-[color:var(--brand-navy)]/80">{body}</p>
     </li>
   );
 }
@@ -745,7 +745,7 @@ function MockChrome({ title, children }: { title: string; children: React.ReactN
         <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-red-400/70" aria-hidden />
         <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-yellow-400/70" aria-hidden />
         <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-green-400/70" aria-hidden />
-        <span className="ml-3 min-w-0 flex-1 truncate text-xs font-medium text-[color:var(--brand-navy)]/70">
+        <span className="ml-3 min-w-0 flex-1 truncate text-xs font-medium text-[color:var(--brand-navy)]/80">
           {title}
         </span>
         <span className="ml-auto inline-flex shrink-0 items-center gap-1 rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-semibold text-emerald-700">
@@ -778,7 +778,7 @@ function RequisitionPortfolioMock() {
                 <div className="truncate text-sm font-semibold text-[color:var(--brand-navy)]">
                   {r.role}
                 </div>
-                <div className="truncate text-xs text-[color:var(--brand-navy)]/60">
+                <div className="truncate text-xs text-[color:var(--brand-navy)]/80">
                   {r.unit} · Hiring mgr: {r.mgr}
                 </div>
               </div>
@@ -814,7 +814,7 @@ function RankedEvidenceMock() {
             <div className="text-sm font-semibold text-[color:var(--brand-navy)]">
               Candidate #A-1042
             </div>
-            <div className="text-xs text-[color:var(--brand-navy)]/60">
+            <div className="text-xs text-[color:var(--brand-navy)]/80">
               Senior Product Designer · Remote · EU
             </div>
           </div>
@@ -825,7 +825,7 @@ function RankedEvidenceMock() {
         <div className="mt-4 space-y-2">
           {reqs.map((r) => (
             <div key={r.label} className="grid grid-cols-[minmax(0,1fr)_1fr_auto] items-center gap-3">
-              <span className="truncate text-xs text-[color:var(--brand-navy)]/75">
+              <span className="truncate text-xs text-[color:var(--brand-navy)]/80">
                 {r.label}
               </span>
               <div className="h-1.5 overflow-hidden rounded-full bg-[color:var(--brand-navy)]/10">
@@ -834,13 +834,13 @@ function RankedEvidenceMock() {
                   style={{ width: `${r.score}%` }}
                 />
               </div>
-              <span className="text-[11px] font-semibold text-[color:var(--brand-navy)]/70">
+              <span className="text-[11px] font-semibold text-[color:var(--brand-navy)]/80">
                 {r.score}
               </span>
             </div>
           ))}
         </div>
-        <p className="mt-4 rounded-md bg-[color:var(--brand-cream)] p-3 text-xs italic text-[color:var(--brand-navy)]/75">
+        <p className="mt-4 rounded-md bg-[color:var(--brand-cream)] p-3 text-xs italic text-[color:var(--brand-navy)]/80">
           "Led the design system for a 40-engineer B2B SaaS across two product lines" —
           recruiter note, sourced from CV.
         </p>
@@ -862,39 +862,39 @@ function ReportingMock() {
     <MockChrome title="Admin workspace · Account reporting">
       <div className="grid grid-cols-2 gap-3">
         <div className="rounded-lg border border-[color:var(--brand-navy)]/10 p-3">
-          <div className="text-[11px] uppercase tracking-wider text-[color:var(--brand-navy)]/60">
+          <div className="text-[11px] uppercase tracking-wider text-[color:var(--brand-navy)]/80">
             Open requisitions
           </div>
           <div className="mt-1 text-2xl font-semibold text-[color:var(--brand-navy)]">
             37
           </div>
-          <div className="mt-1 text-[11px] text-[color:var(--brand-navy)]/60">
+          <div className="mt-1 text-[11px] text-[color:var(--brand-navy)]/80">
             across 6 business units
           </div>
         </div>
         <div className="rounded-lg border border-[color:var(--brand-navy)]/10 p-3">
-          <div className="text-[11px] uppercase tracking-wider text-[color:var(--brand-navy)]/60">
+          <div className="text-[11px] uppercase tracking-wider text-[color:var(--brand-navy)]/80">
             Active candidates
           </div>
           <div className="mt-1 text-2xl font-semibold text-[color:var(--brand-navy)]">
             412
           </div>
-          <div className="mt-1 text-[11px] text-[color:var(--brand-navy)]/60">
+          <div className="mt-1 text-[11px] text-[color:var(--brand-navy)]/80">
             across all pipelines
           </div>
         </div>
       </div>
       <div className="mt-4 rounded-lg border border-[color:var(--brand-navy)]/10 p-3">
         <div className="mb-2 flex items-center justify-between">
-          <span className="text-[11px] font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/60">
+          <span className="text-[11px] font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/80">
             Stage distribution
           </span>
-          <ArrowRight className="h-3.5 w-3.5 text-[color:var(--brand-navy)]/40" aria-hidden />
+          <ArrowRight className="h-3.5 w-3.5 text-[color:var(--brand-navy)]/80" aria-hidden />
         </div>
         <div className="space-y-1.5">
           {stages.map((s) => (
             <div key={s.label} className="grid grid-cols-[110px_1fr_36px] items-center gap-2">
-              <span className="truncate text-[11px] text-[color:var(--brand-navy)]/75">
+              <span className="truncate text-[11px] text-[color:var(--brand-navy)]/80">
                 {s.label}
               </span>
               <div className="h-1.5 overflow-hidden rounded-full bg-[color:var(--brand-navy)]/10">
@@ -903,7 +903,7 @@ function ReportingMock() {
                   style={{ width: `${(s.n / max) * 100}%` }}
                 />
               </div>
-              <span className="text-right text-[11px] font-semibold text-[color:var(--brand-navy)]/70">
+              <span className="text-right text-[11px] font-semibold text-[color:var(--brand-navy)]/80">
                 {s.n}
               </span>
             </div>

@@ -129,7 +129,7 @@ export function ProofSystem() {
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
         {/* Header */}
         <div className="max-w-3xl">
-          <span className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-[color:var(--brand-navy)]/60">
+          <span className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-[color:var(--brand-navy)]/80">
             How the model works in practice
           </span>
           <h2
@@ -138,7 +138,7 @@ export function ProofSystem() {
           >
             Proof without invented quotes.
           </h2>
-          <p className="mt-3 text-base text-[color:var(--brand-navy)]/70">
+          <p className="mt-3 text-base text-[color:var(--brand-navy)]/80">
             We do not publish testimonials we cannot verify. Instead we show
             the pattern the model produces on every role — the numbers a
             recruiter can defend, the steps that always run, and the artefacts
@@ -153,14 +153,14 @@ export function ProofSystem() {
               key={o.unit}
               className="rounded-xl border border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-paper)] p-5"
             >
-              <o.icon className="h-5 w-5 text-[color:var(--brand-ocean)]" aria-hidden />
+              <o.icon className="h-5 w-5 text-[color:var(--brand-ocean-text)]" aria-hidden />
               <div className="mt-4 font-[family-name:var(--brand-font-display)] text-3xl font-semibold text-[color:var(--brand-navy)]">
                 {o.stat}
               </div>
-              <div className="text-[12px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/55">
+              <div className="text-[12px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/80">
                 {o.unit}
               </div>
-              <p className="mt-2 text-sm leading-snug text-[color:var(--brand-navy)]/70">
+              <p className="mt-2 text-sm leading-snug text-[color:var(--brand-navy)]/80">
                 {o.line}
               </p>
             </div>
@@ -182,12 +182,12 @@ export function ProofSystem() {
                   <span className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[color:var(--brand-navy)]/6 text-[12px] font-semibold text-[color:var(--brand-navy)]">
                     {i + 1}
                   </span>
-                  <s.icon className="h-4 w-4 text-[color:var(--brand-ocean)]" aria-hidden />
+                  <s.icon className="h-4 w-4 text-[color:var(--brand-ocean-text)]" aria-hidden />
                   <span className="text-sm font-semibold text-[color:var(--brand-navy)]">
                     {s.t}
                   </span>
                 </div>
-                <p className="mt-3 text-sm leading-snug text-[color:var(--brand-navy)]/70">
+                <p className="mt-3 text-sm leading-snug text-[color:var(--brand-navy)]/80">
                   {s.d}
                 </p>
               </li>
@@ -235,7 +235,7 @@ export function ProofSystem() {
 
           {/* Product patterns */}
           <div className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-paper)] p-6 sm:p-8">
-            <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[color:var(--brand-navy)]/60">
+            <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[color:var(--brand-navy)]/80">
               What lives in the workspace
             </span>
             <h3 className="mt-3 font-[family-name:var(--brand-font-display)] text-2xl font-semibold leading-tight text-[color:var(--brand-navy)]">
@@ -248,12 +248,12 @@ export function ProofSystem() {
                   className="rounded-xl border border-[color:var(--brand-navy)]/10 bg-white p-4"
                 >
                   <div className="flex items-center gap-2">
-                    <p.icon className="h-4 w-4 text-[color:var(--brand-ocean)]" aria-hidden />
+                    <p.icon className="h-4 w-4 text-[color:var(--brand-ocean-text)]" aria-hidden />
                     <span className="text-sm font-semibold text-[color:var(--brand-navy)]">
                       {p.label}
                     </span>
                   </div>
-                  <p className="mt-2 text-[12px] leading-snug text-[color:var(--brand-navy)]/70">
+                  <p className="mt-2 text-[12px] leading-snug text-[color:var(--brand-navy)]/80">
                     {p.detail}
                   </p>
                 </li>
@@ -261,7 +261,7 @@ export function ProofSystem() {
             </ul>
             <Link
               to="/how-it-works"
-              className="mt-6 inline-flex items-center gap-1 text-sm font-semibold text-[color:var(--brand-ocean)] hover:text-[color:var(--brand-navy)]"
+              className="mt-6 inline-flex items-center gap-1 text-sm font-semibold text-[color:var(--brand-ocean-text)] hover:text-[color:var(--brand-navy)]"
             >
               Tour the workspace <ArrowRight className="h-4 w-4" aria-hidden />
             </Link>
@@ -278,7 +278,7 @@ export function ProofSystem() {
               </h3>
               <Link
                 to="/case-studies"
-                className="hidden text-sm font-semibold text-[color:var(--brand-ocean)] hover:text-[color:var(--brand-navy)] sm:inline-flex"
+                className="hidden text-sm font-semibold text-[color:var(--brand-ocean-text)] hover:text-[color:var(--brand-navy)] sm:inline-flex"
               >
                 All case studies →
               </Link>
@@ -290,14 +290,14 @@ export function ProofSystem() {
                   className="rounded-xl border border-[color:var(--brand-navy)]/10 bg-white p-5"
                 >
                   <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                    <span className="text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-ocean)]">
+                    <span className="text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-ocean-text)]">
                       {c.industry}
                     </span>
                     <span className="text-sm font-semibold text-[color:var(--brand-navy)]">
                       {c.role}
                     </span>
                   </div>
-                  <p className="mt-2 text-sm leading-snug text-[color:var(--brand-navy)]/75">
+                  <p className="mt-2 text-sm leading-snug text-[color:var(--brand-navy)]/80">
                     {c.line}
                   </p>
                 </li>
@@ -307,7 +307,7 @@ export function ProofSystem() {
 
           {/* Calculator math */}
           <div className="rounded-2xl border border-[color:var(--brand-ocean)]/25 bg-gradient-to-br from-[color:var(--brand-sky)]/40 to-[color:var(--brand-paper)] p-6 sm:p-8">
-            <span className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-[color:var(--brand-navy)]/70">
+            <span className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-[color:var(--brand-navy)]/80">
               <Wallet className="h-3.5 w-3.5" aria-hidden />
               The math, without a call
             </span>
@@ -318,7 +318,7 @@ export function ProofSystem() {
             </h3>
             <dl className="mt-6 space-y-3 text-sm">
               <div className="flex items-baseline justify-between gap-4 border-b border-[color:var(--brand-navy)]/10 pb-3">
-                <dt className="text-[color:var(--brand-navy)]/70">
+                <dt className="text-[color:var(--brand-navy)]/80">
                   Contingency agency (22% of first-year salary)
                 </dt>
                 <dd className="font-semibold tabular-nums text-[color:var(--brand-navy)]">
@@ -326,10 +326,10 @@ export function ProofSystem() {
                 </dd>
               </div>
               <div className="flex items-baseline justify-between gap-4 border-b border-[color:var(--brand-navy)]/10 pb-3">
-                <dt className="text-[color:var(--brand-navy)]/70">
+                <dt className="text-[color:var(--brand-navy)]/80">
                   TaaSFlow Growth (one month, flat)
                 </dt>
-                <dd className="font-semibold tabular-nums text-[color:var(--brand-ocean)]">
+                <dd className="font-semibold tabular-nums text-[color:var(--brand-ocean-text)]">
                   $5,900
                 </dd>
               </div>
@@ -344,7 +344,7 @@ export function ProofSystem() {
             </dl>
             <a
               href="#roi-calculator"
-              className="mt-6 inline-flex items-center gap-1 text-sm font-semibold text-[color:var(--brand-ocean)] hover:text-[color:var(--brand-navy)]"
+              className="mt-6 inline-flex items-center gap-1 text-sm font-semibold text-[color:var(--brand-ocean-text)] hover:text-[color:var(--brand-navy)]"
             >
               Run your own numbers <ArrowRight className="h-4 w-4" aria-hidden />
             </a>
@@ -357,7 +357,7 @@ export function ProofSystem() {
             <h3 className="text-lg font-semibold text-[color:var(--brand-navy)]">
               What people ask before signing.
             </h3>
-            <span className="text-[12px] text-[color:var(--brand-navy)]/55">
+            <span className="text-[12px] text-[color:var(--brand-navy)]/80">
               Straight answers. No sales dance.
             </span>
           </div>
@@ -377,14 +377,14 @@ export function ProofSystem() {
                     </span>
                     <ChevronDown
                       className={
-                        "h-4 w-4 shrink-0 text-[color:var(--brand-navy)]/50 transition-transform " +
+                        "h-4 w-4 shrink-0 text-[color:var(--brand-navy)]/80 transition-transform " +
                         (open ? "rotate-180" : "")
                       }
                       aria-hidden
                     />
                   </button>
                   {open && (
-                    <div className="px-5 pb-5 text-sm leading-relaxed text-[color:var(--brand-navy)]/75">
+                    <div className="px-5 pb-5 text-sm leading-relaxed text-[color:var(--brand-navy)]/80">
                       {f.a}
                     </div>
                   )}
