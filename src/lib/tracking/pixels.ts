@@ -297,7 +297,7 @@ export function verifyTrackers(): Record<TrackerKey, TrackerStatus> {
   return {
     ga4: build("ga4", GA_ID, typeof w.gtag === "function"),
     apollo: build("apollo", APOLLO_ID, !!w.trackingFunctions?.onLoad),
-    rb2b: build("rb2b", RB2B_ID, !!w.reb2b?.invoked),
+    rb2b: build("rb2b", RB2B_ID, !!w.reb2b),
     meta: build("meta", META_ID, typeof w.fbq === "function"),
     linkedin: build("linkedin", LINKEDIN_ID, typeof w.lintrk === "function"),
     clarity: build("clarity", CLARITY_ID, typeof w.clarity === "function"),
