@@ -1,4 +1,5 @@
 import * as React from "react";
+import { PRICE_PILOT_USD } from "@/config/pricing-core";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   Activity,
@@ -1329,14 +1330,29 @@ function Home() {
                 id="home-hero-heading"
                 className="font-[family-name:var(--brand-font-display)] text-4xl font-semibold leading-[1.05] tracking-tight text-[color:var(--brand-navy)] sm:text-5xl lg:text-[3.5rem]"
               >
-                Ranked shortlists in a week.
+                Your hiring team,
                 <br className="hidden sm:block" />{" "}
-                <span className="text-[color:var(--brand-ocean)]">Not a quarter.</span>
+                <span className="text-[color:var(--brand-ocean)]">on demand.</span>
               </h1>
               <p className="max-w-xl text-lg text-[color:var(--brand-navy)]/75">
-                Every role briefed, sourced, and scored against your rubric — so you decide in days, not months.{" "}
-                <span className="font-semibold text-[color:var(--brand-navy)]">Cheaper than an agency. Better than a job post.</span>
+                TaaSFlow is subscription recruiting for Series A–C teams. Get ranked, enriched candidates through a live dashboard for one flat monthly fee.{" "}
+                <span className="font-semibold text-[color:var(--brand-navy)]">Pre-screened, ranked candidates in 7–14 days. No placement fees.</span>
               </p>
+              <ul className="flex flex-wrap gap-2 pt-1">
+                {[
+                  "First shortlist in 7–14 days",
+                  "No salary percentage fees",
+                  `$${PRICE_PILOT_USD} pilot available`,
+                ].map((t) => (
+                  <li
+                    key={t}
+                    className="inline-flex items-center gap-1.5 rounded-full border border-[color:var(--brand-navy)]/12 bg-white/70 px-3 py-1.5 text-xs font-semibold text-[color:var(--brand-navy)]/80 backdrop-blur"
+                  >
+                    <CheckCircle2 className="h-3.5 w-3.5 text-[color:var(--brand-ocean)]" aria-hidden />
+                    {t}
+                  </li>
+                ))}
+              </ul>
               <div className="flex flex-wrap items-center gap-3 pt-1">
                 <Link
                   to="/intake"
@@ -1361,18 +1377,10 @@ function Home() {
                   Browse open jobs <ArrowRight className="h-3 w-3" aria-hidden />
                 </Link>
               </div>
-              <ul className="flex flex-wrap gap-x-5 gap-y-1.5 text-xs text-[color:var(--brand-navy)]/65">
-                {[
-                  "Ranked shortlist within 14 days",
-                  "Package pricing, no placement fees",
-                  "You keep the ATS, the candidates, the final call",
-                ].map((t) => (
-                  <li key={t} className="inline-flex items-center gap-1.5">
-                    <CheckCircle2 className="h-3.5 w-3.5 text-[color:var(--brand-ocean)]" aria-hidden />
-                    {t}
-                  </li>
-                ))}
-              </ul>
+              <p className="text-xs text-[color:var(--brand-navy)]/60">
+                You keep the ATS, the candidates, and the final call.
+              </p>
+
 
             </div>
             <div className="min-w-0">
