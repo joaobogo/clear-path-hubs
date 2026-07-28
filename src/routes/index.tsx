@@ -1396,6 +1396,58 @@ function Home() {
       {/* 2b — STRAIGHT ANSWERS (sales-risk removal) */}
       <StraightAnswers />
 
+      {/* 2c — PILOT */}
+      <PublicSection>
+        <PublicPage>
+          <div className="rounded-3xl border border-[color:var(--brand-navy)]/10 bg-white p-6 sm:p-10">
+            <div className="grid gap-8 lg:grid-cols-[1fr_1.2fr]">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[color:var(--brand-ocean)]">
+                  ${PRICE_PILOT_USD} pilot
+                </p>
+                <h2 className="mt-2 font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight text-[color:var(--brand-navy)]">
+                  Try one role before you subscribe.
+                </h2>
+                <p className="mt-3 text-[color:var(--brand-navy)]/70">
+                  One role, run end-to-end: intake, sourcing and scoring, then a ranked shortlist in
+                  your dashboard. No placement fees, no commitment afterwards.
+                </p>
+                <p className="mt-4 rounded-xl border border-[color:var(--brand-ocean)]/25 bg-[color:var(--brand-ocean)]/5 p-3 text-sm text-[color:var(--brand-navy)]/80">
+                  <span className="font-semibold text-[color:var(--brand-navy)]">Best for:</span>{" "}
+                  teams that need to validate candidate quality before starting a monthly subscription.
+                </p>
+                <Link
+                  to="/pilot"
+                  className="mt-6 inline-flex min-h-11 items-center gap-2 rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[color:var(--brand-navy-dark)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+                >
+                  See what the pilot includes <ArrowRight className="h-4 w-4" aria-hidden />
+                </Link>
+              </div>
+              <ol className="grid gap-4 sm:grid-cols-3">
+                {[
+                  { n: "01", when: "Day 1–2", t: "Intake", b: "Guided intake plus a short alignment call to lock the search plan." },
+                  { n: "02", when: "Day 3–10", t: "Sourcing and scoring", b: "Multi-channel sourcing, then scoring against your rubric with evidence per requirement." },
+                  { n: "03", when: "Day 10–14", t: "Ranked shortlist review", b: "Reviewed candidates published to your dashboard, ranked, with CVs and evidence." },
+                ].map((s) => (
+                  <li key={s.n} className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-paper)] p-5">
+                    <div className="flex items-center gap-2">
+                      <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-[color:var(--brand-navy)]/5 text-xs font-semibold text-[color:var(--brand-navy)]">
+                        {s.n}
+                      </span>
+                      <span className="text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-ocean)]">
+                        {s.when}
+                      </span>
+                    </div>
+                    <h3 className="mt-3 text-sm font-semibold text-[color:var(--brand-navy)]">{s.t}</h3>
+                    <p className="mt-1 text-xs text-[color:var(--brand-navy)]/70">{s.b}</p>
+                  </li>
+                ))}
+              </ol>
+            </div>
+          </div>
+        </PublicPage>
+      </PublicSection>
+
 
 
       {/* 3 — WHAT YOU RECEIVE (product-grade interactive deliverable) */}
