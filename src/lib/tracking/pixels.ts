@@ -44,7 +44,7 @@ declare global {
     clarity?: (...args: unknown[]) => void;
     hj?: ((...args: unknown[]) => void) & { q?: unknown[] };
     _hjSettings?: { hjid: number; hjsv: number };
-    reb2b?: { invoked?: boolean; methods?: string[]; SNIPPET_VERSION?: string; [k: string]: unknown };
+    reb2b?: unknown[] & { invoked?: boolean; SNIPPET_VERSION?: string };
     trackingFunctions?: { onLoad?: (opts: { appId: string }) => void };
     _taasflow_tracking?: {
       initialized: boolean;
