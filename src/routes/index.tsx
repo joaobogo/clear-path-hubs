@@ -1493,9 +1493,10 @@ function Home() {
           <PublicPage>
             <SectionHead
               eyebrow="The live dashboard"
-              title="This is what lands in your workspace each week."
-              lead="Ranked candidates scored 0–100 across Role Fit, Evidence, Logistics and Signal — with Shortlist, Interview, Request Info and Reject one click away."
+              title="Your hiring pipeline, on your phone."
+              lead="Ranked candidates scored 0–100 across Role Fit, Evidence, Logistics and Signal — with Shortlist, Interview, Ask and Reject one tap away."
             />
+
             <div className="mt-10">
               <DashboardPreview />
             </div>
