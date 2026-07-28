@@ -79,8 +79,45 @@ export function ModelComparisonTable({ className }: { className?: string }) {
         </p>
       </div>
 
-      <div className="mt-8 overflow-x-auto rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white" tabIndex={0} role="region" aria-label="Comparison table, scroll horizontally">
+      {/* Mobile: stacked per-dimension cards — no horizontal scrolling */}
+      <ul className="mt-8 space-y-3 md:hidden">
+        {ROWS.map((r) => (
+          <li
+            key={r.dimension}
+            className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-4"
+          >
+            <p className="text-sm font-semibold text-[color:var(--brand-navy)]">
+              {r.dimension}
+            </p>
+            <div className="mt-3 space-y-2.5 text-sm">
+              <div>
+                <p className="text-[11px] font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/70">
+                  Contingency agency
+                </p>
+                <p className="mt-0.5 text-[color:var(--brand-navy)]/80">{r.agency}</p>
+              </div>
+              <div>
+                <p className="text-[11px] font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/70">
+                  Sourcing tools &amp; job boards
+                </p>
+                <p className="mt-0.5 text-[color:var(--brand-navy)]/80">{r.tools}</p>
+              </div>
+              <div className="rounded-xl bg-[color:var(--brand-navy)]/[0.04] p-3">
+                <p className="text-[11px] font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]">
+                  TaaSFlow subscription
+                </p>
+                <p className="mt-0.5 font-medium text-[color:var(--brand-navy)]">
+                  {r.taasflow}
+                </p>
+              </div>
+            </div>
+          </li>
+        ))}
+      </ul>
+
+      <div className="mt-8 hidden overflow-x-auto rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white md:block" tabIndex={0} role="region" aria-label="Comparison table, scroll horizontally">
         <table className="w-full min-w-[48rem] border-collapse text-sm">
+
           <caption className="sr-only">
             Comparison of contingency agencies, internal sourcing tools and
             TaaSFlow subscription recruiting
