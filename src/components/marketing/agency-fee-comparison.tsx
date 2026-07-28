@@ -48,7 +48,7 @@ export function AgencyFeeComparison() {
         </p>
       </div>
 
-      <div className="mt-8 overflow-x-auto rounded-2xl border border-[color:var(--brand-navy)]/12 bg-white shadow-[var(--brand-shadow-sm)]">
+      <div className="mt-8 overflow-x-auto rounded-2xl border border-[color:var(--brand-navy)]/12 bg-white shadow-[var(--brand-shadow-sm)]" tabIndex={0} role="region" aria-label="Comparison table, scroll horizontally">
         <table className="w-full min-w-[44rem] border-collapse text-left text-sm">
           <caption className="sr-only">
             Example cost comparison between agency placement fees at 20 to 25

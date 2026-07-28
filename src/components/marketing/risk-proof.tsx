@@ -75,16 +75,16 @@ export function RiskProof({ className = "" }: { className?: string }) {
               </span>
             </div>
           </div>
-          <dl className="mt-5 space-y-3">
+          <div className="mt-5 space-y-3">
             {SCORECARD.lines.map((l) => (
               <div key={l.label}>
                 <div className="flex items-baseline justify-between gap-2">
-                  <dt className="text-xs font-semibold text-[color:var(--brand-navy)]">
+                  <p className="text-xs font-semibold text-[color:var(--brand-navy)]">
                     {l.label}
-                  </dt>
-                  <dd className="text-xs font-semibold tabular-nums text-[color:var(--brand-navy)]/80">
+                  </p>
+                  <p className="text-xs font-semibold tabular-nums text-[color:var(--brand-navy)]/80">
                     {l.value}
-                  </dd>
+                  </p>
                 </div>
                 <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-[color:var(--brand-navy)]/10">
                   <div
@@ -97,7 +97,7 @@ export function RiskProof({ className = "" }: { className?: string }) {
                 </p>
               </div>
             ))}
-          </dl>
+          </div>
         </article>
 
         {/* 2 — Sample fit narrative */}

@@ -187,21 +187,21 @@ export function DashboardPreview() {
                     / 100
                   </div>
                 </div>
-                <dl className="grid min-w-0 flex-1 grid-cols-2 gap-x-3 gap-y-2 sm:grid-cols-4">
+                <div className="grid min-w-0 flex-1 grid-cols-2 gap-x-3 gap-y-2 sm:grid-cols-4">
                   {r.categories.map((c) => (
                     <div key={c.label} className="min-w-0">
-                      <dt className="truncate text-[10px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/80">
+                      <p className="truncate text-[10px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/80">
                         {c.label}
-                      </dt>
+                      </p>
                       <div className="mt-1 flex items-center gap-2">
                         <ScoreBar value={c.value} />
-                        <dd className="shrink-0 text-[11px] font-semibold tabular-nums text-[color:var(--brand-navy)]">
+                        <span className="shrink-0 text-[11px] font-semibold tabular-nums text-[color:var(--brand-navy)]">
                           {c.value}
-                        </dd>
+                        </span>
                       </div>
                     </div>
                   ))}
-                </dl>
+                </div>
               </div>
 
               {/* Actions */}

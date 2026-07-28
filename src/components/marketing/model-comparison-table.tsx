@@ -79,7 +79,7 @@ export function ModelComparisonTable({ className }: { className?: string }) {
         </p>
       </div>
 
-      <div className="mt-8 overflow-x-auto rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white">
+      <div className="mt-8 overflow-x-auto rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white" tabIndex={0} role="region" aria-label="Comparison table, scroll horizontally">
         <table className="w-full min-w-[48rem] border-collapse text-sm">
           <caption className="sr-only">
             Comparison of contingency agencies, internal sourcing tools and
