@@ -21,7 +21,7 @@ type Row = {
   score: number;
   band: "Top fit" | "Strong fit" | "Consider";
   stage: string;
-  categories: { label: string; short: string; value: number }[];
+  categories: { label: string; value: number }[];
 };
 
 const ROWS: Row[] = [
@@ -35,10 +35,10 @@ const ROWS: Row[] = [
     band: "Top fit",
     stage: "Ready for review",
     categories: [
-      { label: "Role Fit", short: "Fit", value: 96 },
-      { label: "Evidence", short: "Ev", value: 93 },
-      { label: "Logistics", short: "Log", value: 88 },
-      { label: "Signal", short: "Sig", value: 91 },
+      { label: "Role Fit", value: 96 },
+      { label: "Evidence", value: 93 },
+      { label: "Logistics", value: 88 },
+      { label: "Signal", value: 91 },
     ],
   },
   {
@@ -51,10 +51,10 @@ const ROWS: Row[] = [
     band: "Strong fit",
     stage: "Shortlisted",
     categories: [
-      { label: "Role Fit", short: "Fit", value: 89 },
-      { label: "Evidence", short: "Ev", value: 94 },
-      { label: "Logistics", short: "Log", value: 82 },
-      { label: "Signal", short: "Sig", value: 87 },
+      { label: "Role Fit", value: 89 },
+      { label: "Evidence", value: 94 },
+      { label: "Logistics", value: 82 },
+      { label: "Signal", value: 87 },
     ],
   },
   {
@@ -67,10 +67,10 @@ const ROWS: Row[] = [
     band: "Consider",
     stage: "Under review",
     categories: [
-      { label: "Role Fit", short: "Fit", value: 84 },
-      { label: "Evidence", short: "Ev", value: 81 },
-      { label: "Logistics", short: "Log", value: 94 },
-      { label: "Signal", short: "Sig", value: 78 },
+      { label: "Role Fit", value: 84 },
+      { label: "Evidence", value: 81 },
+      { label: "Logistics", value: 94 },
+      { label: "Signal", value: 78 },
     ],
   },
 ];
@@ -129,7 +129,7 @@ export function DashboardPreview() {
         </div>
 
         {/* Column labels — desktop only */}
-        <div className="hidden grid-cols-[minmax(0,1.5fr)_minmax(0,1.4fr)_auto] gap-4 border-b border-[color:var(--brand-navy)]/8 px-5 py-2 text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/50 lg:grid">
+        <div className="hidden grid-cols-[minmax(0,1.25fr)_minmax(0,1.6fr)_auto] gap-4 border-b border-[color:var(--brand-navy)]/8 px-5 py-2 text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/50 lg:grid">
           <span>Candidate</span>
           <span>Role Fit · Evidence · Logistics · Signal</span>
           <span className="text-right">Decision</span>
@@ -139,7 +139,7 @@ export function DashboardPreview() {
           {ROWS.map((r) => (
             <li
               key={r.id}
-              className="grid gap-4 px-4 py-4 sm:px-5 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1.4fr)_auto] lg:items-center"
+              className="grid gap-4 px-4 py-4 sm:px-5 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,1.6fr)_auto] lg:items-center"
             >
               {/* Identity + overall score */}
               <div className="flex min-w-0 items-start gap-3">
@@ -187,19 +187,17 @@ export function DashboardPreview() {
                     / 100
                   </div>
                 </div>
-                <dl className="grid min-w-0 flex-1 grid-cols-2 gap-x-4 gap-y-2 sm:grid-cols-4">
+                <dl className="grid min-w-0 flex-1 grid-cols-2 gap-x-3 gap-y-2 sm:grid-cols-4">
                   {r.categories.map((c) => (
                     <div key={c.label} className="min-w-0">
-                      <div className="flex items-baseline justify-between gap-2">
-                        <dt className="truncate text-[11px] font-semibold text-[color:var(--brand-navy)]/60">
-                          {c.label}
-                        </dt>
-                        <dd className="text-[11px] font-semibold tabular-nums text-[color:var(--brand-navy)]">
+                      <dt className="truncate text-[10px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/55">
+                        {c.label}
+                      </dt>
+                      <div className="mt-1 flex items-center gap-2">
+                        <ScoreBar value={c.value} />
+                        <dd className="shrink-0 text-[11px] font-semibold tabular-nums text-[color:var(--brand-navy)]">
                           {c.value}
                         </dd>
-                      </div>
-                      <div className="mt-1">
-                        <ScoreBar value={c.value} />
                       </div>
                     </div>
                   ))}
