@@ -716,6 +716,12 @@ export const INDUSTRY_ENTRIES_BATCH2: IndustryEntry[] = [
       { title: "Modality fluency", body: "Modality is non-transferable. Rubrics separate small molecule, biologics, cell/gene, mRNA and synbio in scoring." },
       { title: "Bench to translational", body: "Bench scientists and translational scientists reward different signal — captured separately." },
       { title: "CMC and process", body: "Process development, tech transfer and scale-up are distinct disciplines with dedicated rubrics." },
+      { title: "Platform maturity", body: "Pre-clinical discovery platforms and clinical-stage biotechs need very different risk tolerance and hands-on-bench expectations from candidates." },
+    ],
+    solutions: [
+      { title: "Modality-specific rubric", body: "Small molecule, biologics, cell/gene therapy and mRNA candidates are never scored against each other's evidence — the rubric rebuilds per modality." },
+      { title: "Bench-to-translational split", body: "Discovery scientists and translational scientists are scored on distinct evidence — assay development versus biomarker and clinical-bridge work." },
+      { title: "CMC track separation", body: "Process development, tech transfer and scale-up are scored as their own discipline, not folded into a generic 'scientist' rubric." },
     ],
     roleFamilies: [
       { name: "Discovery science", roles: ["Molecular biologists", "Biochemists", "Computational biologists"] },
@@ -724,6 +730,11 @@ export const INDUSTRY_ENTRIES_BATCH2: IndustryEntry[] = [
       { name: "Clinical & regulatory", roles: ["Clinical scientists", "Regulatory affairs leads"] },
     ],
     roles: ["Molecular biologists", "Computational biologists", "Process development scientists", "Translational scientists", "CMC leads"],
+    candidateSignals: [
+      { title: "Modality depth", body: "Named modality (small molecule, biologics, cell/gene, mRNA, synbio) with years of hands-on platform experience." },
+      { title: "Publication and IP", body: "Peer-reviewed papers, patents filed and named programmes advanced." },
+      { title: "Process ownership", body: "For CMC roles, named scale-up milestones, tech transfers completed and GMP-readiness achieved." },
+    ],
     skills: ["Cell biology", "Bioinformatics", "Upstream/downstream processing", "Analytical development"],
     tools: ["Benchling", "Geneious", "GraphPad Prism", "SnapGene", "SEQUEL / NovaSeq platforms"],
     certifications: ["PhD in relevant biology", "GMP training for CMC"],
@@ -735,6 +746,9 @@ export const INDUSTRY_ENTRIES_BATCH2: IndustryEntry[] = [
     resources: DEFAULT_RESOURCES,
     faqs: [
       { q: "Do you cover cell & gene therapy specifically?", a: "Yes — modality is captured as a first-class filter." },
+      { q: "Can you tell discovery scientists from translational scientists?", a: "Yes — they're scored on separate rubrics reflecting bench versus clinical-bridge evidence." },
+      { q: "Do you screen for GMP and tech-transfer experience?", a: "Yes. Named scale-up milestones and GMP-readiness are captured for CMC and process roles." },
+      { q: "Can you hire for a pre-clinical discovery platform?", a: "Yes. Platform maturity is captured at intake so early-stage risk tolerance is factored into scoring." },
     ],
     cta: { title: "Hiring in Biotech?", description: "Submit the role — modality scored, track captured." },
   },
@@ -754,6 +768,12 @@ export const INDUSTRY_ENTRIES_BATCH2: IndustryEntry[] = [
       { title: "Class and pathway", body: "510(k), De Novo, PMA and CE marking under MDR/IVDR reward different signal. Pathway captured at intake." },
       { title: "R&D specialisation", body: "Mechanical, electrical, firmware and software-in-devices are distinct crafts — separated in scoring." },
       { title: "QMS and design controls", body: "ISO 13485 and design-control ownership surfaced from the CV." },
+      { title: "Software-in-device convergence", body: "As devices become connected, firmware and cybersecurity expectations now sit alongside mechanical and electrical engineering — rubrics capture both." },
+    ],
+    solutions: [
+      { title: "Class-and-pathway capture", body: "510(k), De Novo, PMA and MDR/IVDR pathway experience is captured at intake and scored against the actual class of device being hired for." },
+      { title: "Discipline-specific rubric", body: "Mechanical, electrical, firmware and software-in-device engineers are scored on separate evidence rather than a single 'device engineer' rating." },
+      { title: "QMS verification", body: "ISO 13485 design-control ownership and named audit outcomes are quoted from the CV, not assumed from company name." },
     ],
     roleFamilies: [
       { name: "R&D engineering", roles: ["Mechanical engineers", "Electrical engineers", "Firmware engineers", "Software-in-device engineers"] },
@@ -762,6 +782,11 @@ export const INDUSTRY_ENTRIES_BATCH2: IndustryEntry[] = [
       { name: "Commercial", roles: ["Product managers", "Field-based clinical specialists", "KAMs"] },
     ],
     roles: ["Medical-device R&D engineers", "Regulatory affairs (MedTech)", "Quality engineers", "Clinical affairs leads"],
+    candidateSignals: [
+      { title: "Class and pathway experience", body: "Named device class (I/II/III), submission type and notified body or FDA centre engaged." },
+      { title: "Design-control ownership", body: "ISO 13485 and ISO 14971 risk-file ownership evidenced with named projects, not just certifications listed." },
+      { title: "Discipline depth", body: "Mechanical, electrical, firmware or software-in-device — years of hands-on ownership per discipline." },
+    ],
     skills: ["Design controls", "ISO 13485", "Risk management (ISO 14971)", "Verification & validation"],
     tools: ["Greenlight Guru", "MasterControl", "Solidworks", "Altium"],
     certifications: ["RAC", "ASQ CQE", "Notified-body audit history"],
@@ -775,6 +800,9 @@ export const INDUSTRY_ENTRIES_BATCH2: IndustryEntry[] = [
     resources: DEFAULT_RESOURCES,
     faqs: [
       { q: "Do you cover SaMD specifically?", a: "Yes — with rubrics that blend software engineering evidence with regulatory pathway." },
+      { q: "Can you filter by device class?", a: "Yes. Class I/II/III and IVD/combination-product status are intake fields applied as filters." },
+      { q: "Do you verify ISO 13485 design-control experience?", a: "We quote the CV line describing the design-control or risk-file ownership so your team can probe it in interview." },
+      { q: "Can you hire firmware engineers with medical-device experience specifically?", a: "Yes — firmware-in-device is scored separately from general embedded engineering, with regulatory context captured." },
     ],
     cta: { title: "Hiring in Medical Devices?", description: "Submit the role — class captured, QMS and pathway scored." },
   },
@@ -794,6 +822,12 @@ export const INDUSTRY_ENTRIES_BATCH2: IndustryEntry[] = [
       { title: "Clearance and citizenship", body: "SC, DV, TS/SCI and equivalent captured at intake and applied as filters." },
       { title: "Programme heritage", body: "Named programmes, phase and role played — captured from the CV." },
       { title: "Standards fluency", body: "DO-178C, DO-254, ARP4754A, MIL-STD, AS9100 ownership surfaced." },
+      { title: "Vetting timelines", body: "Clearance processing can take months. Candidates already holding or eligible for the required level are flagged up front to avoid dead-end pipelines." },
+    ],
+    solutions: [
+      { title: "Clearance-first filtering", body: "Clearance level and citizenship are captured before shortlisting, so time is never spent on candidates who cannot be cleared for the programme." },
+      { title: "Programme-heritage extraction", body: "Named programmes, phase worked and role played are quoted from the CV rather than inferred from a company name alone." },
+      { title: "Standards-specific scoring", body: "DO-178C, DO-254, ARP4754A and MIL-STD experience is scored against the actual standard the programme operates under." },
     ],
     roleFamilies: [
       { name: "Systems engineering", roles: ["Systems engineers", "Requirements engineers", "V&V engineers"] },
@@ -802,6 +836,11 @@ export const INDUSTRY_ENTRIES_BATCH2: IndustryEntry[] = [
       { name: "Programme & production", roles: ["Programme managers", "Production engineers", "Supply-chain leads"] },
     ],
     roles: ["Systems engineers", "GNC engineers", "Avionics software engineers", "Programme managers (cleared)"],
+    candidateSignals: [
+      { title: "Clearance status", body: "Current or eligible clearance level, sponsoring agency and citizenship — verified before shortlist, not after offer." },
+      { title: "Programme heritage", body: "Named programmes, phase (development, production, sustainment) and role played." },
+      { title: "Standards ownership", body: "DO-178C/DO-254/ARP4754A/MIL-STD experience with named certification or qualification outcomes." },
+    ],
     skills: ["Requirements engineering", "V&V", "Embedded systems", "GNC", "Systems safety"],
     tools: ["DOORS", "Rhapsody", "MATLAB/Simulink", "SysML", "Ansys"],
     certifications: ["INCOSE CSEP", "PMP / APM PMQ", "Security clearances (SC/DV/TS/SCI)"],
@@ -815,6 +854,9 @@ export const INDUSTRY_ENTRIES_BATCH2: IndustryEntry[] = [
     resources: DEFAULT_RESOURCES,
     faqs: [
       { q: "Do you handle cleared roles?", a: "Yes. Clearance status and citizenship are intake fields; unclearable candidates are filtered out." },
+      { q: "Can you filter for candidates who already hold an active clearance?", a: "Yes. Active clearance level and expiry are captured at intake as a hard filter." },
+      { q: "Do you screen for export-control exposure (ITAR/EAR)?", a: "Yes. Citizenship and prior export-controlled work are surfaced so compliance teams can review before engagement." },
+      { q: "Can you match candidates to a specific named programme's standards?", a: "Yes. DO-178C, DO-254 and ARP4754A ownership is captured with the level of the standard the candidate actually worked to." },
     ],
     cta: { title: "Hiring in Defense or Aerospace?", description: "Submit the role — clearance captured, programme and standards scored." },
   },
