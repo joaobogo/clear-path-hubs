@@ -1353,7 +1353,29 @@ function Home() {
                 ))}
               </ul>
               <div className="flex flex-wrap items-center gap-3 pt-1">
-...
+                <Link
+                  to="/intake"
+                  aria-label="Start hiring — launch a role"
+                  className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-[color:var(--brand-navy-dark)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+                >
+                  Start Hiring <ArrowRight className="h-4 w-4" aria-hidden />
+                </Link>
+                <Link
+                  to="/platform"
+                  className="inline-flex min-h-11 items-center justify-center rounded-md border border-[color:var(--brand-navy)]/15 bg-white px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+                >
+                  See the Platform
+                </Link>
+              </div>
+              <div className="text-xs text-[color:var(--brand-navy)]/60">
+                Hiring for a candidate seat?{" "}
+                <Link
+                  to="/jobs"
+                  className="inline-flex items-center gap-1 font-semibold text-[color:var(--brand-ocean)] underline-offset-4 hover:text-[color:var(--brand-navy)] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)] rounded"
+                >
+                  Browse open jobs <ArrowRight className="h-3 w-3" aria-hidden />
+                </Link>
+              </div>
               <p className="text-xs text-[color:var(--brand-navy)]/60">
                 You keep the ATS, the candidates, and the final call.
               </p>
