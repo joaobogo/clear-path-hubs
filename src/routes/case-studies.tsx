@@ -206,8 +206,8 @@ function HeroMetrics() {
     <dl className="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
       {items.map((m) => (
         <div key={m.label} className="rounded-2xl border border-border/60 bg-card/60 p-4 backdrop-blur">
-          <m.icon className="h-5 w-5 text-primary" aria-hidden />
-          <dt className="mt-3 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+          <m.icon className="h-5 w-5 text-[color:var(--brand-ocean-text)]" aria-hidden />
+          <dt className="mt-3 text-[10px] font-semibold uppercase tracking-widest text-[color:var(--brand-navy)]/80">
             {m.label}
           </dt>
           <dd className="mt-1 font-display text-2xl font-semibold tracking-tight sm:text-3xl">
@@ -230,13 +230,13 @@ function TrustStrip() {
   ];
   return (
     <div className="mt-8 rounded-2xl border border-border/60 bg-muted/20 p-5">
-      <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">
+      <p className="text-[11px] font-semibold uppercase tracking-widest text-[color:var(--brand-navy)]/80">
         Active or recent engagements represented on this page
       </p>
       <ul className="mt-3 flex flex-wrap gap-2">
         {items.map((i) => (
           <li key={i} className="inline-flex items-center gap-1.5 rounded-full border border-border/60 bg-background px-3 py-1 text-xs font-medium">
-            <CheckCircle2 className="h-3.5 w-3.5 text-primary" aria-hidden /> {i}
+            <CheckCircle2 className="h-3.5 w-3.5 text-[color:var(--brand-ocean-text)]" aria-hidden /> {i}
           </li>
         ))}
       </ul>
@@ -253,21 +253,21 @@ function ProcessStrip() {
   ];
   return (
     <div className="mt-8 rounded-2xl border border-border/60 bg-background p-6">
-      <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">
+      <p className="text-[11px] font-semibold uppercase tracking-widest text-[color:var(--brand-navy)]/80">
         Every engagement runs the same 4 stages
       </p>
       <ol className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
         {steps.map((s, i) => (
           <li key={s.label} className="relative flex items-start gap-3 rounded-xl border border-border/60 bg-card p-4">
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-[color:var(--brand-ocean-text)]">
               <s.icon className="h-4 w-4" aria-hidden />
             </div>
             <div>
-              <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+              <p className="text-[10px] font-semibold uppercase tracking-widest text-[color:var(--brand-navy)]/80">
                 Stage {i + 1}
               </p>
               <p className="text-sm font-semibold">{s.label}</p>
-              <p className="text-xs text-muted-foreground">{s.sub}</p>
+              <p className="text-xs text-[color:var(--brand-navy)]/80">{s.sub}</p>
             </div>
           </li>
         ))}
@@ -306,8 +306,8 @@ function StudyCard({ study }: { study: Study }) {
         {study.qualitySignal.map((m) => (
           <div key={m.label} className="p-5 text-center">
             <dd className="font-display text-2xl font-semibold tracking-tight sm:text-3xl">{m.value}</dd>
-            <dt className="mt-1 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">{m.label}</dt>
-            {m.sub && <p className="mt-0.5 text-[11px] text-muted-foreground">{m.sub}</p>}
+            <dt className="mt-1 text-[10px] font-semibold uppercase tracking-widest text-[color:var(--brand-navy)]/80">{m.label}</dt>
+            {m.sub && <p className="mt-0.5 text-[11px] text-[color:var(--brand-navy)]/80">{m.sub}</p>}
           </div>
         ))}
       </dl>
@@ -315,11 +315,11 @@ function StudyCard({ study }: { study: Study }) {
       {/* Situation + roles needed */}
       <div className="grid gap-6 p-6 md:grid-cols-2 md:p-8">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Client situation</p>
+          <p className="text-xs font-semibold uppercase tracking-widest text-[color:var(--brand-navy)]/80">Client situation</p>
           <p className="mt-2 text-sm leading-relaxed">{study.situation}</p>
         </div>
         <div>
-          <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Roles needed</p>
+          <p className="text-xs font-semibold uppercase tracking-widest text-[color:var(--brand-navy)]/80">Roles needed</p>
           <ul className="mt-3 flex flex-wrap gap-2">
             {study.rolesNeeded.map((r) => (
               <li key={r} className="rounded-full border border-border/60 bg-background px-3 py-1 text-xs font-medium">
@@ -332,17 +332,17 @@ function StudyCard({ study }: { study: Study }) {
 
       {/* Timeline to first shortlist */}
       <div className="border-t border-border/60 bg-muted/10 p-6 md:p-8">
-        <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+        <p className="text-xs font-semibold uppercase tracking-widest text-[color:var(--brand-navy)]/80">
           Timeline to first shortlist ({study.timeToFirstShortlist})
         </p>
         <ol className="relative mt-4 grid grid-cols-2 gap-4 sm:grid-cols-4">
           {study.timeline.map((t, i) => (
             <li key={i} className="relative">
               <div className="flex items-center gap-2">
-                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/10 text-[11px] font-semibold text-primary">
+                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/10 text-[11px] font-semibold text-[color:var(--brand-ocean-text)]">
                   {i + 1}
                 </span>
-                <span className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">{t.day}</span>
+                <span className="text-[11px] font-semibold uppercase tracking-widest text-[color:var(--brand-navy)]/80">{t.day}</span>
               </div>
               <p className="mt-1.5 text-sm font-medium">{t.label}</p>
             </li>
@@ -353,7 +353,7 @@ function StudyCard({ study }: { study: Study }) {
       {/* Outcome + testimonial */}
       <div className={`grid gap-6 border-t border-border/60 bg-muted/20 p-6 md:p-8 ${study.testimonial ? "md:grid-cols-[1.4fr_1fr]" : ""}`}>
         <div>
-          <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+          <p className="text-xs font-semibold uppercase tracking-widest text-[color:var(--brand-navy)]/80">
             Outcome — what happened after they paid
           </p>
           <p className="mt-1 text-sm font-semibold text-[color:var(--brand-navy)]">{study.outcomeHighlight}</p>
@@ -361,11 +361,11 @@ function StudyCard({ study }: { study: Study }) {
         </div>
         {study.testimonial && (
           <figure className="rounded-2xl border border-border/60 bg-background p-5">
-            <Quote className="h-5 w-5 text-primary" aria-hidden />
+            <Quote className="h-5 w-5 text-[color:var(--brand-ocean-text)]" aria-hidden />
             <blockquote className="mt-2 text-sm italic leading-relaxed">
               "{study.testimonial.quote}"
             </blockquote>
-            <figcaption className="mt-3 text-xs text-muted-foreground">
+            <figcaption className="mt-3 text-xs text-[color:var(--brand-navy)]/80">
               <span className="font-semibold text-foreground">{study.testimonial.author}</span>
               <br />
               {study.testimonial.role}
@@ -461,7 +461,7 @@ function OutcomesGrid() {
   return (
     <section className="mt-20">
       <div className="max-w-2xl">
-        <p className="text-xs font-semibold uppercase tracking-widest text-primary">Outcomes</p>
+        <p className="text-xs font-semibold uppercase tracking-widest text-[color:var(--brand-ocean-text)]">Outcomes</p>
         <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight sm:text-4xl">
           Numbers that show up in the client's own dashboard.
         </h2>
@@ -469,8 +469,8 @@ function OutcomesGrid() {
       <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {outcomes.map((o) => (
           <li key={o.label} className="rounded-2xl border border-border/60 bg-card p-6">
-            <p className="font-display text-4xl font-semibold tracking-tight text-primary">{o.value}</p>
-            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{o.label}</p>
+            <p className="font-display text-4xl font-semibold tracking-tight text-[color:var(--brand-ocean-text)]">{o.value}</p>
+            <p className="mt-3 text-sm leading-relaxed text-[color:var(--brand-navy)]/80">{o.label}</p>
           </li>
         ))}
       </ul>
@@ -483,13 +483,13 @@ function CaseStudiesPage() {
     <SiteShell>
       <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
         <header className="max-w-3xl">
-          <p className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-primary">
+          <p className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-[color:var(--brand-ocean-text)]">
             <Sparkles className="h-3.5 w-3.5" aria-hidden /> Case studies
           </p>
           <h1 className="mt-3 font-display text-4xl font-semibold tracking-tight sm:text-6xl">
             Results, visualized.
           </h1>
-          <p className="mt-4 max-w-2xl text-lg text-muted-foreground">
+          <p className="mt-4 max-w-2xl text-lg text-[color:var(--brand-navy)]/80">
             Six engagements across hospitality, finance, healthcare, tech,
             consumer, and industrial — with a global operating footprint and
             evidence-scored shortlists every time.
@@ -514,7 +514,7 @@ function CaseStudiesPage() {
         <GlobalReach />
 
         {/* Policy note */}
-        <section className="mt-16 rounded-2xl border border-border/60 bg-muted/20 p-6 text-sm text-muted-foreground md:p-8">
+        <section className="mt-16 rounded-2xl border border-border/60 bg-muted/20 p-6 text-sm text-[color:var(--brand-navy)]/80 md:p-8">
           Metrics reflect aggregate delivery performance across representative
           TaaSFlow engagements in each vertical. Testimonials are attributed to
           the role and organization type; named case studies with written
@@ -527,12 +527,12 @@ function CaseStudiesPage() {
           <h2 className="font-display text-3xl font-semibold tracking-tight">
             Your engagement is next.
           </h2>
-          <p className="mt-3 max-w-2xl text-muted-foreground">
+          <p className="mt-3 max-w-2xl text-[color:var(--brand-navy)]/80">
             Start an intake and see shortlist delivery inside your own
             workspace in under 10 days.
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
-            <Link to="/intake" className="rounded-md bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90">
+            <Link to="/intake" className="rounded-md bg-primary px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-ocean-text)]-foreground hover:bg-primary/90">
               Start hiring
             </Link>
             <Link to="/how-it-works" className="rounded-md border border-border/60 bg-background px-5 py-2.5 text-sm font-semibold hover:bg-muted">
