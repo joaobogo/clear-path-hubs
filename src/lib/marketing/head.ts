@@ -19,7 +19,7 @@ export function marketingHead(
     entry?.meta.description ||
     entry?.meta["og:description"] ||
     fallback?.description ||
-    "Subscription recruiting: ranked, pre-screened candidate shortlists through a live dashboard for one flat monthly fee.";
+    "Your ATS, recruiting team, and outreach engine in one subscription — ranked, pre-screened candidates in a live dashboard.";
   const url = `${CANONICAL_ORIGIN}${path}`;
   return {
     meta: [
