@@ -21,9 +21,9 @@ import { PageConnections } from "@/components/marketing/page-connections";
 export const Route = createFileRoute("/enterprise")({
   head: () =>
     marketingHead(undefined, "/enterprise", {
-      title: "Enterprise — TaaSFlow for scale hiring",
+      title: "Enterprise Recruiting Subscription | TaaSFlow",
       description:
-        "Run parallel searches across teams and business units on one operating system. Shared workspace, ranked delivery, evidence per requirement, and account-level reporting — with a direct handover after shortlist.",
+        "Recruiting for teams hiring at scale. Get ranked, pre-screened candidate shortlists through a live dashboard for one flat monthly fee.",
     }),
   component: EnterprisePage,
 });

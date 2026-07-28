@@ -173,7 +173,7 @@ export const FOOTER_GROUPS: NavGroup[] = [
 ];
 
 export const FOOTER_DESCRIPTION =
-  "TaaSFlow is the hiring operating system: ATS + recruiting execution + evidence-first scoring + persistent candidate memory, in one live workspace your team owns.";
+  "TaaSFlow is subscription recruiting. We deliver ranked, pre-screened candidate shortlists through a live dashboard for one flat monthly fee.";
 
 export const SOCIAL_LINKS = [
   { href: "https://www.linkedin.com/company/taasflow", label: "LinkedIn" },

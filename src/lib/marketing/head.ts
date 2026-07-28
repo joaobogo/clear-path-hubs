@@ -11,13 +11,15 @@ export function marketingHead(
   path: string,
   fallback?: { title: string; description: string },
 ) {
+  // Page-specific title/description always win. og:* is only a fallback so a
+  // generic share string can never become the page <title>.
   const title =
-    entry?.meta["og:title"] || entry?.meta.title || fallback?.title || "TaaSFlow";
+    entry?.meta.title || entry?.meta["og:title"] || fallback?.title || "TaaSFlow";
   const description =
-    entry?.meta["og:description"] ||
     entry?.meta.description ||
+    entry?.meta["og:description"] ||
     fallback?.description ||
-    "Subscription recruiting that delivers ranked, enriched candidates in 14 days.";
+    "Subscription recruiting: ranked, pre-screened candidate shortlists through a live dashboard for one flat monthly fee.";
   const url = `${CANONICAL_ORIGIN}${path}`;
   return {
     meta: [

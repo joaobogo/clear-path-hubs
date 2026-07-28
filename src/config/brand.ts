@@ -16,7 +16,7 @@ import iconWhite from "@/assets/brand/icon-white.png";
 
 export const brand = {
   name: "TaaSFlow",
-  tagline: "Talent as a Service",
+  tagline: "Subscription recruiting",
   productDomain: "clear-path-hubs.lovable.app",
 
   logos: {
