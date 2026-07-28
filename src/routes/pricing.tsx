@@ -234,14 +234,14 @@ function PricingPage() {
           <h2 className="mt-3 max-w-3xl font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight sm:text-4xl">
             The questions we get before a first engagement.
           </h2>
-          <dl className="mt-8 grid gap-6 md:grid-cols-2">
+          <div className="mt-8 grid gap-6 md:grid-cols-2">
             {FAQ.map((f) => (
               <details
                 key={f.q}
                 className="group rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6 [&_summary::-webkit-details-marker]:hidden"
               >
                 <summary className="flex cursor-pointer items-start justify-between gap-4">
-                  <dt className="font-semibold text-[color:var(--brand-navy)]">{f.q}</dt>
+                  <span className="font-semibold text-[color:var(--brand-navy)]">{f.q}</span>
                   <span
                     aria-hidden
                     className="mt-0.5 text-[color:var(--brand-navy)]/80 transition-transform group-open:rotate-45"
@@ -249,12 +249,12 @@ function PricingPage() {
                     +
                   </span>
                 </summary>
-                <dd className="mt-3 text-sm leading-relaxed text-[color:var(--brand-navy)]/80">
+                <p className="mt-3 text-sm leading-relaxed text-[color:var(--brand-navy)]/80">
                   {f.a}
-                </dd>
+                </p>
               </details>
             ))}
-          </dl>
+          </div>
         </PublicPage>
       </PublicSection>
 

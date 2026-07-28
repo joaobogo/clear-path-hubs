@@ -187,7 +187,7 @@ export function AgencyComparator() {
               {/* Ledger split */}
               <div className="mt-10 grid grid-cols-1 gap-6 border-t border-white/20 pt-8 sm:grid-cols-2 sm:gap-10 sm:pt-10 md:mt-14">
                 <div className="min-w-0">
-                  <span className="block text-[10px] uppercase tracking-[0.18em] opacity-45">
+                  <span className="block text-[10px] uppercase tracking-[0.18em] opacity-80">
                     Traditional agency model
                   </span>
                   <p className="mt-3 break-words font-[family-name:var(--brand-font-display)] text-2xl tabular-nums text-white/90 sm:text-3xl md:text-4xl">
