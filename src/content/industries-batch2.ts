@@ -982,6 +982,12 @@ export const INDUSTRY_ENTRIES_BATCH2: IndustryEntry[] = [
       { title: "Segment fit", body: "SMB, mid-market and enterprise CS look nothing alike. Rubrics separate them and never merge scoring." },
       { title: "Renewal vs growth", body: "GRR-focused and NRR-focused CS roles reward different signal. Rubrics separate them." },
       { title: "Technical vs strategic", body: "Solution-heavy CS and strategic account CS are different crafts — captured explicitly." },
+      { title: "Comp-model mismatch", body: "Fully variable renewal comp and flat-salary adoption roles attract different candidates; comp structure is captured so expectations align before interview." },
+    ],
+    solutions: [
+      { title: "Segment-locked rubric", body: "SMB, mid-market and enterprise CS never share a rubric, so a high-volume SMB CSM isn't scored against strategic-account evidence." },
+      { title: "Retention-metric extraction", body: "GRR, NRR and logo-churn outcomes are quoted from the CV instead of accepting 'improved retention' at face value." },
+      { title: "Motion-stage clarity", body: "Onboarding, adoption, renewal and expansion ownership are captured separately so a renewals specialist isn't ranked as a full-lifecycle CSM." },
     ],
     roleFamilies: [
       { name: "Individual contributor", roles: ["CSMs (SMB/MM/Ent)", "Technical CSMs", "Strategic CSMs"] },
@@ -1004,6 +1010,9 @@ export const INDUSTRY_ENTRIES_BATCH2: IndustryEntry[] = [
     resources: DEFAULT_RESOURCES,
     faqs: [
       { q: "Do you separate SMB and enterprise CSMs?", a: "Yes — segment is captured at intake and rubrics never mix them." },
+      { q: "Can you verify claimed retention numbers?", a: "We quote the CV line behind each GRR/NRR claim so your team can probe it in interview." },
+      { q: "Do you screen for technical CSM roles differently?", a: "Yes. Technical CSMs are scored on product-implementation depth alongside relationship evidence." },
+      { q: "Can you hire renewal specialists separately from full-lifecycle CSMs?", a: "Yes — renewal-only and full-lifecycle roles are captured as distinct motions." },
     ],
     cta: { title: "Hiring in Customer Success?", description: "Submit the role — segment scored, retention outcomes captured." },
   },
@@ -1023,6 +1032,12 @@ export const INDUSTRY_ENTRIES_BATCH2: IndustryEntry[] = [
       { title: "Surface fluency", body: "B2B, consumer, platform, growth and data product are distinct disciplines — never merged in scoring." },
       { title: "Outcome vs output", body: "Rubrics capture measurable outcomes owned — activation, retention, revenue — not just launches." },
       { title: "Founding vs scale", body: "0→1 founding PMs and scale-stage optimisation PMs reward different signal — captured at intake." },
+      { title: "Output theatre", body: "Roadmap slides and Jira ticket counts are easy to pad. Rubrics look for the metric moved and the decision behind it, not activity volume." },
+    ],
+    solutions: [
+      { title: "Surface-locked rubric", body: "B2B, consumer, platform, growth and data/AI product are scored on separate evidence, never blended into one generic PM rating." },
+      { title: "Outcome quoting", body: "Named metrics moved and hypotheses tested are quoted directly from the CV, distinguishing outcome ownership from feature shipping." },
+      { title: "Stage-matched scoring", body: "0→1 founding evidence and scale-stage optimisation evidence are scored against what your stage actually needs." },
     ],
     roleFamilies: [
       { name: "IC PMs", roles: ["APMs", "PMs", "Senior PMs", "Staff PMs", "Principal PMs"] },
@@ -1046,6 +1061,9 @@ export const INDUSTRY_ENTRIES_BATCH2: IndustryEntry[] = [
     resources: DEFAULT_RESOURCES,
     faqs: [
       { q: "Do you cover Chief Product Officer searches?", a: "Yes. Function shape, org design and CEO-partnership evidence captured." },
+      { q: "Can you tell 0→1 builders from scale-stage optimisers?", a: "Yes — stage evidence is a first-class intake field and scored accordingly." },
+      { q: "Do you screen for AI/data product experience specifically?", a: "Yes. Data and AI product management is scored on its own rubric, separate from general B2B/consumer product." },
+      { q: "How do you validate claimed metric outcomes?", a: "We quote the CV line describing the metric moved so it can be probed directly in interview." },
     ],
     cta: { title: "Hiring in Product?", description: "Submit the role — surface scored, outcomes captured, level calibrated." },
   },
@@ -1065,6 +1083,12 @@ export const INDUSTRY_ENTRIES_BATCH2: IndustryEntry[] = [
       { title: "Portfolio parsing", body: "Portfolios beat resumes. Rubrics capture named projects, role played, craft depth and shipped surface." },
       { title: "Craft specialisation", body: "Interaction, visual, research, systems and content design are distinct — separated in scoring." },
       { title: "Product vs agency", body: "Agency polish and in-house shipping-cadence discipline reward different signal." },
+      { title: "Portfolio ghost-work", body: "Team projects can overstate individual contribution. Rubrics look for the specific role played on each shown project." },
+    ],
+    solutions: [
+      { title: "Portfolio-first rubric", body: "Every scoring point ties back to a named project in the portfolio, with the candidate's specific role on that project called out." },
+      { title: "Craft-specific scoring", body: "Interaction, visual, research, systems and content design are scored on separate evidence, never merged into a single 'designer' rating." },
+      { title: "Context calibration", body: "Agency and in-house experience are scored against the delivery cadence and craft ownership the role actually needs." },
     ],
     roleFamilies: [
       { name: "Product design", roles: ["Product designers", "Senior product designers", "Staff designers", "Principal designers"] },
@@ -1083,6 +1107,9 @@ export const INDUSTRY_ENTRIES_BATCH2: IndustryEntry[] = [
     resources: DEFAULT_RESOURCES,
     faqs: [
       { q: "Do you review portfolios?", a: "Yes — portfolio URLs are captured at intake and referenced in evidence alongside CV claims." },
+      { q: "Can you tell individual contribution from team credit on a portfolio project?", a: "We flag where a project appears team-led and note the specific role claimed, for your team to probe in interview." },
+      { q: "Do you screen UX researchers separately from product designers?", a: "Yes — research and design are distinct crafts scored on separate rubrics." },
+      { q: "Can you hire for design-systems roles specifically?", a: "Yes. Named systems shipped and adoption across teams are captured as first-class evidence." },
     ],
     cta: { title: "Hiring in Design?", description: "Submit the role — portfolio scored, craft calibrated." },
   },
