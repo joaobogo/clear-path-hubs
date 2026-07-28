@@ -19,7 +19,7 @@ import { PageConnections } from "@/components/marketing/page-connections";
 export const Route = createFileRoute("/pricing")({
   head: () =>
     marketingHead(undefined, "/pricing", {
-      title: "Pricing — Plans that scale with volume | TaaSFlow",
+      title: "Pricing | Subscription Recruiting | TaaSFlow",
       description:
         `Transparent one-off packages from ${PRICE_PILOT_DISPLAY}. Ranked candidates in 14 days, no placement fees, no salary percentages. Higher volume = lower cost per role.`,
     }),
