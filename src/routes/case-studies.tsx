@@ -45,6 +45,73 @@ export const Route = createFileRoute("/case-studies")({
 // written client approval are added individually as clients sign off.
 // -----------------------------------------------------------------------------
 
+// --- Patterns -----------------------------------------------------------------
+
+const HotelPattern = (
+  <svg aria-hidden className="absolute inset-0 h-full w-full opacity-[0.18]" viewBox="0 0 400 240" preserveAspectRatio="none">
+    <defs>
+      <pattern id="hotel-windows" x="0" y="0" width="28" height="34" patternUnits="userSpaceOnUse">
+        <rect x="6" y="8" width="16" height="20" rx="1.5" fill="currentColor" opacity="0.7" />
+      </pattern>
+    </defs>
+    <rect width="400" height="240" fill="url(#hotel-windows)" />
+  </svg>
+);
+
+const FinancePattern = (
+  <svg aria-hidden className="absolute inset-0 h-full w-full opacity-[0.22]" viewBox="0 0 400 240" preserveAspectRatio="none">
+    <polyline points="0,180 40,160 80,170 120,120 160,140 200,90 240,110 280,70 320,85 360,40 400,55" fill="none" stroke="currentColor" strokeWidth="2" />
+    {Array.from({ length: 12 }).map((_, i) => (
+      <rect key={i} x={i * 34 + 6} y={200 - (i % 4) * 12 - 8} width="14" height={(i % 4) * 12 + 8} fill="currentColor" opacity="0.35" />
+    ))}
+  </svg>
+);
+
+const HealthPattern = (
+  <svg aria-hidden className="absolute inset-0 h-full w-full opacity-[0.20]" viewBox="0 0 400 240" preserveAspectRatio="none">
+    <path d="M0,140 L60,140 L75,110 L95,170 L115,90 L135,180 L155,130 L400,130" fill="none" stroke="currentColor" strokeWidth="2" />
+    <path d="M0,80 L400,80" stroke="currentColor" strokeWidth="0.5" strokeDasharray="2 4" opacity="0.6" />
+    <path d="M0,200 L400,200" stroke="currentColor" strokeWidth="0.5" strokeDasharray="2 4" opacity="0.6" />
+  </svg>
+);
+
+const TechPattern = (
+  <svg aria-hidden className="absolute inset-0 h-full w-full opacity-[0.20]" viewBox="0 0 400 240" preserveAspectRatio="none">
+    {Array.from({ length: 8 }).map((_, r) =>
+      Array.from({ length: 14 }).map((_, c) => (
+        <circle key={`${r}-${c}`} cx={c * 30 + 15} cy={r * 30 + 15} r={((r + c) % 3) + 1} fill="currentColor" opacity={0.4} />
+      ))
+    )}
+    <path d="M0,120 Q100,60 200,120 T400,120" fill="none" stroke="currentColor" strokeWidth="1.5" opacity="0.7" />
+  </svg>
+);
+
+const RetailPattern = (
+  <svg aria-hidden className="absolute inset-0 h-full w-full opacity-[0.20]" viewBox="0 0 400 240" preserveAspectRatio="none">
+    <defs>
+      <pattern id="retail-bags" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+        <rect x="10" y="14" width="20" height="20" rx="2" fill="none" stroke="currentColor" strokeWidth="1.5" />
+        <path d="M14 14 Q14 8 20 8 Q26 8 26 14" fill="none" stroke="currentColor" strokeWidth="1.5" />
+      </pattern>
+    </defs>
+    <rect width="400" height="240" fill="url(#retail-bags)" />
+  </svg>
+);
+
+const IndustrialPattern = (
+  <svg aria-hidden className="absolute inset-0 h-full w-full opacity-[0.20]" viewBox="0 0 400 240" preserveAspectRatio="none">
+    {Array.from({ length: 6 }).map((_, i) => (
+      <g key={i} transform={`translate(${i * 70 + 30},${120})`}>
+        <circle r="18" fill="none" stroke="currentColor" strokeWidth="1.5" />
+        <circle r="6" fill="currentColor" opacity="0.6" />
+        {Array.from({ length: 8 }).map((_, j) => (
+          <rect key={j} x="-2" y="-24" width="4" height="8" fill="currentColor" transform={`rotate(${j * 45})`} />
+        ))}
+      </g>
+    ))}
+  </svg>
+);
+
 type VisualMeta = {
   icon: typeof Hotel;
   gradient: string;
@@ -222,6 +289,7 @@ function StudyCard({ study }: { study: Study }) {
               <Icon className="h-3.5 w-3.5" aria-hidden />
               {study.industry}
             </div>
+            <p className="mt-2 text-xs font-medium text-white/90">{study.companyType}</p>
             <p className="mt-3 inline-flex items-center gap-1.5 text-xs font-medium text-white/80">
               <MapPin className="h-3.5 w-3.5" aria-hidden /> {study.region}
             </p>
@@ -233,9 +301,9 @@ function StudyCard({ study }: { study: Study }) {
         </h3>
       </div>
 
-      {/* Metrics band */}
+      {/* Candidate quality signal */}
       <dl className="grid grid-cols-2 divide-x divide-y divide-border/60 border-b border-border/60 bg-background sm:grid-cols-4 sm:divide-y-0">
-        {study.metrics.map((m) => (
+        {study.qualitySignal.map((m) => (
           <div key={m.label} className="p-5 text-center">
             <dd className="font-display text-2xl font-semibold tracking-tight sm:text-3xl">{m.value}</dd>
             <dt className="mt-1 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">{m.label}</dt>
@@ -244,21 +312,29 @@ function StudyCard({ study }: { study: Study }) {
         ))}
       </dl>
 
-      {/* Body */}
+      {/* Situation + roles needed */}
       <div className="grid gap-6 p-6 md:grid-cols-2 md:p-8">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Challenge</p>
-          <p className="mt-2 text-sm leading-relaxed">{study.challenge}</p>
+          <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Client situation</p>
+          <p className="mt-2 text-sm leading-relaxed">{study.situation}</p>
         </div>
         <div>
-          <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">TaaSFlow approach</p>
-          <p className="mt-2 text-sm leading-relaxed">{study.approach}</p>
+          <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Roles needed</p>
+          <ul className="mt-3 flex flex-wrap gap-2">
+            {study.rolesNeeded.map((r) => (
+              <li key={r} className="rounded-full border border-border/60 bg-background px-3 py-1 text-xs font-medium">
+                {r}
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
 
-      {/* Timeline */}
+      {/* Timeline to first shortlist */}
       <div className="border-t border-border/60 bg-muted/10 p-6 md:p-8">
-        <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Engagement timeline</p>
+        <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+          Timeline to first shortlist ({study.timeToFirstShortlist})
+        </p>
         <ol className="relative mt-4 grid grid-cols-2 gap-4 sm:grid-cols-4">
           {study.timeline.map((t, i) => (
             <li key={i} className="relative">
@@ -274,31 +350,28 @@ function StudyCard({ study }: { study: Study }) {
         </ol>
       </div>
 
-      {/* Roles + testimonial */}
-      <div className="grid gap-6 border-t border-border/60 bg-muted/20 p-6 md:grid-cols-[1.4fr_1fr] md:p-8">
+      {/* Outcome + testimonial */}
+      <div className={`grid gap-6 border-t border-border/60 bg-muted/20 p-6 md:p-8 ${study.testimonial ? "md:grid-cols-[1.4fr_1fr]" : ""}`}>
         <div>
           <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-            Representative roles delivered
+            Outcome — what happened after they paid
           </p>
-          <ul className="mt-3 flex flex-wrap gap-2">
-            {study.roles.map((r) => (
-              <li key={r} className="rounded-full border border-border/60 bg-background px-3 py-1 text-xs font-medium">
-                {r}
-              </li>
-            ))}
-          </ul>
+          <p className="mt-1 text-sm font-semibold text-[color:var(--brand-navy)]">{study.outcomeHighlight}</p>
+          <p className="mt-2 text-sm leading-relaxed">{study.outcome}</p>
         </div>
-        <figure className="rounded-2xl border border-border/60 bg-background p-5">
-          <Quote className="h-5 w-5 text-primary" aria-hidden />
-          <blockquote className="mt-2 text-sm italic leading-relaxed">
-            "{study.testimonial.quote}"
-          </blockquote>
-          <figcaption className="mt-3 text-xs text-muted-foreground">
-            <span className="font-semibold text-foreground">{study.testimonial.author}</span>
-            <br />
-            {study.testimonial.role}
-          </figcaption>
-        </figure>
+        {study.testimonial && (
+          <figure className="rounded-2xl border border-border/60 bg-background p-5">
+            <Quote className="h-5 w-5 text-primary" aria-hidden />
+            <blockquote className="mt-2 text-sm italic leading-relaxed">
+              "{study.testimonial.quote}"
+            </blockquote>
+            <figcaption className="mt-3 text-xs text-muted-foreground">
+              <span className="font-semibold text-foreground">{study.testimonial.author}</span>
+              <br />
+              {study.testimonial.role}
+            </figcaption>
+          </figure>
+        )}
       </div>
     </article>
   );

@@ -41,6 +41,125 @@ export const Route = createFileRoute("/enterprise")({
   component: EnterprisePage,
 });
 
+const DECISION_PATH = [
+  { href: "#volume", label: "Hiring volume" },
+  { href: "#governance", label: "Dashboard governance" },
+  { href: "#quality", label: "Candidate quality controls" },
+  { href: "#reporting", label: "Reporting" },
+  { href: "#regions", label: "Regions served" },
+  { href: "#compliance", label: "Compliance & privacy" },
+  { href: "#cost", label: "Cost model" },
+  { href: "#timeline", label: "Implementation" },
+];
+
+const VOLUME_BANDS = [
+  {
+    band: "2–5 active roles",
+    price: PRICE_SUB_BRONZE_DISPLAY,
+    cadence: "Weekly ranked delivery",
+    pod: "One recruiter pod",
+    fit: "A single function hiring steadily — usually one hiring manager group.",
+  },
+  {
+    band: "6–15 active roles",
+    price: PRICE_SUB_SILVER_DISPLAY,
+    cadence: "Weekly delivery per role family",
+    pod: "Pod per role family",
+    fit: "Two or three functions hiring in parallel with shared standards.",
+  },
+  {
+    band: "16–40 active roles",
+    price: PRICE_SUB_GOLD_DISPLAY,
+    cadence: "Twice-weekly delivery on priority roles",
+    pod: "Pods plus a named account lead",
+    fit: "Multi-business-unit hiring with executive reporting.",
+  },
+  {
+    band: "40+ or continuous hiring",
+    price: PRICE_SUB_ENTERPRISE_DISPLAY,
+    cadence: "Cadence agreed per business unit",
+    pod: "Programme team",
+    fit: "Programme hiring where volume shifts by quarter.",
+  },
+];
+
+const QUALITY_CONTROLS = [
+  {
+    title: "Approved criteria before sourcing",
+    body: "No search starts until must-haves, nice-to-haves and weightings are signed off in writing at intake.",
+  },
+  {
+    title: "Every claim quoted from the CV",
+    body: "Each score line carries the source text it came from, so a hiring committee can check the reasoning.",
+  },
+  {
+    title: "Human review before delivery",
+    body: "A recruiter reads and signs off every shortlist. Nothing reaches your dashboard unread.",
+  },
+  {
+    title: "Rescoring when the role changes",
+    body: "Change the brief and affected candidates are flagged for re-review rather than left on a stale score.",
+  },
+  {
+    title: "Consistent rubric across pods",
+    body: "The same role family is scored against the same rubric version, whichever recruiter runs the search.",
+  },
+  {
+    title: "Reasons captured on every decision",
+    body: "Advance, hold and pass all require a reason code, which feeds calibration for the next batch.",
+  },
+];
+
+const REGIONS = [
+  {
+    title: "EMEA",
+    body: "UK, EU-27, EFTA and select MENA markets, with local time-zone screening and language filters.",
+  },
+  {
+    title: "Americas",
+    body: "North America, LATAM and the Caribbean, with time-zone-aligned pipelines for cross-region teams.",
+  },
+  {
+    title: "APAC",
+    body: "Australia, New Zealand, India, Singapore and Southeast Asia, with explicit local-hours filters.",
+  },
+];
+
+const COMPLIANCE_POSTURE = [
+  {
+    title: "Tenant isolation by default",
+    body: "Every account is isolated at the database layer. Your candidates and pipelines are never visible to another tenant.",
+  },
+  {
+    title: "Least-privilege access",
+    body: "Access is scoped to business unit, team or requisition, and candidate contact details are released deliberately, not by default.",
+  },
+  {
+    title: "Consent captured at source",
+    body: "Candidates apply directly and consent to processing. CVs are stored as PDFs in private storage with time-limited access links.",
+  },
+  {
+    title: "Audit trail on record changes",
+    body: "Score changes, decisions, releases and exports are logged with actor and timestamp for internal review.",
+  },
+  {
+    title: "Data subject requests",
+    body: "Candidate export and deletion requests are handled on request, including removal from active pipelines.",
+  },
+  {
+    title: "Scoped in your review",
+    body: "DPAs, sub-processor lists, retention windows and security questionnaires are completed during onboarding.",
+  },
+];
+
+const IMPLEMENTATION = [
+  { step: "Week 0", title: "Scoping call", body: "Role families, business units, expected volume, stakeholders and reporting needs." },
+  { step: "Week 1", title: "Account design", body: "Business units, hiring teams, permissions and dashboards configured to match your org." },
+  { step: "Week 1–2", title: "Intake and calibration", body: "Criteria and weightings approved per role family. Pods assigned and briefed." },
+  { step: "Week 2–3", title: "First ranked shortlists", body: "Delivery begins in the workspace, 7–14 days from an approved brief." },
+  { step: "Ongoing", title: "Review cadence", body: "Calibration on the first batches, then a standing review on volume, quality and cycle time." },
+];
+
 function EnterprisePage() {
   return (
     <SiteShell>
@@ -129,6 +248,54 @@ function EnterprisePage() {
               body="Cycle time and stage health are calculated retroactively from stale exports rather than a live account view."
             />
           </div>
+        </PublicPage>
+      </PublicSection>
+
+      {/* ── Hiring volume ────────────────────────────────────────── */}
+      <PublicSection id="volume" className="scroll-mt-24 py-10">
+        <PublicPage>
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">
+            Hiring volume
+          </p>
+          <h2 className="mt-3 max-w-3xl font-[family-name:var(--brand-font-display)] text-3xl font-semibold sm:text-4xl">
+            How the model scales with your requisition count.
+          </h2>
+          <p className="mt-4 max-w-2xl text-[color:var(--brand-navy)]/75">
+            Capacity is expressed in active roles, not headcount promises. Volume can move
+            up or down between review cycles — {SUBSCRIPTION_ANNUAL_DISCOUNT_LABEL.toLowerCase()}.
+          </p>
+
+          <div className="mt-8 overflow-x-auto">
+            <table className="w-full min-w-[42rem] border-collapse text-left text-sm">
+              <caption className="sr-only">
+                Subscription bands by number of active roles
+              </caption>
+              <thead>
+                <tr className="border-b border-[color:var(--brand-navy)]/12 bg-[color:var(--brand-navy)]/[0.03]">
+                  <th scope="col" className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/60">Active roles</th>
+                  <th scope="col" className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/60">Monthly</th>
+                  <th scope="col" className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/60">Delivery cadence</th>
+                  <th scope="col" className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/60">Recruiter coverage</th>
+                </tr>
+              </thead>
+              <tbody>
+                {VOLUME_BANDS.map((b) => (
+                  <tr key={b.band} className="border-b border-[color:var(--brand-navy)]/8 align-top">
+                    <td className="px-4 py-4">
+                      <span className="font-semibold text-[color:var(--brand-navy)]">{b.band}</span>
+                      <span className="mt-1 block text-xs text-[color:var(--brand-navy)]/65">{b.fit}</span>
+                    </td>
+                    <td className="whitespace-nowrap px-4 py-4 font-semibold text-[color:var(--brand-navy)]">{b.price}</td>
+                    <td className="px-4 py-4 text-[color:var(--brand-navy)]/75">{b.cadence}</td>
+                    <td className="px-4 py-4 text-[color:var(--brand-navy)]/75">{b.pod}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p className="mt-4 text-xs text-[color:var(--brand-navy)]/55">
+            Bands are indicative. Your plan is scoped to your role families and approved before anything starts.
+          </p>
         </PublicPage>
       </PublicSection>
 
@@ -254,6 +421,21 @@ function EnterprisePage() {
               </ul>
             </div>
           </div>
+
+          <h3 className="mt-14 font-[family-name:var(--brand-font-display)] text-2xl font-semibold">
+            The controls behind every shortlist.
+          </h3>
+          <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {QUALITY_CONTROLS.map((c) => (
+              <div key={c.title} className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-5">
+                <div className="flex items-start gap-2.5">
+                  <ListChecks className="mt-0.5 h-4 w-4 shrink-0 text-[color:var(--brand-navy)]" aria-hidden />
+                  <h4 className="text-sm font-semibold text-[color:var(--brand-navy)]">{c.title}</h4>
+                </div>
+                <p className="mt-2 text-sm text-[color:var(--brand-navy)]/75">{c.body}</p>
+              </div>
+            ))}
+          </div>
         </PublicPage>
       </PublicSection>
 
@@ -335,6 +517,30 @@ function EnterprisePage() {
         </PublicPage>
       </PublicSection>
 
+      {/* ── Regions served ───────────────────────────────────────── */}
+      <PublicSection id="regions" className="scroll-mt-24 py-10">
+        <PublicPage>
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">
+            Regions served
+          </p>
+          <h2 className="mt-3 max-w-3xl font-[family-name:var(--brand-font-display)] text-3xl font-semibold sm:text-4xl">
+            Where we source, and how location is enforced.
+          </h2>
+          <div className="mt-8 grid gap-6 md:grid-cols-3">
+            {REGIONS.map((r) => (
+              <Pillar key={r.title} icon={<Globe2 className="h-5 w-5" aria-hidden />} title={r.title} body={r.body} />
+            ))}
+          </div>
+          <p className="mt-6 max-w-2xl text-sm text-[color:var(--brand-navy)]/70">
+            Time-zone and right-to-work constraints are captured at intake and enforced in scoring, so
+            a candidate who cannot legally or practically work the role never reaches your shortlist.{" "}
+            <Link to="/global-talent" className="font-semibold underline underline-offset-4">
+              More on global coverage
+            </Link>
+          </p>
+        </PublicPage>
+      </PublicSection>
+
       {/* ── Security & support positioning ───────────────────────── */}
       <PublicSection id="compliance" className="scroll-mt-24 py-10 bg-[color:var(--brand-cream)]">
         <PublicPage>
@@ -342,8 +548,22 @@ function EnterprisePage() {
             Security & support
           </p>
           <h2 className="mt-3 max-w-3xl font-[family-name:var(--brand-font-display)] text-3xl font-semibold sm:text-4xl">
-            Enterprise access, private data, dedicated recruiter contact.
+            Compliance and privacy posture, stated plainly.
           </h2>
+          <p className="mt-4 max-w-2xl text-[color:var(--brand-navy)]/75">
+            What holds today, and what gets confirmed in writing before you sign.
+          </p>
+          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {COMPLIANCE_POSTURE.map((c) => (
+              <div key={c.title} className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-5">
+                <div className="flex items-start gap-2.5">
+                  <Lock className="mt-0.5 h-4 w-4 shrink-0 text-[color:var(--brand-navy)]" aria-hidden />
+                  <h3 className="text-sm font-semibold text-[color:var(--brand-navy)]">{c.title}</h3>
+                </div>
+                <p className="mt-2 text-sm text-[color:var(--brand-navy)]/75">{c.body}</p>
+              </div>
+            ))}
+          </div>
           <div className="mt-8 grid gap-6 md:grid-cols-3">
             <Pillar
               icon={<ShieldCheck className="h-5 w-5" aria-hidden />}
@@ -352,13 +572,13 @@ function EnterprisePage() {
             />
             <Pillar
               icon={<Eye className="h-5 w-5" aria-hidden />}
-              title="Tenant isolation"
-              body="Every enterprise account is isolated. Your candidates and pipelines are not visible outside your tenant."
+              title="Named recruiter contact"
+              body="You always know who to talk to. Your recruiter pod is a direct message in the workspace — not a ticket queue."
             />
             <Pillar
               icon={<MessagesSquare className="h-5 w-5" aria-hidden />}
-              title="Named recruiter contact"
-              body="You always know who to talk to. Your recruiter pod is a direct message in the workspace — not a ticket queue."
+              title="Security review support"
+              body="We complete your questionnaire, DPA and sub-processor review as part of onboarding, not after go-live."
             />
           </div>
           <p className="mt-6 text-xs text-[color:var(--brand-navy)]/55">
@@ -368,31 +588,62 @@ function EnterprisePage() {
         </PublicPage>
       </PublicSection>
 
+      {/* ── Cost model ───────────────────────────────────────────── */}
+      <PublicSection id="cost" className="scroll-mt-24 py-10">
+        <PublicPage>
+          <div className="flex items-start gap-3">
+            <Scale className="mt-1 h-5 w-5 shrink-0 text-[color:var(--brand-navy)]" aria-hidden />
+            <p className="text-sm text-[color:var(--brand-navy)]/75">
+              At enterprise volume the difference is structural: a placement fee scales with every
+              hire and every salary. A subscription does not.
+            </p>
+          </div>
+          <div className="mt-8">
+            <AgencyFeeComparison />
+          </div>
+          <div className="mt-8">
+            <Link
+              to="/contact"
+              className="inline-flex min-h-11 items-center justify-center rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-white hover:opacity-90"
+            >
+              Build an enterprise recruiting plan
+            </Link>
+          </div>
+        </PublicPage>
+      </PublicSection>
+
       {/* ── Enterprise engagement path ───────────────────────────── */}
       <PublicSection id="timeline" className="scroll-mt-24 py-10">
         <PublicPage>
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">
-            Engagement path
+            Implementation timeline
           </p>
           <h2 className="mt-3 max-w-3xl font-[family-name:var(--brand-font-display)] text-3xl font-semibold sm:text-4xl">
-            From consultation to a live enterprise account.
+            From first call to first shortlist in weeks, not quarters.
           </h2>
-          <ol className="mt-8 grid gap-6 md:grid-cols-4">
-            <Step step="01" title="Consultation" body="Scope your role families, business units, expected volume, and stakeholders." />
-            <Step step="02" title="Account design" body="We model business units, hiring teams, permissions, and reporting to match your org." />
-            <Step step="03" title="Pod alignment" body="Dedicated recruiter pods are assigned to role families with consistent standards." />
-            <Step step="04" title="Launch & iterate" body="Requisitions open in the workspace. Ranked delivery begins. Reviews cadence is set." />
+          <p className="mt-4 max-w-2xl text-[color:var(--brand-navy)]/75">
+            No integration project, no data migration, no implementation fee. Your team logs into a
+            workspace that is already configured.
+          </p>
+          <ol className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-5">
+            {IMPLEMENTATION.map((s) => (
+              <Step key={s.step} step={s.step} title={s.title} body={s.body} />
+            ))}
           </ol>
+          <p className="mt-6 flex items-start gap-2 text-sm text-[color:var(--brand-navy)]/70">
+            <CalendarClock className="mt-0.5 h-4 w-4 shrink-0" aria-hidden />
+            Timings assume criteria are approved on schedule; scoping calls are usually booked within a week.
+          </p>
         </PublicPage>
       </PublicSection>
 
       {/* ── Final CTA ────────────────────────────────────────────── */}
       <CtaSection
         eyebrow="Enterprise"
-        title="Design your enterprise recruiting account."
-        description="Book a consultation to scope role families, business units, and reporting. Or start a single search today and expand from there."
-        primary={{ to: "/contact", label: "Book Enterprise Consultation" }}
-        secondary={{ to: "/intake", label: "Start Hiring" }}
+        title="Build an enterprise recruiting plan."
+        description="One call to scope role families, volume, governance and reporting. You get a written plan before anything starts."
+        primary={{ to: "/contact", label: "Build an enterprise recruiting plan" }}
+        secondary={{ to: "/pricing", label: "See pricing" }}
       />
           <PageConnections
         commercial={{ to: "/contact", label: "Talk to enterprise sales", desc: "Get a scoped rollout and pricing proposal." }}
