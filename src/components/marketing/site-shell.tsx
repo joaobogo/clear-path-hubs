@@ -352,20 +352,20 @@ function FooterCol({ title, links }: { title: string; links: NavLink[] }) {
       <h3 className="text-xs font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/80">
         {title}
       </h3>
-      <ul className="mt-4 space-y-2.5">
+      <ul className="mt-2 space-y-0.5 sm:mt-4">
         {visible.map((l) => (
           <li key={`${l.to}-${l.label}`}>
             {l.external ? (
               <a
                 href={l.to}
-                className="text-sm text-[color:var(--brand-navy)]/80 hover:text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+                className="inline-flex min-h-11 items-center text-sm text-[color:var(--brand-navy)]/80 hover:text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
               >
                 {l.label}
               </a>
             ) : (
               <Link
                 to={l.to}
-                className="text-sm text-[color:var(--brand-navy)]/80 hover:text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+                className="inline-flex min-h-11 items-center text-sm text-[color:var(--brand-navy)]/80 hover:text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
               >
                 {l.label}
               </Link>
