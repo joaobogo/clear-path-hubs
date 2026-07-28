@@ -14,6 +14,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Toaster } from "@/components/ui/sonner";
 import { PublicNotFound, PublicErrorState } from "@/components/marketing/site-shell";
 import { OfflineBanner } from "@/components/offline-banner";
+import { TrackingRouteObserver } from "@/components/analytics/tracking-route-observer";
 
 function NotFoundComponent() {
   return <PublicNotFound />;
@@ -124,6 +125,7 @@ function RootComponent() {
 
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <Outlet />
+      <TrackingRouteObserver />
       <OfflineBanner />
       <Toaster />
     </QueryClientProvider>
