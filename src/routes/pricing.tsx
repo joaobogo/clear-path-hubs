@@ -15,6 +15,8 @@ import { SUBSCRIPTION_TIERS } from "@/content/pricing-subscriptions";
 import { PRICE_PILOT_DISPLAY } from "@/config/pricing-core";
 import { Check, X } from "lucide-react";
 import { PageConnections } from "@/components/marketing/page-connections";
+import { AgencyFeeComparison } from "@/components/marketing/agency-fee-comparison";
+import { RiskProof } from "@/components/marketing/risk-proof";
 
 export const Route = createFileRoute("/pricing")({
   head: () =>
@@ -144,10 +146,24 @@ function PricingPage() {
         </PublicPage>
       </PublicSection>
 
+      {/* Static agency-fee comparison — example math for 1, 3, 10 hires */}
+      <PublicSection className="py-10">
+        <PublicPage>
+          <AgencyFeeComparison />
+        </PublicPage>
+      </PublicSection>
+
       {/* Live agency comparator */}
       <PublicSection className="py-10">
         <PublicPage>
           <AgencyComparator />
+        </PublicPage>
+      </PublicSection>
+
+      {/* Proof that lowers hiring risk */}
+      <PublicSection className="py-10">
+        <PublicPage>
+          <RiskProof />
         </PublicPage>
       </PublicSection>
 
