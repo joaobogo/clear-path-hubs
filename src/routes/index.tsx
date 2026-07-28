@@ -57,6 +57,8 @@ import { WhySwitchMatrix } from "@/components/marketing/why-switch-matrix";
 import { ProofSystem } from "@/components/marketing/proof-system";
 import { PageConnections } from "@/components/marketing/page-connections";
 import { FoundersStrip } from "@/components/marketing/founders-strip";
+import { DashboardPreview } from "@/components/marketing/dashboard-preview";
+import { RiskProof } from "@/components/marketing/risk-proof";
 
 // Homepage metadata is authored inline (guardrail: legacy JSON entry contains
 // unapproved "14 days" and totals claims). Do not pass the legacy entry here.
@@ -1483,6 +1485,29 @@ function Home() {
         </PublicPage>
       </PublicSection>
 
+
+      {/* 3b — DASHBOARD PREVIEW */}
+      <section className="border-y border-[color:var(--brand-navy)]/8 bg-white">
+        <PublicSection>
+          <PublicPage>
+            <SectionHead
+              eyebrow="The live dashboard"
+              title="This is what lands in your workspace each week."
+              lead="Ranked candidates scored 0–100 across Role Fit, Evidence, Logistics and Signal — with Shortlist, Interview, Request Info and Reject one click away."
+            />
+            <div className="mt-10">
+              <DashboardPreview />
+            </div>
+          </PublicPage>
+        </PublicSection>
+      </section>
+
+      {/* 3c — PROOF THAT LOWERS HIRING RISK */}
+      <PublicSection>
+        <PublicPage>
+          <RiskProof />
+        </PublicPage>
+      </PublicSection>
 
       {/* 4 — CALCULATOR */}
       <section

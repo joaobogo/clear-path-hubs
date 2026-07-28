@@ -14,6 +14,7 @@ import {
   PRIMARY_ITEMS,
   PRIMARY_NAV as CONFIG_PRIMARY_NAV,
   PRIMARY_CTA,
+  BOOK_CALL_CTA,
   SECONDARY_CTAS,
   FOOTER_GROUPS,
   FOOTER_DESCRIPTION,
@@ -200,25 +201,25 @@ function Header() {
           <div className="ml-auto hidden items-center gap-1 lg:flex">
             <Link
               to={browseJobs.to}
-              className="whitespace-nowrap rounded-md px-2.5 py-1.5 text-sm font-medium text-[color:var(--brand-navy)]/80 hover:text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+              className="whitespace-nowrap rounded-md px-2.5 py-1.5 text-sm font-medium text-[color:var(--brand-navy)]/70 hover:text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
             >
-              {browseJobs.label}
-            </Link>
-            <Link
-              to={joinNetwork.to}
-              className="hidden whitespace-nowrap rounded-md px-2.5 py-1.5 text-sm font-medium text-[color:var(--brand-navy)]/80 hover:text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)] xl:inline-flex"
-            >
-              Join Talent Network
+              For candidates
             </Link>
             <Link
               to={signIn.to}
-              className="whitespace-nowrap rounded-md px-2.5 py-1.5 text-sm font-medium text-[color:var(--brand-navy)]/80 hover:text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+              className="whitespace-nowrap rounded-md px-2.5 py-1.5 text-sm font-medium text-[color:var(--brand-navy)]/70 hover:text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
             >
               {signIn.label}
             </Link>
             <Link
+              to={BOOK_CALL_CTA.to}
+              className="ml-1 whitespace-nowrap rounded-md border border-[color:var(--brand-navy)]/15 bg-white px-3.5 py-1.5 text-sm font-semibold text-[color:var(--brand-navy)] transition-colors hover:border-[color:var(--brand-navy)]/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+            >
+              {BOOK_CALL_CTA.label}
+            </Link>
+            <Link
               to={PRIMARY_CTA.to}
-              className="ml-1 whitespace-nowrap rounded-md bg-[color:var(--brand-navy)] px-4 py-1.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-[color:var(--brand-navy-dark)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+              className="whitespace-nowrap rounded-md bg-[color:var(--brand-navy)] px-4 py-1.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-[color:var(--brand-navy-dark)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
             >
               {PRIMARY_CTA.label}
             </Link>
@@ -297,6 +298,12 @@ function Header() {
                   >
                     {joinNetwork.label}
                   </Link>
+                  <Link
+                    to="/intake"
+                    className="mt-2 flex min-h-11 items-center rounded-md px-3 py-2.5 text-base font-semibold text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5"
+                  >
+                    Start hiring
+                  </Link>
                 </div>
               </div>
               <div className="space-y-2 border-t border-[color:var(--brand-navy)]/10 p-4">
@@ -307,8 +314,14 @@ function Header() {
                   {PRIMARY_CTA.label}
                 </Link>
                 <Link
+                  to={BOOK_CALL_CTA.to}
+                  className="flex min-h-11 items-center justify-center rounded-md border border-[color:var(--brand-navy)]/15 px-3 py-2 text-sm font-semibold text-[color:var(--brand-navy)]"
+                >
+                  {BOOK_CALL_CTA.label}
+                </Link>
+                <Link
                   to={signIn.to}
-                  className="flex min-h-11 items-center justify-center rounded-md border border-[color:var(--brand-navy)]/15 px-3 py-2 text-sm font-medium text-[color:var(--brand-navy)]"
+                  className="flex min-h-11 items-center justify-center rounded-md px-3 py-2 text-sm font-medium text-[color:var(--brand-navy)]/80"
                 >
                   {signIn.label}
                 </Link>
