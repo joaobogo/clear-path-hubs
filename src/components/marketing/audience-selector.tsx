@@ -113,7 +113,7 @@ export function AudienceSelector() {
               onClick={() => setActive(x.key)}
               className={`group flex flex-col items-start gap-2 rounded-xl border p-3 text-left transition sm:p-4 ${
                 isActive
-                  ? "border-[color:var(--brand-ocean)] bg-[color:var(--brand-ocean)] text-white shadow-md"
+                  ? "border-[color:var(--brand-ocean-text)] bg-[color:var(--brand-ocean-text)] text-white shadow-md"
                   : "border-[color:var(--brand-navy)]/10 bg-white text-[color:var(--brand-navy)] hover:border-[color:var(--brand-ocean)]/40"
               }`}
             >
