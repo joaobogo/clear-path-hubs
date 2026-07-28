@@ -228,7 +228,7 @@ function OverviewVisual() {
           </li>
           <li className="flex items-center gap-2">
             <CheckCircle2 className="h-3 w-3 text-[color:var(--brand-navy)]/80" />
-            <span className="line-through opacity-60">Confirm role brief — Data Eng</span>
+            <span className="line-through opacity-85">Confirm role brief — Data Eng</span>
           </li>
         </ul>
       </Panel>
