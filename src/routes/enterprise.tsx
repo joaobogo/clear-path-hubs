@@ -4,6 +4,11 @@ import { SiteShell, PublicPage, PublicSection, CtaSection } from "@/components/m
 import { EnterpriseStakeholderSelector } from "@/components/marketing/enterprise-stakeholder-selector";
 import {
   Building2,
+  Globe2,
+  Lock,
+  ListChecks,
+  CalendarClock,
+  Scale,
   Layers,
   Users,
   Eye,
@@ -15,6 +20,14 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { PageConnections } from "@/components/marketing/page-connections";
+import { AgencyFeeComparison } from "@/components/marketing/agency-fee-comparison";
+import {
+  PRICE_SUB_BRONZE_DISPLAY,
+  PRICE_SUB_SILVER_DISPLAY,
+  PRICE_SUB_GOLD_DISPLAY,
+  PRICE_SUB_ENTERPRISE_DISPLAY,
+  SUBSCRIPTION_ANNUAL_DISCOUNT_LABEL,
+} from "@/config/pricing-core";
 
 // Enterprise metadata authored inline. Legacy JSON contained unapproved
 // commercial and volume claims — kept out on purpose.
@@ -46,20 +59,38 @@ function EnterprisePage() {
             Human recruiters + AI-supported structure. Flat subscription;
             direct handover after shortlist.
           </p>
-          <div className="mt-8 flex flex-wrap gap-3">
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
             <Link
               to="/contact"
-              className="inline-flex min-h-11 items-center justify-center rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-white hover:opacity-90"
+              className="inline-flex min-h-11 items-center justify-center rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-center text-sm font-semibold text-white hover:opacity-90"
             >
-              Book Enterprise Consultation
+              Build an enterprise recruiting plan
             </Link>
             <Link
               to="/intake"
-              className="inline-flex min-h-11 items-center justify-center rounded-md border border-[color:var(--brand-navy)]/20 px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5"
+              className="inline-flex min-h-11 items-center justify-center rounded-md border border-[color:var(--brand-navy)]/20 px-5 py-2.5 text-center text-sm font-semibold text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5"
             >
-              Start Hiring
+              Start with one search
             </Link>
           </div>
+
+          <nav aria-label="Enterprise decision path" className="mt-10">
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">
+              What enterprise buyers ask
+            </p>
+            <ul className="mt-3 flex flex-wrap gap-2">
+              {DECISION_PATH.map((item) => (
+                <li key={item.href}>
+                  <a
+                    href={item.href}
+                    className="inline-flex min-h-11 items-center rounded-full border border-[color:var(--brand-navy)]/15 bg-white px-4 text-sm font-medium text-[color:var(--brand-navy)]/85 transition-colors hover:border-[color:var(--brand-navy)]/35 hover:text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+                  >
+                    {item.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
         </PublicPage>
       </PublicSection>
 
@@ -157,8 +188,7 @@ function EnterprisePage() {
       </PublicSection>
 
       {/* ── Multi-role & multi-stakeholder visibility ────────────── */}
-
-      <PublicSection className="py-10 bg-[color:var(--brand-cream)]">
+      <PublicSection id="governance" className="scroll-mt-24 py-10 bg-[color:var(--brand-cream)]">
         <PublicPage>
           <div className="grid gap-10 lg:grid-cols-[1fr_1.05fr] lg:items-center">
             <div>
@@ -193,7 +223,7 @@ function EnterprisePage() {
       </PublicSection>
 
       {/* ── Ranking & evidence at scale ──────────────────────────── */}
-      <PublicSection className="py-10">
+      <PublicSection id="quality" className="scroll-mt-24 py-10">
         <PublicPage>
           <div className="grid gap-10 lg:grid-cols-[1.05fr_1fr] lg:items-center">
             <RankedEvidenceMock />
@@ -228,7 +258,7 @@ function EnterprisePage() {
       </PublicSection>
 
       {/* ── Workspace transparency & reporting ───────────────────── */}
-      <PublicSection className="py-10 bg-[color:var(--brand-cream)]">
+      <PublicSection id="reporting" className="scroll-mt-24 py-10 bg-[color:var(--brand-cream)]">
         <PublicPage>
           <div className="grid gap-10 lg:grid-cols-[1fr_1fr] lg:items-center">
             <div>
@@ -306,7 +336,7 @@ function EnterprisePage() {
       </PublicSection>
 
       {/* ── Security & support positioning ───────────────────────── */}
-      <PublicSection className="py-10 bg-[color:var(--brand-cream)]">
+      <PublicSection id="compliance" className="scroll-mt-24 py-10 bg-[color:var(--brand-cream)]">
         <PublicPage>
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">
             Security & support
@@ -339,7 +369,7 @@ function EnterprisePage() {
       </PublicSection>
 
       {/* ── Enterprise engagement path ───────────────────────────── */}
-      <PublicSection className="py-10">
+      <PublicSection id="timeline" className="scroll-mt-24 py-10">
         <PublicPage>
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">
             Engagement path

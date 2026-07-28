@@ -25,6 +25,7 @@ import { SiteShell } from "@/components/marketing/site-shell";
 import { getPage } from "@/lib/marketing/content";
 import { marketingHead } from "@/lib/marketing/head";
 import { PageConnections } from "@/components/marketing/page-connections";
+import { CASE_STUDIES, type CaseStudy } from "@/content/case-studies";
 
 const entry = getPage("case-studies");
 
