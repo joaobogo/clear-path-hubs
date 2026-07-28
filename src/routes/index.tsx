@@ -47,6 +47,7 @@ import { getPage } from "@/lib/marketing/content";
 import { marketingHead } from "@/lib/marketing/head";
 import { AgencyComparator } from "@/components/marketing/agency-comparator";
 import { ModelComparisonTable } from "@/components/marketing/model-comparison-table";
+import { CaseStudyPreviews } from "@/components/marketing/case-study-previews";
 import { OperatingSystem } from "@/components/marketing/operating-system";
 import { WorkspaceTour } from "@/components/marketing/workspace-tour";
 import { AudienceSelector } from "@/components/marketing/audience-selector";
@@ -1558,6 +1559,14 @@ function Home() {
       </PublicSection>
 
       {/* 5b — WHAT YOU KEEP MISSING (status-quo tax) */}
+      <section className="border-y border-[color:var(--brand-navy)]/8 bg-[color:var(--brand-paper)]">
+        <PublicSection>
+          <PublicPage>
+            <CaseStudyPreviews count={3} />
+          </PublicPage>
+        </PublicSection>
+      </section>
+
       <HiddenCostOfWaiting />
 
       {/* 6 — HOW IT WORKS */}

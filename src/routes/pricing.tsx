@@ -18,6 +18,7 @@ import { PageConnections } from "@/components/marketing/page-connections";
 import { AgencyFeeComparison } from "@/components/marketing/agency-fee-comparison";
 import { RiskProof } from "@/components/marketing/risk-proof";
 import { ModelComparisonTable } from "@/components/marketing/model-comparison-table";
+import { CaseStudyPreviews } from "@/components/marketing/case-study-previews";
 
 export const Route = createFileRoute("/pricing")({
   head: () =>
@@ -166,6 +167,13 @@ function PricingPage() {
       <PublicSection className="py-10">
         <PublicPage>
           <AgencyComparator />
+        </PublicPage>
+      </PublicSection>
+
+      {/* Real engagements */}
+      <PublicSection className="py-10">
+        <PublicPage>
+          <CaseStudyPreviews count={2} />
         </PublicPage>
       </PublicSection>
 
