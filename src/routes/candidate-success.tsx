@@ -90,13 +90,13 @@ function CandidateSuccessPage() {
 
       <PublicSection className="pb-8 pt-10 sm:pt-14">
         <PublicPage>
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
             For candidates
           </p>
           <h1 className="mt-3 max-w-3xl font-[family-name:var(--brand-font-display)] text-4xl font-semibold tracking-tight sm:text-5xl">
             A transparent process, from application to decision.
           </h1>
-          <p className="mt-4 max-w-2xl text-lg text-[color:var(--brand-navy)]/75">
+          <p className="mt-4 max-w-2xl text-lg text-[color:var(--brand-navy)]/80">
             We publish how the process works — not fabricated quotes. Candidate stories are added
             here only when the person has reviewed and approved the write-up.
           </p>
@@ -135,7 +135,7 @@ function CandidateSuccessPage() {
                 <h3 className="font-[family-name:var(--brand-font-display)] text-lg font-semibold">
                   {p.title}
                 </h3>
-                <p className="mt-2 text-sm text-[color:var(--brand-navy)]/75">{p.body}</p>
+                <p className="mt-2 text-sm text-[color:var(--brand-navy)]/80">{p.body}</p>
               </div>
             ))}
           </div>
@@ -150,13 +150,13 @@ function CandidateSuccessPage() {
           <div className="mt-6 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
             {JOURNEY.map((j) => (
               <div key={j.step} className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6">
-                <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/50">
+                <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
                   {j.step}
                 </p>
                 <h3 className="mt-2 font-[family-name:var(--brand-font-display)] text-lg font-semibold">
                   {j.title}
                 </h3>
-                <p className="mt-2 text-sm text-[color:var(--brand-navy)]/75">{j.body}</p>
+                <p className="mt-2 text-sm text-[color:var(--brand-navy)]/80">{j.body}</p>
               </div>
             ))}
           </div>
@@ -169,7 +169,7 @@ function CandidateSuccessPage() {
             Stories
           </h2>
           {APPROVED_STORIES.length === 0 ? (
-            <div className="mt-5 rounded-2xl border border-dashed border-[color:var(--brand-navy)]/20 bg-white p-6 text-sm text-[color:var(--brand-navy)]/75">
+            <div className="mt-5 rounded-2xl border border-dashed border-[color:var(--brand-navy)]/20 bg-white p-6 text-sm text-[color:var(--brand-navy)]/80">
               <p>
                 We only publish candidate stories with explicit written consent from the person
                 involved. When approved stories are available, they will appear here with the role,
@@ -187,7 +187,7 @@ function CandidateSuccessPage() {
             <div className="mt-6 grid gap-5 md:grid-cols-2">
               {APPROVED_STORIES.map((s) => (
                 <div key={`${s.role}-${s.region}`} className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6">
-                  <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/50">
+                  <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
                     {s.role} · {s.region}
                   </p>
                   <p className="mt-2 text-sm text-[color:var(--brand-navy)]/80">{s.summary}</p>

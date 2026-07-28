@@ -100,7 +100,7 @@ export function WorkspaceTour() {
               onClick={() => setActive(v.key)}
               className={`inline-flex shrink-0 snap-start items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition ${
                 isActive
-                  ? "border-[color:var(--brand-ocean)] bg-[color:var(--brand-ocean)] text-white"
+                  ? "border-[color:var(--brand-ocean-text)] bg-[color:var(--brand-ocean-text)] text-white"
                   : "border-[color:var(--brand-navy)]/15 bg-white text-[color:var(--brand-navy)]/80 hover:border-[color:var(--brand-ocean)]/40 hover:text-[color:var(--brand-navy)]"
               }`}
             >
@@ -119,7 +119,7 @@ export function WorkspaceTour() {
             <span className="h-2.5 w-2.5 rounded-full bg-[#ff5f56]" />
             <span className="h-2.5 w-2.5 rounded-full bg-[#ffbd2e]" />
             <span className="h-2.5 w-2.5 rounded-full bg-[#27c93f]" />
-            <span className="ml-3 text-xs font-medium text-[color:var(--brand-navy)]/50">
+            <span className="ml-3 text-xs font-medium text-[color:var(--brand-navy)]/80">
               taasflow.com / workspace / {view.label.toLowerCase()}
             </span>
           </div>
@@ -136,7 +136,7 @@ export function WorkspaceTour() {
         {/* Explanation */}
         <div className="flex flex-col justify-between rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6">
           <div>
-            <div className="text-xs font-semibold uppercase tracking-widest text-[color:var(--brand-ocean)]">
+            <div className="text-xs font-semibold uppercase tracking-widest text-[color:var(--brand-ocean-text)]">
               {view.label}
             </div>
             <p className="mt-3 text-lg font-semibold leading-snug text-[color:var(--brand-navy)]">
@@ -144,7 +144,7 @@ export function WorkspaceTour() {
             </p>
           </div>
           <div className="mt-6 rounded-lg bg-[color:var(--brand-mist)]/50 p-4 text-sm leading-relaxed text-[color:var(--brand-navy)]/80">
-            <span className="block text-[10px] font-semibold uppercase tracking-widest text-[color:var(--brand-navy)]/50">
+            <span className="block text-[10px] font-semibold uppercase tracking-widest text-[color:var(--brand-navy)]/80">
               Why it matters
             </span>
             <span className="mt-1 block font-medium text-[color:var(--brand-navy)]">
@@ -183,7 +183,7 @@ function Panel({
       className={`rounded-lg border border-[color:var(--brand-navy)]/10 bg-white p-3 ${className}`}
     >
       {title ? (
-        <div className="mb-2 text-[10px] font-semibold uppercase tracking-widest text-[color:var(--brand-navy)]/50">
+        <div className="mb-2 text-[10px] font-semibold uppercase tracking-widest text-[color:var(--brand-navy)]/80">
           {title}
         </div>
       ) : null}
@@ -198,13 +198,13 @@ function OverviewVisual() {
     <div className="grid gap-3 md:grid-cols-3">
       <Panel title="Active roles">
         <div className="text-3xl font-bold text-[color:var(--brand-navy)]">4</div>
-        <div className="mt-1 text-xs text-[color:var(--brand-navy)]/60">
+        <div className="mt-1 text-xs text-[color:var(--brand-navy)]/80">
           2 delivering · 2 sourcing
         </div>
       </Panel>
       <Panel title="Candidates delivered">
         <div className="text-3xl font-bold text-[color:var(--brand-navy)]">12</div>
-        <div className="mt-1 text-xs text-[color:var(--brand-navy)]/60">
+        <div className="mt-1 text-xs text-[color:var(--brand-navy)]/80">
           Awaiting your review
         </div>
       </Panel>
@@ -212,23 +212,23 @@ function OverviewVisual() {
         <div className="mt-1 h-2 w-full overflow-hidden rounded-full bg-[color:var(--brand-mist)]">
           <div className="h-full w-[68%] rounded-full bg-[color:var(--brand-ocean)]" />
         </div>
-        <div className="mt-1 text-xs text-[color:var(--brand-navy)]/60">
+        <div className="mt-1 text-xs text-[color:var(--brand-navy)]/80">
           68% of weekly targets
         </div>
       </Panel>
       <Panel title="Actions needed" className="md:col-span-2">
         <ul className="space-y-1.5 text-xs text-[color:var(--brand-navy)]/80">
           <li className="flex items-center gap-2">
-            <Circle className="h-3 w-3 text-[color:var(--brand-ocean)]" />
+            <Circle className="h-3 w-3 text-[color:var(--brand-ocean-text)]" />
             Review 3 candidates for Head of Growth
           </li>
           <li className="flex items-center gap-2">
-            <Circle className="h-3 w-3 text-[color:var(--brand-ocean)]" />
+            <Circle className="h-3 w-3 text-[color:var(--brand-ocean-text)]" />
             Approve interview slot — Alex R.
           </li>
           <li className="flex items-center gap-2">
-            <CheckCircle2 className="h-3 w-3 text-[color:var(--brand-navy)]/40" />
-            <span className="line-through opacity-60">Confirm role brief — Data Eng</span>
+            <CheckCircle2 className="h-3 w-3 text-[color:var(--brand-navy)]/80" />
+            <span className="line-through opacity-85">Confirm role brief — Data Eng</span>
           </li>
         </ul>
       </Panel>
@@ -262,26 +262,26 @@ function PositionsVisual() {
                   <div className="truncate text-sm font-semibold text-[color:var(--brand-navy)]">
                     {r.role}
                   </div>
-                  <div className="text-[11px] text-[color:var(--brand-navy)]/60">
+                  <div className="text-[11px] text-[color:var(--brand-navy)]/80">
                     {r.stage} · updated 2h ago
                   </div>
                 </div>
-                <span className="shrink-0 rounded-full bg-[color:var(--brand-ocean)]/10 px-2 py-0.5 text-[10px] font-semibold text-[color:var(--brand-ocean)]">
+                <span className="shrink-0 rounded-full bg-[color:var(--brand-ocean)]/10 px-2 py-0.5 text-[10px] font-semibold text-[color:var(--brand-ocean-text)]">
                   {r.stage}
                 </span>
               </div>
               <div className="mt-3 grid grid-cols-3 gap-2 text-center text-[11px]">
                 <div className="rounded bg-[color:var(--brand-mist)]/40 py-1.5">
                   <div className="font-bold text-[color:var(--brand-navy)]">{r.sourced}</div>
-                  <div className="text-[color:var(--brand-navy)]/60">Sourced</div>
+                  <div className="text-[color:var(--brand-navy)]/80">Sourced</div>
                 </div>
                 <div className="rounded bg-[color:var(--brand-mist)]/40 py-1.5">
                   <div className="font-bold text-[color:var(--brand-navy)]">{r.screened}</div>
-                  <div className="text-[color:var(--brand-navy)]/60">Screened</div>
+                  <div className="text-[color:var(--brand-navy)]/80">Screened</div>
                 </div>
                 <div className="rounded bg-[color:var(--brand-ocean)]/10 py-1.5">
-                  <div className="font-bold text-[color:var(--brand-ocean)]">{r.delivered}</div>
-                  <div className="text-[color:var(--brand-navy)]/60">Delivered</div>
+                  <div className="font-bold text-[color:var(--brand-ocean-text)]">{r.delivered}</div>
+                  <div className="text-[color:var(--brand-navy)]/80">Delivered</div>
                 </div>
               </div>
             </div>
@@ -314,18 +314,18 @@ function CandidatesVisual() {
             key={c.name}
             className="flex items-center gap-3 rounded-lg border border-[color:var(--brand-navy)]/10 bg-white px-3 py-2"
           >
-            <div className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-[color:var(--brand-ocean)]/10 text-xs font-bold text-[color:var(--brand-ocean)]">
+            <div className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-[color:var(--brand-ocean)]/10 text-xs font-bold text-[color:var(--brand-ocean-text)]">
               {i + 1}
             </div>
             <div className="min-w-0 flex-1">
               <div className="truncate text-sm font-semibold text-[color:var(--brand-navy)]">
                 {c.name}
               </div>
-              <div className="truncate text-[11px] text-[color:var(--brand-navy)]/60">
+              <div className="truncate text-[11px] text-[color:var(--brand-navy)]/80">
                 {c.role}
               </div>
             </div>
-            <div className="flex shrink-0 items-center gap-1 text-sm font-bold text-[color:var(--brand-ocean)]">
+            <div className="flex shrink-0 items-center gap-1 text-sm font-bold text-[color:var(--brand-ocean-text)]">
               <Star className="h-3.5 w-3.5 fill-current" /> {c.score}
             </div>
           </div>
@@ -354,9 +354,9 @@ function DetailVisual() {
         <div className="flex items-center justify-between rounded-lg bg-[color:var(--brand-ocean)]/10 px-3 py-2">
           <div>
             <div className="text-sm font-bold text-[color:var(--brand-navy)]">Alex Rivera</div>
-            <div className="text-[11px] text-[color:var(--brand-navy)]/60">Head of Growth · Fit 92</div>
+            <div className="text-[11px] text-[color:var(--brand-navy)]/80">Head of Growth · Fit 92</div>
           </div>
-          <div className="text-2xl font-black text-[color:var(--brand-ocean)]">92</div>
+          <div className="text-2xl font-black text-[color:var(--brand-ocean-text)]">92</div>
         </div>
         <Panel title="Requirement coverage">
           <div className="space-y-2">
@@ -377,10 +377,10 @@ function DetailVisual() {
           </div>
         </Panel>
         <Panel title="Evidence">
-          <p className="text-[11px] italic leading-relaxed text-[color:var(--brand-navy)]/75">
+          <p className="text-[11px] italic leading-relaxed text-[color:var(--brand-navy)]/80">
             "Scaled paid + lifecycle from $12M to $47M ARR in 22 months, managing a team of 7."
           </p>
-          <div className="mt-1 text-[10px] text-[color:var(--brand-navy)]/50">
+          <div className="mt-1 text-[10px] text-[color:var(--brand-navy)]/80">
             CV, p.1 · verified
           </div>
         </Panel>
@@ -410,7 +410,7 @@ function CompareVisual() {
   return (
     <div className="grid gap-3 md:grid-cols-[minmax(0,1fr)_220px]">
       <div className="overflow-hidden rounded-lg border border-[color:var(--brand-navy)]/10 bg-white">
-        <div className="grid grid-cols-4 gap-2 border-b border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-mist)]/40 px-3 py-2 text-[11px] font-semibold text-[color:var(--brand-navy)]/70">
+        <div className="grid grid-cols-4 gap-2 border-b border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-mist)]/40 px-3 py-2 text-[11px] font-semibold text-[color:var(--brand-navy)]/80">
           <span>Requirement</span>
           <span className="text-center">Alex R.</span>
           <span className="text-center">Priya M.</span>
@@ -490,13 +490,13 @@ function CollabVisual() {
               key={i}
               className="flex items-start gap-3 rounded-lg border border-[color:var(--brand-navy)]/10 bg-white px-3 py-2"
             >
-              <div className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-[color:var(--brand-ocean)]/10 text-[color:var(--brand-ocean)]">
+              <div className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-[color:var(--brand-ocean)]/10 text-[color:var(--brand-ocean-text)]">
                 <Icon className="h-3.5 w-3.5" />
               </div>
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2 text-[11px]">
                   <span className="font-semibold text-[color:var(--brand-navy)]">{f.who}</span>
-                  <span className="inline-flex items-center gap-0.5 text-[color:var(--brand-navy)]/50">
+                  <span className="inline-flex items-center gap-0.5 text-[color:var(--brand-navy)]/80">
                     <Clock className="h-2.5 w-2.5" /> {f.when}
                   </span>
                 </div>

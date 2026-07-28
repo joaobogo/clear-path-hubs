@@ -63,7 +63,7 @@ export function PageConnections({
       className="border-t border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-paper)]"
     >
       <div className="mx-auto max-w-[1200px] px-4 py-14 sm:px-6 lg:px-8">
-        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">
+        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
           {eyebrow}
         </p>
         <h2
@@ -84,7 +84,7 @@ export function PageConnections({
                   params={link.params as never}
                   className="group block h-full rounded-xl border border-[color:var(--brand-navy)]/10 bg-white p-5 transition hover:border-[color:var(--brand-navy)]/30 hover:shadow-sm"
                 >
-                  <div className="flex items-center gap-2 text-[color:var(--brand-navy)]/60">
+                  <div className="flex items-center gap-2 text-[color:var(--brand-navy)]/80">
                     <Icon className="h-4 w-4" />
                     <span className="text-[11px] font-semibold uppercase tracking-[0.14em]">
                       {kicker}
@@ -94,7 +94,7 @@ export function PageConnections({
                     {link.label}
                     <ArrowRight className="h-4 w-4 opacity-0 transition group-hover:translate-x-0.5 group-hover:opacity-100" />
                   </p>
-                  <p className="mt-1.5 text-sm text-[color:var(--brand-navy)]/70">
+                  <p className="mt-1.5 text-sm text-[color:var(--brand-navy)]/80">
                     {link.desc}
                   </p>
                 </Link>

@@ -64,13 +64,13 @@ export function IndustryTemplate({ entry }: { entry: IndustryEntry }) {
 
           <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:items-center">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
                 {entry.eyebrow}
               </p>
               <h1 className="mt-3 max-w-3xl font-[family-name:var(--brand-font-display)] text-4xl font-semibold tracking-tight sm:text-5xl">
                 {entry.hero.title}
               </h1>
-              <p className="mt-5 max-w-2xl text-lg text-[color:var(--brand-navy)]/70">
+              <p className="mt-5 max-w-2xl text-lg text-[color:var(--brand-navy)]/80">
                 {entry.hero.subtitle}
               </p>
               <div className="mt-8 flex flex-wrap gap-3">
@@ -97,7 +97,7 @@ export function IndustryTemplate({ entry }: { entry: IndustryEntry }) {
                 />
                 <a
                   href="#role-explorer"
-                  className="inline-flex min-h-11 items-center justify-center rounded-md px-3 py-2.5 text-sm font-semibold text-[color:var(--brand-navy)]/70 hover:text-[color:var(--brand-navy)]"
+                  className="inline-flex min-h-11 items-center justify-center rounded-md px-3 py-2.5 text-sm font-semibold text-[color:var(--brand-navy)]/80 hover:text-[color:var(--brand-navy)]"
                 >
                   Explore roles →
                 </a>
@@ -200,7 +200,7 @@ export function IndustryTemplate({ entry }: { entry: IndustryEntry }) {
       {/* 1b. Keyword-anchored intro links — SEO internal-link density */}
       <PublicSection className="py-4">
         <PublicPage>
-          <p className="max-w-3xl text-sm leading-relaxed text-[color:var(--brand-navy)]/70">
+          <p className="max-w-3xl text-sm leading-relaxed text-[color:var(--brand-navy)]/80">
             Hiring in <span className="font-semibold text-[color:var(--brand-navy)]">{entry.name}</span>?
             See how{" "}
             <Link to="/" className="font-medium text-[color:var(--brand-navy)] underline underline-offset-4">
@@ -238,7 +238,7 @@ export function IndustryTemplate({ entry }: { entry: IndustryEntry }) {
           <h2 className="font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight">
             {entry.name} hiring challenges
           </h2>
-          <p className="mt-2 max-w-2xl text-[color:var(--brand-navy)]/70">
+          <p className="mt-2 max-w-2xl text-[color:var(--brand-navy)]/80">
             What we hear from {entry.name} teams before they switch to a
             structured, evidence-based workflow.
           </p>
@@ -251,7 +251,7 @@ export function IndustryTemplate({ entry }: { entry: IndustryEntry }) {
                 <h3 className="font-[family-name:var(--brand-font-display)] text-lg font-semibold">
                   {c.title}
                 </h3>
-                <p className="mt-3 text-sm text-[color:var(--brand-navy)]/75">
+                <p className="mt-3 text-sm text-[color:var(--brand-navy)]/80">
                   {c.body}
                 </p>
               </div>
@@ -276,7 +276,7 @@ export function IndustryTemplate({ entry }: { entry: IndustryEntry }) {
                   <h3 className="text-lg font-semibold text-[color:var(--brand-navy)]">
                     {s.title}
                   </h3>
-                  <p className="mt-3 text-sm text-[color:var(--brand-navy)]/75">
+                  <p className="mt-3 text-sm text-[color:var(--brand-navy)]/80">
                     {s.body}
                   </p>
                 </div>
@@ -292,13 +292,13 @@ export function IndustryTemplate({ entry }: { entry: IndustryEntry }) {
 
         <PublicPage>
           <div className="max-w-3xl">
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean)]">
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean-text)]">
               Role explorer
             </p>
             <h2 className="mt-2 font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight">
               Explore {entry.name} roles TaaSFlow sources
             </h2>
-            <p className="mt-2 text-[color:var(--brand-navy)]/70">
+            <p className="mt-2 text-[color:var(--brand-navy)]/80">
               Select a family to see typical roles, common requirements, the
               signals we evaluate, and a sample of the evidence we quote back.
             </p>
@@ -313,13 +313,13 @@ export function IndustryTemplate({ entry }: { entry: IndustryEntry }) {
       <PublicSection className="border-t border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-mist)]/40 py-12">
         <PublicPage>
           <div className="max-w-3xl">
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean)]">
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean-text)]">
               Candidate signals
             </p>
             <h2 className="mt-2 font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight">
               What TaaSFlow evaluates for {entry.name}
             </h2>
-            <p className="mt-2 text-[color:var(--brand-navy)]/70">
+            <p className="mt-2 text-[color:var(--brand-navy)]/80">
               Every point of the score maps to a specific evidence quote from
               the CV. Tap a signal to see what it means and how we validate it.
             </p>
@@ -362,13 +362,13 @@ export function IndustryTemplate({ entry }: { entry: IndustryEntry }) {
         <PublicPage>
           <div className="grid gap-8 lg:grid-cols-[1.05fr_1fr] lg:items-center">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean)]">
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean-text)]">
                 In your workspace
               </p>
               <h2 className="mt-2 font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight">
                 What a {entry.name} shortlist looks like
               </h2>
-              <p className="mt-3 max-w-xl text-[color:var(--brand-navy)]/70">
+              <p className="mt-3 max-w-xl text-[color:var(--brand-navy)]/80">
                 Ranked candidates with a fit score, requirement coverage,
                 evidence quotes, strengths, and validation areas — reviewed
                 before it reaches you.
@@ -407,19 +407,19 @@ export function IndustryTemplate({ entry }: { entry: IndustryEntry }) {
                 key={s.n}
                 className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6"
               >
-                <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/50">
+                <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
                   {s.n}
                 </p>
                 <h3 className="mt-2 font-[family-name:var(--brand-font-display)] text-lg font-semibold">
                   {s.title}
                 </h3>
-                <p className="mt-2 text-sm text-[color:var(--brand-navy)]/75">
+                <p className="mt-2 text-sm text-[color:var(--brand-navy)]/80">
                   {s.body}
                 </p>
               </div>
             ))}
           </div>
-          <p className="mt-4 text-sm text-[color:var(--brand-navy)]/60">
+          <p className="mt-4 text-sm text-[color:var(--brand-navy)]/80">
             See the full process on{" "}
             <Link to="/how-it-works" className="underline underline-offset-4">
               how it works
@@ -434,7 +434,7 @@ export function IndustryTemplate({ entry }: { entry: IndustryEntry }) {
         <PublicPage>
           <div className="flex items-end justify-between gap-4">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean)]">
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean-text)]">
                 Adjacent hiring
               </p>
               <h2 className="mt-1 font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight">
@@ -443,7 +443,7 @@ export function IndustryTemplate({ entry }: { entry: IndustryEntry }) {
             </div>
             <Link
               to="/industries"
-              className="hidden text-sm font-semibold text-[color:var(--brand-ocean)] underline-offset-4 hover:underline sm:inline-flex"
+              className="hidden text-sm font-semibold text-[color:var(--brand-ocean-text)] underline-offset-4 hover:underline sm:inline-flex"
             >
               See all industries →
             </Link>
@@ -457,15 +457,15 @@ export function IndustryTemplate({ entry }: { entry: IndustryEntry }) {
                 style={{ animationDelay: `${i * 60}ms` }}
                 className="group rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6 transition-all hover:-translate-y-0.5 hover:border-[color:var(--brand-ocean)]/50 hover:shadow-md motion-safe:animate-[fade-in_320ms_ease-out_both]"
               >
-                <h3 className="text-lg font-semibold text-[color:var(--brand-navy)] group-hover:text-[color:var(--brand-ocean)]">
+                <h3 className="text-lg font-semibold text-[color:var(--brand-navy)] group-hover:text-[color:var(--brand-ocean-text)]">
                   {r.name}
                 </h3>
                 {r.blurb ? (
-                  <p className="mt-2 line-clamp-3 text-sm text-[color:var(--brand-navy)]/70">
+                  <p className="mt-2 line-clamp-3 text-sm text-[color:var(--brand-navy)]/80">
                     {r.blurb}
                   </p>
                 ) : null}
-                <span className="mt-4 inline-flex text-sm font-semibold text-[color:var(--brand-ocean)]">
+                <span className="mt-4 inline-flex text-sm font-semibold text-[color:var(--brand-ocean-text)]">
                   Explore →
                 </span>
               </Link>
@@ -483,22 +483,22 @@ export function IndustryTemplate({ entry }: { entry: IndustryEntry }) {
               className="group flex items-center justify-between rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6 transition-colors hover:border-[color:var(--brand-ocean)]/50"
             >
               <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean)]">Commercial</p>
+                <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean-text)]">Commercial</p>
                 <p className="mt-1 font-semibold text-[color:var(--brand-navy)]">{relationships.commercial.label}</p>
-                <p className="mt-1 text-sm text-[color:var(--brand-navy)]/70">Subscription pricing — no placement fees.</p>
+                <p className="mt-1 text-sm text-[color:var(--brand-navy)]/80">Subscription pricing — no placement fees.</p>
               </div>
-              <span className="text-lg text-[color:var(--brand-ocean)] transition-transform group-hover:translate-x-1">→</span>
+              <span className="text-lg text-[color:var(--brand-ocean-text)] transition-transform group-hover:translate-x-1">→</span>
             </Link>
             <Link
               to={relationships.audience.to}
               className="group flex items-center justify-between rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6 transition-colors hover:border-[color:var(--brand-ocean)]/50"
             >
               <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean)]">Audience</p>
+                <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean-text)]">Audience</p>
                 <p className="mt-1 font-semibold text-[color:var(--brand-navy)]">{relationships.audience.label}</p>
-                <p className="mt-1 text-sm text-[color:var(--brand-navy)]/70">{relationships.audience.blurb}</p>
+                <p className="mt-1 text-sm text-[color:var(--brand-navy)]/80">{relationships.audience.blurb}</p>
               </div>
-              <span className="text-lg text-[color:var(--brand-ocean)] transition-transform group-hover:translate-x-1">→</span>
+              <span className="text-lg text-[color:var(--brand-ocean-text)] transition-transform group-hover:translate-x-1">→</span>
             </Link>
             <BookACallDialog
               industrySlug={entry.slug}
@@ -531,7 +531,7 @@ export function IndustryTemplate({ entry }: { entry: IndustryEntry }) {
           <h2 className="font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight">
             {entry.name} hiring resources
           </h2>
-          <p className="mt-2 max-w-2xl text-sm text-[color:var(--brand-navy)]/70">
+          <p className="mt-2 max-w-2xl text-sm text-[color:var(--brand-navy)]/80">
             Two hiring guides, a commercial explainer, the process breakdown, and a category-relevant read — everything a
             hiring lead in {entry.name} typically needs before intake.
           </p>
@@ -543,14 +543,14 @@ export function IndustryTemplate({ entry }: { entry: IndustryEntry }) {
                 style={{ animationDelay: `${i * 50}ms` }}
                 className="group rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6 transition-all hover:-translate-y-0.5 hover:border-[color:var(--brand-ocean)]/50 hover:shadow-md motion-safe:animate-[fade-in_320ms_ease-out_both]"
               >
-                <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean)]">
+                <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean-text)]">
                   {r.kind}
                 </p>
-                <h3 className="mt-2 text-lg font-semibold text-[color:var(--brand-navy)] group-hover:text-[color:var(--brand-ocean)]">
+                <h3 className="mt-2 text-lg font-semibold text-[color:var(--brand-navy)] group-hover:text-[color:var(--brand-ocean-text)]">
                   {r.title}
                 </h3>
                 {r.description ? (
-                  <p className="mt-2 text-sm text-[color:var(--brand-navy)]/70">
+                  <p className="mt-2 text-sm text-[color:var(--brand-navy)]/80">
                     {r.description}
                   </p>
                 ) : null}
@@ -576,7 +576,7 @@ export function IndustryTemplate({ entry }: { entry: IndustryEntry }) {
                   <h3 className="text-base font-semibold text-[color:var(--brand-navy)]">
                     {f.q}
                   </h3>
-                  <p className="mt-2 text-sm text-[color:var(--brand-navy)]/75">
+                  <p className="mt-2 text-sm text-[color:var(--brand-navy)]/80">
                     {f.a}
                   </p>
                 </div>
@@ -608,7 +608,7 @@ export function IndustryTemplate({ entry }: { entry: IndustryEntry }) {
 function SkillBlock({ title, items }: { title: string; items: string[] }) {
   return (
     <div className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6">
-      <h3 className="text-sm font-semibold uppercase tracking-[0.12em] text-[color:var(--brand-navy)]/60">
+      <h3 className="text-sm font-semibold uppercase tracking-[0.12em] text-[color:var(--brand-navy)]/80">
         {title}
       </h3>
       <ul className="mt-3 flex flex-wrap gap-2">
@@ -636,17 +636,17 @@ function DeliveryVisual({ entry }: { entry: IndustryEntry }) {
     <div className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-5 shadow-sm motion-safe:animate-[fade-in_400ms_ease-out]">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[color:var(--brand-navy)]/55">
+          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[color:var(--brand-navy)]/80">
             {entry.name} shortlist · Fictional
           </p>
           <p className="mt-1 text-sm font-semibold text-[color:var(--brand-navy)]">
             Candidate #A-1042 · Alex R.
           </p>
-          <p className="mt-0.5 text-xs text-[color:var(--brand-navy)]/70">
+          <p className="mt-0.5 text-xs text-[color:var(--brand-navy)]/80">
             Applying as: {primaryRole}
           </p>
         </div>
-        <div className="rounded-full bg-[color:var(--brand-ocean)]/10 px-3 py-1 text-xs font-semibold text-[color:var(--brand-ocean)]">
+        <div className="rounded-full bg-[color:var(--brand-ocean)]/10 px-3 py-1 text-xs font-semibold text-[color:var(--brand-ocean-text)]">
           Fit 94
         </div>
       </div>
@@ -675,7 +675,7 @@ function DeliveryVisual({ entry }: { entry: IndustryEntry }) {
         <p className="mt-1 line-clamp-3">
           “{evidenceLine}”
         </p>
-        <p className="mt-2 text-[10px] uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/50">
+        <p className="mt-2 text-[10px] uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
           Fictional example — no production candidate data.
         </p>
       </div>

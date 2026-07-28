@@ -17,13 +17,13 @@ export function IndustryInsights({
       <PublicPage>
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
               Insights
             </p>
             <h2 className="mt-2 font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight">
               {industryName} hiring intelligence
             </h2>
-            <p className="mt-2 max-w-2xl text-[color:var(--brand-navy)]/70">
+            <p className="mt-2 max-w-2xl text-[color:var(--brand-navy)]/80">
               Benchmarks, role playbooks and workforce outlook — written for {industryName}{" "}
               talent leaders.
             </p>
@@ -62,17 +62,17 @@ export function IndustryInsights({
                 )}
                 <div className="flex flex-1 flex-col p-5">
                   {p.category && (
-                    <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/50">
+                    <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
                       {p.category}
                     </p>
                   )}
                   <h3 className="mt-2 text-base font-semibold leading-snug tracking-tight text-[color:var(--brand-navy)] group-hover:opacity-90">
                     {p.title}
                   </h3>
-                  <p className="mt-2 line-clamp-3 text-sm text-[color:var(--brand-navy)]/70">
+                  <p className="mt-2 line-clamp-3 text-sm text-[color:var(--brand-navy)]/80">
                     {p.description}
                   </p>
-                  <p className="mt-4 text-xs text-[color:var(--brand-navy)]/50">
+                  <p className="mt-4 text-xs text-[color:var(--brand-navy)]/80">
                     {p.readMinutes} min read
                   </p>
                 </div>

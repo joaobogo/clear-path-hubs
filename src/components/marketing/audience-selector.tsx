@@ -119,7 +119,7 @@ export function AudienceSelector() {
             >
               <Icon
                 className={`h-5 w-5 ${
-                  isActive ? "text-white" : "text-[color:var(--brand-ocean)]"
+                  isActive ? "text-white" : "text-[color:var(--brand-ocean-text)]"
                 }`}
                 aria-hidden
               />
@@ -127,7 +127,7 @@ export function AudienceSelector() {
                 <div className="text-sm font-bold leading-tight">{x.label}</div>
                 <div
                   className={`mt-0.5 text-[11px] leading-snug ${
-                    isActive ? "text-white/85" : "text-[color:var(--brand-navy)]/60"
+                    isActive ? "text-white/85" : "text-[color:var(--brand-navy)]/80"
                   }`}
                 >
                   {x.tagline}
@@ -143,7 +143,7 @@ export function AudienceSelector() {
         <div className="flex flex-col justify-between gap-6">
           <div className="space-y-5">
             <div>
-              <div className="text-[10px] font-semibold uppercase tracking-widest text-[color:var(--brand-navy)]/50">
+              <div className="text-[10px] font-semibold uppercase tracking-widest text-[color:var(--brand-navy)]/80">
                 The problem
               </div>
               <p className="mt-1 text-lg font-semibold leading-snug text-[color:var(--brand-navy)]">
@@ -151,7 +151,7 @@ export function AudienceSelector() {
               </p>
             </div>
             <div>
-              <div className="text-[10px] font-semibold uppercase tracking-widest text-[color:var(--brand-ocean)]">
+              <div className="text-[10px] font-semibold uppercase tracking-widest text-[color:var(--brand-ocean-text)]">
                 TaaSFlow's role
               </div>
               <p className="mt-1 text-base leading-relaxed text-[color:var(--brand-navy)]/85">
@@ -159,14 +159,14 @@ export function AudienceSelector() {
               </p>
             </div>
             <div className="rounded-lg bg-[color:var(--brand-mist)]/50 p-4">
-              <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-widest text-[color:var(--brand-navy)]/60">
-                <Sparkles className="h-3 w-3 text-[color:var(--brand-ocean)]" />
+              <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-widest text-[color:var(--brand-navy)]/80">
+                <Sparkles className="h-3 w-3 text-[color:var(--brand-ocean-text)]" />
                 Strongest benefit
               </div>
               <div className="mt-1.5 text-base font-bold text-[color:var(--brand-navy)]">
                 {a.benefit.title}
               </div>
-              <p className="mt-1 text-sm leading-relaxed text-[color:var(--brand-navy)]/75">
+              <p className="mt-1 text-sm leading-relaxed text-[color:var(--brand-navy)]/80">
                 {a.benefit.body}
               </p>
             </div>
@@ -198,7 +198,7 @@ export function AudienceSelector() {
 function FounderVisual() {
   return (
     <div className="space-y-3">
-      <div className="text-[10px] font-semibold uppercase tracking-widest text-[color:var(--brand-navy)]/50">
+      <div className="text-[10px] font-semibold uppercase tracking-widest text-[color:var(--brand-navy)]/80">
         Your first hire, delivered
       </div>
       {[
@@ -207,24 +207,24 @@ function FounderVisual() {
         <div key={r.name} className="rounded-lg border border-[color:var(--brand-navy)]/10 bg-white p-3">
           <div className="flex items-center justify-between">
             <span className="text-sm font-semibold text-[color:var(--brand-navy)]">{r.name}</span>
-            <span className="rounded-full bg-[color:var(--brand-ocean)]/10 px-2 py-0.5 text-[10px] font-bold text-[color:var(--brand-ocean)]">
+            <span className="rounded-full bg-[color:var(--brand-ocean)]/10 px-2 py-0.5 text-[10px] font-bold text-[color:var(--brand-ocean-text)]">
               Delivered
             </span>
           </div>
           <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-[color:var(--brand-mist)]">
             <div className="h-full bg-[color:var(--brand-ocean)]" style={{ width: `${r.pct}%` }} />
           </div>
-          <div className="mt-1 text-[11px] text-[color:var(--brand-navy)]/60">{r.status}</div>
+          <div className="mt-1 text-[11px] text-[color:var(--brand-navy)]/80">{r.status}</div>
         </div>
       ))}
       <div className="grid grid-cols-3 gap-2">
         {["Alex R.", "Priya M.", "Daniel K."].map((n, i) => (
           <div key={n} className="rounded-md border border-[color:var(--brand-navy)]/10 bg-white p-2 text-center">
-            <div className="mx-auto grid h-7 w-7 place-items-center rounded-full bg-[color:var(--brand-ocean)]/10 text-[10px] font-bold text-[color:var(--brand-ocean)]">
+            <div className="mx-auto grid h-7 w-7 place-items-center rounded-full bg-[color:var(--brand-ocean)]/10 text-[10px] font-bold text-[color:var(--brand-ocean-text)]">
               {i + 1}
             </div>
             <div className="mt-1 truncate text-[11px] font-semibold text-[color:var(--brand-navy)]">{n}</div>
-            <div className="text-[10px] text-[color:var(--brand-navy)]/60">Fit {92 - i * 4}</div>
+            <div className="text-[10px] text-[color:var(--brand-navy)]/80">Fit {92 - i * 4}</div>
           </div>
         ))}
       </div>
@@ -241,15 +241,15 @@ function HRVisual() {
   ];
   return (
     <div className="space-y-3">
-      <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-widest text-[color:var(--brand-navy)]/50">
-        <Layers className="h-3 w-3 text-[color:var(--brand-ocean)]" />
+      <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-widest text-[color:var(--brand-navy)]/80">
+        <Layers className="h-3 w-3 text-[color:var(--brand-ocean-text)]" />
         Continuous sourcing capacity
       </div>
       {roles.map((r) => (
         <div key={r.r} className="rounded-lg border border-[color:var(--brand-navy)]/10 bg-white p-2.5">
           <div className="flex items-center justify-between text-[12px]">
             <span className="font-semibold text-[color:var(--brand-navy)]">{r.r}</span>
-            <span className="text-[10px] text-[color:var(--brand-navy)]/60">{r.s}</span>
+            <span className="text-[10px] text-[color:var(--brand-navy)]/80">{r.s}</span>
           </div>
           <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-[color:var(--brand-mist)]">
             <div className="h-full bg-[color:var(--brand-ocean)]" style={{ width: `${r.p}%` }} />
@@ -268,20 +268,20 @@ function EnterpriseVisual() {
   ];
   return (
     <div className="space-y-3">
-      <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-widest text-[color:var(--brand-navy)]/50">
-        <Network className="h-3 w-3 text-[color:var(--brand-ocean)]" />
+      <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-widest text-[color:var(--brand-navy)]/80">
+        <Network className="h-3 w-3 text-[color:var(--brand-ocean-text)]" />
         Portfolio view
       </div>
       {markets.map((m) => (
         <div key={m.m} className="rounded-lg border border-[color:var(--brand-navy)]/10 bg-white p-3">
           <div className="flex items-center justify-between">
             <span className="text-sm font-semibold text-[color:var(--brand-navy)]">{m.m}</span>
-            <span className="text-[11px] text-[color:var(--brand-navy)]/60">
+            <span className="text-[11px] text-[color:var(--brand-navy)]/80">
               {m.roles} roles active
             </span>
           </div>
           <div className="mt-2 flex items-center gap-2">
-            <BarChart3 className="h-3.5 w-3.5 text-[color:var(--brand-ocean)]" />
+            <BarChart3 className="h-3.5 w-3.5 text-[color:var(--brand-ocean-text)]" />
             <span className="text-[11px] font-semibold text-[color:var(--brand-navy)]">
               {m.delivered} candidates delivered YTD
             </span>
@@ -295,13 +295,13 @@ function EnterpriseVisual() {
 function AgencyVisual() {
   return (
     <div className="space-y-3">
-      <div className="text-[10px] font-semibold uppercase tracking-widest text-[color:var(--brand-navy)]/50">
+      <div className="text-[10px] font-semibold uppercase tracking-widest text-[color:var(--brand-navy)]/80">
         Your brand up front
       </div>
       <div className="rounded-lg border border-[color:var(--brand-navy)]/10 bg-white p-3">
         <div className="flex items-center justify-between">
           <span className="text-sm font-bold text-[color:var(--brand-navy)]">Client: Acme</span>
-          <span className="rounded-full bg-[color:var(--brand-ocean)]/10 px-2 py-0.5 text-[10px] font-bold text-[color:var(--brand-ocean)]">
+          <span className="rounded-full bg-[color:var(--brand-ocean)]/10 px-2 py-0.5 text-[10px] font-bold text-[color:var(--brand-ocean-text)]">
             3 mandates
           </span>
         </div>
@@ -309,14 +309,14 @@ function AgencyVisual() {
           {["Head of Sales", "Senior BE Engineer", "Ops Manager"].map((r, i) => (
             <div key={r} className="flex items-center justify-between text-[11px]">
               <span className="text-[color:var(--brand-navy)]/85">{r}</span>
-              <span className="text-[color:var(--brand-navy)]/60">
+              <span className="text-[color:var(--brand-navy)]/80">
                 Sourced by TaaSFlow · {12 - i * 3} candidates
               </span>
             </div>
           ))}
         </div>
       </div>
-      <div className="rounded-lg bg-[color:var(--brand-mist)]/40 p-3 text-[11px] leading-relaxed text-[color:var(--brand-navy)]/75">
+      <div className="rounded-lg bg-[color:var(--brand-mist)]/40 p-3 text-[11px] leading-relaxed text-[color:var(--brand-navy)]/80">
         White-label delivery — TaaSFlow works behind your workspace, your client sees you.
       </div>
     </div>

@@ -33,7 +33,7 @@ function MockChrome({
         <span className="h-2.5 w-2.5 rounded-full bg-[color:var(--brand-navy)]/15" />
         <span className="h-2.5 w-2.5 rounded-full bg-[color:var(--brand-navy)]/15" />
         <span className="h-2.5 w-2.5 rounded-full bg-[color:var(--brand-navy)]/15" />
-        <span className="ml-3 truncate text-xs font-medium text-[color:var(--brand-navy)]/70">
+        <span className="ml-3 truncate text-xs font-medium text-[color:var(--brand-navy)]/80">
           {title}
         </span>
       </div>
@@ -64,11 +64,11 @@ function RankedShortlistMock() {
               <p className="truncate text-sm font-semibold text-[color:var(--brand-navy)]">
                 {r.name}
               </p>
-              <p className="truncate text-xs text-[color:var(--brand-navy)]/60">
+              <p className="truncate text-xs text-[color:var(--brand-navy)]/80">
                 Evidence: {r.cite}
               </p>
             </div>
-            <span className="rounded-full bg-[color:var(--brand-ocean)]/10 px-2.5 py-0.5 text-xs font-semibold text-[color:var(--brand-ocean)]">
+            <span className="rounded-full bg-[color:var(--brand-ocean)]/10 px-2.5 py-0.5 text-xs font-semibold text-[color:var(--brand-ocean-text)]">
               {r.score}
             </span>
           </div>
@@ -91,7 +91,7 @@ function EvidenceMock() {
             key={e.req}
             className="rounded-lg border border-[color:var(--brand-navy)]/10 bg-white p-3"
           >
-            <p className="text-xs font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/60">
+            <p className="text-xs font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/80">
               {e.req}
             </p>
             <p className="mt-1 text-sm text-[color:var(--brand-navy)]/80">
@@ -120,7 +120,7 @@ function WorkspaceMock() {
             <p className="text-2xl font-semibold text-[color:var(--brand-navy)]">
               {k.v}
             </p>
-            <p className="mt-1 text-xs text-[color:var(--brand-navy)]/60">
+            <p className="mt-1 text-xs text-[color:var(--brand-navy)]/80">
               {k.l}
             </p>
           </div>
@@ -134,7 +134,7 @@ function WorkspaceMock() {
               className="flex items-center justify-between rounded-lg border border-[color:var(--brand-navy)]/10 bg-white px-3 py-2 text-sm text-[color:var(--brand-navy)]/80"
             >
               <span className="truncate">{s}</span>
-              <span className="ml-3 text-xs text-[color:var(--brand-navy)]/50">
+              <span className="ml-3 text-xs text-[color:var(--brand-navy)]/80">
                 today
               </span>
             </div>
@@ -159,10 +159,10 @@ function DecisionMock() {
         ))}
       </div>
       <div className="mt-4 rounded-lg border border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-mist)]/40 p-3">
-        <p className="text-xs font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/60">
+        <p className="text-xs font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/80">
           Audit trail
         </p>
-        <ul className="mt-2 space-y-1 text-xs text-[color:var(--brand-navy)]/70">
+        <ul className="mt-2 space-y-1 text-xs text-[color:var(--brand-navy)]/80">
           <li>· Advanced Candidate A · Head of Engineering</li>
           <li>· Requested interview · Talent Ops</li>
           <li>· Pass — reason: seniority mismatch · Head of Engineering</li>
@@ -201,13 +201,13 @@ function JourneyPage() {
       {/* Hero */}
       <PublicSection className="pt-24">
         <PublicPage className="max-w-4xl">
-          <p className="text-sm font-medium uppercase tracking-widest text-[color:var(--brand-ocean)]">
+          <p className="text-sm font-medium uppercase tracking-widest text-[color:var(--brand-ocean-text)]">
             Our journey
           </p>
           <h1 className="mt-3 font-[family-name:var(--brand-font-display)] text-4xl font-semibold tracking-tight sm:text-5xl lg:text-6xl">
             How TaaSFlow became a better recruiting model.
           </h1>
-          <p className="mt-6 max-w-2xl text-lg text-[color:var(--brand-navy)]/70">
+          <p className="mt-6 max-w-2xl text-lg text-[color:var(--brand-navy)]/80">
             TaaSFlow was not built to be another agency with a nicer landing
             page. It was built to fix the specific things that failed us
             every time we tried to hire at scale.
@@ -225,10 +225,10 @@ function JourneyPage() {
                 className="grid gap-6 md:grid-cols-[auto_1fr] md:gap-10"
               >
                 <div className="flex items-start gap-4 md:flex-col md:items-start">
-                  <span className="font-[family-name:var(--brand-font-display)] text-4xl font-semibold text-[color:var(--brand-ocean)]">
+                  <span className="font-[family-name:var(--brand-font-display)] text-4xl font-semibold text-[color:var(--brand-ocean-text)]">
                     {c.n}
                   </span>
-                  <p className="pt-2 text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">
+                  <p className="pt-2 text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
                     {c.label}
                   </p>
                 </div>
@@ -236,7 +236,7 @@ function JourneyPage() {
                   <h2 className="font-[family-name:var(--brand-font-display)] text-2xl font-semibold tracking-tight sm:text-3xl">
                     {c.title}
                   </h2>
-                  <p className="mt-4 max-w-2xl text-[color:var(--brand-navy)]/75">
+                  <p className="mt-4 max-w-2xl text-[color:var(--brand-navy)]/80">
                     {c.body}
                   </p>
                 </div>
@@ -251,13 +251,13 @@ function JourneyPage() {
         <PublicPage>
           <div className="grid gap-10 md:grid-cols-2 md:items-center">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean)]">
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean-text)]">
                 Chapter 05 — Ranking + evidence
               </p>
               <h2 className="mt-2 font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight sm:text-4xl">
                 Every shortlist arrives ranked and cited.
               </h2>
-              <p className="mt-4 max-w-xl text-[color:var(--brand-navy)]/75">
+              <p className="mt-4 max-w-xl text-[color:var(--brand-navy)]/80">
                 Every shortlist arrives ranked against a role-specific rubric,
                 with evidence from the CV attached to each requirement. The
                 client sees the same view the recruiter used to build it.
@@ -273,13 +273,13 @@ function JourneyPage() {
         <PublicPage>
           <div className="grid gap-10 md:grid-cols-2 md:items-center">
             <div className="md:order-2">
-              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean)]">
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean-text)]">
                 Chapter 04 — The live workspace
               </p>
               <h2 className="mt-2 font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight sm:text-4xl">
                 One workspace per requisition.
               </h2>
-              <p className="mt-4 max-w-xl text-[color:var(--brand-navy)]/75">
+              <p className="mt-4 max-w-xl text-[color:var(--brand-navy)]/80">
                 One workspace per requisition, one aggregate view across all
                 of them. Progress, evidence and recruiter notes live in the
                 same surface the hiring team uses to decide.
@@ -297,13 +297,13 @@ function JourneyPage() {
         <PublicPage>
           <div className="grid gap-10 md:grid-cols-2 md:items-center">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean)]">
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean-text)]">
                 Chapter 06 — Client control
               </p>
               <h2 className="mt-2 font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight sm:text-4xl">
                 Every action is captured with a reason.
               </h2>
-              <p className="mt-4 max-w-xl text-[color:var(--brand-navy)]/75">
+              <p className="mt-4 max-w-xl text-[color:var(--brand-navy)]/80">
                 Advance, hold or pass — every action is captured with the
                 reason and the person who took it. Nothing about the search
                 is a black box; nothing depends on a private inbox.
@@ -344,13 +344,13 @@ function JourneyPage() {
         <PublicPage>
           <div className="grid gap-10 md:grid-cols-2 md:items-start">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean)]">
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean-text)]">
                 Chapter 07 — Economics
               </p>
               <h2 className="mt-2 font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight sm:text-4xl">
                 Priced like software, not like a placement.
               </h2>
-              <p className="mt-4 max-w-xl text-[color:var(--brand-navy)]/75">
+              <p className="mt-4 max-w-xl text-[color:var(--brand-navy)]/80">
                 A flat subscription instead of contingent fees. Predictable
                 per-role economics your finance team can model, and no
                 incentive to push a hire that doesn't fit. When the search
@@ -386,13 +386,13 @@ function JourneyPage() {
       <PublicSection className="border-t border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-mist)]/40">
         <PublicPage>
           <div className="max-w-3xl">
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean)]">
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean-text)]">
               Chapter 08 — What the future looks like
             </p>
             <h2 className="mt-2 font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight sm:text-4xl">
               Hiring stops being a black box.
             </h2>
-            <p className="mt-4 text-[color:var(--brand-navy)]/75">
+            <p className="mt-4 text-[color:var(--brand-navy)]/80">
               Every hire has a rubric behind it. Every rejection has a reason.
               Every pipeline is owned by the company that paid for it. The
               recruiter is still human — the reasoning is finally visible.
@@ -406,7 +406,7 @@ function JourneyPage() {
       <PublicSection>
         <PublicPage>
           <figure className="mx-auto max-w-3xl rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-8 sm:p-10">
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean)]">
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean-text)]">
               A note from the founders
             </p>
             <blockquote className="mt-4 font-[family-name:var(--brand-font-display)] text-2xl leading-snug text-[color:var(--brand-navy)] sm:text-3xl">
@@ -418,12 +418,12 @@ function JourneyPage() {
               <span className="font-semibold text-[color:var(--brand-navy)]">
                 João Luciano, Christian Brogger & João Bogo
               </span>
-              <span className="text-[color:var(--brand-navy)]/60">
+              <span className="text-[color:var(--brand-navy)]/80">
                 Co-founders, TaaSFlow
               </span>
               <Link
                 to="/about"
-                className="ml-auto inline-flex items-center gap-1 text-sm font-semibold text-[color:var(--brand-ocean)] hover:text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+                className="ml-auto inline-flex items-center gap-1 text-sm font-semibold text-[color:var(--brand-ocean-text)] hover:text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
               >
                 Meet the team →
               </Link>

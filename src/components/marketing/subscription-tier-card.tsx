@@ -27,7 +27,7 @@ export function SubscriptionTierCard({ tier }: { tier: SubscriptionTier }) {
         <h3 className="font-[family-name:var(--brand-font-display)] text-2xl font-semibold tracking-tight text-[color:var(--brand-navy)]">
           {tier.name}
         </h3>
-        <p className="mt-1 text-sm text-[color:var(--brand-navy)]/65">
+        <p className="mt-1 text-sm text-[color:var(--brand-navy)]/80">
           {tier.eyebrow}
         </p>
       </div>
@@ -36,10 +36,10 @@ export function SubscriptionTierCard({ tier }: { tier: SubscriptionTier }) {
         <span className="font-[family-name:var(--brand-font-display)] text-4xl font-semibold tracking-tight text-[color:var(--brand-navy)]">
           {tier.priceDisplay}
         </span>
-        <p className="mt-1 text-xs text-[color:var(--brand-navy)]/60">
+        <p className="mt-1 text-xs text-[color:var(--brand-navy)]/80">
           {isCustom ? tier.priceSuffix : tier.priceSuffix}
         </p>
-        <p className="mt-0.5 text-xs text-[color:var(--brand-navy)]/55">
+        <p className="mt-0.5 text-xs text-[color:var(--brand-navy)]/80">
           {tier.billingNote}
         </p>
       </div>

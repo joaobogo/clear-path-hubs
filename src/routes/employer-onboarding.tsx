@@ -122,13 +122,13 @@ function EmployerOnboardingPage() {
       {/* Hero */}
       <PublicSection className="pt-24">
         <PublicPage className="max-w-4xl">
-          <p className="text-sm font-medium uppercase tracking-widest text-[color:var(--brand-ocean)]">
+          <p className="text-sm font-medium uppercase tracking-widest text-[color:var(--brand-ocean-text)]">
             Employer onboarding
           </p>
           <h1 className="mt-3 font-[family-name:var(--brand-font-display)] text-4xl font-semibold tracking-tight sm:text-5xl lg:text-6xl">
             Here is exactly what happens after you start.
           </h1>
-          <p className="mt-6 max-w-2xl text-lg text-[color:var(--brand-navy)]/70">
+          <p className="mt-6 max-w-2xl text-lg text-[color:var(--brand-navy)]/80">
             No mystery. From intake to first ranked shortlist, TaaSFlow gives
             you a predictable path and a workspace you and your team share
             with the recruiting team from day one.
@@ -165,7 +165,7 @@ function EmployerOnboardingPage() {
                 <h3 className="text-lg font-semibold text-[color:var(--brand-navy)]">
                   {e.title}
                 </h3>
-                <p className="mt-3 text-sm text-[color:var(--brand-navy)]/70">
+                <p className="mt-3 text-sm text-[color:var(--brand-navy)]/80">
                   {e.body}
                 </p>
               </div>
@@ -180,7 +180,7 @@ function EmployerOnboardingPage() {
           <h2 className="max-w-2xl font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight sm:text-4xl">
             Step-by-step onboarding journey
           </h2>
-          <p className="mt-3 max-w-2xl text-[color:var(--brand-navy)]/70">
+          <p className="mt-3 max-w-2xl text-[color:var(--brand-navy)]/80">
             Six stages from submission to steady state. Every stage has a
             clear owner and a clear artefact.
           </p>
@@ -191,17 +191,17 @@ function EmployerOnboardingPage() {
                 className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6"
               >
                 <div className="flex items-start gap-4">
-                  <span className="font-[family-name:var(--brand-font-display)] text-3xl font-semibold text-[color:var(--brand-ocean)]">
+                  <span className="font-[family-name:var(--brand-font-display)] text-3xl font-semibold text-[color:var(--brand-ocean-text)]">
                     {s.n}
                   </span>
                   <div className="min-w-0">
-                    <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">
+                    <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
                       {s.label}
                     </p>
                     <h3 className="mt-1 text-lg font-semibold text-[color:var(--brand-navy)]">
                       {s.title}
                     </h3>
-                    <p className="mt-2 text-sm text-[color:var(--brand-navy)]/70">
+                    <p className="mt-2 text-sm text-[color:var(--brand-navy)]/80">
                       {s.body}
                     </p>
                   </div>
@@ -218,7 +218,7 @@ function EmployerOnboardingPage() {
           <h2 className="max-w-2xl font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight sm:text-4xl">
             What to prepare before you start
           </h2>
-          <p className="mt-3 max-w-2xl text-[color:var(--brand-navy)]/70">
+          <p className="mt-3 max-w-2xl text-[color:var(--brand-navy)]/80">
             None of this is mandatory upfront — the intake will guide you.
             Having it ready just makes the first shortlist land sooner.
           </p>
@@ -231,7 +231,7 @@ function EmployerOnboardingPage() {
                 <h3 className="text-base font-semibold text-[color:var(--brand-navy)]">
                   {p.title}
                 </h3>
-                <p className="mt-2 text-sm text-[color:var(--brand-navy)]/70">
+                <p className="mt-2 text-sm text-[color:var(--brand-navy)]/80">
                   {p.body}
                 </p>
               </div>
@@ -254,14 +254,14 @@ function EmployerOnboardingPage() {
               <ul className="mt-6 space-y-3 text-sm text-white/85">
                 {WE_DO.map((t) => (
                   <li key={t} className="flex gap-2">
-                    <span className="text-[color:var(--brand-ocean)]">·</span>
+                    <span className="text-[color:var(--brand-ocean-text)]">·</span>
                     <span>{t}</span>
                   </li>
                 ))}
               </ul>
             </div>
             <div className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-8">
-              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean)]">
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean-text)]">
                 What the client does
               </p>
               <h3 className="mt-2 font-[family-name:var(--brand-font-display)] text-2xl font-semibold text-[color:var(--brand-navy)]">
@@ -270,7 +270,7 @@ function EmployerOnboardingPage() {
               <ul className="mt-6 space-y-3 text-sm text-[color:var(--brand-navy)]/80">
                 {CLIENT_DO.map((t) => (
                   <li key={t} className="flex gap-2">
-                    <span className="text-[color:var(--brand-ocean)]">·</span>
+                    <span className="text-[color:var(--brand-ocean-text)]">·</span>
                     <span>{t}</span>
                   </li>
                 ))}
@@ -285,13 +285,13 @@ function EmployerOnboardingPage() {
         <PublicPage>
           <div className="grid gap-10 md:grid-cols-2 md:items-start">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean)]">
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean-text)]">
                 Workspace access
               </p>
               <h2 className="mt-2 font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight sm:text-4xl">
                 Your team, in the workspace from day one
               </h2>
-              <p className="mt-4 text-[color:var(--brand-navy)]/75">
+              <p className="mt-4 text-[color:var(--brand-navy)]/80">
                 As soon as the requisition is created, your account is
                 provisioned and you can invite reviewers, interviewers and
                 observers. Access is scoped to your organisation with
@@ -305,13 +305,13 @@ function EmployerOnboardingPage() {
               </ul>
             </div>
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean)]">
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean-text)]">
                 First candidate delivery
               </p>
               <h2 className="mt-2 font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight sm:text-4xl">
                 Your first ranked shortlist
               </h2>
-              <p className="mt-4 text-[color:var(--brand-navy)]/75">
+              <p className="mt-4 text-[color:var(--brand-navy)]/80">
                 The first shortlist is human-reviewed before publication —
                 every candidate is ranked, every score has evidence citations
                 pulled directly from the CV, and every recruiter narrative is

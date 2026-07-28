@@ -646,6 +646,8 @@ export const INDUSTRY_ENTRIES: IndustryEntry[] = [
     name: "Private Equity",
     category: "Financial Services",
     aliases: ["PE", "Buy-side", "Portfolio Operations", "Value Creation"],
+    summary:
+      "Fund-side investment hiring and portfolio-company leadership searches on one workspace, with deal, sector and value-creation evidence extracted from the CV.",
     meta: {
       title: "Private equity hiring — TaaSFlow",
       description:
@@ -660,6 +662,19 @@ export const INDUSTRY_ENTRIES: IndustryEntry[] = [
       { title: "Deal and sector evidence", body: "PE CVs need to show the deals actually worked on and the sector depth behind them. Our rubric extracts deal roles, cheque sizes and sector coverage — not just firm names." },
       { title: "Fund vs portfolio context", body: "Investment-team hires and portfolio-company operators need different signals. We build the rubric per mandate instead of treating both as the same search." },
       { title: "Confidentiality and discretion", body: "Every mandate sits in a private workspace scoped to the sponsor. Candidate context stays inside the search it was collected for." },
+      { title: "Operator credibility under time pressure", body: "Portfolio CEOs and CFOs are hired against a hold-period clock. Rubrics weight the specific operating levers pulled — pricing, working capital, add-on integration — over generic leadership language." },
+    ],
+    solutions: [
+      { title: "Deal-level evidence extraction", body: "Named deals, cheque size, entry/exit role and sector are quoted straight from the CV rather than inferred from firm brand." },
+      { title: "Mandate-specific rubrics", body: "Fund-side investment rubrics and portfolio-operator rubrics are built separately so a deal-team search never surfaces generalist operators, or vice versa." },
+      { title: "Value-creation lever tracking", body: "Pricing, procurement, add-on M&A, commercial excellence and systems work are captured as distinct signals against the thesis the role serves." },
+      { title: "Sponsor-scoped confidentiality", body: "Each mandate sits in an isolated workspace with row-level access control, so live searches never surface to other sponsors or portfolio companies." },
+    ],
+    roleFamilies: [
+      { name: "Investment team", blurb: "Fund-side deal execution and portfolio monitoring.", roles: ["Investment analysts and associates", "Vice presidents", "Principals and partners", "Sector heads"] },
+      { name: "Portfolio operations", blurb: "Operating partners embedded across the portfolio.", roles: ["Operating partners", "Value creation directors", "Transformation leads", "Commercial excellence leads"] },
+      { name: "Portfolio leadership", blurb: "C-suite hires placed directly into portfolio companies.", roles: ["Portfolio CEOs and GMs", "Portfolio CFOs and finance directors", "Portfolio COOs", "Interim executives"] },
+      { name: "Fund operations", blurb: "Non-investment functions supporting the fund.", roles: ["Fund controllers", "Investor relations", "Fund operations and compliance", "ESG and impact leads"] },
     ],
     roles: [
       "Investment associates and VPs",
@@ -671,7 +686,29 @@ export const INDUSTRY_ENTRIES: IndustryEntry[] = [
       "Fund operations and investor relations",
       "Sector specialists and operating advisors",
     ],
+    candidateSignals: [
+      { title: "Deal tape", body: "Named transactions, cheque size, role played (sourcing, execution, monitoring) and outcome, quoted from the CV." },
+      { title: "Sector depth", body: "Years and named deals within a specific sector, distinguished from generalist coverage." },
+      { title: "Value-creation ownership", body: "Specific operating levers pulled at portfolio companies — pricing, procurement, add-on integration, systems — with measurable scope." },
+      { title: "Fund vs operator track", body: "Career shape distinguishing investment-team progression from operating-executive progression, so the right rubric applies." },
+      { title: "Hold-period outcomes", body: "Entry and exit context, multiple context where stated, and tenure through a hold period." },
+    ],
+    skills: ["Financial modelling", "Due diligence", "Value creation planning", "Portfolio governance", "Carve-outs and integration", "100-day planning"],
+    tools: ["Excel (advanced)", "PowerPoint", "Capital IQ", "PitchBook", "Datasite", "Board reporting platforms"],
     signals: ["Deal and sector evidence extracted", "Rubric per fund or portfolio mandate", "Private workspace per requisition"],
+    relatedIndustries: [
+      { slug: "investment-banking", name: "Investment Banking", blurb: "Deal execution feeding the PE talent pool." },
+      { slug: "venture-capital", name: "Venture Capital", blurb: "Earlier-stage investing counterpart." },
+      { slug: "finance", name: "Finance", blurb: "Corporate finance and treasury for portfolio companies." },
+    ],
+    resources: DEFAULT_RESOURCES,
+    faqs: [
+      { q: "Can you hire directly into portfolio companies?", a: "Yes. Portfolio CEO, CFO and functional leadership searches run on an operator rubric distinct from fund-side investment hiring." },
+      { q: "How do you keep live mandates confidential?", a: "Each mandate is a private, sponsor-scoped workspace with row-level isolation — no cross-visibility between sponsors or portfolio companies." },
+      { q: "Do you verify deal-tape claims?", a: "We surface what the CV states, quoted to the source line, so your team can verify through references or data-room history." },
+      { q: "Can rubrics reflect a specific investment thesis?", a: "Yes — sector focus, deal size band and value-creation priorities are captured at intake and shape the rubric." },
+      { q: "Is pricing different for fund vs portfolio-company roles?", a: "No — one flat subscription covers every search in your workspace, regardless of role type." },
+    ],
     cta: { title: "Running a PE search?", description: "Submit the mandate — one private workspace, one rubric, one reviewed shortlist." },
   },
 
@@ -933,6 +970,8 @@ export const INDUSTRY_ENTRIES: IndustryEntry[] = [
     name: "Nonprofit",
     category: "Regulated & Public",
     aliases: ["NGO", "Foundation", "Charity", "Third Sector"],
+    summary:
+      "Programme, development and operations hiring for mission-driven organisations, with impact evidence and funding context captured directly from the CV.",
     meta: {
       title: "Nonprofit hiring — TaaSFlow",
       description:
@@ -947,6 +986,20 @@ export const INDUSTRY_ENTRIES: IndustryEntry[] = [
       { title: "Mission and programme fit", body: "Nonprofit CVs need to show real programme contribution, not just cause alignment. Our rubric extracts the programmes owned, outcomes measured and communities served." },
       { title: "Funding and development context", body: "Foundation, individual giving, government grants and earned revenue each require different signals. Funding context is captured so shortlists reflect it." },
       { title: "Lean-team operating reality", body: "Nonprofit roles usually carry multiple hats. Rubrics reflect the actual scope of ownership rather than idealised job descriptions." },
+      { title: "Budget-constrained hiring cycles", body: "Grant-funded and board-approved headcount often opens on a tight runway. A rubric ready at intake means the shortlist doesn't wait on process." },
+    ],
+    solutions: [
+      { title: "Programme-outcome extraction", body: "Named programmes, beneficiaries served and outcomes measured are quoted from the CV rather than inferred from job titles." },
+      { title: "Funding-model rubrics", body: "Foundation grants, individual giving, government contracts and earned revenue are scored as distinct development skill sets." },
+      { title: "Multi-hat scope capture", body: "Rubrics reflect the real breadth of small-team roles — programme plus ops, or development plus comms — instead of penalising candidates for generalist scope." },
+      { title: "Flat-fee model built for lean budgets", body: "One subscription with no placement fees keeps hiring cost predictable for boards and grant-funded budgets." },
+    ],
+    roleFamilies: [
+      { name: "Leadership", blurb: "Executive and operational leadership of the organisation.", roles: ["Executive directors", "Deputy directors / COOs", "Country and regional directors"] },
+      { name: "Programmes", blurb: "Design and delivery of mission programmes.", roles: ["Programme directors", "Programme managers", "Field/programme officers", "Monitoring and evaluation specialists"] },
+      { name: "Development and fundraising", blurb: "Revenue generation across funding models.", roles: ["Development directors", "Major gifts officers", "Grant writers and grants managers", "Corporate partnerships leads"] },
+      { name: "Communications and community", blurb: "Storytelling, advocacy and community engagement.", roles: ["Communications directors", "Content and campaigns leads", "Community organisers", "Advocacy managers"] },
+      { name: "Operations and finance", blurb: "Back-office functions that keep the mission funded and compliant.", roles: ["Finance and operations managers", "HR and people leads", "Volunteer and partnerships managers"] },
     ],
     roles: [
       "Executive directors and COOs",
@@ -958,7 +1011,28 @@ export const INDUSTRY_ENTRIES: IndustryEntry[] = [
       "Volunteer and partnerships managers",
       "Monitoring and evaluation specialists",
     ],
+    candidateSignals: [
+      { title: "Programme evidence", body: "Named programmes led, populations served and geographic scope, quoted from the CV." },
+      { title: "Outcome and impact data", body: "Measured outcomes — beneficiaries reached, retention, evaluation results — separated from activity counts." },
+      { title: "Funding-model fit", body: "Foundation grants, major gifts, government contracts or earned revenue experience, matched to the role's development mix." },
+      { title: "Scope of ownership", body: "The real breadth of the role — budget size, team size, functions combined — captured rather than assumed from title." },
+      { title: "Board and stakeholder exposure", body: "Board reporting, funder relationships and multi-stakeholder coordination evidenced where present." },
+    ],
+    skills: ["Programme design", "Grant writing", "Donor stewardship", "Monitoring and evaluation", "Advocacy", "Volunteer management", "Budget management"],
+    tools: ["Salesforce Nonprofit Cloud", "Bloomerang", "DonorPerfect", "Blackbaud", "Asana", "Grant management platforms"],
     signals: ["Programme and outcome evidence from the CV", "Funding and development context captured", "Rubric per role and level"],
+    relatedIndustries: [
+      { slug: "public-sector", name: "Public Sector", blurb: "Government-funded delivery and policy work." },
+      { slug: "healthcare", name: "Healthcare", blurb: "Health-focused nonprofits and public health programmes." },
+      { slug: "human-resources", name: "Human Resources", blurb: "People functions for mission-driven organisations." },
+    ],
+    resources: DEFAULT_RESOURCES,
+    faqs: [
+      { q: "Do you understand grant-funded hiring timelines?", a: "Yes. Intake is built to move quickly once a grant or board approval opens a headcount, with the usual 7-14 day shortlist window." },
+      { q: "Can the rubric reflect multi-hat roles?", a: "Yes — intake captures the real combined scope of a role (e.g. programme plus communications) so candidates aren't penalised for generalist breadth." },
+      { q: "Do you work with small teams and tight budgets?", a: "Yes. Flat subscription pricing with no placement fees is designed to be predictable for board-approved and grant-funded budgets." },
+      { q: "Can you evaluate international programme experience?", a: "Yes. Country and regional context, language and field-office experience are captured as structured intake fields." },
+    ],
     cta: { title: "Hiring for a nonprofit role?", description: "Submit the role — one workspace, one rubric, one reviewed shortlist." },
   },
 
@@ -1911,6 +1985,8 @@ export const INDUSTRY_ENTRIES: IndustryEntry[] = [
     name: "E-commerce",
     category: "Consumer & Operations",
     aliases: ["DTC", "Direct to Consumer", "Online Retail", "Marketplaces"],
+    summary:
+      "Merchandising, growth, retention and operations hiring for online retailers and DTC brands, with channel, category and funnel ownership evidenced from the CV.",
     meta: {
       title: "E-commerce hiring — TaaSFlow",
       description:
@@ -1925,6 +2001,20 @@ export const INDUSTRY_ENTRIES: IndustryEntry[] = [
       { title: "Channel and marketplace fit", body: "DTC store, marketplaces, wholesale and retail media each require distinct evidence. Our rubric captures the channels actually owned and the results measured." },
       { title: "Category and margin context", body: "Apparel, beauty, home, consumables and hardgoods have different unit economics. We capture category and margin context so shortlists match your operating reality." },
       { title: "Full-funnel ownership", body: "Growth, merchandising, retention and CX often overlap. Rubrics per seat surface the specific stage of the funnel the candidate actually owned." },
+      { title: "Platform and stack fluency", body: "Shopify Plus, Salesforce Commerce Cloud and headless builds each reward different operating experience. Platform history is captured so migrations aren't staffed on the wrong assumption." },
+    ],
+    solutions: [
+      { title: "Channel-specific evidence", body: "DTC, marketplace (Amazon, Walmart), wholesale and retail-media experience are captured separately, with named platforms and revenue scope." },
+      { title: "Category and margin scoring", body: "Category background and margin structure — apparel, beauty, consumables, hardgoods — are matched to the operating context of the role." },
+      { title: "Funnel-stage rubrics", body: "Acquisition, conversion, retention and post-purchase CX are scored as distinct disciplines instead of one blended 'e-commerce' rubric." },
+      { title: "Platform and stack matching", body: "Shopify, BigCommerce, Salesforce Commerce Cloud and headless/composable stacks are captured with production tenure, not just tool exposure." },
+    ],
+    roleFamilies: [
+      { name: "Merchandising and buying", blurb: "Assortment, pricing and inventory decisions.", roles: ["Merchandising managers", "Buyers and planners", "Site merchandisers", "Inventory and demand planners"] },
+      { name: "Growth and performance marketing", blurb: "Paid, organic and marketplace acquisition.", roles: ["Growth marketers", "Performance marketing managers", "SEO and organic leads", "Marketplace advertising specialists"] },
+      { name: "Retention and lifecycle", blurb: "Post-purchase revenue and loyalty.", roles: ["Lifecycle/CRM marketers", "Retention managers", "Loyalty programme leads", "Email/SMS specialists"] },
+      { name: "E-commerce operations", blurb: "Platform, fulfilment and site operations.", roles: ["E-commerce operations managers", "Platform/technical leads", "Fulfilment and logistics coordinators", "CRO and site-experience specialists"] },
+      { name: "Leadership", blurb: "Cross-functional ownership of the e-commerce P&L.", roles: ["Heads of e-commerce", "VPs of digital / DTC", "General managers (channel or region)"] },
     ],
     roles: [
       "E-commerce managers and directors",
@@ -1936,7 +2026,28 @@ export const INDUSTRY_ENTRIES: IndustryEntry[] = [
       "Site merchandising and CRO specialists",
       "Customer experience and support leads",
     ],
+    candidateSignals: [
+      { title: "Channel ownership", body: "Named channels run (DTC, Amazon, wholesale, retail media) with revenue scope and platform." },
+      { title: "Category depth", body: "Category background and margin structure, matched against the hiring brand's assortment." },
+      { title: "Funnel-stage evidence", body: "Acquisition, conversion, retention or CX metrics owned — CAC, AOV, LTV, repeat-purchase rate — quoted from the CV." },
+      { title: "Platform and stack tenure", body: "Shopify Plus, BigCommerce, Salesforce Commerce Cloud or headless builds, with years of production ownership." },
+      { title: "Peak-period delivery", body: "Evidence of operating through high-volume periods (BFCM, seasonal peaks) and the outcomes delivered." },
+    ],
+    skills: ["Merchandising", "Demand planning", "Performance marketing", "Lifecycle marketing", "CRO", "Marketplace management", "Unit economics"],
+    tools: ["Shopify Plus", "BigCommerce", "Salesforce Commerce Cloud", "Klaviyo", "Attentive", "Google Analytics 4", "Triple Whale", "NetSuite"],
     signals: ["Channel and marketplace rubric per role", "Category and margin context captured", "Funnel-stage ownership from the CV"],
+    relatedIndustries: [
+      { slug: "retail", name: "Retail", blurb: "Multi-location and omnichannel retail operations." },
+      { slug: "logistics", name: "Logistics and Supply Chain", blurb: "Fulfilment and last-mile delivery for online orders." },
+      { slug: "marketing", name: "Marketing", blurb: "Brand and demand marketing for consumer businesses." },
+    ],
+    resources: DEFAULT_RESOURCES,
+    faqs: [
+      { q: "Can you separate DTC from marketplace experience?", a: "Yes. Channel is a first-class intake field, and DTC, Amazon/marketplace and wholesale experience are scored on their own evidence." },
+      { q: "Do you account for seasonal hiring spikes?", a: "Yes. Roles tied to peak-period ramp-up move through the same 7-14 day shortlist window as any other requisition." },
+      { q: "How do you evaluate growth marketing claims?", a: "CAC, AOV, LTV and channel-specific ROAS figures are quoted from the CV with the source line, so your team can sanity-check the numbers." },
+      { q: "Can you hire for a platform migration?", a: "Yes. Platform history (Shopify, BigCommerce, Salesforce Commerce Cloud, headless) is captured explicitly so migrations aren't staffed on assumed familiarity." },
+    ],
     cta: { title: "Hiring in e-commerce?", description: "Submit the role — one workspace per requisition, ranked and reviewed." },
   },
 ];

@@ -101,13 +101,13 @@ function GlobalTalentPage() {
 
       <PublicSection className="pb-8 pt-10 sm:pt-14">
         <PublicPage>
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
             Global reach
           </p>
           <h1 className="mt-3 max-w-3xl font-[family-name:var(--brand-font-display)] text-4xl font-semibold tracking-tight sm:text-5xl">
             Hire globally, without vague promises.
           </h1>
-          <p className="mt-4 max-w-2xl text-lg text-[color:var(--brand-navy)]/75">
+          <p className="mt-4 max-w-2xl text-lg text-[color:var(--brand-navy)]/80">
             Remote-first sourcing across EMEA, the Americas and APAC. Relocation and visa support are
             offered per brief, only when the employer has confirmed the scope in writing.
           </p>
@@ -132,7 +132,7 @@ function GlobalTalentPage() {
               (chip) => (
                 <span
                   key={chip}
-                  className="rounded-full border border-[color:var(--brand-navy)]/15 bg-white px-3 py-1 text-[color:var(--brand-navy)]/75"
+                  className="rounded-full border border-[color:var(--brand-navy)]/15 bg-white px-3 py-1 text-[color:var(--brand-navy)]/80"
                 >
                   {chip}
                 </span>
@@ -147,7 +147,7 @@ function GlobalTalentPage() {
           <h2 className="font-[family-name:var(--brand-font-display)] text-2xl font-semibold sm:text-3xl">
             Geographic coverage
           </h2>
-          <p className="mt-3 max-w-2xl text-[color:var(--brand-navy)]/75">
+          <p className="mt-3 max-w-2xl text-[color:var(--brand-navy)]/80">
             Coverage means active sourcing, screening and time-zone alignment — not country checklists.
           </p>
           <div className="mt-6 grid gap-5 md:grid-cols-3">
@@ -156,7 +156,7 @@ function GlobalTalentPage() {
                 <h3 className="font-[family-name:var(--brand-font-display)] text-lg font-semibold">
                   {c.title}
                 </h3>
-                <p className="mt-2 text-sm text-[color:var(--brand-navy)]/75">{c.body}</p>
+                <p className="mt-2 text-sm text-[color:var(--brand-navy)]/80">{c.body}</p>
               </div>
             ))}
           </div>
@@ -213,11 +213,11 @@ function GlobalTalentPage() {
                 <h3 className="font-[family-name:var(--brand-font-display)] text-lg font-semibold">
                   {r.title}
                 </h3>
-                <p className="mt-2 text-sm text-[color:var(--brand-navy)]/75">{r.body}</p>
+                <p className="mt-2 text-sm text-[color:var(--brand-navy)]/80">{r.body}</p>
               </div>
             ))}
           </div>
-          <p className="mt-4 text-xs text-[color:var(--brand-navy)]/60">
+          <p className="mt-4 text-xs text-[color:var(--brand-navy)]/80">
             We do not publish country totals or visa outcomes. Every brief states what the employer
             commits to, and nothing more.
           </p>
@@ -235,7 +235,7 @@ function GlobalTalentPage() {
                 <h3 className="font-[family-name:var(--brand-font-display)] text-lg font-semibold">
                   {o.title}
                 </h3>
-                <p className="mt-2 text-sm text-[color:var(--brand-navy)]/75">{o.body}</p>
+                <p className="mt-2 text-sm text-[color:var(--brand-navy)]/80">{o.body}</p>
               </div>
             ))}
           </div>

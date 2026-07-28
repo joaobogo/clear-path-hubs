@@ -82,7 +82,7 @@ export function StraightAnswers() {
     >
       <PublicPage>
         <div className="max-w-3xl">
-          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[color:var(--brand-ocean)]">
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[color:var(--brand-ocean-text)]">
             Straight answers
           </p>
           <h2
@@ -91,7 +91,7 @@ export function StraightAnswers() {
           >
             The six questions we get before every first call.
           </h2>
-          <p className="mt-3 text-[color:var(--brand-navy)]/70">
+          <p className="mt-3 text-[color:var(--brand-navy)]/80">
             Answered here so you don't have to book a call to find out.
           </p>
         </div>
@@ -103,7 +103,7 @@ export function StraightAnswers() {
               className="flex flex-col rounded-2xl border border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-paper)] p-5"
             >
               <div className="flex items-center gap-2">
-                <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-[color:var(--brand-ocean)]/10 text-[color:var(--brand-ocean)]">
+                <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-[color:var(--brand-ocean)]/10 text-[color:var(--brand-ocean-text)]">
                   <it.icon className="h-4 w-4" aria-hidden />
                 </span>
                 <h3 className="text-sm font-semibold text-[color:var(--brand-navy)]">
@@ -113,18 +113,18 @@ export function StraightAnswers() {
               <p className="mt-3 text-[15px] font-semibold text-[color:var(--brand-navy)]">
                 {it.answer}
               </p>
-              <p className="mt-2 text-sm leading-relaxed text-[color:var(--brand-navy)]/70">
+              <p className="mt-2 text-sm leading-relaxed text-[color:var(--brand-navy)]/80">
                 {it.detail}
               </p>
             </li>
           ))}
         </ul>
 
-        <p className="mt-8 text-sm text-[color:var(--brand-navy)]/60">
+        <p className="mt-8 text-sm text-[color:var(--brand-navy)]/80">
           Still want to talk it through?{" "}
           <Link
             to="/contact"
-            className="font-semibold text-[color:var(--brand-ocean)] hover:text-[color:var(--brand-navy)]"
+            className="font-semibold text-[color:var(--brand-ocean-text)] hover:text-[color:var(--brand-navy)]"
           >
             Book a Call →
           </Link>

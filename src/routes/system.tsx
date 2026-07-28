@@ -156,13 +156,13 @@ function SystemPage() {
     <SiteShell>
       <PublicSection className="pb-8 pt-16 sm:pt-20">
         <PublicPage>
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean)]">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean-text)]">
             The TaaSFlow System
           </p>
           <h1 className="mt-3 max-w-3xl font-[family-name:var(--brand-font-display)] text-4xl font-semibold tracking-tight text-[color:var(--brand-navy)] sm:text-5xl">
             A proprietary recruiting system, run by expert operators.
           </h1>
-          <p className="mt-5 max-w-2xl text-lg text-[color:var(--brand-navy)]/75">
+          <p className="mt-5 max-w-2xl text-lg text-[color:var(--brand-navy)]/80">
             TaaSFlow is software plus people. The system sources, researches,
             scores, and automates the mechanical work of hiring. Recruiters,
             sourcers, and researchers run the loop. Both parts are visible.
@@ -187,13 +187,13 @@ function SystemPage() {
             <PublicPage>
               <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)]">
                 <div>
-                  <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean)]">
+                  <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean-text)]">
                     <p.icon className="h-3.5 w-3.5" /> {p.eyebrow}
                   </div>
                   <h2 className="mt-2 font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight text-[color:var(--brand-navy)] sm:text-4xl">
                     {p.title}
                   </h2>
-                  <p className="mt-3 text-base text-[color:var(--brand-navy)]/75">
+                  <p className="mt-3 text-base text-[color:var(--brand-navy)]/80">
                     {p.body}
                   </p>
                 </div>
@@ -203,7 +203,7 @@ function SystemPage() {
                       key={b}
                       className="flex items-start gap-3 text-sm text-[color:var(--brand-navy)]/80"
                     >
-                      <ArrowRight className="mt-0.5 h-4 w-4 shrink-0 text-[color:var(--brand-ocean)]" />
+                      <ArrowRight className="mt-0.5 h-4 w-4 shrink-0 text-[color:var(--brand-ocean-text)]" />
                       <span>{b}</span>
                     </li>
                   ))}
@@ -217,7 +217,7 @@ function SystemPage() {
       <PublicSection className="py-14">
         <PublicPage>
           <div className="max-w-3xl">
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean)]">
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean-text)]">
               What we do and don't claim
             </p>
             <h2 className="mt-2 font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight text-[color:var(--brand-navy)] sm:text-4xl">
@@ -230,13 +230,13 @@ function SystemPage() {
                 key={h.title}
                 className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6"
               >
-                <div className="flex items-center gap-2 text-[color:var(--brand-ocean)]">
+                <div className="flex items-center gap-2 text-[color:var(--brand-ocean-text)]">
                   <h.icon className="h-4 w-4" />
                   <div className="text-xs font-semibold uppercase tracking-[0.14em]">
                     {h.title}
                   </div>
                 </div>
-                <p className="mt-3 text-sm text-[color:var(--brand-navy)]/75">
+                <p className="mt-3 text-sm text-[color:var(--brand-navy)]/80">
                   {h.body}
                 </p>
               </div>

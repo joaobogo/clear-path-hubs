@@ -83,13 +83,13 @@ function TalentMarketplacePage() {
 
       <PublicSection className="pb-8 pt-10 sm:pt-14">
         <PublicPage>
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
             The marketplace
           </p>
           <h1 className="mt-3 max-w-3xl font-[family-name:var(--brand-font-display)] text-4xl font-semibold tracking-tight sm:text-5xl">
             A curated marketplace, not a job board.
           </h1>
-          <p className="mt-4 max-w-2xl text-lg text-[color:var(--brand-navy)]/75">
+          <p className="mt-4 max-w-2xl text-lg text-[color:var(--brand-navy)]/80">
             TaaSFlow connects real employer briefs to vetted, evidence-scored candidates. Ranked
             shortlists arrive in a shared workspace — private to the client, transparent to the
             candidate.
@@ -126,13 +126,13 @@ function TalentMarketplacePage() {
           <div className="mt-6 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
             {HOW.map((h) => (
               <div key={h.step} className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6">
-                <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/50">
+                <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
                   {h.step}
                 </p>
                 <h3 className="mt-2 font-[family-name:var(--brand-font-display)] text-lg font-semibold">
                   {h.title}
                 </h3>
-                <p className="mt-2 text-sm text-[color:var(--brand-navy)]/75">{h.body}</p>
+                <p className="mt-2 text-sm text-[color:var(--brand-navy)]/80">{h.body}</p>
               </div>
             ))}
           </div>

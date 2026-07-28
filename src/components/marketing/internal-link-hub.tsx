@@ -86,7 +86,7 @@ export function InternalLinkHub() {
       <div className="mx-auto max-w-[1200px] px-4 py-14 sm:px-6 lg:px-8">
         {/* Subtle inline CTA band */}
         <div className="mb-10 flex flex-col items-start justify-between gap-3 rounded-xl border border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-paper)] px-5 py-4 sm:flex-row sm:items-center">
-          <p className="text-sm text-[color:var(--brand-navy)]/75">
+          <p className="text-sm text-[color:var(--brand-navy)]/80">
             <span className="font-semibold text-[color:var(--brand-navy)]">
               Ready when you are.
             </span>{" "}
@@ -121,7 +121,7 @@ export function InternalLinkHub() {
 
         <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-4">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
               Solutions
             </p>
             <ul className="mt-4 space-y-2.5">
@@ -140,12 +140,12 @@ export function InternalLinkHub() {
 
           <div className="lg:col-span-2">
             <div className="flex items-baseline justify-between">
-              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
                 Industries we serve
               </p>
               <Link
                 to="/industries"
-                className="text-xs font-semibold text-[color:var(--brand-navy)]/70 underline underline-offset-4 hover:opacity-80"
+                className="text-xs font-semibold text-[color:var(--brand-navy)]/80 underline underline-offset-4 hover:opacity-80"
               >
                 All 57 →
               </Link>
@@ -166,7 +166,7 @@ export function InternalLinkHub() {
           </div>
 
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
               Resources
             </p>
             <ul className="mt-4 space-y-2.5">
@@ -182,7 +182,7 @@ export function InternalLinkHub() {
               ))}
             </ul>
 
-            <p className="mt-6 text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">
+            <p className="mt-6 text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
               For candidates
             </p>
             <ul className="mt-4 space-y-2.5">

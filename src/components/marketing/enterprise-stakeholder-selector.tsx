@@ -150,17 +150,17 @@ export function EnterpriseStakeholderSelector() {
         className="mt-6 grid gap-6 rounded-2xl border border-[color:var(--brand-navy)]/12 bg-white p-6 lg:grid-cols-[1.15fr_1fr] lg:p-8"
       >
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
             {current.role}
           </p>
           <h3 className="mt-2 font-[family-name:var(--brand-font-display)] text-2xl font-semibold tracking-tight text-[color:var(--brand-navy)] sm:text-3xl">
             {current.title}
           </h3>
-          <p className="mt-3 text-[color:var(--brand-navy)]/75">
+          <p className="mt-3 text-[color:var(--brand-navy)]/80">
             {current.headline}
           </p>
 
-          <p className="mt-6 text-[11px] font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/55">
+          <p className="mt-6 text-[11px] font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/80">
             What matters to this role
           </p>
           <ul className="mt-2 grid gap-1.5 sm:grid-cols-2">
@@ -181,7 +181,7 @@ export function EnterpriseStakeholderSelector() {
 
         <div className="space-y-4">
           <div className="rounded-xl border border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-cream)] p-4">
-            <p className="text-[11px] font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/60">
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/80">
               What they see in the workspace
             </p>
             <p className="mt-1.5 text-sm text-[color:var(--brand-navy)]/80">
@@ -190,7 +190,7 @@ export function EnterpriseStakeholderSelector() {
           </div>
 
           <div className="rounded-xl border border-[color:var(--brand-navy)]/10 p-4">
-            <p className="text-[11px] font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/60">
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/80">
               Why it holds up under scrutiny
             </p>
             <ul className="mt-2 space-y-1.5">

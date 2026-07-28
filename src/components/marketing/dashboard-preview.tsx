@@ -111,14 +111,14 @@ export function DashboardPreview() {
         {/* Window chrome */}
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-paper)] px-4 py-3 sm:px-5">
           <div className="min-w-0">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[color:var(--brand-navy)]/55">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[color:var(--brand-navy)]/80">
               Client workspace · Shortlist
             </p>
             <p className="truncate text-sm font-semibold text-[color:var(--brand-navy)]">
               Senior Product Designer · Week 2 delivery
             </p>
           </div>
-          <div className="flex items-center gap-2 text-[11px] font-semibold text-[color:var(--brand-navy)]/60">
+          <div className="flex items-center gap-2 text-[11px] font-semibold text-[color:var(--brand-navy)]/80">
             <span className="rounded-full border border-[color:var(--brand-navy)]/12 bg-white px-2.5 py-1">
               3 new candidates
             </span>
@@ -129,7 +129,7 @@ export function DashboardPreview() {
         </div>
 
         {/* Column labels — desktop only */}
-        <div className="hidden grid-cols-[minmax(0,1.25fr)_minmax(0,1.6fr)_auto] gap-4 border-b border-[color:var(--brand-navy)]/8 px-5 py-2 text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/50 lg:grid">
+        <div className="hidden grid-cols-[minmax(0,1.25fr)_minmax(0,1.6fr)_auto] gap-4 border-b border-[color:var(--brand-navy)]/8 px-5 py-2 text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/80 lg:grid">
           <span>Candidate</span>
           <span>Role Fit · Evidence · Logistics · Signal</span>
           <span className="text-right">Decision</span>
@@ -160,10 +160,10 @@ export function DashboardPreview() {
                       {r.band}
                     </span>
                   </div>
-                  <p className="mt-0.5 truncate text-xs text-[color:var(--brand-navy)]/70">
+                  <p className="mt-0.5 truncate text-xs text-[color:var(--brand-navy)]/80">
                     {r.headline}
                   </p>
-                  <p className="truncate text-xs text-[color:var(--brand-navy)]/55">
+                  <p className="truncate text-xs text-[color:var(--brand-navy)]/80">
                     {r.location} · {r.stage}
                   </p>
                 </div>
@@ -171,7 +171,7 @@ export function DashboardPreview() {
                   <div className="font-[family-name:var(--brand-font-display)] text-2xl font-semibold leading-none text-[color:var(--brand-navy)]">
                     {r.score}
                   </div>
-                  <div className="text-[10px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/50">
+                  <div className="text-[10px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/80">
                     / 100
                   </div>
                 </div>
@@ -183,25 +183,25 @@ export function DashboardPreview() {
                   <div className="font-[family-name:var(--brand-font-display)] text-2xl font-semibold leading-none text-[color:var(--brand-navy)]">
                     {r.score}
                   </div>
-                  <div className="text-[10px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/50">
+                  <div className="text-[10px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/80">
                     / 100
                   </div>
                 </div>
-                <dl className="grid min-w-0 flex-1 grid-cols-2 gap-x-3 gap-y-2 sm:grid-cols-4">
+                <div className="grid min-w-0 flex-1 grid-cols-2 gap-x-3 gap-y-2 sm:grid-cols-4">
                   {r.categories.map((c) => (
                     <div key={c.label} className="min-w-0">
-                      <dt className="truncate text-[10px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/55">
+                      <p className="truncate text-[10px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/80">
                         {c.label}
-                      </dt>
+                      </p>
                       <div className="mt-1 flex items-center gap-2">
                         <ScoreBar value={c.value} />
-                        <dd className="shrink-0 text-[11px] font-semibold tabular-nums text-[color:var(--brand-navy)]">
+                        <span className="shrink-0 text-[11px] font-semibold tabular-nums text-[color:var(--brand-navy)]">
                           {c.value}
-                        </dd>
+                        </span>
                       </div>
                     </div>
                   ))}
-                </dl>
+                </div>
               </div>
 
               {/* Actions */}
@@ -216,7 +216,7 @@ export function DashboardPreview() {
                         "inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1.5 text-[11px] font-semibold " +
                         (a.primary
                           ? "border-transparent bg-[color:var(--brand-navy)] text-white"
-                          : "border-[color:var(--brand-navy)]/15 bg-white text-[color:var(--brand-navy)]/75")
+                          : "border-[color:var(--brand-navy)]/15 bg-white text-[color:var(--brand-navy)]/80")
                       }
                     >
                       <Icon className="h-3.5 w-3.5" aria-hidden />
@@ -229,20 +229,20 @@ export function DashboardPreview() {
           ))}
         </ul>
 
-        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-[color:var(--brand-navy)]/8 bg-[color:var(--brand-paper)] px-4 py-3 text-xs text-[color:var(--brand-navy)]/65 sm:px-5">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-[color:var(--brand-navy)]/8 bg-[color:var(--brand-paper)] px-4 py-3 text-xs text-[color:var(--brand-navy)]/80 sm:px-5">
           <span>
             Every score links to the recruiter-written evidence behind it.
           </span>
           <Link
             to="/platform"
-            className="inline-flex items-center gap-1 font-semibold text-[color:var(--brand-ocean)] hover:text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+            className="inline-flex items-center gap-1 font-semibold text-[color:var(--brand-ocean-text)] hover:text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
           >
             See the full workspace <ArrowRight className="h-3.5 w-3.5" aria-hidden />
           </Link>
         </div>
       </div>
 
-      <figcaption className="mt-3 text-xs text-[color:var(--brand-navy)]/55">
+      <figcaption className="mt-3 text-xs text-[color:var(--brand-navy)]/80">
         Illustrative dashboard view. Candidate names, scores, and roles are
         anonymized examples — not real candidates.
       </figcaption>

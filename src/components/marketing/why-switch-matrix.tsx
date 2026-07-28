@@ -91,7 +91,7 @@ function ScoreDot({ score }: { score: Score }) {
   if (score === "full") {
     return (
       <span
-        className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-[color:var(--brand-ocean)]/15 text-[color:var(--brand-ocean)]"
+        className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-[color:var(--brand-ocean)]/15 text-[color:var(--brand-ocean-text)]"
         aria-label="Strong"
       >
         <Check className="h-3.5 w-3.5" aria-hidden />
@@ -101,7 +101,7 @@ function ScoreDot({ score }: { score: Score }) {
   if (score === "partial") {
     return (
       <span
-        className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-[color:var(--brand-navy)]/8 text-[color:var(--brand-navy)]/70"
+        className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-[color:var(--brand-navy)]/8 text-[color:var(--brand-navy)]/80"
         aria-label="Partial"
       >
         <Minus className="h-3.5 w-3.5" aria-hidden />
@@ -110,7 +110,7 @@ function ScoreDot({ score }: { score: Score }) {
   }
   return (
     <span
-      className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-[color:var(--brand-navy)]/6 text-[color:var(--brand-navy)]/40"
+      className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-[color:var(--brand-navy)]/6 text-[color:var(--brand-navy)]/80"
       aria-label="Gap"
     >
       <X className="h-3.5 w-3.5" aria-hidden />
@@ -128,7 +128,7 @@ export function WhySwitchMatrix() {
     >
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
         <div className="max-w-3xl">
-          <span className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-[color:var(--brand-navy)]/60">
+          <span className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-[color:var(--brand-navy)]/80">
             The decision matrix
           </span>
           <h2
@@ -137,7 +137,7 @@ export function WhySwitchMatrix() {
           >
             Why teams switch to TaaSFlow.
           </h2>
-          <p className="mt-3 text-base text-[color:var(--brand-navy)]/70">
+          <p className="mt-3 text-base text-[color:var(--brand-navy)]/80">
             Four ways teams hire today. Seven dimensions that decide the outcome.
             Compare, then choose.
           </p>
@@ -147,7 +147,7 @@ export function WhySwitchMatrix() {
         <div className="mt-10 hidden overflow-hidden rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white shadow-[var(--brand-shadow-lg)] lg:block">
           {/* Header row */}
           <div className="grid grid-cols-[minmax(200px,1.1fr)_repeat(4,1fr)] border-b border-[color:var(--brand-navy)]/10">
-            <div className="p-5 text-[11px] font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/55">
+            <div className="p-5 text-[11px] font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
               Dimension
             </div>
             {OPTIONS.map((o) => (
@@ -164,13 +164,13 @@ export function WhySwitchMatrix() {
                   className={
                     "text-sm font-semibold " +
                     (o.highlight
-                      ? "text-[color:var(--brand-ocean)]"
+                      ? "text-[color:var(--brand-ocean-text)]"
                       : "text-[color:var(--brand-navy)]")
                   }
                 >
                   {o.name}
                 </div>
-                <div className="mt-1 text-[11px] leading-snug text-[color:var(--brand-navy)]/60">
+                <div className="mt-1 text-[11px] leading-snug text-[color:var(--brand-navy)]/80">
                   {o.tagline}
                 </div>
               </div>
@@ -202,7 +202,7 @@ export function WhySwitchMatrix() {
                     }
                   >
                     <ScoreDot score={cell.score} />
-                    <div className="text-[12px] leading-snug text-[color:var(--brand-navy)]/75">
+                    <div className="text-[12px] leading-snug text-[color:var(--brand-navy)]/80">
                       {cell.note}
                     </div>
                   </div>
@@ -237,19 +237,19 @@ export function WhySwitchMatrix() {
                       className={
                         "text-sm font-semibold " +
                         (o.highlight
-                          ? "text-[color:var(--brand-ocean)]"
+                          ? "text-[color:var(--brand-ocean-text)]"
                           : "text-[color:var(--brand-navy)]")
                       }
                     >
                       {o.name}
                     </div>
-                    <div className="mt-0.5 text-[11px] leading-snug text-[color:var(--brand-navy)]/60">
+                    <div className="mt-0.5 text-[11px] leading-snug text-[color:var(--brand-navy)]/80">
                       {o.tagline}
                     </div>
                   </div>
                   <ChevronRight
                     className={
-                      "h-4 w-4 shrink-0 text-[color:var(--brand-navy)]/50 transition-transform " +
+                      "h-4 w-4 shrink-0 text-[color:var(--brand-navy)]/80 transition-transform " +
                       (open ? "rotate-90" : "")
                     }
                     aria-hidden
@@ -269,7 +269,7 @@ export function WhySwitchMatrix() {
                             <div className="text-[13px] font-medium text-[color:var(--brand-navy)]">
                               {dim}
                             </div>
-                            <div className="mt-0.5 text-[12px] leading-snug text-[color:var(--brand-navy)]/70">
+                            <div className="mt-0.5 text-[12px] leading-snug text-[color:var(--brand-navy)]/80">
                               {cell.note}
                             </div>
                           </div>
@@ -284,7 +284,7 @@ export function WhySwitchMatrix() {
         </div>
 
         {/* Legend */}
-        <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2 text-[12px] text-[color:var(--brand-navy)]/60">
+        <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2 text-[12px] text-[color:var(--brand-navy)]/80">
           <span className="inline-flex items-center gap-2">
             <ScoreDot score="full" /> Strong
           </span>

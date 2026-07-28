@@ -25,7 +25,7 @@ export function PricingTierCard({ tier }: { tier: PricingTier }) {
     >
       <div className="flex items-start justify-between gap-3">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/55">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
             {tier.eyebrow}
           </p>
           <h3 className="mt-2 font-[family-name:var(--brand-font-display)] text-2xl font-semibold tracking-tight">
@@ -44,24 +44,24 @@ export function PricingTierCard({ tier }: { tier: PricingTier }) {
           {formatPrice(tier)}
         </span>
       </div>
-      <p className="mt-1 text-xs text-[color:var(--brand-navy)]/60">
+      <p className="mt-1 text-xs text-[color:var(--brand-navy)]/80">
         {isCustom ? "Scoped to your programme" : "one-time flat fee"}
       </p>
       {tier.pricePer ? (
-        <p className="mt-0.5 text-xs text-[color:var(--brand-navy)]/55">{tier.pricePer}</p>
+        <p className="mt-0.5 text-xs text-[color:var(--brand-navy)]/80">{tier.pricePer}</p>
       ) : null}
 
-      <p className="mt-5 text-sm text-[color:var(--brand-navy)]/75">{tier.bestFor}</p>
+      <p className="mt-5 text-sm text-[color:var(--brand-navy)]/80">{tier.bestFor}</p>
 
       <dl className="mt-5 grid grid-cols-2 gap-3 rounded-xl bg-[color:var(--brand-navy)]/[0.04] px-4 py-3 text-xs">
         <div>
-          <dt className="text-[color:var(--brand-navy)]/55">Active roles</dt>
+          <dt className="text-[color:var(--brand-navy)]/80">Active roles</dt>
           <dd className="mt-0.5 font-semibold text-[color:var(--brand-navy)]">
             {tier.rolesIncluded}
           </dd>
         </div>
         <div>
-          <dt className="text-[color:var(--brand-navy)]/55">Turnaround</dt>
+          <dt className="text-[color:var(--brand-navy)]/80">Turnaround</dt>
           <dd className="mt-0.5 font-semibold text-[color:var(--brand-navy)]">
             {tier.turnaround}
           </dd>
@@ -83,7 +83,7 @@ export function PricingTierCard({ tier }: { tier: PricingTier }) {
             type="button"
             onClick={() => setOpen((v) => !v)}
             aria-expanded={open}
-            className="inline-flex items-center gap-1.5 text-xs font-semibold text-[color:var(--brand-navy)]/70 hover:text-[color:var(--brand-navy)]"
+            className="inline-flex items-center gap-1.5 text-xs font-semibold text-[color:var(--brand-navy)]/80 hover:text-[color:var(--brand-navy)]"
           >
             <ChevronDown
               className={"h-3.5 w-3.5 transition-transform " + (open ? "rotate-180" : "")}

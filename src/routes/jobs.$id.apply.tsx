@@ -338,7 +338,7 @@ function ApplyPage() {
       progress={{ step, total: STEP_LABELS.length, label: `Step ${step} of ${STEP_LABELS.length}` }}
       width="md"
     >
-      <div className="text-sm text-[color:var(--brand-navy)]/60">{pos.organization_name}</div>
+      <div className="text-sm text-[color:var(--brand-navy)]/80">{pos.organization_name}</div>
         <div className="text-sm text-muted-foreground">{pos.organization_name}</div>
         <h1 className="mt-1 text-2xl md:text-3xl font-semibold tracking-tight">
           Apply — {pos.title}

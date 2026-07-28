@@ -173,7 +173,7 @@ function HeroActions({
   const secondaryCls =
     tone === "dark"
       ? "text-white/85 hover:text-white"
-      : "text-[color:var(--brand-navy)]/70 hover:text-[color:var(--brand-navy)]";
+      : "text-[color:var(--brand-navy)]/80 hover:text-[color:var(--brand-navy)]";
   return (
     <div className="flex flex-wrap items-center gap-3">
       <BookACallDialog
@@ -212,7 +212,7 @@ function HeroCredibility({ text, tone = "light" }: { text: string; tone?: "light
   const cls =
     tone === "dark"
       ? "text-white/70"
-      : "text-[color:var(--brand-navy)]/60";
+      : "text-[color:var(--brand-navy)]/80";
   return (
     <p className={`mt-6 max-w-xl text-xs uppercase tracking-[0.14em] ${cls}`}>
       {text}
@@ -238,7 +238,7 @@ function SectionHeading({
       }
     >
       {eyebrow ? (
-        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[color:var(--brand-ocean)]">
+        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[color:var(--brand-ocean-text)]">
           {eyebrow}
         </p>
       ) : null}
@@ -246,7 +246,7 @@ function SectionHeading({
         {title}
       </h2>
       {intro ? (
-        <p className="mt-3 text-[15px] leading-relaxed text-[color:var(--brand-navy)]/70">
+        <p className="mt-3 text-[15px] leading-relaxed text-[color:var(--brand-navy)]/80">
           {intro}
         </p>
       ) : null}
@@ -317,11 +317,11 @@ function HeroSystemsCapability({ ctx }: { ctx: Ctx }) {
       <PublicPage className="relative">
         <div className="grid gap-10 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] lg:items-start">
           <div>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[color:var(--brand-ocean)]">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[color:var(--brand-ocean-text)]">
               {entry.eyebrow} · {config.familyLabel}
             </p>
             <HeroH1 className="mt-5 max-w-[22ch]">{entry.hero.title}</HeroH1>
-            <p className="mt-5 max-w-xl text-base text-[color:var(--brand-navy)]/75 sm:text-lg">
+            <p className="mt-5 max-w-xl text-base text-[color:var(--brand-navy)]/80 sm:text-lg">
               {config.valueProp}
             </p>
             <div className="mt-8">
@@ -339,7 +339,7 @@ function HeroSystemsCapability({ ctx }: { ctx: Ctx }) {
                   key={c.label}
                   className="rounded-xl bg-[color:var(--brand-paper)] p-4"
                 >
-                  <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[color:var(--brand-navy)]/50">
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[color:var(--brand-navy)]/80">
                     {c.label}
                   </p>
                   <ul className="mt-2 space-y-1 text-xs font-medium text-[color:var(--brand-navy)]/85">
@@ -375,11 +375,11 @@ function HeroTrustCompliance({ ctx }: { ctx: Ctx }) {
       <PublicPage>
         <div className="grid gap-10 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)] lg:items-center">
           <div>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[color:var(--brand-navy)]/60">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[color:var(--brand-navy)]/80">
               {entry.eyebrow} · {config.familyLabel}
             </p>
             <HeroH1 className="mt-5 max-w-[24ch]">{entry.hero.title}</HeroH1>
-            <p className="mt-5 max-w-xl text-lg leading-relaxed text-[color:var(--brand-navy)]/75">
+            <p className="mt-5 max-w-xl text-lg leading-relaxed text-[color:var(--brand-navy)]/80">
               {config.valueProp}
             </p>
             <div className="mt-8">
@@ -429,7 +429,7 @@ function HeroTrustCompliance({ ctx }: { ctx: Ctx }) {
                     <p className="text-sm font-semibold text-[color:var(--brand-navy)]">
                       {g.title}
                     </p>
-                    <p className="mt-0.5 line-clamp-2 text-xs text-[color:var(--brand-navy)]/70">
+                    <p className="mt-0.5 line-clamp-2 text-xs text-[color:var(--brand-navy)]/80">
                       {g.body}
                     </p>
                   </div>
@@ -458,7 +458,7 @@ function HeroRiskJudgment({ ctx }: { ctx: Ctx }) {
       <PublicPage>
         <div className="grid gap-10 lg:grid-cols-[1.15fr_1fr] lg:items-end">
           <div>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[color:var(--brand-navy)]/60">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[color:var(--brand-navy)]/80">
               {entry.eyebrow} · {config.familyLabel}
             </p>
             <h1
@@ -467,7 +467,7 @@ function HeroRiskJudgment({ ctx }: { ctx: Ctx }) {
             >
               {entry.hero.title}
             </h1>
-            <p className="mt-6 max-w-xl text-lg leading-relaxed text-[color:var(--brand-navy)]/75">
+            <p className="mt-6 max-w-xl text-lg leading-relaxed text-[color:var(--brand-navy)]/80">
               {config.valueProp}
             </p>
             <div className="mt-8">
@@ -479,7 +479,7 @@ function HeroRiskJudgment({ ctx }: { ctx: Ctx }) {
             aria-label="Risk and judgment matrix"
             className="rounded-2xl border border-[color:var(--brand-navy)]/15 bg-white p-5 shadow-[0_20px_60px_-30px_rgba(10,20,50,0.25)]"
           >
-            <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[color:var(--brand-navy)]/50">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[color:var(--brand-navy)]/80">
               Case-file scope · {entry.name}
             </p>
             <div className="mt-4 grid grid-cols-2 gap-3">
@@ -488,7 +488,7 @@ function HeroRiskJudgment({ ctx }: { ctx: Ctx }) {
                   key={m.axis}
                   className="rounded-lg border border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-paper)] p-3"
                 >
-                  <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/55">
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
                     {m.axis}
                   </p>
                   <p className="mt-1 line-clamp-2 text-sm font-medium text-[color:var(--brand-navy)]">
@@ -525,11 +525,11 @@ function HeroOperationsDelivery({ ctx }: { ctx: Ctx }) {
         }}
       />
       <PublicPage className="relative">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[color:var(--brand-ocean)]">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[color:var(--brand-ocean-text)]">
           {entry.eyebrow} · {config.familyLabel}
         </p>
         <HeroH1 className="mt-5 max-w-[24ch]">{entry.hero.title}</HeroH1>
-        <p className="mt-5 max-w-2xl text-base text-[color:var(--brand-navy)]/75 sm:text-lg">
+        <p className="mt-5 max-w-2xl text-base text-[color:var(--brand-navy)]/80 sm:text-lg">
           {config.valueProp}
         </p>
         <div className="mt-8">
@@ -538,7 +538,7 @@ function HeroOperationsDelivery({ ctx }: { ctx: Ctx }) {
         <HeroCredibility text={config.credibility} />
 
         <div className="mt-10 rounded-2xl border border-dashed border-[color:var(--brand-navy)]/20 bg-white/70 p-4 sm:p-6">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[color:var(--brand-navy)]/50">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[color:var(--brand-navy)]/80">
             Blueprint · role to outcome
           </p>
           <div className="mt-3 grid gap-3 md:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)_auto_minmax(0,1fr)] md:items-center">
@@ -557,7 +557,7 @@ function HeroOperationsDelivery({ ctx }: { ctx: Ctx }) {
 function FlowNode({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-xl border border-[color:var(--brand-navy)]/10 bg-white p-4">
-      <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/50">
+      <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
         {label}
       </p>
       <p className="mt-1 line-clamp-2 text-sm font-semibold text-[color:var(--brand-navy)]">
@@ -569,7 +569,7 @@ function FlowNode({ label, value }: { label: string; value: string }) {
 
 function FlowArrow() {
   return (
-    <div className="hidden md:flex justify-center text-[color:var(--brand-ocean)]" aria-hidden>
+    <div className="hidden md:flex justify-center text-[color:var(--brand-ocean-text)]" aria-hidden>
       <ArrowRight className="h-5 w-5" />
     </div>
   );
@@ -652,11 +652,11 @@ function HeroExpertiseGrowth({ ctx }: { ctx: Ctx }) {
       <PublicPage>
         <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:items-start">
           <div>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[color:var(--brand-ocean)]">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[color:var(--brand-ocean-text)]">
               {entry.eyebrow} · {config.familyLabel}
             </p>
             <HeroH1 className="mt-5 max-w-[22ch]">{entry.hero.title}</HeroH1>
-            <p className="mt-5 max-w-xl text-base text-[color:var(--brand-navy)]/75 sm:text-lg">
+            <p className="mt-5 max-w-xl text-base text-[color:var(--brand-navy)]/80 sm:text-lg">
               {config.valueProp}
             </p>
             <div className="mt-8">
@@ -674,7 +674,7 @@ function HeroExpertiseGrowth({ ctx }: { ctx: Ctx }) {
                   key={f.tier}
                   className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-5"
                 >
-                  <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[color:var(--brand-ocean)]">
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[color:var(--brand-ocean-text)]">
                     {f.tier}
                   </p>
                   <ul className="mt-3 space-y-1.5 text-sm font-medium text-[color:var(--brand-navy)]/85">
@@ -733,12 +733,12 @@ function SectionChallenges({ ctx }: { ctx: Ctx }) {
                   <span aria-hidden className="pointer-events-none absolute left-full top-8 hidden h-px w-4 -translate-y-1/2 bg-[color:var(--brand-navy)]/20 lg:block" />
                 )}
                 <div className="h-full rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6 text-[color:var(--brand-navy)] shadow-[0_1px_0_rgba(0,0,0,0.02)]">
-                  <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-[color:var(--brand-navy)]/55">
+                  <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-[color:var(--brand-navy)]/80">
                     <span aria-hidden className="grid h-5 w-5 place-items-center rounded-full bg-[color:var(--brand-navy)] text-[10px] text-white">{i + 1}</span>
                     Node
                   </div>
                   <h3 className="mt-3 font-[family-name:var(--brand-font-display)] text-base font-semibold leading-snug">{c.title}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-[color:var(--brand-navy)]/75">{c.body}</p>
+                  <p className="mt-2 text-sm leading-relaxed text-[color:var(--brand-navy)]/80">{c.body}</p>
                   <EvidenceLine text={evidenceFor(i)} />
                 </div>
               </div>
@@ -764,7 +764,7 @@ function SectionChallenges({ ctx }: { ctx: Ctx }) {
           <ol className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {entry.challenges.map((c, i) => (
               <li key={c.title} className="rounded-2xl border border-[color:var(--brand-cream)]/15 bg-[color:var(--brand-cream)] p-6 text-[color:var(--brand-navy)]">
-                <div className="flex items-center justify-between text-[10px] font-semibold uppercase tracking-[0.18em] text-[color:var(--brand-navy)]/60">
+                <div className="flex items-center justify-between text-[10px] font-semibold uppercase tracking-[0.18em] text-[color:var(--brand-navy)]/80">
                   <span>Gate {String(i + 1).padStart(2, "0")}</span>
                   <span className="rounded-sm border border-current/25 px-1.5 py-0.5">Mandatory judgment</span>
                 </div>
@@ -789,7 +789,7 @@ function SectionChallenges({ ctx }: { ctx: Ctx }) {
         <PublicPage>
           {heading}
           <div className="mt-10 overflow-hidden rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white">
-            <div className="hidden grid-cols-[1.5fr_2fr_1.2fr] gap-6 border-b border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-mist)]/40 px-6 py-3 text-[10px] font-semibold uppercase tracking-[0.16em] text-[color:var(--brand-navy)]/60 md:grid">
+            <div className="hidden grid-cols-[1.5fr_2fr_1.2fr] gap-6 border-b border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-mist)]/40 px-6 py-3 text-[10px] font-semibold uppercase tracking-[0.16em] text-[color:var(--brand-navy)]/80 md:grid">
               <span>Control</span>
               <span>Why it matters clinically</span>
               <span>Evidence captured</span>
@@ -798,8 +798,8 @@ function SectionChallenges({ ctx }: { ctx: Ctx }) {
               {entry.challenges.map((c, i) => (
                 <li key={c.title} className="grid gap-2 px-6 py-5 md:grid-cols-[1.5fr_2fr_1.2fr] md:gap-6">
                   <h3 className="font-[family-name:var(--brand-font-display)] text-sm font-semibold text-[color:var(--brand-navy)]">{c.title}</h3>
-                  <p className="text-sm leading-relaxed text-[color:var(--brand-navy)]/75">{c.body}</p>
-                  <p className="text-xs leading-relaxed text-[color:var(--brand-navy)]/70">
+                  <p className="text-sm leading-relaxed text-[color:var(--brand-navy)]/80">{c.body}</p>
+                  <p className="text-xs leading-relaxed text-[color:var(--brand-navy)]/80">
                     <span className="mr-1 font-semibold uppercase tracking-wider text-[color:var(--brand-gold)]">Signal · </span>
                     {evidenceFor(i) ?? "Evidence quoted from the CV and verified before shortlist."}
                   </p>
@@ -823,12 +823,12 @@ function SectionChallenges({ ctx }: { ctx: Ctx }) {
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
               {entry.challenges.map((c, i) => (
                 <div key={c.title} className="relative rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6">
-                  <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-[color:var(--brand-navy)]/60">
+                  <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-[color:var(--brand-navy)]/80">
                     <span aria-hidden className="grid h-6 w-6 place-items-center rounded-full border border-[color:var(--brand-navy)]/30 bg-white text-[10px] text-[color:var(--brand-navy)]">{i + 1}</span>
                     Stage
                   </div>
                   <h3 className="mt-3 font-[family-name:var(--brand-font-display)] text-base font-semibold leading-snug text-[color:var(--brand-navy)]">{c.title}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-[color:var(--brand-navy)]/75">{c.body}</p>
+                  <p className="mt-2 text-sm leading-relaxed text-[color:var(--brand-navy)]/80">{c.body}</p>
                   <EvidenceLine text={evidenceFor(i)} />
                 </div>
               ))}
@@ -850,7 +850,7 @@ function SectionChallenges({ ctx }: { ctx: Ctx }) {
               <li key={c.title} className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6">
                 <div className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[color:var(--brand-gold)]">Moment {String(i + 1).padStart(2, "0")}</div>
                 <h3 className="mt-2 font-[family-name:var(--brand-font-display)] text-base font-semibold leading-snug text-[color:var(--brand-navy)]">{c.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-[color:var(--brand-navy)]/75">{c.body}</p>
+                <p className="mt-2 text-sm leading-relaxed text-[color:var(--brand-navy)]/80">{c.body}</p>
                 <EvidenceLine text={evidenceFor(i)} />
               </li>
             ))}
@@ -870,11 +870,11 @@ function SectionChallenges({ ctx }: { ctx: Ctx }) {
             <li key={c.title} className="grid gap-4 rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6 md:grid-cols-[auto_1fr_1fr] md:items-start md:gap-6">
               <div className="flex items-center gap-3 md:flex-col md:items-start">
                 <span aria-hidden className="grid h-9 w-9 place-items-center rounded-full bg-[color:var(--brand-navy)] font-[family-name:var(--brand-font-display)] text-sm font-semibold text-white">{i + 1}</span>
-                <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[color:var(--brand-navy)]/60">Rung</span>
+                <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[color:var(--brand-navy)]/80">Rung</span>
               </div>
               <div>
                 <h3 className="font-[family-name:var(--brand-font-display)] text-base font-semibold leading-snug text-[color:var(--brand-navy)]">{c.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-[color:var(--brand-navy)]/75">{c.body}</p>
+                <p className="mt-2 text-sm leading-relaxed text-[color:var(--brand-navy)]/80">{c.body}</p>
               </div>
               <div className="rounded-xl bg-[color:var(--brand-mist)]/50 p-4 text-xs leading-relaxed text-[color:var(--brand-navy)]/80">
                 <span className="mr-1 font-semibold uppercase tracking-wider text-[color:var(--brand-gold)]">Evidence · </span>
@@ -907,7 +907,7 @@ function SectionSolutions({ ctx }: { ctx: Ctx }) {
               <h3 className="text-lg font-semibold text-[color:var(--brand-navy)]">
                 {s.title}
               </h3>
-              <p className="mt-3 text-sm leading-relaxed text-[color:var(--brand-navy)]/75">
+              <p className="mt-3 text-sm leading-relaxed text-[color:var(--brand-navy)]/80">
                 {s.body}
               </p>
             </div>
@@ -959,7 +959,7 @@ function SectionScoring({ ctx }: { ctx: Ctx }) {
         <div className="mt-8">
           <IndustrySignalExplorer entry={entry} />
         </div>
-        <p className="mt-6 max-w-[65ch] text-sm text-[color:var(--brand-navy)]/70">
+        <p className="mt-6 max-w-[65ch] text-sm text-[color:var(--brand-navy)]/80">
           See the full methodology on{" "}
           <Link
             to="/how-it-works"
@@ -1009,7 +1009,7 @@ function SectionProof({ ctx }: { ctx: Ctx }) {
               <h3 className="font-[family-name:var(--brand-font-display)] text-lg font-semibold text-[color:var(--brand-navy)]">
                 {it.title}
               </h3>
-              <p className="mt-3 max-w-[52ch] text-sm leading-relaxed text-[color:var(--brand-navy)]/75">
+              <p className="mt-3 max-w-[52ch] text-sm leading-relaxed text-[color:var(--brand-navy)]/80">
                 {it.body}
               </p>
             </div>
@@ -1039,7 +1039,7 @@ function SectionSkillsTools({ ctx }: { ctx: Ctx }) {
               key={g.title}
               className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6"
             >
-              <h3 className="text-sm font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">
+              <h3 className="text-sm font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
                 {g.title}
               </h3>
               <ul className="mt-3 flex flex-wrap gap-2">
@@ -1080,7 +1080,7 @@ function SectionDeliveryPreview({ ctx }: { ctx: Ctx }) {
               title={`What a ${entry.name} shortlist looks like`}
               intro="Ranked candidates with a fit score, requirement coverage, evidence quotes, strengths and validation areas. Reviewed by a partner before it reaches you."
             />
-            <p className="mt-4 inline-flex items-center gap-2 rounded-full bg-[color:var(--brand-navy)]/5 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/70">
+            <p className="mt-4 inline-flex items-center gap-2 rounded-full bg-[color:var(--brand-navy)]/5 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
               Example data — not a live candidate
             </p>
           </div>
@@ -1088,13 +1088,13 @@ function SectionDeliveryPreview({ ctx }: { ctx: Ctx }) {
             className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-5 shadow-sm"
             aria-label="Example shortlist card"
           >
-            <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/55">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
               {entry.name} shortlist · Example
             </p>
             <p className="mt-1 text-sm font-semibold text-[color:var(--brand-navy)]">
               Candidate #EXAMPLE · Alex R.
             </p>
-            <p className="mt-0.5 text-xs text-[color:var(--brand-navy)]/70">
+            <p className="mt-0.5 text-xs text-[color:var(--brand-navy)]/80">
               Applying as: {primaryRole}
             </p>
             {skillChips.length ? (
@@ -1120,7 +1120,7 @@ function SectionDeliveryPreview({ ctx }: { ctx: Ctx }) {
                 Recommended: shortlist
               </p>
               <p className="mt-1 line-clamp-3">“{evidenceLine}”</p>
-              <p className="mt-2 text-[10px] uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/50">
+              <p className="mt-2 text-[10px] uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
                 Example data — no production candidate.
               </p>
             </div>
@@ -1168,13 +1168,13 @@ function SectionProcess({ ctx }: { ctx: Ctx }) {
                 key={s.n}
                 className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6"
               >
-                <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/50">
+                <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
                   {s.n}
                 </p>
                 <h3 className="mt-2 font-[family-name:var(--brand-font-display)] text-lg font-semibold">
                   {s.title}
                 </h3>
-                <p className="mt-2 text-sm text-[color:var(--brand-navy)]/75">{s.body}</p>
+                <p className="mt-2 text-sm text-[color:var(--brand-navy)]/80">{s.body}</p>
               </div>
             ))}
           </div>
@@ -1188,7 +1188,7 @@ function SectionProcess({ ctx }: { ctx: Ctx }) {
                 <h3 className="font-[family-name:var(--brand-font-display)] text-lg font-semibold">
                   {s.title}
                 </h3>
-                <p className="mt-1 text-sm text-[color:var(--brand-navy)]/75">{s.body}</p>
+                <p className="mt-1 text-sm text-[color:var(--brand-navy)]/80">{s.body}</p>
               </li>
             ))}
           </ol>
@@ -1196,18 +1196,18 @@ function SectionProcess({ ctx }: { ctx: Ctx }) {
           <div className="mt-8 divide-y divide-[color:var(--brand-navy)]/10 rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white">
             {steps.map((s) => (
               <div key={s.n} className="grid grid-cols-[80px_1fr] gap-6 p-5 sm:grid-cols-[80px_1fr_2fr]">
-                <span className="text-xs font-semibold uppercase tracking-[0.16em] text-[color:var(--brand-navy)]/45">
+                <span className="text-xs font-semibold uppercase tracking-[0.16em] text-[color:var(--brand-navy)]/80">
                   {s.n}
                 </span>
                 <span className="font-semibold text-[color:var(--brand-navy)]">{s.title}</span>
-                <span className="col-span-2 text-sm text-[color:var(--brand-navy)]/75 sm:col-span-1">
+                <span className="col-span-2 text-sm text-[color:var(--brand-navy)]/80 sm:col-span-1">
                   {s.body}
                 </span>
               </div>
             ))}
           </div>
         )}
-        <p className="mt-4 text-sm text-[color:var(--brand-navy)]/60">
+        <p className="mt-4 text-sm text-[color:var(--brand-navy)]/80">
           See the full process on{" "}
           <Link to="/how-it-works" className="underline underline-offset-4">
             how it works
@@ -1224,7 +1224,7 @@ function SectionKeywordLinks({ ctx }: { ctx: Ctx }) {
   return (
     <PublicSection className="py-6">
       <PublicPage>
-        <p className="max-w-3xl text-sm leading-relaxed text-[color:var(--brand-navy)]/70">
+        <p className="max-w-3xl text-sm leading-relaxed text-[color:var(--brand-navy)]/80">
           Hiring in{" "}
           <span className="font-semibold text-[color:var(--brand-navy)]">{entry.name}</span>? See how{" "}
           <Link to="/" className="font-medium text-[color:var(--brand-navy)] underline underline-offset-4">
@@ -1268,7 +1268,7 @@ function SectionRelated({ ctx }: { ctx: Ctx }) {
           <SectionHeading eyebrow="Adjacent hiring" title="Related industries" />
           <Link
             to="/industries"
-            className="hidden text-sm font-semibold text-[color:var(--brand-ocean)] underline-offset-4 hover:underline sm:inline-flex"
+            className="hidden text-sm font-semibold text-[color:var(--brand-ocean-text)] underline-offset-4 hover:underline sm:inline-flex"
           >
             See all industries →
           </Link>
@@ -1281,15 +1281,15 @@ function SectionRelated({ ctx }: { ctx: Ctx }) {
               params={{ slug: toPublicSlug(r.slug) }}
               className="group rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6 transition-all hover:-translate-y-0.5 hover:border-[color:var(--brand-ocean)]/50 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
             >
-              <h3 className="text-lg font-semibold text-[color:var(--brand-navy)] group-hover:text-[color:var(--brand-ocean)]">
+              <h3 className="text-lg font-semibold text-[color:var(--brand-navy)] group-hover:text-[color:var(--brand-ocean-text)]">
                 {r.name}
               </h3>
               {r.blurb ? (
-                <p className="mt-2 line-clamp-3 text-sm text-[color:var(--brand-navy)]/70">
+                <p className="mt-2 line-clamp-3 text-sm text-[color:var(--brand-navy)]/80">
                   {r.blurb}
                 </p>
               ) : null}
-              <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-[color:var(--brand-ocean)]">
+              <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-[color:var(--brand-ocean-text)]">
                 Explore <ArrowRight className="h-4 w-4" />
               </span>
             </Link>
@@ -1314,7 +1314,7 @@ function SectionFaq({ ctx }: { ctx: Ctx }) {
               className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6"
             >
               <h3 className="text-base font-semibold text-[color:var(--brand-navy)]">{f.q}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-[color:var(--brand-navy)]/75">
+              <p className="mt-2 text-sm leading-relaxed text-[color:var(--brand-navy)]/80">
                 {f.a}
               </p>
             </div>

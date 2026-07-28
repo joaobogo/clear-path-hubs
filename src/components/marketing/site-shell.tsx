@@ -16,6 +16,9 @@ import {
   PRIMARY_CTA,
   BOOK_CALL_CTA,
   SECONDARY_CTAS,
+  CANDIDATE_PRIMARY_CTA,
+  CANDIDATE_SECONDARY_CTA,
+  isCandidateJourneyPath,
   FOOTER_GROUPS,
   FOOTER_DESCRIPTION,
   SOCIAL_LINKS,
@@ -109,7 +112,7 @@ function DesktopNavLink({ to, label }: { to: string; label: string }) {
   return (
     <Link
       to={to}
-      className="whitespace-nowrap rounded-md px-2 py-1.5 text-sm text-[color:var(--brand-navy)]/75 transition-colors hover:text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+      className="whitespace-nowrap rounded-md px-2 py-1.5 text-sm text-[color:var(--brand-navy)]/80 transition-colors hover:text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
       activeProps={{ className: "text-[color:var(--brand-navy)] font-semibold" }}
     >
       {label}
@@ -142,7 +145,7 @@ function GroupContent({ links }: { links: NavLink[] }) {
               >
                 <span className="block font-medium">{l.label}</span>
                 {l.description ? (
-                  <span className="mt-0.5 block text-xs text-[color:var(--brand-navy)]/55">
+                  <span className="mt-0.5 block text-xs text-[color:var(--brand-navy)]/80">
                     {l.description}
                   </span>
                 ) : null}
@@ -161,6 +164,10 @@ function Header() {
 
   // Close mobile sheet when route changes.
   useEffect(() => { setOpen(false); }, [pathname]);
+
+  const candidateMode = isCandidateJourneyPath(pathname);
+  const ctaPrimary = candidateMode ? CANDIDATE_PRIMARY_CTA : PRIMARY_CTA;
+  const ctaSecondary = candidateMode ? CANDIDATE_SECONDARY_CTA : BOOK_CALL_CTA;
 
   const signIn = SECONDARY_CTAS.find((c) => c.label === "Sign in") ?? { to: "/login", label: "Sign in" };
   const browseJobs = SECONDARY_CTAS.find((c) => c.label === "Browse Jobs") ?? { to: "/jobs", label: "Browse Jobs" };
@@ -200,28 +207,28 @@ function Header() {
 
           <div className="ml-auto hidden items-center gap-1 lg:flex">
             <Link
-              to={browseJobs.to}
-              className="whitespace-nowrap rounded-md px-2.5 py-1.5 text-sm font-medium text-[color:var(--brand-navy)]/70 hover:text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+              to={candidateMode ? "/" : browseJobs.to}
+              className="whitespace-nowrap rounded-md px-2.5 py-1.5 text-sm font-medium text-[color:var(--brand-navy)]/80 hover:text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
             >
-              For candidates
+              {candidateMode ? "For employers" : "For candidates"}
             </Link>
             <Link
               to={signIn.to}
-              className="whitespace-nowrap rounded-md px-2.5 py-1.5 text-sm font-medium text-[color:var(--brand-navy)]/70 hover:text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+              className="whitespace-nowrap rounded-md px-2.5 py-1.5 text-sm font-medium text-[color:var(--brand-navy)]/80 hover:text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
             >
               {signIn.label}
             </Link>
             <Link
-              to={BOOK_CALL_CTA.to}
+              to={ctaSecondary.to}
               className="ml-1 whitespace-nowrap rounded-md border border-[color:var(--brand-navy)]/15 bg-white px-3.5 py-1.5 text-sm font-semibold text-[color:var(--brand-navy)] transition-colors hover:border-[color:var(--brand-navy)]/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
             >
-              {BOOK_CALL_CTA.label}
+              {ctaSecondary.label}
             </Link>
             <Link
-              to={PRIMARY_CTA.to}
+              to={ctaPrimary.to}
               className="whitespace-nowrap rounded-md bg-[color:var(--brand-navy)] px-4 py-1.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-[color:var(--brand-navy-dark)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
             >
-              {PRIMARY_CTA.label}
+              {ctaPrimary.label}
             </Link>
           </div>
 
@@ -283,7 +290,7 @@ function Header() {
                   )}
                 </Accordion>
                 <div className="border-t border-[color:var(--brand-navy)]/10 px-3 py-4">
-                  <p className="px-3 pb-2 text-xs font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/55">
+                  <p className="px-3 pb-2 text-xs font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/80">
                     For candidates
                   </p>
                   <Link
@@ -298,26 +305,28 @@ function Header() {
                   >
                     {joinNetwork.label}
                   </Link>
-                  <Link
-                    to="/intake"
-                    className="mt-2 flex min-h-11 items-center rounded-md px-3 py-2.5 text-base font-semibold text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5"
-                  >
-                    Start hiring
-                  </Link>
+                  {!candidateMode ? (
+                    <Link
+                      to="/intake"
+                      className="mt-2 flex min-h-11 items-center rounded-md px-3 py-2.5 text-base font-semibold text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5"
+                    >
+                      Start hiring
+                    </Link>
+                  ) : null}
                 </div>
               </div>
               <div className="space-y-2 border-t border-[color:var(--brand-navy)]/10 p-4">
                 <Link
-                  to={PRIMARY_CTA.to}
+                  to={ctaPrimary.to}
                   className="flex min-h-11 items-center justify-center rounded-md bg-[color:var(--brand-navy)] px-4 py-2.5 text-sm font-semibold text-white"
                 >
-                  {PRIMARY_CTA.label}
+                  {ctaPrimary.label}
                 </Link>
                 <Link
-                  to={BOOK_CALL_CTA.to}
+                  to={ctaSecondary.to}
                   className="flex min-h-11 items-center justify-center rounded-md border border-[color:var(--brand-navy)]/15 px-3 py-2 text-sm font-semibold text-[color:var(--brand-navy)]"
                 >
-                  {BOOK_CALL_CTA.label}
+                  {ctaSecondary.label}
                 </Link>
                 <Link
                   to={signIn.to}
@@ -340,7 +349,7 @@ function FooterCol({ title, links }: { title: string; links: NavLink[] }) {
   const visible = links.filter((l) => !l.hidden);
   return (
     <div>
-      <h3 className="text-xs font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/60">
+      <h3 className="text-xs font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/80">
         {title}
       </h3>
       <ul className="mt-4 space-y-2.5">
@@ -378,7 +387,7 @@ function Footer() {
         <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-6">
           <div className="lg:col-span-2">
             <BrandMark />
-            <p className="mt-4 max-w-sm text-sm text-[color:var(--brand-navy)]/70">
+            <p className="mt-4 max-w-sm text-sm text-[color:var(--brand-navy)]/80">
               {FOOTER_DESCRIPTION}
             </p>
             <div className="mt-5 flex items-center gap-3">
@@ -391,7 +400,7 @@ function Footer() {
                     aria-label={label}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-[color:var(--brand-navy)]/10 text-[color:var(--brand-navy)]/70 hover:border-[color:var(--brand-navy)]/30 hover:text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+                    className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-[color:var(--brand-navy)]/10 text-[color:var(--brand-navy)]/80 hover:border-[color:var(--brand-navy)]/30 hover:text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
                   >
                     <Icon className="h-4 w-4" aria-hidden />
                   </a>
@@ -405,7 +414,7 @@ function Footer() {
           ))}
         </div>
 
-        <div className="mt-12 flex flex-col gap-4 border-t border-[color:var(--brand-navy)]/10 pt-6 text-sm text-[color:var(--brand-navy)]/60 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-12 flex flex-col gap-4 border-t border-[color:var(--brand-navy)]/10 pt-6 text-sm text-[color:var(--brand-navy)]/80 sm:flex-row sm:items-center sm:justify-between">
           <p>© {new Date().getFullYear()} TaaSFlow. All rights reserved.</p>
           {legalGroup ? (
             <nav aria-label="Legal" className="flex flex-wrap items-center gap-x-5 gap-y-2">
@@ -469,14 +478,21 @@ export function PublicPage({
 export function PublicSection({
   children,
   className,
+  id,
   as: Tag = "section",
 }: {
   children: ReactNode;
   className?: string;
+  id?: string;
   as?: "section" | "div" | "article";
 }) {
-  return <Tag className={cn("py-16 sm:py-20 lg:py-24", className)}>{children}</Tag>;
+  return (
+    <Tag id={id} className={cn("py-16 sm:py-20 lg:py-24", className)}>
+      {children}
+    </Tag>
+  );
 }
+
 
 /* ---------------------------------------------------------------- Breadcrumbs */
 
@@ -486,7 +502,7 @@ export function Breadcrumbs({
   items: { label: string; to?: string }[];
 }) {
   return (
-    <nav aria-label="Breadcrumb" className="mx-auto w-full max-w-[1200px] px-4 pt-6 text-sm text-[color:var(--brand-navy)]/60 sm:px-6 lg:px-8">
+    <nav aria-label="Breadcrumb" className="mx-auto w-full max-w-[1200px] px-4 pt-6 text-sm text-[color:var(--brand-navy)]/80 sm:px-6 lg:px-8">
       <ol className="flex flex-wrap items-center gap-1.5">
         {items.map((item, i) => {
           const last = i === items.length - 1;
@@ -579,7 +595,7 @@ export function CtaSection({
 export function PublicLoading({ label = "Loading" }: { label?: string }) {
   return (
     <div role="status" aria-live="polite" className="flex min-h-[40vh] items-center justify-center">
-      <Loader2 className="h-6 w-6 animate-spin text-[color:var(--brand-navy)]/70" aria-hidden />
+      <Loader2 className="h-6 w-6 animate-spin text-[color:var(--brand-navy)]/80" aria-hidden />
       <span className="sr-only">{label}</span>
     </div>
   );
@@ -593,11 +609,11 @@ export function PublicNotFound() {
       <PublicSection>
         <PublicPage>
           <div className="mx-auto max-w-xl text-center">
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">Error 404</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">Error 404</p>
             <h1 className="mt-3 font-[family-name:var(--brand-font-display)] text-5xl font-semibold tracking-tight text-[color:var(--brand-navy)] sm:text-6xl">
               Page not found
             </h1>
-            <p className="mt-4 text-base text-[color:var(--brand-navy)]/70">
+            <p className="mt-4 text-base text-[color:var(--brand-navy)]/80">
               The page you were looking for doesn't exist or has moved. Try one of these instead.
             </p>
             <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
@@ -641,7 +657,7 @@ export function PublicErrorState({
             <h1 className="mt-3 font-[family-name:var(--brand-font-display)] text-4xl font-semibold tracking-tight text-[color:var(--brand-navy)] sm:text-5xl">
               This page didn't load
             </h1>
-            <p className="mt-4 text-base text-[color:var(--brand-navy)]/70">
+            <p className="mt-4 text-base text-[color:var(--brand-navy)]/80">
               A temporary issue prevented this page from loading. You can try again or head back home.
             </p>
             <div className="mt-8 flex flex-wrap items-center justify-center gap-3">

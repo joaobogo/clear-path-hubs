@@ -139,8 +139,8 @@ export function OperatingSystem() {
                     on
                       ? "border-[color:var(--brand-ocean)] bg-[color:var(--brand-ocean)] text-white shadow-[var(--brand-shadow-sm)] scale-110"
                       : done
-                        ? "border-[color:var(--brand-ocean)] bg-white text-[color:var(--brand-ocean)]"
-                        : "border-[color:var(--brand-navy)]/15 bg-white text-[color:var(--brand-navy)]/50 group-hover:border-[color:var(--brand-navy)]/40 group-hover:text-[color:var(--brand-navy)]"
+                        ? "border-[color:var(--brand-ocean)] bg-white text-[color:var(--brand-ocean-text)]"
+                        : "border-[color:var(--brand-navy)]/15 bg-white text-[color:var(--brand-navy)]/80 group-hover:border-[color:var(--brand-navy)]/40 group-hover:text-[color:var(--brand-navy)]"
                   }`}
                 >
                   {done ? (
@@ -151,14 +151,14 @@ export function OperatingSystem() {
                 </span>
                 <span
                   className={`text-[11px] font-semibold uppercase tracking-wide ${
-                    on ? "text-[color:var(--brand-navy)]" : "text-[color:var(--brand-navy)]/55"
+                    on ? "text-[color:var(--brand-navy)]" : "text-[color:var(--brand-navy)]/80"
                   }`}
                 >
                   {String(i + 1).padStart(2, "0")}
                 </span>
                 <span
                   className={`max-w-[9rem] text-center text-xs font-semibold leading-tight ${
-                    on ? "text-[color:var(--brand-navy)]" : "text-[color:var(--brand-navy)]/70"
+                    on ? "text-[color:var(--brand-navy)]" : "text-[color:var(--brand-navy)]/80"
                   }`}
                 >
                   {s.title}
@@ -181,7 +181,7 @@ export function OperatingSystem() {
       {/* Mobile progressive */}
       <div className="lg:hidden">
         <div className="flex items-center justify-between gap-3">
-          <span className="text-xs font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/55">
+          <span className="text-xs font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/80">
             Stage {activeIdx + 1} of {STAGES.length}
           </span>
           <div className="flex items-center gap-2">
@@ -237,11 +237,11 @@ function StageDetail({
   return (
     <div key={stage.key} className="p-6 sm:p-8 animate-fade-in">
       <div className="flex items-center gap-3">
-        <span className="grid h-11 w-11 place-items-center rounded-lg bg-[color:var(--brand-ocean)]/10 text-[color:var(--brand-ocean)]">
+        <span className="grid h-11 w-11 place-items-center rounded-lg bg-[color:var(--brand-ocean)]/10 text-[color:var(--brand-ocean-text)]">
           <StageIcon className="h-5 w-5" aria-hidden />
         </span>
         <div>
-          <div className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">
+          <div className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
             Step {String(activeIdx + 1).padStart(2, "0")}
           </div>
           <h3 className="text-xl font-semibold text-[color:var(--brand-navy)] sm:text-2xl">
@@ -252,19 +252,19 @@ function StageDetail({
 
       <dl className="mt-6 space-y-4 text-sm">
         <div>
-          <dt className="text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/55">
+          <dt className="text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/80">
             TaaSFlow does
           </dt>
           <dd className="mt-1 text-[color:var(--brand-navy)]/85">{stage.taasflow}</dd>
         </div>
         <div>
-          <dt className="text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/55">
+          <dt className="text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/80">
             Client sees
           </dt>
           <dd className="mt-1 text-[color:var(--brand-navy)]/85">{stage.client}</dd>
         </div>
         <div className="rounded-lg border border-[color:var(--brand-ocean)]/20 bg-[color:var(--brand-ocean)]/5 p-3">
-          <dt className="text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-ocean)]">
+          <dt className="text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-ocean-text)]">
             Output
           </dt>
           <dd className="mt-1 font-medium text-[color:var(--brand-navy)]">{stage.output}</dd>
@@ -295,10 +295,10 @@ function StageVisual({ stage }: { stage: Stage }) {
 function Chip({ children, tone = "muted" }: { children: React.ReactNode; tone?: "muted" | "ocean" | "navy" }) {
   const c =
     tone === "ocean"
-      ? "bg-[color:var(--brand-ocean)]/10 text-[color:var(--brand-ocean)]"
+      ? "bg-[color:var(--brand-ocean)]/10 text-[color:var(--brand-ocean-text)]"
       : tone === "navy"
         ? "bg-[color:var(--brand-navy)] text-white"
-        : "bg-white text-[color:var(--brand-navy)]/70 border border-[color:var(--brand-navy)]/12";
+        : "bg-white text-[color:var(--brand-navy)]/80 border border-[color:var(--brand-navy)]/12";
   return <span className={`rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${c}`}>{children}</span>;
 }
 
@@ -315,8 +315,8 @@ function MiniCard({ children }: { children: React.ReactNode }) {
 function VisualBrief() {
   return (
     <div className="space-y-2">
-      <div className="text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/55">Role brief</div>
-      <MiniCard><div className="font-semibold text-[color:var(--brand-navy)]">Senior Backend Engineer</div><div className="mt-1 text-[color:var(--brand-navy)]/60">Approved · Berlin · Hybrid</div></MiniCard>
+      <div className="text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/80">Role brief</div>
+      <MiniCard><div className="font-semibold text-[color:var(--brand-navy)]">Senior Backend Engineer</div><div className="mt-1 text-[color:var(--brand-navy)]/80">Approved · Berlin · Hybrid</div></MiniCard>
       <MiniCard>Must-haves: Go, distributed systems, on-call ownership</MiniCard>
       <MiniCard>Nice-to-haves: Kafka, k8s, SRE background</MiniCard>
     </div>
@@ -325,7 +325,7 @@ function VisualBrief() {
 function VisualSearch() {
   return (
     <div className="space-y-2">
-      <div className="text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/55">Search plan</div>
+      <div className="text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/80">Search plan</div>
       <div className="flex flex-wrap gap-1.5"><Chip tone="ocean">LinkedIn</Chip><Chip tone="ocean">GitHub</Chip><Chip tone="ocean">Community</Chip><Chip tone="ocean">Referrals</Chip></div>
       <MiniCard>Target: Series B-D infra teams, 5-9 yrs Go, EU time zones.</MiniCard>
       <MiniCard>Outreach angle: platform reliability ownership over feature velocity.</MiniCard>
@@ -337,10 +337,10 @@ function VisualSourcing() {
   const max = 128;
   return (
     <div className="space-y-2.5">
-      <div className="text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/55">Pipeline funnel</div>
+      <div className="text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/80">Pipeline funnel</div>
       {rows.map((r) => (
         <div key={r.n}>
-          <div className="flex justify-between text-xs text-[color:var(--brand-navy)]/70"><span>{r.n}</span><span className="tabular-nums font-semibold">{r.v}</span></div>
+          <div className="flex justify-between text-xs text-[color:var(--brand-navy)]/80"><span>{r.n}</span><span className="tabular-nums font-semibold">{r.v}</span></div>
           <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-[color:var(--brand-navy)]/8"><div className="h-full rounded-full bg-[color:var(--brand-ocean)]" style={{ width: `${(r.v / max) * 100}%` }} /></div>
         </div>
       ))}
@@ -350,7 +350,7 @@ function VisualSourcing() {
 function VisualEvidence() {
   return (
     <div className="space-y-2">
-      <div className="text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/55">Requirement coverage</div>
+      <div className="text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/80">Requirement coverage</div>
       {[{ r: "Go, 5+ yrs", ok: true }, { r: "Distributed systems", ok: true }, { r: "On-call ownership", ok: true }, { r: "Kafka", ok: false }].map((e) => (
         <div key={e.r} className="flex items-center justify-between rounded-lg border border-[color:var(--brand-navy)]/10 bg-white px-3 py-2 text-xs">
           <span className="text-[color:var(--brand-navy)]/80">{e.r}</span>
@@ -364,10 +364,10 @@ function VisualRanking() {
   const rows = [{ n: "Alex R.", s: 92 }, { n: "Priya M.", s: 84 }, { n: "Dan K.", s: 71 }];
   return (
     <div className="space-y-2.5">
-      <div className="text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/55">Ranked shortlist</div>
+      <div className="text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/80">Ranked shortlist</div>
       {rows.map((r, i) => (
         <div key={r.n} className="rounded-lg border border-[color:var(--brand-navy)]/10 bg-white p-3">
-          <div className="flex items-center justify-between text-xs"><span className="font-semibold text-[color:var(--brand-navy)]">#{i + 1} · {r.n}</span><span className="tabular-nums font-semibold text-[color:var(--brand-ocean)]">{r.s}</span></div>
+          <div className="flex items-center justify-between text-xs"><span className="font-semibold text-[color:var(--brand-navy)]">#{i + 1} · {r.n}</span><span className="tabular-nums font-semibold text-[color:var(--brand-ocean-text)]">{r.s}</span></div>
           <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-[color:var(--brand-navy)]/8"><div className="h-full rounded-full bg-[color:var(--brand-ocean)]" style={{ width: `${r.s}%` }} /></div>
         </div>
       ))}
@@ -377,11 +377,11 @@ function VisualRanking() {
 function VisualDelivery() {
   return (
     <div className="space-y-2">
-      <div className="text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/55">Workspace</div>
+      <div className="text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/80">Workspace</div>
       <div className="grid grid-cols-3 gap-2">
         {["Delivered", "In review", "Interview"].map((c) => (
           <div key={c} className="rounded-lg border border-[color:var(--brand-navy)]/10 bg-white p-2">
-            <div className="text-[10px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/55">{c}</div>
+            <div className="text-[10px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/80">{c}</div>
             <div className="mt-1 h-1.5 rounded-full bg-[color:var(--brand-ocean)]/60" />
             <div className="mt-1.5 h-1.5 rounded-full bg-[color:var(--brand-ocean)]/30" />
           </div>
@@ -394,7 +394,7 @@ function VisualDelivery() {
 function VisualDecision() {
   return (
     <div className="space-y-2">
-      <div className="text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/55">Decision controls</div>
+      <div className="text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/80">Decision controls</div>
       <div className="flex flex-wrap gap-1.5"><Chip tone="navy">Advance</Chip><Chip>Hold</Chip><Chip>Reject with reason</Chip></div>
       <MiniCard>Interview kit: 5 personalized questions tied to the evidence file.</MiniCard>
       <MiniCard>Audit trail preserved on every status change.</MiniCard>
@@ -404,7 +404,7 @@ function VisualDecision() {
 function VisualLoop() {
   return (
     <div className="space-y-2">
-      <div className="text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/55">Recalibration</div>
+      <div className="text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/80">Recalibration</div>
       <MiniCard>Feedback: "more platform ownership, less pure product engineering."</MiniCard>
       <div className="flex flex-wrap gap-1.5"><Chip tone="ocean">Search updated</Chip><Chip tone="ocean">Weights adjusted</Chip><Chip tone="ocean">Bench refreshed</Chip></div>
       <MiniCard>Next delivery inherits the calibration — no restart from zero.</MiniCard>

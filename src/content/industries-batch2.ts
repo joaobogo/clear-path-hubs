@@ -251,6 +251,12 @@ export const INDUSTRY_ENTRIES_BATCH2: IndustryEntry[] = [
       { title: "Segment fluency", body: "Residential brokerage, CRE, iBuying, multi-family and building-ops are different worlds. Rubrics separate them." },
       { title: "Data-partnership depth", body: "MLS, CoStar, county-record and IoT-sensor integrations belong in engineering rubrics." },
       { title: "Field vs software", body: "Field ops and software often collide. Rubrics capture on-site experience alongside product delivery." },
+      { title: "Compliance and disclosure", body: "iBuying and lending-adjacent PropTech carry fair-housing, RESPA and licensing exposure that generic tech rubrics miss." },
+    ],
+    solutions: [
+      { title: "Segment-specific rubric", body: "Residential, CRE, iBuying, multi-family and building-ops each scored on the buyer, data source and workflow that segment actually runs on." },
+      { title: "Data-partnership evidence", body: "MLS, CoStar, county-record and IoT-sensor integrations are quoted from the CV, not assumed from a tools list." },
+      { title: "Field-and-software blend", body: "For hybrid roles, on-site inspection or leasing experience is scored alongside shipped product, so field credibility isn't lost to a software-only rubric." },
     ],
     roleFamilies: [
       { name: "Product & engineering", roles: ["PropTech PMs", "Full-stack engineers", "Data engineers", "GIS specialists"] },
@@ -258,6 +264,11 @@ export const INDUSTRY_ENTRIES_BATCH2: IndustryEntry[] = [
       { name: "Commercial", roles: ["Broker-partnership leads", "Enterprise CRE sales", "Landlord sales"] },
     ],
     roles: ["PropTech PMs", "Full-stack engineers", "GIS specialists", "Broker-partnership leads", "Underwriting analysts"],
+    candidateSignals: [
+      { title: "Segment named", body: "Residential, CRE, multi-family, iBuying or building-ops — with the platforms and portfolio size worked against." },
+      { title: "Data integrations shipped", body: "MLS feeds, CoStar, county records or IoT sensor networks actually connected, not just referenced." },
+      { title: "Field credibility", body: "For ops-adjacent roles, site visits, inspections or leasing volume handled alongside the software they used." },
+    ],
     skills: ["GIS", "Property valuation", "IoT sensor integration", "Real-estate data"],
     tools: ["MLS", "CoStar", "Yardi", "MRI Software", "AppFolio", "Procore"],
     signals: ["Segment-specific rubric", "Data-partnership evidence", "Field vs software separation"],
@@ -268,6 +279,9 @@ export const INDUSTRY_ENTRIES_BATCH2: IndustryEntry[] = [
     resources: DEFAULT_RESOURCES,
     faqs: [
       { q: "Do you cover ConTech?", a: "Yes — construction-tech hires get rubrics that weight field-ops fluency alongside software." },
+      { q: "Can you tell iBuying operators from listing-portal engineers?", a: "Yes. Segment is an intake field, and the rubric never mixes valuation-model engineers with listing-search engineers." },
+      { q: "Do you screen for fair-housing or RESPA exposure?", a: "Where the role touches consumer-facing pricing or lending workflows, we surface any compliance ownership named on the CV." },
+      { q: "Can you hire for building-operations software specifically?", a: "Yes. BMS/IoT integration experience and named building portfolios are captured as first-class signals." },
     ],
     cta: { title: "Hiring in PropTech?", description: "Submit the role — segment scored, data partnerships surfaced." },
   },
@@ -289,6 +303,11 @@ export const INDUSTRY_ENTRIES_BATCH2: IndustryEntry[] = [
       { title: "Genre fluency", body: "MMO, shooter, sim, mobile puzzler and sports each need distinct signal. Genre is captured explicitly." },
       { title: "Craft depth", body: "Combat design, level design, narrative and technical art are separate crafts. Rubrics honour the specialisation." },
     ],
+    solutions: [
+      { title: "Engine-and-pipeline rubric", body: "Unreal, Unity and proprietary-engine ownership scored separately, with named gameplay systems shipped rather than tool familiarity." },
+      { title: "Live-ops track", body: "Seasonal content cadence, event delivery and retention curves scored as a distinct discipline from ship-and-move-on production." },
+      { title: "Genre calibration", body: "Rubrics are rebuilt per genre so an MMO systems designer isn't scored against a mobile-puzzler designer's evidence." },
+    ],
     roleFamilies: [
       { name: "Engineering", roles: ["Gameplay engineers", "Engine engineers", "Graphics engineers", "Server/backend engineers", "Tools engineers"] },
       { name: "Design", roles: ["Systems designers", "Level designers", "Combat designers", "Narrative designers"] },
@@ -300,6 +319,7 @@ export const INDUSTRY_ENTRIES_BATCH2: IndustryEntry[] = [
       { title: "Shipped titles", body: "Games shipped, platforms, credits, sales tier — surfaced from the CV." },
       { title: "Engine portfolio", body: "Unreal, Unity, Bevy, Godot or in-house — with production years." },
       { title: "Live-service evidence", body: "MAU/DAU cohorts, seasonal cadence, event delivery, retention outcomes." },
+      { title: "Craft ownership", body: "For art and design roles, named systems or content areas owned end-to-end, not just tickets closed." },
     ],
     skills: ["Unreal", "Unity", "C++", "C#", "Graphics programming", "Level design", "Narrative design"],
     tools: ["Unreal Engine", "Unity", "Perforce", "Houdini", "Maya", "Substance", "Jira/Hansoft"],
@@ -312,6 +332,8 @@ export const INDUSTRY_ENTRIES_BATCH2: IndustryEntry[] = [
     faqs: [
       { q: "Can you hire for in-house engine teams?", a: "Yes. Engine engineering is scored on named systems owned and shipped." },
       { q: "Do you cover live-service leadership?", a: "Yes, with rubrics that weight seasonal cadence, retention and event delivery." },
+      { q: "Can you separate console, mobile and PC candidates?", a: "Yes. Platform is captured at intake and never merged — a mobile F2P designer is scored against mobile benchmarks, not console ones." },
+      { q: "Do you screen art portfolios as well as CVs?", a: "Yes. Portfolio links and shipped-title credits are captured alongside the CV and referenced in the evidence." },
     ],
     cta: { title: "Hiring in Gaming?", description: "Submit the role — engine, genre and platform captured, craft-specific rubric applied." },
   },
@@ -331,6 +353,12 @@ export const INDUSTRY_ENTRIES_BATCH2: IndustryEntry[] = [
       { title: "Security discipline", body: "Smart-contract vulnerabilities are catastrophic. Rubrics capture audit history, formal-verification familiarity and post-mortem ownership." },
       { title: "Chain and language fluency", body: "Solidity, Rust, Move, Cairo — each ecosystem is distinct. Rubrics never merge chains in scoring." },
       { title: "Regulated vs permissionless", body: "Exchange, custody and stablecoin roles collide with FinTech regulation. Regulatory regime is captured at intake." },
+      { title: "Verifying real on-chain work", body: "GitHub commit history and testnet contracts are easy to fabricate. We look for deployed mainnet contracts, audit reports and TVL context the candidate can name." },
+    ],
+    solutions: [
+      { title: "Audit-first screening", body: "For protocol and contract roles, past audit findings, disclosed vulnerabilities and post-mortems owned are surfaced explicitly, not assumed from a stack list." },
+      { title: "Chain-specific rubrics", body: "Solidity/EVM, Rust/Solana, Move and Cairo are scored on separate rubrics so an EVM specialist isn't ranked against a Solana specialist's evidence." },
+      { title: "Regulatory-context capture", body: "Exchange, custody and stablecoin candidates get their licensing and compliance history captured alongside technical evidence." },
     ],
     roleFamilies: [
       { name: "Protocol & smart contracts", roles: ["Solidity engineers", "Rust engineers (Solana/Substrate)", "Protocol engineers", "Cryptography engineers"] },
@@ -339,6 +367,11 @@ export const INDUSTRY_ENTRIES_BATCH2: IndustryEntry[] = [
       { name: "Operations & compliance", roles: ["Exchange ops", "Compliance and financial-crime leads", "Treasury managers"] },
     ],
     roles: ["Solidity/Rust engineers", "Protocol engineers", "Smart-contract auditors", "DeFi product managers", "Exchange compliance leads"],
+    candidateSignals: [
+      { title: "Deployed contracts", body: "Mainnet addresses, TVL context and protocol names the candidate can be verified against." },
+      { title: "Audit history", body: "Named audit firms engaged, findings disclosed, and how the candidate remediated them." },
+      { title: "Chain fluency", body: "Solidity, Rust, Move or Cairo — years of production use per chain, not just a GitHub star count." },
+    ],
     skills: ["Solidity", "Rust", "Cryptography", "Zero-knowledge proofs", "Formal verification", "MEV"],
     tools: ["Foundry", "Hardhat", "Anchor", "Halmos", "Certora", "Etherscan", "Dune"],
     signals: ["Security-track rubric", "Chain-specific scoring", "Regulatory regime captured"],
@@ -349,6 +382,9 @@ export const INDUSTRY_ENTRIES_BATCH2: IndustryEntry[] = [
     resources: DEFAULT_RESOURCES,
     faqs: [
       { q: "Do you cover smart-contract auditors?", a: "Yes. Audit portfolio, methodology and disclosure history are captured." },
+      { q: "Can you verify claimed mainnet deployments?", a: "We quote the CV line naming the protocol and contract, and flag claims that can't be tied to a verifiable deployment for your team to confirm." },
+      { q: "Do you separate DeFi, custody and exchange candidates?", a: "Yes — each carries different regulatory exposure, so they're scored on distinct rubrics." },
+      { q: "Can you hire for a non-EVM chain?", a: "Yes. Rust/Solana, Move/Aptos-Sui and Cairo/StarkNet are captured as separate chain tracks." },
     ],
     cta: { title: "Hiring in Web3?", description: "Submit the role — chain scored, security captured, regulatory context surfaced." },
   },
@@ -368,6 +404,12 @@ export const INDUSTRY_ENTRIES_BATCH2: IndustryEntry[] = [
       { title: "SRE vs platform vs DevOps", body: "These labels are used interchangeably but mean different things. Rubrics capture the actual remit: reliability, developer experience or ops automation." },
       { title: "Scale and blast radius", body: "Running a startup cluster and running a fleet at hyperscale are not comparable. Scale is captured with named metrics." },
       { title: "Cost fluency", body: "Cloud cost is now a first-class skill. FinOps discipline is scored explicitly." },
+      { title: "On-call reality", body: "Rota depth, escalation ownership and incident-commander experience vary hugely between candidates who all list 'on-call' on the CV." },
+    ],
+    solutions: [
+      { title: "Remit-first scoring", body: "SRE, platform engineering and DevOps are scored against the actual remit named in your job description, not the label on the candidate's last title." },
+      { title: "Scale evidence over adjectives", body: "Fleet size, request volume and SLO ownership are quoted from the CV instead of accepting 'high-scale' claims at face value." },
+      { title: "FinOps and on-call depth", body: "Cost-optimisation programmes and incident-command experience are captured as distinct, named evidence." },
     ],
     roleFamilies: [
       { name: "SRE", roles: ["Site reliability engineers", "Senior SREs", "Staff SREs", "SRE managers"] },
@@ -380,6 +422,7 @@ export const INDUSTRY_ENTRIES_BATCH2: IndustryEntry[] = [
       { title: "Scale evidence", body: "Fleet size, request volume, incident cadence — with named SLOs." },
       { title: "IaC portfolio", body: "Terraform, Pulumi, Crossplane, CDK — with production ownership." },
       { title: "FinOps discipline", body: "Cost dashboards, savings-plan design, rightsizing programmes evidenced." },
+      { title: "Incident ownership", body: "Named incidents led, post-mortems authored, and on-call rotation depth — not just 'on-call' listed as a skill." },
     ],
     skills: ["Kubernetes", "Terraform", "Observability", "IaC", "FinOps", "Incident response"],
     tools: ["AWS", "GCP", "Azure", "Kubernetes", "Terraform", "Pulumi", "Datadog", "Grafana", "PagerDuty", "Argo CD"],
@@ -391,6 +434,9 @@ export const INDUSTRY_ENTRIES_BATCH2: IndustryEntry[] = [
     resources: DEFAULT_RESOURCES,
     faqs: [
       { q: "Do you separate SRE and platform roles?", a: "Yes — different rubrics, different evidence." },
+      { q: "Can you validate claimed uptime and scale numbers?", a: "We quote the CV line behind each scale claim so your team can probe it directly in interview." },
+      { q: "Do you screen for FinOps experience specifically?", a: "Yes. Cost-reduction programmes and savings-plan ownership are captured as a first-class signal when the role calls for it." },
+      { q: "Can you hire for a specific cloud provider?", a: "Yes. AWS, GCP and Azure depth are scored separately, and multi-cloud experience is flagged rather than assumed equivalent." },
     ],
     cta: { title: "Hiring for Platform or SRE?", description: "Submit the role — remit captured, scale scored, evidence you can defend." },
   },
@@ -413,6 +459,12 @@ export const INDUSTRY_ENTRIES_BATCH2: IndustryEntry[] = [
       { title: "Deal-tape depth", body: "Named deals, roles played, transaction size and geography — captured and quoted from the CV." },
       { title: "Product vs coverage", body: "Product bankers and coverage bankers are scored separately. Rubrics honour the distinction." },
       { title: "Boutique vs bulge", body: "Bulge-bracket process discipline and boutique deal breadth reward different signal — captured at intake." },
+      { title: "Analyst-class churn", body: "Two-and-out analyst classes mean CVs often understate real deal exposure. Rubrics look for transaction credit, not just tenure." },
+    ],
+    solutions: [
+      { title: "Deal-tape extraction", body: "Named transactions, deal value, role played and sector are pulled and quoted from the CV instead of trusting a generic 'M&A experience' line." },
+      { title: "Product-vs-coverage split", body: "M&A, ECM, DCM and LevFin rubrics are kept separate from sector-coverage rubrics, so scoring never conflates execution skill with relationship coverage." },
+      { title: "Modelling-depth verification", body: "LBO, DCF and merger-model ownership is scored against the level of the role — analyst build vs VP-level review and defence." },
     ],
     roleFamilies: [
       { name: "M&A", roles: ["Analysts", "Associates", "Vice Presidents", "Directors", "Managing Directors"] },
@@ -425,6 +477,7 @@ export const INDUSTRY_ENTRIES_BATCH2: IndustryEntry[] = [
       { title: "Deal tape", body: "Named transactions, role played, deal value, geography, sector." },
       { title: "Modelling depth", body: "LBO, DCF, merger, precedent — with role owned and audit context." },
       { title: "Client ownership", body: "For VP+: named accounts, mandates won, revenue attribution where evidenced." },
+      { title: "Analyst transaction credit", body: "Named deals worked on at analyst/associate level, distinguishing lead-left execution from support roles." },
     ],
     skills: ["M&A execution", "LBO modelling", "Debt structuring", "Equity syndication", "Pitching"],
     tools: ["Excel (advanced)", "PowerPoint", "Bloomberg", "Refinitiv", "Capital IQ", "Dealogic", "FactSet"],
@@ -437,6 +490,9 @@ export const INDUSTRY_ENTRIES_BATCH2: IndustryEntry[] = [
     resources: DEFAULT_RESOURCES,
     faqs: [
       { q: "Do you handle MD-level searches?", a: "Yes. Coverage, sector focus and revenue attribution are captured as first-class signals." },
+      { q: "Can you tell execution analysts from relationship bankers?", a: "Yes — product and coverage rubrics are kept separate, so a modelling-heavy analyst isn't scored like a client-facing MD." },
+      { q: "Do you verify named deals on a CV?", a: "We quote the CV line naming the transaction and role played, so your team can confirm it during reference checks." },
+      { q: "Can you source from boutique advisory firms?", a: "Yes. Boutique deal breadth and bulge-bracket process discipline are captured as distinct signals, not ranked against each other by firm name alone." },
     ],
     cta: { title: "Hiring in Investment Banking?", description: "Submit the role — deal tape scored, product and coverage separated." },
   },
@@ -456,6 +512,12 @@ export const INDUSTRY_ENTRIES_BATCH2: IndustryEntry[] = [
       { title: "Book portability", body: "Not all AUM travels. We capture book characteristics: client tenure, product mix and portability signal — without breaching confidentiality." },
       { title: "Licensing regime", body: "Series 7/66, SIE, CFP, CFA, CISI — captured at intake and applied as filters." },
       { title: "Segment fit", body: "Mass-affluent, HNW and UHNW workflows differ. Rubrics separate them." },
+      { title: "Fee model transparency", body: "Fee-only, commission and hybrid advisors are compensated and regulated differently — captured explicitly rather than assumed from title." },
+    ],
+    solutions: [
+      { title: "Book-context capture", body: "AUM band, client tenure and product mix are captured without ever asking for client names, so portability can be assessed without breaching confidentiality." },
+      { title: "Licensing verification", body: "Series 7/66, CFP, CFA and CISI status are intake fields applied as hard filters before a shortlist is built." },
+      { title: "Segment-specific rubric", body: "Mass-affluent, HNW private banking and UHNW family-office roles are scored on separate rubrics so a retail advisor isn't ranked against a family-office CIO's evidence." },
     ],
     roleFamilies: [
       { name: "Advisory", roles: ["Financial advisors", "Private bankers", "Wealth planners"] },
@@ -463,6 +525,11 @@ export const INDUSTRY_ENTRIES_BATCH2: IndustryEntry[] = [
       { name: "Family office", roles: ["Family-office CIOs", "Trust officers", "Estate planners"] },
     ],
     roles: ["Private bankers", "Financial advisors (RIA/broker-dealer)", "Portfolio managers", "Family-office CIOs"],
+    candidateSignals: [
+      { title: "Book characteristics", body: "AUM band, client tenure and product mix, described without identifying individual clients." },
+      { title: "Licence status", body: "Series 7/66, CFP, CFA or CISI — verified as active, not just historically held." },
+      { title: "Client-segment fit", body: "Mass-affluent, HNW or UHNW experience, matched to the segment the role actually serves." },
+    ],
     skills: ["Financial planning", "Portfolio construction", "Trust & estate", "Alternative investments"],
     tools: ["Salesforce Financial Services Cloud", "eMoney", "Envestnet", "Addepar", "Orion"],
     certifications: ["CFP", "CFA", "CISI", "Series 7/66"],
@@ -474,6 +541,9 @@ export const INDUSTRY_ENTRIES_BATCH2: IndustryEntry[] = [
     resources: DEFAULT_RESOURCES,
     faqs: [
       { q: "How do you assess book portability without compromising confidentiality?", a: "We capture book characteristics — tenure, product mix, segment — never client identities." },
+      { q: "Do you verify licensing status?", a: "Yes. Series 7/66, CFP, CFA and CISI status are intake filters, and lapsed licences are flagged." },
+      { q: "Can you hire for a family office specifically?", a: "Yes. UHNW and family-office rubrics weight discretion, multi-generational planning and trust structuring differently from retail advisory." },
+      { q: "Do you distinguish fee-only from commission-based advisors?", a: "Yes — fee model is captured at intake since it shapes both regulatory obligations and how a book was actually built." },
     ],
     cta: { title: "Hiring in Wealth Management?", description: "Submit the role — segment scored, licensing captured." },
   },
@@ -493,6 +563,12 @@ export const INDUSTRY_ENTRIES_BATCH2: IndustryEntry[] = [
       { title: "Thesis fit", body: "Seed sector, growth thesis and geography must match. Thesis alignment captured at intake." },
       { title: "Track record signal", body: "Investment memos led, deals championed, board seats held — captured from the CV." },
       { title: "Platform vs investing", body: "Platform, ops and investment roles are scored separately." },
+      { title: "Attribution ambiguity", body: "Junior investors often list deals they merely supported. Rubrics distinguish sourcing, diligence-leading and board-seat ownership." },
+    ],
+    solutions: [
+      { title: "Thesis-matching at intake", body: "Sector, stage and geography thesis are captured up front so candidates are scored against your actual mandate, not generic VC pattern-matching." },
+      { title: "Deal-attribution scoring", body: "Sourced vs. diligenced vs. board-seat-held deals are separated, so junior investors aren't credited with partner-level outcomes." },
+      { title: "Platform-role rubric", body: "Talent, marketing and portfolio-ops platform hires are scored on named founder outcomes, not investment track record." },
     ],
     roleFamilies: [
       { name: "Investment", roles: ["Investment associates", "Principals", "Partners", "MPs"] },
@@ -500,6 +576,11 @@ export const INDUSTRY_ENTRIES_BATCH2: IndustryEntry[] = [
       { name: "Ops", roles: ["Fund controllers", "IR / LP relations", "COO / CFO"] },
     ],
     roles: ["Investment associates to partners", "Platform and portfolio talent leads", "Fund controllers", "IR / LP-relations professionals"],
+    candidateSignals: [
+      { title: "Deal attribution", body: "Sourced, diligenced or board-seat-held — specified per deal rather than a blended track record." },
+      { title: "Thesis alignment", body: "Sector, stage and geography focus matched explicitly against the fund's mandate." },
+      { title: "Platform impact", body: "For non-investing roles, named founder or portfolio-company outcomes the candidate directly influenced." },
+    ],
     skills: ["Investment memos", "Board governance", "Portfolio support", "LP fundraising"],
     tools: ["Affinity", "PitchBook", "Crunchbase", "Carta", "Airtable"],
     signals: ["Thesis fit captured", "Track-record signal from CV", "Function-specific rubric"],
@@ -510,6 +591,9 @@ export const INDUSTRY_ENTRIES_BATCH2: IndustryEntry[] = [
     resources: DEFAULT_RESOURCES,
     faqs: [
       { q: "Can you cover platform and talent partners?", a: "Yes. Portfolio support, network depth and named-founder outcomes captured." },
+      { q: "How do you avoid crediting associates with partner-level deals?", a: "Deal involvement is captured per stage — sourced, diligenced, board seat — so attribution stays honest." },
+      { q: "Can you match a specific sector thesis?", a: "Yes. Sector, stage and geography are intake fields applied as hard filters before ranking begins." },
+      { q: "Do you hire for fund operations roles?", a: "Yes — fund controllers, LP relations and CFO/COO roles are scored on their own operational rubric, separate from investing tracks." },
     ],
     cta: { title: "Hiring in VC?", description: "Submit the role — thesis captured, function-specific rubric applied." },
   },
@@ -529,6 +613,12 @@ export const INDUSTRY_ENTRIES_BATCH2: IndustryEntry[] = [
       { title: "Portfolio parsing", body: "Portfolios are the evidence. Rubrics capture project type, scale, role played and delivery stage owned." },
       { title: "Stage specialisation", body: "Concept designers, technical architects and delivery leads reward different signal — separated in scoring." },
       { title: "Registration status", body: "ARB/RIBA, AIA, licensing captured at intake." },
+      { title: "Sector specialisation", body: "Residential, commercial, healthcare, education and civic projects each carry different codes and client types — captured explicitly." },
+    ],
+    solutions: [
+      { title: "Portfolio-anchored rubric", body: "Every claim is checked against the portfolio: project type, scale, RIBA stage owned and the candidate's actual role on the team." },
+      { title: "Stage-specific scoring", body: "Concept design, technical delivery and contract administration are scored as distinct crafts, not blended into a single 'architect' rating." },
+      { title: "Registration and sector filters", body: "ARB/RIBA/AIA status and sector experience (healthcare, education, civic, residential) are applied as hard filters at intake." },
     ],
     roleFamilies: [
       { name: "Design", roles: ["Concept architects", "Design leads", "Interior designers"] },
@@ -536,6 +626,11 @@ export const INDUSTRY_ENTRIES_BATCH2: IndustryEntry[] = [
       { name: "Studio leadership", roles: ["Associates", "Principals", "Studio directors"] },
     ],
     roles: ["Architects (Part 1/2/3)", "Interior designers", "BIM specialists", "Project architects", "Studio directors"],
+    candidateSignals: [
+      { title: "Portfolio evidence", body: "Named projects with scale, sector, stage owned and role played on the delivery team." },
+      { title: "Registration status", body: "ARB/RIBA or AIA registration, part-qualification stage, and continuing professional development record." },
+      { title: "Software and standards", body: "Revit/BIM proficiency and planning-consent experience relevant to the sector being hired for." },
+    ],
     skills: ["Concept design", "Technical detailing", "BIM (Revit)", "Planning & consent", "Contract administration"],
     tools: ["Revit", "AutoCAD", "Rhino/Grasshopper", "SketchUp", "V-Ray", "Enscape", "Bluebeam"],
     certifications: ["ARB / RIBA", "AIA", "LEED / BREEAM / WELL"],
@@ -548,6 +643,9 @@ export const INDUSTRY_ENTRIES_BATCH2: IndustryEntry[] = [
     resources: DEFAULT_RESOURCES,
     faqs: [
       { q: "How do you handle portfolio submissions?", a: "Portfolio links are captured at intake and referenced in evidence alongside CV claims." },
+      { q: "Can you filter for ARB/RIBA-registered architects only?", a: "Yes — registration status is an intake filter and unregistered candidates are labelled clearly rather than excluded silently." },
+      { q: "Do you screen for a specific sector, like healthcare or education?", a: "Yes. Sector experience is captured explicitly since planning and regulatory context differ significantly by building type." },
+      { q: "Can you hire for BIM/technical roles separately from design leads?", a: "Yes. Technical delivery and concept design are scored on separate rubrics." },
     ],
     cta: { title: "Hiring in Architecture?", description: "Submit the role — portfolio scored, stage specialisation captured." },
   },
@@ -618,6 +716,12 @@ export const INDUSTRY_ENTRIES_BATCH2: IndustryEntry[] = [
       { title: "Modality fluency", body: "Modality is non-transferable. Rubrics separate small molecule, biologics, cell/gene, mRNA and synbio in scoring." },
       { title: "Bench to translational", body: "Bench scientists and translational scientists reward different signal — captured separately." },
       { title: "CMC and process", body: "Process development, tech transfer and scale-up are distinct disciplines with dedicated rubrics." },
+      { title: "Platform maturity", body: "Pre-clinical discovery platforms and clinical-stage biotechs need very different risk tolerance and hands-on-bench expectations from candidates." },
+    ],
+    solutions: [
+      { title: "Modality-specific rubric", body: "Small molecule, biologics, cell/gene therapy and mRNA candidates are never scored against each other's evidence — the rubric rebuilds per modality." },
+      { title: "Bench-to-translational split", body: "Discovery scientists and translational scientists are scored on distinct evidence — assay development versus biomarker and clinical-bridge work." },
+      { title: "CMC track separation", body: "Process development, tech transfer and scale-up are scored as their own discipline, not folded into a generic 'scientist' rubric." },
     ],
     roleFamilies: [
       { name: "Discovery science", roles: ["Molecular biologists", "Biochemists", "Computational biologists"] },
@@ -626,6 +730,11 @@ export const INDUSTRY_ENTRIES_BATCH2: IndustryEntry[] = [
       { name: "Clinical & regulatory", roles: ["Clinical scientists", "Regulatory affairs leads"] },
     ],
     roles: ["Molecular biologists", "Computational biologists", "Process development scientists", "Translational scientists", "CMC leads"],
+    candidateSignals: [
+      { title: "Modality depth", body: "Named modality (small molecule, biologics, cell/gene, mRNA, synbio) with years of hands-on platform experience." },
+      { title: "Publication and IP", body: "Peer-reviewed papers, patents filed and named programmes advanced." },
+      { title: "Process ownership", body: "For CMC roles, named scale-up milestones, tech transfers completed and GMP-readiness achieved." },
+    ],
     skills: ["Cell biology", "Bioinformatics", "Upstream/downstream processing", "Analytical development"],
     tools: ["Benchling", "Geneious", "GraphPad Prism", "SnapGene", "SEQUEL / NovaSeq platforms"],
     certifications: ["PhD in relevant biology", "GMP training for CMC"],
@@ -637,6 +746,9 @@ export const INDUSTRY_ENTRIES_BATCH2: IndustryEntry[] = [
     resources: DEFAULT_RESOURCES,
     faqs: [
       { q: "Do you cover cell & gene therapy specifically?", a: "Yes — modality is captured as a first-class filter." },
+      { q: "Can you tell discovery scientists from translational scientists?", a: "Yes — they're scored on separate rubrics reflecting bench versus clinical-bridge evidence." },
+      { q: "Do you screen for GMP and tech-transfer experience?", a: "Yes. Named scale-up milestones and GMP-readiness are captured for CMC and process roles." },
+      { q: "Can you hire for a pre-clinical discovery platform?", a: "Yes. Platform maturity is captured at intake so early-stage risk tolerance is factored into scoring." },
     ],
     cta: { title: "Hiring in Biotech?", description: "Submit the role — modality scored, track captured." },
   },
@@ -656,6 +768,12 @@ export const INDUSTRY_ENTRIES_BATCH2: IndustryEntry[] = [
       { title: "Class and pathway", body: "510(k), De Novo, PMA and CE marking under MDR/IVDR reward different signal. Pathway captured at intake." },
       { title: "R&D specialisation", body: "Mechanical, electrical, firmware and software-in-devices are distinct crafts — separated in scoring." },
       { title: "QMS and design controls", body: "ISO 13485 and design-control ownership surfaced from the CV." },
+      { title: "Software-in-device convergence", body: "As devices become connected, firmware and cybersecurity expectations now sit alongside mechanical and electrical engineering — rubrics capture both." },
+    ],
+    solutions: [
+      { title: "Class-and-pathway capture", body: "510(k), De Novo, PMA and MDR/IVDR pathway experience is captured at intake and scored against the actual class of device being hired for." },
+      { title: "Discipline-specific rubric", body: "Mechanical, electrical, firmware and software-in-device engineers are scored on separate evidence rather than a single 'device engineer' rating." },
+      { title: "QMS verification", body: "ISO 13485 design-control ownership and named audit outcomes are quoted from the CV, not assumed from company name." },
     ],
     roleFamilies: [
       { name: "R&D engineering", roles: ["Mechanical engineers", "Electrical engineers", "Firmware engineers", "Software-in-device engineers"] },
@@ -664,6 +782,11 @@ export const INDUSTRY_ENTRIES_BATCH2: IndustryEntry[] = [
       { name: "Commercial", roles: ["Product managers", "Field-based clinical specialists", "KAMs"] },
     ],
     roles: ["Medical-device R&D engineers", "Regulatory affairs (MedTech)", "Quality engineers", "Clinical affairs leads"],
+    candidateSignals: [
+      { title: "Class and pathway experience", body: "Named device class (I/II/III), submission type and notified body or FDA centre engaged." },
+      { title: "Design-control ownership", body: "ISO 13485 and ISO 14971 risk-file ownership evidenced with named projects, not just certifications listed." },
+      { title: "Discipline depth", body: "Mechanical, electrical, firmware or software-in-device — years of hands-on ownership per discipline." },
+    ],
     skills: ["Design controls", "ISO 13485", "Risk management (ISO 14971)", "Verification & validation"],
     tools: ["Greenlight Guru", "MasterControl", "Solidworks", "Altium"],
     certifications: ["RAC", "ASQ CQE", "Notified-body audit history"],
@@ -677,6 +800,9 @@ export const INDUSTRY_ENTRIES_BATCH2: IndustryEntry[] = [
     resources: DEFAULT_RESOURCES,
     faqs: [
       { q: "Do you cover SaMD specifically?", a: "Yes — with rubrics that blend software engineering evidence with regulatory pathway." },
+      { q: "Can you filter by device class?", a: "Yes. Class I/II/III and IVD/combination-product status are intake fields applied as filters." },
+      { q: "Do you verify ISO 13485 design-control experience?", a: "We quote the CV line describing the design-control or risk-file ownership so your team can probe it in interview." },
+      { q: "Can you hire firmware engineers with medical-device experience specifically?", a: "Yes — firmware-in-device is scored separately from general embedded engineering, with regulatory context captured." },
     ],
     cta: { title: "Hiring in Medical Devices?", description: "Submit the role — class captured, QMS and pathway scored." },
   },
@@ -696,6 +822,12 @@ export const INDUSTRY_ENTRIES_BATCH2: IndustryEntry[] = [
       { title: "Clearance and citizenship", body: "SC, DV, TS/SCI and equivalent captured at intake and applied as filters." },
       { title: "Programme heritage", body: "Named programmes, phase and role played — captured from the CV." },
       { title: "Standards fluency", body: "DO-178C, DO-254, ARP4754A, MIL-STD, AS9100 ownership surfaced." },
+      { title: "Vetting timelines", body: "Clearance processing can take months. Candidates already holding or eligible for the required level are flagged up front to avoid dead-end pipelines." },
+    ],
+    solutions: [
+      { title: "Clearance-first filtering", body: "Clearance level and citizenship are captured before shortlisting, so time is never spent on candidates who cannot be cleared for the programme." },
+      { title: "Programme-heritage extraction", body: "Named programmes, phase worked and role played are quoted from the CV rather than inferred from a company name alone." },
+      { title: "Standards-specific scoring", body: "DO-178C, DO-254, ARP4754A and MIL-STD experience is scored against the actual standard the programme operates under." },
     ],
     roleFamilies: [
       { name: "Systems engineering", roles: ["Systems engineers", "Requirements engineers", "V&V engineers"] },
@@ -704,6 +836,11 @@ export const INDUSTRY_ENTRIES_BATCH2: IndustryEntry[] = [
       { name: "Programme & production", roles: ["Programme managers", "Production engineers", "Supply-chain leads"] },
     ],
     roles: ["Systems engineers", "GNC engineers", "Avionics software engineers", "Programme managers (cleared)"],
+    candidateSignals: [
+      { title: "Clearance status", body: "Current or eligible clearance level, sponsoring agency and citizenship — verified before shortlist, not after offer." },
+      { title: "Programme heritage", body: "Named programmes, phase (development, production, sustainment) and role played." },
+      { title: "Standards ownership", body: "DO-178C/DO-254/ARP4754A/MIL-STD experience with named certification or qualification outcomes." },
+    ],
     skills: ["Requirements engineering", "V&V", "Embedded systems", "GNC", "Systems safety"],
     tools: ["DOORS", "Rhapsody", "MATLAB/Simulink", "SysML", "Ansys"],
     certifications: ["INCOSE CSEP", "PMP / APM PMQ", "Security clearances (SC/DV/TS/SCI)"],
@@ -717,6 +854,9 @@ export const INDUSTRY_ENTRIES_BATCH2: IndustryEntry[] = [
     resources: DEFAULT_RESOURCES,
     faqs: [
       { q: "Do you handle cleared roles?", a: "Yes. Clearance status and citizenship are intake fields; unclearable candidates are filtered out." },
+      { q: "Can you filter for candidates who already hold an active clearance?", a: "Yes. Active clearance level and expiry are captured at intake as a hard filter." },
+      { q: "Do you screen for export-control exposure (ITAR/EAR)?", a: "Yes. Citizenship and prior export-controlled work are surfaced so compliance teams can review before engagement." },
+      { q: "Can you match candidates to a specific named programme's standards?", a: "Yes. DO-178C, DO-254 and ARP4754A ownership is captured with the level of the standard the candidate actually worked to." },
     ],
     cta: { title: "Hiring in Defense or Aerospace?", description: "Submit the role — clearance captured, programme and standards scored." },
   },
@@ -736,12 +876,23 @@ export const INDUSTRY_ENTRIES_BATCH2: IndustryEntry[] = [
       { title: "Phase specialisation", body: "Primary and secondary reward different signal. Rubrics separate them." },
       { title: "Subject fluency", body: "STEM, humanities and vocational subjects captured with named exam boards." },
       { title: "Safeguarding & DBS", body: "Enhanced DBS, safeguarding training and prohibition-list checks are baseline." },
+      { title: "Supply vs permanent", body: "Short-notice supply cover and permanent contracted posts need different vetting speed without cutting safeguarding corners." },
+    ],
+    solutions: [
+      { title: "Phase-and-subject rubric", body: "Primary, secondary and SEND roles are scored on separate rubrics with named exam boards and phase-specific pedagogy." },
+      { title: "Safeguarding-first screening", body: "Enhanced DBS status, safeguarding training and prohibition-list checks are verified before a candidate reaches shortlist." },
+      { title: "Leadership pipeline separation", body: "Middle-leader and headteacher searches are scored on strategic and people-leadership evidence, not classroom performance alone." },
     ],
     roleFamilies: [
       { name: "Teaching", roles: ["Primary teachers", "Secondary teachers", "SEND specialists", "TAs and HLTAs"] },
       { name: "Leadership", roles: ["Middle leaders", "Deputies", "Headteachers", "MAT executives"] },
     ],
     roles: ["Teachers (all phases)", "SEND specialists", "School leaders", "MAT central-team roles"],
+    candidateSignals: [
+      { title: "Phase and subject", body: "Named phase, subject and exam board, with named results outcomes where evidenced." },
+      { title: "Safeguarding baseline", body: "Enhanced DBS status, safeguarding training currency and prohibition-list clearance." },
+      { title: "Leadership evidence", body: "For leadership posts, named responsibility areas, staff managed and school-improvement outcomes." },
+    ],
     skills: ["Curriculum planning", "Assessment", "Safeguarding", "Behaviour management"],
     tools: ["SIMS", "Arbor", "Bromcom", "Google Classroom", "Microsoft Teams for Education"],
     certifications: ["QTS", "NPQ suite", "Enhanced DBS"],
@@ -754,6 +905,9 @@ export const INDUSTRY_ENTRIES_BATCH2: IndustryEntry[] = [
     resources: DEFAULT_RESOURCES,
     faqs: [
       { q: "Do you cover MAT central teams?", a: "Yes. School-improvement, HR and finance roles at MAT level are captured with sector context." },
+      { q: "Do you verify DBS and safeguarding status?", a: "Yes — enhanced DBS and safeguarding-training currency are captured as baseline intake fields." },
+      { q: "Can you fill short-notice supply cover?", a: "Yes, with the same safeguarding verification applied regardless of contract length." },
+      { q: "Do you screen for SEND specialism specifically?", a: "Yes. SEND qualifications and named needs experience (e.g. autism, EBD) are captured explicitly." },
     ],
     cta: { title: "Hiring in Education?", description: "Submit the role — phase, subject and safeguarding captured." },
   },
@@ -773,6 +927,12 @@ export const INDUSTRY_ENTRIES_BATCH2: IndustryEntry[] = [
       { title: "Academic vs professional", body: "Academic and professional-services roles are governed differently. Rubrics separate them." },
       { title: "Research portfolio", body: "Publications, grants, PhD supervision and REF/RAE outputs captured as first-class signals for academic roles." },
       { title: "Mission fit", body: "Research-intensive, teaching-focused, applied and vocational institutions reward different signal." },
+      { title: "REF/RAE cycle pressure", body: "Research-output timing against national assessment cycles shapes who's hireable when — captured rather than ignored." },
+    ],
+    solutions: [
+      { title: "Academic-vs-professional split", body: "Academic appointments and professional-services roles are governed and evidenced differently, so rubrics never blend the two." },
+      { title: "Research-portfolio extraction", body: "Publications, grant income, PhD supervision and REF-eligible outputs are quoted from the CV, not assumed from institution prestige." },
+      { title: "Mission-matched scoring", body: "Research-intensive, teaching-focused and vocational institutions get rubrics weighted to what each mission actually rewards." },
     ],
     roleFamilies: [
       { name: "Academic", roles: ["Lecturers", "Senior lecturers", "Readers", "Professors", "Chairs"] },
@@ -781,6 +941,11 @@ export const INDUSTRY_ENTRIES_BATCH2: IndustryEntry[] = [
       { name: "Leadership", roles: ["Deans", "Pro-vice-chancellors", "Vice-chancellors"] },
     ],
     roles: ["Academic staff (all grades)", "Postdocs and research fellows", "Registry and admissions leaders", "Deans and PVCs"],
+    candidateSignals: [
+      { title: "Research portfolio", body: "Named publications, grant income secured, PhD supervision load and REF-eligible outputs." },
+      { title: "Teaching evidence", body: "Modules led, student outcomes and named curriculum-design contributions." },
+      { title: "Institutional fit", body: "Mission type (research-intensive, teaching-focused, vocational) matched against the candidate's prior institution profile." },
+    ],
     skills: ["Teaching", "Research design", "Grant writing", "Curriculum design"],
     tools: ["Blackboard", "Canvas", "SITS", "Banner", "Symplectic Elements"],
     signals: ["Academic vs professional separated", "Research portfolio captured", "Mission fit scored"],
@@ -792,6 +957,9 @@ export const INDUSTRY_ENTRIES_BATCH2: IndustryEntry[] = [
     resources: DEFAULT_RESOURCES,
     faqs: [
       { q: "Can you cover professorial appointments?", a: "Yes — with rubrics that weight research portfolio, teaching outcomes and citizenship." },
+      { q: "Do you separate academic and professional-services searches?", a: "Yes — different governance, different rubric, never blended." },
+      { q: "Can you weight for grant-income track record?", a: "Yes. Named grants secured and funding bodies are captured as first-class evidence for research-heavy posts." },
+      { q: "Do you account for REF timing?", a: "Yes. Output timing against the assessment cycle is captured so panels understand what's realistically portable." },
     ],
     cta: { title: "Hiring in Higher Education?", description: "Submit the role — track separated, portfolio and mission scored." },
   },
@@ -814,6 +982,12 @@ export const INDUSTRY_ENTRIES_BATCH2: IndustryEntry[] = [
       { title: "Segment fit", body: "SMB, mid-market and enterprise CS look nothing alike. Rubrics separate them and never merge scoring." },
       { title: "Renewal vs growth", body: "GRR-focused and NRR-focused CS roles reward different signal. Rubrics separate them." },
       { title: "Technical vs strategic", body: "Solution-heavy CS and strategic account CS are different crafts — captured explicitly." },
+      { title: "Comp-model mismatch", body: "Fully variable renewal comp and flat-salary adoption roles attract different candidates; comp structure is captured so expectations align before interview." },
+    ],
+    solutions: [
+      { title: "Segment-locked rubric", body: "SMB, mid-market and enterprise CS never share a rubric, so a high-volume SMB CSM isn't scored against strategic-account evidence." },
+      { title: "Retention-metric extraction", body: "GRR, NRR and logo-churn outcomes are quoted from the CV instead of accepting 'improved retention' at face value." },
+      { title: "Motion-stage clarity", body: "Onboarding, adoption, renewal and expansion ownership are captured separately so a renewals specialist isn't ranked as a full-lifecycle CSM." },
     ],
     roleFamilies: [
       { name: "Individual contributor", roles: ["CSMs (SMB/MM/Ent)", "Technical CSMs", "Strategic CSMs"] },
@@ -836,6 +1010,9 @@ export const INDUSTRY_ENTRIES_BATCH2: IndustryEntry[] = [
     resources: DEFAULT_RESOURCES,
     faqs: [
       { q: "Do you separate SMB and enterprise CSMs?", a: "Yes — segment is captured at intake and rubrics never mix them." },
+      { q: "Can you verify claimed retention numbers?", a: "We quote the CV line behind each GRR/NRR claim so your team can probe it in interview." },
+      { q: "Do you screen for technical CSM roles differently?", a: "Yes. Technical CSMs are scored on product-implementation depth alongside relationship evidence." },
+      { q: "Can you hire renewal specialists separately from full-lifecycle CSMs?", a: "Yes — renewal-only and full-lifecycle roles are captured as distinct motions." },
     ],
     cta: { title: "Hiring in Customer Success?", description: "Submit the role — segment scored, retention outcomes captured." },
   },
@@ -855,6 +1032,12 @@ export const INDUSTRY_ENTRIES_BATCH2: IndustryEntry[] = [
       { title: "Surface fluency", body: "B2B, consumer, platform, growth and data product are distinct disciplines — never merged in scoring." },
       { title: "Outcome vs output", body: "Rubrics capture measurable outcomes owned — activation, retention, revenue — not just launches." },
       { title: "Founding vs scale", body: "0→1 founding PMs and scale-stage optimisation PMs reward different signal — captured at intake." },
+      { title: "Output theatre", body: "Roadmap slides and Jira ticket counts are easy to pad. Rubrics look for the metric moved and the decision behind it, not activity volume." },
+    ],
+    solutions: [
+      { title: "Surface-locked rubric", body: "B2B, consumer, platform, growth and data/AI product are scored on separate evidence, never blended into one generic PM rating." },
+      { title: "Outcome quoting", body: "Named metrics moved and hypotheses tested are quoted directly from the CV, distinguishing outcome ownership from feature shipping." },
+      { title: "Stage-matched scoring", body: "0→1 founding evidence and scale-stage optimisation evidence are scored against what your stage actually needs." },
     ],
     roleFamilies: [
       { name: "IC PMs", roles: ["APMs", "PMs", "Senior PMs", "Staff PMs", "Principal PMs"] },
@@ -878,6 +1061,9 @@ export const INDUSTRY_ENTRIES_BATCH2: IndustryEntry[] = [
     resources: DEFAULT_RESOURCES,
     faqs: [
       { q: "Do you cover Chief Product Officer searches?", a: "Yes. Function shape, org design and CEO-partnership evidence captured." },
+      { q: "Can you tell 0→1 builders from scale-stage optimisers?", a: "Yes — stage evidence is a first-class intake field and scored accordingly." },
+      { q: "Do you screen for AI/data product experience specifically?", a: "Yes. Data and AI product management is scored on its own rubric, separate from general B2B/consumer product." },
+      { q: "How do you validate claimed metric outcomes?", a: "We quote the CV line describing the metric moved so it can be probed directly in interview." },
     ],
     cta: { title: "Hiring in Product?", description: "Submit the role — surface scored, outcomes captured, level calibrated." },
   },
@@ -897,6 +1083,12 @@ export const INDUSTRY_ENTRIES_BATCH2: IndustryEntry[] = [
       { title: "Portfolio parsing", body: "Portfolios beat resumes. Rubrics capture named projects, role played, craft depth and shipped surface." },
       { title: "Craft specialisation", body: "Interaction, visual, research, systems and content design are distinct — separated in scoring." },
       { title: "Product vs agency", body: "Agency polish and in-house shipping-cadence discipline reward different signal." },
+      { title: "Portfolio ghost-work", body: "Team projects can overstate individual contribution. Rubrics look for the specific role played on each shown project." },
+    ],
+    solutions: [
+      { title: "Portfolio-first rubric", body: "Every scoring point ties back to a named project in the portfolio, with the candidate's specific role on that project called out." },
+      { title: "Craft-specific scoring", body: "Interaction, visual, research, systems and content design are scored on separate evidence, never merged into a single 'designer' rating." },
+      { title: "Context calibration", body: "Agency and in-house experience are scored against the delivery cadence and craft ownership the role actually needs." },
     ],
     roleFamilies: [
       { name: "Product design", roles: ["Product designers", "Senior product designers", "Staff designers", "Principal designers"] },
@@ -915,6 +1107,9 @@ export const INDUSTRY_ENTRIES_BATCH2: IndustryEntry[] = [
     resources: DEFAULT_RESOURCES,
     faqs: [
       { q: "Do you review portfolios?", a: "Yes — portfolio URLs are captured at intake and referenced in evidence alongside CV claims." },
+      { q: "Can you tell individual contribution from team credit on a portfolio project?", a: "We flag where a project appears team-led and note the specific role claimed, for your team to probe in interview." },
+      { q: "Do you screen UX researchers separately from product designers?", a: "Yes — research and design are distinct crafts scored on separate rubrics." },
+      { q: "Can you hire for design-systems roles specifically?", a: "Yes. Named systems shipped and adoption across teams are captured as first-class evidence." },
     ],
     cta: { title: "Hiring in Design?", description: "Submit the role — portfolio scored, craft calibrated." },
   },

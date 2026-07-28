@@ -58,7 +58,7 @@ function MockChrome({
         <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-red-400/70" aria-hidden />
         <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-yellow-400/70" aria-hidden />
         <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-green-400/70" aria-hidden />
-        <span className="ml-3 min-w-0 flex-1 truncate text-xs font-medium text-[color:var(--brand-navy)]/70">
+        <span className="ml-3 min-w-0 flex-1 truncate text-xs font-medium text-[color:var(--brand-navy)]/80">
           {title}
         </span>
         <span className="ml-auto inline-flex shrink-0 items-center gap-1 rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-semibold text-emerald-700">
@@ -78,21 +78,21 @@ export function RoleBlueprintMock() {
     <MockChrome title="Intake · Role blueprint">
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="rounded-lg border border-[color:var(--brand-navy)]/10 p-3">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/55">
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/80">
             Role
           </p>
           <p className="mt-1 text-sm font-semibold text-[color:var(--brand-navy)]">
             Senior Backend Engineer
           </p>
-          <p className="mt-0.5 text-xs text-[color:var(--brand-navy)]/65">
+          <p className="mt-0.5 text-xs text-[color:var(--brand-navy)]/80">
             Remote · EU · €90–110k · Series B fintech
           </p>
         </div>
         <div className="rounded-lg border border-[color:var(--brand-navy)]/10 p-3">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/55">
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/80">
             Search plan
           </p>
-          <p className="mt-1 text-xs text-[color:var(--brand-navy)]/75">
+          <p className="mt-1 text-xs text-[color:var(--brand-navy)]/80">
             Target: 12 companies · 3 seniority bands · 2 timezones · screening
             call before publication
           </p>
@@ -100,7 +100,7 @@ export function RoleBlueprintMock() {
       </div>
 
       <div className="mt-4 rounded-lg border border-[color:var(--brand-navy)]/10 p-3">
-        <p className="text-[11px] font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/55">
+        <p className="text-[11px] font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/80">
           Scoring rubric (weights approved at intake)
         </p>
         <ul className="mt-2 space-y-1.5">
@@ -115,7 +115,7 @@ export function RoleBlueprintMock() {
               key={r.label}
               className="grid grid-cols-[minmax(0,1fr)_140px_36px] items-center gap-3"
             >
-              <span className="truncate text-xs text-[color:var(--brand-navy)]/75">
+              <span className="truncate text-xs text-[color:var(--brand-navy)]/80">
                 {r.label}
               </span>
               <div className="h-1.5 overflow-hidden rounded-full bg-[color:var(--brand-navy)]/10">
@@ -124,7 +124,7 @@ export function RoleBlueprintMock() {
                   style={{ width: `${r.w * 3}%` }}
                 />
               </div>
-              <span className="text-right text-[11px] font-semibold text-[color:var(--brand-navy)]/70">
+              <span className="text-right text-[11px] font-semibold text-[color:var(--brand-navy)]/80">
                 {r.w}%
               </span>
             </li>
@@ -137,7 +137,7 @@ export function RoleBlueprintMock() {
           (t) => (
             <span
               key={t}
-              className="rounded-full bg-[color:var(--brand-navy)]/6 px-2.5 py-1 text-[11px] font-medium text-[color:var(--brand-navy)]/75"
+              className="rounded-full bg-[color:var(--brand-navy)]/6 px-2.5 py-1 text-[11px] font-medium text-[color:var(--brand-navy)]/80"
             >
               {t}
             </span>
@@ -220,7 +220,7 @@ export function SourcingEcosystemMap() {
           <Sparkles className="h-3 w-3" aria-hidden />
           {total} channels · one scoring bar
         </div>
-        <div className="text-[11px] text-[color:var(--brand-navy)]/60">
+        <div className="text-[11px] text-[color:var(--brand-navy)]/80">
           Grouped by how candidates surface
         </div>
       </div>
@@ -232,10 +232,10 @@ export function SourcingEcosystemMap() {
             className="rounded-xl border border-[color:var(--brand-navy)]/10 bg-white p-3"
           >
             <div className="mb-2">
-              <div className="text-[11px] font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/70">
+              <div className="text-[11px] font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/80">
                 {g.heading}
               </div>
-              <div className="text-[11px] text-[color:var(--brand-navy)]/55">
+              <div className="text-[11px] text-[color:var(--brand-navy)]/80">
                 {g.caption}
               </div>
             </div>
@@ -248,7 +248,7 @@ export function SourcingEcosystemMap() {
         ))}
       </div>
 
-      <p className="mt-4 text-xs text-[color:var(--brand-navy)]/65">
+      <p className="mt-4 text-xs text-[color:var(--brand-navy)]/80">
         Every candidate — regardless of channel — is evaluated against the same
         approved rubric. No side-doors that skip evidence. No channel gets a
         shortcut past the scoring bar.
@@ -275,7 +275,7 @@ function ChannelPill({
         <div className="truncate text-sm font-semibold text-[color:var(--brand-navy)]">
           {label}
         </div>
-        <div className="truncate text-[11px] text-[color:var(--brand-navy)]/65">
+        <div className="truncate text-[11px] text-[color:var(--brand-navy)]/80">
           {note}
         </div>
       </div>
@@ -320,7 +320,7 @@ export function EvidenceReviewPanel() {
             <p className="text-sm font-semibold text-[color:var(--brand-navy)]">
               Candidate #B-2178
             </p>
-            <p className="text-[11px] text-[color:var(--brand-navy)]/60">
+            <p className="text-[11px] text-[color:var(--brand-navy)]/80">
               Reviewed by recruiter before publication
             </p>
           </div>
@@ -347,15 +347,15 @@ export function EvidenceReviewPanel() {
                   {i.verdict}
                 </span>
               </div>
-              <p className="mt-1.5 flex gap-2 text-[11px] italic text-[color:var(--brand-navy)]/75">
-                <Quote className="mt-0.5 h-3 w-3 shrink-0 text-[color:var(--brand-navy)]/40" aria-hidden />
+              <p className="mt-1.5 flex gap-2 text-[11px] italic text-[color:var(--brand-navy)]/80">
+                <Quote className="mt-0.5 h-3 w-3 shrink-0 text-[color:var(--brand-navy)]/80" aria-hidden />
                 <span>{i.quote}</span>
               </p>
             </li>
           ))}
         </ul>
 
-        <p className="mt-3 text-[11px] text-[color:var(--brand-navy)]/65">
+        <p className="mt-3 text-[11px] text-[color:var(--brand-navy)]/80">
           Every score has a quote. Every quote has a source line. If a requirement
           isn't evidenced, the candidate isn't published.
         </p>
@@ -445,13 +445,13 @@ export function RankingDemo() {
       <div className="grid gap-4 lg:grid-cols-[1.1fr_1fr]">
         {/* Weight controls */}
         <div className="rounded-lg border border-[color:var(--brand-navy)]/10 p-3">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/60">
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/80">
             Rubric weights · adjust to see re-ranking
           </p>
           <ul className="mt-3 space-y-3">
             {labels.map((lab) => (
               <li key={lab}>
-                <div className="mb-1 flex items-center justify-between text-[11px] text-[color:var(--brand-navy)]/75">
+                <div className="mb-1 flex items-center justify-between text-[11px] text-[color:var(--brand-navy)]/80">
                   <span>{lab}</span>
                   <span className="font-semibold">{weights[lab]}%</span>
                 </div>
@@ -470,7 +470,7 @@ export function RankingDemo() {
               </li>
             ))}
           </ul>
-          <p className="mt-3 text-[11px] text-[color:var(--brand-navy)]/60">
+          <p className="mt-3 text-[11px] text-[color:var(--brand-navy)]/80">
             In your real workspace, weights are approved at intake — this demo just
             shows how the ranking responds to them.
           </p>
@@ -510,7 +510,7 @@ export function RankingDemo() {
           </ul>
 
           <div className="rounded-lg border border-[color:var(--brand-navy)]/10 bg-white p-3">
-            <p className="text-[11px] font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/60">
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/80">
               Fit summary · {activeRow.ref} · {activeScore}
             </p>
             <p className="mt-1.5 text-xs text-[color:var(--brand-navy)]/80">
@@ -541,10 +541,10 @@ export function WorkspaceDeliveryDemo() {
             className="min-h-32 rounded-lg border border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-cream)] p-2.5"
           >
             <div className="mb-2 flex items-center justify-between">
-              <span className="text-[11px] font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/65">
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/80">
                 {s.label}
               </span>
-              <span className="rounded-full bg-white px-1.5 text-[10px] font-semibold text-[color:var(--brand-navy)]/70">
+              <span className="rounded-full bg-white px-1.5 text-[10px] font-semibold text-[color:var(--brand-navy)]/80">
                 {s.ids.length}
               </span>
             </div>
@@ -558,7 +558,7 @@ export function WorkspaceDeliveryDemo() {
                 </li>
               ))}
               {s.ids.length === 0 ? (
-                <li className="rounded-md border border-dashed border-[color:var(--brand-navy)]/15 px-2 py-3 text-center text-[10px] text-[color:var(--brand-navy)]/45">
+                <li className="rounded-md border border-dashed border-[color:var(--brand-navy)]/15 px-2 py-3 text-center text-[10px] text-[color:var(--brand-navy)]/80">
                   Empty
                 </li>
               ) : null}
@@ -605,13 +605,13 @@ export function ResponsibilityMatrix() {
     { activity: "Offer & close", owner: "Client", note: "You extend. We support scheduling and comms." },
   ];
   const badge: Record<Owner, string> = {
-    Client: "bg-[color:var(--brand-ocean)]/12 text-[color:var(--brand-ocean)]",
+    Client: "bg-[color:var(--brand-ocean)]/12 text-[color:var(--brand-ocean-text)]",
     TaaSFlow: "bg-[color:var(--brand-navy)]/10 text-[color:var(--brand-navy)]",
     Shared: "bg-amber-100 text-amber-800",
   };
   return (
     <div className="overflow-hidden rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white">
-      <div className="grid grid-cols-[minmax(0,1.2fr)_120px_minmax(0,2fr)] gap-0 border-b border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-cream)] px-4 py-2.5 text-[11px] font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/65">
+      <div className="grid grid-cols-[minmax(0,1.2fr)_120px_minmax(0,2fr)] gap-0 border-b border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-cream)] px-4 py-2.5 text-[11px] font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/80">
         <span>Activity</span>
         <span>Owner</span>
         <span>How it works</span>
@@ -633,7 +633,7 @@ export function ResponsibilityMatrix() {
                 {r.owner}
               </span>
             </span>
-            <span className="text-[color:var(--brand-navy)]/75">{r.note}</span>
+            <span className="text-[color:var(--brand-navy)]/80">{r.note}</span>
           </li>
         ))}
       </ul>
@@ -664,14 +664,14 @@ export function StepRail() {
             {s.n}
           </span>
           <span className="flex min-w-0 items-center gap-1.5">
-            <span className="text-[color:var(--brand-navy)]/60">{s.icon}</span>
+            <span className="text-[color:var(--brand-navy)]/80">{s.icon}</span>
             <span className="truncate text-xs font-semibold text-[color:var(--brand-navy)]">
               {s.label}
             </span>
           </span>
           {i < steps.length - 1 ? (
             <ArrowRight
-              className="pointer-events-none absolute -right-2 top-1/2 hidden h-3.5 w-3.5 -translate-y-1/2 text-[color:var(--brand-navy)]/30 lg:block"
+              className="pointer-events-none absolute -right-2 top-1/2 hidden h-3.5 w-3.5 -translate-y-1/2 text-[color:var(--brand-navy)]/80 lg:block"
               aria-hidden
             />
           ) : null}

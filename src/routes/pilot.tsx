@@ -75,13 +75,13 @@ function PilotPage() {
     <SiteShell>
       <PublicSection className="pb-8 pt-16 sm:pt-20">
         <PublicPage>
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
             {PRICE_PILOT_DISPLAY} pilot · one role · 7–14 days
           </p>
           <h1 className="mt-3 max-w-3xl font-[family-name:var(--brand-font-display)] text-4xl font-semibold tracking-tight sm:text-5xl">
             Run one role end-to-end for {PRICE_PILOT_DISPLAY}.
           </h1>
-          <p className="mt-5 max-w-2xl text-lg text-[color:var(--brand-navy)]/70">
+          <p className="mt-5 max-w-2xl text-lg text-[color:var(--brand-navy)]/80">
             The pilot is a single-role engagement that runs the full TaaSFlow process — intake,
             sourcing, evidence-based scoring, and a ranked shortlist in a live dashboard — so you can
             judge candidate quality on real work before committing to a subscription.
@@ -113,7 +113,7 @@ function PilotPage() {
           <h2 className="font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight">
             What happens in the {PRICE_PILOT_DISPLAY} pilot
           </h2>
-          <p className="mt-3 max-w-2xl text-[color:var(--brand-navy)]/70">
+          <p className="mt-3 max-w-2xl text-[color:var(--brand-navy)]/80">
             Three stages, one role, one fixed price. Timings assume you complete intake and the
             alignment call in the first two days.
           </p>
@@ -127,12 +127,12 @@ function PilotPage() {
                   <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[color:var(--brand-navy)]/5 font-[family-name:var(--brand-font-display)] text-sm font-semibold text-[color:var(--brand-navy)]">
                     {s.n}
                   </span>
-                  <span className="text-xs font-semibold uppercase tracking-wide text-[color:var(--brand-ocean)]">
+                  <span className="text-xs font-semibold uppercase tracking-wide text-[color:var(--brand-ocean-text)]">
                     {s.when}
                   </span>
                 </div>
                 <h3 className="mt-4 text-lg font-semibold">{s.title}</h3>
-                <p className="mt-2 text-sm text-[color:var(--brand-navy)]/70">{s.body}</p>
+                <p className="mt-2 text-sm text-[color:var(--brand-navy)]/80">{s.body}</p>
               </li>
             ))}
           </ol>
@@ -192,15 +192,15 @@ function PilotPage() {
                 className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6"
               >
                 <h3 className="text-lg font-semibold">{a.title}</h3>
-                <p className="mt-2 text-sm text-[color:var(--brand-navy)]/70">{a.body}</p>
+                <p className="mt-2 text-sm text-[color:var(--brand-navy)]/80">{a.body}</p>
               </div>
             ))}
           </div>
-          <p className="mt-4 text-sm text-[color:var(--brand-navy)]/60">
+          <p className="mt-4 text-sm text-[color:var(--brand-navy)]/80">
             Either way: no placement fees and no salary percentages.{" "}
             <Link
               to="/pricing"
-              className="font-semibold text-[color:var(--brand-ocean)] underline-offset-4 hover:underline"
+              className="font-semibold text-[color:var(--brand-ocean-text)] underline-offset-4 hover:underline"
             >
               See subscription pricing
             </Link>

@@ -31,13 +31,13 @@ function TalentNetworkPage() {
       {/* ── Hero ─────────────────────────────────────────────────── */}
       <PublicSection className="pb-10 pt-16 sm:pt-20">
         <PublicPage>
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
             Talent Network
           </p>
           <h1 className="mt-3 max-w-3xl font-[family-name:var(--brand-font-display)] text-4xl font-semibold tracking-tight sm:text-5xl">
             Be considered for the right roles &mdash; on your terms.
           </h1>
-          <p className="mt-5 max-w-2xl text-lg text-[color:var(--brand-navy)]/70">
+          <p className="mt-5 max-w-2xl text-lg text-[color:var(--brand-navy)]/80">
             Browse roles that are open today, or join the network so we can match you to briefs
             as they come in. Your profile stays private until you choose to be considered.
           </p>
@@ -57,7 +57,7 @@ function TalentNetworkPage() {
             </Link>
             <Link
               to="/login"
-              className="inline-flex min-h-11 items-center gap-2 rounded-md px-3 py-2 text-sm text-[color:var(--brand-navy)]/70 hover:text-[color:var(--brand-navy)]"
+              className="inline-flex min-h-11 items-center gap-2 rounded-md px-3 py-2 text-sm text-[color:var(--brand-navy)]/80 hover:text-[color:var(--brand-navy)]"
             >
               <LogIn className="h-4 w-4" />
               Candidate Sign In
@@ -96,7 +96,7 @@ function TalentNetworkPage() {
               >
                 <card.icon className="h-6 w-6 text-[color:var(--brand-navy)]" />
                 <h3 className="mt-4 text-lg font-semibold">{card.title}</h3>
-                <p className="mt-2 flex-1 text-sm text-[color:var(--brand-navy)]/70">{card.body}</p>
+                <p className="mt-2 flex-1 text-sm text-[color:var(--brand-navy)]/80">{card.body}</p>
                 <Link
                   to={card.cta.to}
                   className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-[color:var(--brand-navy)] hover:opacity-80"
@@ -115,13 +115,13 @@ function TalentNetworkPage() {
         <PublicPage>
           <div className="grid gap-10 lg:grid-cols-2">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
                 Who this network is for
               </p>
               <h2 className="mt-3 font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight">
                 Experienced professionals who want to be found for the right work
               </h2>
-              <p className="mt-4 text-[color:var(--brand-navy)]/70">
+              <p className="mt-4 text-[color:var(--brand-navy)]/80">
                 The network is designed for candidates who value quality of match over volume of
                 outreach. You choose what to share, and you only surface for roles where the
                 brief fits.
@@ -151,7 +151,7 @@ function TalentNetworkPage() {
           <h2 className="max-w-2xl font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight">
             How matching works
           </h2>
-          <p className="mt-4 max-w-2xl text-[color:var(--brand-navy)]/70">
+          <p className="mt-4 max-w-2xl text-[color:var(--brand-navy)]/80">
             When a client opens a role, we look at the requirements and see which network
             candidates are a genuine fit. If your background matches, we&rsquo;ll reach out with
             the brief so you can decide whether to be considered.
@@ -185,7 +185,7 @@ function TalentNetworkPage() {
               >
                 <step.icon className="h-6 w-6 text-[color:var(--brand-navy)]" />
                 <h3 className="mt-4 text-lg font-semibold">{step.title}</h3>
-                <p className="mt-2 text-sm text-[color:var(--brand-navy)]/70">{step.body}</p>
+                <p className="mt-2 text-sm text-[color:var(--brand-navy)]/80">{step.body}</p>
               </div>
             ))}
           </div>
@@ -197,13 +197,13 @@ function TalentNetworkPage() {
         <PublicPage>
           <div className="grid gap-10 lg:grid-cols-2">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
                 Privacy and control
               </p>
               <h2 className="mt-3 font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight">
                 Your profile, your choices
               </h2>
-              <p className="mt-4 text-[color:var(--brand-navy)]/70">
+              <p className="mt-4 text-[color:var(--brand-navy)]/80">
                 Joining the network doesn&rsquo;t put your profile in front of any employer. Your
                 information stays private until you decide to be considered for a specific role.
               </p>
@@ -231,7 +231,7 @@ function TalentNetworkPage() {
           <h2 className="max-w-2xl font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight">
             What happens after joining
           </h2>
-          <p className="mt-4 max-w-2xl text-[color:var(--brand-navy)]/70">
+          <p className="mt-4 max-w-2xl text-[color:var(--brand-navy)]/80">
             Joining takes a few minutes. From there, activity is quiet by design — we only
             reach out when there&rsquo;s a real reason to.
           </p>
@@ -272,12 +272,12 @@ function TalentNetworkPage() {
                 key={step.n}
                 className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6"
               >
-                <span className="text-sm font-semibold text-[color:var(--brand-navy)]/50">
+                <span className="text-sm font-semibold text-[color:var(--brand-navy)]/80">
                   {step.n}
                 </span>
                 <h3 className="mt-3 text-lg font-semibold">{step.title}</h3>
                 <p
-                  className="mt-2 text-sm text-[color:var(--brand-navy)]/70"
+                  className="mt-2 text-sm text-[color:var(--brand-navy)]/80"
                   dangerouslySetInnerHTML={{ __html: step.body }}
                 />
               </li>

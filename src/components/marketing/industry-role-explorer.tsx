@@ -60,7 +60,7 @@ export function IndustryRoleExplorer({ entry }: { entry: IndustryEntry }) {
             >
               <span className="block font-semibold">{fam.name}</span>
               {fam.blurb ? (
-                <span className="mt-1 block text-xs text-[color:var(--brand-navy)]/60">
+                <span className="mt-1 block text-xs text-[color:var(--brand-navy)]/80">
                   {fam.blurb}
                 </span>
               ) : null}
@@ -89,7 +89,7 @@ export function IndustryRoleExplorer({ entry }: { entry: IndustryEntry }) {
                   "rounded-full border px-3 py-1.5 text-xs font-medium transition-colors",
                   selected
                     ? "border-[color:var(--brand-navy)] bg-[color:var(--brand-navy)] text-white"
-                    : "border-[color:var(--brand-navy)]/15 bg-white text-[color:var(--brand-navy)]/75 hover:border-[color:var(--brand-navy)]/40",
+                    : "border-[color:var(--brand-navy)]/15 bg-white text-[color:var(--brand-navy)]/80 hover:border-[color:var(--brand-navy)]/40",
                 ].join(" ")}
               >
                 {r}
@@ -103,7 +103,7 @@ export function IndustryRoleExplorer({ entry }: { entry: IndustryEntry }) {
             <h3 className="font-[family-name:var(--brand-font-display)] text-2xl font-semibold text-[color:var(--brand-navy)]">
               {role}
             </h3>
-            <p className="mt-1 text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean)]">
+            <p className="mt-1 text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean-text)]">
               {view.seniority} · {family.name} · {entry.name}
             </p>
           </div>
@@ -119,12 +119,12 @@ export function IndustryRoleExplorer({ entry }: { entry: IndustryEntry }) {
           <ExplorerBlock title="Relevant skills" items={view.skills} />
           <ExplorerBlock title="Likely validation areas" items={view.validation} />
           <div className="sm:col-span-2">
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/55">
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
               Sample evidence line
             </p>
             <blockquote className="mt-2 rounded-xl bg-[color:var(--brand-mist)]/60 p-4 text-sm italic text-[color:var(--brand-navy)]/85">
               {view.evidence}
-              <footer className="mt-2 not-italic text-xs text-[color:var(--brand-navy)]/55">
+              <footer className="mt-2 not-italic text-xs text-[color:var(--brand-navy)]/80">
                 Illustrative — quoted from candidate CVs in the workspace.
               </footer>
             </blockquote>
@@ -132,7 +132,7 @@ export function IndustryRoleExplorer({ entry }: { entry: IndustryEntry }) {
         </div>
 
         <div className="mt-6 flex flex-wrap items-center gap-3 border-t border-[color:var(--brand-navy)]/10 pt-5">
-          <p className="text-sm text-[color:var(--brand-navy)]/70">{view.cta}</p>
+          <p className="text-sm text-[color:var(--brand-navy)]/80">{view.cta}</p>
           <a
             href="/intake"
             className="inline-flex min-h-11 items-center justify-center rounded-md bg-[color:var(--brand-navy)] px-4 py-2 text-sm font-semibold text-white hover:opacity-90"
@@ -154,7 +154,7 @@ export function IndustryRoleExplorer({ entry }: { entry: IndustryEntry }) {
 function ExplorerBlock({ title, items }: { title: string; items: string[] }) {
   return (
     <div>
-      <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/55">
+      <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
         {title}
       </p>
       <ul className="mt-2 space-y-1.5 text-sm text-[color:var(--brand-navy)]/85">

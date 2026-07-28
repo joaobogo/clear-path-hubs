@@ -35,20 +35,20 @@ export function AgencyFeeComparison() {
   return (
     <div>
       <div className="max-w-2xl">
-        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">
+        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
           Flat fee vs placement fee
         </p>
         <h2 className="mt-3 font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight text-[color:var(--brand-navy)] sm:text-4xl">
           The same hires, without the percentage.
         </h2>
-        <p className="mt-4 text-base text-[color:var(--brand-navy)]/70">
+        <p className="mt-4 text-base text-[color:var(--brand-navy)]/80">
           Example math on a {usd(EXAMPLE_SALARY)} average salary and a typical
           agency fee of 20–25% of first-year salary. Your numbers will differ —
           these are illustrative, not a quote.
         </p>
       </div>
 
-      <div className="mt-8 overflow-x-auto rounded-2xl border border-[color:var(--brand-navy)]/12 bg-white shadow-[var(--brand-shadow-sm)]">
+      <div className="mt-8 overflow-x-auto rounded-2xl border border-[color:var(--brand-navy)]/12 bg-white shadow-[var(--brand-shadow-sm)]" tabIndex={0} role="region" aria-label="Comparison table, scroll horizontally">
         <table className="w-full min-w-[44rem] border-collapse text-left text-sm">
           <caption className="sr-only">
             Example cost comparison between agency placement fees at 20 to 25
@@ -56,7 +56,7 @@ export function AgencyFeeComparison() {
             packages, for 1, 3, and 10 hires.
           </caption>
           <thead>
-            <tr className="border-b border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-paper)] text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/60">
+            <tr className="border-b border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-paper)] text-[11px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/80">
               <th scope="col" className="px-5 py-3">Scenario</th>
               <th scope="col" className="px-5 py-3">Agency fee (20–25%)</th>
               <th scope="col" className="px-5 py-3">TaaSFlow flat fee</th>
@@ -71,25 +71,25 @@ export function AgencyFeeComparison() {
                   className="px-5 py-4 align-top font-semibold text-[color:var(--brand-navy)]"
                 >
                   {s.label}
-                  <span className="mt-0.5 block text-xs font-normal text-[color:var(--brand-navy)]/60">
+                  <span className="mt-0.5 block text-xs font-normal text-[color:var(--brand-navy)]/80">
                     {usd(EXAMPLE_SALARY)} average salary
                   </span>
                 </th>
                 <td className="px-5 py-4 align-top tabular-nums text-[color:var(--brand-navy)]/85">
                   {usd(s.low)} – {usd(s.high)}
-                  <span className="mt-0.5 block text-xs text-[color:var(--brand-navy)]/60">
+                  <span className="mt-0.5 block text-xs text-[color:var(--brand-navy)]/80">
                     Charged per placement
                   </span>
                 </td>
                 <td className="px-5 py-4 align-top tabular-nums font-semibold text-[color:var(--brand-navy)]">
                   {usd(s.cost)}
-                  <span className="mt-0.5 block text-xs font-normal text-[color:var(--brand-navy)]/60">
+                  <span className="mt-0.5 block text-xs font-normal text-[color:var(--brand-navy)]/80">
                     {s.package}
                   </span>
                 </td>
-                <td className="px-5 py-4 align-top tabular-nums font-semibold text-[color:var(--brand-ocean)]">
+                <td className="px-5 py-4 align-top tabular-nums font-semibold text-[color:var(--brand-ocean-text)]">
                   {usd(s.savingLow)} – {usd(s.savingHigh)}
-                  <span className="mt-0.5 block text-xs font-normal text-[color:var(--brand-navy)]/60">
+                  <span className="mt-0.5 block text-xs font-normal text-[color:var(--brand-navy)]/80">
                     Less, for the same number of hires
                   </span>
                 </td>
@@ -99,7 +99,7 @@ export function AgencyFeeComparison() {
         </table>
       </div>
 
-      <p className="mt-4 text-xs text-[color:var(--brand-navy)]/60">
+      <p className="mt-4 text-xs text-[color:var(--brand-navy)]/80">
         Examples only. Agency fees vary by market and seniority; TaaSFlow package
         prices are fixed and published. The flat fee covers the search — you are
         never charged a percentage of salary when someone is hired.

@@ -53,7 +53,7 @@ export function FormShell({
           </Link>
           {progress && (
             <div className="hidden items-center gap-3 sm:flex" aria-live="polite">
-              <span className="text-xs font-medium text-[color:var(--brand-navy)]/70">
+              <span className="text-xs font-medium text-[color:var(--brand-navy)]/80">
                 {progress.label ?? `Step ${progress.step} of ${progress.total}`}
               </span>
               <div
@@ -72,7 +72,7 @@ export function FormShell({
           )}
           <a
             href={exitTo}
-            className="rounded-md px-2.5 py-1.5 text-sm text-[color:var(--brand-navy)]/70 hover:text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+            className="rounded-md px-2.5 py-1.5 text-sm text-[color:var(--brand-navy)]/80 hover:text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
           >
             {exitLabel}
           </a>
@@ -98,7 +98,7 @@ export function FormShell({
           {(eyebrow || title || description) && (
             <div className="mb-8">
               {eyebrow && (
-                <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">
+                <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
                   {eyebrow}
                 </p>
               )}
@@ -108,7 +108,7 @@ export function FormShell({
                 </h1>
               )}
               {description && (
-                <p className="mt-2 max-w-xl text-sm text-[color:var(--brand-navy)]/70 sm:text-base">
+                <p className="mt-2 max-w-xl text-sm text-[color:var(--brand-navy)]/80 sm:text-base">
                   {description}
                 </p>
               )}
@@ -119,7 +119,7 @@ export function FormShell({
       </main>
 
       <footer className="border-t border-[color:var(--brand-navy)]/10 bg-white/60 py-4">
-        <div className="mx-auto flex max-w-[1200px] flex-wrap items-center justify-between gap-2 px-4 text-xs text-[color:var(--brand-navy)]/60 sm:px-6 lg:px-8">
+        <div className="mx-auto flex max-w-[1200px] flex-wrap items-center justify-between gap-2 px-4 text-xs text-[color:var(--brand-navy)]/80 sm:px-6 lg:px-8">
           <span>© {new Date().getFullYear()} TaaSFlow</span>
           <nav aria-label="Form legal" className="flex flex-wrap items-center gap-x-4 gap-y-1">
             <Link to="/privacy" className="hover:text-[color:var(--brand-navy)]">Privacy</Link>

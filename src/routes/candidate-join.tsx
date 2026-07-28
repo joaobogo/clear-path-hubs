@@ -94,13 +94,13 @@ function CandidateJoinPage() {
 
       <PublicSection className="pb-8 pt-10 sm:pt-14">
         <PublicPage>
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
             For candidates
           </p>
           <h1 className="mt-3 max-w-3xl font-[family-name:var(--brand-font-display)] text-4xl font-semibold tracking-tight sm:text-5xl">
             Join TaaSFlow in a few minutes.
           </h1>
-          <p className="mt-4 max-w-2xl text-lg text-[color:var(--brand-navy)]/75">
+          <p className="mt-4 max-w-2xl text-lg text-[color:var(--brand-navy)]/80">
             Applying to any open brief creates your candidate account. No separate signup form —
             your first application is your join.
           </p>
@@ -163,13 +163,13 @@ function CandidateJoinPage() {
           <div className="mt-6 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
             {STEPS.map((s) => (
               <div key={s.step} className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6">
-                <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/50">
+                <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
                   {s.step}
                 </p>
                 <h3 className="mt-2 font-[family-name:var(--brand-font-display)] text-lg font-semibold">
                   {s.title}
                 </h3>
-                <p className="mt-2 text-sm text-[color:var(--brand-navy)]/75">{s.body}</p>
+                <p className="mt-2 text-sm text-[color:var(--brand-navy)]/80">{s.body}</p>
               </div>
             ))}
           </div>
@@ -187,7 +187,7 @@ function CandidateJoinPage() {
                 <summary className="cursor-pointer list-none text-sm font-semibold text-[color:var(--brand-navy)]">
                   {f.q}
                 </summary>
-                <p className="mt-2 text-sm text-[color:var(--brand-navy)]/75">{f.a}</p>
+                <p className="mt-2 text-sm text-[color:var(--brand-navy)]/80">{f.a}</p>
               </details>
             ))}
           </div>

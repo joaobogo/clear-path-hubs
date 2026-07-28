@@ -25,6 +25,7 @@ import { SiteShell } from "@/components/marketing/site-shell";
 import { getPage } from "@/lib/marketing/content";
 import { marketingHead } from "@/lib/marketing/head";
 import { PageConnections } from "@/components/marketing/page-connections";
+import { CASE_STUDIES, type CaseStudy } from "@/content/case-studies";
 
 const entry = getPage("case-studies");
 
@@ -43,25 +44,6 @@ export const Route = createFileRoute("/case-studies")({
 // ranges observed across the TaaSFlow delivery model. Named studies with
 // written client approval are added individually as clients sign off.
 // -----------------------------------------------------------------------------
-
-type Metric = { label: string; value: string; sub?: string };
-type Timeline = { day: string; label: string };
-type Study = {
-  slug: string;
-  icon: typeof Hotel;
-  industry: string;
-  region: string;
-  headline: string;
-  challenge: string;
-  approach: string;
-  metrics: Metric[];
-  roles: string[];
-  timeline: Timeline[];
-  testimonial: { quote: string; author: string; role: string };
-  gradient: string;
-  accent: string;
-  pattern: React.ReactNode;
-};
 
 // --- Patterns -----------------------------------------------------------------
 
@@ -130,202 +112,61 @@ const IndustrialPattern = (
   </svg>
 );
 
-// --- Studies ------------------------------------------------------------------
+type VisualMeta = {
+  icon: typeof Hotel;
+  gradient: string;
+  accent: string;
+  pattern: React.ReactNode;
+};
 
-const STUDIES: Study[] = [
-  {
-    slug: "hospitality-luxury-group",
+// Visual treatment per engagement, keyed by slug. Text/data content lives in
+// the shared @/content/case-studies module (single source of truth used by
+// both this page and the CaseStudyPreviews component).
+const VISUALS: Record<string, VisualMeta> = {
+  "hospitality-luxury-group": {
     icon: Hotel,
-    industry: "Hospitality",
-    region: "Europe · Middle East",
-    headline: "Staffing a luxury hotel group across 6 properties",
-    challenge:
-      "Pre-opening pipeline for 6 flagship properties. Front-of-house, F&B leadership, revenue management, spa — all under one calendar with a hard opening date.",
-    approach:
-      "Parallel intake per property. Shared candidate pool with location-scored ranking. Evidence-based hospitality fit criteria replaced CV keyword matching entirely.",
-    metrics: [
-      { label: "Positions filled", value: "42", sub: "across 6 properties" },
-      { label: "Time to shortlist", value: "6d", sub: "median per role" },
-      { label: "Offer acceptance", value: "88%", sub: "shortlist → hire" },
-      { label: "12-mo retention", value: "91%", sub: "of placements" },
-    ],
-    roles: ["Hotel General Manager", "F&B Director", "Revenue Manager", "Executive Chef", "Spa Director", "Front Office Manager", "Director of Sales", "Rooms Division Manager"],
-    timeline: [
-      { day: "Day 0", label: "Intake · 6 briefs captured" },
-      { day: "Day 4", label: "First evidence-scored shortlists" },
-      { day: "Day 12", label: "First 8 offers signed" },
-      { day: "Day 84", label: "All 42 roles closed" },
-    ],
-    testimonial: {
-      quote: "TaaSFlow ran six pre-openings in parallel without a single missed calendar. We stopped reading CVs — we read evidence.",
-      author: "Group Talent Director",
-      role: "European hospitality group",
-    },
     gradient: "from-[#7c4a1e] via-[#a56a3b] to-[#d4a15a]",
     accent: "text-[#d4a15a]",
     pattern: HotelPattern,
   },
-  {
-    slug: "finance-mid-market-pe",
+  "finance-mid-market-pe": {
     icon: Landmark,
-    industry: "Finance",
-    region: "Americas · APAC",
-    headline: "Building a mid-market private equity investment team",
-    challenge:
-      "A newly-raised $400M fund needed a senior investment team stood up in 12 weeks, plus operating partners across two portfolio companies.",
-    approach:
-      "Deal-experience evidence scoring, sector-specific screening panels, and reference validation woven directly into the shortlist gate.",
-    metrics: [
-      { label: "Positions filled", value: "18", sub: "senior + operating" },
-      { label: "Days to first hire", value: "21", sub: "signed offer" },
-      { label: "Shortlist quality", value: "9.1/10", sub: "client rating" },
-      { label: "Diversity mix", value: "44%", sub: "underrepresented" },
-    ],
-    roles: ["Investment Director", "Vice President, Investments", "Portfolio Operating Partner", "Head of Value Creation", "Senior Associate", "Deal Origination Lead", "Head of IR"],
-    timeline: [
-      { day: "Day 0", label: "Fund charter → role scoping" },
-      { day: "Day 7", label: "First shortlist delivered" },
-      { day: "Day 21", label: "First signed offer" },
-      { day: "Day 84", label: "Full team + operating partners in seat" },
-    ],
-    testimonial: {
-      quote: "The shortlists were dense with deal evidence, not resumes. Our IC could go straight to reference conversations by week two.",
-      author: "Founding Partner",
-      role: "Mid-market PE fund",
-    },
     gradient: "from-[#0b2740] via-[#144670] to-[#2b7fb8]",
     accent: "text-[#7dc5ef]",
     pattern: FinancePattern,
   },
-  {
-    slug: "healthcare-clinical-network",
+  "healthcare-clinical-network": {
     icon: HeartPulse,
-    industry: "Healthcare",
-    region: "Europe · North America",
-    headline: "Scaling a multi-site clinical network",
-    challenge:
-      "A specialty clinic network needed clinical, operational, and digital-health leadership across 11 sites — with credentialing verified before shortlist.",
-    approach:
-      "Credential-first pipeline. Board certifications, licensure, and patient-outcome evidence surfaced before the client ever opened a profile.",
-    metrics: [
-      { label: "Positions filled", value: "34", sub: "clinical + ops" },
-      { label: "Credential pass", value: "100%", sub: "pre-shortlist gate" },
-      { label: "Retention @ 12mo", value: "94%", sub: "of placements" },
-      { label: "Sites covered", value: "11", sub: "across 3 countries" },
-    ],
-    roles: ["Chief Medical Officer", "Clinic Director", "Head of Digital Health", "Director of Nursing", "Head of Patient Operations", "Regulatory & Compliance Lead"],
-    timeline: [
-      { day: "Day 0", label: "Credential taxonomy locked" },
-      { day: "Day 9", label: "First site director shortlisted" },
-      { day: "Day 30", label: "8 sites fully staffed at leadership" },
-      { day: "Day 120", label: "All 11 sites live" },
-    ],
-    testimonial: {
-      quote: "Every shortlisted candidate had verified credentials before we spoke to them. That alone gave us back six weeks per hire.",
-      author: "Chief People Officer",
-      role: "Specialty clinic network",
-    },
     gradient: "from-[#0f3d3a] via-[#137a63] to-[#4fbfa1]",
     accent: "text-[#7fe0c4]",
     pattern: HealthPattern,
   },
-  {
-    slug: "tech-series-c-platform",
+  "tech-series-c-platform": {
     icon: Cpu,
-    industry: "Technology",
-    region: "North America · Europe",
-    headline: "Series C platform team — engineers, PMs, and design",
-    challenge:
-      "A Series C infra platform company needed to double engineering and stand up a product-led design org in two quarters, without diluting their bar.",
-    approach:
-      "Skill-graph evidence scoring on real project artifacts (PRs, RFCs, portfolios). Structured hiring panels standardized across regions.",
-    metrics: [
-      { label: "Positions filled", value: "27", sub: "eng · PM · design" },
-      { label: "Interview-to-offer", value: "3.2x", sub: "vs. prior baseline" },
-      { label: "Pass through loop", value: "62%", sub: "shortlist → onsite" },
-      { label: "Diversity mix", value: "48%", sub: "underrepresented" },
-    ],
-    roles: ["Staff Engineer, Platform", "Principal PM", "Head of Design", "Engineering Manager", "Senior Backend Engineer", "Design Systems Lead"],
-    timeline: [
-      { day: "Day 0", label: "Skill graph + rubric locked" },
-      { day: "Day 5", label: "First shortlist across 3 tracks" },
-      { day: "Day 42", label: "12 offers signed" },
-      { day: "Day 90", label: "Full 27 seats closed" },
-    ],
-    testimonial: {
-      quote: "The candidate loop finally felt like engineering — evidence in, decisions out. We stopped debating vibes and started debating trade-offs.",
-      author: "VP of Engineering",
-      role: "Series C infra company",
-    },
     gradient: "from-[#1a1440] via-[#3b2e8c] to-[#7c5cff]",
     accent: "text-[#b8a6ff]",
     pattern: TechPattern,
   },
-  {
-    slug: "consumer-dtc-scaleup",
+  "consumer-dtc-scaleup": {
     icon: ShoppingBag,
-    industry: "Consumer & Retail",
-    region: "Europe · Americas",
-    headline: "Scaling a DTC brand into omnichannel retail",
-    challenge:
-      "A fast-growing DTC brand needed leadership across retail expansion, supply chain, brand, and performance marketing — while protecting margin discipline.",
-    approach:
-      "P&L-owner evidence gate. Every senior shortlist required documented category ownership, margin, and channel results at comparable scale.",
-    metrics: [
-      { label: "Positions filled", value: "23", sub: "commercial + ops" },
-      { label: "Median time-to-hire", value: "31d", sub: "brief → signed" },
-      { label: "Cost-per-hire", value: "-42%", sub: "vs. prior agency" },
-      { label: "Markets opened", value: "4", sub: "in 9 months" },
-    ],
-    roles: ["Chief Retail Officer", "VP Supply Chain", "Head of Brand", "Director of Performance Marketing", "Head of Category", "Regional GM"],
-    timeline: [
-      { day: "Day 0", label: "Growth plan → role map" },
-      { day: "Day 6", label: "First commercial shortlist" },
-      { day: "Day 45", label: "Retail leadership in seat" },
-      { day: "Day 180", label: "4 new markets operational" },
-    ],
-    testimonial: {
-      quote: "We halved our cost per senior hire and doubled offer acceptance. The shortlists actually understood our margin model.",
-      author: "Chief Executive Officer",
-      role: "DTC consumer brand",
-    },
     gradient: "from-[#5c1c3a] via-[#a02d5d] to-[#e77aa8]",
     accent: "text-[#f7c2d9]",
     pattern: RetailPattern,
   },
-  {
-    slug: "industrial-energy-transition",
+  "industrial-energy-transition": {
     icon: Factory,
-    industry: "Industrial & Energy",
-    region: "Europe · Middle East · APAC",
-    headline: "Energy-transition leadership across 3 continents",
-    challenge:
-      "A heavy-industry group building out a low-carbon business needed engineering, EPC, and commercial leadership across sites on three continents.",
-    approach:
-      "Regulated-industry evidence scoring — safety records, EPC delivery track record, and commissioning experience were mandatory shortlist gates.",
-    metrics: [
-      { label: "Positions filled", value: "31", sub: "engineering + commercial" },
-      { label: "Sites staffed", value: "9", sub: "on 3 continents" },
-      { label: "Time to shortlist", value: "7d", sub: "median per role" },
-      { label: "Offer acceptance", value: "84%", sub: "shortlist → hire" },
-    ],
-    roles: ["Head of Low-Carbon Projects", "VP Engineering", "EPC Program Director", "Commissioning Manager", "Head of HSE", "Commercial Director"],
-    timeline: [
-      { day: "Day 0", label: "Program charter · 3 regions" },
-      { day: "Day 10", label: "First regional shortlists" },
-      { day: "Day 60", label: "18 senior seats filled" },
-      { day: "Day 150", label: "All 31 roles closed" },
-    ],
-    testimonial: {
-      quote: "The shortlist gate for safety and EPC delivery experience is what won us the confidence of our board.",
-      author: "Group HR Director",
-      role: "Industrial energy group",
-    },
     gradient: "from-[#1e1a12] via-[#4a3a1f] to-[#c8933a]",
     accent: "text-[#f5cf7a]",
     pattern: IndustrialPattern,
   },
-];
+};
+
+type Study = CaseStudy & VisualMeta;
+
+const STUDIES: Study[] = CASE_STUDIES.map((study) => ({
+  ...study,
+  ...VISUALS[study.slug],
+}));
 
 // --- Global reach -------------------------------------------------------------
 
@@ -365,8 +206,8 @@ function HeroMetrics() {
     <dl className="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
       {items.map((m) => (
         <div key={m.label} className="rounded-2xl border border-border/60 bg-card/60 p-4 backdrop-blur">
-          <m.icon className="h-5 w-5 text-primary" aria-hidden />
-          <dt className="mt-3 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+          <m.icon className="h-5 w-5 text-[color:var(--brand-ocean-text)]" aria-hidden />
+          <dt className="mt-3 text-[10px] font-semibold uppercase tracking-widest text-[color:var(--brand-navy)]/80">
             {m.label}
           </dt>
           <dd className="mt-1 font-display text-2xl font-semibold tracking-tight sm:text-3xl">
@@ -389,13 +230,13 @@ function TrustStrip() {
   ];
   return (
     <div className="mt-8 rounded-2xl border border-border/60 bg-muted/20 p-5">
-      <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">
+      <p className="text-[11px] font-semibold uppercase tracking-widest text-[color:var(--brand-navy)]/80">
         Active or recent engagements represented on this page
       </p>
       <ul className="mt-3 flex flex-wrap gap-2">
         {items.map((i) => (
           <li key={i} className="inline-flex items-center gap-1.5 rounded-full border border-border/60 bg-background px-3 py-1 text-xs font-medium">
-            <CheckCircle2 className="h-3.5 w-3.5 text-primary" aria-hidden /> {i}
+            <CheckCircle2 className="h-3.5 w-3.5 text-[color:var(--brand-ocean-text)]" aria-hidden /> {i}
           </li>
         ))}
       </ul>
@@ -412,21 +253,21 @@ function ProcessStrip() {
   ];
   return (
     <div className="mt-8 rounded-2xl border border-border/60 bg-background p-6">
-      <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">
+      <p className="text-[11px] font-semibold uppercase tracking-widest text-[color:var(--brand-navy)]/80">
         Every engagement runs the same 4 stages
       </p>
       <ol className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
         {steps.map((s, i) => (
           <li key={s.label} className="relative flex items-start gap-3 rounded-xl border border-border/60 bg-card p-4">
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-[color:var(--brand-ocean-text)]">
               <s.icon className="h-4 w-4" aria-hidden />
             </div>
             <div>
-              <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+              <p className="text-[10px] font-semibold uppercase tracking-widest text-[color:var(--brand-navy)]/80">
                 Stage {i + 1}
               </p>
               <p className="text-sm font-semibold">{s.label}</p>
-              <p className="text-xs text-muted-foreground">{s.sub}</p>
+              <p className="text-xs text-[color:var(--brand-navy)]/80">{s.sub}</p>
             </div>
           </li>
         ))}
@@ -448,6 +289,7 @@ function StudyCard({ study }: { study: Study }) {
               <Icon className="h-3.5 w-3.5" aria-hidden />
               {study.industry}
             </div>
+            <p className="mt-2 text-xs font-medium text-white/90">{study.companyType}</p>
             <p className="mt-3 inline-flex items-center gap-1.5 text-xs font-medium text-white/80">
               <MapPin className="h-3.5 w-3.5" aria-hidden /> {study.region}
             </p>
@@ -459,40 +301,48 @@ function StudyCard({ study }: { study: Study }) {
         </h3>
       </div>
 
-      {/* Metrics band */}
-      <dl className="grid grid-cols-2 divide-x divide-y divide-border/60 border-b border-border/60 bg-background sm:grid-cols-4 sm:divide-y-0">
-        {study.metrics.map((m) => (
+      {/* Candidate quality signal */}
+      <div className="grid grid-cols-2 divide-x divide-y divide-border/60 border-b border-border/60 bg-background sm:grid-cols-4 sm:divide-y-0">
+        {study.qualitySignal.map((m) => (
           <div key={m.label} className="p-5 text-center">
-            <dd className="font-display text-2xl font-semibold tracking-tight sm:text-3xl">{m.value}</dd>
-            <dt className="mt-1 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">{m.label}</dt>
-            {m.sub && <p className="mt-0.5 text-[11px] text-muted-foreground">{m.sub}</p>}
+            <p className="font-display text-2xl font-semibold tracking-tight sm:text-3xl">{m.value}</p>
+            <p className="mt-1 text-[10px] font-semibold uppercase tracking-widest text-[color:var(--brand-navy)]/80">{m.label}</p>
+            {m.sub && <p className="mt-0.5 text-[11px] text-[color:var(--brand-navy)]/80">{m.sub}</p>}
           </div>
         ))}
-      </dl>
+      </div>
 
-      {/* Body */}
+      {/* Situation + roles needed */}
       <div className="grid gap-6 p-6 md:grid-cols-2 md:p-8">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Challenge</p>
-          <p className="mt-2 text-sm leading-relaxed">{study.challenge}</p>
+          <p className="text-xs font-semibold uppercase tracking-widest text-[color:var(--brand-navy)]/80">Client situation</p>
+          <p className="mt-2 text-sm leading-relaxed">{study.situation}</p>
         </div>
         <div>
-          <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">TaaSFlow approach</p>
-          <p className="mt-2 text-sm leading-relaxed">{study.approach}</p>
+          <p className="text-xs font-semibold uppercase tracking-widest text-[color:var(--brand-navy)]/80">Roles needed</p>
+          <ul className="mt-3 flex flex-wrap gap-2">
+            {study.rolesNeeded.map((r) => (
+              <li key={r} className="rounded-full border border-border/60 bg-background px-3 py-1 text-xs font-medium">
+                {r}
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
 
-      {/* Timeline */}
+      {/* Timeline to first shortlist */}
       <div className="border-t border-border/60 bg-muted/10 p-6 md:p-8">
-        <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Engagement timeline</p>
+        <p className="text-xs font-semibold uppercase tracking-widest text-[color:var(--brand-navy)]/80">
+          Timeline to first shortlist ({study.timeToFirstShortlist})
+        </p>
         <ol className="relative mt-4 grid grid-cols-2 gap-4 sm:grid-cols-4">
           {study.timeline.map((t, i) => (
             <li key={i} className="relative">
               <div className="flex items-center gap-2">
-                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/10 text-[11px] font-semibold text-primary">
+                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/10 text-[11px] font-semibold text-[color:var(--brand-ocean-text)]">
                   {i + 1}
                 </span>
-                <span className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">{t.day}</span>
+                <span className="text-[11px] font-semibold uppercase tracking-widest text-[color:var(--brand-navy)]/80">{t.day}</span>
               </div>
               <p className="mt-1.5 text-sm font-medium">{t.label}</p>
             </li>
@@ -500,31 +350,28 @@ function StudyCard({ study }: { study: Study }) {
         </ol>
       </div>
 
-      {/* Roles + testimonial */}
-      <div className="grid gap-6 border-t border-border/60 bg-muted/20 p-6 md:grid-cols-[1.4fr_1fr] md:p-8">
+      {/* Outcome + testimonial */}
+      <div className={`grid gap-6 border-t border-border/60 bg-muted/20 p-6 md:p-8 ${study.testimonial ? "md:grid-cols-[1.4fr_1fr]" : ""}`}>
         <div>
-          <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-            Representative roles delivered
+          <p className="text-xs font-semibold uppercase tracking-widest text-[color:var(--brand-navy)]/80">
+            Outcome — what happened after they paid
           </p>
-          <ul className="mt-3 flex flex-wrap gap-2">
-            {study.roles.map((r) => (
-              <li key={r} className="rounded-full border border-border/60 bg-background px-3 py-1 text-xs font-medium">
-                {r}
-              </li>
-            ))}
-          </ul>
+          <p className="mt-1 text-sm font-semibold text-[color:var(--brand-navy)]">{study.outcomeHighlight}</p>
+          <p className="mt-2 text-sm leading-relaxed">{study.outcome}</p>
         </div>
-        <figure className="rounded-2xl border border-border/60 bg-background p-5">
-          <Quote className="h-5 w-5 text-primary" aria-hidden />
-          <blockquote className="mt-2 text-sm italic leading-relaxed">
-            "{study.testimonial.quote}"
-          </blockquote>
-          <figcaption className="mt-3 text-xs text-muted-foreground">
-            <span className="font-semibold text-foreground">{study.testimonial.author}</span>
-            <br />
-            {study.testimonial.role}
-          </figcaption>
-        </figure>
+        {study.testimonial && (
+          <figure className="rounded-2xl border border-border/60 bg-background p-5">
+            <Quote className="h-5 w-5 text-[color:var(--brand-ocean-text)]" aria-hidden />
+            <blockquote className="mt-2 text-sm italic leading-relaxed">
+              "{study.testimonial.quote}"
+            </blockquote>
+            <figcaption className="mt-3 text-xs text-[color:var(--brand-navy)]/80">
+              <span className="font-semibold text-foreground">{study.testimonial.author}</span>
+              <br />
+              {study.testimonial.role}
+            </figcaption>
+          </figure>
+        )}
       </div>
     </article>
   );
@@ -614,7 +461,7 @@ function OutcomesGrid() {
   return (
     <section className="mt-20">
       <div className="max-w-2xl">
-        <p className="text-xs font-semibold uppercase tracking-widest text-primary">Outcomes</p>
+        <p className="text-xs font-semibold uppercase tracking-widest text-[color:var(--brand-ocean-text)]">Outcomes</p>
         <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight sm:text-4xl">
           Numbers that show up in the client's own dashboard.
         </h2>
@@ -622,8 +469,8 @@ function OutcomesGrid() {
       <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {outcomes.map((o) => (
           <li key={o.label} className="rounded-2xl border border-border/60 bg-card p-6">
-            <p className="font-display text-4xl font-semibold tracking-tight text-primary">{o.value}</p>
-            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{o.label}</p>
+            <p className="font-display text-4xl font-semibold tracking-tight text-[color:var(--brand-ocean-text)]">{o.value}</p>
+            <p className="mt-3 text-sm leading-relaxed text-[color:var(--brand-navy)]/80">{o.label}</p>
           </li>
         ))}
       </ul>
@@ -636,13 +483,13 @@ function CaseStudiesPage() {
     <SiteShell>
       <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
         <header className="max-w-3xl">
-          <p className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-primary">
+          <p className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-[color:var(--brand-ocean-text)]">
             <Sparkles className="h-3.5 w-3.5" aria-hidden /> Case studies
           </p>
           <h1 className="mt-3 font-display text-4xl font-semibold tracking-tight sm:text-6xl">
             Results, visualized.
           </h1>
-          <p className="mt-4 max-w-2xl text-lg text-muted-foreground">
+          <p className="mt-4 max-w-2xl text-lg text-[color:var(--brand-navy)]/80">
             Six engagements across hospitality, finance, healthcare, tech,
             consumer, and industrial — with a global operating footprint and
             evidence-scored shortlists every time.
@@ -667,7 +514,7 @@ function CaseStudiesPage() {
         <GlobalReach />
 
         {/* Policy note */}
-        <section className="mt-16 rounded-2xl border border-border/60 bg-muted/20 p-6 text-sm text-muted-foreground md:p-8">
+        <section className="mt-16 rounded-2xl border border-border/60 bg-muted/20 p-6 text-sm text-[color:var(--brand-navy)]/80 md:p-8">
           Metrics reflect aggregate delivery performance across representative
           TaaSFlow engagements in each vertical. Testimonials are attributed to
           the role and organization type; named case studies with written
@@ -680,7 +527,7 @@ function CaseStudiesPage() {
           <h2 className="font-display text-3xl font-semibold tracking-tight">
             Your engagement is next.
           </h2>
-          <p className="mt-3 max-w-2xl text-muted-foreground">
+          <p className="mt-3 max-w-2xl text-[color:var(--brand-navy)]/80">
             Start an intake and see shortlist delivery inside your own
             workspace in under 10 days.
           </p>

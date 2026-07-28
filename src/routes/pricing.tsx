@@ -17,6 +17,8 @@ import { Check, X } from "lucide-react";
 import { PageConnections } from "@/components/marketing/page-connections";
 import { AgencyFeeComparison } from "@/components/marketing/agency-fee-comparison";
 import { RiskProof } from "@/components/marketing/risk-proof";
+import { ModelComparisonTable } from "@/components/marketing/model-comparison-table";
+import { CaseStudyPreviews } from "@/components/marketing/case-study-previews";
 
 export const Route = createFileRoute("/pricing")({
   head: () =>
@@ -38,17 +40,17 @@ function PricingPage() {
       <PublicSection className="pb-6 pt-16 sm:pt-20">
         <PublicPage>
           <div className="text-center">
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
               Transparent Pricing
             </p>
             <h1 className="mt-3 font-[family-name:var(--brand-font-display)] text-4xl font-semibold tracking-tight sm:text-5xl">
               Plans that scale with volume
             </h1>
-            <p className="mt-5 max-w-2xl mx-auto text-lg text-[color:var(--brand-navy)]/70">
+            <p className="mt-5 max-w-2xl mx-auto text-lg text-[color:var(--brand-navy)]/80">
               Higher volume = lower cost per role. Annual commitment saves 10%.
             </p>
           </div>
-          <ul className="mt-8 flex flex-wrap justify-center gap-x-8 gap-y-3 text-sm text-[color:var(--brand-navy)]/75">
+          <ul className="mt-8 flex flex-wrap justify-center gap-x-8 gap-y-3 text-sm text-[color:var(--brand-navy)]/80">
             {[
               "No salary percentage fees",
               "Ranked candidates in 14 days",
@@ -84,7 +86,7 @@ function PricingPage() {
                 "flex-1 rounded-full px-4 py-2 text-sm font-semibold transition-colors " +
                 (mode === "oneoff"
                   ? "bg-[color:var(--brand-navy)] text-white shadow-sm"
-                  : "text-[color:var(--brand-navy)]/70 hover:text-[color:var(--brand-navy)]")
+                  : "text-[color:var(--brand-navy)]/80 hover:text-[color:var(--brand-navy)]")
               }
             >
               One-Off Package
@@ -98,13 +100,13 @@ function PricingPage() {
                 "flex-1 rounded-full px-4 py-2 text-sm font-semibold transition-colors " +
                 (mode === "subscription"
                   ? "bg-[color:var(--brand-navy)] text-white shadow-sm"
-                  : "text-[color:var(--brand-navy)]/70 hover:text-[color:var(--brand-navy)]")
+                  : "text-[color:var(--brand-navy)]/80 hover:text-[color:var(--brand-navy)]")
               }
             >
               Subscription
             </button>
           </div>
-          <p className="mt-4 text-center text-sm text-[color:var(--brand-navy)]/65">
+          <p className="mt-4 text-center text-sm text-[color:var(--brand-navy)]/80">
             {mode === "oneoff"
               ? "Flat fee, delivered weekly. Best when you know the roles you need to fill right now."
               : "Continuous monthly hiring at volume — Bronze through Enterprise."}
@@ -122,7 +124,7 @@ function PricingPage() {
                   <PricingTierCard key={tier.id} tier={tier} />
                 ))}
               </div>
-              <p className="mt-6 text-sm text-[color:var(--brand-navy)]/70">
+              <p className="mt-6 text-sm text-[color:var(--brand-navy)]/80">
                 Deliveries include the{" "}
                 <span className="font-semibold text-[color:var(--brand-navy)]">top 10</span>{" "}
                 ranked candidates per position each week.
@@ -153,10 +155,25 @@ function PricingPage() {
         </PublicPage>
       </PublicSection>
 
+      {/* Operating-model comparison — agency vs sourcing tools vs TaaSFlow */}
+      <PublicSection className="py-10">
+        <PublicPage>
+          <ModelComparisonTable />
+        </PublicPage>
+      </PublicSection>
+
+
       {/* Live agency comparator */}
       <PublicSection className="py-10">
         <PublicPage>
           <AgencyComparator />
+        </PublicPage>
+      </PublicSection>
+
+      {/* Real engagements */}
+      <PublicSection className="py-10">
+        <PublicPage>
+          <CaseStudyPreviews count={2} />
         </PublicPage>
       </PublicSection>
 
@@ -176,7 +193,7 @@ function PricingPage() {
               <h2 className="font-[family-name:var(--brand-font-display)] text-2xl font-semibold tracking-tight">
                 What every tier includes
               </h2>
-              <p className="mt-2 text-sm text-[color:var(--brand-navy)]/70">
+              <p className="mt-2 text-sm text-[color:var(--brand-navy)]/80">
                 Baseline capabilities that ship on every engagement.
               </p>
               <ul className="mt-5 space-y-2.5 text-sm text-[color:var(--brand-navy)]/85">
@@ -192,13 +209,13 @@ function PricingPage() {
               <h2 className="font-[family-name:var(--brand-font-display)] text-2xl font-semibold tracking-tight">
                 What you will never be charged
               </h2>
-              <p className="mt-2 text-sm text-[color:var(--brand-navy)]/70">
+              <p className="mt-2 text-sm text-[color:var(--brand-navy)]/80">
                 Charges you will never see on a TaaSFlow invoice.
               </p>
               <ul className="mt-5 space-y-2.5 text-sm text-[color:var(--brand-navy)]/85">
                 {NEVER_CHARGED.map((x) => (
                   <li key={x} className="flex gap-2">
-                    <X className="mt-0.5 h-4 w-4 shrink-0 text-[color:var(--brand-navy)]/70" aria-hidden />
+                    <X className="mt-0.5 h-4 w-4 shrink-0 text-[color:var(--brand-navy)]/80" aria-hidden />
                     <span>{x}</span>
                   </li>
                 ))}
@@ -211,33 +228,33 @@ function PricingPage() {
       {/* FAQ */}
       <PublicSection className="py-10">
         <PublicPage>
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
             Pricing FAQ
           </p>
           <h2 className="mt-3 max-w-3xl font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight sm:text-4xl">
             The questions we get before a first engagement.
           </h2>
-          <dl className="mt-8 grid gap-6 md:grid-cols-2">
+          <div className="mt-8 grid gap-6 md:grid-cols-2">
             {FAQ.map((f) => (
               <details
                 key={f.q}
                 className="group rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6 [&_summary::-webkit-details-marker]:hidden"
               >
                 <summary className="flex cursor-pointer items-start justify-between gap-4">
-                  <dt className="font-semibold text-[color:var(--brand-navy)]">{f.q}</dt>
+                  <span className="font-semibold text-[color:var(--brand-navy)]">{f.q}</span>
                   <span
                     aria-hidden
-                    className="mt-0.5 text-[color:var(--brand-navy)]/50 transition-transform group-open:rotate-45"
+                    className="mt-0.5 text-[color:var(--brand-navy)]/80 transition-transform group-open:rotate-45"
                   >
                     +
                   </span>
                 </summary>
-                <dd className="mt-3 text-sm leading-relaxed text-[color:var(--brand-navy)]/75">
+                <p className="mt-3 text-sm leading-relaxed text-[color:var(--brand-navy)]/80">
                   {f.a}
-                </dd>
+                </p>
               </details>
             ))}
-          </dl>
+          </div>
         </PublicPage>
       </PublicSection>
 

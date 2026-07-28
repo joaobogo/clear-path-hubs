@@ -152,13 +152,13 @@ function PitchPage() {
       {/* Section 1 — hero */}
       <PublicSection className="pt-16">
         <PublicPage className="max-w-4xl text-center">
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean)]">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean-text)]">
             Overview · 2026
           </p>
           <h1 className="mt-4 font-[family-name:var(--brand-font-display)] text-4xl font-semibold tracking-tight sm:text-5xl lg:text-6xl">
             The recruiting engine you can see through.
           </h1>
-          <p className="mx-auto mt-6 max-w-2xl text-lg text-[color:var(--brand-navy)]/70">
+          <p className="mx-auto mt-6 max-w-2xl text-lg text-[color:var(--brand-navy)]/80">
             A subscription recruiting function delivered as product. Human
             recruiters, evidence-first scoring, and a workspace your team owns.
           </p>
@@ -183,7 +183,7 @@ function PitchPage() {
       <PublicSection className="border-t border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-mist)]/40">
         <PublicPage>
           <div className="max-w-3xl">
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
               The problem
             </p>
             <h2 className="mt-3 font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight sm:text-4xl">
@@ -193,10 +193,10 @@ function PitchPage() {
           <div className="mt-10 grid gap-5 md:grid-cols-2">
             {PLACEMENT_FAILS.map((f) => (
               <div key={f.title} className="flex gap-4 rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6">
-                <XCircle className="mt-1 h-5 w-5 flex-shrink-0 text-[color:var(--brand-navy)]/40" aria-hidden />
+                <XCircle className="mt-1 h-5 w-5 flex-shrink-0 text-[color:var(--brand-navy)]/80" aria-hidden />
                 <div>
                   <h3 className="font-semibold text-[color:var(--brand-navy)]">{f.title}</h3>
-                  <p className="mt-2 text-sm text-[color:var(--brand-navy)]/75">{f.body}</p>
+                  <p className="mt-2 text-sm text-[color:var(--brand-navy)]/80">{f.body}</p>
                 </div>
               </div>
             ))}
@@ -208,13 +208,13 @@ function PitchPage() {
       <PublicSection>
         <PublicPage>
           <div className="max-w-3xl">
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean)]">
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean-text)]">
               The engine
             </p>
             <h2 className="mt-3 font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight sm:text-4xl">
               A live hiring engine, not a batch delivery.
             </h2>
-            <p className="mt-4 text-[color:var(--brand-navy)]/75">
+            <p className="mt-4 text-[color:var(--brand-navy)]/80">
               Every stage is visible. Every score cites its evidence. The engine
               runs continuously — you don't wait two weeks to see progress.
             </p>
@@ -222,11 +222,11 @@ function PitchPage() {
           <ol className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
             {ENGINE_STEPS.map((s) => (
               <li key={s.n} className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6">
-                <span className="font-[family-name:var(--brand-font-display)] text-3xl font-semibold text-[color:var(--brand-ocean)]/70">
+                <span className="font-[family-name:var(--brand-font-display)] text-3xl font-semibold text-[color:var(--brand-ocean-text)]/70">
                   {s.n}
                 </span>
                 <h3 className="mt-3 text-lg font-semibold text-[color:var(--brand-navy)]">{s.title}</h3>
-                <p className="mt-2 text-sm text-[color:var(--brand-navy)]/75">{s.body}</p>
+                <p className="mt-2 text-sm text-[color:var(--brand-navy)]/80">{s.body}</p>
               </li>
             ))}
           </ol>
@@ -238,29 +238,29 @@ function PitchPage() {
         <PublicPage>
           <div className="grid gap-10 lg:grid-cols-[1fr_1.2fr]">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
                 Client control
               </p>
               <h2 className="mt-3 font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight sm:text-4xl">
                 You run the pipeline. We do the work.
               </h2>
-              <p className="mt-4 text-[color:var(--brand-navy)]/75">
+              <p className="mt-4 text-[color:var(--brand-navy)]/80">
                 The workspace is the product. Not a monthly slide deck, not a
                 spreadsheet dropped in your inbox — a live surface where the
                 shortlist, the reasoning, and the next decision all live in one place.
               </p>
               <div className="mt-6 flex items-center gap-2 text-sm font-medium text-[color:var(--brand-navy)]/80">
-                <ShieldCheck className="h-4 w-4 text-[color:var(--brand-ocean)]" aria-hidden />
+                <ShieldCheck className="h-4 w-4 text-[color:var(--brand-ocean-text)]" aria-hidden />
                 Your pipeline stays yours — even when a role closes.
               </div>
             </div>
             <ul className="space-y-3">
               {CONTROL.map((c) => (
                 <li key={c.label} className="flex gap-3 rounded-xl border border-[color:var(--brand-navy)]/10 bg-white p-5">
-                  <CheckCircle2 className="mt-0.5 h-5 w-5 flex-shrink-0 text-[color:var(--brand-ocean)]" aria-hidden />
+                  <CheckCircle2 className="mt-0.5 h-5 w-5 flex-shrink-0 text-[color:var(--brand-ocean-text)]" aria-hidden />
                   <div>
                     <p className="font-semibold text-[color:var(--brand-navy)]">{c.label}</p>
-                    <p className="mt-1 text-sm text-[color:var(--brand-navy)]/70">{c.body}</p>
+                    <p className="mt-1 text-sm text-[color:var(--brand-navy)]/80">{c.body}</p>
                   </div>
                 </li>
               ))}
@@ -273,7 +273,7 @@ function PitchPage() {
       <PublicSection>
         <PublicPage>
           <div className="max-w-3xl">
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean)]">
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean-text)]">
               The shortlist
             </p>
             <h2 className="mt-3 font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight sm:text-4xl">
@@ -281,7 +281,7 @@ function PitchPage() {
             </h2>
           </div>
           <div className="mt-10 overflow-hidden rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white">
-            <div className="border-b border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-mist)]/50 px-6 py-3 text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">
+            <div className="border-b border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-mist)]/50 px-6 py-3 text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
               Head of Growth — top 3 delivered
             </div>
             {[
@@ -290,23 +290,23 @@ function PitchPage() {
               { rank: 3, name: "Candidate C · Good Fit", score: 81, evidence: "Head of growth at bootstrapped $10M ARR company." },
             ].map((c) => (
               <div key={c.rank} className="flex items-center gap-6 border-b border-[color:var(--brand-navy)]/5 px-6 py-5 last:border-b-0">
-                <span className="font-[family-name:var(--brand-font-display)] text-2xl font-semibold text-[color:var(--brand-navy)]/40">
+                <span className="font-[family-name:var(--brand-font-display)] text-2xl font-semibold text-[color:var(--brand-navy)]/80">
                   #{c.rank}
                 </span>
                 <div className="flex-1 min-w-0">
                   <p className="font-semibold text-[color:var(--brand-navy)]">{c.name}</p>
-                  <p className="mt-1 text-sm text-[color:var(--brand-navy)]/70">"{c.evidence}"</p>
+                  <p className="mt-1 text-sm text-[color:var(--brand-navy)]/80">"{c.evidence}"</p>
                 </div>
                 <div className="text-right">
-                  <p className="font-[family-name:var(--brand-font-display)] text-2xl font-semibold text-[color:var(--brand-ocean)]">
+                  <p className="font-[family-name:var(--brand-font-display)] text-2xl font-semibold text-[color:var(--brand-ocean-text)]">
                     {c.score}
                   </p>
-                  <p className="text-xs text-[color:var(--brand-navy)]/55">fit score</p>
+                  <p className="text-xs text-[color:var(--brand-navy)]/80">fit score</p>
                 </div>
               </div>
             ))}
           </div>
-          <p className="mt-4 text-xs text-[color:var(--brand-navy)]/55">
+          <p className="mt-4 text-xs text-[color:var(--brand-navy)]/80">
             Illustrative example. Real shortlists include CV citations, interview guides, and stage history.
           </p>
         </PublicPage>
@@ -316,13 +316,13 @@ function PitchPage() {
       <PublicSection className="border-t border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-mist)]/40">
         <PublicPage>
           <div className="max-w-3xl">
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
               Dashboards
             </p>
             <h2 className="mt-3 font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight sm:text-4xl">
               Visibility at every altitude.
             </h2>
-            <p className="mt-4 text-[color:var(--brand-navy)]/75">
+            <p className="mt-4 text-[color:var(--brand-navy)]/80">
               From the daily standup to the board meeting — the same evidence
               scaled to the right level of detail.
             </p>
@@ -330,13 +330,13 @@ function PitchPage() {
           <div className="mt-10 grid gap-5 md:grid-cols-2">
             {DASHBOARDS.map((d, i) => (
               <div key={d.label} className="flex gap-4 rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6">
-                {i === 0 ? <Users className="mt-1 h-5 w-5 text-[color:var(--brand-ocean)]" aria-hidden /> : null}
-                {i === 1 ? <LineChart className="mt-1 h-5 w-5 text-[color:var(--brand-ocean)]" aria-hidden /> : null}
-                {i === 2 ? <Sparkles className="mt-1 h-5 w-5 text-[color:var(--brand-ocean)]" aria-hidden /> : null}
-                {i === 3 ? <ShieldCheck className="mt-1 h-5 w-5 text-[color:var(--brand-ocean)]" aria-hidden /> : null}
+                {i === 0 ? <Users className="mt-1 h-5 w-5 text-[color:var(--brand-ocean-text)]" aria-hidden /> : null}
+                {i === 1 ? <LineChart className="mt-1 h-5 w-5 text-[color:var(--brand-ocean-text)]" aria-hidden /> : null}
+                {i === 2 ? <Sparkles className="mt-1 h-5 w-5 text-[color:var(--brand-ocean-text)]" aria-hidden /> : null}
+                {i === 3 ? <ShieldCheck className="mt-1 h-5 w-5 text-[color:var(--brand-ocean-text)]" aria-hidden /> : null}
                 <div>
                   <h3 className="font-semibold text-[color:var(--brand-navy)]">{d.label}</h3>
-                  <p className="mt-2 text-sm text-[color:var(--brand-navy)]/75">{d.body}</p>
+                  <p className="mt-2 text-sm text-[color:var(--brand-navy)]/80">{d.body}</p>
                 </div>
               </div>
             ))}
@@ -348,13 +348,13 @@ function PitchPage() {
       <PublicSection>
         <PublicPage>
           <div className="max-w-3xl">
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean)]">
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean-text)]">
               Economics
             </p>
             <h2 className="mt-3 font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight sm:text-4xl">
               Priced like software. Delivered by people.
             </h2>
-            <p className="mt-4 text-[color:var(--brand-navy)]/75">
+            <p className="mt-4 text-[color:var(--brand-navy)]/80">
             A flat one-time fee per package — no salary percentages, no placement
             fees, ever. Move to a custom continuous plan when volume warrants it.
           </p>
@@ -369,19 +369,19 @@ function PitchPage() {
                     : "border-[color:var(--brand-navy)]/10 bg-white"
                 }`}
               >
-                <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">
+                <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
                   {t.tier}
                 </p>
                 <p className="mt-3 font-[family-name:var(--brand-font-display)] text-3xl font-semibold text-[color:var(--brand-navy)]">
                   {t.price}
-                  <span className="text-base font-normal text-[color:var(--brand-navy)]/55">{t.unit}</span>
+                  <span className="text-base font-normal text-[color:var(--brand-navy)]/80">{t.unit}</span>
                 </p>
                 <p className="mt-3 text-sm font-medium text-[color:var(--brand-navy)]">{t.fits}</p>
-                <p className="mt-2 text-sm text-[color:var(--brand-navy)]/70">{t.line}</p>
+                <p className="mt-2 text-sm text-[color:var(--brand-navy)]/80">{t.line}</p>
               </div>
             ))}
           </div>
-          <p className="mt-6 text-sm text-[color:var(--brand-navy)]/65">
+          <p className="mt-6 text-sm text-[color:var(--brand-navy)]/80">
             Compare to placement: a single €120k hire at a 20% fee equals more than five Hiring Sprints.
           </p>
         </PublicPage>
