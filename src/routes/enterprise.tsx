@@ -265,8 +265,31 @@ function EnterprisePage() {
             up or down between review cycles — {SUBSCRIPTION_ANNUAL_DISCOUNT_LABEL.toLowerCase()}.
           </p>
 
-          <div className="mt-8 overflow-x-auto">
+          <ul className="mt-8 space-y-3 md:hidden">
+            {VOLUME_BANDS.map((b) => (
+              <li key={b.band} className="rounded-2xl border border-[color:var(--brand-navy)]/12 bg-white p-4">
+                <div className="flex items-baseline justify-between gap-3">
+                  <span className="font-semibold text-[color:var(--brand-navy)]">{b.band}</span>
+                  <span className="shrink-0 font-semibold text-[color:var(--brand-navy)]">{b.price}</span>
+                </div>
+                <p className="mt-1 text-xs text-[color:var(--brand-navy)]/80">{b.fit}</p>
+                <dl className="mt-3 space-y-1.5 text-sm">
+                  <div className="flex gap-2">
+                    <dt className="shrink-0 text-[color:var(--brand-navy)]/70">Cadence:</dt>
+                    <dd className="text-[color:var(--brand-navy)]/85">{b.cadence}</dd>
+                  </div>
+                  <div className="flex gap-2">
+                    <dt className="shrink-0 text-[color:var(--brand-navy)]/70">Coverage:</dt>
+                    <dd className="text-[color:var(--brand-navy)]/85">{b.pod}</dd>
+                  </div>
+                </dl>
+              </li>
+            ))}
+          </ul>
+
+          <div className="mt-8 hidden overflow-x-auto md:block">
             <table className="w-full min-w-[42rem] border-collapse text-left text-sm">
+
               <caption className="sr-only">
                 Subscription bands by number of active roles
               </caption>
