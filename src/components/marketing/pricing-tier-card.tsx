@@ -83,7 +83,7 @@ export function PricingTierCard({ tier }: { tier: PricingTier }) {
             type="button"
             onClick={() => setOpen((v) => !v)}
             aria-expanded={open}
-            className="inline-flex items-center gap-1.5 text-xs font-semibold text-[color:var(--brand-navy)]/80 hover:text-[color:var(--brand-navy)]"
+            className="inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold text-[color:var(--brand-navy)]/80 hover:text-[color:var(--brand-navy)]"
           >
             <ChevronDown
               className={"h-3.5 w-3.5 transition-transform " + (open ? "rotate-180" : "")}

@@ -420,16 +420,16 @@ function Footer() {
             <nav aria-label="Legal" className="flex flex-wrap items-center gap-x-5 gap-y-2">
               {legalGroup.links.filter((l) => !l.hidden).map((l) =>
                 l.external ? (
-                  <a key={l.label} href={l.to} className="hover:text-[color:var(--brand-navy)]">
+                  <a key={l.label} href={l.to} className="inline-flex min-h-11 items-center hover:text-[color:var(--brand-navy)]">
                     {l.label}
                   </a>
                 ) : (
-                  <Link key={l.label} to={l.to} className="hover:text-[color:var(--brand-navy)]">
+                  <Link key={l.label} to={l.to} className="inline-flex min-h-11 items-center hover:text-[color:var(--brand-navy)]">
                     {l.label}
                   </Link>
                 ),
               )}
-              <a href="mailto:hello@taasflow.com" className="hover:text-[color:var(--brand-navy)]">
+              <a href="mailto:hello@taasflow.com" className="inline-flex min-h-11 items-center hover:text-[color:var(--brand-navy)]">
                 hello@taasflow.com
               </a>
             </nav>
@@ -562,7 +562,7 @@ export function Breadcrumbs({
             <li key={i} className="flex items-center gap-1.5">
               {i > 0 && <ChevronRight className="h-3.5 w-3.5" aria-hidden />}
               {item.to && !last ? (
-                <Link to={item.to} className="hover:text-[color:var(--brand-navy)]">
+                <Link to={item.to} className="inline-flex min-h-11 items-center hover:text-[color:var(--brand-navy)]">
                   {item.label}
                 </Link>
               ) : (
