@@ -99,13 +99,13 @@ export function InternalLinkHub() {
           <div className="flex flex-wrap items-center gap-3">
             <Link
               to="/intake"
-              className="inline-flex min-h-10 items-center rounded-md bg-[color:var(--brand-navy)] px-4 py-2 text-sm font-semibold text-white hover:bg-[color:var(--brand-navy-dark)]"
+              className="inline-flex min-h-11 items-center rounded-md bg-[color:var(--brand-navy)] px-4 py-2 text-sm font-semibold text-white hover:bg-[color:var(--brand-navy-dark)]"
             >
               Start hiring
             </Link>
             <Link
               to="/how-it-works"
-              className="inline-flex min-h-10 items-center rounded-md border border-[color:var(--brand-navy)]/15 px-4 py-2 text-sm font-semibold text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5"
+              className="inline-flex min-h-11 items-center rounded-md border border-[color:var(--brand-navy)]/15 px-4 py-2 text-sm font-semibold text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5"
             >
               How it works
             </Link>
@@ -124,12 +124,12 @@ export function InternalLinkHub() {
             <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
               Solutions
             </p>
-            <ul className="mt-4 space-y-2.5">
+            <ul className="mt-2 space-y-0.5 sm:mt-4">
               {SOLUTION_LINKS.map((l) => (
                 <li key={l.to}>
                   <Link
                     to={l.to}
-                    className="text-sm text-[color:var(--brand-navy)]/80 hover:text-[color:var(--brand-navy)]"
+                    className="inline-flex min-h-11 items-center text-sm text-[color:var(--brand-navy)]/80 hover:text-[color:var(--brand-navy)]"
                   >
                     {l.label}
                   </Link>
@@ -150,13 +150,13 @@ export function InternalLinkHub() {
                 All 57 →
               </Link>
             </div>
-            <ul className="mt-4 grid grid-cols-2 gap-x-4 gap-y-2 sm:grid-cols-3">
+            <ul className="mt-2 grid grid-cols-2 gap-x-4 sm:mt-4 sm:grid-cols-3">
               {industries.map((e) => (
                 <li key={e.slug}>
                   <Link
                     to="/industries/$slug"
                     params={{ slug: e.slug }}
-                    className="text-sm text-[color:var(--brand-navy)]/80 hover:text-[color:var(--brand-navy)]"
+                    className="inline-flex min-h-11 items-center text-sm text-[color:var(--brand-navy)]/80 hover:text-[color:var(--brand-navy)]"
                   >
                     {e.name}
                   </Link>
@@ -169,12 +169,12 @@ export function InternalLinkHub() {
             <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
               Resources
             </p>
-            <ul className="mt-4 space-y-2.5">
+            <ul className="mt-2 space-y-0.5 sm:mt-4">
               {RESOURCE_LINKS.map((l) => (
                 <li key={l.to}>
                   <Link
                     to={l.to}
-                    className="text-sm text-[color:var(--brand-navy)]/80 hover:text-[color:var(--brand-navy)]"
+                    className="inline-flex min-h-11 items-center text-sm text-[color:var(--brand-navy)]/80 hover:text-[color:var(--brand-navy)]"
                   >
                     {l.label}
                   </Link>
@@ -185,12 +185,12 @@ export function InternalLinkHub() {
             <p className="mt-6 text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
               For candidates
             </p>
-            <ul className="mt-4 space-y-2.5">
+            <ul className="mt-2 space-y-0.5 sm:mt-4">
               {CANDIDATE_LINKS.map((l) => (
                 <li key={l.to}>
                   <Link
                     to={l.to}
-                    className="text-sm text-[color:var(--brand-navy)]/80 hover:text-[color:var(--brand-navy)]"
+                    className="inline-flex min-h-11 items-center text-sm text-[color:var(--brand-navy)]/80 hover:text-[color:var(--brand-navy)]"
                   >
                     {l.label}
                   </Link>

@@ -1337,9 +1337,9 @@ function Home() {
                 <br className="hidden sm:block" />{" "}
                 <span className="text-[color:var(--brand-ocean-text)]">on demand.</span>
               </h1>
-              <p className="max-w-xl text-lg text-[color:var(--brand-navy)]/80">
-                TaaSFlow is subscription recruiting for Series A–C teams. Get ranked, enriched candidates through a live dashboard for one flat monthly fee.{" "}
-                <span className="font-semibold text-[color:var(--brand-navy)]">Pre-screened, ranked candidates in 7–14 days. No placement fees.</span>
+              <p className="max-w-xl text-base text-[color:var(--brand-navy)]/80 sm:text-lg">
+                Subscription recruiting for Series A–C teams: ranked, enriched
+                candidates in a live dashboard — one flat monthly fee.
               </p>
               <ul className="flex flex-wrap gap-2 pt-1">
                 {[

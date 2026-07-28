@@ -352,20 +352,20 @@ function FooterCol({ title, links }: { title: string; links: NavLink[] }) {
       <h3 className="text-xs font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/80">
         {title}
       </h3>
-      <ul className="mt-4 space-y-2.5">
+      <ul className="mt-2 space-y-0.5 sm:mt-4">
         {visible.map((l) => (
           <li key={`${l.to}-${l.label}`}>
             {l.external ? (
               <a
                 href={l.to}
-                className="text-sm text-[color:var(--brand-navy)]/80 hover:text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+                className="inline-flex min-h-11 items-center text-sm text-[color:var(--brand-navy)]/80 hover:text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
               >
                 {l.label}
               </a>
             ) : (
               <Link
                 to={l.to}
-                className="text-sm text-[color:var(--brand-navy)]/80 hover:text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+                className="inline-flex min-h-11 items-center text-sm text-[color:var(--brand-navy)]/80 hover:text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
               >
                 {l.label}
               </Link>
@@ -420,16 +420,16 @@ function Footer() {
             <nav aria-label="Legal" className="flex flex-wrap items-center gap-x-5 gap-y-2">
               {legalGroup.links.filter((l) => !l.hidden).map((l) =>
                 l.external ? (
-                  <a key={l.label} href={l.to} className="hover:text-[color:var(--brand-navy)]">
+                  <a key={l.label} href={l.to} className="inline-flex min-h-11 items-center hover:text-[color:var(--brand-navy)]">
                     {l.label}
                   </a>
                 ) : (
-                  <Link key={l.label} to={l.to} className="hover:text-[color:var(--brand-navy)]">
+                  <Link key={l.label} to={l.to} className="inline-flex min-h-11 items-center hover:text-[color:var(--brand-navy)]">
                     {l.label}
                   </Link>
                 ),
               )}
-              <a href="mailto:hello@taasflow.com" className="hover:text-[color:var(--brand-navy)]">
+              <a href="mailto:hello@taasflow.com" className="inline-flex min-h-11 items-center hover:text-[color:var(--brand-navy)]">
                 hello@taasflow.com
               </a>
             </nav>
@@ -440,6 +440,56 @@ function Footer() {
   );
 }
 
+
+/* ------------------------------------------------- Mobile sticky CTA bar */
+
+/**
+ * One-handed action bar for phones. Stays out of the way until the visitor has
+ * scrolled past the hero, then offers the two next steps for their journey.
+ */
+function MobileCtaBar() {
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const [shown, setShown] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setShown(window.scrollY > 520);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  const candidateMode = isCandidateJourneyPath(pathname);
+  const primary = candidateMode ? CANDIDATE_PRIMARY_CTA : PRIMARY_CTA;
+  const secondary = candidateMode ? CANDIDATE_SECONDARY_CTA : BOOK_CALL_CTA;
+
+  return (
+    <div
+      className={cn(
+        "fixed inset-x-0 bottom-0 z-40 border-t border-[color:var(--brand-navy)]/10 bg-white/95 backdrop-blur transition-transform duration-200 md:hidden",
+        "pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-2",
+        shown ? "translate-y-0" : "pointer-events-none translate-y-full",
+      )}
+      aria-hidden={!shown}
+    >
+      <div className="mx-auto flex max-w-[1200px] items-center gap-2 px-4">
+        <Link
+          to={primary.to}
+          tabIndex={shown ? undefined : -1}
+          className="inline-flex min-h-12 flex-1 items-center justify-center rounded-xl bg-[color:var(--brand-navy)] px-4 text-sm font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+        >
+          {primary.label}
+        </Link>
+        <Link
+          to={secondary.to}
+          tabIndex={shown ? undefined : -1}
+          className="inline-flex min-h-12 shrink-0 items-center justify-center rounded-xl border border-[color:var(--brand-navy)]/15 bg-white px-4 text-sm font-semibold text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+        >
+          {secondary.label}
+        </Link>
+      </div>
+    </div>
+  );
+}
 
 /* ---------------------------------------------------------------- Shell */
 
@@ -454,14 +504,16 @@ export function SiteShell({
     <div className="flex min-h-dvh flex-col bg-[color:var(--brand-paper)] text-[color:var(--brand-navy)]">
       <SkipNav />
       <Header />
-      <main id="main" tabIndex={-1} className="flex-1 focus:outline-none">
+      <main id="main" tabIndex={-1} className="flex-1 pb-16 focus:outline-none md:pb-0">
         {children}
       </main>
       {!hideLinkHub && <InternalLinkHub />}
       <Footer />
+      <MobileCtaBar />
     </div>
   );
 }
+
 
 /* ---------------------------------------------------------------- Layout helpers */
 
@@ -510,7 +562,7 @@ export function Breadcrumbs({
             <li key={i} className="flex items-center gap-1.5">
               {i > 0 && <ChevronRight className="h-3.5 w-3.5" aria-hidden />}
               {item.to && !last ? (
-                <Link to={item.to} className="hover:text-[color:var(--brand-navy)]">
+                <Link to={item.to} className="inline-flex min-h-11 items-center hover:text-[color:var(--brand-navy)]">
                   {item.label}
                 </Link>
               ) : (
