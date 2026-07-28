@@ -1329,50 +1329,35 @@ function Home() {
                 id="home-hero-heading"
                 className="font-[family-name:var(--brand-font-display)] text-4xl font-semibold leading-[1.05] tracking-tight text-[color:var(--brand-navy)] sm:text-5xl lg:text-[3.5rem]"
               >
-                Ranked shortlists in a week.
+                Your hiring team,
                 <br className="hidden sm:block" />{" "}
-                <span className="text-[color:var(--brand-ocean)]">Not a quarter.</span>
+                <span className="text-[color:var(--brand-ocean)]">on demand.</span>
               </h1>
               <p className="max-w-xl text-lg text-[color:var(--brand-navy)]/75">
-                Every role briefed, sourced, and scored against your rubric — so you decide in days, not months.{" "}
-                <span className="font-semibold text-[color:var(--brand-navy)]">Cheaper than an agency. Better than a job post.</span>
+                TaaSFlow is subscription recruiting for Series A–C teams. Get ranked, enriched candidates through a live dashboard for one flat monthly fee.{" "}
+                <span className="font-semibold text-[color:var(--brand-navy)]">Pre-screened, ranked candidates in 7–14 days. No placement fees.</span>
               </p>
-              <div className="flex flex-wrap items-center gap-3 pt-1">
-                <Link
-                  to="/intake"
-                  aria-label="Start hiring — launch a role"
-                  className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-[color:var(--brand-navy-dark)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
-                >
-                  Start Hiring <ArrowRight className="h-4 w-4" aria-hidden />
-                </Link>
-                <Link
-                  to="/platform"
-                  className="inline-flex min-h-11 items-center justify-center rounded-md border border-[color:var(--brand-navy)]/15 bg-white px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
-                >
-                  See the Platform
-                </Link>
-              </div>
-              <div className="text-xs text-[color:var(--brand-navy)]/60">
-                Hiring for a candidate seat?{" "}
-                <Link
-                  to="/jobs"
-                  className="inline-flex items-center gap-1 font-semibold text-[color:var(--brand-ocean)] underline-offset-4 hover:text-[color:var(--brand-navy)] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)] rounded"
-                >
-                  Browse open jobs <ArrowRight className="h-3 w-3" aria-hidden />
-                </Link>
-              </div>
-              <ul className="flex flex-wrap gap-x-5 gap-y-1.5 text-xs text-[color:var(--brand-navy)]/65">
+              <ul className="flex flex-wrap gap-2 pt-1">
                 {[
-                  "Ranked shortlist within 14 days",
-                  "Package pricing, no placement fees",
-                  "You keep the ATS, the candidates, the final call",
+                  "First shortlist in 7–14 days",
+                  "No salary percentage fees",
+                  `$${PRICE_PILOT_USD} pilot available`,
                 ].map((t) => (
-                  <li key={t} className="inline-flex items-center gap-1.5">
+                  <li
+                    key={t}
+                    className="inline-flex items-center gap-1.5 rounded-full border border-[color:var(--brand-navy)]/12 bg-white/70 px-3 py-1.5 text-xs font-semibold text-[color:var(--brand-navy)]/80 backdrop-blur"
+                  >
                     <CheckCircle2 className="h-3.5 w-3.5 text-[color:var(--brand-ocean)]" aria-hidden />
                     {t}
                   </li>
                 ))}
               </ul>
+              <div className="flex flex-wrap items-center gap-3 pt-1">
+...
+              <p className="text-xs text-[color:var(--brand-navy)]/60">
+                You keep the ATS, the candidates, and the final call.
+              </p>
+
 
             </div>
             <div className="min-w-0">
