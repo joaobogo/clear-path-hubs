@@ -17,6 +17,7 @@ import { Check, X } from "lucide-react";
 import { PageConnections } from "@/components/marketing/page-connections";
 import { AgencyFeeComparison } from "@/components/marketing/agency-fee-comparison";
 import { RiskProof } from "@/components/marketing/risk-proof";
+import { ModelComparison } from "@/components/marketing/model-comparison";
 
 export const Route = createFileRoute("/pricing")({
   head: () =>

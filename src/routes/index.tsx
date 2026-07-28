@@ -59,6 +59,7 @@ import { PageConnections } from "@/components/marketing/page-connections";
 import { FoundersStrip } from "@/components/marketing/founders-strip";
 import { DashboardPreview } from "@/components/marketing/dashboard-preview";
 import { RiskProof } from "@/components/marketing/risk-proof";
+import { ModelComparison } from "@/components/marketing/model-comparison";
 
 // Homepage metadata is authored inline (guardrail: legacy JSON entry contains
 // unapproved "14 days" and totals claims). Do not pass the legacy entry here.
@@ -1508,6 +1509,15 @@ function Home() {
           <RiskProof />
         </PublicPage>
       </PublicSection>
+
+      {/* 3d — OPERATING-MODEL COMPARISON */}
+      <section className="border-y border-[color:var(--brand-navy)]/8 bg-white">
+        <PublicSection>
+          <PublicPage>
+            <ModelComparison />
+          </PublicPage>
+        </PublicSection>
+      </section>
 
       {/* 4 — CALCULATOR */}
       <section
