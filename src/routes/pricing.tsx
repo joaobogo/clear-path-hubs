@@ -21,7 +21,7 @@ export const Route = createFileRoute("/pricing")({
     marketingHead(undefined, "/pricing", {
       title: "Pricing | Subscription Recruiting | TaaSFlow",
       description:
-        `Transparent one-off packages from ${PRICE_PILOT_DISPLAY}. Ranked candidates in 14 days, no placement fees, no salary percentages. Higher volume = lower cost per role.`,
+        `Flat-fee subscription recruiting from ${PRICE_PILOT_DISPLAY}. Ranked, pre-screened shortlists in a live dashboard. No placement fees, no salary percentages.`,
     }),
   component: PricingPage,
 });
