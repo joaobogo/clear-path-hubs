@@ -1398,7 +1398,7 @@ function Home() {
                 </Link>
               </div>
               <p className="text-xs text-[color:var(--brand-navy)]/80">
-                You keep the ATS, the candidates, and the final call.
+                Use our ATS or keep yours — you own the candidates and the final call.
               </p>
 
 
