@@ -469,14 +469,21 @@ export function PublicPage({
 export function PublicSection({
   children,
   className,
+  id,
   as: Tag = "section",
 }: {
   children: ReactNode;
   className?: string;
+  id?: string;
   as?: "section" | "div" | "article";
 }) {
-  return <Tag className={cn("py-16 sm:py-20 lg:py-24", className)}>{children}</Tag>;
+  return (
+    <Tag id={id} className={cn("py-16 sm:py-20 lg:py-24", className)}>
+      {children}
+    </Tag>
+  );
 }
+
 
 /* ---------------------------------------------------------------- Breadcrumbs */
 
