@@ -1,3 +1,5 @@
+import { PRICE_PILOT_USD } from "@/config/pricing-core";
+
 /**
  * TaaSFlow Public Navigation — Single Source of Truth
  * ---------------------------------------------------
@@ -27,9 +29,16 @@ export type PrimaryItem =
 /* -------------------------------------------------------------- CTAs */
 
 export const PRIMARY_CTA: NavLink = {
-  to: "/intake",
-  label: "Start Hiring",
-  description: "Launch a role — canonical employer intake",
+  to: "/pilot",
+  label: `Start a $${PRICE_PILOT_USD} pilot`,
+  description: "Run one role end-to-end before subscribing",
+};
+
+/** Secondary header CTA — rendered next to the primary CTA. */
+export const BOOK_CALL_CTA: NavLink = {
+  to: "/contact",
+  label: "Book call",
+  description: "Talk to a founder about your roles",
 };
 
 export const SECONDARY_CTAS: NavLink[] = [
@@ -41,19 +50,20 @@ export const SECONDARY_CTAS: NavLink[] = [
 /* -------------------------------------------------------------- Primary nav (ordered) */
 
 export const PRIMARY_ITEMS: PrimaryItem[] = [
-  { kind: "link", to: "/platform", label: "Platform" },
-  { kind: "link", to: "/system", label: "The System" },
-  { kind: "link", to: "/how-it-works", label: "How It Works" },
   {
     kind: "group",
-    label: "Solutions",
+    label: "How It Works",
     links: [
-      { to: "/solutions",             label: "Growing Companies",     description: "On-demand recruiting for scaling teams" },
-      { to: "/enterprise",            label: "Enterprise",            description: "Compliance, security, and scale" },
-      { to: "/partnerships/staffing", label: "Staffing Partnerships", description: "White-label and referral programs" },
+      { to: "/how-it-works",          label: "How It Works",          description: "Intake, sourcing, scoring, delivery — step by step" },
+      { to: "/platform",              label: "Platform",              description: "The live workspace your team opens every day" },
+      { to: "/system",                label: "The System",            description: "How evidence and ranking actually work" },
+      { to: "/solutions",             label: "For Growing Companies", description: "On-demand recruiting for scaling teams" },
+      { to: "/enterprise",            label: "For Enterprise",        description: "Compliance, security, and scale" },
       { to: "/employer-onboarding",   label: "Employer Onboarding",   description: "Get your first role live" },
+      { to: "/partnerships/staffing", label: "Staffing Partnerships", description: "White-label and referral programs" },
     ],
   },
+  { kind: "link", to: "/pricing", label: "Pricing" },
   {
     kind: "group",
     label: "Industries",
@@ -73,25 +83,18 @@ export const PRIMARY_ITEMS: PrimaryItem[] = [
       { to: "/industries",                  label: "View All 57 Industries", description: "Every sector we support" },
     ],
   },
-  { kind: "link", to: "/pricing", label: "Pricing" },
+  { kind: "link", to: "/case-studies", label: "Case Studies" },
   {
     kind: "group",
     label: "Resources",
     links: [
       { to: "/resources",      label: "Resources",     description: "Playbooks, guides, and templates" },
       { to: "/blog",           label: "Blog",          description: "Hiring analysis and market data" },
-      { to: "/case-studies",   label: "Case Studies",  description: "Real recruiting outcomes" },
       { to: "/knowledge-base", label: "Knowledge Base",description: "How TaaSFlow works, in detail" },
       { to: "/faq",            label: "FAQ",           description: "Common questions answered" },
-    ],
-  },
-  {
-    kind: "group",
-    label: "Company",
-    links: [
-      { to: "/about",   label: "About",             description: "Who we are and why" },
-      { to: "/journey", label: "TaaSFlow Journey",  description: "How we got here" },
-      { to: "/contact", label: "Contact",           description: "Talk to the team" },
+      { to: "/about",          label: "About TaaSFlow",description: "Who we are and why" },
+      { to: "/journey",        label: "Our Journey",   description: "How we got here" },
+      { to: "/contact",        label: "Contact",       description: "Talk to the team" },
     ],
   },
 ];
@@ -190,6 +193,7 @@ export function allNavHrefs(): string[] {
   });
   FOOTER_GROUPS.forEach((g) => g.links.forEach(push));
   push(PRIMARY_CTA);
+  push(BOOK_CALL_CTA);
   SECONDARY_CTAS.forEach(push);
   return Array.from(out);
 }
