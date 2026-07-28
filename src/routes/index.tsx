@@ -46,7 +46,7 @@ import {
 import { getPage } from "@/lib/marketing/content";
 import { marketingHead } from "@/lib/marketing/head";
 import { AgencyComparator } from "@/components/marketing/agency-comparator";
-import { ModelComparison } from "@/components/marketing/model-comparison";
+import { ModelComparisonTable } from "@/components/marketing/model-comparison-table";
 import { OperatingSystem } from "@/components/marketing/operating-system";
 import { WorkspaceTour } from "@/components/marketing/workspace-tour";
 import { AudienceSelector } from "@/components/marketing/audience-selector";
@@ -59,7 +59,6 @@ import { PageConnections } from "@/components/marketing/page-connections";
 import { FoundersStrip } from "@/components/marketing/founders-strip";
 import { DashboardPreview } from "@/components/marketing/dashboard-preview";
 import { RiskProof } from "@/components/marketing/risk-proof";
-import { ModelComparison } from "@/components/marketing/model-comparison";
 
 // Homepage metadata is authored inline (guardrail: legacy JSON entry contains
 // unapproved "14 days" and totals claims). Do not pass the legacy entry here.
@@ -1510,15 +1509,6 @@ function Home() {
         </PublicPage>
       </PublicSection>
 
-      {/* 3d — OPERATING-MODEL COMPARISON */}
-      <section className="border-y border-[color:var(--brand-navy)]/8 bg-white">
-        <PublicSection>
-          <PublicPage>
-            <ModelComparison />
-          </PublicPage>
-        </PublicSection>
-      </section>
-
       {/* 4 — CALCULATOR */}
       <section
         id="roi-calculator"
@@ -1543,14 +1533,7 @@ function Home() {
       {/* 5 — MODEL COMPARISON */}
       <PublicSection>
         <PublicPage>
-          <SectionHead
-            eyebrow="TaaSFlow vs the agency model"
-            title="Pick a dimension. See how each model behaves."
-            lead="Recruiting agency, internal recruiter, ATS-only software, or a subscription recruiting function — the trade-offs are structural, not marketing."
-          />
-          <div className="mt-10">
-            <ModelComparison />
-          </div>
+          <ModelComparisonTable />
           <div className="mt-8 flex flex-wrap items-center gap-3">
             <Link
               to="/pricing"
