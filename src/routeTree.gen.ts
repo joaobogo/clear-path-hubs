@@ -133,7 +133,7 @@ import { Route as AuthenticatedAdminScoringReviewIndexRouteImport } from './rout
 import { Route as AuthenticatedClientPositionsIdEditRouteImport } from './routes/_authenticated/client.positions.$id_.edit'
 import { Route as AuthenticatedAdminScoringReviewMatchIdRouteImport } from './routes/_authenticated/admin.scoring.review.$matchId'
 import { Route as AuthenticatedAdminPositionsIdEditRouteImport } from './routes/_authenticated/admin.positions.$id_.edit'
-import { Route as AuthenticatedAdminCandidatesIdEvidenceRouteImport } from './routes/_authenticated/admin.candidates.$id.evidence'
+import { Route as AuthenticatedAdminCandidatesIdEvidenceRouteImport } from './routes/_authenticated/admin.candidates.$id_.evidence'
 
 const UnauthorizedRoute = UnauthorizedRouteImport.update({
   id: '/unauthorized',
@@ -810,9 +810,9 @@ const AuthenticatedAdminPositionsIdEditRoute =
   } as any)
 const AuthenticatedAdminCandidatesIdEvidenceRoute =
   AuthenticatedAdminCandidatesIdEvidenceRouteImport.update({
-    id: '/evidence',
-    path: '/evidence',
-    getParentRoute: () => AuthenticatedAdminCandidatesIdRoute,
+    id: '/$id_/evidence',
+    path: '/$id/evidence',
+    getParentRoute: () => AuthenticatedAdminCandidatesRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
@@ -914,7 +914,7 @@ export interface FileRoutesByFullPath {
   '/client/': typeof AuthenticatedClientIndexRoute
   '/me/': typeof AuthenticatedMeIndexRoute
   '/jobs/$id/': typeof JobsIdIndexRoute
-  '/admin/candidates/$id': typeof AuthenticatedAdminCandidatesIdRouteWithChildren
+  '/admin/candidates/$id': typeof AuthenticatedAdminCandidatesIdRoute
   '/admin/clients/$id': typeof AuthenticatedAdminClientsIdRoute
   '/admin/intake/$id': typeof AuthenticatedAdminIntakeIdRoute
   '/admin/positions/$id': typeof AuthenticatedAdminPositionsIdRoute
@@ -1030,7 +1030,7 @@ export interface FileRoutesByTo {
   '/client': typeof AuthenticatedClientIndexRoute
   '/me': typeof AuthenticatedMeIndexRoute
   '/jobs/$id': typeof JobsIdIndexRoute
-  '/admin/candidates/$id': typeof AuthenticatedAdminCandidatesIdRouteWithChildren
+  '/admin/candidates/$id': typeof AuthenticatedAdminCandidatesIdRoute
   '/admin/clients/$id': typeof AuthenticatedAdminClientsIdRoute
   '/admin/intake/$id': typeof AuthenticatedAdminIntakeIdRoute
   '/admin/positions/$id': typeof AuthenticatedAdminPositionsIdRoute
@@ -1158,7 +1158,7 @@ export interface FileRoutesById {
   '/_authenticated/client/': typeof AuthenticatedClientIndexRoute
   '/_authenticated/me/': typeof AuthenticatedMeIndexRoute
   '/jobs/$id/': typeof JobsIdIndexRoute
-  '/_authenticated/admin/candidates/$id': typeof AuthenticatedAdminCandidatesIdRouteWithChildren
+  '/_authenticated/admin/candidates/$id': typeof AuthenticatedAdminCandidatesIdRoute
   '/_authenticated/admin/clients/$id': typeof AuthenticatedAdminClientsIdRoute
   '/_authenticated/admin/intake/$id': typeof AuthenticatedAdminIntakeIdRoute
   '/_authenticated/admin/positions/$id': typeof AuthenticatedAdminPositionsIdRoute
@@ -1179,7 +1179,7 @@ export interface FileRoutesById {
   '/_authenticated/client/positions/': typeof AuthenticatedClientPositionsIndexRoute
   '/_authenticated/client/shares/': typeof AuthenticatedClientSharesIndexRoute
   '/_authenticated/me/applications/': typeof AuthenticatedMeApplicationsIndexRoute
-  '/_authenticated/admin/candidates/$id/evidence': typeof AuthenticatedAdminCandidatesIdEvidenceRoute
+  '/_authenticated/admin/candidates/$id_/evidence': typeof AuthenticatedAdminCandidatesIdEvidenceRoute
   '/_authenticated/admin/positions/$id_/edit': typeof AuthenticatedAdminPositionsIdEditRoute
   '/_authenticated/admin/scoring/review/$matchId': typeof AuthenticatedAdminScoringReviewMatchIdRoute
   '/_authenticated/client/positions/$id_/edit': typeof AuthenticatedClientPositionsIdEditRoute
@@ -1550,7 +1550,7 @@ export interface FileRouteTypes {
     | '/_authenticated/client/positions/'
     | '/_authenticated/client/shares/'
     | '/_authenticated/me/applications/'
-    | '/_authenticated/admin/candidates/$id/evidence'
+    | '/_authenticated/admin/candidates/$id_/evidence'
     | '/_authenticated/admin/positions/$id_/edit'
     | '/_authenticated/admin/scoring/review/$matchId'
     | '/_authenticated/client/positions/$id_/edit'
@@ -2489,42 +2489,29 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminPositionsIdEditRouteImport
       parentRoute: typeof AuthenticatedAdminPositionsRoute
     }
-    '/_authenticated/admin/candidates/$id/evidence': {
-      id: '/_authenticated/admin/candidates/$id/evidence'
-      path: '/evidence'
+    '/_authenticated/admin/candidates/$id_/evidence': {
+      id: '/_authenticated/admin/candidates/$id_/evidence'
+      path: '/$id/evidence'
       fullPath: '/admin/candidates/$id/evidence'
       preLoaderRoute: typeof AuthenticatedAdminCandidatesIdEvidenceRouteImport
-      parentRoute: typeof AuthenticatedAdminCandidatesIdRoute
+      parentRoute: typeof AuthenticatedAdminCandidatesRoute
     }
   }
 }
 
-interface AuthenticatedAdminCandidatesIdRouteChildren {
-  AuthenticatedAdminCandidatesIdEvidenceRoute: typeof AuthenticatedAdminCandidatesIdEvidenceRoute
-}
-
-const AuthenticatedAdminCandidatesIdRouteChildren: AuthenticatedAdminCandidatesIdRouteChildren =
-  {
-    AuthenticatedAdminCandidatesIdEvidenceRoute:
-      AuthenticatedAdminCandidatesIdEvidenceRoute,
-  }
-
-const AuthenticatedAdminCandidatesIdRouteWithChildren =
-  AuthenticatedAdminCandidatesIdRoute._addFileChildren(
-    AuthenticatedAdminCandidatesIdRouteChildren,
-  )
-
 interface AuthenticatedAdminCandidatesRouteChildren {
-  AuthenticatedAdminCandidatesIdRoute: typeof AuthenticatedAdminCandidatesIdRouteWithChildren
+  AuthenticatedAdminCandidatesIdRoute: typeof AuthenticatedAdminCandidatesIdRoute
   AuthenticatedAdminCandidatesIndexRoute: typeof AuthenticatedAdminCandidatesIndexRoute
+  AuthenticatedAdminCandidatesIdEvidenceRoute: typeof AuthenticatedAdminCandidatesIdEvidenceRoute
 }
 
 const AuthenticatedAdminCandidatesRouteChildren: AuthenticatedAdminCandidatesRouteChildren =
   {
-    AuthenticatedAdminCandidatesIdRoute:
-      AuthenticatedAdminCandidatesIdRouteWithChildren,
+    AuthenticatedAdminCandidatesIdRoute: AuthenticatedAdminCandidatesIdRoute,
     AuthenticatedAdminCandidatesIndexRoute:
       AuthenticatedAdminCandidatesIndexRoute,
+    AuthenticatedAdminCandidatesIdEvidenceRoute:
+      AuthenticatedAdminCandidatesIdEvidenceRoute,
   }
 
 const AuthenticatedAdminCandidatesRouteWithChildren =
@@ -2844,13 +2831,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
