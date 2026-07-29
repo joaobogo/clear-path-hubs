@@ -71,6 +71,7 @@ import { Route as ApiPublicExpressIntakeRouteImport } from './routes/api/public/
 import { Route as ApiPublicEventsRouteImport } from './routes/api/public/events'
 import { Route as ApiPublicContactRouteImport } from './routes/api/public/contact'
 import { Route as ApiPublicBootstrapAdminRouteImport } from './routes/api/public/bootstrap-admin'
+import { Route as ApiPublicBlueprintRunRouteImport } from './routes/api/public/blueprint-run'
 import { Route as AuthenticatedMeSettingsRouteImport } from './routes/_authenticated/me.settings'
 import { Route as AuthenticatedMeProfileRouteImport } from './routes/_authenticated/me.profile'
 import { Route as AuthenticatedMeMessagesRouteImport } from './routes/_authenticated/me.messages'
@@ -445,6 +446,11 @@ const ApiPublicContactRoute = ApiPublicContactRouteImport.update({
 const ApiPublicBootstrapAdminRoute = ApiPublicBootstrapAdminRouteImport.update({
   id: '/api/public/bootstrap-admin',
   path: '/api/public/bootstrap-admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicBlueprintRunRoute = ApiPublicBlueprintRunRouteImport.update({
+  id: '/api/public/blueprint-run',
+  path: '/api/public/blueprint-run',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedMeSettingsRoute = AuthenticatedMeSettingsRouteImport.update({
@@ -908,6 +914,7 @@ export interface FileRoutesByFullPath {
   '/me/messages': typeof AuthenticatedMeMessagesRoute
   '/me/profile': typeof AuthenticatedMeProfileRoute
   '/me/settings': typeof AuthenticatedMeSettingsRoute
+  '/api/public/blueprint-run': typeof ApiPublicBlueprintRunRoute
   '/api/public/bootstrap-admin': typeof ApiPublicBootstrapAdminRoute
   '/api/public/contact': typeof ApiPublicContactRoute
   '/api/public/events': typeof ApiPublicEventsRoute
@@ -1025,6 +1032,7 @@ export interface FileRoutesByTo {
   '/me/messages': typeof AuthenticatedMeMessagesRoute
   '/me/profile': typeof AuthenticatedMeProfileRoute
   '/me/settings': typeof AuthenticatedMeSettingsRoute
+  '/api/public/blueprint-run': typeof ApiPublicBlueprintRunRoute
   '/api/public/bootstrap-admin': typeof ApiPublicBootstrapAdminRoute
   '/api/public/contact': typeof ApiPublicContactRoute
   '/api/public/events': typeof ApiPublicEventsRoute
@@ -1154,6 +1162,7 @@ export interface FileRoutesById {
   '/_authenticated/me/messages': typeof AuthenticatedMeMessagesRoute
   '/_authenticated/me/profile': typeof AuthenticatedMeProfileRoute
   '/_authenticated/me/settings': typeof AuthenticatedMeSettingsRoute
+  '/api/public/blueprint-run': typeof ApiPublicBlueprintRunRoute
   '/api/public/bootstrap-admin': typeof ApiPublicBootstrapAdminRoute
   '/api/public/contact': typeof ApiPublicContactRoute
   '/api/public/events': typeof ApiPublicEventsRoute
@@ -1283,6 +1292,7 @@ export interface FileRouteTypes {
     | '/me/messages'
     | '/me/profile'
     | '/me/settings'
+    | '/api/public/blueprint-run'
     | '/api/public/bootstrap-admin'
     | '/api/public/contact'
     | '/api/public/events'
@@ -1400,6 +1410,7 @@ export interface FileRouteTypes {
     | '/me/messages'
     | '/me/profile'
     | '/me/settings'
+    | '/api/public/blueprint-run'
     | '/api/public/bootstrap-admin'
     | '/api/public/contact'
     | '/api/public/events'
@@ -1528,6 +1539,7 @@ export interface FileRouteTypes {
     | '/_authenticated/me/messages'
     | '/_authenticated/me/profile'
     | '/_authenticated/me/settings'
+    | '/api/public/blueprint-run'
     | '/api/public/bootstrap-admin'
     | '/api/public/contact'
     | '/api/public/events'
@@ -1615,6 +1627,7 @@ export interface RootRouteChildren {
   BlogIndexRoute: typeof BlogIndexRoute
   IndustriesIndexRoute: typeof IndustriesIndexRoute
   JobsIndexRoute: typeof JobsIndexRoute
+  ApiPublicBlueprintRunRoute: typeof ApiPublicBlueprintRunRoute
   ApiPublicBootstrapAdminRoute: typeof ApiPublicBootstrapAdminRoute
   ApiPublicContactRoute: typeof ApiPublicContactRoute
   ApiPublicEventsRoute: typeof ApiPublicEventsRoute
@@ -2066,6 +2079,13 @@ declare module '@tanstack/react-router' {
       path: '/api/public/bootstrap-admin'
       fullPath: '/api/public/bootstrap-admin'
       preLoaderRoute: typeof ApiPublicBootstrapAdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/blueprint-run': {
+      id: '/api/public/blueprint-run'
+      path: '/api/public/blueprint-run'
+      fullPath: '/api/public/blueprint-run'
+      preLoaderRoute: typeof ApiPublicBlueprintRunRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/me/settings': {
@@ -2833,6 +2853,7 @@ const rootRouteChildren: RootRouteChildren = {
   BlogIndexRoute: BlogIndexRoute,
   IndustriesIndexRoute: IndustriesIndexRoute,
   JobsIndexRoute: JobsIndexRoute,
+  ApiPublicBlueprintRunRoute: ApiPublicBlueprintRunRoute,
   ApiPublicBootstrapAdminRoute: ApiPublicBootstrapAdminRoute,
   ApiPublicContactRoute: ApiPublicContactRoute,
   ApiPublicEventsRoute: ApiPublicEventsRoute,
