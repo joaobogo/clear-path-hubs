@@ -3,6 +3,11 @@
 // → Compensation → Search Criteria → Review) so admins and clients edit
 // positions with the same questions asked at intake.
 import { useEffect, useMemo, useState } from "react";
+import {
+  SCREENING_MAX_QUESTIONS,
+  SCREENING_MAX_REQUIRED,
+  countRequired,
+} from "@/lib/screening-limits";
 import { toast } from "sonner";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -810,79 +815,109 @@ export function PositionEditWizard({
 
               <SectionHeader
                 title="Screening Questions"
-                subtitle="Optional. Shown to candidates when they apply."
+                subtitle={`Keep it short: up to ${SCREENING_MAX_QUESTIONS} questions, max ${SCREENING_MAX_REQUIRED} mandatory. Everything else is optional for the candidate.`}
               />
-              <div className="flex gap-2">
-                <Input
-                  value={qDraft}
-                  onChange={(e) => setQDraft(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      e.preventDefault();
-                      const v = qDraft.trim();
-                      if (v.length >= 3) {
-                        set("screening_questions", [
-                          ...state.screening_questions,
-                          {
-                            question: v,
-                            answer_type: "text",
-                            required: false,
-                            dealbreaker: false,
-                          } satisfies ScreeningInput,
-                        ]);
-                        setQDraft("");
-                      }
-                    }
-                  }}
-                  placeholder="Add a question and press Enter"
-                />
-                <Button
-                  type="button"
-                  variant="secondary"
-                  onClick={() => {
-                    const v = qDraft.trim();
-                    if (v.length >= 3) {
-                      set("screening_questions", [
-                        ...state.screening_questions,
-                        {
-                          question: v,
-                          answer_type: "text",
-                          required: false,
-                          dealbreaker: false,
-                        } satisfies ScreeningInput,
-                      ]);
-                      setQDraft("");
-                    }
-                  }}
-                >
-                  Add
-                </Button>
-              </div>
-              {state.screening_questions.length > 0 && (
-                <ul className="mt-1 space-y-2">
-                  {state.screening_questions.map((q, i) => (
-                    <li
-                      key={q.id ?? `new-${i}`}
-                      className="flex items-start justify-between gap-2 rounded-md border p-3 text-sm"
-                    >
-                      <span className="flex-1">{q.question}</span>
-                      <button
-                        type="button"
-                        className="text-xs text-muted-foreground underline"
-                        aria-label={`Remove ${q.question}`}
-                        onClick={() =>
-                          set(
-                            "screening_questions",
-                            state.screening_questions.filter((_, idx) => idx !== i),
-                          )
+              {(() => {
+                const qs = state.screening_questions;
+                const requiredCount = countRequired(qs);
+                const atMax = qs.length >= SCREENING_MAX_QUESTIONS;
+                const addQuestion = () => {
+                  const v = qDraft.trim();
+                  if (v.length < 3 || atMax) return;
+                  set("screening_questions", [
+                    ...qs,
+                    {
+                      question: v,
+                      answer_type: "text",
+                      required: false,
+                      dealbreaker: false,
+                    } satisfies ScreeningInput,
+                  ]);
+                  setQDraft("");
+                };
+                return (
+                  <>
+                    <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+                      <span>
+                        {qs.length}/{SCREENING_MAX_QUESTIONS} questions
+                      </span>
+                      <span aria-hidden>·</span>
+                      <span>
+                        {requiredCount}/{SCREENING_MAX_REQUIRED} mandatory
+                      </span>
+                    </div>
+                    <div className="flex gap-2">
+                      <Input
+                        value={qDraft}
+                        onChange={(e) => setQDraft(e.target.value)}
+                        disabled={atMax}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            e.preventDefault();
+                            addQuestion();
+                          }
+                        }}
+                        placeholder={
+                          atMax
+                            ? `Limit reached (${SCREENING_MAX_QUESTIONS} questions)`
+                            : "Add a question and press Enter"
                         }
+                      />
+                      <Button
+                        type="button"
+                        variant="secondary"
+                        disabled={atMax}
+                        onClick={addQuestion}
                       >
-                        Remove
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              )}
+                        Add
+                      </Button>
+                    </div>
+                    {qs.length > 0 && (
+                      <ul className="mt-1 space-y-2">
+                        {qs.map((q, i) => {
+                          const lockRequired = !q.required && requiredCount >= SCREENING_MAX_REQUIRED;
+                          return (
+                            <li
+                              key={q.id ?? `new-${i}`}
+                              className="flex flex-wrap items-start justify-between gap-2 rounded-md border p-3 text-sm"
+                            >
+                              <span className="flex-1 min-w-[12rem]">{q.question}</span>
+                              <label className="flex items-center gap-2 text-xs">
+                                <Checkbox
+                                  checked={!!q.required}
+                                  disabled={lockRequired}
+                                  onCheckedChange={(v) =>
+                                    set(
+                                      "screening_questions",
+                                      qs.map((item, idx) =>
+                                        idx === i ? { ...item, required: !!v } : item,
+                                      ),
+                                    )
+                                  }
+                                />
+                                <span>{q.required ? "Mandatory" : "Optional"}</span>
+                              </label>
+                              <button
+                                type="button"
+                                className="text-xs text-muted-foreground underline"
+                                aria-label={`Remove ${q.question}`}
+                                onClick={() =>
+                                  set(
+                                    "screening_questions",
+                                    qs.filter((_, idx) => idx !== i),
+                                  )
+                                }
+                              >
+                                Remove
+                              </button>
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    )}
+                  </>
+                );
+              })()}
             </div>
           )}
 
