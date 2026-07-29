@@ -531,7 +531,58 @@ function ApplyPage() {
                   )}
                 </div>
               </div>
+
+              {signedIn === false && (
+                <div className="rounded-lg border bg-muted/30 p-4 space-y-4">
+                  <div>
+                    <h3 className="text-base font-semibold">Create your candidate account</h3>
+                    <p className="text-sm text-muted-foreground">
+                      Set a password so you can sign in and follow the status of this
+                      application. We use the email above as your username.
+                    </p>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="password">Password *</Label>
+                      <Input
+                        id="password"
+                        type="password"
+                        autoComplete="new-password"
+                        data-field="password"
+                        placeholder={`At least ${MIN_PASSWORD_LENGTH} characters`}
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                      />
+                      {fieldErrors.password && (
+                        <p className="mt-1 text-xs text-destructive">{fieldErrors.password}</p>
+                      )}
+                    </div>
+                    <div>
+                      <Label htmlFor="password2">Confirm password *</Label>
+                      <Input
+                        id="password2"
+                        type="password"
+                        autoComplete="new-password"
+                        data-field="password2"
+                        value={password2}
+                        onChange={(e) => setPassword2(e.target.value)}
+                      />
+                      {fieldErrors.password2 && (
+                        <p className="mt-1 text-xs text-destructive">{fieldErrors.password2}</p>
+                      )}
+                    </div>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Already have an account?{" "}
+                    <Link to="/login" className="underline">
+                      Sign in first
+                    </Link>{" "}
+                    — your details will be prefilled.
+                  </p>
+                </div>
+              )}
             </div>
+
           )}
 
           {step === 2 && (
