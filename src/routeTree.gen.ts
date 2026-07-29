@@ -67,6 +67,7 @@ import { Route as BlogCategorySlugRouteImport } from './routes/blog.category.$sl
 import { Route as ApplyReceivedApplicationIdRouteImport } from './routes/apply.received.$applicationId'
 import { Route as ApiPublicQaSeedRouteImport } from './routes/api/public/qa-seed'
 import { Route as ApiPublicIntakeRouteImport } from './routes/api/public/intake'
+import { Route as ApiPublicExpressIntakeRouteImport } from './routes/api/public/express-intake'
 import { Route as ApiPublicEventsRouteImport } from './routes/api/public/events'
 import { Route as ApiPublicContactRouteImport } from './routes/api/public/contact'
 import { Route as ApiPublicBootstrapAdminRouteImport } from './routes/api/public/bootstrap-admin'
@@ -424,6 +425,11 @@ const ApiPublicQaSeedRoute = ApiPublicQaSeedRouteImport.update({
 const ApiPublicIntakeRoute = ApiPublicIntakeRouteImport.update({
   id: '/api/public/intake',
   path: '/api/public/intake',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicExpressIntakeRoute = ApiPublicExpressIntakeRouteImport.update({
+  id: '/api/public/express-intake',
+  path: '/api/public/express-intake',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPublicEventsRoute = ApiPublicEventsRouteImport.update({
@@ -905,6 +911,7 @@ export interface FileRoutesByFullPath {
   '/api/public/bootstrap-admin': typeof ApiPublicBootstrapAdminRoute
   '/api/public/contact': typeof ApiPublicContactRoute
   '/api/public/events': typeof ApiPublicEventsRoute
+  '/api/public/express-intake': typeof ApiPublicExpressIntakeRoute
   '/api/public/intake': typeof ApiPublicIntakeRoute
   '/api/public/qa-seed': typeof ApiPublicQaSeedRoute
   '/apply/received/$applicationId': typeof ApplyReceivedApplicationIdRoute
@@ -1021,6 +1028,7 @@ export interface FileRoutesByTo {
   '/api/public/bootstrap-admin': typeof ApiPublicBootstrapAdminRoute
   '/api/public/contact': typeof ApiPublicContactRoute
   '/api/public/events': typeof ApiPublicEventsRoute
+  '/api/public/express-intake': typeof ApiPublicExpressIntakeRoute
   '/api/public/intake': typeof ApiPublicIntakeRoute
   '/api/public/qa-seed': typeof ApiPublicQaSeedRoute
   '/apply/received/$applicationId': typeof ApplyReceivedApplicationIdRoute
@@ -1149,6 +1157,7 @@ export interface FileRoutesById {
   '/api/public/bootstrap-admin': typeof ApiPublicBootstrapAdminRoute
   '/api/public/contact': typeof ApiPublicContactRoute
   '/api/public/events': typeof ApiPublicEventsRoute
+  '/api/public/express-intake': typeof ApiPublicExpressIntakeRoute
   '/api/public/intake': typeof ApiPublicIntakeRoute
   '/api/public/qa-seed': typeof ApiPublicQaSeedRoute
   '/apply/received/$applicationId': typeof ApplyReceivedApplicationIdRoute
@@ -1277,6 +1286,7 @@ export interface FileRouteTypes {
     | '/api/public/bootstrap-admin'
     | '/api/public/contact'
     | '/api/public/events'
+    | '/api/public/express-intake'
     | '/api/public/intake'
     | '/api/public/qa-seed'
     | '/apply/received/$applicationId'
@@ -1393,6 +1403,7 @@ export interface FileRouteTypes {
     | '/api/public/bootstrap-admin'
     | '/api/public/contact'
     | '/api/public/events'
+    | '/api/public/express-intake'
     | '/api/public/intake'
     | '/api/public/qa-seed'
     | '/apply/received/$applicationId'
@@ -1520,6 +1531,7 @@ export interface FileRouteTypes {
     | '/api/public/bootstrap-admin'
     | '/api/public/contact'
     | '/api/public/events'
+    | '/api/public/express-intake'
     | '/api/public/intake'
     | '/api/public/qa-seed'
     | '/apply/received/$applicationId'
@@ -1606,6 +1618,7 @@ export interface RootRouteChildren {
   ApiPublicBootstrapAdminRoute: typeof ApiPublicBootstrapAdminRoute
   ApiPublicContactRoute: typeof ApiPublicContactRoute
   ApiPublicEventsRoute: typeof ApiPublicEventsRoute
+  ApiPublicExpressIntakeRoute: typeof ApiPublicExpressIntakeRoute
   ApiPublicIntakeRoute: typeof ApiPublicIntakeRoute
   ApiPublicQaSeedRoute: typeof ApiPublicQaSeedRoute
   ApplyReceivedApplicationIdRoute: typeof ApplyReceivedApplicationIdRoute
@@ -2025,6 +2038,13 @@ declare module '@tanstack/react-router' {
       path: '/api/public/intake'
       fullPath: '/api/public/intake'
       preLoaderRoute: typeof ApiPublicIntakeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/express-intake': {
+      id: '/api/public/express-intake'
+      path: '/api/public/express-intake'
+      fullPath: '/api/public/express-intake'
+      preLoaderRoute: typeof ApiPublicExpressIntakeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/events': {
@@ -2816,6 +2836,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicBootstrapAdminRoute: ApiPublicBootstrapAdminRoute,
   ApiPublicContactRoute: ApiPublicContactRoute,
   ApiPublicEventsRoute: ApiPublicEventsRoute,
+  ApiPublicExpressIntakeRoute: ApiPublicExpressIntakeRoute,
   ApiPublicIntakeRoute: ApiPublicIntakeRoute,
   ApiPublicQaSeedRoute: ApiPublicQaSeedRoute,
   ApplyReceivedApplicationIdRoute: ApplyReceivedApplicationIdRoute,
