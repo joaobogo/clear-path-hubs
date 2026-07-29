@@ -515,7 +515,28 @@ export const Route = createFileRoute("/api/public/intake")({
               }));
               await supabaseAdmin.from("notifications").insert(notifRows);
             }
-          }
+        }
+
+        // ---------- Teams channel ping (non-critical) ----------
+        try {
+          const { notifyTeamsSafe } = await import("@/lib/teams-notify.server");
+          notifyTeamsSafe({
+            title: "New employer intake",
+            subtitle: `${data.companyName.trim()} · ${data.roleTitle.trim()}`,
+            facts: [
+              { label: "Contact", value: `${data.firstName} ${data.lastName}` },
+              { label: "Email", value: data.workEmail },
+              { label: "Reference", value: intakeId },
+              { label: "Workspace", value: requisitionPending ? "preparing" : "ready" },
+            ],
+            linkPath: organizationId ? `/admin/clients/${organizationId}` : "/admin/clients",
+            linkLabel: "Open client",
+          });
+        } catch (err) {
+          console.error("[intake] teams notify failed (non-critical)", { traceId, err });
+        }
+
+
         } catch (err) {
           console.error("[intake] notification failed (non-critical)", { traceId, err });
         }
