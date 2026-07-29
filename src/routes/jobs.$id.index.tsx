@@ -6,6 +6,17 @@ import { buildJobSlug, extractJobUuid } from "@/lib/marketing/job-slug";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { SiteShell } from "@/components/marketing/site-shell";
+import { parseJobDescription } from "@/lib/marketing/job-description";
+import {
+  ArrowLeft,
+  Building2,
+  Check,
+  Clock,
+  MapPin,
+  TrendingUp,
+  Wallet,
+  type LucideIcon,
+} from "lucide-react";
 
 export const Route = createFileRoute("/jobs/$id/")({
   loader: async ({ context, params }) => {
