@@ -3,6 +3,11 @@
 // → Compensation → Search Criteria → Review) so admins and clients edit
 // positions with the same questions asked at intake.
 import { useEffect, useMemo, useState } from "react";
+import {
+  SCREENING_MAX_QUESTIONS,
+  SCREENING_MAX_REQUIRED,
+  countRequired,
+} from "@/lib/screening-limits";
 import { toast } from "sonner";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
