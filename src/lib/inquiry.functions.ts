@@ -58,5 +58,29 @@ export const submitInquiry = createServerFn({ method: "POST" })
       // Never leak DB detail to the client.
       throw new Error("Could not submit inquiry. Please try again in a moment.");
     }
+
+    // Teams channel ping (non-critical).
+    try {
+      const { notifyTeamsSafe } = await import("./teams-notify.server");
+      notifyTeamsSafe({
+        title: data.kind === "call" ? "New call request" : "New website message",
+        subtitle: `${data.name}${data.company ? ` · ${data.company}` : ""}`,
+        facts: [
+          { label: "Email", value: data.email },
+          { label: "Role", value: data.role_title },
+          { label: "Roles to hire", value: data.role_count },
+          { label: "Industry", value: data.industry_slug },
+          { label: "Preferred slot", value: data.preferred_slot },
+          { label: "Message", value: data.message },
+          { label: "Source", value: data.source_path },
+        ],
+        linkPath: "/admin/inbox",
+        linkLabel: "Open inbox",
+      });
+    } catch {
+      // ignore
+    }
+
     return { ok: true, id: inserted?.id ?? null };
+
   });
