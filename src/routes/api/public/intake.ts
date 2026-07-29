@@ -515,6 +515,9 @@ export const Route = createFileRoute("/api/public/intake")({
               }));
               await supabaseAdmin.from("notifications").insert(notifRows);
             }
+          }
+        } catch (err) {
+          console.error("[intake] notification failed (non-critical)", { traceId, err });
         }
 
         // ---------- Teams channel ping (non-critical) ----------
@@ -536,10 +539,6 @@ export const Route = createFileRoute("/api/public/intake")({
           console.error("[intake] teams notify failed (non-critical)", { traceId, err });
         }
 
-
-        } catch (err) {
-          console.error("[intake] notification failed (non-critical)", { traceId, err });
-        }
 
         return Response.json({
           ok: true,
