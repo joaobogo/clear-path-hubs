@@ -399,6 +399,24 @@ export const submitApplication = createServerFn({ method: "POST" })
         console.error("[submitApplication] teams notify failed", trace_id, teamsErr);
       }
 
+      // Internal email alert (non-critical).
+      try {
+        const { sendTemplateEmail } = await import("./email-templates/send-email");
+        await sendTemplateEmail("new-application-alert", "john.kasprzak@taasflow.com", {
+          idempotencyKey: `new-application-alert-${appRow.id}`,
+          templateData: {
+            candidateName: data.full_name,
+            positionTitle: pos.title,
+            reference: ref6(appRow.id),
+            receivedAt: new Date().toISOString(),
+            reviewUrl: "https://taasflow.com/admin/candidates",
+          },
+        });
+      } catch (mailErr) {
+        console.error("[submitApplication] alert email failed", trace_id, mailErr);
+      }
+
+
 
 
       return {
