@@ -34,8 +34,6 @@ import {
 	Settings,
 	Award,
 	Bot,
-	LineChart,
- 	Building2,
  	CheckSquare,
  	Plus,
 } from "lucide-react";
