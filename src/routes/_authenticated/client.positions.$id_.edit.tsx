@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { PositionEditWizard } from "@/components/positions/PositionEditWizard";
 import { getPositionForEdit } from "@/lib/position-edit.functions";
 
-export const Route = createFileRoute("/_authenticated/client/positions/$id/edit")({
+export const Route = createFileRoute("/_authenticated/client/positions/$id_/edit")({
  validateSearch: (search: Record<string, unknown>) => ({
   step: search.step ? Number(search.step) : undefined,
  }),
