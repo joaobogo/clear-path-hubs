@@ -47,7 +47,8 @@ export type EmailConfig = {
  * has no verified sender domain, email is honestly reported as unconfigured.
  */
 export function readEmailConfig(): EmailConfig {
-  const domain = process.env.SENDER_DOMAIN ?? process.env.LOVABLE_EMAIL_DOMAIN ?? null;
+  const domain =
+    process.env.SENDER_DOMAIN ?? process.env.LOVABLE_EMAIL_DOMAIN ?? SENDER_DOMAIN;
   const apiKey = process.env.LOVABLE_API_KEY ?? null;
   if (!domain) {
     return { configured: false, senderDomain: null, reason: "email_not_configured" };
