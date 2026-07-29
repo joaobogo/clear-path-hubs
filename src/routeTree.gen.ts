@@ -123,6 +123,7 @@ import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/em
 import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
 import { Route as ApiPublicPipelineRunRouteImport } from './routes/api/public/pipeline.run'
 import { Route as ApiPublicIntakeStatusIdRouteImport } from './routes/api/public/intake-status.$id'
+import { Route as ApiPublicBlueprintStatusIntakeIdRouteImport } from './routes/api/public/blueprint-status.$intakeId'
 import { Route as AuthenticatedMeApplicationsIdRouteImport } from './routes/_authenticated/me.applications.$id'
 import { Route as AuthenticatedClientPositionsIdRouteImport } from './routes/_authenticated/client.positions.$id'
 import { Route as AuthenticatedClientCandidatesIdRouteImport } from './routes/_authenticated/client.candidates.$id'
@@ -748,6 +749,12 @@ const ApiPublicIntakeStatusIdRoute = ApiPublicIntakeStatusIdRouteImport.update({
   path: '/api/public/intake-status/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicBlueprintStatusIntakeIdRoute =
+  ApiPublicBlueprintStatusIntakeIdRouteImport.update({
+    id: '/api/public/blueprint-status/$intakeId',
+    path: '/api/public/blueprint-status/$intakeId',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AuthenticatedMeApplicationsIdRoute =
   AuthenticatedMeApplicationsIdRouteImport.update({
     id: '/$id',
@@ -936,6 +943,7 @@ export interface FileRoutesByFullPath {
   '/client/candidates/$id': typeof AuthenticatedClientCandidatesIdRoute
   '/client/positions/$id': typeof AuthenticatedClientPositionsIdRoute
   '/me/applications/$id': typeof AuthenticatedMeApplicationsIdRoute
+  '/api/public/blueprint-status/$intakeId': typeof ApiPublicBlueprintStatusIntakeIdRoute
   '/api/public/intake-status/$id': typeof ApiPublicIntakeStatusIdRoute
   '/api/public/pipeline/run': typeof ApiPublicPipelineRunRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -1054,6 +1062,7 @@ export interface FileRoutesByTo {
   '/client/candidates/$id': typeof AuthenticatedClientCandidatesIdRoute
   '/client/positions/$id': typeof AuthenticatedClientPositionsIdRoute
   '/me/applications/$id': typeof AuthenticatedMeApplicationsIdRoute
+  '/api/public/blueprint-status/$intakeId': typeof ApiPublicBlueprintStatusIntakeIdRoute
   '/api/public/intake-status/$id': typeof ApiPublicIntakeStatusIdRoute
   '/api/public/pipeline/run': typeof ApiPublicPipelineRunRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -1184,6 +1193,7 @@ export interface FileRoutesById {
   '/_authenticated/client/candidates/$id': typeof AuthenticatedClientCandidatesIdRoute
   '/_authenticated/client/positions/$id': typeof AuthenticatedClientPositionsIdRoute
   '/_authenticated/me/applications/$id': typeof AuthenticatedMeApplicationsIdRoute
+  '/api/public/blueprint-status/$intakeId': typeof ApiPublicBlueprintStatusIntakeIdRoute
   '/api/public/intake-status/$id': typeof ApiPublicIntakeStatusIdRoute
   '/api/public/pipeline/run': typeof ApiPublicPipelineRunRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -1314,6 +1324,7 @@ export interface FileRouteTypes {
     | '/client/candidates/$id'
     | '/client/positions/$id'
     | '/me/applications/$id'
+    | '/api/public/blueprint-status/$intakeId'
     | '/api/public/intake-status/$id'
     | '/api/public/pipeline/run'
     | '/lovable/email/auth/preview'
@@ -1432,6 +1443,7 @@ export interface FileRouteTypes {
     | '/client/candidates/$id'
     | '/client/positions/$id'
     | '/me/applications/$id'
+    | '/api/public/blueprint-status/$intakeId'
     | '/api/public/intake-status/$id'
     | '/api/public/pipeline/run'
     | '/lovable/email/auth/preview'
@@ -1561,6 +1573,7 @@ export interface FileRouteTypes {
     | '/_authenticated/client/candidates/$id'
     | '/_authenticated/client/positions/$id'
     | '/_authenticated/me/applications/$id'
+    | '/api/public/blueprint-status/$intakeId'
     | '/api/public/intake-status/$id'
     | '/api/public/pipeline/run'
     | '/lovable/email/auth/preview'
@@ -1638,6 +1651,7 @@ export interface RootRouteChildren {
   BlogCategorySlugRoute: typeof BlogCategorySlugRoute
   JobsIdApplyRoute: typeof JobsIdApplyRoute
   JobsIdIndexRoute: typeof JobsIdIndexRoute
+  ApiPublicBlueprintStatusIntakeIdRoute: typeof ApiPublicBlueprintStatusIntakeIdRoute
   ApiPublicIntakeStatusIdRoute: typeof ApiPublicIntakeStatusIdRoute
   ApiPublicPipelineRunRoute: typeof ApiPublicPipelineRunRoute
   LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
@@ -2445,6 +2459,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicIntakeStatusIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/blueprint-status/$intakeId': {
+      id: '/api/public/blueprint-status/$intakeId'
+      path: '/api/public/blueprint-status/$intakeId'
+      fullPath: '/api/public/blueprint-status/$intakeId'
+      preLoaderRoute: typeof ApiPublicBlueprintStatusIntakeIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/me/applications/$id': {
       id: '/_authenticated/me/applications/$id'
       path: '/$id'
@@ -2864,6 +2885,7 @@ const rootRouteChildren: RootRouteChildren = {
   BlogCategorySlugRoute: BlogCategorySlugRoute,
   JobsIdApplyRoute: JobsIdApplyRoute,
   JobsIdIndexRoute: JobsIdIndexRoute,
+  ApiPublicBlueprintStatusIntakeIdRoute: ApiPublicBlueprintStatusIntakeIdRoute,
   ApiPublicIntakeStatusIdRoute: ApiPublicIntakeStatusIdRoute,
   ApiPublicPipelineRunRoute: ApiPublicPipelineRunRoute,
   LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,
