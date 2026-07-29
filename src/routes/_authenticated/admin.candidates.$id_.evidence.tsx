@@ -19,7 +19,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
-export const Route = createFileRoute("/_authenticated/admin/candidates/$id/evidence")({
+export const Route = createFileRoute("/_authenticated/admin/candidates/$id_/evidence")({
   loader: async ({ context, params }) => {
     const d = await context.queryClient.ensureQueryData({
       queryKey: ["admin-candidate", params.id],
