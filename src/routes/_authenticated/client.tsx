@@ -34,8 +34,6 @@ import {
 	Settings,
 	Award,
 	Bot,
-	LineChart,
- 	Building2,
  	CheckSquare,
  	Plus,
 } from "lucide-react";
@@ -99,8 +97,6 @@ const TABS: NavDef[] = [
 	{ to: "/client/positions", label: "Positions", icon: Briefcase, everyone: true },
 	{ to: "/client/candidates", label: "Candidates", icon: Users, everyone: true },
 	{ to: "/client/tasks", label: "Tasks & Approvals", icon: CheckSquare, everyone: true },
-	{ to: "/client/analytics", label: "Operations", icon: LineChart, everyone: true },
-	{ to: "/client/portfolio", label: "Portfolio", icon: Building2, everyone: true },
  { to: "/client/assistant", label: "Assistant", icon: Bot, everyone: true },
  { to: "/client/talent-memory", label: "Talent memory", icon: Award, everyone: true },
  { to: "/client/inbox", label: "Inbox", icon: MessageSquare, everyone: true },
