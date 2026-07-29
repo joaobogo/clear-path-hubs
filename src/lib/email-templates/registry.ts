@@ -25,5 +25,9 @@ export interface TemplateEntry {
  */
 export const TEMPLATES: Record<string, TemplateEntry> = {
   'new-application-alert': newApplicationAlertTemplate,
+  'express-welcome': expressWelcomeTemplate,
+  'role-blueprint-ready': roleBlueprintReadyTemplate,
+  'blueprint-delayed': blueprintDelayedTemplate,
 }
+
 
