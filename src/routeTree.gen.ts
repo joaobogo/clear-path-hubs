@@ -116,6 +116,7 @@ import { Route as AuthenticatedAdminPositionsIndexRouteImport } from './routes/_
 import { Route as AuthenticatedAdminIntakeIndexRouteImport } from './routes/_authenticated/admin.intake.index'
 import { Route as AuthenticatedAdminClientsIndexRouteImport } from './routes/_authenticated/admin.clients.index'
 import { Route as AuthenticatedAdminCandidatesIndexRouteImport } from './routes/_authenticated/admin.candidates.index'
+import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
 import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
 import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
 import { Route as ApiPublicPipelineRunRouteImport } from './routes/api/public/pipeline.run'
@@ -709,6 +710,12 @@ const AuthenticatedAdminCandidatesIndexRoute =
     path: '/',
     getParentRoute: () => AuthenticatedAdminCandidatesRoute,
   } as any)
+const LovableEmailTransactionalPreviewRoute =
+  LovableEmailTransactionalPreviewRouteImport.update({
+    id: '/lovable/email/transactional/preview',
+    path: '/lovable/email/transactional/preview',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const LovableEmailAuthWebhookRoute = LovableEmailAuthWebhookRouteImport.update({
   id: '/lovable/email/auth/webhook',
   path: '/lovable/email/auth/webhook',
@@ -919,6 +926,7 @@ export interface FileRoutesByFullPath {
   '/api/public/pipeline/run': typeof ApiPublicPipelineRunRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
+  '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
   '/admin/candidates/': typeof AuthenticatedAdminCandidatesIndexRoute
   '/admin/clients/': typeof AuthenticatedAdminClientsIndexRoute
   '/admin/intake/': typeof AuthenticatedAdminIntakeIndexRoute
@@ -1034,6 +1042,7 @@ export interface FileRoutesByTo {
   '/api/public/pipeline/run': typeof ApiPublicPipelineRunRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
+  '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
   '/admin/candidates': typeof AuthenticatedAdminCandidatesIndexRoute
   '/admin/clients': typeof AuthenticatedAdminClientsIndexRoute
   '/admin/intake': typeof AuthenticatedAdminIntakeIndexRoute
@@ -1161,6 +1170,7 @@ export interface FileRoutesById {
   '/api/public/pipeline/run': typeof ApiPublicPipelineRunRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
+  '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
   '/_authenticated/admin/candidates/': typeof AuthenticatedAdminCandidatesIndexRoute
   '/_authenticated/admin/clients/': typeof AuthenticatedAdminClientsIndexRoute
   '/_authenticated/admin/intake/': typeof AuthenticatedAdminIntakeIndexRoute
@@ -1288,6 +1298,7 @@ export interface FileRouteTypes {
     | '/api/public/pipeline/run'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
+    | '/lovable/email/transactional/preview'
     | '/admin/candidates/'
     | '/admin/clients/'
     | '/admin/intake/'
@@ -1403,6 +1414,7 @@ export interface FileRouteTypes {
     | '/api/public/pipeline/run'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
+    | '/lovable/email/transactional/preview'
     | '/admin/candidates'
     | '/admin/clients'
     | '/admin/intake'
@@ -1529,6 +1541,7 @@ export interface FileRouteTypes {
     | '/api/public/pipeline/run'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
+    | '/lovable/email/transactional/preview'
     | '/_authenticated/admin/candidates/'
     | '/_authenticated/admin/clients/'
     | '/_authenticated/admin/intake/'
@@ -1603,6 +1616,7 @@ export interface RootRouteChildren {
   ApiPublicPipelineRunRoute: typeof ApiPublicPipelineRunRoute
   LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
   LovableEmailAuthWebhookRoute: typeof LovableEmailAuthWebhookRoute
+  LovableEmailTransactionalPreviewRoute: typeof LovableEmailTransactionalPreviewRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -2356,6 +2370,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminCandidatesIndexRouteImport
       parentRoute: typeof AuthenticatedAdminCandidatesRoute
     }
+    '/lovable/email/transactional/preview': {
+      id: '/lovable/email/transactional/preview'
+      path: '/lovable/email/transactional/preview'
+      fullPath: '/lovable/email/transactional/preview'
+      preLoaderRoute: typeof LovableEmailTransactionalPreviewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/lovable/email/auth/webhook': {
       id: '/lovable/email/auth/webhook'
       path: '/lovable/email/auth/webhook'
@@ -2844,6 +2865,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicPipelineRunRoute: ApiPublicPipelineRunRoute,
   LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,
   LovableEmailAuthWebhookRoute: LovableEmailAuthWebhookRoute,
+  LovableEmailTransactionalPreviewRoute: LovableEmailTransactionalPreviewRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
