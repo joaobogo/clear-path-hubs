@@ -9,7 +9,7 @@ import { EmailChangeEmail } from '@/lib/email-templates/email-change'
 import { ReauthenticationEmail } from '@/lib/email-templates/reauthentication'
 
 // Configuration
-const SITE_NAME = "clear-path-hubs"
+const SITE_NAME = "TaaSFlow"
 const SENDER_DOMAIN = "notify.taasflow.com"
 const ROOT_DOMAIN = "taasflow.com"
 const FROM_DOMAIN = "taasflow.com"
