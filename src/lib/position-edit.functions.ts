@@ -277,7 +277,12 @@ const saveInput = z.object({
         dealbreaker: z.boolean().default(false),
       }),
     )
-    .max(30)
+    .max(SCREENING_MAX_QUESTIONS, {
+      message: `Keep it to ${SCREENING_MAX_QUESTIONS} screening questions or fewer.`,
+    })
+    .refine((qs) => qs.filter((q) => q.required).length <= SCREENING_MAX_REQUIRED, {
+      message: `At most ${SCREENING_MAX_REQUIRED} screening questions can be mandatory — make the rest optional.`,
+    })
     .default([]),
 });
 
