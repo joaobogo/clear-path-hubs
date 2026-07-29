@@ -9,6 +9,7 @@ import {
   APPLY_DRAFT_KEY,
   APPLY_IDEMPOTENCY_KEY,
   MAX_CV_BYTES,
+  MIN_PASSWORD_LENGTH,
   applySchema,
   composeLocation,
   fileExt,
@@ -94,6 +95,10 @@ function ApplyPage() {
     website_url: "",
     accommodation_request: "",
   });
+  // Account creation for applicants who are not signed in.
+  const [signedIn, setSignedIn] = useState<boolean | null>(null);
+  const [password, setPassword] = useState("");
+  const [password2, setPassword2] = useState("");
   const [cvFile, setCvFile] = useState<File | null>(null);
   const [cvError, setCvError] = useState<string | null>(null);
   const [answers, setAnswers] = useState<Record<string, AnswerValue>>({});
@@ -118,6 +123,24 @@ function ApplyPage() {
       }
     } catch { /* ignore */ }
   }, [draftKey]);
+
+  // Is this applicant already signed in? If so we skip account creation and
+  // prefill the email we already know.
+  useEffect(() => {
+    let alive = true;
+    (async () => {
+      const { supabase } = await import("@/integrations/supabase/client");
+      const { data } = await supabase.auth.getUser();
+      if (!alive) return;
+      setSignedIn(Boolean(data.user));
+      if (data.user?.email) {
+        setForm((f) => (f.email ? f : { ...f, email: data.user!.email as string }));
+      }
+    })().catch(() => setSignedIn(false));
+    return () => {
+      alive = false;
+    };
+  }, []);
 
   useEffect(() => {
     try {
@@ -198,6 +221,11 @@ function ApplyPage() {
       if (form.country.trim().length < 2) errs.country = "Enter your country";
       if (!form.region.trim()) errs.region = "Enter your state or region";
       if (!form.city.trim()) errs.city = "Enter your city";
+      if (signedIn === false) {
+        if (password.length < MIN_PASSWORD_LENGTH)
+          errs.password = `Use at least ${MIN_PASSWORD_LENGTH} characters`;
+        else if (password !== password2) errs.password2 = "Passwords do not match";
+      }
     }
     if (n === 2) {
       if (!cvFile) errs.cv = "Attach your CV to continue";
@@ -248,7 +276,9 @@ function ApplyPage() {
         allErrs.phone ||
         allErrs.country ||
         allErrs.region ||
-        allErrs.city
+        allErrs.city ||
+        allErrs.password ||
+        allErrs.password2
       )
         setStep(1);
       else if (allErrs.cv || allErrs.portfolio_url || allErrs.linkedin_url || allErrs.website_url)
@@ -292,6 +322,7 @@ function ApplyPage() {
         consent_terms: consent as true,
         network_opt_in: network,
         idempotency_key: getOrCreateIdempotencyKey(),
+        ...(signedIn === false && password ? { password } : {}),
       };
 
       const parsed = applySchema.safeParse(payload);
@@ -316,6 +347,19 @@ function ApplyPage() {
       try {
         localStorage.removeItem(draftKey);
       } catch { /* ignore */ }
+      // Account just created for this applicant → sign them straight in so the
+      // confirmation page can take them to their application tracker.
+      if (result.account === "created" && password) {
+        try {
+          const { supabase } = await import("@/integrations/supabase/client");
+          await supabase.auth.signInWithPassword({
+            email: form.email.trim().toLowerCase(),
+            password,
+          });
+        } catch { /* non-blocking: they can sign in later */ }
+      }
+      setPassword("");
+      setPassword2("");
       await navigate({
         to: "/apply/received/$applicationId",
         params: { applicationId: result.application_id },
@@ -487,7 +531,58 @@ function ApplyPage() {
                   )}
                 </div>
               </div>
+
+              {signedIn === false && (
+                <div className="rounded-lg border bg-muted/30 p-4 space-y-4">
+                  <div>
+                    <h3 className="text-base font-semibold">Create your candidate account</h3>
+                    <p className="text-sm text-muted-foreground">
+                      Set a password so you can sign in and follow the status of this
+                      application. We use the email above as your username.
+                    </p>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="password">Password *</Label>
+                      <Input
+                        id="password"
+                        type="password"
+                        autoComplete="new-password"
+                        data-field="password"
+                        placeholder={`At least ${MIN_PASSWORD_LENGTH} characters`}
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                      />
+                      {fieldErrors.password && (
+                        <p className="mt-1 text-xs text-destructive">{fieldErrors.password}</p>
+                      )}
+                    </div>
+                    <div>
+                      <Label htmlFor="password2">Confirm password *</Label>
+                      <Input
+                        id="password2"
+                        type="password"
+                        autoComplete="new-password"
+                        data-field="password2"
+                        value={password2}
+                        onChange={(e) => setPassword2(e.target.value)}
+                      />
+                      {fieldErrors.password2 && (
+                        <p className="mt-1 text-xs text-destructive">{fieldErrors.password2}</p>
+                      )}
+                    </div>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Already have an account?{" "}
+                    <Link to="/login" className="underline">
+                      Sign in first
+                    </Link>{" "}
+                    — your details will be prefilled.
+                  </p>
+                </div>
+              )}
             </div>
+
           )}
 
           {step === 2 && (

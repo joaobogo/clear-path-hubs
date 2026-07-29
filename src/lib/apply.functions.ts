@@ -12,6 +12,11 @@ export type SubmitApplicationResult =
       reference: string; // short human-friendly ref
       tracking_path: string; // route to send the candidate to
       deduped: boolean;
+      // Account outcome for an unauthenticated applicant:
+      //  created  → we just made their candidate account with the password given
+      //  existing → an account already existed for this email; they should sign in
+      //  none     → no password supplied, no account created
+      account: "created" | "existing" | "none";
     }
   | {
       ok: false;
@@ -173,6 +178,81 @@ export const submitApplication = createServerFn({ method: "POST" })
         candidateProfileId = cpNew.id;
       }
 
+      // 3b. Candidate account. An applicant who is not signed in may set a
+      // password here so they can track this application in their portal.
+      // Never overwrite an existing account's password.
+      let accountOutcome: "created" | "existing" | "none" = "none";
+      let authUserId: string | null = existingCp?.user_id ?? null;
+
+      if (!authUserId) {
+        // Someone may already have an auth account with this email even if the
+        // candidate profile is not linked yet — reuse it instead of creating.
+        const { data: existingProfile } = await supabaseAdmin
+          .from("profiles")
+          .select("auth_user_id")
+          .ilike("email", emailLower)
+          .maybeSingle();
+        if (existingProfile?.auth_user_id) {
+          authUserId = existingProfile.auth_user_id as string;
+          accountOutcome = "existing";
+        }
+      } else {
+        accountOutcome = "existing";
+      }
+
+      if (!authUserId && data.password) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const admin = supabaseAdmin as any;
+        const { data: created, error: createErr } = await admin.auth.admin.createUser({
+          email: emailLower,
+          password: data.password,
+          // Confirmed on creation: the candidate proved control of the flow and
+          // must be able to sign in immediately to follow their application.
+          email_confirm: true,
+          user_metadata: { full_name: data.full_name, role: "candidate" },
+        });
+        if (createErr) {
+          // Most likely the address is already registered — find and reuse it.
+          const { data: list } = await admin.auth.admin.listUsers({ page: 1, perPage: 200 });
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const found = list?.users?.find(
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            (u: any) => (u.email ?? "").toLowerCase() === emailLower,
+          );
+          if (found) {
+            authUserId = found.id as string;
+            accountOutcome = "existing";
+          } else {
+            console.error("[submitApplication] account create failed", trace_id, createErr);
+          }
+        } else if (created?.user?.id) {
+          authUserId = created.user.id as string;
+          accountOutcome = "created";
+        }
+      }
+
+      if (authUserId) {
+        // Link the candidate profile and make sure a platform profile row exists.
+        await supabaseAdmin
+          .from("candidate_profiles")
+          .update({ user_id: authUserId })
+          .eq("id", candidateProfileId)
+          .is("user_id", null);
+        const { data: prof } = await supabaseAdmin
+          .from("profiles")
+          .select("id")
+          .eq("auth_user_id", authUserId)
+          .maybeSingle();
+        if (!prof) {
+          await supabaseAdmin.from("profiles").insert({
+            auth_user_id: authUserId,
+            email: emailLower,
+            full_name: data.full_name,
+            status: "active",
+          });
+        }
+      }
+
 
       // 4. Idempotency short-circuit: if a matching application already exists for this
       // (candidate, position) that is not withdrawn/rejected/archived, treat as duplicate.
@@ -193,6 +273,7 @@ export const submitApplication = createServerFn({ method: "POST" })
           reference: ref6(existingApp.id),
           tracking_path: `/apply/received/${existingApp.id}`,
           deduped: true,
+          account: accountOutcome,
         };
       }
 
@@ -213,7 +294,7 @@ export const submitApplication = createServerFn({ method: "POST" })
       const { data: fileRow, error: fileErr } = await supabaseAdmin
         .from("files")
         .insert({
-          owner_user_id: existingCp?.user_id ?? null,
+          owner_user_id: authUserId,
           candidate_profile_id: candidateProfileId,
           storage_bucket: "cvs",
           storage_path: storagePath,
@@ -281,6 +362,7 @@ export const submitApplication = createServerFn({ method: "POST" })
             reference: ref6(race.id),
             tracking_path: `/apply/received/${race.id}`,
             deduped: true,
+            account: accountOutcome,
           };
         }
         throw appErr;
@@ -425,6 +507,7 @@ export const submitApplication = createServerFn({ method: "POST" })
         reference: ref6(appRow.id),
         tracking_path: `/apply/received/${appRow.id}`,
         deduped: false,
+        account: accountOutcome,
       };
     } catch (err) {
       console.error("[submitApplication]", trace_id, err);

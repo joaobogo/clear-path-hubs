@@ -4,6 +4,7 @@ export const MAX_CV_BYTES = 10 * 1024 * 1024; // 10 MB
 // CVs are PDF-only across UI, backend, storage and processing.
 export const ALLOWED_CV_MIME = new Set(["application/pdf"]);
 export const ALLOWED_CV_EXT = new Set(["pdf"]);
+export const MIN_PASSWORD_LENGTH = 8;
 
 export const answerSchema = z.object({
   question_id: z.string().uuid(),
@@ -45,6 +46,13 @@ export const applySchema = z.object({
   }),
   network_opt_in: z.boolean().default(false),
   source: z.string().trim().max(80).default("public_job_board"),
+  // Optional account password: set when an unauthenticated applicant chooses
+  // to create a candidate account so they can track their application.
+  password: z
+    .string()
+    .min(MIN_PASSWORD_LENGTH, `Use at least ${MIN_PASSWORD_LENGTH} characters`)
+    .max(128)
+    .optional(),
   // Client-generated stable id so a double-tap or reload cannot double-submit.
   idempotency_key: z.string().min(8).max(64),
 });

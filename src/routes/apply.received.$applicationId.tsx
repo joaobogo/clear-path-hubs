@@ -1,5 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { FormShell } from "@/components/marketing/form-shell";
+import { useEffect, useState } from "react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { getApplicationReceipt } from "@/lib/apply.functions";
 import { Button } from "@/components/ui/button";
@@ -37,6 +38,18 @@ function Received() {
     queryKey: ["application-receipt", applicationId],
     queryFn: () => getApplicationReceipt({ data: { id: applicationId } }),
   });
+  const [signedIn, setSignedIn] = useState(false);
+  useEffect(() => {
+    let alive = true;
+    (async () => {
+      const { supabase } = await import("@/integrations/supabase/client");
+      const { data: u } = await supabase.auth.getUser();
+      if (alive) setSignedIn(Boolean(u.user));
+    })().catch(() => undefined);
+    return () => {
+      alive = false;
+    };
+  }, []);
   if (!data) return null;
 
   return (
@@ -69,15 +82,22 @@ function Received() {
             <li>Our team reviews your CV and screening answers.</li>
             <li>If there's a fit, we'll reach out by email within a few business days.</li>
             <li>
-              You can create a candidate account any time to track this application and reuse your
-              profile for future roles.
+              {signedIn
+                ? "Your candidate account is ready — track this application and reuse your profile for future roles."
+                : "You can create a candidate account any time to track this application and reuse your profile for future roles."}
             </li>
           </ol>
         </section>
 
         <div className="mt-8 flex flex-wrap gap-3">
           <Button asChild>
-            <Link to="/auth">Create account to track application</Link>
+            {signedIn ? (
+              <Link to="/me/applications/$id" params={{ id: applicationId }}>
+                Track your application
+              </Link>
+            ) : (
+              <Link to="/login">Sign in to track your application</Link>
+            )}
           </Button>
           <Button asChild variant="outline">
             <Link to="/jobs">Browse more roles</Link>
