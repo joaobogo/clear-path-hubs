@@ -277,3 +277,105 @@ export async function retryDelivery(admin: Admin, deliveryId: string) {
     .eq("id", deliveryId);
   return result;
 }
+
+// ---------------------------------------------------------------------------
+// Intake welcome email
+// ---------------------------------------------------------------------------
+
+/**
+ * Branded welcome email sent to the person who submitted an employer intake.
+ * Confirms the workspace + requisition were created and links to the dashboard.
+ * Non-critical: returns a result instead of throwing.
+ */
+export async function sendIntakeWelcomeEmail(args: {
+  to: string;
+  firstName: string;
+  companyName: string;
+  roleTitle: string;
+  reference: string;
+  requisitionPending: boolean;
+}): Promise<{ ok: boolean; reason?: string }> {
+  const cfg = readEmailConfig();
+  if (!cfg.configured) return { ok: false, reason: cfg.reason ?? "email_not_configured" };
+
+  const greeting = args.firstName ? `Hi ${args.firstName},` : "Hi,";
+  const html = renderIntakeWelcomeEmail({ ...args, greeting });
+  try {
+    const res = await sendViaProvider({
+      to: args.to,
+      subject: `Your ${args.roleTitle} search is being set up — TaaSFlow`,
+      html,
+      idempotencyKey: `intake:${args.reference}:welcome`,
+      senderDomain: cfg.senderDomain!,
+    });
+    return res.ok ? { ok: true } : { ok: false, reason: res.code };
+  } catch (e) {
+    return { ok: false, reason: e instanceof Error ? e.message : "provider_exception" };
+  }
+}
+
+function renderIntakeWelcomeEmail(args: {
+  greeting: string;
+  companyName: string;
+  roleTitle: string;
+  reference: string;
+  requisitionPending: boolean;
+}): string {
+  const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  const loginUrl = absoluteLink("/login");
+  const steps: Array<[string, string]> = [
+    ["Workspace created", "Your TaaSFlow workspace and admin access are ready."],
+    [
+      args.requisitionPending ? "Requisition being prepared" : "Requisition created",
+      `We're structuring ${esc(args.roleTitle)} into a scored requisition — must-haves, dealbreakers and screening criteria.`,
+    ],
+    [
+      "Evaluation model in progress",
+      "Our team is calibrating the scoring rubric for this role. First ranked candidates follow within 7–14 days.",
+    ],
+  ];
+
+  return `<!doctype html><html lang="en"><head><meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Your TaaSFlow workspace is being set up</title></head>
+<body style="margin:0;padding:0;background:#f5f7fa;font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:#0f1b2d">
+<div style="max-width:600px;margin:0 auto;padding:32px 20px">
+  <div style="background:#ffffff;border:1px solid #e5e9f0;border-radius:14px;overflow:hidden">
+    <div style="background:#0f1b2d;padding:20px 28px">
+      <div style="font-size:13px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#ffffff">TaaSFlow</div>
+      <div style="font-size:12px;letter-spacing:.04em;color:#9fb3c8;margin-top:4px">ATS + recruiting + outreach, one subscription</div>
+    </div>
+    <div style="padding:28px">
+      <h1 style="font-size:22px;line-height:1.3;margin:0 0 10px">We're setting up your ${esc(args.roleTitle)} search</h1>
+      <p style="font-size:15px;line-height:1.6;margin:0 0 18px;color:#3a4a60">
+        ${esc(args.greeting)} thanks for your intake for <strong>${esc(args.companyName)}</strong>.
+        The system is creating your workspace and role, and our team is building the evaluation model now.
+      </p>
+      <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="border-collapse:collapse;margin:0 0 22px">
+        ${steps
+          .map(
+            ([label, copy], i) => `<tr>
+          <td valign="top" style="width:28px;padding:8px 0;font-size:13px;font-weight:700;color:#1f7a8c">${i + 1}</td>
+          <td style="padding:8px 0">
+            <div style="font-size:15px;font-weight:600;color:#0f1b2d">${esc(label)}</div>
+            <div style="font-size:14px;line-height:1.55;color:#5a6b80">${copy}</div>
+          </td>
+        </tr>`,
+          )
+          .join("")}
+      </table>
+      <p style="margin:0 0 22px">
+        <a href="${esc(loginUrl)}" style="display:inline-block;background:#1f7a8c;color:#ffffff;text-decoration:none;padding:13px 24px;border-radius:9px;font-size:15px;font-weight:600">Log in to your dashboard</a>
+      </p>
+      <p style="font-size:13px;line-height:1.6;color:#5a6b80;margin:0 0 6px">
+        Sign in with your work email. If you didn't set a password, use "Forgot password" on the login page to create one.
+      </p>
+      <p style="font-size:13px;line-height:1.6;color:#8496a8;margin:14px 0 0">
+        Reference ${esc(args.reference.slice(0, 8))} · A TaaSFlow reviewer confirms scope within one business day.
+      </p>
+    </div>
+  </div>
+  <p style="font-size:12px;color:#8496a8;text-align:center;margin:16px 0 0">TaaSFlow · Subscription recruiting</p>
+</div>
+</body></html>`;
+}

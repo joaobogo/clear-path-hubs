@@ -455,6 +455,22 @@ export const Route = createFileRoute("/api/public/intake")({
           trace_id: traceId,
         });
 
+        // ---------- Welcome email to the intake creator (non-critical) ----------
+        try {
+          const { sendIntakeWelcomeEmail } = await import("@/lib/notification-email.server");
+          const sent = await sendIntakeWelcomeEmail({
+            to: data.workEmail,
+            firstName: data.firstName,
+            companyName: data.companyName.trim(),
+            roleTitle: data.roleTitle.trim(),
+            reference: intakeId,
+            requisitionPending,
+          });
+          if (!sent.ok) console.warn("[intake] welcome email not sent", { traceId, reason: sent.reason });
+        } catch (err) {
+          console.error("[intake] welcome email failed (non-critical)", { traceId, err });
+        }
+
         // ---------- Admin notification (non-critical) ----------
         try {
           const { data: evt } = await supabaseAdmin

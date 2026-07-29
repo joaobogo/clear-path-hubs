@@ -106,6 +106,26 @@ function ConfirmationPage() {
                 <strong>{status.role_title}</strong> at{" "}
                 <strong>{status.company_name}</strong>.
               </p>
+              <div className="rounded-md border p-4">
+                <p className="font-medium">What's happening right now</p>
+                <ol className="mt-2 space-y-2 text-muted-foreground">
+                  <li>
+                    <span className="font-medium text-foreground">1. Creating your workspace</span> —
+                    your account and admin access are being set up.
+                  </li>
+                  <li>
+                    <span className="font-medium text-foreground">
+                      2. {status.position_id ? "Building your role" : "Preparing your requisition"}
+                    </span>{" "}
+                    — we're structuring {status.role_title} into a scored requisition with must-haves,
+                    dealbreakers and screening criteria.
+                  </li>
+                  <li>
+                    <span className="font-medium text-foreground">3. Evaluating</span> — the scoring
+                    model for this role is being calibrated so candidates arrive ranked, not raw.
+                  </li>
+                </ol>
+              </div>
               <dl className="grid grid-cols-2 gap-y-1 rounded-md border p-3 text-xs">
                 <dt className="text-muted-foreground">Reference</dt>
                 <dd className="font-mono">{status.id.slice(0, 8)}</dd>
@@ -125,11 +145,12 @@ function ConfirmationPage() {
                 <dd>{new Date(status.created_at).toLocaleString()}</dd>
               </dl>
               <p className="text-muted-foreground">
-                A TaaSFlow reviewer will confirm scope and shortlist criteria within one business day.
-                You'll receive workspace access at the email you provided.
+                We've emailed your dashboard login link to the address you provided. A TaaSFlow
+                reviewer will confirm scope and shortlist criteria within one business day.
               </p>
             </>
           )}
+
 
           <div className="pt-2">
             <Button asChild variant="outline">
