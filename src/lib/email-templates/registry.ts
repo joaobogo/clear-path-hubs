@@ -1,5 +1,9 @@
 import type { ComponentType } from 'react'
 import { template as newApplicationAlertTemplate } from './new-application-alert'
+import { template as expressWelcomeTemplate } from './express-welcome'
+import { template as roleBlueprintReadyTemplate } from './role-blueprint-ready'
+import { template as blueprintDelayedTemplate } from './blueprint-delayed'
+
 
 
 export interface TemplateEntry {
