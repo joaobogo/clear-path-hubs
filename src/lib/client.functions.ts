@@ -449,9 +449,12 @@ export const getClientPositionDetail = createServerFn({ method: "GET" })
       .select(
         `id, title, status, location, work_model, employment_type, seniority, department,
          description, requirements, preferred_requirements, dealbreakers, openings,
-         compensation, work_authorization, intake_context,
+         compensation, work_authorization, intake_context, evaluation_weights,
+         blueprint, blueprint_status, blueprint_generated_at, blueprint_confirmed_at,
+         jd_file_name, jd_source, company_research,
          published_at, approved_at, submitted_at, closed_at, created_at, updated_at`,
       )
+
       .eq("organization_id", data.orgId)
       .eq("id", data.positionId)
       .maybeSingle();
