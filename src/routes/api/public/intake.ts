@@ -88,7 +88,15 @@ const intakePayloadSchema = z
     interviewProcess: z.string().trim().max(2000).optional().or(z.literal("")),
     decisionMakers: z.string().trim().max(400).optional().or(z.literal("")),
     additionalContext: z.string().trim().max(4000).optional().or(z.literal("")),
-    screeningQuestions: z.array(screeningQuestionSchema).max(20).default([]),
+    screeningQuestions: z
+      .array(screeningQuestionSchema)
+      .max(SCREENING_MAX_QUESTIONS, {
+        message: `Keep it to ${SCREENING_MAX_QUESTIONS} screening questions or fewer.`,
+      })
+      .refine((qs) => qs.filter((q) => q.required).length <= SCREENING_MAX_REQUIRED, {
+        message: `At most ${SCREENING_MAX_REQUIRED} screening questions can be mandatory.`,
+      })
+      .default([]),
     // Submit
     consent: z.literal(true),
     password: z.string().min(8).max(128).optional(),
