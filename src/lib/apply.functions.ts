@@ -381,6 +381,26 @@ export const submitApplication = createServerFn({ method: "POST" })
         console.error("[submitApplication] emit failed", trace_id, emitErr);
       }
 
+      // Teams channel ping (non-critical, no contact details).
+      try {
+        const { notifyTeamsSafe } = await import("./teams-notify.server");
+        notifyTeamsSafe({
+          title: "New application",
+          subtitle: `${data.full_name} applied for ${pos.title}`,
+          facts: [
+            { label: "Role", value: pos.title },
+            { label: "Reference", value: ref6(appRow.id) },
+            { label: "Received", value: new Date().toISOString() },
+          ],
+          linkPath: "/admin/candidates",
+          linkLabel: "Review in TaaSFlow",
+        });
+      } catch (teamsErr) {
+        console.error("[submitApplication] teams notify failed", trace_id, teamsErr);
+      }
+
+
+
       return {
         ok: true,
         application_id: appRow.id,
