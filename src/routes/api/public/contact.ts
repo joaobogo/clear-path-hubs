@@ -85,7 +85,27 @@ export const Route = createFileRoute("/api/public/contact")({
           );
         }
 
+        // Teams channel ping (non-critical).
+        try {
+          const { notifyTeamsSafe } = await import("@/lib/teams-notify.server");
+          notifyTeamsSafe({
+            title: "New contact form submission",
+            subtitle: `${data.name}${data.company ? ` · ${data.company}` : ""}`,
+            facts: [
+              { label: "Email", value: data.email },
+              { label: "Topic", value: data.topic },
+              { label: "Message", value: data.message },
+              { label: "Source", value: data.source },
+            ],
+            linkPath: "/admin/inbox",
+            linkLabel: "Open inbox",
+          });
+        } catch {
+          // ignore
+        }
+
         return Response.json({ ok: true, trace_id: traceId });
+
       },
     },
   },
