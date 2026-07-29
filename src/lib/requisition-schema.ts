@@ -361,7 +361,7 @@ export function assessJobQuality(i: QualityInput): {
   if (!i.seniority.trim())
     add({ id: "seniority", severity: "blocking", label: "Seniority level", why: "Scope and level decide whether strong candidates are over- or under-qualified.", step: 1 });
   if (i.locations.length === 0)
-    add({ id: "locations", severity: "blocking", label: "At least one location", why: "Eligibility gates (right to work, timezone, commute) cannot run without locations.", step: 2 });
+    add({ id: "locations", severity: "blocking", label: "At least one location", why: "Eligibility gates (right to work, timezone, commute) cannot run without locations.", step: 5 });
   if (!i.employment_type.trim())
     add({ id: "employment_type", severity: "blocking", label: "Employment type", why: "Contract vs permanent changes both the candidate pool and the eligibility checks.", step: 1 });
 
@@ -373,14 +373,14 @@ export function assessJobQuality(i: QualityInput): {
     add({ id: "outcomes", severity: "degrades", label: "Role outcomes / responsibilities", why: "Outcomes let evidence extraction look for what this person must actually deliver.", step: 2 });
   const needsTz = i.locations.some((l) => l.work_model === "remote");
   if (needsTz && !i.primary_timezone.trim() && i.timezone_overlap_hours === null)
-    add({ id: "timezone", severity: "degrades", label: "Timezone anchor or overlap", why: "Remote hiring across countries fails on collaboration hours more often than on skills.", step: 2 });
+    add({ id: "timezone", severity: "degrades", label: "Timezone anchor or overlap", why: "Remote hiring across countries fails on collaboration hours more often than on skills.", step: 5 });
   if (!i.headcount)
     add({ id: "headcount", severity: "degrades", label: "Hiring volume", why: "Volume drives pipeline sizing and delivery commitments.", step: 1 });
   if (!i.owner_user_id)
     add({ id: "owner", severity: "degrades", label: "Responsible admin", why: "Unowned requisitions stall — nobody is accountable for delivery.", step: 5 });
 
   if (!i.travel_expectation.trim())
-    add({ id: "travel", severity: "optional", label: "Travel expectations", why: "Surfacing travel early avoids late-stage drop-off.", step: 2 });
+    add({ id: "travel", severity: "optional", label: "Travel expectations", why: "Surfacing travel early avoids late-stage drop-off.", step: 5 });
   if (!i.target_start_date.trim())
     add({ id: "start_date", severity: "optional", label: "Target start date", why: "Notice periods can quietly disqualify otherwise perfect candidates.", step: 1 });
   if (!i.interview_process.trim())
