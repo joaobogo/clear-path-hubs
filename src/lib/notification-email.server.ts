@@ -36,6 +36,11 @@ const PREFERENCE_COLUMN: Partial<Record<EventType, string>> = {
   candidate_hired: "hire_update",
 };
 
+/** Verified Lovable sender subdomain (NS-delegated). Overridable via env. */
+const SENDER_DOMAIN = "notify.taasflow.com";
+/** Domain shown in the From: header (cosmetic). */
+const FROM_DOMAIN = "taasflow.com";
+
 export type EmailConfig = {
   configured: boolean;
   senderDomain: string | null;
