@@ -9,6 +9,7 @@ import {
   APPLY_DRAFT_KEY,
   APPLY_IDEMPOTENCY_KEY,
   MAX_CV_BYTES,
+  MIN_PASSWORD_LENGTH,
   applySchema,
   composeLocation,
   fileExt,
@@ -94,6 +95,10 @@ function ApplyPage() {
     website_url: "",
     accommodation_request: "",
   });
+  // Account creation for applicants who are not signed in.
+  const [signedIn, setSignedIn] = useState<boolean | null>(null);
+  const [password, setPassword] = useState("");
+  const [password2, setPassword2] = useState("");
   const [cvFile, setCvFile] = useState<File | null>(null);
   const [cvError, setCvError] = useState<string | null>(null);
   const [answers, setAnswers] = useState<Record<string, AnswerValue>>({});
@@ -118,6 +123,24 @@ function ApplyPage() {
       }
     } catch { /* ignore */ }
   }, [draftKey]);
+
+  // Is this applicant already signed in? If so we skip account creation and
+  // prefill the email we already know.
+  useEffect(() => {
+    let alive = true;
+    (async () => {
+      const { supabase } = await import("@/integrations/supabase/client");
+      const { data } = await supabase.auth.getUser();
+      if (!alive) return;
+      setSignedIn(Boolean(data.user));
+      if (data.user?.email) {
+        setForm((f) => (f.email ? f : { ...f, email: data.user!.email as string }));
+      }
+    })().catch(() => setSignedIn(false));
+    return () => {
+      alive = false;
+    };
+  }, []);
 
   useEffect(() => {
     try {
@@ -198,6 +221,11 @@ function ApplyPage() {
       if (form.country.trim().length < 2) errs.country = "Enter your country";
       if (!form.region.trim()) errs.region = "Enter your state or region";
       if (!form.city.trim()) errs.city = "Enter your city";
+      if (signedIn === false) {
+        if (password.length < MIN_PASSWORD_LENGTH)
+          errs.password = `Use at least ${MIN_PASSWORD_LENGTH} characters`;
+        else if (password !== password2) errs.password2 = "Passwords do not match";
+      }
     }
     if (n === 2) {
       if (!cvFile) errs.cv = "Attach your CV to continue";
@@ -248,7 +276,9 @@ function ApplyPage() {
         allErrs.phone ||
         allErrs.country ||
         allErrs.region ||
-        allErrs.city
+        allErrs.city ||
+        allErrs.password ||
+        allErrs.password2
       )
         setStep(1);
       else if (allErrs.cv || allErrs.portfolio_url || allErrs.linkedin_url || allErrs.website_url)
@@ -292,6 +322,7 @@ function ApplyPage() {
         consent_terms: consent as true,
         network_opt_in: network,
         idempotency_key: getOrCreateIdempotencyKey(),
+        ...(signedIn === false && password ? { password } : {}),
       };
 
       const parsed = applySchema.safeParse(payload);
@@ -316,6 +347,19 @@ function ApplyPage() {
       try {
         localStorage.removeItem(draftKey);
       } catch { /* ignore */ }
+      // Account just created for this applicant → sign them straight in so the
+      // confirmation page can take them to their application tracker.
+      if (result.account === "created" && password) {
+        try {
+          const { supabase } = await import("@/integrations/supabase/client");
+          await supabase.auth.signInWithPassword({
+            email: form.email.trim().toLowerCase(),
+            password,
+          });
+        } catch { /* non-blocking: they can sign in later */ }
+      }
+      setPassword("");
+      setPassword2("");
       await navigate({
         to: "/apply/received/$applicationId",
         params: { applicationId: result.application_id },
