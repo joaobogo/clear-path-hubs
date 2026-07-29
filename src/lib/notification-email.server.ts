@@ -236,27 +236,35 @@ async function sendViaProvider(args: {
   idempotencyKey: string;
   senderDomain: string;
 }): Promise<{ ok: true } | { ok: false; code: string; message: string }> {
-  const res = await fetch("https://api.lovable.dev/v1/emails", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${process.env.LOVABLE_API_KEY}`,
-      "Idempotency-Key": args.idempotencyKey,
-    },
-    body: JSON.stringify({
-      from: `TaaSFlow <notifications@${args.senderDomain}>`,
-      to: [args.to],
-      subject: args.subject,
-      html: args.html,
-    }),
-  });
-  if (res.ok) return { ok: true };
-  const text = await res.text().catch(() => "");
-  return {
-    ok: false,
-    code: `provider_${res.status}`,
-    message: text.slice(0, 500) || "Provider rejected the message.",
-  };
+  const apiKey = process.env.LOVABLE_API_KEY;
+  if (!apiKey) {
+    return { ok: false, code: "email_credentials_missing", message: "LOVABLE_API_KEY is not configured." };
+  }
+  const { EmailAPIError, sendLovableEmail } = await import("@lovable.dev/email-js");
+  try {
+    await sendLovableEmail(
+      {
+        to: args.to,
+        from: `TaaSFlow <notifications@${FROM_DOMAIN}>`,
+        sender_domain: args.senderDomain,
+        subject: args.subject,
+        html: args.html,
+        purpose: "transactional",
+        idempotency_key: args.idempotencyKey,
+      },
+      { apiKey, sendUrl: process.env.LOVABLE_SEND_URL },
+    );
+    return { ok: true };
+  } catch (e) {
+    if (e instanceof EmailAPIError) {
+      return { ok: false, code: e.code ?? `provider_${e.status}`, message: e.message.slice(0, 500) };
+    }
+    return {
+      ok: false,
+      code: "provider_exception",
+      message: e instanceof Error ? e.message.slice(0, 500) : "Provider rejected the message.",
+    };
+  }
 }
 
 /** Re-attempt a single failed delivery. Idempotent by notification+channel. */
