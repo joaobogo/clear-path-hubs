@@ -368,7 +368,7 @@ function renderIntakeWelcomeEmail(args: {
         <a href="${esc(loginUrl)}" style="display:inline-block;background:#1f7a8c;color:#ffffff;text-decoration:none;padding:13px 24px;border-radius:9px;font-size:15px;font-weight:600">Log in to your dashboard</a>
       </p>
       <p style="font-size:13px;line-height:1.6;color:#5a6b80;margin:0 0 6px">
-        Sign in with <strong>${esc(args.reference ? "" : "")}</strong>your work email. If you didn't set a password, use "Forgot password" on the login page to create one.
+        Sign in with your work email. If you didn't set a password, use "Forgot password" on the login page to create one.
       </p>
       <p style="font-size:13px;line-height:1.6;color:#8496a8;margin:14px 0 0">
         Reference ${esc(args.reference.slice(0, 8))} · A TaaSFlow reviewer confirms scope within one business day.
