@@ -203,7 +203,10 @@ function PositionWorkspace() {
           </div>
         </div>
         <div className="mt-4">
-          <JobQualityPanel positionId={p.id} />
+          <JobQualityPanel
+            positionId={p.id}
+            editTo={{ to: "/admin/positions/$id/edit", positionId: p.id }}
+          />
         </div>
       </header>
 

@@ -24,6 +24,7 @@ import { AlertCircle, MessageSquare, Users } from "lucide-react";
 import { RoleBlueprint } from "@/components/product/role-blueprint";
 import { ResurfacePanel } from "@/components/client/resurface-panel";
 import { RoleMemoryPanel } from "@/components/role-memory-panel";
+import { JobQualityPanel } from "@/components/positions/JobQualityPanel";
 
 export const Route = createFileRoute("/_authenticated/client/positions/$id")({
  head: () => ({
@@ -301,6 +302,14 @@ function PositionDetailPage() {
  </Button>
  )}
  </div>
+ {canEdit && !support.readOnly && (
+ <div className="mt-4">
+ <JobQualityPanel
+ positionId={position.id}
+ editTo={{ to: "/client/positions/$id/edit", positionId: position.id }}
+ />
+ </div>
+ )}
  </header>
 
  {/* 2. Hiring summary */}
