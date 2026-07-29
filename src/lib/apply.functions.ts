@@ -12,6 +12,11 @@ export type SubmitApplicationResult =
       reference: string; // short human-friendly ref
       tracking_path: string; // route to send the candidate to
       deduped: boolean;
+      // Account outcome for an unauthenticated applicant:
+      //  created  → we just made their candidate account with the password given
+      //  existing → an account already existed for this email; they should sign in
+      //  none     → no password supplied, no account created
+      account: "created" | "existing" | "none";
     }
   | {
       ok: false;
