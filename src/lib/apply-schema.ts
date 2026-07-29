@@ -4,6 +4,7 @@ export const MAX_CV_BYTES = 10 * 1024 * 1024; // 10 MB
 // CVs are PDF-only across UI, backend, storage and processing.
 export const ALLOWED_CV_MIME = new Set(["application/pdf"]);
 export const ALLOWED_CV_EXT = new Set(["pdf"]);
+export const MIN_PASSWORD_LENGTH = 8;
 
 export const answerSchema = z.object({
   question_id: z.string().uuid(),
