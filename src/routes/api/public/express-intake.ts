@@ -382,9 +382,14 @@ export const Route = createFileRoute("/api/public/express-intake")({
 
         // ---------- Notify platform staff ----------
         try {
-          const { data: staff } = await admin.from("user_roles").select("user_id").in("role", ["platform_admin", "operations"]);
-          const rows = (staff ?? []).map((s: { user_id: string }) => ({
-            recipient_user_id: s.user_id,
+          const { data: staff } = await admin
+            .from("memberships")
+            .select("user_id")
+            .in("role", ["platform_admin", "operations"])
+            .eq("status", "active");
+          const recipients = Array.from(new Set((staff ?? []).map((m: { user_id: string }) => m.user_id)));
+          const rows = recipients.map((uid) => ({
+            recipient_user_id: uid as string,
             audience: "admin" as const,
             organization_id: organizationId,
             event_type: "intake_submitted" as const,
