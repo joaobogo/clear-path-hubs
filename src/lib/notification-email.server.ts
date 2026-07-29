@@ -249,6 +249,7 @@ async function sendViaProvider(args: {
         sender_domain: args.senderDomain,
         subject: args.subject,
         html: args.html,
+        text: args.html.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim(),
         purpose: "transactional",
         idempotency_key: args.idempotencyKey,
       },
