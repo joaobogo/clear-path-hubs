@@ -273,6 +273,7 @@ export const submitApplication = createServerFn({ method: "POST" })
           reference: ref6(existingApp.id),
           tracking_path: `/apply/received/${existingApp.id}`,
           deduped: true,
+          account: accountOutcome,
         };
       }
 
@@ -293,7 +294,7 @@ export const submitApplication = createServerFn({ method: "POST" })
       const { data: fileRow, error: fileErr } = await supabaseAdmin
         .from("files")
         .insert({
-          owner_user_id: existingCp?.user_id ?? null,
+          owner_user_id: authUserId,
           candidate_profile_id: candidateProfileId,
           storage_bucket: "cvs",
           storage_path: storagePath,
@@ -361,6 +362,7 @@ export const submitApplication = createServerFn({ method: "POST" })
             reference: ref6(race.id),
             tracking_path: `/apply/received/${race.id}`,
             deduped: true,
+            account: accountOutcome,
           };
         }
         throw appErr;
@@ -505,6 +507,7 @@ export const submitApplication = createServerFn({ method: "POST" })
         reference: ref6(appRow.id),
         tracking_path: `/apply/received/${appRow.id}`,
         deduped: false,
+        account: accountOutcome,
       };
     } catch (err) {
       console.error("[submitApplication]", trace_id, err);
