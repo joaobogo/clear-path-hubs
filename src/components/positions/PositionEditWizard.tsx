@@ -111,17 +111,21 @@ export function PositionEditWizard({
   returnTo,
   invalidateKeys,
   audience,
+  initialStep,
 }: {
   initial: PositionEditInitial;
   returnTo: string;
   invalidateKeys: string[][];
   audience: "admin" | "client";
+  initialStep?: number;
 }) {
   const navigate = useNavigate();
   const qc = useQueryClient();
   const save = useServerFn(savePositionEdit);
 
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState(() =>
+    initialStep && initialStep >= 1 && initialStep <= LAST_STEP ? initialStep : 1,
+  );
   const [state, setState] = useState<State>(() => initialState(initial));
 
 

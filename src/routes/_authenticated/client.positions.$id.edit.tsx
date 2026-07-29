@@ -5,6 +5,9 @@ import { PositionEditWizard } from "@/components/positions/PositionEditWizard";
 import { getPositionForEdit } from "@/lib/position-edit.functions";
 
 export const Route = createFileRoute("/_authenticated/client/positions/$id/edit")({
+ validateSearch: (search: Record<string, unknown>) => ({
+  step: search.step ? Number(search.step) : undefined,
+ }),
  loader: async ({ context, params }) => {
  const d = await context.queryClient.ensureQueryData({
  queryKey: ["client-position-edit", params.id],
@@ -23,9 +26,11 @@ export const Route = createFileRoute("/_authenticated/client/positions/$id/edit"
 
 function Page() {
  const initial = Route.useLoaderData();
+ const { step } = Route.useSearch();
  return (
  <PositionEditWizard
  initial={initial}
+ initialStep={step}
  audience="client"
  returnTo={`/client/positions/${initial.id}`}
  invalidateKeys={[
