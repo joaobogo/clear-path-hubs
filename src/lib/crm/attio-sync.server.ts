@@ -81,6 +81,60 @@ export function sanitizeAnswers(answers: Record<string, unknown>) {
   return out;
 }
 
+/**
+ * Free / consumer mailbox providers: their domain is never a company domain,
+ * so we must not create an Attio Company for "gmail.com".
+ */
+const FREE_EMAIL_DOMAINS = new Set([
+  "gmail.com",
+  "googlemail.com",
+  "yahoo.com",
+  "yahoo.co.uk",
+  "hotmail.com",
+  "hotmail.co.uk",
+  "outlook.com",
+  "live.com",
+  "msn.com",
+  "aol.com",
+  "icloud.com",
+  "me.com",
+  "mac.com",
+  "proton.me",
+  "protonmail.com",
+  "gmx.com",
+  "gmx.de",
+  "mail.com",
+  "yandex.com",
+  "zoho.com",
+  "qq.com",
+  "163.com",
+]);
+
+export function normalizeDomain(value: string | null | undefined): string | null {
+  if (!value) return null;
+  const cleaned = value
+    .trim()
+    .toLowerCase()
+    .replace(/^https?:\/\//, "")
+    .replace(/^www\./, "")
+    .split("/")[0]
+    .split("?")[0];
+  if (!/^[a-z0-9-]+(\.[a-z0-9-]+)*\.[a-z]{2,}$/.test(cleaned)) return null;
+  return FREE_EMAIL_DOMAINS.has(cleaned) ? null : cleaned;
+}
+
+/**
+ * Company domain resolution: an explicit company website wins; otherwise fall
+ * back to the work-email domain. Never guessed from a company *name*.
+ */
+export function resolveCompanyDomain(
+  explicit: string | null | undefined,
+  email: string,
+): string | null {
+  return normalizeDomain(explicit) ?? normalizeDomain(email.split("@")[1] ?? null);
+}
+
+
 function attributionValues(s: CrmSubmission) {
   const form = CRM_FORMS[s.source_form_id];
   return {
@@ -270,9 +324,11 @@ export async function syncSubmissionToAttio(s: CrmSubmission): Promise<SyncIds> 
   }
 
   const note = buildNote(s);
+  // The note always lands on the Person record: it is the one record that
+  // always exists, and it keeps the contact timeline complete.
   const noteId = await createNote({
-    parentObject: dealId ? "deals" : "people",
-    parentRecordId: dealId ?? personId,
+    parentObject: "people",
+    parentRecordId: personId,
     title: note.title,
     content: note.content,
   });
