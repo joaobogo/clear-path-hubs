@@ -443,6 +443,7 @@ export function SourcingOpsPanel({ positionId }: { positionId: string }) {
           </div>
         )}
       </div>
+      {confirmDialog}
     </div>
   );
 }
