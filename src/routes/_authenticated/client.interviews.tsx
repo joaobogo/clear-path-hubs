@@ -324,6 +324,10 @@ function InterviewsPage() {
           onComplete={(feedback) =>
             completeMut.mutate({ orgId: detail.organization_id, id: detail.id, feedback })
           }
+          onScorecard={() => {
+            setScorecardId(detail.id);
+            setDetail(null);
+          }}
           pending={
             proposeMut.isPending ||
             confirmMut.isPending ||
