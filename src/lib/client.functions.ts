@@ -1092,6 +1092,96 @@ export const moveMatchStage = createServerFn({ method: "POST" })
     return { ok: true, trace_id: trace };
   });
 
+/** How long a client can take a decision back without asking anyone. */
+export const UNDO_WINDOW_MS = 5 * 60 * 1000;
+
+/**
+ * Take back the last decision on a match.
+ *
+ * Deliberately bypasses STAGE_GRAPH: an undo is a correction of the caller's
+ * own action inside the undo window, not a new forward transition. Anything
+ * older than the window, or taken by someone else, is refused.
+ */
+export const undoClientDecision = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator(
+    (input: { orgId: string; matchId: string; toStage: MatchStage; decisionId?: string }) =>
+      z
+        .object({
+          orgId: z.string().uuid(),
+          matchId: z.string().uuid(),
+          toStage: z.enum([
+            "delivered",
+            "shortlisted",
+            "interview_process",
+            "offer",
+            "hired",
+            "not_moving_forward",
+          ]),
+          decisionId: z.string().uuid().optional(),
+        })
+        .parse(input),
+  )
+  .handler(async ({ context, data }) => {
+    const trace = traceId();
+    await assertEditor(context.supabase, context.userId, data.orgId);
+    const match = await loadMatch(context.supabase, data.orgId, data.matchId);
+    const from = match.stage as MatchStage;
+
+    const cutoff = new Date(Date.now() - UNDO_WINDOW_MS).toISOString();
+    let q = context.supabase
+      .from("client_decisions")
+      .select("id, decision, created_at")
+      .eq("candidate_match_id", data.matchId)
+      .eq("organization_id", data.orgId)
+      .eq("actor_user_id", context.userId)
+      .gte("created_at", cutoff)
+      .order("created_at", { ascending: false })
+      .limit(1);
+    if (data.decisionId) q = q.eq("id", data.decisionId);
+    const { data: recent, error: recentErr } = await q.maybeSingle();
+    if (recentErr) throw new Error(recentErr.message);
+    if (!recent) throw new Error("undo_window_expired");
+
+    if (from !== data.toStage) {
+      const { error } = await context.supabase
+        .from("candidate_matches")
+        .update({ stage: data.toStage })
+        .eq("id", data.matchId)
+        .eq("organization_id", data.orgId);
+      if (error) throw new Error(error.message);
+    }
+
+    // An interview requested by the undone decision must not survive it.
+    if (recent.decision === "request_interview") {
+      await context.supabase
+        .from("interviews")
+        .delete()
+        .eq("candidate_match_id", data.matchId)
+        .eq("organization_id", data.orgId)
+        .eq("status", "requested");
+    }
+
+    await context.supabase
+      .from("client_decisions")
+      .delete()
+      .eq("id", recent.id)
+      .eq("organization_id", data.orgId);
+
+    await writeAudit(context.supabase, {
+      actor: context.userId,
+      action: "client.undo_decision",
+      entity_type: "candidate_matches",
+      entity_id: data.matchId,
+      organization_id: data.orgId,
+      before: { stage: from, decision: recent.decision },
+      after: { stage: data.toStage, decision: null },
+      trace_id: trace,
+    });
+
+    return { ok: true, trace_id: trace, undone: recent.decision as string };
+  });
+
 // ─── Client actions ─────────────────────────────────────────────────────────
 
 const ACTION_TO_STAGE: Partial<Record<string, MatchStage>> = {

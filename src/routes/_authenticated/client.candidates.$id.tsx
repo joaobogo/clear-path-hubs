@@ -1,6 +1,6 @@
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
@@ -32,6 +32,7 @@ import {
 } from "lucide-react";
 import {
  clientAction,
+ undoClientDecision,
  getClientCandidate,
  getClientContext,
 } from "@/lib/client.functions";
@@ -182,6 +183,9 @@ function CandidateDetailPage() {
  });
 
  const [dialogAction, setDialogAction] = useState<ActionKey | null>(null);
+ // Stage captured at mutate time so the toast's Undo knows where to return to.
+ const stageBeforeRef = useRef<MatchStage | null>(null);
+ const undoFn = useServerFn(undoClientDecision);
 
  const act = useMutation({
  mutationFn: (p: DecisionPayload) =>
@@ -196,7 +200,28 @@ function CandidateDetailPage() {
  },
  }),
  onSuccess: () => {
- toast.success("Recorded — the TaaSFlow team has been notified.");
+ const back = stageBeforeRef.current;
+ toast.success("Recorded — the TaaSFlow team has been notified.", {
+ duration: 12_000,
+ action: back
+ ? {
+ label: "Undo",
+ onClick: () => {
+ void (async () => {
+ try {
+ await undoFn({ data: { orgId: orgId!, matchId: id, toStage: back } });
+ toast.success("Decision undone.");
+ await qc.invalidateQueries();
+ } catch {
+ toast.error(
+ "That decision can no longer be undone. Your recruiter can reverse it for you.",
+ );
+ }
+ })();
+ },
+ }
+ : undefined,
+ });
  setDialogAction(null);
  qc.invalidateQueries({ queryKey: ["client-candidate", orgId, id] });
  qc.invalidateQueries({ queryKey: ["client-overview", orgId] });
@@ -206,6 +231,21 @@ function CandidateDetailPage() {
  onError: (e: Error) => toast.error(e.message.replace(/^Error: /, "")),
  });
 
+
+ // Advance-type moves go through in one click; anything needing a "why"
+ // opens the structured reason picker.
+ const NO_REASON_NEEDED = new Set<ActionKey>([
+ "shortlist",
+ "request_interview",
+ "offer",
+ "hire",
+ ]);
+ const handleAct = (k: ActionKey, fromStage: MatchStage) => {
+ if (act.isPending) return;
+ stageBeforeRef.current = fromStage;
+ if (NO_REASON_NEEDED.has(k)) act.mutate({ action: k });
+ else setDialogAction(k);
+ };
 
  if (!orgId || detailPending || (data === undefined && detailFetching)) {
  return <div className="p-8 text-sm text-muted-foreground">Loading candidate…</div>;
@@ -321,7 +361,7 @@ function CandidateDetailPage() {
               actions={actions}
               readOnly={readOnly}
               pending={act.isPending}
-              onAct={(k) => setDialogAction(k)}
+              onAct={(k) => handleAct(k, candidate.stage)}
               stage={candidate.stage}
               matchId={candidate.match_id}
             />
@@ -343,7 +383,7 @@ function CandidateDetailPage() {
         <MobileActionBar
           actions={actions}
           pending={act.isPending}
-          onAct={(k) => setDialogAction(k)}
+          onAct={(k) => handleAct(k, candidate.stage)}
         />
       )}
 
@@ -355,6 +395,7 @@ function CandidateDetailPage() {
         onOpenChange={(v) => !v && setDialogAction(null)}
         onConfirm={(payload) => {
           if (act.isPending) return; // guard against double submission
+          stageBeforeRef.current = candidate.stage;
           act.mutate(payload);
         }}
       />
