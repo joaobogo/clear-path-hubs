@@ -36,6 +36,7 @@ import {
  getClientContext,
 } from "@/lib/client.functions";
 import type { MatchStage } from "@/lib/client-kpi.server";
+import { buildShortlistRationale } from "@/lib/client-rationale";
 import { DownloadCvButton } from "@/components/download-cv-button";
 import { useClientOrgSearch } from "@/lib/use-client-org";
 import { JourneyTimeline } from "@/components/candidate/journey-timeline";
