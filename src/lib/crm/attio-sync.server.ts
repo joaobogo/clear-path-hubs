@@ -235,7 +235,7 @@ export async function syncSubmissionToAttio(s: CrmSubmission): Promise<SyncIds> 
     assertPerson,
     {
       email_addresses: [s.email],
-      name: s.full_name ? [{ full_name: s.full_name }] : undefined,
+      name: personNameValue(s.full_name),
       phone_numbers: s.phone ? [s.phone] : undefined,
       job_title: s.job_title ?? undefined,
       linkedin: s.linkedin ?? undefined,
