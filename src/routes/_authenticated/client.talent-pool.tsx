@@ -173,6 +173,10 @@ function TalentPoolPage() {
         </div>
       </header>
 
+      <div className="mt-6">
+        <RoleFitPanel orgId={orgId} />
+      </div>
+
       <div className="mt-6 grid gap-6 lg:grid-cols-[240px_1fr]">
         {/* Pools sidebar */}
         <aside className="space-y-2">
