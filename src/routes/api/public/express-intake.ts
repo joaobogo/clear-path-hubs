@@ -1,5 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { expressIntakeSchema, ALLOWED_JD_EXT, ALLOWED_JD_MIME, MAX_JD_BYTES, jdFileExt } from "@/lib/express-intake-schema";
+import {
+  expressIntakeSchema,
+  ALLOWED_JD_EXT,
+  ALLOWED_JD_MIME,
+  MAX_JD_BYTES,
+  UNREADABLE_JD_EXT,
+  jdFileExt,
+} from "@/lib/express-intake-schema";
 
 /**
  * Express onboarding.
