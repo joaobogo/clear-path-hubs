@@ -202,8 +202,9 @@ function PortfolioPage() {
                   </div>
 
                   {unit.rows.length > 0 && (
-                    <div className="mt-4 overflow-hidden rounded-lg border">
-                      <table className="w-full text-sm">
+                    <div className="mt-4 overflow-x-auto rounded-lg border">
+                      <table className="w-full min-w-[520px] text-sm">
+
                         <thead className="bg-muted/40 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                           <tr>
                             <th className="px-3 py-2 text-left">Business unit</th>
