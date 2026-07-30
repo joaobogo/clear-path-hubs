@@ -583,22 +583,30 @@ export const applyReviewDecision = createServerFn({ method: "POST" })
         reason: data.reason ?? null,
         actor_user_id: context.userId,
       });
-      // Canonical state must travel human_review → approved → published_to_client to
-      // satisfy tg_candidate_matches_canonical_state and tg_candidate_matches_publish_gate.
-      // Two updates keep both triggers happy; a partial failure between them still
-      // holds `client_visibility=hidden`, so no client-side leak is possible.
+      // Canonical state must reach `approved` before publishing, and the DB
+      // trigger only allows single legal hops. Legacy/partially-processed rows
+      // can sit in `ingestion`, so walk the shortest legal path instead of
+      // jumping straight to `approved` (which the trigger rejects).
       const { data: preRow } = await supabase
         .from("candidate_matches")
         .select("canonical_state")
         .eq("id", data.match_id)
         .maybeSingle();
-      if (preRow?.canonical_state && preRow.canonical_state !== "approved" && preRow.canonical_state !== "published_to_client") {
-        const { error: approveErr } = await supabase
-          .from("candidate_matches")
-          .update({ canonical_state: "approved" })
-          .eq("id", data.match_id);
-        if (approveErr) throw new Error(`publish_failed:approve_state:${approveErr.message}`);
+      const current = preRow?.canonical_state as CanonicalScoringState | null | undefined;
+      if (current && current !== "approved" && current !== "published_to_client") {
+        const path = shortestTransitionPath(current, "approved");
+        if (!path) {
+          throw new Error(`publish_failed:approve_state:no_path_from:${current}`);
+        }
+        for (const step of path) {
+          const { error: stepErr } = await supabase
+            .from("candidate_matches")
+            .update({ canonical_state: step })
+            .eq("id", data.match_id);
+          if (stepErr) throw new Error(`publish_failed:approve_state:${stepErr.message}`);
+        }
       }
+
       const { data: published, error: publishError } = await supabase
         .from("candidate_matches")
         .update({
