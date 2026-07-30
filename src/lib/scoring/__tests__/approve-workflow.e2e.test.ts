@@ -20,7 +20,7 @@ import {
   shortestTransitionPath,
   type CanonicalScoringState,
 } from "../canonical-state";
-import { approvePreflightBlock, parseApproveFailure } from "../approve-failure";
+import { approvePreflightBlock, explainApproveFailure } from "../approve-failure";
 
 type MatchRow = {
   id: string;
@@ -179,13 +179,13 @@ describe("approve score workflow (e2e)", () => {
   });
 
   it("maps backend approval errors to retry guidance", () => {
-    const failed = parseApproveFailure(
+    const failed = explainApproveFailure(
       "publish_failed:approve_state:invalid_canonical_state_transition: ingestion -> approved",
     );
     expect(failed.title).toBeTruthy();
     expect(failed.raw).toContain("invalid_canonical_state_transition");
 
-    const network = parseApproveFailure("Failed to fetch");
+    const network = explainApproveFailure("Failed to fetch");
     expect(network.retryable).toBe(true);
   });
 });
