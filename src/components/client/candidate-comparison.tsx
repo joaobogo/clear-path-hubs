@@ -5,6 +5,7 @@ import { Link, useSearch } from "@tanstack/react-router";
 import { Printer, Share2 } from "lucide-react";
 import { toast } from "sonner";
 import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
+import { VisibilityNote } from "@/components/client/visibility-note";
 import {
   Tooltip,
   TooltipContent,
