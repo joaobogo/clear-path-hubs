@@ -583,7 +583,7 @@ function ExpressIntakePage() {
             <input
               ref={fileInput}
               type="file"
-              accept=".pdf,.docx,.txt,application/pdf,text/plain"
+              accept={JD_ACCEPT_ATTR}
               className="sr-only"
               onChange={(e) => void onPickFile(e.target.files?.[0] ?? null)}
             />
