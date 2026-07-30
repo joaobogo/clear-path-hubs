@@ -117,6 +117,18 @@ export type PositionEditInitial = {
   interview_process: string;
   additional_context: string;
   screening_questions: ScreeningInput[];
+
+  // Step 6 — Job post personalisation (stored in intake_context.posting)
+  company_intro: string;
+  benefits: string;
+  languages: string;
+  travel: string;
+  work_authorization_note: string;
+  accessibility_note: string;
+  eeo_statement: string;
+  brand_tone: string;
+  application_deadline: string;
+  confidentiality: string;
 };
 
 function fromJsonArray(v: unknown): string[] {
