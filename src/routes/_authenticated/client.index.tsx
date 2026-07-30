@@ -312,25 +312,18 @@ function OverviewPage() {
         <EmptyWelcome canSubmit={canSubmit} />
       ) : (
         <>
-          {/* 0 · INDUSTRY PERSONALIZATION — vertical-tuned rubric + samples */}
-          <IndustryPersonalizationPanel industry={ctx?.active?.industry ?? null} />
+          {/* 1 · THE DECISION QUEUE — the only thing on the first screen */}
+          <DecisionQueue queue={decisionQueue} loading={!data && isFetching} />
 
-          {/* 0.5 · BLOCKING APPROVALS — urgent tasks that hold delivery */}
-          {blocking && blocking.count > 0 && (
-            <Link
-              to="/client/tasks"
-              search={{ view: "blocking" }}
-              className="flex items-center gap-3 rounded-lg border border-destructive/40 bg-destructive/5 px-4 py-3 text-sm hover:bg-destructive/10"
-            >
-              <AlertTriangle className="h-4 w-4 text-destructive" />
-              <span className="flex-1 font-medium">
-                {blocking.count} task{blocking.count === 1 ? "" : "s"} blocking delivery — needs approval or decision
-              </span>
-              <ArrowRight className="h-4 w-4 text-destructive" />
-            </Link>
-          )}
+          {/* ── Everything below here is context, not action ── */}
+          <div className="flex items-center gap-3 pt-2">
+            <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+              Pipeline detail
+            </span>
+            <span className="h-px flex-1 bg-border" />
+          </div>
 
-          {/* 0.75 · ROLE FOCUS — multi-position selector, preserved in the URL */}
+          {/* ROLE FOCUS — multi-position selector, preserved in the URL */}
           {whatsNext.length > 0 && (
             <div className="flex flex-wrap items-center gap-2">
               <label htmlFor="role-focus" className="text-xs font-medium text-muted-foreground">
@@ -362,8 +355,7 @@ function OverviewPage() {
             </div>
           )}
 
-          {/* 1 · PRIORITY ACTIONS — what needs me now, deduped */}
-          <PriorityActions queue={priorityQueue} loading={!data && isFetching} />
+
 
 
           {/* 2 · FOCUS ROLE + NEXT STEPS */}
