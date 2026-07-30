@@ -364,13 +364,14 @@ function ExpressIntakePage() {
       <div className="space-y-6" id="form-main">
         <div className="rounded-xl border border-[color:var(--brand-navy)]/12 bg-[color:var(--brand-navy)]/4 p-4">
           <p className="text-sm font-semibold">
-            ${PRICE_PILOT_USD} one-time pilot · 14 days · One role · Any industry · Anywhere in the world ·
-            No placement fees
+            No payment today. Nothing is charged to start.
           </p>
           <p className="mt-1 text-sm text-[color:var(--brand-navy)]/70">
-            Pilot access is available once per company.
+            Create your workspace and share the role first. You only pay once your account is created
+            and we've accepted the role — and you can walk away before that at no cost.
           </p>
         </div>
+
 
         <Section title="Your company" step={1}>
           <Field label="Company name" error={errors.companyName} required>
