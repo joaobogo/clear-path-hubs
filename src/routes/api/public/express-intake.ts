@@ -418,7 +418,9 @@ export const Route = createFileRoute("/api/public/express-intake")({
               ? "application/pdf"
               : jdExt === "docx"
                 ? "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                : "text/plain";
+                : jdExt === "rtf"
+                  ? "application/rtf"
+                  : "text/plain";
           const { error: upErr } = await admin.storage
             .from("job-descriptions")
             .upload(path, jdBytes, { contentType, upsert: true });

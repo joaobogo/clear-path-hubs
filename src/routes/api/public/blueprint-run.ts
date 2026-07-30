@@ -44,8 +44,12 @@ export const Route = createFileRoute("/api/public/blueprint-run")({
           .maybeSingle();
         if (!position) return Response.json({ ok: false, error: "position_missing" }, { status: 404 });
 
-        if (!["queued", "failed", "not_started"].includes(position.blueprint_status)) {
-          return Response.json({ ok: true, alreadyRunning: true, status: position.blueprint_status });
+        // A null/blank status is a role that was never queued — it is runnable,
+        // not "already running". Treating it otherwise wedges retry forever.
+        const RUNNABLE = ["queued", "failed", "not_started"];
+        const currentStatus = String(position.blueprint_status ?? "not_started") || "not_started";
+        if (!RUNNABLE.includes(currentStatus)) {
+          return Response.json({ ok: true, alreadyRunning: true, status: currentStatus });
         }
 
         // Hard cap so a known intake id cannot be replayed to burn AI usage.
