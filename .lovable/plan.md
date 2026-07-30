@@ -1,81 +1,110 @@
-# Phase 6 — Explainable Scoring, Review Center, Client Presentation (Prompts 6–9)
+# Stage 3 — Admin, Cross-Role Regression, and Release Approval
 
-Four connected surfaces powered by one canonical evidence layer. Delivered as 4 slices in this order.
+## Blocker to resolve first
 
-## Slice A — Evidence Layer (Prompt 6)
+The sandbox reports `LOVABLE_BROWSER_AUTH_STATUS = signed_out`. Without an active
+session in the preview I cannot drive authenticated Admin or Client screens in a
+real browser, so the end-to-end scenario (steps 1-17) cannot be executed or
+honestly signed off. Sign in once in the preview (admin account, and ideally a
+client account) and the interactive pass runs immediately in the next turn.
 
-Foundation everything else reads from.
+Everything below assumes that session exists. Where it does not, the affected
+items are reported as UNVERIFIED, never as passing.
 
-**Database (migration `evidence_layer_v1`)**
-- Extend `candidate_evidence_items` with the fields still missing to cover the full spec: `result` (enum: strong, partial, weak, missing, contradictory, not_applicable, needs_validation), `source_kind` (cv, application_answer, interview, manual), `source_ref` (file_id or answer_id), `source_locator` (page/line/section JSON), `factual_quote` (verbatim), `interpretation` (TaaSFlow reading), `validation_need` (what to confirm in interview), `confidence` (0-100), `reviewer_id`, `last_reviewed_at`, `integrity_ok` (bool).
-- New `evidence_overrides` table: append-only before/after snapshots, reason, actor, timestamp.
-- Add `integrity_status` column on `candidate_matches`: `ok | missing_required | contradictions | manual_review`.
-- View `public.candidate_evidence_client` exposing only client-safe fields (no debug/rejected/prompts/private notes).
-- Trigger blocks `canonical_state -> approved` when any `required=true` criterion has `integrity_ok=false`.
+## 1. Inventory
 
-**Server**
-- `src/lib/evidence/evidence.functions.ts` — CRUD + `overrideEvidence` (writes to `evidence_overrides`), `flagForCorrection`, `getEvidenceForCriterion`.
-- `src/lib/evidence/insight-generator.ts` — deterministic derivation of strengths, true gaps, contradictions, and personalized interview questions from approved evidence only. Falls back gracefully; never fabricates. If no role-specific uncertainty, returns empty (not generic).
-- `src/lib/scoring/publish-gate.ts` — integrity checks that must pass to publish.
+Enumerate every admin route under `src/routes/_authenticated/admin.*` plus every
+control they render (tabs, tables, filters, sorts, pagination, bulk actions,
+menus, dialogs, exports, settings). Produce a single checklist file,
+`STAGE3_ADMIN_INVENTORY.md`, with one row per control: route, control, expected
+effect, verification method. This is the execution list; nothing gets marked
+verified without an observed result.
 
-**UI primitives**
-- `src/components/evidence/EvidenceCard.tsx` — visually splits Source Fact / TaaSFlow Interpretation / Validation Need with distinct treatments.
-- `src/components/evidence/CriterionRow.tsx` — result pill, weight, score (perm-gated), confidence, expand for evidence.
+## 2. Admin execution pass
 
-## Slice B — Admin Scoring Review Center (Prompt 7)
+Drive each inventoried control in a real browser (Playwright, viewport 1280
+wide), and after each action inspect: rendered UI, console, network status
+codes, and the resulting database rows. Stop on the first error, fix the root
+cause, retest, then re-run the regressions the fix touches.
 
-Route: `/admin/scoring/review` (queue) and `/admin/scoring/review/$matchId` (three-panel).
+Covered areas: admin auth and direct-URL protection; organizations, users,
+invitations, permissions, suspend/reactivate; jobs (intake, ownership,
+approval, publish, pause, close, archive, delete guards); candidates (profile,
+documents, applications, duplicates, source attribution, stages, notes, tags,
+interviews, messages, audit history); templates, screening questions, pipeline
+config, notifications, email templates, settings, analytics, exports, support,
+integrations; search/filter/sort/pagination/bulk/date-range/charts and their
+empty and error states; destructive operations on QA records only.
 
-**Layout (desktop 3-panel, responsive stacking)**
-- Left: candidate context, applied position pinned, CV/document viewer, prev/next in queue.
-- Center: rubric criteria list, per-criterion evidence w/ semantic match type, score anchors, contradiction flags, qualifiers, duplicate warning.
-- Right: eligibility, recommendation, quality checks, integrity status, publish readiness checklist, client-visible preview button, action bar.
+## 3. Sourcing Operations (admin-managed, client read-only)
 
-**Actions**
-- Approve internally · Return for correction (reason required) · Not suitable for delivery · Escalate · Publish to client.
-- Publish is transactional: single server fn wraps `canonical_state -> published_to_client` + `client_visibility=visible` + notification event; rolls back on any failure. Idempotent by `approved_score_run_id`.
+Audit the existing sourcing surfaces (`src/lib/role-launch.server.ts`,
+`outreach_campaigns`, `outreach_touches`, `role-launch-panel.tsx`) against the
+required capability list, then close the gaps found:
 
-**Keyboard**: `j/k` next/prev, `a` approve, `r` return, `p` publish, `?` help.
+- Per-job sourcing record: analysis/strategy status, selected channel
+  categories, per-channel activation and pause state, external campaign
+  reference, dates, owner, notes, next action.
+- Funnel counters sourced only from real rows: identified, contacted, engaged,
+  responded, applied, qualified.
+- Channel coverage: job boards, sponsored, LinkedIn, email, social, paid,
+  university, partnership, offline.
+- Exceptions/failed-operations list requiring intervention.
+- Every field admin-writable, client read-only, enforced in RLS as well as UI.
+- No copy that implies automation where a human records the data; no synthetic
+  numbers or fabricated campaign activity anywhere in the client view.
 
-**Server**
-- `src/lib/review/review-queue.functions.ts` — queue query, cursor pagination, filters (role, state, oldest first).
-- `src/lib/review/publish.functions.ts` — transactional publish + rollback + audit event.
+Any schema additions ship as an additive, reversible migration with GRANTs and
+RLS policies (admin write, org-member read).
 
-## Slice C — Client Ranked Candidates (Prompt 8)
+## 4. Role and data security
 
-Rewrite `client.candidates.index.tsx` around progressive disclosure. Reads only from `client_visible_candidates`, so unpublished never leaks and ranks are always contiguous (1..N).
+- Candidate can read only own records; client only own organization; verified
+  by direct server-function and PostgREST calls with each role's token, not by
+  reading policy source.
+- Admin-only server functions rejected (401/403) when called with a client or
+  candidate token, and when reached by URL tampering.
+- CV/resume storage objects unreachable without a scoped signed URL.
+- No service credentials in the client bundle (grep the built assets).
+- Authorized workflows produce no unexplained 4xx/5xx.
+- Administrative and recruiting actions land in `audit_events`.
 
-**Row/card data**
-Rank · name/anon · applied position · fit + band · eligibility (only when relevant) · confidence · recommendation · strongest strength (1 line, evidence-backed) · main true gap or validation need · location/work model · availability · comp alignment · stage · review state · last scored.
+## 5. Cross-role end-to-end scenario
 
-**Layouts**: table (dense), compact (list), mobile cards. Same data source; column definitions in `src/config/candidate-columns.ts`.
+One isolated QA organization, all records tagged as QA, executed straight
+through: create org and client → build and publish a customized job → configure
+and activate sourcing as admin → confirm client's read-only view → apply as
+candidate with PDF CV and screening answers → verify the application surfaces
+under the right client, job, and admin records → review, score, tag, comment,
+assign, advance stages → verify candidate-visible status and notifications →
+interview schedule/reschedule/complete → reject and restore → hire/close →
+confirm dashboards, counts, analytics, activity feed, and source attribution
+all move consistently → confirm a second org and second candidate see nothing →
+retest refresh, deep links, back navigation, expired session, repeat submits →
+clearly label or remove the QA records at the end, leaving real data untouched.
 
-**Interactions**: click opens detail without losing filters/scroll (query-state via search params). Tooltips on score, confidence, recommendation, evidence coverage.
+## 6. Final platform check
 
-**Rank**: computed client-side over the already-filtered published set, deterministic tie-break via `ranking.ts` comparator.
+Production build, typecheck, lint, unit/integration suite, browser E2E for the
+three critical paths, migration and schema consistency, auth/role policies,
+storage policies, notification templates with delivery restricted to a QA
+address, route refresh and deep links, broken-link/missing-route sweep,
+console-error and unhandled-rejection sweep, duplicate-submit and concurrency
+guards, all loading/empty/success/validation/offline/error states, keyboard and
+accessibility basics, and responsive checks at 320, 375, 390, 768, laptop, and
+desktop widths with admin tables, modals, forms, charts, and navigation usable
+at every width.
 
-## Slice D — Client Candidate Detail (Prompt 9)
+No real campaigns, ad spend, mass email, or external broadcast: sandbox modes
+and controlled recipients only. Any integration that cannot be genuinely
+verified is recorded with its missing requirement, affected workflow, and
+launch impact — and treated as a blocker when it gates a production function.
 
-Rewrite `client.candidates.$id.tsx` with the exact header hierarchy and sections from the prompt.
+## 7. Release report
 
-**Header**: identity + applied position → recommendation pill → fit + band → confidence → stage → primary actions.
-
-**Sections** (anchor nav, whitespace, consistent evidence pattern):
-Executive Fit Summary · Requirement Coverage (criterion picker → EvidenceCard on right) · Category Breakdown · Evidence by Criterion · Top Strengths · True Gaps · Contradictions & Risks · Logistics & Eligibility · Validate in Interview · Personalized Interview Questions · Experience Timeline · CV/Documents · Client Comments & Decisions · Score/Stage History (client-permitted subset).
-
-**Sticky decision panel** (desktop) / mobile bottom action bar: Shortlist · Interview · Hold · Pass · Add to Comparison · Add to Talent Pool · Comment. Each hits permission-checked server fn, emits notification event, invalidates queries.
-
-**Guarantees**: reads exclusively via `client_visible_candidates` + `candidate_evidence_client`. Numbers reconcile with ranked list + comparison because they share the same view.
-
-## Cross-cutting
-
-- **Permissions**: numeric criterion scores gated to admin/staff via `is_platform_staff`; client sees band/result/evidence only.
-- **Audit**: every override, publish, and client decision writes to `audit_events` via existing trigger.
-- **Tests**: unit tests for insight-generator (no hallucination on empty evidence), publish-gate (blocks on integrity fail), ranking (contiguous ranks over published set).
-- **No new deps.**
-
-## Technical notes
-Reuses `candidate_evidence_items`, `candidate_matches`, `score_runs`, `rubric_versions`, and `client_visible_candidates` established in prior slices. Extends triggers `tg_candidate_matches_publish_gate` and `tg_candidate_matches_canonical_state` — does not replace them. All new tables get GRANTs + RLS in the same migration per project rules.
-
-## Order & checkpoints
-A → B → C → D. After each slice: build passes, targeted preview check on the relevant route, then continue. Say **"go"** to start Slice A, or name a slice to jump.
+`RELEASE_GATE_STAGE3.md` plus a chat summary: areas tested, defects found and
+fixed, security and isolation results, cross-role workflow result, mobile and
+accessibility result, build and test results, external-integration status,
+remaining blockers, and a final verdict of READY FOR AUGUST 10 LAUNCH or NOT
+READY FOR LAUNCH. The ready verdict is only possible if every required workflow
+was actually executed and passed.
