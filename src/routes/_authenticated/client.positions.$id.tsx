@@ -349,7 +349,7 @@ function PositionDetailPage() {
  Where we are
  </h2>
  <div className="mt-3">
- <RoleProgressTracker progress={detail.progress} />
+ <RoleProgressTracker progress={data.progress} />
  </div>
  {summary.pipeline_line && (
  <p className="mt-3 border-t pt-3 text-sm font-medium text-foreground/90">
