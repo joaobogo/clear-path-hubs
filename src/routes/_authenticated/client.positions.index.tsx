@@ -271,6 +271,7 @@ function PositionsPage() {
  <Link
  to="/client/positions/$id/edit"
  params={{ id: p.id }}
+ search={{ step: undefined }}
  className="text-xs font-medium text-primary hover:underline shrink-0"
  >
  Review →
@@ -528,6 +529,7 @@ function PositionCard({ p }: { p: Row }) {
  <Link
  to="/client/positions/$id/edit"
  params={{ id: p.id }}
+ search={{ step: undefined }}
  className="group flex flex-col gap-3 rounded-xl border bg-card p-5 transition-all hover:border-primary hover:shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
  >
  <div className="flex items-start justify-between gap-3">
@@ -616,6 +618,7 @@ function CompactList({ rows }: { rows: Row[] }) {
  <Link
  to="/client/positions/$id/edit"
  params={{ id: p.id }}
+ search={{ step: undefined }}
  className="font-medium hover:underline"
  >
  {p.title}
