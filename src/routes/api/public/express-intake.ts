@@ -470,8 +470,11 @@ export const Route = createFileRoute("/api/public/express-intake")({
           positionId,
           userId: authUserId,
           accountCreated,
+          pilotEligible,
+          pilotReason,
           blueprintStatus: "queued",
         });
+
       },
     },
   },
