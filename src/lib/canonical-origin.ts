@@ -9,7 +9,12 @@
 export const CANONICAL_ORIGIN = "https://www.taasflow.com";
 
 /** Hosts that ARE the production site (no rewrite needed). */
-const PRODUCTION_HOSTS = new Set(["www.taasflow.com", "taasflow.com"]);
+const PRODUCTION_HOSTS = new Set([
+  "www.taasflow.com",
+  "taasflow.com",
+  "localhost",
+  "127.0.0.1",
+]);
 
 export function isCanonicalHost(hostname: string): boolean {
   return PRODUCTION_HOSTS.has(hostname.toLowerCase());
