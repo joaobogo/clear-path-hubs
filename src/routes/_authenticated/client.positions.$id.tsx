@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { AlertCircle, MessageSquare, Users } from "lucide-react";
 import { RoleBlueprint } from "@/components/product/role-blueprint";
+import { GeneratedBlueprintPanel } from "@/components/positions/generated-blueprint-panel";
 import { ResurfacePanel } from "@/components/client/resurface-panel";
 import { RoleMemoryPanel } from "@/components/role-memory-panel";
 import { JobQualityPanel } from "@/components/positions/JobQualityPanel";
