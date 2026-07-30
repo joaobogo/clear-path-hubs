@@ -120,7 +120,7 @@ export async function readJobDescription(args: {
 /* Permitted public company research                                   */
 /* ------------------------------------------------------------------ */
 
-const BLOCKED_HOST = /(^|\.)(localhost|internal|local|test)$/i;
+const BLOCKED_HOST = /(^|\.)(localhost|internal|local|test|localdomain)$/i;
 
 function normalizeSiteUrl(raw: string): URL | null {
   const trimmed = (raw ?? "").trim();
@@ -129,11 +129,13 @@ function normalizeSiteUrl(raw: string): URL | null {
     const url = new URL(/^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`);
     if (url.protocol !== "https:" && url.protocol !== "http:") return null;
     const host = url.hostname;
-    // Block loopback, link-local and private ranges — never let a submitted URL
-    // reach anything but the public internet.
+    // Block loopback, link-local, private ranges and raw IP literals — never
+    // let a submitted URL reach anything but a public, named host.
     if (BLOCKED_HOST.test(host)) return null;
     if (/^\d+\.\d+\.\d+\.\d+$/.test(host)) return null;
+    if (host.startsWith("[") || host.includes(":")) return null; // IPv6 literal
     if (host.endsWith(".internal") || !host.includes(".")) return null;
+    if (url.username || url.password) return null;
     return url;
   } catch {
     return null;
@@ -172,13 +174,24 @@ export async function researchCompany(website: string): Promise<CompanyResearch>
     try {
       const ctl = new AbortController();
       const timer = setTimeout(() => ctl.abort(), 8000);
-      const res = await fetch(url, {
-        redirect: "follow",
-        signal: ctl.signal,
-        headers: { "User-Agent": "TaaSFlowBot/1.0 (+https://taasflow.com)", Accept: "text/html" },
-      });
+      // Follow redirects manually so every hop is re-validated: a public host
+      // must not be able to bounce us onto an internal address.
+      let target: URL | null = normalizeSiteUrl(url);
+      let res: Response | null = null;
+      for (let hop = 0; hop < 4 && target; hop++) {
+        res = await fetch(target, {
+          redirect: "manual",
+          signal: ctl.signal,
+          headers: { "User-Agent": "TaaSFlowBot/1.0 (+https://taasflow.com)", Accept: "text/html" },
+        });
+        if (res.status < 300 || res.status >= 400) break;
+        const loc = res.headers.get("location");
+        if (!loc) break;
+        target = normalizeSiteUrl(new URL(loc, target).toString());
+        res = null;
+      }
       clearTimeout(timer);
-      if (!res.ok) return null;
+      if (!res || !res.ok) return null;
       const type = res.headers.get("content-type") ?? "";
       if (!type.includes("html") && !type.includes("text/plain")) return null;
       const raw = await res.text();
@@ -187,6 +200,7 @@ export async function researchCompany(website: string): Promise<CompanyResearch>
       return null;
     }
   };
+
 
   // Respect a blanket robots.txt disallow.
   const robots = await get(new URL("/robots.txt", base).toString());

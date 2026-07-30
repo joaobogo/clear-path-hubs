@@ -62,13 +62,22 @@ function signatureOk(bytes: Uint8Array, ext: string): boolean {
   return true; // txt
 }
 
-function randomPassword(len: number): string {
-  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789!@#$%^&*";
-  const arr = new Uint32Array(len);
-  crypto.getRandomValues(arr);
-  let out = "";
-  for (let i = 0; i < len; i++) out += chars[arr[i] % chars.length];
-  return out;
+/**
+ * Resolve an existing auth user by email without paging the whole directory.
+ * profiles mirrors auth.users, so it is the cheap and complete lookup.
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function lookupUserIdByEmail(admin: any, email: string): Promise<string | null> {
+  const { data: prof } = await admin
+    .from("profiles")
+    .select("auth_user_id")
+    .ilike("email", email)
+    .maybeSingle();
+  if (prof?.auth_user_id) return prof.auth_user_id as string;
+  const { data: list } = await admin.auth.admin.listUsers({ page: 1, perPage: 1000 });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const found = list?.users?.find((u: any) => (u.email ?? "").toLowerCase() === email.toLowerCase());
+  return found?.id ?? null;
 }
 
 export const Route = createFileRoute("/api/public/express-intake")({
@@ -162,22 +171,51 @@ export const Route = createFileRoute("/api/public/express-intake")({
           });
         }
 
+        // ---------- Caller identity (optional bearer from a signed-in client) ----------
+        let callerUserId: string | null = null;
+        {
+          const bearer = /^bearer\s+(.+)$/i.exec(request.headers.get("authorization") ?? "")?.[1] ?? null;
+          if (bearer) {
+            const { data: u } = await admin.auth.getUser(bearer);
+            callerUserId = u?.user?.id ?? null;
+          }
+        }
+
         // ---------- Organization ----------
+        // Joining an EXISTING organization is a privilege: a matching company
+        // name alone must never grant access to another tenant's workspace.
+        // We only attach to an existing org when the work-email domain matches
+        // that org's verified domain, or the caller is already a member of it.
         const companyNorm = normalizeCompany(data.companyName);
         const domain = emailDomain(data.workEmail);
+        const corporateDomain = domain && !isGenericDomain(domain) ? domain : null;
         let organizationId: string | null = null;
-        {
+        if (corporateDomain) {
+          const { data: byDomain } = await admin
+            .from("organizations")
+            .select("id")
+            .eq("domain", corporateDomain)
+            .maybeSingle();
+          if (byDomain) organizationId = byDomain.id;
+        }
+        if (!organizationId && callerUserId) {
           const { data: byName } = await admin
             .from("organizations")
             .select("id")
             .eq("name_normalized", companyNorm)
             .maybeSingle();
-          if (byName) organizationId = byName.id;
+          if (byName) {
+            const { data: mem } = await admin
+              .from("memberships")
+              .select("id")
+              .eq("user_id", callerUserId)
+              .eq("organization_id", byName.id)
+              .eq("status", "active")
+              .maybeSingle();
+            if (mem) organizationId = byName.id;
+          }
         }
-        if (!organizationId && domain && !isGenericDomain(domain)) {
-          const { data: byDomain } = await admin.from("organizations").select("id").eq("domain", domain).maybeSingle();
-          if (byDomain) organizationId = byDomain.id;
-        }
+
         if (!organizationId) {
           const { data: newOrg, error: orgErr } = await admin
             .from("organizations")
@@ -207,13 +245,12 @@ export const Route = createFileRoute("/api/public/express-intake")({
         let authUserId: string | null = null;
         let accountCreated = false;
         {
-          // No password supplied → this must already be an account (an
-          // authenticated client re-submitting). Never create one blind.
+          // No password supplied → the caller must PROVE they own that account
+          // with a valid bearer token. Otherwise anyone knowing a client's
+          // email could create roles inside their workspace.
           if (!data.password) {
-            const { data: list } = await admin.auth.admin.listUsers({ page: 1, perPage: 200 });
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const found = list?.users?.find((u: any) => (u.email ?? "").toLowerCase() === data.workEmail);
-            if (!found) {
+            const existingId = callerUserId ? await lookupUserIdByEmail(admin, data.workEmail) : null;
+            if (!callerUserId || !existingId || existingId !== callerUserId) {
               return Response.json(
                 {
                   ok: false,
@@ -224,7 +261,7 @@ export const Route = createFileRoute("/api/public/express-intake")({
                 { status: 400 },
               );
             }
-            authUserId = found.id;
+            authUserId = existingId;
           }
           const { data: created, error: createErr } = authUserId
             ? { data: null, error: null as { message: string } | null }
@@ -237,17 +274,29 @@ export const Route = createFileRoute("/api/public/express-intake")({
           if (authUserId) {
             // already resolved above
           } else if (createErr) {
-            const { data: list } = await admin.auth.admin.listUsers({ page: 1, perPage: 200 });
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const found = list?.users?.find((u: any) => (u.email ?? "").toLowerCase() === data.workEmail);
+            const found = await lookupUserIdByEmail(admin, data.workEmail);
             if (!found) {
               return Response.json(
                 { ok: false, trace_id: traceId, error: "auth_user_failed", message: createErr.message },
                 { status: 500 },
               );
             }
-            authUserId = found.id;
-            // Existing account: never silently reset their password from a public form.
+            // Existing account. Never silently reset the password from a public
+            // form, and never create work inside their workspace unless the
+            // request actually comes from them.
+            if (callerUserId !== found) {
+              return Response.json(
+                {
+                  ok: false,
+                  trace_id: traceId,
+                  error: "account_exists",
+                  message: "An account already uses that email. Sign in first, then launch your role.",
+                },
+                { status: 409 },
+              );
+            }
+            authUserId = found;
+
           } else {
             authUserId = created?.user?.id ?? null;
             accountCreated = true;

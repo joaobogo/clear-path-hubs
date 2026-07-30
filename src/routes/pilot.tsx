@@ -76,7 +76,7 @@ function PilotPage() {
       <PublicSection className="pb-8 pt-16 sm:pt-20">
         <PublicPage>
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
-            {PRICE_PILOT_DISPLAY} pilot · one role · 7–14 days
+            {PRICE_PILOT_DISPLAY} one-time pilot · one role · 14 days
           </p>
           <h1 className="mt-3 max-w-3xl font-[family-name:var(--brand-font-display)] text-4xl font-semibold tracking-tight sm:text-5xl">
             Run one role end-to-end for {PRICE_PILOT_DISPLAY}.

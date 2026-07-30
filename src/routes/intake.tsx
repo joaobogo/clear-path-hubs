@@ -258,9 +258,17 @@ function ExpressIntakePage() {
     setSubmitting(true);
 
     try {
+      // A signed-in client proves ownership of the account with their bearer
+      // token; the server refuses to touch an existing workspace without it.
+      const headers: Record<string, string> = { "Content-Type": "application/json" };
+      if (authed) {
+        const { data: sess } = await supabase.auth.getSession();
+        const token = sess.session?.access_token;
+        if (token) headers.Authorization = `Bearer ${token}`;
+      }
       const res = await fetch("/api/public/express-intake", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers,
         body: JSON.stringify(parsed.data),
       });
       const body = await res.json();
@@ -269,6 +277,7 @@ function ExpressIntakePage() {
         setSubmitting(false);
         return;
       }
+
 
       trackEvent("express_intake_submitted", {
         flow: "express_onboarding",

@@ -5171,41 +5171,6 @@ export type Database = {
             referencedRelation: "v_portfolio_rollup"
             referencedColumns: ["organization_id"]
           },
-          {
-            foreignKeyName: "organizations_pilot_position_id_fkey"
-            columns: ["pilot_position_id"]
-            isOneToOne: false
-            referencedRelation: "admin_pipeline_health"
-            referencedColumns: ["position_id"]
-          },
-          {
-            foreignKeyName: "organizations_pilot_position_id_fkey"
-            columns: ["pilot_position_id"]
-            isOneToOne: false
-            referencedRelation: "admin_positions_view"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "organizations_pilot_position_id_fkey"
-            columns: ["pilot_position_id"]
-            isOneToOne: false
-            referencedRelation: "candidate_my_applications"
-            referencedColumns: ["position_id"]
-          },
-          {
-            foreignKeyName: "organizations_pilot_position_id_fkey"
-            columns: ["pilot_position_id"]
-            isOneToOne: false
-            referencedRelation: "client_positions_view"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "organizations_pilot_position_id_fkey"
-            columns: ["pilot_position_id"]
-            isOneToOne: false
-            referencedRelation: "positions"
-            referencedColumns: ["id"]
-          },
         ]
       }
       outreach_campaigns: {

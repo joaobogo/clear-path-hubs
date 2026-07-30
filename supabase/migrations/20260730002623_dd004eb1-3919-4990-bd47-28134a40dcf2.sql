@@ -1,0 +1,1 @@
+REVOKE ALL ON FUNCTION public.tg_clear_pilot_position_ref() FROM PUBLIC, anon, authenticated;
