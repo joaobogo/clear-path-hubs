@@ -17,6 +17,15 @@ import {
  type InterviewParticipant,
  type SchedulableCandidate,
 } from "@/lib/interviews.functions";
+import {
+ proposeFromAvailability,
+ rescheduleInterview,
+} from "@/lib/availability.functions";
+import {
+ AvailabilityManager,
+ useAvailability,
+} from "@/components/client/scheduling/availability-manager";
+import { InterviewTimeline } from "@/components/client/scheduling/interview-timeline";
 import { useClientOrgSearch } from "@/lib/use-client-org";
 import { useSupportView } from "@/lib/support-view";
 import { PageHeader, PageBody, PageShell } from "@/components/ds";
