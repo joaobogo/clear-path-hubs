@@ -130,6 +130,7 @@ import { Route as ApiPublicIntakeStatusIdRouteImport } from './routes/api/public
 import { Route as ApiPublicBlueprintStatusIntakeIdRouteImport } from './routes/api/public/blueprint-status.$intakeId'
 import { Route as AuthenticatedMeApplicationsIdRouteImport } from './routes/_authenticated/me.applications.$id'
 import { Route as AuthenticatedClientPositionsIdRouteImport } from './routes/_authenticated/client.positions.$id'
+import { Route as AuthenticatedClientConversationsConversationIdRouteImport } from './routes/_authenticated/client.conversations.$conversationId'
 import { Route as AuthenticatedClientCandidatesIdRouteImport } from './routes/_authenticated/client.candidates.$id'
 import { Route as AuthenticatedAdminScoringOrphansRouteImport } from './routes/_authenticated/admin.scoring.orphans'
 import { Route as AuthenticatedAdminPositionsIdRouteImport } from './routes/_authenticated/admin.positions.$id'
@@ -792,6 +793,12 @@ const AuthenticatedClientPositionsIdRoute =
     path: '/$id',
     getParentRoute: () => AuthenticatedClientPositionsRoute,
   } as any)
+const AuthenticatedClientConversationsConversationIdRoute =
+  AuthenticatedClientConversationsConversationIdRouteImport.update({
+    id: '/conversations/$conversationId',
+    path: '/conversations/$conversationId',
+    getParentRoute: () => AuthenticatedClientRoute,
+  } as any)
 const AuthenticatedClientCandidatesIdRoute =
   AuthenticatedClientCandidatesIdRouteImport.update({
     id: '/$id',
@@ -969,6 +976,7 @@ export interface FileRoutesByFullPath {
   '/admin/positions/$id': typeof AuthenticatedAdminPositionsIdRoute
   '/admin/scoring/orphans': typeof AuthenticatedAdminScoringOrphansRoute
   '/client/candidates/$id': typeof AuthenticatedClientCandidatesIdRoute
+  '/client/conversations/$conversationId': typeof AuthenticatedClientConversationsConversationIdRoute
   '/client/positions/$id': typeof AuthenticatedClientPositionsIdRoute
   '/me/applications/$id': typeof AuthenticatedMeApplicationsIdRoute
   '/api/public/blueprint-status/$intakeId': typeof ApiPublicBlueprintStatusIntakeIdRoute
@@ -1092,6 +1100,7 @@ export interface FileRoutesByTo {
   '/admin/positions/$id': typeof AuthenticatedAdminPositionsIdRoute
   '/admin/scoring/orphans': typeof AuthenticatedAdminScoringOrphansRoute
   '/client/candidates/$id': typeof AuthenticatedClientCandidatesIdRoute
+  '/client/conversations/$conversationId': typeof AuthenticatedClientConversationsConversationIdRoute
   '/client/positions/$id': typeof AuthenticatedClientPositionsIdRoute
   '/me/applications/$id': typeof AuthenticatedMeApplicationsIdRoute
   '/api/public/blueprint-status/$intakeId': typeof ApiPublicBlueprintStatusIntakeIdRoute
@@ -1227,6 +1236,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/positions/$id': typeof AuthenticatedAdminPositionsIdRoute
   '/_authenticated/admin/scoring/orphans': typeof AuthenticatedAdminScoringOrphansRoute
   '/_authenticated/client/candidates/$id': typeof AuthenticatedClientCandidatesIdRoute
+  '/_authenticated/client/conversations/$conversationId': typeof AuthenticatedClientConversationsConversationIdRoute
   '/_authenticated/client/positions/$id': typeof AuthenticatedClientPositionsIdRoute
   '/_authenticated/me/applications/$id': typeof AuthenticatedMeApplicationsIdRoute
   '/api/public/blueprint-status/$intakeId': typeof ApiPublicBlueprintStatusIntakeIdRoute
@@ -1362,6 +1372,7 @@ export interface FileRouteTypes {
     | '/admin/positions/$id'
     | '/admin/scoring/orphans'
     | '/client/candidates/$id'
+    | '/client/conversations/$conversationId'
     | '/client/positions/$id'
     | '/me/applications/$id'
     | '/api/public/blueprint-status/$intakeId'
@@ -1485,6 +1496,7 @@ export interface FileRouteTypes {
     | '/admin/positions/$id'
     | '/admin/scoring/orphans'
     | '/client/candidates/$id'
+    | '/client/conversations/$conversationId'
     | '/client/positions/$id'
     | '/me/applications/$id'
     | '/api/public/blueprint-status/$intakeId'
@@ -1619,6 +1631,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/positions/$id'
     | '/_authenticated/admin/scoring/orphans'
     | '/_authenticated/client/candidates/$id'
+    | '/_authenticated/client/conversations/$conversationId'
     | '/_authenticated/client/positions/$id'
     | '/_authenticated/me/applications/$id'
     | '/api/public/blueprint-status/$intakeId'
@@ -2560,6 +2573,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedClientPositionsIdRouteImport
       parentRoute: typeof AuthenticatedClientPositionsRoute
     }
+    '/_authenticated/client/conversations/$conversationId': {
+      id: '/_authenticated/client/conversations/$conversationId'
+      path: '/conversations/$conversationId'
+      fullPath: '/client/conversations/$conversationId'
+      preLoaderRoute: typeof AuthenticatedClientConversationsConversationIdRouteImport
+      parentRoute: typeof AuthenticatedClientRoute
+    }
     '/_authenticated/client/candidates/$id': {
       id: '/_authenticated/client/candidates/$id'
       path: '/$id'
@@ -2822,6 +2842,7 @@ interface AuthenticatedClientRouteChildren {
   AuthenticatedClientTasksRoute: typeof AuthenticatedClientTasksRoute
   AuthenticatedClientTeamRoute: typeof AuthenticatedClientTeamRoute
   AuthenticatedClientIndexRoute: typeof AuthenticatedClientIndexRoute
+  AuthenticatedClientConversationsConversationIdRoute: typeof AuthenticatedClientConversationsConversationIdRoute
   AuthenticatedClientConversationsIndexRoute: typeof AuthenticatedClientConversationsIndexRoute
   AuthenticatedClientSharesIndexRoute: typeof AuthenticatedClientSharesIndexRoute
 }
@@ -2846,6 +2867,8 @@ const AuthenticatedClientRouteChildren: AuthenticatedClientRouteChildren = {
   AuthenticatedClientTasksRoute: AuthenticatedClientTasksRoute,
   AuthenticatedClientTeamRoute: AuthenticatedClientTeamRoute,
   AuthenticatedClientIndexRoute: AuthenticatedClientIndexRoute,
+  AuthenticatedClientConversationsConversationIdRoute:
+    AuthenticatedClientConversationsConversationIdRoute,
   AuthenticatedClientConversationsIndexRoute:
     AuthenticatedClientConversationsIndexRoute,
   AuthenticatedClientSharesIndexRoute: AuthenticatedClientSharesIndexRoute,
