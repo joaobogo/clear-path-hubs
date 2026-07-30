@@ -390,6 +390,7 @@ function Footer() {
             <p className="mt-4 max-w-sm text-sm text-[color:var(--brand-navy)]/80">
               {FOOTER_DESCRIPTION}
             </p>
+            <FgvEndorsement className="mt-4 text-xs text-[color:var(--brand-navy)]/70" />
             <div className="mt-5 flex items-center gap-3">
               {SOCIAL_LINKS.map(({ href, label }) => {
                 const Icon = SOCIAL_ICONS[label] ?? Mail;
