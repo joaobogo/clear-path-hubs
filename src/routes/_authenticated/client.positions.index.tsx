@@ -57,6 +57,9 @@ const STATUS_LABELS: Record<string, string> = {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
 
+import { RoleProgressTracker } from "@/components/client/role-progress-tracker";
+import type { RoleProgress } from "@/lib/client-role-progress";
+
 type Row = {
  id: string;
  title: string;
@@ -76,6 +79,7 @@ type Row = {
  active_positions: number;
  };
  pipeline_line: string | null;
+ progress: RoleProgress | null;
  next_milestone: string | null;
  action_required: string | null;
 };
