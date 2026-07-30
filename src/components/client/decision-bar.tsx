@@ -10,6 +10,24 @@ import {
 } from "@/components/client/decision-dialog";
 import { clientAction, undoClientDecision } from "@/lib/client.functions";
 import type { MatchStage } from "@/lib/client-kpi.server";
+import { confirmationLine } from "@/lib/client-next-step";
+
+/** Where each decision lands the candidate, so we can promise what follows. */
+const RESULT_STAGE: Partial<Record<DecisionActionKey, MatchStage>> = {
+  shortlist: "shortlisted",
+  request_interview: "interview_process",
+  offer: "offer",
+  hire: "hired",
+  not_moving_forward: "not_moving_forward",
+};
+
+/** The visible consequence of a decision, shown the moment it is made. */
+function consequenceFor(action: DecisionActionKey): string {
+  if (action === "hold")
+    return "We'll pause outreach and keep them warm until you tell us to move.";
+  const stage = RESULT_STAGE[action];
+  return stage ? confirmationLine(stage) : "";
+}
 
 /** How long the Undo affordance stays on screen, in ms. */
 const UNDO_TOAST_MS = 12_000;
@@ -81,8 +99,8 @@ export function DecisionBar({
     try {
       await act({ data: { orgId, matchId, ...payload } });
       setDialog(null);
-      toast.success(done, {
-        description: candidateName,
+      toast.success(`${done} — ${candidateName}`, {
+        description: consequenceFor(payload.action),
         duration: UNDO_TOAST_MS,
         action: { label: "Undo", onClick: () => void runUndo(fromStage) },
       });
