@@ -1,45 +1,53 @@
+import * as React from "react";
 import { Link, useSearch } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
+import { useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@/components/ui/button";
+import { useConfirmAction } from "@/components/ds/confirm-action";
+import { AgeBadge } from "@/components/client/age-badge";
+import { formatDaysInStage } from "@/lib/time-age";
+import { moveMatchStage } from "@/lib/client.functions";
+import {
+  selectEvidenceBullets,
+  unevidencedMustHaves,
+  fitChips,
+} from "@/lib/client-evidence-bullets";
 import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
 import type { FitPresentation } from "@/lib/client-fit-presentation";
 
-const ACCENT: Record<FitPresentation["accent"], { ring: string; chip: string; bar: string; dot: string }> = {
+const ACCENT: Record<FitPresentation["accent"], { ring: string; chip: string; dot: string }> = {
   emerald: {
     ring: "ring-success/40",
     chip: "bg-success/10 text-success dark:text-success border-success/20",
-    bar: "bg-success",
     dot: "bg-success",
   },
   sky: {
     ring: "ring-info/40",
     chip: "bg-info/10 text-info dark:text-info border-info/20",
-    bar: "bg-info",
     dot: "bg-info",
   },
   amber: {
     ring: "ring-warning/40",
     chip: "bg-warning/10 text-warning-foreground dark:text-warning-foreground border-warning/20",
-    bar: "bg-warning",
     dot: "bg-warning",
   },
   slate: {
     ring: "ring-muted-foreground/30",
     chip: "bg-muted text-muted-foreground border-border",
-    bar: "bg-muted-foreground/60",
     dot: "bg-muted-foreground/60",
   },
   rose: {
     ring: "ring-destructive/40",
     chip: "bg-destructive/10 text-destructive dark:text-destructive border-destructive/20",
-    bar: "bg-destructive",
     dot: "bg-destructive",
   },
 };
 
-import { AgeBadge } from "@/components/client/age-badge";
-import { formatDaysInStage } from "@/lib/time-age";
+type Stage = ClientCandidateDTO["stage"];
 
-function stageLabel(s: ClientCandidateDTO["stage"]): string {
+function stageLabel(s: Stage): string {
   return (
     {
       delivered: "New — awaiting review",
@@ -52,28 +60,31 @@ function stageLabel(s: ClientCandidateDTO["stage"]): string {
   )[s];
 }
 
-function primaryAction(s: ClientCandidateDTO["stage"]): string {
+/** The single forward move available from this stage. */
+function advanceStep(s: Stage): { to: Stage; label: string } | null {
   return (
     {
-      delivered: "Review candidate",
-      shortlisted: "Request interview",
-      interview_process: "Review interview",
-      offer: "Review offer",
-      hired: "View hire details",
-      not_moving_forward: "View decision",
+      delivered: { to: "shortlisted", label: "Advance" },
+      shortlisted: { to: "interview_process", label: "Advance" },
+      interview_process: { to: "offer", label: "Advance" },
+      offer: { to: "hired", label: "Advance" },
+      hired: null,
+      not_moving_forward: { to: "shortlisted", label: "Reopen" },
     } as const
   )[s];
 }
 
-function timeAgo(iso: string | null): string {
-  if (!iso) return "";
-  const diff = Date.now() - new Date(iso).getTime();
-  const d = Math.floor(diff / 86400000);
-  if (d <= 0) return "today";
-  if (d === 1) return "yesterday";
-  if (d < 7) return `${d}d ago`;
-  if (d < 30) return `${Math.floor(d / 7)}w ago`;
-  return `${Math.floor(d / 30)}mo ago`;
+function advanceMeaning(s: Stage): string {
+  return (
+    {
+      delivered: "Adds them to your shortlist.",
+      shortlisted: "Starts the interview process.",
+      interview_process: "Moves them to offer stage.",
+      offer: "Marks them as hired.",
+      hired: "",
+      not_moving_forward: "Puts them back on your shortlist.",
+    } as const
+  )[s];
 }
 
 export function CandidateCard({
@@ -90,12 +101,41 @@ export function CandidateCard({
   const search = useSearch({ strict: false }) as { org?: string };
   const c = candidate;
   const accent = ACCENT[c.fit.accent];
-  const cov = c.coverage;
-  const mustPct = cov.must_total ? Math.round((cov.must_met / cov.must_total) * 100) : 0;
+  const bullets = React.useMemo(() => selectEvidenceBullets(c), [c]);
+  const gaps = React.useMemo(() => unevidencedMustHaves(c), [c]);
+  const chips = React.useMemo(() => fitChips(c), [c]);
+
+  const queryClient = useQueryClient();
+  const { confirm, confirmDialog } = useConfirmAction();
+  const move = useServerFn(moveMatchStage);
+  const [busy, setBusy] = React.useState<null | "advance" | "decline">(null);
+
+  const orgId = search.org ?? null;
+  const advance = advanceStep(c.stage);
+  const canDecline = c.stage !== "hired" && c.stage !== "not_moving_forward";
+  const showActions = !!orgId;
+
+  async function runMove(kind: "advance" | "decline", to: Stage, reason?: string) {
+    if (!orgId) return;
+    setBusy(kind);
+    try {
+      await move({ data: { orgId, matchId: c.match_id, toStage: to, reason } });
+      toast.success(kind === "advance" ? "Candidate advanced" : "Candidate declined");
+      await queryClient.invalidateQueries();
+    } catch (e) {
+      toast.error(
+        e instanceof Error && e.message.includes("reason_required")
+          ? "A short reason is required to decline."
+          : "We couldn't save that decision. Please try again.",
+      );
+    } finally {
+      setBusy(null);
+    }
+  }
 
   return (
     <div
-      className={`group relative rounded-xl border bg-card p-5 transition hover:shadow-md hover:border-primary/40 ${
+      className={`group relative flex flex-col rounded-xl border bg-card p-5 transition hover:shadow-md hover:border-primary/40 ${
         compareSelected ? `ring-2 ${accent.ring}` : ""
       }`}
     >
@@ -111,90 +151,143 @@ export function CandidateCard({
         </label>
       )}
 
-      <div className="grid grid-cols-[minmax(0,1fr)_auto] gap-4 items-start">
-        <div className="min-w-0 pr-24">
-          <div className="flex items-center gap-2 flex-wrap">
-            <h3 className="font-semibold text-base truncate">{c.candidate.display_name}</h3>
-            <span className={`text-[11px] font-medium rounded-full px-2 py-0.5 border ${accent.chip}`}>
-              {c.fit.headline}
-            </span>
-          </div>
-          {c.candidate.headline && (
-            <p className="text-sm text-foreground/80 mt-0.5 line-clamp-1">{c.candidate.headline}</p>
-          )}
-          <p className="text-xs text-muted-foreground mt-1">
-            {[
-              c.position?.title,
-              c.candidate.location,
-              c.candidate.availability,
-              c.candidate.years_experience ? `${c.candidate.years_experience}y exp` : null,
-            ]
-              .filter(Boolean)
-              .join(" · ")}
+      {/* Identity — qualitative outcome only, never a score */}
+      <div className="min-w-0 pr-24">
+        <div className="flex items-center gap-2 flex-wrap">
+          <h3 className="font-semibold text-base truncate">{c.candidate.display_name}</h3>
+          <span className={`text-[11px] font-medium rounded-full px-2 py-0.5 border ${accent.chip}`}>
+            {c.fit.headline}
+          </span>
+        </div>
+        {c.candidate.headline && (
+          <p className="text-sm text-foreground/80 mt-0.5 line-clamp-1">{c.candidate.headline}</p>
+        )}
+        {c.position?.title && (
+          <p className="text-xs text-muted-foreground mt-1 truncate">For {c.position.title}</p>
+        )}
+      </div>
+
+      {/* Evidence first — what we verified against the role's requirements */}
+      <div className="mt-4">
+        <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
+          Evidence against your requirements
+        </div>
+        {bullets.length > 0 ? (
+          <ul className="mt-2 space-y-1.5">
+            {bullets.map((b, i) => (
+              <li key={`${b.requirement}-${i}`} className="flex gap-2 text-xs leading-snug">
+                <span
+                  aria-hidden
+                  className={`mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full ${
+                    b.strength === "verified" ? accent.dot : "bg-muted-foreground/50"
+                  }`}
+                />
+                <span className="min-w-0">
+                  <span className="font-medium text-foreground">{b.requirement}</span>
+                  <span className="text-muted-foreground"> — {b.detail}</span>
+                </span>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="mt-2 text-xs text-muted-foreground">
+            Evidence review is still in progress for this candidate.
           </p>
-        </div>
-
-        <div className="text-right shrink-0">
-          <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Approved fit</div>
-          <div className="text-3xl font-semibold tabular-nums leading-none mt-0.5">
-            {c.score == null ? "—" : c.score.toFixed(0)}
-          </div>
-          <div className="text-[10px] text-muted-foreground mt-0.5">/ 100</div>
-        </div>
+        )}
+        {gaps.length > 0 && (
+          <p className="mt-2 text-xs text-warning-foreground dark:text-warning-foreground line-clamp-2">
+            Not yet evidenced: {gaps.join(", ")}
+          </p>
+        )}
       </div>
 
-      {/* Must-have coverage */}
-      {cov.must_total > 0 && (
-        <div className="mt-4">
-          <div className="flex items-center justify-between text-[11px] text-muted-foreground mb-1">
-            <span>
-              Must-haves: <span className="text-foreground font-medium">{cov.must_met}/{cov.must_total}</span>
-              {cov.must_partial > 0 && <span className="ml-1">· {cov.must_partial} partial</span>}
-              {cov.must_missing > 0 && <span className="ml-1">· {cov.must_missing} missing</span>}
+      {/* Practical fit: availability, location, compensation */}
+      {chips.length > 0 && (
+        <div className="mt-3 flex flex-wrap gap-1.5">
+          {chips.map((chip) => (
+            <span
+              key={chip.label}
+              className={`inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-[11px] ${
+                chip.tone === "good"
+                  ? "border-success/20 bg-success/10 text-success"
+                  : chip.tone === "watch"
+                    ? "border-warning/20 bg-warning/10 text-warning-foreground"
+                    : "border-border bg-muted/50 text-muted-foreground"
+              }`}
+            >
+              <span className="font-medium">{chip.label}</span>
+              <span className="truncate max-w-[14rem]">{chip.value}</span>
             </span>
-            <span>{mustPct}%</span>
-          </div>
-          <div className="h-1.5 rounded-full bg-muted overflow-hidden">
-            <div className={`h-full ${accent.bar} transition-all`} style={{ width: `${mustPct}%` }} />
-          </div>
+          ))}
         </div>
       )}
 
-      {/* Recommendation + top evidence */}
-      <div className="mt-3 text-xs text-foreground/80">
-        <span className={`inline-block h-1.5 w-1.5 rounded-full mr-1.5 align-middle ${accent.dot}`} />
-        <span className="font-medium">{c.fit.recommendation}.</span>{" "}
-        {c.strengths[0] && <span className="text-muted-foreground">{c.strengths[0]}</span>}
+      {/* Stage + clock */}
+      <div className="mt-4 flex flex-wrap items-center gap-x-1.5 gap-y-1 border-t pt-3 text-[11px] text-muted-foreground">
+        <span>{stageLabel(c.stage)}</span>
+        {c.stage_entered_at && (
+          <span className="tabular-nums">· {formatDaysInStage(c.stage_entered_at)}</span>
+        )}
+        {c.stage === "delivered" && <AgeBadge since={c.delivered_at ?? c.stage_entered_at} />}
       </div>
-      {c.strengths[1] && (
-        <div className="mt-1.5 text-xs text-muted-foreground line-clamp-1">• {c.strengths[1]}</div>
-      )}
-      {c.main_consideration && (
-        <div className="mt-1.5 text-xs text-warning-foreground dark:text-warning-foreground line-clamp-1">
-          ⚠ {c.main_consideration}
-        </div>
-      )}
 
-      {/* Footer: stage · delivered · primary action */}
-      <div className="mt-4 flex items-center justify-between gap-3 border-t pt-3">
-        <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1 text-[11px] text-muted-foreground">
-          <span>{stageLabel(c.stage)}</span>
-          {c.stage_entered_at && (
-            <span className="tabular-nums">· {formatDaysInStage(c.stage_entered_at)}</span>
-          )}
-          {c.stage === "delivered" && (
-            <AgeBadge since={c.delivered_at ?? c.stage_entered_at} />
-          )}
-        </div>
-        <Link
-          to="/client/candidates/$id"
-          params={{ id: c.match_id }}
-          search={search.org ? { org: search.org } : undefined}
-          className="text-sm font-medium text-primary hover:underline whitespace-nowrap"
-        >
-          {primaryAction(c.stage)} →
-        </Link>
+      {/* One primary action, two secondaries */}
+      <div className="mt-3 flex flex-wrap items-center gap-2">
+        <Button asChild size="sm" className="min-w-[6.5rem]">
+          <Link
+            to="/client/candidates/$id"
+            params={{ id: c.match_id }}
+            search={search.org ? { org: search.org } : undefined}
+          >
+            Review
+          </Link>
+        </Button>
+        {showActions && advance && (
+          <Button
+            size="sm"
+            variant="outline"
+            disabled={busy !== null}
+            onClick={async () => {
+              const r = await confirm({
+                title: advance.label === "Reopen" ? "Reopen candidate" : "Advance candidate",
+                object: c.candidate.display_name,
+                description: advanceMeaning(c.stage),
+                confirmLabel: advance.label,
+              });
+              if (r.confirmed) await runMove("advance", advance.to, r.reason || undefined);
+            }}
+          >
+            {busy === "advance" ? "Saving…" : advance.label}
+          </Button>
+        )}
+        {showActions && canDecline && (
+          <Button
+            size="sm"
+            variant="ghost"
+            className="text-muted-foreground hover:text-destructive"
+            disabled={busy !== null}
+            onClick={async () => {
+              const r = await confirm({
+                title: "Decline candidate",
+                object: c.candidate.display_name,
+                description: "They stop progressing for this role and your recruiter is notified.",
+                confirmLabel: "Decline",
+                tone: "destructive",
+                reason: {
+                  label: "Why are they not moving forward?",
+                  placeholder: "e.g. Needs more hands-on experience with X",
+                  required: true,
+                },
+              });
+              if (r.confirmed) await runMove("decline", "not_moving_forward", r.reason);
+            }}
+          >
+            {busy === "decline" ? "Saving…" : "Decline"}
+          </Button>
+        )}
       </div>
+
+      {confirmDialog}
     </div>
   );
 }
