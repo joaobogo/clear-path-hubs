@@ -6096,6 +6096,105 @@ export type Database = {
           },
         ]
       }
+      position_commitments: {
+        Row: {
+          baseline_at: string
+          created_at: string
+          created_by: string | null
+          first_shortlist_days: number
+          id: string
+          interview_slots_hours: number
+          notes: string | null
+          organization_id: string
+          position_id: string
+          shortlist_size: number
+          updated_at: string
+        }
+        Insert: {
+          baseline_at?: string
+          created_at?: string
+          created_by?: string | null
+          first_shortlist_days?: number
+          id?: string
+          interview_slots_hours?: number
+          notes?: string | null
+          organization_id: string
+          position_id: string
+          shortlist_size?: number
+          updated_at?: string
+        }
+        Update: {
+          baseline_at?: string
+          created_at?: string
+          created_by?: string | null
+          first_shortlist_days?: number
+          id?: string
+          interview_slots_hours?: number
+          notes?: string | null
+          organization_id?: string
+          position_id?: string
+          shortlist_size?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "position_commitments_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "admin_clients_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "position_commitments_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "position_commitments_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_portfolio_rollup"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "position_commitments_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: true
+            referencedRelation: "admin_pipeline_health"
+            referencedColumns: ["position_id"]
+          },
+          {
+            foreignKeyName: "position_commitments_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: true
+            referencedRelation: "admin_positions_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "position_commitments_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: true
+            referencedRelation: "candidate_my_applications"
+            referencedColumns: ["position_id"]
+          },
+          {
+            foreignKeyName: "position_commitments_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: true
+            referencedRelation: "client_positions_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "position_commitments_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: true
+            referencedRelation: "positions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       position_locations: {
         Row: {
           city: string | null
