@@ -403,6 +403,7 @@ export const savePositionEdit = createServerFn({ method: "POST" })
           confidentiality: data.confidentiality || "public",
         },
       },
+      travel_expectation: data.travel || null,
       openings: typeof data.headcount === "number" ? data.headcount : 1,
       updated_at: new Date().toISOString(),
     };
