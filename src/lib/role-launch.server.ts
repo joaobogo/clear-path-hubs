@@ -256,6 +256,7 @@ export function computeRoleLaunchState({
     isClosed,
     attribution,
     campaignCount: campaigns.length,
+    campaigns,
   });
 
   return {
