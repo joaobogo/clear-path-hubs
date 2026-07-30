@@ -25,6 +25,7 @@ import { AlertCircle, MessageSquare, Users } from "lucide-react";
 import { RoleBlueprint } from "@/components/product/role-blueprint";
 import { GeneratedBlueprintPanel } from "@/components/positions/generated-blueprint-panel";
 import { RoleLaunchPanel } from "@/components/positions/role-launch-panel";
+import { PositionLifecycleMenu } from "@/components/positions/position-lifecycle-menu";
 import type { RoleLaunchState } from "@/lib/role-launch";
 import { ResurfacePanel } from "@/components/client/resurface-panel";
 import { RoleMemoryPanel } from "@/components/role-memory-panel";
