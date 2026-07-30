@@ -648,7 +648,7 @@ export const applyReviewDecision = createServerFn({ method: "POST" })
       } catch (emitErr) {
         console.error("[approve_for_client] emit failed", emitErr);
       }
-      return { ok: true as const, action: data.action, match: published };
+      return { ok: true as const, action: data.action, already: false, match: published };
     }
 
     // Hold and archive both use decision_type='reject' since the enum has no hold/archive.
