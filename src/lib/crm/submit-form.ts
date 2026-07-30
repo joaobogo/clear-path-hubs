@@ -3,7 +3,15 @@
  * It posts sanitized form context to the server; the Attio credential never
  * leaves the server.
  */
-import { CRM_FORMS, type CrmFormId } from "./attio-config";
+import {
+  CRM_FORMS,
+  FORM_SERVICE_INTEREST,
+  SERVICE_ROUTING,
+  deriveCrossSellStatus,
+  deriveLeadType,
+  type CrmFormId,
+  type ServiceInterest,
+} from "./attio-config";
 import { getAttribution, getPageContext } from "./attribution";
 
 export type CrmSubmitInput = {
@@ -20,7 +28,12 @@ export type CrmSubmitInput = {
   consentStatus?: string | null;
   /** Honeypot field value — must be empty for real humans. */
   honeypot?: string | null;
+  /** Which ecosystem service the visitor asked about. Drives routing. */
+  serviceInterest?: ServiceInterest;
+  secondaryServiceInterest?: ServiceInterest | null;
 };
+
+export type { ServiceInterest };
 
 export type CrmSubmitResult =
   | { ok: true; queued: boolean; submissionId: string }
@@ -37,7 +50,14 @@ export async function submitToCrm(input: CrmSubmitInput): Promise<CrmSubmitResul
       : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
 
   const form = CRM_FORMS[input.formId];
+  const serviceInterest = input.serviceInterest ?? FORM_SERVICE_INTEREST[input.formId];
+  const routing = SERVICE_ROUTING[serviceInterest];
   const payload = {
+    service_interest: serviceInterest,
+    secondary_service_interest: input.secondaryServiceInterest ?? null,
+    destination_brand: routing.destination_brand,
+    lead_type: deriveLeadType(input.formId, serviceInterest),
+    cross_sell_status: deriveCrossSellStatus(serviceInterest),
     submission_id: submissionId,
     source_form_id: form.id,
     submitted_at: new Date().toISOString(),
