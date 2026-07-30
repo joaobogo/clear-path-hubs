@@ -337,6 +337,17 @@ function InterviewsPage() {
           }
         />
       ) : null}
+
+      {org && scorecardId ? (
+        <InterviewScorecardDialog
+          orgId={org}
+          interviewId={scorecardId}
+          open
+          onOpenChange={(v) => {
+            if (!v) setScorecardId(null);
+          }}
+        />
+      ) : null}
     </PageShell>
   );
 }
