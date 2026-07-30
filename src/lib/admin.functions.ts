@@ -801,8 +801,43 @@ export const setPositionStatus = createServerFn({ method: "POST" })
       .eq("id", data.id)
       .maybeSingle();
     if (!before) throw new Error("position_not_found");
+
+    // Pilot scope: a company on the one-time pilot runs exactly one active role.
+    // Paying clients (org.status = "active") and admin overrides are unaffected.
+    if (data.action === "activate" || data.action === "reopen") {
+      const { data: pilotOrg } = await s
+        .from("organizations")
+        .select("id, status, pilot_status, pilot_position_id, pilot_admin_override")
+        .eq("id", before.organization_id)
+        .maybeSingle();
+      const onPilotOnly =
+        pilotOrg &&
+        pilotOrg.status !== "active" &&
+        !pilotOrg.pilot_admin_override &&
+        ["reserved", "active"].includes(pilotOrg.pilot_status ?? "");
+      if (onPilotOnly) {
+        if (pilotOrg!.pilot_position_id && pilotOrg!.pilot_position_id !== data.id) {
+          throw new Error(
+            "pilot_role_limit: this company's pilot covers a different role. Convert them to a paid plan or set an admin override first.",
+          );
+        }
+        const { count } = await s
+          .from("positions")
+          .select("id", { count: "exact", head: true })
+          .eq("organization_id", before.organization_id)
+          .eq("status", "active")
+          .neq("id", data.id);
+        if ((count ?? 0) > 0) {
+          throw new Error(
+            "pilot_role_limit: this company already has an active pilot role. Pause it, convert to a paid plan, or set an admin override.",
+          );
+        }
+      }
+    }
+
     const next = STATUS_MAP[data.action];
     const patch: AnyRow = { status: next };
+
     if (data.action === "submit") patch.submitted_at = new Date().toISOString();
     if (data.action === "approve") patch.approved_at = new Date().toISOString();
     if (data.action === "activate" || data.action === "reopen") patch.published_at = new Date().toISOString();

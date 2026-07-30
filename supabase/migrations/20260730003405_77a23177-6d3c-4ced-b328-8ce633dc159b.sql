@@ -1,0 +1,1 @@
+ALTER TABLE public.positions ADD COLUMN IF NOT EXISTS blueprint_attempts integer NOT NULL DEFAULT 0;
