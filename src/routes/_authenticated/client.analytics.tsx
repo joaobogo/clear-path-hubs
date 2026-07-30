@@ -181,7 +181,7 @@ function AnalyticsPage() {
       </header>
 
       {insights.isLoading ? (
-        <SkeletonCards count={3} />
+        <SkeletonCards cards={3} />
       ) : !data ? (
         <EmptyState
           title="No insight yet"
