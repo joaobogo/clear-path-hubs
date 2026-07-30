@@ -18,6 +18,7 @@ const traceId = () =>
 export type HireStatus =
   | "offer_drafted"
   | "offer_sent"
+  | "offer_negotiating"
   | "offer_accepted"
   | "offer_declined"
   | "hire_confirmed"
@@ -39,6 +40,7 @@ export type HireCloseReason =
 export const HIRE_STATUSES: HireStatus[] = [
   "offer_drafted",
   "offer_sent",
+  "offer_negotiating",
   "offer_accepted",
   "offer_declined",
   "hire_confirmed",
@@ -48,6 +50,7 @@ export const HIRE_STATUSES: HireStatus[] = [
 export const HIRE_STATUS_LABEL: Record<HireStatus, string> = {
   offer_drafted: "Offer drafted",
   offer_sent: "Offer sent",
+  offer_negotiating: "Negotiating",
   offer_accepted: "Offer accepted",
   offer_declined: "Offer declined",
   hire_confirmed: "Hire confirmed",
@@ -92,12 +95,15 @@ export interface HireRecordDTO {
   offer_notes: string | null;
   drafted_at: string | null;
   sent_at: string | null;
+  negotiating_at: string | null;
   accepted_at: string | null;
   declined_at: string | null;
   hired_at: string | null;
   closed_at: string | null;
   close_reason: HireCloseReason | null;
   close_reason_notes: string | null;
+  last_nudged_at: string | null;
+  nudge_count: number;
   created_at: string;
   updated_at: string;
   applied_at: string | null;
@@ -220,12 +226,15 @@ function toDTO(row: AnyRow): HireRecordDTO {
     offer_notes: row.offer_notes ?? null,
     drafted_at: row.drafted_at ?? null,
     sent_at: row.sent_at ?? null,
+    negotiating_at: row.negotiating_at ?? null,
     accepted_at: row.accepted_at ?? null,
     declined_at: row.declined_at ?? null,
     hired_at: row.hired_at ?? null,
     closed_at: row.closed_at ?? null,
     close_reason: row.close_reason ?? null,
     close_reason_notes: row.close_reason_notes ?? null,
+    last_nudged_at: row.last_nudged_at ?? null,
+    nudge_count: row.nudge_count ?? 0,
     created_at: row.created_at,
     updated_at: row.updated_at,
     applied_at: row.applied_at ?? null,
@@ -563,7 +572,9 @@ export const getTimeToHireReport = createServerFn({ method: "POST" })
     const scoped = list.filter(inWindow);
 
     const openOffers = scoped.filter((r) =>
-      ["offer_drafted", "offer_sent", "offer_accepted"].includes(r.status),
+      ["offer_drafted", "offer_sent", "offer_negotiating", "offer_accepted"].includes(
+        r.status,
+      ),
     ).length;
     const hires = scoped.filter((r) => r.status === "hire_confirmed");
     const declined = scoped.filter((r) => r.status === "offer_declined");
@@ -644,7 +655,9 @@ export const getTimeToHireReport = createServerFn({ method: "POST" })
         entry.hires += 1;
         if (r.days_to_hire != null) entry.days.push(Number(r.days_to_hire));
       } else if (
-        ["offer_drafted", "offer_sent", "offer_accepted"].includes(r.status)
+        ["offer_drafted", "offer_sent", "offer_negotiating", "offer_accepted"].includes(
+          r.status,
+        )
       ) {
         entry.open += 1;
       }
@@ -711,4 +724,83 @@ export const listOfferOwners = createServerFn({ method: "POST" })
         "Team member",
     }));
     return { owners };
+  });
+
+// ─── Stalled-offer nudge ────────────────────────────────────────────────────
+
+/**
+ * Records a nudge on a stalled offer: stamps last_nudged_at, increments the
+ * counter, notifies the offer owner, and writes an audit event. Idempotency is
+ * intentionally soft — a nudge is a human action, repeat nudges are meaningful.
+ */
+export const nudgeOffer = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: { orgId: string; id: string; note?: string }) =>
+    z
+      .object({
+        orgId: z.string().uuid(),
+        id: z.string().uuid(),
+        note: z.string().max(1000).optional(),
+      })
+      .parse(input),
+  )
+  .handler(async ({ context, data }) => {
+    const trace = traceId();
+    await assertEditor(context.supabase, context.userId, data.orgId);
+
+    const { data: current, error: cErr } = await context.supabase
+      .from("hire_records")
+      .select(
+        "id, status, owner_user_id, nudge_count, position_id, candidate_profile_id, candidate_match_id",
+      )
+      .eq("id", data.id)
+      .eq("organization_id", data.orgId)
+      .maybeSingle();
+    if (cErr) throw new Error(cErr.message);
+    if (!current) throw new Error("hire_not_found");
+
+    const row = current as AnyRow;
+    const nowIso = new Date().toISOString();
+    const { error } = await context.supabase
+      .from("hire_records")
+      .update({
+        last_nudged_at: nowIso,
+        nudge_count: (row.nudge_count ?? 0) + 1,
+      } as never)
+      .eq("id", data.id)
+      .eq("organization_id", data.orgId);
+    if (error) throw new Error(error.message);
+
+    // Best-effort in-app notification to the owner; never blocks the nudge.
+    if (row.owner_user_id) {
+      await context.supabase
+        .from("notifications")
+        .insert({
+          user_id: row.owner_user_id,
+          organization_id: data.orgId,
+          title: "Offer needs a push",
+          body:
+            data.note?.trim() ||
+            "This offer has had no movement for more than 48 hours. Chase the candidate or update the record.",
+          entity_type: "hire_records",
+          entity_id: data.id,
+        } as never)
+        .then(
+          () => undefined,
+          () => undefined,
+        );
+    }
+
+    await writeAudit(context.supabase, {
+      actor: context.userId,
+      action: "hire.nudged",
+      entity_type: "hire_records",
+      entity_id: data.id,
+      organization_id: data.orgId,
+      before: { status: row.status, nudge_count: row.nudge_count ?? 0 },
+      after: { last_nudged_at: nowIso, note: data.note ?? null },
+      trace_id: trace,
+    });
+
+    return { ok: true, last_nudged_at: nowIso, trace_id: trace };
   });
