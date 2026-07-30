@@ -617,6 +617,14 @@ function OfferTermsDialog({
   const [workModel, setWorkModel] = useState(hire.work_model ?? "");
   const [location, setLocation] = useState(hire.location ?? "");
   const [notes, setNotes] = useState(hire.offer_notes ?? "");
+  const [guaranteeDays, setGuaranteeDays] = useState(
+    hire.guarantee_days != null ? String(hire.guarantee_days) : "",
+  );
+  const [guaranteeStartsOn, setGuaranteeStartsOn] = useState(hire.guarantee_starts_on ?? "");
+  const [guaranteeTerms, setGuaranteeTerms] = useState(hire.guarantee_terms ?? "");
+  const [guaranteeVisible, setGuaranteeVisible] = useState(
+    hire.guarantee_visible_to_client !== false,
+  );
   const [owner, setOwner] = useState<string>(hire.owner_user_id ?? "__unassigned__");
 
   const { data: ownersData } = useQuery({
