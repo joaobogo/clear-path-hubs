@@ -1,14 +1,10 @@
 import * as React from "react";
 import { Link, useSearch } from "@tanstack/react-router";
-import { useServerFn } from "@tanstack/react-start";
-import { useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
-import { useConfirmAction } from "@/components/ds/confirm-action";
 import { AgeBadge } from "@/components/client/age-badge";
 import { formatDaysInStage } from "@/lib/time-age";
-import { moveMatchStage } from "@/lib/client.functions";
+import { DecisionBar } from "@/components/client/decision-bar";
 import { fitChips } from "@/lib/client-evidence-bullets";
 import { buildShortlistRationale } from "@/lib/client-rationale";
 import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
@@ -240,9 +236,9 @@ export function CandidateCard({
         {c.stage === "delivered" && <AgeBadge since={c.delivered_at ?? c.stage_entered_at} />}
       </div>
 
-      {/* One primary action, two secondaries */}
+      {/* One click each: Advance, Hold, Decline — all reversible */}
       <div className="mt-3 flex flex-wrap items-center gap-2">
-        <Button asChild size="sm" className="min-w-[6.5rem]">
+        <Button asChild size="sm" variant="secondary" className="min-w-[5.5rem]">
           <Link
             to="/client/candidates/$id"
             params={{ id: c.match_id }}
@@ -251,52 +247,17 @@ export function CandidateCard({
             Review
           </Link>
         </Button>
-        {showActions && advance && (
-          <Button
-            size="sm"
-            variant="outline"
-            disabled={busy !== null}
-            onClick={async () => {
-              const r = await confirm({
-                title: advance.label === "Reopen" ? "Reopen candidate" : "Advance candidate",
-                object: c.candidate.display_name,
-                description: advanceMeaning(c.stage),
-                confirmLabel: advance.label,
-              });
-              if (r.confirmed) await runMove("advance", advance.to, r.reason || undefined);
-            }}
-          >
-            {busy === "advance" ? "Saving…" : advance.label}
-          </Button>
-        )}
-        {showActions && canDecline && (
-          <Button
-            size="sm"
-            variant="ghost"
-            className="text-muted-foreground hover:text-destructive"
-            disabled={busy !== null}
-            onClick={async () => {
-              const r = await confirm({
-                title: "Decline candidate",
-                object: c.candidate.display_name,
-                description: "They stop progressing for this role and your recruiter is notified.",
-                confirmLabel: "Decline",
-                tone: "destructive",
-                reason: {
-                  label: "Why are they not moving forward?",
-                  placeholder: "e.g. Needs more hands-on experience with X",
-                  required: true,
-                },
-              });
-              if (r.confirmed) await runMove("decline", "not_moving_forward", r.reason);
-            }}
-          >
-            {busy === "decline" ? "Saving…" : "Decline"}
-          </Button>
+        {orgId && (
+          <DecisionBar
+            orgId={orgId}
+            matchId={c.match_id}
+            stage={c.stage}
+            candidateName={c.candidate.display_name}
+            compact
+          />
         )}
       </div>
 
-      {confirmDialog}
     </div>
   );
 }
