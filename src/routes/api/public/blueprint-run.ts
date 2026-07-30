@@ -70,7 +70,9 @@ export const Route = createFileRoute("/api/public/blueprint-run")({
             blueprint_attempts: attempts + 1,
           })
           .eq("id", position.id)
-          .in("blueprint_status", ["queued", "failed", "not_started"])
+          // NULL is not matched by `in(...)`, so the atomic claim has to allow it
+          // explicitly or a never-queued role can never be claimed.
+          .or(`blueprint_status.in.(${RUNNABLE.join(",")}),blueprint_status.is.null`)
           .select("id");
         if (!claimed || claimed.length === 0) {
           return Response.json({ ok: true, alreadyRunning: true });
