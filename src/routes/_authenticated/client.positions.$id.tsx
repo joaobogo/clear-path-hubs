@@ -348,6 +348,11 @@ function PositionDetailPage() {
  )}
  </section>
 
+ {/* What we committed to at launch — promise, actual, variance */}
+ <SlaScorecard orgId={orgId} positionId={id} title="What we committed to for this role" />
+
+
+
 
  {/* 2. Hiring summary */}
  <section aria-label="Hiring summary" className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
