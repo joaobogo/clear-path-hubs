@@ -232,6 +232,21 @@ function CandidateDetailPage() {
  });
 
 
+ // Advance-type moves go through in one click; anything needing a "why"
+ // opens the structured reason picker.
+ const NO_REASON_NEEDED = new Set<ActionKey>([
+ "shortlist",
+ "request_interview",
+ "offer",
+ "hire",
+ ]);
+ const handleAct = (k: ActionKey, fromStage: MatchStage) => {
+ if (act.isPending) return;
+ stageBeforeRef.current = fromStage;
+ if (NO_REASON_NEEDED.has(k)) act.mutate({ action: k });
+ else setDialogAction(k);
+ };
+
  if (!orgId || detailPending || (data === undefined && detailFetching)) {
  return <div className="p-8 text-sm text-muted-foreground">Loading candidate…</div>;
  }
@@ -346,7 +361,7 @@ function CandidateDetailPage() {
               actions={actions}
               readOnly={readOnly}
               pending={act.isPending}
-              onAct={(k) => setDialogAction(k)}
+              onAct={(k) => handleAct(k, candidate.stage)}
               stage={candidate.stage}
               matchId={candidate.match_id}
             />
@@ -368,7 +383,7 @@ function CandidateDetailPage() {
         <MobileActionBar
           actions={actions}
           pending={act.isPending}
-          onAct={(k) => setDialogAction(k)}
+          onAct={(k) => handleAct(k, candidate.stage)}
         />
       )}
 
