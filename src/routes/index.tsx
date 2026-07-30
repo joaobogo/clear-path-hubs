@@ -1445,7 +1445,7 @@ function Home() {
               </div>
               <ol className="grid gap-4 sm:grid-cols-3">
                 {[
-                  { n: "01", when: "Day 1–2", t: "Intake", b: "Guided intake plus a short alignment call to lock the search plan." },
+                  { n: "01", when: "Day 1–2", t: "Intake", b: "Upload the job description. TaaSFlow builds the blueprint and search plan for you to review." },
                   { n: "02", when: "Day 3–10", t: "Sourcing and scoring", b: "Multi-channel sourcing, then scoring against your rubric with evidence per requirement." },
                   { n: "03", when: "Day 10–14", t: "Ranked shortlist review", b: "Reviewed candidates published to your dashboard, ranked, with CVs and evidence." },
                 ].map((s) => (

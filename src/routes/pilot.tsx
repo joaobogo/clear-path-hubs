@@ -22,7 +22,7 @@ const TIMELINE = [
     title: "Intake",
     when: "Day 1–2",
     body:
-      "A guided intake captures the role, must-haves, deal-breakers, and how you weigh each requirement. A short alignment call confirms the search plan before sourcing starts.",
+      "You create your workspace and upload the job description. TaaSFlow builds the role blueprint, screening criteria and sourcing plan automatically, and you review or edit every detail before the search goes live.",
   },
   {
     n: "02",
@@ -114,8 +114,8 @@ function PilotPage() {
             What happens in the {PRICE_PILOT_DISPLAY} pilot
           </h2>
           <p className="mt-3 max-w-2xl text-[color:var(--brand-navy)]/80">
-            Three stages, one role, one fixed price. Timings assume you complete intake and the
-            alignment call in the first two days.
+            Three stages, one role, one fixed price. Available once per company. First candidate
+            activity usually begins within 3–5 days after the search goes live.
           </p>
           <ol className="mt-8 grid gap-4 md:grid-cols-3">
             {TIMELINE.map((s) => (
