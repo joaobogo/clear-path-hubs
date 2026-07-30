@@ -491,6 +491,7 @@ export const Route = createFileRoute("/api/public/express-intake")({
           intakeId,
           organizationId,
           positionId,
+          jdStored: Boolean(jdPath),
           userId: authUserId,
           accountCreated,
           pilotEligible,

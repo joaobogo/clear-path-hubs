@@ -284,15 +284,16 @@ function ExpressIntakePage() {
 
       // Sign the client straight into their new workspace.
       let signedIn = authed;
-      try {
-        if (authed || !parsed.data.password) throw new Error("skip");
-        const { error } = await supabase.auth.signInWithPassword({
-          email: parsed.data.workEmail,
-          password: parsed.data.password!,
-        });
-        signedIn = !error;
-      } catch {
-        signedIn = false;
+      if (!authed && parsed.data.password) {
+        try {
+          const { error } = await supabase.auth.signInWithPassword({
+            email: parsed.data.workEmail,
+            password: parsed.data.password,
+          });
+          signedIn = !error;
+        } catch {
+          signedIn = false;
+        }
       }
 
       // Kick off blueprint preparation. Deliberately not awaited — the role
