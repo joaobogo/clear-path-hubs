@@ -559,7 +559,10 @@ function PositionDetailPage() {
  )}
  </section>
 
-   {/* 5b. Generated role blueprint from express onboarding */}
+   {/* 5b. Role setup timeline + search channels — evidence-backed */}
+  {launch && <RoleLaunchPanel launch={launch} />}
+
+   {/* 5c. Generated role blueprint from express onboarding */}
   <GeneratedBlueprintPanel
    position={position}
    audience="client"
@@ -567,6 +570,7 @@ function PositionDetailPage() {
    onConfirm={() => confirmBlueprint.mutate()}
    confirming={confirmBlueprint.isPending}
   />
+
 
    {/* 6. Role blueprint — ATS-grade source of truth */}
   <RoleBlueprint position={position} activity={activity} />
