@@ -286,8 +286,9 @@ function PositionDetailPage() {
  </div>
  ) : null}
  </div>
- <div className="flex items-center gap-2">
+ <div className="flex flex-wrap items-center gap-2">
  {canEdit && !support.readOnly && (
+  <>
  <Button asChild variant="outline" size="sm">
  <Link
  to="/client/positions/$id/edit"
@@ -298,6 +299,13 @@ function PositionDetailPage() {
  Edit position
  </Link>
  </Button>
+   <PositionLifecycleMenu
+     positionId={position.id}
+     status={position.status}
+     title={position.title}
+     onChanged={() => void refetch()}
+   />
+  </>
  )}
  <Button asChild variant="outline" size="sm">
  <Link to="/client/messages" search={{ position: position.id } as never}>
