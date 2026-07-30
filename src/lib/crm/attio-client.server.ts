@@ -161,9 +161,7 @@ export async function listObjectAttributeSlugs(object: string): Promise<Set<stri
   const cached = attributeSlugCache.get(object);
   if (cached) return cached;
   try {
-    const res = await attioFetch<{ data: { api_slug: string }[] }>(
-      `/objects/${object}/attributes`,
-    );
+    const res = await attioFetch<{ data: { api_slug: string }[] }>(`/objects/${object}/attributes`);
     const slugs = new Set(res.data.map((a) => a.api_slug));
     attributeSlugCache.set(object, slugs);
     return slugs;
