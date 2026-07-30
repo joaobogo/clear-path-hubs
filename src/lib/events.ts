@@ -270,12 +270,14 @@ export const INTERVIEW_STATES = {
 
 export const PLACEMENT_STATES = {
   offer_drafted: ["offer_sent", "closed_lost"],
-  offer_sent: ["offer_accepted", "offer_declined", "closed_lost"],
+  offer_sent: ["offer_negotiating", "offer_accepted", "offer_declined", "closed_lost"],
+  offer_negotiating: ["offer_sent", "offer_accepted", "offer_declined", "closed_lost"],
   offer_accepted: ["hire_confirmed", "closed_lost"],
   offer_declined: ["offer_drafted", "closed_lost"],
   hire_confirmed: ["closed_lost"],
   closed_lost: ["offer_drafted"],
 } as const;
+
 
 /** Client approval and contact release are two separate, ordered permissions. */
 export const CLIENT_ACCESS_STATES = {
