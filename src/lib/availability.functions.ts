@@ -249,7 +249,7 @@ export const rescheduleInterview = createServerFn({ method: "POST" })
         previous_scheduled_at: prev.scheduled_at ?? null,
         scheduled_at: null,
         proposed_times: slots as never,
-        candidate_response: null,
+        candidate_response: null as never,
         candidate_response_at: null,
         candidate_selected_time: null,
         availability_expires_at: new Date(Date.now() + 5 * 86_400_000).toISOString(),
