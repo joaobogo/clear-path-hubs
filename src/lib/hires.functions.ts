@@ -93,6 +93,10 @@ export interface HireRecordDTO {
   work_model: string | null;
   location: string | null;
   offer_notes: string | null;
+  guarantee_days: number | null;
+  guarantee_starts_on: string | null;
+  guarantee_terms: string | null;
+  guarantee_visible_to_client: boolean;
   drafted_at: string | null;
   sent_at: string | null;
   negotiating_at: string | null;
