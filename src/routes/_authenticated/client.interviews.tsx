@@ -340,6 +340,8 @@ function KpiTile({
  );
 }
 
+import { AgeBadge } from "@/components/client/age-badge";
+
 function InterviewRow({ interview, onOpen }: { interview: InterviewDTO; onOpen: () => void }) {
  return (
  <button
@@ -358,6 +360,9 @@ function InterviewRow({ interview, onOpen }: { interview: InterviewDTO; onOpen: 
  ) : null}
  {interview.position?.reference ? (
  <span className="text-xs text-muted-foreground">#{interview.position.reference}</span>
+ ) : null}
+ {interview.status === "requested" || interview.status === "scheduling" ? (
+ <AgeBadge since={interview.created_at} />
  ) : null}
  </div>
  <div className="font-medium">
