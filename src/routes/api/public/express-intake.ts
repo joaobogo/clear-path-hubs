@@ -363,16 +363,23 @@ export const Route = createFileRoute("/api/public/express-intake")({
             payload: {
               firstName: data.firstName,
               lastName: data.lastName,
+              contactTitle: data.contactTitle,
               workEmail: data.workEmail,
-              phone: data.phone ?? "",
+              phone: data.phone,
+              contactLinkedin: data.contactLinkedin ?? "",
               companyName: data.companyName,
-              companyWebsite: data.companyWebsite ?? "",
+              companyWebsite: data.companyWebsite,
+              companyLinkedin: data.companyLinkedin ?? "",
               roleTitle: data.roleTitle,
               researchConsent: data.researchConsent,
+              pilotAcknowledgement: data.pilotAcknowledgement,
+              pilotEligible,
+              pilotReason,
               jobDescriptionChars: (data.jobDescriptionText ?? "").length,
               jobDescriptionFile: jdPath,
               source: data.source,
             },
+
           })
           .select("id")
           .single();
