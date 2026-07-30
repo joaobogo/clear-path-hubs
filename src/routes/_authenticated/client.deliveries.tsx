@@ -10,6 +10,7 @@ import {
   submitDeliveryFeedback,
   type DeliveryRow,
 } from "@/lib/deliveries.functions";
+import { EmptyState, SkeletonCards, NoWorkspaceState } from "@/components/client/states";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -99,7 +100,7 @@ function DeliveriesPage() {
       .slice(-8);
   }, [deliveries.data]);
 
-  if (!orgId) return <div className="text-sm text-muted-foreground">No workspace selected.</div>;
+  if (!orgId) return <NoWorkspaceState />;
 
   return (
     <div className="space-y-8">
@@ -165,15 +166,16 @@ function DeliveriesPage() {
       <section className="space-y-3">
         <h2 className="text-lg font-semibold">Delivery history</h2>
         {deliveries.isLoading ? (
-          <div className="space-y-2">
-            {Array.from({ length: 3 }).map((_, i) => (
-              <div key={i} className="h-28 animate-pulse rounded-lg border bg-muted/30" />
-            ))}
-          </div>
+          <SkeletonCards cards={3} />
         ) : (deliveries.data?.deliveries ?? []).length === 0 ? (
-          <div className="rounded-lg border bg-card p-8 text-center text-sm text-muted-foreground">
-            No deliveries yet. Your first weekly shortlist appears here once the recruiter publishes it.
-          </div>
+          <EmptyState
+            icon={PackageOpen}
+            title="No deliveries yet"
+            description="Your recruiter publishes a ranked shortlist here each week."
+            whatAppearsHere="Each delivery lists the candidates released to you, why they were shortlisted, and where you can leave calibration feedback."
+            action={{ label: "See your roles", to: "/client/positions" }}
+            secondaryAction={{ label: "Ask your recruiter", to: "/client/conversations" }}
+          />
         ) : (
           <ul className="space-y-3">
             {(deliveries.data?.deliveries ?? []).map((d, i) => (
