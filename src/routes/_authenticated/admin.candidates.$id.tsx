@@ -57,6 +57,11 @@ import { ScoreExplainability } from "@/components/candidate/score-explainability
 import { JourneyTimeline } from "@/components/candidate/journey-timeline";
 import { getCandidateJourney } from "@/lib/journey.functions";
 import { AdminDossier } from "@/components/candidate/admin-dossier";
+import {
+  approvePreflightBlock,
+  explainApproveFailure,
+  type ApproveFailure,
+} from "@/lib/scoring/approve-failure";
 
 
 
@@ -137,16 +142,22 @@ function CandidateWorkspace() {
     await router.invalidate();
   };
 
-  const run = async (label: string, fn: () => Promise<Any>) => {
+  const run = async (
+    label: string,
+    fn: () => Promise<Any>,
+    opts?: { onError?: (err: Error) => void; onSuccess?: () => void },
+  ) => {
     setBusy(label);
     try {
       const r = await fn();
       toast.success(
         `${label} → ${r?.state ?? r?.action ?? "done"}${r?.trace_id ? ` (${r.trace_id})` : ""}`,
       );
+      opts?.onSuccess?.();
       await invalidate();
     } catch (e) {
-      toast.error(`${label} failed: ${(e as Error).message}`);
+      if (opts?.onError) opts.onError(e as Error);
+      else toast.error(`${label} failed: ${(e as Error).message}`);
     } finally {
       setBusy(null);
     }
@@ -1461,11 +1472,16 @@ function ActionRail({
   m: Any;
   currentRun?: Any;
   busy: string | null;
-  onRun: (label: string, fn: () => Promise<Any>) => Promise<void>;
+  onRun: (
+    label: string,
+    fn: () => Promise<Any>,
+    opts?: { onError?: (err: Error) => void; onSuccess?: () => void },
+  ) => Promise<void>;
   onDone: () => Promise<void>;
   onSetTab: (t: Any) => void;
 }) {
   const [reason, setReason] = useState("");
+  const [approveFailure, setApproveFailure] = useState<ApproveFailure | null>(null);
   const [ocrText, setOcrText] = useState("");
   const [override, setOverride] = useState("");
   const setVisFn = useServerFn(setMatchClientVisibility);
@@ -1490,6 +1506,29 @@ function ActionRail({
     m.processing_state === "manual_review_required" ||
     m.processing_state === "ocr_required";
 
+  // Approve safety: block doomed requests before they are sent, and never let a
+  // non-retryable failure be clicked again.
+  const preflightBlock = approvePreflightBlock(m.canonical_state);
+  const approveBlocked = !!preflightBlock || approveFailure?.retryable === false;
+  const runApprove = () => {
+    setApproveFailure(null);
+    return onRun(
+      "approve",
+      () =>
+        applyReviewDecision({
+          data: { match_id: m.id, action: "approve_for_client", reason },
+        }),
+      {
+        onSuccess: () => setApproveFailure(null),
+        onError: (err) => {
+          const failure = explainApproveFailure(err.message);
+          setApproveFailure(failure);
+          toast.error(`${failure.title} — ${failure.detail}`);
+        },
+      },
+    );
+  };
+
   // Context-aware primary action — one at a time, following readiness order.
   let primary: { label: string; qa: string; onClick: () => void; disabled?: boolean };
   if (needsRepair) {
@@ -1500,15 +1539,10 @@ function ActionRail({
     };
   } else if (scored && !approved) {
     primary = {
-      label: "Approve score",
+      label: approveFailure?.retryable ? "Retry approve score" : "Approve score",
       qa: "primary-approve-score",
-      disabled: !!busy,
-      onClick: () =>
-        onRun("approve", () =>
-          applyReviewDecision({
-            data: { match_id: m.id, action: "approve_for_client", reason },
-          }),
-        ),
+      disabled: !!busy || approveBlocked,
+      onClick: runApprove,
     };
   } else if (approved && !isPublished) {
     primary = {
@@ -1542,6 +1576,31 @@ function ActionRail({
         <p className="mt-1 text-xs text-muted-foreground">
           Actions follow readiness: review → approve → preview → publish.
         </p>
+        {scored && !approved && preflightBlock && (
+          <Alert variant="destructive" className="mt-3" data-qa="approve-preflight-block">
+            <AlertTitle className="text-xs">Approval unavailable</AlertTitle>
+            <AlertDescription className="text-xs">{preflightBlock}</AlertDescription>
+          </Alert>
+        )}
+        {approveFailure && (
+          <Alert variant="destructive" className="mt-3" data-qa="approve-failure">
+            <AlertTitle className="text-xs">{approveFailure.title}</AlertTitle>
+            <AlertDescription className="space-y-1 text-xs">
+              <p>{approveFailure.detail}</p>
+              {approveFailure.nextStep && (
+                <p className="font-medium">Next: {approveFailure.nextStep}</p>
+              )}
+              <p className="font-mono text-[10px] opacity-70 break-all">
+                {approveFailure.raw}
+              </p>
+              {!approveFailure.retryable && (
+                <p className="opacity-80">
+                  Retrying will fail the same way — resolve the cause first.
+                </p>
+              )}
+            </AlertDescription>
+          </Alert>
+        )}
         <div className="mt-3 flex items-stretch gap-2">
           <Button
             className="flex-1"
@@ -1549,7 +1608,7 @@ function ActionRail({
             onClick={primary.onClick}
             data-qa-action={primary.qa}
           >
-            {primary.label}
+            {busy === "approve" ? "Approving…" : primary.label}
           </Button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
