@@ -206,9 +206,9 @@ function OverviewPage() {
     return selectedRole ? all.filter((c: Any) => c.position?.id === selectedRole) : all;
   }, [data, selectedRole]);
 
-  const priorityQueue = useMemo(
-    () => buildPriorityQueue(actions, { org: orgSearch, position: selectedRole || undefined }),
-    [actions, orgSearch, selectedRole],
+  const decisionQueue = useMemo(
+    () => buildDecisionQueue(kpis, blocking?.count ?? 0, { org: orgSearch, position: selectedRole || undefined }),
+    [kpis, blocking, orgSearch, selectedRole],
   );
   const hottestRole = useMemo(() => pickHottestRole(visibleRoles), [visibleRoles]);
   const otherRoles = useMemo(
