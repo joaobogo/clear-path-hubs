@@ -47,6 +47,7 @@ import {
 import { JobQualityPanel } from "@/components/positions/JobQualityPanel";
 import { GeneratedBlueprintPanel } from "@/components/positions/generated-blueprint-panel";
 import { RoleMemoryPanel } from "@/components/role-memory-panel";
+import { SourcingOpsPanel } from "@/components/positions/sourcing-ops-panel";
 import { useConfirmAction } from "@/components/ds";
 import {
   DropdownMenu,
