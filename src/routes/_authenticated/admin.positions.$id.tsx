@@ -240,7 +240,17 @@ function PositionWorkspace() {
       </nav>
 
       <section>
-        {tab === "overview" && <OverviewTab position={p} matches={matches} screening={screening} />}
+        {tab === "overview" && (
+          <div className="space-y-6">
+            <GeneratedBlueprintPanel
+              position={p}
+              audience="admin"
+              editTo={{ to: "/admin/positions/$id/edit", params: { id } }}
+            />
+            <OverviewTab position={p} matches={matches} screening={screening} />
+          </div>
+        )}
+
         {tab === "requirements" && (
           <RequirementsEditor
             positionId={id}
