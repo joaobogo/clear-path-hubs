@@ -30,7 +30,7 @@ import { VISUAL_SYSTEMS, clearSpaceDiagram, gridDiagram, LOGO } from "@/lib/bran
 import { brand } from "@/config/brand";
 import { triggerDownload } from "@/lib/brand-center/scene";
 
-const CANONICAL = "https://clear-path-hubs.lovable.app/brand-center";
+const CANONICAL = "https://www.taasflow.com/brand-center";
 const TITLE = "TaaSFlow Brand Center — logos, messaging, assets";
 const DESCRIPTION =
   "Official TaaSFlow brand center: approved positioning and messaging, logo rules, colour and type tokens, and exact-dimension social, presentation and document assets ready to download.";
