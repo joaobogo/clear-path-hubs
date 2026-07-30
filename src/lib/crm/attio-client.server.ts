@@ -120,10 +120,7 @@ export async function findOpenDealForPerson(personId: string): Promise<string | 
 }
 
 /** Update an existing Deal in place (used for repeat inquiries). */
-export async function updateDeal(
-  dealId: string,
-  values: Record<string, unknown>,
-): Promise<string> {
+export async function updateDeal(dealId: string, values: Record<string, unknown>): Promise<string> {
   const res = await attioFetch<RecordResponse>(`/objects/deals/records/${dealId}`, {
     method: "PATCH",
     body: { data: { values } },

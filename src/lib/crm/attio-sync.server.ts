@@ -61,12 +61,15 @@ export type SyncIds = {
 
 /** Strip HTML/script and clamp length. */
 export function sanitizeText(value: unknown, max = 2000): string {
-  return String(value ?? "")
-    .replace(/<[^>]*>/g, " ")
-    .replace(/[\u0000-\u001f\u007f]/g, " ")
-    .replace(/\s+/g, " ")
-    .trim()
-    .slice(0, max);
+  return (
+    String(value ?? "")
+      .replace(/<[^>]*>/g, " ")
+      // eslint-disable-next-line no-control-regex
+      .replace(/[\u0000-\u001f\u007f]/g, " ")
+      .replace(/\s+/g, " ")
+      .trim()
+      .slice(0, max)
+  );
 }
 
 const SENSITIVE_KEY = /pass(word)?|token|secret|card|cvv|iban|ssn|api[_-]?key/i;
@@ -133,7 +136,6 @@ export function resolveCompanyDomain(
 ): string | null {
   return normalizeDomain(explicit) ?? normalizeDomain(email.split("@")[1] ?? null);
 }
-
 
 function attributionValues(s: CrmSubmission) {
   const form = CRM_FORMS[s.source_form_id];
@@ -216,10 +218,7 @@ function buildNote(s: CrmSubmission) {
   };
 }
 
-function pickListId(
-  lists: { id: string; name: string; api_slug: string }[],
-  patterns: RegExp[],
-) {
+function pickListId(lists: { id: string; name: string; api_slug: string }[], patterns: RegExp[]) {
   for (const pattern of patterns) {
     const hit = lists.find((l) => pattern.test(l.name) || pattern.test(l.api_slug));
     if (hit) return hit.id;

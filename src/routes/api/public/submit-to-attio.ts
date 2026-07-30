@@ -34,9 +34,7 @@ const optionalText = (max: number) =>
 
 const submissionSchema = z.object({
   submission_id: z.string().uuid(),
-  source_form_id: z.enum(
-    Object.keys(CRM_FORMS) as [CrmFormId, ...CrmFormId[]],
-  ),
+  source_form_id: z.enum(Object.keys(CRM_FORMS) as [CrmFormId, ...CrmFormId[]]),
   submitted_at: z.string().datetime().optional(),
   source_page_url: optionalText(500),
   source_page_title: optionalText(300),
@@ -61,7 +59,6 @@ const submissionSchema = z.object({
   // Honeypot: accept any value here so bots get a silent 200 instead of a
   // validation error that would teach them which field to leave blank.
   website: z.string().max(200).optional().nullable(),
-
 });
 
 // Simple in-memory rate limit (per isolate): 5 submissions / minute / IP.
