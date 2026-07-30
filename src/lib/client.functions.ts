@@ -6,6 +6,8 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 import { CLIENT_PERMISSIONS, type ClientPermission } from "@/lib/authz";
+import { computeRoleLaunchState } from "@/lib/role-launch.server";
+
 
 import {
   loadKpiRows,
