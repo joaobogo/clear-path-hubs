@@ -44,6 +44,7 @@ import {
   NotebookPen,
 } from "lucide-react";
 import { JobQualityPanel } from "@/components/positions/JobQualityPanel";
+import { GeneratedBlueprintPanel } from "@/components/positions/generated-blueprint-panel";
 import { RoleMemoryPanel } from "@/components/role-memory-panel";
 import { useConfirmAction } from "@/components/ds";
 import {
