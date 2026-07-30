@@ -120,7 +120,7 @@ export async function readJobDescription(args: {
 /* Permitted public company research                                   */
 /* ------------------------------------------------------------------ */
 
-const BLOCKED_HOST = /(^|\.)(localhost|internal|local|test)$/i;
+const BLOCKED_HOST = /(^|\.)(localhost|internal|local|test|localdomain)$/i;
 
 function normalizeSiteUrl(raw: string): URL | null {
   const trimmed = (raw ?? "").trim();
@@ -129,11 +129,13 @@ function normalizeSiteUrl(raw: string): URL | null {
     const url = new URL(/^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`);
     if (url.protocol !== "https:" && url.protocol !== "http:") return null;
     const host = url.hostname;
-    // Block loopback, link-local and private ranges — never let a submitted URL
-    // reach anything but the public internet.
+    // Block loopback, link-local, private ranges and raw IP literals — never
+    // let a submitted URL reach anything but a public, named host.
     if (BLOCKED_HOST.test(host)) return null;
     if (/^\d+\.\d+\.\d+\.\d+$/.test(host)) return null;
+    if (host.startsWith("[") || host.includes(":")) return null; // IPv6 literal
     if (host.endsWith(".internal") || !host.includes(".")) return null;
+    if (url.username || url.password) return null;
     return url;
   } catch {
     return null;
