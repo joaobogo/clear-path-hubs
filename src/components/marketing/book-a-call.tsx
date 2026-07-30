@@ -20,6 +20,7 @@ import { CalendarDays, MessageSquare, Phone, Loader2, Check, Clock, Mail } from 
 import { useServerFn } from "@tanstack/react-start";
 
 import { submitInquiry } from "@/lib/inquiry.functions";
+import { submitToCrm } from "@/lib/crm/submit-form";
 import {
   Dialog,
   DialogContent,
@@ -252,6 +253,22 @@ function CallForm({
           website: String(form.get("website") ?? ""),
         },
       });
+      void submitToCrm({
+        formId: "book-a-call",
+        email: String(form.get("email") ?? ""),
+        fullName: String(form.get("name") ?? ""),
+        jobTitle: roleTitle ?? String(form.get("role_title") ?? ""),
+        companyName: String(form.get("company") ?? "") || null,
+        companyDomain: String(form.get("company") ?? "") || null,
+        answers: {
+          "Roles to hire": String(form.get("role_count") ?? ""),
+          Industry: industrySlug ?? "",
+          "Preferred slot": chosenIso ?? "",
+          Message: String(form.get("message") ?? ""),
+        },
+        consentStatus: "requested_call",
+        honeypot: String(form.get("website") ?? ""),
+      });
       toast.success("Call requested — we'll confirm within one business day.");
       (e.currentTarget as HTMLFormElement).reset();
       setSlot(null);
@@ -424,6 +441,21 @@ function MessageForm({
           source_path: typeof window !== "undefined" ? window.location.pathname : "",
           website: String(form.get("website") ?? ""),
         },
+      });
+      void submitToCrm({
+        formId: "website-message",
+        email: String(form.get("email") ?? ""),
+        fullName: String(form.get("name") ?? ""),
+        jobTitle: roleTitle ?? String(form.get("role_title") ?? ""),
+        companyName: String(form.get("company") ?? "") || null,
+        companyDomain: String(form.get("company") ?? "") || null,
+        answers: {
+          "Roles to hire": String(form.get("role_count") ?? ""),
+          Industry: industrySlug ?? "",
+          Message: String(form.get("message") ?? ""),
+        },
+        consentStatus: "submitted_message",
+        honeypot: String(form.get("website") ?? ""),
       });
       toast.success("Message sent — we'll reply within one business day.");
       (e.currentTarget as HTMLFormElement).reset();

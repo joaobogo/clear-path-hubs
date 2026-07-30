@@ -23,6 +23,7 @@ import {
   jdFileExt,
 } from "@/lib/express-intake-schema";
 import { supabase } from "@/integrations/supabase/client";
+import { submitToCrm } from "@/lib/crm/submit-form";
 import { trackEvent } from "@/lib/tracking/pixels";
 import { PRICE_PILOT_USD } from "@/config/pricing-core";
 import { CheckCircle2, Eye, EyeOff, FileText, Loader2, Upload, X } from "lucide-react";
@@ -287,6 +288,25 @@ function ExpressIntakePage() {
         return;
       }
 
+
+      void submitToCrm({
+        formId: "employer-intake",
+        email: parsed.data.workEmail,
+        fullName: `${parsed.data.firstName} ${parsed.data.lastName}`.trim(),
+        phone: parsed.data.phone || null,
+        jobTitle: parsed.data.contactTitle || null,
+        linkedin: parsed.data.contactLinkedin || null,
+        companyName: parsed.data.companyName || null,
+        companyDomain: parsed.data.companyWebsite || null,
+        answers: {
+          "Role title": parsed.data.roleTitle ?? "",
+          "Company website": parsed.data.companyWebsite ?? "",
+          "Company LinkedIn": parsed.data.companyLinkedin ?? "",
+          "Job description provided": parsed.data.jobDescriptionText ? "pasted" : jdFile ? "uploaded" : "none",
+        },
+        consentStatus: parsed.data.consent ? "accepted_terms" : null,
+        honeypot: parsed.data.companyFax ?? "",
+      });
 
       trackEvent("express_intake_submitted", {
         flow: "express_onboarding",
