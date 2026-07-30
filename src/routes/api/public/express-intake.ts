@@ -245,13 +245,12 @@ export const Route = createFileRoute("/api/public/express-intake")({
         let authUserId: string | null = null;
         let accountCreated = false;
         {
-          // No password supplied → this must already be an account (an
-          // authenticated client re-submitting). Never create one blind.
+          // No password supplied → the caller must PROVE they own that account
+          // with a valid bearer token. Otherwise anyone knowing a client's
+          // email could create roles inside their workspace.
           if (!data.password) {
-            const { data: list } = await admin.auth.admin.listUsers({ page: 1, perPage: 200 });
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const found = list?.users?.find((u: any) => (u.email ?? "").toLowerCase() === data.workEmail);
-            if (!found) {
+            const existingId = callerUserId ? await lookupUserIdByEmail(admin, data.workEmail) : null;
+            if (!callerUserId || !existingId || existingId !== callerUserId) {
               return Response.json(
                 {
                   ok: false,
@@ -262,7 +261,7 @@ export const Route = createFileRoute("/api/public/express-intake")({
                 { status: 400 },
               );
             }
-            authUserId = found.id;
+            authUserId = existingId;
           }
           const { data: created, error: createErr } = authUserId
             ? { data: null, error: null as { message: string } | null }
@@ -275,16 +274,14 @@ export const Route = createFileRoute("/api/public/express-intake")({
           if (authUserId) {
             // already resolved above
           } else if (createErr) {
-            const { data: list } = await admin.auth.admin.listUsers({ page: 1, perPage: 200 });
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const found = list?.users?.find((u: any) => (u.email ?? "").toLowerCase() === data.workEmail);
+            const found = await lookupUserIdByEmail(admin, data.workEmail);
             if (!found) {
               return Response.json(
                 { ok: false, trace_id: traceId, error: "auth_user_failed", message: createErr.message },
                 { status: 500 },
               );
             }
-            authUserId = found.id;
+            authUserId = found;
             // Existing account: never silently reset their password from a public form.
           } else {
             authUserId = created?.user?.id ?? null;
