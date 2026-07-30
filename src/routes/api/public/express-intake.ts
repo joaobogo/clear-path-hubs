@@ -171,22 +171,51 @@ export const Route = createFileRoute("/api/public/express-intake")({
           });
         }
 
+        // ---------- Caller identity (optional bearer from a signed-in client) ----------
+        let callerUserId: string | null = null;
+        {
+          const bearer = /^bearer\s+(.+)$/i.exec(request.headers.get("authorization") ?? "")?.[1] ?? null;
+          if (bearer) {
+            const { data: u } = await admin.auth.getUser(bearer);
+            callerUserId = u?.user?.id ?? null;
+          }
+        }
+
         // ---------- Organization ----------
+        // Joining an EXISTING organization is a privilege: a matching company
+        // name alone must never grant access to another tenant's workspace.
+        // We only attach to an existing org when the work-email domain matches
+        // that org's verified domain, or the caller is already a member of it.
         const companyNorm = normalizeCompany(data.companyName);
         const domain = emailDomain(data.workEmail);
+        const corporateDomain = domain && !isGenericDomain(domain) ? domain : null;
         let organizationId: string | null = null;
-        {
+        if (corporateDomain) {
+          const { data: byDomain } = await admin
+            .from("organizations")
+            .select("id")
+            .eq("domain", corporateDomain)
+            .maybeSingle();
+          if (byDomain) organizationId = byDomain.id;
+        }
+        if (!organizationId && callerUserId) {
           const { data: byName } = await admin
             .from("organizations")
             .select("id")
             .eq("name_normalized", companyNorm)
             .maybeSingle();
-          if (byName) organizationId = byName.id;
+          if (byName) {
+            const { data: mem } = await admin
+              .from("memberships")
+              .select("id")
+              .eq("user_id", callerUserId)
+              .eq("organization_id", byName.id)
+              .eq("status", "active")
+              .maybeSingle();
+            if (mem) organizationId = byName.id;
+          }
         }
-        if (!organizationId && domain && !isGenericDomain(domain)) {
-          const { data: byDomain } = await admin.from("organizations").select("id").eq("domain", domain).maybeSingle();
-          if (byDomain) organizationId = byDomain.id;
-        }
+
         if (!organizationId) {
           const { data: newOrg, error: orgErr } = await admin
             .from("organizations")
