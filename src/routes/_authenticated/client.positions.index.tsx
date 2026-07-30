@@ -75,9 +75,11 @@ type Row = {
  hires: number;
  active_positions: number;
  };
+ pipeline_line: string | null;
  next_milestone: string | null;
  action_required: string | null;
 };
+
 
 function PositionsPage() {
  const { status, q, location, view, sort } = Route.useSearch();
