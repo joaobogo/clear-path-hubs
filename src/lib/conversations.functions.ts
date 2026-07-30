@@ -57,6 +57,29 @@ async function assertOrgAccess(
   return { staff: staff === true };
 }
 
+/**
+ * Posting requires client editor rights, or platform staff inside an active
+ * interactive support session (read-only support view cannot post).
+ */
+async function assertCanPost(supabase: Row, userId: string, orgId: string): Promise<void> {
+  const { data: isEditor } = await supabase.rpc("is_org_editor", { _user: userId, _org: orgId });
+  if (isEditor === true) return;
+  const { data: isStaff } = await supabase.rpc("is_platform_staff", { _user: userId });
+  if (isStaff !== true) throw new Error("forbidden");
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { data: interactive } = await supabaseAdmin
+    .from("support_sessions")
+    .select("id")
+    .eq("actor_user_id", userId)
+    .eq("organization_id", orgId)
+    .eq("mode", "interactive")
+    .is("ended_at", null)
+    .gt("expires_at", new Date().toISOString())
+    .limit(1)
+    .maybeSingle();
+  if (!interactive) throw new Error("SUPPORT_VIEW_READ_ONLY");
+}
+
 async function nameMap(userIds: string[]): Promise<Record<string, { name: string; staff: boolean }>> {
   const ids = Array.from(new Set(userIds.filter(Boolean)));
   if (ids.length === 0) return {};
