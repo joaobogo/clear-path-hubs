@@ -6,7 +6,7 @@ import { useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { retryBlueprintAnalysis } from "@/lib/blueprint.functions";
 import { toast } from "sonner";
-import { track } from "@/lib/tracking/pixels";
+import { trackEvent } from "@/lib/tracking/pixels";
 import {
   BLUEPRINT_STAGES,
   blueprintProgress,
@@ -118,7 +118,7 @@ export function GeneratedBlueprintPanel({
   async function handleRetry() {
     if (retrying) return;
     setRetrying(true);
-    track("blueprint_reanalysis_requested", { position_id: position?.id });
+    trackEvent("blueprint_reanalysis_requested", { position_id: position?.id });
     try {
       const res = await retry({ data: { positionId: position.id as string } });
       if (res.ok) toast.success("Analysis finished. Your role blueprint is ready.");
