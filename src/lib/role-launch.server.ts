@@ -291,6 +291,7 @@ function computeSourcingMetrics({
   isClosed,
   attribution,
   campaignCount,
+  campaigns = [],
 }: {
   touches: AnyRow[];
   matchCount: number;
@@ -300,8 +301,23 @@ function computeSourcingMetrics({
   isClosed: boolean;
   attribution: Array<{ label: string; count: number }>;
   campaignCount: number;
+  /** Campaign rows may carry admin-verified manual counters. */
+  campaigns?: AnyRow[];
 }): SourcingMetrics {
   const real = touches.filter((t) => !t.is_test_record);
+  // Admin-entered counters for channels the platform cannot instrument
+  // (offline media, partner sourcing). Only summed when a value is recorded.
+  const manual = (key: string): number | null => {
+    const vals = campaigns
+      .filter((c) => !c.is_test_record)
+      .map((c) => c[key] as number | null | undefined)
+      .filter((v): v is number => typeof v === "number");
+    return vals.length ? vals.reduce((a, b) => a + b, 0) : null;
+  };
+  const manualIdentified = manual("manual_identified");
+  const manualContacted = manual("manual_contacted");
+  const manualEngaged = manual("manual_engaged");
+  const manualReplied = manual("manual_replied");
   const hasOutreach = real.length > 0;
 
   const identifiedIds = new Set(
