@@ -90,16 +90,24 @@ export async function loadKpiRows(
   if (matchIds.length > 0) {
     const { data: ivs } = await supabase
       .from("interviews")
-      .select("candidate_match_id, status")
+      .select("candidate_match_id, status, scheduled_at")
       .in("candidate_match_id", matchIds)
       .in("status", ["requested", "scheduling", "scheduled", "completed"]);
     for (const iv of (ivs as AnyRow[]) ?? []) {
       activeInterviews.add(iv.candidate_match_id);
-      if (iv.status === "scheduled") scheduledInterviews.add(iv.candidate_match_id);
+      if (iv.status === "scheduled") {
+        scheduledInterviews.add(iv.candidate_match_id);
+        const at = iv.scheduled_at as string | null;
+        if (at) {
+          const prev = nextInterviewAt.get(iv.candidate_match_id);
+          if (!prev || at < prev) nextInterviewAt.set(iv.candidate_match_id, at);
+        }
+      }
       if (iv.status === "requested" || iv.status === "scheduling") {
         unconfirmedInterviews.add(iv.candidate_match_id);
       }
     }
+
   }
 
   return (matches as AnyRow[]).map((m) => ({
