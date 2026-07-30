@@ -1,12 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
-import { EcosystemCrossSell } from "@/components/marketing/ecosystem-cross-sell";
   SiteShell,
   PublicPage,
   PublicSection,
   CtaSection,
   Breadcrumbs,
 } from "@/components/marketing/site-shell";
+import { EcosystemCrossSell } from "@/components/marketing/ecosystem-cross-sell";
 
 const CANONICAL = "https://taasflow.com/global-talent";
 const TITLE = "Global Talent — remote-first hiring with clear scope | TaaSFlow";
