@@ -93,6 +93,10 @@ export interface HireRecordDTO {
   work_model: string | null;
   location: string | null;
   offer_notes: string | null;
+  guarantee_days: number | null;
+  guarantee_starts_on: string | null;
+  guarantee_terms: string | null;
+  guarantee_visible_to_client: boolean;
   drafted_at: string | null;
   sent_at: string | null;
   negotiating_at: string | null;
@@ -224,6 +228,10 @@ function toDTO(row: AnyRow): HireRecordDTO {
     work_model: row.work_model ?? null,
     location: row.location ?? null,
     offer_notes: row.offer_notes ?? null,
+    guarantee_days: row.guarantee_days ?? null,
+    guarantee_starts_on: row.guarantee_starts_on ?? null,
+    guarantee_terms: row.guarantee_terms ?? null,
+    guarantee_visible_to_client: row.guarantee_visible_to_client ?? true,
     drafted_at: row.drafted_at ?? null,
     sent_at: row.sent_at ?? null,
     negotiating_at: row.negotiating_at ?? null,
@@ -359,6 +367,11 @@ const OfferTermsSchema = z.object({
   work_model: z.string().max(40).nullable().optional(),
   location: z.string().max(160).nullable().optional(),
   offer_notes: z.string().max(4000).nullable().optional(),
+  // Guarantee terms — visible to the client by default so the promise is on record.
+  guarantee_days: z.number().int().min(0).max(365).nullable().optional(),
+  guarantee_starts_on: z.string().nullable().optional(),
+  guarantee_terms: z.string().max(2000).nullable().optional(),
+  guarantee_visible_to_client: z.boolean().optional(),
 });
 type OfferTerms = z.infer<typeof OfferTermsSchema>;
 

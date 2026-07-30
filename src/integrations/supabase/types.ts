@@ -3118,6 +3118,10 @@ export type Database = {
           drafted_at: string | null
           employment_type: string | null
           equity_notes: string | null
+          guarantee_days: number | null
+          guarantee_starts_on: string | null
+          guarantee_terms: string | null
+          guarantee_visible_to_client: boolean
           hired_at: string | null
           id: string
           last_nudged_at: string | null
@@ -3152,6 +3156,10 @@ export type Database = {
           drafted_at?: string | null
           employment_type?: string | null
           equity_notes?: string | null
+          guarantee_days?: number | null
+          guarantee_starts_on?: string | null
+          guarantee_terms?: string | null
+          guarantee_visible_to_client?: boolean
           hired_at?: string | null
           id?: string
           last_nudged_at?: string | null
@@ -3186,6 +3194,10 @@ export type Database = {
           drafted_at?: string | null
           employment_type?: string | null
           equity_notes?: string | null
+          guarantee_days?: number | null
+          guarantee_starts_on?: string | null
+          guarantee_terms?: string | null
+          guarantee_visible_to_client?: boolean
           hired_at?: string | null
           id?: string
           last_nudged_at?: string | null
@@ -3499,6 +3511,187 @@ export type Database = {
           },
           {
             foreignKeyName: "intake_submissions_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "positions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      interview_scorecards: {
+        Row: {
+          candidate_match_id: string
+          concerns: string | null
+          created_at: string
+          criteria: Json
+          id: string
+          interview_id: string
+          organization_id: string
+          position_id: string | null
+          recommendation: string
+          reviewer_name: string | null
+          reviewer_user_id: string
+          strengths: string | null
+          submitted_at: string
+          summary: string | null
+          updated_at: string
+        }
+        Insert: {
+          candidate_match_id: string
+          concerns?: string | null
+          created_at?: string
+          criteria?: Json
+          id?: string
+          interview_id: string
+          organization_id: string
+          position_id?: string | null
+          recommendation?: string
+          reviewer_name?: string | null
+          reviewer_user_id: string
+          strengths?: string | null
+          submitted_at?: string
+          summary?: string | null
+          updated_at?: string
+        }
+        Update: {
+          candidate_match_id?: string
+          concerns?: string | null
+          created_at?: string
+          criteria?: Json
+          id?: string
+          interview_id?: string
+          organization_id?: string
+          position_id?: string | null
+          recommendation?: string
+          reviewer_name?: string | null
+          reviewer_user_id?: string
+          strengths?: string | null
+          submitted_at?: string
+          summary?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "interview_scorecards_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "admin_candidate_matches_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "interview_scorecards_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "admin_work_inbox"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "interview_scorecards_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_matches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "interview_scorecards_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "client_candidate_matches_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "interview_scorecards_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "client_kanban_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "interview_scorecards_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "client_visible_candidates"
+            referencedColumns: ["candidate_match_id"]
+          },
+          {
+            foreignKeyName: "interview_scorecards_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "v_admin_candidate_index"
+            referencedColumns: ["match_id"]
+          },
+          {
+            foreignKeyName: "interview_scorecards_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "v_scoring_review_queue"
+            referencedColumns: ["match_id"]
+          },
+          {
+            foreignKeyName: "interview_scorecards_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "v_source_attribution"
+            referencedColumns: ["match_id"]
+          },
+          {
+            foreignKeyName: "interview_scorecards_interview_id_fkey"
+            columns: ["interview_id"]
+            isOneToOne: false
+            referencedRelation: "interviews"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "interview_scorecards_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "admin_clients_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "interview_scorecards_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "interview_scorecards_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_portfolio_rollup"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "interview_scorecards_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "admin_pipeline_health"
+            referencedColumns: ["position_id"]
+          },
+          {
+            foreignKeyName: "interview_scorecards_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "admin_positions_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "interview_scorecards_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_my_applications"
+            referencedColumns: ["position_id"]
+          },
+          {
+            foreignKeyName: "interview_scorecards_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "client_positions_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "interview_scorecards_position_id_fkey"
             columns: ["position_id"]
             isOneToOne: false
             referencedRelation: "positions"

@@ -26,6 +26,7 @@ import {
  useAvailability,
 } from "@/components/client/scheduling/availability-manager";
 import { InterviewTimeline } from "@/components/client/scheduling/interview-timeline";
+import { InterviewScorecardDialog } from "@/components/client/interview-scorecard-dialog";
 import { useClientOrgSearch } from "@/lib/use-client-org";
 import { useSupportView } from "@/lib/support-view";
 import { PageHeader, PageBody, PageShell } from "@/components/ds";
@@ -135,6 +136,7 @@ function InterviewsPage() {
   const [requestOpen, setRequestOpen] = useState(false);
   const [detail, setDetail] = useState<InterviewDTO | null>(null);
   const [busyId, setBusyId] = useState<string | null>(null);
+  const [scorecardId, setScorecardId] = useState<string | null>(null);
 
   const listQuery = useQuery({
     queryKey: ["client-interviews", org, "all"],
@@ -324,12 +326,27 @@ function InterviewsPage() {
           onComplete={(feedback) =>
             completeMut.mutate({ orgId: detail.organization_id, id: detail.id, feedback })
           }
+          onScorecard={() => {
+            setScorecardId(detail.id);
+            setDetail(null);
+          }}
           pending={
             proposeMut.isPending ||
             confirmMut.isPending ||
             cancelMut.isPending ||
             completeMut.isPending
           }
+        />
+      ) : null}
+
+      {org && scorecardId ? (
+        <InterviewScorecardDialog
+          orgId={org}
+          interviewId={scorecardId}
+          open
+          onOpenChange={(v) => {
+            if (!v) setScorecardId(null);
+          }}
         />
       ) : null}
     </PageShell>
@@ -621,7 +638,8 @@ function DetailDialog({
  onPropose,
  onConfirm,
  onCancel,
- onComplete,
+  onComplete,
+  onScorecard,
  pending,
 }: {
  interview: InterviewDTO;
@@ -636,7 +654,8 @@ function DetailDialog({
  location?: string;
  }) => void;
  onCancel: (reason?: string) => void;
- onComplete: (feedback?: string) => void;
+  onComplete: (feedback?: string) => void;
+  onScorecard: () => void;
  pending: boolean;
 }) {
  const [mode, setMode] = useState<
@@ -901,14 +920,20 @@ function DetailDialog({
  {pending ? "Cancelling…" : "Cancel interview"}
  </Button>
  ) : null}
- {mode === "complete" ? (
- <Button
- disabled={pending}
- onClick={() => onComplete(feedback.trim() || undefined)}
- >
- {pending ? "Saving…" : "Mark completed"}
- </Button>
- ) : null}
+  {mode === "complete" ? (
+  <>
+  <Button variant="outline" disabled={pending} onClick={onScorecard}>
+  Record structured feedback
+  </Button>
+  <Button
+  variant="ghost"
+  disabled={pending}
+  onClick={() => onComplete(feedback.trim() || undefined)}
+  >
+  {pending ? "Saving…" : "Mark completed without scorecard"}
+  </Button>
+  </>
+  ) : null}
  </>
  ) : null}
  </DialogFooter>

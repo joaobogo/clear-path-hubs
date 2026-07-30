@@ -35,6 +35,7 @@ import {
   type HireStatus,
   type HireCloseReason,
 } from "@/lib/hires.functions";
+import { guaranteeLine } from "@/lib/interview-scorecard";
 import { getClientContext } from "@/lib/client.functions";
 import {
   isStalled,
@@ -495,6 +496,30 @@ function HireCard({
         </div>
       </dl>
 
+      {guaranteeLine(
+        {
+          days: hire.guarantee_days,
+          startsOn: hire.guarantee_starts_on,
+          terms: hire.guarantee_terms,
+          visibleToClient: hire.guarantee_visible_to_client,
+        },
+        hire.start_date,
+      ) && (
+        <div className="mt-2 rounded border border-dashed border-border/70 bg-muted/40 px-2 py-1 text-[11px]">
+          <strong className="text-foreground">Guarantee: </strong>
+          {guaranteeLine(
+            {
+              days: hire.guarantee_days,
+              startsOn: hire.guarantee_starts_on,
+              terms: hire.guarantee_terms,
+              visibleToClient: hire.guarantee_visible_to_client,
+            },
+            hire.start_date,
+          )}
+          {hire.guarantee_terms ? ` ${hire.guarantee_terms}` : ""}
+        </div>
+      )}
+
       {hire.close_reason && (
         <div className="mt-2 rounded border border-dashed border-border/70 bg-muted/40 px-2 py-1 text-[11px]">
           <strong className="text-foreground">
@@ -617,6 +642,14 @@ function OfferTermsDialog({
   const [workModel, setWorkModel] = useState(hire.work_model ?? "");
   const [location, setLocation] = useState(hire.location ?? "");
   const [notes, setNotes] = useState(hire.offer_notes ?? "");
+  const [guaranteeDays, setGuaranteeDays] = useState(
+    hire.guarantee_days != null ? String(hire.guarantee_days) : "",
+  );
+  const [guaranteeStartsOn, setGuaranteeStartsOn] = useState(hire.guarantee_starts_on ?? "");
+  const [guaranteeTerms, setGuaranteeTerms] = useState(hire.guarantee_terms ?? "");
+  const [guaranteeVisible, setGuaranteeVisible] = useState(
+    hire.guarantee_visible_to_client !== false,
+  );
   const [owner, setOwner] = useState<string>(hire.owner_user_id ?? "__unassigned__");
 
   const { data: ownersData } = useQuery({
@@ -640,6 +673,10 @@ function OfferTermsDialog({
             work_model: workModel || null,
             location: location || null,
             offer_notes: notes || null,
+            guarantee_days: guaranteeDays ? Number(guaranteeDays) : null,
+            guarantee_starts_on: guaranteeStartsOn || null,
+            guarantee_terms: guaranteeTerms || null,
+            guarantee_visible_to_client: guaranteeVisible,
           },
         },
       });
@@ -741,6 +778,47 @@ function OfferTermsDialog({
                 placeholder="Bonus, equity, contingencies, negotiation history…"
               />
             </Field>
+          </div>
+          <div className="space-y-3 rounded-md border p-3 sm:col-span-2">
+            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              Guarantee
+            </p>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <Field label="Guarantee period (days)">
+                <Input
+                  type="number"
+                  min={0}
+                  max={365}
+                  value={guaranteeDays}
+                  onChange={(e) => setGuaranteeDays(e.target.value)}
+                  placeholder="e.g. 90"
+                />
+              </Field>
+              <Field label="Guarantee starts on">
+                <Input
+                  type="date"
+                  value={guaranteeStartsOn}
+                  onChange={(e) => setGuaranteeStartsOn(e.target.value)}
+                />
+              </Field>
+            </div>
+            <Field label="Terms">
+              <Textarea
+                rows={2}
+                value={guaranteeTerms}
+                onChange={(e) => setGuaranteeTerms(e.target.value)}
+                placeholder="What happens if the hire leaves inside the guarantee period."
+              />
+            </Field>
+            <label className="flex items-center gap-2 text-sm">
+              <input
+                type="checkbox"
+                checked={guaranteeVisible}
+                onChange={(e) => setGuaranteeVisible(e.target.checked)}
+                className="h-4 w-4 accent-[hsl(var(--primary))]"
+              />
+              Show these terms to the client
+            </label>
           </div>
         </div>
         <DialogFooter>
