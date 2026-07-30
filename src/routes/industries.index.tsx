@@ -147,7 +147,7 @@ function IndustriesIndex() {
       "@type": "ListItem",
       position: i + 1,
       name: `${t.name} hiring — TaaSFlow`,
-      url: `https://clear-path-hubs.lovable.app/industries/${t.publicSlug}`,
+      url: `https://www.taasflow.com/industries/${t.publicSlug}`,
     })),
   };
 

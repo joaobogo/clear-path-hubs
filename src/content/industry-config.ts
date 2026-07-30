@@ -28,7 +28,7 @@ import {
 } from "@/content/industry-archetypes";
 import { toPublicSlug } from "@/lib/marketing/industry-slug-aliases";
 
-const SITE_ORIGIN = "https://clear-path-hubs.lovable.app";
+const SITE_ORIGIN = "https://www.taasflow.com";
 
 /** Proof state controls whether we render an explicit product
  * demonstration ("example data") or fall back to a methodology / "what

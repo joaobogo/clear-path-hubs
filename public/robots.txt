@@ -14,4 +14,4 @@ Disallow: /_authenticated/
 Disallow: /reset-password
 Disallow: /access-denied
 
-Sitemap: https://clear-path-hubs.lovable.app/sitemap.xml
+Sitemap: https://www.taasflow.com/sitemap.xml

@@ -3,6 +3,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import { ChevronRight, ChevronDown, Loader2, Menu, Linkedin, Mail } from "lucide-react";
 import * as NavigationMenuPrimitive from "@radix-ui/react-navigation-menu";
 import { InternalLinkHub } from "@/components/marketing/internal-link-hub";
+import { ProductionLink } from "@/components/marketing/production-link";
 
 import { brand } from "@/config/brand";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
@@ -213,12 +214,12 @@ function Header() {
             >
               {candidateMode ? "For employers" : "For candidates"}
             </Link>
-            <Link
+            <ProductionLink
               to={signIn.to}
               className="whitespace-nowrap rounded-md px-2.5 py-1.5 text-sm font-medium text-[color:var(--brand-navy)]/80 hover:text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
             >
               {signIn.label}
-            </Link>
+            </ProductionLink>
             <Link
               to={ctaSecondary.to}
               className="ml-1 whitespace-nowrap rounded-md border border-[color:var(--brand-navy)]/15 bg-white px-3.5 py-1.5 text-sm font-semibold text-[color:var(--brand-navy)] transition-colors hover:border-[color:var(--brand-navy)]/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
@@ -329,12 +330,12 @@ function Header() {
                 >
                   {ctaSecondary.label}
                 </Link>
-                <Link
+                <ProductionLink
                   to={signIn.to}
                   className="flex min-h-11 items-center justify-center rounded-md px-3 py-2 text-sm font-medium text-[color:var(--brand-navy)]/80"
                 >
                   {signIn.label}
-                </Link>
+                </ProductionLink>
               </div>
             </SheetContent>
           </Sheet>
