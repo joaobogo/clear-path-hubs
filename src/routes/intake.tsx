@@ -19,22 +19,24 @@ import {
   jdFileExt,
 } from "@/lib/express-intake-schema";
 import { supabase } from "@/integrations/supabase/client";
-import { CheckCircle2, FileText, Loader2, Upload, X } from "lucide-react";
+import { trackEvent } from "@/lib/tracking/pixels";
+import { PRICE_PILOT_USD } from "@/config/pricing-core";
+import { CheckCircle2, Eye, EyeOff, FileText, Loader2, Upload, X } from "lucide-react";
 
 export const Route = createFileRoute("/intake")({
   head: () => ({
     meta: [
-      { title: "Start hiring in minutes — TaaSFlow" },
+      { title: "Start your hiring pilot — TaaSFlow" },
       {
         name: "description",
         content:
-          "Add your company, create your account, upload the job description. TaaSFlow builds the full role blueprint, scoring rubric and sourcing plan for you.",
+          "Tell us about your company, create your account and upload the job description. TaaSFlow builds the role blueprint, scoring rubric and sourcing plan for you.",
       },
-      { property: "og:title", content: "Start hiring in minutes — TaaSFlow" },
+      { property: "og:title", content: "Start your hiring pilot — TaaSFlow" },
       {
         property: "og:description",
         content:
-          "Add your company, create your account, upload the job description. TaaSFlow builds the rest.",
+          "Company details, your account, the job description. TaaSFlow builds the rest and shows you every step.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -46,14 +48,19 @@ export const Route = createFileRoute("/intake")({
 type FormState = {
   companyName: string;
   companyWebsite: string;
+  companyLinkedin: string;
   firstName: string;
   lastName: string;
+  contactTitle: string;
   workEmail: string;
   phone: string;
+  contactLinkedin: string;
   password: string;
+  confirmPassword: string;
   roleTitle: string;
   jobDescriptionText: string;
   consent: boolean;
+  pilotAcknowledgement: boolean;
   researchConsent: boolean;
   companyFax: string;
 };
@@ -61,14 +68,19 @@ type FormState = {
 const EMPTY: FormState = {
   companyName: "",
   companyWebsite: "",
+  companyLinkedin: "",
   firstName: "",
   lastName: "",
+  contactTitle: "",
   workEmail: "",
   phone: "",
+  contactLinkedin: "",
   password: "",
+  confirmPassword: "",
   roleTitle: "",
   jobDescriptionText: "",
   consent: false,
+  pilotAcknowledgement: false,
   researchConsent: true,
   companyFax: "",
 };
@@ -95,17 +107,27 @@ function ExpressIntakePage() {
   const [jdFile, setJdFile] = useState<JdFile | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [dragging, setDragging] = useState(false);
   const fileInput = useRef<HTMLInputElement>(null);
   const idem = useRef<string>("");
+  const startedRef = useRef(false);
 
-  // Restore a draft so a refresh never costs the client their typing. The
-  // password is deliberately never persisted.
+  // Restore a draft so a refresh never costs the client their typing. Passwords
+  // are deliberately never persisted.
   useEffect(() => {
     try {
       const raw = localStorage.getItem(EXPRESS_DRAFT_KEY);
       if (raw) {
         const parsed = JSON.parse(raw) as Partial<FormState>;
-        setState((s) => ({ ...s, ...parsed, password: "", consent: false }));
+        setState((s) => ({
+          ...s,
+          ...parsed,
+          password: "",
+          confirmPassword: "",
+          consent: false,
+          pilotAcknowledgement: false,
+        }));
       }
       const existingIdem = localStorage.getItem(EXPRESS_IDEMPOTENCY_KEY);
       idem.current = existingIdem || newIdempotencyKey();
@@ -113,19 +135,32 @@ function ExpressIntakePage() {
     } catch {
       idem.current = newIdempotencyKey();
     }
+    trackEvent("onboarding_started", { flow: "express_onboarding" });
   }, []);
 
   useEffect(() => {
     try {
-      const { password: _pw, consent: _c, companyFax: _f, ...safe } = state;
+      const {
+        password: _pw,
+        confirmPassword: _cpw,
+        consent: _c,
+        pilotAcknowledgement: _p,
+        companyFax: _f,
+        ...safe
+      } = state;
       localStorage.setItem(EXPRESS_DRAFT_KEY, JSON.stringify(safe));
     } catch {
       /* storage unavailable — the form still works */
     }
   }, [state]);
 
-  const set = <K extends keyof FormState>(key: K, value: FormState[K]) =>
+  const set = <K extends keyof FormState>(key: K, value: FormState[K]) => {
+    if (!startedRef.current) {
+      startedRef.current = true;
+      trackEvent("onboarding_form_engaged", { flow: "express_onboarding" });
+    }
     setState((s) => ({ ...s, [key]: value }));
+  };
 
   const onPickFile = async (file: File | null) => {
     if (!file) return;
@@ -140,8 +175,14 @@ function ExpressIntakePage() {
     }
     try {
       const base64 = await fileToBase64(file);
-      setJdFile({ filename: file.name, mime: file.type || "application/octet-stream", base64, size: file.size });
+      setJdFile({
+        filename: file.name,
+        mime: file.type || "application/octet-stream",
+        base64,
+        size: file.size,
+      });
       setErrors((e) => ({ ...e, jobDescriptionText: "" }));
+      trackEvent("jd_uploaded", { flow: "express_onboarding", kind: ext });
     } catch {
       toast.error("We couldn't read that file. Try another one.");
     }
@@ -152,17 +193,22 @@ function ExpressIntakePage() {
       idempotencyKey: idem.current || newIdempotencyKey(),
       companyName: state.companyName,
       companyWebsite: state.companyWebsite,
+      companyLinkedin: state.companyLinkedin,
       firstName: state.firstName,
       lastName: state.lastName,
+      contactTitle: state.contactTitle,
       workEmail: state.workEmail,
       phone: state.phone,
+      contactLinkedin: state.contactLinkedin,
       password: state.password,
+      confirmPassword: state.confirmPassword,
       roleTitle: state.roleTitle,
       jobDescriptionText: state.jobDescriptionText,
       jobDescriptionFile: jdFile
         ? { filename: jdFile.filename, mime: jdFile.mime, base64: jdFile.base64 }
         : null,
       consent: state.consent,
+      pilotAcknowledgement: state.pilotAcknowledgement,
       researchConsent: state.researchConsent,
       source: "express_onboarding",
       companyFax: state.companyFax,
@@ -177,6 +223,8 @@ function ExpressIntakePage() {
       }
       setErrors(next);
       toast.error("Please check the highlighted fields.");
+      const first = document.querySelector<HTMLElement>("[data-field-error='true']");
+      first?.scrollIntoView({ behavior: "smooth", block: "center" });
       return;
     }
     setErrors({});
@@ -195,18 +243,25 @@ function ExpressIntakePage() {
         return;
       }
 
+      trackEvent("onboarding_submitted", {
+        flow: "express_onboarding",
+        pilot_eligible: body.pilotEligible !== false,
+      });
+
       // Sign the client straight into their new workspace.
+      let signedIn = false;
       try {
-        await supabase.auth.signInWithPassword({
+        const { error } = await supabase.auth.signInWithPassword({
           email: parsed.data.workEmail,
           password: parsed.data.password,
         });
+        signedIn = !error;
       } catch {
-        /* they can still sign in manually from the confirmation screen */
+        signedIn = false;
       }
 
-      // Kick off blueprint preparation. Deliberately not awaited — the
-      // confirmation screen shows real progress while it runs.
+      // Kick off blueprint preparation. Deliberately not awaited — the role
+      // page shows real progress while it runs.
       if (body.intakeId) {
         void fetch("/api/public/blueprint-run", {
           method: "POST",
@@ -222,6 +277,10 @@ function ExpressIntakePage() {
         /* ignore */
       }
 
+      if (signedIn && body.positionId) {
+        navigate({ to: "/client/positions/$id", params: { id: body.positionId } });
+        return;
+      }
       navigate({ to: "/intake/confirmation", search: { intake_id: body.intakeId } });
     } catch {
       toast.error("Network problem. Please try again.");
@@ -236,7 +295,7 @@ function ExpressIntakePage() {
       width="lg"
       eyebrow="Start hiring"
       title="Give us the role. We'll build the rest."
-      description="Five fields and a job description. Your workspace, role blueprint, scoring rubric and sourcing plan are prepared automatically."
+      description="Your company, your account, the job description. We create your workspace, read the role, build the blueprint and scoring rubric, and show you every step as it happens."
     >
       <div className="space-y-6" id="form-main">
         <Section title="Your company" step={1}>
@@ -248,19 +307,30 @@ function ExpressIntakePage() {
               autoComplete="organization"
             />
           </Field>
-          <Field
-            label="Company website"
-            error={errors.companyWebsite}
-            hint="We read only your public pages to fill in company context."
-          >
-            <Input
-              value={state.companyWebsite}
-              onChange={(e) => set("companyWebsite", e.target.value)}
-              placeholder="northwindhealth.com"
-              autoComplete="url"
-              inputMode="url"
-            />
-          </Field>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <Field
+              label="Company website"
+              error={errors.companyWebsite}
+              required
+              hint="We read only your public pages."
+            >
+              <Input
+                value={state.companyWebsite}
+                onChange={(e) => set("companyWebsite", e.target.value)}
+                placeholder="northwindhealth.com"
+                autoComplete="url"
+                inputMode="url"
+              />
+            </Field>
+            <Field label="Company LinkedIn" error={errors.companyLinkedin} hint="Optional">
+              <Input
+                value={state.companyLinkedin}
+                onChange={(e) => set("companyLinkedin", e.target.value)}
+                placeholder="linkedin.com/company/northwind"
+                inputMode="url"
+              />
+            </Field>
+          </div>
         </Section>
 
         <Section title="You" step={2}>
@@ -280,6 +350,14 @@ function ExpressIntakePage() {
               />
             </Field>
           </div>
+          <Field label="Your job title" error={errors.contactTitle} required>
+            <Input
+              value={state.contactTitle}
+              onChange={(e) => set("contactTitle", e.target.value)}
+              placeholder="Head of Talent"
+              autoComplete="organization-title"
+            />
+          </Field>
           <div className="grid gap-4 sm:grid-cols-2">
             <Field label="Work email" error={errors.workEmail} required>
               <Input
@@ -290,7 +368,7 @@ function ExpressIntakePage() {
                 inputMode="email"
               />
             </Field>
-            <Field label="Phone" error={errors.phone} hint="Optional">
+            <Field label="Phone" error={errors.phone} required>
               <Input
                 value={state.phone}
                 onChange={(e) => set("phone", e.target.value)}
@@ -299,22 +377,60 @@ function ExpressIntakePage() {
               />
             </Field>
           </div>
+          <Field label="Your LinkedIn" error={errors.contactLinkedin} hint="Optional">
+            <Input
+              value={state.contactLinkedin}
+              onChange={(e) => set("contactLinkedin", e.target.value)}
+              placeholder="linkedin.com/in/yourname"
+              inputMode="url"
+            />
+          </Field>
         </Section>
 
         <Section title="Create your account" step={3}>
-          <Field
-            label="Password"
-            error={errors.password}
-            required
-            hint={`At least ${MIN_ACCOUNT_PASSWORD} characters. You'll be signed in straight after submitting.`}
-          >
-            <Input
-              type="password"
-              value={state.password}
-              onChange={(e) => set("password", e.target.value)}
-              autoComplete="new-password"
-            />
-          </Field>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <Field
+              label="Password"
+              error={errors.password}
+              required
+              hint={`At least ${MIN_ACCOUNT_PASSWORD} characters.`}
+            >
+              <div className="relative">
+                <Input
+                  type={showPassword ? "text" : "password"}
+                  value={state.password}
+                  onChange={(e) => set("password", e.target.value)}
+                  autoComplete="new-password"
+                  className="pr-11"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((v) => !v)}
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                  className="absolute right-1 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-md text-[color:var(--brand-navy)]/60 hover:text-[color:var(--brand-navy)]"
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-4 w-4" aria-hidden />
+                  ) : (
+                    <Eye className="h-4 w-4" aria-hidden />
+                  )}
+                </button>
+              </div>
+            </Field>
+            <Field
+              label="Confirm password"
+              error={errors.confirmPassword}
+              required
+              hint="You'll be signed in straight after submitting."
+            >
+              <Input
+                type={showPassword ? "text" : "password"}
+                value={state.confirmPassword}
+                onChange={(e) => set("confirmPassword", e.target.value)}
+                autoComplete="new-password"
+              />
+            </Field>
+          </div>
         </Section>
 
         <Section title="The role" step={4}>
@@ -339,26 +455,53 @@ function ExpressIntakePage() {
                     </p>
                   </div>
                 </div>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setJdFile(null)}
-                  aria-label="Remove file"
-                  className="min-h-11"
-                >
-                  <X className="h-4 w-4" aria-hidden />
-                </Button>
+                <div className="flex shrink-0 items-center gap-1">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="min-h-11"
+                    onClick={() => fileInput.current?.click()}
+                  >
+                    Replace
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setJdFile(null)}
+                    aria-label="Remove file"
+                    className="min-h-11"
+                  >
+                    <X className="h-4 w-4" aria-hidden />
+                  </Button>
+                </div>
               </div>
             ) : (
               <button
                 type="button"
                 onClick={() => fileInput.current?.click()}
-                className="flex min-h-[88px] w-full flex-col items-center justify-center gap-1 rounded-lg border border-dashed border-[color:var(--brand-navy)]/25 bg-white p-4 text-center transition hover:border-[color:var(--brand-navy)]/50"
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  setDragging(true);
+                }}
+                onDragLeave={() => setDragging(false)}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  setDragging(false);
+                  void onPickFile(e.dataTransfer.files?.[0] ?? null);
+                }}
+                className={`flex min-h-[104px] w-full flex-col items-center justify-center gap-1 rounded-lg border border-dashed bg-white p-4 text-center transition ${
+                  dragging
+                    ? "border-[color:var(--brand-teal,#0f766e)] bg-[color:var(--brand-teal,#0f766e)]/5"
+                    : "border-[color:var(--brand-navy)]/25 hover:border-[color:var(--brand-navy)]/50"
+                }`}
               >
                 <Upload className="h-5 w-5 text-[color:var(--brand-navy)]/60" aria-hidden />
-                <span className="text-sm font-medium">Upload the job description</span>
-                <span className="text-xs text-[color:var(--brand-navy)]/60">PDF, DOCX or TXT · up to 10 MB</span>
+                <span className="text-sm font-medium">Drop the job description here, or browse</span>
+                <span className="text-xs text-[color:var(--brand-navy)]/60">
+                  PDF, DOCX or TXT · up to 10 MB
+                </span>
               </button>
             )}
             <input
@@ -388,13 +531,42 @@ function ExpressIntakePage() {
               )}
             </div>
             {errors.jobDescriptionText && (
-              <p className="text-sm text-[color:var(--brand-danger,#b3261e)]">{errors.jobDescriptionText}</p>
+              <p data-field-error="true" className="text-sm text-[color:var(--brand-danger,#b3261e)]">
+                {errors.jobDescriptionText}
+              </p>
             )}
           </div>
         </Section>
 
         <Card className="border-[color:var(--brand-navy)]/12">
           <CardContent className="space-y-4 pt-6">
+            <div className="rounded-lg bg-[color:var(--brand-navy)]/4 p-4">
+              <p className="text-sm font-semibold">How the pilot works</p>
+              <p className="mt-1 text-sm leading-relaxed text-[color:var(--brand-navy)]/75">
+                One role, one company, ${PRICE_PILOT_USD}. We build the blueprint, run the search and
+                deliver your first shortlist. No salary percentage fees, and nothing starts until you
+                approve the blueprint.
+              </p>
+            </div>
+
+            <label className="flex items-start gap-3">
+              <Checkbox
+                checked={state.pilotAcknowledgement}
+                onCheckedChange={(v) => set("pilotAcknowledgement", v === true)}
+                className="mt-0.5"
+                aria-invalid={Boolean(errors.pilotAcknowledgement)}
+              />
+              <span className="text-sm leading-relaxed">
+                I understand the pilot covers one role for my company and that TaaSFlow will confirm
+                scope with me before the search begins.
+              </span>
+            </label>
+            {errors.pilotAcknowledgement && (
+              <p data-field-error="true" className="text-sm text-[color:var(--brand-danger,#b3261e)]">
+                {errors.pilotAcknowledgement}
+              </p>
+            )}
+
             <label className="flex items-start gap-3">
               <Checkbox
                 checked={state.researchConsent}
@@ -402,8 +574,8 @@ function ExpressIntakePage() {
                 className="mt-0.5"
               />
               <span className="text-sm leading-relaxed">
-                Review my company's public website to fill in company context. You can turn this off — we'll
-                use only the job description.
+                Review my company's public website to fill in company context. You can turn this off —
+                we'll use only the job description.
               </span>
             </label>
             <label className="flex items-start gap-3">
@@ -426,7 +598,9 @@ function ExpressIntakePage() {
               </span>
             </label>
             {errors.consent && (
-              <p className="text-sm text-[color:var(--brand-danger,#b3261e)]">{errors.consent}</p>
+              <p data-field-error="true" className="text-sm text-[color:var(--brand-danger,#b3261e)]">
+                {errors.consent}
+              </p>
             )}
 
             {/* Spam trap — intentionally hidden from people and assistive tech. */}
@@ -501,7 +675,11 @@ function Field({
       </Label>
       {children}
       {hint && !error && <p className="text-xs text-[color:var(--brand-navy)]/60">{hint}</p>}
-      {error && <p className="text-sm text-[color:var(--brand-danger,#b3261e)]">{error}</p>}
+      {error && (
+        <p data-field-error="true" className="text-sm text-[color:var(--brand-danger,#b3261e)]">
+          {error}
+        </p>
+      )}
     </div>
   );
 }
