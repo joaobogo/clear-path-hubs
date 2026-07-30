@@ -320,6 +320,18 @@ function CandidateDetailPage() {
  readOnly={readOnly}
  />
 
+ {orgId && (
+ <div className="mt-3">
+ <OpenThreadButton
+ orgId={orgId}
+ scope="candidate"
+ candidateMatchId={id}
+ subject={candidate.candidate.display_name}
+ label="Conversation about this candidate"
+ />
+ </div>
+ )}
+
  {/* Closes the loop: what we do next after your decision, and by when. */}
  <NextStepNote
  stage={candidate.stage}
