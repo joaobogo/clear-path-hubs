@@ -1472,11 +1472,16 @@ function ActionRail({
   m: Any;
   currentRun?: Any;
   busy: string | null;
-  onRun: (label: string, fn: () => Promise<Any>) => Promise<void>;
+  onRun: (
+    label: string,
+    fn: () => Promise<Any>,
+    opts?: { onError?: (err: Error) => void; onSuccess?: () => void },
+  ) => Promise<void>;
   onDone: () => Promise<void>;
   onSetTab: (t: Any) => void;
 }) {
   const [reason, setReason] = useState("");
+  const [approveFailure, setApproveFailure] = useState<ApproveFailure | null>(null);
   const [ocrText, setOcrText] = useState("");
   const [override, setOverride] = useState("");
   const setVisFn = useServerFn(setMatchClientVisibility);
