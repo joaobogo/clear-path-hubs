@@ -18,6 +18,7 @@ import {
   rubricVersion,
   STATUS_LABEL,
   type CompareStatus,
+  type CompareMatrixRow,
 } from "@/lib/client-compare";
 
 
@@ -536,6 +537,132 @@ export function CompareSheet({
   );
 }
 
+/**
+ * Side-by-side requirement grid: one row per requirement, one column per
+ * candidate, met / partially met / unknown per cell. Hovering (or focusing)
+ * a cell reveals the evidence snippet behind that judgement — never a score.
+ */
+function RequirementGrid({
+  candidates,
+  matrix,
+  diffOnly,
+  orgSearch,
+}: {
+  candidates: ClientCandidateDTO[];
+  matrix: CompareMatrixRow[];
+  diffOnly: boolean;
+  orgSearch?: { org: string };
+}) {
+  const cols = Math.max(1, candidates.length);
+  const rows = diffOnly ? matrix.filter((r) => !r.uniform) : matrix;
+  const template = { gridTemplateColumns: `minmax(150px, 1.2fr) repeat(${cols}, minmax(0, 1fr))` };
+
+  return (
+    <section className="mt-4" aria-label="Requirement comparison grid">
+      <div className="flex items-baseline justify-between gap-3">
+        <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+          Requirement grid
+        </h3>
+        <div className="flex items-center gap-3 text-[11px] text-muted-foreground">
+          {(["met", "partial", "unknown"] as CompareStatus[]).map((k) => (
+            <span key={k} className="inline-flex items-center gap-1">
+              <span aria-hidden className={STATUS_META[k].className}>
+                {STATUS_META[k].icon}
+              </span>
+              {STATUS_META[k].label}
+            </span>
+          ))}
+        </div>
+      </div>
+
+      {rows.length === 0 ? (
+        <p className="py-4 text-sm text-muted-foreground">
+          {matrix.length === 0
+            ? "No structured requirements are recorded for this role yet."
+            : "These candidates land identically on every requirement."}
+        </p>
+      ) : (
+        <TooltipProvider delayDuration={120}>
+          <div className="mt-2 overflow-x-auto">
+            <div className="min-w-[36rem]">
+              <div
+                className="sticky top-0 z-10 grid gap-2 border-b bg-background/95 py-2 backdrop-blur"
+                style={template}
+              >
+                <div className="text-xs font-medium text-muted-foreground">Requirement</div>
+                {candidates.map((c) => (
+                  <div key={c.match_id} className="min-w-0">
+                    <div className="truncate text-sm font-semibold">
+                      {c.candidate.display_name}
+                    </div>
+                    <Link
+                      to="/client/candidates/$id"
+                      params={{ id: c.match_id }}
+                      search={orgSearch}
+                      className="text-[11px] text-primary hover:underline"
+                    >
+                      Review →
+                    </Link>
+                  </div>
+                ))}
+              </div>
+
+              {rows.map((r) => (
+                <div key={r.key} className="grid items-stretch gap-2 border-b py-2" style={template}>
+                  <div className="min-w-0 pr-2">
+                    <div className="text-sm leading-snug">{r.label}</div>
+                    <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                      {r.importance === "must_have" ? "Must-have" : "Preferred"}
+                    </div>
+                  </div>
+                  {r.cells.map((cell) => {
+                    const meta = STATUS_META[cell.status];
+                    return (
+                      <Tooltip key={cell.match_id}>
+                        <TooltipTrigger asChild>
+                          <div
+                            tabIndex={0}
+                            className={`rounded-md border px-2 py-1.5 text-xs outline-none focus-visible:ring-2 focus-visible:ring-ring ${meta.cell}`}
+                          >
+                            <span className={`font-medium ${meta.className}`}>
+                              <span aria-hidden className="mr-1">
+                                {meta.icon}
+                              </span>
+                              {meta.label}
+                            </span>
+                            {cell.evidence && (
+                              <p className="mt-0.5 line-clamp-2 text-muted-foreground">
+                                {cell.evidence}
+                              </p>
+                            )}
+                          </div>
+                        </TooltipTrigger>
+                        <TooltipContent className="max-w-xs text-xs">
+                          {cell.evidence ? (
+                            <>
+                              <p>{cell.evidence}</p>
+                              {cell.source && (
+                                <p className="mt-1 text-muted-foreground">Source: {cell.source}</p>
+                              )}
+                            </>
+                          ) : (
+                            <p>No evidence recorded for this requirement yet.</p>
+                          )}
+                        </TooltipContent>
+                      </Tooltip>
+                    );
+                  })}
+                </div>
+              ))}
+            </div>
+          </div>
+        </TooltipProvider>
+      )}
+    </section>
+  );
+}
+
+
 function ComparisonRow({
   label,
   cols,
@@ -570,12 +697,6 @@ function RelativeStrengthBoard({ candidates }: { candidates: ClientCandidateDTO[
 
   type Axis = { key: string; label: string; values: number[]; format?: (n: number) => string };
   const axes: Axis[] = [
-    {
-      key: "fit",
-      label: "Fit score",
-      values: candidates.map((c) => c.score ?? 0),
-      format: (n) => (n ? n.toFixed(0) : "—"),
-    },
     {
       key: "coverage",
       label: "Must-haves met",
