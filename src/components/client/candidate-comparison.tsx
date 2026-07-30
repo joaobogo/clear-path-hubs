@@ -5,18 +5,57 @@ import { Link, useSearch } from "@tanstack/react-router";
 import { Printer, Share2 } from "lucide-react";
 import { toast } from "sonner";
 import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
-import type { RequirementRow } from "@/lib/client-fit-presentation";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import {
+  buildCompareMatrix,
+  compareEligibility,
+  rubricGuard,
+  rubricVersion,
+  STATUS_LABEL,
+  type CompareStatus,
+  type CompareMatrixRow,
+} from "@/lib/client-compare";
 
 
 const STATUS_META: Record<
-  RequirementRow["status"],
-  { label: string; icon: string; className: string }
+  CompareStatus,
+  { label: string; icon: string; className: string; cell: string }
 > = {
-  met: { label: "Met", icon: "✓", className: "text-success dark:text-success" },
-  partial: { label: "Partial", icon: "◐", className: "text-warning-foreground dark:text-warning-foreground" },
-  not_evidenced: { label: "Not evidenced", icon: "○", className: "text-muted-foreground" },
-  contradicted: { label: "Contradicted", icon: "✕", className: "text-destructive dark:text-destructive" },
-  not_applicable: { label: "N/A", icon: "—", className: "text-muted-foreground" },
+  met: {
+    label: STATUS_LABEL.met,
+    icon: "✓",
+    className: "text-success dark:text-success",
+    cell: "bg-success/10 border-success/20",
+  },
+  partial: {
+    label: STATUS_LABEL.partial,
+    icon: "◐",
+    className: "text-warning-foreground dark:text-warning-foreground",
+    cell: "bg-warning/10 border-warning/20",
+  },
+  unknown: {
+    label: STATUS_LABEL.unknown,
+    icon: "○",
+    className: "text-muted-foreground",
+    cell: "bg-muted/40 border-border",
+  },
+  contradicted: {
+    label: STATUS_LABEL.contradicted,
+    icon: "✕",
+    className: "text-destructive dark:text-destructive",
+    cell: "bg-destructive/10 border-destructive/20",
+  },
+  not_applicable: {
+    label: STATUS_LABEL.not_applicable,
+    icon: "—",
+    className: "text-muted-foreground",
+    cell: "bg-muted/30 border-border",
+  },
 };
 
 /**
@@ -107,40 +146,19 @@ export function CompareSheet({
   const search = useSearch({ strict: false }) as { org?: string };
   const [diffOnly, setDiffOnly] = useState(false);
 
-  // Guard: never render a comparison if candidates span multiple positions.
-  const positionIds = new Set(candidates.map((c) => c.position?.id).filter(Boolean));
-  const positionSafe = positionIds.size <= 1;
+  // Guard: 2–4 candidates, single position.
+  const eligibility = compareEligibility(candidates);
+  const positionSafe = eligibility.ok;
 
-  // Union of requirements across selected candidates (same position → same rows).
-  const rowsUnion = useMemo(() => {
-    const map = new Map<string, RequirementRow>();
-    for (const c of candidates) {
-      for (const r of c.requirement_rows) {
-        const key = `${r.importance}:${r.label.toLowerCase()}`;
-        if (!map.has(key)) map.set(key, r);
-      }
-    }
-    const arr = Array.from(map.values());
-    arr.sort((a, b) => {
-      if (a.importance !== b.importance) return a.importance === "must_have" ? -1 : 1;
-      return a.label.localeCompare(b.label);
-    });
-    return arr;
-  }, [candidates]);
+  // Requirement grid — the lead surface of the comparison.
+  const matrix = useMemo(() => buildCompareMatrix(candidates), [candidates]);
 
   const observations = buildObservations(candidates);
   const cols = Math.max(1, candidates.length);
   const positionTitle = candidates[0]?.position?.title;
 
-  // Scoring versions must align for dimensions and weights to be comparable.
-  const scoringVersions = Array.from(
-    new Set(
-      candidates.map(
-        (c) => `${c.evaluation.blueprint_version ?? "—"}·${c.evaluation.engine_version ?? "—"}`,
-      ),
-    ),
-  );
-  const mixedScoringVersions = scoringVersions.length > 1;
+  // Rubric identity must match for the same requirement to mean the same thing.
+  const guard = rubricGuard(candidates);
 
   // Helper: are values across candidates identical? (for "differences only")
   const allSame = (vals: (string | number | null | undefined)[]) => {
@@ -171,7 +189,7 @@ export function CompareSheet({
 
         {!positionSafe ? (
           <div className="mt-4 rounded-lg border border-warning/30 bg-warning/5 p-3 text-sm">
-            Comparison is only available for candidates on the same position.
+            {eligibility.reason ?? "Comparison is only available for candidates on the same position."}
           </div>
         ) : (
           <>
@@ -201,13 +219,32 @@ export function CompareSheet({
             </div>
 
 
-            {mixedScoringVersions && (
-              <div className="mt-3 rounded-lg border border-warning/30 bg-warning/5 p-3 text-sm">
-                These candidates were assessed with different scoring versions
-                ({scoringVersions.join(", ")}). Dimensions and weights may not line up —
-                compare the evidence rather than the totals.
+            {guard.mismatched && (
+              <div
+                role="alert"
+                className="mt-3 rounded-lg border border-warning/40 bg-warning/10 p-3 text-sm"
+              >
+                <div className="font-medium text-warning-foreground">
+                  Mismatched requirement versions
+                </div>
+                <p className="mt-1 text-foreground/90">{guard.warning}</p>
+                <ul className="mt-2 space-y-0.5 text-xs text-muted-foreground">
+                  {candidates.map((c) => (
+                    <li key={c.match_id}>
+                      {c.candidate.display_name} — assessed on {rubricVersion(c)}
+                    </li>
+                  ))}
+                </ul>
               </div>
             )}
+
+            {/* Requirement grid — met / partially met / unknown, evidence on hover */}
+            <RequirementGrid
+              candidates={candidates}
+              matrix={matrix}
+              diffOnly={diffOnly}
+              orgSearch={search.org ? { org: search.org } : undefined}
+            />
 
             {/* Visual ranking bands — relative strength per axis, not a single winner. */}
             <RelativeStrengthBoard candidates={candidates} />
@@ -237,12 +274,7 @@ export function CompareSheet({
                   <div className="text-xs text-muted-foreground truncate">
                     {c.candidate.headline ?? c.position?.title}
                   </div>
-                  <div className="flex items-center gap-2 mt-1">
-                    <span className="text-lg font-semibold tabular-nums">
-                      {c.score == null ? "—" : c.score.toFixed(0)}
-                    </span>
-                    <span className="text-xs text-muted-foreground">{c.fit.headline}</span>
-                  </div>
+                  <div className="mt-1 text-xs text-muted-foreground">{c.fit.headline}</div>
                   <Link
                     to="/client/candidates/$id"
                     params={{ id: c.match_id }}
@@ -476,55 +508,6 @@ export function CompareSheet({
               ))}
             </ComparisonRow>
 
-            {/* Requirement matrix */}
-            <div className="mt-4">
-              <div className="text-xs uppercase tracking-wider text-muted-foreground mb-2">
-                Requirement matrix
-              </div>
-              {rowsUnion.length === 0 && (
-                <div className="text-sm text-muted-foreground py-4">
-                  No structured requirements available.
-                </div>
-              )}
-              {rowsUnion.map((r) => (
-                <div
-                  key={r.id + r.label}
-                  className="grid gap-3 py-2 border-b text-sm"
-                  style={{ gridTemplateColumns: `160px repeat(${cols}, minmax(0, 1fr))` }}
-                >
-                  <div className="min-w-0">
-                    <div className="truncate">{r.label}</div>
-                    <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
-                      {r.importance === "must_have" ? "Must-have" : "Preferred"}
-                    </div>
-                  </div>
-                  {candidates.map((c) => {
-                    const cell =
-                      c.requirement_rows.find(
-                        (x) => x.label.toLowerCase() === r.label.toLowerCase(),
-                      ) ?? null;
-                    const status = cell?.status ?? "not_evidenced";
-                    const meta = STATUS_META[status];
-                    return (
-                      <div key={c.match_id} className="min-w-0">
-                        <div className={`text-sm font-medium ${meta.className}`}>
-                          <span aria-hidden className="mr-1">
-                            {meta.icon}
-                          </span>
-                          {meta.label}
-                        </div>
-                        {cell?.explanation && (
-                          <div className="text-xs text-muted-foreground line-clamp-2 mt-0.5">
-                            {cell.explanation}
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              ))}
-            </div>
-
             {/* Interview focus */}
             <div className="mt-6">
               <div className="text-xs uppercase tracking-wider text-muted-foreground mb-2">
@@ -553,6 +536,132 @@ export function CompareSheet({
     </Sheet>
   );
 }
+
+/**
+ * Side-by-side requirement grid: one row per requirement, one column per
+ * candidate, met / partially met / unknown per cell. Hovering (or focusing)
+ * a cell reveals the evidence snippet behind that judgement — never a score.
+ */
+function RequirementGrid({
+  candidates,
+  matrix,
+  diffOnly,
+  orgSearch,
+}: {
+  candidates: ClientCandidateDTO[];
+  matrix: CompareMatrixRow[];
+  diffOnly: boolean;
+  orgSearch?: { org: string };
+}) {
+  const cols = Math.max(1, candidates.length);
+  const rows = diffOnly ? matrix.filter((r) => !r.uniform) : matrix;
+  const template = { gridTemplateColumns: `minmax(150px, 1.2fr) repeat(${cols}, minmax(0, 1fr))` };
+
+  return (
+    <section className="mt-4" aria-label="Requirement comparison grid">
+      <div className="flex items-baseline justify-between gap-3">
+        <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+          Requirement grid
+        </h3>
+        <div className="flex items-center gap-3 text-[11px] text-muted-foreground">
+          {(["met", "partial", "unknown"] as CompareStatus[]).map((k) => (
+            <span key={k} className="inline-flex items-center gap-1">
+              <span aria-hidden className={STATUS_META[k].className}>
+                {STATUS_META[k].icon}
+              </span>
+              {STATUS_META[k].label}
+            </span>
+          ))}
+        </div>
+      </div>
+
+      {rows.length === 0 ? (
+        <p className="py-4 text-sm text-muted-foreground">
+          {matrix.length === 0
+            ? "No structured requirements are recorded for this role yet."
+            : "These candidates land identically on every requirement."}
+        </p>
+      ) : (
+        <TooltipProvider delayDuration={120}>
+          <div className="mt-2 overflow-x-auto">
+            <div className="min-w-[36rem]">
+              <div
+                className="sticky top-0 z-10 grid gap-2 border-b bg-background/95 py-2 backdrop-blur"
+                style={template}
+              >
+                <div className="text-xs font-medium text-muted-foreground">Requirement</div>
+                {candidates.map((c) => (
+                  <div key={c.match_id} className="min-w-0">
+                    <div className="truncate text-sm font-semibold">
+                      {c.candidate.display_name}
+                    </div>
+                    <Link
+                      to="/client/candidates/$id"
+                      params={{ id: c.match_id }}
+                      search={orgSearch}
+                      className="text-[11px] text-primary hover:underline"
+                    >
+                      Review →
+                    </Link>
+                  </div>
+                ))}
+              </div>
+
+              {rows.map((r) => (
+                <div key={r.key} className="grid items-stretch gap-2 border-b py-2" style={template}>
+                  <div className="min-w-0 pr-2">
+                    <div className="text-sm leading-snug">{r.label}</div>
+                    <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                      {r.importance === "must_have" ? "Must-have" : "Preferred"}
+                    </div>
+                  </div>
+                  {r.cells.map((cell) => {
+                    const meta = STATUS_META[cell.status];
+                    return (
+                      <Tooltip key={cell.match_id}>
+                        <TooltipTrigger asChild>
+                          <div
+                            tabIndex={0}
+                            className={`rounded-md border px-2 py-1.5 text-xs outline-none focus-visible:ring-2 focus-visible:ring-ring ${meta.cell}`}
+                          >
+                            <span className={`font-medium ${meta.className}`}>
+                              <span aria-hidden className="mr-1">
+                                {meta.icon}
+                              </span>
+                              {meta.label}
+                            </span>
+                            {cell.evidence && (
+                              <p className="mt-0.5 line-clamp-2 text-muted-foreground">
+                                {cell.evidence}
+                              </p>
+                            )}
+                          </div>
+                        </TooltipTrigger>
+                        <TooltipContent className="max-w-xs text-xs">
+                          {cell.evidence ? (
+                            <>
+                              <p>{cell.evidence}</p>
+                              {cell.source && (
+                                <p className="mt-1 text-muted-foreground">Source: {cell.source}</p>
+                              )}
+                            </>
+                          ) : (
+                            <p>No evidence recorded for this requirement yet.</p>
+                          )}
+                        </TooltipContent>
+                      </Tooltip>
+                    );
+                  })}
+                </div>
+              ))}
+            </div>
+          </div>
+        </TooltipProvider>
+      )}
+    </section>
+  );
+}
+
 
 function ComparisonRow({
   label,
@@ -588,12 +697,6 @@ function RelativeStrengthBoard({ candidates }: { candidates: ClientCandidateDTO[
 
   type Axis = { key: string; label: string; values: number[]; format?: (n: number) => string };
   const axes: Axis[] = [
-    {
-      key: "fit",
-      label: "Fit score",
-      values: candidates.map((c) => c.score ?? 0),
-      format: (n) => (n ? n.toFixed(0) : "—"),
-    },
     {
       key: "coverage",
       label: "Must-haves met",
