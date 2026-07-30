@@ -322,7 +322,7 @@ export const listRoleFitPositions = createServerFn({ method: "POST" })
       .from("positions")
       .select("id, title, status, created_at")
       .eq("organization_id", data.orgId)
-      .in("status", ["approved", "sourcing", "live", "open", "draft", "submitted"])
+      .in("status", ["approved", "active", "under_review", "draft", "submitted", "paused"])
       .order("created_at", { ascending: false })
       .limit(100);
     return {
