@@ -515,7 +515,7 @@ function PortfolioSnapshot({
 }
 
 function PositionCard({ p }: { p: Row }) {
- const progress = progressSummary(p);
+ const progress = p.pipeline_line ?? progressSummary(p);
  const total =
  p.kpis.delivered +
  p.kpis.shortlisted +
