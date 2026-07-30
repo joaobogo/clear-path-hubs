@@ -123,6 +123,8 @@ export async function loadKpiRows(
     approved_fit_label: m.score_runs?.fit_label ?? null,
     interview_active: activeInterviews.has(m.id),
     interview_scheduled: scheduledInterviews.has(m.id),
+    next_interview_at: nextInterviewAt.get(m.id) ?? null,
+
     interview_needs_confirmation: unconfirmedInterviews.has(m.id),
   }));
 }
