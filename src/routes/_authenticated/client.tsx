@@ -36,13 +36,6 @@ import {
 	Bot,
  	CheckSquare,
  	Plus,
- 	PackageCheck,
- 	CalendarClock,
- 	FileSignature,
- 	Share2,
- 	BarChart3,
- 	LineChart,
- 	Users2,
 } from "lucide-react";
 import {
  WorkspaceShell,
@@ -100,22 +93,15 @@ export const Route = createFileRoute("/_authenticated/client")({
 type NavDef = WorkspaceNavItem & { everyone: boolean };
 
 const TABS: NavDef[] = [
-	{ to: "/client", label: "Overview", icon: LayoutDashboard, exact: true, everyone: true, group: "Workspace" },
-	{ to: "/client/positions", label: "Positions", icon: Briefcase, everyone: true, group: "Workspace" },
-	{ to: "/client/candidates", label: "Candidates", icon: Users, everyone: true, group: "Workspace" },
-	{ to: "/client/tasks", label: "Tasks & Approvals", icon: CheckSquare, everyone: true, group: "Workspace" },
-	{ to: "/client/deliveries", label: "Deliveries", icon: PackageCheck, everyone: true, group: "Delivery" },
-	{ to: "/client/interviews", label: "Interviews", icon: CalendarClock, everyone: true, group: "Delivery" },
-	{ to: "/client/offers", label: "Offers & hires", icon: FileSignature, everyone: true, group: "Delivery" },
-	{ to: "/client/shares", label: "Shared shortlists", icon: Share2, everyone: true, group: "Delivery" },
-	{ to: "/client/analytics", label: "Analytics", icon: BarChart3, everyone: true, group: "Insight" },
-	{ to: "/client/executive", label: "Executive portfolio", icon: LineChart, everyone: false, group: "Insight" },
-	{ to: "/client/talent-pool", label: "Talent pool", icon: Users2, everyone: true, group: "Insight" },
-	{ to: "/client/talent-memory", label: "Talent memory", icon: Award, everyone: true, group: "Insight" },
-	{ to: "/client/assistant", label: "Assistant", icon: Bot, everyone: true, group: "More" },
-	{ to: "/client/inbox", label: "Inbox", icon: MessageSquare, everyone: true, group: "More" },
-	{ to: "/client/team", label: "Team", icon: UserCog, everyone: false, group: "More" },
-	{ to: "/client/settings", label: "Settings", icon: Settings, everyone: false, group: "More" },
+	{ to: "/client", label: "Overview", icon: LayoutDashboard, exact: true, everyone: true },
+	{ to: "/client/positions", label: "Positions", icon: Briefcase, everyone: true },
+	{ to: "/client/candidates", label: "Candidates", icon: Users, everyone: true },
+	{ to: "/client/tasks", label: "Tasks & Approvals", icon: CheckSquare, everyone: true },
+ { to: "/client/assistant", label: "Assistant", icon: Bot, everyone: true },
+ { to: "/client/talent-memory", label: "Talent memory", icon: Award, everyone: true },
+ { to: "/client/inbox", label: "Inbox", icon: MessageSquare, everyone: true },
+ { to: "/client/team", label: "Team", icon: UserCog, everyone: false },
+ { to: "/client/settings", label: "Settings", icon: Settings, everyone: false },
 ];
 
 function ClientLayout() {

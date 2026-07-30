@@ -38,8 +38,7 @@ function toLabelList(v: unknown): string[] {
 
 function formatCompensation(comp: AnyRow): string | null {
   if (!comp || typeof comp !== "object") return null;
-  const rawCurrency = String(comp.currency ?? "USD").trim().toUpperCase();
-  const currency = /^[A-Z]{3}$/.test(rawCurrency) ? rawCurrency : "USD";
+  const currency = comp.currency ?? "USD";
   const min = comp.min ?? comp.salary_min ?? comp.base_min;
   const max = comp.max ?? comp.salary_max ?? comp.base_max;
   const period = comp.period ?? comp.frequency ?? "year";
@@ -47,18 +46,8 @@ function formatCompensation(comp: AnyRow): string | null {
     if (typeof comp.notes === "string") return comp.notes;
     return null;
   }
-  const fmt = (n: number) => {
-    if (!Number.isFinite(n)) return "—";
-    try {
-      return new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency,
-        maximumFractionDigits: 0,
-      }).format(n);
-    } catch {
-      return `${currency} ${Math.round(n).toLocaleString("en-US")}`;
-    }
-  };
+  const fmt = (n: number) =>
+    new Intl.NumberFormat("en-US", { style: "currency", currency, maximumFractionDigits: 0 }).format(n);
   if (min != null && max != null) return `${fmt(Number(min))} – ${fmt(Number(max))} / ${period}`;
   if (min != null) return `from ${fmt(Number(min))} / ${period}`;
   return `up to ${fmt(Number(max))} / ${period}`;

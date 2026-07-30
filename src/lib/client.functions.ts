@@ -1229,15 +1229,7 @@ export const getClientTeam = createServerFn({ method: "GET" })
       _user: context.userId,
     });
     if (canRead !== true && staff !== true) throw new Error("forbidden");
-    // Platform staff are not members of the tenant, so membership RLS would
-    // silently return zero rows for them (the Team page rendered "0 members").
-    // Authorization is already decided above; read with the admin client only
-    // on the staff path, scoped to the single organization.
-    const reader =
-      canRead === true
-        ? context.supabase
-        : (await import("@/integrations/supabase/client.server")).supabaseAdmin;
-    const { data: rows, error } = await reader
+    const { data: rows, error } = await context.supabase
       .from("memberships")
       .select("user_id, role, status, created_at, profiles:user_id(full_name, email)")
       .eq("organization_id", data.orgId);
