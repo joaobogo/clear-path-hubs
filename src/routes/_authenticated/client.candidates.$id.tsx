@@ -40,6 +40,7 @@ import type { MatchStage } from "@/lib/client-kpi.server";
 import { buildShortlistRationale } from "@/lib/client-rationale";
 import { DownloadCvButton } from "@/components/download-cv-button";
 import { useClientOrgSearch } from "@/lib/use-client-org";
+import { OpenThreadButton } from "@/components/comms/open-thread-button";
 import { JourneyTimeline } from "@/components/candidate/journey-timeline";
 import { NextStepNote } from "@/components/client/next-step-note";
 import { CompensationPanel } from "@/components/client/compensation-panel";
@@ -319,6 +320,18 @@ function CandidateDetailPage() {
  candidate={candidate}
  readOnly={readOnly}
  />
+
+ {orgId && (
+ <div className="mt-3">
+ <OpenThreadButton
+ orgId={orgId}
+ scope="candidate"
+ candidateMatchId={id}
+ subject={candidate.candidate.display_name}
+ label="Conversation about this candidate"
+ />
+ </div>
+ )}
 
  {/* Closes the loop: what we do next after your decision, and by when. */}
  <NextStepNote

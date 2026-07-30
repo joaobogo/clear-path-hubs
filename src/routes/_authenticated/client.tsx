@@ -99,7 +99,7 @@ const TABS: NavDef[] = [
 	{ to: "/client/tasks", label: "Tasks & Approvals", icon: CheckSquare, everyone: true },
  { to: "/client/assistant", label: "Assistant", icon: Bot, everyone: true },
  { to: "/client/talent-memory", label: "Talent memory", icon: Award, everyone: true },
- { to: "/client/inbox", label: "Inbox", icon: MessageSquare, everyone: true },
+ { to: "/client/conversations", label: "Conversations", icon: MessageSquare, everyone: true },
  { to: "/client/team", label: "Team", icon: UserCog, everyone: false },
  { to: "/client/settings", label: "Settings", icon: Settings, everyone: false },
 ];

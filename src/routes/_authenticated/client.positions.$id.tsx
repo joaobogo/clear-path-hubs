@@ -1,4 +1,5 @@
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
+import { OpenThreadButton } from "@/components/comms/open-thread-button";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -312,26 +313,15 @@ function PositionDetailPage() {
    />
   </>
  )}
- <Button asChild variant="outline" size="sm">
- <Link to="/client/messages" search={{ position: position.id } as never}>
- <MessageSquare className="mr-1.5 h-4 w-4" /> Message TaaSFlow
- </Link>
- </Button>
- {canEdit && (
- <Button asChild size="sm">
- <Link
- to="/client/messages"
- search={
- {
- position: position.id,
- intent: "change_request",
- } as never
- }
- >
- Request a change
- </Link>
- </Button>
- )}
+  {orgId && (
+  <OpenThreadButton
+  orgId={orgId}
+  scope="position"
+  positionId={position.id}
+  subject={position.title}
+  label="Conversation"
+  />
+  )}
  </div>
  {canEdit && !support.readOnly && (
  <div className="mt-4">

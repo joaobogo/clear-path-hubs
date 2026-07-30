@@ -1,74 +1,80 @@
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { listAdminMessages } from "@/lib/admin.functions";
+import { listAllConversations } from "@/lib/conversations.functions";
 import { Badge } from "@/components/ui/badge";
-import { MessageSquare } from "lucide-react";
+import { Briefcase, MessageSquare, User } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/admin/messages")({
   loader: ({ context }) =>
     context.queryClient.ensureQueryData({
-      queryKey: ["admin-messages"],
-      queryFn: () => listAdminMessages(),
+      queryKey: ["admin-conversations"],
+      queryFn: () => listAllConversations(),
     }),
   head: () => ({
     meta: [
-      { title: "Messages · TaaSFlow admin" },
+      { title: "Conversations · TaaSFlow admin" },
       { name: "robots", content: "noindex" },
     ],
   }),
-  errorComponent: makeRouteErrorComponent("admin", "src/routes/_authenticated/admin.messages.tsx"),
-  component: MessagesPage,
+  errorComponent: makeRouteErrorComponent(
+    "admin",
+    "src/routes/_authenticated/admin.messages.tsx",
+  ),
+  component: AdminConversationsPage,
 });
 
-function MessagesPage() {
+function AdminConversationsPage() {
   const { data } = useSuspenseQuery({
-    queryKey: ["admin-messages"],
-    queryFn: () => listAdminMessages(),
+    queryKey: ["admin-conversations"],
+    queryFn: () => listAllConversations(),
   });
 
   return (
-    <main className="mx-auto max-w-4xl px-6 py-8 space-y-6">
+    <main className="mx-auto max-w-4xl space-y-6 px-6 py-8">
       <header>
-        <h1 className="text-2xl font-semibold tracking-tight">Messages</h1>
+        <h1 className="text-2xl font-semibold tracking-tight">Conversations</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          {data.threads.length} client {data.threads.length === 1 ? "thread" : "threads"}. Open
-          any row to reply inside the client workspace.
+          {data.items.length} {data.items.length === 1 ? "thread" : "threads"} across all clients —
+          one per account, role, and candidate. Open a thread to reply inside the client workspace.
         </p>
       </header>
 
-      {data.threads.length === 0 ? (
+      {data.items.length === 0 ? (
         <div className="rounded-lg border bg-card px-5 py-14 text-center">
-          <MessageSquare className="h-6 w-6 mx-auto text-muted-foreground" />
-          <p className="mt-2 text-sm text-muted-foreground">No client messages yet.</p>
+          <MessageSquare className="mx-auto h-6 w-6 text-muted-foreground" />
+          <p className="mt-2 text-sm text-muted-foreground">No conversations yet.</p>
         </div>
       ) : (
-        <ul className="rounded-lg border bg-card divide-y">
-          {data.threads.map((t) => (
-            <li key={t.thread_id}>
-              <Link
-                to="/admin/clients/$id"
-                params={{ id: t.organization?.id ?? t.thread_id }}
-                className="flex items-start gap-3 px-5 py-4 hover:bg-muted/50 transition-colors"
-              >
-                <MessageSquare className="h-4 w-4 mt-0.5 text-muted-foreground shrink-0" />
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-medium truncate">
-                      {t.organization?.name ?? "Unknown client"}
-                    </span>
-                    {t.unread && <Badge>new</Badge>}
+        <ul className="divide-y rounded-lg border bg-card">
+          {data.items.map((t) => {
+            const Icon =
+              t.scope === "position" ? Briefcase : t.scope === "candidate" ? User : MessageSquare;
+            return (
+              <li key={t.id}>
+                <Link
+                  to="/client/conversations/$conversationId"
+                  params={{ conversationId: t.id }}
+                  search={{ org: t.organization_id }}
+                  className="flex items-start gap-3 px-5 py-4 transition-colors hover:bg-muted/50"
+                >
+                  <Icon className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-2">
+                      <span className="truncate text-sm font-medium">{t.organization_name}</span>
+                      <Badge variant="secondary">{t.subject}</Badge>
+                    </div>
+                    <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">
+                      {t.last_body ?? "No messages yet"}
+                    </p>
                   </div>
-                  <p className="mt-1 text-sm text-muted-foreground line-clamp-2">
-                    {t.last_body}
-                  </p>
-                </div>
-                <span className="text-xs text-muted-foreground tabular-nums shrink-0">
-                  {relTime(t.last_at)}
-                </span>
-              </Link>
-            </li>
-          ))}
+                  <span className="shrink-0 text-xs tabular-nums text-muted-foreground">
+                    {relTime(t.last_message_at)}
+                  </span>
+                </Link>
+              </li>
+            );
+          })}
         </ul>
       )}
     </main>
@@ -81,6 +87,5 @@ function relTime(iso: string): string {
   if (m < 60) return `${m}m`;
   const h = Math.round(m / 60);
   if (h < 24) return `${h}h`;
-  const d = Math.round(h / 24);
-  return `${d}d`;
+  return `${Math.round(h / 24)}d`;
 }
