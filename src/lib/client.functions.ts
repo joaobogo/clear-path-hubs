@@ -536,13 +536,46 @@ export const getClientPositionDetail = createServerFn({ method: "GET" })
         .filter((v): v is string => Boolean(v))
         .sort()[0] ?? null;
 
+    // Verified outreach activity for this role (RLS-scoped to the org).
+    const campaignIds = ((campaigns as AnyRow[]) ?? []).map((c) => c.id as string);
+    let touches: AnyRow[] = [];
+    if (campaignIds.length > 0) {
+      const { data: touchRows } = await context.supabase
+        .from("outreach_touches")
+        .select(
+          "id, candidate_profile_id, sent_at, delivered_at, replied_at, engagement_state, is_test_record, created_at",
+        )
+        .eq("organization_id", data.orgId)
+        .in("campaign_id", campaignIds);
+      touches = (touchRows as AnyRow[]) ?? [];
+    }
+
+    // Source attribution — real application rows only.
+    const { data: appSources } = await context.supabase
+      .from("applications")
+      .select("source_kind")
+      .eq("position_id", data.positionId);
+    const attributionMap = new Map<string, number>();
+    for (const a of (appSources as AnyRow[]) ?? []) {
+      const src = String(a.source_kind ?? "").trim();
+      if (!src) continue;
+      attributionMap.set(src, (attributionMap.get(src) ?? 0) + 1);
+    }
+    const attribution = [...attributionMap.entries()]
+      .map(([label, count]) => ({ label, count }))
+      .sort((a, b) => b.count - a.count);
+
+
     const launch = computeRoleLaunchState({
       position,
       campaigns: ((campaigns as AnyRow[]) ?? []).filter((c) => !c.is_test_record),
       matchCount: ((matches as AnyRow[]) ?? []).length,
       deliveredAt,
       applicationCount: applicationCount ?? 0,
+      touches,
+      attribution,
     });
+
 
     return {
       position,

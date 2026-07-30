@@ -65,6 +65,42 @@ export const CHANNEL_STATE_LABEL: Record<ChannelState, string> = {
   attention: "Needs attention",
 };
 
+/**
+ * Sourcing Engine metrics. Every value is either a real count from stored
+ * rows or `null`, which the UI renders as "No verified data yet". We never
+ * substitute an estimate, a projection, or a zero-as-placeholder.
+ */
+export interface SourcingMetrics {
+  identified: number | null;
+  contacted: number | null;
+  engaged: number | null;
+  replied: number | null;
+  applicants: number | null;
+  qualified: number | null;
+  /** ISO timestamp of the most recent verified sourcing record. */
+  lastUpdate: string | null;
+  /** What the system does next, in product language. */
+  nextAction: string;
+  /** Where the qualified candidates actually came from. */
+  attribution: Array<{ label: string; count: number }>;
+}
+
+/**
+ * Network capabilities available to the engine. This is the menu the engine
+ * chooses from — never a claim that a given role uses all of them.
+ */
+export const SOURCING_CAPABILITIES = [
+  "Proprietary candidate datasets and discovery tools",
+  "Global distribution across 17+ job boards",
+  "Sponsored job distribution",
+  "Social recruiting campaigns",
+  "LinkedIn outreach and advertising",
+  "Managed email infrastructure (200+ inboxes)",
+  "Paid digital campaigns",
+  "University and institutional partnerships",
+  "Offline media when the market justifies it",
+] as const;
+
 export interface RoleLaunchState {
   stages: LaunchStage[];
   channels: LaunchChannel[];
@@ -73,7 +109,10 @@ export interface RoleLaunchState {
   delayed: boolean;
   /** Client-safe headline for the panel. */
   headline: string;
+  /** Verified sourcing performance. Optional so older callers keep compiling. */
+  metrics?: SourcingMetrics;
 }
+
 
 /**
  * Adds N business days (Mon–Fri) to a date.

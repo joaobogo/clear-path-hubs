@@ -1,5 +1,6 @@
 import {
   addBusinessDays,
+  type SourcingMetrics,
   type LaunchChannel,
   type LaunchStage,
   type RoleLaunchState,
@@ -24,6 +25,10 @@ export interface RoleLaunchInputs {
   matchCount: number;
   deliveredAt: string | null;
   applicationCount: number;
+  /** outreach_touches rows for this position (already RLS-scoped). */
+  touches?: AnyRow[];
+  /** Where the delivered candidates came from: source_kind -> count. */
+  attribution?: Array<{ label: string; count: number }>;
 }
 
 export function computeRoleLaunchState({
@@ -32,6 +37,8 @@ export function computeRoleLaunchState({
   matchCount,
   deliveredAt,
   applicationCount,
+  touches = [],
+  attribution = [],
 }: RoleLaunchInputs): RoleLaunchState {
   const status = String(position?.status ?? "draft");
   const bpStatus = String(position?.blueprint_status ?? "none");
@@ -71,12 +78,12 @@ export function computeRoleLaunchState({
     at: generatedAt,
     detail:
       bpStatus === "failed"
-        ? "We could not read the file automatically — a specialist is doing it by hand."
+        ? "Automatic reading didn't complete — TaaSFlow is processing this brief in the background."
         : bpStatus === "ready"
           ? "Blueprint generated from your job description."
           : bpStatus === "none"
             ? "Built from the details you entered."
-            : "Reading your job description now.",
+            : "TaaSFlow is analysing this talent market.",
   });
 
   const briefDone = Boolean(confirmedAt) || Boolean(approvedAt) || isLive;
@@ -93,23 +100,23 @@ export function computeRoleLaunchState({
   const hasCampaign = campaigns.length > 0;
   stages.push({
     key: "channels",
-    label: "Search channels prepared",
+    label: "Channel mix selected",
     state: hasCampaign ? "done" : briefDone ? "active" : "pending",
     at: hasCampaign ? earliest(campaigns.map((c) => c.started_at ?? c.created_at)) : null,
     detail: hasCampaign
-      ? `${campaigns.length} channel${campaigns.length === 1 ? "" : "s"} set up for this role.`
-      : "Your recruiter is selecting the channels for this search.",
+      ? `${campaigns.length} channel${campaigns.length === 1 ? "" : "s"} activated for this role.`
+      : "The channel mix is being optimised for this role.",
   });
 
   const qualityDone = Boolean(approvedAt) || isLive;
   stages.push({
     key: "quality",
-    label: "Recruiter quality check",
+    label: "Strategy quality check",
     state: qualityDone ? "done" : briefDone ? "active" : "pending",
     at: approvedAt,
     detail: qualityDone
-      ? "A TaaSFlow recruiter signed off on the brief."
-      : "A recruiter reviews every role before it goes live.",
+      ? "Your sourcing strategy is ready."
+      : "TaaSFlow validates every sourcing strategy before activation.",
   });
 
   stages.push({
@@ -122,19 +129,19 @@ export function computeRoleLaunchState({
       : isPaused
         ? "Sourcing is on hold. Resume it whenever you're ready."
         : isLive
-          ? "Sourcing and outreach are running."
+          ? "Candidate discovery is active."
           : "Starts as soon as the quality check passes.",
   });
 
   stages.push({
     key: "discovery",
-    label: "Active sourcing and outreach",
+    label: "Candidate discovery",
     state: isPaused ? "attention" : isLive ? (matchCount > 0 ? "done" : "active") : "pending",
     at: liveAt,
     detail:
       applicationCount > 0
         ? `${applicationCount} application${applicationCount === 1 ? "" : "s"} received so far.`
-        : "Searching, contacting and screening candidates.",
+        : "Discovery, outreach and screening are running.",
   });
 
   const expected = liveAt ? (addBusinessDays(new Date(liveAt), FIRST_BATCH_BUSINESS_DAYS)?.toISOString() ?? null) : null;
@@ -147,7 +154,7 @@ export function computeRoleLaunchState({
     detail: deliveredAt
       ? "Delivered."
       : overdue
-        ? "Taking longer than planned. Your recruiter has been notified."
+        ? "Running longer than planned — the channel mix is being re-optimised."
         : "Typically within three business days of going live.",
   });
 
@@ -192,10 +199,10 @@ export function computeRoleLaunchState({
         st === "active"
           ? "Outreach is running on this channel."
           : st === "paused"
-            ? "Paused by your recruiter."
+            ? "Paused for this role."
             : st === "completed" || st === "archived"
               ? "This channel has finished its run."
-              : "Being set up by your recruiter.",
+              : "Being activated by the engine.",
       at: c.started_at ?? c.created_at ?? null,
     });
   }
@@ -209,7 +216,7 @@ export function computeRoleLaunchState({
       matchCount > 0
         ? `${matchCount} matched profile${matchCount === 1 ? "" : "s"} from our database.`
         : isLive
-          ? "Screening our existing talent pool against your brief."
+          ? "Matching our talent datasets against your brief."
           : "Starts when your role goes live.",
     at: liveAt,
   });
@@ -233,16 +240,28 @@ export function computeRoleLaunchState({
     : isPaused
       ? "Sourcing is paused."
       : matchCount > 0
-        ? "Candidates are in your pipeline."
+        ? "New candidates require review."
         : isLive
-          ? "Your role is live and sourcing is under way."
+          ? "Candidate discovery is active."
           : briefDone
-            ? "Final recruiter check before your role goes live."
-            : "We're preparing your search brief.";
+            ? "Your sourcing strategy is in final validation."
+            : "TaaSFlow is analysing this talent market.";
+
+  const metrics = computeSourcingMetrics({
+    touches,
+    matchCount,
+    applicationCount,
+    isLive,
+    isPaused,
+    isClosed,
+    attribution,
+    campaignCount: campaigns.length,
+  });
 
   return {
     stages,
     channels,
+    metrics,
     firstCandidatesExpected: expected,
     delayed: overdue,
     headline,
@@ -254,4 +273,78 @@ function earliest(values: Array<string | null | undefined>): string | null {
     .filter((v): v is string => typeof v === "string" && v !== "")
     .sort();
   return times[0] ?? null;
+}
+
+
+/**
+ * Verified sourcing metrics. A metric is `null` — rendered as "No verified
+ * data yet" — whenever no record exists to back it. Zero is only used when
+ * the engine is running and the true count really is zero.
+ */
+function computeSourcingMetrics({
+  touches,
+  matchCount,
+  applicationCount,
+  isLive,
+  isPaused,
+  isClosed,
+  attribution,
+  campaignCount,
+}: {
+  touches: AnyRow[];
+  matchCount: number;
+  applicationCount: number;
+  isLive: boolean;
+  isPaused: boolean;
+  isClosed: boolean;
+  attribution: Array<{ label: string; count: number }>;
+  campaignCount: number;
+}): SourcingMetrics {
+  const real = touches.filter((t) => !t.is_test_record);
+  const hasOutreach = real.length > 0;
+
+  const identifiedIds = new Set(
+    real
+      .map((t) => t.candidate_profile_id as string | null)
+      .filter((v): v is string => Boolean(v)),
+  );
+  const contacted = real.filter((t) => Boolean(t.sent_at)).length;
+  const engaged = real.filter(
+    (t) => Boolean(t.engagement_state) || Boolean(t.delivered_at),
+  ).length;
+  const replied = real.filter((t) => Boolean(t.replied_at)).length;
+
+  const running = isLive || hasOutreach;
+
+  const timestamps = real
+    .map((t) => (t.replied_at ?? t.delivered_at ?? t.sent_at ?? t.created_at) as string | null)
+    .filter((v): v is string => Boolean(v))
+    .sort();
+  const lastUpdate = timestamps.length ? timestamps[timestamps.length - 1]! : null;
+
+  const nextAction = isClosed
+    ? "This search is closed. No further sourcing is scheduled."
+    : isPaused
+      ? "Sourcing is paused. Resume the role to restart discovery."
+      : !isLive
+        ? "TaaSFlow is finalising the sourcing strategy for this role."
+        : matchCount > 0
+          ? "New candidates require review; discovery continues in parallel."
+          : hasOutreach
+            ? "The channel mix is being optimised based on response data."
+            : campaignCount > 0
+              ? "Candidate discovery is activating across the selected channels."
+              : "TaaSFlow is analysing this talent market to set the channel mix.";
+
+  return {
+    identified: hasOutreach ? identifiedIds.size : running ? 0 : null,
+    contacted: hasOutreach ? contacted : running ? 0 : null,
+    engaged: hasOutreach ? engaged : running ? 0 : null,
+    replied: hasOutreach ? replied : running ? 0 : null,
+    applicants: running || applicationCount > 0 ? applicationCount : null,
+    qualified: running || matchCount > 0 ? matchCount : null,
+    lastUpdate,
+    nextAction,
+    attribution,
+  };
 }

@@ -2,11 +2,12 @@ import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import {
   CHANNEL_STATE_LABEL,
+  SOURCING_CAPABILITIES,
   formatExpected,
   type LaunchStage,
   type RoleLaunchState,
 } from "@/lib/role-launch";
-import { CheckCircle2, Circle, Loader2, TriangleAlert } from "lucide-react";
+import { CheckCircle2, Circle, Loader2, Radar, TriangleAlert } from "lucide-react";
 
 /**
  * RoleLaunchPanel — the client's "what is happening with my role" view.
@@ -46,7 +47,9 @@ export function RoleLaunchPanel({ launch }: { launch: RoleLaunchState }) {
   const { stages, channels } = launch;
 
   return (
-    <div className="grid gap-4 lg:grid-cols-[1.4fr_1fr]">
+    <div className="space-y-4">
+      <SourcingEngineCard launch={launch} />
+      <div className="grid gap-4 lg:grid-cols-[1.4fr_1fr]">
       <Card className="p-5">
         <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
           <div>
@@ -107,9 +110,9 @@ export function RoleLaunchPanel({ launch }: { launch: RoleLaunchState }) {
       </Card>
 
       <Card className="p-5">
-        <h2 className="mb-1 text-sm font-semibold">Search channels</h2>
+        <h2 className="mb-1 text-sm font-semibold">Channel mix</h2>
         <p className="mb-4 text-xs text-muted-foreground">
-          Where TaaSFlow is looking for this role.
+          Selected and optimised by TaaSFlow for this role.
         </p>
         <ul className="space-y-3">
           {channels.map((c) => (
@@ -134,6 +137,115 @@ export function RoleLaunchPanel({ launch }: { launch: RoleLaunchState }) {
           ))}
         </ul>
       </Card>
+      </div>
     </div>
+  );
+}
+
+const METRIC_ORDER = [
+  ["identified", "Candidates identified"],
+  ["contacted", "Candidates contacted"],
+  ["engaged", "Engaged"],
+  ["replied", "Responses"],
+  ["applicants", "Applicants"],
+  ["qualified", "Qualified candidates"],
+] as const;
+
+function MetricTile({ label, value }: { label: string; value: number | null }) {
+  return (
+    <div className="rounded-lg border bg-muted/30 p-3">
+      <p className="text-xs text-muted-foreground">{label}</p>
+      {value === null ? (
+        <p className="mt-1 text-xs text-muted-foreground">No verified data yet</p>
+      ) : (
+        <p className="mt-1 text-xl font-semibold tabular-nums">{value}</p>
+      )}
+    </div>
+  );
+}
+
+/**
+ * TaaSFlow Sourcing Engine — read-only. Clients never pick channels; the
+ * engine decides the mix from role, geography, seniority, market conditions,
+ * availability and channel performance. Every number here is a stored count.
+ */
+function SourcingEngineCard({ launch }: { launch: RoleLaunchState }) {
+  const m = launch.metrics;
+  if (!m) return null;
+  return (
+    <Card className="p-5">
+      <div className="mb-3 flex flex-wrap items-start justify-between gap-2">
+        <div className="flex items-start gap-3">
+          <span className="mt-0.5 rounded-md bg-primary/10 p-2 text-primary">
+            <Radar className="h-4 w-4" aria-hidden />
+          </span>
+          <div>
+            <h2 className="text-sm font-semibold">TaaSFlow Sourcing Engine</h2>
+            <p className="text-sm text-muted-foreground">{launch.headline}</p>
+          </div>
+        </div>
+        {m.lastUpdate && (
+          <span className="text-xs text-muted-foreground">
+            Last update {new Date(m.lastUpdate).toLocaleDateString(undefined, { month: "short", day: "numeric" })}
+          </span>
+        )}
+      </div>
+
+      <p className="mb-4 text-xs text-muted-foreground">
+        The engine evaluates role, geography, seniority, market conditions,
+        candidate availability and live channel performance to set and
+        continuously optimise the channel mix for this position.
+      </p>
+
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+        {METRIC_ORDER.map(([key, label]) => (
+          <MetricTile key={key} label={label} value={m[key]} />
+        ))}
+      </div>
+
+      <div className="mt-4 grid gap-4 md:grid-cols-2">
+        <div>
+          <p className="text-xs font-medium">Source attribution</p>
+          {m.attribution.length === 0 ? (
+            <p className="mt-1 text-xs text-muted-foreground">
+              No verified data yet
+            </p>
+          ) : (
+            <ul className="mt-1 space-y-1">
+              {m.attribution.map((a) => (
+                <li
+                  key={a.label}
+                  className="flex items-center justify-between text-xs text-muted-foreground"
+                >
+                  <span className="capitalize">{a.label.replace(/_/g, " ")}</span>
+                  <span className="tabular-nums">{a.count}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+        <div>
+          <p className="text-xs font-medium">Next system action</p>
+          <p className="mt-1 text-xs text-muted-foreground">{m.nextAction}</p>
+        </div>
+      </div>
+
+      <details className="mt-4 rounded-lg border bg-muted/20 p-3">
+        <summary className="cursor-pointer text-xs font-medium">
+          Network capabilities the engine can deploy
+        </summary>
+        <ul className="mt-2 grid gap-1 sm:grid-cols-2">
+          {SOURCING_CAPABILITIES.map((c) => (
+            <li key={c} className="text-xs text-muted-foreground">
+              {c}
+            </li>
+          ))}
+        </ul>
+        <p className="mt-2 text-[11px] text-muted-foreground">
+          Availability across the TaaSFlow network. The engine selects only the
+          channels justified by this role and market.
+        </p>
+      </details>
+    </Card>
   );
 }
