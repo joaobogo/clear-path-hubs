@@ -174,13 +174,24 @@ export async function researchCompany(website: string): Promise<CompanyResearch>
     try {
       const ctl = new AbortController();
       const timer = setTimeout(() => ctl.abort(), 8000);
-      const res = await fetch(url, {
-        redirect: "follow",
-        signal: ctl.signal,
-        headers: { "User-Agent": "TaaSFlowBot/1.0 (+https://taasflow.com)", Accept: "text/html" },
-      });
+      // Follow redirects manually so every hop is re-validated: a public host
+      // must not be able to bounce us onto an internal address.
+      let target: URL | null = normalizeSiteUrl(url);
+      let res: Response | null = null;
+      for (let hop = 0; hop < 4 && target; hop++) {
+        res = await fetch(target, {
+          redirect: "manual",
+          signal: ctl.signal,
+          headers: { "User-Agent": "TaaSFlowBot/1.0 (+https://taasflow.com)", Accept: "text/html" },
+        });
+        if (res.status < 300 || res.status >= 400) break;
+        const loc = res.headers.get("location");
+        if (!loc) break;
+        target = normalizeSiteUrl(new URL(loc, target).toString());
+        res = null;
+      }
       clearTimeout(timer);
-      if (!res.ok) return null;
+      if (!res || !res.ok) return null;
       const type = res.headers.get("content-type") ?? "";
       if (!type.includes("html") && !type.includes("text/plain")) return null;
       const raw = await res.text();
@@ -189,6 +200,7 @@ export async function researchCompany(website: string): Promise<CompanyResearch>
       return null;
     }
   };
+
 
   // Respect a blanket robots.txt disallow.
   const robots = await get(new URL("/robots.txt", base).toString());
