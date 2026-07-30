@@ -67,6 +67,7 @@ import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authentic
 import { Route as JobsIdApplyRouteImport } from './routes/jobs.$id.apply'
 import { Route as BlogCategorySlugRouteImport } from './routes/blog.category.$slug'
 import { Route as ApplyReceivedApplicationIdRouteImport } from './routes/apply.received.$applicationId'
+import { Route as ApiPublicSubmitToAttioRouteImport } from './routes/api/public/submit-to-attio'
 import { Route as ApiPublicQaSeedRouteImport } from './routes/api/public/qa-seed'
 import { Route as ApiPublicIntakeRouteImport } from './routes/api/public/intake'
 import { Route as ApiPublicExpressIntakeRouteImport } from './routes/api/public/express-intake'
@@ -431,6 +432,11 @@ const ApplyReceivedApplicationIdRoute =
     path: '/apply/received/$applicationId',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicSubmitToAttioRoute = ApiPublicSubmitToAttioRouteImport.update({
+  id: '/api/public/submit-to-attio',
+  path: '/api/public/submit-to-attio',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicQaSeedRoute = ApiPublicQaSeedRouteImport.update({
   id: '/api/public/qa-seed',
   path: '/api/public/qa-seed',
@@ -942,6 +948,7 @@ export interface FileRoutesByFullPath {
   '/api/public/express-intake': typeof ApiPublicExpressIntakeRoute
   '/api/public/intake': typeof ApiPublicIntakeRoute
   '/api/public/qa-seed': typeof ApiPublicQaSeedRoute
+  '/api/public/submit-to-attio': typeof ApiPublicSubmitToAttioRoute
   '/apply/received/$applicationId': typeof ApplyReceivedApplicationIdRoute
   '/blog/category/$slug': typeof BlogCategorySlugRoute
   '/jobs/$id/apply': typeof JobsIdApplyRoute
@@ -1063,6 +1070,7 @@ export interface FileRoutesByTo {
   '/api/public/express-intake': typeof ApiPublicExpressIntakeRoute
   '/api/public/intake': typeof ApiPublicIntakeRoute
   '/api/public/qa-seed': typeof ApiPublicQaSeedRoute
+  '/api/public/submit-to-attio': typeof ApiPublicSubmitToAttioRoute
   '/apply/received/$applicationId': typeof ApplyReceivedApplicationIdRoute
   '/blog/category/$slug': typeof BlogCategorySlugRoute
   '/jobs/$id/apply': typeof JobsIdApplyRoute
@@ -1196,6 +1204,7 @@ export interface FileRoutesById {
   '/api/public/express-intake': typeof ApiPublicExpressIntakeRoute
   '/api/public/intake': typeof ApiPublicIntakeRoute
   '/api/public/qa-seed': typeof ApiPublicQaSeedRoute
+  '/api/public/submit-to-attio': typeof ApiPublicSubmitToAttioRoute
   '/apply/received/$applicationId': typeof ApplyReceivedApplicationIdRoute
   '/blog/category/$slug': typeof BlogCategorySlugRoute
   '/jobs/$id/apply': typeof JobsIdApplyRoute
@@ -1329,6 +1338,7 @@ export interface FileRouteTypes {
     | '/api/public/express-intake'
     | '/api/public/intake'
     | '/api/public/qa-seed'
+    | '/api/public/submit-to-attio'
     | '/apply/received/$applicationId'
     | '/blog/category/$slug'
     | '/jobs/$id/apply'
@@ -1450,6 +1460,7 @@ export interface FileRouteTypes {
     | '/api/public/express-intake'
     | '/api/public/intake'
     | '/api/public/qa-seed'
+    | '/api/public/submit-to-attio'
     | '/apply/received/$applicationId'
     | '/blog/category/$slug'
     | '/jobs/$id/apply'
@@ -1582,6 +1593,7 @@ export interface FileRouteTypes {
     | '/api/public/express-intake'
     | '/api/public/intake'
     | '/api/public/qa-seed'
+    | '/api/public/submit-to-attio'
     | '/apply/received/$applicationId'
     | '/blog/category/$slug'
     | '/jobs/$id/apply'
@@ -1673,6 +1685,7 @@ export interface RootRouteChildren {
   ApiPublicExpressIntakeRoute: typeof ApiPublicExpressIntakeRoute
   ApiPublicIntakeRoute: typeof ApiPublicIntakeRoute
   ApiPublicQaSeedRoute: typeof ApiPublicQaSeedRoute
+  ApiPublicSubmitToAttioRoute: typeof ApiPublicSubmitToAttioRoute
   ApplyReceivedApplicationIdRoute: typeof ApplyReceivedApplicationIdRoute
   BlogCategorySlugRoute: typeof BlogCategorySlugRoute
   JobsIdApplyRoute: typeof JobsIdApplyRoute
@@ -2091,6 +2104,13 @@ declare module '@tanstack/react-router' {
       path: '/apply/received/$applicationId'
       fullPath: '/apply/received/$applicationId'
       preLoaderRoute: typeof ApplyReceivedApplicationIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/submit-to-attio': {
+      id: '/api/public/submit-to-attio'
+      path: '/api/public/submit-to-attio'
+      fullPath: '/api/public/submit-to-attio'
+      preLoaderRoute: typeof ApiPublicSubmitToAttioRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/qa-seed': {
@@ -2923,6 +2943,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicExpressIntakeRoute: ApiPublicExpressIntakeRoute,
   ApiPublicIntakeRoute: ApiPublicIntakeRoute,
   ApiPublicQaSeedRoute: ApiPublicQaSeedRoute,
+  ApiPublicSubmitToAttioRoute: ApiPublicSubmitToAttioRoute,
   ApplyReceivedApplicationIdRoute: ApplyReceivedApplicationIdRoute,
   BlogCategorySlugRoute: BlogCategorySlugRoute,
   JobsIdApplyRoute: JobsIdApplyRoute,

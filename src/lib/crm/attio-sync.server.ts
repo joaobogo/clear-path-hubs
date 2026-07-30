@@ -44,7 +44,7 @@ export type CrmSubmission = {
   linkedin: string | null;
   company_name: string | null;
   company_domain: string | null;
-  answers: Record<string, unknown>;
+  answers: Record<string, string>;
   consent_status: string | null;
   consent_at: string | null;
   environment: "production" | "preview";
