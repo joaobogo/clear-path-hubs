@@ -48,6 +48,9 @@ import {
 } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/client/tasks")({
+  validateSearch: (search: Record<string, unknown>) => ({
+    view: typeof search.view === "string" ? search.view : undefined,
+  }),
   head: () => ({
     meta: [
       { title: "Tasks & Approvals · Client workspace" },
@@ -85,7 +88,10 @@ function TasksPage() {
   const listFn = useServerFn(listTasks);
   const bulkFn = useServerFn(bulkUpdateTasks);
   const qc = useQueryClient();
-  const [view, setView] = useState<TaskView>("my");
+  const initialView = Route.useSearch().view;
+  const [view, setView] = useState<TaskView>(
+    VIEWS.some((v) => v.key === initialView) ? (initialView as TaskView) : "my",
+  );
   const [taskType, setTaskType] = useState<TaskType | "all">("all");
   const [selected, setSelected] = useState<Set<string>>(new Set());
 

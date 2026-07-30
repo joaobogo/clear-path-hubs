@@ -247,13 +247,13 @@ function PublishDesk() {
                       <div className="flex flex-col items-end gap-1.5">
                         {rd.canPublish && !isPublished && (
                           <>
-                            <Link
-                              to={previewHref as "/client/candidates/$id"}
+                            <a
+                              href={previewHref}
                               className="inline-flex items-center gap-1 rounded-md border border-primary/40 bg-primary/5 px-2 py-1 text-xs font-medium text-primary hover:bg-primary/10"
                               data-qa-action="preview-as-client"
                             >
                               <Eye className="h-3 w-3" /> Preview as client
-                            </Link>
+                            </a>
                             <Button
                               size="sm"
                               variant="secondary"
@@ -270,12 +270,12 @@ function PublishDesk() {
                         )}
                         {isPublished && (
                           <>
-                            <Link
-                              to={previewHref as "/client/candidates/$id"}
+                            <a
+                              href={previewHref}
                               className="inline-flex items-center gap-1 text-xs text-primary hover:underline"
                             >
                               <ExternalLink className="h-3 w-3" /> View live
-                            </Link>
+                            </a>
                             <Button
                               size="sm"
                               variant="ghost"

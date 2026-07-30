@@ -195,6 +195,7 @@ function PositionWorkspace() {
               <Link
                 to="/admin/positions/$id/edit"
                 params={{ id: p.id }}
+                search={{ step: undefined }}
                 data-qa-action="edit-position-wizard"
               >
                 Edit position

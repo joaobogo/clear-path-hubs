@@ -292,6 +292,7 @@ function PositionDetailPage() {
  <Link
  to="/client/positions/$id/edit"
  params={{ id: position.id }}
+ search={{ step: undefined }}
  data-qa-action="edit-position-wizard"
  >
  Edit position
