@@ -337,6 +337,40 @@ export const Route = createFileRoute("/api/public/express-intake")({
           return Response.json({ ok: false, trace_id: traceId, error: "auth_user_missing" }, { status: 500 });
         }
 
+        // ---------- Organization (created only once the account is real) ----------
+        if (!organizationId) {
+          const { data: newOrg, error: orgErr } = await admin
+            .from("organizations")
+            .insert({
+              name: data.companyName.trim(),
+              website: data.companyWebsite || null,
+              domain: corporateDomain,
+              status: "prospect",
+              primary_contact_name: `${data.firstName} ${data.lastName}`.trim(),
+              primary_contact_email: data.workEmail,
+            })
+            .select("id")
+            .single();
+          if (orgErr) {
+            return Response.json(
+              { ok: false, trace_id: traceId, error: "org_create_failed", message: orgErr.message },
+              { status: 500 },
+            );
+          }
+          organizationId = newOrg.id as string;
+        } else if (data.companyWebsite) {
+          const { data: org } = await admin
+            .from("organizations")
+            .select("website")
+            .eq("id", organizationId)
+            .maybeSingle();
+          if (!org?.website) {
+            await admin.from("organizations").update({ website: data.companyWebsite }).eq("id", organizationId);
+          }
+        }
+
+
+
         // ---------- Profile ----------
         {
           const { data: prof } = await admin.from("profiles").select("id").eq("auth_user_id", authUserId).maybeSingle();
