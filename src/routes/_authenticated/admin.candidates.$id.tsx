@@ -57,6 +57,11 @@ import { ScoreExplainability } from "@/components/candidate/score-explainability
 import { JourneyTimeline } from "@/components/candidate/journey-timeline";
 import { getCandidateJourney } from "@/lib/journey.functions";
 import { AdminDossier } from "@/components/candidate/admin-dossier";
+import {
+  approvePreflightBlock,
+  explainApproveFailure,
+  type ApproveFailure,
+} from "@/lib/scoring/approve-failure";
 
 
 
