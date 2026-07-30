@@ -59,6 +59,19 @@ export function RoleProgressTracker({
                 >
                   {date || (step.state === "upcoming" ? "" : "—")}
                 </p>
+                <p
+                  className={cn(
+                    "truncate leading-tight tabular-nums",
+                    step.state === "current"
+                      ? "font-medium text-foreground/80"
+                      : "text-muted-foreground/60",
+                    compact ? "text-[9px]" : "text-[10px]",
+                  )}
+                >
+                  {step.daysInStage == null
+                    ? ""
+                    : `${step.daysInStage}d${step.state === "current" ? " here" : ""}`}
+                </p>
               </div>
               <span className="sr-only">
                 {step.state === "current" ? "Current stage. " : ""}
