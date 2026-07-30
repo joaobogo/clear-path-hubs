@@ -495,6 +495,30 @@ function HireCard({
         </div>
       </dl>
 
+      {guaranteeLine(
+        {
+          days: hire.guarantee_days,
+          startsOn: hire.guarantee_starts_on,
+          terms: hire.guarantee_terms,
+          visibleToClient: hire.guarantee_visible_to_client,
+        },
+        hire.start_date,
+      ) && (
+        <div className="mt-2 rounded border border-dashed border-border/70 bg-muted/40 px-2 py-1 text-[11px]">
+          <strong className="text-foreground">Guarantee: </strong>
+          {guaranteeLine(
+            {
+              days: hire.guarantee_days,
+              startsOn: hire.guarantee_starts_on,
+              terms: hire.guarantee_terms,
+              visibleToClient: hire.guarantee_visible_to_client,
+            },
+            hire.start_date,
+          )}
+          {hire.guarantee_terms ? ` ${hire.guarantee_terms}` : ""}
+        </div>
+      )}
+
       {hire.close_reason && (
         <div className="mt-2 rounded border border-dashed border-border/70 bg-muted/40 px-2 py-1 text-[11px]">
           <strong className="text-foreground">
