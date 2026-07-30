@@ -13,6 +13,7 @@ import {
   createNote,
   findOpenDealForPerson,
   listDealStages,
+  listObjectAttributeSlugs,
   resolveDealOwnerEmail,
   listWorkspaceLists,
   updateDeal,
@@ -170,12 +171,20 @@ const prune = (v: Record<string, unknown>) =>
  * have the optional source attributes configured (Attio replies 400).
  */
 async function writeWithFallback(
+  object: "people" | "companies" | "deals",
   write: (values: Record<string, unknown>) => Promise<string>,
   core: Record<string, unknown>,
   extra: Record<string, unknown>,
 ): Promise<string> {
+  // Only send attribution attributes this workspace actually has. Without the
+  // filter a single unconfigured custom attribute 400s the write and the
+  // fallback below would discard *all* attribution, not just the missing one.
+  const known = await listObjectAttributeSlugs(object);
+  const supported = known
+    ? Object.fromEntries(Object.entries(extra).filter(([k]) => known.has(k)))
+    : extra;
   try {
-    return await write(prune({ ...core, ...extra }));
+    return await write(prune({ ...core, ...supported }));
   } catch (e) {
     if (e instanceof AttioError && e.status === 400) {
       return await write(prune(core));
@@ -247,6 +256,7 @@ export async function syncSubmissionToAttio(s: CrmSubmission): Promise<SyncIds> 
   const attribution = attributionValues(s);
 
   const personId = await writeWithFallback(
+    "people",
     assertPerson,
     {
       email_addresses: [s.email],
@@ -261,6 +271,7 @@ export async function syncSubmissionToAttio(s: CrmSubmission): Promise<SyncIds> 
   let companyId: string | null = null;
   if (s.company_domain) {
     companyId = await writeWithFallback(
+      "companies",
       assertCompany,
       { domains: [s.company_domain], name: s.company_name ?? undefined },
       attribution,
@@ -285,12 +296,14 @@ export async function syncSubmissionToAttio(s: CrmSubmission): Promise<SyncIds> 
     try {
       if (existingDealId) {
         dealId = await writeWithFallback(
+          "deals",
           (values) => updateDeal(existingDealId, values),
           { associated_company: companyId ?? undefined },
           attribution,
         );
       } else {
         dealId = await writeWithFallback(
+          "deals",
           createDeal,
           {
             name: `${CRM_SOURCE_BRAND} | ${form.name} | ${displayName}`,
