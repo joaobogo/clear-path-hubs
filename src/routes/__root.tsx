@@ -13,6 +13,7 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { supabase } from "@/integrations/supabase/client";
 import { Toaster } from "@/components/ui/sonner";
 import { PublicNotFound, PublicErrorState } from "@/components/marketing/site-shell";
+import { captureFirstTouch } from "@/lib/crm/attribution";
 import { OfflineBanner } from "@/components/offline-banner";
 import { TrackingRouteObserver } from "@/components/analytics/tracking-route-observer";
 
@@ -81,6 +82,11 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const router = useRouter();
+
+  // First-touch attribution capture (campaign + landing page only).
+  useEffect(() => {
+    captureFirstTouch();
+  }, []);
 
   // Preview / non-production hosts (e.g. *.lovable.app) must not
   // compete with taasflow.com in search. Inject a robots noindex

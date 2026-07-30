@@ -2179,6 +2179,135 @@ export type Database = {
         }
         Relationships: []
       }
+      crm_submission_queue: {
+        Row: {
+          answers: Json
+          attempts: number
+          attio_company_id: string | null
+          attio_deal_id: string | null
+          attio_note_id: string | null
+          attio_person_id: string | null
+          company_domain: string | null
+          company_name: string | null
+          consent_at: string | null
+          consent_status: string | null
+          created_at: string
+          email: string
+          environment: string
+          form_type: string
+          full_name: string | null
+          id: string
+          job_title: string | null
+          landing_page: string | null
+          last_error: string | null
+          latest_referrer: string | null
+          linkedin: string | null
+          original_referrer: string | null
+          phone: string | null
+          source_brand: string
+          source_domain: string
+          source_form_id: string
+          source_form_name: string
+          source_page_title: string | null
+          source_page_url: string | null
+          source_website: string
+          status: string
+          submission_id: string
+          submitted_at: string
+          synced_at: string | null
+          updated_at: string
+          utm_campaign: string | null
+          utm_content: string | null
+          utm_medium: string | null
+          utm_source: string | null
+          utm_term: string | null
+        }
+        Insert: {
+          answers?: Json
+          attempts?: number
+          attio_company_id?: string | null
+          attio_deal_id?: string | null
+          attio_note_id?: string | null
+          attio_person_id?: string | null
+          company_domain?: string | null
+          company_name?: string | null
+          consent_at?: string | null
+          consent_status?: string | null
+          created_at?: string
+          email: string
+          environment?: string
+          form_type: string
+          full_name?: string | null
+          id?: string
+          job_title?: string | null
+          landing_page?: string | null
+          last_error?: string | null
+          latest_referrer?: string | null
+          linkedin?: string | null
+          original_referrer?: string | null
+          phone?: string | null
+          source_brand: string
+          source_domain: string
+          source_form_id: string
+          source_form_name: string
+          source_page_title?: string | null
+          source_page_url?: string | null
+          source_website: string
+          status?: string
+          submission_id: string
+          submitted_at?: string
+          synced_at?: string | null
+          updated_at?: string
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
+        }
+        Update: {
+          answers?: Json
+          attempts?: number
+          attio_company_id?: string | null
+          attio_deal_id?: string | null
+          attio_note_id?: string | null
+          attio_person_id?: string | null
+          company_domain?: string | null
+          company_name?: string | null
+          consent_at?: string | null
+          consent_status?: string | null
+          created_at?: string
+          email?: string
+          environment?: string
+          form_type?: string
+          full_name?: string | null
+          id?: string
+          job_title?: string | null
+          landing_page?: string | null
+          last_error?: string | null
+          latest_referrer?: string | null
+          linkedin?: string | null
+          original_referrer?: string | null
+          phone?: string | null
+          source_brand?: string
+          source_domain?: string
+          source_form_id?: string
+          source_form_name?: string
+          source_page_title?: string | null
+          source_page_url?: string | null
+          source_website?: string
+          status?: string
+          submission_id?: string
+          submitted_at?: string
+          synced_at?: string | null
+          updated_at?: string
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
+        }
+        Relationships: []
+      }
       data_subject_requests: {
         Row: {
           candidate_profile_id: string | null

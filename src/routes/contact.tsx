@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useRef, useState } from "react";
+import { submitToCrm } from "@/lib/crm/submit-form";
 import { toast } from "sonner";
 import { marketingHead } from "@/lib/marketing/head";
 import { SiteShell, PublicPage, PublicSection } from "@/components/marketing/site-shell";
@@ -357,6 +358,23 @@ function ContactForm({ intent }: { intent: IntentSpec }) {
         );
         toast.error("Message failed to send.");
         return;
+      }
+      if (topic !== "support" && topic !== "candidate") {
+        void submitToCrm({
+          formId: "contact-page",
+          email: payload.email,
+          fullName: payload.name,
+          companyName: payload.company || null,
+          companyDomain: payload.company || null,
+          answers: {
+            Topic: topic,
+            Role: roleExtra,
+            Link: urlExtra,
+            Message: rawMessage,
+          },
+          consentStatus: "submitted_contact_form",
+          honeypot: payload.website,
+        });
       }
       setDone({ traceId: json.trace_id ?? "" });
       toast.success("Message sent. We'll be in touch.");
