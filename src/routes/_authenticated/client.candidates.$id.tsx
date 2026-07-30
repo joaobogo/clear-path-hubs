@@ -42,6 +42,8 @@ import { DownloadCvButton } from "@/components/download-cv-button";
 import { useClientOrgSearch } from "@/lib/use-client-org";
 import { JourneyTimeline } from "@/components/candidate/journey-timeline";
 import { NextStepNote } from "@/components/client/next-step-note";
+import { CompensationPanel } from "@/components/client/compensation-panel";
+import { getCompensationSignal } from "@/lib/compensation.functions";
 import { confirmationLine } from "@/lib/client-next-step";
 import { getCandidateJourney } from "@/lib/journey.functions";
 import { useSupportView } from "@/lib/support-view";
@@ -182,7 +184,17 @@ function CandidateDetailPage() {
  queryKey: ["client-candidate", orgId, id],
  queryFn: () => detailFn({ data: { orgId: orgId!, matchId: id } }),
  enabled: !!orgId,
- });
+  });
+
+  // Compensation decision support — figures on record only, never estimates.
+  const compFn = useServerFn(getCompensationSignal);
+  const { data: compSignal, isPending: compPending } = useQuery({
+    queryKey: ["client-candidate-comp", orgId, id],
+    queryFn: () => compFn({ data: { orgId: orgId!, matchId: id } }),
+    enabled: !!orgId,
+  });
+
+
 
  const [dialogAction, setDialogAction] = useState<ActionKey | null>(null);
  // Stage captured at mutate time so the toast's Undo knows where to return to.
@@ -349,6 +361,9 @@ function CandidateDetailPage() {
           <div id="sec-strengths" className="scroll-mt-24"><WhyThisCandidate candidate={candidate} /></div>
           <div id="sec-risks" className="scroll-mt-24"><WhatNeedsValidation candidate={candidate} /></div>
           <AvailabilityAndComp candidate={candidate} />
+          <div id="sec-comp" className="scroll-mt-24">
+            <CompensationPanel signal={compSignal} loading={compPending} />
+          </div>
           <div id="sec-interview" className="scroll-mt-24"><InterviewGuide candidate={candidate} /></div>
           <div id="sec-experience" className="scroll-mt-24"><ExperienceTimeline candidate={candidate} /></div>
           <div id="sec-skills" className="scroll-mt-24"><SkillsAndEducation candidate={candidate} /></div>
