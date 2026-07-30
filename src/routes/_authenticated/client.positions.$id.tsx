@@ -477,17 +477,13 @@ function PositionDetailPage() {
  {m.candidate_profiles?.headline ?? ""}
  </div>
  <div className="mt-1 flex items-center gap-2 text-xs">
- {m.score_runs?.score != null && (
- <span className="tabular-nums">
- {Number(m.score_runs.score).toFixed(0)}
- </span>
- )}
- {m.score_runs?.fit_label && (
- <span className="capitalize text-muted-foreground">
- {m.score_runs.fit_label}
+ {(m.score_runs?.fit_label || m.score_runs?.score != null) && (
+ <span className="text-muted-foreground">
+ {toFitPresentation(m.score_runs?.fit_label, m.score_runs?.score).headline}
  </span>
  )}
  </div>
+
  {canEdit && allowed.length > 0 && (
  <div className="mt-2">
  <DropdownMenu>
