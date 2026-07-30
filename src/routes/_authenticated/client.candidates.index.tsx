@@ -11,6 +11,7 @@ import {
  getClientPositions,
 } from "@/lib/client.functions";
 import { useClientOrgSearch } from "@/lib/use-client-org";
+import { VisibilityNote } from "@/components/client/visibility-note";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
