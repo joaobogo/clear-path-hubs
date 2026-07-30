@@ -5034,10 +5034,16 @@ export type Database = {
           onboarding_status: string
           parent_organization_id: string | null
           phone: string | null
+          pilot_admin_override: boolean
           pilot_completed_at: string | null
+          pilot_ends_at: string | null
+          pilot_override_at: string | null
+          pilot_override_by: string | null
+          pilot_override_reason: string | null
           pilot_position_id: string | null
           pilot_started_at: string | null
           pilot_status: string
+          pilot_used: boolean
           primary_contact_email: string | null
           primary_contact_name: string | null
           status: Database["public"]["Enums"]["org_status"]
@@ -5077,10 +5083,16 @@ export type Database = {
           onboarding_status?: string
           parent_organization_id?: string | null
           phone?: string | null
+          pilot_admin_override?: boolean
           pilot_completed_at?: string | null
+          pilot_ends_at?: string | null
+          pilot_override_at?: string | null
+          pilot_override_by?: string | null
+          pilot_override_reason?: string | null
           pilot_position_id?: string | null
           pilot_started_at?: string | null
           pilot_status?: string
+          pilot_used?: boolean
           primary_contact_email?: string | null
           primary_contact_name?: string | null
           status?: Database["public"]["Enums"]["org_status"]
@@ -5120,10 +5132,16 @@ export type Database = {
           onboarding_status?: string
           parent_organization_id?: string | null
           phone?: string | null
+          pilot_admin_override?: boolean
           pilot_completed_at?: string | null
+          pilot_ends_at?: string | null
+          pilot_override_at?: string | null
+          pilot_override_by?: string | null
+          pilot_override_reason?: string | null
           pilot_position_id?: string | null
           pilot_started_at?: string | null
           pilot_status?: string
+          pilot_used?: boolean
           primary_contact_email?: string | null
           primary_contact_name?: string | null
           status?: Database["public"]["Enums"]["org_status"]
@@ -5670,6 +5688,7 @@ export type Database = {
           blueprint_model: string | null
           blueprint_status: string
           business_unit: string | null
+          channel_plan: Json | null
           closed_at: string | null
           company_research: Json
           compensation: Json
@@ -5715,6 +5734,8 @@ export type Database = {
           rescore_requested_at: string | null
           rescore_state: string
           scoring_signature: string | null
+          search_live_at: string | null
+          search_live_email_at: string | null
           seniority: string | null
           status: Database["public"]["Enums"]["position_status"]
           submitted_at: string | null
@@ -5737,6 +5758,7 @@ export type Database = {
           blueprint_model?: string | null
           blueprint_status?: string
           business_unit?: string | null
+          channel_plan?: Json | null
           closed_at?: string | null
           company_research?: Json
           compensation?: Json
@@ -5784,6 +5806,8 @@ export type Database = {
           rescore_requested_at?: string | null
           rescore_state?: string
           scoring_signature?: string | null
+          search_live_at?: string | null
+          search_live_email_at?: string | null
           seniority?: string | null
           status?: Database["public"]["Enums"]["position_status"]
           submitted_at?: string | null
@@ -5806,6 +5830,7 @@ export type Database = {
           blueprint_model?: string | null
           blueprint_status?: string
           business_unit?: string | null
+          channel_plan?: Json | null
           closed_at?: string | null
           company_research?: Json
           compensation?: Json
@@ -5853,6 +5878,8 @@ export type Database = {
           rescore_requested_at?: string | null
           rescore_state?: string
           scoring_signature?: string | null
+          search_live_at?: string | null
+          search_live_email_at?: string | null
           seniority?: string | null
           status?: Database["public"]["Enums"]["position_status"]
           submitted_at?: string | null

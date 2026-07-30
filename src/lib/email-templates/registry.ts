@@ -3,6 +3,7 @@ import { template as newApplicationAlertTemplate } from './new-application-alert
 import { template as expressWelcomeTemplate } from './express-welcome'
 import { template as roleBlueprintReadyTemplate } from './role-blueprint-ready'
 import { template as blueprintDelayedTemplate } from './blueprint-delayed'
+import { template as searchLiveTemplate } from './search-live'
 
 
 
@@ -28,6 +29,7 @@ export const TEMPLATES: Record<string, TemplateEntry> = {
   'express-welcome': expressWelcomeTemplate,
   'role-blueprint-ready': roleBlueprintReadyTemplate,
   'blueprint-delayed': blueprintDelayedTemplate,
+  'search-live': searchLiveTemplate,
 }
 
 

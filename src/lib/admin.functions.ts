@@ -851,7 +851,17 @@ export const setPositionStatus = createServerFn({ method: "POST" })
         console.error("[setPositionStatus] emit failed", trace_id, e);
       }
     }
+    // The search is genuinely live now — tell the client once.
+    if (data.action === "activate" || data.action === "reopen") {
+      try {
+        const { notifySearchLive } = await import("./search-live.server");
+        await notifySearchLive(data.id);
+      } catch (e) {
+        console.error("[setPositionStatus] search-live email failed", trace_id, e);
+      }
+    }
     return { ok: true as const, trace_id, position: after };
+
   });
 
 const visibilityInput = z.object({
