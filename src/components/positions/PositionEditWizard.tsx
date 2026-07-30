@@ -34,6 +34,7 @@ import {
 import { checkRequisitionDuplicate } from "@/lib/requisition.functions";
 import { RequisitionEditor } from "@/components/positions/RequisitionEditor";
 import { JobQualityPanel } from "@/components/positions/JobQualityPanel";
+import { JobPostStep } from "@/components/positions/JobPostStep";
 
 
 const STEPS = [
@@ -42,7 +43,8 @@ const STEPS = [
   { id: 3, label: "Compensation" },
   { id: 4, label: "Search Criteria" },
   { id: 5, label: "Locations & Priorities" },
-  { id: 6, label: "Review & Save" },
+  { id: 6, label: "Job Post & Preview" },
+  { id: 7, label: "Review & Save" },
 ];
 const LAST_STEP = STEPS.length;
 
@@ -289,6 +291,16 @@ export function PositionEditWizard({
           disqualifier_tags: unique(state.disqualifier_tags),
           interview_process: state.interview_process,
           additional_context: state.additional_context,
+          company_intro: state.company_intro,
+          benefits: state.benefits,
+          languages: state.languages,
+          travel: state.travel,
+          work_authorization_note: state.work_authorization_note,
+          accessibility_note: state.accessibility_note,
+          eeo_statement: state.eeo_statement,
+          brand_tone: state.brand_tone,
+          application_deadline: state.application_deadline,
+          confidentiality: (state.confidentiality || "public") as "public" | "confidential",
           screening_questions: state.screening_questions.filter(
             (q) => q.question.trim().length >= 3,
           ),
@@ -926,8 +938,47 @@ export function PositionEditWizard({
             <RequisitionEditor positionId={state.id} onDirtyChange={setReqDirty} />
           )}
 
-          {/* STEP 6 — Review */}
+          {/* STEP 6 — Job post personalisation + candidate preview */}
           {step === 6 && (
+            <JobPostStep
+              value={{
+                title: state.title,
+                department: state.department,
+                location: state.location,
+                work_model: state.work_model,
+                employment_type: state.employment_type,
+                seniority: state.seniority,
+                description: state.description,
+                responsibilities: state.responsibilities,
+                must_have_skills: state.must_have_skills,
+                nice_to_have_skills: state.nice_to_have_skills,
+                education: state.education,
+                experience: state.experience,
+                currency: state.currency,
+                budget_min: state.budget_min,
+                budget_max: state.budget_max,
+                company_intro: state.company_intro,
+                benefits: state.benefits,
+                languages: state.languages,
+                travel: state.travel,
+                work_authorization_note: state.work_authorization_note,
+                accessibility_note: state.accessibility_note,
+                eeo_statement: state.eeo_statement,
+                brand_tone: state.brand_tone,
+                application_deadline: state.application_deadline,
+                confidentiality: state.confidentiality,
+                screening_questions: state.screening_questions.map((q) => ({
+                  question: q.question,
+                  required: q.required,
+                  answer_type: q.answer_type,
+                })),
+              }}
+              onChange={(k, v) => set(k as keyof State, v as never)}
+            />
+          )}
+
+          {/* STEP 7 — Review */}
+          {step === 7 && (
             <div className="space-y-3 text-sm">
               <JobQualityPanel positionId={state.id} onJumpToStep={setStep} />
 

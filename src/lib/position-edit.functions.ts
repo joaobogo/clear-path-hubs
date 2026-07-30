@@ -117,6 +117,18 @@ export type PositionEditInitial = {
   interview_process: string;
   additional_context: string;
   screening_questions: ScreeningInput[];
+
+  // Step 6 — Job post personalisation (stored in intake_context.posting)
+  company_intro: string;
+  benefits: string;
+  languages: string;
+  travel: string;
+  work_authorization_note: string;
+  accessibility_note: string;
+  eeo_statement: string;
+  brand_tone: string;
+  application_deadline: string;
+  confidentiality: string;
 };
 
 function fromJsonArray(v: unknown): string[] {
@@ -162,6 +174,7 @@ export const getPositionForEdit = createServerFn({ method: "GET" })
     const comp = (p.compensation ?? {}) as AnyRow;
     const wa = (p.work_authorization ?? {}) as AnyRow;
     const ctx = (p.intake_context ?? {}) as AnyRow;
+    const posting = (ctx.posting ?? {}) as AnyRow;
 
     const initial: PositionEditInitial = {
       id: p.id,
@@ -210,6 +223,16 @@ export const getPositionForEdit = createServerFn({ method: "GET" })
       disqualifier_tags: fromJsonArray(p.dealbreakers),
       interview_process: asStr(ctx.interview_process),
       additional_context: asStr(ctx.additional_context),
+      company_intro: asStr(posting.company_intro),
+      benefits: asStr(posting.benefits),
+      languages: asStr(posting.languages),
+      travel: asStr(posting.travel) || asStr(p.travel_expectation),
+      work_authorization_note: asStr(posting.work_authorization_note),
+      accessibility_note: asStr(posting.accessibility_note),
+      eeo_statement: asStr(posting.eeo_statement),
+      brand_tone: asStr(posting.brand_tone),
+      application_deadline: asStr(posting.application_deadline),
+      confidentiality: asStr(posting.confidentiality) || "public",
       screening_questions: ((screeningRes.data ?? []) as AnyRow[]).map((r) => ({
         id: r.id,
         question: r.question,
@@ -268,6 +291,16 @@ const saveInput = z.object({
   disqualifier_tags: z.array(z.string().trim().min(1).max(200)).max(30).default([]),
   interview_process: z.string().max(2000).default(""),
   additional_context: z.string().max(4000).default(""),
+  company_intro: z.string().max(4000).default(""),
+  benefits: z.string().max(4000).default(""),
+  languages: z.string().max(500).default(""),
+  travel: z.string().max(300).default(""),
+  work_authorization_note: z.string().max(600).default(""),
+  accessibility_note: z.string().max(1500).default(""),
+  eeo_statement: z.string().max(3000).default(""),
+  brand_tone: z.string().max(60).default(""),
+  application_deadline: z.string().max(40).default(""),
+  confidentiality: z.enum(["public", "confidential", ""]).default("public"),
   screening_questions: z
     .array(
       z.object({
@@ -356,7 +389,21 @@ export const savePositionEdit = createServerFn({ method: "POST" })
         exclude_keywords: data.exclude_keywords,
         interview_process: data.interview_process || "",
         additional_context: data.additional_context || "",
+        posting: {
+          ...((priorCtx.posting ?? {}) as AnyRow),
+          company_intro: data.company_intro || "",
+          benefits: data.benefits || "",
+          languages: data.languages || "",
+          travel: data.travel || "",
+          work_authorization_note: data.work_authorization_note || "",
+          accessibility_note: data.accessibility_note || "",
+          eeo_statement: data.eeo_statement || "",
+          brand_tone: data.brand_tone || "",
+          application_deadline: data.application_deadline || "",
+          confidentiality: data.confidentiality || "public",
+        },
       },
+      travel_expectation: data.travel || null,
       openings: typeof data.headcount === "number" ? data.headcount : 1,
       updated_at: new Date().toISOString(),
     };

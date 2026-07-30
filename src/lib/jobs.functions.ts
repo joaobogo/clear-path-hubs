@@ -111,7 +111,7 @@ export const getPublicPosition = createServerFn({ method: "GET" })
     const { data: pos, error } = await supabase
       .from("positions")
       .select(
-        "id,title,department,location,work_model,employment_type,seniority,description,requirements,preferred_requirements,compensation,published_at,openings,status,organizations(name)",
+        "id,title,department,location,work_model,employment_type,seniority,description,requirements,preferred_requirements,compensation,intake_context,published_at,openings,status,organizations(name)",
       )
       .eq("id", data.id)
       .in("status", ["active", "paused"])
@@ -138,6 +138,12 @@ export const getPublicPosition = createServerFn({ method: "GET" })
       .order("display_order", { ascending: true });
 
     const comp = (pos.compensation ?? {}) as { approved?: boolean; display?: string };
+    const ctx = (pos as { intake_context?: Record<string, unknown> }).intake_context ?? {};
+    const posting = (ctx.posting ?? {}) as Record<string, string>;
+    const str = (v: unknown) => (typeof v === "string" ? v.trim() : "");
+    const deadline = str(posting.application_deadline);
+    const deadlinePassed = deadline ? new Date(`${deadline}T23:59:59`) < new Date() : false;
+    const confidential = str(posting.confidentiality) === "confidential";
 
     return {
       id: pos.id,
@@ -153,7 +159,19 @@ export const getPublicPosition = createServerFn({ method: "GET" })
       compensation_display: comp.approved && comp.display ? comp.display : null,
       published_at: pos.published_at,
       openings: (pos as { openings?: number }).openings ?? 1,
-      accepting_applications: (pos as { status?: string }).status === "active",
+      accepting_applications:
+        (pos as { status?: string }).status === "active" && !deadlinePassed,
+      company_intro: str(posting.company_intro),
+      responsibilities: str((ctx as Record<string, unknown>).responsibilities),
+      benefits: str(posting.benefits),
+      languages: str(posting.languages),
+      travel: str(posting.travel),
+      work_authorization_note: str(posting.work_authorization_note),
+      accessibility_note: str(posting.accessibility_note),
+      eeo_statement: str(posting.eeo_statement),
+      application_deadline: deadline || null,
+      deadline_passed: deadlinePassed,
+      confidential,
       locations: (locs ?? []).map((l) => ({
         city: l.city,
         region: l.region,
@@ -162,8 +180,9 @@ export const getPublicPosition = createServerFn({ method: "GET" })
         headcount: l.headcount,
         is_primary: l.is_primary,
       })),
-      organization_name:
-        (pos.organizations as unknown as { name?: string } | null)?.name ?? "TaaSFlow client",
+      organization_name: confidential
+        ? "Confidential employer"
+        : ((pos.organizations as unknown as { name?: string } | null)?.name ?? "TaaSFlow client"),
       questions: (questions ?? []).map((q) => ({
         id: q.id,
         question: q.question,

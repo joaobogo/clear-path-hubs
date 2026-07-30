@@ -175,6 +175,15 @@ function JobDetail() {
         <div className="grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,1fr)_20rem]">
           {/* Main column: the description, rendered with real hierarchy. */}
           <div className="min-w-0">
+            {pos.company_intro ? (
+              <section className="mb-8 rounded-xl border bg-muted/30 p-6">
+                <h2 className="text-xl font-semibold tracking-tight">About the company</h2>
+                <p className="mt-3 whitespace-pre-wrap text-[0.95rem] leading-relaxed text-foreground/90">
+                  {pos.company_intro}
+                </p>
+              </section>
+            ) : null}
+
             <section>
               <h2 className="text-xl font-semibold tracking-tight">About the role</h2>
               <div className="mt-4 space-y-4">
@@ -210,6 +219,33 @@ function JobDetail() {
                 <BulletList items={pos.preferred_requirements} />
               </section>
             )}
+
+            {[
+              { title: "Responsibilities", body: pos.responsibilities },
+              { title: "Benefits", body: pos.benefits },
+              { title: "Languages", body: pos.languages },
+              { title: "Travel", body: pos.travel },
+              { title: "Work authorization", body: pos.work_authorization_note },
+              { title: "Accessibility and accommodations", body: pos.accessibility_note },
+              { title: "Equal opportunity", body: pos.eeo_statement },
+            ]
+              .filter((sec) => sec.body)
+              .map((sec) => (
+                <section key={sec.title} className="mt-6">
+                  <h2 className="text-xl font-semibold tracking-tight">{sec.title}</h2>
+                  <p className="mt-3 whitespace-pre-wrap text-[0.95rem] leading-relaxed text-foreground/90">
+                    {sec.body}
+                  </p>
+                </section>
+              ))}
+
+            {pos.application_deadline ? (
+              <p className="mt-6 text-sm text-muted-foreground">
+                {pos.deadline_passed
+                  ? `Applications closed on ${pos.application_deadline}.`
+                  : `Applications close on ${pos.application_deadline}.`}
+              </p>
+            ) : null}
 
             <section className="mt-10">
               <h2 className="text-xl font-semibold tracking-tight">How hiring works here</h2>
