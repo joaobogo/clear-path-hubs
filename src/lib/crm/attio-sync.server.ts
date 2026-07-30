@@ -13,6 +13,7 @@ import {
   createNote,
   findOpenDealForPerson,
   listDealStages,
+  resolveDealOwnerEmail,
   listWorkspaceLists,
   updateDeal,
 } from "./attio-client.server";
@@ -276,7 +277,7 @@ export async function syncSubmissionToAttio(s: CrmSubmission): Promise<SyncIds> 
 
   let dealId: string | null = null;
   if (DEAL_FORM_TYPES.includes(form.type)) {
-    const stages = await listDealStages();
+    const [stages, ownerEmail] = await Promise.all([listDealStages(), resolveDealOwnerEmail()]);
     const stage = stages.find((x) => /new lead|new inbound|inbound|lead|new/i.test(x.title));
     const displayName = s.company_name || s.full_name || s.email;
     // Reuse an existing open Deal for this Person before creating a new one.
@@ -294,6 +295,7 @@ export async function syncSubmissionToAttio(s: CrmSubmission): Promise<SyncIds> 
           {
             name: `${CRM_SOURCE_BRAND} | ${form.name} | ${displayName}`,
             stage: stage ? stage.title : undefined,
+            owner: ownerEmail ?? undefined,
             associated_people: [personId],
             associated_company: companyId ?? undefined,
           },
