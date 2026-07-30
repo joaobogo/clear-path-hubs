@@ -10,6 +10,7 @@ import {
  moveMatchStage,
  type MatchStage,
 } from "@/lib/client.functions";
+import { confirmRoleBlueprint } from "@/lib/client.functions";
 import { useClientOrgSearch } from "@/lib/use-client-org";
 import { useSupportView } from "@/lib/support-view";
 import { Button } from "@/components/ui/button";
