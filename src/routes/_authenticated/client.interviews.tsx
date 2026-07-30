@@ -636,7 +636,8 @@ function DetailDialog({
  location?: string;
  }) => void;
  onCancel: (reason?: string) => void;
- onComplete: (feedback?: string) => void;
+  onComplete: (feedback?: string) => void;
+  onScorecard: () => void;
  pending: boolean;
 }) {
  const [mode, setMode] = useState<
