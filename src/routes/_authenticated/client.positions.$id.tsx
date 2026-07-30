@@ -35,6 +35,7 @@ import { RoleMemoryPanel } from "@/components/role-memory-panel";
 import { JobQualityPanel } from "@/components/positions/JobQualityPanel";
 
 import { RoleProgressTracker } from "@/components/client/role-progress-tracker";
+import { SlaScorecard } from "@/components/client/sla-scorecard";
 
 export const Route = createFileRoute("/_authenticated/client/positions/$id")({
  head: () => ({
