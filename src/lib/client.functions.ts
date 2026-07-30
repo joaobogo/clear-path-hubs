@@ -550,18 +550,21 @@ export const getClientPositionDetail = createServerFn({ method: "GET" })
       touches = (touchRows as AnyRow[]) ?? [];
     }
 
-    // Source attribution for delivered candidates — real rows only.
+    // Source attribution — real application rows only.
+    const { data: appSources } = await context.supabase
+      .from("applications")
+      .select("source_kind")
+      .eq("position_id", data.positionId);
     const attributionMap = new Map<string, number>();
-    for (const m of (matches as AnyRow[]) ?? []) {
-      const src = String(
-        (m as AnyRow).source_kind ?? (m as AnyRow).source ?? "",
-      ).trim();
+    for (const a of (appSources as AnyRow[]) ?? []) {
+      const src = String(a.source_kind ?? "").trim();
       if (!src) continue;
       attributionMap.set(src, (attributionMap.get(src) ?? 0) + 1);
     }
     const attribution = [...attributionMap.entries()]
       .map(([label, count]) => ({ label, count }))
       .sort((a, b) => b.count - a.count);
+
 
     const launch = computeRoleLaunchState({
       position,
