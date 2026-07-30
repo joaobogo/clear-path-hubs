@@ -10,6 +10,8 @@ import {
  moveMatchStage,
  type MatchStage,
 } from "@/lib/client.functions";
+import { toFitPresentation } from "@/lib/client-fit-presentation";
+
 import { confirmRoleBlueprint } from "@/lib/client.functions";
 import { useClientOrgSearch } from "@/lib/use-client-org";
 import { useSupportView } from "@/lib/support-view";
@@ -339,6 +341,14 @@ function PositionDetailPage() {
  )}
  </header>
 
+ {/* Plain-language pipeline status */}
+ {summary.pipeline_line && (
+ <p className="rounded-xl border bg-card px-4 py-3 text-sm font-medium text-foreground/90">
+ {summary.pipeline_line}
+ </p>
+ )}
+
+
  {/* 2. Hiring summary */}
  <section aria-label="Hiring summary" className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
  <SummaryTile
@@ -469,17 +479,13 @@ function PositionDetailPage() {
  {m.candidate_profiles?.headline ?? ""}
  </div>
  <div className="mt-1 flex items-center gap-2 text-xs">
- {m.score_runs?.score != null && (
- <span className="tabular-nums">
- {Number(m.score_runs.score).toFixed(0)}
- </span>
- )}
- {m.score_runs?.fit_label && (
- <span className="capitalize text-muted-foreground">
- {m.score_runs.fit_label}
+ {(m.score_runs?.fit_label || m.score_runs?.score != null) && (
+ <span className="text-muted-foreground">
+ {toFitPresentation(m.score_runs?.fit_label, m.score_runs?.score).headline}
  </span>
  )}
  </div>
+
  {canEdit && allowed.length > 0 && (
  <div className="mt-2">
  <DropdownMenu>

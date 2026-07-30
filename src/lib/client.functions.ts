@@ -17,6 +17,12 @@ import {
   type MatchStage,
   type KpiRow,
 } from "@/lib/client-kpi.server";
+import {
+  buildPipelineStatusLine,
+  buildPipelineActionLabel,
+  type PipelineStatusInput,
+} from "@/lib/client-pipeline-language";
+
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
@@ -413,15 +419,38 @@ export const getClientPositions = createServerFn({ method: "GET" })
     return (positions as AnyRow[]).map((p) => {
       const posRows = byPosition.get(p.id) ?? [];
       const kpi = computeKpis(posRows, 0);
+      const language = pipelineLanguageInput(posRows, p.status);
       return {
         ...p,
 
         kpis: kpi,
+        pipeline_line: buildPipelineStatusLine(language),
         next_milestone: nextMilestoneFor(posRows, p.status),
-        action_required: actionRequiredFor(posRows, p.status),
+        action_required: buildPipelineActionLabel(language),
       };
     });
   });
+
+/** Map canonical rows onto the client-language vocabulary. */
+function pipelineLanguageInput(rows: KpiRow[], status: string): PipelineStatusInput {
+  const scheduled = rows.filter((r) => r.interview_scheduled);
+  const nextInterviewAt =
+    scheduled
+      .map((r) => r.next_interview_at)
+      .filter((v): v is string => Boolean(v))
+      .sort()[0] ?? null;
+  return {
+    status,
+    awaitingReview: rows.filter((r) => r.stage === "delivered").length,
+    shortlisted: rows.filter((r) => r.stage === "shortlisted").length,
+    interviewsToConfirm: rows.filter((r) => r.interview_needs_confirmation).length,
+    interviewsScheduled: scheduled.length,
+    nextInterviewAt,
+    offers: rows.filter((r) => r.stage === "offer").length,
+    hires: rows.filter((r) => r.stage === "hired").length,
+    totalCandidates: rows.length,
+  };
+}
 
 function nextMilestoneFor(rows: KpiRow[], status: string): string | null {
   if (status === "draft") return "Awaiting intake approval";
@@ -434,11 +463,7 @@ function nextMilestoneFor(rows: KpiRow[], status: string): string | null {
   if (rows.length > 0) return "Review new candidates";
   return "Awaiting first candidates";
 }
-function actionRequiredFor(rows: KpiRow[], _status: string): string | null {
-  const newlyDelivered = rows.filter((r) => r.stage === "delivered").length;
-  if (newlyDelivered > 0) return `${newlyDelivered} new to review`;
-  return null;
-}
+
 
 export const getClientPositionDetail = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
@@ -517,6 +542,44 @@ export const getClientPositionDetail = createServerFn({ method: "GET" })
     const hires = stageCounts.hired ?? 0;
     const remaining = Math.max(0, openings - hires);
 
+    // Interview state for the plain-language status line.
+    const matchIdList = ((matches as AnyRow[]) ?? []).map((m) => m.id as string);
+    let interviewsToConfirm = 0;
+    let interviewsScheduled = 0;
+    let nextInterviewAt: string | null = null;
+    if (matchIdList.length > 0) {
+      const { data: ivs } = await context.supabase
+        .from("interviews")
+        .select("candidate_match_id, status, scheduled_at")
+        .in("candidate_match_id", matchIdList)
+        .in("status", ["requested", "scheduling", "scheduled"]);
+      const confirmSet = new Set<string>();
+      const scheduledSet = new Set<string>();
+      for (const iv of ((ivs as AnyRow[]) ?? [])) {
+        if (iv.status === "scheduled") {
+          scheduledSet.add(iv.candidate_match_id);
+          const at = iv.scheduled_at as string | null;
+          if (at && (!nextInterviewAt || at < nextInterviewAt)) nextInterviewAt = at;
+        } else {
+          confirmSet.add(iv.candidate_match_id);
+        }
+      }
+      interviewsToConfirm = confirmSet.size;
+      interviewsScheduled = scheduledSet.size;
+    }
+    const pipelineLine = buildPipelineStatusLine({
+      status: String(position.status),
+      awaitingReview: stageCounts.delivered ?? 0,
+      shortlisted: stageCounts.shortlisted ?? 0,
+      interviewsToConfirm,
+      interviewsScheduled,
+      nextInterviewAt,
+      offers: stageCounts.offer ?? 0,
+      hires,
+      totalCandidates: ((matches as AnyRow[]) ?? []).length,
+    });
+
+
     // Role launch state — timeline + channels, derived from real records only.
     const { data: campaigns } = await context.supabase
       .from("outreach_campaigns")
@@ -591,7 +654,9 @@ export const getClientPositionDetail = createServerFn({ method: "GET" })
         interviewing: stageCounts.interview_process,
         offers: stageCounts.offer,
         not_moving_forward: stageCounts.not_moving_forward,
+        pipeline_line: pipelineLine,
       },
+
     };
   });
 

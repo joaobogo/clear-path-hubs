@@ -75,9 +75,11 @@ type Row = {
  hires: number;
  active_positions: number;
  };
+ pipeline_line: string | null;
  next_milestone: string | null;
  action_required: string | null;
 };
+
 
 function PositionsPage() {
  const { status, q, location, view, sort } = Route.useSearch();
@@ -513,7 +515,7 @@ function PortfolioSnapshot({
 }
 
 function PositionCard({ p }: { p: Row }) {
- const progress = progressSummary(p);
+ const progress = p.pipeline_line ?? progressSummary(p);
  const total =
  p.kpis.delivered +
  p.kpis.shortlisted +
@@ -623,11 +625,15 @@ function CompactList({ rows }: { rows: Row[] }) {
  >
  {p.title}
  </Link>
+ <div className="text-xs text-muted-foreground">
+ {p.pipeline_line ?? progressSummary(p)}
+ </div>
  {p.action_required && (
  <div className="text-[11px] taas-fg-warning ">
  {p.action_required}
  </div>
  )}
+
  </td>
  <td className="px-3 py-2">
  <Badge variant="secondary" className="text-[11px]">

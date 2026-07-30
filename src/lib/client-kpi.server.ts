@@ -43,7 +43,10 @@ export type KpiRow = {
   interview_scheduled: boolean;
   /** An interview exists that still needs the client to confirm a time. */
   interview_needs_confirmation: boolean;
+  /** Soonest confirmed interview time, if one is booked. */
+  next_interview_at: string | null;
 };
+
 
 
 export type ClientKpis = {
@@ -84,19 +87,29 @@ export async function loadKpiRows(
   const activeInterviews = new Set<string>();
   const scheduledInterviews = new Set<string>();
   const unconfirmedInterviews = new Set<string>();
+  const nextInterviewAt = new Map<string, string>();
+
   if (matchIds.length > 0) {
     const { data: ivs } = await supabase
       .from("interviews")
-      .select("candidate_match_id, status")
+      .select("candidate_match_id, status, scheduled_at")
       .in("candidate_match_id", matchIds)
       .in("status", ["requested", "scheduling", "scheduled", "completed"]);
     for (const iv of (ivs as AnyRow[]) ?? []) {
       activeInterviews.add(iv.candidate_match_id);
-      if (iv.status === "scheduled") scheduledInterviews.add(iv.candidate_match_id);
+      if (iv.status === "scheduled") {
+        scheduledInterviews.add(iv.candidate_match_id);
+        const at = iv.scheduled_at as string | null;
+        if (at) {
+          const prev = nextInterviewAt.get(iv.candidate_match_id);
+          if (!prev || at < prev) nextInterviewAt.set(iv.candidate_match_id, at);
+        }
+      }
       if (iv.status === "requested" || iv.status === "scheduling") {
         unconfirmedInterviews.add(iv.candidate_match_id);
       }
     }
+
   }
 
   return (matches as AnyRow[]).map((m) => ({
@@ -110,6 +123,8 @@ export async function loadKpiRows(
     approved_fit_label: m.score_runs?.fit_label ?? null,
     interview_active: activeInterviews.has(m.id),
     interview_scheduled: scheduledInterviews.has(m.id),
+    next_interview_at: nextInterviewAt.get(m.id) ?? null,
+
     interview_needs_confirmation: unconfirmedInterviews.has(m.id),
   }));
 }
