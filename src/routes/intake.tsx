@@ -197,7 +197,7 @@ function ExpressIntakePage() {
       return;
     }
     if (!ALLOWED_JD_EXT.has(ext)) {
-      toast.error(`Upload a ${JD_ACCEPT_LABEL.split(",").slice(0, -1).join(",")} file.`);
+      toast.error("Upload a PDF, DOCX, TXT or RTF file.");
       return;
     }
 
