@@ -264,31 +264,13 @@ export const Route = createFileRoute("/api/public/express-intake")({
           );
         }
 
+        // NOTE: the organization is deliberately NOT created yet. Creating it
+        // before the account is resolved leaves an orphan "prospect" org behind
+        // whenever the account step rejects the request — and that orphan then
+        // matches the domain/name lookup above, permanently 409-ing the real
+        // user out of their own company. Account first, tenant second.
 
-        if (!organizationId) {
-          const { data: newOrg, error: orgErr } = await admin
-            .from("organizations")
-            .insert({
-              name: data.companyName.trim(),
-              website: data.companyWebsite || null,
-              domain: domain && !isGenericDomain(domain) ? domain : null,
-              status: "prospect",
-              primary_contact_name: `${data.firstName} ${data.lastName}`.trim(),
-              primary_contact_email: data.workEmail,
-            })
-            .select("id")
-            .single();
-          if (orgErr) {
-            return Response.json(
-              { ok: false, trace_id: traceId, error: "org_create_failed", message: orgErr.message },
-              { status: 500 },
-            );
-          }
-          organizationId = newOrg.id as string;
-        } else if (data.companyWebsite) {
-          const { data: org } = await admin.from("organizations").select("website").eq("id", organizationId).maybeSingle();
-          if (!org?.website) await admin.from("organizations").update({ website: data.companyWebsite }).eq("id", organizationId);
-        }
+
 
         // ---------- Auth user ----------
         let authUserId: string | null = null;
