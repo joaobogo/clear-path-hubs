@@ -487,12 +487,20 @@ function OverviewPage() {
 // Sections
 // ═══════════════════════════════════════════════════════════════════════════
 
-function PriorityActions({ queue, loading }: { queue: Priority[]; loading: boolean }) {
+/**
+ * The decision queue. Every row is an action with a real, server-computed
+ * count and a link straight to where that action is taken. Nothing decorative.
+ */
+function DecisionQueue({ queue, loading }: { queue: DecisionRow[]; loading: boolean }) {
   if (loading) {
     return (
-      <section aria-labelledby="action-heading">
-        <SectionHeader id="action-heading" icon={<AlertTriangle className="h-4 w-4" />} title="What needs you now" />
-        <div className="mt-3 h-24 animate-pulse rounded-xl border bg-muted/40" />
+      <section aria-labelledby="queue-heading" className="space-y-3">
+        <SectionHeader id="queue-heading" icon={<AlertTriangle className="h-4 w-4" />} title="What needs you today" />
+        <div className="space-y-2">
+          {[0, 1, 2].map((i) => (
+            <div key={i} className="h-[76px] animate-pulse rounded-xl border bg-muted/40" />
+          ))}
+        </div>
       </section>
     );
   }
@@ -500,17 +508,18 @@ function PriorityActions({ queue, loading }: { queue: Priority[]; loading: boole
   if (queue.length === 0) {
     return (
       <section
-        aria-labelledby="action-heading"
-        className="rounded-xl border bg-gradient-to-br from-emerald-500/[0.04] to-transparent p-5"
+        aria-labelledby="queue-heading"
+        className="rounded-xl border bg-gradient-to-br from-emerald-500/[0.05] to-transparent p-6"
       >
         <div className="flex items-start gap-3">
-          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full taas-bg-success-soft taas-fg-success">
+          <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full taas-bg-success-soft taas-fg-success">
             <CheckCircle2 className="h-5 w-5" />
           </span>
           <div>
-            <h2 id="action-heading" className="text-base font-semibold">You are up to date</h2>
+            <h2 id="queue-heading" className="text-lg font-semibold">Nothing needs you today</h2>
             <p className="mt-1 text-sm text-muted-foreground">
-              No hiring decisions waiting for you. TaaSFlow is continuing work on your active searches.
+              No candidates awaiting a decision, no interviews to confirm, no offers pending.
+              We'll surface the next decision here the moment it exists.
             </p>
           </div>
         </div>
@@ -518,47 +527,67 @@ function PriorityActions({ queue, loading }: { queue: Priority[]; loading: boole
     );
   }
 
+  const total = queue.reduce((s, p) => s + p.count, 0);
+
   return (
-    <section aria-labelledby="action-heading" className="space-y-3">
+    <section aria-labelledby="queue-heading" className="space-y-3">
       <SectionHeader
-        id="action-heading"
+        id="queue-heading"
         icon={<AlertTriangle className="h-4 w-4 taas-fg-warning" />}
-        title="What needs you now"
+        title="What needs you today"
         action={
           <span className="rounded-full taas-bg-warning-soft px-2 py-0.5 text-[11px] font-semibold taas-fg-warning">
-            {queue.reduce((s, p) => s + p.count, 0)} to act on
+            {total} to act on
           </span>
         }
       />
-      <div className={`grid gap-3 ${queue.length >= 3 ? "md:grid-cols-3" : queue.length === 2 ? "md:grid-cols-2" : ""}`}>
+      <ul className="divide-y overflow-hidden rounded-xl border bg-card">
         {queue.map((p) => (
-          <Link
-            key={p.type}
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            to={p.to as any}
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            search={p.search as any}
-            className="group relative flex flex-col gap-3 rounded-xl border taas-bd-warning bg-card p-4 transition hover:border-primary/60 hover:shadow-sm"
-          >
-            <div className="flex items-center gap-2">
-              <span className="grid h-8 w-8 place-items-center rounded-full taas-bg-warning-soft taas-fg-warning">
+          <li key={p.key}>
+            <Link
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              to={p.to as any}
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              search={p.search as any}
+              className="group flex min-h-[76px] items-center gap-4 px-4 py-4 transition hover:bg-muted/40 sm:px-5"
+            >
+              <span
+                className={`grid h-11 w-11 shrink-0 place-items-center rounded-full ${
+                  p.tone === "danger"
+                    ? "bg-destructive/10 text-destructive"
+                    : p.tone === "info"
+                      ? "taas-bg-info-soft taas-fg-info"
+                      : "taas-bg-warning-soft taas-fg-warning"
+                }`}
+              >
                 {p.icon}
               </span>
-              <span className="text-xs font-semibold uppercase tracking-wide taas-fg-warning">
-                {p.type === "offer_pending" ? "Offers" : p.type === "interview_scheduled" ? "Interviews" : "New candidates"}
+              <span
+                className={`w-12 shrink-0 text-3xl font-semibold tabular-nums leading-none ${
+                  p.tone === "danger" ? "text-destructive" : "text-foreground"
+                }`}
+              >
+                {p.count}
               </span>
-            </div>
-            <div className="text-[15px] font-semibold leading-snug">{p.label}</div>
-            <div className="mt-auto flex items-center justify-between border-t pt-3 text-xs text-muted-foreground">
-              <span className="font-medium text-primary">{p.cta}</span>
-              <ChevronRight className="h-4 w-4 transition group-hover:translate-x-0.5 group-hover:text-primary" />
-            </div>
-          </Link>
+              <span className="min-w-0 flex-1">
+                <span className="block truncate text-[15px] font-semibold leading-snug group-hover:text-primary">
+                  {p.title}
+                </span>
+                <span className="mt-0.5 block text-xs text-muted-foreground sm:text-sm">{p.detail}</span>
+              </span>
+              <span className="hidden shrink-0 items-center gap-1 text-sm font-medium text-primary sm:inline-flex">
+                {p.cta}
+                <ChevronRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
+              </span>
+              <ChevronRight className="h-5 w-5 shrink-0 text-muted-foreground sm:hidden" />
+            </Link>
+          </li>
         ))}
-      </div>
+      </ul>
     </section>
   );
 }
+
 
 function HottestRoleCard({ role }: { role: Any | null }) {
   if (!role) {
