@@ -633,11 +633,22 @@ export const applyReviewDecision = createServerFn({ method: "POST" })
         _run_id: runIdForDecision,
         _actor_user_id: context.userId,
         _reason: data.reason ?? null,
+        _trace_id: decisionTrace,
       });
-      if (rpcError) throw new Error(`publish_failed:${rpcError.message}`);
+      if (rpcError) {
+        await writeAudit("score_approval_failed", {
+          ...beforeState,
+          score_run_id: runIdForDecision,
+          error: rpcError.message,
+          reason: data.reason ?? null,
+        });
+        throw new Error(`publish_failed:${rpcError.message}`);
+      }
       const published = (rpcResult ?? null) as {
         already?: boolean;
         match_id?: string;
+        trace_id?: string;
+        state_path?: string[];
         canonical_state?: string;
         admin_status?: string;
         client_visibility?: string;
@@ -650,12 +661,27 @@ export const applyReviewDecision = createServerFn({ method: "POST" })
         candidate_profile_id?: string | null;
       } | null;
       if (!published || published.client_visibility !== "visible") {
+        await writeAudit("score_approval_failed", {
+          ...beforeState,
+          score_run_id: runIdForDecision,
+          error: "not_visible_after_update",
+        });
         throw new Error("publish_failed:not_visible_after_update");
       }
       if (published.already) {
         // Nothing new to announce; the client already has this candidate.
-        return { ok: true as const, action: data.action, already: true, match: published };
+        // The RPC already wrote a `score_approval_noop` audit row.
+        return {
+          ok: true as const,
+          action: data.action,
+          already: true,
+          trace_id: decisionTrace,
+          match: published,
+        };
       }
+      // The successful `score_approved` audit row is written inside the RPC
+      // transaction, so it can never disagree with the published state.
+
 
 
       // Emit candidate_published to the client org (visible delivery)
