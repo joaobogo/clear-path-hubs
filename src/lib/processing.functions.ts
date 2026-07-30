@@ -548,12 +548,44 @@ export const applyReviewDecision = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     if (!(await isStaff(context.userId))) throw new Error("forbidden");
     const supabase = (await getAdmin()) as AnyRow;
+    // One trace id per decision attempt — echoed in audit_events and to the UI.
+    const decisionTrace = `review-${data.action}-${crypto.randomUUID()}`;
     const { data: match } = await supabase
       .from("candidate_matches")
-      .select("id,current_score_run_id,approved_score_run_id")
+      .select(
+        "id,current_score_run_id,approved_score_run_id,organization_id,canonical_state,admin_status,client_visibility,stage,integrity_status",
+      )
       .eq("id", data.match_id)
       .maybeSingle();
     if (!match) throw new Error("match_not_found");
+
+    const snapshot = (row: AnyRow | null) => ({
+      canonical_state: row?.canonical_state ?? null,
+      admin_status: row?.admin_status ?? null,
+      client_visibility: row?.client_visibility ?? null,
+      stage: row?.stage ?? null,
+      integrity_status: row?.integrity_status ?? null,
+      approved_score_run_id: row?.approved_score_run_id ?? null,
+      current_score_run_id: row?.current_score_run_id ?? null,
+    });
+    const beforeState = snapshot(match);
+
+    const writeAudit = async (action: string, after: Record<string, unknown>) => {
+      try {
+        await supabase.from("audit_events").insert({
+          actor_user_id: context.userId,
+          organization_id: match.organization_id ?? null,
+          entity_type: "candidate_match",
+          entity_id: data.match_id,
+          action,
+          before_state: beforeState,
+          after_state: after,
+          trace_id: decisionTrace,
+        });
+      } catch (auditErr) {
+        console.error("[applyReviewDecision] audit write failed", decisionTrace, auditErr);
+      }
+    };
 
     const runIdForDecision = match.current_score_run_id ?? match.approved_score_run_id;
     if (!runIdForDecision) throw new Error("no_score_run_yet");
@@ -568,15 +600,29 @@ export const applyReviewDecision = createServerFn({ method: "POST" })
         reason: data.reason ?? null,
         actor_user_id: context.userId,
       });
-      return { ok: true as const, action: data.action };
+      await writeAudit("score_manual_override", {
+        ...beforeState,
+        score_run_id: runIdForDecision,
+        approved_score: data.approved_score,
+        reason: data.reason ?? null,
+      });
+      return { ok: true as const, action: data.action, trace_id: decisionTrace };
     }
 
     if (data.action === "approve_for_client") {
       // Canonical publish gate: identity + status + evidence + contradiction.
       const gate = await assertPublishGate(data.match_id, runIdForDecision);
       if (!gate.ok) {
+        await writeAudit("score_approval_blocked", {
+          ...beforeState,
+          score_run_id: runIdForDecision,
+          blocked_reason: gate.reason,
+          reason: data.reason ?? null,
+        });
         throw new Error(`publish_blocked:${gate.reason}`);
       }
+
+
 
       // Single-transaction, idempotent approval. The RPC locks the match row,
       // inserts the approve decision at most once per (match, run), walks the
