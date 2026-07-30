@@ -110,7 +110,19 @@ function PositionDetailPage() {
  return () => window.removeEventListener("client:refresh", onRefresh);
  }, [refetch]);
 
- const [dragOver, setDragOver] = useState<MatchStage | null>(null);
+  const [dragOver, setDragOver] = useState<MatchStage | null>(null);
+
+  const confirmBlueprintFn = useServerFn(confirmRoleBlueprint);
+  const confirmBlueprint = useMutation({
+    mutationFn: () => confirmBlueprintFn({ data: { orgId: orgId!, positionId: id } }),
+    onSuccess: () => {
+      toast.success("Thanks — we've noted your sign-off on this brief.");
+      void refetch();
+    },
+    onError: (e: unknown) =>
+      toast.error(e instanceof Error ? e.message : "We couldn't record that. Please try again."),
+  });
+
 
  const move = useMutation({
   mutationFn: (v: { matchId: string; toStage: MatchStage; reason?: string }) =>
