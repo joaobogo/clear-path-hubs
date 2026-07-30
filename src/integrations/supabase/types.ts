@@ -10510,6 +10510,7 @@ export type Database = {
           _match_id: string
           _reason?: string
           _run_id: string
+          _trace_id?: string
         }
         Returns: Json
       }

@@ -548,12 +548,44 @@ export const applyReviewDecision = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     if (!(await isStaff(context.userId))) throw new Error("forbidden");
     const supabase = (await getAdmin()) as AnyRow;
+    // One trace id per decision attempt — echoed in audit_events and to the UI.
+    const decisionTrace = `review-${data.action}-${crypto.randomUUID()}`;
     const { data: match } = await supabase
       .from("candidate_matches")
-      .select("id,current_score_run_id,approved_score_run_id")
+      .select(
+        "id,current_score_run_id,approved_score_run_id,organization_id,canonical_state,admin_status,client_visibility,stage,integrity_status",
+      )
       .eq("id", data.match_id)
       .maybeSingle();
     if (!match) throw new Error("match_not_found");
+
+    const snapshot = (row: AnyRow | null) => ({
+      canonical_state: row?.canonical_state ?? null,
+      admin_status: row?.admin_status ?? null,
+      client_visibility: row?.client_visibility ?? null,
+      stage: row?.stage ?? null,
+      integrity_status: row?.integrity_status ?? null,
+      approved_score_run_id: row?.approved_score_run_id ?? null,
+      current_score_run_id: row?.current_score_run_id ?? null,
+    });
+    const beforeState = snapshot(match);
+
+    const writeAudit = async (action: string, after: Record<string, unknown>) => {
+      try {
+        await supabase.from("audit_events").insert({
+          actor_user_id: context.userId,
+          organization_id: match.organization_id ?? null,
+          entity_type: "candidate_match",
+          entity_id: data.match_id,
+          action,
+          before_state: beforeState,
+          after_state: after,
+          trace_id: decisionTrace,
+        });
+      } catch (auditErr) {
+        console.error("[applyReviewDecision] audit write failed", decisionTrace, auditErr);
+      }
+    };
 
     const runIdForDecision = match.current_score_run_id ?? match.approved_score_run_id;
     if (!runIdForDecision) throw new Error("no_score_run_yet");
@@ -568,15 +600,29 @@ export const applyReviewDecision = createServerFn({ method: "POST" })
         reason: data.reason ?? null,
         actor_user_id: context.userId,
       });
-      return { ok: true as const, action: data.action };
+      await writeAudit("score_manual_override", {
+        ...beforeState,
+        score_run_id: runIdForDecision,
+        approved_score: data.approved_score,
+        reason: data.reason ?? null,
+      });
+      return { ok: true as const, action: data.action, trace_id: decisionTrace };
     }
 
     if (data.action === "approve_for_client") {
       // Canonical publish gate: identity + status + evidence + contradiction.
       const gate = await assertPublishGate(data.match_id, runIdForDecision);
       if (!gate.ok) {
+        await writeAudit("score_approval_blocked", {
+          ...beforeState,
+          score_run_id: runIdForDecision,
+          blocked_reason: gate.reason,
+          reason: data.reason ?? null,
+        });
         throw new Error(`publish_blocked:${gate.reason}`);
       }
+
+
 
       // Single-transaction, idempotent approval. The RPC locks the match row,
       // inserts the approve decision at most once per (match, run), walks the
@@ -587,11 +633,22 @@ export const applyReviewDecision = createServerFn({ method: "POST" })
         _run_id: runIdForDecision,
         _actor_user_id: context.userId,
         _reason: data.reason ?? null,
+        _trace_id: decisionTrace,
       });
-      if (rpcError) throw new Error(`publish_failed:${rpcError.message}`);
+      if (rpcError) {
+        await writeAudit("score_approval_failed", {
+          ...beforeState,
+          score_run_id: runIdForDecision,
+          error: rpcError.message,
+          reason: data.reason ?? null,
+        });
+        throw new Error(`publish_failed:${rpcError.message}`);
+      }
       const published = (rpcResult ?? null) as {
         already?: boolean;
         match_id?: string;
+        trace_id?: string;
+        state_path?: string[];
         canonical_state?: string;
         admin_status?: string;
         client_visibility?: string;
@@ -604,12 +661,27 @@ export const applyReviewDecision = createServerFn({ method: "POST" })
         candidate_profile_id?: string | null;
       } | null;
       if (!published || published.client_visibility !== "visible") {
+        await writeAudit("score_approval_failed", {
+          ...beforeState,
+          score_run_id: runIdForDecision,
+          error: "not_visible_after_update",
+        });
         throw new Error("publish_failed:not_visible_after_update");
       }
       if (published.already) {
         // Nothing new to announce; the client already has this candidate.
-        return { ok: true as const, action: data.action, already: true, match: published };
+        // The RPC already wrote a `score_approval_noop` audit row.
+        return {
+          ok: true as const,
+          action: data.action,
+          already: true,
+          trace_id: decisionTrace,
+          match: published,
+        };
       }
+      // The successful `score_approved` audit row is written inside the RPC
+      // transaction, so it can never disagree with the published state.
+
 
 
       // Emit candidate_published to the client org (visible delivery)
@@ -644,7 +716,13 @@ export const applyReviewDecision = createServerFn({ method: "POST" })
       } catch (emitErr) {
         console.error("[approve_for_client] emit failed", emitErr);
       }
-      return { ok: true as const, action: data.action, already: false, match: published };
+      return {
+        ok: true as const,
+        action: data.action,
+        already: false,
+        trace_id: published.trace_id ?? decisionTrace,
+        match: published,
+      };
     }
 
     // Hold and archive both use decision_type='reject' since the enum has no hold/archive.
@@ -664,7 +742,20 @@ export const applyReviewDecision = createServerFn({ method: "POST" })
         .update({ admin_status: "rejected", client_visibility: "archived", stage: "archived" })
         .eq("id", data.match_id);
     }
-    return { ok: true as const, action: data.action };
+    const { data: afterRow } = await supabase
+      .from("candidate_matches")
+      .select(
+        "canonical_state,admin_status,client_visibility,stage,integrity_status,approved_score_run_id,current_score_run_id",
+      )
+      .eq("id", data.match_id)
+      .maybeSingle();
+    await writeAudit(data.action === "hold" ? "score_held" : "score_archived", {
+      ...snapshot(afterRow),
+      score_run_id: runIdForDecision,
+      reason: data.reason ?? null,
+    });
+    return { ok: true as const, action: data.action, trace_id: decisionTrace };
+
   });
 
 // Permanently purge a candidate match. Works regardless of score state — admins can
