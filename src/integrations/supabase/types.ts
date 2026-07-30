@@ -5376,9 +5376,16 @@ export type Database = {
           channel: Database["public"]["Enums"]["outreach_channel"]
           created_at: string
           ended_at: string | null
+          external_ref: string | null
           id: string
           is_test_record: boolean
+          manual_contacted: number | null
+          manual_engaged: number | null
+          manual_identified: number | null
+          manual_replied: number | null
           name: string
+          next_action: string | null
+          next_action_at: string | null
           notes: string | null
           organization_id: string
           owner_user_id: string | null
@@ -5392,9 +5399,16 @@ export type Database = {
           channel: Database["public"]["Enums"]["outreach_channel"]
           created_at?: string
           ended_at?: string | null
+          external_ref?: string | null
           id?: string
           is_test_record?: boolean
+          manual_contacted?: number | null
+          manual_engaged?: number | null
+          manual_identified?: number | null
+          manual_replied?: number | null
           name: string
+          next_action?: string | null
+          next_action_at?: string | null
           notes?: string | null
           organization_id: string
           owner_user_id?: string | null
@@ -5408,9 +5422,16 @@ export type Database = {
           channel?: Database["public"]["Enums"]["outreach_channel"]
           created_at?: string
           ended_at?: string | null
+          external_ref?: string | null
           id?: string
           is_test_record?: boolean
+          manual_contacted?: number | null
+          manual_engaged?: number | null
+          manual_identified?: number | null
+          manual_replied?: number | null
           name?: string
+          next_action?: string | null
+          next_action_at?: string | null
           notes?: string | null
           organization_id?: string
           owner_user_id?: string | null
@@ -5728,6 +5749,114 @@ export type Database = {
             foreignKeyName: "position_locations_position_id_fkey"
             columns: ["position_id"]
             isOneToOne: false
+            referencedRelation: "positions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      position_sourcing_plans: {
+        Row: {
+          created_at: string
+          exceptions: string | null
+          id: string
+          job_board_status: string
+          last_reviewed_at: string | null
+          next_action: string | null
+          next_action_at: string | null
+          organization_id: string
+          owner_user_id: string | null
+          position_id: string
+          sponsored_status: string
+          strategy_notes: string | null
+          strategy_status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          exceptions?: string | null
+          id?: string
+          job_board_status?: string
+          last_reviewed_at?: string | null
+          next_action?: string | null
+          next_action_at?: string | null
+          organization_id: string
+          owner_user_id?: string | null
+          position_id: string
+          sponsored_status?: string
+          strategy_notes?: string | null
+          strategy_status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          exceptions?: string | null
+          id?: string
+          job_board_status?: string
+          last_reviewed_at?: string | null
+          next_action?: string | null
+          next_action_at?: string | null
+          organization_id?: string
+          owner_user_id?: string | null
+          position_id?: string
+          sponsored_status?: string
+          strategy_notes?: string | null
+          strategy_status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "position_sourcing_plans_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "admin_clients_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "position_sourcing_plans_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "position_sourcing_plans_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_portfolio_rollup"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "position_sourcing_plans_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: true
+            referencedRelation: "admin_pipeline_health"
+            referencedColumns: ["position_id"]
+          },
+          {
+            foreignKeyName: "position_sourcing_plans_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: true
+            referencedRelation: "admin_positions_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "position_sourcing_plans_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: true
+            referencedRelation: "candidate_my_applications"
+            referencedColumns: ["position_id"]
+          },
+          {
+            foreignKeyName: "position_sourcing_plans_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: true
+            referencedRelation: "client_positions_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "position_sourcing_plans_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: true
             referencedRelation: "positions"
             referencedColumns: ["id"]
           },

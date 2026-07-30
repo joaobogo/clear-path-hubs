@@ -42,10 +42,12 @@ import {
   ShieldCheck,
   MoreHorizontal,
   NotebookPen,
+  Radar,
 } from "lucide-react";
 import { JobQualityPanel } from "@/components/positions/JobQualityPanel";
 import { GeneratedBlueprintPanel } from "@/components/positions/generated-blueprint-panel";
 import { RoleMemoryPanel } from "@/components/role-memory-panel";
+import { SourcingOpsPanel } from "@/components/positions/sourcing-ops-panel";
 import { useConfirmAction } from "@/components/ds";
 import {
   DropdownMenu,
@@ -83,6 +85,7 @@ const TABS = [
   { id: "screening", label: "Screening", icon: ListChecks },
   { id: "blueprint", label: "Scoring blueprint", icon: Gauge },
   { id: "pipeline", label: "Pipeline", icon: Users },
+  { id: "sourcing", label: "Sourcing", icon: Radar },
   { id: "memory", label: "Memory & handoff", icon: NotebookPen },
   { id: "activity", label: "Activity", icon: History },
   { id: "audit", label: "Audit", icon: ShieldCheck },
@@ -287,6 +290,7 @@ function PositionWorkspace() {
           <BlueprintTab position={p} screening={screening} />
         )}
         {tab === "pipeline" && <PipelineTab matches={matches} />}
+        {tab === "sourcing" && <SourcingOpsPanel positionId={id} />}
         {tab === "memory" && <RoleMemoryPanel positionId={id} canEdit={true} />}
         {tab === "activity" && <ActivityTab id={id} />}
         {tab === "audit" && <AuditTab id={id} />}

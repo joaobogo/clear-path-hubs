@@ -84,7 +84,7 @@ const TILES: Tile[] = INDUSTRY_ENTRIES.map((entry) => {
 
 function IndustriesIndex() {
   const search = Route.useSearch();
-  const navigate = useNavigate({ from: "/industries" });
+  const navigate = useNavigate({ from: "/industries/" });
   const resultsRef = useRef<HTMLHeadingElement>(null);
   const [inputQ, setInputQ] = useState(search.q);
 
