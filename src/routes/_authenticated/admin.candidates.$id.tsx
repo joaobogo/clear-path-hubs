@@ -142,16 +142,22 @@ function CandidateWorkspace() {
     await router.invalidate();
   };
 
-  const run = async (label: string, fn: () => Promise<Any>) => {
+  const run = async (
+    label: string,
+    fn: () => Promise<Any>,
+    opts?: { onError?: (err: Error) => void; onSuccess?: () => void },
+  ) => {
     setBusy(label);
     try {
       const r = await fn();
       toast.success(
         `${label} → ${r?.state ?? r?.action ?? "done"}${r?.trace_id ? ` (${r.trace_id})` : ""}`,
       );
+      opts?.onSuccess?.();
       await invalidate();
     } catch (e) {
-      toast.error(`${label} failed: ${(e as Error).message}`);
+      if (opts?.onError) opts.onError(e as Error);
+      else toast.error(`${label} failed: ${(e as Error).message}`);
     } finally {
       setBusy(null);
     }
