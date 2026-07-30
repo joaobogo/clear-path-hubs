@@ -47,6 +47,7 @@ import { Route as JobsIndexRouteImport } from './routes/jobs.index'
 import { Route as IndustriesIndexRouteImport } from './routes/industries.index'
 import { Route as BlogIndexRouteImport } from './routes/blog.index'
 import { Route as ShareTokenRouteImport } from './routes/share.$token'
+import { Route as PilotIntakeRouteImport } from './routes/pilot_.intake'
 import { Route as PartnershipsStaffingRouteImport } from './routes/partnerships.staffing'
 import { Route as IntakeConfirmationRouteImport } from './routes/intake_.confirmation'
 import { Route as IndustriesNonProfitRouteImport } from './routes/industries.non-profit'
@@ -325,6 +326,11 @@ const BlogIndexRoute = BlogIndexRouteImport.update({
 const ShareTokenRoute = ShareTokenRouteImport.update({
   id: '/share/$token',
   path: '/share/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PilotIntakeRoute = PilotIntakeRouteImport.update({
+  id: '/pilot_/intake',
+  path: '/pilot/intake',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PartnershipsStaffingRoute = PartnershipsStaffingRouteImport.update({
@@ -879,6 +885,7 @@ export interface FileRoutesByFullPath {
   '/industries/non-profit': typeof IndustriesNonProfitRoute
   '/intake/confirmation': typeof IntakeConfirmationRoute
   '/partnerships/staffing': typeof PartnershipsStaffingRoute
+  '/pilot/intake': typeof PilotIntakeRoute
   '/share/$token': typeof ShareTokenRoute
   '/blog/': typeof BlogIndexRoute
   '/industries/': typeof IndustriesIndexRoute
@@ -1005,6 +1012,7 @@ export interface FileRoutesByTo {
   '/industries/non-profit': typeof IndustriesNonProfitRoute
   '/intake/confirmation': typeof IntakeConfirmationRoute
   '/partnerships/staffing': typeof PartnershipsStaffingRoute
+  '/pilot/intake': typeof PilotIntakeRoute
   '/share/$token': typeof ShareTokenRoute
   '/blog': typeof BlogIndexRoute
   '/industries': typeof IndustriesIndexRoute
@@ -1129,6 +1137,7 @@ export interface FileRoutesById {
   '/industries/non-profit': typeof IndustriesNonProfitRoute
   '/intake_/confirmation': typeof IntakeConfirmationRoute
   '/partnerships/staffing': typeof PartnershipsStaffingRoute
+  '/pilot_/intake': typeof PilotIntakeRoute
   '/share/$token': typeof ShareTokenRoute
   '/blog/': typeof BlogIndexRoute
   '/industries/': typeof IndustriesIndexRoute
@@ -1260,6 +1269,7 @@ export interface FileRouteTypes {
     | '/industries/non-profit'
     | '/intake/confirmation'
     | '/partnerships/staffing'
+    | '/pilot/intake'
     | '/share/$token'
     | '/blog/'
     | '/industries/'
@@ -1386,6 +1396,7 @@ export interface FileRouteTypes {
     | '/industries/non-profit'
     | '/intake/confirmation'
     | '/partnerships/staffing'
+    | '/pilot/intake'
     | '/share/$token'
     | '/blog'
     | '/industries'
@@ -1509,6 +1520,7 @@ export interface FileRouteTypes {
     | '/industries/non-profit'
     | '/intake_/confirmation'
     | '/partnerships/staffing'
+    | '/pilot_/intake'
     | '/share/$token'
     | '/blog/'
     | '/industries/'
@@ -1636,6 +1648,7 @@ export interface RootRouteChildren {
   IndustriesNonProfitRoute: typeof IndustriesNonProfitRoute
   IntakeConfirmationRoute: typeof IntakeConfirmationRoute
   PartnershipsStaffingRoute: typeof PartnershipsStaffingRoute
+  PilotIntakeRoute: typeof PilotIntakeRoute
   ShareTokenRoute: typeof ShareTokenRoute
   BlogIndexRoute: typeof BlogIndexRoute
   IndustriesIndexRoute: typeof IndustriesIndexRoute
@@ -1925,6 +1938,13 @@ declare module '@tanstack/react-router' {
       path: '/share/$token'
       fullPath: '/share/$token'
       preLoaderRoute: typeof ShareTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pilot_/intake': {
+      id: '/pilot_/intake'
+      path: '/pilot/intake'
+      fullPath: '/pilot/intake'
+      preLoaderRoute: typeof PilotIntakeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/partnerships/staffing': {
@@ -2870,6 +2890,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndustriesNonProfitRoute: IndustriesNonProfitRoute,
   IntakeConfirmationRoute: IntakeConfirmationRoute,
   PartnershipsStaffingRoute: PartnershipsStaffingRoute,
+  PilotIntakeRoute: PilotIntakeRoute,
   ShareTokenRoute: ShareTokenRoute,
   BlogIndexRoute: BlogIndexRoute,
   IndustriesIndexRoute: IndustriesIndexRoute,
