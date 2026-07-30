@@ -5141,6 +5141,64 @@ export type Database = {
           },
         ]
       }
+      org_availability_windows: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          end_minute: number
+          id: string
+          organization_id: string
+          start_minute: number
+          timezone: string
+          updated_at: string
+          weekday: number
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          end_minute: number
+          id?: string
+          organization_id: string
+          start_minute: number
+          timezone?: string
+          updated_at?: string
+          weekday: number
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          end_minute?: number
+          id?: string
+          organization_id?: string
+          start_minute?: number
+          timezone?: string
+          updated_at?: string
+          weekday?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "org_availability_windows_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "admin_clients_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "org_availability_windows_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "org_availability_windows_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_portfolio_rollup"
+            referencedColumns: ["organization_id"]
+          },
+        ]
+      }
       org_scheduling_settings: {
         Row: {
           availability_window_days: number
@@ -10689,6 +10747,7 @@ export type Database = {
         | "client_declined"
         | "client_information_requested"
         | "contact_release_requested"
+        | "interview_rescheduled"
       file_status: "uploading" | "ready" | "failed" | "deleted"
       hire_close_reason:
         | "candidate_declined"
@@ -11112,6 +11171,7 @@ export const Constants = {
         "client_declined",
         "client_information_requested",
         "contact_release_requested",
+        "interview_rescheduled",
       ],
       file_status: ["uploading", "ready", "failed", "deleted"],
       hire_close_reason: [
