@@ -262,7 +262,6 @@
   img,
   svg {
     max-width: 100% !important;
-    height: auto !important;
   }
 
   /* Print URLs behind links so a paper copy stays useful, but skip
