@@ -380,6 +380,7 @@ function CandidateDetailPage() {
         onOpenChange={(v) => !v && setDialogAction(null)}
         onConfirm={(payload) => {
           if (act.isPending) return; // guard against double submission
+          stageBeforeRef.current = candidate.stage;
           act.mutate(payload);
         }}
       />
