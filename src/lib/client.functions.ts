@@ -449,9 +449,12 @@ export const getClientPositionDetail = createServerFn({ method: "GET" })
       .select(
         `id, title, status, location, work_model, employment_type, seniority, department,
          description, requirements, preferred_requirements, dealbreakers, openings,
-         compensation, work_authorization, intake_context,
+         compensation, work_authorization, intake_context, evaluation_weights,
+         blueprint, blueprint_status, blueprint_generated_at, blueprint_confirmed_at,
+         jd_file_name, jd_source, company_research,
          published_at, approved_at, submitted_at, closed_at, created_at, updated_at`,
       )
+
       .eq("organization_id", data.orgId)
       .eq("id", data.positionId)
       .maybeSingle();
@@ -1726,4 +1729,55 @@ export const updateClientTimezone = createServerFn({ method: "POST" })
       trace_id,
     });
     return { ok: true, timezone: (after as AnyRow)?.timezone as string };
+  });
+
+/* ------------------------------------------------------------------ */
+/* Role blueprint confirmation                                         */
+/* ------------------------------------------------------------------ */
+
+const confirmBlueprintSchema = z.object({
+  orgId: z.string().uuid(),
+  positionId: z.string().uuid(),
+});
+
+/**
+ * The client signs off on the AI-generated blueprint. This never changes the
+ * generated content — it only records that a human reviewed it, which the
+ * admin review centre and the delivery gate both read.
+ */
+export const confirmRoleBlueprint = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: z.infer<typeof confirmBlueprintSchema>) =>
+    confirmBlueprintSchema.parse(input),
+  )
+  .handler(async ({ context, data }) => {
+    const trace_id = crypto.randomUUID();
+    const { data: before } = await context.supabase
+      .from("positions")
+      .select("id, blueprint_status, blueprint_confirmed_at")
+      .eq("organization_id", data.orgId)
+      .eq("id", data.positionId)
+      .maybeSingle();
+    if (!before) throw new Error("Position not found");
+
+    const { data: after, error } = await context.supabase
+      .from("positions")
+      .update({ blueprint_confirmed_at: new Date().toISOString() })
+      .eq("organization_id", data.orgId)
+      .eq("id", data.positionId)
+      .select("id, blueprint_confirmed_at")
+      .maybeSingle();
+    if (error) throw new Error(error.message);
+
+    await writeAudit(context.supabase, {
+      actor: context.userId,
+      action: "client.position.blueprint.confirm",
+      entity_type: "positions",
+      entity_id: data.positionId,
+      organization_id: data.orgId,
+      before,
+      after,
+      trace_id,
+    });
+    return { ok: true as const, confirmed_at: (after as AnyRow)?.blueprint_confirmed_at as string };
   });

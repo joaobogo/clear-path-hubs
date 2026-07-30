@@ -3161,6 +3161,7 @@ export type Database = {
           created_at: string
           id: string
           idempotency_key: string
+          intake_mode: string
           legacy_source_id: string | null
           legacy_source_system: string | null
           legacy_source_table: string | null
@@ -3188,6 +3189,7 @@ export type Database = {
           created_at?: string
           id?: string
           idempotency_key: string
+          intake_mode?: string
           legacy_source_id?: string | null
           legacy_source_system?: string | null
           legacy_source_table?: string | null
@@ -3215,6 +3217,7 @@ export type Database = {
           created_at?: string
           id?: string
           idempotency_key?: string
+          intake_mode?: string
           legacy_source_id?: string | null
           legacy_source_system?: string | null
           legacy_source_table?: string | null
@@ -5031,6 +5034,10 @@ export type Database = {
           onboarding_status: string
           parent_organization_id: string | null
           phone: string | null
+          pilot_completed_at: string | null
+          pilot_position_id: string | null
+          pilot_started_at: string | null
+          pilot_status: string
           primary_contact_email: string | null
           primary_contact_name: string | null
           status: Database["public"]["Enums"]["org_status"]
@@ -5070,6 +5077,10 @@ export type Database = {
           onboarding_status?: string
           parent_organization_id?: string | null
           phone?: string | null
+          pilot_completed_at?: string | null
+          pilot_position_id?: string | null
+          pilot_started_at?: string | null
+          pilot_status?: string
           primary_contact_email?: string | null
           primary_contact_name?: string | null
           status?: Database["public"]["Enums"]["org_status"]
@@ -5109,6 +5120,10 @@ export type Database = {
           onboarding_status?: string
           parent_organization_id?: string | null
           phone?: string | null
+          pilot_completed_at?: string | null
+          pilot_position_id?: string | null
+          pilot_started_at?: string | null
+          pilot_status?: string
           primary_contact_email?: string | null
           primary_contact_name?: string | null
           status?: Database["public"]["Enums"]["org_status"]
@@ -5137,6 +5152,41 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "v_portfolio_rollup"
             referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "organizations_pilot_position_id_fkey"
+            columns: ["pilot_position_id"]
+            isOneToOne: false
+            referencedRelation: "admin_pipeline_health"
+            referencedColumns: ["position_id"]
+          },
+          {
+            foreignKeyName: "organizations_pilot_position_id_fkey"
+            columns: ["pilot_position_id"]
+            isOneToOne: false
+            referencedRelation: "admin_positions_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "organizations_pilot_position_id_fkey"
+            columns: ["pilot_position_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_my_applications"
+            referencedColumns: ["position_id"]
+          },
+          {
+            foreignKeyName: "organizations_pilot_position_id_fkey"
+            columns: ["pilot_position_id"]
+            isOneToOne: false
+            referencedRelation: "client_positions_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "organizations_pilot_position_id_fkey"
+            columns: ["pilot_position_id"]
+            isOneToOne: false
+            referencedRelation: "positions"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -5613,8 +5663,15 @@ export type Database = {
       positions: {
         Row: {
           approved_at: string | null
+          blueprint: Json
+          blueprint_confirmed_at: string | null
+          blueprint_error: string | null
+          blueprint_generated_at: string | null
+          blueprint_model: string | null
+          blueprint_status: string
           business_unit: string | null
           closed_at: string | null
+          company_research: Json
           compensation: Json
           compensation_collected: boolean
           compensation_visibility: string
@@ -5631,6 +5688,11 @@ export type Database = {
           id: string
           intake_context: Json
           is_test_record: boolean | null
+          jd_file_name: string | null
+          jd_file_path: string | null
+          jd_file_size: number | null
+          jd_source: string | null
+          jd_text: string | null
           legacy_source_id: string | null
           legacy_source_system: string | null
           legacy_source_table: string | null
@@ -5668,8 +5730,15 @@ export type Database = {
         }
         Insert: {
           approved_at?: string | null
+          blueprint?: Json
+          blueprint_confirmed_at?: string | null
+          blueprint_error?: string | null
+          blueprint_generated_at?: string | null
+          blueprint_model?: string | null
+          blueprint_status?: string
           business_unit?: string | null
           closed_at?: string | null
+          company_research?: Json
           compensation?: Json
           compensation_collected?: boolean
           compensation_visibility?: string
@@ -5688,6 +5757,11 @@ export type Database = {
           id?: string
           intake_context?: Json
           is_test_record?: boolean | null
+          jd_file_name?: string | null
+          jd_file_path?: string | null
+          jd_file_size?: number | null
+          jd_source?: string | null
+          jd_text?: string | null
           legacy_source_id?: string | null
           legacy_source_system?: string | null
           legacy_source_table?: string | null
@@ -5725,8 +5799,15 @@ export type Database = {
         }
         Update: {
           approved_at?: string | null
+          blueprint?: Json
+          blueprint_confirmed_at?: string | null
+          blueprint_error?: string | null
+          blueprint_generated_at?: string | null
+          blueprint_model?: string | null
+          blueprint_status?: string
           business_unit?: string | null
           closed_at?: string | null
+          company_research?: Json
           compensation?: Json
           compensation_collected?: boolean
           compensation_visibility?: string
@@ -5745,6 +5826,11 @@ export type Database = {
           id?: string
           intake_context?: Json
           is_test_record?: boolean | null
+          jd_file_name?: string | null
+          jd_file_path?: string | null
+          jd_file_size?: number | null
+          jd_source?: string | null
+          jd_text?: string | null
           legacy_source_id?: string | null
           legacy_source_system?: string | null
           legacy_source_table?: string | null

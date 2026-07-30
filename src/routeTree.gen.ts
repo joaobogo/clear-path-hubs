@@ -67,9 +67,11 @@ import { Route as BlogCategorySlugRouteImport } from './routes/blog.category.$sl
 import { Route as ApplyReceivedApplicationIdRouteImport } from './routes/apply.received.$applicationId'
 import { Route as ApiPublicQaSeedRouteImport } from './routes/api/public/qa-seed'
 import { Route as ApiPublicIntakeRouteImport } from './routes/api/public/intake'
+import { Route as ApiPublicExpressIntakeRouteImport } from './routes/api/public/express-intake'
 import { Route as ApiPublicEventsRouteImport } from './routes/api/public/events'
 import { Route as ApiPublicContactRouteImport } from './routes/api/public/contact'
 import { Route as ApiPublicBootstrapAdminRouteImport } from './routes/api/public/bootstrap-admin'
+import { Route as ApiPublicBlueprintRunRouteImport } from './routes/api/public/blueprint-run'
 import { Route as AuthenticatedMeSettingsRouteImport } from './routes/_authenticated/me.settings'
 import { Route as AuthenticatedMeProfileRouteImport } from './routes/_authenticated/me.profile'
 import { Route as AuthenticatedMeMessagesRouteImport } from './routes/_authenticated/me.messages'
@@ -121,6 +123,7 @@ import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/em
 import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
 import { Route as ApiPublicPipelineRunRouteImport } from './routes/api/public/pipeline.run'
 import { Route as ApiPublicIntakeStatusIdRouteImport } from './routes/api/public/intake-status.$id'
+import { Route as ApiPublicBlueprintStatusIntakeIdRouteImport } from './routes/api/public/blueprint-status.$intakeId'
 import { Route as AuthenticatedMeApplicationsIdRouteImport } from './routes/_authenticated/me.applications.$id'
 import { Route as AuthenticatedClientPositionsIdRouteImport } from './routes/_authenticated/client.positions.$id'
 import { Route as AuthenticatedClientCandidatesIdRouteImport } from './routes/_authenticated/client.candidates.$id'
@@ -426,6 +429,11 @@ const ApiPublicIntakeRoute = ApiPublicIntakeRouteImport.update({
   path: '/api/public/intake',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicExpressIntakeRoute = ApiPublicExpressIntakeRouteImport.update({
+  id: '/api/public/express-intake',
+  path: '/api/public/express-intake',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicEventsRoute = ApiPublicEventsRouteImport.update({
   id: '/api/public/events',
   path: '/api/public/events',
@@ -439,6 +447,11 @@ const ApiPublicContactRoute = ApiPublicContactRouteImport.update({
 const ApiPublicBootstrapAdminRoute = ApiPublicBootstrapAdminRouteImport.update({
   id: '/api/public/bootstrap-admin',
   path: '/api/public/bootstrap-admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicBlueprintRunRoute = ApiPublicBlueprintRunRouteImport.update({
+  id: '/api/public/blueprint-run',
+  path: '/api/public/blueprint-run',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedMeSettingsRoute = AuthenticatedMeSettingsRouteImport.update({
@@ -736,6 +749,12 @@ const ApiPublicIntakeStatusIdRoute = ApiPublicIntakeStatusIdRouteImport.update({
   path: '/api/public/intake-status/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicBlueprintStatusIntakeIdRoute =
+  ApiPublicBlueprintStatusIntakeIdRouteImport.update({
+    id: '/api/public/blueprint-status/$intakeId',
+    path: '/api/public/blueprint-status/$intakeId',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AuthenticatedMeApplicationsIdRoute =
   AuthenticatedMeApplicationsIdRouteImport.update({
     id: '/$id',
@@ -902,9 +921,11 @@ export interface FileRoutesByFullPath {
   '/me/messages': typeof AuthenticatedMeMessagesRoute
   '/me/profile': typeof AuthenticatedMeProfileRoute
   '/me/settings': typeof AuthenticatedMeSettingsRoute
+  '/api/public/blueprint-run': typeof ApiPublicBlueprintRunRoute
   '/api/public/bootstrap-admin': typeof ApiPublicBootstrapAdminRoute
   '/api/public/contact': typeof ApiPublicContactRoute
   '/api/public/events': typeof ApiPublicEventsRoute
+  '/api/public/express-intake': typeof ApiPublicExpressIntakeRoute
   '/api/public/intake': typeof ApiPublicIntakeRoute
   '/api/public/qa-seed': typeof ApiPublicQaSeedRoute
   '/apply/received/$applicationId': typeof ApplyReceivedApplicationIdRoute
@@ -922,6 +943,7 @@ export interface FileRoutesByFullPath {
   '/client/candidates/$id': typeof AuthenticatedClientCandidatesIdRoute
   '/client/positions/$id': typeof AuthenticatedClientPositionsIdRoute
   '/me/applications/$id': typeof AuthenticatedMeApplicationsIdRoute
+  '/api/public/blueprint-status/$intakeId': typeof ApiPublicBlueprintStatusIntakeIdRoute
   '/api/public/intake-status/$id': typeof ApiPublicIntakeStatusIdRoute
   '/api/public/pipeline/run': typeof ApiPublicPipelineRunRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -1018,9 +1040,11 @@ export interface FileRoutesByTo {
   '/me/messages': typeof AuthenticatedMeMessagesRoute
   '/me/profile': typeof AuthenticatedMeProfileRoute
   '/me/settings': typeof AuthenticatedMeSettingsRoute
+  '/api/public/blueprint-run': typeof ApiPublicBlueprintRunRoute
   '/api/public/bootstrap-admin': typeof ApiPublicBootstrapAdminRoute
   '/api/public/contact': typeof ApiPublicContactRoute
   '/api/public/events': typeof ApiPublicEventsRoute
+  '/api/public/express-intake': typeof ApiPublicExpressIntakeRoute
   '/api/public/intake': typeof ApiPublicIntakeRoute
   '/api/public/qa-seed': typeof ApiPublicQaSeedRoute
   '/apply/received/$applicationId': typeof ApplyReceivedApplicationIdRoute
@@ -1038,6 +1062,7 @@ export interface FileRoutesByTo {
   '/client/candidates/$id': typeof AuthenticatedClientCandidatesIdRoute
   '/client/positions/$id': typeof AuthenticatedClientPositionsIdRoute
   '/me/applications/$id': typeof AuthenticatedMeApplicationsIdRoute
+  '/api/public/blueprint-status/$intakeId': typeof ApiPublicBlueprintStatusIntakeIdRoute
   '/api/public/intake-status/$id': typeof ApiPublicIntakeStatusIdRoute
   '/api/public/pipeline/run': typeof ApiPublicPipelineRunRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -1146,9 +1171,11 @@ export interface FileRoutesById {
   '/_authenticated/me/messages': typeof AuthenticatedMeMessagesRoute
   '/_authenticated/me/profile': typeof AuthenticatedMeProfileRoute
   '/_authenticated/me/settings': typeof AuthenticatedMeSettingsRoute
+  '/api/public/blueprint-run': typeof ApiPublicBlueprintRunRoute
   '/api/public/bootstrap-admin': typeof ApiPublicBootstrapAdminRoute
   '/api/public/contact': typeof ApiPublicContactRoute
   '/api/public/events': typeof ApiPublicEventsRoute
+  '/api/public/express-intake': typeof ApiPublicExpressIntakeRoute
   '/api/public/intake': typeof ApiPublicIntakeRoute
   '/api/public/qa-seed': typeof ApiPublicQaSeedRoute
   '/apply/received/$applicationId': typeof ApplyReceivedApplicationIdRoute
@@ -1166,6 +1193,7 @@ export interface FileRoutesById {
   '/_authenticated/client/candidates/$id': typeof AuthenticatedClientCandidatesIdRoute
   '/_authenticated/client/positions/$id': typeof AuthenticatedClientPositionsIdRoute
   '/_authenticated/me/applications/$id': typeof AuthenticatedMeApplicationsIdRoute
+  '/api/public/blueprint-status/$intakeId': typeof ApiPublicBlueprintStatusIntakeIdRoute
   '/api/public/intake-status/$id': typeof ApiPublicIntakeStatusIdRoute
   '/api/public/pipeline/run': typeof ApiPublicPipelineRunRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -1274,9 +1302,11 @@ export interface FileRouteTypes {
     | '/me/messages'
     | '/me/profile'
     | '/me/settings'
+    | '/api/public/blueprint-run'
     | '/api/public/bootstrap-admin'
     | '/api/public/contact'
     | '/api/public/events'
+    | '/api/public/express-intake'
     | '/api/public/intake'
     | '/api/public/qa-seed'
     | '/apply/received/$applicationId'
@@ -1294,6 +1324,7 @@ export interface FileRouteTypes {
     | '/client/candidates/$id'
     | '/client/positions/$id'
     | '/me/applications/$id'
+    | '/api/public/blueprint-status/$intakeId'
     | '/api/public/intake-status/$id'
     | '/api/public/pipeline/run'
     | '/lovable/email/auth/preview'
@@ -1390,9 +1421,11 @@ export interface FileRouteTypes {
     | '/me/messages'
     | '/me/profile'
     | '/me/settings'
+    | '/api/public/blueprint-run'
     | '/api/public/bootstrap-admin'
     | '/api/public/contact'
     | '/api/public/events'
+    | '/api/public/express-intake'
     | '/api/public/intake'
     | '/api/public/qa-seed'
     | '/apply/received/$applicationId'
@@ -1410,6 +1443,7 @@ export interface FileRouteTypes {
     | '/client/candidates/$id'
     | '/client/positions/$id'
     | '/me/applications/$id'
+    | '/api/public/blueprint-status/$intakeId'
     | '/api/public/intake-status/$id'
     | '/api/public/pipeline/run'
     | '/lovable/email/auth/preview'
@@ -1517,9 +1551,11 @@ export interface FileRouteTypes {
     | '/_authenticated/me/messages'
     | '/_authenticated/me/profile'
     | '/_authenticated/me/settings'
+    | '/api/public/blueprint-run'
     | '/api/public/bootstrap-admin'
     | '/api/public/contact'
     | '/api/public/events'
+    | '/api/public/express-intake'
     | '/api/public/intake'
     | '/api/public/qa-seed'
     | '/apply/received/$applicationId'
@@ -1537,6 +1573,7 @@ export interface FileRouteTypes {
     | '/_authenticated/client/candidates/$id'
     | '/_authenticated/client/positions/$id'
     | '/_authenticated/me/applications/$id'
+    | '/api/public/blueprint-status/$intakeId'
     | '/api/public/intake-status/$id'
     | '/api/public/pipeline/run'
     | '/lovable/email/auth/preview'
@@ -1603,15 +1640,18 @@ export interface RootRouteChildren {
   BlogIndexRoute: typeof BlogIndexRoute
   IndustriesIndexRoute: typeof IndustriesIndexRoute
   JobsIndexRoute: typeof JobsIndexRoute
+  ApiPublicBlueprintRunRoute: typeof ApiPublicBlueprintRunRoute
   ApiPublicBootstrapAdminRoute: typeof ApiPublicBootstrapAdminRoute
   ApiPublicContactRoute: typeof ApiPublicContactRoute
   ApiPublicEventsRoute: typeof ApiPublicEventsRoute
+  ApiPublicExpressIntakeRoute: typeof ApiPublicExpressIntakeRoute
   ApiPublicIntakeRoute: typeof ApiPublicIntakeRoute
   ApiPublicQaSeedRoute: typeof ApiPublicQaSeedRoute
   ApplyReceivedApplicationIdRoute: typeof ApplyReceivedApplicationIdRoute
   BlogCategorySlugRoute: typeof BlogCategorySlugRoute
   JobsIdApplyRoute: typeof JobsIdApplyRoute
   JobsIdIndexRoute: typeof JobsIdIndexRoute
+  ApiPublicBlueprintStatusIntakeIdRoute: typeof ApiPublicBlueprintStatusIntakeIdRoute
   ApiPublicIntakeStatusIdRoute: typeof ApiPublicIntakeStatusIdRoute
   ApiPublicPipelineRunRoute: typeof ApiPublicPipelineRunRoute
   LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
@@ -2027,6 +2067,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicIntakeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/express-intake': {
+      id: '/api/public/express-intake'
+      path: '/api/public/express-intake'
+      fullPath: '/api/public/express-intake'
+      preLoaderRoute: typeof ApiPublicExpressIntakeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/events': {
       id: '/api/public/events'
       path: '/api/public/events'
@@ -2046,6 +2093,13 @@ declare module '@tanstack/react-router' {
       path: '/api/public/bootstrap-admin'
       fullPath: '/api/public/bootstrap-admin'
       preLoaderRoute: typeof ApiPublicBootstrapAdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/blueprint-run': {
+      id: '/api/public/blueprint-run'
+      path: '/api/public/blueprint-run'
+      fullPath: '/api/public/blueprint-run'
+      preLoaderRoute: typeof ApiPublicBlueprintRunRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/me/settings': {
@@ -2403,6 +2457,13 @@ declare module '@tanstack/react-router' {
       path: '/api/public/intake-status/$id'
       fullPath: '/api/public/intake-status/$id'
       preLoaderRoute: typeof ApiPublicIntakeStatusIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/blueprint-status/$intakeId': {
+      id: '/api/public/blueprint-status/$intakeId'
+      path: '/api/public/blueprint-status/$intakeId'
+      fullPath: '/api/public/blueprint-status/$intakeId'
+      preLoaderRoute: typeof ApiPublicBlueprintStatusIntakeIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/me/applications/$id': {
@@ -2813,15 +2874,18 @@ const rootRouteChildren: RootRouteChildren = {
   BlogIndexRoute: BlogIndexRoute,
   IndustriesIndexRoute: IndustriesIndexRoute,
   JobsIndexRoute: JobsIndexRoute,
+  ApiPublicBlueprintRunRoute: ApiPublicBlueprintRunRoute,
   ApiPublicBootstrapAdminRoute: ApiPublicBootstrapAdminRoute,
   ApiPublicContactRoute: ApiPublicContactRoute,
   ApiPublicEventsRoute: ApiPublicEventsRoute,
+  ApiPublicExpressIntakeRoute: ApiPublicExpressIntakeRoute,
   ApiPublicIntakeRoute: ApiPublicIntakeRoute,
   ApiPublicQaSeedRoute: ApiPublicQaSeedRoute,
   ApplyReceivedApplicationIdRoute: ApplyReceivedApplicationIdRoute,
   BlogCategorySlugRoute: BlogCategorySlugRoute,
   JobsIdApplyRoute: JobsIdApplyRoute,
   JobsIdIndexRoute: JobsIdIndexRoute,
+  ApiPublicBlueprintStatusIntakeIdRoute: ApiPublicBlueprintStatusIntakeIdRoute,
   ApiPublicIntakeStatusIdRoute: ApiPublicIntakeStatusIdRoute,
   ApiPublicPipelineRunRoute: ApiPublicPipelineRunRoute,
   LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,
@@ -2831,13 +2895,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

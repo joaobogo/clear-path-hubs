@@ -1,5 +1,9 @@
 import type { ComponentType } from 'react'
 import { template as newApplicationAlertTemplate } from './new-application-alert'
+import { template as expressWelcomeTemplate } from './express-welcome'
+import { template as roleBlueprintReadyTemplate } from './role-blueprint-ready'
+import { template as blueprintDelayedTemplate } from './blueprint-delayed'
+
 
 
 export interface TemplateEntry {
@@ -21,5 +25,9 @@ export interface TemplateEntry {
  */
 export const TEMPLATES: Record<string, TemplateEntry> = {
   'new-application-alert': newApplicationAlertTemplate,
+  'express-welcome': expressWelcomeTemplate,
+  'role-blueprint-ready': roleBlueprintReadyTemplate,
+  'blueprint-delayed': blueprintDelayedTemplate,
 }
+
 
