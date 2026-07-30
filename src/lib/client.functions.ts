@@ -17,6 +17,12 @@ import {
   type MatchStage,
   type KpiRow,
 } from "@/lib/client-kpi.server";
+import {
+  buildPipelineStatusLine,
+  buildPipelineActionLabel,
+  type PipelineStatusInput,
+} from "@/lib/client-pipeline-language";
+
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
