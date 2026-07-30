@@ -281,8 +281,22 @@ export const Route = createFileRoute("/api/public/express-intake")({
                 { status: 500 },
               );
             }
+            // Existing account. Never silently reset the password from a public
+            // form, and never create work inside their workspace unless the
+            // request actually comes from them.
+            if (callerUserId !== found) {
+              return Response.json(
+                {
+                  ok: false,
+                  trace_id: traceId,
+                  error: "account_exists",
+                  message: "An account already uses that email. Sign in first, then launch your role.",
+                },
+                { status: 409 },
+              );
+            }
             authUserId = found;
-            // Existing account: never silently reset their password from a public form.
+
           } else {
             authUserId = created?.user?.id ?? null;
             accountCreated = true;
