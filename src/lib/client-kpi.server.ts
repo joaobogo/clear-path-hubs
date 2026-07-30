@@ -45,6 +45,10 @@ export type KpiRow = {
   interview_needs_confirmation: boolean;
   /** Soonest confirmed interview time, if one is booked. */
   next_interview_at: string | null;
+  /** When the earliest unconfirmed interview was requested. */
+  interview_requested_at: string | null;
+  /** When this candidate entered its current stage (falls back to delivery). */
+  stage_entered_at: string | null;
 };
 
 
@@ -59,6 +63,10 @@ export type ClientKpis = {
   interviews_to_confirm: number;
   /** Candidates delivered and still awaiting a first client decision. */
   awaiting_decision: number;
+  /** Oldest timestamps behind each queue count — makes delay visible. */
+  oldest_awaiting_decision_at: string | null;
+  oldest_interview_to_confirm_at: string | null;
+  oldest_offer_at: string | null;
   offers: number;
   hires: number;
   active_positions: number;
@@ -88,11 +96,13 @@ export async function loadKpiRows(
   const scheduledInterviews = new Set<string>();
   const unconfirmedInterviews = new Set<string>();
   const nextInterviewAt = new Map<string, string>();
+  const interviewRequestedAt = new Map<string, string>();
+  const stageEnteredAt = new Map<string, string>();
 
   if (matchIds.length > 0) {
     const { data: ivs } = await supabase
       .from("interviews")
-      .select("candidate_match_id, status, scheduled_at")
+      .select("candidate_match_id, status, scheduled_at, created_at")
       .in("candidate_match_id", matchIds)
       .in("status", ["requested", "scheduling", "scheduled", "completed"]);
     for (const iv of (ivs as AnyRow[]) ?? []) {
@@ -107,9 +117,29 @@ export async function loadKpiRows(
       }
       if (iv.status === "requested" || iv.status === "scheduling") {
         unconfirmedInterviews.add(iv.candidate_match_id);
+        const at = iv.created_at as string | null;
+        if (at) {
+          const prev = interviewRequestedAt.get(iv.candidate_match_id);
+          if (!prev || at < prev) interviewRequestedAt.set(iv.candidate_match_id, at);
+        }
       }
     }
 
+    // When each candidate entered its current stage — the clock clients see.
+    const { data: history } = await supabase
+      .from("candidate_stage_history")
+      .select("candidate_match_id, to_stage, created_at")
+      .in("candidate_match_id", matchIds);
+    const stageByMatch = new Map<string, string>(
+      (matches as AnyRow[]).map((m) => [m.id as string, String(m.stage)]),
+    );
+    for (const h of ((history as AnyRow[]) ?? [])) {
+      if (stageByMatch.get(h.candidate_match_id) !== h.to_stage) continue;
+      const at = h.created_at as string | null;
+      if (!at) continue;
+      const prev = stageEnteredAt.get(h.candidate_match_id);
+      if (!prev || at > prev) stageEnteredAt.set(h.candidate_match_id, at);
+    }
   }
 
   return (matches as AnyRow[]).map((m) => ({
@@ -124,6 +154,8 @@ export async function loadKpiRows(
     interview_active: activeInterviews.has(m.id),
     interview_scheduled: scheduledInterviews.has(m.id),
     next_interview_at: nextInterviewAt.get(m.id) ?? null,
+    interview_requested_at: interviewRequestedAt.get(m.id) ?? null,
+    stage_entered_at: stageEnteredAt.get(m.id) ?? m.delivered_at ?? null,
 
     interview_needs_confirmation: unconfirmedInterviews.has(m.id),
   }));
@@ -145,6 +177,11 @@ export function isInInterview(r: KpiRow): boolean {
   );
 }
 
+/** Earliest non-null timestamp in a list. */
+function oldest(values: Array<string | null | undefined>): string | null {
+  return values.filter((v): v is string => Boolean(v)).sort()[0] ?? null;
+}
+
 export function computeKpis(rows: KpiRow[], activePositions = 0): ClientKpis {
   return {
     delivered: new Set(rows.map((r) => r.candidate_profile_id)).size,
@@ -157,6 +194,17 @@ export function computeKpis(rows: KpiRow[], activePositions = 0): ClientKpis {
     offers: rows.filter((r) => r.stage === "offer").length,
     hires: rows.filter((r) => r.stage === "hired").length,
     active_positions: activePositions,
+    oldest_awaiting_decision_at: oldest(
+      rows.filter((r) => r.stage === "delivered").map((r) => r.delivered_at ?? r.stage_entered_at),
+    ),
+    oldest_interview_to_confirm_at: oldest(
+      rows
+        .filter((r) => r.interview_needs_confirmation)
+        .map((r) => r.interview_requested_at ?? r.stage_entered_at),
+    ),
+    oldest_offer_at: oldest(
+      rows.filter((r) => r.stage === "offer").map((r) => r.stage_entered_at),
+    ),
   };
 }
 
