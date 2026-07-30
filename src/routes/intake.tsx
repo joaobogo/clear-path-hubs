@@ -142,6 +142,8 @@ function ExpressIntakePage() {
     // Already signed in? Reuse the account — never ask for another password.
     void (async () => {
       try {
+        const { data: sess } = await supabase.auth.getSession();
+        if (!sess?.session) return;
         const { data } = await supabase.auth.getUser();
         const user = data?.user;
         if (!user?.email) return;
