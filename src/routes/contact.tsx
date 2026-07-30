@@ -365,7 +365,6 @@ function ContactForm({ intent }: { intent: IntentSpec }) {
           email: payload.email,
           fullName: payload.name,
           companyName: payload.company || null,
-          companyDomain: payload.company || null,
           answers: {
             Topic: topic,
             Role: roleExtra,

@@ -197,7 +197,7 @@ export const Route = createFileRoute("/api/public/submit-to-attio")({
           job_title: sanitizeText(input.job_title, 160) || null,
           linkedin: sanitizeText(input.linkedin, 300) || null,
           company_name: sanitizeText(input.company_name, 200) || null,
-          company_domain: normalizeDomain(input.company_domain),
+          company_domain: resolveCompanyDomain(input.company_domain, input.email),
           answers: sanitizeAnswers(input.answers),
           consent_status: sanitizeText(input.consent_status, 80) || null,
           consent_at: input.consent_at ?? null,
