@@ -316,7 +316,7 @@ function AccountPage() {
           <EmptyState
             icon={Briefcase}
             title="No roles yet"
-            body="Once you brief a role, it appears here with its live stage and hire count."
+            description="Once you brief a role, it appears here with its live stage and hire count."
             action={{ label: "Submit a role", to: "/intake" }}
           />
         ) : (
@@ -394,7 +394,8 @@ function AccountPage() {
         {!isAdmin ? (
           <PermissionDenied
             title="Team details are admin-only"
-            body="Ask a workspace admin in your organisation to change permissions or invite teammates."
+            description="Ask a workspace admin in your organisation to change permissions or invite teammates."
+            whoToAsk="A workspace admin in your organisation"
           />
         ) : team.isLoading && members.length === 0 ? (
           <div className="p-5">
