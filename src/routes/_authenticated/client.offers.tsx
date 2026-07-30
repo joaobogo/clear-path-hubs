@@ -648,6 +648,10 @@ function OfferTermsDialog({
             work_model: workModel || null,
             location: location || null,
             offer_notes: notes || null,
+            guarantee_days: guaranteeDays ? Number(guaranteeDays) : null,
+            guarantee_starts_on: guaranteeStartsOn || null,
+            guarantee_terms: guaranteeTerms || null,
+            guarantee_visible_to_client: guaranteeVisible,
           },
         },
       });
