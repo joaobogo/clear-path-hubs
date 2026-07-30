@@ -41,6 +41,8 @@ export type KpiRow = {
   approved_fit_label: string | null;
   interview_active: boolean;
   interview_scheduled: boolean;
+  /** An interview exists that still needs the client to confirm a time. */
+  interview_needs_confirmation: boolean;
 };
 
 
@@ -50,6 +52,10 @@ export type ClientKpis = {
   shortlisted: number;
   interviewing: number;
   interview_scheduled: number;
+  /** Interviews requested or being scheduled — waiting on the client. */
+  interviews_to_confirm: number;
+  /** Candidates delivered and still awaiting a first client decision. */
+  awaiting_decision: number;
   offers: number;
   hires: number;
   active_positions: number;
