@@ -17,7 +17,7 @@ import {
  SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { LayoutGrid, List, Search, AlertCircle, Clock } from "lucide-react";
+import { LayoutGrid, List, Search, AlertCircle, Clock, Briefcase } from "lucide-react";
 
 const searchSchema = z.object({
  status: fallback(z.string(), "active").default("active"),
