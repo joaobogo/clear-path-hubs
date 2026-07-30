@@ -339,6 +339,14 @@ function PositionDetailPage() {
  )}
  </header>
 
+ {/* Plain-language pipeline status */}
+ {summary.pipeline_line && (
+ <p className="rounded-xl border bg-card px-4 py-3 text-sm font-medium text-foreground/90">
+ {summary.pipeline_line}
+ </p>
+ )}
+
+
  {/* 2. Hiring summary */}
  <section aria-label="Hiring summary" className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
  <SummaryTile
