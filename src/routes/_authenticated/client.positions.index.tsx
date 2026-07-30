@@ -59,6 +59,8 @@ type AnyRow = any;
 
 import { RoleProgressTracker } from "@/components/client/role-progress-tracker";
 import type { RoleProgress } from "@/lib/client-role-progress";
+import { EmptyState as SharedEmptyState } from "@/components/client/states";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type Row = {
  id: string;
@@ -683,30 +685,41 @@ function CompactList({ rows }: { rows: Row[] }) {
 }
 
 function EmptyState({ status }: { status: string }) {
- const map: Record<string, { title: string; body: string }> = {
+ const map: Record<string, { title: string; body: string; next: string }> = {
  active: {
  title: "No active searches right now",
- body: "When TaaSFlow activates a search, it will appear here with live progress.",
+ body: "Live searches appear here with progress, candidates delivered, and time in stage.",
+ next: "Submit a role and we'll open the pipeline for it.",
  },
  draft: {
  title: "Nothing under review",
- body: "Positions being reviewed will appear here before they go active.",
+ body: "Roles we're scoping with you sit here until the search goes live.",
+ next: "Submit a role to start the scoping conversation.",
  },
  paused: {
- title: "No paused positions",
- body: "Paused searches will appear here.",
+ title: "No paused searches",
+ body: "If you pause a search, it stays here with its pipeline intact.",
+ next: "Nothing to do — this is a good sign.",
  },
  closed: {
- title: "No closed positions yet",
- body: "Filled and closed positions will appear here for reference.",
+ title: "No closed searches yet",
+ body: "Filled and closed roles stay here for reference, with their hires and outcomes.",
+ next: "Nothing to do yet.",
  },
  };
  const s = map[status] ?? map.active;
  return (
- <div className="rounded-xl border bg-card p-10 text-center">
- <h3 className="text-base font-semibold">{s.title}</h3>
- <p className="mt-2 text-sm text-muted-foreground">{s.body}</p>
- </div>
+ <SharedEmptyState
+ icon={Briefcase}
+ title={s.title}
+ description={s.body}
+ whatAppearsHere={s.next}
+ action={
+ status === "active" || status === "draft"
+ ? { label: "Submit a role", to: "/intake" }
+ : { label: "See active searches", to: "/client/positions" }
+ }
+ />
  );
 }
 
