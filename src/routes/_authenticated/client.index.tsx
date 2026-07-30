@@ -6,6 +6,7 @@ import { getClientContext, getClientOverview, getClientTeam } from "@/lib/client
 import { countBlockingTasks } from "@/lib/tasks.functions";
 import { useClientOrgSearch } from "@/lib/use-client-org";
 import { CandidateCard } from "@/components/client/candidate-card";
+import { VisibilityNote } from "@/components/client/visibility-note";
 import { Button } from "@/components/ui/button";
 import {
   AlertTriangle,
