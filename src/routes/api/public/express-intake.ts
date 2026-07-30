@@ -62,13 +62,22 @@ function signatureOk(bytes: Uint8Array, ext: string): boolean {
   return true; // txt
 }
 
-function randomPassword(len: number): string {
-  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789!@#$%^&*";
-  const arr = new Uint32Array(len);
-  crypto.getRandomValues(arr);
-  let out = "";
-  for (let i = 0; i < len; i++) out += chars[arr[i] % chars.length];
-  return out;
+/**
+ * Resolve an existing auth user by email without paging the whole directory.
+ * profiles mirrors auth.users, so it is the cheap and complete lookup.
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function lookupUserIdByEmail(admin: any, email: string): Promise<string | null> {
+  const { data: prof } = await admin
+    .from("profiles")
+    .select("auth_user_id")
+    .ilike("email", email)
+    .maybeSingle();
+  if (prof?.auth_user_id) return prof.auth_user_id as string;
+  const { data: list } = await admin.auth.admin.listUsers({ page: 1, perPage: 1000 });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const found = list?.users?.find((u: any) => (u.email ?? "").toLowerCase() === email.toLowerCase());
+  return found?.id ?? null;
 }
 
 export const Route = createFileRoute("/api/public/express-intake")({
