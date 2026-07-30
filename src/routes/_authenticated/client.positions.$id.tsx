@@ -10,6 +10,8 @@ import {
  moveMatchStage,
  type MatchStage,
 } from "@/lib/client.functions";
+import { toFitPresentation } from "@/lib/client-fit-presentation";
+
 import { confirmRoleBlueprint } from "@/lib/client.functions";
 import { useClientOrgSearch } from "@/lib/use-client-org";
 import { useSupportView } from "@/lib/support-view";
