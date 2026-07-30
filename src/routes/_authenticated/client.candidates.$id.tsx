@@ -42,6 +42,8 @@ import { DownloadCvButton } from "@/components/download-cv-button";
 import { useClientOrgSearch } from "@/lib/use-client-org";
 import { JourneyTimeline } from "@/components/candidate/journey-timeline";
 import { NextStepNote } from "@/components/client/next-step-note";
+import { CompensationPanel } from "@/components/client/compensation-panel";
+import { getCompensationSignal } from "@/lib/compensation.functions";
 import { confirmationLine } from "@/lib/client-next-step";
 import { getCandidateJourney } from "@/lib/journey.functions";
 import { useSupportView } from "@/lib/support-view";
