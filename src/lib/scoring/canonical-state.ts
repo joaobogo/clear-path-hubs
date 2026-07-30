@@ -60,3 +60,28 @@ export function canTransition(from: CanonicalScoringState, to: CanonicalScoringS
   if (from === to) return true;
   return ALLOWED_TRANSITIONS[from].includes(to);
 }
+
+/**
+ * Shortest legal transition path from `from` to `to`, excluding `from`.
+ * The DB trigger only permits single legal hops, so callers must walk each
+ * step in order. Returns null when no legal path exists.
+ */
+export function shortestTransitionPath(
+  from: CanonicalScoringState,
+  to: CanonicalScoringState,
+): CanonicalScoringState[] | null {
+  if (from === to) return [];
+  const queue: CanonicalScoringState[][] = [[from]];
+  const seen = new Set<CanonicalScoringState>([from]);
+  while (queue.length) {
+    const path = queue.shift()!;
+    const last = path[path.length - 1];
+    for (const next of ALLOWED_TRANSITIONS[last] ?? []) {
+      if (seen.has(next)) continue;
+      if (next === to) return [...path.slice(1), next];
+      seen.add(next);
+      queue.push([...path, next]);
+    }
+  }
+  return null;
+}
