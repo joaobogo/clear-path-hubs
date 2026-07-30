@@ -10,6 +10,10 @@ import { Card, CardContent } from "@/components/ui/card";
 import { FormShell } from "@/components/marketing/form-shell";
 import {
   ALLOWED_JD_EXT,
+  UNREADABLE_JD_EXT,
+  JD_ACCEPT_ATTR,
+  JD_ACCEPT_LABEL,
+
   EXPRESS_DRAFT_KEY,
   EXPRESS_IDEMPOTENCY_KEY,
   MAX_JD_BYTES,
