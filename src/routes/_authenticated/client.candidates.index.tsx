@@ -413,6 +413,7 @@ function CandidatesPage() {
  <p className="text-sm text-muted-foreground mt-1">
  Review, compare, and progress the candidates delivered for your open positions.
  </p>
+ <VisibilityNote className="mt-2" />
  </div>
  <div className="flex flex-col items-end gap-2 shrink-0">
  <Button
