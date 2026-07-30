@@ -469,8 +469,11 @@ function OverviewPage() {
             <HelpCard org={orgSearch} />
           </section>
 
-          {/* 7 · SECONDARY SNAPSHOT — moved below the decision surfaces */}
+          {/* 7 · SECONDARY SNAPSHOT — below every decision surface */}
           <SnapshotFooter kpis={kpis} />
+
+          {/* 8 · INDUSTRY PERSONALIZATION — context, not an action */}
+          <IndustryPersonalizationPanel industry={ctx?.active?.industry ?? null} />
 
           {data?.last_updated && (
             <p className="pt-2 text-xs text-muted-foreground">
