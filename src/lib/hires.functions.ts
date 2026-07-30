@@ -359,6 +359,11 @@ const OfferTermsSchema = z.object({
   work_model: z.string().max(40).nullable().optional(),
   location: z.string().max(160).nullable().optional(),
   offer_notes: z.string().max(4000).nullable().optional(),
+  // Guarantee terms — visible to the client by default so the promise is on record.
+  guarantee_days: z.number().int().min(0).max(365).nullable().optional(),
+  guarantee_starts_on: z.string().nullable().optional(),
+  guarantee_terms: z.string().max(2000).nullable().optional(),
+  guarantee_visible_to_client: z.boolean().optional(),
 });
 type OfferTerms = z.infer<typeof OfferTermsSchema>;
 
