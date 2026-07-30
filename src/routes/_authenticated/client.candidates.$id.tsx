@@ -270,6 +270,7 @@ function CandidateDetailPage() {
           <JumpNav
             items={[
               { id: "sec-fit", label: "Summary" },
+              { id: "sec-why", label: "Why shortlisted" },
               { id: "sec-coverage", label: "Requirements" },
               { id: "sec-strengths", label: "Strengths" },
               { id: "sec-risks", label: "Risks" },
@@ -281,6 +282,7 @@ function CandidateDetailPage() {
           />
           <div id="sec-fit" className="scroll-mt-24"><FitHero candidate={candidate} /></div>
           <EvaluationProvenance candidate={candidate} />
+          <div id="sec-why" className="scroll-mt-24"><WhyWeShortlisted candidate={candidate} /></div>
           <div id="sec-coverage" className="scroll-mt-24"><RequirementCoverage candidate={candidate} /></div>
           <div id="sec-strengths" className="scroll-mt-24"><WhyThisCandidate candidate={candidate} /></div>
           <div id="sec-risks" className="scroll-mt-24"><WhatNeedsValidation candidate={candidate} /></div>
@@ -640,6 +642,62 @@ function FitHero({
  )}
  </div>
  </section>
+ );
+}
+
+function WhyWeShortlisted({
+ candidate,
+}: {
+ candidate: import("@/lib/client-kpi.server").ClientCandidateDTO;
+}) {
+ const rationale = buildShortlistRationale(candidate);
+ if (rationale.lines.length === 0) return null;
+ const tone: Record<string, string> = {
+  met: "border-success/30 bg-success/5",
+  partial: "border-warning/30 bg-warning/5",
+  gap: "border-border bg-muted/30",
+  not_applicable: "border-border bg-muted/20",
+ };
+ return (
+  <SectionCard
+   title="Why we shortlisted"
+   icon={<CheckCircle2 className="h-4 w-4" />}
+   description="One line for every requirement you gave us at intake, with the source of each claim."
+  >
+   <p className="text-xs text-muted-foreground">{rationale.summary}</p>
+   <ul className="mt-3 space-y-2">
+    {rationale.lines.map((l) => (
+     <li key={l.id} className={`rounded-md border p-3 ${tone[l.verdict]}`}>
+      <div className="flex flex-wrap items-center gap-2">
+       <span className="font-medium text-sm">{l.requirement}</span>
+       <Badge variant="outline" className="text-[10px] uppercase tracking-wide">
+        {l.importance === "must_have" ? "Must-have" : "Preferred"}
+       </Badge>
+       <span className="text-[11px] text-muted-foreground">{l.verdictLabel}</span>
+      </div>
+      {l.claim ? (
+       <p className="mt-1 text-sm text-muted-foreground">{l.claim}</p>
+      ) : (
+       <p className="mt-1 text-sm text-muted-foreground italic">
+        No evidence captured for this yet — we will not claim it.
+       </p>
+      )}
+      {l.sources.length > 0 && (
+       <div className="mt-2 flex flex-wrap gap-1.5">
+        {l.sources.map((src) => (
+         <span
+          key={src}
+          className="rounded border border-border bg-background px-1.5 py-0.5 text-[10px] text-muted-foreground"
+         >
+          Source: {src}
+         </span>
+        ))}
+       </div>
+      )}
+     </li>
+    ))}
+   </ul>
+  </SectionCard>
  );
 }
 
