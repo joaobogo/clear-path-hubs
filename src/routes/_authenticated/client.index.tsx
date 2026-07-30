@@ -25,6 +25,7 @@ import {
 } from "lucide-react";
 import { IndustryPersonalizationPanel } from "@/components/client/industry-personalization-panel";
 import { ActivityFeed } from "@/components/activity/ActivityFeed";
+import { SlaScorecard } from "@/components/client/sla-scorecard";
 
 export const Route = createFileRoute("/_authenticated/client/")({
   head: () => ({
@@ -365,6 +366,9 @@ function OverviewPage() {
 
 
 
+
+          {/* SLA REPORTING — promise vs actual vs variance */}
+          <SlaScorecard orgId={orgId} positionId={selectedRole || undefined} />
 
           {/* 2 · FOCUS ROLE + NEXT STEPS */}
           <section className="grid gap-4 lg:grid-cols-5">
