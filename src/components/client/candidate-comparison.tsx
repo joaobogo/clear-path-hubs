@@ -186,6 +186,9 @@ export function CompareSheet({
           <SheetTitle>Candidate comparison</SheetTitle>
         </SheetHeader>
 
+        <VisibilityNote className="mt-3" variant="card" />
+
+
 
         {!positionSafe ? (
           <div className="mt-4 rounded-lg border border-warning/30 bg-warning/5 p-3 text-sm">
