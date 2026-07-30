@@ -34,6 +34,7 @@ import {
 } from "@/lib/talent-pool.functions";
 import { getClientContext } from "@/lib/client.functions";
 import { useClientOrgSearch } from "@/lib/use-client-org";
+import { RoleFitPanel } from "@/components/client/role-fit-panel";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -172,6 +173,10 @@ function TalentPoolPage() {
           {results?.total ?? 0} candidates
         </div>
       </header>
+
+      <div className="mt-6">
+        <RoleFitPanel orgId={orgId} />
+      </div>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-[240px_1fr]">
         {/* Pools sidebar */}
