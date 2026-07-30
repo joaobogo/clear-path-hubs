@@ -189,7 +189,6 @@ function OverviewPage() {
   }, [refetch]);
 
   const kpis = data?.kpis;
-  const actions: Any[] = data?.action_required ?? [];
   const whatsNext: Any[] = data?.whats_next ?? [];
   const messages: Any[] = data?.recent_messages ?? [];
   const activity: Any[] = data?.recent_activity ?? [];
@@ -963,8 +962,4 @@ function formatAction(action: string): string {
     "position.paused": "Position paused",
   };
   return map[action] ?? action.replace(/[_.]/g, " ");
-}
-
-function cap(s: string): string {
-  return s.charAt(0).toUpperCase() + s.slice(1);
 }
