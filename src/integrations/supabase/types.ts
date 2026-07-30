@@ -5658,6 +5658,9 @@ export type Database = {
       organizations: {
         Row: {
           archived_at: string | null
+          billing_interval: string | null
+          billing_period_end: string | null
+          billing_period_start: string | null
           brand_accent_color: string | null
           brand_display_name: string | null
           brand_primary_color: string | null
@@ -5698,8 +5701,10 @@ export type Database = {
           pilot_started_at: string | null
           pilot_status: string
           pilot_used: boolean
+          plan_name: string | null
           primary_contact_email: string | null
           primary_contact_name: string | null
+          renewal_date: string | null
           status: Database["public"]["Enums"]["org_status"]
           test_run_id: string | null
           updated_at: string
@@ -5707,6 +5712,9 @@ export type Database = {
         }
         Insert: {
           archived_at?: string | null
+          billing_interval?: string | null
+          billing_period_end?: string | null
+          billing_period_start?: string | null
           brand_accent_color?: string | null
           brand_display_name?: string | null
           brand_primary_color?: string | null
@@ -5747,8 +5755,10 @@ export type Database = {
           pilot_started_at?: string | null
           pilot_status?: string
           pilot_used?: boolean
+          plan_name?: string | null
           primary_contact_email?: string | null
           primary_contact_name?: string | null
+          renewal_date?: string | null
           status?: Database["public"]["Enums"]["org_status"]
           test_run_id?: string | null
           updated_at?: string
@@ -5756,6 +5766,9 @@ export type Database = {
         }
         Update: {
           archived_at?: string | null
+          billing_interval?: string | null
+          billing_period_end?: string | null
+          billing_period_start?: string | null
           brand_accent_color?: string | null
           brand_display_name?: string | null
           brand_primary_color?: string | null
@@ -5796,8 +5809,10 @@ export type Database = {
           pilot_started_at?: string | null
           pilot_status?: string
           pilot_used?: boolean
+          plan_name?: string | null
           primary_contact_email?: string | null
           primary_contact_name?: string | null
+          renewal_date?: string | null
           status?: Database["public"]["Enums"]["org_status"]
           test_run_id?: string | null
           updated_at?: string
