@@ -449,7 +449,7 @@ export async function nextActions(
       .from("hire_records")
       .select("id, status, updated_at, positions(title), candidate_profiles(full_name)")
       .eq("organization_id", orgId)
-      .in("status", ["offer_drafted", "offer_sent", "offer_accepted"])
+      .in("status", ["offer_drafted", "offer_sent", "offer_negotiating", "offer_accepted"])
       .order("updated_at", { ascending: true })
       .limit(10),
     supabase
