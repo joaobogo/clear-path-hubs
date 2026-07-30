@@ -5,18 +5,56 @@ import { Link, useSearch } from "@tanstack/react-router";
 import { Printer, Share2 } from "lucide-react";
 import { toast } from "sonner";
 import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
-import type { RequirementRow } from "@/lib/client-fit-presentation";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import {
+  buildCompareMatrix,
+  compareEligibility,
+  rubricGuard,
+  rubricVersion,
+  STATUS_LABEL,
+  type CompareStatus,
+} from "@/lib/client-compare";
 
 
 const STATUS_META: Record<
-  RequirementRow["status"],
-  { label: string; icon: string; className: string }
+  CompareStatus,
+  { label: string; icon: string; className: string; cell: string }
 > = {
-  met: { label: "Met", icon: "✓", className: "text-success dark:text-success" },
-  partial: { label: "Partial", icon: "◐", className: "text-warning-foreground dark:text-warning-foreground" },
-  not_evidenced: { label: "Not evidenced", icon: "○", className: "text-muted-foreground" },
-  contradicted: { label: "Contradicted", icon: "✕", className: "text-destructive dark:text-destructive" },
-  not_applicable: { label: "N/A", icon: "—", className: "text-muted-foreground" },
+  met: {
+    label: STATUS_LABEL.met,
+    icon: "✓",
+    className: "text-success dark:text-success",
+    cell: "bg-success/10 border-success/20",
+  },
+  partial: {
+    label: STATUS_LABEL.partial,
+    icon: "◐",
+    className: "text-warning-foreground dark:text-warning-foreground",
+    cell: "bg-warning/10 border-warning/20",
+  },
+  unknown: {
+    label: STATUS_LABEL.unknown,
+    icon: "○",
+    className: "text-muted-foreground",
+    cell: "bg-muted/40 border-border",
+  },
+  contradicted: {
+    label: STATUS_LABEL.contradicted,
+    icon: "✕",
+    className: "text-destructive dark:text-destructive",
+    cell: "bg-destructive/10 border-destructive/20",
+  },
+  not_applicable: {
+    label: STATUS_LABEL.not_applicable,
+    icon: "—",
+    className: "text-muted-foreground",
+    cell: "bg-muted/30 border-border",
+  },
 };
 
 /**
