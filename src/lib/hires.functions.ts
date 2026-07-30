@@ -773,22 +773,21 @@ export const nudgeOffer = createServerFn({ method: "POST" })
 
     // Best-effort in-app notification to the owner; never blocks the nudge.
     if (row.owner_user_id) {
-      await context.supabase
-        .from("notifications")
-        .insert({
-          user_id: row.owner_user_id,
+      try {
+        await context.supabase.from("notifications").insert({
+          recipient_user_id: row.owner_user_id,
+          audience: "client",
           organization_id: data.orgId,
+          event_type: "candidate_stage_changed",
           title: "Offer needs a push",
           body:
             data.note?.trim() ||
             "This offer has had no movement for more than 48 hours. Chase the candidate or update the record.",
-          entity_type: "hire_records",
-          entity_id: data.id,
-        } as never)
-        .then(
-          () => undefined,
-          () => undefined,
-        );
+          link_path: "/client/offers",
+        } as never);
+      } catch {
+        // notification failure must not fail the nudge
+      }
     }
 
     await writeAudit(context.supabase, {
