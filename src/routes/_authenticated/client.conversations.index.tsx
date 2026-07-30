@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Briefcase, MessageSquare, Search, User } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { EmptyState, SkeletonRows } from "@/components/client/states";
 
 export const Route = createFileRoute("/_authenticated/client/conversations/")({
   head: () => ({
@@ -114,17 +115,16 @@ function ConversationsPage() {
       </div>
 
       {isLoading && !data ? (
-        <div className="rounded-lg border bg-card px-5 py-14 text-center text-sm text-muted-foreground">
-          Loading conversations…
-        </div>
+        <SkeletonRows rows={5} />
       ) : items.length === 0 ? (
-        <div className="rounded-lg border bg-card px-5 py-14 text-center">
-          <MessageSquare className="mx-auto h-6 w-6 text-muted-foreground" />
-          <p className="mt-2 text-sm font-medium">No conversations yet</p>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Open a role or a candidate and start the thread there.
-          </p>
-        </div>
+        <EmptyState
+          icon={MessageSquare}
+          title="No conversations yet"
+          description="Every message about a role or a candidate lives in one thread here."
+          whatAppearsHere="Open a role or a candidate and start the thread there — it shows up in this list, and we mirror it to email."
+          action={{ label: "Go to your roles", to: "/client/positions" }}
+          secondaryAction={{ label: "See candidates", to: "/client/candidates" }}
+        />
       ) : (
         <ul className="divide-y rounded-lg border bg-card">
           {items.map((c) => {

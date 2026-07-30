@@ -610,8 +610,17 @@ function DecisionQueue({ queue, loading }: { queue: DecisionRow[]; loading: bool
 function HottestRoleCard({ role }: { role: Any | null }) {
   if (!role) {
     return (
-      <div className="flex h-full flex-col justify-center rounded-xl border border-dashed bg-card/40 p-6 text-sm text-muted-foreground">
-        No active searches yet. Submit a role to open your first pipeline.
+      <div className="flex h-full flex-col justify-center rounded-xl border border-dashed bg-card/40 p-6">
+        <p className="text-sm font-medium text-foreground">No active searches yet</p>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Your busiest role shows up here with its pipeline and what needs you next.
+        </p>
+        <Link
+          to="/intake"
+          className="mt-3 text-sm font-medium text-primary hover:underline"
+        >
+          Submit a role →
+        </Link>
       </div>
     );
   }

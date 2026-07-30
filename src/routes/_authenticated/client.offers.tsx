@@ -46,6 +46,7 @@ import {
 } from "@/lib/offer-stall";
 import { formatAge } from "@/lib/time-age";
 import { useClientOrgSearch } from "@/lib/use-client-org";
+import { EmptyState, SkeletonBoard } from "@/components/client/states";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -243,9 +244,9 @@ function OffersPage() {
       {/* Board */}
       <section className="mt-6 overflow-x-auto">
         {isPending ? (
-          <p className="text-sm text-muted-foreground">Loading offers…</p>
+          <SkeletonBoard columns={6} />
         ) : hires.length === 0 ? (
-          <EmptyState />
+          <OffersEmptyState />
         ) : (
           <div className="grid min-w-[1100px] grid-cols-6 gap-3">
             {COLUMN_ORDER.map((status) => (
@@ -336,17 +337,16 @@ function Kpi({
   );
 }
 
-function EmptyState() {
+function OffersEmptyState() {
   return (
-    <div className="mx-auto max-w-md rounded-xl border bg-card p-8 text-center">
-      <HandCoins className="mx-auto h-8 w-8 text-muted-foreground" aria-hidden />
-      <h2 className="mt-3 font-medium">No offers yet</h2>
-      <p className="mt-1 text-sm text-muted-foreground">
-        When you extend an offer to a candidate, draft it here from their profile
-        or from a role's candidate list. Everything after shortlist lives on this
-        board.
-      </p>
-    </div>
+    <EmptyState
+      icon={HandCoins}
+      title="No offers yet"
+      description="Everything after shortlist lives on this board: offer drafted, sent, negotiating, accepted, hired."
+      whatAppearsHere="Draft an offer from a candidate's profile and it appears here with its status, compensation, and any stall warning."
+      action={{ label: "See your candidates", to: "/client/candidates" }}
+      secondaryAction={{ label: "View interviews", to: "/client/interviews" }}
+    />
   );
 }
 

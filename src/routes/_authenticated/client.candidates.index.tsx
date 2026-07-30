@@ -890,11 +890,22 @@ function EmptyState({
  "Your TaaSFlow team is building the pipeline for your roles. Candidates appear here once they're approved for you."
  )}
  </div>
- {filtered && (
- <Button size="sm" variant="outline" className="mt-4" onClick={onClear}>
+ <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
+ {filtered ? (
+ <Button size="sm" variant="outline" onClick={onClear}>
  Clear all filters
  </Button>
+ ) : (
+ <>
+ <Button size="sm" asChild>
+ <Link to="/client/positions">See your roles</Link>
+ </Button>
+ <Button size="sm" variant="outline" asChild>
+ <Link to="/client/conversations">Ask your recruiter</Link>
+ </Button>
+ </>
  )}
+ </div>
  </div>
  );
 }

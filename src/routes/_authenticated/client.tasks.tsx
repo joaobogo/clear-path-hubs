@@ -16,6 +16,7 @@ import {
   type TaskView,
   type TaskType,
 } from "@/lib/tasks.functions";
+import { EmptyState, SkeletonRows, NoWorkspaceState } from "@/components/client/states";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -199,7 +200,7 @@ function TasksPage() {
   };
 
   if (!orgId) {
-    return <div className="text-sm text-muted-foreground">No workspace selected.</div>;
+    return <NoWorkspaceState />;
   }
 
   return (
@@ -278,18 +279,18 @@ function TasksPage() {
       </div>
 
       {tasks.isLoading ? (
-        <div className="space-y-2">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="h-16 animate-pulse rounded-lg border bg-muted/30" />
-          ))}
-        </div>
+        <SkeletonRows rows={4} />
       ) : rows.length === 0 ? (
-        <div className="rounded-lg border bg-card p-8 text-center text-sm text-muted-foreground">
-          <div className="mb-1 font-medium text-foreground">No tasks in this view.</div>
-          {view === "blocking"
-            ? "Nothing is currently blocking a delivery. Nice."
-            : "Add a task to keep track of the next action for a role or candidate."}
-        </div>
+        <EmptyState
+          icon={CheckCircle2}
+          title="Nothing in this view"
+          description={
+            view === "blocking"
+              ? "Nothing is currently blocking a delivery."
+              : "Tasks and approvals waiting on your team appear here."
+          }
+          whatAppearsHere="Approvals we need from you, interview confirmations, and anything holding up a shortlist land here. Use “New task” above to add your own."
+        />
       ) : (
         <ul className="space-y-2">
           {rows.map((t) => (

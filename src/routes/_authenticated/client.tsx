@@ -3,6 +3,7 @@ import {
   Link,
   Outlet,
   redirect,
+  useRouterState,
 } from "@tanstack/react-router";
 import {
   makeRouteErrorComponent,
@@ -43,6 +44,7 @@ import {
 } from "@/components/workspace/workspace-shell";
 import { ClientBrandHeader } from "@/components/client/client-brand-header";
 import { OrgSwitcher } from "@/components/workspace/org-switcher";
+import { EmptyState, PermissionDenied } from "@/components/client/states";
 
 const emptyToUndef = (v: unknown) => (v === "" ? undefined : v);
 const searchSchema = z.object({
@@ -104,9 +106,15 @@ const TABS: NavDef[] = [
  { to: "/client/settings", label: "Settings", icon: Settings, everyone: false },
 ];
 
+const MANAGE_ONLY_PATHS = TABS.filter((t) => !t.everyone).map((t) => t.to);
+const MANAGE_ONLY_LABELS: Record<string, string> = Object.fromEntries(
+ TABS.filter((t) => !t.everyone).map((t) => [t.to, t.label]),
+);
+
 function ClientLayout() {
  const ctx = Route.useLoaderData();
  const search = Route.useSearch();
+ const pathname = useRouterState({ select: (st) => st.location.pathname });
  const getCtx = useServerFn(getClientContext);
  const { data } = useQuery({
  queryKey: ["client-context", search.org ?? null],
@@ -170,18 +178,25 @@ function ClientLayout() {
  if (!active) {
  return (
  <div className="mx-auto max-w-3xl p-8">
- <h1 className="text-2xl font-semibold mb-2">No client workspace yet</h1>
- <p className="text-muted-foreground">
- Your account isn&apos;t linked to a client organization. Ask your admin to invite
- you, or{" "}
- <Link to="/intake" className="text-primary underline">
- submit a new intake
- </Link>{" "}
- to create one.
+ <EmptyState
+ title="No client workspace yet"
+ description="Your account isn't linked to a client organization, so there's nothing to show here yet."
+ whatAppearsHere="Once you're added to a workspace, your roles, shortlists, interviews, and offers appear here."
+ action={{ label: "Submit a role", to: "/intake" }}
+ >
+ <p className="mt-4 text-xs text-muted-foreground">
+ Already part of a team? Ask the person who set up your workspace to invite
+ your email address.
  </p>
+ </EmptyState>
  </div>
  );
  }
+
+ const deniedTab = MANAGE_ONLY_PATHS.find(
+ (path) => pathname === path || pathname.startsWith(path + "/"),
+ );
+ const permissionDenied = !canManage && !!deniedTab;
 
  const navItems: WorkspaceNavItem[] = TABS.filter((t) => t.everyone || canManage).map(
  ({ everyone: _e, ...rest }) => rest,
@@ -261,7 +276,15 @@ function ClientLayout() {
           supportView={supportView.active}
         />
       </div>
-      <Outlet />
+      {permissionDenied ? (
+        <PermissionDenied
+          description={`${MANAGE_ONLY_LABELS[deniedTab!] ?? "This area"} is limited to workspace admins, so we're not showing it to you.`}
+          whoToAsk={`Ask an admin in ${active.name} to upgrade your access, or ask them to make the change for you.`}
+          action={{ label: "Back to overview", to: "/client" }}
+        />
+      ) : (
+        <Outlet />
+      )}
  {showOnboarding && (
  <ClientOnboardingModal
  orgId={active.organization_id}

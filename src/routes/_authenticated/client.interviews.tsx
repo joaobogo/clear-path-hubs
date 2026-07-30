@@ -30,6 +30,7 @@ import { InterviewScorecardDialog } from "@/components/client/interview-scorecar
 import { useClientOrgSearch } from "@/lib/use-client-org";
 import { useSupportView } from "@/lib/support-view";
 import { PageHeader, PageBody, PageShell } from "@/components/ds";
+import { EmptyState, SkeletonCards } from "@/components/client/states";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -267,19 +268,23 @@ function InterviewsPage() {
         {org ? <AvailabilityManager orgId={org} readOnly={readOnly} /> : null}
 
         {listQuery.isLoading ? (
-          <div className="rounded-lg border p-8 text-center text-sm text-muted-foreground">
-            Loading interviews…
-          </div>
+          <SkeletonCards cards={3} />
         ) : interviews.length === 0 ? (
-          <div className="rounded-lg border p-8 text-center">
-            <CalendarClock className="mx-auto h-8 w-8 text-muted-foreground" />
-            <p className="mt-3 text-sm font-medium">No interviews yet</p>
-            <p className="mt-1 text-sm text-muted-foreground">
-              {readOnly
-                ? "Interviews will appear here as they are scheduled."
-                : "Request an interview from a shortlisted candidate to get started."}
-            </p>
-          </div>
+          <EmptyState
+            icon={CalendarClock}
+            title="No interviews yet"
+            description={
+              readOnly
+                ? "Interviews appear here as soon as your team schedules them."
+                : "Set your availability windows above, then request an interview with a shortlisted candidate."
+            }
+            whatAppearsHere="Each interview shows the requested slots, who confirmed, and the scorecard once it's done."
+            action={
+              readOnly
+                ? { label: "See your candidates", to: "/client/candidates" }
+                : { label: "Request interview", onClick: () => setRequestOpen(true) }
+            }
+          />
         ) : (
           <InterviewTimeline
             interviews={interviews}
