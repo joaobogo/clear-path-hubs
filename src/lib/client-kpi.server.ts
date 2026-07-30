@@ -43,7 +43,10 @@ export type KpiRow = {
   interview_scheduled: boolean;
   /** An interview exists that still needs the client to confirm a time. */
   interview_needs_confirmation: boolean;
+  /** Soonest confirmed interview time, if one is booked. */
+  next_interview_at: string | null;
 };
+
 
 
 export type ClientKpis = {
