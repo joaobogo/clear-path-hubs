@@ -754,6 +754,47 @@ function OfferTermsDialog({
               />
             </Field>
           </div>
+          <div className="space-y-3 rounded-md border p-3 sm:col-span-2">
+            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              Guarantee
+            </p>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <Field label="Guarantee period (days)">
+                <Input
+                  type="number"
+                  min={0}
+                  max={365}
+                  value={guaranteeDays}
+                  onChange={(e) => setGuaranteeDays(e.target.value)}
+                  placeholder="e.g. 90"
+                />
+              </Field>
+              <Field label="Guarantee starts on">
+                <Input
+                  type="date"
+                  value={guaranteeStartsOn}
+                  onChange={(e) => setGuaranteeStartsOn(e.target.value)}
+                />
+              </Field>
+            </div>
+            <Field label="Terms">
+              <Textarea
+                rows={2}
+                value={guaranteeTerms}
+                onChange={(e) => setGuaranteeTerms(e.target.value)}
+                placeholder="What happens if the hire leaves inside the guarantee period."
+              />
+            </Field>
+            <label className="flex items-center gap-2 text-sm">
+              <input
+                type="checkbox"
+                checked={guaranteeVisible}
+                onChange={(e) => setGuaranteeVisible(e.target.checked)}
+                className="h-4 w-4 accent-[hsl(var(--primary))]"
+              />
+              Show these terms to the client
+            </label>
+          </div>
         </div>
         <DialogFooter>
           <Button variant="ghost" onClick={onClose}>Cancel</Button>
