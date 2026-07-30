@@ -339,8 +339,7 @@ export const postConversationMessage = createServerFn({ method: "POST" })
     if (!convo) throw new Error("not_found");
     const orgId = (convo as Row).organization_id as string;
 
-    const { assertNotSupportViewReadOnly } = await import("./support-session.server");
-    await assertNotSupportViewReadOnly(supabase, userId, orgId);
+    await assertCanPost(supabase, userId, orgId);
 
     const { data: row, error } = await supabase
       .from("messages")
