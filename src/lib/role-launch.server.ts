@@ -354,10 +354,10 @@ function computeSourcingMetrics({
               : "TaaSFlow is analysing this talent market to set the channel mix.";
 
   return {
-    identified: hasOutreach ? identifiedIds.size : running ? 0 : null,
-    contacted: hasOutreach ? contacted : running ? 0 : null,
-    engaged: hasOutreach ? engaged : running ? 0 : null,
-    replied: hasOutreach ? replied : running ? 0 : null,
+    identified: manualIdentified ?? (hasOutreach ? identifiedIds.size : running ? 0 : null),
+    contacted: manualContacted ?? (hasOutreach ? contacted : running ? 0 : null),
+    engaged: manualEngaged ?? (hasOutreach ? engaged : running ? 0 : null),
+    replied: manualReplied ?? (hasOutreach ? replied : running ? 0 : null),
     applicants: running || applicationCount > 0 ? applicationCount : null,
     qualified: running || matchCount > 0 ? matchCount : null,
     lastUpdate,
