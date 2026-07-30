@@ -151,6 +151,42 @@ export async function listDealStages(): Promise<{ id: string; title: string }[]>
   }
 }
 
+/**
+ * Attribute slugs actually configured on an object in this workspace, cached
+ * per isolate. Used to drop unknown attribution fields before writing, so one
+ * missing custom attribute can't wipe out every other attribution value.
+ */
+const attributeSlugCache = new Map<string, Set<string>>();
+export async function listObjectAttributeSlugs(object: string): Promise<Set<string> | null> {
+  const cached = attributeSlugCache.get(object);
+  if (cached) return cached;
+  try {
+    const res = await attioFetch<{ data: { api_slug: string }[] }>(`/objects/${object}/attributes`);
+    const slugs = new Set(res.data.map((a) => a.api_slug));
+    attributeSlugCache.set(object, slugs);
+    return slugs;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Attio marks `owner` as required on the Deals object, so a deal cannot be
+ * created without one. Prefer an admin member, fall back to the first member.
+ */
+export async function resolveDealOwnerEmail(): Promise<string | null> {
+  try {
+    const res = await attioFetch<{
+      data: { email_address?: string; access_level?: string }[];
+    }>("/workspace_members");
+    const members = res.data.filter((m) => !!m.email_address);
+    const admin = members.find((m) => m.access_level === "admin");
+    return (admin ?? members[0])?.email_address ?? null;
+  } catch {
+    return null;
+  }
+}
+
 export async function listWorkspaceLists(): Promise<
   { id: string; name: string; api_slug: string }[]
 > {
