@@ -49,7 +49,8 @@ describe("computeRoleProgress", () => {
       { status: "active", briefedAt: "2026-03-12T00:00:00Z" },
       new Date("2026-04-01T00:00:00Z"),
     );
-    expect(p.caption).toBe("Briefed since 12 Mar");
+    expect(p.caption).toBe("Briefed since 12 Mar · 20 days in stage");
+    expect(p.daysInCurrentStage).toBe(20);
   });
 
   it("formats dates from other years with the year", () => {
