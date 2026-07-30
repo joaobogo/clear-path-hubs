@@ -13,8 +13,18 @@ export const ALLOWED_JD_MIME = new Set([
   "application/pdf",
   "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
   "text/plain",
+  "application/rtf",
+  "text/rtf",
 ]);
-export const ALLOWED_JD_EXT = new Set(["pdf", "docx", "txt"]);
+export const ALLOWED_JD_EXT = new Set(["pdf", "docx", "txt", "rtf"]);
+/**
+ * Legacy binary .doc cannot be read in the edge runtime. We name it explicitly
+ * so the client gets a fix ("save as PDF or DOCX") instead of a generic reject.
+ */
+export const UNREADABLE_JD_EXT = new Set(["doc"]);
+export const JD_ACCEPT_ATTR = ".pdf,.docx,.txt,.rtf";
+export const JD_ACCEPT_LABEL = "PDF, DOCX, TXT or RTF, up to 10 MB";
+
 export const MIN_JD_TEXT = 80;
 export const MIN_ACCOUNT_PASSWORD = 8;
 
