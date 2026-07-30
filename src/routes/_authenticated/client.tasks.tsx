@@ -48,6 +48,9 @@ import {
 } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/client/tasks")({
+  validateSearch: (search: Record<string, unknown>) => ({
+    view: typeof search.view === "string" ? search.view : undefined,
+  }),
   head: () => ({
     meta: [
       { title: "Tasks & Approvals · Client workspace" },
