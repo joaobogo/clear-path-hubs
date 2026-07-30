@@ -51,71 +51,93 @@ function relTime(iso: string | null | undefined): string {
   return new Date(iso).toLocaleDateString(undefined, { month: "short", day: "numeric" });
 }
 
-// ─── Priority action queue: dedup + prioritize ──────────────────────────────
-// Rule: never show two cards for the same next action. Aggregate by type.
-type Priority = {
-  type: "offer_pending" | "interview_scheduled" | "new_delivered";
+// ─── Decision queue ─────────────────────────────────────────────────────────
+// One question: what needs me today? Every row is an action with a real,
+// server-computed count and a link straight to where the action happens.
+type DecisionRow = {
+  key: "awaiting_decision" | "interviews_to_confirm" | "offers_pending" | "blocking_tasks";
   count: number;
-  label: string;
+  title: string;
+  detail: string;
   to: string;
   search?: Record<string, string>;
   icon: React.ReactNode;
   cta: string;
+  tone: "warning" | "info" | "danger";
 };
-function buildPriorityQueue(
-  actions: Any[],
+
+function buildDecisionQueue(
+  kpis: Any,
+  blockingCount: number,
   scope: { org?: string; position?: string } = {},
-): Priority[] {
-  const offers = actions.find((a) => a.type === "offer_pending");
-  const interviews = actions.find((a) => a.type === "interview_scheduled");
-  const deliveries = actions.filter((a) => a.type === "new_delivered");
-  const deliveryTotal = deliveries.reduce((s, a) => s + (a.count ?? 0), 0);
-  const deliveryRoles = deliveries.length;
-  // Every metric links to the matching filtered candidate view, scoped to the
-  // same org + role the overview is currently showing.
+): DecisionRow[] {
+  if (!kpis) return [];
   const base: Record<string, string> = {
     ...(scope.org ? { org: scope.org } : {}),
     ...(scope.position ? { position: scope.position } : {}),
   };
+  const rows: DecisionRow[] = [];
 
-  const q: Priority[] = [];
-  if (offers && offers.count > 0) {
-    q.push({
-      type: "offer_pending",
-      count: offers.count,
-      label: `${offers.count} offer${offers.count === 1 ? "" : "s"} awaiting response`,
-      to: "/client/candidates",
-      search: { ...base, stage: "offer" },
-      icon: <Handshake className="h-4 w-4" />,
-      cta: "Follow up",
+  if (blockingCount > 0) {
+    rows.push({
+      key: "blocking_tasks",
+      count: blockingCount,
+      title: `${blockingCount} task${blockingCount === 1 ? "" : "s"} blocking delivery`,
+      detail: "Approvals and answers we need before candidates can move.",
+      to: "/client/tasks",
+      search: { view: "blocking" },
+      icon: <AlertTriangle className="h-5 w-5" />,
+      cta: "Resolve",
+      tone: "danger",
     });
   }
-  if (interviews && interviews.count > 0) {
-    q.push({
-      type: "interview_scheduled",
-      count: interviews.count,
-      label: `${interviews.count} interview${interviews.count === 1 ? "" : "s"} to confirm or debrief`,
-      to: "/client/interviews",
-      search: scope.org ? { org: scope.org } : undefined,
-      icon: <CalendarClock className="h-4 w-4" />,
-      cta: "Open interviews",
-    });
-  }
-  if (deliveryTotal > 0) {
-    q.push({
-      type: "new_delivered",
-      count: deliveryTotal,
-      label:
-        deliveryRoles === 1
-          ? deliveries[0].label
-          : `${deliveryTotal} new candidate${deliveryTotal === 1 ? "" : "s"} to review across ${deliveryRoles} role${deliveryRoles === 1 ? "" : "s"}`,
+
+  const awaiting = kpis.awaiting_decision ?? 0;
+  if (awaiting > 0) {
+    rows.push({
+      key: "awaiting_decision",
+      count: awaiting,
+      title: `${awaiting} candidate${awaiting === 1 ? "" : "s"} awaiting your decision`,
+      detail: "Delivered to you and not yet shortlisted or declined.",
       to: "/client/candidates",
       search: { ...base, stage: "delivered" },
-      icon: <Users className="h-4 w-4" />,
-      cta: "Review",
+      icon: <Users className="h-5 w-5" />,
+      cta: "Review candidates",
+      tone: "warning",
     });
   }
-  return q;
+
+  const toConfirm = kpis.interviews_to_confirm ?? 0;
+  if (toConfirm > 0) {
+    rows.push({
+      key: "interviews_to_confirm",
+      count: toConfirm,
+      title: `${toConfirm} interview${toConfirm === 1 ? "" : "s"} to confirm`,
+      detail: "Requested or being scheduled — a time still needs confirming.",
+      to: "/client/interviews",
+      search: scope.org ? { org: scope.org } : undefined,
+      icon: <CalendarClock className="h-5 w-5" />,
+      cta: "Confirm times",
+      tone: "info",
+    });
+  }
+
+  const offers = kpis.offers ?? 0;
+  if (offers > 0) {
+    rows.push({
+      key: "offers_pending",
+      count: offers,
+      title: `${offers} offer${offers === 1 ? "" : "s"} pending`,
+      detail: "Extended and awaiting a candidate response or your close-out.",
+      to: "/client/candidates",
+      search: { ...base, stage: "offer" },
+      icon: <Handshake className="h-5 w-5" />,
+      cta: "Follow up",
+      tone: "warning",
+    });
+  }
+
+  return rows;
 }
 
 // ─── "Hottest role": position with the most pending reviews, else most recent
@@ -167,7 +189,6 @@ function OverviewPage() {
   }, [refetch]);
 
   const kpis = data?.kpis;
-  const actions: Any[] = data?.action_required ?? [];
   const whatsNext: Any[] = data?.whats_next ?? [];
   const messages: Any[] = data?.recent_messages ?? [];
   const activity: Any[] = data?.recent_activity ?? [];
@@ -184,9 +205,9 @@ function OverviewPage() {
     return selectedRole ? all.filter((c: Any) => c.position?.id === selectedRole) : all;
   }, [data, selectedRole]);
 
-  const priorityQueue = useMemo(
-    () => buildPriorityQueue(actions, { org: orgSearch, position: selectedRole || undefined }),
-    [actions, orgSearch, selectedRole],
+  const decisionQueue = useMemo(
+    () => buildDecisionQueue(kpis, blocking?.count ?? 0, { org: orgSearch, position: selectedRole || undefined }),
+    [kpis, blocking, orgSearch, selectedRole],
   );
   const hottestRole = useMemo(() => pickHottestRole(visibleRoles), [visibleRoles]);
   const otherRoles = useMemo(
@@ -228,13 +249,13 @@ function OverviewPage() {
 
   const summary = useMemo(() => {
     if (!kpis) return null;
-    const parts: string[] = [];
-    if (kpis.active_positions) parts.push(`${kpis.active_positions} active search${kpis.active_positions === 1 ? "" : "es"}`);
-    const totalPending = priorityQueue.reduce((s, p) => s + p.count, 0);
-    if (totalPending > 0) parts.push(`${totalPending} decision${totalPending === 1 ? "" : "s"} waiting`);
-    if (parts.length === 0) return "Your workspace is quiet. Submit a role to get started.";
-    return `${cap(parts.join(" · "))}.`;
-  }, [kpis, priorityQueue]);
+    const totalPending = decisionQueue.reduce((s: number, p: DecisionRow) => s + p.count, 0);
+    if (totalPending > 0) {
+      return `${totalPending} thing${totalPending === 1 ? "" : "s"} need${totalPending === 1 ? "s" : ""} you today.`;
+    }
+    if (kpis.active_positions) return "Nothing needs you today. Your searches are running.";
+    return "Your workspace is quiet. Submit a role to get started.";
+  }, [kpis, decisionQueue]);
 
   const showOnboarding = !!kpis && kpis.active_positions === 0 && kpis.delivered === 0;
 
@@ -290,25 +311,18 @@ function OverviewPage() {
         <EmptyWelcome canSubmit={canSubmit} />
       ) : (
         <>
-          {/* 0 · INDUSTRY PERSONALIZATION — vertical-tuned rubric + samples */}
-          <IndustryPersonalizationPanel industry={ctx?.active?.industry ?? null} />
+          {/* 1 · THE DECISION QUEUE — the only thing on the first screen */}
+          <DecisionQueue queue={decisionQueue} loading={!data && isFetching} />
 
-          {/* 0.5 · BLOCKING APPROVALS — urgent tasks that hold delivery */}
-          {blocking && blocking.count > 0 && (
-            <Link
-              to="/client/tasks"
-              search={{ view: "blocking" }}
-              className="flex items-center gap-3 rounded-lg border border-destructive/40 bg-destructive/5 px-4 py-3 text-sm hover:bg-destructive/10"
-            >
-              <AlertTriangle className="h-4 w-4 text-destructive" />
-              <span className="flex-1 font-medium">
-                {blocking.count} task{blocking.count === 1 ? "" : "s"} blocking delivery — needs approval or decision
-              </span>
-              <ArrowRight className="h-4 w-4 text-destructive" />
-            </Link>
-          )}
+          {/* ── Everything below here is context, not action ── */}
+          <div className="flex items-center gap-3 pt-2">
+            <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+              Pipeline detail
+            </span>
+            <span className="h-px flex-1 bg-border" />
+          </div>
 
-          {/* 0.75 · ROLE FOCUS — multi-position selector, preserved in the URL */}
+          {/* ROLE FOCUS — multi-position selector, preserved in the URL */}
           {whatsNext.length > 0 && (
             <div className="flex flex-wrap items-center gap-2">
               <label htmlFor="role-focus" className="text-xs font-medium text-muted-foreground">
@@ -340,8 +354,7 @@ function OverviewPage() {
             </div>
           )}
 
-          {/* 1 · PRIORITY ACTIONS — what needs me now, deduped */}
-          <PriorityActions queue={priorityQueue} loading={!data && isFetching} />
+
 
 
           {/* 2 · FOCUS ROLE + NEXT STEPS */}
@@ -455,8 +468,11 @@ function OverviewPage() {
             <HelpCard org={orgSearch} />
           </section>
 
-          {/* 7 · SECONDARY SNAPSHOT — moved below the decision surfaces */}
+          {/* 7 · SECONDARY SNAPSHOT — below every decision surface */}
           <SnapshotFooter kpis={kpis} />
+
+          {/* 8 · INDUSTRY PERSONALIZATION — context, not an action */}
+          <IndustryPersonalizationPanel industry={ctx?.active?.industry ?? null} />
 
           {data?.last_updated && (
             <p className="pt-2 text-xs text-muted-foreground">
@@ -473,12 +489,20 @@ function OverviewPage() {
 // Sections
 // ═══════════════════════════════════════════════════════════════════════════
 
-function PriorityActions({ queue, loading }: { queue: Priority[]; loading: boolean }) {
+/**
+ * The decision queue. Every row is an action with a real, server-computed
+ * count and a link straight to where that action is taken. Nothing decorative.
+ */
+function DecisionQueue({ queue, loading }: { queue: DecisionRow[]; loading: boolean }) {
   if (loading) {
     return (
-      <section aria-labelledby="action-heading">
-        <SectionHeader id="action-heading" icon={<AlertTriangle className="h-4 w-4" />} title="What needs you now" />
-        <div className="mt-3 h-24 animate-pulse rounded-xl border bg-muted/40" />
+      <section aria-labelledby="queue-heading" className="space-y-3">
+        <SectionHeader id="queue-heading" icon={<AlertTriangle className="h-4 w-4" />} title="What needs you today" />
+        <div className="space-y-2">
+          {[0, 1, 2].map((i) => (
+            <div key={i} className="h-[76px] animate-pulse rounded-xl border bg-muted/40" />
+          ))}
+        </div>
       </section>
     );
   }
@@ -486,17 +510,18 @@ function PriorityActions({ queue, loading }: { queue: Priority[]; loading: boole
   if (queue.length === 0) {
     return (
       <section
-        aria-labelledby="action-heading"
-        className="rounded-xl border bg-gradient-to-br from-emerald-500/[0.04] to-transparent p-5"
+        aria-labelledby="queue-heading"
+        className="rounded-xl border bg-gradient-to-br from-emerald-500/[0.05] to-transparent p-6"
       >
         <div className="flex items-start gap-3">
-          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full taas-bg-success-soft taas-fg-success">
+          <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full taas-bg-success-soft taas-fg-success">
             <CheckCircle2 className="h-5 w-5" />
           </span>
           <div>
-            <h2 id="action-heading" className="text-base font-semibold">You are up to date</h2>
+            <h2 id="queue-heading" className="text-lg font-semibold">Nothing needs you today</h2>
             <p className="mt-1 text-sm text-muted-foreground">
-              No hiring decisions waiting for you. TaaSFlow is continuing work on your active searches.
+              No candidates awaiting a decision, no interviews to confirm, no offers pending.
+              We'll surface the next decision here the moment it exists.
             </p>
           </div>
         </div>
@@ -504,47 +529,67 @@ function PriorityActions({ queue, loading }: { queue: Priority[]; loading: boole
     );
   }
 
+  const total = queue.reduce((s, p) => s + p.count, 0);
+
   return (
-    <section aria-labelledby="action-heading" className="space-y-3">
+    <section aria-labelledby="queue-heading" className="space-y-3">
       <SectionHeader
-        id="action-heading"
+        id="queue-heading"
         icon={<AlertTriangle className="h-4 w-4 taas-fg-warning" />}
-        title="What needs you now"
+        title="What needs you today"
         action={
           <span className="rounded-full taas-bg-warning-soft px-2 py-0.5 text-[11px] font-semibold taas-fg-warning">
-            {queue.reduce((s, p) => s + p.count, 0)} to act on
+            {total} to act on
           </span>
         }
       />
-      <div className={`grid gap-3 ${queue.length >= 3 ? "md:grid-cols-3" : queue.length === 2 ? "md:grid-cols-2" : ""}`}>
+      <ul className="divide-y overflow-hidden rounded-xl border bg-card">
         {queue.map((p) => (
-          <Link
-            key={p.type}
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            to={p.to as any}
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            search={p.search as any}
-            className="group relative flex flex-col gap-3 rounded-xl border taas-bd-warning bg-card p-4 transition hover:border-primary/60 hover:shadow-sm"
-          >
-            <div className="flex items-center gap-2">
-              <span className="grid h-8 w-8 place-items-center rounded-full taas-bg-warning-soft taas-fg-warning">
+          <li key={p.key}>
+            <Link
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              to={p.to as any}
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              search={p.search as any}
+              className="group flex min-h-[76px] items-center gap-4 px-4 py-4 transition hover:bg-muted/40 sm:px-5"
+            >
+              <span
+                className={`grid h-11 w-11 shrink-0 place-items-center rounded-full ${
+                  p.tone === "danger"
+                    ? "bg-destructive/10 text-destructive"
+                    : p.tone === "info"
+                      ? "taas-bg-info-soft taas-fg-info"
+                      : "taas-bg-warning-soft taas-fg-warning"
+                }`}
+              >
                 {p.icon}
               </span>
-              <span className="text-xs font-semibold uppercase tracking-wide taas-fg-warning">
-                {p.type === "offer_pending" ? "Offers" : p.type === "interview_scheduled" ? "Interviews" : "New candidates"}
+              <span
+                className={`w-12 shrink-0 text-3xl font-semibold tabular-nums leading-none ${
+                  p.tone === "danger" ? "text-destructive" : "text-foreground"
+                }`}
+              >
+                {p.count}
               </span>
-            </div>
-            <div className="text-[15px] font-semibold leading-snug">{p.label}</div>
-            <div className="mt-auto flex items-center justify-between border-t pt-3 text-xs text-muted-foreground">
-              <span className="font-medium text-primary">{p.cta}</span>
-              <ChevronRight className="h-4 w-4 transition group-hover:translate-x-0.5 group-hover:text-primary" />
-            </div>
-          </Link>
+              <span className="min-w-0 flex-1">
+                <span className="block truncate text-[15px] font-semibold leading-snug group-hover:text-primary">
+                  {p.title}
+                </span>
+                <span className="mt-0.5 block text-xs text-muted-foreground sm:text-sm">{p.detail}</span>
+              </span>
+              <span className="hidden shrink-0 items-center gap-1 text-sm font-medium text-primary sm:inline-flex">
+                {p.cta}
+                <ChevronRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
+              </span>
+              <ChevronRight className="h-5 w-5 shrink-0 text-muted-foreground sm:hidden" />
+            </Link>
+          </li>
         ))}
-      </div>
+      </ul>
     </section>
   );
 }
+
 
 function HottestRoleCard({ role }: { role: Any | null }) {
   if (!role) {
@@ -917,8 +962,4 @@ function formatAction(action: string): string {
     "position.paused": "Position paused",
   };
   return map[action] ?? action.replace(/[_.]/g, " ");
-}
-
-function cap(s: string): string {
-  return s.charAt(0).toUpperCase() + s.slice(1);
 }

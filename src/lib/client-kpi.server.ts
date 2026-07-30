@@ -41,6 +41,8 @@ export type KpiRow = {
   approved_fit_label: string | null;
   interview_active: boolean;
   interview_scheduled: boolean;
+  /** An interview exists that still needs the client to confirm a time. */
+  interview_needs_confirmation: boolean;
 };
 
 
@@ -50,6 +52,10 @@ export type ClientKpis = {
   shortlisted: number;
   interviewing: number;
   interview_scheduled: number;
+  /** Interviews requested or being scheduled — waiting on the client. */
+  interviews_to_confirm: number;
+  /** Candidates delivered and still awaiting a first client decision. */
+  awaiting_decision: number;
   offers: number;
   hires: number;
   active_positions: number;
@@ -77,6 +83,7 @@ export async function loadKpiRows(
   const matchIds = (matches as AnyRow[]).map((m) => m.id);
   const activeInterviews = new Set<string>();
   const scheduledInterviews = new Set<string>();
+  const unconfirmedInterviews = new Set<string>();
   if (matchIds.length > 0) {
     const { data: ivs } = await supabase
       .from("interviews")
@@ -86,6 +93,9 @@ export async function loadKpiRows(
     for (const iv of (ivs as AnyRow[]) ?? []) {
       activeInterviews.add(iv.candidate_match_id);
       if (iv.status === "scheduled") scheduledInterviews.add(iv.candidate_match_id);
+      if (iv.status === "requested" || iv.status === "scheduling") {
+        unconfirmedInterviews.add(iv.candidate_match_id);
+      }
     }
   }
 
@@ -100,6 +110,7 @@ export async function loadKpiRows(
     approved_fit_label: m.score_runs?.fit_label ?? null,
     interview_active: activeInterviews.has(m.id),
     interview_scheduled: scheduledInterviews.has(m.id),
+    interview_needs_confirmation: unconfirmedInterviews.has(m.id),
   }));
 }
 
@@ -126,6 +137,8 @@ export function computeKpis(rows: KpiRow[], activePositions = 0): ClientKpis {
     shortlisted: rows.filter((r) => r.stage === "shortlisted").length,
     interviewing: rows.filter(isInInterview).length,
     interview_scheduled: rows.filter((r) => r.interview_scheduled).length,
+    interviews_to_confirm: rows.filter((r) => r.interview_needs_confirmation).length,
+    awaiting_decision: rows.filter((r) => r.stage === "delivered").length,
     offers: rows.filter((r) => r.stage === "offer").length,
     hires: rows.filter((r) => r.stage === "hired").length,
     active_positions: activePositions,
