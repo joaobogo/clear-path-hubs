@@ -25,6 +25,9 @@ import {
   CRM_SOURCE_WEBSITE,
   DEAL_FORM_TYPES,
   type CrmFormId,
+  type CrossSellStatus,
+  type LeadType,
+  type ServiceInterest,
 } from "./attio-config";
 
 export type CrmSubmission = {
@@ -52,6 +55,30 @@ export type CrmSubmission = {
   consent_status: string | null;
   consent_at: string | null;
   environment: "production" | "preview";
+  /* --- FGV ecosystem attribution ------------------------------------- */
+  conversion_page: string | null;
+  first_touch_source: string | null;
+  first_touch_medium: string | null;
+  first_touch_campaign: string | null;
+  last_touch_source: string | null;
+  last_touch_medium: string | null;
+  last_touch_campaign: string | null;
+  gclid: string | null;
+  gbraid: string | null;
+  wbraid: string | null;
+  msclkid: string | null;
+  linkedin_click_id: string | null;
+  fgv_journey_id: string | null;
+  fgv_entry_brand: string | null;
+  fgv_referrer: string | null;
+  first_landing_timestamp: string | null;
+  last_activity_timestamp: string | null;
+  service_interest: ServiceInterest;
+  secondary_service_interest: ServiceInterest | null;
+  destination_brand: string;
+  lead_type: LeadType | null;
+  cross_sell_status: CrossSellStatus | null;
+  is_test: boolean;
 };
 
 export type SyncIds = {
@@ -160,6 +187,29 @@ function attributionValues(s: CrmSubmission) {
     submission_id: s.submission_id,
     submitted_at: s.submitted_at,
     latest_form_submission_at: s.submitted_at,
+    source_domain: CRM_PRODUCTION_DOMAIN,
+    conversion_page: s.conversion_page ?? undefined,
+    first_touch_source: s.first_touch_source ?? undefined,
+    first_touch_medium: s.first_touch_medium ?? undefined,
+    first_touch_campaign: s.first_touch_campaign ?? undefined,
+    last_touch_source: s.last_touch_source ?? undefined,
+    last_touch_medium: s.last_touch_medium ?? undefined,
+    last_touch_campaign: s.last_touch_campaign ?? undefined,
+    gclid: s.gclid ?? undefined,
+    gbraid: s.gbraid ?? undefined,
+    wbraid: s.wbraid ?? undefined,
+    msclkid: s.msclkid ?? undefined,
+    linkedin_click_or_campaign_identifier: s.linkedin_click_id ?? undefined,
+    fgv_journey_id: s.fgv_journey_id ?? undefined,
+    fgv_entry_brand: s.fgv_entry_brand ?? undefined,
+    fgv_referrer: s.fgv_referrer ?? undefined,
+    first_landing_timestamp: s.first_landing_timestamp ?? undefined,
+    last_activity_timestamp: s.last_activity_timestamp ?? undefined,
+    primary_service_interest: s.service_interest,
+    secondary_service_interest: s.secondary_service_interest ?? undefined,
+    lead_type: s.lead_type ?? undefined,
+    cross_sell_status: s.cross_sell_status ?? undefined,
+    is_test: s.is_test ? true : undefined,
   };
 }
 
@@ -211,7 +261,13 @@ function buildNote(s: CrmSubmission) {
     `Original referrer: ${s.original_referrer ?? "—"}`,
     `Latest referrer: ${s.latest_referrer ?? "—"}`,
     `UTM: source=${s.utm_source ?? "—"} medium=${s.utm_medium ?? "—"} campaign=${s.utm_campaign ?? "—"} content=${s.utm_content ?? "—"} term=${s.utm_term ?? "—"}`,
-    `Environment: ${s.environment}`,
+    `Environment: ${s.environment}${s.is_test ? " (TEST)" : ""}`,
+    `Service interest: ${s.service_interest}${s.secondary_service_interest ? ` (secondary: ${s.secondary_service_interest})` : ""}`,
+    `Routed to: ${s.destination_brand}${s.cross_sell_status && s.cross_sell_status !== "None" ? ` — ${s.cross_sell_status}` : ""}`,
+    `First touch: source=${s.first_touch_source ?? "—"} medium=${s.first_touch_medium ?? "—"} campaign=${s.first_touch_campaign ?? "—"}`,
+    `Last touch: source=${s.last_touch_source ?? "—"} medium=${s.last_touch_medium ?? "—"} campaign=${s.last_touch_campaign ?? "—"}`,
+    `Conversion page: ${s.conversion_page ?? "—"}`,
+    `FGV journey: ${s.fgv_journey_id ?? "—"} · entry brand: ${s.fgv_entry_brand ?? "—"} · cross-brand referrer: ${s.fgv_referrer ?? "—"}`,
     "",
     "Form answers:",
     ...Object.entries(s.answers).map(([k, v]) => `- ${k}: ${v}`),

@@ -13,7 +13,12 @@ import {
   CRM_PRODUCTION_DOMAIN,
   CRM_SOURCE_BRAND,
   CRM_SOURCE_WEBSITE,
+  CROSS_SELL_STATUSES,
+  FORM_SERVICE_INTEREST,
+  LEAD_TYPES,
+  SERVICE_ROUTING,
   type CrmFormId,
+  type ServiceInterest,
 } from "@/lib/crm/attio-config";
 import {
   resolveCompanyDomain,
@@ -46,6 +51,33 @@ const submissionSchema = z.object({
   utm_campaign: optionalText(200),
   utm_content: optionalText(200),
   utm_term: optionalText(200),
+  conversion_page: optionalText(500),
+  first_touch_source: optionalText(200),
+  first_touch_medium: optionalText(200),
+  first_touch_campaign: optionalText(200),
+  last_touch_source: optionalText(200),
+  last_touch_medium: optionalText(200),
+  last_touch_campaign: optionalText(200),
+  gclid: optionalText(300),
+  gbraid: optionalText(300),
+  wbraid: optionalText(300),
+  msclkid: optionalText(300),
+  linkedin_click_id: optionalText(300),
+  fgv_journey_id: optionalText(64),
+  fgv_entry_brand: optionalText(40),
+  fgv_referrer: optionalText(500),
+  first_landing_timestamp: optionalText(40),
+  last_activity_timestamp: optionalText(40),
+  service_interest: z
+    .enum(Object.keys(SERVICE_ROUTING) as [ServiceInterest, ...ServiceInterest[]])
+    .optional(),
+  secondary_service_interest: z
+    .enum(Object.keys(SERVICE_ROUTING) as [ServiceInterest, ...ServiceInterest[]])
+    .optional()
+    .nullable(),
+  lead_type: z.enum(LEAD_TYPES).optional().nullable(),
+  cross_sell_status: z.enum(CROSS_SELL_STATUSES).optional().nullable(),
+  is_test: z.boolean().optional(),
   email: z.string().trim().toLowerCase().email().max(254),
   full_name: optionalText(160),
   phone: optionalText(40),
@@ -121,6 +153,9 @@ export const Route = createFileRoute("/api/public/submit-to-attio")({
           ? "production"
           : "preview";
 
+        const serviceInterest: ServiceInterest =
+          input.service_interest ?? FORM_SERVICE_INTEREST[input.source_form_id];
+
         const submission: CrmSubmission = {
           submission_id: input.submission_id,
           source_form_id: input.source_form_id,
@@ -146,6 +181,30 @@ export const Route = createFileRoute("/api/public/submit-to-attio")({
           consent_status: sanitizeText(input.consent_status, 80) || null,
           consent_at: input.consent_at ?? null,
           environment,
+          conversion_page: sanitizeText(input.conversion_page, 500) || null,
+          first_touch_source: sanitizeText(input.first_touch_source, 200) || null,
+          first_touch_medium: sanitizeText(input.first_touch_medium, 200) || null,
+          first_touch_campaign: sanitizeText(input.first_touch_campaign, 200) || null,
+          last_touch_source: sanitizeText(input.last_touch_source, 200) || null,
+          last_touch_medium: sanitizeText(input.last_touch_medium, 200) || null,
+          last_touch_campaign: sanitizeText(input.last_touch_campaign, 200) || null,
+          gclid: sanitizeText(input.gclid, 300) || null,
+          gbraid: sanitizeText(input.gbraid, 300) || null,
+          wbraid: sanitizeText(input.wbraid, 300) || null,
+          msclkid: sanitizeText(input.msclkid, 300) || null,
+          linkedin_click_id: sanitizeText(input.linkedin_click_id, 300) || null,
+          fgv_journey_id: sanitizeText(input.fgv_journey_id, 64) || null,
+          fgv_entry_brand: sanitizeText(input.fgv_entry_brand, 40) || null,
+          fgv_referrer: sanitizeText(input.fgv_referrer, 500) || null,
+          first_landing_timestamp: input.first_landing_timestamp ?? null,
+          last_activity_timestamp: input.last_activity_timestamp ?? null,
+          // The server, not the browser, decides routing from the interest.
+          service_interest: serviceInterest,
+          secondary_service_interest: input.secondary_service_interest ?? null,
+          destination_brand: SERVICE_ROUTING[serviceInterest].destination_brand,
+          lead_type: input.lead_type ?? null,
+          cross_sell_status: input.cross_sell_status ?? null,
+          is_test: input.is_test === true || environment !== "production",
         };
 
         const form = CRM_FORMS[submission.source_form_id];
@@ -196,6 +255,29 @@ export const Route = createFileRoute("/api/public/submit-to-attio")({
               consent_status: submission.consent_status,
               consent_at: submission.consent_at,
               submitted_at: submission.submitted_at,
+              conversion_page: submission.conversion_page,
+              first_touch_source: submission.first_touch_source,
+              first_touch_medium: submission.first_touch_medium,
+              first_touch_campaign: submission.first_touch_campaign,
+              last_touch_source: submission.last_touch_source,
+              last_touch_medium: submission.last_touch_medium,
+              last_touch_campaign: submission.last_touch_campaign,
+              gclid: submission.gclid,
+              gbraid: submission.gbraid,
+              wbraid: submission.wbraid,
+              msclkid: submission.msclkid,
+              linkedin_click_id: submission.linkedin_click_id,
+              fgv_journey_id: submission.fgv_journey_id,
+              fgv_entry_brand: submission.fgv_entry_brand,
+              fgv_referrer: submission.fgv_referrer,
+              first_landing_timestamp: submission.first_landing_timestamp,
+              last_activity_timestamp: submission.last_activity_timestamp,
+              service_interest: submission.service_interest,
+              secondary_service_interest: submission.secondary_service_interest,
+              destination_brand: submission.destination_brand,
+              lead_type: submission.lead_type,
+              cross_sell_status: submission.cross_sell_status,
+              is_test: submission.is_test,
               status: "pending",
             })
             .select("id")

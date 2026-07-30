@@ -21,6 +21,7 @@ import { useServerFn } from "@tanstack/react-start";
 
 import { submitInquiry } from "@/lib/inquiry.functions";
 import { submitToCrm } from "@/lib/crm/submit-form";
+import { FGV_EVENTS, trackConfirmedConversion, trackFgv } from "@/lib/tracking/fgv-events";
 import {
   Dialog,
   DialogContent,
@@ -253,6 +254,7 @@ function CallForm({
           website: String(form.get("website") ?? ""),
         },
       });
+      trackFgv(FGV_EVENTS.formSubmit, { form_type: "consultation" });
       void submitToCrm({
         formId: "book-a-call",
         email: String(form.get("email") ?? ""),
@@ -267,6 +269,20 @@ function CallForm({
         },
         consentStatus: "requested_call",
         honeypot: String(form.get("website") ?? ""),
+      }).then((result) => {
+        if (result.ok) {
+          trackConfirmedConversion({
+            formType: "consultation",
+            serviceInterest: "recruiting_subscription",
+            destinationBrand: "taasflow",
+            submissionId: result.submissionId,
+          });
+        } else {
+          trackFgv(FGV_EVENTS.formError, {
+            form_type: "consultation",
+            error_code: result.error,
+          });
+        }
       });
       toast.success("Call requested — we'll confirm within one business day.");
       (e.currentTarget as HTMLFormElement).reset();
@@ -454,6 +470,20 @@ function MessageForm({
         },
         consentStatus: "submitted_message",
         honeypot: String(form.get("website") ?? ""),
+      }).then((result) => {
+        if (result.ok) {
+          trackConfirmedConversion({
+            formType: "consultation",
+            serviceInterest: "recruiting_subscription",
+            destinationBrand: "taasflow",
+            submissionId: result.submissionId,
+          });
+        } else {
+          trackFgv(FGV_EVENTS.formError, {
+            form_type: "consultation",
+            error_code: result.error,
+          });
+        }
       });
       toast.success("Message sent — we'll reply within one business day.");
       (e.currentTarget as HTMLFormElement).reset();
