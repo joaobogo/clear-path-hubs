@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
+import { EcosystemCrossSell } from "@/components/marketing/ecosystem-cross-sell";
   SiteShell,
   PublicPage,
   PublicSection,
@@ -249,6 +250,7 @@ function GlobalTalentPage() {
         primary={{ to: "/intake", label: "Start hiring" }}
         secondary={{ to: "/jobs", label: "See open briefs" }}
       />
+      <EcosystemCrossSell trigger="market-entry" />
     </SiteShell>
   );
 }
