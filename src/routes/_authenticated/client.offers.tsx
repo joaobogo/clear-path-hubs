@@ -16,10 +16,14 @@ import {
   BadgeAlert,
   RotateCcw,
   ClipboardList,
+  Handshake,
+  BellRing,
+  AlertTriangle,
 } from "lucide-react";
 import {
   listHires,
   transitionHire,
+  nudgeOffer,
   assignHireOwner,
   upsertOfferDraft,
   listOfferOwners,
@@ -32,6 +36,14 @@ import {
   type HireCloseReason,
 } from "@/lib/hires.functions";
 import { getClientContext } from "@/lib/client.functions";
+import {
+  isStalled,
+  stallLabel,
+  byStallDesc,
+  stageEnteredAt,
+  STALL_HOURS,
+} from "@/lib/offer-stall";
+import { formatAge } from "@/lib/time-age";
 import { useClientOrgSearch } from "@/lib/use-client-org";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -75,6 +87,7 @@ export const Route = createFileRoute("/_authenticated/client/offers")({
 const COLUMN_ORDER: HireStatus[] = [
   "offer_drafted",
   "offer_sent",
+  "offer_negotiating",
   "offer_accepted",
   "hire_confirmed",
   "offer_declined",
@@ -84,6 +97,7 @@ const COLUMN_ORDER: HireStatus[] = [
 const COLUMN_ICON: Record<HireStatus, React.ComponentType<{ className?: string }>> = {
   offer_drafted: ClipboardList,
   offer_sent: Send,
+  offer_negotiating: Handshake,
   offer_accepted: Check,
   offer_declined: X,
   hire_confirmed: Trophy,
@@ -93,6 +107,7 @@ const COLUMN_ICON: Record<HireStatus, React.ComponentType<{ className?: string }
 const COLUMN_TONE: Record<HireStatus, string> = {
   offer_drafted: "border-slate-300 bg-slate-50 dark:bg-slate-900/40",
   offer_sent: "border-blue-300/60 bg-blue-50/60 dark:bg-blue-950/30",
+  offer_negotiating: "border-violet-300/60 bg-violet-50/60 dark:bg-violet-950/30",
   offer_accepted: "border-emerald-300/60 bg-emerald-50/60 dark:bg-emerald-950/30",
   offer_declined: "border-amber-300/60 bg-amber-50/60 dark:bg-amber-950/30",
   hire_confirmed: "border-primary/40 bg-primary/5",
@@ -130,6 +145,11 @@ function OffersPage() {
     for (const h of hires) m.get(h.status)?.push(h);
     return m;
   }, [hires]);
+
+  const stalled = useMemo(
+    () => hires.filter((h) => isStalled(h)).sort((a, b) => byStallDesc(a, b)),
+    [hires],
+  );
 
   if (!orgId) return <div className="p-8 text-sm text-muted-foreground">Loading…</div>;
 
@@ -183,6 +203,41 @@ function OffersPage() {
           }
         />
       </section>
+
+      {/* Stalled offers */}
+      {stalled.length > 0 && (
+        <section className="mt-6 rounded-xl border border-amber-300/70 bg-amber-50/60 p-4 dark:bg-amber-950/20">
+          <h2 className="flex items-center gap-2 text-sm font-semibold">
+            <AlertTriangle className="h-4 w-4 text-amber-600" aria-hidden />
+            {stalled.length} offer{stalled.length === 1 ? "" : "s"} stalled over{" "}
+            {STALL_HOURS}h
+          </h2>
+          <ul className="mt-3 space-y-2">
+            {stalled.map((h) => (
+              <li
+                key={h.id}
+                className="flex flex-wrap items-center justify-between gap-2 rounded-lg border bg-background/80 px-3 py-2"
+              >
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-medium">
+                    {h.candidate_name}{" "}
+                    <span className="font-normal text-muted-foreground">
+                      · {h.position_title}
+                    </span>
+                  </p>
+                  <p className="mt-0.5 text-[11px] text-muted-foreground">
+                    {HIRE_STATUS_LABEL[h.status]} · {stallLabel(h)} · owner{" "}
+                    {h.owner_name ?? "unassigned"}
+                    {h.nudge_count > 0 &&
+                      ` · nudged ${h.nudge_count}× (last ${formatAge(h.last_nudged_at)} ago)`}
+                  </p>
+                </div>
+                {!readOnly && <NudgeButton orgId={orgId} hire={h} />}
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       {/* Board */}
       <section className="mt-6 overflow-x-auto">
@@ -345,7 +400,8 @@ function Column({
 
 const NEXT_STEPS: Record<HireStatus, HireStatus[]> = {
   offer_drafted: ["offer_sent", "closed_lost"],
-  offer_sent: ["offer_accepted", "offer_declined", "closed_lost"],
+  offer_sent: ["offer_negotiating", "offer_accepted", "offer_declined", "closed_lost"],
+  offer_negotiating: ["offer_accepted", "offer_sent", "offer_declined", "closed_lost"],
   offer_accepted: ["hire_confirmed", "closed_lost"],
   offer_declined: ["offer_drafted", "closed_lost"],
   hire_confirmed: ["closed_lost"],
@@ -398,13 +454,27 @@ function HireCard({
         </div>
       </div>
 
+      {isStalled(hire) && (
+        <p className="mt-1.5 inline-flex items-center gap-1 rounded bg-amber-100 px-1.5 py-0.5 text-[10px] font-medium text-amber-900 dark:bg-amber-950/50 dark:text-amber-200">
+          <AlertTriangle className="h-3 w-3" /> {stallLabel(hire)}
+        </p>
+      )}
+
       <dl className="mt-2 space-y-0.5 text-[11px] text-muted-foreground">
-        {salary && (
-          <div className="flex justify-between">
-            <dt>Comp</dt>
-            <dd className="text-foreground">{salary}</dd>
-          </div>
-        )}
+        <div className="flex justify-between">
+          <dt>Comp</dt>
+          <dd className={salary ? "text-foreground" : "italic"}>
+            {salary ?? "not on record"}
+          </dd>
+        </div>
+        <div className="flex justify-between">
+          <dt>{HIRE_STATUS_LABEL[hire.status]}</dt>
+          <dd className="text-foreground">
+            {stageEnteredAt(hire)
+              ? new Date(stageEnteredAt(hire)!).toLocaleDateString()
+              : "—"}
+          </dd>
+        </div>
         {hire.start_date && (
           <div className="flex items-center justify-between">
             <dt className="inline-flex items-center gap-1">
@@ -435,6 +505,12 @@ function HireCard({
               {hire.close_reason_notes}
             </p>
           )}
+        </div>
+      )}
+
+      {!readOnly && isStalled(hire) && (
+        <div className="mt-2">
+          <NudgeButton orgId={orgId} hire={hire} />
         </div>
       )}
 
@@ -772,5 +848,34 @@ function Field({
       <label className="text-xs font-medium text-muted-foreground">{label}</label>
       <div className="mt-1">{children}</div>
     </div>
+  );
+}
+
+// ─── Nudge action ───────────────────────────────────────────────────────────
+
+function NudgeButton({ orgId, hire }: { orgId: string; hire: HireRecordDTO }) {
+  const qc = useQueryClient();
+  const nudgeFn = useServerFn(nudgeOffer);
+  const nudge = useMutation({
+    mutationFn: () => nudgeFn({ data: { orgId, id: hire.id } }),
+    onSuccess: () => {
+      toast.success(`Nudge sent to ${hire.owner_name ?? "the offer owner"}`, {
+        description: "We'll chase the candidate and update this record.",
+      });
+      qc.invalidateQueries({ queryKey: ["hires", orgId] });
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+  return (
+    <Button
+      size="sm"
+      variant="outline"
+      className="h-7 gap-1 text-[11px]"
+      disabled={nudge.isPending}
+      onClick={() => nudge.mutate()}
+    >
+      <BellRing className="h-3 w-3" />
+      {nudge.isPending ? "Nudging…" : "Nudge"}
+    </Button>
   );
 }

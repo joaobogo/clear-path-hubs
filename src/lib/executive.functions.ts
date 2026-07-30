@@ -231,7 +231,7 @@ export const getExecutiveReport = createServerFn({ method: "GET" })
       .from("hire_records")
       .select("id, status, salary_amount, salary_currency, sent_at, updated_at")
       .eq("organization_id", orgId)
-      .in("status", ["offer_drafted", "offer_sent", "offer_accepted"]);
+      .in("status", ["offer_drafted", "offer_sent", "offer_negotiating", "offer_accepted"]);
     const offerRows: AnyRow[] = offersOpen ?? [];
     const staleOffers = offerRows.filter(
       (o) =>
@@ -348,7 +348,7 @@ export const getExecutiveReport = createServerFn({ method: "GET" })
       (h) => new Date(h.hired_at) >= yearStart,
     ).length;
     const openOfferRows = offerRows.filter((o) =>
-      ["offer_drafted", "offer_sent"].includes(String(o.status)),
+      ["offer_drafted", "offer_sent", "offer_negotiating"].includes(String(o.status)),
     );
     const currencyOf = (rows: AnyRow[]): string | null => {
       const c = rows.find((r) => r.salary_currency)?.salary_currency;

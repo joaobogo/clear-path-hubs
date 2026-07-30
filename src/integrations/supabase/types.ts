@@ -3120,7 +3120,10 @@ export type Database = {
           equity_notes: string | null
           hired_at: string | null
           id: string
+          last_nudged_at: string | null
           location: string | null
+          negotiating_at: string | null
+          nudge_count: number
           offer_notes: string | null
           organization_id: string
           owner_user_id: string | null
@@ -3151,7 +3154,10 @@ export type Database = {
           equity_notes?: string | null
           hired_at?: string | null
           id?: string
+          last_nudged_at?: string | null
           location?: string | null
+          negotiating_at?: string | null
+          nudge_count?: number
           offer_notes?: string | null
           organization_id: string
           owner_user_id?: string | null
@@ -3182,7 +3188,10 @@ export type Database = {
           equity_notes?: string | null
           hired_at?: string | null
           id?: string
+          last_nudged_at?: string | null
           location?: string | null
+          negotiating_at?: string | null
+          nudge_count?: number
           offer_notes?: string | null
           organization_id?: string
           owner_user_id?: string | null
@@ -10764,6 +10773,7 @@ export type Database = {
       hire_status:
         | "offer_drafted"
         | "offer_sent"
+        | "offer_negotiating"
         | "offer_accepted"
         | "offer_declined"
         | "hire_confirmed"
@@ -11190,6 +11200,7 @@ export const Constants = {
       hire_status: [
         "offer_drafted",
         "offer_sent",
+        "offer_negotiating",
         "offer_accepted",
         "offer_declined",
         "hire_confirmed",
