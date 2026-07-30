@@ -110,9 +110,9 @@ export function RoleLaunchPanel({ launch }: { launch: RoleLaunchState }) {
       </Card>
 
       <Card className="p-5">
-        <h2 className="mb-1 text-sm font-semibold">Search channels</h2>
+        <h2 className="mb-1 text-sm font-semibold">Channel mix</h2>
         <p className="mb-4 text-xs text-muted-foreground">
-          Where TaaSFlow is looking for this role.
+          Selected and optimised by TaaSFlow for this role.
         </p>
         <ul className="space-y-3">
           {channels.map((c) => (
