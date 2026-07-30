@@ -87,6 +87,8 @@ export async function loadKpiRows(
   const activeInterviews = new Set<string>();
   const scheduledInterviews = new Set<string>();
   const unconfirmedInterviews = new Set<string>();
+  const nextInterviewAt = new Map<string, string>();
+
   if (matchIds.length > 0) {
     const { data: ivs } = await supabase
       .from("interviews")
