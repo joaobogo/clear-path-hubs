@@ -19,6 +19,7 @@ import { AgencyFeeComparison } from "@/components/marketing/agency-fee-compariso
 import { RiskProof } from "@/components/marketing/risk-proof";
 import { ModelComparisonTable } from "@/components/marketing/model-comparison-table";
 import { CaseStudyPreviews } from "@/components/marketing/case-study-previews";
+import { EcosystemCrossSell } from "@/components/marketing/ecosystem-cross-sell";
 
 export const Route = createFileRoute("/pricing")({
   head: () =>
@@ -271,6 +272,7 @@ function PricingPage() {
         resource={{ to: "/faq", label: "Pricing questions answered", desc: "Overages, holds, cancellation, and enterprise terms." }}
         audience={{ to: "/enterprise", label: "Enterprise pricing", desc: "Volume, procurement, and MSA-ready terms." }}
       />
+      <EcosystemCrossSell trigger="single-role" />
     </SiteShell>
   );
 }

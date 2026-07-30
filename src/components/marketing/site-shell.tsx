@@ -8,6 +8,7 @@ import { brand } from "@/config/brand";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
+import { FgvEndorsement } from "@/components/marketing/fgv-endorsement";
 import { cn } from "@/lib/utils";
 import {
   NAV_GROUPS,
@@ -390,6 +391,7 @@ function Footer() {
             <p className="mt-4 max-w-sm text-sm text-[color:var(--brand-navy)]/80">
               {FOOTER_DESCRIPTION}
             </p>
+            <FgvEndorsement className="mt-4 text-xs text-[color:var(--brand-navy)]/70" />
             <div className="mt-5 flex items-center gap-3">
               {SOCIAL_LINKS.map(({ href, label }) => {
                 const Icon = SOCIAL_ICONS[label] ?? Mail;

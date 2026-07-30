@@ -9,6 +9,7 @@ import {
 import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
+import { FGV } from "@/config/ecosystem";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { supabase } from "@/integrations/supabase/client";
 import { Toaster } from "@/components/ui/sonner";
@@ -56,6 +57,37 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         rel: "stylesheet",
         href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,400;9..144,600&display=swap",
+      },
+    ],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@graph": [
+            {
+              "@type": "Organization",
+              "@id": "https://taasflow.com/#organization",
+              name: "TaaSFlow",
+              url: "https://taasflow.com",
+              logo: "https://taasflow.com/og-image.png",
+              description:
+                "Subscription recruiting: ATS, sourcing, evidence-based screening, outreach, and delivery in one live workspace.",
+              parentOrganization: {
+                "@type": "Organization",
+                name: FGV.name,
+                url: FGV.url,
+              },
+            },
+            {
+              "@type": "WebSite",
+              "@id": "https://taasflow.com/#website",
+              url: "https://taasflow.com",
+              name: "TaaSFlow",
+              publisher: { "@id": "https://taasflow.com/#organization" },
+            },
+          ],
+        }),
       },
     ],
   }),

@@ -6,6 +6,7 @@ import {
   CtaSection,
   Breadcrumbs,
 } from "@/components/marketing/site-shell";
+import { EcosystemCrossSell } from "@/components/marketing/ecosystem-cross-sell";
 
 const CANONICAL = "https://taasflow.com/global-talent";
 const TITLE = "Global Talent — remote-first hiring with clear scope | TaaSFlow";
@@ -249,6 +250,7 @@ function GlobalTalentPage() {
         primary={{ to: "/intake", label: "Start hiring" }}
         secondary={{ to: "/jobs", label: "See open briefs" }}
       />
+      <EcosystemCrossSell trigger="market-entry" />
     </SiteShell>
   );
 }

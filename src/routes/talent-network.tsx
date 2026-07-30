@@ -14,6 +14,7 @@ import {
   Eye,
 } from "lucide-react";
 import { PageConnections } from "@/components/marketing/page-connections";
+import { EcosystemCrossSell } from "@/components/marketing/ecosystem-cross-sell";
 
 export const Route = createFileRoute("/talent-network")({
   head: () =>
@@ -332,6 +333,7 @@ function TalentNetworkPage() {
         resource={{ to: "/blog", label: "Career insights", desc: "Interview prep and market context." }}
         audience={{ to: "/candidate-join", label: "Join the network", desc: "Get matched to future roles." }}
       />
+      <EcosystemCrossSell trigger="employer-brand" />
     </SiteShell>
   );
 }
