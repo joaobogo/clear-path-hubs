@@ -9,11 +9,8 @@ import { useConfirmAction } from "@/components/ds/confirm-action";
 import { AgeBadge } from "@/components/client/age-badge";
 import { formatDaysInStage } from "@/lib/time-age";
 import { moveMatchStage } from "@/lib/client.functions";
-import {
-  selectEvidenceBullets,
-  unevidencedMustHaves,
-  fitChips,
-} from "@/lib/client-evidence-bullets";
+import { fitChips } from "@/lib/client-evidence-bullets";
+import { buildShortlistRationale } from "@/lib/client-rationale";
 import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
 import type { FitPresentation } from "@/lib/client-fit-presentation";
 
@@ -101,8 +98,9 @@ export function CandidateCard({
   const search = useSearch({ strict: false }) as { org?: string };
   const c = candidate;
   const accent = ACCENT[c.fit.accent];
-  const bullets = React.useMemo(() => selectEvidenceBullets(c), [c]);
-  const gaps = React.useMemo(() => unevidencedMustHaves(c), [c]);
+  const rationale = React.useMemo(() => buildShortlistRationale(c), [c]);
+  const bullets = rationale.evidenced.slice(0, 3);
+  const gaps = rationale.gaps;
   const chips = React.useMemo(() => fitChips(c), [c]);
 
   const queryClient = useQueryClient();
@@ -167,36 +165,47 @@ export function CandidateCard({
         )}
       </div>
 
-      {/* Evidence first — what we verified against the role's requirements */}
+      {/* Why we shortlisted — one bullet per requirement, each attributed */}
       <div className="mt-4">
-        <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
-          Evidence against your requirements
+        <div className="flex items-baseline justify-between gap-2">
+          <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
+            Why we shortlisted
+          </div>
+          <div className="text-[10px] text-muted-foreground tabular-nums">{rationale.summary}</div>
         </div>
         {bullets.length > 0 ? (
           <ul className="mt-2 space-y-1.5">
-            {bullets.map((b, i) => (
-              <li key={`${b.requirement}-${i}`} className="flex gap-2 text-xs leading-snug">
+            {bullets.map((b) => (
+              <li key={b.id} className="flex gap-2 text-xs leading-snug">
                 <span
                   aria-hidden
                   className={`mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full ${
-                    b.strength === "verified" ? accent.dot : "bg-muted-foreground/50"
+                    b.verdict === "met" ? accent.dot : "bg-muted-foreground/50"
                   }`}
                 />
                 <span className="min-w-0">
                   <span className="font-medium text-foreground">{b.requirement}</span>
-                  <span className="text-muted-foreground"> — {b.detail}</span>
+                  {b.verdict === "partial" && (
+                    <span className="text-muted-foreground"> (partly)</span>
+                  )}
+                  <span className="text-muted-foreground"> — {b.claim}</span>
+                  {b.sources.length > 0 && (
+                    <span className="ml-1 text-[10px] text-muted-foreground/80">
+                      [{b.sources.join(" · ")}]
+                    </span>
+                  )}
                 </span>
               </li>
             ))}
           </ul>
         ) : (
           <p className="mt-2 text-xs text-muted-foreground">
-            Evidence review is still in progress for this candidate.
+            We haven't evidenced your requirements for this candidate yet.
           </p>
         )}
         {gaps.length > 0 && (
-          <p className="mt-2 text-xs text-warning-foreground dark:text-warning-foreground line-clamp-2">
-            Not yet evidenced: {gaps.join(", ")}
+          <p className="mt-2 text-xs text-warning-foreground line-clamp-2">
+            Not evidenced yet: {gaps.slice(0, 2).map((g) => g.requirement).join(", ")}
           </p>
         )}
       </div>
