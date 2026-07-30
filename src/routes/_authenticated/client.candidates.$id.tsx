@@ -563,6 +563,7 @@ function CandidateHeader({
  </Badge>
  )}
  </div>
+ <VisibilityNote className="col-span-full mt-3" />
  </header>
  );
 }
