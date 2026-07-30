@@ -58,6 +58,7 @@ import { WhySwitchMatrix } from "@/components/marketing/why-switch-matrix";
 import { ProofSystem } from "@/components/marketing/proof-system";
 import { PageConnections } from "@/components/marketing/page-connections";
 import { FoundersStrip } from "@/components/marketing/founders-strip";
+import { FgvEndorsement } from "@/components/marketing/fgv-endorsement";
 import { DashboardPreview } from "@/components/marketing/dashboard-preview";
 import { RiskProof } from "@/components/marketing/risk-proof";
 
@@ -1375,17 +1376,17 @@ function Home() {
               </ul>
               <div className="flex flex-wrap items-center gap-3 pt-1">
                 <Link
-                  to="/intake"
-                  aria-label="Start hiring — launch a role"
+                  to="/pilot"
+                  aria-label={`Start a $${PRICE_PILOT_USD} pilot`}
                   className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-[color:var(--brand-navy-dark)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
                 >
-                  Start Hiring <ArrowRight className="h-4 w-4" aria-hidden />
+                  Start a ${PRICE_PILOT_USD} Pilot <ArrowRight className="h-4 w-4" aria-hidden />
                 </Link>
                 <Link
-                  to="/platform"
+                  to="/how-it-works"
                   className="inline-flex min-h-11 items-center justify-center rounded-md border border-[color:var(--brand-navy)]/15 bg-white px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
                 >
-                  See the Platform
+                  See how the recruiting subscription works
                 </Link>
               </div>
               <div className="text-xs text-[color:var(--brand-navy)]/80">
@@ -1806,9 +1807,10 @@ function Home() {
         eyebrow="Ready to hire?"
         title="Start with one role. See a ranked shortlist by Friday."
         description="Open a role and get evidence per requirement, a live workspace your whole team can see, and package-based pricing instead of placement fees."
-        primary={{ to: "/intake", label: "Start Hiring" }}
-        secondary={{ to: "/contact", label: "Book a Call" }}
+        primary={{ to: "/pilot", label: `Start a $${PRICE_PILOT_USD} Pilot` }}
+        secondary={{ to: "/how-it-works", label: "See how it works" }}
       />
+      <FgvEndorsement className="mx-auto max-w-[1200px] px-4 pt-8 text-center text-xs text-[color:var(--brand-navy)]/70 sm:px-6 lg:px-8" />
           <PageConnections
         commercial={{ to: "/pricing", label: "See pricing", desc: "Transparent packages, scoped to your role volume." }}
         explainer={{ to: "/how-it-works", label: "How it works", desc: "Sourcing, evidence, ranking, delivery — step by step." }}
