@@ -172,13 +172,13 @@ describe("accessibility and copy", () => {
   });
 
   it("uses only verified URLs in artwork", () => {
-    const urls = ASSETS.filter((a) => a.scene)
+    const domains = ASSETS.filter((a) => a.scene)
       .flatMap((a) => a.scene!().nodes)
       .filter((n) => n.t === "text")
-      .map((n) => (n as { text: string }).text)
-      .filter((t) => /\.(com|io|ai|co)\b/.test(t));
-    for (const u of urls) {
-      expect(u.startsWith("taasflow.com")).toBe(true);
+      .flatMap((n) => (n as { text: string }).text.match(/[a-z0-9.-]+\.(com|io|ai|co)\b/gi) ?? []);
+    expect(domains.length).toBeGreaterThan(0);
+    for (const d of domains) {
+      expect(d.toLowerCase()).toBe("taasflow.com");
     }
   });
 });
