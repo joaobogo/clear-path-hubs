@@ -454,13 +454,27 @@ function HireCard({
         </div>
       </div>
 
+      {isStalled(hire) && (
+        <p className="mt-1.5 inline-flex items-center gap-1 rounded bg-amber-100 px-1.5 py-0.5 text-[10px] font-medium text-amber-900 dark:bg-amber-950/50 dark:text-amber-200">
+          <AlertTriangle className="h-3 w-3" /> {stallLabel(hire)}
+        </p>
+      )}
+
       <dl className="mt-2 space-y-0.5 text-[11px] text-muted-foreground">
-        {salary && (
-          <div className="flex justify-between">
-            <dt>Comp</dt>
-            <dd className="text-foreground">{salary}</dd>
-          </div>
-        )}
+        <div className="flex justify-between">
+          <dt>Comp</dt>
+          <dd className={salary ? "text-foreground" : "italic"}>
+            {salary ?? "not on record"}
+          </dd>
+        </div>
+        <div className="flex justify-between">
+          <dt>{HIRE_STATUS_LABEL[hire.status]}</dt>
+          <dd className="text-foreground">
+            {stageEnteredAt(hire)
+              ? new Date(stageEnteredAt(hire)!).toLocaleDateString()
+              : "—"}
+          </dd>
+        </div>
         {hire.start_date && (
           <div className="flex items-center justify-between">
             <dt className="inline-flex items-center gap-1">
@@ -491,6 +505,12 @@ function HireCard({
               {hire.close_reason_notes}
             </p>
           )}
+        </div>
+      )}
+
+      {!readOnly && isStalled(hire) && (
+        <div className="mt-2">
+          <NudgeButton orgId={orgId} hire={hire} />
         </div>
       )}
 
@@ -828,5 +848,34 @@ function Field({
       <label className="text-xs font-medium text-muted-foreground">{label}</label>
       <div className="mt-1">{children}</div>
     </div>
+  );
+}
+
+// ─── Nudge action ───────────────────────────────────────────────────────────
+
+function NudgeButton({ orgId, hire }: { orgId: string; hire: HireRecordDTO }) {
+  const qc = useQueryClient();
+  const nudgeFn = useServerFn(nudgeOffer);
+  const nudge = useMutation({
+    mutationFn: () => nudgeFn({ data: { orgId, id: hire.id } }),
+    onSuccess: () => {
+      toast.success(`Nudge sent to ${hire.owner_name ?? "the offer owner"}`, {
+        description: "We'll chase the candidate and update this record.",
+      });
+      qc.invalidateQueries({ queryKey: ["hires", orgId] });
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+  return (
+    <Button
+      size="sm"
+      variant="outline"
+      className="h-7 gap-1 text-[11px]"
+      disabled={nudge.isPending}
+      onClick={() => nudge.mutate()}
+    >
+      <BellRing className="h-3 w-3" />
+      {nudge.isPending ? "Nudging…" : "Nudge"}
+    </Button>
   );
 }
