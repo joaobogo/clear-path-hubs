@@ -1,6 +1,6 @@
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
@@ -182,6 +182,9 @@ function CandidateDetailPage() {
  });
 
  const [dialogAction, setDialogAction] = useState<ActionKey | null>(null);
+ // Stage captured at mutate time so the toast's Undo knows where to return to.
+ const stageBeforeRef = useRef<MatchStage | null>(null);
+ const undoFn = useServerFn(undoClientDecision);
 
  const act = useMutation({
  mutationFn: (p: DecisionPayload) =>
@@ -196,7 +199,28 @@ function CandidateDetailPage() {
  },
  }),
  onSuccess: () => {
- toast.success("Recorded — the TaaSFlow team has been notified.");
+ const back = stageBeforeRef.current;
+ toast.success("Recorded — the TaaSFlow team has been notified.", {
+ duration: 12_000,
+ action: back
+ ? {
+ label: "Undo",
+ onClick: () => {
+ void (async () => {
+ try {
+ await undoFn({ data: { orgId: orgId!, matchId: id, toStage: back } });
+ toast.success("Decision undone.");
+ await qc.invalidateQueries();
+ } catch {
+ toast.error(
+ "That decision can no longer be undone. Your recruiter can reverse it for you.",
+ );
+ }
+ })();
+ },
+ }
+ : undefined,
+ });
  setDialogAction(null);
  qc.invalidateQueries({ queryKey: ["client-candidate", orgId, id] });
  qc.invalidateQueries({ queryKey: ["client-overview", orgId] });
