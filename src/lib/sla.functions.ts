@@ -6,7 +6,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import { addDays, amountLabel, diffDays, type RoleSla, type SlaMetric } from "@/lib/sla";
+import { addDays, amountLabel, diffDays, worstState, type RoleSla, type SlaMetric } from "@/lib/sla";
 import {
   dayMetric,
   emptySummary,
