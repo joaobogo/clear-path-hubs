@@ -192,10 +192,15 @@ function ExpressIntakePage() {
   const onPickFile = async (file: File | null) => {
     if (!file) return;
     const ext = jdFileExt(file.name);
-    if (!ALLOWED_JD_EXT.has(ext)) {
-      toast.error("Upload a PDF, DOCX or TXT file.");
+    if (UNREADABLE_JD_EXT.has(ext)) {
+      toast.error("Legacy .doc files can't be read. Save it as PDF or DOCX and upload again.");
       return;
     }
+    if (!ALLOWED_JD_EXT.has(ext)) {
+      toast.error(`Upload a ${JD_ACCEPT_LABEL.split(",").slice(0, -1).join(",")} file.`);
+      return;
+    }
+
     if (file.size > MAX_JD_BYTES) {
       toast.error("That file is larger than 10 MB.");
       return;
