@@ -8,6 +8,7 @@ import { brand } from "@/config/brand";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
+import { FgvEndorsement } from "@/components/marketing/fgv-endorsement";
 import { cn } from "@/lib/utils";
 import {
   NAV_GROUPS,
