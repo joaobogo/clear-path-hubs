@@ -638,7 +638,8 @@ function DetailDialog({
  onPropose,
  onConfirm,
  onCancel,
- onComplete,
+  onComplete,
+  onScorecard,
  pending,
 }: {
  interview: InterviewDTO;
