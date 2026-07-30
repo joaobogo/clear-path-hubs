@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Briefcase, MessageSquare, Search, User } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { EmptyState, SkeletonRows } from "@/components/client/states";
 
 export const Route = createFileRoute("/_authenticated/client/conversations/")({
   head: () => ({

@@ -29,7 +29,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { CalendarClock, Users, TrendingUp, Sparkles } from "lucide-react";
+import { CalendarClock, Users, TrendingUp, Sparkles, PackageOpen } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/client/deliveries")({
   head: () => ({
