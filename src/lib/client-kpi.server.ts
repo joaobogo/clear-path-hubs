@@ -630,3 +630,94 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
 }
 
 
+
+// ─── Role progress ("where we are") ─────────────────────────────────────────
+
+export type RoleStageDates = {
+  sourcing: string | null;
+  screening: string | null;
+  shortlist: string | null;
+  offer: string | null;
+};
+
+/**
+ * Earliest real timestamp per role for each client-facing progress stage.
+ * Derived only from records the client's own org owns (RLS applies).
+ */
+export async function loadRoleStageDates(
+  supabase: AnyRow,
+  orgId: string,
+  positionIds?: string[],
+): Promise<Map<string, RoleStageDates>> {
+  const out = new Map<string, RoleStageDates>();
+  const take = (pid: string): RoleStageDates => {
+    let v = out.get(pid);
+    if (!v) {
+      v = { sourcing: null, screening: null, shortlist: null, offer: null };
+      out.set(pid, v);
+    }
+    return v;
+  };
+  const min = (a: string | null, b: string | null | undefined) =>
+    b && (!a || b < a) ? b : a;
+
+  const scoped = <T>(q: T): T =>
+    positionIds && positionIds.length > 0
+      ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (q as any).in("position_id", positionIds)
+      : q;
+
+  // Sourcing — first outreach campaign started for the role.
+  const { data: campaigns } = await scoped(
+    supabase
+      .from("outreach_campaigns")
+      .select("position_id, started_at, created_at, is_test_record")
+      .eq("organization_id", orgId),
+  );
+  for (const c of ((campaigns as AnyRow[]) ?? [])) {
+    if (c.is_test_record || !c.position_id) continue;
+    const row = take(c.position_id);
+    row.sourcing = min(row.sourcing, c.started_at ?? c.created_at);
+  }
+
+  // Screening — first candidate worked on for the role (visible to the client).
+  const { data: matches } = await scoped(
+    supabase
+      .from("candidate_matches")
+      .select("position_id, created_at, delivered_at, stage")
+      .eq("organization_id", orgId)
+      .eq("client_visibility", "visible"),
+  );
+  for (const m of ((matches as AnyRow[]) ?? [])) {
+    if (!m.position_id) continue;
+    const row = take(m.position_id);
+    row.screening = min(row.screening, m.created_at ?? m.delivered_at);
+    if (m.stage === "shortlisted" || m.stage === "interview_process") {
+      row.shortlist = min(row.shortlist, m.delivered_at ?? m.created_at);
+    }
+    if (m.stage === "offer" || m.stage === "hired") {
+      row.offer = min(row.offer, m.delivered_at ?? m.created_at);
+    }
+  }
+
+  // Shortlist / Offer — first time a candidate actually reached that stage.
+  const { data: history } = await scoped(
+    supabase
+      .from("candidate_stage_history")
+      .select("position_id, to_stage, created_at")
+      .eq("organization_id", orgId)
+      .in("to_stage", ["shortlisted", "interview_process", "offer", "hired"]),
+  );
+  for (const h of ((history as AnyRow[]) ?? [])) {
+    if (!h.position_id) continue;
+    const row = take(h.position_id);
+    if (h.to_stage === "offer" || h.to_stage === "hired") {
+      row.offer = min(row.offer, h.created_at);
+      row.shortlist = min(row.shortlist, h.created_at);
+    } else {
+      row.shortlist = min(row.shortlist, h.created_at);
+    }
+  }
+
+  return out;
+}
