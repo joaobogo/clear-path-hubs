@@ -23,6 +23,11 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { CandidateCard } from "@/components/client/candidate-card";
 import { CompareTray, CompareSheet } from "@/components/client/candidate-comparison";
+import {
+  compareEligibility,
+  defaultCompareSelection,
+  COMPARE_MAX,
+} from "@/lib/client-compare";
 import { ShareShortlistDialog } from "@/components/client/share-shortlist-dialog";
 import { Share2 } from "lucide-react";
 import { SavedViewsBar } from "@/components/workspace/saved-views-bar";
@@ -297,6 +302,19 @@ function CandidatesPage() {
  const [compareIds, setCompareIds] = useState<string[]>(initialCompare);
  const [compareOpen, setCompareOpen] = useState(initialCompare.length >= 2);
  const [shareOpen, setShareOpen] = useState(false);
+ const seededDefault = useRef(false);
+ useEffect(() => {
+  // Comparison is the default posture: pre-select the shortlist for the
+  // busiest role so the grid is one click away, never a hidden feature.
+  if (seededDefault.current) return;
+  const rows = rowsRaw as ClientCandidateDTO[];
+  if (rows.length === 0) return;
+  seededDefault.current = true;
+  if (initialCompare.length > 0) return;
+  const preset = defaultCompareSelection(rows);
+  if (preset.length > 0) setCompareIds(preset);
+ }, [rowsRaw, initialCompare]);
+
  useEffect(() => {
   // Drop any selection that is no longer client-visible (tenant switch, filter change to hidden rows).
   setCompareIds((ids) => {
@@ -317,8 +335,8 @@ function CandidatesPage() {
  [compareIds, rowsRaw],
  );
 
- const positionsForCompare = new Set(selectedCandidates.map((c) => c.position?.id));
- const crossPosition = positionsForCompare.size > 1;
+ const compareCheck = compareEligibility(selectedCandidates);
+ const crossPosition = !compareCheck.ok && selectedCandidates.length >= 2;
 
  const setF = (patch: Partial<typeof search>) =>
  navigate({ search: { ...search, ...patch } as never });
@@ -395,7 +413,16 @@ function CandidatesPage() {
  Review, compare, and progress the candidates delivered for your open positions.
  </p>
  </div>
- <div className="text-right text-xs text-muted-foreground shrink-0">
+ <div className="flex flex-col items-end gap-2 shrink-0">
+ <Button
+ size="sm"
+ onClick={() => setCompareOpen(true)}
+ disabled={!compareCheck.ok}
+ title={compareCheck.reason ?? undefined}
+ >
+ Compare {selectedCandidates.length > 0 ? `${selectedCandidates.length} ` : ""}side by side
+ </Button>
+ <div className="text-right text-xs text-muted-foreground">
  <div>
  <span className="tabular-nums text-foreground font-medium">{filtered.length}</span> of{" "}
  {(rowsRaw as ClientCandidateDTO[]).length} shown
@@ -403,6 +430,8 @@ function CandidatesPage() {
  {overview?.last_updated && (
  <div>Updated {new Date(overview.last_updated).toLocaleDateString()}</div>
  )}
+ <div>Select {2}–{COMPARE_MAX} candidates on one role</div>
+ </div>
  </div>
  </header>
 
@@ -748,12 +777,10 @@ function CandidatesPage() {
  selected={selectedCandidates}
  onClear={() => setCompareIds([])}
  onOpen={() => setCompareOpen(true)}
- disabledReason={
- crossPosition ? "Select candidates from the same position to compare" : null
- }
+ disabledReason={compareCheck.ok ? null : compareCheck.reason}
  />
   <CompareSheet
-  open={compareOpen && selectedCandidates.length >= 2 && !crossPosition}
+  open={compareOpen && compareCheck.ok}
   onOpenChange={setCompareOpen}
   candidates={selectedCandidates}
   />
