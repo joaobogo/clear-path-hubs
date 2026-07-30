@@ -34,6 +34,7 @@ import {
   type HireRecordDTO,
   type HireStatus,
   type HireCloseReason,
+import { guaranteeLine } from "@/lib/interview-scorecard";
 } from "@/lib/hires.functions";
 import { getClientContext } from "@/lib/client.functions";
 import {
