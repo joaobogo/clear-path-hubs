@@ -40,7 +40,7 @@ export function SourcingOpsPanel({ positionId }: { positionId: string }) {
   const savePlanFn = useServerFn(saveSourcingPlan);
   const saveCampaignFn = useServerFn(saveSourcingCampaign);
   const deleteCampaignFn = useServerFn(deleteSourcingCampaign);
-  const confirmAction = useConfirmAction();
+  const { confirm, confirmDialog } = useConfirmAction();
 
   const key = ["admin-sourcing-ops", positionId];
   const { data, isLoading, error } = useQuery({
