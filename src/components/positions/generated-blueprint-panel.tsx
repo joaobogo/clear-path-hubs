@@ -1,7 +1,12 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { Link } from "@tanstack/react-router";
+import { Link, useRouter } from "@tanstack/react-router";
+import { useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
+import { retryBlueprintAnalysis } from "@/lib/blueprint.functions";
+import { toast } from "sonner";
+import { trackEvent } from "@/lib/tracking/pixels";
 import {
   BLUEPRINT_STAGES,
   blueprintProgress,
@@ -104,8 +109,28 @@ export function GeneratedBlueprintPanel({
   onConfirm,
   confirming,
 }: GeneratedBlueprintPanelProps) {
+  const router = useRouter();
+  const retry = useServerFn(retryBlueprintAnalysis);
+  const [retrying, setRetrying] = useState(false);
   const status: string = position?.blueprint_status ?? "none";
   if (status === "none" || !status) return null;
+
+  async function handleRetry() {
+    if (retrying) return;
+    setRetrying(true);
+    trackEvent("blueprint_reanalysis_requested", { position_id: position?.id });
+    try {
+      const res = await retry({ data: { positionId: position.id as string } });
+      if (res.ok) toast.success("Analysis finished. Your role blueprint is ready.");
+      else if (res.reason === "already_running") toast.info("Analysis is already running.");
+      else toast.error("TaaSFlow could not finish the analysis. Try again or paste the job description.");
+      await router.invalidate();
+    } catch {
+      toast.error("Something went wrong starting the analysis.");
+    } finally {
+      setRetrying(false);
+    }
+  }
 
   const bp = position?.blueprint as AnyRow | null;
   const ready = status === "ready";
@@ -148,6 +173,11 @@ export function GeneratedBlueprintPanel({
                 <Wand2 className="mr-1.5 h-3.5 w-3.5" aria-hidden />
                 Edit answers
               </Link>
+            </Button>
+          )}
+          {failed && (
+            <Button size="sm" onClick={handleRetry} disabled={retrying}>
+              {retrying ? "Analyzing…" : "Try analysis again"}
             </Button>
           )}
           {ready && !confirmedAt && audience === "client" && onConfirm && (
