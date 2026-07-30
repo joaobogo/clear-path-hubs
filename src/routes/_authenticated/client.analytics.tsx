@@ -6,7 +6,7 @@ import {
   getClientAnalytics,
   getAnalyticsFilterOptions,
 } from "@/lib/analytics.functions";
-import { useClientOrgSearch } from "@/lib/use-client-org";
+import { useResolvedClientOrgId } from "@/lib/use-client-org";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -51,7 +51,7 @@ function fmtPct(v: number | null): string {
 }
 
 function AnalyticsPage() {
-  const orgId = useClientOrgSearch();
+  const orgId = useResolvedClientOrgId();
   const [days, setDays] = useState(90);
   const [positionId, setPositionId] = useState<string | "all">("all");
 

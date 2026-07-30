@@ -12,7 +12,7 @@ import {
   getMyPreferences,
   updateMyPreferences,
 } from "@/lib/inbox.functions";
-import { useClientOrgSearch } from "@/lib/use-client-org";
+import { useResolvedClientOrgId } from "@/lib/use-client-org";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -52,7 +52,7 @@ function relTime(iso: string): string {
 }
 
 function InboxPage() {
-  const orgId = useClientOrgSearch();
+  const orgId = useResolvedClientOrgId();
   const [tab, setTab] = useState("notifications");
 
   return (
