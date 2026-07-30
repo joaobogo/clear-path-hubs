@@ -53,32 +53,7 @@ function stageLabel(s: Stage): string {
   )[s];
 }
 
-/** The single forward move available from this stage. */
-function advanceStep(s: Stage): { to: Stage; label: string } | null {
-  return (
-    {
-      delivered: { to: "shortlisted", label: "Advance" },
-      shortlisted: { to: "interview_process", label: "Advance" },
-      interview_process: { to: "offer", label: "Advance" },
-      offer: { to: "hired", label: "Advance" },
-      hired: null,
-      not_moving_forward: { to: "shortlisted", label: "Reopen" },
-    } as const
-  )[s];
-}
 
-function advanceMeaning(s: Stage): string {
-  return (
-    {
-      delivered: "Adds them to your shortlist.",
-      shortlisted: "Starts the interview process.",
-      interview_process: "Moves them to offer stage.",
-      offer: "Marks them as hired.",
-      hired: "",
-      not_moving_forward: "Puts them back on your shortlist.",
-    } as const
-  )[s];
-}
 
 export function CandidateCard({
   candidate,
@@ -99,33 +74,7 @@ export function CandidateCard({
   const gaps = rationale.gaps;
   const chips = React.useMemo(() => fitChips(c), [c]);
 
-  const queryClient = useQueryClient();
-  const { confirm, confirmDialog } = useConfirmAction();
-  const move = useServerFn(moveMatchStage);
-  const [busy, setBusy] = React.useState<null | "advance" | "decline">(null);
-
   const orgId = search.org ?? null;
-  const advance = advanceStep(c.stage);
-  const canDecline = c.stage !== "hired" && c.stage !== "not_moving_forward";
-  const showActions = !!orgId;
-
-  async function runMove(kind: "advance" | "decline", to: Stage, reason?: string) {
-    if (!orgId) return;
-    setBusy(kind);
-    try {
-      await move({ data: { orgId, matchId: c.match_id, toStage: to, reason } });
-      toast.success(kind === "advance" ? "Candidate advanced" : "Candidate declined");
-      await queryClient.invalidateQueries();
-    } catch (e) {
-      toast.error(
-        e instanceof Error && e.message.includes("reason_required")
-          ? "A short reason is required to decline."
-          : "We couldn't save that decision. Please try again.",
-      );
-    } finally {
-      setBusy(null);
-    }
-  }
 
   return (
     <div
