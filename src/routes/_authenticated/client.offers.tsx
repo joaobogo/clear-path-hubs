@@ -16,10 +16,14 @@ import {
   BadgeAlert,
   RotateCcw,
   ClipboardList,
+  Handshake,
+  BellRing,
+  AlertTriangle,
 } from "lucide-react";
 import {
   listHires,
   transitionHire,
+  nudgeOffer,
   assignHireOwner,
   upsertOfferDraft,
   listOfferOwners,
@@ -32,6 +36,14 @@ import {
   type HireCloseReason,
 } from "@/lib/hires.functions";
 import { getClientContext } from "@/lib/client.functions";
+import {
+  isStalled,
+  stallLabel,
+  byStallDesc,
+  stageEnteredAt,
+  STALL_HOURS,
+} from "@/lib/offer-stall";
+import { formatAge } from "@/lib/time-age";
 import { useClientOrgSearch } from "@/lib/use-client-org";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -75,6 +87,7 @@ export const Route = createFileRoute("/_authenticated/client/offers")({
 const COLUMN_ORDER: HireStatus[] = [
   "offer_drafted",
   "offer_sent",
+  "offer_negotiating",
   "offer_accepted",
   "hire_confirmed",
   "offer_declined",
@@ -84,6 +97,7 @@ const COLUMN_ORDER: HireStatus[] = [
 const COLUMN_ICON: Record<HireStatus, React.ComponentType<{ className?: string }>> = {
   offer_drafted: ClipboardList,
   offer_sent: Send,
+  offer_negotiating: Handshake,
   offer_accepted: Check,
   offer_declined: X,
   hire_confirmed: Trophy,
@@ -93,6 +107,7 @@ const COLUMN_ICON: Record<HireStatus, React.ComponentType<{ className?: string }
 const COLUMN_TONE: Record<HireStatus, string> = {
   offer_drafted: "border-slate-300 bg-slate-50 dark:bg-slate-900/40",
   offer_sent: "border-blue-300/60 bg-blue-50/60 dark:bg-blue-950/30",
+  offer_negotiating: "border-violet-300/60 bg-violet-50/60 dark:bg-violet-950/30",
   offer_accepted: "border-emerald-300/60 bg-emerald-50/60 dark:bg-emerald-950/30",
   offer_declined: "border-amber-300/60 bg-amber-50/60 dark:bg-amber-950/30",
   hire_confirmed: "border-primary/40 bg-primary/5",
@@ -130,6 +145,11 @@ function OffersPage() {
     for (const h of hires) m.get(h.status)?.push(h);
     return m;
   }, [hires]);
+
+  const stalled = useMemo(
+    () => hires.filter((h) => isStalled(h)).sort((a, b) => byStallDesc(a, b)),
+    [hires],
+  );
 
   if (!orgId) return <div className="p-8 text-sm text-muted-foreground">Loading…</div>;
 
@@ -183,6 +203,41 @@ function OffersPage() {
           }
         />
       </section>
+
+      {/* Stalled offers */}
+      {stalled.length > 0 && (
+        <section className="mt-6 rounded-xl border border-amber-300/70 bg-amber-50/60 p-4 dark:bg-amber-950/20">
+          <h2 className="flex items-center gap-2 text-sm font-semibold">
+            <AlertTriangle className="h-4 w-4 text-amber-600" aria-hidden />
+            {stalled.length} offer{stalled.length === 1 ? "" : "s"} stalled over{" "}
+            {STALL_HOURS}h
+          </h2>
+          <ul className="mt-3 space-y-2">
+            {stalled.map((h) => (
+              <li
+                key={h.id}
+                className="flex flex-wrap items-center justify-between gap-2 rounded-lg border bg-background/80 px-3 py-2"
+              >
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-medium">
+                    {h.candidate_name}{" "}
+                    <span className="font-normal text-muted-foreground">
+                      · {h.position_title}
+                    </span>
+                  </p>
+                  <p className="mt-0.5 text-[11px] text-muted-foreground">
+                    {HIRE_STATUS_LABEL[h.status]} · {stallLabel(h)} · owner{" "}
+                    {h.owner_name ?? "unassigned"}
+                    {h.nudge_count > 0 &&
+                      ` · nudged ${h.nudge_count}× (last ${formatAge(h.last_nudged_at)} ago)`}
+                  </p>
+                </div>
+                {!readOnly && <NudgeButton orgId={orgId} hire={h} />}
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       {/* Board */}
       <section className="mt-6 overflow-x-auto">
@@ -345,7 +400,8 @@ function Column({
 
 const NEXT_STEPS: Record<HireStatus, HireStatus[]> = {
   offer_drafted: ["offer_sent", "closed_lost"],
-  offer_sent: ["offer_accepted", "offer_declined", "closed_lost"],
+  offer_sent: ["offer_negotiating", "offer_accepted", "offer_declined", "closed_lost"],
+  offer_negotiating: ["offer_accepted", "offer_sent", "offer_declined", "closed_lost"],
   offer_accepted: ["hire_confirmed", "closed_lost"],
   offer_declined: ["offer_drafted", "closed_lost"],
   hire_confirmed: ["closed_lost"],
