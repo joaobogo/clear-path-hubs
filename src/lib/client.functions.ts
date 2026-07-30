@@ -413,15 +413,38 @@ export const getClientPositions = createServerFn({ method: "GET" })
     return (positions as AnyRow[]).map((p) => {
       const posRows = byPosition.get(p.id) ?? [];
       const kpi = computeKpis(posRows, 0);
+      const language = pipelineLanguageInput(posRows, p.status);
       return {
         ...p,
 
         kpis: kpi,
+        pipeline_line: buildPipelineStatusLine(language),
         next_milestone: nextMilestoneFor(posRows, p.status),
-        action_required: actionRequiredFor(posRows, p.status),
+        action_required: buildPipelineActionLabel(language),
       };
     });
   });
+
+/** Map canonical rows onto the client-language vocabulary. */
+function pipelineLanguageInput(rows: KpiRow[], status: string): PipelineStatusInput {
+  const scheduled = rows.filter((r) => r.interview_scheduled);
+  const nextInterviewAt =
+    scheduled
+      .map((r) => r.next_interview_at)
+      .filter((v): v is string => Boolean(v))
+      .sort()[0] ?? null;
+  return {
+    status,
+    awaitingReview: rows.filter((r) => r.stage === "delivered").length,
+    shortlisted: rows.filter((r) => r.stage === "shortlisted").length,
+    interviewsToConfirm: rows.filter((r) => r.interview_needs_confirmation).length,
+    interviewsScheduled: scheduled.length,
+    nextInterviewAt,
+    offers: rows.filter((r) => r.stage === "offer").length,
+    hires: rows.filter((r) => r.stage === "hired").length,
+    totalCandidates: rows.length,
+  };
+}
 
 function nextMilestoneFor(rows: KpiRow[], status: string): string | null {
   if (status === "draft") return "Awaiting intake approval";
@@ -434,11 +457,7 @@ function nextMilestoneFor(rows: KpiRow[], status: string): string | null {
   if (rows.length > 0) return "Review new candidates";
   return "Awaiting first candidates";
 }
-function actionRequiredFor(rows: KpiRow[], _status: string): string | null {
-  const newlyDelivered = rows.filter((r) => r.stage === "delivered").length;
-  if (newlyDelivered > 0) return `${newlyDelivered} new to review`;
-  return null;
-}
+
 
 export const getClientPositionDetail = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
