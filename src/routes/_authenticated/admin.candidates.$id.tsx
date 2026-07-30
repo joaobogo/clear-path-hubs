@@ -1506,6 +1506,29 @@ function ActionRail({
     m.processing_state === "manual_review_required" ||
     m.processing_state === "ocr_required";
 
+  // Approve safety: block doomed requests before they are sent, and never let a
+  // non-retryable failure be clicked again.
+  const preflightBlock = approvePreflightBlock(m.canonical_state);
+  const approveBlocked = !!preflightBlock || approveFailure?.retryable === false;
+  const runApprove = () => {
+    setApproveFailure(null);
+    return onRun(
+      "approve",
+      () =>
+        applyReviewDecision({
+          data: { match_id: m.id, action: "approve_for_client", reason },
+        }),
+      {
+        onSuccess: () => setApproveFailure(null),
+        onError: (err) => {
+          const failure = explainApproveFailure(err.message);
+          setApproveFailure(failure);
+          toast.error(`${failure.title} — ${failure.detail}`);
+        },
+      },
+    );
+  };
+
   // Context-aware primary action — one at a time, following readiness order.
   let primary: { label: string; qa: string; onClick: () => void; disabled?: boolean };
   if (needsRepair) {
@@ -1516,15 +1539,10 @@ function ActionRail({
     };
   } else if (scored && !approved) {
     primary = {
-      label: "Approve score",
+      label: approveFailure?.retryable ? "Retry approve score" : "Approve score",
       qa: "primary-approve-score",
-      disabled: !!busy,
-      onClick: () =>
-        onRun("approve", () =>
-          applyReviewDecision({
-            data: { match_id: m.id, action: "approve_for_client", reason },
-          }),
-        ),
+      disabled: !!busy || approveBlocked,
+      onClick: runApprove,
     };
   } else if (approved && !isPublished) {
     primary = {
