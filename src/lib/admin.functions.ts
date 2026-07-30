@@ -851,6 +851,30 @@ export const setPositionStatus = createServerFn({ method: "POST" })
         console.error("[setPositionStatus] emit failed", trace_id, e);
       }
     }
+    // Start the 14-day pilot clock at activation — never at signup.
+    if (data.action === "activate" || data.action === "reopen") {
+      try {
+        const { data: org } = await s
+          .from("organizations")
+          .select("id, pilot_status, pilot_position_id, pilot_started_at")
+          .eq("id", before.organization_id)
+          .maybeSingle();
+        if (org && org.pilot_position_id === data.id && !org.pilot_started_at) {
+          const startedAt = new Date();
+          const endsAt = new Date(startedAt.getTime() + 14 * 24 * 60 * 60 * 1000);
+          await s
+            .from("organizations")
+            .update({
+              pilot_status: "active",
+              pilot_started_at: startedAt.toISOString(),
+              pilot_ends_at: endsAt.toISOString(),
+            })
+            .eq("id", org.id);
+        }
+      } catch (e) {
+        console.error("[setPositionStatus] pilot clock failed", trace_id, e);
+      }
+    }
     // The search is genuinely live now — tell the client once.
     if (data.action === "activate" || data.action === "reopen") {
       try {
