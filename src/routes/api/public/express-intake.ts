@@ -59,8 +59,12 @@ function signatureOk(bytes: Uint8Array, ext: string): boolean {
   const at = (i: number) => (i < bytes.length ? bytes[i] : -1);
   if (ext === "pdf") return at(0) === 0x25 && at(1) === 0x50 && at(2) === 0x44 && at(3) === 0x46;
   if (ext === "docx") return at(0) === 0x50 && at(1) === 0x4b && at(2) === 0x03 && at(3) === 0x04;
+  // {\rtf
+  if (ext === "rtf")
+    return at(0) === 0x7b && at(1) === 0x5c && at(2) === 0x72 && at(3) === 0x74 && at(4) === 0x66;
   return true; // txt
 }
+
 
 /**
  * Resolve an existing auth user by email without paging the whole directory.
