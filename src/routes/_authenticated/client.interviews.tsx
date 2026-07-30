@@ -135,6 +135,7 @@ function InterviewsPage() {
   const [requestOpen, setRequestOpen] = useState(false);
   const [detail, setDetail] = useState<InterviewDTO | null>(null);
   const [busyId, setBusyId] = useState<string | null>(null);
+  const [scorecardId, setScorecardId] = useState<string | null>(null);
 
   const listQuery = useQuery({
     queryKey: ["client-interviews", org, "all"],
