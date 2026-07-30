@@ -207,13 +207,36 @@ export const Route = createFileRoute("/api/public/express-intake")({
         let authUserId: string | null = null;
         let accountCreated = false;
         {
-          const { data: created, error: createErr } = await admin.auth.admin.createUser({
-            email: data.workEmail,
-            password: data.password,
-            email_confirm: true,
-            user_metadata: { full_name: `${data.firstName} ${data.lastName}`.trim() },
-          });
-          if (createErr) {
+          // No password supplied → this must already be an account (an
+          // authenticated client re-submitting). Never create one blind.
+          if (!data.password) {
+            const { data: list } = await admin.auth.admin.listUsers({ page: 1, perPage: 200 });
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const found = list?.users?.find((u: any) => (u.email ?? "").toLowerCase() === data.workEmail);
+            if (!found) {
+              return Response.json(
+                {
+                  ok: false,
+                  trace_id: traceId,
+                  error: "password_required",
+                  message: "Choose a password to create your TaaSFlow account.",
+                },
+                { status: 400 },
+              );
+            }
+            authUserId = found.id;
+          }
+          const { data: created, error: createErr } = authUserId
+            ? { data: null, error: null as { message: string } | null }
+            : await admin.auth.admin.createUser({
+                email: data.workEmail,
+                password: data.password,
+                email_confirm: true,
+                user_metadata: { full_name: `${data.firstName} ${data.lastName}`.trim() },
+              });
+          if (authUserId) {
+            // already resolved above
+          } else if (createErr) {
             const { data: list } = await admin.auth.admin.listUsers({ page: 1, perPage: 200 });
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const found = list?.users?.find((u: any) => (u.email ?? "").toLowerCase() === data.workEmail);
@@ -331,9 +354,9 @@ export const Route = createFileRoute("/api/public/express-intake")({
             await admin
               .from("organizations")
               .update({
-                pilot_status: "active",
+                // The 14-day clock starts when the search goes live, not now.
+                pilot_status: "reserved",
                 pilot_used: true,
-                pilot_started_at: new Date().toISOString(),
                 pilot_position_id: positionId,
               })
               .eq("id", organizationId);
@@ -468,6 +491,7 @@ export const Route = createFileRoute("/api/public/express-intake")({
           intakeId,
           organizationId,
           positionId,
+          jdStored: Boolean(jdPath),
           userId: authUserId,
           accountCreated,
           pilotEligible,

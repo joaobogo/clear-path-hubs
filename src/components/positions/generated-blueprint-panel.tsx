@@ -122,13 +122,15 @@ export function GeneratedBlueprintPanel({
             <Sparkles className="h-4 w-4" aria-hidden />
           </span>
           <div>
-            <h2 className="text-base font-semibold">Role blueprint</h2>
+            <h2 className="text-base font-semibold">
+              {ready || failed ? "Role blueprint" : "Your role is being built"}
+            </h2>
             <p className="text-sm text-muted-foreground">
               {ready
                 ? "Prepared from your job description and public company information. Every answer is editable."
                 : failed
-                  ? "Automated preparation didn't complete — a TaaSFlow specialist is finishing this brief."
-                  : "We're preparing this role now. You can keep working — nothing is blocked."}
+                  ? "Your role was saved, but TaaSFlow could not finish analyzing the document. Try the analysis again or paste the job description."
+                  : "TaaSFlow is analyzing the job description, completing the role blueprint, calibrating the screening criteria, and preparing the sourcing plan. You can review or edit every detail as soon as the blueprint is ready."}
             </p>
           </div>
         </div>
@@ -179,6 +181,15 @@ export function GeneratedBlueprintPanel({
               );
             })}
           </ol>
+          {!failed && audience === "client" && (
+            <div className="space-y-1 rounded-md border bg-muted/30 p-3 text-sm text-muted-foreground">
+              <p>You do not need to keep this page open. TaaSFlow will email you when the role blueprint is ready.</p>
+              <p>
+                First candidate activity usually begins within 3–5 days after the search goes live. Your
+                complete pilot runs for 14 days.
+              </p>
+            </div>
+          )}
           {failed && audience === "admin" && position?.blueprint_error && (
             <p className="rounded-md border border-amber-500/40 bg-amber-500/5 p-3 font-mono text-xs">
               {String(position.blueprint_error).slice(0, 300)}

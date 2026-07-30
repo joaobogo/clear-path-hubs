@@ -11,7 +11,10 @@ interface Props {
 }
 
 const ExpressWelcome = ({ contactName, companyName, roleTitle, workspaceUrl }: Props) => (
-  <Shell preview="Your TaaSFlow workspace is ready" heading="Your workspace is ready">
+  <Shell
+    preview={`Your ${roleTitle ?? 'new'} role is being built`}
+    heading={`Your ${roleTitle ?? 'new'} role is being built`}
+  >
     <Text style={text}>
       {contactName ? `Hi ${contactName},` : 'Hi,'}
     </Text>
@@ -20,13 +23,17 @@ const ExpressWelcome = ({ contactName, companyName, roleTitle, workspaceUrl }: P
       <strong>{roleTitle ?? 'your role'}</strong> has been created in your workspace.
     </Text>
     <Text style={text}>
-      We're now reading your job description and building the role blueprint — the brief,
-      scoring rubric, screening questions and sourcing plan. You'll get a second email the
-      moment it's ready to review. Nothing is needed from you in the meantime.
+      TaaSFlow is currently completing the role blueprint, calibrating the screening criteria,
+      building the sourcing and outreach plan, and preparing the search channels. You'll be able
+      to review or edit every detail inside your workspace.
+    </Text>
+    <Text style={text}>
+      First candidate activity usually begins within 3–5 days after the search goes live. Your
+      one-time pilot runs for 14 days and covers one role.
     </Text>
     {workspaceUrl && (
       <Button style={button} href={workspaceUrl}>
-        Open your workspace
+        Open my workspace
       </Button>
     )}
     <Text style={footer}>
@@ -38,7 +45,7 @@ const ExpressWelcome = ({ contactName, companyName, roleTitle, workspaceUrl }: P
 export const template = {
   component: ExpressWelcome,
   subject: (data: Record<string, any>) =>
-    `Your TaaSFlow workspace is ready — ${data.roleTitle ?? 'your first role'}`,
+    `Your ${data.roleTitle ?? 'new'} role is being built`,
   displayName: 'Express onboarding welcome',
   previewData: {
     contactName: 'Marina',

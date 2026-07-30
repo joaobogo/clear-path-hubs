@@ -50,17 +50,21 @@ export const expressIntakeSchema = z
     // Contact
     firstName: z.string().trim().min(1, "Enter your first name").max(80),
     lastName: z.string().trim().min(1, "Enter your last name").max(80),
-    contactTitle: z.string().trim().min(2, "Enter your job title").max(120),
+    contactTitle: z.string().trim().max(120).optional().or(z.literal("")),
     workEmail: z.string().trim().toLowerCase().email("Enter a valid work email").max(255),
     phone: z.string().trim().min(6, "Enter a phone number we can reach you on").max(40),
     contactLinkedin: linkedinField("personal"),
 
     // Account
+    // Optional: an already-authenticated client keeps their existing password.
+    // When absent the server only accepts an email that already has an account.
     password: z
       .string()
       .min(MIN_ACCOUNT_PASSWORD, `Use at least ${MIN_ACCOUNT_PASSWORD} characters`)
-      .max(128),
-    confirmPassword: z.string().max(128),
+      .max(128)
+      .optional()
+      .or(z.literal("")),
+    confirmPassword: z.string().max(128).optional().or(z.literal("")),
 
     // Role
     roleTitle: z.string().trim().min(2, "Enter the job title").max(160),
@@ -78,7 +82,7 @@ export const expressIntakeSchema = z
     // Silent spam trap — must stay empty.
     companyFax: z.string().max(200).optional().or(z.literal("")),
   })
-  .refine((v) => v.password === v.confirmPassword, {
+  .refine((v) => (v.password ?? "") === (v.confirmPassword ?? ""), {
     path: ["confirmPassword"],
     message: "Both passwords must match",
   })

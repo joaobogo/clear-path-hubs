@@ -112,6 +112,8 @@ function ExpressIntakePage() {
   const fileInput = useRef<HTMLInputElement>(null);
   const idem = useRef<string>("");
   const startedRef = useRef(false);
+  const pastedRef = useRef(false);
+  const [authed, setAuthed] = useState(false);
 
   // Restore a draft so a refresh never costs the client their typing. Passwords
   // are deliberately never persisted.
@@ -135,7 +137,32 @@ function ExpressIntakePage() {
     } catch {
       idem.current = newIdempotencyKey();
     }
-    trackEvent("onboarding_started", { flow: "express_onboarding" });
+    trackEvent("express_intake_viewed", { flow: "express_onboarding" });
+
+    // Already signed in? Reuse the account — never ask for another password.
+    void (async () => {
+      try {
+        const { data: sess } = await supabase.auth.getSession();
+        if (!sess?.session) return;
+        const { data } = await supabase.auth.getUser();
+        const user = data?.user;
+        if (!user?.email) return;
+        setAuthed(true);
+        const meta = (user.user_metadata ?? {}) as Record<string, unknown>;
+        const full = typeof meta.full_name === "string" ? meta.full_name : "";
+        const [first, ...rest] = full.split(" ");
+        setState((s2) => ({
+          ...s2,
+          workEmail: s2.workEmail || user.email!,
+          firstName: s2.firstName || first || "",
+          lastName: s2.lastName || rest.join(" "),
+          password: "",
+          confirmPassword: "",
+        }));
+      } catch {
+        /* anonymous visitor — normal path */
+      }
+    })();
   }, []);
 
   useEffect(() => {
@@ -157,7 +184,7 @@ function ExpressIntakePage() {
   const set = <K extends keyof FormState>(key: K, value: FormState[K]) => {
     if (!startedRef.current) {
       startedRef.current = true;
-      trackEvent("onboarding_form_engaged", { flow: "express_onboarding" });
+      trackEvent("express_intake_started", { flow: "express_onboarding" });
     }
     setState((s) => ({ ...s, [key]: value }));
   };
@@ -182,7 +209,7 @@ function ExpressIntakePage() {
         size: file.size,
       });
       setErrors((e) => ({ ...e, jobDescriptionText: "" }));
-      trackEvent("jd_uploaded", { flow: "express_onboarding", kind: ext });
+      trackEvent("job_description_selected", { flow: "express_onboarding", kind: ext });
     } catch {
       toast.error("We couldn't read that file. Try another one.");
     }
@@ -243,21 +270,32 @@ function ExpressIntakePage() {
         return;
       }
 
-      trackEvent("onboarding_submitted", {
+      trackEvent("express_intake_submitted", {
         flow: "express_onboarding",
         pilot_eligible: body.pilotEligible !== false,
       });
+      if (body.accountCreated) trackEvent("account_created_from_intake", { flow: "express_onboarding" });
+      else trackEvent("existing_account_detected", { flow: "express_onboarding" });
+      if (body.pilotEligible === false)
+        trackEvent("pilot_ineligible", { reason: String(body.pilotReason ?? "unknown") });
+      if (body.positionId) trackEvent("role_created", { flow: "express_onboarding" });
+      if (jdFile)
+        trackEvent(body.jdStored === false ? "document_upload_failed" : "document_upload_succeeded", {
+          flow: "express_onboarding",
+        });
 
       // Sign the client straight into their new workspace.
-      let signedIn = false;
-      try {
-        const { error } = await supabase.auth.signInWithPassword({
-          email: parsed.data.workEmail,
-          password: parsed.data.password,
-        });
-        signedIn = !error;
-      } catch {
-        signedIn = false;
+      let signedIn = authed;
+      if (!authed && parsed.data.password) {
+        try {
+          const { error } = await supabase.auth.signInWithPassword({
+            email: parsed.data.workEmail,
+            password: parsed.data.password,
+          });
+          signedIn = !error;
+        } catch {
+          signedIn = false;
+        }
       }
 
       // Kick off blueprint preparation. Deliberately not awaited — the role
@@ -290,14 +328,32 @@ function ExpressIntakePage() {
 
   const jdChars = state.jobDescriptionText.trim().length;
 
+  // Fire once when the client has genuinely pasted a description.
+  useEffect(() => {
+    if (jdChars >= MIN_JD_TEXT && !pastedRef.current) {
+      pastedRef.current = true;
+      trackEvent("job_description_pasted", { flow: "express_onboarding" });
+    }
+  }, [jdChars]);
+
   return (
     <FormShell
       width="lg"
       eyebrow="Start hiring"
-      title="Give us the role. We'll build the rest."
-      description="Your company, your account, the job description. We create your workspace, read the role, build the blueprint and scoring rubric, and show you every step as it happens."
+      title="Launch a role in minutes."
+      description="Create your workspace and upload the job description. TaaSFlow will build the complete role blueprint, screening criteria, and sourcing plan for you."
     >
       <div className="space-y-6" id="form-main">
+        <div className="rounded-xl border border-[color:var(--brand-navy)]/12 bg-[color:var(--brand-navy)]/4 p-4">
+          <p className="text-sm font-semibold">
+            ${PRICE_PILOT_USD} one-time pilot · 14 days · One role · Any industry · Anywhere in the world ·
+            No placement fees
+          </p>
+          <p className="mt-1 text-sm text-[color:var(--brand-navy)]/70">
+            Pilot access is available once per company.
+          </p>
+        </div>
+
         <Section title="Your company" step={1}>
           <Field label="Company name" error={errors.companyName} required>
             <Input
@@ -350,7 +406,7 @@ function ExpressIntakePage() {
               />
             </Field>
           </div>
-          <Field label="Your job title" error={errors.contactTitle} required>
+          <Field label="Your job title" error={errors.contactTitle} hint="Optional">
             <Input
               value={state.contactTitle}
               onChange={(e) => set("contactTitle", e.target.value)}
@@ -387,6 +443,7 @@ function ExpressIntakePage() {
           </Field>
         </Section>
 
+        {authed ? null : (
         <Section title="Create your account" step={3}>
           <div className="grid gap-4 sm:grid-cols-2">
             <Field
@@ -432,8 +489,9 @@ function ExpressIntakePage() {
             </Field>
           </div>
         </Section>
+        )}
 
-        <Section title="The role" step={4}>
+        <Section title="The role" step={authed ? 3 : 4}>
           <Field label="Job title" error={errors.roleTitle} required>
             <Input
               value={state.roleTitle}
@@ -543,9 +601,9 @@ function ExpressIntakePage() {
             <div className="rounded-lg bg-[color:var(--brand-navy)]/4 p-4">
               <p className="text-sm font-semibold">How the pilot works</p>
               <p className="mt-1 text-sm leading-relaxed text-[color:var(--brand-navy)]/75">
-                One role, one company, ${PRICE_PILOT_USD}. We build the blueprint, run the search and
-                deliver your first shortlist. No salary percentage fees, and nothing starts until you
-                approve the blueprint.
+                ${PRICE_PILOT_USD} one-time introductory pilot, available once per company. One active
+                role for 14 days, any industry, anywhere in the world, with no placement fees. First
+                candidate activity usually begins within 3–5 days after the search goes live.
               </p>
             </div>
 
@@ -557,8 +615,8 @@ function ExpressIntakePage() {
                 aria-invalid={Boolean(errors.pilotAcknowledgement)}
               />
               <span className="text-sm leading-relaxed">
-                I understand the pilot covers one role for my company and that TaaSFlow will confirm
-                scope with me before the search begins.
+                I understand that this is a one-time 14-day pilot for one role and cannot be repeated by
+                the same company.
               </span>
             </label>
             {errors.pilotAcknowledgement && (
@@ -622,7 +680,7 @@ function ExpressIntakePage() {
                   Creating your workspace…
                 </>
               ) : (
-                "Create my workspace and role"
+                "Create my workspace and analyze my role"
               )}
             </Button>
             <ul className="grid gap-2 pt-1 text-sm text-[color:var(--brand-navy)]/70 sm:grid-cols-3">

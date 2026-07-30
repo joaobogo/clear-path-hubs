@@ -144,7 +144,7 @@ function JobsPage() {
           <h1 className="text-3xl md:text-4xl font-semibold tracking-tight">Open roles</h1>
           <p className="mt-2 text-muted-foreground">
             {positions.length} live {positions.length === 1 ? "role" : "roles"} curated by TaaSFlow.
-            Apply in minutes — no account required.
+            Apply in minutes and track your application.
           </p>
         </div>
 
