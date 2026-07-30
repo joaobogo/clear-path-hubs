@@ -137,9 +137,7 @@ export function computeRoleLaunchState({
         : "Searching, contacting and screening candidates.",
   });
 
-  const expected = liveAt
-    ? addBusinessDays(new Date(liveAt), FIRST_BATCH_BUSINESS_DAYS).toISOString()
-    : null;
+  const expected = liveAt ? (addBusinessDays(new Date(liveAt), FIRST_BATCH_BUSINESS_DAYS)?.toISOString() ?? null) : null;
   const overdue = Boolean(expected) && !deliveredAt && new Date(expected!) < new Date();
   stages.push({
     key: "first_expected",
