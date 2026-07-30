@@ -576,7 +576,7 @@ function ExpressIntakePage() {
                 <Upload className="h-5 w-5 text-[color:var(--brand-navy)]/60" aria-hidden />
                 <span className="text-sm font-medium">Drop the job description here, or browse</span>
                 <span className="text-xs text-[color:var(--brand-navy)]/60">
-                  PDF, DOCX or TXT · up to 10 MB
+                  {JD_ACCEPT_LABEL}
                 </span>
               </button>
             )}
