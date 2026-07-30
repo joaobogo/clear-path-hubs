@@ -581,55 +581,40 @@ export const applyReviewDecision = createServerFn({ method: "POST" })
       if (!gate.ok) {
         throw new Error(`publish_blocked:${gate.reason}`);
       }
-      await supabase.from("score_decisions").insert({
-        candidate_match_id: data.match_id,
-        score_run_id: runIdForDecision,
-        decision_type: "approve",
-        reason: data.reason ?? null,
-        actor_user_id: context.userId,
-      });
-      // Canonical state must reach `approved` before publishing, and the DB
-      // trigger only allows single legal hops. Legacy/partially-processed rows
-      // can sit in `ingestion`, so walk the shortest legal path instead of
-      // jumping straight to `approved` (which the trigger rejects).
-      const { data: preRow } = await supabase
-        .from("candidate_matches")
-        .select("canonical_state")
-        .eq("id", data.match_id)
-        .maybeSingle();
-      const current = preRow?.canonical_state as CanonicalScoringState | null | undefined;
-      if (current && current !== "approved" && current !== "published_to_client") {
-        const path = shortestTransitionPath(current, "approved");
-        if (!path) {
-          throw new Error(`publish_failed:approve_state:no_path_from:${current}`);
-        }
-        for (const step of path) {
-          const { error: stepErr } = await supabase
-            .from("candidate_matches")
-            .update({ canonical_state: step })
-            .eq("id", data.match_id);
-          if (stepErr) throw new Error(`publish_failed:approve_state:${stepErr.message}`);
-        }
-      }
 
-      const { data: published, error: publishError } = await supabase
-        .from("candidate_matches")
-        .update({
-          approved_score_run_id: runIdForDecision,
-          admin_status: "approved",
-          client_visibility: "visible",
-          canonical_state: "published_to_client",
-          integrity_status: "ok",
-          stage: "delivered",
-          delivered_at: new Date().toISOString(),
-        })
-        .eq("id", data.match_id)
-        .select("id,admin_status,client_visibility,stage,approved_score_run_id,delivered_at,canonical_state")
-        .maybeSingle();
-      if (publishError) throw new Error(`publish_failed:${publishError.message}`);
-      if (published?.client_visibility !== "visible") {
+      // Single-transaction, idempotent approval. The RPC locks the match row,
+      // inserts the approve decision at most once per (match, run), walks the
+      // legal canonical-state path, and publishes — all atomically. Repeated
+      // clicks return `already: true` instead of failing or half-updating.
+      const { data: rpcResult, error: rpcError } = await supabase.rpc("approve_candidate_match", {
+        _match_id: data.match_id,
+        _run_id: runIdForDecision,
+        _actor_user_id: context.userId,
+        _reason: data.reason ?? null,
+      });
+      if (rpcError) throw new Error(`publish_failed:${rpcError.message}`);
+      const published = (rpcResult ?? null) as {
+        already?: boolean;
+        match_id?: string;
+        canonical_state?: string;
+        admin_status?: string;
+        client_visibility?: string;
+        stage?: string;
+        approved_score_run_id?: string;
+        delivered_at?: string | null;
+        organization_id?: string | null;
+        position_id?: string | null;
+        application_id?: string | null;
+        candidate_profile_id?: string | null;
+      } | null;
+      if (!published || published.client_visibility !== "visible") {
         throw new Error("publish_failed:not_visible_after_update");
       }
+      if (published.already) {
+        // Nothing new to announce; the client already has this candidate.
+        return { ok: true as const, action: data.action, already: true, match: published };
+      }
+
 
       // Emit candidate_published to the client org (visible delivery)
       try {
