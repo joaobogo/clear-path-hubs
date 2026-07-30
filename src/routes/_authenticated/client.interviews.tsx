@@ -919,14 +919,20 @@ function DetailDialog({
  {pending ? "Cancelling…" : "Cancel interview"}
  </Button>
  ) : null}
- {mode === "complete" ? (
- <Button
- disabled={pending}
- onClick={() => onComplete(feedback.trim() || undefined)}
- >
- {pending ? "Saving…" : "Mark completed"}
- </Button>
- ) : null}
+  {mode === "complete" ? (
+  <>
+  <Button variant="outline" disabled={pending} onClick={onScorecard}>
+  Record structured feedback
+  </Button>
+  <Button
+  variant="ghost"
+  disabled={pending}
+  onClick={() => onComplete(feedback.trim() || undefined)}
+  >
+  {pending ? "Saving…" : "Mark completed without scorecard"}
+  </Button>
+  </>
+  ) : null}
  </>
  ) : null}
  </DialogFooter>
