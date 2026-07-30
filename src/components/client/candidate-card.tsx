@@ -36,6 +36,9 @@ const ACCENT: Record<FitPresentation["accent"], { ring: string; chip: string; ba
   },
 };
 
+import { AgeBadge } from "@/components/client/age-badge";
+import { formatDaysInStage } from "@/lib/time-age";
+
 function stageLabel(s: ClientCandidateDTO["stage"]): string {
   return (
     {
@@ -174,10 +177,14 @@ export function CandidateCard({
 
       {/* Footer: stage · delivered · primary action */}
       <div className="mt-4 flex items-center justify-between gap-3 border-t pt-3">
-        <div className="text-[11px] text-muted-foreground">
-          {stageLabel(c.stage)}
-          {c.delivered_at && <span className="mx-1">·</span>}
-          {c.delivered_at && <span>Delivered {timeAgo(c.delivered_at)}</span>}
+        <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1 text-[11px] text-muted-foreground">
+          <span>{stageLabel(c.stage)}</span>
+          {c.stage_entered_at && (
+            <span className="tabular-nums">· {formatDaysInStage(c.stage_entered_at)}</span>
+          )}
+          {c.stage === "delivered" && (
+            <AgeBadge since={c.delivered_at ?? c.stage_entered_at} />
+          )}
         </div>
         <Link
           to="/client/candidates/$id"

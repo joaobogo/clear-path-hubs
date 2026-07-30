@@ -219,6 +219,8 @@ export type ClientCandidateDTO = {
   match_id: string;
   stage: MatchStage;
   delivered_at: string | null;
+  /** When this candidate entered its current stage — powers the age badge. */
+  stage_entered_at: string | null;
   last_updated: string | null;
   position: { id: string; title: string } | null;
   candidate: {
@@ -599,6 +601,10 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
     match_id: row.id,
     stage: row.stage,
     delivered_at: row.delivered_at ?? null,
+    stage_entered_at:
+      row.stage === "delivered"
+        ? (row.delivered_at ?? row.updated_at ?? null)
+        : (row.updated_at ?? row.delivered_at ?? null),
     last_updated: run?.completed_at ?? row.updated_at ?? row.delivered_at ?? null,
     position: pos ? { id: pos.id, title: pos.title } : null,
     candidate: {
