@@ -11,8 +11,10 @@ import {
   assertPerson,
   createDeal,
   createNote,
+  findOpenDealForPerson,
   listDealStages,
   listWorkspaceLists,
+  updateDeal,
 } from "./attio-client.server";
 import {
   CRM_FORMS,
@@ -86,7 +88,9 @@ function attributionValues(s: CrmSubmission) {
     source_brand: CRM_SOURCE_BRAND,
     source_website: CRM_SOURCE_WEBSITE,
     source_form: form.name,
+    source_form_id: form.id,
     form_type: form.type,
+    source_environment: s.environment,
     source_page_url: s.source_page_url ?? undefined,
     landing_page: s.landing_page ?? undefined,
     original_referrer: s.original_referrer ?? undefined,
@@ -208,20 +212,30 @@ export async function syncSubmissionToAttio(s: CrmSubmission): Promise<SyncIds> 
     const stages = await listDealStages();
     const stage = stages.find((x) => /new lead|new inbound|inbound|lead|new/i.test(x.title));
     const displayName = s.company_name || s.full_name || s.email;
+    // Reuse an existing open Deal for this Person before creating a new one.
+    const existingDealId = await findOpenDealForPerson(personId);
     try {
-      dealId = await writeWithFallback(
-        createDeal,
-        {
-          name: `${CRM_SOURCE_BRAND} | ${form.name} | ${displayName}`,
-          stage: stage ? stage.title : undefined,
-          associated_people: [personId],
-          associated_company: companyId ?? undefined,
-        },
-        attribution,
-      );
+      if (existingDealId) {
+        dealId = await writeWithFallback(
+          (values) => updateDeal(existingDealId, values),
+          { associated_company: companyId ?? undefined },
+          attribution,
+        );
+      } else {
+        dealId = await writeWithFallback(
+          createDeal,
+          {
+            name: `${CRM_SOURCE_BRAND} | ${form.name} | ${displayName}`,
+            stage: stage ? stage.title : undefined,
+            associated_people: [personId],
+            associated_company: companyId ?? undefined,
+          },
+          attribution,
+        );
+      }
     } catch (e) {
       if (!(e instanceof AttioError) || e.status !== 400) throw e;
-      dealId = null; // workspace has no deals object configured
+      dealId = existingDealId; // workspace has no writable deals object
     }
   }
 
