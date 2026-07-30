@@ -41,6 +41,8 @@ import { buildShortlistRationale } from "@/lib/client-rationale";
 import { DownloadCvButton } from "@/components/download-cv-button";
 import { useClientOrgSearch } from "@/lib/use-client-org";
 import { JourneyTimeline } from "@/components/candidate/journey-timeline";
+import { NextStepNote } from "@/components/client/next-step-note";
+import { confirmationLine } from "@/lib/client-next-step";
 import { getCandidateJourney } from "@/lib/journey.functions";
 import { useSupportView } from "@/lib/support-view";
 import { Button } from "@/components/ui/button";
@@ -185,6 +187,8 @@ function CandidateDetailPage() {
  const [dialogAction, setDialogAction] = useState<ActionKey | null>(null);
  // Stage captured at mutate time so the toast's Undo knows where to return to.
  const stageBeforeRef = useRef<MatchStage | null>(null);
+ // Consequence line for the stage the decision moves the candidate into.
+ const nextStepAfterRef = useRef<string | null>(null);
  const undoFn = useServerFn(undoClientDecision);
 
  const act = useMutation({
@@ -202,6 +206,7 @@ function CandidateDetailPage() {
  onSuccess: () => {
  const back = stageBeforeRef.current;
  toast.success("Recorded — the TaaSFlow team has been notified.", {
+ description: nextStepAfterRef.current ?? undefined,
  duration: 12_000,
  action: back
  ? {
@@ -240,9 +245,18 @@ function CandidateDetailPage() {
  "offer",
  "hire",
  ]);
+ const RESULT_STAGE: Partial<Record<ActionKey, MatchStage>> = {
+ shortlist: "shortlisted",
+ request_interview: "interview_process",
+ offer: "offer",
+ hire: "hired",
+ not_moving_forward: "not_moving_forward",
+ };
  const handleAct = (k: ActionKey, fromStage: MatchStage) => {
  if (act.isPending) return;
  stageBeforeRef.current = fromStage;
+ const to = RESULT_STAGE[k];
+ nextStepAfterRef.current = to ? confirmationLine(to) : null;
  if (NO_REASON_NEEDED.has(k)) act.mutate({ action: k });
  else setDialogAction(k);
  };
@@ -292,6 +306,13 @@ function CandidateDetailPage() {
  <CandidateHeader
  candidate={candidate}
  readOnly={readOnly}
+ />
+
+ {/* Closes the loop: what we do next after your decision, and by when. */}
+ <NextStepNote
+ stage={candidate.stage}
+ stageEnteredAt={candidate.stage_entered_at}
+ className="mt-4"
  />
 
  {readOnly && support.readOnly && (
@@ -396,6 +417,12 @@ function CandidateDetailPage() {
         onConfirm={(payload) => {
           if (act.isPending) return; // guard against double submission
           stageBeforeRef.current = candidate.stage;
+          nextStepAfterRef.current =
+            payload.action === "hold"
+              ? "We'll pause outreach and keep them warm until you tell us to move."
+              : RESULT_STAGE[payload.action]
+                ? confirmationLine(RESULT_STAGE[payload.action]!)
+                : null;
           act.mutate(payload);
         }}
       />
