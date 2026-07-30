@@ -559,8 +559,17 @@ function PositionDetailPage() {
  )}
  </section>
 
-  {/* 6. Role blueprint — ATS-grade source of truth */}
- <RoleBlueprint position={position} activity={activity} />
+   {/* 5b. Generated role blueprint from express onboarding */}
+  <GeneratedBlueprintPanel
+   position={position}
+   audience="client"
+   editTo={{ to: "/client/positions/$id/edit", params: { id } }}
+   onConfirm={() => confirmBlueprint.mutate()}
+   confirming={confirmBlueprint.isPending}
+  />
+
+   {/* 6. Role blueprint — ATS-grade source of truth */}
+  <RoleBlueprint position={position} activity={activity} />
 
  {/* 6b. Silver medalists from talent memory */}
  {orgId && <ResurfacePanel orgId={orgId} positionId={id} />}
