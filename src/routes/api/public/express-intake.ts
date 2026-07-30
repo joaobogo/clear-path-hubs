@@ -312,18 +312,36 @@ export const Route = createFileRoute("/api/public/express-intake")({
           }
         }
 
-        // ---------- Pilot state (one pilot per company) ----------
+        // ---------- Pilot eligibility (one introductory pilot per company) ----------
+        // Never blocks onboarding: an ineligible company still gets its workspace,
+        // role and blueprint — it just isn't granted a second pilot.
+        let pilotEligible = true;
+        let pilotReason: string | null = null;
         try {
-          const { data: org } = await admin.from("organizations").select("pilot_status").eq("id", organizationId).maybeSingle();
-          if (!org?.pilot_status || org.pilot_status === "none") {
+          const { data: org } = await admin
+            .from("organizations")
+            .select("pilot_status, pilot_used, pilot_admin_override, pilot_position_id")
+            .eq("id", organizationId)
+            .maybeSingle();
+          const alreadyUsed = Boolean(org?.pilot_used) || (org?.pilot_status && org.pilot_status !== "none");
+          if (alreadyUsed && !org?.pilot_admin_override) {
+            pilotEligible = false;
+            pilotReason = "pilot_already_used";
+          } else {
             await admin
               .from("organizations")
-              .update({ pilot_status: "active", pilot_started_at: new Date().toISOString(), pilot_position_id: positionId })
+              .update({
+                pilot_status: "active",
+                pilot_used: true,
+                pilot_started_at: new Date().toISOString(),
+                pilot_position_id: positionId,
+              })
               .eq("id", organizationId);
           }
         } catch (err) {
           console.error("[express-intake] pilot state failed (non-critical)", err);
         }
+
 
         // ---------- Intake record ----------
         const { data: intakeRow, error: intakeErr } = await admin
