@@ -226,6 +226,20 @@ function pickListId(lists: { id: string; name: string; api_slug: string }[], pat
   return null;
 }
 
+/**
+ * Attio's `name` attribute on People is a structured personal-name value and
+ * requires first_name, last_name AND full_name — sending full_name alone is
+ * rejected with a 400 validation_type error.
+ */
+export function personNameValue(fullName: string | null) {
+  const cleaned = (fullName ?? "").replace(/\s+/g, " ").trim();
+  if (!cleaned) return undefined;
+  const parts = cleaned.split(" ");
+  const first = parts[0];
+  const last = parts.length > 1 ? parts.slice(1).join(" ") : "";
+  return [{ first_name: first, last_name: last, full_name: cleaned }];
+}
+
 /** Push one validated submission into Attio. Throws on failure. */
 export async function syncSubmissionToAttio(s: CrmSubmission): Promise<SyncIds> {
   const form = CRM_FORMS[s.source_form_id];
