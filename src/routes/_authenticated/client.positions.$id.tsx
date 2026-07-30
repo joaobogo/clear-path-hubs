@@ -312,26 +312,15 @@ function PositionDetailPage() {
    />
   </>
  )}
- <Button asChild variant="outline" size="sm">
- <Link to="/client/messages" search={{ position: position.id } as never}>
- <MessageSquare className="mr-1.5 h-4 w-4" /> Message TaaSFlow
- </Link>
- </Button>
- {canEdit && (
- <Button asChild size="sm">
- <Link
- to="/client/messages"
- search={
- {
- position: position.id,
- intent: "change_request",
- } as never
- }
- >
- Request a change
- </Link>
- </Button>
- )}
+  {orgId && (
+  <OpenThreadButton
+  orgId={orgId}
+  scope="position"
+  positionId={position.id}
+  subject={position.title}
+  label="Conversation"
+  />
+  )}
  </div>
  {canEdit && !support.readOnly && (
  <div className="mt-4">
