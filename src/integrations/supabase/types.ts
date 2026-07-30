@@ -5647,6 +5647,7 @@ export type Database = {
         Row: {
           approved_at: string | null
           blueprint: Json
+          blueprint_attempts: number
           blueprint_confirmed_at: string | null
           blueprint_error: string | null
           blueprint_generated_at: string | null
@@ -5717,6 +5718,7 @@ export type Database = {
         Insert: {
           approved_at?: string | null
           blueprint?: Json
+          blueprint_attempts?: number
           blueprint_confirmed_at?: string | null
           blueprint_error?: string | null
           blueprint_generated_at?: string | null
@@ -5789,6 +5791,7 @@ export type Database = {
         Update: {
           approved_at?: string | null
           blueprint?: Json
+          blueprint_attempts?: number
           blueprint_confirmed_at?: string | null
           blueprint_error?: string | null
           blueprint_generated_at?: string | null
