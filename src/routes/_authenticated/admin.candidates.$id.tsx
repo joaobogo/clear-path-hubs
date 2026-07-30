@@ -1576,6 +1576,31 @@ function ActionRail({
         <p className="mt-1 text-xs text-muted-foreground">
           Actions follow readiness: review → approve → preview → publish.
         </p>
+        {scored && !approved && preflightBlock && (
+          <Alert variant="destructive" className="mt-3" data-qa="approve-preflight-block">
+            <AlertTitle className="text-xs">Approval unavailable</AlertTitle>
+            <AlertDescription className="text-xs">{preflightBlock}</AlertDescription>
+          </Alert>
+        )}
+        {approveFailure && (
+          <Alert variant="destructive" className="mt-3" data-qa="approve-failure">
+            <AlertTitle className="text-xs">{approveFailure.title}</AlertTitle>
+            <AlertDescription className="space-y-1 text-xs">
+              <p>{approveFailure.detail}</p>
+              {approveFailure.nextStep && (
+                <p className="font-medium">Next: {approveFailure.nextStep}</p>
+              )}
+              <p className="font-mono text-[10px] opacity-70 break-all">
+                {approveFailure.raw}
+              </p>
+              {!approveFailure.retryable && (
+                <p className="opacity-80">
+                  Retrying will fail the same way — resolve the cause first.
+                </p>
+              )}
+            </AlertDescription>
+          </Alert>
+        )}
         <div className="mt-3 flex items-stretch gap-2">
           <Button
             className="flex-1"
@@ -1583,7 +1608,7 @@ function ActionRail({
             onClick={primary.onClick}
             data-qa-action={primary.qa}
           >
-            {primary.label}
+            {busy === "approve" ? "Approving…" : primary.label}
           </Button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
