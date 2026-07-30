@@ -602,6 +602,7 @@ function DecisionQueue({ queue, loading }: { queue: DecisionRow[]; loading: bool
           </li>
         ))}
       </ul>
+      <VisibilityNote />
     </section>
   );
 }
