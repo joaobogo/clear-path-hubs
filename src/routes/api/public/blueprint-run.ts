@@ -39,7 +39,7 @@ export const Route = createFileRoute("/api/public/blueprint-run")({
 
         const { data: position } = await admin
           .from("positions")
-          .select("id, title, blueprint_status, jd_file_path, jd_file_name, description")
+          .select("id, title, blueprint_status, blueprint_attempts, jd_file_path, jd_file_name, description")
           .eq("id", intake.position_id)
           .maybeSingle();
         if (!position) return Response.json({ ok: false, error: "position_missing" }, { status: 404 });
@@ -48,16 +48,30 @@ export const Route = createFileRoute("/api/public/blueprint-run")({
           return Response.json({ ok: true, alreadyRunning: true, status: position.blueprint_status });
         }
 
+        // Hard cap so a known intake id cannot be replayed to burn AI usage.
+        const attempts = Number(position.blueprint_attempts ?? 0);
+        if (attempts >= 5) {
+          return Response.json(
+            { ok: false, error: "attempt_limit_reached", status: position.blueprint_status },
+            { status: 429 },
+          );
+        }
+
         // Claim the job so a double-tap or a second tab cannot run it twice.
         const { data: claimed } = await admin
           .from("positions")
-          .update({ blueprint_status: "analyzing_jd", blueprint_error: null })
+          .update({
+            blueprint_status: "analyzing_jd",
+            blueprint_error: null,
+            blueprint_attempts: attempts + 1,
+          })
           .eq("id", position.id)
           .in("blueprint_status", ["queued", "failed", "not_started"])
           .select("id");
         if (!claimed || claimed.length === 0) {
           return Response.json({ ok: true, alreadyRunning: true });
         }
+
 
         const payload = (intake.payload ?? {}) as Record<string, unknown>;
         const contactFirst = typeof payload.firstName === "string" ? payload.firstName : "";
