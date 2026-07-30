@@ -111,7 +111,14 @@ function buildBreadcrumbs(
   const section = sorted.find((n) =>
     n.exact ? pathname === n.to : pathname === n.to || pathname.startsWith(n.to + "/"),
   );
-  if (!section) return [];
+  // Routes that are not in the sidebar still deserve a page title instead of
+  // falling back to the workspace name.
+  if (!section) {
+    const seg = pathname.split("/").filter(Boolean).pop();
+    if (!seg) return [];
+    const label = seg.replace(/[-_]/g, " ").replace(/^./, (c) => c.toUpperCase());
+    return [{ label }];
+  }
   if (pathname === section.to) return [{ label: section.label }];
   // Add a trailing crumb from the remaining path segments (Title-cased last segment).
   const tail = pathname.slice(section.to.length).split("/").filter(Boolean);
