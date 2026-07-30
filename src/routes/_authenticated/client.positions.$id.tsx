@@ -24,6 +24,8 @@ import {
 import { AlertCircle, MessageSquare, Users } from "lucide-react";
 import { RoleBlueprint } from "@/components/product/role-blueprint";
 import { GeneratedBlueprintPanel } from "@/components/positions/generated-blueprint-panel";
+import { RoleLaunchPanel } from "@/components/positions/role-launch-panel";
+import type { RoleLaunchState } from "@/lib/role-launch";
 import { ResurfacePanel } from "@/components/client/resurface-panel";
 import { RoleMemoryPanel } from "@/components/role-memory-panel";
 import { JobQualityPanel } from "@/components/positions/JobQualityPanel";
@@ -186,6 +188,7 @@ function PositionDetailPage() {
  ctx?.active?.role === "operations");
 
  const { position, matches, activity, summary } = data;
+ const launch = (data as { launch?: RoleLaunchState }).launch;
  const byStage: Record<string, AnyRow[]> = {};
  for (const col of KANBAN_COLUMNS) byStage[col.key] = [];
  for (const m of matches as AnyRow[]) {
@@ -559,7 +562,10 @@ function PositionDetailPage() {
  )}
  </section>
 
-   {/* 5b. Generated role blueprint from express onboarding */}
+   {/* 5b. Role setup timeline + search channels — evidence-backed */}
+  {launch && <RoleLaunchPanel launch={launch} />}
+
+   {/* 5c. Generated role blueprint from express onboarding */}
   <GeneratedBlueprintPanel
    position={position}
    audience="client"
@@ -567,6 +573,7 @@ function PositionDetailPage() {
    onConfirm={() => confirmBlueprint.mutate()}
    confirming={confirmBlueprint.isPending}
   />
+
 
    {/* 6. Role blueprint — ATS-grade source of truth */}
   <RoleBlueprint position={position} activity={activity} />

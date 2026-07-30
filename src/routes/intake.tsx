@@ -10,6 +10,10 @@ import { Card, CardContent } from "@/components/ui/card";
 import { FormShell } from "@/components/marketing/form-shell";
 import {
   ALLOWED_JD_EXT,
+  UNREADABLE_JD_EXT,
+  JD_ACCEPT_ATTR,
+  JD_ACCEPT_LABEL,
+
   EXPRESS_DRAFT_KEY,
   EXPRESS_IDEMPOTENCY_KEY,
   MAX_JD_BYTES,
@@ -192,10 +196,15 @@ function ExpressIntakePage() {
   const onPickFile = async (file: File | null) => {
     if (!file) return;
     const ext = jdFileExt(file.name);
-    if (!ALLOWED_JD_EXT.has(ext)) {
-      toast.error("Upload a PDF, DOCX or TXT file.");
+    if (UNREADABLE_JD_EXT.has(ext)) {
+      toast.error("Legacy .doc files can't be read. Save it as PDF or DOCX and upload again.");
       return;
     }
+    if (!ALLOWED_JD_EXT.has(ext)) {
+      toast.error("Upload a PDF, DOCX, TXT or RTF file.");
+      return;
+    }
+
     if (file.size > MAX_JD_BYTES) {
       toast.error("That file is larger than 10 MB.");
       return;
@@ -567,14 +576,14 @@ function ExpressIntakePage() {
                 <Upload className="h-5 w-5 text-[color:var(--brand-navy)]/60" aria-hidden />
                 <span className="text-sm font-medium">Drop the job description here, or browse</span>
                 <span className="text-xs text-[color:var(--brand-navy)]/60">
-                  PDF, DOCX or TXT · up to 10 MB
+                  {JD_ACCEPT_LABEL}
                 </span>
               </button>
             )}
             <input
               ref={fileInput}
               type="file"
-              accept=".pdf,.docx,.txt,application/pdf,text/plain"
+              accept={JD_ACCEPT_ATTR}
               className="sr-only"
               onChange={(e) => void onPickFile(e.target.files?.[0] ?? null)}
             />

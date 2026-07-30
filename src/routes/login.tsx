@@ -26,10 +26,26 @@ import { sanitizeRedirect } from "@/lib/safe-redirect";
 
 const searchSchema = z.object({ redirect: z.string().optional() });
 
+const QA_DISABLED = { enabled: false, personas: [] as Array<{ key: Persona; label: string }> };
+type Persona =
+  | "platform_admin"
+  | "operations"
+  | "client_admin"
+  | "client_editor"
+  | "client_viewer";
+
 export const Route = createFileRoute("/login")({
   validateSearch: searchSchema,
   ssr: false,
-  loader: async () => await getQaPersonaConfig(),
+  // The QA persona list is a convenience, never a dependency: if the call
+  // fails the sign-in form must still render.
+  loader: async () => {
+    try {
+      return await getQaPersonaConfig();
+    } catch {
+      return QA_DISABLED;
+    }
+  },
   head: () => ({
     meta: [
       { title: "Sign in — TaaSFlow" },
@@ -41,7 +57,33 @@ export const Route = createFileRoute("/login")({
     ],
   }),
   component: LoginPage,
+  pendingComponent: LoginFallback,
+  errorComponent: LoginFallback,
 });
+
+/**
+ * Never show a blank screen on /login. While the route resolves — or if it
+ * fails outright — render the same shell with a working recovery path.
+ */
+function LoginFallback() {
+  return (
+    <FormShell exitTo="/" exitLabel="Exit" width="sm">
+      <Card className="w-full space-y-3 p-6">
+        <h1 className="text-xl font-semibold">Sign in to TaaSFlow</h1>
+        <p className="text-sm text-muted-foreground" role="status" aria-live="polite">
+          Loading the sign-in form…
+        </p>
+        <Button variant="outline" className="w-full" onClick={() => window.location.reload()}>
+          Reload
+        </Button>
+        <Link to="/" className="block text-xs text-muted-foreground hover:underline">
+          ← Back home
+        </Link>
+      </Card>
+    </FormShell>
+  );
+}
+
 
 // Generic messages — never disclose whether an email exists.
 const GENERIC_SIGNIN_ERROR = "Email or password is incorrect.";

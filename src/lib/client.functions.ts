@@ -6,6 +6,8 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 import { CLIENT_PERMISSIONS, type ClientPermission } from "@/lib/authz";
+import { computeRoleLaunchState } from "@/lib/role-launch.server";
+
 
 import {
   loadKpiRows,
@@ -447,13 +449,14 @@ export const getClientPositionDetail = createServerFn({ method: "GET" })
     const { data: position, error } = await context.supabase
       .from("positions")
       .select(
-        `id, title, status, location, work_model, employment_type, seniority, department,
+        `id, title, status, visibility, location, work_model, employment_type, seniority, department,
          description, requirements, preferred_requirements, dealbreakers, openings,
          compensation, work_authorization, intake_context, evaluation_weights,
          blueprint, blueprint_status, blueprint_generated_at, blueprint_confirmed_at,
          jd_file_name, jd_source, company_research,
          published_at, approved_at, submitted_at, closed_at, created_at, updated_at`,
       )
+
 
       .eq("organization_id", data.orgId)
       .eq("id", data.positionId)
@@ -514,10 +517,38 @@ export const getClientPositionDetail = createServerFn({ method: "GET" })
     const hires = stageCounts.hired ?? 0;
     const remaining = Math.max(0, openings - hires);
 
+    // Role launch state — timeline + channels, derived from real records only.
+    const { data: campaigns } = await context.supabase
+      .from("outreach_campaigns")
+      .select("id, name, channel, status, started_at, ended_at, created_at")
+      .eq("organization_id", data.orgId)
+      .eq("position_id", data.positionId)
+      .order("created_at", { ascending: true });
+
+    const { count: applicationCount } = await context.supabase
+      .from("applications")
+      .select("id", { count: "exact", head: true })
+      .eq("position_id", data.positionId);
+
+    const deliveredAt =
+      ((matches as AnyRow[]) ?? [])
+        .map((m) => m.delivered_at as string | null)
+        .filter((v): v is string => Boolean(v))
+        .sort()[0] ?? null;
+
+    const launch = computeRoleLaunchState({
+      position,
+      campaigns: ((campaigns as AnyRow[]) ?? []).filter((c) => !c.is_test_record),
+      matchCount: ((matches as AnyRow[]) ?? []).length,
+      deliveredAt,
+      applicationCount: applicationCount ?? 0,
+    });
+
     return {
       position,
       matches: (matches as AnyRow[]) ?? [],
       activity,
+      launch,
       summary: {
         openings,
         hires,
@@ -530,6 +561,7 @@ export const getClientPositionDetail = createServerFn({ method: "GET" })
       },
     };
   });
+
 
 // ─── Candidates ─────────────────────────────────────────────────────────────
 
