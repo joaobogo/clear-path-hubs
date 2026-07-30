@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useRef, useState } from "react";
 import { submitToCrm } from "@/lib/crm/submit-form";
+import { FGV_EVENTS, trackConfirmedConversion, trackFgv } from "@/lib/tracking/fgv-events";
 import { toast } from "sonner";
 import { marketingHead } from "@/lib/marketing/head";
 import { SiteShell, PublicPage, PublicSection } from "@/components/marketing/site-shell";
@@ -360,6 +361,7 @@ function ContactForm({ intent }: { intent: IntentSpec }) {
         return;
       }
       if (topic !== "support" && topic !== "candidate") {
+        trackFgv(FGV_EVENTS.formSubmit, { form_type: "sales_contact" });
         void submitToCrm({
           formId: "contact-page",
           email: payload.email,
@@ -373,6 +375,21 @@ function ContactForm({ intent }: { intent: IntentSpec }) {
           },
           consentStatus: "submitted_contact_form",
           honeypot: payload.website,
+        }).then((result) => {
+          // Conversion fires only on a server-confirmed submission id.
+          if (result.ok) {
+            trackConfirmedConversion({
+              formType: "sales_contact",
+              serviceInterest: "recruiting_subscription",
+              destinationBrand: "taasflow",
+              submissionId: result.submissionId,
+            });
+          } else {
+            trackFgv(FGV_EVENTS.formError, {
+              form_type: "sales_contact",
+              error_code: result.error,
+            });
+          }
         });
       }
       setDone({ traceId: json.trace_id ?? "" });
