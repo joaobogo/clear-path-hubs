@@ -1,0 +1,1 @@
+REVOKE ALL ON public.position_sourcing_plans FROM anon;
