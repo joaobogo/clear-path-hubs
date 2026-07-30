@@ -716,7 +716,13 @@ export const applyReviewDecision = createServerFn({ method: "POST" })
       } catch (emitErr) {
         console.error("[approve_for_client] emit failed", emitErr);
       }
-      return { ok: true as const, action: data.action, already: false, match: published };
+      return {
+        ok: true as const,
+        action: data.action,
+        already: false,
+        trace_id: published.trace_id ?? decisionTrace,
+        match: published,
+      };
     }
 
     // Hold and archive both use decision_type='reject' since the enum has no hold/archive.
@@ -736,7 +742,20 @@ export const applyReviewDecision = createServerFn({ method: "POST" })
         .update({ admin_status: "rejected", client_visibility: "archived", stage: "archived" })
         .eq("id", data.match_id);
     }
-    return { ok: true as const, action: data.action };
+    const { data: afterRow } = await supabase
+      .from("candidate_matches")
+      .select(
+        "canonical_state,admin_status,client_visibility,stage,integrity_status,approved_score_run_id,current_score_run_id",
+      )
+      .eq("id", data.match_id)
+      .maybeSingle();
+    await writeAudit(data.action === "hold" ? "score_held" : "score_archived", {
+      ...snapshot(afterRow),
+      score_run_id: runIdForDecision,
+      reason: data.reason ?? null,
+    });
+    return { ok: true as const, action: data.action, trace_id: decisionTrace };
+
   });
 
 // Permanently purge a candidate match. Works regardless of score state — admins can
