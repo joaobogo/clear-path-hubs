@@ -48,7 +48,6 @@ import {
  DialogTitle,
  DialogDescription,
 } from "@/components/ui/dialog";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
  CalendarClock,
  CheckCircle2,
@@ -70,15 +69,6 @@ export const Route = createFileRoute("/_authenticated/client/interviews")({
  }),
  component: InterviewsPage,
 });
-
-const STATUS_TABS: { value: InterviewStatus | "all"; label: string }[] = [
- { value: "all", label: "All" },
- { value: "requested", label: "Requested" },
- { value: "scheduling", label: "Scheduling" },
- { value: "scheduled", label: "Scheduled" },
- { value: "completed", label: "Completed" },
- { value: "cancelled", label: "Cancelled" },
-];
 
 const TYPE_OPTIONS: { value: InterviewType; label: string }[] = [
  { value: "phone_screen", label: "Phone screen" },
