@@ -1,5 +1,6 @@
 import {
   addBusinessDays,
+  type SourcingMetrics,
   type LaunchChannel,
   type LaunchStage,
   type RoleLaunchState,
@@ -24,6 +25,10 @@ export interface RoleLaunchInputs {
   matchCount: number;
   deliveredAt: string | null;
   applicationCount: number;
+  /** outreach_touches rows for this position (already RLS-scoped). */
+  touches?: AnyRow[];
+  /** Where the delivered candidates came from: source_kind -> count. */
+  attribution?: Array<{ label: string; count: number }>;
 }
 
 export function computeRoleLaunchState({
@@ -32,6 +37,8 @@ export function computeRoleLaunchState({
   matchCount,
   deliveredAt,
   applicationCount,
+  touches = [],
+  attribution = [],
 }: RoleLaunchInputs): RoleLaunchState {
   const status = String(position?.status ?? "draft");
   const bpStatus = String(position?.blueprint_status ?? "none");
@@ -240,9 +247,21 @@ export function computeRoleLaunchState({
             ? "Your sourcing strategy is in final validation."
             : "TaaSFlow is analysing this talent market.";
 
+  const metrics = computeSourcingMetrics({
+    touches,
+    matchCount,
+    applicationCount,
+    isLive,
+    isPaused,
+    isClosed,
+    attribution,
+    campaignCount: campaigns.length,
+  });
+
   return {
     stages,
     channels,
+    metrics,
     firstCandidatesExpected: expected,
     delayed: overdue,
     headline,
@@ -254,4 +273,78 @@ function earliest(values: Array<string | null | undefined>): string | null {
     .filter((v): v is string => typeof v === "string" && v !== "")
     .sort();
   return times[0] ?? null;
+}
+
+
+/**
+ * Verified sourcing metrics. A metric is `null` — rendered as "No verified
+ * data yet" — whenever no record exists to back it. Zero is only used when
+ * the engine is running and the true count really is zero.
+ */
+function computeSourcingMetrics({
+  touches,
+  matchCount,
+  applicationCount,
+  isLive,
+  isPaused,
+  isClosed,
+  attribution,
+  campaignCount,
+}: {
+  touches: AnyRow[];
+  matchCount: number;
+  applicationCount: number;
+  isLive: boolean;
+  isPaused: boolean;
+  isClosed: boolean;
+  attribution: Array<{ label: string; count: number }>;
+  campaignCount: number;
+}): SourcingMetrics {
+  const real = touches.filter((t) => !t.is_test_record);
+  const hasOutreach = real.length > 0;
+
+  const identifiedIds = new Set(
+    real
+      .map((t) => t.candidate_profile_id as string | null)
+      .filter((v): v is string => Boolean(v)),
+  );
+  const contacted = real.filter((t) => Boolean(t.sent_at)).length;
+  const engaged = real.filter(
+    (t) => Boolean(t.engagement_state) || Boolean(t.delivered_at),
+  ).length;
+  const replied = real.filter((t) => Boolean(t.replied_at)).length;
+
+  const running = isLive || hasOutreach;
+
+  const timestamps = real
+    .map((t) => (t.replied_at ?? t.delivered_at ?? t.sent_at ?? t.created_at) as string | null)
+    .filter((v): v is string => Boolean(v))
+    .sort();
+  const lastUpdate = timestamps.length ? timestamps[timestamps.length - 1]! : null;
+
+  const nextAction = isClosed
+    ? "This search is closed. No further sourcing is scheduled."
+    : isPaused
+      ? "Sourcing is paused. Resume the role to restart discovery."
+      : !isLive
+        ? "TaaSFlow is finalising the sourcing strategy for this role."
+        : matchCount > 0
+          ? "New candidates require review; discovery continues in parallel."
+          : hasOutreach
+            ? "The channel mix is being optimised based on response data."
+            : campaignCount > 0
+              ? "Candidate discovery is activating across the selected channels."
+              : "TaaSFlow is analysing this talent market to set the channel mix.";
+
+  return {
+    identified: hasOutreach ? identifiedIds.size : running ? 0 : null,
+    contacted: hasOutreach ? contacted : running ? 0 : null,
+    engaged: hasOutreach ? engaged : running ? 0 : null,
+    replied: hasOutreach ? replied : running ? 0 : null,
+    applicants: running || applicationCount > 0 ? applicationCount : null,
+    qualified: running || matchCount > 0 ? matchCount : null,
+    lastUpdate,
+    nextAction,
+    attribution,
+  };
 }
