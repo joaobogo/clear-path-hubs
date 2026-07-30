@@ -116,6 +116,8 @@ function statusBadgeClass(status: InterviewStatus): string {
  case "cancelled":
  return "taas-bg-danger-soft taas-fg-danger border taas-bd-danger";
  }
+}
+
 function InterviewsPage() {
   const org = useClientOrgSearch();
   const support = useSupportView();
