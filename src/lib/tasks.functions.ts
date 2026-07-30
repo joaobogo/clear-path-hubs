@@ -125,15 +125,20 @@ export const countBlockingTasks = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .inputValidator((v) => z.object({ organization_id: z.string().uuid() }).parse(v))
   .handler(async ({ data, context }) => {
-    const { count, error } = await context.supabase
+    const { data: rows, error, count } = await context.supabase
       .from("tasks")
-      .select("id", { count: "exact", head: true })
+      .select("id, created_at", { count: "exact" })
       .eq("organization_id", data.organization_id)
       .eq("blocking", true)
       .is("deleted_at", null)
-      .in("status", ["open", "in_progress"]);
+      .in("status", ["open", "in_progress"])
+      .order("created_at", { ascending: true })
+      .limit(1);
     if (error) throw new Error(error.message);
-    return { count: count ?? 0 };
+    const oldest =
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      ((rows ?? []) as any[])[0]?.created_at ?? null;
+    return { count: count ?? 0, oldest_at: oldest as string | null };
   });
 
 const createInput = z.object({

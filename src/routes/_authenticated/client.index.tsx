@@ -51,6 +51,8 @@ function relTime(iso: string | null | undefined): string {
   return new Date(iso).toLocaleDateString(undefined, { month: "short", day: "numeric" });
 }
 
+import { AgeBadge } from "@/components/client/age-badge";
+
 // ─── Decision queue ─────────────────────────────────────────────────────────
 // One question: what needs me today? Every row is an action with a real,
 // server-computed count and a link straight to where the action happens.
@@ -64,11 +66,14 @@ type DecisionRow = {
   icon: React.ReactNode;
   cta: string;
   tone: "warning" | "info" | "danger";
+  /** Oldest item behind this count — drives the age badge. */
+  waitingSince?: string | null;
 };
 
 function buildDecisionQueue(
   kpis: Any,
   blockingCount: number,
+  blockingOldestAt: string | null = null,
   scope: { org?: string; position?: string } = {},
 ): DecisionRow[] {
   if (!kpis) return [];
@@ -89,6 +94,7 @@ function buildDecisionQueue(
       icon: <AlertTriangle className="h-5 w-5" />,
       cta: "Resolve",
       tone: "danger",
+      waitingSince: blockingOldestAt,
     });
   }
 
@@ -104,6 +110,7 @@ function buildDecisionQueue(
       icon: <Users className="h-5 w-5" />,
       cta: "Review candidates",
       tone: "warning",
+      waitingSince: kpis.oldest_awaiting_decision_at ?? null,
     });
   }
 
@@ -119,6 +126,7 @@ function buildDecisionQueue(
       icon: <CalendarClock className="h-5 w-5" />,
       cta: "Confirm times",
       tone: "info",
+      waitingSince: kpis.oldest_interview_to_confirm_at ?? null,
     });
   }
 
@@ -134,6 +142,7 @@ function buildDecisionQueue(
       icon: <Handshake className="h-5 w-5" />,
       cta: "Follow up",
       tone: "warning",
+      waitingSince: kpis.oldest_offer_at ?? null,
     });
   }
 
@@ -206,7 +215,7 @@ function OverviewPage() {
   }, [data, selectedRole]);
 
   const decisionQueue = useMemo(
-    () => buildDecisionQueue(kpis, blocking?.count ?? 0, { org: orgSearch, position: selectedRole || undefined }),
+    () => buildDecisionQueue(kpis, blocking?.count ?? 0, (blocking as Any)?.oldest_at ?? null, { org: orgSearch, position: selectedRole || undefined }),
     [kpis, blocking, orgSearch, selectedRole],
   );
   const hottestRole = useMemo(() => pickHottestRole(visibleRoles), [visibleRoles]);
@@ -572,8 +581,11 @@ function DecisionQueue({ queue, loading }: { queue: DecisionRow[]; loading: bool
                 {p.count}
               </span>
               <span className="min-w-0 flex-1">
-                <span className="block truncate text-[15px] font-semibold leading-snug group-hover:text-primary">
-                  {p.title}
+                <span className="flex min-w-0 items-center gap-2">
+                  <span className="truncate text-[15px] font-semibold leading-snug group-hover:text-primary">
+                    {p.title}
+                  </span>
+                  <AgeBadge since={p.waitingSince} />
                 </span>
                 <span className="mt-0.5 block text-xs text-muted-foreground sm:text-sm">{p.detail}</span>
               </span>

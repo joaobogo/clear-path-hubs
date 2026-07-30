@@ -54,6 +54,8 @@ export type RoleProgressStep = {
   hint: string;
   state: "done" | "current" | "upcoming";
   enteredAt: string | null;
+  /** Whole days spent in this stage (completed stages) or so far (current). */
+  daysInStage: number | null;
 };
 
 export type RoleProgress = {
@@ -64,9 +66,27 @@ export type RoleProgress = {
   currentEnteredAt: string | null;
   /** True when the role is paused/closed — the tracker is frozen. */
   inactive: boolean;
-  /** Short caption, e.g. "Screening since 12 Mar". */
+  /** Whole days in the current stage, when the entry date is known. */
+  daysInCurrentStage: number | null;
+  /** Short caption, e.g. "Screening since 12 Mar · 5 days". */
   caption: string;
 };
+
+const DAY_MS = 86_400_000;
+
+function dayStart(iso: string): number {
+  const d = new Date(iso);
+  return new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
+}
+
+/** Whole calendar days between two timestamps; null when either is unknown. */
+function wholeDays(from: string | null, to: string | null): number | null {
+  if (!from || !to) return null;
+  const a = dayStart(from);
+  const b = dayStart(to);
+  if (Number.isNaN(a) || Number.isNaN(b)) return null;
+  return Math.max(0, Math.round((b - a) / DAY_MS));
+}
 
 function earliest(...values: Array<string | null | undefined>): string | null {
   const list = values.filter((v): v is string => Boolean(v)).sort();
@@ -122,13 +142,22 @@ export function computeRoleProgress(
     }
   }
 
-  const steps: RoleProgressStep[] = ROLE_PROGRESS_STAGES.map((key, i) => ({
-    key,
-    label: ROLE_PROGRESS_LABELS[key],
-    hint: ROLE_PROGRESS_HINTS[key],
-    state: i < currentIndex ? "done" : i === currentIndex ? "current" : "upcoming",
-    enteredAt: i <= currentIndex ? dates[key] : null,
-  }));
+  const steps: RoleProgressStep[] = ROLE_PROGRESS_STAGES.map((key, i) => {
+    const enteredAt = i <= currentIndex ? dates[key] : null;
+    const nextEntered = i < currentIndex ? dates[ROLE_PROGRESS_STAGES[i + 1]] : null;
+    const until = i === currentIndex ? now.toISOString() : nextEntered;
+    return {
+      key,
+      label: ROLE_PROGRESS_LABELS[key],
+      hint: ROLE_PROGRESS_HINTS[key],
+      state: (i < currentIndex ? "done" : i === currentIndex ? "current" : "upcoming") as
+        | "done"
+        | "current"
+        | "upcoming",
+      enteredAt,
+      daysInStage: wholeDays(enteredAt, until),
+    };
+  });
 
   const currentLabel = ROLE_PROGRESS_LABELS[ROLE_PROGRESS_STAGES[currentIndex]];
   const currentEnteredAt = dates[ROLE_PROGRESS_STAGES[currentIndex]];
@@ -140,5 +169,20 @@ export function computeRoleProgress(
   else if (isDraft) caption = "Brief in progress";
   else caption = since ? `${currentLabel} since ${since}` : currentLabel;
 
-  return { steps, currentIndex, currentLabel, currentEnteredAt, inactive, caption };
+  const daysInCurrentStage = steps[currentIndex]?.daysInStage ?? null;
+  if (!inactive && !isDraft && since && daysInCurrentStage != null) {
+    caption = `${currentLabel} since ${since} · ${
+      daysInCurrentStage === 1 ? "1 day" : `${daysInCurrentStage} days`
+    } in stage`;
+  }
+
+  return {
+    steps,
+    currentIndex,
+    currentLabel,
+    currentEnteredAt,
+    daysInCurrentStage,
+    inactive,
+    caption,
+  };
 }
