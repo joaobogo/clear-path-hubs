@@ -1,4 +1,5 @@
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
+import { OpenThreadButton } from "@/components/comms/open-thread-button";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
