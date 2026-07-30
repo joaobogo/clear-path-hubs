@@ -44,8 +44,12 @@ export const Route = createFileRoute("/api/public/blueprint-run")({
           .maybeSingle();
         if (!position) return Response.json({ ok: false, error: "position_missing" }, { status: 404 });
 
-        if (!["queued", "failed", "not_started"].includes(position.blueprint_status)) {
-          return Response.json({ ok: true, alreadyRunning: true, status: position.blueprint_status });
+        // A null/blank status is a role that was never queued — it is runnable,
+        // not "already running". Treating it otherwise wedges retry forever.
+        const RUNNABLE = ["queued", "failed", "not_started"];
+        const currentStatus = String(position.blueprint_status ?? "not_started") || "not_started";
+        if (!RUNNABLE.includes(currentStatus)) {
+          return Response.json({ ok: true, alreadyRunning: true, status: currentStatus });
         }
 
         // Hard cap so a known intake id cannot be replayed to burn AI usage.
@@ -66,7 +70,9 @@ export const Route = createFileRoute("/api/public/blueprint-run")({
             blueprint_attempts: attempts + 1,
           })
           .eq("id", position.id)
-          .in("blueprint_status", ["queued", "failed", "not_started"])
+          // NULL is not matched by `in(...)`, so the atomic claim has to allow it
+          // explicitly or a never-queued role can never be claimed.
+          .or(`blueprint_status.in.(${RUNNABLE.join(",")}),blueprint_status.is.null`)
           .select("id");
         if (!claimed || claimed.length === 0) {
           return Response.json({ ok: true, alreadyRunning: true });

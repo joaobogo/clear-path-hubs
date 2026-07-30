@@ -138,6 +138,15 @@ export async function runBlueprintPipeline(input: BlueprintRunInput): Promise<{ 
 
 /* ------------------------------------------------------------------ */
 
+/** True for values a human clearly has not filled in yet. */
+function isEmptyValue(v: unknown): boolean {
+  if (v === null || v === undefined) return true;
+  if (typeof v === "string") return v.trim() === "";
+  if (Array.isArray(v)) return v.length === 0;
+  if (typeof v === "object") return Object.keys(v as object).length === 0;
+  return false;
+}
+
 async function applyBlueprintToPosition(
   admin: Admin,
   positionId: string,
@@ -146,75 +155,102 @@ async function applyBlueprintToPosition(
 ) {
   const { data: current } = await admin
     .from("positions")
-    .select("description, requirements, intake_context")
+    .select(
+      "description, requirements, preferred_requirements, dealbreakers, evaluation_weights, " +
+        "department, location, work_model, employment_type, seniority, openings, " +
+        "travel_expectation, primary_timezone, compensation, work_authorization, " +
+        "intake_context, blueprint_generated_at",
+    )
     .eq("id", positionId)
     .maybeSingle();
 
   const existingContext = (current?.intake_context ?? {}) as Record<string, unknown>;
 
+  // A blueprint has already been applied to this role once, so a person may
+  // have edited these fields since. A retry must never silently overwrite
+  // their work — it only fills what is still empty.
+  const isRerun = Boolean(current?.blueprint_generated_at);
+
   const requirements = bp.must_have_skills.map((label) => ({ label, kind: "skill", weight: 1 }));
   const preferred = bp.nice_to_have_skills.map((label) => ({ label }));
   const dealbreakers = bp.dealbreakers.map((label) => ({ label }));
+  const compensation =
+    bp.compensation.note || bp.compensation.min || bp.compensation.max
+      ? {
+          note: bp.compensation.note,
+          currency: bp.compensation.currency,
+          min: bp.compensation.min,
+          max: bp.compensation.max,
+          generated: true,
+        }
+      : {};
 
-  await admin
-    .from("positions")
-    .update({
-      description: (current?.description ?? "").trim() || jdText.slice(0, 20000),
-      department: bp.role.department || null,
-      location: bp.role.location || null,
-      work_model: bp.role.work_model,
-      employment_type: bp.role.employment_type || null,
-      seniority: bp.role.seniority || null,
-      openings: bp.role.headcount,
-      travel_expectation: bp.geography.travel_expectation || null,
-      primary_timezone: bp.geography.timezone_requirements || null,
-      requirements,
-      preferred_requirements: preferred,
-      dealbreakers,
-      evaluation_weights: bp.rubric.weights,
-      compensation: bp.compensation.note || bp.compensation.min || bp.compensation.max
-        ? {
-            note: bp.compensation.note,
-            currency: bp.compensation.currency,
-            min: bp.compensation.min,
-            max: bp.compensation.max,
-            generated: true,
-          }
-        : {},
-      work_authorization: {
-        note: bp.candidate_profile.work_authorization,
-        countries: bp.geography.target_countries,
-        target_titles: bp.sourcing_plan.target_titles,
-      },
-      intake_context: {
-        ...existingContext,
-        generated_by_blueprint: true,
-        blueprint_version: bp.version,
-        employer_value_proposition: bp.company.value_proposition,
-        responsibilities: bp.responsibilities.join("\n"),
-        experience: bp.candidate_profile.experience,
-        education: bp.candidate_profile.education,
-        languages: bp.candidate_profile.languages,
-        industry_experience: bp.candidate_profile.industry_experience,
-        certifications_list: bp.certifications,
-        tools_platforms: bp.tools_platforms,
-        nice_to_have_skills: bp.nice_to_have_skills,
-        timezone_requirements: bp.geography.timezone_requirements,
-        open_worldwide: bp.geography.open_worldwide,
-        hiring_timeline: bp.timeline.hiring_urgency,
-        time_to_hire: bp.timeline.time_to_hire,
-        target_start_date: bp.timeline.target_start_date,
-        currency: bp.compensation.currency,
-        budget_min: bp.compensation.min,
-        budget_max: bp.compensation.max,
-        target_company_types: bp.sourcing_plan.target_company_types,
-        include_keywords: bp.sourcing_plan.include_keywords,
-        exclude_keywords: bp.sourcing_plan.exclude_keywords,
-        disqualifiers: bp.sourcing_plan.disqualifiers,
-        additional_context: bp.role.summary,
-      },
-    })
-    .eq("id", positionId);
+  const generated: Record<string, unknown> = {
+    description: (current?.description ?? "").trim() || jdText.slice(0, 20000),
+    department: bp.role.department || null,
+    location: bp.role.location || null,
+    work_model: bp.role.work_model,
+    employment_type: bp.role.employment_type || null,
+    seniority: bp.role.seniority || null,
+    openings: bp.role.headcount,
+    travel_expectation: bp.geography.travel_expectation || null,
+    primary_timezone: bp.geography.timezone_requirements || null,
+    requirements,
+    preferred_requirements: preferred,
+    dealbreakers,
+    evaluation_weights: bp.rubric.weights,
+    compensation,
+    work_authorization: {
+      note: bp.candidate_profile.work_authorization,
+      countries: bp.geography.target_countries,
+      target_titles: bp.sourcing_plan.target_titles,
+    },
+  };
+
+  const patch: Record<string, unknown> = {};
+  for (const [key, value] of Object.entries(generated)) {
+    // On a retry, keep whatever a human already put there.
+    if (isRerun && !isEmptyValue((current as Record<string, unknown> | null)?.[key])) continue;
+    if (isEmptyValue(value) && isRerun) continue;
+    patch[key] = value;
+  }
+
+  // intake_context is additive by construction: generated keys never replace a
+  // key a human has already set on a retry.
+  const generatedContext: Record<string, unknown> = {
+    generated_by_blueprint: true,
+    blueprint_version: bp.version,
+    employer_value_proposition: bp.company.value_proposition,
+    responsibilities: bp.responsibilities.join("\n"),
+    experience: bp.candidate_profile.experience,
+    education: bp.candidate_profile.education,
+    languages: bp.candidate_profile.languages,
+    industry_experience: bp.candidate_profile.industry_experience,
+    certifications_list: bp.certifications,
+    tools_platforms: bp.tools_platforms,
+    nice_to_have_skills: bp.nice_to_have_skills,
+    timezone_requirements: bp.geography.timezone_requirements,
+    open_worldwide: bp.geography.open_worldwide,
+    hiring_timeline: bp.timeline.hiring_urgency,
+    time_to_hire: bp.timeline.time_to_hire,
+    target_start_date: bp.timeline.target_start_date,
+    currency: bp.compensation.currency,
+    budget_min: bp.compensation.min,
+    budget_max: bp.compensation.max,
+    target_company_types: bp.sourcing_plan.target_company_types,
+    include_keywords: bp.sourcing_plan.include_keywords,
+    exclude_keywords: bp.sourcing_plan.exclude_keywords,
+    disqualifiers: bp.sourcing_plan.disqualifiers,
+    additional_context: bp.role.summary,
+  };
+  const mergedContext: Record<string, unknown> = { ...existingContext };
+  for (const [key, value] of Object.entries(generatedContext)) {
+    if (isRerun && !isEmptyValue(existingContext[key])) continue;
+    mergedContext[key] = value;
+  }
+  patch.intake_context = mergedContext;
+
+  await admin.from("positions").update(patch).eq("id", positionId);
 }
 
 async function applyScreeningQuestions(admin: Admin, positionId: string, bp: RoleBlueprint) {

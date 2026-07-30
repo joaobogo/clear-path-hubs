@@ -75,9 +75,15 @@ export interface RoleLaunchState {
   headline: string;
 }
 
-/** Adds N business days (Mon–Fri) to a date. */
-export function addBusinessDays(from: Date, days: number): Date {
-  const d = new Date(from.getTime());
+/**
+ * Adds N business days (Mon–Fri) to a date.
+ * Returns null for an unparseable input rather than an Invalid Date, so callers
+ * can never hand `Invalid Date.toISOString()` a chance to throw.
+ */
+export function addBusinessDays(from: Date, days: number): Date | null {
+  const start = from.getTime();
+  if (!Number.isFinite(start)) return null;
+  const d = new Date(start);
   let added = 0;
   while (added < days) {
     d.setUTCDate(d.getUTCDate() + 1);
@@ -89,7 +95,9 @@ export function addBusinessDays(from: Date, days: number): Date {
 
 export function formatExpected(iso: string | null): string {
   if (!iso) return "Set once your role goes live";
-  return new Date(iso).toLocaleDateString(undefined, {
+  const d = new Date(iso);
+  if (!Number.isFinite(d.getTime())) return "Set once your role goes live";
+  return d.toLocaleDateString(undefined, {
     month: "short",
     day: "numeric",
   });
