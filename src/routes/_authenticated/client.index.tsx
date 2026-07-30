@@ -215,7 +215,7 @@ function OverviewPage() {
   }, [data, selectedRole]);
 
   const decisionQueue = useMemo(
-    () => buildDecisionQueue(kpis, blocking?.count ?? 0, { org: orgSearch, position: selectedRole || undefined }),
+    () => buildDecisionQueue(kpis, blocking?.count ?? 0, (blocking as Any)?.oldest_at ?? null, { org: orgSearch, position: selectedRole || undefined }),
     [kpis, blocking, orgSearch, selectedRole],
   );
   const hottestRole = useMemo(() => pickHottestRole(visibleRoles), [visibleRoles]);
