@@ -169,11 +169,20 @@ describe("approve score workflow (e2e)", () => {
     expect(entry.path.length).toBeGreaterThan(0);
   });
 
-  it("blocks terminal states with no legal path and surfaces the reason", () => {
+  it("never claims a doomed approval is legal, and refuses illegal hops", () => {
+    // Every canonical state currently has a legal path to approved, so the
+    // preflight must not block any of them (a false block would disable a
+    // valid Approve button).
+    for (const state of CANONICAL_SCORING_STATES) {
+      expect(approvePreflightBlock(state), `${state} preflight`).toBeNull();
+    }
+    expect(approvePreflightBlock(null)).toBeNull();
+    expect(approvePreflightBlock("not_a_state")).toBeNull();
+
+    // ...but the trigger mirror still refuses any multi-hop shortcut.
     const row = makeMatch("superseded");
-    expect(approvePreflightBlock("superseded")).toMatch(/no legal path to Approved/i);
-    expect(() => approveCandidateMatch(row, "run-1", "trace-x")).toThrow(
-      /invalid_canonical_state_transition/,
+    expect(() => applyTransition(row, "approved")).toThrow(
+      /invalid_canonical_state_transition: superseded -> approved/,
     );
     expect(row.canonical_state).toBe("superseded");
   });
