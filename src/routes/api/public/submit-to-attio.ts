@@ -57,7 +57,10 @@ const submissionSchema = z.object({
   answers: z.record(z.string(), z.unknown()).default({}),
   consent_status: optionalText(80),
   consent_at: z.string().datetime().optional().nullable(),
-  website: z.string().max(0).optional().or(z.literal("")),
+  // Honeypot: accept any value here so bots get a silent 200 instead of a
+  // validation error that would teach them which field to leave blank.
+  website: z.string().max(200).optional().nullable(),
+
 });
 
 // Simple in-memory rate limit (per isolate): 5 submissions / minute / IP.
