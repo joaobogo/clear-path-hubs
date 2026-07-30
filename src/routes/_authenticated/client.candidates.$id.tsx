@@ -361,6 +361,9 @@ function CandidateDetailPage() {
           <div id="sec-strengths" className="scroll-mt-24"><WhyThisCandidate candidate={candidate} /></div>
           <div id="sec-risks" className="scroll-mt-24"><WhatNeedsValidation candidate={candidate} /></div>
           <AvailabilityAndComp candidate={candidate} />
+          <div id="sec-comp" className="scroll-mt-24">
+            <CompensationPanel signal={compSignal} loading={compPending} />
+          </div>
           <div id="sec-interview" className="scroll-mt-24"><InterviewGuide candidate={candidate} /></div>
           <div id="sec-experience" className="scroll-mt-24"><ExperienceTimeline candidate={candidate} /></div>
           <div id="sec-skills" className="scroll-mt-24"><SkillsAndEducation candidate={candidate} /></div>
