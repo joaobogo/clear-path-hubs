@@ -51,71 +51,93 @@ function relTime(iso: string | null | undefined): string {
   return new Date(iso).toLocaleDateString(undefined, { month: "short", day: "numeric" });
 }
 
-// ─── Priority action queue: dedup + prioritize ──────────────────────────────
-// Rule: never show two cards for the same next action. Aggregate by type.
-type Priority = {
-  type: "offer_pending" | "interview_scheduled" | "new_delivered";
+// ─── Decision queue ─────────────────────────────────────────────────────────
+// One question: what needs me today? Every row is an action with a real,
+// server-computed count and a link straight to where the action happens.
+type DecisionRow = {
+  key: "awaiting_decision" | "interviews_to_confirm" | "offers_pending" | "blocking_tasks";
   count: number;
-  label: string;
+  title: string;
+  detail: string;
   to: string;
   search?: Record<string, string>;
   icon: React.ReactNode;
   cta: string;
+  tone: "warning" | "info" | "danger";
 };
-function buildPriorityQueue(
-  actions: Any[],
+
+function buildDecisionQueue(
+  kpis: Any,
+  blockingCount: number,
   scope: { org?: string; position?: string } = {},
-): Priority[] {
-  const offers = actions.find((a) => a.type === "offer_pending");
-  const interviews = actions.find((a) => a.type === "interview_scheduled");
-  const deliveries = actions.filter((a) => a.type === "new_delivered");
-  const deliveryTotal = deliveries.reduce((s, a) => s + (a.count ?? 0), 0);
-  const deliveryRoles = deliveries.length;
-  // Every metric links to the matching filtered candidate view, scoped to the
-  // same org + role the overview is currently showing.
+): DecisionRow[] {
+  if (!kpis) return [];
   const base: Record<string, string> = {
     ...(scope.org ? { org: scope.org } : {}),
     ...(scope.position ? { position: scope.position } : {}),
   };
+  const rows: DecisionRow[] = [];
 
-  const q: Priority[] = [];
-  if (offers && offers.count > 0) {
-    q.push({
-      type: "offer_pending",
-      count: offers.count,
-      label: `${offers.count} offer${offers.count === 1 ? "" : "s"} awaiting response`,
-      to: "/client/candidates",
-      search: { ...base, stage: "offer" },
-      icon: <Handshake className="h-4 w-4" />,
-      cta: "Follow up",
+  if (blockingCount > 0) {
+    rows.push({
+      key: "blocking_tasks",
+      count: blockingCount,
+      title: `${blockingCount} task${blockingCount === 1 ? "" : "s"} blocking delivery`,
+      detail: "Approvals and answers we need before candidates can move.",
+      to: "/client/tasks",
+      search: { view: "blocking" },
+      icon: <AlertTriangle className="h-5 w-5" />,
+      cta: "Resolve",
+      tone: "danger",
     });
   }
-  if (interviews && interviews.count > 0) {
-    q.push({
-      type: "interview_scheduled",
-      count: interviews.count,
-      label: `${interviews.count} interview${interviews.count === 1 ? "" : "s"} to confirm or debrief`,
-      to: "/client/interviews",
-      search: scope.org ? { org: scope.org } : undefined,
-      icon: <CalendarClock className="h-4 w-4" />,
-      cta: "Open interviews",
-    });
-  }
-  if (deliveryTotal > 0) {
-    q.push({
-      type: "new_delivered",
-      count: deliveryTotal,
-      label:
-        deliveryRoles === 1
-          ? deliveries[0].label
-          : `${deliveryTotal} new candidate${deliveryTotal === 1 ? "" : "s"} to review across ${deliveryRoles} role${deliveryRoles === 1 ? "" : "s"}`,
+
+  const awaiting = kpis.awaiting_decision ?? 0;
+  if (awaiting > 0) {
+    rows.push({
+      key: "awaiting_decision",
+      count: awaiting,
+      title: `${awaiting} candidate${awaiting === 1 ? "" : "s"} awaiting your decision`,
+      detail: "Delivered to you and not yet shortlisted or declined.",
       to: "/client/candidates",
       search: { ...base, stage: "delivered" },
-      icon: <Users className="h-4 w-4" />,
-      cta: "Review",
+      icon: <Users className="h-5 w-5" />,
+      cta: "Review candidates",
+      tone: "warning",
     });
   }
-  return q;
+
+  const toConfirm = kpis.interviews_to_confirm ?? 0;
+  if (toConfirm > 0) {
+    rows.push({
+      key: "interviews_to_confirm",
+      count: toConfirm,
+      title: `${toConfirm} interview${toConfirm === 1 ? "" : "s"} to confirm`,
+      detail: "Requested or being scheduled — a time still needs confirming.",
+      to: "/client/interviews",
+      search: scope.org ? { org: scope.org } : undefined,
+      icon: <CalendarClock className="h-5 w-5" />,
+      cta: "Confirm times",
+      tone: "info",
+    });
+  }
+
+  const offers = kpis.offers ?? 0;
+  if (offers > 0) {
+    rows.push({
+      key: "offers_pending",
+      count: offers,
+      title: `${offers} offer${offers === 1 ? "" : "s"} pending`,
+      detail: "Extended and awaiting a candidate response or your close-out.",
+      to: "/client/candidates",
+      search: { ...base, stage: "offer" },
+      icon: <Handshake className="h-5 w-5" />,
+      cta: "Follow up",
+      tone: "warning",
+    });
+  }
+
+  return rows;
 }
 
 // ─── "Hottest role": position with the most pending reviews, else most recent
