@@ -145,40 +145,19 @@ export function CompareSheet({
   const search = useSearch({ strict: false }) as { org?: string };
   const [diffOnly, setDiffOnly] = useState(false);
 
-  // Guard: never render a comparison if candidates span multiple positions.
-  const positionIds = new Set(candidates.map((c) => c.position?.id).filter(Boolean));
-  const positionSafe = positionIds.size <= 1;
+  // Guard: 2–4 candidates, single position.
+  const eligibility = compareEligibility(candidates);
+  const positionSafe = eligibility.ok;
 
-  // Union of requirements across selected candidates (same position → same rows).
-  const rowsUnion = useMemo(() => {
-    const map = new Map<string, RequirementRow>();
-    for (const c of candidates) {
-      for (const r of c.requirement_rows) {
-        const key = `${r.importance}:${r.label.toLowerCase()}`;
-        if (!map.has(key)) map.set(key, r);
-      }
-    }
-    const arr = Array.from(map.values());
-    arr.sort((a, b) => {
-      if (a.importance !== b.importance) return a.importance === "must_have" ? -1 : 1;
-      return a.label.localeCompare(b.label);
-    });
-    return arr;
-  }, [candidates]);
+  // Requirement grid — the lead surface of the comparison.
+  const matrix = useMemo(() => buildCompareMatrix(candidates), [candidates]);
 
   const observations = buildObservations(candidates);
   const cols = Math.max(1, candidates.length);
   const positionTitle = candidates[0]?.position?.title;
 
-  // Scoring versions must align for dimensions and weights to be comparable.
-  const scoringVersions = Array.from(
-    new Set(
-      candidates.map(
-        (c) => `${c.evaluation.blueprint_version ?? "—"}·${c.evaluation.engine_version ?? "—"}`,
-      ),
-    ),
-  );
-  const mixedScoringVersions = scoringVersions.length > 1;
+  // Rubric identity must match for the same requirement to mean the same thing.
+  const guard = rubricGuard(candidates);
 
   // Helper: are values across candidates identical? (for "differences only")
   const allSame = (vals: (string | number | null | undefined)[]) => {
@@ -209,7 +188,7 @@ export function CompareSheet({
 
         {!positionSafe ? (
           <div className="mt-4 rounded-lg border border-warning/30 bg-warning/5 p-3 text-sm">
-            Comparison is only available for candidates on the same position.
+            {eligibility.reason ?? "Comparison is only available for candidates on the same position."}
           </div>
         ) : (
           <>
@@ -239,13 +218,32 @@ export function CompareSheet({
             </div>
 
 
-            {mixedScoringVersions && (
-              <div className="mt-3 rounded-lg border border-warning/30 bg-warning/5 p-3 text-sm">
-                These candidates were assessed with different scoring versions
-                ({scoringVersions.join(", ")}). Dimensions and weights may not line up —
-                compare the evidence rather than the totals.
+            {guard.mismatched && (
+              <div
+                role="alert"
+                className="mt-3 rounded-lg border border-warning/40 bg-warning/10 p-3 text-sm"
+              >
+                <div className="font-medium text-warning-foreground">
+                  Mismatched requirement versions
+                </div>
+                <p className="mt-1 text-foreground/90">{guard.warning}</p>
+                <ul className="mt-2 space-y-0.5 text-xs text-muted-foreground">
+                  {candidates.map((c) => (
+                    <li key={c.match_id}>
+                      {c.candidate.display_name} — assessed on {rubricVersion(c)}
+                    </li>
+                  ))}
+                </ul>
               </div>
             )}
+
+            {/* Requirement grid — met / partially met / unknown, evidence on hover */}
+            <RequirementGrid
+              candidates={candidates}
+              matrix={matrix}
+              diffOnly={diffOnly}
+              orgSearch={search.org ? { org: search.org } : undefined}
+            />
 
             {/* Visual ranking bands — relative strength per axis, not a single winner. */}
             <RelativeStrengthBoard candidates={candidates} />
@@ -275,12 +273,7 @@ export function CompareSheet({
                   <div className="text-xs text-muted-foreground truncate">
                     {c.candidate.headline ?? c.position?.title}
                   </div>
-                  <div className="flex items-center gap-2 mt-1">
-                    <span className="text-lg font-semibold tabular-nums">
-                      {c.score == null ? "—" : c.score.toFixed(0)}
-                    </span>
-                    <span className="text-xs text-muted-foreground">{c.fit.headline}</span>
-                  </div>
+                  <div className="mt-1 text-xs text-muted-foreground">{c.fit.headline}</div>
                   <Link
                     to="/client/candidates/$id"
                     params={{ id: c.match_id }}
@@ -513,55 +506,6 @@ export function CompareSheet({
                 </ul>
               ))}
             </ComparisonRow>
-
-            {/* Requirement matrix */}
-            <div className="mt-4">
-              <div className="text-xs uppercase tracking-wider text-muted-foreground mb-2">
-                Requirement matrix
-              </div>
-              {rowsUnion.length === 0 && (
-                <div className="text-sm text-muted-foreground py-4">
-                  No structured requirements available.
-                </div>
-              )}
-              {rowsUnion.map((r) => (
-                <div
-                  key={r.id + r.label}
-                  className="grid gap-3 py-2 border-b text-sm"
-                  style={{ gridTemplateColumns: `160px repeat(${cols}, minmax(0, 1fr))` }}
-                >
-                  <div className="min-w-0">
-                    <div className="truncate">{r.label}</div>
-                    <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
-                      {r.importance === "must_have" ? "Must-have" : "Preferred"}
-                    </div>
-                  </div>
-                  {candidates.map((c) => {
-                    const cell =
-                      c.requirement_rows.find(
-                        (x) => x.label.toLowerCase() === r.label.toLowerCase(),
-                      ) ?? null;
-                    const status = cell?.status ?? "not_evidenced";
-                    const meta = STATUS_META[status];
-                    return (
-                      <div key={c.match_id} className="min-w-0">
-                        <div className={`text-sm font-medium ${meta.className}`}>
-                          <span aria-hidden className="mr-1">
-                            {meta.icon}
-                          </span>
-                          {meta.label}
-                        </div>
-                        {cell?.explanation && (
-                          <div className="text-xs text-muted-foreground line-clamp-2 mt-0.5">
-                            {cell.explanation}
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              ))}
-            </div>
 
             {/* Interview focus */}
             <div className="mt-6">
