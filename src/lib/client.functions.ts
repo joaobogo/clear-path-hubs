@@ -654,7 +654,9 @@ export const getClientPositionDetail = createServerFn({ method: "GET" })
         interviewing: stageCounts.interview_process,
         offers: stageCounts.offer,
         not_moving_forward: stageCounts.not_moving_forward,
+        pipeline_line: pipelineLine,
       },
+
     };
   });
 
