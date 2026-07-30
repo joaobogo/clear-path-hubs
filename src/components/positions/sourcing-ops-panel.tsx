@@ -270,18 +270,19 @@ export function SourcingOpsPanel({ positionId }: { positionId: string }) {
                   <Button
                     size="sm"
                     variant="ghost"
-                    onClick={() =>
-                      confirmAction({
+                    onClick={async () => {
+                      const res = await confirm({
                         title: "Remove this channel?",
+                        object: c.name,
                         description:
                           "The channel and its outreach touches are deleted permanently.",
                         confirmLabel: "Remove channel",
-                        destructive: true,
-                        requireReason: true,
-                        onConfirm: async (reason?: string) =>
-                          removeCampaign.mutateAsync({ id: c.id, reason: reason ?? "n/a" }),
-                      })
-                    }
+                        tone: "destructive",
+                        reason: { label: "Reason", required: true },
+                      });
+                      if (!res.confirmed) return;
+                      await removeCampaign.mutateAsync({ id: c.id, reason: res.reason });
+                    }}
                   >
                     <Trash2 className="h-3.5 w-3.5 text-destructive" />
                   </Button>
