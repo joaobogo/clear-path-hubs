@@ -26,6 +26,7 @@ import {
  useAvailability,
 } from "@/components/client/scheduling/availability-manager";
 import { InterviewTimeline } from "@/components/client/scheduling/interview-timeline";
+import { InterviewScorecardDialog } from "@/components/client/interview-scorecard-dialog";
 import { useClientOrgSearch } from "@/lib/use-client-org";
 import { useSupportView } from "@/lib/support-view";
 import { PageHeader, PageBody, PageShell } from "@/components/ds";
