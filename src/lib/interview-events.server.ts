@@ -10,6 +10,7 @@ type AnyRow = any;
 export type InterviewEvent =
   | "interview_requested"
   | "interview_scheduled"
+  | "interview_rescheduled"
   | "interview_cancelled"
   | "interview_completed";
 
