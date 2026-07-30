@@ -618,11 +618,18 @@ function ExpressIntakePage() {
         <Card className="border-[color:var(--brand-navy)]/12">
           <CardContent className="space-y-4 pt-6">
             <div className="rounded-lg bg-[color:var(--brand-navy)]/4 p-4">
-              <p className="text-sm font-semibold">How the pilot works</p>
-              <p className="mt-1 text-sm leading-relaxed text-[color:var(--brand-navy)]/75">
-                ${PRICE_PILOT_USD} one-time introductory pilot, available once per company. One active
-                role for 14 days, any industry, anywhere in the world, with no placement fees. First
-                candidate activity usually begins within 3–5 days after the search goes live.
+              <p className="text-sm font-semibold">What happens after you submit</p>
+              <ol className="mt-2 space-y-1 text-sm leading-relaxed text-[color:var(--brand-navy)]/75">
+                <li>1. Your account and workspace are created — free.</li>
+                <li>2. We review the role and confirm we can deliver it.</li>
+                <li>
+                  3. Only then do you pay the ${PRICE_PILOT_USD} one-time pilot fee. The 14 days start
+                  when the search goes live.
+                </li>
+              </ol>
+              <p className="mt-2 text-sm leading-relaxed text-[color:var(--brand-navy)]/75">
+                One active role, any industry, anywhere in the world, no placement fees. Available once
+                per company. First candidate activity usually begins within 3–5 days after go-live.
               </p>
             </div>
 
@@ -634,10 +641,12 @@ function ExpressIntakePage() {
                 aria-invalid={Boolean(errors.pilotAcknowledgement)}
               />
               <span className="text-sm leading-relaxed">
-                I understand that this is a one-time 14-day pilot for one role and cannot be repeated by
-                the same company.
+                I understand there is no charge today, and that the ${PRICE_PILOT_USD} one-time 14-day
+                pilot is billed only after my account is created and the role is accepted — once per
+                company, for one role.
               </span>
             </label>
+
             {errors.pilotAcknowledgement && (
               <p data-field-error="true" className="text-sm text-[color:var(--brand-danger,#b3261e)]">
                 {errors.pilotAcknowledgement}
