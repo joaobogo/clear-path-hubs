@@ -34,6 +34,7 @@ import {
 } from "@/lib/talent-pool.functions";
 import { getClientContext } from "@/lib/client.functions";
 import { useClientOrgSearch } from "@/lib/use-client-org";
+import { RoleFitPanel } from "@/components/client/role-fit-panel";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
