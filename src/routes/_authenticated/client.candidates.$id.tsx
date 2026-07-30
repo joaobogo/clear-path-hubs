@@ -184,7 +184,17 @@ function CandidateDetailPage() {
  queryKey: ["client-candidate", orgId, id],
  queryFn: () => detailFn({ data: { orgId: orgId!, matchId: id } }),
  enabled: !!orgId,
- });
+  });
+
+  // Compensation decision support — figures on record only, never estimates.
+  const compFn = useServerFn(getCompensationSignal);
+  const { data: compSignal, isPending: compPending } = useQuery({
+    queryKey: ["client-candidate-comp", orgId, id],
+    queryFn: () => compFn({ data: { orgId: orgId!, matchId: id } }),
+    enabled: !!orgId,
+  });
+
+
 
  const [dialogAction, setDialogAction] = useState<ActionKey | null>(null);
  // Stage captured at mutate time so the toast's Undo knows where to return to.
