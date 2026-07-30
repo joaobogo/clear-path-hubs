@@ -83,6 +83,7 @@ const TABS = [
   { id: "screening", label: "Screening", icon: ListChecks },
   { id: "blueprint", label: "Scoring blueprint", icon: Gauge },
   { id: "pipeline", label: "Pipeline", icon: Users },
+  { id: "sourcing", label: "Sourcing", icon: Radar },
   { id: "memory", label: "Memory & handoff", icon: NotebookPen },
   { id: "activity", label: "Activity", icon: History },
   { id: "audit", label: "Audit", icon: ShieldCheck },
