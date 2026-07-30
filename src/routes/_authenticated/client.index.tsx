@@ -250,13 +250,13 @@ function OverviewPage() {
 
   const summary = useMemo(() => {
     if (!kpis) return null;
-    const parts: string[] = [];
-    if (kpis.active_positions) parts.push(`${kpis.active_positions} active search${kpis.active_positions === 1 ? "" : "es"}`);
-    const totalPending = priorityQueue.reduce((s, p) => s + p.count, 0);
-    if (totalPending > 0) parts.push(`${totalPending} decision${totalPending === 1 ? "" : "s"} waiting`);
-    if (parts.length === 0) return "Your workspace is quiet. Submit a role to get started.";
-    return `${cap(parts.join(" · "))}.`;
-  }, [kpis, priorityQueue]);
+    const totalPending = decisionQueue.reduce((s: number, p: DecisionRow) => s + p.count, 0);
+    if (totalPending > 0) {
+      return `${totalPending} thing${totalPending === 1 ? "" : "s"} need${totalPending === 1 ? "s" : ""} you today.`;
+    }
+    if (kpis.active_positions) return "Nothing needs you today. Your searches are running.";
+    return "Your workspace is quiet. Submit a role to get started.";
+  }, [kpis, decisionQueue]);
 
   const showOnboarding = !!kpis && kpis.active_positions === 0 && kpis.delivered === 0;
 
