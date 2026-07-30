@@ -44,6 +44,7 @@ import { OpenThreadButton } from "@/components/comms/open-thread-button";
 import { JourneyTimeline } from "@/components/candidate/journey-timeline";
 import { NextStepNote } from "@/components/client/next-step-note";
 import { CompensationPanel } from "@/components/client/compensation-panel";
+import { VisibilityNote } from "@/components/client/visibility-note";
 import { getCompensationSignal } from "@/lib/compensation.functions";
 import { confirmationLine } from "@/lib/client-next-step";
 import { getCandidateJourney } from "@/lib/journey.functions";
@@ -563,6 +564,7 @@ function CandidateHeader({
  </Badge>
  )}
  </div>
+ <VisibilityNote className="col-span-full mt-3" />
  </header>
  );
 }

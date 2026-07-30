@@ -11,6 +11,7 @@ import {
  getClientPositions,
 } from "@/lib/client.functions";
 import { useClientOrgSearch } from "@/lib/use-client-org";
+import { VisibilityNote } from "@/components/client/visibility-note";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -412,6 +413,7 @@ function CandidatesPage() {
  <p className="text-sm text-muted-foreground mt-1">
  Review, compare, and progress the candidates delivered for your open positions.
  </p>
+ <VisibilityNote className="mt-2" />
  </div>
  <div className="flex flex-col items-end gap-2 shrink-0">
  <Button
