@@ -20,6 +20,11 @@ import {
   type ScreeningAnswer,
 } from "@/lib/scoring-engine.server";
 import { executeScoring, assertPublishGate } from "@/lib/scoring-service.server";
+import {
+  shortestTransitionPath,
+  type CanonicalScoringState,
+} from "@/lib/scoring/canonical-state";
+
 
 type State =
   | "queued"
