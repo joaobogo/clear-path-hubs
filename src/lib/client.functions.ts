@@ -11,6 +11,7 @@ import { computeRoleLaunchState } from "@/lib/role-launch.server";
 
 import {
   loadKpiRows,
+  loadRoleStageDates,
   computeKpis,
   toClientCandidateDTO,
   TOP_FIT_LABELS,
@@ -22,6 +23,7 @@ import {
   buildPipelineActionLabel,
   type PipelineStatusInput,
 } from "@/lib/client-pipeline-language";
+import { computeRoleProgress } from "@/lib/client-role-progress";
 
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -404,13 +406,20 @@ export const getClientPositions = createServerFn({ method: "GET" })
     ) as unknown as string[];
     const { data: positions, error } = await context.supabase
       .from("positions")
-      .select("id, title, status, location, work_model, employment_type, seniority, updated_at")
+      .select(
+        "id, title, status, location, work_model, employment_type, seniority, updated_at, created_at, published_at, approved_at",
+      )
       .eq("organization_id", data.orgId)
       .in("status", statusFilter as never)
       .order("updated_at", { ascending: false });
     if (error) throw new Error(error.message);
 
     const rows = await loadKpiRows(context.supabase, data.orgId);
+    const stageDates = await loadRoleStageDates(
+      context.supabase,
+      data.orgId,
+      (positions as AnyRow[]).map((p) => p.id as string),
+    );
     const byPosition = new Map<string, KpiRow[]>();
     for (const r of rows) {
       if (!byPosition.has(r.position_id)) byPosition.set(r.position_id, []);
@@ -425,6 +434,15 @@ export const getClientPositions = createServerFn({ method: "GET" })
 
         kpis: kpi,
         pipeline_line: buildPipelineStatusLine(language),
+        progress: computeRoleProgress({
+          status: String(p.status),
+          briefedAt: (p.approved_at as string | null) ?? (p.created_at as string | null),
+          sourcingStartedAt:
+            stageDates.get(p.id)?.sourcing ?? (p.published_at as string | null),
+          screeningStartedAt: stageDates.get(p.id)?.screening ?? null,
+          shortlistStartedAt: stageDates.get(p.id)?.shortlist ?? null,
+          offerStartedAt: stageDates.get(p.id)?.offer ?? null,
+        }),
         next_milestone: nextMilestoneFor(posRows, p.status),
         action_required: buildPipelineActionLabel(language),
       };
@@ -580,6 +598,10 @@ export const getClientPositionDetail = createServerFn({ method: "GET" })
     });
 
 
+    const positionStageDates = (
+      await loadRoleStageDates(context.supabase, data.orgId, [data.positionId])
+    ).get(data.positionId);
+
     // Role launch state — timeline + channels, derived from real records only.
     const { data: campaigns } = await context.supabase
       .from("outreach_campaigns")
@@ -656,6 +678,16 @@ export const getClientPositionDetail = createServerFn({ method: "GET" })
         not_moving_forward: stageCounts.not_moving_forward,
         pipeline_line: pipelineLine,
       },
+      progress: computeRoleProgress({
+        status: String(position.status),
+        briefedAt:
+          (position.approved_at as string | null) ?? (position.created_at as string | null),
+        sourcingStartedAt:
+          positionStageDates?.sourcing ?? (position.published_at as string | null),
+        screeningStartedAt: positionStageDates?.screening ?? null,
+        shortlistStartedAt: positionStageDates?.shortlist ?? null,
+        offerStartedAt: positionStageDates?.offer ?? null,
+      }),
 
     };
   });
