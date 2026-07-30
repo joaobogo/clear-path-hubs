@@ -542,6 +542,44 @@ export const getClientPositionDetail = createServerFn({ method: "GET" })
     const hires = stageCounts.hired ?? 0;
     const remaining = Math.max(0, openings - hires);
 
+    // Interview state for the plain-language status line.
+    const matchIdList = ((matches as AnyRow[]) ?? []).map((m) => m.id as string);
+    let interviewsToConfirm = 0;
+    let interviewsScheduled = 0;
+    let nextInterviewAt: string | null = null;
+    if (matchIdList.length > 0) {
+      const { data: ivs } = await context.supabase
+        .from("interviews")
+        .select("candidate_match_id, status, scheduled_at")
+        .in("candidate_match_id", matchIdList)
+        .in("status", ["requested", "scheduling", "scheduled"]);
+      const confirmSet = new Set<string>();
+      const scheduledSet = new Set<string>();
+      for (const iv of ((ivs as AnyRow[]) ?? [])) {
+        if (iv.status === "scheduled") {
+          scheduledSet.add(iv.candidate_match_id);
+          const at = iv.scheduled_at as string | null;
+          if (at && (!nextInterviewAt || at < nextInterviewAt)) nextInterviewAt = at;
+        } else {
+          confirmSet.add(iv.candidate_match_id);
+        }
+      }
+      interviewsToConfirm = confirmSet.size;
+      interviewsScheduled = scheduledSet.size;
+    }
+    const pipelineLine = buildPipelineStatusLine({
+      status: String(position.status),
+      awaitingReview: stageCounts.delivered ?? 0,
+      shortlisted: stageCounts.shortlisted ?? 0,
+      interviewsToConfirm,
+      interviewsScheduled,
+      nextInterviewAt,
+      offers: stageCounts.offer ?? 0,
+      hires,
+      totalCandidates: ((matches as AnyRow[]) ?? []).length,
+    });
+
+
     // Role launch state — timeline + channels, derived from real records only.
     const { data: campaigns } = await context.supabase
       .from("outreach_campaigns")
