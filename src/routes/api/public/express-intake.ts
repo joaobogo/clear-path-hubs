@@ -182,39 +182,60 @@ export const Route = createFileRoute("/api/public/express-intake")({
         }
 
         // ---------- Organization ----------
-        // Joining an EXISTING organization is a privilege: a matching company
-        // name alone must never grant access to another tenant's workspace.
-        // We only attach to an existing org when the work-email domain matches
-        // that org's verified domain, or the caller is already a member of it.
+        // Joining an EXISTING organization is a privilege. Neither a matching
+        // company name nor a matching email domain proves identity — the work
+        // email is never verified at this point — so an existing tenant is only
+        // ever joined by someone who is already an active member of it.
         const companyNorm = normalizeCompany(data.companyName);
         const domain = emailDomain(data.workEmail);
         const corporateDomain = domain && !isGenericDomain(domain) ? domain : null;
         let organizationId: string | null = null;
-        if (corporateDomain) {
-          const { data: byDomain } = await admin
-            .from("organizations")
-            .select("id")
-            .eq("domain", corporateDomain)
-            .maybeSingle();
-          if (byDomain) organizationId = byDomain.id;
-        }
-        if (!organizationId && callerUserId) {
-          const { data: byName } = await admin
-            .from("organizations")
-            .select("id")
-            .eq("name_normalized", companyNorm)
-            .maybeSingle();
-          if (byName) {
-            const { data: mem } = await admin
-              .from("memberships")
+        let claimedExistingOrgId: string | null = null;
+        {
+          let candidate: string | null = null;
+          if (corporateDomain) {
+            const { data: byDomain } = await admin
+              .from("organizations")
               .select("id")
-              .eq("user_id", callerUserId)
-              .eq("organization_id", byName.id)
-              .eq("status", "active")
+              .eq("domain", corporateDomain)
               .maybeSingle();
-            if (mem) organizationId = byName.id;
+            if (byDomain) candidate = byDomain.id as string;
+          }
+          if (!candidate) {
+            const { data: byName } = await admin
+              .from("organizations")
+              .select("id")
+              .eq("name_normalized", companyNorm)
+              .maybeSingle();
+            if (byName) candidate = byName.id as string;
+          }
+          if (candidate) {
+            claimedExistingOrgId = candidate;
+            if (callerUserId) {
+              const { data: mem } = await admin
+                .from("memberships")
+                .select("id")
+                .eq("user_id", callerUserId)
+                .eq("organization_id", candidate)
+                .eq("status", "active")
+                .maybeSingle();
+              if (mem) organizationId = candidate;
+            }
           }
         }
+        if (!organizationId && claimedExistingOrgId) {
+          return Response.json(
+            {
+              ok: false,
+              trace_id: traceId,
+              error: "organization_exists",
+              message:
+                "Your company already has a TaaSFlow workspace. Sign in, or ask a workspace admin to invite you, then launch your role.",
+            },
+            { status: 409 },
+          );
+        }
+
 
         if (!organizationId) {
           const { data: newOrg, error: orgErr } = await admin
