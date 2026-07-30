@@ -116,284 +116,223 @@ function statusBadgeClass(status: InterviewStatus): string {
  case "cancelled":
  return "taas-bg-danger-soft taas-fg-danger border taas-bd-danger";
  }
-}
-
 function InterviewsPage() {
- const org = useClientOrgSearch();
- const support = useSupportView();
- const readOnly = support.readOnly || support.permissionPreview === "client_viewer";
- const qc = useQueryClient();
- const listFn = useServerFn(listClientInterviews);
- const candidatesFn = useServerFn(listSchedulableCandidates);
- const requestFn = useServerFn(requestInterview);
- const proposeFn = useServerFn(proposeInterviewTimes);
- const confirmFn = useServerFn(confirmInterviewTime);
- const cancelFn = useServerFn(cancelInterview);
- const completeFn = useServerFn(markInterviewCompleted);
+  const org = useClientOrgSearch();
+  const support = useSupportView();
+  const readOnly = support.readOnly || support.permissionPreview === "client_viewer";
+  const qc = useQueryClient();
+  const listFn = useServerFn(listClientInterviews);
+  const candidatesFn = useServerFn(listSchedulableCandidates);
+  const requestFn = useServerFn(requestInterview);
+  const proposeFn = useServerFn(proposeInterviewTimes);
+  const confirmFn = useServerFn(confirmInterviewTime);
+  const cancelFn = useServerFn(cancelInterview);
+  const completeFn = useServerFn(markInterviewCompleted);
+  const autoProposeFn = useServerFn(proposeFromAvailability);
+  const rescheduleFn = useServerFn(rescheduleInterview);
 
- const [tab, setTab] = useState<InterviewStatus | "all">("all");
- const [requestOpen, setRequestOpen] = useState(false);
- const [detail, setDetail] = useState<InterviewDTO | null>(null);
+  const [requestOpen, setRequestOpen] = useState(false);
+  const [detail, setDetail] = useState<InterviewDTO | null>(null);
+  const [busyId, setBusyId] = useState<string | null>(null);
 
- const listQuery = useQuery({
- queryKey: ["client-interviews", org, tab],
- queryFn: () => listFn({ data: { orgId: org!, status: tab } }),
- enabled: !!org,
- });
+  const listQuery = useQuery({
+    queryKey: ["client-interviews", org, "all"],
+    queryFn: () => listFn({ data: { orgId: org!, status: "all" } }),
+    enabled: !!org,
+  });
+  const availability = useAvailability(org);
+  const hasWindows = ((availability.data?.windows ?? []) as unknown[]).length > 0;
 
- const interviews = (listQuery.data?.interviews as InterviewDTO[] | undefined) ?? [];
- const kpis = useMemo(() => {
- const src = interviews;
- return {
- requested: src.filter((i) => i.status === "requested").length,
- scheduling: src.filter((i) => i.status === "scheduling").length,
- scheduled: src.filter((i) => i.status === "scheduled").length,
- completed: src.filter((i) => i.status === "completed").length,
- };
- }, [interviews]);
+  const interviews = (listQuery.data?.interviews as InterviewDTO[] | undefined) ?? [];
 
- const invalidate = () => {
- qc.invalidateQueries({ queryKey: ["client-interviews"] });
- qc.invalidateQueries({ queryKey: ["client-kpis"] });
- qc.invalidateQueries({ queryKey: ["client-candidates"] });
- };
+  const invalidate = () => {
+    qc.invalidateQueries({ queryKey: ["client-interviews"] });
+    qc.invalidateQueries({ queryKey: ["client-kpis"] });
+    qc.invalidateQueries({ queryKey: ["client-candidates"] });
+  };
 
- const requestMut = useMutation({
- mutationFn: (payload: Parameters<typeof requestFn>[0]["data"]) => requestFn({ data: payload }),
- onSuccess: () => {
- toast.success("Interview requested");
- setRequestOpen(false);
- invalidate();
- },
- onError: (e: Error) => {
- if (e.message === "interview_already_active")
- toast.error("This candidate already has an active interview.");
- else if (e.message === "forbidden") toast.error("You don't have permission.");
- else if (e.message === "SUPPORT_VIEW_READ_ONLY")
- toast.error("Support view is read-only.");
- else toast.error(e.message);
- },
- });
+  const requestMut = useMutation({
+    mutationFn: (payload: Parameters<typeof requestFn>[0]["data"]) => requestFn({ data: payload }),
+    onSuccess: () => {
+      toast.success("Interview requested");
+      setRequestOpen(false);
+      invalidate();
+    },
+    onError: (e: Error) => {
+      if (e.message === "interview_already_active")
+        toast.error("This candidate already has an active interview.");
+      else if (e.message === "forbidden") toast.error("You don't have permission.");
+      else if (e.message === "SUPPORT_VIEW_READ_ONLY")
+        toast.error("Support view is read-only.");
+      else toast.error(e.message);
+    },
+  });
 
- const proposeMut = useMutation({
- mutationFn: (payload: Parameters<typeof proposeFn>[0]["data"]) => proposeFn({ data: payload }),
- onSuccess: () => {
- toast.success("Times proposed");
- invalidate();
- setDetail(null);
- },
- onError: (e: Error) => toast.error(e.message),
- });
+  const proposeMut = useMutation({
+    mutationFn: (payload: Parameters<typeof proposeFn>[0]["data"]) => proposeFn({ data: payload }),
+    onSuccess: () => {
+      toast.success("Times proposed");
+      invalidate();
+      setDetail(null);
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
 
- const confirmMut = useMutation({
- mutationFn: (payload: Parameters<typeof confirmFn>[0]["data"]) => confirmFn({ data: payload }),
- onSuccess: () => {
- toast.success("Interview scheduled");
- invalidate();
- setDetail(null);
- },
- onError: (e: Error) => {
- if (e.message === "scheduled_in_past") toast.error("Choose a future time.");
- else toast.error(e.message);
- },
- });
+  const autoProposeMut = useMutation({
+    mutationFn: (payload: { orgId: string; id: string }) => autoProposeFn({ data: payload }),
+    onSettled: () => setBusyId(null),
+    onSuccess: (res) => {
+      toast.success(
+        `Sent ${(res as { slots: string[] }).slots.length} times from your availability — the candidate picks one.`,
+      );
+      invalidate();
+    },
+    onError: (e: Error) =>
+      toast.error(
+        e.message === "no_availability_windows"
+          ? "Set your availability windows first."
+          : e.message === "no_slots_available"
+            ? "No open slots in the next 10 days — widen your windows."
+            : e.message,
+      ),
+  });
 
- const cancelMut = useMutation({
- mutationFn: (payload: Parameters<typeof cancelFn>[0]["data"]) => cancelFn({ data: payload }),
- onSuccess: () => {
- toast.success("Interview cancelled");
- invalidate();
- setDetail(null);
- },
- onError: (e: Error) => toast.error(e.message),
- });
+  const rescheduleMut = useMutation({
+    mutationFn: (payload: { orgId: string; id: string }) => rescheduleFn({ data: payload }),
+    onSettled: () => setBusyId(null),
+    onSuccess: (res) => {
+      const r = res as { slots: string[]; hasWindows: boolean };
+      toast.success(
+        r.hasWindows
+          ? `New times sent. Both you and the candidate have been notified.`
+          : "Interview reopened for new times. Add availability to send options automatically.",
+      );
+      invalidate();
+      setDetail(null);
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
 
- const completeMut = useMutation({
- mutationFn: (payload: Parameters<typeof completeFn>[0]["data"]) =>
- completeFn({ data: payload }),
- onSuccess: () => {
- toast.success("Interview marked completed");
- invalidate();
- setDetail(null);
- },
- onError: (e: Error) => toast.error(e.message),
- });
+  const confirmMut = useMutation({
+    mutationFn: (payload: Parameters<typeof confirmFn>[0]["data"]) => confirmFn({ data: payload }),
+    onSuccess: () => {
+      toast.success("Interview scheduled");
+      invalidate();
+      setDetail(null);
+    },
+    onError: (e: Error) => {
+      if (e.message === "scheduled_in_past") toast.error("Choose a future time.");
+      else toast.error(e.message);
+    },
+  });
 
- return (
- <PageShell>
- <PageHeader
- title="Interviews"
- description="Track every interview from request to completion."
- actions={
- !readOnly ? (
- <Button onClick={() => setRequestOpen(true)}>
- <Plus className="mr-1.5 h-4 w-4" /> Request interview
- </Button>
- ) : null
- }
- />
- <PageBody>
- {/* KPI strip */}
- <div className="grid gap-3 sm:grid-cols-4">
- <KpiTile label="Requested" value={kpis.requested} tone="amber" />
- <KpiTile label="Scheduling" value={kpis.scheduling} tone="blue" />
- <KpiTile label="Scheduled" value={kpis.scheduled} tone="emerald" />
- <KpiTile label="Completed" value={kpis.completed} tone="slate" />
- </div>
+  const cancelMut = useMutation({
+    mutationFn: (payload: Parameters<typeof cancelFn>[0]["data"]) => cancelFn({ data: payload }),
+    onSuccess: () => {
+      toast.success("Interview cancelled");
+      invalidate();
+      setDetail(null);
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
 
- <Tabs value={tab} onValueChange={(v) => setTab(v as InterviewStatus | "all")}>
- <TabsList>
- {STATUS_TABS.map((t) => (
- <TabsTrigger key={t.value} value={t.value}>
- {t.label}
- </TabsTrigger>
- ))}
- </TabsList>
- </Tabs>
+  const completeMut = useMutation({
+    mutationFn: (payload: Parameters<typeof completeFn>[0]["data"]) =>
+      completeFn({ data: payload }),
+    onSuccess: () => {
+      toast.success("Interview marked completed");
+      invalidate();
+      setDetail(null);
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
 
- {listQuery.isLoading ? (
- <div className="rounded-lg border p-8 text-center text-sm text-muted-foreground">
- Loading interviews…
- </div>
- ) : interviews.length === 0 ? (
- <div className="rounded-lg border p-8 text-center">
- <CalendarClock className="mx-auto h-8 w-8 text-muted-foreground" />
- <p className="mt-3 text-sm font-medium">No interviews yet</p>
- <p className="mt-1 text-sm text-muted-foreground">
- {readOnly
- ? "Interviews will appear here as they are scheduled."
- : "Request an interview from a shortlisted candidate to get started."}
- </p>
- </div>
- ) : (
- <div className="grid gap-3">
- {interviews.map((iv) => (
- <InterviewRow key={iv.id} interview={iv} onOpen={() => setDetail(iv)} />
- ))}
- </div>
- )}
- </PageBody>
+  return (
+    <PageShell>
+      <PageHeader
+        title="Interviews"
+        description="Set your availability once — everything else happens on this one timeline."
+        actions={
+          !readOnly ? (
+            <Button onClick={() => setRequestOpen(true)}>
+              <Plus className="mr-1.5 h-4 w-4" /> Request interview
+            </Button>
+          ) : null
+        }
+      />
+      <PageBody>
+        {org ? <AvailabilityManager orgId={org} readOnly={readOnly} /> : null}
 
- {requestOpen && org ? (
- <RequestDialog
- orgId={org}
- onClose={() => setRequestOpen(false)}
- submitting={requestMut.isPending}
- onSubmit={(payload) => requestMut.mutate(payload)}
- fetchCandidates={() => candidatesFn({ data: { orgId: org } })}
- />
- ) : null}
+        {listQuery.isLoading ? (
+          <div className="rounded-lg border p-8 text-center text-sm text-muted-foreground">
+            Loading interviews…
+          </div>
+        ) : interviews.length === 0 ? (
+          <div className="rounded-lg border p-8 text-center">
+            <CalendarClock className="mx-auto h-8 w-8 text-muted-foreground" />
+            <p className="mt-3 text-sm font-medium">No interviews yet</p>
+            <p className="mt-1 text-sm text-muted-foreground">
+              {readOnly
+                ? "Interviews will appear here as they are scheduled."
+                : "Request an interview from a shortlisted candidate to get started."}
+            </p>
+          </div>
+        ) : (
+          <InterviewTimeline
+            interviews={interviews}
+            readOnly={readOnly}
+            hasWindows={hasWindows}
+            busyId={busyId}
+            onOpen={(iv) => setDetail(iv)}
+            onProposeFromAvailability={(iv) => {
+              setBusyId(iv.id);
+              autoProposeMut.mutate({ orgId: iv.organization_id, id: iv.id });
+            }}
+            onReschedule={(iv) => {
+              setBusyId(iv.id);
+              rescheduleMut.mutate({ orgId: iv.organization_id, id: iv.id });
+            }}
+          />
+        )}
+      </PageBody>
 
- {detail ? (
- <DetailDialog
- interview={detail}
- readOnly={readOnly}
- onClose={() => setDetail(null)}
- onPropose={(times) =>
- proposeMut.mutate({ orgId: detail.organization_id, id: detail.id, proposedTimes: times })
- }
- onConfirm={(payload) =>
- confirmMut.mutate({ orgId: detail.organization_id, id: detail.id, ...payload })
- }
- onCancel={(reason) =>
- cancelMut.mutate({ orgId: detail.organization_id, id: detail.id, reason })
- }
- onComplete={(feedback) =>
- completeMut.mutate({ orgId: detail.organization_id, id: detail.id, feedback })
- }
- pending={
- proposeMut.isPending ||
- confirmMut.isPending ||
- cancelMut.isPending ||
- completeMut.isPending
- }
- />
- ) : null}
- </PageShell>
- );
-}
+      {requestOpen && org ? (
+        <RequestDialog
+          orgId={org}
+          onClose={() => setRequestOpen(false)}
+          submitting={requestMut.isPending}
+          onSubmit={(payload) => requestMut.mutate(payload)}
+          fetchCandidates={() => candidatesFn({ data: { orgId: org } })}
+        />
+      ) : null}
 
-function KpiTile({
- label,
- value,
- tone,
-}: {
- label: string;
- value: number;
- tone: "amber" | "blue" | "emerald" | "slate";
-}) {
- const dot =
- tone === "amber"
- ? "taas-bg-warning-solid"
- : tone === "blue"
- ? "taas-bg-info-solid"
- : tone === "emerald"
- ? "taas-bg-success-solid"
- : "taas-bg-neutral-solid";
- return (
- <div className="rounded-lg border bg-card p-4">
- <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground uppercase tracking-wide">
- <span className={`h-2 w-2 rounded-full ${dot}`} /> {label}
- </div>
- <div className="mt-2 text-2xl font-semibold">{value}</div>
- </div>
- );
-}
-
-import { AgeBadge } from "@/components/client/age-badge";
-
-function InterviewRow({ interview, onOpen }: { interview: InterviewDTO; onOpen: () => void }) {
- return (
- <button
- onClick={onOpen}
- className="group grid gap-3 rounded-lg border bg-card p-4 text-left transition hover:border-primary/40 hover:shadow-sm sm:grid-cols-[1fr_auto]"
- >
- <div className="space-y-2 min-w-0">
- <div className="flex flex-wrap items-center gap-2">
- <span className={`inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium ${statusBadgeClass(interview.status)}`}>
- {interview.status}
- </span>
- {interview.interview_type ? (
- <Badge variant="outline" className="capitalize">
- {interview.interview_type.replace(/_/g, " ")}
- </Badge>
- ) : null}
- {interview.position?.reference ? (
- <span className="text-xs text-muted-foreground">#{interview.position.reference}</span>
- ) : null}
- {interview.status === "requested" || interview.status === "scheduling" ? (
- <AgeBadge since={interview.created_at} />
- ) : null}
- </div>
- <div className="font-medium">
- {interview.candidate?.name ?? "Candidate"}
- <span className="mx-1.5 text-muted-foreground">·</span>
- <span className="text-muted-foreground">{interview.position?.title ?? "Position"}</span>
- </div>
- <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
- <span className="inline-flex items-center gap-1">
- <Clock className="h-3.5 w-3.5" />
- {formatWhen(interview.scheduled_at, interview.timezone)}
- {interview.timezone ? <span className="ml-1 text-xs">({interview.timezone})</span> : null}
- </span>
- {interview.participants.length > 0 ? (
- <span className="inline-flex items-center gap-1">
- <Users2 className="h-3.5 w-3.5" />
- {interview.participants.length} participant
- {interview.participants.length === 1 ? "" : "s"}
- </span>
- ) : null}
- {interview.duration_minutes ? (
- <span>{interview.duration_minutes} min</span>
- ) : null}
- </div>
- </div>
- <div className="flex flex-col items-end justify-between gap-2 text-right">
- <span className="text-xs font-medium text-primary">Next: {interview.next_action}</span>
- <span className="text-xs text-muted-foreground">Open →</span>
- </div>
- </button>
- );
+      {detail ? (
+        <DetailDialog
+          interview={detail}
+          readOnly={readOnly}
+          onClose={() => setDetail(null)}
+          onPropose={(times) =>
+            proposeMut.mutate({ orgId: detail.organization_id, id: detail.id, proposedTimes: times })
+          }
+          onConfirm={(payload) =>
+            confirmMut.mutate({ orgId: detail.organization_id, id: detail.id, ...payload })
+          }
+          onCancel={(reason) =>
+            cancelMut.mutate({ orgId: detail.organization_id, id: detail.id, reason })
+          }
+          onComplete={(feedback) =>
+            completeMut.mutate({ orgId: detail.organization_id, id: detail.id, feedback })
+          }
+          pending={
+            proposeMut.isPending ||
+            confirmMut.isPending ||
+            cancelMut.isPending ||
+            completeMut.isPending
+          }
+        />
+      ) : null}
+    </PageShell>
+  );
 }
 
 // ─── Request Dialog ─────────────────────────────────────────────────────────
