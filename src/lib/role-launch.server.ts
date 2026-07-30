@@ -71,12 +71,12 @@ export function computeRoleLaunchState({
     at: generatedAt,
     detail:
       bpStatus === "failed"
-        ? "We could not read the file automatically — a specialist is doing it by hand."
+        ? "Automatic reading didn't complete — TaaSFlow is processing this brief in the background."
         : bpStatus === "ready"
           ? "Blueprint generated from your job description."
           : bpStatus === "none"
             ? "Built from the details you entered."
-            : "Reading your job description now.",
+            : "TaaSFlow is analysing this talent market.",
   });
 
   const briefDone = Boolean(confirmedAt) || Boolean(approvedAt) || isLive;
@@ -93,23 +93,23 @@ export function computeRoleLaunchState({
   const hasCampaign = campaigns.length > 0;
   stages.push({
     key: "channels",
-    label: "Search channels prepared",
+    label: "Channel mix selected",
     state: hasCampaign ? "done" : briefDone ? "active" : "pending",
     at: hasCampaign ? earliest(campaigns.map((c) => c.started_at ?? c.created_at)) : null,
     detail: hasCampaign
-      ? `${campaigns.length} channel${campaigns.length === 1 ? "" : "s"} set up for this role.`
-      : "Your recruiter is selecting the channels for this search.",
+      ? `${campaigns.length} channel${campaigns.length === 1 ? "" : "s"} activated for this role.`
+      : "The channel mix is being optimised for this role.",
   });
 
   const qualityDone = Boolean(approvedAt) || isLive;
   stages.push({
     key: "quality",
-    label: "Recruiter quality check",
+    label: "Strategy quality check",
     state: qualityDone ? "done" : briefDone ? "active" : "pending",
     at: approvedAt,
     detail: qualityDone
-      ? "A TaaSFlow recruiter signed off on the brief."
-      : "A recruiter reviews every role before it goes live.",
+      ? "Your sourcing strategy is ready."
+      : "TaaSFlow validates every sourcing strategy before activation.",
   });
 
   stages.push({
@@ -122,19 +122,19 @@ export function computeRoleLaunchState({
       : isPaused
         ? "Sourcing is on hold. Resume it whenever you're ready."
         : isLive
-          ? "Sourcing and outreach are running."
+          ? "Candidate discovery is active."
           : "Starts as soon as the quality check passes.",
   });
 
   stages.push({
     key: "discovery",
-    label: "Active sourcing and outreach",
+    label: "Candidate discovery",
     state: isPaused ? "attention" : isLive ? (matchCount > 0 ? "done" : "active") : "pending",
     at: liveAt,
     detail:
       applicationCount > 0
         ? `${applicationCount} application${applicationCount === 1 ? "" : "s"} received so far.`
-        : "Searching, contacting and screening candidates.",
+        : "Discovery, outreach and screening are running.",
   });
 
   const expected = liveAt ? (addBusinessDays(new Date(liveAt), FIRST_BATCH_BUSINESS_DAYS)?.toISOString() ?? null) : null;
@@ -147,7 +147,7 @@ export function computeRoleLaunchState({
     detail: deliveredAt
       ? "Delivered."
       : overdue
-        ? "Taking longer than planned. Your recruiter has been notified."
+        ? "Running longer than planned — the channel mix is being re-optimised."
         : "Typically within three business days of going live.",
   });
 
@@ -192,10 +192,10 @@ export function computeRoleLaunchState({
         st === "active"
           ? "Outreach is running on this channel."
           : st === "paused"
-            ? "Paused by your recruiter."
+            ? "Paused for this role."
             : st === "completed" || st === "archived"
               ? "This channel has finished its run."
-              : "Being set up by your recruiter.",
+              : "Being activated by the engine.",
       at: c.started_at ?? c.created_at ?? null,
     });
   }
@@ -209,7 +209,7 @@ export function computeRoleLaunchState({
       matchCount > 0
         ? `${matchCount} matched profile${matchCount === 1 ? "" : "s"} from our database.`
         : isLive
-          ? "Screening our existing talent pool against your brief."
+          ? "Matching our talent datasets against your brief."
           : "Starts when your role goes live.",
     at: liveAt,
   });
@@ -233,12 +233,12 @@ export function computeRoleLaunchState({
     : isPaused
       ? "Sourcing is paused."
       : matchCount > 0
-        ? "Candidates are in your pipeline."
+        ? "New candidates require review."
         : isLive
-          ? "Your role is live and sourcing is under way."
+          ? "Candidate discovery is active."
           : briefDone
-            ? "Final recruiter check before your role goes live."
-            : "We're preparing your search brief.";
+            ? "Your sourcing strategy is in final validation."
+            : "TaaSFlow is analysing this talent market.";
 
   return {
     stages,
