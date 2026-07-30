@@ -10504,6 +10504,15 @@ export type Database = {
       }
     }
     Functions: {
+      approve_candidate_match: {
+        Args: {
+          _actor_user_id: string
+          _match_id: string
+          _reason?: string
+          _run_id: string
+        }
+        Returns: Json
+      }
       default_permissions_for_role: {
         Args: { _role: Database["public"]["Enums"]["membership_role"] }
         Returns: Database["public"]["Enums"]["client_permission"][]
