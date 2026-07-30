@@ -33,6 +33,8 @@ import { ResurfacePanel } from "@/components/client/resurface-panel";
 import { RoleMemoryPanel } from "@/components/role-memory-panel";
 import { JobQualityPanel } from "@/components/positions/JobQualityPanel";
 
+import { RoleProgressTracker } from "@/components/client/role-progress-tracker";
+
 export const Route = createFileRoute("/_authenticated/client/positions/$id")({
  head: () => ({
  meta: [
@@ -341,12 +343,20 @@ function PositionDetailPage() {
  )}
  </header>
 
- {/* Plain-language pipeline status */}
+ {/* Where we are — persistent five-stage tracker + plain-language status */}
+ <section className="rounded-xl border bg-card px-4 py-4">
+ <h2 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+ Where we are
+ </h2>
+ <div className="mt-3">
+ <RoleProgressTracker progress={detail.progress} />
+ </div>
  {summary.pipeline_line && (
- <p className="rounded-xl border bg-card px-4 py-3 text-sm font-medium text-foreground/90">
+ <p className="mt-3 border-t pt-3 text-sm font-medium text-foreground/90">
  {summary.pipeline_line}
  </p>
  )}
+ </section>
 
 
  {/* 2. Hiring summary */}

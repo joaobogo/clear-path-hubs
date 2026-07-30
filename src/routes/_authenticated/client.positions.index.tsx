@@ -553,6 +553,7 @@ function PositionCard({ p }: { p: Row }) {
  </div>
 
  <p className="text-sm text-foreground/80 min-h-[2.5rem]">{progress}</p>
+ <RoleProgressTracker progress={p.progress} size="sm" className="pt-1" />
 
  <div>
  <div className="flex h-2 w-full overflow-hidden rounded-full bg-muted">
@@ -632,6 +633,11 @@ function CompactList({ rows }: { rows: Row[] }) {
  <div className="text-xs text-muted-foreground">
  {p.pipeline_line ?? progressSummary(p)}
  </div>
+ {p.progress && (
+ <div className="mt-1 text-[11px] text-muted-foreground">
+ {p.progress.caption}
+ </div>
+ )}
  {p.action_required && (
  <div className="text-[11px] taas-fg-warning ">
  {p.action_required}
