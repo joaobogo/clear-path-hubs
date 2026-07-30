@@ -625,11 +625,15 @@ function CompactList({ rows }: { rows: Row[] }) {
  >
  {p.title}
  </Link>
+ <div className="text-xs text-muted-foreground">
+ {p.pipeline_line ?? progressSummary(p)}
+ </div>
  {p.action_required && (
  <div className="text-[11px] taas-fg-warning ">
  {p.action_required}
  </div>
  )}
+
  </td>
  <td className="px-3 py-2">
  <Badge variant="secondary" className="text-[11px]">
