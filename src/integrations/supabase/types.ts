@@ -2146,6 +2146,191 @@ export type Database = {
         }
         Relationships: []
       }
+      conversation_reads: {
+        Row: {
+          conversation_id: string
+          last_read_at: string
+          user_id: string
+        }
+        Insert: {
+          conversation_id: string
+          last_read_at?: string
+          user_id: string
+        }
+        Update: {
+          conversation_id?: string
+          last_read_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "conversation_reads_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      conversations: {
+        Row: {
+          candidate_match_id: string | null
+          created_at: string
+          created_by: string | null
+          id: string
+          last_message_at: string
+          organization_id: string
+          position_id: string | null
+          scope: string
+          subject: string | null
+          updated_at: string
+        }
+        Insert: {
+          candidate_match_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          last_message_at?: string
+          organization_id: string
+          position_id?: string | null
+          scope: string
+          subject?: string | null
+          updated_at?: string
+        }
+        Update: {
+          candidate_match_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          last_message_at?: string
+          organization_id?: string
+          position_id?: string | null
+          scope?: string
+          subject?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "conversations_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "admin_candidate_matches_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "conversations_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "admin_work_inbox"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "conversations_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_matches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "conversations_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "client_candidate_matches_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "conversations_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "client_kanban_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "conversations_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "client_visible_candidates"
+            referencedColumns: ["candidate_match_id"]
+          },
+          {
+            foreignKeyName: "conversations_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "v_admin_candidate_index"
+            referencedColumns: ["match_id"]
+          },
+          {
+            foreignKeyName: "conversations_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "v_scoring_review_queue"
+            referencedColumns: ["match_id"]
+          },
+          {
+            foreignKeyName: "conversations_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "v_source_attribution"
+            referencedColumns: ["match_id"]
+          },
+          {
+            foreignKeyName: "conversations_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "admin_clients_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "conversations_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "conversations_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_portfolio_rollup"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "conversations_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "admin_pipeline_health"
+            referencedColumns: ["position_id"]
+          },
+          {
+            foreignKeyName: "conversations_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "admin_positions_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "conversations_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_my_applications"
+            referencedColumns: ["position_id"]
+          },
+          {
+            foreignKeyName: "conversations_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "client_positions_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "conversations_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "positions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       cost_limits: {
         Row: {
           id: string
@@ -4744,6 +4929,7 @@ export type Database = {
       messages: {
         Row: {
           body: string
+          conversation_id: string | null
           created_at: string
           id: string
           legacy_source_id: string | null
@@ -4762,6 +4948,7 @@ export type Database = {
         }
         Insert: {
           body: string
+          conversation_id?: string | null
           created_at?: string
           id?: string
           legacy_source_id?: string | null
@@ -4780,6 +4967,7 @@ export type Database = {
         }
         Update: {
           body?: string
+          conversation_id?: string | null
           created_at?: string
           id?: string
           legacy_source_id?: string | null
@@ -4796,7 +4984,15 @@ export type Database = {
           sender_user_id?: string | null
           thread_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       migration_entity_results: {
         Row: {
