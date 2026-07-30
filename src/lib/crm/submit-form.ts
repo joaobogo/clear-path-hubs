@@ -61,6 +61,9 @@ export async function submitToCrm(input: CrmSubmitInput): Promise<CrmSubmitResul
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
+      // Survives the navigation that often follows a successful submit
+      // (e.g. intake -> confirmation), so the lead is never dropped in flight.
+      keepalive: true,
     });
     const json = (await res.json().catch(() => ({}))) as {
       ok?: boolean;

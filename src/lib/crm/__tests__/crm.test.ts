@@ -35,3 +35,26 @@ describe("crm form registry", () => {
     expect(DEAL_FORM_TYPES).not.toContain("partnership");
   });
 });
+
+import { normalizeDomain, resolveCompanyDomain } from "@/lib/crm/attio-sync.server";
+
+describe("company domain resolution", () => {
+  it("normalizes urls and strips www/protocol/path", () => {
+    expect(normalizeDomain("https://www.Acme.com/careers?x=1")).toBe("acme.com");
+  });
+
+  it("rejects company names, not domains", () => {
+    expect(normalizeDomain("Acme Incorporated")).toBeNull();
+    expect(normalizeDomain("Acme")).toBeNull();
+  });
+
+  it("never treats a consumer mailbox as a company", () => {
+    expect(normalizeDomain("gmail.com")).toBeNull();
+    expect(resolveCompanyDomain(null, "someone@gmail.com")).toBeNull();
+  });
+
+  it("falls back to the work email domain", () => {
+    expect(resolveCompanyDomain(null, "jane@acme.co.uk")).toBe("acme.co.uk");
+    expect(resolveCompanyDomain("https://acme.io", "jane@gmail.com")).toBe("acme.io");
+  });
+});

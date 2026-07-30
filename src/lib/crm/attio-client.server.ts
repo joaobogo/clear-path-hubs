@@ -89,6 +89,45 @@ export async function assertCompany(values: Record<string, unknown>): Promise<st
   return res.data.id.record_id;
 }
 
+/**
+ * Find an existing open Deal already associated with this Person, so repeat
+ * inquiries update one pipeline record instead of creating duplicates.
+ * Closed-won / closed-lost stages are skipped: those need a fresh Deal.
+ */
+const CLOSED_STAGE = /won|lost|closed|archiv/i;
+
+export async function findOpenDealForPerson(personId: string): Promise<string | null> {
+  try {
+    const res = await attioFetch<{
+      data: { id: { record_id: string }; values?: Record<string, unknown> }[];
+    }>("/objects/deals/records/query", {
+      method: "POST",
+      body: {
+        filter: { associated_people: { target_record_id: personId } },
+        sorts: [{ direction: "desc", attribute: "created_at", field: "value" }],
+        limit: 25,
+      },
+    });
+    for (const record of res.data ?? []) {
+      const stageValues = (record.values?.stage ?? []) as { status?: { title?: string } }[];
+      const title = stageValues[0]?.status?.title ?? "";
+      if (!CLOSED_STAGE.test(title)) return record.id.record_id;
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+/** Update an existing Deal in place (used for repeat inquiries). */
+export async function updateDeal(dealId: string, values: Record<string, unknown>): Promise<string> {
+  const res = await attioFetch<RecordResponse>(`/objects/deals/records/${dealId}`, {
+    method: "PATCH",
+    body: { data: { values } },
+  });
+  return res.data.id.record_id;
+}
+
 export async function createDeal(values: Record<string, unknown>): Promise<string> {
   const res = await attioFetch<RecordResponse>("/objects/deals/records", {
     method: "POST",

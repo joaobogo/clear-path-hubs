@@ -16,6 +16,7 @@ import {
   type CrmFormId,
 } from "@/lib/crm/attio-config";
 import {
+  resolveCompanyDomain,
   sanitizeAnswers,
   sanitizeText,
   syncSubmissionToAttio,
@@ -33,9 +34,7 @@ const optionalText = (max: number) =>
 
 const submissionSchema = z.object({
   submission_id: z.string().uuid(),
-  source_form_id: z.enum(
-    Object.keys(CRM_FORMS) as [CrmFormId, ...CrmFormId[]],
-  ),
+  source_form_id: z.enum(Object.keys(CRM_FORMS) as [CrmFormId, ...CrmFormId[]]),
   submitted_at: z.string().datetime().optional(),
   source_page_url: optionalText(500),
   source_page_title: optionalText(300),
@@ -57,7 +56,9 @@ const submissionSchema = z.object({
   answers: z.record(z.string(), z.unknown()).default({}),
   consent_status: optionalText(80),
   consent_at: z.string().datetime().optional().nullable(),
-  website: z.string().max(0).optional().or(z.literal("")),
+  // Honeypot: accept any value here so bots get a silent 200 instead of a
+  // validation error that would teach them which field to leave blank.
+  website: z.string().max(200).optional().nullable(),
 });
 
 // Simple in-memory rate limit (per isolate): 5 submissions / minute / IP.
@@ -69,17 +70,6 @@ function rateLimited(ip: string) {
   hits.set(ip, recent);
   if (hits.size > 5000) hits.clear();
   return recent.length > 5;
-}
-
-function normalizeDomain(value: string | null): string | null {
-  if (!value) return null;
-  const cleaned = value
-    .trim()
-    .toLowerCase()
-    .replace(/^https?:\/\//, "")
-    .replace(/^www\./, "")
-    .split("/")[0];
-  return /^[a-z0-9.-]+\.[a-z]{2,}$/.test(cleaned) ? cleaned : null;
 }
 
 export const Route = createFileRoute("/api/public/submit-to-attio")({
@@ -151,7 +141,7 @@ export const Route = createFileRoute("/api/public/submit-to-attio")({
           job_title: sanitizeText(input.job_title, 160) || null,
           linkedin: sanitizeText(input.linkedin, 300) || null,
           company_name: sanitizeText(input.company_name, 200) || null,
-          company_domain: normalizeDomain(input.company_domain),
+          company_domain: resolveCompanyDomain(input.company_domain, input.email),
           answers: sanitizeAnswers(input.answers),
           consent_status: sanitizeText(input.consent_status, 80) || null,
           consent_at: input.consent_at ?? null,

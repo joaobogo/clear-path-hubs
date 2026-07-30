@@ -11,8 +11,10 @@ import {
   assertPerson,
   createDeal,
   createNote,
+  findOpenDealForPerson,
   listDealStages,
   listWorkspaceLists,
+  updateDeal,
 } from "./attio-client.server";
 import {
   CRM_FORMS,
@@ -59,12 +61,15 @@ export type SyncIds = {
 
 /** Strip HTML/script and clamp length. */
 export function sanitizeText(value: unknown, max = 2000): string {
-  return String(value ?? "")
-    .replace(/<[^>]*>/g, " ")
-    .replace(/[\u0000-\u001f\u007f]/g, " ")
-    .replace(/\s+/g, " ")
-    .trim()
-    .slice(0, max);
+  return (
+    String(value ?? "")
+      .replace(/<[^>]*>/g, " ")
+      // eslint-disable-next-line no-control-regex
+      .replace(/[\u0000-\u001f\u007f]/g, " ")
+      .replace(/\s+/g, " ")
+      .trim()
+      .slice(0, max)
+  );
 }
 
 const SENSITIVE_KEY = /pass(word)?|token|secret|card|cvv|iban|ssn|api[_-]?key/i;
@@ -79,6 +84,59 @@ export function sanitizeAnswers(answers: Record<string, unknown>) {
   return out;
 }
 
+/**
+ * Free / consumer mailbox providers: their domain is never a company domain,
+ * so we must not create an Attio Company for "gmail.com".
+ */
+const FREE_EMAIL_DOMAINS = new Set([
+  "gmail.com",
+  "googlemail.com",
+  "yahoo.com",
+  "yahoo.co.uk",
+  "hotmail.com",
+  "hotmail.co.uk",
+  "outlook.com",
+  "live.com",
+  "msn.com",
+  "aol.com",
+  "icloud.com",
+  "me.com",
+  "mac.com",
+  "proton.me",
+  "protonmail.com",
+  "gmx.com",
+  "gmx.de",
+  "mail.com",
+  "yandex.com",
+  "zoho.com",
+  "qq.com",
+  "163.com",
+]);
+
+export function normalizeDomain(value: string | null | undefined): string | null {
+  if (!value) return null;
+  const cleaned = value
+    .trim()
+    .toLowerCase()
+    .replace(/^https?:\/\//, "")
+    .replace(/^www\./, "")
+    .split("/")[0]
+    .split("?")[0];
+  if (!/^[a-z0-9-]+(\.[a-z0-9-]+)*\.[a-z]{2,}$/.test(cleaned)) return null;
+  return FREE_EMAIL_DOMAINS.has(cleaned) ? null : cleaned;
+}
+
+/**
+ * Company domain resolution: an explicit company website wins; otherwise fall
+ * back to the work-email domain. Never guessed from a company *name*.
+ */
+export function resolveCompanyDomain(
+  explicit: string | null | undefined,
+  email: string,
+): string | null {
+  return normalizeDomain(explicit) ?? normalizeDomain(email.split("@")[1] ?? null);
+}
+
 function attributionValues(s: CrmSubmission) {
   const form = CRM_FORMS[s.source_form_id];
   return {
@@ -86,7 +144,9 @@ function attributionValues(s: CrmSubmission) {
     source_brand: CRM_SOURCE_BRAND,
     source_website: CRM_SOURCE_WEBSITE,
     source_form: form.name,
+    source_form_id: form.id,
     form_type: form.type,
+    source_environment: s.environment,
     source_page_url: s.source_page_url ?? undefined,
     landing_page: s.landing_page ?? undefined,
     original_referrer: s.original_referrer ?? undefined,
@@ -158,10 +218,7 @@ function buildNote(s: CrmSubmission) {
   };
 }
 
-function pickListId(
-  lists: { id: string; name: string; api_slug: string }[],
-  patterns: RegExp[],
-) {
+function pickListId(lists: { id: string; name: string; api_slug: string }[], patterns: RegExp[]) {
   for (const pattern of patterns) {
     const hit = lists.find((l) => pattern.test(l.name) || pattern.test(l.api_slug));
     if (hit) return hit.id;
@@ -208,20 +265,30 @@ export async function syncSubmissionToAttio(s: CrmSubmission): Promise<SyncIds> 
     const stages = await listDealStages();
     const stage = stages.find((x) => /new lead|new inbound|inbound|lead|new/i.test(x.title));
     const displayName = s.company_name || s.full_name || s.email;
+    // Reuse an existing open Deal for this Person before creating a new one.
+    const existingDealId = await findOpenDealForPerson(personId);
     try {
-      dealId = await writeWithFallback(
-        createDeal,
-        {
-          name: `${CRM_SOURCE_BRAND} | ${form.name} | ${displayName}`,
-          stage: stage ? stage.title : undefined,
-          associated_people: [personId],
-          associated_company: companyId ?? undefined,
-        },
-        attribution,
-      );
+      if (existingDealId) {
+        dealId = await writeWithFallback(
+          (values) => updateDeal(existingDealId, values),
+          { associated_company: companyId ?? undefined },
+          attribution,
+        );
+      } else {
+        dealId = await writeWithFallback(
+          createDeal,
+          {
+            name: `${CRM_SOURCE_BRAND} | ${form.name} | ${displayName}`,
+            stage: stage ? stage.title : undefined,
+            associated_people: [personId],
+            associated_company: companyId ?? undefined,
+          },
+          attribution,
+        );
+      }
     } catch (e) {
       if (!(e instanceof AttioError) || e.status !== 400) throw e;
-      dealId = null; // workspace has no deals object configured
+      dealId = existingDealId; // workspace has no writable deals object
     }
   }
 
@@ -256,9 +323,11 @@ export async function syncSubmissionToAttio(s: CrmSubmission): Promise<SyncIds> 
   }
 
   const note = buildNote(s);
+  // The note always lands on the Person record: it is the one record that
+  // always exists, and it keeps the contact timeline complete.
   const noteId = await createNote({
-    parentObject: dealId ? "deals" : "people",
-    parentRecordId: dealId ?? personId,
+    parentObject: "people",
+    parentRecordId: personId,
     title: note.title,
     content: note.content,
   });

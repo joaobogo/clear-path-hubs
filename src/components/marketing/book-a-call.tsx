@@ -259,7 +259,6 @@ function CallForm({
         fullName: String(form.get("name") ?? ""),
         jobTitle: roleTitle ?? String(form.get("role_title") ?? ""),
         companyName: String(form.get("company") ?? "") || null,
-        companyDomain: String(form.get("company") ?? "") || null,
         answers: {
           "Roles to hire": String(form.get("role_count") ?? ""),
           Industry: industrySlug ?? "",
@@ -448,7 +447,6 @@ function MessageForm({
         fullName: String(form.get("name") ?? ""),
         jobTitle: roleTitle ?? String(form.get("role_title") ?? ""),
         companyName: String(form.get("company") ?? "") || null,
-        companyDomain: String(form.get("company") ?? "") || null,
         answers: {
           "Roles to hire": String(form.get("role_count") ?? ""),
           Industry: industrySlug ?? "",
