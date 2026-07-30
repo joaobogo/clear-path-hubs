@@ -38,6 +38,7 @@ import { Route as ContactRouteImport } from './routes/contact'
 import { Route as CaseStudiesRouteImport } from './routes/case-studies'
 import { Route as CandidateSuccessRouteImport } from './routes/candidate-success'
 import { Route as CandidateJoinRouteImport } from './routes/candidate-join'
+import { Route as BrandCenterRouteImport } from './routes/brand-center'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AccessDeniedRouteImport } from './routes/access-denied'
 import { Route as AboutRouteImport } from './routes/about'
@@ -282,6 +283,11 @@ const CandidateSuccessRoute = CandidateSuccessRouteImport.update({
 const CandidateJoinRoute = CandidateJoinRouteImport.update({
   id: '/candidate-join',
   path: '/candidate-join',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BrandCenterRoute = BrandCenterRouteImport.update({
+  id: '/brand-center',
+  path: '/brand-center',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -845,6 +851,7 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/access-denied': typeof AccessDeniedRoute
   '/auth': typeof AuthRoute
+  '/brand-center': typeof BrandCenterRoute
   '/candidate-join': typeof CandidateJoinRoute
   '/candidate-success': typeof CandidateSuccessRoute
   '/case-studies': typeof CaseStudiesRoute
@@ -975,6 +982,7 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/access-denied': typeof AccessDeniedRoute
   '/auth': typeof AuthRoute
+  '/brand-center': typeof BrandCenterRoute
   '/candidate-join': typeof CandidateJoinRoute
   '/candidate-success': typeof CandidateSuccessRoute
   '/case-studies': typeof CaseStudiesRoute
@@ -1097,6 +1105,7 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/access-denied': typeof AccessDeniedRoute
   '/auth': typeof AuthRoute
+  '/brand-center': typeof BrandCenterRoute
   '/candidate-join': typeof CandidateJoinRoute
   '/candidate-success': typeof CandidateSuccessRoute
   '/case-studies': typeof CaseStudiesRoute
@@ -1229,6 +1238,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/access-denied'
     | '/auth'
+    | '/brand-center'
     | '/candidate-join'
     | '/candidate-success'
     | '/case-studies'
@@ -1359,6 +1369,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/access-denied'
     | '/auth'
+    | '/brand-center'
     | '/candidate-join'
     | '/candidate-success'
     | '/case-studies'
@@ -1480,6 +1491,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/access-denied'
     | '/auth'
+    | '/brand-center'
     | '/candidate-join'
     | '/candidate-success'
     | '/case-studies'
@@ -1612,6 +1624,7 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   AccessDeniedRoute: typeof AccessDeniedRoute
   AuthRoute: typeof AuthRoute
+  BrandCenterRoute: typeof BrandCenterRoute
   CandidateJoinRoute: typeof CandidateJoinRoute
   CandidateSuccessRoute: typeof CandidateSuccessRoute
   CaseStudiesRoute: typeof CaseStudiesRoute
@@ -1875,6 +1888,13 @@ declare module '@tanstack/react-router' {
       path: '/candidate-join'
       fullPath: '/candidate-join'
       preLoaderRoute: typeof CandidateJoinRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/brand-center': {
+      id: '/brand-center'
+      path: '/brand-center'
+      fullPath: '/brand-center'
+      preLoaderRoute: typeof BrandCenterRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -2854,6 +2874,7 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   AccessDeniedRoute: AccessDeniedRoute,
   AuthRoute: AuthRoute,
+  BrandCenterRoute: BrandCenterRoute,
   CandidateJoinRoute: CandidateJoinRoute,
   CandidateSuccessRoute: CandidateSuccessRoute,
   CaseStudiesRoute: CaseStudiesRoute,

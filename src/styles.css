@@ -208,3 +208,80 @@
   from { stroke-dashoffset: 200; }
   to { stroke-dashoffset: 0; }
 }
+
+/* --------------------------------------------------------------- *
+ * Brand Center — print / PDF output
+ * Applies to /brand-center and /brand-center?print=1. Strips
+ * interactive chrome, forces light ink-friendly surfaces, and keeps
+ * headings, swatches and captions with their content.
+ * --------------------------------------------------------------- */
+@page {
+  size: A4;
+  margin: 16mm;
+}
+
+@media print {
+  nav,
+  button,
+  select,
+  [role="tablist"],
+  video {
+    display: none !important;
+  }
+
+  :root,
+  body {
+    background: #ffffff !important;
+    color: #0a111f !important;
+  }
+
+  main {
+    max-width: none !important;
+    padding: 0 !important;
+  }
+
+  section {
+    break-inside: auto;
+    page-break-inside: auto;
+  }
+
+  h1, h2, h3, h4 {
+    break-after: avoid-page;
+    page-break-after: avoid;
+  }
+
+  figure,
+  table,
+  li,
+  article,
+  [role="img"] {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  img,
+  svg {
+    max-width: 100% !important;
+  }
+
+  /* Print URLs behind links so a paper copy stays useful, but skip
+   * in-page anchors and long tracking URLs. */
+  a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: 10pt;
+    color: #4c5666;
+    word-break: break-all;
+  }
+
+  a[href^="#"]::after,
+  a[href*="utm_"]::after {
+    content: "";
+  }
+
+  * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    animation: none !important;
+    transition: none !important;
+  }
+}
