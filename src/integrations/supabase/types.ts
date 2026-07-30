@@ -2191,19 +2191,41 @@ export type Database = {
           company_name: string | null
           consent_at: string | null
           consent_status: string | null
+          conversion_page: string | null
           created_at: string
+          cross_sell_status: string | null
+          destination_brand: string | null
           email: string
           environment: string
+          fgv_entry_brand: string | null
+          fgv_journey_id: string | null
+          fgv_referrer: string | null
+          first_landing_timestamp: string | null
+          first_touch_campaign: string | null
+          first_touch_medium: string | null
+          first_touch_source: string | null
           form_type: string
           full_name: string | null
+          gbraid: string | null
+          gclid: string | null
           id: string
+          is_test: boolean
           job_title: string | null
           landing_page: string | null
+          last_activity_timestamp: string | null
           last_error: string | null
+          last_touch_campaign: string | null
+          last_touch_medium: string | null
+          last_touch_source: string | null
           latest_referrer: string | null
+          lead_type: string | null
           linkedin: string | null
+          linkedin_click_id: string | null
+          msclkid: string | null
           original_referrer: string | null
           phone: string | null
+          secondary_service_interest: string | null
+          service_interest: string | null
           source_brand: string
           source_domain: string
           source_form_id: string
@@ -2221,6 +2243,7 @@ export type Database = {
           utm_medium: string | null
           utm_source: string | null
           utm_term: string | null
+          wbraid: string | null
         }
         Insert: {
           answers?: Json
@@ -2233,19 +2256,41 @@ export type Database = {
           company_name?: string | null
           consent_at?: string | null
           consent_status?: string | null
+          conversion_page?: string | null
           created_at?: string
+          cross_sell_status?: string | null
+          destination_brand?: string | null
           email: string
           environment?: string
+          fgv_entry_brand?: string | null
+          fgv_journey_id?: string | null
+          fgv_referrer?: string | null
+          first_landing_timestamp?: string | null
+          first_touch_campaign?: string | null
+          first_touch_medium?: string | null
+          first_touch_source?: string | null
           form_type: string
           full_name?: string | null
+          gbraid?: string | null
+          gclid?: string | null
           id?: string
+          is_test?: boolean
           job_title?: string | null
           landing_page?: string | null
+          last_activity_timestamp?: string | null
           last_error?: string | null
+          last_touch_campaign?: string | null
+          last_touch_medium?: string | null
+          last_touch_source?: string | null
           latest_referrer?: string | null
+          lead_type?: string | null
           linkedin?: string | null
+          linkedin_click_id?: string | null
+          msclkid?: string | null
           original_referrer?: string | null
           phone?: string | null
+          secondary_service_interest?: string | null
+          service_interest?: string | null
           source_brand: string
           source_domain: string
           source_form_id: string
@@ -2263,6 +2308,7 @@ export type Database = {
           utm_medium?: string | null
           utm_source?: string | null
           utm_term?: string | null
+          wbraid?: string | null
         }
         Update: {
           answers?: Json
@@ -2275,19 +2321,41 @@ export type Database = {
           company_name?: string | null
           consent_at?: string | null
           consent_status?: string | null
+          conversion_page?: string | null
           created_at?: string
+          cross_sell_status?: string | null
+          destination_brand?: string | null
           email?: string
           environment?: string
+          fgv_entry_brand?: string | null
+          fgv_journey_id?: string | null
+          fgv_referrer?: string | null
+          first_landing_timestamp?: string | null
+          first_touch_campaign?: string | null
+          first_touch_medium?: string | null
+          first_touch_source?: string | null
           form_type?: string
           full_name?: string | null
+          gbraid?: string | null
+          gclid?: string | null
           id?: string
+          is_test?: boolean
           job_title?: string | null
           landing_page?: string | null
+          last_activity_timestamp?: string | null
           last_error?: string | null
+          last_touch_campaign?: string | null
+          last_touch_medium?: string | null
+          last_touch_source?: string | null
           latest_referrer?: string | null
+          lead_type?: string | null
           linkedin?: string | null
+          linkedin_click_id?: string | null
+          msclkid?: string | null
           original_referrer?: string | null
           phone?: string | null
+          secondary_service_interest?: string | null
+          service_interest?: string | null
           source_brand?: string
           source_domain?: string
           source_form_id?: string
@@ -2305,6 +2373,7 @@ export type Database = {
           utm_medium?: string | null
           utm_source?: string | null
           utm_term?: string | null
+          wbraid?: string | null
         }
         Relationships: []
       }
