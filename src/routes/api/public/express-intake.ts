@@ -115,12 +115,29 @@ export const Route = createFileRoute("/api/public/express-intake")({
         let jdExt = "";
         if (data.jobDescriptionFile) {
           jdExt = jdFileExt(data.jobDescriptionFile.filename);
-          if (!ALLOWED_JD_EXT.has(jdExt)) {
+          if (UNREADABLE_JD_EXT.has(jdExt)) {
             return Response.json(
-              { ok: false, trace_id: traceId, error: "jd_bad_extension", message: "Upload a PDF, DOCX or TXT file." },
+              {
+                ok: false,
+                trace_id: traceId,
+                error: "jd_legacy_doc",
+                message: "Legacy .doc files can't be read. Save it as PDF or DOCX and upload again.",
+              },
               { status: 400 },
             );
           }
+          if (!ALLOWED_JD_EXT.has(jdExt)) {
+            return Response.json(
+              {
+                ok: false,
+                trace_id: traceId,
+                error: "jd_bad_extension",
+                message: "Upload a PDF, DOCX, TXT or RTF file.",
+              },
+              { status: 400 },
+            );
+          }
+
           const mime = data.jobDescriptionFile.mime.toLowerCase();
           if (mime && !ALLOWED_JD_MIME.has(mime) && mime !== "application/octet-stream") {
             return Response.json(
