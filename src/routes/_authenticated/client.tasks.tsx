@@ -289,8 +289,7 @@ function TasksPage() {
               ? "Nothing is currently blocking a delivery."
               : "Tasks and approvals waiting on your team appear here."
           }
-          whatAppearsHere="Approvals we need from you, interview confirmations, and anything holding up a shortlist land in this list."
-          action={{ label: "Add a task", onClick: () => setCreateOpen(true) }}
+          whatAppearsHere="Approvals we need from you, interview confirmations, and anything holding up a shortlist land here. Use “New task” above to add your own."
         />
       ) : (
         <ul className="space-y-2">
