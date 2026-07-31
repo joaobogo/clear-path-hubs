@@ -64,7 +64,12 @@ function DashboardRequestsPage() {
   const refresh = () => queryClient.invalidateQueries({ queryKey: ["staff-dashboard-desk"] });
 
   const outcome = useMutation({
-    mutationFn: (input: Parameters<typeof outcomeFn>[0]["data"]) => outcomeFn({ data: input }),
+    mutationFn: (input: {
+      id: string;
+      status: "quoted" | "agreed" | "delivered" | "declined";
+      quoteAmountCents?: number;
+      quoteNote?: string;
+    }) => outcomeFn({ data: input }),
     onSuccess: (res) => {
       if ("error" in res) return toast.error(res.error);
       toast.success("Updated.");
