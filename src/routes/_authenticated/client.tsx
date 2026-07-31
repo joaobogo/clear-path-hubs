@@ -48,6 +48,8 @@ import {
  type WorkspaceNavItem,
 } from "@/components/workspace/workspace-shell";
 import { ClientBrandHeader } from "@/components/client/client-brand-header";
+import { SectionTabs } from "@/components/workspace/section-tabs";
+import { CLIENT_SECTION_GROUPS } from "@/config/workspace-sections";
 import { OrgSwitcher } from "@/components/workspace/org-switcher";
 import { EmptyState, PermissionDenied } from "@/components/client/states";
 
@@ -99,28 +101,30 @@ export const Route = createFileRoute("/_authenticated/client")({
 
 type NavDef = WorkspaceNavItem & { everyone: boolean };
 
+// Part 9 subtraction: nine entries instead of fifteen. Everything that used to
+// have its own sidebar row now lives as a tab inside one of these sections
+// (see src/config/workspace-sections.ts).
 const TABS: NavDef[] = [
-	{ to: "/client", label: "Overview", icon: LayoutDashboard, exact: true, everyone: true },
-	{ to: "/client/positions", label: "Positions", icon: Briefcase, everyone: true },
-	{ to: "/client/candidates", label: "Candidates", icon: Users, everyone: true },
-	{ to: "/client/tasks", label: "Tasks & Approvals", icon: CheckSquare, everyone: true },
-	{ to: "/client/dashboards", label: "Dashboards", icon: Gauge, everyone: true },
- { to: "/client/assistant", label: "Assistant", icon: Bot, everyone: true },
- { to: "/client/talent-memory", label: "Talent memory", icon: Award, everyone: true },
- { to: "/client/data", label: "Your data", icon: Database, everyone: true },
- { to: "/client/agents", label: "Agents", icon: Bot, everyone: true },
- { to: "/client/outreach", label: "Outreach", icon: Send, everyone: true },
- { to: "/client/conversations", label: "Conversations", icon: MessageSquare, everyone: true },
- { to: "/client/plan", label: "Plan & pricing", icon: CreditCard, everyone: false },
- { to: "/client/account", label: "Account", icon: Building2, everyone: false },
- { to: "/client/team", label: "Team", icon: UserCog, everyone: false },
- { to: "/client/settings", label: "Settings", icon: Settings, everyone: false },
+	{ to: "/client", label: "Overview", icon: LayoutDashboard, exact: true, everyone: true, hint: "What needs you today" },
+	{ to: "/client/positions", label: "Roles", icon: Briefcase, everyone: true, hint: "Roles, interviews, offers, deliveries" },
+	{ to: "/client/candidates", label: "Candidates", icon: Users, everyone: true, hint: "Shortlist, talent pool, shared links" },
+	{ to: "/client/tasks", label: "Approvals", icon: CheckSquare, everyone: true, hint: "Decisions waiting on you" },
+	{ to: "/client/conversations", label: "Messages", icon: MessageSquare, everyone: true, hint: "One thread per role and candidate" },
+	{ to: "/client/analytics", label: "Insights", icon: Gauge, everyone: true, hint: "Questions, dashboards, your data" },
+	{ to: "/client/assistant", label: "Assistant", icon: Bot, everyone: true, hint: "Assistant, agents, outreach" },
+	{ to: "/client/talent-memory", label: "Talent memory", icon: Award, everyone: true, hint: "People we already know" },
+	{ to: "/client/account", label: "Account", icon: Building2, everyone: false, hint: "Team, plan, settings" },
 ];
 
-const MANAGE_ONLY_PATHS = TABS.filter((t) => !t.everyone).map((t) => t.to);
-const MANAGE_ONLY_LABELS: Record<string, string> = Object.fromEntries(
- TABS.filter((t) => !t.everyone).map((t) => [t.to, t.label]),
-);
+// Manage-only areas are gated by path, not by whether they appear in the rail —
+// several of them are now tabs inside the Account section.
+const MANAGE_ONLY_LABELS: Record<string, string> = {
+	"/client/account": "Account",
+	"/client/team": "Team",
+	"/client/plan": "Plan & billing",
+	"/client/settings": "Settings",
+};
+const MANAGE_ONLY_PATHS = Object.keys(MANAGE_ONLY_LABELS);
 
 function ClientLayout() {
  const ctx = Route.useLoaderData();
@@ -294,7 +298,11 @@ function ClientLayout() {
           action={{ label: "Back to overview", to: "/client" }}
         />
       ) : (
-        <Outlet />
+        <>
+          <SectionTabs groups={CLIENT_SECTION_GROUPS} linkSearch={linkSearch} />
+          <Outlet />
+        </>
+
       )}
  {showOnboarding && (
  <ClientOnboardingModal
