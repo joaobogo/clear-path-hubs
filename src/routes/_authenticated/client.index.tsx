@@ -509,7 +509,9 @@ function RoleStatusList({
             <Link
               to="/client/positions/$id"
               params={{ id: r.position_id }}
-              className="group flex flex-col gap-2 px-4 py-3.5 hover:bg-muted/30"
+              className={`group flex flex-col gap-2 hover:bg-muted/30 ${
+                compact ? "px-4 py-2.5" : "px-4 py-3.5"
+              }`}
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
