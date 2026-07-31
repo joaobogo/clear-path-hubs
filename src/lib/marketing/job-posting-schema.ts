@@ -38,7 +38,9 @@ function bulletBlock(heading: string, items: string[]) {
   return `\n\n${heading}\n${items.map((i) => `- ${i}`).join("\n")}`;
 }
 
-function placeFrom(row: LocationRow) {
+type Place = { "@type": "Place"; address: Record<string, string> & { "@type": "PostalAddress" } };
+
+function placeFrom(row: LocationRow): Place | null {
   const address: Record<string, string> = {};
   if (row.city) address.addressLocality = row.city;
   if (row.region) address.addressRegion = row.region;
@@ -53,7 +55,7 @@ export function buildJobPostingJsonLd(pos: JobPostingSource, canonicalUrl: strin
     bulletBlock("What you need:", pos.requirements) +
     bulletBlock("Nice to have:", pos.preferred_requirements);
 
-  const places = pos.locations.map(placeFrom).filter(Boolean);
+  const places = pos.locations.map(placeFrom).filter((p): p is Place => p !== null);
   if (places.length === 0 && pos.location) {
     places.push({
       "@type": "Place",
