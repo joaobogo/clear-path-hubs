@@ -35,6 +35,7 @@ export const TEMPLATES: Record<string, TemplateEntry> = {
   'search-live': searchLiveTemplate,
   'intake-confirmation': intakeConfirmationTemplate,
   'payment-receipt': paymentReceiptTemplate,
+  'client-weekly-digest': clientWeeklyDigestTemplate,
 }
 
 
