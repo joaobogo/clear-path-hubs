@@ -3968,6 +3968,67 @@ export type Database = {
           },
         ]
       }
+      integration_sync_status: {
+        Row: {
+          display_name: string
+          id: string
+          integration_key: string
+          last_attempt_at: string | null
+          last_error: string | null
+          last_error_at: string | null
+          last_success_at: string | null
+          organization_id: string
+          state: string
+          updated_at: string
+        }
+        Insert: {
+          display_name: string
+          id?: string
+          integration_key: string
+          last_attempt_at?: string | null
+          last_error?: string | null
+          last_error_at?: string | null
+          last_success_at?: string | null
+          organization_id: string
+          state?: string
+          updated_at?: string
+        }
+        Update: {
+          display_name?: string
+          id?: string
+          integration_key?: string
+          last_attempt_at?: string | null
+          last_error?: string | null
+          last_error_at?: string | null
+          last_success_at?: string | null
+          organization_id?: string
+          state?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "integration_sync_status_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "admin_clients_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "integration_sync_status_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "integration_sync_status_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_portfolio_rollup"
+            referencedColumns: ["organization_id"]
+          },
+        ]
+      }
       internal_notes: {
         Row: {
           author_user_id: string | null
@@ -7254,6 +7315,7 @@ export type Database = {
           expires_at: string | null
           id: string
           intake_context: Json
+          intensity: Database["public"]["Enums"]["role_intensity"]
           is_test_record: boolean | null
           jd_file_name: string | null
           jd_file_path: string | null
@@ -7329,6 +7391,7 @@ export type Database = {
           expires_at?: string | null
           id?: string
           intake_context?: Json
+          intensity?: Database["public"]["Enums"]["role_intensity"]
           is_test_record?: boolean | null
           jd_file_name?: string | null
           jd_file_path?: string | null
@@ -7404,6 +7467,7 @@ export type Database = {
           expires_at?: string | null
           id?: string
           intake_context?: Json
+          intensity?: Database["public"]["Enums"]["role_intensity"]
           is_test_record?: boolean | null
           jd_file_name?: string | null
           jd_file_path?: string | null
@@ -12856,6 +12920,7 @@ export type Database = {
         | "review"
         | "hold_for_validation"
         | "do_not_recommend"
+      role_intensity: "steady" | "standard" | "aggressive"
       role_memory_kind:
         | "brief"
         | "rationale"
@@ -13306,6 +13371,7 @@ export const Constants = {
         "hold_for_validation",
         "do_not_recommend",
       ],
+      role_intensity: ["steady", "standard", "aggressive"],
       role_memory_kind: [
         "brief",
         "rationale",

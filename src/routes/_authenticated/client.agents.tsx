@@ -22,7 +22,7 @@ import {
   setAgentPaused,
   type AgentCard,
 } from "@/lib/agents.functions";
-import { Switch } from "@/components/ui/switch";
+import { HonestSwitch } from "@/components/ds/honest-switch";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -83,7 +83,7 @@ function AgentCardView({
 }: {
   agent: AgentCard;
   canManage: boolean;
-  onToggle: (enabled: boolean) => void;
+  onToggle: (enabled: boolean) => Promise<unknown>;
   onPause: (paused: boolean) => void;
   busy: boolean;
 }) {
@@ -99,11 +99,11 @@ function AgentCardView({
           </h3>
           <p className="mt-1 text-sm text-muted-foreground">{agent.job}</p>
         </div>
-        <Switch
+        <HonestSwitch
           checked={agent.enabled && !paused}
           disabled={!canManage || busy}
-          onCheckedChange={onToggle}
-          aria-label={`Switch the ${agent.name} agent ${agent.enabled ? "off" : "on"}`}
+          onCommit={onToggle}
+          label={`Switch the ${agent.name} agent ${agent.enabled ? "off" : "on"}`}
         />
       </div>
 
@@ -320,7 +320,7 @@ function AgentControlPage() {
             canManage={!!panel.can_manage}
             busy={busy}
             onToggle={(enabled) =>
-              toggle.mutate({ agent_key: a.key, enabled })
+              toggle.mutateAsync({ agent_key: a.key, enabled })
             }
             onPause={(paused) => pause.mutate({ agent_key: a.key, paused })}
           />
