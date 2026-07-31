@@ -60,6 +60,7 @@ import { Route as ApplyStatusRouteImport } from './routes/apply.status'
 import { Route as AuthenticatedMeRouteImport } from './routes/_authenticated/me'
 import { Route as AuthenticatedClientRouteImport } from './routes/_authenticated/client'
 import { Route as AuthenticatedCheckoutRouteImport } from './routes/_authenticated/checkout'
+import { Route as AuthenticatedBookCallRouteImport } from './routes/_authenticated/book-call'
 import { Route as AuthenticatedBoardroomRouteImport } from './routes/_authenticated/boardroom'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as JobsIdIndexRouteImport } from './routes/jobs.$id.index'
@@ -90,6 +91,7 @@ import { Route as AuthenticatedClientTalentMemoryRouteImport } from './routes/_a
 import { Route as AuthenticatedClientSettingsRouteImport } from './routes/_authenticated/client.settings'
 import { Route as AuthenticatedClientPositionsRouteImport } from './routes/_authenticated/client.positions'
 import { Route as AuthenticatedClientPortfolioRouteImport } from './routes/_authenticated/client.portfolio'
+import { Route as AuthenticatedClientPlanRouteImport } from './routes/_authenticated/client.plan'
 import { Route as AuthenticatedClientOutreachRouteImport } from './routes/_authenticated/client.outreach'
 import { Route as AuthenticatedClientOffersRouteImport } from './routes/_authenticated/client.offers'
 import { Route as AuthenticatedClientMessagesRouteImport } from './routes/_authenticated/client.messages'
@@ -112,6 +114,7 @@ import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authen
 import { Route as AuthenticatedAdminQaReportRouteImport } from './routes/_authenticated/admin.qa-report'
 import { Route as AuthenticatedAdminPublishRouteImport } from './routes/_authenticated/admin.publish'
 import { Route as AuthenticatedAdminPositionsRouteImport } from './routes/_authenticated/admin.positions'
+import { Route as AuthenticatedAdminPendingLeadsRouteImport } from './routes/_authenticated/admin.pending-leads'
 import { Route as AuthenticatedAdminPaymentsRouteImport } from './routes/_authenticated/admin.payments'
 import { Route as AuthenticatedAdminOperationsRouteImport } from './routes/_authenticated/admin.operations'
 import { Route as AuthenticatedAdminNotificationsRouteImport } from './routes/_authenticated/admin.notifications'
@@ -413,6 +416,11 @@ const AuthenticatedCheckoutRoute = AuthenticatedCheckoutRouteImport.update({
   path: '/checkout',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedBookCallRoute = AuthenticatedBookCallRouteImport.update({
+  id: '/book-call',
+  path: '/book-call',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedBoardroomRoute = AuthenticatedBoardroomRouteImport.update({
   id: '/boardroom',
   path: '/boardroom',
@@ -572,6 +580,11 @@ const AuthenticatedClientPortfolioRoute =
     path: '/portfolio',
     getParentRoute: () => AuthenticatedClientRoute,
   } as any)
+const AuthenticatedClientPlanRoute = AuthenticatedClientPlanRouteImport.update({
+  id: '/plan',
+  path: '/plan',
+  getParentRoute: () => AuthenticatedClientRoute,
+} as any)
 const AuthenticatedClientOutreachRoute =
   AuthenticatedClientOutreachRouteImport.update({
     id: '/outreach',
@@ -698,6 +711,12 @@ const AuthenticatedAdminPositionsRoute =
   AuthenticatedAdminPositionsRouteImport.update({
     id: '/positions',
     path: '/positions',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminPendingLeadsRoute =
+  AuthenticatedAdminPendingLeadsRouteImport.update({
+    id: '/pending-leads',
+    path: '/pending-leads',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 const AuthenticatedAdminPaymentsRoute =
@@ -1009,6 +1028,7 @@ export interface FileRoutesByFullPath {
   '/unauthorized': typeof UnauthorizedRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/boardroom': typeof AuthenticatedBoardroomRoute
+  '/book-call': typeof AuthenticatedBookCallRoute
   '/checkout': typeof AuthenticatedCheckoutRoute
   '/client': typeof AuthenticatedClientRouteWithChildren
   '/me': typeof AuthenticatedMeRouteWithChildren
@@ -1038,6 +1058,7 @@ export interface FileRoutesByFullPath {
   '/admin/notifications': typeof AuthenticatedAdminNotificationsRoute
   '/admin/operations': typeof AuthenticatedAdminOperationsRoute
   '/admin/payments': typeof AuthenticatedAdminPaymentsRoute
+  '/admin/pending-leads': typeof AuthenticatedAdminPendingLeadsRoute
   '/admin/positions': typeof AuthenticatedAdminPositionsRouteWithChildren
   '/admin/publish': typeof AuthenticatedAdminPublishRoute
   '/admin/qa-report': typeof AuthenticatedAdminQaReportRoute
@@ -1060,6 +1081,7 @@ export interface FileRoutesByFullPath {
   '/client/messages': typeof AuthenticatedClientMessagesRoute
   '/client/offers': typeof AuthenticatedClientOffersRoute
   '/client/outreach': typeof AuthenticatedClientOutreachRoute
+  '/client/plan': typeof AuthenticatedClientPlanRoute
   '/client/portfolio': typeof AuthenticatedClientPortfolioRoute
   '/client/positions': typeof AuthenticatedClientPositionsRouteWithChildren
   '/client/settings': typeof AuthenticatedClientSettingsRoute
@@ -1158,6 +1180,7 @@ export interface FileRoutesByTo {
   '/trust': typeof TrustRoute
   '/unauthorized': typeof UnauthorizedRoute
   '/boardroom': typeof AuthenticatedBoardroomRoute
+  '/book-call': typeof AuthenticatedBookCallRoute
   '/checkout': typeof AuthenticatedCheckoutRoute
   '/apply/status': typeof ApplyStatusRoute
   '/blog/$slug': typeof BlogSlugRoute
@@ -1182,6 +1205,7 @@ export interface FileRoutesByTo {
   '/admin/notifications': typeof AuthenticatedAdminNotificationsRoute
   '/admin/operations': typeof AuthenticatedAdminOperationsRoute
   '/admin/payments': typeof AuthenticatedAdminPaymentsRoute
+  '/admin/pending-leads': typeof AuthenticatedAdminPendingLeadsRoute
   '/admin/publish': typeof AuthenticatedAdminPublishRoute
   '/admin/qa-report': typeof AuthenticatedAdminQaReportRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
@@ -1202,6 +1226,7 @@ export interface FileRoutesByTo {
   '/client/messages': typeof AuthenticatedClientMessagesRoute
   '/client/offers': typeof AuthenticatedClientOffersRoute
   '/client/outreach': typeof AuthenticatedClientOutreachRoute
+  '/client/plan': typeof AuthenticatedClientPlanRoute
   '/client/portfolio': typeof AuthenticatedClientPortfolioRoute
   '/client/settings': typeof AuthenticatedClientSettingsRoute
   '/client/talent-memory': typeof AuthenticatedClientTalentMemoryRoute
@@ -1301,6 +1326,7 @@ export interface FileRoutesById {
   '/unauthorized': typeof UnauthorizedRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/boardroom': typeof AuthenticatedBoardroomRoute
+  '/_authenticated/book-call': typeof AuthenticatedBookCallRoute
   '/_authenticated/checkout': typeof AuthenticatedCheckoutRoute
   '/_authenticated/client': typeof AuthenticatedClientRouteWithChildren
   '/_authenticated/me': typeof AuthenticatedMeRouteWithChildren
@@ -1330,6 +1356,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/notifications': typeof AuthenticatedAdminNotificationsRoute
   '/_authenticated/admin/operations': typeof AuthenticatedAdminOperationsRoute
   '/_authenticated/admin/payments': typeof AuthenticatedAdminPaymentsRoute
+  '/_authenticated/admin/pending-leads': typeof AuthenticatedAdminPendingLeadsRoute
   '/_authenticated/admin/positions': typeof AuthenticatedAdminPositionsRouteWithChildren
   '/_authenticated/admin/publish': typeof AuthenticatedAdminPublishRoute
   '/_authenticated/admin/qa-report': typeof AuthenticatedAdminQaReportRoute
@@ -1352,6 +1379,7 @@ export interface FileRoutesById {
   '/_authenticated/client/messages': typeof AuthenticatedClientMessagesRoute
   '/_authenticated/client/offers': typeof AuthenticatedClientOffersRoute
   '/_authenticated/client/outreach': typeof AuthenticatedClientOutreachRoute
+  '/_authenticated/client/plan': typeof AuthenticatedClientPlanRoute
   '/_authenticated/client/portfolio': typeof AuthenticatedClientPortfolioRoute
   '/_authenticated/client/positions': typeof AuthenticatedClientPositionsRouteWithChildren
   '/_authenticated/client/settings': typeof AuthenticatedClientSettingsRoute
@@ -1453,6 +1481,7 @@ export interface FileRouteTypes {
     | '/unauthorized'
     | '/admin'
     | '/boardroom'
+    | '/book-call'
     | '/checkout'
     | '/client'
     | '/me'
@@ -1482,6 +1511,7 @@ export interface FileRouteTypes {
     | '/admin/notifications'
     | '/admin/operations'
     | '/admin/payments'
+    | '/admin/pending-leads'
     | '/admin/positions'
     | '/admin/publish'
     | '/admin/qa-report'
@@ -1504,6 +1534,7 @@ export interface FileRouteTypes {
     | '/client/messages'
     | '/client/offers'
     | '/client/outreach'
+    | '/client/plan'
     | '/client/portfolio'
     | '/client/positions'
     | '/client/settings'
@@ -1602,6 +1633,7 @@ export interface FileRouteTypes {
     | '/trust'
     | '/unauthorized'
     | '/boardroom'
+    | '/book-call'
     | '/checkout'
     | '/apply/status'
     | '/blog/$slug'
@@ -1626,6 +1658,7 @@ export interface FileRouteTypes {
     | '/admin/notifications'
     | '/admin/operations'
     | '/admin/payments'
+    | '/admin/pending-leads'
     | '/admin/publish'
     | '/admin/qa-report'
     | '/admin/settings'
@@ -1646,6 +1679,7 @@ export interface FileRouteTypes {
     | '/client/messages'
     | '/client/offers'
     | '/client/outreach'
+    | '/client/plan'
     | '/client/portfolio'
     | '/client/settings'
     | '/client/talent-memory'
@@ -1744,6 +1778,7 @@ export interface FileRouteTypes {
     | '/unauthorized'
     | '/_authenticated/admin'
     | '/_authenticated/boardroom'
+    | '/_authenticated/book-call'
     | '/_authenticated/checkout'
     | '/_authenticated/client'
     | '/_authenticated/me'
@@ -1773,6 +1808,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/notifications'
     | '/_authenticated/admin/operations'
     | '/_authenticated/admin/payments'
+    | '/_authenticated/admin/pending-leads'
     | '/_authenticated/admin/positions'
     | '/_authenticated/admin/publish'
     | '/_authenticated/admin/qa-report'
@@ -1795,6 +1831,7 @@ export interface FileRouteTypes {
     | '/_authenticated/client/messages'
     | '/_authenticated/client/offers'
     | '/_authenticated/client/outreach'
+    | '/_authenticated/client/plan'
     | '/_authenticated/client/portfolio'
     | '/_authenticated/client/positions'
     | '/_authenticated/client/settings'
@@ -2290,6 +2327,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCheckoutRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/book-call': {
+      id: '/_authenticated/book-call'
+      path: '/book-call'
+      fullPath: '/book-call'
+      preLoaderRoute: typeof AuthenticatedBookCallRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/boardroom': {
       id: '/_authenticated/boardroom'
       path: '/boardroom'
@@ -2500,6 +2544,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedClientPortfolioRouteImport
       parentRoute: typeof AuthenticatedClientRoute
     }
+    '/_authenticated/client/plan': {
+      id: '/_authenticated/client/plan'
+      path: '/plan'
+      fullPath: '/client/plan'
+      preLoaderRoute: typeof AuthenticatedClientPlanRouteImport
+      parentRoute: typeof AuthenticatedClientRoute
+    }
     '/_authenticated/client/outreach': {
       id: '/_authenticated/client/outreach'
       path: '/outreach'
@@ -2652,6 +2703,13 @@ declare module '@tanstack/react-router' {
       path: '/positions'
       fullPath: '/admin/positions'
       preLoaderRoute: typeof AuthenticatedAdminPositionsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/pending-leads': {
+      id: '/_authenticated/admin/pending-leads'
+      path: '/pending-leads'
+      fullPath: '/admin/pending-leads'
+      preLoaderRoute: typeof AuthenticatedAdminPendingLeadsRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
     '/_authenticated/admin/payments': {
@@ -3065,6 +3123,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminNotificationsRoute: typeof AuthenticatedAdminNotificationsRoute
   AuthenticatedAdminOperationsRoute: typeof AuthenticatedAdminOperationsRoute
   AuthenticatedAdminPaymentsRoute: typeof AuthenticatedAdminPaymentsRoute
+  AuthenticatedAdminPendingLeadsRoute: typeof AuthenticatedAdminPendingLeadsRoute
   AuthenticatedAdminPositionsRoute: typeof AuthenticatedAdminPositionsRouteWithChildren
   AuthenticatedAdminPublishRoute: typeof AuthenticatedAdminPublishRoute
   AuthenticatedAdminQaReportRoute: typeof AuthenticatedAdminQaReportRoute
@@ -3095,6 +3154,7 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminNotificationsRoute: AuthenticatedAdminNotificationsRoute,
   AuthenticatedAdminOperationsRoute: AuthenticatedAdminOperationsRoute,
   AuthenticatedAdminPaymentsRoute: AuthenticatedAdminPaymentsRoute,
+  AuthenticatedAdminPendingLeadsRoute: AuthenticatedAdminPendingLeadsRoute,
   AuthenticatedAdminPositionsRoute:
     AuthenticatedAdminPositionsRouteWithChildren,
   AuthenticatedAdminPublishRoute: AuthenticatedAdminPublishRoute,
@@ -3167,6 +3227,7 @@ interface AuthenticatedClientRouteChildren {
   AuthenticatedClientMessagesRoute: typeof AuthenticatedClientMessagesRoute
   AuthenticatedClientOffersRoute: typeof AuthenticatedClientOffersRoute
   AuthenticatedClientOutreachRoute: typeof AuthenticatedClientOutreachRoute
+  AuthenticatedClientPlanRoute: typeof AuthenticatedClientPlanRoute
   AuthenticatedClientPortfolioRoute: typeof AuthenticatedClientPortfolioRoute
   AuthenticatedClientPositionsRoute: typeof AuthenticatedClientPositionsRouteWithChildren
   AuthenticatedClientSettingsRoute: typeof AuthenticatedClientSettingsRoute
@@ -3195,6 +3256,7 @@ const AuthenticatedClientRouteChildren: AuthenticatedClientRouteChildren = {
   AuthenticatedClientMessagesRoute: AuthenticatedClientMessagesRoute,
   AuthenticatedClientOffersRoute: AuthenticatedClientOffersRoute,
   AuthenticatedClientOutreachRoute: AuthenticatedClientOutreachRoute,
+  AuthenticatedClientPlanRoute: AuthenticatedClientPlanRoute,
   AuthenticatedClientPortfolioRoute: AuthenticatedClientPortfolioRoute,
   AuthenticatedClientPositionsRoute:
     AuthenticatedClientPositionsRouteWithChildren,
@@ -3257,6 +3319,7 @@ const AuthenticatedMeRouteWithChildren = AuthenticatedMeRoute._addFileChildren(
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRouteWithChildren
   AuthenticatedBoardroomRoute: typeof AuthenticatedBoardroomRoute
+  AuthenticatedBookCallRoute: typeof AuthenticatedBookCallRoute
   AuthenticatedCheckoutRoute: typeof AuthenticatedCheckoutRoute
   AuthenticatedClientRoute: typeof AuthenticatedClientRouteWithChildren
   AuthenticatedMeRoute: typeof AuthenticatedMeRouteWithChildren
@@ -3266,6 +3329,7 @@ interface AuthenticatedRouteRouteChildren {
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRouteWithChildren,
   AuthenticatedBoardroomRoute: AuthenticatedBoardroomRoute,
+  AuthenticatedBookCallRoute: AuthenticatedBookCallRoute,
   AuthenticatedCheckoutRoute: AuthenticatedCheckoutRoute,
   AuthenticatedClientRoute: AuthenticatedClientRouteWithChildren,
   AuthenticatedMeRoute: AuthenticatedMeRouteWithChildren,

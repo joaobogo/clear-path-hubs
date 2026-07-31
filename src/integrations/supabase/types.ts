@@ -3831,6 +3831,10 @@ export type Database = {
           id: string
           idempotency_key: string
           intake_mode: string
+          lead_close_reason: string | null
+          lead_closed_at: string | null
+          lead_closed_by: string | null
+          lead_status: string
           legacy_source_id: string | null
           legacy_source_system: string | null
           legacy_source_table: string | null
@@ -3859,6 +3863,10 @@ export type Database = {
           id?: string
           idempotency_key: string
           intake_mode?: string
+          lead_close_reason?: string | null
+          lead_closed_at?: string | null
+          lead_closed_by?: string | null
+          lead_status?: string
           legacy_source_id?: string | null
           legacy_source_system?: string | null
           legacy_source_table?: string | null
@@ -3887,6 +3895,10 @@ export type Database = {
           id?: string
           idempotency_key?: string
           intake_mode?: string
+          lead_close_reason?: string | null
+          lead_closed_at?: string | null
+          lead_closed_by?: string | null
+          lead_status?: string
           legacy_source_id?: string | null
           legacy_source_system?: string | null
           legacy_source_table?: string | null
@@ -7348,6 +7360,9 @@ export type Database = {
           search_live_at: string | null
           search_live_email_at: string | null
           seniority: string | null
+          start_approval_reason: string | null
+          start_approved_at: string | null
+          start_approved_by: string | null
           status: Database["public"]["Enums"]["position_status"]
           submitted_at: string | null
           target_start_date: string | null
@@ -7424,6 +7439,9 @@ export type Database = {
           search_live_at?: string | null
           search_live_email_at?: string | null
           seniority?: string | null
+          start_approval_reason?: string | null
+          start_approved_at?: string | null
+          start_approved_by?: string | null
           status?: Database["public"]["Enums"]["position_status"]
           submitted_at?: string | null
           target_start_date?: string | null
@@ -7500,6 +7518,9 @@ export type Database = {
           search_live_at?: string | null
           search_live_email_at?: string | null
           seniority?: string | null
+          start_approval_reason?: string | null
+          start_approved_at?: string | null
+          start_approved_by?: string | null
           status?: Database["public"]["Enums"]["position_status"]
           submitted_at?: string | null
           target_start_date?: string | null
@@ -8154,6 +8175,130 @@ export type Database = {
           },
           {
             foreignKeyName: "rubric_versions_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "positions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sales_calls: {
+        Row: {
+          booked_by: string | null
+          cancelled_at: string | null
+          contact_email: string
+          contact_name: string
+          contact_phone: string | null
+          created_at: string
+          ics_uid: string
+          id: string
+          intake_submission_id: string | null
+          notes: string | null
+          organization_id: string
+          position_id: string | null
+          scheduled_end: string
+          scheduled_start: string
+          status: string
+          timezone: string
+          updated_at: string
+        }
+        Insert: {
+          booked_by?: string | null
+          cancelled_at?: string | null
+          contact_email: string
+          contact_name: string
+          contact_phone?: string | null
+          created_at?: string
+          ics_uid?: string
+          id?: string
+          intake_submission_id?: string | null
+          notes?: string | null
+          organization_id: string
+          position_id?: string | null
+          scheduled_end: string
+          scheduled_start: string
+          status?: string
+          timezone?: string
+          updated_at?: string
+        }
+        Update: {
+          booked_by?: string | null
+          cancelled_at?: string | null
+          contact_email?: string
+          contact_name?: string
+          contact_phone?: string | null
+          created_at?: string
+          ics_uid?: string
+          id?: string
+          intake_submission_id?: string | null
+          notes?: string | null
+          organization_id?: string
+          position_id?: string | null
+          scheduled_end?: string
+          scheduled_start?: string
+          status?: string
+          timezone?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sales_calls_intake_submission_id_fkey"
+            columns: ["intake_submission_id"]
+            isOneToOne: false
+            referencedRelation: "intake_submissions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sales_calls_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "admin_clients_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sales_calls_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sales_calls_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_portfolio_rollup"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "sales_calls_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "admin_pipeline_health"
+            referencedColumns: ["position_id"]
+          },
+          {
+            foreignKeyName: "sales_calls_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "admin_positions_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sales_calls_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_my_applications"
+            referencedColumns: ["position_id"]
+          },
+          {
+            foreignKeyName: "sales_calls_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "client_positions_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sales_calls_position_id_fkey"
             columns: ["position_id"]
             isOneToOne: false
             referencedRelation: "positions"
