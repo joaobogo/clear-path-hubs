@@ -340,7 +340,8 @@ function ApplyPage() {
           fe[i.path.join(".") || "form"] = i.message;
         });
         setFieldErrors(fe);
-        setSubmitting(false);
+        setPhase("idle");
+      setSubmitting(false);
         submittingRef.current = false;
         return;
       }
@@ -348,7 +349,8 @@ function ApplyPage() {
       const result = await submitApplication({ data: parsed.data });
       if (!result.ok) {
         setServerError({ message: result.message, trace_id: result.trace_id });
-        setSubmitting(false);
+        setPhase("idle");
+      setSubmitting(false);
         submittingRef.current = false;
         return;
       }
@@ -376,6 +378,7 @@ function ApplyPage() {
     } catch (err) {
       console.error(err);
       setServerError({ message: "Network error — please try again." });
+      setPhase("idle");
       setSubmitting(false);
       submittingRef.current = false;
     }
