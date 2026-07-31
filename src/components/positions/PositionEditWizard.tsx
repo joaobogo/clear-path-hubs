@@ -248,6 +248,7 @@ export function PositionEditWizard({
       const all = {
         ...validateStep(1, state),
         ...validateStep(2, state),
+        ...validateStep(3, state),
         ...validateStep(4, state),
       };
       if (Object.keys(all).length > 0) {
