@@ -223,7 +223,7 @@ export const updateMyApplication = createServerFn({ method: "POST" })
     if (Object.keys(profilePatch).length > 0) {
       await supabaseAdmin
         .from("candidate_profiles")
-        .update(profilePatch)
+        .update(profilePatch as never)
         .eq("id", app.candidate_profile_id);
     }
 
@@ -285,7 +285,6 @@ export const requestMyDataDeletion = createServerFn({ method: "POST" })
         request_type: "deletion",
         subject_email: app.email,
         candidate_profile_id: app.candidate_profile_id,
-        organization_id: app.organization_id,
         status: "received",
         details: {
           reference: data.reference,
