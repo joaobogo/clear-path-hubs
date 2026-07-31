@@ -80,6 +80,9 @@ function HealthPage() {
 
       <TeamsDeliveryPanel />
 
+      <EmailDeliveryPanel />
+
+
       <section>
         <h2 className="font-semibold mb-2">Backlog by state</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
