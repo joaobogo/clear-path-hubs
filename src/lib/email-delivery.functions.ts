@@ -68,7 +68,7 @@ export const listEmailDeliveryEvents = createServerFn({ method: "GET" })
       const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
       const [{ data: profiles }, { data: candidates }] = await Promise.all([
         supabaseAdmin.from("profiles").select("email, full_name").in("email", recipients),
-        supabaseAdmin.from("candidates").select("email, full_name").in("email", recipients),
+        supabaseAdmin.from("candidate_profiles").select("email, full_name").in("email", recipients),
       ]);
       for (const c of candidates ?? []) {
         if (c.email) identities.set(c.email, { name: c.full_name ?? null, role: "Candidate" });
