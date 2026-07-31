@@ -194,6 +194,11 @@ function PositionWorkspace() {
             </div>
           </div>
           <div className="flex flex-wrap items-center gap-2">
+            <PaymentExemptionDialog
+              positionId={p.id}
+              paymentStatus={(p as { payment_status?: string | null }).payment_status}
+            />
+
             <Button asChild variant="outline" size="sm">
               <Link
                 to="/admin/positions/$id/edit"
