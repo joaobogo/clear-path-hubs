@@ -100,6 +100,7 @@ import { Route as AuthenticatedClientInboxRouteImport } from './routes/_authenti
 import { Route as AuthenticatedClientExecutiveRouteImport } from './routes/_authenticated/client.executive'
 import { Route as AuthenticatedClientDeliveriesRouteImport } from './routes/_authenticated/client.deliveries'
 import { Route as AuthenticatedClientDataRouteImport } from './routes/_authenticated/client.data'
+import { Route as AuthenticatedClientDashboardsRouteImport } from './routes/_authenticated/client.dashboards'
 import { Route as AuthenticatedClientCandidatesRouteImport } from './routes/_authenticated/client.candidates'
 import { Route as AuthenticatedClientAssistantRouteImport } from './routes/_authenticated/client.assistant'
 import { Route as AuthenticatedClientAnalyticsRouteImport } from './routes/_authenticated/client.analytics'
@@ -123,6 +124,7 @@ import { Route as AuthenticatedAdminIntakeRouteImport } from './routes/_authenti
 import { Route as AuthenticatedAdminHealthRouteImport } from './routes/_authenticated/admin.health'
 import { Route as AuthenticatedAdminDesignSystemRouteImport } from './routes/_authenticated/admin.design-system'
 import { Route as AuthenticatedAdminDataHealthRouteImport } from './routes/_authenticated/admin.data-health'
+import { Route as AuthenticatedAdminDashboardRequestsRouteImport } from './routes/_authenticated/admin.dashboard-requests'
 import { Route as AuthenticatedAdminCopilotRouteImport } from './routes/_authenticated/admin.copilot'
 import { Route as AuthenticatedAdminClients_newRouteImport } from './routes/_authenticated/admin.clients_new'
 import { Route as AuthenticatedAdminClientsRouteImport } from './routes/_authenticated/admin.clients'
@@ -632,6 +634,12 @@ const AuthenticatedClientDataRoute = AuthenticatedClientDataRouteImport.update({
   path: '/data',
   getParentRoute: () => AuthenticatedClientRoute,
 } as any)
+const AuthenticatedClientDashboardsRoute =
+  AuthenticatedClientDashboardsRouteImport.update({
+    id: '/dashboards',
+    path: '/dashboards',
+    getParentRoute: () => AuthenticatedClientRoute,
+  } as any)
 const AuthenticatedClientCandidatesRoute =
   AuthenticatedClientCandidatesRouteImport.update({
     id: '/candidates',
@@ -765,6 +773,12 @@ const AuthenticatedAdminDataHealthRoute =
   AuthenticatedAdminDataHealthRouteImport.update({
     id: '/data-health',
     path: '/data-health',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminDashboardRequestsRoute =
+  AuthenticatedAdminDashboardRequestsRouteImport.update({
+    id: '/dashboard-requests',
+    path: '/dashboard-requests',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 const AuthenticatedAdminCopilotRoute =
@@ -1050,6 +1064,7 @@ export interface FileRoutesByFullPath {
   '/admin/clients': typeof AuthenticatedAdminClientsRouteWithChildren
   '/admin/clients_new': typeof AuthenticatedAdminClients_newRoute
   '/admin/copilot': typeof AuthenticatedAdminCopilotRoute
+  '/admin/dashboard-requests': typeof AuthenticatedAdminDashboardRequestsRoute
   '/admin/data-health': typeof AuthenticatedAdminDataHealthRoute
   '/admin/design-system': typeof AuthenticatedAdminDesignSystemRoute
   '/admin/health': typeof AuthenticatedAdminHealthRoute
@@ -1073,6 +1088,7 @@ export interface FileRoutesByFullPath {
   '/client/analytics': typeof AuthenticatedClientAnalyticsRoute
   '/client/assistant': typeof AuthenticatedClientAssistantRoute
   '/client/candidates': typeof AuthenticatedClientCandidatesRouteWithChildren
+  '/client/dashboards': typeof AuthenticatedClientDashboardsRoute
   '/client/data': typeof AuthenticatedClientDataRoute
   '/client/deliveries': typeof AuthenticatedClientDeliveriesRoute
   '/client/executive': typeof AuthenticatedClientExecutiveRoute
@@ -1198,6 +1214,7 @@ export interface FileRoutesByTo {
   '/admin/business-rules': typeof AuthenticatedAdminBusinessRulesRoute
   '/admin/clients_new': typeof AuthenticatedAdminClients_newRoute
   '/admin/copilot': typeof AuthenticatedAdminCopilotRoute
+  '/admin/dashboard-requests': typeof AuthenticatedAdminDashboardRequestsRoute
   '/admin/data-health': typeof AuthenticatedAdminDataHealthRoute
   '/admin/design-system': typeof AuthenticatedAdminDesignSystemRoute
   '/admin/health': typeof AuthenticatedAdminHealthRoute
@@ -1218,6 +1235,7 @@ export interface FileRoutesByTo {
   '/client/agents': typeof AuthenticatedClientAgentsRoute
   '/client/analytics': typeof AuthenticatedClientAnalyticsRoute
   '/client/assistant': typeof AuthenticatedClientAssistantRoute
+  '/client/dashboards': typeof AuthenticatedClientDashboardsRoute
   '/client/data': typeof AuthenticatedClientDataRoute
   '/client/deliveries': typeof AuthenticatedClientDeliveriesRoute
   '/client/executive': typeof AuthenticatedClientExecutiveRoute
@@ -1348,6 +1366,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/clients': typeof AuthenticatedAdminClientsRouteWithChildren
   '/_authenticated/admin/clients_new': typeof AuthenticatedAdminClients_newRoute
   '/_authenticated/admin/copilot': typeof AuthenticatedAdminCopilotRoute
+  '/_authenticated/admin/dashboard-requests': typeof AuthenticatedAdminDashboardRequestsRoute
   '/_authenticated/admin/data-health': typeof AuthenticatedAdminDataHealthRoute
   '/_authenticated/admin/design-system': typeof AuthenticatedAdminDesignSystemRoute
   '/_authenticated/admin/health': typeof AuthenticatedAdminHealthRoute
@@ -1371,6 +1390,7 @@ export interface FileRoutesById {
   '/_authenticated/client/analytics': typeof AuthenticatedClientAnalyticsRoute
   '/_authenticated/client/assistant': typeof AuthenticatedClientAssistantRoute
   '/_authenticated/client/candidates': typeof AuthenticatedClientCandidatesRouteWithChildren
+  '/_authenticated/client/dashboards': typeof AuthenticatedClientDashboardsRoute
   '/_authenticated/client/data': typeof AuthenticatedClientDataRoute
   '/_authenticated/client/deliveries': typeof AuthenticatedClientDeliveriesRoute
   '/_authenticated/client/executive': typeof AuthenticatedClientExecutiveRoute
@@ -1503,6 +1523,7 @@ export interface FileRouteTypes {
     | '/admin/clients'
     | '/admin/clients_new'
     | '/admin/copilot'
+    | '/admin/dashboard-requests'
     | '/admin/data-health'
     | '/admin/design-system'
     | '/admin/health'
@@ -1526,6 +1547,7 @@ export interface FileRouteTypes {
     | '/client/analytics'
     | '/client/assistant'
     | '/client/candidates'
+    | '/client/dashboards'
     | '/client/data'
     | '/client/deliveries'
     | '/client/executive'
@@ -1651,6 +1673,7 @@ export interface FileRouteTypes {
     | '/admin/business-rules'
     | '/admin/clients_new'
     | '/admin/copilot'
+    | '/admin/dashboard-requests'
     | '/admin/data-health'
     | '/admin/design-system'
     | '/admin/health'
@@ -1671,6 +1694,7 @@ export interface FileRouteTypes {
     | '/client/agents'
     | '/client/analytics'
     | '/client/assistant'
+    | '/client/dashboards'
     | '/client/data'
     | '/client/deliveries'
     | '/client/executive'
@@ -1800,6 +1824,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/clients'
     | '/_authenticated/admin/clients_new'
     | '/_authenticated/admin/copilot'
+    | '/_authenticated/admin/dashboard-requests'
     | '/_authenticated/admin/data-health'
     | '/_authenticated/admin/design-system'
     | '/_authenticated/admin/health'
@@ -1823,6 +1848,7 @@ export interface FileRouteTypes {
     | '/_authenticated/client/analytics'
     | '/_authenticated/client/assistant'
     | '/_authenticated/client/candidates'
+    | '/_authenticated/client/dashboards'
     | '/_authenticated/client/data'
     | '/_authenticated/client/deliveries'
     | '/_authenticated/client/executive'
@@ -2607,6 +2633,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedClientDataRouteImport
       parentRoute: typeof AuthenticatedClientRoute
     }
+    '/_authenticated/client/dashboards': {
+      id: '/_authenticated/client/dashboards'
+      path: '/dashboards'
+      fullPath: '/client/dashboards'
+      preLoaderRoute: typeof AuthenticatedClientDashboardsRouteImport
+      parentRoute: typeof AuthenticatedClientRoute
+    }
     '/_authenticated/client/candidates': {
       id: '/_authenticated/client/candidates'
       path: '/candidates'
@@ -2766,6 +2799,13 @@ declare module '@tanstack/react-router' {
       path: '/data-health'
       fullPath: '/admin/data-health'
       preLoaderRoute: typeof AuthenticatedAdminDataHealthRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/dashboard-requests': {
+      id: '/_authenticated/admin/dashboard-requests'
+      path: '/dashboard-requests'
+      fullPath: '/admin/dashboard-requests'
+      preLoaderRoute: typeof AuthenticatedAdminDashboardRequestsRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
     '/_authenticated/admin/copilot': {
@@ -3115,6 +3155,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminClientsRoute: typeof AuthenticatedAdminClientsRouteWithChildren
   AuthenticatedAdminClients_newRoute: typeof AuthenticatedAdminClients_newRoute
   AuthenticatedAdminCopilotRoute: typeof AuthenticatedAdminCopilotRoute
+  AuthenticatedAdminDashboardRequestsRoute: typeof AuthenticatedAdminDashboardRequestsRoute
   AuthenticatedAdminDataHealthRoute: typeof AuthenticatedAdminDataHealthRoute
   AuthenticatedAdminDesignSystemRoute: typeof AuthenticatedAdminDesignSystemRoute
   AuthenticatedAdminHealthRoute: typeof AuthenticatedAdminHealthRoute
@@ -3146,6 +3187,8 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminClientsRoute: AuthenticatedAdminClientsRouteWithChildren,
   AuthenticatedAdminClients_newRoute: AuthenticatedAdminClients_newRoute,
   AuthenticatedAdminCopilotRoute: AuthenticatedAdminCopilotRoute,
+  AuthenticatedAdminDashboardRequestsRoute:
+    AuthenticatedAdminDashboardRequestsRoute,
   AuthenticatedAdminDataHealthRoute: AuthenticatedAdminDataHealthRoute,
   AuthenticatedAdminDesignSystemRoute: AuthenticatedAdminDesignSystemRoute,
   AuthenticatedAdminHealthRoute: AuthenticatedAdminHealthRoute,
@@ -3219,6 +3262,7 @@ interface AuthenticatedClientRouteChildren {
   AuthenticatedClientAnalyticsRoute: typeof AuthenticatedClientAnalyticsRoute
   AuthenticatedClientAssistantRoute: typeof AuthenticatedClientAssistantRoute
   AuthenticatedClientCandidatesRoute: typeof AuthenticatedClientCandidatesRouteWithChildren
+  AuthenticatedClientDashboardsRoute: typeof AuthenticatedClientDashboardsRoute
   AuthenticatedClientDataRoute: typeof AuthenticatedClientDataRoute
   AuthenticatedClientDeliveriesRoute: typeof AuthenticatedClientDeliveriesRoute
   AuthenticatedClientExecutiveRoute: typeof AuthenticatedClientExecutiveRoute
@@ -3248,6 +3292,7 @@ const AuthenticatedClientRouteChildren: AuthenticatedClientRouteChildren = {
   AuthenticatedClientAssistantRoute: AuthenticatedClientAssistantRoute,
   AuthenticatedClientCandidatesRoute:
     AuthenticatedClientCandidatesRouteWithChildren,
+  AuthenticatedClientDashboardsRoute: AuthenticatedClientDashboardsRoute,
   AuthenticatedClientDataRoute: AuthenticatedClientDataRoute,
   AuthenticatedClientDeliveriesRoute: AuthenticatedClientDeliveriesRoute,
   AuthenticatedClientExecutiveRoute: AuthenticatedClientExecutiveRoute,
@@ -3414,3 +3459,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
