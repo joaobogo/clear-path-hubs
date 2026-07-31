@@ -22,7 +22,7 @@ import {
   setAgentPaused,
   type AgentCard,
 } from "@/lib/agents.functions";
-import { Switch } from "@/components/ui/switch";
+import { HonestSwitch } from "@/components/ds/honest-switch";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
