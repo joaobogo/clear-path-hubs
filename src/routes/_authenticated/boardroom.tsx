@@ -251,12 +251,22 @@ function SlideIntro({ orgName }: { orgName: string }) {
   );
 }
 
+function SlideNote({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="mt-10 rounded-xl border border-white/15 bg-white/5 px-6 py-8 text-white/70">
+      {children}
+    </div>
+  );
+}
+
 function SlidePositions({
   positions,
   kpis,
+  isLoading,
 }: {
   positions: { title: string; status: string; pending: number }[];
   kpis?: { active_positions?: number; delivered_this_month?: number; time_to_shortlist_days?: number };
+  isLoading?: boolean;
 }) {
   return (
     <div>
@@ -269,32 +279,43 @@ function SlidePositions({
         <Stat label="Delivered this month" value={kpis?.delivered_this_month ?? "—"} />
         <Stat label="Days to shortlist" value={kpis?.time_to_shortlist_days ?? "—"} />
       </div>
-      <ul className="mt-10 space-y-3">
-        {positions.map((p) => (
-          <li
-            key={p.title}
-            className="flex items-center justify-between rounded-xl border border-white/15 bg-white/5 px-5 py-4"
-          >
-            <div>
-              <p className="font-semibold">{p.title}</p>
-              <p className="text-xs text-white/60 capitalize">{p.status}</p>
-            </div>
-            {p.pending > 0 ? (
-              <span className="rounded-full bg-white/10 px-3 py-1 text-xs">
-                {p.pending} to review
-              </span>
-            ) : null}
-          </li>
-        ))}
-      </ul>
+      {isLoading ? (
+        <SlideNote>Loading your roles…</SlideNote>
+      ) : positions.length === 0 ? (
+        <SlideNote>
+          No active roles in this workspace yet. Once a role goes live, it appears
+          here with its review count.
+        </SlideNote>
+      ) : (
+        <ul className="mt-10 space-y-3">
+          {positions.map((p) => (
+            <li
+              key={p.title}
+              className="flex items-center justify-between rounded-xl border border-white/15 bg-white/5 px-5 py-4"
+            >
+              <div>
+                <p className="font-semibold">{p.title}</p>
+                <p className="text-xs text-white/60 capitalize">{p.status}</p>
+              </div>
+              {p.pending > 0 ? (
+                <span className="rounded-full bg-white/10 px-3 py-1 text-xs">
+                  {p.pending} to review
+                </span>
+              ) : null}
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }
 
 function SlideShortlist({
   candidates,
+  isLoading,
 }: {
   candidates: { rank: number; name: string; score: number; note: string }[];
+  isLoading?: boolean;
 }) {
   return (
     <div>
@@ -302,31 +323,41 @@ function SlideShortlist({
       <h2 className="mt-3 font-[family-name:var(--brand-font-display)] text-4xl font-semibold tracking-tight sm:text-5xl">
         Top candidates, with the reasoning attached.
       </h2>
-      <div className="mt-10 space-y-4">
-        {candidates.map((c) => (
-          <div
-            key={c.rank}
-            className="flex items-center gap-6 rounded-xl border border-white/15 bg-white/5 px-6 py-5"
-          >
-            <span className="font-[family-name:var(--brand-font-display)] text-4xl font-semibold text-white/40">
-              #{c.rank}
-            </span>
-            <div className="flex-1 min-w-0">
-              <p className="font-semibold">{c.name}</p>
-              <p className="mt-1 text-sm text-white/70">"{c.note}"</p>
+      {isLoading ? (
+        <SlideNote>Loading your shortlist…</SlideNote>
+      ) : candidates.length === 0 ? (
+        <SlideNote>
+          No candidates released to this workspace yet. Approved candidates appear
+          here in rank order with the evidence behind each score.
+        </SlideNote>
+      ) : (
+        <div className="mt-10 space-y-4">
+          {candidates.map((c) => (
+            <div
+              key={c.rank}
+              className="flex items-center gap-6 rounded-xl border border-white/15 bg-white/5 px-6 py-5"
+            >
+              <span className="font-[family-name:var(--brand-font-display)] text-4xl font-semibold text-white/40">
+                #{c.rank}
+              </span>
+              <div className="flex-1 min-w-0">
+                <p className="font-semibold">{c.name}</p>
+                <p className="mt-1 text-sm text-white/70">"{c.note}"</p>
+              </div>
+              <div className="text-right">
+                <p className="font-[family-name:var(--brand-font-display)] text-4xl font-semibold">
+                  {c.score}
+                </p>
+                <p className="text-[10px] uppercase tracking-widest text-white/50">fit</p>
+              </div>
             </div>
-            <div className="text-right">
-              <p className="font-[family-name:var(--brand-font-display)] text-4xl font-semibold">
-                {c.score}
-              </p>
-              <p className="text-[10px] uppercase tracking-widest text-white/50">fit</p>
-            </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
+
 
 function SlideEconomics() {
   return (
