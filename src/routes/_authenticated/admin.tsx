@@ -34,6 +34,8 @@ import { useEffect, useState } from "react";
 import { NOTIFICATIONS_QUERY_KEY } from "@/components/notification-bell";
 import { useDashboardRealtime } from "@/hooks/use-realtime-refresh";
 import { getSessionContext } from "@/lib/auth.functions";
+import { SectionTabs } from "@/components/workspace/section-tabs";
+import { ADMIN_SECTION_GROUPS } from "@/config/workspace-sections";
 import {
   WorkspaceShell,
   type WorkspaceNavItem,
