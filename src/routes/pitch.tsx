@@ -122,7 +122,7 @@ const ECONOMICS: Array<{
     price: PRICE_MULTI_DISPLAY,
     unit: " one-time",
     fits: MULTI_ROLES_LABEL,
-    line: "Parallel searches with shared intake context. ≈ $600 per role.",
+    line: "Parallel searches with shared intake context. $420–$1,050 per role, depending on how many you run.",
     highlight: true,
   },
   {

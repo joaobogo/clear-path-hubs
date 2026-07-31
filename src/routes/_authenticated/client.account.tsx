@@ -1,3 +1,4 @@
+import { derivePilotState } from "@/lib/pilot-state";
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -285,11 +286,31 @@ function AccountPage() {
             </dd>
           </div>
         </dl>
-        {data?.subscription.pilot_status === "active" && data.subscription.pilot_ends_at && (
-          <p className="mt-4 rounded-lg border taas-bd-info px-3 py-2 text-sm">
-            Pilot in progress — ends {fmtDate(data.subscription.pilot_ends_at)}.
-          </p>
-        )}
+        {(() => {
+          if (!data) return null;
+          const pilot = derivePilotState({
+            pilot_status: data.subscription.pilot_status,
+            pilot_ends_at: data.subscription.pilot_ends_at,
+          });
+          if (pilot.phase === "not_started") return null;
+          return (
+            <div
+              className={`mt-4 rounded-lg border px-3 py-2 text-sm ${
+                pilot.phase === "ended" || pilot.phase === "ending_soon"
+                  ? "taas-bd-warning"
+                  : "taas-bd-info"
+              }`}
+            >
+              <p>{pilot.message}</p>
+              {pilot.endsAt && (
+                <p className="mt-1 text-xs text-muted-foreground">
+                  {pilot.phase === "ended" ? "Ended" : "Ends"} {fmtDate(pilot.endsAt)}.
+                </p>
+              )}
+            </div>
+          );
+        })()}
+
         <p className="mt-4 text-xs text-muted-foreground">
           These figures come straight from your account record. Anything marked “not on
           file” is not held in the system — nothing here is estimated.

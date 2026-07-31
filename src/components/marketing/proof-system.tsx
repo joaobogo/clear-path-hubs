@@ -1,5 +1,15 @@
 import * as React from "react";
 import { Link } from "@tanstack/react-router";
+import { PRICE_SUB_BRONZE_USD } from "@/config/pricing-core";
+
+/** Agency benchmark used in the cost comparison. Contingency fees typically
+ *  run 20–25% of first-year salary; we quote the midpoint and show the math. */
+const AGENCY_FEE_PCT = 22;
+const BENCHMARK_SALARY_USD = 150_000;
+const AGENCY_FEE_USD = Math.round((BENCHMARK_SALARY_USD * AGENCY_FEE_PCT) / 100);
+const COST_DIFFERENCE_USD = AGENCY_FEE_USD - PRICE_SUB_BRONZE_USD;
+const usd = (n: number) => `$${n.toLocaleString("en-US")}`;
+
 import {
   ArrowRight,
   BadgeCheck,
@@ -319,18 +329,18 @@ export function ProofSystem() {
             <dl className="mt-6 space-y-3 text-sm">
               <div className="flex items-baseline justify-between gap-4 border-b border-[color:var(--brand-navy)]/10 pb-3">
                 <dt className="text-[color:var(--brand-navy)]/80">
-                  Contingency agency (22% of first-year salary)
+                  Contingency agency ({AGENCY_FEE_PCT}% of first-year salary)
                 </dt>
                 <dd className="font-semibold tabular-nums text-[color:var(--brand-navy)]">
-                  $33,000
+                  {usd(AGENCY_FEE_USD)}
                 </dd>
               </div>
               <div className="flex items-baseline justify-between gap-4 border-b border-[color:var(--brand-navy)]/10 pb-3">
                 <dt className="text-[color:var(--brand-navy)]/80">
-                  TaaSFlow Growth (one month, flat)
+                  TaaSFlow Bronze (one month, flat)
                 </dt>
                 <dd className="font-semibold tabular-nums text-[color:var(--brand-ocean-text)]">
-                  $5,900
+                  {usd(PRICE_SUB_BRONZE_USD)}
                 </dd>
               </div>
               <div className="flex items-baseline justify-between gap-4">
@@ -338,9 +348,10 @@ export function ProofSystem() {
                   Difference on one hire
                 </dt>
                 <dd className="font-[family-name:var(--brand-font-display)] text-2xl font-semibold tabular-nums text-[color:var(--brand-navy)]">
-                  $27,100
+                  {usd(COST_DIFFERENCE_USD)}
                 </dd>
               </div>
+
             </dl>
             <a
               href="#roi-calculator"

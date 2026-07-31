@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { useEffect, useMemo, useRef, useState, useCallback } from "react";
+import { useEffect, useMemo, useRef, useState, useCallback, type ReactNode } from "react";
 import { getClientContext, getClientOverview } from "@/lib/client.functions";
 import { useClientOrgSearch } from "@/lib/use-client-org";
 import { Button } from "@/components/ui/button";
@@ -48,19 +48,10 @@ export const Route = createFileRoute("/_authenticated/boardroom")({
   component: BoardroomPage,
 });
 
-/* ─── Safe demo data (used when workspace has none) ─────────────────────── */
+/* Boardroom shows live workspace records only. When a workspace has no
+   records yet, every slide says so plainly — never invented roles or
+   candidates in front of a client. */
 
-const DEMO_POSITIONS = [
-  { title: "Head of Growth", status: "active", pending: 3 },
-  { title: "Senior Backend Engineer", status: "active", pending: 5 },
-  { title: "VP People", status: "active", pending: 2 },
-];
-
-const DEMO_CANDIDATES = [
-  { rank: 1, name: "Candidate A", score: 92, note: "Scaled B2B SaaS growth at two Series B firms." },
-  { rank: 2, name: "Candidate B", score: 88, note: "Ran EMEA GTM, hire-to-signal <30d twice." },
-  { rank: 3, name: "Candidate C", score: 81, note: "Head of growth at bootstrapped $10M ARR co." },
-];
 
 /* ─── Page ─────────────────────────────────────────────────────────────── */
 
@@ -99,36 +90,33 @@ function BoardroomPage() {
     strengths?: string[];
   }>;
 
-  const usingDemo = !overviewQ.data || whatsNext.length === 0;
+  const isLoading = overviewQ.isPending && !!resolvedOrgId;
 
-  const positions = usingDemo
-    ? DEMO_POSITIONS
-    : whatsNext.slice(0, 6).map((p) => ({
-        title: p.title,
-        status: p.status,
-        pending: p.delivered_pending ?? 0,
-      }));
+  const positions = whatsNext.slice(0, 6).map((p) => ({
+    title: p.title,
+    status: p.status,
+    pending: p.delivered_pending ?? 0,
+  }));
 
-  const candidates = usingDemo
-    ? DEMO_CANDIDATES
-    : latestCandidates.slice(0, 3).map((c, i) => ({
-        rank: i + 1,
-        name: c.full_name ?? `Candidate ${i + 1}`,
-        score: c.fit_score ?? 0,
-        note: c.strengths?.[0] ?? "Evidence available in workspace.",
-      }));
+  const candidates = latestCandidates.slice(0, 3).map((c, i) => ({
+    rank: i + 1,
+    name: c.full_name ?? `Candidate ${i + 1}`,
+    score: c.fit_score ?? 0,
+    note: c.strengths?.[0] ?? "Evidence available in workspace.",
+  }));
 
   /* Slides */
   const slides = useMemo(
     () => [
-      { key: "intro", render: () => <SlideIntro orgName={orgName} usingDemo={usingDemo} /> },
-      { key: "positions", render: () => <SlidePositions positions={positions} kpis={kpis} /> },
-      { key: "shortlist", render: () => <SlideShortlist candidates={candidates} /> },
+      { key: "intro", render: () => <SlideIntro orgName={orgName} /> },
+      { key: "positions", render: () => <SlidePositions positions={positions} kpis={kpis} isLoading={isLoading} /> },
+      { key: "shortlist", render: () => <SlideShortlist candidates={candidates} isLoading={isLoading} /> },
       { key: "economics", render: () => <SlideEconomics /> },
       { key: "industry", render: () => <SlideIndustry /> },
       { key: "next", render: () => <SlideNext /> },
     ],
-    [orgName, positions, candidates, kpis, usingDemo],
+    [orgName, positions, candidates, kpis, isLoading],
+
   );
 
   const [i, setI] = useState(0);
@@ -174,15 +162,10 @@ function BoardroomPage() {
             <ArrowLeft className="h-3.5 w-3.5" aria-hidden />
             Exit boardroom
           </Link>
-          {usingDemo ? (
-            <span className="rounded-full border border-white/20 px-2 py-0.5 text-[10px] uppercase tracking-widest">
-              Demo data
-            </span>
-          ) : (
-            <span className="rounded-full border border-white/20 px-2 py-0.5 text-[10px] uppercase tracking-widest">
-              Live · {orgName}
-            </span>
-          )}
+          <span className="rounded-full border border-white/20 px-2 py-0.5 text-[10px] uppercase tracking-widest">
+            Live · {orgName}
+          </span>
+
         </div>
         <div className="flex items-center gap-4">
           <span>
@@ -252,13 +235,14 @@ function SlideEyebrow({ children }: { children: React.ReactNode }) {
   );
 }
 
-function SlideIntro({ orgName, usingDemo }: { orgName: string; usingDemo: boolean }) {
+function SlideIntro({ orgName }: { orgName: string }) {
   return (
     <div>
       <SlideEyebrow>Boardroom · TaaSFlow</SlideEyebrow>
       <h1 className="mt-4 font-[family-name:var(--brand-font-display)] text-5xl font-semibold tracking-tight sm:text-6xl lg:text-7xl">
-        What TaaSFlow is doing for {usingDemo ? "you" : orgName}.
+        What TaaSFlow is doing for {orgName}.
       </h1>
+
       <p className="mt-6 max-w-2xl text-lg text-white/70">
         A subscription recruiting function — human recruiters, evidence-first
         scoring, and a workspace you own. This is the ten-minute overview.
@@ -267,12 +251,22 @@ function SlideIntro({ orgName, usingDemo }: { orgName: string; usingDemo: boolea
   );
 }
 
+function SlideNote({ children }: { children: ReactNode }) {
+  return (
+    <div className="mt-10 rounded-xl border border-white/15 bg-white/5 px-6 py-8 text-white/70">
+      {children}
+    </div>
+  );
+}
+
 function SlidePositions({
   positions,
   kpis,
+  isLoading,
 }: {
   positions: { title: string; status: string; pending: number }[];
   kpis?: { active_positions?: number; delivered_this_month?: number; time_to_shortlist_days?: number };
+  isLoading?: boolean;
 }) {
   return (
     <div>
@@ -285,32 +279,43 @@ function SlidePositions({
         <Stat label="Delivered this month" value={kpis?.delivered_this_month ?? "—"} />
         <Stat label="Days to shortlist" value={kpis?.time_to_shortlist_days ?? "—"} />
       </div>
-      <ul className="mt-10 space-y-3">
-        {positions.map((p) => (
-          <li
-            key={p.title}
-            className="flex items-center justify-between rounded-xl border border-white/15 bg-white/5 px-5 py-4"
-          >
-            <div>
-              <p className="font-semibold">{p.title}</p>
-              <p className="text-xs text-white/60 capitalize">{p.status}</p>
-            </div>
-            {p.pending > 0 ? (
-              <span className="rounded-full bg-white/10 px-3 py-1 text-xs">
-                {p.pending} to review
-              </span>
-            ) : null}
-          </li>
-        ))}
-      </ul>
+      {isLoading ? (
+        <SlideNote>Loading your roles…</SlideNote>
+      ) : positions.length === 0 ? (
+        <SlideNote>
+          No active roles in this workspace yet. Once a role goes live, it appears
+          here with its review count.
+        </SlideNote>
+      ) : (
+        <ul className="mt-10 space-y-3">
+          {positions.map((p) => (
+            <li
+              key={p.title}
+              className="flex items-center justify-between rounded-xl border border-white/15 bg-white/5 px-5 py-4"
+            >
+              <div>
+                <p className="font-semibold">{p.title}</p>
+                <p className="text-xs text-white/60 capitalize">{p.status}</p>
+              </div>
+              {p.pending > 0 ? (
+                <span className="rounded-full bg-white/10 px-3 py-1 text-xs">
+                  {p.pending} to review
+                </span>
+              ) : null}
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }
 
 function SlideShortlist({
   candidates,
+  isLoading,
 }: {
   candidates: { rank: number; name: string; score: number; note: string }[];
+  isLoading?: boolean;
 }) {
   return (
     <div>
@@ -318,31 +323,41 @@ function SlideShortlist({
       <h2 className="mt-3 font-[family-name:var(--brand-font-display)] text-4xl font-semibold tracking-tight sm:text-5xl">
         Top candidates, with the reasoning attached.
       </h2>
-      <div className="mt-10 space-y-4">
-        {candidates.map((c) => (
-          <div
-            key={c.rank}
-            className="flex items-center gap-6 rounded-xl border border-white/15 bg-white/5 px-6 py-5"
-          >
-            <span className="font-[family-name:var(--brand-font-display)] text-4xl font-semibold text-white/40">
-              #{c.rank}
-            </span>
-            <div className="flex-1 min-w-0">
-              <p className="font-semibold">{c.name}</p>
-              <p className="mt-1 text-sm text-white/70">"{c.note}"</p>
+      {isLoading ? (
+        <SlideNote>Loading your shortlist…</SlideNote>
+      ) : candidates.length === 0 ? (
+        <SlideNote>
+          No candidates released to this workspace yet. Approved candidates appear
+          here in rank order with the evidence behind each score.
+        </SlideNote>
+      ) : (
+        <div className="mt-10 space-y-4">
+          {candidates.map((c) => (
+            <div
+              key={c.rank}
+              className="flex items-center gap-6 rounded-xl border border-white/15 bg-white/5 px-6 py-5"
+            >
+              <span className="font-[family-name:var(--brand-font-display)] text-4xl font-semibold text-white/40">
+                #{c.rank}
+              </span>
+              <div className="flex-1 min-w-0">
+                <p className="font-semibold">{c.name}</p>
+                <p className="mt-1 text-sm text-white/70">"{c.note}"</p>
+              </div>
+              <div className="text-right">
+                <p className="font-[family-name:var(--brand-font-display)] text-4xl font-semibold">
+                  {c.score}
+                </p>
+                <p className="text-[10px] uppercase tracking-widest text-white/50">fit</p>
+              </div>
             </div>
-            <div className="text-right">
-              <p className="font-[family-name:var(--brand-font-display)] text-4xl font-semibold">
-                {c.score}
-              </p>
-              <p className="text-[10px] uppercase tracking-widest text-white/50">fit</p>
-            </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
+
 
 function SlideEconomics() {
   return (
