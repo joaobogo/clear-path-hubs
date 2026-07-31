@@ -48,6 +48,8 @@ import {
  type WorkspaceNavItem,
 } from "@/components/workspace/workspace-shell";
 import { ClientBrandHeader } from "@/components/client/client-brand-header";
+import { SectionTabs } from "@/components/workspace/section-tabs";
+import { CLIENT_SECTION_GROUPS } from "@/config/workspace-sections";
 import { OrgSwitcher } from "@/components/workspace/org-switcher";
 import { EmptyState, PermissionDenied } from "@/components/client/states";
 
