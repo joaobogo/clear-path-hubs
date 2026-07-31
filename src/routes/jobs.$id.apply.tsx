@@ -443,9 +443,7 @@ function ApplyPage() {
                 ready.
               </span>
               {serverError.trace_id && (
-                <span className="block mt-1 text-xs opacity-70">
 
-                <span className="block mt-1 text-xs opacity-70">
                   Reference: {serverError.trace_id}
                 </span>
               )}
