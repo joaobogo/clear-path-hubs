@@ -84,7 +84,7 @@ function Received() {
             <li>
               {signedIn
                 ? "Your candidate account is ready — track this application and reuse your profile for future roles."
-                : "You can create a candidate account any time to track this application and reuse your profile for future roles."}
+                : "No account needed: check your status any time with your reference and email."}
             </li>
           </ol>
         </section>
@@ -96,13 +96,16 @@ function Received() {
                 Track your application
               </Link>
             ) : (
-              <Link to="/login">Sign in to track your application</Link>
+              <Link to="/apply/status" search={{ ref: data.reference }}>
+                Check your status
+              </Link>
             )}
           </Button>
           <Button asChild variant="outline">
             <Link to="/jobs">Browse more roles</Link>
           </Button>
         </div>
+
 
         <p className="mt-6 text-xs text-muted-foreground">
           Keep this reference handy — we'll ask for it if you contact us about this application.
