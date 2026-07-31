@@ -94,6 +94,232 @@ export type Database = {
           },
         ]
       }
+      agent_activity: {
+        Row: {
+          agent_key: string
+          candidate_match_id: string | null
+          created_at: string
+          id: string
+          link_path: string | null
+          occurred_at: string
+          organization_id: string
+          outcome: string
+          position_id: string | null
+          reason: string | null
+          sentence: string
+        }
+        Insert: {
+          agent_key: string
+          candidate_match_id?: string | null
+          created_at?: string
+          id?: string
+          link_path?: string | null
+          occurred_at?: string
+          organization_id: string
+          outcome: string
+          position_id?: string | null
+          reason?: string | null
+          sentence: string
+        }
+        Update: {
+          agent_key?: string
+          candidate_match_id?: string | null
+          created_at?: string
+          id?: string
+          link_path?: string | null
+          occurred_at?: string
+          organization_id?: string
+          outcome?: string
+          position_id?: string | null
+          reason?: string | null
+          sentence?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agent_activity_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "admin_candidate_matches_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agent_activity_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "admin_work_inbox"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agent_activity_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_matches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agent_activity_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "client_candidate_matches_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agent_activity_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "client_kanban_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agent_activity_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "client_visible_candidates"
+            referencedColumns: ["candidate_match_id"]
+          },
+          {
+            foreignKeyName: "agent_activity_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "v_admin_candidate_index"
+            referencedColumns: ["match_id"]
+          },
+          {
+            foreignKeyName: "agent_activity_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "v_scoring_review_queue"
+            referencedColumns: ["match_id"]
+          },
+          {
+            foreignKeyName: "agent_activity_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "v_source_attribution"
+            referencedColumns: ["match_id"]
+          },
+          {
+            foreignKeyName: "agent_activity_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "admin_clients_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agent_activity_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agent_activity_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_portfolio_rollup"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "agent_activity_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "admin_pipeline_health"
+            referencedColumns: ["position_id"]
+          },
+          {
+            foreignKeyName: "agent_activity_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "admin_positions_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agent_activity_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_my_applications"
+            referencedColumns: ["position_id"]
+          },
+          {
+            foreignKeyName: "agent_activity_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "client_positions_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agent_activity_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "positions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      agent_settings: {
+        Row: {
+          agent_key: string
+          created_at: string
+          enabled: boolean
+          id: string
+          last_action_at: string | null
+          last_action_summary: string | null
+          organization_id: string
+          paused_at: string | null
+          paused_by: string | null
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          agent_key: string
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          last_action_at?: string | null
+          last_action_summary?: string | null
+          organization_id: string
+          paused_at?: string | null
+          paused_by?: string | null
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          agent_key?: string
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          last_action_at?: string | null
+          last_action_summary?: string | null
+          organization_id?: string
+          paused_at?: string | null
+          paused_by?: string | null
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agent_settings_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "admin_clients_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agent_settings_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agent_settings_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_portfolio_rollup"
+            referencedColumns: ["organization_id"]
+          },
+        ]
+      }
       application_answers: {
         Row: {
           answer: Json
@@ -5954,6 +6180,7 @@ export type Database = {
       outreach_campaigns: {
         Row: {
           channel: Database["public"]["Enums"]["outreach_channel"]
+          channels: Database["public"]["Enums"]["outreach_channel"][]
           created_at: string
           ended_at: string | null
           external_ref: string | null
@@ -5977,6 +6204,7 @@ export type Database = {
         }
         Insert: {
           channel: Database["public"]["Enums"]["outreach_channel"]
+          channels?: Database["public"]["Enums"]["outreach_channel"][]
           created_at?: string
           ended_at?: string | null
           external_ref?: string | null
@@ -6000,6 +6228,7 @@ export type Database = {
         }
         Update: {
           channel?: Database["public"]["Enums"]["outreach_channel"]
+          channels?: Database["public"]["Enums"]["outreach_channel"][]
           created_at?: string
           ended_at?: string | null
           external_ref?: string | null
@@ -6080,14 +6309,139 @@ export type Database = {
           },
         ]
       }
+      outreach_channel_rules: {
+        Row: {
+          channel: Database["public"]["Enums"]["outreach_channel"]
+          created_at: string
+          enabled: boolean
+          id: string
+          max_contacts_per_person: number
+          organization_id: string
+          updated_at: string
+          window_hours: number
+        }
+        Insert: {
+          channel: Database["public"]["Enums"]["outreach_channel"]
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          max_contacts_per_person?: number
+          organization_id: string
+          updated_at?: string
+          window_hours?: number
+        }
+        Update: {
+          channel?: Database["public"]["Enums"]["outreach_channel"]
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          max_contacts_per_person?: number
+          organization_id?: string
+          updated_at?: string
+          window_hours?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "outreach_channel_rules_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "admin_clients_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "outreach_channel_rules_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "outreach_channel_rules_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_portfolio_rollup"
+            referencedColumns: ["organization_id"]
+          },
+        ]
+      }
+      outreach_opt_outs: {
+        Row: {
+          candidate_profile_id: string | null
+          channel: Database["public"]["Enums"]["outreach_channel"] | null
+          created_at: string
+          email: string | null
+          id: string
+          organization_id: string | null
+          reason: string | null
+        }
+        Insert: {
+          candidate_profile_id?: string | null
+          channel?: Database["public"]["Enums"]["outreach_channel"] | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          organization_id?: string | null
+          reason?: string | null
+        }
+        Update: {
+          candidate_profile_id?: string | null
+          channel?: Database["public"]["Enums"]["outreach_channel"] | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          organization_id?: string | null
+          reason?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "outreach_opt_outs_candidate_profile_id_fkey"
+            columns: ["candidate_profile_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_profile_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "outreach_opt_outs_candidate_profile_id_fkey"
+            columns: ["candidate_profile_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "outreach_opt_outs_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "admin_clients_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "outreach_opt_outs_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "outreach_opt_outs_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_portfolio_rollup"
+            referencedColumns: ["organization_id"]
+          },
+        ]
+      }
       outreach_touches: {
         Row: {
           application_id: string | null
+          blocked_reason: string | null
+          body: string | null
           campaign_id: string
           candidate_profile_id: string | null
           channel: Database["public"]["Enums"]["outreach_channel"]
+          conversation_id: string | null
           created_at: string
           delivered_at: string | null
+          direction: string
           engagement_state:
             | Database["public"]["Enums"]["outreach_engagement_state"]
             | null
@@ -6096,20 +6450,26 @@ export type Database = {
           is_test_record: boolean
           organization_id: string
           replied_at: string | null
+          reply_body: string | null
           reply_category:
             | Database["public"]["Enums"]["outreach_reply_category"]
             | null
           sent_at: string | null
+          sequence_step: number | null
           state: Database["public"]["Enums"]["outreach_touch_state"]
           updated_at: string
         }
         Insert: {
           application_id?: string | null
+          blocked_reason?: string | null
+          body?: string | null
           campaign_id: string
           candidate_profile_id?: string | null
           channel: Database["public"]["Enums"]["outreach_channel"]
+          conversation_id?: string | null
           created_at?: string
           delivered_at?: string | null
+          direction?: string
           engagement_state?:
             | Database["public"]["Enums"]["outreach_engagement_state"]
             | null
@@ -6118,20 +6478,26 @@ export type Database = {
           is_test_record?: boolean
           organization_id: string
           replied_at?: string | null
+          reply_body?: string | null
           reply_category?:
             | Database["public"]["Enums"]["outreach_reply_category"]
             | null
           sent_at?: string | null
+          sequence_step?: number | null
           state?: Database["public"]["Enums"]["outreach_touch_state"]
           updated_at?: string
         }
         Update: {
           application_id?: string | null
+          blocked_reason?: string | null
+          body?: string | null
           campaign_id?: string
           candidate_profile_id?: string | null
           channel?: Database["public"]["Enums"]["outreach_channel"]
+          conversation_id?: string | null
           created_at?: string
           delivered_at?: string | null
+          direction?: string
           engagement_state?:
             | Database["public"]["Enums"]["outreach_engagement_state"]
             | null
@@ -6140,10 +6506,12 @@ export type Database = {
           is_test_record?: boolean
           organization_id?: string
           replied_at?: string | null
+          reply_body?: string | null
           reply_category?:
             | Database["public"]["Enums"]["outreach_reply_category"]
             | null
           sent_at?: string | null
+          sequence_step?: number | null
           state?: Database["public"]["Enums"]["outreach_touch_state"]
           updated_at?: string
         }
@@ -6195,6 +6563,13 @@ export type Database = {
             columns: ["candidate_profile_id"]
             isOneToOne: false
             referencedRelation: "candidate_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "outreach_touches_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
             referencedColumns: ["id"]
           },
           {
@@ -11149,6 +11524,82 @@ export type Database = {
         }
         Relationships: []
       }
+      outreach_role_report: {
+        Row: {
+          became_hired: number | null
+          became_shortlisted: number | null
+          first_touch_at: string | null
+          last_activity_at: string | null
+          organization_id: string | null
+          people_contacted: number | null
+          people_replied: number | null
+          position_id: string | null
+          replies_future: number | null
+          replies_interested: number | null
+          replies_not_interested: number | null
+          replies_other: number | null
+          replies_referral: number | null
+          replies_unsubscribe: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "outreach_campaigns_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "admin_pipeline_health"
+            referencedColumns: ["position_id"]
+          },
+          {
+            foreignKeyName: "outreach_campaigns_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "admin_positions_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "outreach_campaigns_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_my_applications"
+            referencedColumns: ["position_id"]
+          },
+          {
+            foreignKeyName: "outreach_campaigns_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "client_positions_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "outreach_campaigns_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "positions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "outreach_touches_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "admin_clients_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "outreach_touches_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "outreach_touches_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_portfolio_rollup"
+            referencedColumns: ["organization_id"]
+          },
+        ]
+      }
       v_activity_feed: {
         Row: {
           actor_name: string | null
@@ -12120,6 +12571,14 @@ export type Database = {
           _title: string
         }
         Returns: undefined
+      }
+      outreach_contact_allowed: {
+        Args: {
+          _candidate_profile_id: string
+          _channel: Database["public"]["Enums"]["outreach_channel"]
+          _org: string
+        }
+        Returns: Json
       }
       person_for_candidate_profile: { Args: { _cp: string }; Returns: string }
       public_position_closure: { Args: { _id: string }; Returns: Json }

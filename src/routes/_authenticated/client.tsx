@@ -39,6 +39,7 @@ import {
 	Bot,
  	CheckSquare,
  	Plus,
+ 	Send,
 } from "lucide-react";
 import {
  WorkspaceShell,
@@ -104,6 +105,8 @@ const TABS: NavDef[] = [
  { to: "/client/assistant", label: "Assistant", icon: Bot, everyone: true },
  { to: "/client/talent-memory", label: "Talent memory", icon: Award, everyone: true },
  { to: "/client/data", label: "Your data", icon: Database, everyone: true },
+ { to: "/client/agents", label: "Agents", icon: Bot, everyone: true },
+ { to: "/client/outreach", label: "Outreach", icon: Send, everyone: true },
  { to: "/client/conversations", label: "Conversations", icon: MessageSquare, everyone: true },
  { to: "/client/account", label: "Account", icon: Building2, everyone: false },
  { to: "/client/team", label: "Team", icon: UserCog, everyone: false },
