@@ -1,4 +1,5 @@
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
+import { PaymentExemptionDialog } from "@/components/admin/payment-exemption-dialog";
 import { createFileRoute, Link, notFound, useRouter } from "@tanstack/react-router";
 import { useSuspenseQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -194,6 +195,11 @@ function PositionWorkspace() {
             </div>
           </div>
           <div className="flex flex-wrap items-center gap-2">
+            <PaymentExemptionDialog
+              positionId={p.id}
+              paymentStatus={(p as { payment_status?: string | null }).payment_status}
+            />
+
             <Button asChild variant="outline" size="sm">
               <Link
                 to="/admin/positions/$id/edit"

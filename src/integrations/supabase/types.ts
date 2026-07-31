@@ -11255,6 +11255,27 @@ export type Database = {
       }
     }
     Functions: {
+      admin_set_position_payment_exempt: {
+        Args: { _actor_user_id: string; _position_id: string; _reason: string }
+        Returns: Json
+      }
+      apply_payment_webhook_event: {
+        Args: {
+          _amount_cents: number
+          _currency: string
+          _customer_id: string
+          _environment: string
+          _event_id: string
+          _event_type: string
+          _organization_id: string
+          _outcome: string
+          _position_id: string
+          _price_id: string
+          _provider_reference: string
+          _raw: Json
+        }
+        Returns: Json
+      }
       approve_candidate_match: {
         Args: {
           _actor_user_id: string

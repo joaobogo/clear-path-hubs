@@ -190,39 +190,27 @@ export const getCheckoutSessionStatus = createServerFn({ method: "POST" })
         return { state: "processing", positionId, reference };
       }
 
-      // paid or no_payment_required — record it, then report success.
+      // paid or no_payment_required — apply through the same atomic routine the
+      // webhook uses, so the return page can never diverge from the webhook.
       if (positionId && organizationId) {
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-        const { data: existing } = await supabaseAdmin
-          .from("payments")
-          .select("id")
-          .eq("provider_reference", reference)
-          .maybeSingle();
-
-        const row = {
-          organization_id: organizationId,
-          position_id: positionId,
-          provider: "stripe",
-          provider_environment: data.environment,
-          provider_reference: reference,
-          provider_customer_id:
-            typeof session.customer === "string" ? session.customer : (session.customer?.id ?? null),
-          price_id: POSITION_PUBLISH_PRICE_ID,
-          amount_cents: session.amount_total ?? 0,
-          currency: session.currency ?? "usd",
-          status: "paid" as const,
-          paid_at: new Date().toISOString(),
-        };
-
-        if (existing) await supabaseAdmin.from("payments").update(row).eq("id", existing.id);
-        else await supabaseAdmin.from("payments").insert(row);
-
-        await supabaseAdmin
-          .from("positions")
-          .update({ payment_status: "paid" })
-          .eq("id", positionId)
-          .neq("payment_status", "exempt");
+        await supabaseAdmin.rpc("apply_payment_webhook_event", {
+          _event_id: `return:${reference}`,
+          _event_type: "checkout.session.verified_on_return",
+          _environment: data.environment,
+          _provider_reference: reference,
+          _organization_id: organizationId,
+          _position_id: positionId,
+          _price_id: POSITION_PUBLISH_PRICE_ID,
+          _amount_cents: session.amount_total ?? 0,
+          _currency: session.currency ?? "usd",
+          _customer_id:
+            typeof session.customer === "string" ? session.customer : (session.customer?.id ?? ""),
+          _outcome: "paid",
+          _raw: { source: "return_page", session_id: reference },
+        });
       }
+
 
       const { data: position } = positionId
         ? await context.supabase.from("positions").select("title").eq("id", positionId).maybeSingle()
