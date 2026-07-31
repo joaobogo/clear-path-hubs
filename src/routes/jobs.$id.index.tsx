@@ -112,7 +112,7 @@ export const Route = createFileRoute("/jobs/$id/")({
   errorComponent: makeRouteErrorComponent("public", "src/routes/jobs.$id.index.tsx"),
   notFoundComponent: () => (
     <SiteShell>
-      <main className="mx-auto max-w-2xl px-4 py-20 text-center">
+      <div className="mx-auto max-w-2xl px-4 py-20 text-center">
         <h1 className="text-2xl font-semibold">We couldn't find that role</h1>
         <p className="mt-3 text-muted-foreground">
           The link may be wrong or the listing may have been removed. The job board has every
@@ -123,7 +123,7 @@ export const Route = createFileRoute("/jobs/$id/")({
             <Link to="/jobs">Browse open roles</Link>
           </Button>
         </div>
-      </main>
+      </div>
     </SiteShell>
   ),
   component: JobDetail,
@@ -145,7 +145,7 @@ function ClosedRole({
 }) {
   return (
     <SiteShell>
-      <main className="mx-auto max-w-2xl px-4 py-16 sm:py-20">
+      <div className="mx-auto max-w-2xl px-4 py-16 sm:py-20">
         <Link
           to="/jobs"
           className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
@@ -195,7 +195,7 @@ function ClosedRole({
             </ul>
           </section>
         )}
-      </main>
+      </div>
     </SiteShell>
   );
 }
