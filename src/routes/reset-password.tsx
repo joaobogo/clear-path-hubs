@@ -119,7 +119,17 @@ function ResetPasswordPage() {
         <div>
           <h1 className="text-xl font-semibold">Set a new password</h1>
           {errorMsg && (
-            <p className="text-xs text-destructive mt-1">{errorMsg}</p>
+            <div className="mt-1 space-y-2">
+              <p className="text-xs text-destructive">{errorMsg}</p>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => navigate({ to: "/login", search: { reset: "1" } as never })}
+              >
+                Send me a new link
+              </Button>
+            </div>
           )}
           {!errorMsg && !hasRecoverySession && (
             <p className="text-xs text-muted-foreground mt-1">
