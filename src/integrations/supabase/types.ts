@@ -3559,6 +3559,27 @@ export type Database = {
           },
         ]
       }
+      intake_drafts: {
+        Row: {
+          created_at: string
+          payload: Json
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          payload?: Json
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          payload?: Json
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       intake_submissions: {
         Row: {
           company_name: string
