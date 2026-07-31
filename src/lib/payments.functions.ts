@@ -44,6 +44,28 @@ export const getPositionCheckoutContext = createServerFn({ method: "POST" })
 
     if (error || !position) return { ok: false as const, error: "not_found" };
 
+    // If the client already holds a package or subscription allowance, they
+    // publish against it rather than paying for this role a second time.
+    const { data: entitlement } = await supabase
+      .from("plan_entitlements")
+      .select("plan_label, roles_total, roles_used, expires_at")
+      .eq("organization_id", position.organization_id)
+      .eq("status", "active")
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    const ent = entitlement as
+      | { plan_label: string; roles_total: number | null; roles_used: number; expires_at: string | null }
+      | null;
+    const notExpired = !ent?.expires_at || new Date(ent.expires_at) > new Date();
+    const remaining =
+      ent && ent.roles_total !== null ? Math.max(0, ent.roles_total - ent.roles_used) : null;
+    const allowance =
+      ent && notExpired && (remaining === null || remaining > 0)
+        ? { planLabel: ent.plan_label, rolesRemaining: remaining }
+        : null;
+
     return {
       ok: true as const,
       position: {
@@ -52,6 +74,7 @@ export const getPositionCheckoutContext = createServerFn({ method: "POST" })
         status: position.status,
         paymentStatus: position.payment_status,
       },
+      allowance,
     };
   });
 
@@ -77,7 +100,11 @@ export const createPositionCheckoutSession = createServerFn({ method: "POST" })
       .maybeSingle();
 
     if (error || !position) return { error: "We couldn't find that role in your workspace." };
-    if (position.payment_status === "paid" || position.payment_status === "exempt") {
+    if (
+      position.payment_status === "paid" ||
+      position.payment_status === "exempt" ||
+      position.payment_status === "covered"
+    ) {
       return { error: "This role is already paid for." };
     }
 

@@ -6334,6 +6334,92 @@ export type Database = {
           },
         ]
       }
+      plan_entitlements: {
+        Row: {
+          created_at: string
+          expires_at: string | null
+          id: string
+          organization_id: string
+          plan_label: string
+          price_id: string
+          provider_environment: string
+          provider_reference: string | null
+          roles_total: number | null
+          roles_used: number
+          source: string
+          source_event_id: string | null
+          starts_at: string
+          status: string
+          subscription_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          organization_id: string
+          plan_label: string
+          price_id: string
+          provider_environment?: string
+          provider_reference?: string | null
+          roles_total?: number | null
+          roles_used?: number
+          source: string
+          source_event_id?: string | null
+          starts_at?: string
+          status?: string
+          subscription_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          organization_id?: string
+          plan_label?: string
+          price_id?: string
+          provider_environment?: string
+          provider_reference?: string | null
+          roles_total?: number | null
+          roles_used?: number
+          source?: string
+          source_event_id?: string | null
+          starts_at?: string
+          status?: string
+          subscription_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "plan_entitlements_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "admin_clients_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "plan_entitlements_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "plan_entitlements_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_portfolio_rollup"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "plan_entitlements_subscription_id_fkey"
+            columns: ["subscription_id"]
+            isOneToOne: false
+            referencedRelation: "subscriptions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       position_commitments: {
         Row: {
           baseline_at: string
@@ -6781,6 +6867,7 @@ export type Database = {
           compensation_collected: boolean
           compensation_visibility: string
           content_version: number
+          covered_by_entitlement_id: string | null
           created_at: string
           created_by: string | null
           created_by_audit: boolean | null
@@ -6853,6 +6940,7 @@ export type Database = {
           compensation_collected?: boolean
           compensation_visibility?: string
           content_version?: number
+          covered_by_entitlement_id?: string | null
           created_at?: string
           created_by?: string | null
           created_by_audit?: boolean | null
@@ -6927,6 +7015,7 @@ export type Database = {
           compensation_collected?: boolean
           compensation_visibility?: string
           content_version?: number
+          covered_by_entitlement_id?: string | null
           created_at?: string
           created_by?: string | null
           created_by_audit?: boolean | null
@@ -6985,6 +7074,13 @@ export type Database = {
           work_model?: Database["public"]["Enums"]["work_model"] | null
         }
         Relationships: [
+          {
+            foreignKeyName: "positions_covered_by_entitlement_id_fkey"
+            columns: ["covered_by_entitlement_id"]
+            isOneToOne: false
+            referencedRelation: "plan_entitlements"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "positions_organization_id_fkey"
             columns: ["organization_id"]
@@ -8649,6 +8745,106 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "positions"
             referencedColumns: ["id"]
+          },
+        ]
+      }
+      subscription_webhook_events: {
+        Row: {
+          event_id: string
+          event_type: string
+          processed_at: string
+          provider_environment: string
+        }
+        Insert: {
+          event_id: string
+          event_type: string
+          processed_at?: string
+          provider_environment: string
+        }
+        Update: {
+          event_id?: string
+          event_type?: string
+          processed_at?: string
+          provider_environment?: string
+        }
+        Relationships: []
+      }
+      subscriptions: {
+        Row: {
+          cancel_at_period_end: boolean
+          created_at: string
+          current_period_end: string | null
+          current_period_start: string | null
+          id: string
+          organization_id: string
+          pending_effective_at: string | null
+          pending_price_id: string | null
+          plan_label: string | null
+          price_id: string
+          provider: string
+          provider_customer_id: string | null
+          provider_environment: string
+          provider_subscription_id: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          cancel_at_period_end?: boolean
+          created_at?: string
+          current_period_end?: string | null
+          current_period_start?: string | null
+          id?: string
+          organization_id: string
+          pending_effective_at?: string | null
+          pending_price_id?: string | null
+          plan_label?: string | null
+          price_id: string
+          provider?: string
+          provider_customer_id?: string | null
+          provider_environment?: string
+          provider_subscription_id: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          cancel_at_period_end?: boolean
+          created_at?: string
+          current_period_end?: string | null
+          current_period_start?: string | null
+          id?: string
+          organization_id?: string
+          pending_effective_at?: string | null
+          pending_price_id?: string | null
+          plan_label?: string | null
+          price_id?: string
+          provider?: string
+          provider_customer_id?: string | null
+          provider_environment?: string
+          provider_subscription_id?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscriptions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "admin_clients_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "subscriptions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "subscriptions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_portfolio_rollup"
+            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -11389,6 +11585,24 @@ export type Database = {
         }
         Returns: Json
       }
+      apply_subscription_event: {
+        Args: {
+          _cancel_at_period_end: boolean
+          _environment: string
+          _event_id: string
+          _event_type: string
+          _organization_id: string
+          _period_end: string
+          _period_start: string
+          _plan_label: string
+          _price_id: string
+          _provider_customer_id: string
+          _provider_subscription_id: string
+          _roles_total: number
+          _status: string
+        }
+        Returns: Json
+      }
       approve_candidate_match: {
         Args: {
           _actor_user_id: string
@@ -11399,9 +11613,26 @@ export type Database = {
         }
         Returns: Json
       }
+      consume_role_allowance: {
+        Args: { _actor_user_id: string; _position_id: string }
+        Returns: Json
+      }
       default_permissions_for_role: {
         Args: { _role: Database["public"]["Enums"]["membership_role"] }
         Returns: Database["public"]["Enums"]["client_permission"][]
+      }
+      grant_plan_entitlement: {
+        Args: {
+          _environment: string
+          _event_id: string
+          _expires_at: string
+          _organization_id: string
+          _plan_label: string
+          _price_id: string
+          _provider_reference: string
+          _roles_total: number
+        }
+        Returns: Json
       }
       hard_delete_candidate_match: {
         Args: { _actor_user_id: string; _match_id: string; _reason?: string }
@@ -11461,6 +11692,16 @@ export type Database = {
       }
       is_platform_admin: { Args: { _user: string }; Returns: boolean }
       is_platform_staff: { Args: { _user: string }; Returns: boolean }
+      notify_platform_staff: {
+        Args: {
+          _body: string
+          _event_type: Database["public"]["Enums"]["event_type"]
+          _link_path: string
+          _organization_id: string
+          _title: string
+        }
+        Returns: undefined
+      }
       public_position_closure: { Args: { _id: string }; Returns: Json }
       public_position_employer: { Args: { _id: string }; Returns: Json }
       run_authz_tests: { Args: never; Returns: string[] }
@@ -11682,7 +11923,13 @@ export type Database = {
         | "replied"
         | "opted_out"
         | "failed"
-      payment_status: "unpaid" | "pending" | "paid" | "refunded" | "exempt"
+      payment_status:
+        | "unpaid"
+        | "pending"
+        | "paid"
+        | "refunded"
+        | "exempt"
+        | "covered"
       position_status:
         | "draft"
         | "submitted"
@@ -12122,7 +12369,14 @@ export const Constants = {
         "opted_out",
         "failed",
       ],
-      payment_status: ["unpaid", "pending", "paid", "refunded", "exempt"],
+      payment_status: [
+        "unpaid",
+        "pending",
+        "paid",
+        "refunded",
+        "exempt",
+        "covered",
+      ],
       position_status: [
         "draft",
         "submitted",

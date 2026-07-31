@@ -21,6 +21,7 @@ import { useSupportView } from "@/lib/support-view";
 import { formatStageDate } from "@/lib/client-role-progress";
 import { EmptyState, PermissionDenied, SkeletonRows, SkeletonStats } from "@/components/client/states";
 import { TeamActivityPanel } from "@/components/client/team-activity-panel";
+import { PlanPanel } from "@/components/client/plan-panel";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -316,6 +317,8 @@ function AccountPage() {
           file” is not held in the system — nothing here is estimated.
         </p>
       </section>
+
+      <PlanPanel organizationId={orgId} canMutate={canMutate} />
 
       {/* Roles */}
       <section className="rounded-xl border bg-card">

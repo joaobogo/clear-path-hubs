@@ -1,7 +1,9 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
+import { toast } from "sonner";
 import { getPositionCheckoutContext } from "@/lib/payments.functions";
+import { useAllowanceForPosition } from "@/lib/plans.functions";
 import { POSITION_PUBLISH_OFFER } from "@/lib/payments-catalog";
 import { PositionCheckout } from "@/components/payments/position-checkout";
 import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
@@ -39,6 +41,28 @@ function CheckoutPage() {
   const { position } = Route.useSearch();
   const navigate = useNavigate();
   const loadContext = useServerFn(getPositionCheckoutContext);
+  const useAllowanceFn = useServerFn(useAllowanceForPosition);
+
+  const useAllowance = useMutation({
+    mutationFn: () => useAllowanceFn({ data: { positionId: position as string } }),
+    onSuccess: (result) => {
+      if (!result.ok) {
+        toast.error(
+          result.reason === "no_allowance"
+            ? "Your plan has no roles left. You can pay for this one or move up a plan."
+            : "We couldn't apply your plan to this role. Nothing was charged.",
+        );
+        return;
+      }
+      toast.success(
+        result.rolesRemaining === null
+          ? `Published against ${result.planLabel}.`
+          : `Published against ${result.planLabel} — ${result.rolesRemaining} role${result.rolesRemaining === 1 ? "" : "s"} left.`,
+      );
+      navigate({ to: "/client/positions" });
+    },
+    onError: () => toast.error("We couldn't apply your plan to this role."),
+  });
 
   const { data, isLoading } = useQuery({
     queryKey: ["checkout-context", position],
@@ -81,12 +105,33 @@ function CheckoutPage() {
                 We couldn't find that role in your workspace.
               </CardContent>
             </Card>
-          ) : data.position.paymentStatus === "paid" || data.position.paymentStatus === "exempt" ? (
+          ) : ["paid", "exempt", "covered"].includes(String(data.position.paymentStatus)) ? (
             <Card>
               <CardContent className="space-y-4 py-10 text-center">
                 <p className="text-sm">This role is already paid for.</p>
                 <Button onClick={() => navigate({ to: "/client/positions" })}>
                   Go to your roles
+                </Button>
+              </CardContent>
+            </Card>
+          ) : data.allowance ? (
+            <Card>
+              <CardContent className="space-y-4 py-8">
+                <div>
+                  <p className="text-sm font-medium">
+                    This role is covered by {data.allowance.planLabel}.
+                  </p>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    {data.allowance.rolesRemaining === null
+                      ? "Your plan covers unlimited roles, so there's nothing to pay."
+                      : `You have ${data.allowance.rolesRemaining} role${data.allowance.rolesRemaining === 1 ? "" : "s"} left on your plan. Publishing uses one of them — no card needed.`}
+                  </p>
+                </div>
+                <Button
+                  onClick={() => useAllowance.mutate()}
+                  disabled={useAllowance.isPending}
+                >
+                  {useAllowance.isPending ? "Publishing…" : "Publish using my plan"}
                 </Button>
               </CardContent>
             </Card>
