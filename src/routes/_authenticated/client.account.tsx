@@ -376,6 +376,9 @@ function AccountPage() {
         </section>
       )}
 
+      {/* Who is doing what */}
+      {isAdmin && <TeamActivityPanel orgId={orgId ?? null} />}
+
       {/* Team */}
       <section className="rounded-xl border bg-card">
         <div className="flex items-center justify-between gap-3 border-b px-5 py-4">
