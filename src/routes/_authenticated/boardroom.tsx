@@ -90,36 +90,33 @@ function BoardroomPage() {
     strengths?: string[];
   }>;
 
-  const usingDemo = !overviewQ.data || whatsNext.length === 0;
+  const isLoading = overviewQ.isPending && !!resolvedOrgId;
 
-  const positions = usingDemo
-    ? DEMO_POSITIONS
-    : whatsNext.slice(0, 6).map((p) => ({
-        title: p.title,
-        status: p.status,
-        pending: p.delivered_pending ?? 0,
-      }));
+  const positions = whatsNext.slice(0, 6).map((p) => ({
+    title: p.title,
+    status: p.status,
+    pending: p.delivered_pending ?? 0,
+  }));
 
-  const candidates = usingDemo
-    ? DEMO_CANDIDATES
-    : latestCandidates.slice(0, 3).map((c, i) => ({
-        rank: i + 1,
-        name: c.full_name ?? `Candidate ${i + 1}`,
-        score: c.fit_score ?? 0,
-        note: c.strengths?.[0] ?? "Evidence available in workspace.",
-      }));
+  const candidates = latestCandidates.slice(0, 3).map((c, i) => ({
+    rank: i + 1,
+    name: c.full_name ?? `Candidate ${i + 1}`,
+    score: c.fit_score ?? 0,
+    note: c.strengths?.[0] ?? "Evidence available in workspace.",
+  }));
 
   /* Slides */
   const slides = useMemo(
     () => [
-      { key: "intro", render: () => <SlideIntro orgName={orgName} usingDemo={usingDemo} /> },
-      { key: "positions", render: () => <SlidePositions positions={positions} kpis={kpis} /> },
-      { key: "shortlist", render: () => <SlideShortlist candidates={candidates} /> },
+      { key: "intro", render: () => <SlideIntro orgName={orgName} /> },
+      { key: "positions", render: () => <SlidePositions positions={positions} kpis={kpis} isLoading={isLoading} /> },
+      { key: "shortlist", render: () => <SlideShortlist candidates={candidates} isLoading={isLoading} /> },
       { key: "economics", render: () => <SlideEconomics /> },
       { key: "industry", render: () => <SlideIndustry /> },
       { key: "next", render: () => <SlideNext /> },
     ],
-    [orgName, positions, candidates, kpis, usingDemo],
+    [orgName, positions, candidates, kpis, isLoading],
+
   );
 
   const [i, setI] = useState(0);
