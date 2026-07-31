@@ -269,6 +269,21 @@ function OverviewPage() {
         <EmptyWelcome canSubmit={canSubmit} />
       ) : (
         <>
+          {/* 0 · Roles that can't publish yet — stated plainly, never nagging */}
+          {pendingRoles.length > 0 && (
+            <div className="space-y-3">
+              {pendingRoles.map((r) => (
+                <PaymentGateBanner
+                  key={r.positionId}
+                  positionId={r.positionId}
+                  positionTitle={r.title}
+                  paymentStatus={r.paymentStatus}
+                  callStart={r.callStart}
+                />
+              ))}
+            </div>
+          )}
+
           {/* 1 · WHAT NEEDS ME TODAY — the only thing on the first screen */}
           <DecisionQueue queue={queue} loading={!data && isFetching} />
 
