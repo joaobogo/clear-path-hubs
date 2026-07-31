@@ -208,8 +208,8 @@ export const getCheckoutSessionStatus = createServerFn({ method: "POST" })
           provider_customer_id:
             typeof session.customer === "string" ? session.customer : (session.customer?.id ?? null),
           price_id: POSITION_PUBLISH_PRICE_ID,
-          amount_cents: session.amount_total ?? null,
-          currency: session.currency ?? null,
+          amount_cents: session.amount_total ?? 0,
+          currency: session.currency ?? "usd",
           status: "paid" as const,
           paid_at: new Date().toISOString(),
         };
