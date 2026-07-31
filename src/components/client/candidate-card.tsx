@@ -6,6 +6,7 @@ import { AgeBadge } from "@/components/client/age-badge";
 import { formatDaysInStage } from "@/lib/time-age";
 import { DecisionBar } from "@/components/client/decision-bar";
 import { NextStepNote } from "@/components/client/next-step-note";
+import { UndoWindow } from "@/components/client/undo-window";
 import { fitChips } from "@/lib/client-evidence-bullets";
 import { buildShortlistRationale } from "@/lib/client-rationale";
 import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
