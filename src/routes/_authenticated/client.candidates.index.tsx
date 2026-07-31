@@ -638,7 +638,17 @@ function CandidatesPage() {
  >
  List
  </button>
+ <button
+ onClick={() => { setF({ view: "compare" }); setCompareOpen(true); }}
+ disabled={!compareCheck.ok}
+ title={compareCheck.reason ?? undefined}
+ className={`px-2 py-1 text-xs rounded disabled:opacity-40 ${search.view === "compare" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
+ aria-pressed={search.view === "compare"}
+ >
+ Side by side
+ </button>
  </div>
+
  </div>
   </div>
 
