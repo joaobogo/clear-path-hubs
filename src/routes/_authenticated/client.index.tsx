@@ -9,6 +9,7 @@ import { CandidateCard } from "@/components/client/candidate-card";
 import { VisibilityNote } from "@/components/client/visibility-note";
 import { AgeBadge } from "@/components/client/age-badge";
 import { formatStageDate } from "@/lib/client-role-progress";
+import { shortlistCommitment, formatCommitmentDate } from "@/lib/client-commitment";
 import { Button } from "@/components/ui/button";
 import {
   AlertTriangle,
