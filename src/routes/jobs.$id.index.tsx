@@ -240,7 +240,6 @@ function JobDetail() {
   const { data: fetched } = useSuspenseQuery({
     queryKey: ["public-position", id],
     queryFn: () => getPublicPosition({ data: { id } }),
-    enabled: !loaderData.closed,
   });
   if (loaderData.closed) {
     return (
