@@ -99,11 +99,11 @@ function AgentCardView({
           </h3>
           <p className="mt-1 text-sm text-muted-foreground">{agent.job}</p>
         </div>
-        <Switch
+        <HonestSwitch
           checked={agent.enabled && !paused}
           disabled={!canManage || busy}
-          onCheckedChange={onToggle}
-          aria-label={`Switch the ${agent.name} agent ${agent.enabled ? "off" : "on"}`}
+          onCommit={onToggle}
+          label={`Switch the ${agent.name} agent ${agent.enabled ? "off" : "on"}`}
         />
       </div>
 
