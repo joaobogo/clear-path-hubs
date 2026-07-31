@@ -40,6 +40,7 @@ import {
  ShieldCheck,
  User,
 } from "lucide-react";
+import { TeamsConnectionCard } from "@/components/client/teams-connection-card";
 
 export const Route = createFileRoute("/_authenticated/client/settings")({
  head: () => ({
