@@ -2,7 +2,7 @@ import { createFileRoute, Link, stripSearchParams, useNavigate } from "@tanstack
 import { fallback, zodValidator } from "@tanstack/zod-adapter";
 import { z } from "zod";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { listPublicPositions } from "@/lib/jobs.functions";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -109,11 +109,6 @@ function JobsPage() {
   // rather than walking every keystroke).
   const setParam = (patch: Record<string, string | number>) =>
     navigate({ search: (prev) => ({ ...prev, ...patch }), replace: true });
-  const setQ = (v: string) => setParam({ q: v });
-  const setLocation = (v: string) => setParam({ location: v });
-  const setWorkModel = (v: string) => setParam({ work: v });
-  const setEmployment = (v: string) => setParam({ type: v });
-  const setSeniority = (v: string) => setParam({ level: v });
   const setPage = (v: number | ((p: number) => number)) =>
     navigate({
       search: (prev) => ({ ...prev, page: typeof v === "function" ? v(prev.page) : v }),
@@ -247,7 +242,7 @@ function JobsPage() {
               <button
                 type="button"
                 key={s}
-                onClick={() => { setSeniority(s); setPage(1); }}
+                onClick={() => setParam({ level: s, page: 1 })}
                 className={`text-xs px-3 py-1 rounded-full border ${
                   seniority === s ? "bg-primary text-primary-foreground" : "bg-background"
                 }`}
