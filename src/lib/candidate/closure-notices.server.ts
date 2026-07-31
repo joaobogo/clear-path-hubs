@@ -72,7 +72,7 @@ export async function runClosureNotices(limit = 100): Promise<ClosureNoticeResul
           reference,
           jobsUrl: "https://taasflow.com/jobs",
           inTalentNetwork: Boolean(
-            (app.consent as { talent_network?: boolean } | null)?.talent_network,
+            (app.consent as { network_opt_in?: boolean } | null)?.network_opt_in,
           ),
         },
       });

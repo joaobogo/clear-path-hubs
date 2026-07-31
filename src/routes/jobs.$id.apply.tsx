@@ -862,6 +862,32 @@ function ApplyPage() {
                 />
               </div>
 
+              <div className="space-y-2 rounded-lg border bg-muted/30 p-4 text-sm">
+                <p className="font-medium">What happens to your data</p>
+                <ul className="list-disc space-y-1 pl-5 text-muted-foreground">
+                  <li>
+                    <span className="text-foreground">What we store:</span> your CV, your answers,
+                    and your contact details.
+                  </li>
+                  <li>
+                    <span className="text-foreground">Who sees it:</span> the TaaSFlow review team,
+                    and the hiring team at {pos.organization_name} for this role. Nobody else.
+                  </li>
+                  <li>
+                    <span className="text-foreground">How long:</span> 12 months after this role
+                    closes — or 24 months if you join the talent network below — then it is deleted.
+                  </li>
+                  <li>
+                    <span className="text-foreground">Changed your mind:</span> ask us to delete
+                    everything at any time from your status page, or email{" "}
+                    <a className="underline" href="mailto:privacy@taasflow.com">
+                      privacy@taasflow.com
+                    </a>
+                    . We action deletion requests within 30 days.
+                  </li>
+                </ul>
+              </div>
+
               <div className="space-y-3 rounded-lg border p-4">
                 <label className="flex items-start gap-3 text-sm">
                   <Checkbox
