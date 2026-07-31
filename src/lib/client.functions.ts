@@ -1299,10 +1299,11 @@ export const undoClientDecision = createServerFn({ method: "POST" })
     const cutoff = new Date(Date.now() - UNDO_WINDOW_MS).toISOString();
     let q = context.supabase
       .from("client_decisions")
-      .select("id, decision, created_at")
+      .select("id, decision, created_at, from_stage")
       .eq("candidate_match_id", data.matchId)
       .eq("organization_id", data.orgId)
       .eq("actor_user_id", context.userId)
+      .is("reversed_at", null)
       .gte("created_at", cutoff)
       .order("created_at", { ascending: false })
       .limit(1);
@@ -1311,10 +1312,13 @@ export const undoClientDecision = createServerFn({ method: "POST" })
     if (recentErr) throw new Error(recentErr.message);
     if (!recent) throw new Error("undo_window_expired");
 
-    if (from !== data.toStage) {
+    // Prefer the stage recorded on the decision itself over the caller's hint.
+    const backTo = ((recent as AnyRow).from_stage as MatchStage | null) ?? data.toStage;
+
+    if (from !== backTo) {
       const { error } = await context.supabase
         .from("candidate_matches")
-        .update({ stage: data.toStage })
+        .update({ stage: backTo })
         .eq("id", data.matchId)
         .eq("organization_id", data.orgId);
       if (error) throw new Error(error.message);
@@ -1330,9 +1334,14 @@ export const undoClientDecision = createServerFn({ method: "POST" })
         .eq("status", "requested");
     }
 
+    // The decision is never erased — it is marked reversed, so the audit trail
+    // carries both the decision and its reversal.
     await context.supabase
       .from("client_decisions")
-      .delete()
+      .update({
+        reversed_at: new Date().toISOString(),
+        reversed_by: context.userId,
+      } as never)
       .eq("id", recent.id)
       .eq("organization_id", data.orgId);
 
@@ -1342,13 +1351,46 @@ export const undoClientDecision = createServerFn({ method: "POST" })
       entity_type: "candidate_matches",
       entity_id: data.matchId,
       organization_id: data.orgId,
-      before: { stage: from, decision: recent.decision },
-      after: { stage: data.toStage, decision: null },
+      before: { stage: from, decision: recent.decision, decision_id: recent.id },
+      after: { stage: backTo, decision: null, reversed: true },
       trace_id: trace,
     });
 
-    return { ok: true, trace_id: trace, undone: recent.decision as string };
+    return { ok: true, trace_id: trace, undone: recent.decision as string, toStage: backTo };
   });
+
+/**
+ * Decisions this user can still take back, so the Undo affordance survives a
+ * page refresh instead of living only inside a toast.
+ */
+export const listReversibleDecisions = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: { orgId: string }) =>
+    z.object({ orgId: z.string().uuid() }).parse(input),
+  )
+  .handler(async ({ context, data }) => {
+    await assertMember(context.supabase, context.userId, data.orgId);
+    const cutoff = new Date(Date.now() - UNDO_WINDOW_MS).toISOString();
+    const { data: rows, error } = await context.supabase
+      .from("client_decisions")
+      .select("id, candidate_match_id, decision, created_at, from_stage")
+      .eq("organization_id", data.orgId)
+      .eq("actor_user_id", context.userId)
+      .is("reversed_at", null)
+      .gte("created_at", cutoff)
+      .order("created_at", { ascending: false })
+      .limit(50);
+    if (error) throw new Error(error.message);
+    return (rows ?? []).map((r) => ({
+      id: r.id as string,
+      match_id: (r as AnyRow).candidate_match_id as string,
+      decision: r.decision as string,
+      created_at: r.created_at as string,
+      from_stage: ((r as AnyRow).from_stage as MatchStage | null) ?? null,
+      expires_at: new Date(new Date(r.created_at as string).getTime() + UNDO_WINDOW_MS).toISOString(),
+    }));
+  });
+
 
 // ─── Client actions ─────────────────────────────────────────────────────────
 
