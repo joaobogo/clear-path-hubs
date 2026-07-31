@@ -342,6 +342,13 @@ function LoginPage() {
                   Apply as a candidate →
                 </Link>
               </div>
+              <button
+                type="button"
+                className="text-xs text-muted-foreground hover:underline"
+                onClick={() => setMode("confirm")}
+              >
+                Didn't get your confirmation email?
+              </button>
               <p className="pt-1 text-[11px] leading-relaxed text-muted-foreground">
                 TaaSFlow is invitation-only for client workspaces. If you were invited, use the
                 email address on the invitation. Employers can{" "}
@@ -351,7 +358,7 @@ function LoginPage() {
                 to talk to our team.
               </p>
             </form>
-          ) : (
+          ) : mode === "forgot" ? (
             <form onSubmit={onForgot} className="space-y-3">
               <div className="space-y-1.5">
                 <Label htmlFor="femail">Email</Label>
@@ -374,7 +381,34 @@ function LoginPage() {
                 ← Back to sign in
               </button>
             </form>
+          ) : (
+            <form onSubmit={onResendConfirmation} className="space-y-3">
+              <div className="space-y-1.5">
+                <Label htmlFor="cemail">Email</Label>
+                <Input
+                  id="cemail"
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </div>
+              <Button type="submit" className="w-full" disabled={loading}>
+                {loading ? "Sending…" : "Send a new confirmation link"}
+              </Button>
+              <p className="text-[11px] leading-relaxed text-muted-foreground">
+                Already confirmed? Nothing will be sent — just sign in as normal.
+              </p>
+              <button
+                type="button"
+                className="text-xs text-muted-foreground hover:underline"
+                onClick={() => setMode("signin")}
+              >
+                ← Back to sign in
+              </button>
+            </form>
           )}
+
 
           <Link to="/" className="block text-xs text-muted-foreground hover:underline">
             ← Back home
