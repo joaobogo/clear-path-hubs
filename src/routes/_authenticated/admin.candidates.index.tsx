@@ -16,6 +16,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
+import { BulkOpsBar } from "@/components/admin/BulkOpsBar";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -456,6 +457,27 @@ function CandidatesPage() {
             <Button size="sm" onClick={() => setConfirm("visible")}>
               Publish to client
             </Button>
+          </div>
+          <div className="w-full">
+            <BulkOpsBar
+              matchIds={selected}
+              candidateProfileIds={[
+                ...new Set(
+                  rows
+                    .filter((r) => selected.includes(r.match_id))
+                    .map((r) => r.candidate_profile_id as string)
+                    .filter(Boolean),
+                ),
+              ]}
+              positions={[
+                ...new Map(
+                  rows
+                    .filter((r) => r.position_id && r.position_title)
+                    .map((r) => [r.position_id as string, { id: r.position_id as string, title: r.position_title as string }]),
+                ).values(),
+              ]}
+              onDone={() => setSelected([])}
+            />
           </div>
         </div>
       )}

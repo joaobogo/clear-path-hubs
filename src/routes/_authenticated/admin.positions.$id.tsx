@@ -1,5 +1,6 @@
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { PaymentExemptionDialog } from "@/components/admin/payment-exemption-dialog";
+import { InternalNotes } from "@/components/admin/InternalNotes";
 import { createFileRoute, Link, notFound, useRouter } from "@tanstack/react-router";
 import { useSuspenseQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -298,7 +299,17 @@ function PositionWorkspace() {
         {tab === "pipeline" && <PipelineTab matches={matches} />}
         {tab === "sourcing" && <SourcingOpsPanel positionId={id} />}
         {tab === "memory" && <RoleMemoryPanel positionId={id} canEdit={true} />}
-        {tab === "activity" && <ActivityTab id={id} />}
+        {tab === "activity" && (
+          <div className="space-y-4">
+            <ActivityTab id={id} />
+            <InternalNotes
+              entityType="position"
+              entityId={id}
+              organizationId={p.organization_id ?? null}
+              title="Internal notes and handoff for this role"
+            />
+          </div>
+        )}
         {tab === "audit" && <AuditTab id={id} />}
         {tab === "settings" && <SettingsTab position={p} onDone={invalidate} />}
       </section>

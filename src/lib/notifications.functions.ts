@@ -103,6 +103,22 @@ export async function emitEventFromServer(args: {
         title: copy.title,
         body: copy.body ?? null,
         link_path: r.link_path ?? args.link_path ?? null,
+        // Point every notification at the exact record it is about.
+        entity_type: args.candidate_match_id
+          ? "candidate_match"
+          : args.application_id
+            ? "application"
+            : args.position_id
+              ? "position"
+              : args.organization_id
+                ? "organization"
+                : null,
+        entity_id:
+          args.candidate_match_id ??
+          args.application_id ??
+          args.position_id ??
+          args.organization_id ??
+          null,
       };
     })
     .filter((x): x is NonNullable<typeof x> => x !== null);
@@ -158,8 +174,9 @@ export const listMyNotifications = createServerFn({ method: "GET" })
   .handler(async ({ context }) => {
     const { data, error } = await context.supabase
       .from("notifications")
-      .select("id, event_type, audience, title, body, link_path, read_at, created_at, organization_id")
+      .select("id, event_type, audience, title, body, link_path, read_at, resolved_at, entity_type, entity_id, created_at, organization_id")
       .eq("recipient_user_id", context.userId)
+      .is("resolved_at", null)
       .order("created_at", { ascending: false })
       .limit(50);
     if (error) throw error;

@@ -92,7 +92,9 @@ function initialState(initial: PositionEditInitial): State {
 function validateStep(step: number, s: State): Record<string, string> {
   const e: Record<string, string> = {};
   if (step === 1) {
-    if (!s.title.trim()) e.title = "Role title is required";
+    // Mirrors the server schema exactly (title: min 3 chars, max 200).
+    if (s.title.trim().length < 3) e.title = "Role title must be at least 3 characters";
+    if (s.title.trim().length > 200) e.title = "Role title must be 200 characters or fewer";
     if (!s.work_model) e.work_model = "Select a work arrangement";
     if (!s.employment_type) e.employment_type = "Select an employment type";
     if (!s.seniority) e.seniority = "Select a seniority level";
@@ -106,6 +108,11 @@ function validateStep(step: number, s: State): Record<string, string> {
       e.must_have_skills =
         "Add at least 3 must-have skills or a job description of 40+ characters on Step 1";
     }
+  }
+  if (step === 3) {
+    const min = Number(String(s.budget_min).replace(/[^0-9.]/g, ""));
+    const max = Number(String(s.budget_max).replace(/[^0-9.]/g, ""));
+    if (min && max && min > max) e.budget_max = "Maximum budget must be at least the minimum";
   }
   if (step === 4) {
     if (s.target_titles.length === 0) e.target_titles = "Add at least one target job title";
@@ -241,6 +248,7 @@ export function PositionEditWizard({
       const all = {
         ...validateStep(1, state),
         ...validateStep(2, state),
+        ...validateStep(3, state),
         ...validateStep(4, state),
       };
       if (Object.keys(all).length > 0) {
