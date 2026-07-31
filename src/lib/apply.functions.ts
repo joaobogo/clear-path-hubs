@@ -509,7 +509,6 @@ export const submitApplication = createServerFn({ method: "POST" })
           templateData: {
             candidateFirstName: (data.full_name ?? "").trim().split(" ")[0] || null,
             positionTitle: pos.title,
-            organizationName: orgName ?? null,
             reference,
             statusUrl: `https://taasflow.com/apply/status?ref=${reference}`,
           },
