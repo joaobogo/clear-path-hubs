@@ -100,6 +100,7 @@ import { Route as AuthenticatedClientDataRouteImport } from './routes/_authentic
 import { Route as AuthenticatedClientCandidatesRouteImport } from './routes/_authenticated/client.candidates'
 import { Route as AuthenticatedClientAssistantRouteImport } from './routes/_authenticated/client.assistant'
 import { Route as AuthenticatedClientAnalyticsRouteImport } from './routes/_authenticated/client.analytics'
+import { Route as AuthenticatedClientAgentsRouteImport } from './routes/_authenticated/client.agents'
 import { Route as AuthenticatedClientAccountRouteImport } from './routes/_authenticated/client.account'
 import { Route as AuthenticatedCheckoutReturnRouteImport } from './routes/_authenticated/checkout_.return'
 import { Route as AuthenticatedAdminWbrRouteImport } from './routes/_authenticated/admin.wbr'
@@ -629,6 +630,12 @@ const AuthenticatedClientAnalyticsRoute =
     path: '/analytics',
     getParentRoute: () => AuthenticatedClientRoute,
   } as any)
+const AuthenticatedClientAgentsRoute =
+  AuthenticatedClientAgentsRouteImport.update({
+    id: '/agents',
+    path: '/agents',
+    getParentRoute: () => AuthenticatedClientRoute,
+  } as any)
 const AuthenticatedClientAccountRoute =
   AuthenticatedClientAccountRouteImport.update({
     id: '/account',
@@ -1034,6 +1041,7 @@ export interface FileRoutesByFullPath {
   '/admin/wbr': typeof AuthenticatedAdminWbrRoute
   '/checkout/return': typeof AuthenticatedCheckoutReturnRoute
   '/client/account': typeof AuthenticatedClientAccountRoute
+  '/client/agents': typeof AuthenticatedClientAgentsRoute
   '/client/analytics': typeof AuthenticatedClientAnalyticsRoute
   '/client/assistant': typeof AuthenticatedClientAssistantRoute
   '/client/candidates': typeof AuthenticatedClientCandidatesRouteWithChildren
@@ -1175,6 +1183,7 @@ export interface FileRoutesByTo {
   '/admin/wbr': typeof AuthenticatedAdminWbrRoute
   '/checkout/return': typeof AuthenticatedCheckoutReturnRoute
   '/client/account': typeof AuthenticatedClientAccountRoute
+  '/client/agents': typeof AuthenticatedClientAgentsRoute
   '/client/analytics': typeof AuthenticatedClientAnalyticsRoute
   '/client/assistant': typeof AuthenticatedClientAssistantRoute
   '/client/data': typeof AuthenticatedClientDataRoute
@@ -1322,6 +1331,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/wbr': typeof AuthenticatedAdminWbrRoute
   '/_authenticated/checkout_/return': typeof AuthenticatedCheckoutReturnRoute
   '/_authenticated/client/account': typeof AuthenticatedClientAccountRoute
+  '/_authenticated/client/agents': typeof AuthenticatedClientAgentsRoute
   '/_authenticated/client/analytics': typeof AuthenticatedClientAnalyticsRoute
   '/_authenticated/client/assistant': typeof AuthenticatedClientAssistantRoute
   '/_authenticated/client/candidates': typeof AuthenticatedClientCandidatesRouteWithChildren
@@ -1472,6 +1482,7 @@ export interface FileRouteTypes {
     | '/admin/wbr'
     | '/checkout/return'
     | '/client/account'
+    | '/client/agents'
     | '/client/analytics'
     | '/client/assistant'
     | '/client/candidates'
@@ -1613,6 +1624,7 @@ export interface FileRouteTypes {
     | '/admin/wbr'
     | '/checkout/return'
     | '/client/account'
+    | '/client/agents'
     | '/client/analytics'
     | '/client/assistant'
     | '/client/data'
@@ -1759,6 +1771,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/wbr'
     | '/_authenticated/checkout_/return'
     | '/_authenticated/client/account'
+    | '/_authenticated/client/agents'
     | '/_authenticated/client/analytics'
     | '/_authenticated/client/assistant'
     | '/_authenticated/client/candidates'
@@ -2544,6 +2557,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedClientAnalyticsRouteImport
       parentRoute: typeof AuthenticatedClientRoute
     }
+    '/_authenticated/client/agents': {
+      id: '/_authenticated/client/agents'
+      path: '/agents'
+      fullPath: '/client/agents'
+      preLoaderRoute: typeof AuthenticatedClientAgentsRouteImport
+      parentRoute: typeof AuthenticatedClientRoute
+    }
     '/_authenticated/client/account': {
       id: '/_authenticated/client/account'
       path: '/account'
@@ -3115,6 +3135,7 @@ const AuthenticatedClientPositionsRouteWithChildren =
 
 interface AuthenticatedClientRouteChildren {
   AuthenticatedClientAccountRoute: typeof AuthenticatedClientAccountRoute
+  AuthenticatedClientAgentsRoute: typeof AuthenticatedClientAgentsRoute
   AuthenticatedClientAnalyticsRoute: typeof AuthenticatedClientAnalyticsRoute
   AuthenticatedClientAssistantRoute: typeof AuthenticatedClientAssistantRoute
   AuthenticatedClientCandidatesRoute: typeof AuthenticatedClientCandidatesRouteWithChildren
@@ -3140,6 +3161,7 @@ interface AuthenticatedClientRouteChildren {
 
 const AuthenticatedClientRouteChildren: AuthenticatedClientRouteChildren = {
   AuthenticatedClientAccountRoute: AuthenticatedClientAccountRoute,
+  AuthenticatedClientAgentsRoute: AuthenticatedClientAgentsRoute,
   AuthenticatedClientAnalyticsRoute: AuthenticatedClientAnalyticsRoute,
   AuthenticatedClientAssistantRoute: AuthenticatedClientAssistantRoute,
   AuthenticatedClientCandidatesRoute:
