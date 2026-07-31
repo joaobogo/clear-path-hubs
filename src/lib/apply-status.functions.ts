@@ -66,9 +66,10 @@ export const lookupApplicationStatus = createServerFn({ method: "POST" })
     const { data: rows, error } = await supabaseAdmin
       .from("applications")
       .select(
-        "id,applied_at,status,withdrawn_at,positions(title,organizations(name)),candidate_profiles(full_name,email),candidate_matches(stage,client_visibility)",
+        "id,applied_at,status,withdrawn_at,positions(title,organizations(name)),candidate_profiles!inner(full_name,email),candidate_matches(stage,client_visibility)",
       )
-      .limit(200);
+      .ilike("candidate_profiles.email", data.email)
+      .limit(50);
     if (error || !rows) return null;
 
     const app = rows.find((r) => {
