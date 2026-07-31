@@ -19,6 +19,7 @@ import {
   Bell,
   ClipboardCheck,
   Database,
+  Gauge,
   HeartPulse,
   Scale,
   ShieldCheck,
