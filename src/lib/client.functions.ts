@@ -243,8 +243,10 @@ export const getClientOverview = createServerFn({ method: "GET" })
 
     const { data: positions } = await context.supabase
       .from("positions")
-      .select("id, title, status, updated_at")
+      .select("id, title, status, updated_at, created_at")
       .eq("organization_id", data.orgId)
+      .in("status", ["active", "paused", "approved"])
+
       .in("status", ["active", "paused", "approved"])
       .order("updated_at", { ascending: false });
     const activePositionsList = (positions as AnyRow[]) ?? [];
