@@ -1369,7 +1369,12 @@ export const listReversibleDecisions = createServerFn({ method: "GET" })
     z.object({ orgId: z.string().uuid() }).parse(input),
   )
   .handler(async ({ context, data }) => {
-    await assertEditor(context.supabase, context.userId, data.orgId);
+    // Viewers simply have nothing to undo — never an error on a dashboard read.
+    try {
+      await assertEditor(context.supabase, context.userId, data.orgId);
+    } catch {
+      return [];
+    }
     const cutoff = new Date(Date.now() - UNDO_WINDOW_MS).toISOString();
     const { data: rows, error } = await context.supabase
       .from("client_decisions")
