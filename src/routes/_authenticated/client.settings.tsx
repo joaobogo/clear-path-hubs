@@ -463,7 +463,7 @@ type Notifications = {
  offer_update: boolean;
  hire_update: boolean;
  email_enabled: boolean;
- digest: "immediate" | "daily" | "off";
+ digest: "immediate" | "daily" | "weekly" | "off";
 };
 
 function useNotifSave(orgId: string) {
