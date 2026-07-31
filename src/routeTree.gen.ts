@@ -148,6 +148,7 @@ import { Route as ApiPublicIntakeStatusIdRouteImport } from './routes/api/public
 import { Route as ApiPublicDigestWeeklyRouteImport } from './routes/api/public/digest/weekly'
 import { Route as ApiPublicCandidateClosureNoticesRouteImport } from './routes/api/public/candidate/closure-notices'
 import { Route as ApiPublicBlueprintStatusIntakeIdRouteImport } from './routes/api/public/blueprint-status.$intakeId'
+import { Route as AuthenticatedTeamsActTokenRouteImport } from './routes/_authenticated/teams.act.$token'
 import { Route as AuthenticatedMeApplicationsIdRouteImport } from './routes/_authenticated/me.applications.$id'
 import { Route as AuthenticatedClientPositionsIdRouteImport } from './routes/_authenticated/client.positions.$id'
 import { Route as AuthenticatedClientConversationsConversationIdRouteImport } from './routes/_authenticated/client.conversations.$conversationId'
@@ -914,6 +915,12 @@ const ApiPublicBlueprintStatusIntakeIdRoute =
     path: '/api/public/blueprint-status/$intakeId',
     getParentRoute: () => rootRouteImport,
   } as any)
+const AuthenticatedTeamsActTokenRoute =
+  AuthenticatedTeamsActTokenRouteImport.update({
+    id: '/teams/act/$token',
+    path: '/teams/act/$token',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedMeApplicationsIdRoute =
   AuthenticatedMeApplicationsIdRouteImport.update({
     id: '/$id',
@@ -1136,6 +1143,7 @@ export interface FileRoutesByFullPath {
   '/client/conversations/$conversationId': typeof AuthenticatedClientConversationsConversationIdRoute
   '/client/positions/$id': typeof AuthenticatedClientPositionsIdRoute
   '/me/applications/$id': typeof AuthenticatedMeApplicationsIdRoute
+  '/teams/act/$token': typeof AuthenticatedTeamsActTokenRoute
   '/api/public/blueprint-status/$intakeId': typeof ApiPublicBlueprintStatusIntakeIdRoute
   '/api/public/candidate/closure-notices': typeof ApiPublicCandidateClosureNoticesRoute
   '/api/public/digest/weekly': typeof ApiPublicDigestWeeklyRoute
@@ -1281,6 +1289,7 @@ export interface FileRoutesByTo {
   '/client/conversations/$conversationId': typeof AuthenticatedClientConversationsConversationIdRoute
   '/client/positions/$id': typeof AuthenticatedClientPositionsIdRoute
   '/me/applications/$id': typeof AuthenticatedMeApplicationsIdRoute
+  '/teams/act/$token': typeof AuthenticatedTeamsActTokenRoute
   '/api/public/blueprint-status/$intakeId': typeof ApiPublicBlueprintStatusIntakeIdRoute
   '/api/public/candidate/closure-notices': typeof ApiPublicCandidateClosureNoticesRoute
   '/api/public/digest/weekly': typeof ApiPublicDigestWeeklyRoute
@@ -1438,6 +1447,7 @@ export interface FileRoutesById {
   '/_authenticated/client/conversations/$conversationId': typeof AuthenticatedClientConversationsConversationIdRoute
   '/_authenticated/client/positions/$id': typeof AuthenticatedClientPositionsIdRoute
   '/_authenticated/me/applications/$id': typeof AuthenticatedMeApplicationsIdRoute
+  '/_authenticated/teams/act/$token': typeof AuthenticatedTeamsActTokenRoute
   '/api/public/blueprint-status/$intakeId': typeof ApiPublicBlueprintStatusIntakeIdRoute
   '/api/public/candidate/closure-notices': typeof ApiPublicCandidateClosureNoticesRoute
   '/api/public/digest/weekly': typeof ApiPublicDigestWeeklyRoute
@@ -1595,6 +1605,7 @@ export interface FileRouteTypes {
     | '/client/conversations/$conversationId'
     | '/client/positions/$id'
     | '/me/applications/$id'
+    | '/teams/act/$token'
     | '/api/public/blueprint-status/$intakeId'
     | '/api/public/candidate/closure-notices'
     | '/api/public/digest/weekly'
@@ -1740,6 +1751,7 @@ export interface FileRouteTypes {
     | '/client/conversations/$conversationId'
     | '/client/positions/$id'
     | '/me/applications/$id'
+    | '/teams/act/$token'
     | '/api/public/blueprint-status/$intakeId'
     | '/api/public/candidate/closure-notices'
     | '/api/public/digest/weekly'
@@ -1896,6 +1908,7 @@ export interface FileRouteTypes {
     | '/_authenticated/client/conversations/$conversationId'
     | '/_authenticated/client/positions/$id'
     | '/_authenticated/me/applications/$id'
+    | '/_authenticated/teams/act/$token'
     | '/api/public/blueprint-status/$intakeId'
     | '/api/public/candidate/closure-notices'
     | '/api/public/digest/weekly'
@@ -2969,6 +2982,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicBlueprintStatusIntakeIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/teams/act/$token': {
+      id: '/_authenticated/teams/act/$token'
+      path: '/teams/act/$token'
+      fullPath: '/teams/act/$token'
+      preLoaderRoute: typeof AuthenticatedTeamsActTokenRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/me/applications/$id': {
       id: '/_authenticated/me/applications/$id'
       path: '/$id'
@@ -3369,6 +3389,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedClientRoute: typeof AuthenticatedClientRouteWithChildren
   AuthenticatedMeRoute: typeof AuthenticatedMeRouteWithChildren
   AuthenticatedCheckoutReturnRoute: typeof AuthenticatedCheckoutReturnRoute
+  AuthenticatedTeamsActTokenRoute: typeof AuthenticatedTeamsActTokenRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -3379,6 +3400,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedClientRoute: AuthenticatedClientRouteWithChildren,
   AuthenticatedMeRoute: AuthenticatedMeRouteWithChildren,
   AuthenticatedCheckoutReturnRoute: AuthenticatedCheckoutReturnRoute,
+  AuthenticatedTeamsActTokenRoute: AuthenticatedTeamsActTokenRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
