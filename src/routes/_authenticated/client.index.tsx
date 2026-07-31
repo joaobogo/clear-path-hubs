@@ -130,6 +130,15 @@ function OverviewPage() {
     enabled: !!orgId,
   });
 
+  const pendingRolesFn = useServerFn(listPendingPaymentRoles);
+  const { data: pendingRolesData } = useQuery({
+    queryKey: ["client", "pending-payment-roles", orgId],
+    queryFn: () => pendingRolesFn({ data: { orgId } }),
+    enabled: !!orgId,
+  });
+  const pendingRoles = pendingRolesData?.roles ?? [];
+
+
   useEffect(() => {
     const onRefresh = () => refetch();
     window.addEventListener("client:refresh", onRefresh);
