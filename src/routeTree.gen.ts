@@ -133,6 +133,7 @@ import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/em
 import { Route as ApiPublicPipelineRunRouteImport } from './routes/api/public/pipeline.run'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 import { Route as ApiPublicIntakeStatusIdRouteImport } from './routes/api/public/intake-status.$id'
+import { Route as ApiPublicDigestWeeklyRouteImport } from './routes/api/public/digest/weekly'
 import { Route as ApiPublicBlueprintStatusIntakeIdRouteImport } from './routes/api/public/blueprint-status.$intakeId'
 import { Route as AuthenticatedMeApplicationsIdRouteImport } from './routes/_authenticated/me.applications.$id'
 import { Route as AuthenticatedClientPositionsIdRouteImport } from './routes/_authenticated/client.positions.$id'
@@ -815,6 +816,11 @@ const ApiPublicIntakeStatusIdRoute = ApiPublicIntakeStatusIdRouteImport.update({
   path: '/api/public/intake-status/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicDigestWeeklyRoute = ApiPublicDigestWeeklyRouteImport.update({
+  id: '/api/public/digest/weekly',
+  path: '/api/public/digest/weekly',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicBlueprintStatusIntakeIdRoute =
   ApiPublicBlueprintStatusIntakeIdRouteImport.update({
     id: '/api/public/blueprint-status/$intakeId',
@@ -1025,6 +1031,7 @@ export interface FileRoutesByFullPath {
   '/client/positions/$id': typeof AuthenticatedClientPositionsIdRoute
   '/me/applications/$id': typeof AuthenticatedMeApplicationsIdRoute
   '/api/public/blueprint-status/$intakeId': typeof ApiPublicBlueprintStatusIntakeIdRoute
+  '/api/public/digest/weekly': typeof ApiPublicDigestWeeklyRoute
   '/api/public/intake-status/$id': typeof ApiPublicIntakeStatusIdRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/api/public/pipeline/run': typeof ApiPublicPipelineRunRoute
@@ -1155,6 +1162,7 @@ export interface FileRoutesByTo {
   '/client/positions/$id': typeof AuthenticatedClientPositionsIdRoute
   '/me/applications/$id': typeof AuthenticatedMeApplicationsIdRoute
   '/api/public/blueprint-status/$intakeId': typeof ApiPublicBlueprintStatusIntakeIdRoute
+  '/api/public/digest/weekly': typeof ApiPublicDigestWeeklyRoute
   '/api/public/intake-status/$id': typeof ApiPublicIntakeStatusIdRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/api/public/pipeline/run': typeof ApiPublicPipelineRunRoute
@@ -1297,6 +1305,7 @@ export interface FileRoutesById {
   '/_authenticated/client/positions/$id': typeof AuthenticatedClientPositionsIdRoute
   '/_authenticated/me/applications/$id': typeof AuthenticatedMeApplicationsIdRoute
   '/api/public/blueprint-status/$intakeId': typeof ApiPublicBlueprintStatusIntakeIdRoute
+  '/api/public/digest/weekly': typeof ApiPublicDigestWeeklyRoute
   '/api/public/intake-status/$id': typeof ApiPublicIntakeStatusIdRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/api/public/pipeline/run': typeof ApiPublicPipelineRunRoute
@@ -1439,6 +1448,7 @@ export interface FileRouteTypes {
     | '/client/positions/$id'
     | '/me/applications/$id'
     | '/api/public/blueprint-status/$intakeId'
+    | '/api/public/digest/weekly'
     | '/api/public/intake-status/$id'
     | '/api/public/payments/webhook'
     | '/api/public/pipeline/run'
@@ -1569,6 +1579,7 @@ export interface FileRouteTypes {
     | '/client/positions/$id'
     | '/me/applications/$id'
     | '/api/public/blueprint-status/$intakeId'
+    | '/api/public/digest/weekly'
     | '/api/public/intake-status/$id'
     | '/api/public/payments/webhook'
     | '/api/public/pipeline/run'
@@ -1710,6 +1721,7 @@ export interface FileRouteTypes {
     | '/_authenticated/client/positions/$id'
     | '/_authenticated/me/applications/$id'
     | '/api/public/blueprint-status/$intakeId'
+    | '/api/public/digest/weekly'
     | '/api/public/intake-status/$id'
     | '/api/public/payments/webhook'
     | '/api/public/pipeline/run'
@@ -1794,6 +1806,7 @@ export interface RootRouteChildren {
   JobsIdApplyRoute: typeof JobsIdApplyRoute
   JobsIdIndexRoute: typeof JobsIdIndexRoute
   ApiPublicBlueprintStatusIntakeIdRoute: typeof ApiPublicBlueprintStatusIntakeIdRoute
+  ApiPublicDigestWeeklyRoute: typeof ApiPublicDigestWeeklyRoute
   ApiPublicIntakeStatusIdRoute: typeof ApiPublicIntakeStatusIdRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
   ApiPublicPipelineRunRoute: typeof ApiPublicPipelineRunRoute
@@ -2672,6 +2685,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicIntakeStatusIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/digest/weekly': {
+      id: '/api/public/digest/weekly'
+      path: '/api/public/digest/weekly'
+      fullPath: '/api/public/digest/weekly'
+      preLoaderRoute: typeof ApiPublicDigestWeeklyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/blueprint-status/$intakeId': {
       id: '/api/public/blueprint-status/$intakeId'
       path: '/api/public/blueprint-status/$intakeId'
@@ -3124,6 +3144,7 @@ const rootRouteChildren: RootRouteChildren = {
   JobsIdApplyRoute: JobsIdApplyRoute,
   JobsIdIndexRoute: JobsIdIndexRoute,
   ApiPublicBlueprintStatusIntakeIdRoute: ApiPublicBlueprintStatusIntakeIdRoute,
+  ApiPublicDigestWeeklyRoute: ApiPublicDigestWeeklyRoute,
   ApiPublicIntakeStatusIdRoute: ApiPublicIntakeStatusIdRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
   ApiPublicPipelineRunRoute: ApiPublicPipelineRunRoute,

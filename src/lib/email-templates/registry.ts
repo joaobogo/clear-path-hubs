@@ -6,6 +6,7 @@ import { template as blueprintDelayedTemplate } from './blueprint-delayed'
 import { template as searchLiveTemplate } from './search-live'
 import { template as intakeConfirmationTemplate } from './intake-confirmation'
 import { template as paymentReceiptTemplate } from './payment-receipt'
+import { template as clientWeeklyDigestTemplate } from './client-weekly-digest'
 
 
 
