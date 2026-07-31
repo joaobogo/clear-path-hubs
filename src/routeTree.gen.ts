@@ -98,6 +98,7 @@ import { Route as AuthenticatedClientCandidatesRouteImport } from './routes/_aut
 import { Route as AuthenticatedClientAssistantRouteImport } from './routes/_authenticated/client.assistant'
 import { Route as AuthenticatedClientAnalyticsRouteImport } from './routes/_authenticated/client.analytics'
 import { Route as AuthenticatedClientAccountRouteImport } from './routes/_authenticated/client.account'
+import { Route as AuthenticatedCheckoutReturnRouteImport } from './routes/_authenticated/checkout_.return'
 import { Route as AuthenticatedAdminWbrRouteImport } from './routes/_authenticated/admin.wbr'
 import { Route as AuthenticatedAdminTeamRouteImport } from './routes/_authenticated/admin.team'
 import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin.settings'
@@ -609,6 +610,12 @@ const AuthenticatedClientAccountRoute =
     path: '/account',
     getParentRoute: () => AuthenticatedClientRoute,
   } as any)
+const AuthenticatedCheckoutReturnRoute =
+  AuthenticatedCheckoutReturnRouteImport.update({
+    id: '/checkout_/return',
+    path: '/checkout/return',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAdminWbrRoute = AuthenticatedAdminWbrRouteImport.update({
   id: '/wbr',
   path: '/wbr',
@@ -955,6 +962,7 @@ export interface FileRoutesByFullPath {
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/team': typeof AuthenticatedAdminTeamRoute
   '/admin/wbr': typeof AuthenticatedAdminWbrRoute
+  '/checkout/return': typeof AuthenticatedCheckoutReturnRoute
   '/client/account': typeof AuthenticatedClientAccountRoute
   '/client/analytics': typeof AuthenticatedClientAnalyticsRoute
   '/client/assistant': typeof AuthenticatedClientAssistantRoute
@@ -1085,6 +1093,7 @@ export interface FileRoutesByTo {
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/team': typeof AuthenticatedAdminTeamRoute
   '/admin/wbr': typeof AuthenticatedAdminWbrRoute
+  '/checkout/return': typeof AuthenticatedCheckoutReturnRoute
   '/client/account': typeof AuthenticatedClientAccountRoute
   '/client/analytics': typeof AuthenticatedClientAnalyticsRoute
   '/client/assistant': typeof AuthenticatedClientAssistantRoute
@@ -1221,6 +1230,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/_authenticated/admin/team': typeof AuthenticatedAdminTeamRoute
   '/_authenticated/admin/wbr': typeof AuthenticatedAdminWbrRoute
+  '/_authenticated/checkout_/return': typeof AuthenticatedCheckoutReturnRoute
   '/_authenticated/client/account': typeof AuthenticatedClientAccountRoute
   '/_authenticated/client/analytics': typeof AuthenticatedClientAnalyticsRoute
   '/_authenticated/client/assistant': typeof AuthenticatedClientAssistantRoute
@@ -1360,6 +1370,7 @@ export interface FileRouteTypes {
     | '/admin/settings'
     | '/admin/team'
     | '/admin/wbr'
+    | '/checkout/return'
     | '/client/account'
     | '/client/analytics'
     | '/client/assistant'
@@ -1490,6 +1501,7 @@ export interface FileRouteTypes {
     | '/admin/settings'
     | '/admin/team'
     | '/admin/wbr'
+    | '/checkout/return'
     | '/client/account'
     | '/client/analytics'
     | '/client/assistant'
@@ -1625,6 +1637,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/settings'
     | '/_authenticated/admin/team'
     | '/_authenticated/admin/wbr'
+    | '/_authenticated/checkout_/return'
     | '/_authenticated/client/account'
     | '/_authenticated/client/analytics'
     | '/_authenticated/client/assistant'
@@ -2388,6 +2401,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedClientAccountRouteImport
       parentRoute: typeof AuthenticatedClientRoute
     }
+    '/_authenticated/checkout_/return': {
+      id: '/_authenticated/checkout_/return'
+      path: '/checkout/return'
+      fullPath: '/checkout/return'
+      preLoaderRoute: typeof AuthenticatedCheckoutReturnRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/admin/wbr': {
       id: '/_authenticated/admin/wbr'
       path: '/wbr'
@@ -2985,6 +3005,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedCheckoutRoute: typeof AuthenticatedCheckoutRoute
   AuthenticatedClientRoute: typeof AuthenticatedClientRouteWithChildren
   AuthenticatedMeRoute: typeof AuthenticatedMeRouteWithChildren
+  AuthenticatedCheckoutReturnRoute: typeof AuthenticatedCheckoutReturnRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -2993,6 +3014,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedCheckoutRoute: AuthenticatedCheckoutRoute,
   AuthenticatedClientRoute: AuthenticatedClientRouteWithChildren,
   AuthenticatedMeRoute: AuthenticatedMeRouteWithChildren,
+  AuthenticatedCheckoutReturnRoute: AuthenticatedCheckoutReturnRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
