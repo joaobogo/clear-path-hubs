@@ -105,7 +105,7 @@ function LoginPage() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [mode, setMode] = useState<"signin" | "forgot">("signin");
+  const [mode, setMode] = useState<"signin" | "forgot" | "confirm">("signin");
   const [pickerFor, setPickerFor] = useState<SessionMembership[] | null>(null);
 
   // Already signed in? Route accordingly.
