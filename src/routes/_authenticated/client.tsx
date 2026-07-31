@@ -35,6 +35,7 @@ import {
  Building2,
 	Settings,
 	Award,
+	Database,
 	Bot,
  	CheckSquare,
  	Plus,

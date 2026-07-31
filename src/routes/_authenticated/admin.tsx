@@ -18,6 +18,7 @@ import {
   Bot,
   Bell,
   ClipboardCheck,
+  Database,
   HeartPulse,
   Scale,
   ShieldCheck,
