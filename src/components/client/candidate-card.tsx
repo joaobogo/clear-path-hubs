@@ -115,9 +115,8 @@ export function CandidateCard({
       <div className="mt-4">
         <div className="flex items-baseline justify-between gap-2">
           <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
-            Why we shortlisted
+            Evidence against your requirements
           </div>
-          <div className="text-[10px] text-muted-foreground tabular-nums">{rationale.summary}</div>
         </div>
         {bullets.length > 0 ? (
           <ul className="mt-2 space-y-1.5">
