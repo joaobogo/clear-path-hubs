@@ -144,7 +144,9 @@ function AdminLayout() {
       navItems={NAV}
       searchScope="admin"
     >
+      <SectionTabs groups={ADMIN_SECTION_GROUPS} />
       <Outlet />
+
     </WorkspaceShell>
   );
 }
