@@ -37,9 +37,11 @@ import {
  Info,
  LogOut,
  Mail,
+ MessagesSquare,
  ShieldCheck,
  User,
 } from "lucide-react";
+import { TeamsConnectionCard } from "@/components/client/teams-connection-card";
 
 export const Route = createFileRoute("/_authenticated/client/settings")({
  head: () => ({
@@ -182,11 +184,20 @@ function SettingsPage() {
  canEdit={!isViewer && !readOnlySupport}
  />
 
- <CommunicationSection
- orgId={orgId}
- initial={settings.notifications}
- canEdit={!isViewer && !readOnlySupport}
- />
+          <CommunicationSection
+            orgId={orgId}
+            initial={settings.notifications}
+            canEdit={!isViewer && !readOnlySupport}
+          />
+
+          <SectionCard
+            icon={<MessagesSquare className="h-5 w-5" />}
+            title="Microsoft Teams"
+            description="Send workspace updates into a Teams channel your team already watches."
+          >
+            <TeamsConnectionCard orgId={orgId} canEdit={!!isAdmin && !readOnlySupport} />
+          </SectionCard>
+
 
  <TimezoneSection
  orgId={orgId}

@@ -10916,6 +10916,237 @@ export type Database = {
           },
         ]
       }
+      teams_action_links: {
+        Row: {
+          action: string
+          candidate_match_id: string
+          created_at: string
+          expires_at: string
+          id: string
+          organization_id: string
+          token_hash: string
+          used_at: string | null
+          used_by: string | null
+        }
+        Insert: {
+          action: string
+          candidate_match_id: string
+          created_at?: string
+          expires_at: string
+          id?: string
+          organization_id: string
+          token_hash: string
+          used_at?: string | null
+          used_by?: string | null
+        }
+        Update: {
+          action?: string
+          candidate_match_id?: string
+          created_at?: string
+          expires_at?: string
+          id?: string
+          organization_id?: string
+          token_hash?: string
+          used_at?: string | null
+          used_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "teams_action_links_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "admin_candidate_matches_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "teams_action_links_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "admin_work_inbox"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "teams_action_links_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_matches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "teams_action_links_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "client_candidate_matches_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "teams_action_links_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "client_kanban_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "teams_action_links_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "client_visible_candidates"
+            referencedColumns: ["candidate_match_id"]
+          },
+          {
+            foreignKeyName: "teams_action_links_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "v_admin_candidate_index"
+            referencedColumns: ["match_id"]
+          },
+          {
+            foreignKeyName: "teams_action_links_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "v_scoring_review_queue"
+            referencedColumns: ["match_id"]
+          },
+          {
+            foreignKeyName: "teams_action_links_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "v_source_attribution"
+            referencedColumns: ["match_id"]
+          },
+          {
+            foreignKeyName: "teams_action_links_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "admin_clients_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "teams_action_links_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "teams_action_links_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_portfolio_rollup"
+            referencedColumns: ["organization_id"]
+          },
+        ]
+      }
+      teams_channel_links: {
+        Row: {
+          channel_id: string
+          channel_label: string | null
+          connected_by: string | null
+          created_at: string
+          enabled: boolean
+          events: string[]
+          organization_id: string
+          team_id: string
+          updated_at: string
+        }
+        Insert: {
+          channel_id: string
+          channel_label?: string | null
+          connected_by?: string | null
+          created_at?: string
+          enabled?: boolean
+          events?: string[]
+          organization_id: string
+          team_id: string
+          updated_at?: string
+        }
+        Update: {
+          channel_id?: string
+          channel_label?: string | null
+          connected_by?: string | null
+          created_at?: string
+          enabled?: boolean
+          events?: string[]
+          organization_id?: string
+          team_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "teams_channel_links_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: true
+            referencedRelation: "admin_clients_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "teams_channel_links_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: true
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "teams_channel_links_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: true
+            referencedRelation: "v_portfolio_rollup"
+            referencedColumns: ["organization_id"]
+          },
+        ]
+      }
+      teams_delivery_log: {
+        Row: {
+          created_at: string
+          error_code: string | null
+          error_message: string | null
+          event_type: string | null
+          id: string
+          organization_id: string | null
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          error_code?: string | null
+          error_message?: string | null
+          event_type?: string | null
+          id?: string
+          organization_id?: string | null
+          status: string
+        }
+        Update: {
+          created_at?: string
+          error_code?: string | null
+          error_message?: string | null
+          event_type?: string | null
+          id?: string
+          organization_id?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "teams_delivery_log_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "admin_clients_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "teams_delivery_log_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "teams_delivery_log_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_portfolio_rollup"
+            referencedColumns: ["organization_id"]
+          },
+        ]
+      }
       trace_index: {
         Row: {
           action: string
@@ -13133,7 +13364,7 @@ export type Database = {
         | "invite_members"
         | "view_reports"
       client_visibility: "hidden" | "visible" | "archived"
-      delivery_channel: "in_app" | "email" | "sms"
+      delivery_channel: "in_app" | "email" | "sms" | "teams"
       delivery_status:
         | "created"
         | "queued"
@@ -13563,7 +13794,7 @@ export const Constants = {
         "view_reports",
       ],
       client_visibility: ["hidden", "visible", "archived"],
-      delivery_channel: ["in_app", "email", "sms"],
+      delivery_channel: ["in_app", "email", "sms", "teams"],
       delivery_status: [
         "created",
         "queued",
