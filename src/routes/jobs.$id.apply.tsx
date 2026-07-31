@@ -97,6 +97,7 @@ function ApplyPage() {
   });
   // Account creation for applicants who are not signed in.
   const [signedIn, setSignedIn] = useState<boolean | null>(null);
+  const [wantsAccount, setWantsAccount] = useState(false);
   const [password, setPassword] = useState("");
   const [password2, setPassword2] = useState("");
   const [cvFile, setCvFile] = useState<File | null>(null);
