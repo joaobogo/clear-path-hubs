@@ -102,6 +102,8 @@ function ApplyPage() {
   const [password2, setPassword2] = useState("");
   const [cvFile, setCvFile] = useState<File | null>(null);
   const [cvError, setCvError] = useState<string | null>(null);
+  const [cvChecking, setCvChecking] = useState(false);
+  const [phase, setPhase] = useState<"idle" | "reading" | "sending">("idle");
   const [answers, setAnswers] = useState<Record<string, AnswerValue>>({});
   const [consent, setConsent] = useState(false);
   const [network, setNetwork] = useState(false);
