@@ -1813,6 +1813,7 @@ export type Database = {
           decision: Database["public"]["Enums"]["client_decision_type"]
           details: Json | null
           feedback: string | null
+          from_stage: string | null
           id: string
           legacy_source_id: string | null
           legacy_source_system: string | null
@@ -1825,6 +1826,8 @@ export type Database = {
           migration_version: string | null
           organization_id: string
           reason_code: string | null
+          reversed_at: string | null
+          reversed_by: string | null
           updated_at: string
         }
         Insert: {
@@ -1834,6 +1837,7 @@ export type Database = {
           decision: Database["public"]["Enums"]["client_decision_type"]
           details?: Json | null
           feedback?: string | null
+          from_stage?: string | null
           id?: string
           legacy_source_id?: string | null
           legacy_source_system?: string | null
@@ -1846,6 +1850,8 @@ export type Database = {
           migration_version?: string | null
           organization_id: string
           reason_code?: string | null
+          reversed_at?: string | null
+          reversed_by?: string | null
           updated_at?: string
         }
         Update: {
@@ -1855,6 +1861,7 @@ export type Database = {
           decision?: Database["public"]["Enums"]["client_decision_type"]
           details?: Json | null
           feedback?: string | null
+          from_stage?: string | null
           id?: string
           legacy_source_id?: string | null
           legacy_source_system?: string | null
@@ -1867,6 +1874,8 @@ export type Database = {
           migration_version?: string | null
           organization_id?: string
           reason_code?: string | null
+          reversed_at?: string | null
+          reversed_by?: string | null
           updated_at?: string
         }
         Relationships: [
