@@ -8,7 +8,7 @@ import { z } from "zod";
  */
 
 const draftSchema = z.object({
-  payload: z.record(z.string(), z.unknown()),
+  payload: z.record(z.string(), z.any()),
 });
 
 export const saveIntakeDraft = createServerFn({ method: "POST" })
@@ -18,7 +18,7 @@ export const saveIntakeDraft = createServerFn({ method: "POST" })
     const { error } = await context.supabase.from("intake_drafts").upsert(
       {
         user_id: context.userId,
-        payload: data.payload as Record<string, unknown>,
+        payload: data.payload as any,
         updated_at: new Date().toISOString(),
       },
       { onConflict: "user_id" },
@@ -37,7 +37,7 @@ export const loadIntakeDraft = createServerFn({ method: "GET" })
       .maybeSingle();
     if (error) throw new Error(error.message);
     return {
-      payload: (data?.payload ?? null) as Record<string, unknown> | null,
+      payload: (data?.payload ?? null) as Record<string, any> | null,
       updatedAt: data?.updated_at ?? null,
     };
   });
