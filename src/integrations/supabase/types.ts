@@ -3742,6 +3742,67 @@ export type Database = {
           },
         ]
       }
+      internal_notes: {
+        Row: {
+          author_user_id: string | null
+          body: string
+          created_at: string
+          entity_id: string
+          entity_type: string
+          id: string
+          kind: string
+          organization_id: string | null
+          pinned: boolean
+          updated_at: string
+        }
+        Insert: {
+          author_user_id?: string | null
+          body: string
+          created_at?: string
+          entity_id: string
+          entity_type: string
+          id?: string
+          kind?: string
+          organization_id?: string | null
+          pinned?: boolean
+          updated_at?: string
+        }
+        Update: {
+          author_user_id?: string | null
+          body?: string
+          created_at?: string
+          entity_id?: string
+          entity_type?: string
+          id?: string
+          kind?: string
+          organization_id?: string | null
+          pinned?: boolean
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "internal_notes_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "admin_clients_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "internal_notes_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "internal_notes_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_portfolio_rollup"
+            referencedColumns: ["organization_id"]
+          },
+        ]
+      }
       interview_scorecards: {
         Row: {
           candidate_match_id: string
@@ -5478,6 +5539,8 @@ export type Database = {
           audience: Database["public"]["Enums"]["notification_audience"]
           body: string | null
           created_at: string
+          entity_id: string | null
+          entity_type: string | null
           event_id: string | null
           event_type: Database["public"]["Enums"]["event_type"]
           id: string
@@ -5494,12 +5557,15 @@ export type Database = {
           organization_id: string | null
           read_at: string | null
           recipient_user_id: string
+          resolved_at: string | null
           title: string
         }
         Insert: {
           audience: Database["public"]["Enums"]["notification_audience"]
           body?: string | null
           created_at?: string
+          entity_id?: string | null
+          entity_type?: string | null
           event_id?: string | null
           event_type: Database["public"]["Enums"]["event_type"]
           id?: string
@@ -5516,12 +5582,15 @@ export type Database = {
           organization_id?: string | null
           read_at?: string | null
           recipient_user_id: string
+          resolved_at?: string | null
           title: string
         }
         Update: {
           audience?: Database["public"]["Enums"]["notification_audience"]
           body?: string | null
           created_at?: string
+          entity_id?: string | null
+          entity_type?: string | null
           event_id?: string | null
           event_type?: Database["public"]["Enums"]["event_type"]
           id?: string
@@ -5538,6 +5607,7 @@ export type Database = {
           organization_id?: string | null
           read_at?: string | null
           recipient_user_id?: string
+          resolved_at?: string | null
           title?: string
         }
         Relationships: [

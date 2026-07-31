@@ -3,6 +3,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { Link } from "@tanstack/react-router";
 import { Bell } from "lucide-react";
 import { listMyNotifications, markNotificationsRead } from "@/lib/notifications.functions";
+import { resolveNotification } from "@/lib/admin-workbench.functions";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -19,6 +20,12 @@ export function NotificationBell() {
     queryFn: () => list(),
     refetchOnWindowFocus: true,
     staleTime: 15_000,
+  });
+
+  const resolveFn = useServerFn(resolveNotification);
+  const resolveMutation = useMutation({
+    mutationFn: (ids: string[]) => resolveFn({ data: { ids } }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: NOTIFICATIONS_QUERY_KEY }),
   });
 
   const markMutation = useMutation({
@@ -70,6 +77,17 @@ export function NotificationBell() {
                       <div className="text-[10px] text-muted-foreground mt-1">
                         {new Date(n.created_at).toLocaleString()}
                       </div>
+                      <button
+                        type="button"
+                        className="mt-1 text-[10px] underline text-muted-foreground hover:text-foreground"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          resolveMutation.mutate([n.id]);
+                        }}
+                      >
+                        Mark done
+                      </button>
                     </div>
                   </div>
                 );

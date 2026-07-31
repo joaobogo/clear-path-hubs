@@ -103,6 +103,8 @@ import { Route as AuthenticatedClientAccountRouteImport } from './routes/_authen
 import { Route as AuthenticatedCheckoutReturnRouteImport } from './routes/_authenticated/checkout_.return'
 import { Route as AuthenticatedAdminWbrRouteImport } from './routes/_authenticated/admin.wbr'
 import { Route as AuthenticatedAdminTeamRouteImport } from './routes/_authenticated/admin.team'
+import { Route as AuthenticatedAdminSupportRouteImport } from './routes/_authenticated/admin.support'
+import { Route as AuthenticatedAdminSlaRouteImport } from './routes/_authenticated/admin.sla'
 import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin.settings'
 import { Route as AuthenticatedAdminQaReportRouteImport } from './routes/_authenticated/admin.qa-report'
 import { Route as AuthenticatedAdminPublishRouteImport } from './routes/_authenticated/admin.publish'
@@ -642,6 +644,17 @@ const AuthenticatedAdminTeamRoute = AuthenticatedAdminTeamRouteImport.update({
   path: '/team',
   getParentRoute: () => AuthenticatedAdminRoute,
 } as any)
+const AuthenticatedAdminSupportRoute =
+  AuthenticatedAdminSupportRouteImport.update({
+    id: '/support',
+    path: '/support',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminSlaRoute = AuthenticatedAdminSlaRouteImport.update({
+  id: '/sla',
+  path: '/sla',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
 const AuthenticatedAdminSettingsRoute =
   AuthenticatedAdminSettingsRouteImport.update({
     id: '/settings',
@@ -1001,6 +1014,8 @@ export interface FileRoutesByFullPath {
   '/admin/publish': typeof AuthenticatedAdminPublishRoute
   '/admin/qa-report': typeof AuthenticatedAdminQaReportRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
+  '/admin/sla': typeof AuthenticatedAdminSlaRoute
+  '/admin/support': typeof AuthenticatedAdminSupportRoute
   '/admin/team': typeof AuthenticatedAdminTeamRoute
   '/admin/wbr': typeof AuthenticatedAdminWbrRoute
   '/checkout/return': typeof AuthenticatedCheckoutReturnRoute
@@ -1138,6 +1153,8 @@ export interface FileRoutesByTo {
   '/admin/publish': typeof AuthenticatedAdminPublishRoute
   '/admin/qa-report': typeof AuthenticatedAdminQaReportRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
+  '/admin/sla': typeof AuthenticatedAdminSlaRoute
+  '/admin/support': typeof AuthenticatedAdminSupportRoute
   '/admin/team': typeof AuthenticatedAdminTeamRoute
   '/admin/wbr': typeof AuthenticatedAdminWbrRoute
   '/checkout/return': typeof AuthenticatedCheckoutReturnRoute
@@ -1281,6 +1298,8 @@ export interface FileRoutesById {
   '/_authenticated/admin/publish': typeof AuthenticatedAdminPublishRoute
   '/_authenticated/admin/qa-report': typeof AuthenticatedAdminQaReportRoute
   '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
+  '/_authenticated/admin/sla': typeof AuthenticatedAdminSlaRoute
+  '/_authenticated/admin/support': typeof AuthenticatedAdminSupportRoute
   '/_authenticated/admin/team': typeof AuthenticatedAdminTeamRoute
   '/_authenticated/admin/wbr': typeof AuthenticatedAdminWbrRoute
   '/_authenticated/checkout_/return': typeof AuthenticatedCheckoutReturnRoute
@@ -1427,6 +1446,8 @@ export interface FileRouteTypes {
     | '/admin/publish'
     | '/admin/qa-report'
     | '/admin/settings'
+    | '/admin/sla'
+    | '/admin/support'
     | '/admin/team'
     | '/admin/wbr'
     | '/checkout/return'
@@ -1564,6 +1585,8 @@ export interface FileRouteTypes {
     | '/admin/publish'
     | '/admin/qa-report'
     | '/admin/settings'
+    | '/admin/sla'
+    | '/admin/support'
     | '/admin/team'
     | '/admin/wbr'
     | '/checkout/return'
@@ -1706,6 +1729,8 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/publish'
     | '/_authenticated/admin/qa-report'
     | '/_authenticated/admin/settings'
+    | '/_authenticated/admin/sla'
+    | '/_authenticated/admin/support'
     | '/_authenticated/admin/team'
     | '/_authenticated/admin/wbr'
     | '/_authenticated/checkout_/return'
@@ -2515,6 +2540,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminTeamRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/support': {
+      id: '/_authenticated/admin/support'
+      path: '/support'
+      fullPath: '/admin/support'
+      preLoaderRoute: typeof AuthenticatedAdminSupportRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/sla': {
+      id: '/_authenticated/admin/sla'
+      path: '/sla'
+      fullPath: '/admin/sla'
+      preLoaderRoute: typeof AuthenticatedAdminSlaRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/settings': {
       id: '/_authenticated/admin/settings'
       path: '/settings'
@@ -2950,6 +2989,8 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminPublishRoute: typeof AuthenticatedAdminPublishRoute
   AuthenticatedAdminQaReportRoute: typeof AuthenticatedAdminQaReportRoute
   AuthenticatedAdminSettingsRoute: typeof AuthenticatedAdminSettingsRoute
+  AuthenticatedAdminSlaRoute: typeof AuthenticatedAdminSlaRoute
+  AuthenticatedAdminSupportRoute: typeof AuthenticatedAdminSupportRoute
   AuthenticatedAdminTeamRoute: typeof AuthenticatedAdminTeamRoute
   AuthenticatedAdminWbrRoute: typeof AuthenticatedAdminWbrRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
@@ -2978,6 +3019,8 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminPublishRoute: AuthenticatedAdminPublishRoute,
   AuthenticatedAdminQaReportRoute: AuthenticatedAdminQaReportRoute,
   AuthenticatedAdminSettingsRoute: AuthenticatedAdminSettingsRoute,
+  AuthenticatedAdminSlaRoute: AuthenticatedAdminSlaRoute,
+  AuthenticatedAdminSupportRoute: AuthenticatedAdminSupportRoute,
   AuthenticatedAdminTeamRoute: AuthenticatedAdminTeamRoute,
   AuthenticatedAdminWbrRoute: AuthenticatedAdminWbrRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,

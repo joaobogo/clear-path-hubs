@@ -23,6 +23,8 @@ import {
   ShieldCheck,
   UserCog,
   Receipt,
+  Timer,
+  LifeBuoy,
 } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
@@ -100,6 +102,8 @@ const NAV: WorkspaceNavItem[] = [
   { to: "/admin/wbr", label: "Weekly Review", icon: CalendarRange, group: "Insight" },
   { to: "/admin/operations", label: "Operations", icon: Activity, group: "Insight", hint: "Pipeline and job health" },
   { to: "/admin/health", label: "System Health", icon: HeartPulse, group: "Insight" },
+  { to: "/admin/sla", label: "SLA Clock", icon: Timer, group: "Insight", hint: "Promises approaching or missed" },
+  { to: "/admin/support", label: "Support View", icon: LifeBuoy, group: "Platform", hint: "Read-only client workspace" },
 
   { to: "/admin/payments", label: "Payments", icon: Receipt, group: "Platform", hint: "Read-only payment ledger" },
   { to: "/admin/team", label: "Team & Access", icon: UserCog, group: "Platform" },

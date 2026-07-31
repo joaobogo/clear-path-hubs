@@ -1,4 +1,5 @@
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
+import { InternalNotes } from "@/components/admin/InternalNotes";
 import { createFileRoute, Link, notFound, useRouter } from "@tanstack/react-router";
 import { useSuspenseQuery, useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -208,7 +209,16 @@ function CandidateWorkspace() {
               <ProfileTab cp={cp} pos={pos} m={m} siblings={siblings} evidence={evidence} />
             )}
             {tab === "dossier" && <AdminDossier matchId={id} />}
-            {tab === "journey" && <JourneyTab matchId={id} />}
+            {tab === "journey" && (
+              <div className="space-y-4">
+                <JourneyTab matchId={id} />
+                <InternalNotes
+                  entityType="candidate_match"
+                  entityId={id}
+                  organizationId={m?.organization_id ?? null}
+                />
+              </div>
+            )}
             {tab === "cv" && <CvTab cv={cv} matchId={id} cp={cp} insights={evidence?.extracted?.insights ?? null} />}
             {tab === "enrichment" && <EnrichmentTab cp={cp} evidence={evidence} />}
             {tab === "evidence" && (

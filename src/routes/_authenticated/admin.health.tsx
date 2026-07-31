@@ -8,6 +8,7 @@ import { advanceProcessing, retryParse } from "@/lib/processing.functions";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { OperationalHealthPanel } from "@/components/admin/OperationalHealthPanel";
 
 export const Route = createFileRoute("/_authenticated/admin/health")({
   loader: ({ context }) =>
@@ -71,6 +72,8 @@ function HealthPage() {
       </header>
 
       {feedback && <Alert><AlertDescription>{feedback}</AlertDescription></Alert>}
+
+      <OperationalHealthPanel />
 
       <section>
         <h2 className="font-semibold mb-2">Backlog by state</h2>
