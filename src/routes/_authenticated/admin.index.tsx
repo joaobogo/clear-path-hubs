@@ -144,7 +144,6 @@ function Overview() {
                 {q.see_all && q.count > q.items.length ? (
                   <Link
                     to={q.see_all.to}
-                    search={q.see_all.search as never}
                     className="shrink-0 whitespace-nowrap text-xs font-medium text-primary hover:underline"
                   >
                     See all {q.count}

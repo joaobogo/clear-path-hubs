@@ -35,7 +35,7 @@ export type WorkQueue = {
   count: number;
   action_hint: string;
   items: QueueItem[];
-  see_all?: { to: string; search?: Record<string, string> };
+  see_all?: { to: string };
 };
 
 const ISO = (ms: number) => new Date(Date.now() - ms).toISOString();
@@ -160,7 +160,7 @@ export async function loadWorkQueues(): Promise<WorkQueue[]> {
       description: "Paid or exempt roles that still need approval and configuration.",
       count: setup.count ?? 0,
       action_hint: "Open the role, complete setup, approve it.",
-      see_all: { to: "/admin/positions", search: { status: "submitted" } },
+      see_all: { to: "/admin/positions" },
       items: ((setup.data ?? []) as Any[]).map((p) => ({
         id: p.id,
         title: p.title,
@@ -179,7 +179,7 @@ export async function loadWorkQueues(): Promise<WorkQueue[]> {
       description: "Scored and waiting on an approve or reject decision.",
       count: review.count ?? 0,
       action_hint: "Review on one screen: evidence, CV and requirements together.",
-      see_all: { to: "/admin/candidates", search: { admin_status: "pending" } },
+      see_all: { to: "/admin/candidates" },
       items: ((review.data ?? []) as Any[]).map((m) => ({
         id: m.id,
         title: m.candidate_profiles?.full_name ?? "Candidate",
@@ -217,7 +217,7 @@ export async function loadWorkQueues(): Promise<WorkQueue[]> {
       description: "Requested but unscheduled, or happening within 48 hours.",
       count: interviews.count ?? 0,
       action_hint: "Confirm the slot and tell both sides.",
-      see_all: { to: "/admin/candidates", search: { has_interview: "true" } },
+      see_all: { to: "/admin/candidates" },
       items: ((interviews.data ?? []) as Any[]).map((iv) => ({
         id: iv.id,
         title: iv.candidate_matches?.candidate_profiles?.full_name ?? "Candidate",
