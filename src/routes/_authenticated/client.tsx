@@ -39,6 +39,7 @@ import {
 	Bot,
  	CheckSquare,
  	Plus,
+ 	Send,
 } from "lucide-react";
 import {
  WorkspaceShell,
