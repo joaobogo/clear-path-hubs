@@ -102,6 +102,7 @@ const TABS: NavDef[] = [
 	{ to: "/client/tasks", label: "Tasks & Approvals", icon: CheckSquare, everyone: true },
  { to: "/client/assistant", label: "Assistant", icon: Bot, everyone: true },
  { to: "/client/talent-memory", label: "Talent memory", icon: Award, everyone: true },
+ { to: "/client/data", label: "Your data", icon: Database, everyone: true },
  { to: "/client/conversations", label: "Conversations", icon: MessageSquare, everyone: true },
  { to: "/client/account", label: "Account", icon: Building2, everyone: false },
  { to: "/client/team", label: "Team", icon: UserCog, everyone: false },

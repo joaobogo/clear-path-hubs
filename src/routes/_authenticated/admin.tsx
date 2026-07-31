@@ -102,6 +102,7 @@ const NAV: WorkspaceNavItem[] = [
   { to: "/admin/wbr", label: "Weekly Review", icon: CalendarRange, group: "Insight" },
   { to: "/admin/operations", label: "Operations", icon: Activity, group: "Insight", hint: "Pipeline and job health" },
   { to: "/admin/health", label: "System Health", icon: HeartPulse, group: "Insight" },
+  { to: "/admin/data-health", label: "Data Health", icon: Database, group: "Insight", hint: "Coverage, duplicates, orphans" },
   { to: "/admin/sla", label: "SLA Clock", icon: Timer, group: "Insight", hint: "Promises approaching or missed" },
   { to: "/admin/support", label: "Support View", icon: LifeBuoy, group: "Platform", hint: "Read-only client workspace" },
 
