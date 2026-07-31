@@ -246,7 +246,7 @@ function JobDetail() {
       <ClosedRole closure={loaderData.closed} alternatives={loaderData.alternatives ?? []} />
     );
   }
-  const pos = fetched ?? loaderData.position;
+  const pos = fetched;
   if (!pos) return null;
 
   const blocks = parseJobDescription(pos.description);
