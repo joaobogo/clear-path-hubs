@@ -9,6 +9,8 @@
  * Routed through the Lovable connector gateway (handles OAuth refresh).
  */
 
+import { createHash } from "node:crypto";
+
 const GATEWAY_URL = "https://connector-gateway.lovable.dev/microsoft_teams";
 
 const TEAM_ID = process.env.TEAMS_TEAM_ID ?? "23502890-88dc-4bf9-9c15-7257018e2a47";
@@ -157,10 +159,7 @@ const ACTION_LABEL: Record<TeamsAction, string> = {
   not_moving_forward: "Decline",
 };
 
-function sha256(value: string): string {
-  // Lazily required so this module stays importable from route graphs.
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const { createHash } = require("node:crypto") as typeof import("node:crypto");
+export function hashActionToken(value: string): string {
   return createHash("sha256").update(value).digest("hex");
 }
 
@@ -181,7 +180,7 @@ async function mintActionLinks(args: {
   for (const action of args.actions) {
     const token = `${crypto.randomUUID()}${crypto.randomUUID()}`.replace(/-/g, "");
     const { error } = await supabaseAdmin.from("teams_action_links").insert({
-      token_hash: sha256(token),
+      token_hash: hashActionToken(token),
       organization_id: args.organizationId,
       candidate_match_id: args.candidateMatchId,
       action,
