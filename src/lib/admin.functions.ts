@@ -896,7 +896,8 @@ export const setPositionStatus = createServerFn({ method: "POST" })
           .maybeSingle();
         if (org && org.pilot_position_id === data.id && !org.pilot_started_at) {
           const startedAt = new Date();
-          const endsAt = new Date(startedAt.getTime() + 14 * 24 * 60 * 60 * 1000);
+          const endsAt = pilotEndsAt(startedAt);
+
           await s
             .from("organizations")
             .update({
