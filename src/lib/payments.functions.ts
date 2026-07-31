@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import {
   type StripeEnv,
+  createCheckoutSessionWithTax,
   createStripeClient,
   getStripeErrorMessage,
 } from "@/lib/stripe.server";
@@ -149,13 +150,12 @@ export const createPositionCheckoutSession = createServerFn({ method: "POST" })
         customerId = created.id;
       }
 
-      const session = await stripe.checkout.sessions.create({
+      const session = await createCheckoutSessionWithTax(stripe, {
         line_items: [{ price: price.id, quantity: 1 }],
         mode: "payment",
         ui_mode: "embedded_page",
         return_url: data.returnUrl,
         customer: customerId,
-        automatic_tax: { enabled: true },
         payment_intent_data: { description: `${product.name} — ${position.title}` },
         metadata: {
           userId,
