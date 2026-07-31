@@ -68,6 +68,7 @@ import { Route as AuthenticatedMeIndexRouteImport } from './routes/_authenticate
 import { Route as AuthenticatedClientIndexRouteImport } from './routes/_authenticated/client.index'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as JobsIdApplyRouteImport } from './routes/jobs.$id.apply'
+import { Route as IndustriesSlugBriefingRouteImport } from './routes/industries.$slug.briefing'
 import { Route as BlogCategorySlugRouteImport } from './routes/blog.category.$slug'
 import { Route as ApplyReceivedApplicationIdRouteImport } from './routes/apply.received.$applicationId'
 import { Route as ApiPublicSubmitToAttioRouteImport } from './routes/api/public/submit-to-attio'
@@ -459,6 +460,11 @@ const JobsIdApplyRoute = JobsIdApplyRouteImport.update({
   id: '/jobs/$id/apply',
   path: '/jobs/$id/apply',
   getParentRoute: () => rootRouteImport,
+} as any)
+const IndustriesSlugBriefingRoute = IndustriesSlugBriefingRouteImport.update({
+  id: '/briefing',
+  path: '/briefing',
+  getParentRoute: () => IndustriesSlugRoute,
 } as any)
 const BlogCategorySlugRoute = BlogCategorySlugRouteImport.update({
   id: '/blog/category/$slug',
@@ -1057,7 +1063,7 @@ export interface FileRoutesByFullPath {
   '/blog/$slug': typeof BlogSlugRoute
   '/dev/catalogue': typeof DevCatalogueRoute
   '/dev/industry-coverage': typeof DevIndustryCoverageRoute
-  '/industries/$slug': typeof IndustriesSlugRoute
+  '/industries/$slug': typeof IndustriesSlugRouteWithChildren
   '/industries/non-profit': typeof IndustriesNonProfitRoute
   '/intake/confirmation': typeof IntakeConfirmationRoute
   '/partnerships/staffing': typeof PartnershipsStaffingRoute
@@ -1128,6 +1134,7 @@ export interface FileRoutesByFullPath {
   '/api/public/submit-to-attio': typeof ApiPublicSubmitToAttioRoute
   '/apply/received/$applicationId': typeof ApplyReceivedApplicationIdRoute
   '/blog/category/$slug': typeof BlogCategorySlugRoute
+  '/industries/$slug/briefing': typeof IndustriesSlugBriefingRoute
   '/jobs/$id/apply': typeof JobsIdApplyRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/client/': typeof AuthenticatedClientIndexRoute
@@ -1210,7 +1217,7 @@ export interface FileRoutesByTo {
   '/blog/$slug': typeof BlogSlugRoute
   '/dev/catalogue': typeof DevCatalogueRoute
   '/dev/industry-coverage': typeof DevIndustryCoverageRoute
-  '/industries/$slug': typeof IndustriesSlugRoute
+  '/industries/$slug': typeof IndustriesSlugRouteWithChildren
   '/industries/non-profit': typeof IndustriesNonProfitRoute
   '/intake/confirmation': typeof IntakeConfirmationRoute
   '/partnerships/staffing': typeof PartnershipsStaffingRoute
@@ -1274,6 +1281,7 @@ export interface FileRoutesByTo {
   '/api/public/submit-to-attio': typeof ApiPublicSubmitToAttioRoute
   '/apply/received/$applicationId': typeof ApplyReceivedApplicationIdRoute
   '/blog/category/$slug': typeof BlogCategorySlugRoute
+  '/industries/$slug/briefing': typeof IndustriesSlugBriefingRoute
   '/jobs/$id/apply': typeof JobsIdApplyRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/client': typeof AuthenticatedClientIndexRoute
@@ -1361,7 +1369,7 @@ export interface FileRoutesById {
   '/blog/$slug': typeof BlogSlugRoute
   '/dev/catalogue': typeof DevCatalogueRoute
   '/dev/industry-coverage': typeof DevIndustryCoverageRoute
-  '/industries/$slug': typeof IndustriesSlugRoute
+  '/industries/$slug': typeof IndustriesSlugRouteWithChildren
   '/industries/non-profit': typeof IndustriesNonProfitRoute
   '/intake_/confirmation': typeof IntakeConfirmationRoute
   '/partnerships/staffing': typeof PartnershipsStaffingRoute
@@ -1432,6 +1440,7 @@ export interface FileRoutesById {
   '/api/public/submit-to-attio': typeof ApiPublicSubmitToAttioRoute
   '/apply/received/$applicationId': typeof ApplyReceivedApplicationIdRoute
   '/blog/category/$slug': typeof BlogCategorySlugRoute
+  '/industries/$slug/briefing': typeof IndustriesSlugBriefingRoute
   '/jobs/$id/apply': typeof JobsIdApplyRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/client/': typeof AuthenticatedClientIndexRoute
@@ -1590,6 +1599,7 @@ export interface FileRouteTypes {
     | '/api/public/submit-to-attio'
     | '/apply/received/$applicationId'
     | '/blog/category/$slug'
+    | '/industries/$slug/briefing'
     | '/jobs/$id/apply'
     | '/admin/'
     | '/client/'
@@ -1736,6 +1746,7 @@ export interface FileRouteTypes {
     | '/api/public/submit-to-attio'
     | '/apply/received/$applicationId'
     | '/blog/category/$slug'
+    | '/industries/$slug/briefing'
     | '/jobs/$id/apply'
     | '/admin'
     | '/client'
@@ -1893,6 +1904,7 @@ export interface FileRouteTypes {
     | '/api/public/submit-to-attio'
     | '/apply/received/$applicationId'
     | '/blog/category/$slug'
+    | '/industries/$slug/briefing'
     | '/jobs/$id/apply'
     | '/_authenticated/admin/'
     | '/_authenticated/client/'
@@ -1974,7 +1986,7 @@ export interface RootRouteChildren {
   BlogSlugRoute: typeof BlogSlugRoute
   DevCatalogueRoute: typeof DevCatalogueRoute
   DevIndustryCoverageRoute: typeof DevIndustryCoverageRoute
-  IndustriesSlugRoute: typeof IndustriesSlugRoute
+  IndustriesSlugRoute: typeof IndustriesSlugRouteWithChildren
   IndustriesNonProfitRoute: typeof IndustriesNonProfitRoute
   IntakeConfirmationRoute: typeof IntakeConfirmationRoute
   PartnershipsStaffingRoute: typeof PartnershipsStaffingRoute
@@ -2421,6 +2433,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/jobs/$id/apply'
       preLoaderRoute: typeof JobsIdApplyRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/industries/$slug/briefing': {
+      id: '/industries/$slug/briefing'
+      path: '/briefing'
+      fullPath: '/industries/$slug/briefing'
+      preLoaderRoute: typeof IndustriesSlugBriefingRouteImport
+      parentRoute: typeof IndustriesSlugRoute
     }
     '/blog/category/$slug': {
       id: '/blog/category/$slug'
@@ -3406,6 +3425,18 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
 const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
+interface IndustriesSlugRouteChildren {
+  IndustriesSlugBriefingRoute: typeof IndustriesSlugBriefingRoute
+}
+
+const IndustriesSlugRouteChildren: IndustriesSlugRouteChildren = {
+  IndustriesSlugBriefingRoute: IndustriesSlugBriefingRoute,
+}
+
+const IndustriesSlugRouteWithChildren = IndustriesSlugRoute._addFileChildren(
+  IndustriesSlugRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
@@ -3446,7 +3477,7 @@ const rootRouteChildren: RootRouteChildren = {
   BlogSlugRoute: BlogSlugRoute,
   DevCatalogueRoute: DevCatalogueRoute,
   DevIndustryCoverageRoute: DevIndustryCoverageRoute,
-  IndustriesSlugRoute: IndustriesSlugRoute,
+  IndustriesSlugRoute: IndustriesSlugRouteWithChildren,
   IndustriesNonProfitRoute: IndustriesNonProfitRoute,
   IntakeConfirmationRoute: IntakeConfirmationRoute,
   PartnershipsStaffingRoute: PartnershipsStaffingRoute,

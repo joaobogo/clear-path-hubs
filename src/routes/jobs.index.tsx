@@ -96,7 +96,7 @@ function JobsPage() {
   const { data: positions } = useSuspenseQuery(positionsQuery);
 
   const search = Route.useSearch();
-  const navigate = useNavigate({ from: "/jobs" });
+  const navigate = useNavigate({ from: "/jobs/" });
 
   const q = search.q.slice(0, 120);
   const location = search.location.slice(0, 120);
