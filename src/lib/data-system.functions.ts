@@ -462,7 +462,7 @@ export type PersonGraph = {
     occurred_at: string;
     position_id: string | null;
     source_table: string;
-    payload: Record<string, unknown>;
+    payload: Record<string, string | number | boolean | null>;
   }>;
   provenance: Provenance;
 };
