@@ -182,11 +182,20 @@ function SettingsPage() {
  canEdit={!isViewer && !readOnlySupport}
  />
 
- <CommunicationSection
- orgId={orgId}
- initial={settings.notifications}
- canEdit={!isViewer && !readOnlySupport}
- />
+          <CommunicationSection
+            orgId={orgId}
+            initial={settings.notifications}
+            canEdit={!isViewer && !readOnlySupport}
+          />
+
+          <SectionCard
+            icon={<MessagesSquare className="h-5 w-5" />}
+            title="Microsoft Teams"
+            description="Send workspace updates into a Teams channel your team already watches."
+          >
+            <TeamsConnectionCard orgId={orgId} canEdit={!!isAdmin && !readOnlySupport} />
+          </SectionCard>
+
 
  <TimezoneSection
  orgId={orgId}
