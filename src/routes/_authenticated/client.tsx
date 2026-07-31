@@ -114,10 +114,15 @@ const TABS: NavDef[] = [
 	{ to: "/client/account", label: "Account", icon: Building2, everyone: false, hint: "Team, plan, settings" },
 ];
 
-const MANAGE_ONLY_PATHS = TABS.filter((t) => !t.everyone).map((t) => t.to);
-const MANAGE_ONLY_LABELS: Record<string, string> = Object.fromEntries(
- TABS.filter((t) => !t.everyone).map((t) => [t.to, t.label]),
-);
+// Manage-only areas are gated by path, not by whether they appear in the rail —
+// several of them are now tabs inside the Account section.
+const MANAGE_ONLY_LABELS: Record<string, string> = {
+	"/client/account": "Account",
+	"/client/team": "Team",
+	"/client/plan": "Plan & billing",
+	"/client/settings": "Settings",
+};
+const MANAGE_ONLY_PATHS = Object.keys(MANAGE_ONLY_LABELS);
 
 function ClientLayout() {
  const ctx = Route.useLoaderData();
