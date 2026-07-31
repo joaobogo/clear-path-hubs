@@ -655,7 +655,11 @@ function ExpressIntakePage() {
               <Input
                 type="email"
                 value={state.workEmail}
-                onChange={(e) => set("workEmail", e.target.value)}
+                onChange={(e) => {
+                  set("workEmail", e.target.value);
+                  setEmailStatus({ kind: "idle" });
+                }}
+                onBlur={() => void checkEmail()}
                 autoComplete="email"
                 inputMode="email"
               />
@@ -679,21 +683,50 @@ function ExpressIntakePage() {
           </Field>
         </Section>
 
-        {authed ? null : (
+        <div id="account-step">
+        {authed ? (
+          <section className="flex items-center gap-3 rounded-xl border border-[color:var(--brand-teal,#0f766e)]/30 bg-[color:var(--brand-teal,#0f766e)]/5 p-4">
+            <Check className="h-5 w-5 shrink-0 text-[color:var(--brand-teal,#0f766e)]" aria-hidden />
+            <p className="text-sm">
+              Signed in as <strong>{accountEmail}</strong>. This role will be added to your existing
+              organisation, and your answers are saved to your account as you type.
+            </p>
+          </section>
+        ) : (
         <Section title="Create your account" step={3}>
+          <p className="text-sm text-[color:var(--brand-navy)]/70">
+            Create it now and nothing you've typed can be lost — you stay on this page the whole time.
+          </p>
+
+          <Button
+            type="button"
+            variant="outline"
+            className="min-h-11 w-full sm:w-auto"
+            disabled={accountBusy}
+            onClick={() => void googleSignIn()}
+          >
+            Continue with Google
+          </Button>
+
+          {emailStatus.kind === "exists" && (
+            <div className="rounded-lg border border-[color:var(--brand-navy)]/15 bg-[color:var(--brand-navy)]/4 p-3 text-sm">
+              {emailStatus.message}
+            </div>
+          )}
+
           <div className="grid gap-4 sm:grid-cols-2">
             <Field
-              label="Password"
+              label={signInMode ? "Password" : "Password"}
               error={errors.password}
               required
-              hint={`At least ${MIN_ACCOUNT_PASSWORD} characters.`}
+              hint={signInMode ? "The password for your existing account." : `At least ${MIN_ACCOUNT_PASSWORD} characters.`}
             >
               <div className="relative">
                 <Input
                   type={showPassword ? "text" : "password"}
                   value={state.password}
                   onChange={(e) => set("password", e.target.value)}
-                  autoComplete="new-password"
+                  autoComplete={signInMode ? "current-password" : "new-password"}
                   className="pr-11"
                 />
                 <button
@@ -710,22 +743,52 @@ function ExpressIntakePage() {
                 </button>
               </div>
             </Field>
-            <Field
-              label="Confirm password"
-              error={errors.confirmPassword}
-              required
-              hint="You'll be signed in straight after submitting."
+            {!signInMode && (
+              <Field
+                label="Confirm password"
+                error={errors.confirmPassword}
+                required
+                hint="Type it once more so we know it's right."
+              >
+                <Input
+                  type={showPassword ? "text" : "password"}
+                  value={state.confirmPassword}
+                  onChange={(e) => set("confirmPassword", e.target.value)}
+                  autoComplete="new-password"
+                />
+              </Field>
+            )}
+          </div>
+
+          <div className="flex flex-wrap items-center gap-3">
+            <Button
+              type="button"
+              className="min-h-11"
+              disabled={accountBusy}
+              onClick={() => void (signInMode ? signInInline() : createAccountInline())}
             >
-              <Input
-                type={showPassword ? "text" : "password"}
-                value={state.confirmPassword}
-                onChange={(e) => set("confirmPassword", e.target.value)}
-                autoComplete="new-password"
-              />
-            </Field>
+              {accountBusy ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden />
+                  Working…
+                </>
+              ) : signInMode ? (
+                "Sign in and continue"
+              ) : (
+                "Create my account now"
+              )}
+            </Button>
+            <button
+              type="button"
+              className="text-sm underline text-[color:var(--brand-navy)]/70"
+              onClick={() => setSignInMode((v) => !v)}
+            >
+              {signInMode ? "I don't have an account yet" : "I already have an account"}
+            </button>
           </div>
         </Section>
         )}
+        </div>
 
         <Section title="The role" step={authed ? 3 : 4}>
           <Field label="Job title" error={errors.roleTitle} required>
