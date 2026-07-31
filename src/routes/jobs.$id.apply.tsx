@@ -503,12 +503,12 @@ function ApplyPage() {
                   )}
                 </div>
                 <div>
-                  <Label htmlFor="region">State / region *</Label>
+                  <Label htmlFor="region">State / region</Label>
                   <Input
                     id="region"
                     autoComplete="address-level1"
                     data-field="region"
-                    placeholder="e.g. Lisbon District"
+                    placeholder="Optional"
                     value={form.region}
                     onChange={(e) => setForm({ ...form, region: e.target.value })}
                   />
@@ -534,15 +534,26 @@ function ApplyPage() {
 
               {signedIn === false && (
                 <div className="rounded-lg border bg-muted/30 p-4 space-y-4">
-                  <div>
-                    <h3 className="text-base font-semibold">Create your candidate account</h3>
-                    <p className="text-sm text-muted-foreground">
-                      Set a password so you can sign in and follow the status of this
-                      application. We use the email above as your username.
-                    </p>
-                  </div>
+                  <label className="flex items-start gap-3">
+                    <Checkbox
+                      checked={wantsAccount}
+                      onCheckedChange={(v) => setWantsAccount(v === true)}
+                      className="mt-0.5"
+                    />
+                    <span>
+                      <span className="block text-sm font-semibold">
+                        Create a candidate account (optional)
+                      </span>
+                      <span className="block text-sm text-muted-foreground">
+                        You don't need one to apply — you can always check your status with the
+                        reference we email you. An account lets you sign in and reuse your details.
+                      </span>
+                    </span>
+                  </label>
+                  {wantsAccount && (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
+
                       <Label htmlFor="password">Password *</Label>
                       <Input
                         id="password"
