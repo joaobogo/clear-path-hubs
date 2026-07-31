@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { listAdminPayments } from "@/lib/admin-payments.functions";
+import { getPaymentsOps } from "@/lib/admin-ops.functions";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -15,7 +16,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Lock } from "lucide-react";
+import { Lock, CheckCircle2, AlertTriangle, Timer } from "lucide-react";
 
 type Filter = "all" | "paid" | "failed" | "refunded";
 
@@ -151,6 +152,148 @@ function AdminPaymentsPage() {
                 </TableBody>
               </Table>
             </div>
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
+// ── Payments & pilot operations panel ──────────────────────────────────────
+// Real records only: confirmed charges, roles stuck before payment, live pilots.
+function OpsPanel() {
+  const loadOps = useServerFn(getPaymentsOps);
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["admin-payments-ops"],
+    queryFn: () => loadOps(),
+    staleTime: 60_000,
+  });
+
+  if (isLoading) {
+    return (
+      <div className="grid gap-4 lg:grid-cols-3">
+        {Array.from({ length: 3 }).map((_, i) => (
+          <Skeleton key={i} className="h-56 w-full" />
+        ))}
+      </div>
+    );
+  }
+  if (error || !data) return null;
+
+  const totals = Object.entries(data.totals.paid_cents_by_currency);
+
+  return (
+    <div className="grid gap-4 lg:grid-cols-3">
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="flex items-center gap-2 text-base">
+            <CheckCircle2 className="h-4 w-4 text-success" /> Who paid
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          {totals.length === 0 ? (
+            <p className="text-sm text-muted-foreground">No confirmed charges yet.</p>
+          ) : (
+            <>
+              <div className="flex flex-wrap gap-3">
+                {totals.map(([cur, cents]) => (
+                  <div key={cur}>
+                    <div className="text-xl font-semibold tabular-nums">{money(cents, cur)}</div>
+                    <div className="text-[11px] text-muted-foreground">
+                      {cur} · {data.totals.paid_count} charge
+                      {data.totals.paid_count === 1 ? "" : "s"}
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <ul className="space-y-1.5 text-xs">
+                {data.paid.slice(0, 6).map((p) => (
+                  <li key={p.id} className="flex items-baseline justify-between gap-2">
+                    <span className="truncate">
+                      {p.org ?? "—"} · {p.position ?? "—"}
+                    </span>
+                    <span className="shrink-0 tabular-nums text-muted-foreground">
+                      {money(p.amount_cents, p.currency)}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="flex items-center gap-2 text-base">
+            <AlertTriangle className="h-4 w-4 text-destructive" /> Abandoned before payment
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {data.abandoned.length === 0 ? (
+            <p className="text-sm text-muted-foreground">
+              Nobody is stuck before payment right now.
+            </p>
+          ) : (
+            <ul className="space-y-2 text-xs">
+              {data.abandoned.slice(0, 8).map((a) => (
+                <li key={a.positionId} className="flex items-center justify-between gap-2">
+                  <div className="min-w-0">
+                    <div className="truncate font-medium">{a.title}</div>
+                    <div className="truncate text-muted-foreground">
+                      {a.org ?? "—"} ·{" "}
+                      {a.stage === "checkout_started" ? "checkout started" : "never started"}
+                    </div>
+                  </div>
+                  <Link
+                    to="/admin/positions/$id"
+                    params={{ id: a.positionId }}
+                    className="shrink-0 font-medium text-primary hover:underline"
+                  >
+                    Open
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          )}
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="flex items-center gap-2 text-base">
+            <Timer className="h-4 w-4 text-muted-foreground" /> Pilots
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {data.pilots.length === 0 ? (
+            <p className="text-sm text-muted-foreground">No pilot accounts on record.</p>
+          ) : (
+            <ul className="space-y-2 text-xs">
+              {data.pilots.slice(0, 8).map((p) => (
+                <li key={p.orgId} className="flex items-center justify-between gap-2">
+                  <div className="min-w-0">
+                    <div className="truncate font-medium">{p.org}</div>
+                    <div className="truncate text-muted-foreground">
+                      {p.position_title ?? "no pilot role linked"}
+                      {p.override ? " · admin override" : ""}
+                    </div>
+                  </div>
+                  <div className="shrink-0 text-right">
+                    <Badge variant={p.status === "active" ? "default" : "outline"}>
+                      {String(p.status ?? "—").replace(/_/g, " ")}
+                    </Badge>
+                    <div className="mt-0.5 tabular-nums text-muted-foreground">
+                      {p.days_left == null
+                        ? "no end date"
+                        : p.days_left >= 0
+                          ? `${p.days_left}d left`
+                          : `ended ${Math.abs(p.days_left)}d ago`}
+                    </div>
+                  </div>
+                </li>
+              ))}
+            </ul>
           )}
         </CardContent>
       </Card>
