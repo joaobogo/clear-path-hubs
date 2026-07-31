@@ -922,17 +922,24 @@ function ApplyPage() {
             </div>
           )}
 
-          <div className="mt-8 flex flex-wrap items-center justify-between gap-3">
+          <div className="mt-8 flex flex-col-reverse gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
             <Button
               type="button"
               variant="ghost"
               onClick={goBack}
               disabled={step === 1 || submitting}
+              className="w-full sm:w-auto"
             >
               ← Back
             </Button>
             {step < 5 ? (
-              <Button type="button" onClick={goNext} data-testid="apply-continue">
+              <Button
+                type="button"
+                onClick={goNext}
+                data-testid="apply-continue"
+                className="w-full sm:w-auto"
+                disabled={cvChecking}
+              >
                 Continue →
               </Button>
             ) : (
@@ -942,12 +949,18 @@ function ApplyPage() {
                 onClick={onSubmit}
                 disabled={submitting}
                 data-testid="apply-submit"
+                className="w-full sm:w-auto"
               >
-                {submitting ? "Submitting…" : "Submit application"}
+                {phase === "reading"
+                  ? "Preparing your CV…"
+                  : phase === "sending"
+                    ? "Sending your application…"
+                    : "Submit application"}
               </Button>
             )}
           </div>
         </div>
+
 
         <div className="mt-4 text-center">
           <Link
