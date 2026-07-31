@@ -597,3 +597,80 @@ function RecentMessages({ messages }: { messages: Any[] }) {
     </div>
   );
 }
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Shared primitives
+// ═══════════════════════════════════════════════════════════════════════════
+
+function SectionHeader({
+  id,
+  icon,
+  title,
+  action,
+  size = "md",
+}: {
+  id?: string;
+  icon?: React.ReactNode;
+  title: string;
+  action?: React.ReactNode;
+  size?: "sm" | "md";
+}) {
+  return (
+    <div className="flex items-center justify-between gap-3">
+      <h2
+        id={id}
+        className={`flex items-center gap-2 font-semibold tracking-tight ${
+          size === "sm" ? "text-sm" : "text-base sm:text-lg"
+        }`}
+      >
+        {icon}
+        {title}
+      </h2>
+      {action}
+    </div>
+  );
+}
+
+function EmptyBlock({ text }: { text: string }) {
+  return (
+    <div className="rounded-xl border border-dashed bg-card/40 p-6 text-center text-sm text-muted-foreground">
+      {text}
+    </div>
+  );
+}
+
+function EmptyWelcome({ canSubmit }: { canSubmit: boolean }) {
+  return (
+    <section className="rounded-xl border bg-card p-6 sm:p-8">
+      <h2 className="text-xl font-semibold tracking-tight">Welcome to your workspace</h2>
+      <p className="mt-2 max-w-xl text-sm leading-relaxed text-muted-foreground">
+        Submit your first role and this page becomes a single list of decisions waiting on you —
+        candidates to review, interviews to confirm, offers to close.
+      </p>
+      {canSubmit && (
+        <Link to="/intake" className="mt-4 inline-block">
+          <Button size="sm" className="min-h-11">
+            Submit a role <ArrowRight className="ml-1.5 h-4 w-4" />
+          </Button>
+        </Link>
+      )}
+    </section>
+  );
+}
+
+/** Audit-event actions in client language. Never shows an internal state name. */
+function formatAction(action: string): string {
+  const map: Record<string, string> = {
+    "candidate_match.stage_changed": "A candidate moved forward",
+    "client.shortlist": "You shortlisted a candidate",
+    "client.request_interview": "You requested an interview",
+    "client.offer": "An offer was made",
+    "client.hire": "A hire was confirmed",
+    "client.not_moving_forward": "A candidate was declined",
+    "client.submit_feedback": "Interview feedback was captured",
+    "position.approved": "A role was approved",
+    "position.activated": "A role went live",
+    "position.paused": "A role was paused",
+  };
+  return map[action] ?? "Your search progressed";
+}
