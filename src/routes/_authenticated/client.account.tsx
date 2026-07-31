@@ -22,6 +22,8 @@ import { formatStageDate } from "@/lib/client-role-progress";
 import { EmptyState, PermissionDenied, SkeletonRows, SkeletonStats } from "@/components/client/states";
 import { TeamActivityPanel } from "@/components/client/team-activity-panel";
 import { PlanPanel } from "@/components/client/plan-panel";
+import { EmailChangeCard } from "@/components/account/email-change-card";
+
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
