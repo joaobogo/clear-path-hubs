@@ -295,7 +295,7 @@ function OverviewPage() {
           </div>
 
           {/* 2 · ROLE STATUS — plain language, real dates, honest risk */}
-          <RoleStatusList roles={visibleRoles} loading={!data && isFetching} />
+          <RoleStatusList roles={visibleRoles} loading={!data && isFetching} compact={compact} />
 
           {/* 3 · CANDIDATES WAITING ON YOU */}
           <section aria-labelledby="open-first-heading" className="space-y-3">
