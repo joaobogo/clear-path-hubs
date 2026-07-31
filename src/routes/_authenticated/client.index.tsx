@@ -567,6 +567,25 @@ function RoleStatusList({
                   </div>
                 </div>
               </div>
+              )}
+
+              {/* What happens next: owner and date, always stated. */}
+              <p
+                className={`flex items-start gap-2 rounded-lg border border-dashed px-3 py-1.5 text-[11px] sm:text-xs ${
+                  next.overdue
+                    ? "taas-bd-warning taas-bg-warning-soft taas-fg-warning"
+                    : "bg-muted/30 text-muted-foreground"
+                }`}
+              >
+                <span>
+                  <span className="font-semibold text-foreground">Next: </span>
+                  {next.sentence}{" "}
+                  <span className="font-medium text-foreground">{next.ownerLabel}</span>
+                  {next.dateLabel ? ` · by ${next.dateLabel}` : ""}
+                </span>
+              </p>
+
+
 
               {r.at_risk && r.risk_reason && (
                 <p className="flex items-start gap-2 rounded-lg taas-bg-warning-soft px-3 py-2 text-xs taas-fg-warning sm:text-sm">
