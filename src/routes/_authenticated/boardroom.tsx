@@ -235,13 +235,14 @@ function SlideEyebrow({ children }: { children: React.ReactNode }) {
   );
 }
 
-function SlideIntro({ orgName, usingDemo }: { orgName: string; usingDemo: boolean }) {
+function SlideIntro({ orgName }: { orgName: string }) {
   return (
     <div>
       <SlideEyebrow>Boardroom · TaaSFlow</SlideEyebrow>
       <h1 className="mt-4 font-[family-name:var(--brand-font-display)] text-5xl font-semibold tracking-tight sm:text-6xl lg:text-7xl">
-        What TaaSFlow is doing for {usingDemo ? "you" : orgName}.
+        What TaaSFlow is doing for {orgName}.
       </h1>
+
       <p className="mt-6 max-w-2xl text-lg text-white/70">
         A subscription recruiting function — human recruiters, evidence-first
         scoring, and a workspace you own. This is the ten-minute overview.
