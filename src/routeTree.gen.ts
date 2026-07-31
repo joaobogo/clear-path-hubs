@@ -142,6 +142,7 @@ import { Route as AuthenticatedClientPositionsIdRouteImport } from './routes/_au
 import { Route as AuthenticatedClientConversationsConversationIdRouteImport } from './routes/_authenticated/client.conversations.$conversationId'
 import { Route as AuthenticatedClientCandidatesIdRouteImport } from './routes/_authenticated/client.candidates.$id'
 import { Route as AuthenticatedAdminScoringOrphansRouteImport } from './routes/_authenticated/admin.scoring.orphans'
+import { Route as AuthenticatedAdminReviewMatchIdRouteImport } from './routes/_authenticated/admin.review.$matchId'
 import { Route as AuthenticatedAdminPositionsIdRouteImport } from './routes/_authenticated/admin.positions.$id'
 import { Route as AuthenticatedAdminIntakeIdRouteImport } from './routes/_authenticated/admin.intake.$id'
 import { Route as AuthenticatedAdminClientsIdRouteImport } from './routes/_authenticated/admin.clients.$id'
@@ -870,6 +871,12 @@ const AuthenticatedAdminScoringOrphansRoute =
     path: '/scoring/orphans',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminReviewMatchIdRoute =
+  AuthenticatedAdminReviewMatchIdRouteImport.update({
+    id: '/review/$matchId',
+    path: '/review/$matchId',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminPositionsIdRoute =
   AuthenticatedAdminPositionsIdRouteImport.update({
     id: '/$id',
@@ -1039,6 +1046,7 @@ export interface FileRoutesByFullPath {
   '/admin/clients/$id': typeof AuthenticatedAdminClientsIdRoute
   '/admin/intake/$id': typeof AuthenticatedAdminIntakeIdRoute
   '/admin/positions/$id': typeof AuthenticatedAdminPositionsIdRoute
+  '/admin/review/$matchId': typeof AuthenticatedAdminReviewMatchIdRoute
   '/admin/scoring/orphans': typeof AuthenticatedAdminScoringOrphansRoute
   '/client/candidates/$id': typeof AuthenticatedClientCandidatesIdRoute
   '/client/conversations/$conversationId': typeof AuthenticatedClientConversationsConversationIdRoute
@@ -1172,6 +1180,7 @@ export interface FileRoutesByTo {
   '/admin/clients/$id': typeof AuthenticatedAdminClientsIdRoute
   '/admin/intake/$id': typeof AuthenticatedAdminIntakeIdRoute
   '/admin/positions/$id': typeof AuthenticatedAdminPositionsIdRoute
+  '/admin/review/$matchId': typeof AuthenticatedAdminReviewMatchIdRoute
   '/admin/scoring/orphans': typeof AuthenticatedAdminScoringOrphansRoute
   '/client/candidates/$id': typeof AuthenticatedClientCandidatesIdRoute
   '/client/conversations/$conversationId': typeof AuthenticatedClientConversationsConversationIdRoute
@@ -1317,6 +1326,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/clients/$id': typeof AuthenticatedAdminClientsIdRoute
   '/_authenticated/admin/intake/$id': typeof AuthenticatedAdminIntakeIdRoute
   '/_authenticated/admin/positions/$id': typeof AuthenticatedAdminPositionsIdRoute
+  '/_authenticated/admin/review/$matchId': typeof AuthenticatedAdminReviewMatchIdRoute
   '/_authenticated/admin/scoring/orphans': typeof AuthenticatedAdminScoringOrphansRoute
   '/_authenticated/client/candidates/$id': typeof AuthenticatedClientCandidatesIdRoute
   '/_authenticated/client/conversations/$conversationId': typeof AuthenticatedClientConversationsConversationIdRoute
@@ -1462,6 +1472,7 @@ export interface FileRouteTypes {
     | '/admin/clients/$id'
     | '/admin/intake/$id'
     | '/admin/positions/$id'
+    | '/admin/review/$matchId'
     | '/admin/scoring/orphans'
     | '/client/candidates/$id'
     | '/client/conversations/$conversationId'
@@ -1595,6 +1606,7 @@ export interface FileRouteTypes {
     | '/admin/clients/$id'
     | '/admin/intake/$id'
     | '/admin/positions/$id'
+    | '/admin/review/$matchId'
     | '/admin/scoring/orphans'
     | '/client/candidates/$id'
     | '/client/conversations/$conversationId'
@@ -1739,6 +1751,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/clients/$id'
     | '/_authenticated/admin/intake/$id'
     | '/_authenticated/admin/positions/$id'
+    | '/_authenticated/admin/review/$matchId'
     | '/_authenticated/admin/scoring/orphans'
     | '/_authenticated/client/candidates/$id'
     | '/_authenticated/client/conversations/$conversationId'
@@ -2775,6 +2788,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminScoringOrphansRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/review/$matchId': {
+      id: '/_authenticated/admin/review/$matchId'
+      path: '/review/$matchId'
+      fullPath: '/admin/review/$matchId'
+      preLoaderRoute: typeof AuthenticatedAdminReviewMatchIdRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/positions/$id': {
       id: '/_authenticated/admin/positions/$id'
       path: '/$id'
@@ -2933,6 +2953,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminTeamRoute: typeof AuthenticatedAdminTeamRoute
   AuthenticatedAdminWbrRoute: typeof AuthenticatedAdminWbrRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
+  AuthenticatedAdminReviewMatchIdRoute: typeof AuthenticatedAdminReviewMatchIdRoute
   AuthenticatedAdminScoringOrphansRoute: typeof AuthenticatedAdminScoringOrphansRoute
   AuthenticatedAdminScoringReviewMatchIdRoute: typeof AuthenticatedAdminScoringReviewMatchIdRoute
   AuthenticatedAdminScoringReviewIndexRoute: typeof AuthenticatedAdminScoringReviewIndexRoute
@@ -2960,6 +2981,7 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminTeamRoute: AuthenticatedAdminTeamRoute,
   AuthenticatedAdminWbrRoute: AuthenticatedAdminWbrRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
+  AuthenticatedAdminReviewMatchIdRoute: AuthenticatedAdminReviewMatchIdRoute,
   AuthenticatedAdminScoringOrphansRoute: AuthenticatedAdminScoringOrphansRoute,
   AuthenticatedAdminScoringReviewMatchIdRoute:
     AuthenticatedAdminScoringReviewMatchIdRoute,
