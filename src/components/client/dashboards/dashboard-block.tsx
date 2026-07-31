@@ -41,7 +41,7 @@ export function DashboardBlock({
         </div>
         <div className="flex shrink-0 items-center gap-1">
           <Button asChild size="sm" variant="ghost" className="h-7 px-2 text-xs">
-            <Link to={definition.href}>
+            <Link to={definition.href as never}>
               Records <ArrowUpRight className="ml-1 h-3 w-3" />
             </Link>
           </Button>
@@ -101,7 +101,7 @@ export function DashboardBlock({
               <li key={row.label} className="flex items-baseline justify-between gap-3 py-2 text-sm">
                 <span className="min-w-0 truncate">
                   {row.href ? (
-                    <Link to={row.href} className="hover:underline">
+                    <Link to={row.href as never} className="hover:underline">
                       {row.label}
                     </Link>
                   ) : (
