@@ -127,6 +127,7 @@ import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/l
 import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
 import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
 import { Route as ApiPublicPipelineRunRouteImport } from './routes/api/public/pipeline.run'
+import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 import { Route as ApiPublicIntakeStatusIdRouteImport } from './routes/api/public/intake-status.$id'
 import { Route as ApiPublicBlueprintStatusIntakeIdRouteImport } from './routes/api/public/blueprint-status.$intakeId'
 import { Route as AuthenticatedMeApplicationsIdRouteImport } from './routes/_authenticated/me.applications.$id'
@@ -777,6 +778,12 @@ const ApiPublicPipelineRunRoute = ApiPublicPipelineRunRouteImport.update({
   path: '/api/public/pipeline/run',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicPaymentsWebhookRoute =
+  ApiPublicPaymentsWebhookRouteImport.update({
+    id: '/api/public/payments/webhook',
+    path: '/api/public/payments/webhook',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicIntakeStatusIdRoute = ApiPublicIntakeStatusIdRouteImport.update({
   id: '/api/public/intake-status/$id',
   path: '/api/public/intake-status/$id',
@@ -989,6 +996,7 @@ export interface FileRoutesByFullPath {
   '/me/applications/$id': typeof AuthenticatedMeApplicationsIdRoute
   '/api/public/blueprint-status/$intakeId': typeof ApiPublicBlueprintStatusIntakeIdRoute
   '/api/public/intake-status/$id': typeof ApiPublicIntakeStatusIdRoute
+  '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/api/public/pipeline/run': typeof ApiPublicPipelineRunRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
@@ -1114,6 +1122,7 @@ export interface FileRoutesByTo {
   '/me/applications/$id': typeof AuthenticatedMeApplicationsIdRoute
   '/api/public/blueprint-status/$intakeId': typeof ApiPublicBlueprintStatusIntakeIdRoute
   '/api/public/intake-status/$id': typeof ApiPublicIntakeStatusIdRoute
+  '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/api/public/pipeline/run': typeof ApiPublicPipelineRunRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
@@ -1251,6 +1260,7 @@ export interface FileRoutesById {
   '/_authenticated/me/applications/$id': typeof AuthenticatedMeApplicationsIdRoute
   '/api/public/blueprint-status/$intakeId': typeof ApiPublicBlueprintStatusIntakeIdRoute
   '/api/public/intake-status/$id': typeof ApiPublicIntakeStatusIdRoute
+  '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/api/public/pipeline/run': typeof ApiPublicPipelineRunRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
@@ -1388,6 +1398,7 @@ export interface FileRouteTypes {
     | '/me/applications/$id'
     | '/api/public/blueprint-status/$intakeId'
     | '/api/public/intake-status/$id'
+    | '/api/public/payments/webhook'
     | '/api/public/pipeline/run'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
@@ -1513,6 +1524,7 @@ export interface FileRouteTypes {
     | '/me/applications/$id'
     | '/api/public/blueprint-status/$intakeId'
     | '/api/public/intake-status/$id'
+    | '/api/public/payments/webhook'
     | '/api/public/pipeline/run'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
@@ -1649,6 +1661,7 @@ export interface FileRouteTypes {
     | '/_authenticated/me/applications/$id'
     | '/api/public/blueprint-status/$intakeId'
     | '/api/public/intake-status/$id'
+    | '/api/public/payments/webhook'
     | '/api/public/pipeline/run'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
@@ -1731,6 +1744,7 @@ export interface RootRouteChildren {
   JobsIdIndexRoute: typeof JobsIdIndexRoute
   ApiPublicBlueprintStatusIntakeIdRoute: typeof ApiPublicBlueprintStatusIntakeIdRoute
   ApiPublicIntakeStatusIdRoute: typeof ApiPublicIntakeStatusIdRoute
+  ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
   ApiPublicPipelineRunRoute: typeof ApiPublicPipelineRunRoute
   LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
   LovableEmailAuthWebhookRoute: typeof LovableEmailAuthWebhookRoute
@@ -2565,6 +2579,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicPipelineRunRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/payments/webhook': {
+      id: '/api/public/payments/webhook'
+      path: '/api/public/payments/webhook'
+      fullPath: '/api/public/payments/webhook'
+      preLoaderRoute: typeof ApiPublicPaymentsWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/intake-status/$id': {
       id: '/api/public/intake-status/$id'
       path: '/api/public/intake-status/$id'
@@ -3018,6 +3039,7 @@ const rootRouteChildren: RootRouteChildren = {
   JobsIdIndexRoute: JobsIdIndexRoute,
   ApiPublicBlueprintStatusIntakeIdRoute: ApiPublicBlueprintStatusIntakeIdRoute,
   ApiPublicIntakeStatusIdRoute: ApiPublicIntakeStatusIdRoute,
+  ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
   ApiPublicPipelineRunRoute: ApiPublicPipelineRunRoute,
   LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,
   LovableEmailAuthWebhookRoute: LovableEmailAuthWebhookRoute,
