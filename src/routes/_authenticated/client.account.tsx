@@ -1,3 +1,4 @@
+import { derivePilotState } from "@/lib/pilot-state";
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
