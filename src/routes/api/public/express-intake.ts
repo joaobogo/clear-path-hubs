@@ -584,21 +584,29 @@ export const Route = createFileRoute("/api/public/express-intake")({
           console.error("[express-intake] teams failed (non-critical)", err);
         }
 
-        // ---------- Welcome email ----------
+        // ---------- Confirmation email ----------
         try {
           const { sendTemplateEmail } = await import("@/lib/email-templates/send-email");
           const { absoluteUrl } = await import("@/lib/blueprint-pipeline.server");
-          await sendTemplateEmail("express-welcome", data.workEmail, {
-            idempotencyKey: `express-welcome-${intakeId}`,
+          const due = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString("en-GB", {
+            day: "numeric",
+            month: "long",
+            year: "numeric",
+          });
+          await sendTemplateEmail("intake-confirmation", data.workEmail, {
+            idempotencyKey: `intake-confirmation-${intakeId}`,
             templateData: {
               contactName: data.firstName,
               companyName: data.companyName.trim(),
               roleTitle: data.roleTitle.trim(),
+              nextStep:
+                "Complete payment in your workspace to publish the role and start the 14-day pilot.",
+              dueDate: due,
               workspaceUrl: absoluteUrl(`/client/positions/${positionId}`),
             },
           });
         } catch (err) {
-          console.error("[express-intake] welcome email failed (non-critical)", err);
+          console.error("[express-intake] confirmation email failed (non-critical)", err);
         }
 
         return Response.json({
