@@ -536,6 +536,7 @@ function RoleStatusList({
               </div>
 
               {/* Our promise, next to what actually happened. Misses shown plainly. */}
+              {!compact && (
               <div className="grid grid-cols-3 gap-2 rounded-lg border bg-muted/30 px-3 py-2 text-[11px] sm:text-xs">
                 <div className="min-w-0">
                   <div className="text-muted-foreground">First shortlist promised</div>
