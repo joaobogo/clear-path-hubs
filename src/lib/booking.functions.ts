@@ -197,3 +197,51 @@ export const cancelDiscoveryCall = createServerFn({ method: "POST" })
       .eq("id", data.callId);
     return { ok: !error };
   });
+
+export type PendingPaymentRole = {
+  positionId: string;
+  title: string;
+  paymentStatus: string;
+  callStart: string | null;
+};
+
+/** Roles the client has created that can't publish yet, with any call attached. */
+export const listPendingPaymentRoles = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: { orgId?: string }) => data)
+  .handler(async ({ data, context }): Promise<{ roles: PendingPaymentRole[] }> => {
+    const { supabase } = context;
+    let query = supabase
+      .from("positions")
+      .select("id, title, payment_status")
+      .in("payment_status", ["unpaid", "pending"])
+      .order("created_at", { ascending: false })
+      .limit(10);
+    if (data.orgId && isUuid(data.orgId)) query = query.eq("organization_id", data.orgId);
+
+    const { data: rows } = await query;
+    const positions = rows ?? [];
+    if (positions.length === 0) return { roles: [] };
+
+    const { data: calls } = await supabase
+      .from("sales_calls")
+      .select("position_id, scheduled_start")
+      .eq("status", "booked")
+      .in(
+        "position_id",
+        positions.map((p) => p.id),
+      );
+
+    const callByPosition = new Map(
+      (calls ?? []).map((c) => [c.position_id as string, c.scheduled_start as string]),
+    );
+
+    return {
+      roles: positions.map((p) => ({
+        positionId: p.id,
+        title: p.title,
+        paymentStatus: String(p.payment_status),
+        callStart: callByPosition.get(p.id) ?? null,
+      })),
+    };
+  });
