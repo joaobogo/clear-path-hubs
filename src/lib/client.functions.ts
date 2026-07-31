@@ -402,6 +402,7 @@ export const getClientOverview = createServerFn({ method: "GET" })
         stage_caption: progress.caption,
         last_movement_at: lastMovementAt,
         promised_shortlist_by: promisedShortlistBy,
+        shortlist_delivered_at: dates.shortlist,
         at_risk: risk.atRisk,
         risk_reason: risk.reason,
         risk_cause: risk.cause,
