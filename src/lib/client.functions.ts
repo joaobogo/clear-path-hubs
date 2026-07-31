@@ -1531,6 +1531,7 @@ export const clientAction = createServerFn({ method: "POST" })
         details: (data.signals?.length || data.rating
           ? { signals: data.signals ?? [], rating: data.rating ?? null }
           : null) as never,
+        from_stage: match.stage as string,
         actor_user_id: context.userId,
       });
     }
