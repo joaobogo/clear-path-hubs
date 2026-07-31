@@ -86,7 +86,7 @@ const searchSchema = z.object({
  minExp: fallback(z.string(), "").default(""),
  location: fallback(z.string(), "").default(""),
  sort: fallback(z.string(), "recent").default("recent"),
- view: fallback(z.enum(["cards", "list"]), "cards").default("cards"),
+ view: fallback(z.enum(["cards", "list", "compare"]), "cards").default("cards"),
  org: fallback(z.string().uuid().optional(), undefined),
  // Canonical KPI drill-through key. Mirrors client-kpi.server predicates:
  // "top" → isTopMatch (fit_label ∈ excellent|strong)
