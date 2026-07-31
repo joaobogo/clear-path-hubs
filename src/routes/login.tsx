@@ -89,6 +89,9 @@ function LoginFallback() {
 const GENERIC_SIGNIN_ERROR = "Email or password is incorrect.";
 const GENERIC_RESET_MESSAGE =
   "If an account exists for that email, we've sent a password reset link.";
+const GENERIC_CONFIRM_MESSAGE =
+  "If that email needs confirming, we've sent a new confirmation link. It's valid for 24 hours.";
+
 
 function LoginPage() {
   const navigate = useNavigate();
@@ -102,7 +105,7 @@ function LoginPage() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [mode, setMode] = useState<"signin" | "forgot">("signin");
+  const [mode, setMode] = useState<"signin" | "forgot" | "confirm">("signin");
   const [pickerFor, setPickerFor] = useState<SessionMembership[] | null>(null);
 
   // Already signed in? Route accordingly.
@@ -211,6 +214,25 @@ function LoginPage() {
     }
   };
 
+  const onResendConfirmation = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      await supabase.auth.resend({
+        type: "signup",
+        email,
+        options: { emailRedirectTo: `${window.location.origin}/login` },
+      });
+    } catch {
+      /* swallow — always return generic message */
+    } finally {
+      toast.success(GENERIC_CONFIRM_MESSAGE);
+      setMode("signin");
+      setLoading(false);
+    }
+  };
+
+
   const onPersona = async (
     key: "platform_admin" | "operations" | "client_admin" | "client_editor" | "client_viewer",
   ) => {
@@ -230,14 +252,21 @@ function LoginPage() {
         <Card className="p-6 space-y-4">
           <div>
             <h1 className="text-xl font-semibold">
-              {mode === "signin" ? "Sign in to TaaSFlow" : "Reset your password"}
+              {mode === "signin"
+                ? "Sign in to TaaSFlow"
+                : mode === "forgot"
+                  ? "Reset your password"
+                  : "Resend your confirmation email"}
             </h1>
             <p className="text-sm text-muted-foreground">
               {mode === "signin"
                 ? "Sign in with the email your team invited or your candidate account."
-                : "We'll email you a secure reset link."}
+                : mode === "forgot"
+                  ? "We'll email you a secure reset link."
+                  : "We'll send a new link to confirm your email address."}
             </p>
           </div>
+
 
           {pickerFor ? (
             <div className="space-y-2">
@@ -313,6 +342,13 @@ function LoginPage() {
                   Apply as a candidate →
                 </Link>
               </div>
+              <button
+                type="button"
+                className="text-xs text-muted-foreground hover:underline"
+                onClick={() => setMode("confirm")}
+              >
+                Didn't get your confirmation email?
+              </button>
               <p className="pt-1 text-[11px] leading-relaxed text-muted-foreground">
                 TaaSFlow is invitation-only for client workspaces. If you were invited, use the
                 email address on the invitation. Employers can{" "}
@@ -322,7 +358,7 @@ function LoginPage() {
                 to talk to our team.
               </p>
             </form>
-          ) : (
+          ) : mode === "forgot" ? (
             <form onSubmit={onForgot} className="space-y-3">
               <div className="space-y-1.5">
                 <Label htmlFor="femail">Email</Label>
@@ -345,7 +381,34 @@ function LoginPage() {
                 ← Back to sign in
               </button>
             </form>
+          ) : (
+            <form onSubmit={onResendConfirmation} className="space-y-3">
+              <div className="space-y-1.5">
+                <Label htmlFor="cemail">Email</Label>
+                <Input
+                  id="cemail"
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </div>
+              <Button type="submit" className="w-full" disabled={loading}>
+                {loading ? "Sending…" : "Send a new confirmation link"}
+              </Button>
+              <p className="text-[11px] leading-relaxed text-muted-foreground">
+                Already confirmed? Nothing will be sent — just sign in as normal.
+              </p>
+              <button
+                type="button"
+                className="text-xs text-muted-foreground hover:underline"
+                onClick={() => setMode("signin")}
+              >
+                ← Back to sign in
+              </button>
+            </form>
           )}
+
 
           <Link to="/" className="block text-xs text-muted-foreground hover:underline">
             ← Back home
