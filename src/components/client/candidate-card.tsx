@@ -207,7 +207,10 @@ export function CandidateCard({
         )}
       </div>
 
-      {/* A decision must never vanish: show what we do next, and by when. */}
+      {/* Every decision is reversible for a short window, visibly. */}
+      <UndoWindow orgId={orgId} matchId={c.match_id} candidateName={c.candidate.display_name} />
+
+      {/* A decision must never vanish: show what we do next, who owns it, when. */}
       <NextStepNote stage={c.stage} stageEnteredAt={c.stage_entered_at} className="mt-3" />
     </div>
   );
