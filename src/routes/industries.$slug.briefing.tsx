@@ -109,9 +109,9 @@ function BriefingPage() {
           <Section title="Role families we cover">
             <ul className="space-y-3">
               {entry.roleFamilies.map((f) => (
-                <li key={f.title} className="break-inside-avoid">
-                  <p className="font-medium text-[color:var(--brand-navy)]">{f.title}</p>
-                  {f.description && <p className="mt-0.5">{f.description}</p>}
+                <li key={f.name} className="break-inside-avoid">
+                  <p className="font-medium text-[color:var(--brand-navy)]">{f.name}</p>
+                  {f.blurb && <p className="mt-0.5">{f.blurb}</p>}
                   {f.roles && f.roles.length > 0 && (
                     <p className="mt-1 text-xs text-[color:var(--brand-navy)]/60">{f.roles.join(" · ")}</p>
                   )}
