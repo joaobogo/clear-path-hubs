@@ -122,6 +122,16 @@ function ExpressIntakePage() {
   const startedRef = useRef(false);
   const pastedRef = useRef(false);
   const [authed, setAuthed] = useState(false);
+  const [accountEmail, setAccountEmail] = useState<string | null>(null);
+  const [savedAt, setSavedAt] = useState<string | null>(null);
+  const [savingDraft, setSavingDraft] = useState(false);
+  const [emailStatus, setEmailStatus] = useState<
+    { kind: "idle" } | { kind: "checking" } | { kind: "exists"; message: string } | { kind: "free" }
+  >({ kind: "idle" });
+  const [accountBusy, setAccountBusy] = useState(false);
+  const [signInMode, setSignInMode] = useState(false);
+  const [reviewing, setReviewing] = useState(false);
+  const hydratedRef = useRef(false);
 
   // Restore a draft so a refresh never costs the client their typing. Passwords
   // are deliberately never persisted.
@@ -156,6 +166,17 @@ function ExpressIntakePage() {
         const user = data?.user;
         if (!user?.email) return;
         setAuthed(true);
+        setAccountEmail(user.email);
+        // Their draft belongs to the account, not this tab.
+        try {
+          const remote = await loadIntakeDraft();
+          if (remote?.payload) {
+            setState((s3) => ({ ...s3, ...(remote.payload as Partial<FormState>), password: "", confirmPassword: "" }));
+            if (remote.updatedAt) setSavedAt(remote.updatedAt);
+          }
+        } catch {
+          /* no server draft yet */
+        }
         const meta = (user.user_metadata ?? {}) as Record<string, unknown>;
         const full = typeof meta.full_name === "string" ? meta.full_name : "";
         const [first, ...rest] = full.split(" ");
@@ -173,21 +194,177 @@ function ExpressIntakePage() {
     })();
   }, []);
 
+  // Autosave: locally always, and against the account once it exists.
   useEffect(() => {
+    const {
+      password: _pw,
+      confirmPassword: _cpw,
+      consent: _c,
+      pilotAcknowledgement: _p,
+      companyFax: _f,
+      ...safe
+    } = state;
     try {
-      const {
-        password: _pw,
-        confirmPassword: _cpw,
-        consent: _c,
-        pilotAcknowledgement: _p,
-        companyFax: _f,
-        ...safe
-      } = state;
       localStorage.setItem(EXPRESS_DRAFT_KEY, JSON.stringify(safe));
     } catch {
       /* storage unavailable — the form still works */
     }
-  }, [state]);
+    if (!hydratedRef.current) {
+      hydratedRef.current = true;
+      return;
+    }
+    if (!authed) {
+      setSavedAt(new Date().toISOString());
+      return;
+    }
+    const t = setTimeout(() => {
+      setSavingDraft(true);
+      void saveIntakeDraft({ data: { payload: safe } })
+        .then((r) => setSavedAt(r?.savedAt ?? new Date().toISOString()))
+        .catch(() => undefined)
+        .finally(() => setSavingDraft(false));
+    }, 1200);
+    return () => clearTimeout(t);
+  }, [state, authed]);
+
+  // Recognise a returning client before they type a password.
+  const checkEmail = async () => {
+    const email = state.workEmail.trim().toLowerCase();
+    if (authed || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return;
+    setEmailStatus({ kind: "checking" });
+    try {
+      const res = await fetch("/api/public/intake-account", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ mode: "check", email }),
+      });
+      const body = await res.json();
+      if (body?.exists) {
+        setEmailStatus({ kind: "exists", message: body.message });
+        setSignInMode(true);
+      } else {
+        setEmailStatus({ kind: "free" });
+      }
+    } catch {
+      setEmailStatus({ kind: "idle" });
+    }
+  };
+
+  const createAccountInline = async () => {
+    const email = state.workEmail.trim().toLowerCase();
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
+      setErrors((e) => ({ ...e, workEmail: "Enter the work email you'd like to sign in with." }));
+      return;
+    }
+    if (state.password.length < MIN_ACCOUNT_PASSWORD) {
+      setErrors((e) => ({
+        ...e,
+        password: `Choose a password of at least ${MIN_ACCOUNT_PASSWORD} characters.`,
+      }));
+      return;
+    }
+    if (state.password !== state.confirmPassword) {
+      setErrors((e) => ({ ...e, confirmPassword: "The two passwords don't match yet." }));
+      return;
+    }
+    setAccountBusy(true);
+    try {
+      const res = await fetch("/api/public/intake-account", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          mode: "create",
+          email,
+          password: state.password,
+          firstName: state.firstName,
+          lastName: state.lastName,
+        }),
+      });
+      const body = await res.json();
+      if (!res.ok || !body?.ok) {
+        if (body?.error === "account_exists") {
+          setEmailStatus({ kind: "exists", message: body.message });
+          setSignInMode(true);
+        }
+        toast.error(body?.message ?? "We couldn't create your account. Please try again.");
+        return;
+      }
+      const { error } = await supabase.auth.signInWithPassword({ email, password: state.password });
+      if (error) {
+        toast.error("Account created, but we couldn't sign you in. Try signing in below.");
+        setSignInMode(true);
+        return;
+      }
+      setAuthed(true);
+      setAccountEmail(email);
+      trackEvent("account_created_from_intake", { flow: "express_onboarding" });
+      toast.success("Account created. Everything you've typed is saved to it.");
+    } catch {
+      toast.error("Network problem. Please try again.");
+    } finally {
+      setAccountBusy(false);
+    }
+  };
+
+  const signInInline = async () => {
+    const email = state.workEmail.trim().toLowerCase();
+    if (!state.password) {
+      setErrors((e) => ({ ...e, password: "Enter your password to sign in." }));
+      return;
+    }
+    setAccountBusy(true);
+    try {
+      const { error } = await supabase.auth.signInWithPassword({ email, password: state.password });
+      if (error) {
+        toast.error("That email and password don't match. Try again or reset your password.");
+        return;
+      }
+      setAuthed(true);
+      setAccountEmail(email);
+      setEmailStatus({ kind: "idle" });
+      toast.success("Signed in. This role will be added to your existing organisation.");
+    } catch {
+      toast.error("Network problem. Please try again.");
+    } finally {
+      setAccountBusy(false);
+    }
+  };
+
+  const googleSignIn = async () => {
+    setAccountBusy(true);
+    try {
+      // Come straight back to the account step of this form.
+      const result = await lovable.auth.signInWithOAuth("google", {
+        redirect_uri: `${window.location.origin}/intake?resume=account`,
+      });
+      if (result.error) {
+        toast.error("Google sign-in didn't complete. Try again or use email.");
+        return;
+      }
+      if (result.redirected) return;
+      const { data } = await supabase.auth.getUser();
+      if (data?.user?.email) {
+        setAuthed(true);
+        setAccountEmail(data.user.email);
+        setState((s2) => ({ ...s2, workEmail: s2.workEmail || data.user!.email! }));
+        toast.success("Signed in with Google. Your draft is safe.");
+      }
+    } catch {
+      toast.error("Google sign-in didn't complete. Try again or use email.");
+    } finally {
+      setAccountBusy(false);
+    }
+  };
+
+  // After a full-page Google redirect, land back on the account step.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (!new URLSearchParams(window.location.search).has("resume")) return;
+    const t = setTimeout(() => {
+      document.getElementById("account-step")?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 400);
+    return () => clearTimeout(t);
+  }, []);
 
   const set = <K extends keyof FormState>(key: K, value: FormState[K]) => {
     if (!startedRef.current) {
