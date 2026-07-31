@@ -23,11 +23,13 @@ import {
   jdFileExt,
 } from "@/lib/express-intake-schema";
 import { supabase } from "@/integrations/supabase/client";
+import { lovable } from "@/integrations/lovable/index";
+import { saveIntakeDraft, loadIntakeDraft, clearIntakeDraft } from "@/lib/intake-draft.functions";
 import { submitToCrm } from "@/lib/crm/submit-form";
 import { trackEvent } from "@/lib/tracking/pixels";
 import { FGV_EVENTS, trackConfirmedConversion, trackFgv } from "@/lib/tracking/fgv-events";
 import { PRICE_PILOT_USD } from "@/config/pricing-core";
-import { CheckCircle2, Eye, EyeOff, FileText, Loader2, Upload, X } from "lucide-react";
+import { Check, CheckCircle2, Eye, EyeOff, FileText, Loader2, Pencil, Upload, X } from "lucide-react";
 
 export const Route = createFileRoute("/intake")({
   head: () => ({
@@ -120,6 +122,16 @@ function ExpressIntakePage() {
   const startedRef = useRef(false);
   const pastedRef = useRef(false);
   const [authed, setAuthed] = useState(false);
+  const [accountEmail, setAccountEmail] = useState<string | null>(null);
+  const [savedAt, setSavedAt] = useState<string | null>(null);
+  const [savingDraft, setSavingDraft] = useState(false);
+  const [emailStatus, setEmailStatus] = useState<
+    { kind: "idle" } | { kind: "checking" } | { kind: "exists"; message: string } | { kind: "free" }
+  >({ kind: "idle" });
+  const [accountBusy, setAccountBusy] = useState(false);
+  const [signInMode, setSignInMode] = useState(false);
+  const [reviewing, setReviewing] = useState(true);
+  const hydratedRef = useRef(false);
 
   // Restore a draft so a refresh never costs the client their typing. Passwords
   // are deliberately never persisted.
@@ -154,6 +166,17 @@ function ExpressIntakePage() {
         const user = data?.user;
         if (!user?.email) return;
         setAuthed(true);
+        setAccountEmail(user.email);
+        // Their draft belongs to the account, not this tab.
+        try {
+          const remote = await loadIntakeDraft();
+          if (remote?.payload) {
+            setState((s3) => ({ ...s3, ...(remote.payload as Partial<FormState>), password: "", confirmPassword: "" }));
+            if (remote.updatedAt) setSavedAt(remote.updatedAt);
+          }
+        } catch {
+          /* no server draft yet */
+        }
         const meta = (user.user_metadata ?? {}) as Record<string, unknown>;
         const full = typeof meta.full_name === "string" ? meta.full_name : "";
         const [first, ...rest] = full.split(" ");
@@ -171,21 +194,177 @@ function ExpressIntakePage() {
     })();
   }, []);
 
+  // Autosave: locally always, and against the account once it exists.
   useEffect(() => {
+    const {
+      password: _pw,
+      confirmPassword: _cpw,
+      consent: _c,
+      pilotAcknowledgement: _p,
+      companyFax: _f,
+      ...safe
+    } = state;
     try {
-      const {
-        password: _pw,
-        confirmPassword: _cpw,
-        consent: _c,
-        pilotAcknowledgement: _p,
-        companyFax: _f,
-        ...safe
-      } = state;
       localStorage.setItem(EXPRESS_DRAFT_KEY, JSON.stringify(safe));
     } catch {
       /* storage unavailable — the form still works */
     }
-  }, [state]);
+    if (!hydratedRef.current) {
+      hydratedRef.current = true;
+      return;
+    }
+    if (!authed) {
+      setSavedAt(new Date().toISOString());
+      return;
+    }
+    const t = setTimeout(() => {
+      setSavingDraft(true);
+      void saveIntakeDraft({ data: { payload: safe } })
+        .then((r) => setSavedAt(r?.savedAt ?? new Date().toISOString()))
+        .catch(() => undefined)
+        .finally(() => setSavingDraft(false));
+    }, 1200);
+    return () => clearTimeout(t);
+  }, [state, authed]);
+
+  // Recognise a returning client before they type a password.
+  const checkEmail = async () => {
+    const email = state.workEmail.trim().toLowerCase();
+    if (authed || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return;
+    setEmailStatus({ kind: "checking" });
+    try {
+      const res = await fetch("/api/public/intake-account", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ mode: "check", email }),
+      });
+      const body = await res.json();
+      if (body?.exists) {
+        setEmailStatus({ kind: "exists", message: body.message });
+        setSignInMode(true);
+      } else {
+        setEmailStatus({ kind: "free" });
+      }
+    } catch {
+      setEmailStatus({ kind: "idle" });
+    }
+  };
+
+  const createAccountInline = async () => {
+    const email = state.workEmail.trim().toLowerCase();
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
+      setErrors((e) => ({ ...e, workEmail: "Enter the work email you'd like to sign in with." }));
+      return;
+    }
+    if (state.password.length < MIN_ACCOUNT_PASSWORD) {
+      setErrors((e) => ({
+        ...e,
+        password: `Choose a password of at least ${MIN_ACCOUNT_PASSWORD} characters.`,
+      }));
+      return;
+    }
+    if (state.password !== state.confirmPassword) {
+      setErrors((e) => ({ ...e, confirmPassword: "The two passwords don't match yet." }));
+      return;
+    }
+    setAccountBusy(true);
+    try {
+      const res = await fetch("/api/public/intake-account", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          mode: "create",
+          email,
+          password: state.password,
+          firstName: state.firstName,
+          lastName: state.lastName,
+        }),
+      });
+      const body = await res.json();
+      if (!res.ok || !body?.ok) {
+        if (body?.error === "account_exists") {
+          setEmailStatus({ kind: "exists", message: body.message });
+          setSignInMode(true);
+        }
+        toast.error(body?.message ?? "We couldn't create your account. Please try again.");
+        return;
+      }
+      const { error } = await supabase.auth.signInWithPassword({ email, password: state.password });
+      if (error) {
+        toast.error("Account created, but we couldn't sign you in. Try signing in below.");
+        setSignInMode(true);
+        return;
+      }
+      setAuthed(true);
+      setAccountEmail(email);
+      trackEvent("account_created_from_intake", { flow: "express_onboarding" });
+      toast.success("Account created. Everything you've typed is saved to it.");
+    } catch {
+      toast.error("Network problem. Please try again.");
+    } finally {
+      setAccountBusy(false);
+    }
+  };
+
+  const signInInline = async () => {
+    const email = state.workEmail.trim().toLowerCase();
+    if (!state.password) {
+      setErrors((e) => ({ ...e, password: "Enter your password to sign in." }));
+      return;
+    }
+    setAccountBusy(true);
+    try {
+      const { error } = await supabase.auth.signInWithPassword({ email, password: state.password });
+      if (error) {
+        toast.error("That email and password don't match. Try again or reset your password.");
+        return;
+      }
+      setAuthed(true);
+      setAccountEmail(email);
+      setEmailStatus({ kind: "idle" });
+      toast.success("Signed in. This role will be added to your existing organisation.");
+    } catch {
+      toast.error("Network problem. Please try again.");
+    } finally {
+      setAccountBusy(false);
+    }
+  };
+
+  const googleSignIn = async () => {
+    setAccountBusy(true);
+    try {
+      // Come straight back to the account step of this form.
+      const result = await lovable.auth.signInWithOAuth("google", {
+        redirect_uri: `${window.location.origin}/intake?resume=account`,
+      });
+      if (result.error) {
+        toast.error("Google sign-in didn't complete. Try again or use email.");
+        return;
+      }
+      if (result.redirected) return;
+      const { data } = await supabase.auth.getUser();
+      if (data?.user?.email) {
+        setAuthed(true);
+        setAccountEmail(data.user.email);
+        setState((s2) => ({ ...s2, workEmail: s2.workEmail || data.user!.email! }));
+        toast.success("Signed in with Google. Your draft is safe.");
+      }
+    } catch {
+      toast.error("Google sign-in didn't complete. Try again or use email.");
+    } finally {
+      setAccountBusy(false);
+    }
+  };
+
+  // After a full-page Google redirect, land back on the account step.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (!new URLSearchParams(window.location.search).has("resume")) return;
+    const t = setTimeout(() => {
+      document.getElementById("account-step")?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 400);
+    return () => clearTimeout(t);
+  }, []);
 
   const set = <K extends keyof FormState>(key: K, value: FormState[K]) => {
     if (!startedRef.current) {
@@ -362,6 +541,7 @@ function ExpressIntakePage() {
         }).catch(() => undefined);
       }
 
+      if (signedIn) void clearIntakeDraft().catch(() => undefined);
       try {
         localStorage.removeItem(EXPRESS_DRAFT_KEY);
         localStorage.removeItem(EXPRESS_IDEMPOTENCY_KEY);
@@ -410,8 +590,25 @@ function ExpressIntakePage() {
           </p>
         </div>
 
+        <div className="flex items-center gap-2 text-xs text-[color:var(--brand-navy)]/60" aria-live="polite">
+          {savingDraft ? (
+            <>
+              <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden />
+              Saving…
+            </>
+          ) : savedAt ? (
+            <>
+              <Check className="h-3.5 w-3.5 text-[color:var(--brand-teal,#0f766e)]" aria-hidden />
+              Saved {new Date(savedAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+              {authed ? " to your account" : " on this device"}
+            </>
+          ) : (
+            "We save your answers as you type."
+          )}
+        </div>
 
-        <Section title="Your company" step={1}>
+
+        <Section id="section-company" title="Your company" step={1}>
           <Field label="Company name" error={errors.companyName} required>
             <Input
               value={state.companyName}
@@ -446,7 +643,7 @@ function ExpressIntakePage() {
           </div>
         </Section>
 
-        <Section title="You" step={2}>
+        <Section id="section-you" title="You" step={2}>
           <div className="grid gap-4 sm:grid-cols-2">
             <Field label="First name" error={errors.firstName} required>
               <Input
@@ -476,7 +673,11 @@ function ExpressIntakePage() {
               <Input
                 type="email"
                 value={state.workEmail}
-                onChange={(e) => set("workEmail", e.target.value)}
+                onChange={(e) => {
+                  set("workEmail", e.target.value);
+                  setEmailStatus({ kind: "idle" });
+                }}
+                onBlur={() => void checkEmail()}
                 autoComplete="email"
                 inputMode="email"
               />
@@ -500,21 +701,50 @@ function ExpressIntakePage() {
           </Field>
         </Section>
 
-        {authed ? null : (
+        <div id="account-step">
+        {authed ? (
+          <section className="flex items-center gap-3 rounded-xl border border-[color:var(--brand-teal,#0f766e)]/30 bg-[color:var(--brand-teal,#0f766e)]/5 p-4">
+            <Check className="h-5 w-5 shrink-0 text-[color:var(--brand-teal,#0f766e)]" aria-hidden />
+            <p className="text-sm">
+              Signed in as <strong>{accountEmail}</strong>. This role will be added to your existing
+              organisation, and your answers are saved to your account as you type.
+            </p>
+          </section>
+        ) : (
         <Section title="Create your account" step={3}>
+          <p className="text-sm text-[color:var(--brand-navy)]/70">
+            Create it now and nothing you've typed can be lost — you stay on this page the whole time.
+          </p>
+
+          <Button
+            type="button"
+            variant="outline"
+            className="min-h-11 w-full sm:w-auto"
+            disabled={accountBusy}
+            onClick={() => void googleSignIn()}
+          >
+            Continue with Google
+          </Button>
+
+          {emailStatus.kind === "exists" && (
+            <div className="rounded-lg border border-[color:var(--brand-navy)]/15 bg-[color:var(--brand-navy)]/4 p-3 text-sm">
+              {emailStatus.message}
+            </div>
+          )}
+
           <div className="grid gap-4 sm:grid-cols-2">
             <Field
-              label="Password"
+              label={signInMode ? "Password" : "Password"}
               error={errors.password}
               required
-              hint={`At least ${MIN_ACCOUNT_PASSWORD} characters.`}
+              hint={signInMode ? "The password for your existing account." : `At least ${MIN_ACCOUNT_PASSWORD} characters.`}
             >
               <div className="relative">
                 <Input
                   type={showPassword ? "text" : "password"}
                   value={state.password}
                   onChange={(e) => set("password", e.target.value)}
-                  autoComplete="new-password"
+                  autoComplete={signInMode ? "current-password" : "new-password"}
                   className="pr-11"
                 />
                 <button
@@ -531,24 +761,54 @@ function ExpressIntakePage() {
                 </button>
               </div>
             </Field>
-            <Field
-              label="Confirm password"
-              error={errors.confirmPassword}
-              required
-              hint="You'll be signed in straight after submitting."
+            {!signInMode && (
+              <Field
+                label="Confirm password"
+                error={errors.confirmPassword}
+                required
+                hint="Type it once more so we know it's right."
+              >
+                <Input
+                  type={showPassword ? "text" : "password"}
+                  value={state.confirmPassword}
+                  onChange={(e) => set("confirmPassword", e.target.value)}
+                  autoComplete="new-password"
+                />
+              </Field>
+            )}
+          </div>
+
+          <div className="flex flex-wrap items-center gap-3">
+            <Button
+              type="button"
+              className="min-h-11"
+              disabled={accountBusy}
+              onClick={() => void (signInMode ? signInInline() : createAccountInline())}
             >
-              <Input
-                type={showPassword ? "text" : "password"}
-                value={state.confirmPassword}
-                onChange={(e) => set("confirmPassword", e.target.value)}
-                autoComplete="new-password"
-              />
-            </Field>
+              {accountBusy ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden />
+                  Working…
+                </>
+              ) : signInMode ? (
+                "Sign in and continue"
+              ) : (
+                "Create my account now"
+              )}
+            </Button>
+            <button
+              type="button"
+              className="text-sm underline text-[color:var(--brand-navy)]/70"
+              onClick={() => setSignInMode((v) => !v)}
+            >
+              {signInMode ? "I don't have an account yet" : "I already have an account"}
+            </button>
           </div>
         </Section>
         )}
+        </div>
 
-        <Section title="The role" step={authed ? 3 : 4}>
+        <Section id="section-role" title="The role" step={authed ? 3 : 4}>
           <Field label="Job title" error={errors.roleTitle} required>
             <Input
               value={state.roleTitle}
@@ -652,6 +912,59 @@ function ExpressIntakePage() {
             )}
           </div>
         </Section>
+
+        <Card className="border-[color:var(--brand-navy)]/12">
+          <CardContent className="space-y-4 pt-6">
+            <div className="flex items-center justify-between gap-3">
+              <h2 className="text-base font-semibold">Review your role brief</h2>
+              <button
+                type="button"
+                className="text-sm underline text-[color:var(--brand-navy)]/70"
+                onClick={() => setReviewing((v) => !v)}
+              >
+                {reviewing ? "Hide" : "Show summary"}
+              </button>
+            </div>
+            <p className="text-sm text-[color:var(--brand-navy)]/70">
+              This is the last chance to correct anything before you pay.
+            </p>
+            {reviewing && (
+              <div className="space-y-4">
+                <ReviewBlock
+                  title="Your company"
+                  target="section-company"
+                  rows={[
+                    ["Company", state.companyName],
+                    ["Website", state.companyWebsite],
+                    ["LinkedIn", state.companyLinkedin],
+                  ]}
+                />
+                <ReviewBlock
+                  title="You"
+                  target="section-you"
+                  rows={[
+                    ["Name", `${state.firstName} ${state.lastName}`.trim()],
+                    ["Job title", state.contactTitle],
+                    ["Work email", state.workEmail],
+                    ["Phone", state.phone],
+                    ["LinkedIn", state.contactLinkedin],
+                  ]}
+                />
+                <ReviewBlock
+                  title="The role"
+                  target="section-role"
+                  rows={[
+                    ["Job title", state.roleTitle],
+                    [
+                      "Job description",
+                      jdFile ? jdFile.filename : state.jobDescriptionText.trim().slice(0, 400),
+                    ],
+                  ]}
+                />
+              </div>
+            )}
+          </CardContent>
+        </Card>
 
         <Card className="border-[color:var(--brand-navy)]/12">
           <CardContent className="space-y-4 pt-6">
@@ -764,9 +1077,19 @@ function ExpressIntakePage() {
   );
 }
 
-function Section({ title, step, children }: { title: string; step: number; children: React.ReactNode }) {
+function Section({
+  title,
+  step,
+  id,
+  children,
+}: {
+  title: string;
+  step: number;
+  id?: string;
+  children: React.ReactNode;
+}) {
   return (
-    <section className="space-y-4 rounded-xl border border-[color:var(--brand-navy)]/12 bg-white p-5 sm:p-6">
+    <section id={id} className="space-y-4 rounded-xl border border-[color:var(--brand-navy)]/12 bg-white p-5 sm:p-6">
       <div className="flex items-center gap-3">
         <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[color:var(--brand-navy)] text-xs font-semibold text-white">
           {step}
@@ -804,6 +1127,46 @@ function Field({
           {error}
         </p>
       )}
+    </div>
+  );
+}
+
+function ReviewBlock({
+  title,
+  target,
+  rows,
+}: {
+  title: string;
+  target: string;
+  rows: Array<[string, string]>;
+}) {
+  return (
+    <div className="rounded-lg border border-[color:var(--brand-navy)]/12 p-4">
+      <div className="flex items-center justify-between gap-3">
+        <h3 className="text-sm font-semibold">{title}</h3>
+        <button
+          type="button"
+          onClick={() =>
+            document.getElementById(target)?.scrollIntoView({ behavior: "smooth", block: "start" })
+          }
+          className="flex items-center gap-1 text-sm underline text-[color:var(--brand-navy)]/70"
+        >
+          <Pencil className="h-3.5 w-3.5" aria-hidden />
+          Edit
+        </button>
+      </div>
+      <dl className="mt-3 space-y-2">
+        {rows.map(([label, value]) => (
+          <div key={label} className="grid gap-1 sm:grid-cols-[160px_1fr]">
+            <dt className="text-xs uppercase tracking-wide text-[color:var(--brand-navy)]/55">
+              {label}
+            </dt>
+            <dd className="text-sm whitespace-pre-wrap">
+              {value?.trim() ? value : <span className="text-[color:var(--brand-navy)]/45">Not provided</span>}
+            </dd>
+          </div>
+        ))}
+      </dl>
     </div>
   );
 }
