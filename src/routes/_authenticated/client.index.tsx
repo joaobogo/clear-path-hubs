@@ -25,6 +25,10 @@ import {
   Users,
 } from "lucide-react";
 import { SlaScorecard } from "@/components/client/sla-scorecard";
+import { DensityToggle } from "@/components/client/density-toggle";
+import { useDensity } from "@/lib/use-density";
+import { roleNextStep } from "@/lib/client-role-next-step";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/_authenticated/client/")({
   head: () => ({
@@ -89,6 +93,11 @@ const KIND_ICON: Record<QueueItem["kind"], React.ReactNode> = {
 };
 
 function OverviewPage() {
+  const [selfId, setSelfId] = useState<string | null>(null);
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => setSelfId(data.user?.id ?? null));
+  }, []);
+  const { density, compact, setDensity } = useDensity(selfId);
   const ctxFn = useServerFn(getClientContext);
   const overviewFn = useServerFn(getClientOverview);
   const orgSearch = useClientOrgSearch();
@@ -220,6 +229,7 @@ function OverviewPage() {
           )}
         </div>
         <div className="flex shrink-0 items-center gap-2">
+          <DensityToggle density={density} onChange={setDensity} />
           <Button
             variant="ghost"
             size="sm"
@@ -285,7 +295,7 @@ function OverviewPage() {
           </div>
 
           {/* 2 · ROLE STATUS — plain language, real dates, honest risk */}
-          <RoleStatusList roles={visibleRoles} loading={!data && isFetching} />
+          <RoleStatusList roles={visibleRoles} loading={!data && isFetching} compact={compact} />
 
           {/* 3 · CANDIDATES WAITING ON YOU */}
           <section aria-labelledby="open-first-heading" className="space-y-3">
@@ -458,7 +468,15 @@ function DecisionQueue({ queue, loading }: { queue: QueueItem[]; loading: boolea
  * Plain-language stage per role, with the date it entered that stage, how long
  * it has been there, and an "at risk" line derived only from real timing data.
  */
-function RoleStatusList({ roles, loading }: { roles: Any[]; loading: boolean }) {
+function RoleStatusList({
+  roles,
+  loading,
+  compact,
+}: {
+  roles: Any[];
+  loading: boolean;
+  compact?: boolean;
+}) {
   if (loading) {
     return (
       <div className="space-y-2">
@@ -472,7 +490,7 @@ function RoleStatusList({ roles, loading }: { roles: Any[]; loading: boolean }) 
     return <EmptyBlock text="No live roles right now. Submit a role and its progress shows up here." />;
   }
   return (
-    <ul className="grid gap-2">
+    <ul className={compact ? "grid gap-1.5" : "grid gap-2"}>
       {roles.map((r) => {
         const since = formatStageDate(r.stage_entered_at);
         const days = r.days_in_stage as number | null;
@@ -480,6 +498,7 @@ function RoleStatusList({ roles, loading }: { roles: Any[]; loading: boolean }) 
           promisedShortlistBy: r.promised_shortlist_by,
           shortlistDeliveredAt: r.shortlist_delivered_at,
         });
+        const next = roleNextStep(r);
         return (
           <li key={r.position_id}>
             <div
@@ -490,7 +509,9 @@ function RoleStatusList({ roles, loading }: { roles: Any[]; loading: boolean }) 
             <Link
               to="/client/positions/$id"
               params={{ id: r.position_id }}
-              className="group flex flex-col gap-2 px-4 py-3.5 hover:bg-muted/30"
+              className={`group flex flex-col gap-2 hover:bg-muted/30 ${
+                compact ? "px-4 py-2.5" : "px-4 py-3.5"
+              }`}
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
@@ -515,6 +536,7 @@ function RoleStatusList({ roles, loading }: { roles: Any[]; loading: boolean }) 
               </div>
 
               {/* Our promise, next to what actually happened. Misses shown plainly. */}
+              {!compact && (
               <div className="grid grid-cols-3 gap-2 rounded-lg border bg-muted/30 px-3 py-2 text-[11px] sm:text-xs">
                 <div className="min-w-0">
                   <div className="text-muted-foreground">First shortlist promised</div>
@@ -545,6 +567,25 @@ function RoleStatusList({ roles, loading }: { roles: Any[]; loading: boolean }) 
                   </div>
                 </div>
               </div>
+              )}
+
+              {/* What happens next: owner and date, always stated. */}
+              <p
+                className={`flex items-start gap-2 rounded-lg border border-dashed px-3 py-1.5 text-[11px] sm:text-xs ${
+                  next.overdue
+                    ? "taas-bd-warning taas-bg-warning-soft taas-fg-warning"
+                    : "bg-muted/30 text-muted-foreground"
+                }`}
+              >
+                <span>
+                  <span className="font-semibold text-foreground">Next: </span>
+                  {next.sentence}{" "}
+                  <span className="font-medium text-foreground">{next.ownerLabel}</span>
+                  {next.dateLabel ? ` · by ${next.dateLabel}` : ""}
+                </span>
+              </p>
+
+
 
               {r.at_risk && r.risk_reason && (
                 <p className="flex items-start gap-2 rounded-lg taas-bg-warning-soft px-3 py-2 text-xs taas-fg-warning sm:text-sm">

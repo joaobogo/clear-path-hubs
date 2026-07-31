@@ -6,6 +6,7 @@ import { AgeBadge } from "@/components/client/age-badge";
 import { formatDaysInStage } from "@/lib/time-age";
 import { DecisionBar } from "@/components/client/decision-bar";
 import { NextStepNote } from "@/components/client/next-step-note";
+import { UndoWindow } from "@/components/client/undo-window";
 import { fitChips } from "@/lib/client-evidence-bullets";
 import { buildShortlistRationale } from "@/lib/client-rationale";
 import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
@@ -207,7 +208,12 @@ export function CandidateCard({
         )}
       </div>
 
-      {/* A decision must never vanish: show what we do next, and by when. */}
+      {/* Every decision is reversible for a short window, visibly. */}
+      <div className="mt-3">
+        <UndoWindow orgId={orgId} matchId={c.match_id} candidateName={c.candidate.display_name} />
+      </div>
+
+      {/* A decision must never vanish: show what we do next, who owns it, when. */}
       <NextStepNote stage={c.stage} stageEnteredAt={c.stage_entered_at} className="mt-3" />
     </div>
   );
