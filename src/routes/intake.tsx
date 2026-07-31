@@ -370,10 +370,12 @@ function ExpressIntakePage() {
       }
 
       if (signedIn && body.positionId) {
-        navigate({ to: "/client/positions/$id", params: { id: body.positionId } });
+        // Role stays a draft — payment is the next step before it can go live.
+        navigate({ to: "/checkout", search: { position: body.positionId } });
         return;
       }
       navigate({ to: "/intake/confirmation", search: { intake_id: body.intakeId } });
+
     } catch {
       toast.error("Network problem. Please try again.");
       setSubmitting(false);

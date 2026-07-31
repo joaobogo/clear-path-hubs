@@ -58,6 +58,7 @@ import { Route as DevCatalogueRouteImport } from './routes/dev.catalogue'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as AuthenticatedMeRouteImport } from './routes/_authenticated/me'
 import { Route as AuthenticatedClientRouteImport } from './routes/_authenticated/client'
+import { Route as AuthenticatedCheckoutRouteImport } from './routes/_authenticated/checkout'
 import { Route as AuthenticatedBoardroomRouteImport } from './routes/_authenticated/boardroom'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as JobsIdIndexRouteImport } from './routes/jobs.$id.index'
@@ -97,6 +98,7 @@ import { Route as AuthenticatedClientCandidatesRouteImport } from './routes/_aut
 import { Route as AuthenticatedClientAssistantRouteImport } from './routes/_authenticated/client.assistant'
 import { Route as AuthenticatedClientAnalyticsRouteImport } from './routes/_authenticated/client.analytics'
 import { Route as AuthenticatedClientAccountRouteImport } from './routes/_authenticated/client.account'
+import { Route as AuthenticatedCheckoutReturnRouteImport } from './routes/_authenticated/checkout_.return'
 import { Route as AuthenticatedAdminWbrRouteImport } from './routes/_authenticated/admin.wbr'
 import { Route as AuthenticatedAdminTeamRouteImport } from './routes/_authenticated/admin.team'
 import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin.settings'
@@ -127,6 +129,7 @@ import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/l
 import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
 import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
 import { Route as ApiPublicPipelineRunRouteImport } from './routes/api/public/pipeline.run'
+import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 import { Route as ApiPublicIntakeStatusIdRouteImport } from './routes/api/public/intake-status.$id'
 import { Route as ApiPublicBlueprintStatusIntakeIdRouteImport } from './routes/api/public/blueprint-status.$intakeId'
 import { Route as AuthenticatedMeApplicationsIdRouteImport } from './routes/_authenticated/me.applications.$id'
@@ -388,6 +391,11 @@ const AuthenticatedClientRoute = AuthenticatedClientRouteImport.update({
   path: '/client',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedCheckoutRoute = AuthenticatedCheckoutRouteImport.update({
+  id: '/checkout',
+  path: '/checkout',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedBoardroomRoute = AuthenticatedBoardroomRouteImport.update({
   id: '/boardroom',
   path: '/boardroom',
@@ -602,6 +610,12 @@ const AuthenticatedClientAccountRoute =
     path: '/account',
     getParentRoute: () => AuthenticatedClientRoute,
   } as any)
+const AuthenticatedCheckoutReturnRoute =
+  AuthenticatedCheckoutReturnRouteImport.update({
+    id: '/checkout_/return',
+    path: '/checkout/return',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAdminWbrRoute = AuthenticatedAdminWbrRouteImport.update({
   id: '/wbr',
   path: '/wbr',
@@ -777,6 +791,12 @@ const ApiPublicPipelineRunRoute = ApiPublicPipelineRunRouteImport.update({
   path: '/api/public/pipeline/run',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicPaymentsWebhookRoute =
+  ApiPublicPaymentsWebhookRouteImport.update({
+    id: '/api/public/payments/webhook',
+    path: '/api/public/payments/webhook',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicIntakeStatusIdRoute = ApiPublicIntakeStatusIdRouteImport.update({
   id: '/api/public/intake-status/$id',
   path: '/api/public/intake-status/$id',
@@ -910,6 +930,7 @@ export interface FileRoutesByFullPath {
   '/unauthorized': typeof UnauthorizedRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/boardroom': typeof AuthenticatedBoardroomRoute
+  '/checkout': typeof AuthenticatedCheckoutRoute
   '/client': typeof AuthenticatedClientRouteWithChildren
   '/me': typeof AuthenticatedMeRouteWithChildren
   '/blog/$slug': typeof BlogSlugRoute
@@ -941,6 +962,7 @@ export interface FileRoutesByFullPath {
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/team': typeof AuthenticatedAdminTeamRoute
   '/admin/wbr': typeof AuthenticatedAdminWbrRoute
+  '/checkout/return': typeof AuthenticatedCheckoutReturnRoute
   '/client/account': typeof AuthenticatedClientAccountRoute
   '/client/analytics': typeof AuthenticatedClientAnalyticsRoute
   '/client/assistant': typeof AuthenticatedClientAssistantRoute
@@ -989,6 +1011,7 @@ export interface FileRoutesByFullPath {
   '/me/applications/$id': typeof AuthenticatedMeApplicationsIdRoute
   '/api/public/blueprint-status/$intakeId': typeof ApiPublicBlueprintStatusIntakeIdRoute
   '/api/public/intake-status/$id': typeof ApiPublicIntakeStatusIdRoute
+  '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/api/public/pipeline/run': typeof ApiPublicPipelineRunRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
@@ -1044,6 +1067,7 @@ export interface FileRoutesByTo {
   '/trust': typeof TrustRoute
   '/unauthorized': typeof UnauthorizedRoute
   '/boardroom': typeof AuthenticatedBoardroomRoute
+  '/checkout': typeof AuthenticatedCheckoutRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/dev/catalogue': typeof DevCatalogueRoute
   '/dev/industry-coverage': typeof DevIndustryCoverageRoute
@@ -1069,6 +1093,7 @@ export interface FileRoutesByTo {
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/team': typeof AuthenticatedAdminTeamRoute
   '/admin/wbr': typeof AuthenticatedAdminWbrRoute
+  '/checkout/return': typeof AuthenticatedCheckoutReturnRoute
   '/client/account': typeof AuthenticatedClientAccountRoute
   '/client/analytics': typeof AuthenticatedClientAnalyticsRoute
   '/client/assistant': typeof AuthenticatedClientAssistantRoute
@@ -1114,6 +1139,7 @@ export interface FileRoutesByTo {
   '/me/applications/$id': typeof AuthenticatedMeApplicationsIdRoute
   '/api/public/blueprint-status/$intakeId': typeof ApiPublicBlueprintStatusIntakeIdRoute
   '/api/public/intake-status/$id': typeof ApiPublicIntakeStatusIdRoute
+  '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/api/public/pipeline/run': typeof ApiPublicPipelineRunRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
@@ -1172,6 +1198,7 @@ export interface FileRoutesById {
   '/unauthorized': typeof UnauthorizedRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/boardroom': typeof AuthenticatedBoardroomRoute
+  '/_authenticated/checkout': typeof AuthenticatedCheckoutRoute
   '/_authenticated/client': typeof AuthenticatedClientRouteWithChildren
   '/_authenticated/me': typeof AuthenticatedMeRouteWithChildren
   '/blog/$slug': typeof BlogSlugRoute
@@ -1203,6 +1230,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/_authenticated/admin/team': typeof AuthenticatedAdminTeamRoute
   '/_authenticated/admin/wbr': typeof AuthenticatedAdminWbrRoute
+  '/_authenticated/checkout_/return': typeof AuthenticatedCheckoutReturnRoute
   '/_authenticated/client/account': typeof AuthenticatedClientAccountRoute
   '/_authenticated/client/analytics': typeof AuthenticatedClientAnalyticsRoute
   '/_authenticated/client/assistant': typeof AuthenticatedClientAssistantRoute
@@ -1251,6 +1279,7 @@ export interface FileRoutesById {
   '/_authenticated/me/applications/$id': typeof AuthenticatedMeApplicationsIdRoute
   '/api/public/blueprint-status/$intakeId': typeof ApiPublicBlueprintStatusIntakeIdRoute
   '/api/public/intake-status/$id': typeof ApiPublicIntakeStatusIdRoute
+  '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/api/public/pipeline/run': typeof ApiPublicPipelineRunRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
@@ -1309,6 +1338,7 @@ export interface FileRouteTypes {
     | '/unauthorized'
     | '/admin'
     | '/boardroom'
+    | '/checkout'
     | '/client'
     | '/me'
     | '/blog/$slug'
@@ -1340,6 +1370,7 @@ export interface FileRouteTypes {
     | '/admin/settings'
     | '/admin/team'
     | '/admin/wbr'
+    | '/checkout/return'
     | '/client/account'
     | '/client/analytics'
     | '/client/assistant'
@@ -1388,6 +1419,7 @@ export interface FileRouteTypes {
     | '/me/applications/$id'
     | '/api/public/blueprint-status/$intakeId'
     | '/api/public/intake-status/$id'
+    | '/api/public/payments/webhook'
     | '/api/public/pipeline/run'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
@@ -1443,6 +1475,7 @@ export interface FileRouteTypes {
     | '/trust'
     | '/unauthorized'
     | '/boardroom'
+    | '/checkout'
     | '/blog/$slug'
     | '/dev/catalogue'
     | '/dev/industry-coverage'
@@ -1468,6 +1501,7 @@ export interface FileRouteTypes {
     | '/admin/settings'
     | '/admin/team'
     | '/admin/wbr'
+    | '/checkout/return'
     | '/client/account'
     | '/client/analytics'
     | '/client/assistant'
@@ -1513,6 +1547,7 @@ export interface FileRouteTypes {
     | '/me/applications/$id'
     | '/api/public/blueprint-status/$intakeId'
     | '/api/public/intake-status/$id'
+    | '/api/public/payments/webhook'
     | '/api/public/pipeline/run'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
@@ -1570,6 +1605,7 @@ export interface FileRouteTypes {
     | '/unauthorized'
     | '/_authenticated/admin'
     | '/_authenticated/boardroom'
+    | '/_authenticated/checkout'
     | '/_authenticated/client'
     | '/_authenticated/me'
     | '/blog/$slug'
@@ -1601,6 +1637,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/settings'
     | '/_authenticated/admin/team'
     | '/_authenticated/admin/wbr'
+    | '/_authenticated/checkout_/return'
     | '/_authenticated/client/account'
     | '/_authenticated/client/analytics'
     | '/_authenticated/client/assistant'
@@ -1649,6 +1686,7 @@ export interface FileRouteTypes {
     | '/_authenticated/me/applications/$id'
     | '/api/public/blueprint-status/$intakeId'
     | '/api/public/intake-status/$id'
+    | '/api/public/payments/webhook'
     | '/api/public/pipeline/run'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
@@ -1731,6 +1769,7 @@ export interface RootRouteChildren {
   JobsIdIndexRoute: typeof JobsIdIndexRoute
   ApiPublicBlueprintStatusIntakeIdRoute: typeof ApiPublicBlueprintStatusIntakeIdRoute
   ApiPublicIntakeStatusIdRoute: typeof ApiPublicIntakeStatusIdRoute
+  ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
   ApiPublicPipelineRunRoute: typeof ApiPublicPipelineRunRoute
   LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
   LovableEmailAuthWebhookRoute: typeof LovableEmailAuthWebhookRoute
@@ -2082,6 +2121,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedClientRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/checkout': {
+      id: '/_authenticated/checkout'
+      path: '/checkout'
+      fullPath: '/checkout'
+      preLoaderRoute: typeof AuthenticatedCheckoutRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/boardroom': {
       id: '/_authenticated/boardroom'
       path: '/boardroom'
@@ -2355,6 +2401,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedClientAccountRouteImport
       parentRoute: typeof AuthenticatedClientRoute
     }
+    '/_authenticated/checkout_/return': {
+      id: '/_authenticated/checkout_/return'
+      path: '/checkout/return'
+      fullPath: '/checkout/return'
+      preLoaderRoute: typeof AuthenticatedCheckoutReturnRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/admin/wbr': {
       id: '/_authenticated/admin/wbr'
       path: '/wbr'
@@ -2563,6 +2616,13 @@ declare module '@tanstack/react-router' {
       path: '/api/public/pipeline/run'
       fullPath: '/api/public/pipeline/run'
       preLoaderRoute: typeof ApiPublicPipelineRunRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/payments/webhook': {
+      id: '/api/public/payments/webhook'
+      path: '/api/public/payments/webhook'
+      fullPath: '/api/public/payments/webhook'
+      preLoaderRoute: typeof ApiPublicPaymentsWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/intake-status/$id': {
@@ -2942,15 +3002,19 @@ const AuthenticatedMeRouteWithChildren = AuthenticatedMeRoute._addFileChildren(
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRouteWithChildren
   AuthenticatedBoardroomRoute: typeof AuthenticatedBoardroomRoute
+  AuthenticatedCheckoutRoute: typeof AuthenticatedCheckoutRoute
   AuthenticatedClientRoute: typeof AuthenticatedClientRouteWithChildren
   AuthenticatedMeRoute: typeof AuthenticatedMeRouteWithChildren
+  AuthenticatedCheckoutReturnRoute: typeof AuthenticatedCheckoutReturnRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRouteWithChildren,
   AuthenticatedBoardroomRoute: AuthenticatedBoardroomRoute,
+  AuthenticatedCheckoutRoute: AuthenticatedCheckoutRoute,
   AuthenticatedClientRoute: AuthenticatedClientRouteWithChildren,
   AuthenticatedMeRoute: AuthenticatedMeRouteWithChildren,
+  AuthenticatedCheckoutReturnRoute: AuthenticatedCheckoutReturnRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
@@ -3018,6 +3082,7 @@ const rootRouteChildren: RootRouteChildren = {
   JobsIdIndexRoute: JobsIdIndexRoute,
   ApiPublicBlueprintStatusIntakeIdRoute: ApiPublicBlueprintStatusIntakeIdRoute,
   ApiPublicIntakeStatusIdRoute: ApiPublicIntakeStatusIdRoute,
+  ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
   ApiPublicPipelineRunRoute: ApiPublicPipelineRunRoute,
   LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,
   LovableEmailAuthWebhookRoute: LovableEmailAuthWebhookRoute,
