@@ -320,7 +320,7 @@ function AgentControlPage() {
             canManage={!!panel.can_manage}
             busy={busy}
             onToggle={(enabled) =>
-              toggle.mutate({ agent_key: a.key, enabled })
+              toggle.mutateAsync({ agent_key: a.key, enabled })
             }
             onPause={(paused) => pause.mutate({ agent_key: a.key, paused })}
           />
