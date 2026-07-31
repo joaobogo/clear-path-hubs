@@ -329,18 +329,18 @@ export function ProofSystem() {
             <dl className="mt-6 space-y-3 text-sm">
               <div className="flex items-baseline justify-between gap-4 border-b border-[color:var(--brand-navy)]/10 pb-3">
                 <dt className="text-[color:var(--brand-navy)]/80">
-                  Contingency agency (22% of first-year salary)
+                  Contingency agency ({AGENCY_FEE_PCT}% of first-year salary)
                 </dt>
                 <dd className="font-semibold tabular-nums text-[color:var(--brand-navy)]">
-                  $33,000
+                  {usd(AGENCY_FEE_USD)}
                 </dd>
               </div>
               <div className="flex items-baseline justify-between gap-4 border-b border-[color:var(--brand-navy)]/10 pb-3">
                 <dt className="text-[color:var(--brand-navy)]/80">
-                  TaaSFlow Growth (one month, flat)
+                  TaaSFlow Bronze (one month, flat)
                 </dt>
                 <dd className="font-semibold tabular-nums text-[color:var(--brand-ocean-text)]">
-                  $5,900
+                  {usd(PRICE_SUB_BRONZE_USD)}
                 </dd>
               </div>
               <div className="flex items-baseline justify-between gap-4">
@@ -348,9 +348,10 @@ export function ProofSystem() {
                   Difference on one hire
                 </dt>
                 <dd className="font-[family-name:var(--brand-font-display)] text-2xl font-semibold tabular-nums text-[color:var(--brand-navy)]">
-                  $27,100
+                  {usd(COST_DIFFERENCE_USD)}
                 </dd>
               </div>
+
             </dl>
             <a
               href="#roi-calculator"
