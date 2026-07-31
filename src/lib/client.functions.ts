@@ -24,6 +24,7 @@ import {
   type PipelineStatusInput,
 } from "@/lib/client-pipeline-language";
 import { computeRoleProgress } from "@/lib/client-role-progress";
+import { computeRoleRisk } from "@/lib/client-role-risk";
 
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -540,6 +541,7 @@ export const getClientOverview = createServerFn({ method: "GET" })
       new_this_week,
       action_required,
       whats_next,
+      decision_queue,
       latest_candidates,
       recent_messages: (recentMessages as AnyRow[]) ?? [],
       recent_activity: (events as AnyRow[]) ?? [],
