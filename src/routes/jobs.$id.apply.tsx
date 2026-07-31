@@ -180,6 +180,7 @@ function ApplyPage() {
     }
     // Same signature/structure checks the server runs — catch renamed Word docs,
     // images and corrupt PDFs before the applicant waits on an upload.
+    setCvChecking(true);
     try {
       const bytes = new Uint8Array(await f.arrayBuffer());
       const { validateCv } = await import("@/lib/cv-validation");
@@ -191,9 +192,12 @@ function ApplyPage() {
     } catch {
       setCvError(CV_MESSAGES.corrupt);
       return;
+    } finally {
+      setCvChecking(false);
     }
     setCvFile(f);
   };
+
 
 
   const setAnswer = (qid: string, v: AnswerValue) =>
