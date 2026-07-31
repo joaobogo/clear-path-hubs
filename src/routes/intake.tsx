@@ -589,8 +589,25 @@ function ExpressIntakePage() {
           </p>
         </div>
 
+        <div className="flex items-center gap-2 text-xs text-[color:var(--brand-navy)]/60" aria-live="polite">
+          {savingDraft ? (
+            <>
+              <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden />
+              Saving…
+            </>
+          ) : savedAt ? (
+            <>
+              <Check className="h-3.5 w-3.5 text-[color:var(--brand-teal,#0f766e)]" aria-hidden />
+              Saved {new Date(savedAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+              {authed ? " to your account" : " on this device"}
+            </>
+          ) : (
+            "We save your answers as you type."
+          )}
+        </div>
 
-        <Section title="Your company" step={1}>
+
+        <Section id="section-company" title="Your company" step={1}>
           <Field label="Company name" error={errors.companyName} required>
             <Input
               value={state.companyName}
@@ -625,7 +642,7 @@ function ExpressIntakePage() {
           </div>
         </Section>
 
-        <Section title="You" step={2}>
+        <Section id="section-you" title="You" step={2}>
           <div className="grid gap-4 sm:grid-cols-2">
             <Field label="First name" error={errors.firstName} required>
               <Input
@@ -790,7 +807,7 @@ function ExpressIntakePage() {
         )}
         </div>
 
-        <Section title="The role" step={authed ? 3 : 4}>
+        <Section id="section-role" title="The role" step={authed ? 3 : 4}>
           <Field label="Job title" error={errors.roleTitle} required>
             <Input
               value={state.roleTitle}
@@ -894,6 +911,59 @@ function ExpressIntakePage() {
             )}
           </div>
         </Section>
+
+        <Card className="border-[color:var(--brand-navy)]/12">
+          <CardContent className="space-y-4 pt-6">
+            <div className="flex items-center justify-between gap-3">
+              <h2 className="text-base font-semibold">Review your role brief</h2>
+              <button
+                type="button"
+                className="text-sm underline text-[color:var(--brand-navy)]/70"
+                onClick={() => setReviewing((v) => !v)}
+              >
+                {reviewing ? "Hide" : "Show summary"}
+              </button>
+            </div>
+            <p className="text-sm text-[color:var(--brand-navy)]/70">
+              This is the last chance to correct anything before you pay.
+            </p>
+            {reviewing && (
+              <div className="space-y-4">
+                <ReviewBlock
+                  title="Your company"
+                  target="section-company"
+                  rows={[
+                    ["Company", state.companyName],
+                    ["Website", state.companyWebsite],
+                    ["LinkedIn", state.companyLinkedin],
+                  ]}
+                />
+                <ReviewBlock
+                  title="You"
+                  target="section-you"
+                  rows={[
+                    ["Name", `${state.firstName} ${state.lastName}`.trim()],
+                    ["Job title", state.contactTitle],
+                    ["Work email", state.workEmail],
+                    ["Phone", state.phone],
+                    ["LinkedIn", state.contactLinkedin],
+                  ]}
+                />
+                <ReviewBlock
+                  title="The role"
+                  target="section-role"
+                  rows={[
+                    ["Job title", state.roleTitle],
+                    [
+                      "Job description",
+                      jdFile ? jdFile.filename : state.jobDescriptionText.trim().slice(0, 400),
+                    ],
+                  ]}
+                />
+              </div>
+            )}
+          </CardContent>
+        </Card>
 
         <Card className="border-[color:var(--brand-navy)]/12">
           <CardContent className="space-y-4 pt-6">
@@ -1006,9 +1076,19 @@ function ExpressIntakePage() {
   );
 }
 
-function Section({ title, step, children }: { title: string; step: number; children: React.ReactNode }) {
+function Section({
+  title,
+  step,
+  id,
+  children,
+}: {
+  title: string;
+  step: number;
+  id?: string;
+  children: React.ReactNode;
+}) {
   return (
-    <section className="space-y-4 rounded-xl border border-[color:var(--brand-navy)]/12 bg-white p-5 sm:p-6">
+    <section id={id} className="space-y-4 rounded-xl border border-[color:var(--brand-navy)]/12 bg-white p-5 sm:p-6">
       <div className="flex items-center gap-3">
         <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[color:var(--brand-navy)] text-xs font-semibold text-white">
           {step}
@@ -1046,6 +1126,46 @@ function Field({
           {error}
         </p>
       )}
+    </div>
+  );
+}
+
+function ReviewBlock({
+  title,
+  target,
+  rows,
+}: {
+  title: string;
+  target: string;
+  rows: Array<[string, string]>;
+}) {
+  return (
+    <div className="rounded-lg border border-[color:var(--brand-navy)]/12 p-4">
+      <div className="flex items-center justify-between gap-3">
+        <h3 className="text-sm font-semibold">{title}</h3>
+        <button
+          type="button"
+          onClick={() =>
+            document.getElementById(target)?.scrollIntoView({ behavior: "smooth", block: "start" })
+          }
+          className="flex items-center gap-1 text-sm underline text-[color:var(--brand-navy)]/70"
+        >
+          <Pencil className="h-3.5 w-3.5" aria-hidden />
+          Edit
+        </button>
+      </div>
+      <dl className="mt-3 space-y-2">
+        {rows.map(([label, value]) => (
+          <div key={label} className="grid gap-1 sm:grid-cols-[160px_1fr]">
+            <dt className="text-xs uppercase tracking-wide text-[color:var(--brand-navy)]/55">
+              {label}
+            </dt>
+            <dd className="text-sm whitespace-pre-wrap">
+              {value?.trim() ? value : <span className="text-[color:var(--brand-navy)]/45">Not provided</span>}
+            </dd>
+          </div>
+        ))}
+      </dl>
     </div>
   );
 }
