@@ -296,7 +296,11 @@ function ClientLayout() {
           action={{ label: "Back to overview", to: "/client" }}
         />
       ) : (
-        <Outlet />
+        <>
+          <SectionTabs groups={CLIENT_SECTION_GROUPS} linkSearch={linkSearch} />
+          <Outlet />
+        </>
+
       )}
  {showOnboarding && (
  <ClientOnboardingModal
