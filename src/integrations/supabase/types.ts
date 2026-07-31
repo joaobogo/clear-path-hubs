@@ -11364,6 +11364,10 @@ export type Database = {
       }
     }
     Functions: {
+      _authz_probe_visible: {
+        Args: { _filter: string; _table: string; _user: string }
+        Returns: number
+      }
       admin_set_position_payment_exempt: {
         Args: { _actor_user_id: string; _position_id: string; _reason: string }
         Returns: Json
