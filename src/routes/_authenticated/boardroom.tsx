@@ -162,15 +162,10 @@ function BoardroomPage() {
             <ArrowLeft className="h-3.5 w-3.5" aria-hidden />
             Exit boardroom
           </Link>
-          {usingDemo ? (
-            <span className="rounded-full border border-white/20 px-2 py-0.5 text-[10px] uppercase tracking-widest">
-              Demo data
-            </span>
-          ) : (
-            <span className="rounded-full border border-white/20 px-2 py-0.5 text-[10px] uppercase tracking-widest">
-              Live · {orgName}
-            </span>
-          )}
+          <span className="rounded-full border border-white/20 px-2 py-0.5 text-[10px] uppercase tracking-widest">
+            Live · {orgName}
+          </span>
+
         </div>
         <div className="flex items-center gap-4">
           <span>
