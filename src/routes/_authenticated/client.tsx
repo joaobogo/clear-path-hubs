@@ -40,6 +40,7 @@ import {
  	CheckSquare,
  	Plus,
  	Send,
+ 	CreditCard,
 } from "lucide-react";
 import {
  WorkspaceShell,
