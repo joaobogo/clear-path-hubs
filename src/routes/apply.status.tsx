@@ -11,6 +11,13 @@ import {
   statusLookupSchema,
   type PublicApplicationStatus,
 } from "@/lib/apply-status.functions";
+import {
+  getMyApplicationDetails,
+  requestMyDataDeletion,
+  updateMyApplication,
+  type CandidateEditableDetails,
+} from "@/lib/candidate-self-service.functions";
+import { ManageApplication } from "@/components/candidate/manage-application";
 
 const searchSchema = z.object({ ref: z.string().optional() });
 
@@ -44,6 +51,8 @@ function StatusPage() {
   const [loading, setLoading] = useState(false);
   const [notFound, setNotFound] = useState(false);
   const [result, setResult] = useState<PublicApplicationStatus | null>(null);
+  const [details, setDetails] = useState<CandidateEditableDetails | null>(null);
+  const [verified, setVerified] = useState<{ reference: string; email: string } | null>(null);
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -61,6 +70,10 @@ function StatusPage() {
       const data = await lookupApplicationStatus({ data: parsed.data });
       if (!data) setNotFound(true);
       setResult(data);
+      if (data) {
+        setVerified(parsed.data);
+        setDetails(await getMyApplicationDetails({ data: parsed.data }));
+      }
     } catch {
       setNotFound(true);
     } finally {
@@ -182,6 +195,18 @@ function StatusPage() {
             </Button>
           </div>
         </section>
+      )}
+
+      {result && verified && details && (
+        <ManageApplication
+          credentials={verified}
+          details={details}
+          onUpdated={async () => {
+            setDetails(await getMyApplicationDetails({ data: verified }));
+          }}
+          updateFn={updateMyApplication}
+          deleteFn={requestMyDataDeletion}
+        />
       )}
     </FormShell>
   );

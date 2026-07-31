@@ -1,6 +1,8 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, stripSearchParams, useNavigate } from "@tanstack/react-router";
+import { fallback, zodValidator } from "@tanstack/zod-adapter";
+import { z } from "zod";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { listPublicPositions } from "@/lib/jobs.functions";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -23,7 +25,23 @@ const positionsQuery = queryOptions({
 
 const PAGE_SIZE = 20;
 
+/** Filters live in the URL so any search can be copied, shared or bookmarked. */
+const jobsSearchSchema = z.object({
+  q: fallback(z.string(), "").default(""),
+  location: fallback(z.string(), "").default(""),
+  work: fallback(z.string(), "any").default("any"),
+  type: fallback(z.string(), "any").default("any"),
+  level: fallback(z.string(), "any").default("any"),
+  page: fallback(z.number().int(), 1).default(1),
+});
+
 export const Route = createFileRoute("/jobs/")({
+  validateSearch: zodValidator(jobsSearchSchema),
+  search: {
+    middlewares: [
+      stripSearchParams({ q: "", location: "", work: "any", type: "any", level: "any", page: 1 }),
+    ],
+  },
   head: () => ({
     meta: [
       { title: "Open roles — TaaSFlow job board" },
@@ -77,12 +95,29 @@ function FilterChip({ label, onClear }: ChipProps) {
 function JobsPage() {
   const { data: positions } = useSuspenseQuery(positionsQuery);
 
-  const [q, setQ] = useState("");
-  const [workModel, setWorkModel] = useState<string>("any");
-  const [employment, setEmployment] = useState<string>("any");
-  const [seniority, setSeniority] = useState<string>("any");
-  const [location, setLocation] = useState("");
-  const [page, setPage] = useState(1);
+  const search = Route.useSearch();
+  const navigate = useNavigate({ from: "/jobs" });
+
+  const q = search.q.slice(0, 120);
+  const location = search.location.slice(0, 120);
+  const workModel = search.work;
+  const employment = search.type;
+  const seniority = search.level;
+  const page = Math.max(1, search.page);
+
+  // Every filter change rewrites the URL (replace, so Back leaves the board
+  // rather than walking every keystroke).
+  const setParam = (patch: Record<string, string | number>) =>
+    navigate({
+      search: (prev: Record<string, unknown>) => ({ ...prev, ...patch }) as never,
+      replace: true,
+    });
+  const setPage = (v: number | ((p: number) => number)) =>
+    navigate({
+      search: (prev: { page: number }) =>
+        ({ ...prev, page: typeof v === "function" ? v(prev.page) : v }) as never,
+      replace: true,
+    });
 
   const seniorityOptions = useMemo(() => {
     const s = new Set<string>();
@@ -108,30 +143,24 @@ function JobsPage() {
 
   // Reset paging on filter change
   const activeChips: ChipProps[] = [];
-  if (q.trim()) activeChips.push({ label: `“${q.trim()}”`, onClear: () => { setQ(""); setPage(1); } });
+  if (q.trim()) activeChips.push({ label: `“${q.trim()}”`, onClear: () => { setParam({ q: "", page: 1 }); } });
   if (location.trim())
-    activeChips.push({ label: `Location: ${location.trim()}`, onClear: () => { setLocation(""); setPage(1); } });
+    activeChips.push({ label: `Location: ${location.trim()}`, onClear: () => { setParam({ location: "", page: 1 }); } });
   if (workModel !== "any")
     activeChips.push({
       label: `Work: ${labelWorkModel(workModel) ?? workModel}`,
-      onClear: () => { setWorkModel("any"); setPage(1); },
+      onClear: () => { setParam({ work: "any", page: 1 }); },
     });
   if (employment !== "any")
     activeChips.push({
       label: `Type: ${labelEmployment(employment) ?? employment}`,
-      onClear: () => { setEmployment("any"); setPage(1); },
+      onClear: () => { setParam({ type: "any", page: 1 }); },
     });
   if (seniority !== "any")
-    activeChips.push({ label: `Level: ${seniority}`, onClear: () => { setSeniority("any"); setPage(1); } });
+    activeChips.push({ label: `Level: ${seniority}`, onClear: () => { setParam({ level: "any", page: 1 }); } });
 
-  const clearAll = () => {
-    setQ("");
-    setLocation("");
-    setWorkModel("any");
-    setEmployment("any");
-    setSeniority("any");
-    setPage(1);
-  };
+  const clearAll = () =>
+    setParam({ q: "", location: "", work: "any", type: "any", level: "any", page: 1 });
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const clampedPage = Math.min(page, totalPages);
@@ -161,18 +190,18 @@ function JobsPage() {
               aria-label="Search roles"
               placeholder="Search roles, skills, companies…"
               value={q}
-              onChange={(e) => { setQ(e.target.value); setPage(1); }}
+              onChange={(e) => { setParam({ q: e.target.value, page: 1 }); }}
             />
           </div>
           <Input
             aria-label="Location"
             placeholder="Location (city, country, remote)"
             value={location}
-            onChange={(e) => { setLocation(e.target.value); setPage(1); }}
+            onChange={(e) => { setParam({ location: e.target.value, page: 1 }); }}
           />
           <Select
             value={workModel}
-            onValueChange={(v) => { setWorkModel(v); setPage(1); }}
+            onValueChange={(v) => { setParam({ work: v, page: 1 }); }}
           >
             <SelectTrigger aria-label="Work model">
               <SelectValue placeholder="Work model" />
@@ -186,7 +215,7 @@ function JobsPage() {
           </Select>
           <Select
             value={employment}
-            onValueChange={(v) => { setEmployment(v); setPage(1); }}
+            onValueChange={(v) => { setParam({ type: v, page: 1 }); }}
           >
             <SelectTrigger aria-label="Employment type">
               <SelectValue placeholder="Employment" />
@@ -206,7 +235,7 @@ function JobsPage() {
           <div className="mb-4 flex flex-wrap gap-2">
             <button
               type="button"
-              onClick={() => { setSeniority("any"); setPage(1); }}
+              onClick={() => { setParam({ level: "any", page: 1 }); }}
               className={`text-xs px-3 py-1 rounded-full border ${
                 seniority === "any" ? "bg-primary text-primary-foreground" : "bg-background"
               }`}
@@ -217,7 +246,7 @@ function JobsPage() {
               <button
                 type="button"
                 key={s}
-                onClick={() => { setSeniority(s); setPage(1); }}
+                onClick={() => setParam({ level: s, page: 1 })}
                 className={`text-xs px-3 py-1 rounded-full border ${
                   seniority === s ? "bg-primary text-primary-foreground" : "bg-background"
                 }`}

@@ -182,6 +182,8 @@ export type Database = {
           accommodation_request: string | null
           applied_at: string
           candidate_profile_id: string
+          closure_notified_at: string | null
+          confirmation_email_sent_at: string | null
           consent: Json
           cover_letter: string | null
           created_at: string
@@ -190,6 +192,7 @@ export type Database = {
           expires_at: string | null
           id: string
           is_test_record: boolean | null
+          last_candidate_edit_at: string | null
           legacy_source_id: string | null
           legacy_source_system: string | null
           legacy_source_table: string | null
@@ -218,6 +221,8 @@ export type Database = {
           accommodation_request?: string | null
           applied_at?: string
           candidate_profile_id: string
+          closure_notified_at?: string | null
+          confirmation_email_sent_at?: string | null
           consent?: Json
           cover_letter?: string | null
           created_at?: string
@@ -226,6 +231,7 @@ export type Database = {
           expires_at?: string | null
           id?: string
           is_test_record?: boolean | null
+          last_candidate_edit_at?: string | null
           legacy_source_id?: string | null
           legacy_source_system?: string | null
           legacy_source_table?: string | null
@@ -254,6 +260,8 @@ export type Database = {
           accommodation_request?: string | null
           applied_at?: string
           candidate_profile_id?: string
+          closure_notified_at?: string | null
+          confirmation_email_sent_at?: string | null
           consent?: Json
           cover_letter?: string | null
           created_at?: string
@@ -262,6 +270,7 @@ export type Database = {
           expires_at?: string | null
           id?: string
           is_test_record?: boolean | null
+          last_candidate_edit_at?: string | null
           legacy_source_id?: string | null
           legacy_source_system?: string | null
           legacy_source_table?: string | null

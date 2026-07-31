@@ -498,6 +498,31 @@ export const submitApplication = createServerFn({ method: "POST" })
         console.error("[submitApplication] alert email failed", trace_id, mailErr);
       }
 
+      // Candidate confirmation — the reference, the status link, and an honest
+      // line about when they hear back. Non-critical: a mail failure must never
+      // cost the applicant their submission.
+      try {
+        const { sendTemplateEmail } = await import("./email-templates/send-email");
+        const reference = ref6(appRow.id);
+        const result = await sendTemplateEmail("application-received", data.email, {
+          idempotencyKey: `application-received-${appRow.id}`,
+          templateData: {
+            candidateFirstName: (data.full_name ?? "").trim().split(" ")[0] || null,
+            positionTitle: pos.title,
+            reference,
+            statusUrl: `https://taasflow.com/apply/status?ref=${reference}`,
+          },
+        });
+        if (result?.sent) {
+          await supabaseAdmin
+            .from("applications")
+            .update({ confirmation_email_sent_at: new Date().toISOString() })
+            .eq("id", appRow.id);
+        }
+      } catch (mailErr) {
+        console.error("[submitApplication] confirmation email failed", trace_id, mailErr);
+      }
+
 
 
 
