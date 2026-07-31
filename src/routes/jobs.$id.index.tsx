@@ -1,7 +1,8 @@
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { createFileRoute, Link, notFound, redirect } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { getPublicPosition } from "@/lib/jobs.functions";
+import { getPositionClosure, getPublicPosition, listPublicPositions } from "@/lib/jobs.functions";
+import { buildJobPostingJsonLd } from "@/lib/marketing/job-posting-schema";
 import { buildJobSlug, extractJobUuid } from "@/lib/marketing/job-slug";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -28,7 +29,20 @@ export const Route = createFileRoute("/jobs/$id/")({
       queryKey: ["public-position", uuid],
       queryFn: () => getPublicPosition({ data: { id: uuid } }),
     });
-    if (!data) throw notFound();
+    if (!data) {
+      // The role may simply be over rather than missing — say so plainly.
+      const closure = await getPositionClosure({ data: { id: uuid } });
+      if (closure) {
+        const others = await context.queryClient
+          .ensureQueryData({
+            queryKey: ["public-positions"],
+            queryFn: () => listPublicPositions(),
+          })
+          .catch(() => []);
+        return { closed: closure, alternatives: (others ?? []).slice(0, 3) } as const;
+      }
+      throw notFound();
+    }
     const canonicalParam = buildJobSlug(data);
     if (params.id !== canonicalParam) {
       throw redirect({
@@ -37,7 +51,7 @@ export const Route = createFileRoute("/jobs/$id/")({
         statusCode: 301,
       });
     }
-    return data;
+    return { closed: null, position: data } as const;
   },
   head: ({ loaderData }) => {
     if (!loaderData) {
@@ -48,9 +62,25 @@ export const Route = createFileRoute("/jobs/$id/")({
         ],
       };
     }
-    const title = `${loaderData.title} — ${loaderData.organization_name} · TaaSFlow`;
-    const desc = loaderData.description.slice(0, 155);
-    const canonical = `https://taasflow.com/jobs/${buildJobSlug(loaderData)}`;
+    if (loaderData.closed) {
+      const t = `${loaderData.closed.title} — no longer accepting applications · TaaSFlow`;
+      return {
+        meta: [
+          { title: t },
+          {
+            name: "description",
+            content: `This role at ${loaderData.closed.organization_name} is closed. Browse other open roles on the TaaSFlow job board.`,
+          },
+          { name: "robots", content: "noindex, follow" },
+        ],
+      };
+    }
+    const pos = loaderData.position;
+    if (!pos) return { meta: [{ title: "TaaSFlow job board" }] };
+    const title = `${pos.title} — ${pos.organization_name} · TaaSFlow`;
+    const desc = pos.description.replace(/\s+/g, " ").trim().slice(0, 155);
+    const canonical = `https://taasflow.com/jobs/${buildJobSlug(pos)}`;
+    const image = pos.organization_logo_url;
     return {
       meta: [
         { title },
@@ -59,25 +89,117 @@ export const Route = createFileRoute("/jobs/$id/")({
         { property: "og:description", content: desc },
         { property: "og:type", content: "article" },
         { property: "og:url", content: canonical },
-        { name: "twitter:card", content: "summary" },
+        { property: "og:site_name", content: "TaaSFlow" },
+        { name: "twitter:card", content: image ? "summary_large_image" : "summary" },
+        { name: "twitter:title", content: title },
+        { name: "twitter:description", content: desc },
+        ...(image
+          ? [
+              { property: "og:image", content: image },
+              { name: "twitter:image", content: image },
+            ]
+          : []),
       ],
       links: [{ rel: "canonical", href: canonical }],
+      scripts: [
+        {
+          type: "application/ld+json",
+          children: JSON.stringify(buildJobPostingJsonLd(pos, canonical)),
+        },
+      ],
     };
   },
   errorComponent: makeRouteErrorComponent("public", "src/routes/jobs.$id.index.tsx"),
   notFoundComponent: () => (
-    <div className="p-16 text-center">
-      <h1 className="text-2xl font-semibold">Role not available</h1>
-      <p className="mt-2 text-muted-foreground">
-        It may have been closed or paused. Browse other open roles.
-      </p>
-      <div className="mt-6">
-        <Button asChild><Link to="/jobs">Back to job board</Link></Button>
+    <SiteShell>
+      <div className="mx-auto max-w-2xl px-4 py-20 text-center">
+        <h1 className="text-2xl font-semibold">We couldn't find that role</h1>
+        <p className="mt-3 text-muted-foreground">
+          The link may be wrong or the listing may have been removed. The job board has every
+          role that's open right now.
+        </p>
+        <div className="mt-6">
+          <Button asChild>
+            <Link to="/jobs">Browse open roles</Link>
+          </Button>
+        </div>
       </div>
-    </div>
+    </SiteShell>
   ),
   component: JobDetail,
 });
+
+const CLOSED_COPY: Record<string, string> = {
+  filled: "This role has been filled, so applications are closed.",
+  closed: "This role has closed and is no longer accepting applications.",
+  archived: "This role has closed and is no longer accepting applications.",
+  paused: "Hiring for this role is on hold, so applications are closed for now.",
+};
+
+function ClosedRole({
+  closure,
+  alternatives,
+}: {
+  closure: { title: string; status: string; organization_name: string };
+  alternatives: Array<{ id: string; title: string; organization_name: string; location: string | null }>;
+}) {
+  return (
+    <SiteShell>
+      <div className="mx-auto max-w-2xl px-4 py-16 sm:py-20">
+        <Link
+          to="/jobs"
+          className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
+        >
+          <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+          All open roles
+        </Link>
+        <h1 className="mt-6 text-3xl font-semibold tracking-tight text-balance">
+          {closure.title}
+        </h1>
+        <p className="mt-2 text-sm text-muted-foreground">{closure.organization_name}</p>
+        <div
+          className="mt-6 rounded-xl border bg-muted/30 p-5 text-[0.95rem] leading-relaxed"
+          role="status"
+        >
+          {CLOSED_COPY[closure.status] ?? CLOSED_COPY.closed}{" "}
+          If you already applied, your application is still tracked — you can check its status
+          any time.
+        </div>
+        <div className="mt-6 flex flex-wrap gap-3">
+          <Button asChild>
+            <Link to="/jobs">Browse open roles</Link>
+          </Button>
+          <Button asChild variant="outline">
+            <Link to="/apply/status">Check an application</Link>
+          </Button>
+        </div>
+
+        {alternatives.length > 0 && (
+          <section className="mt-12 border-t pt-8">
+            <h2 className="text-lg font-semibold tracking-tight">Open right now</h2>
+            <ul className="mt-4 space-y-3">
+              {alternatives.map((role) => (
+                <li key={role.id}>
+                  <Link
+                    to="/jobs/$id"
+                    params={{ id: buildJobSlug(role) }}
+                    className="block rounded-lg border p-4 transition-colors hover:bg-muted/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  >
+                    <span className="font-medium">{role.title}</span>
+                    <span className="mt-1 block text-sm text-muted-foreground">
+                      {[role.organization_name, role.location].filter(Boolean).join(" · ")}
+                    </span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+      </div>
+    </SiteShell>
+  );
+}
+
 
 function labelWorkModel(m: string | null) {
   return m === "remote" ? "Remote" : m === "hybrid" ? "Hybrid" : m === "onsite" ? "Onsite" : null;
@@ -112,12 +234,19 @@ function BulletList({ items }: { items: string[] }) {
 }
 
 function JobDetail() {
+  const loaderData = Route.useLoaderData();
   const { id: rawId } = Route.useParams();
   const id = extractJobUuid(rawId);
-  const { data: pos } = useSuspenseQuery({
+  const { data: fetched } = useSuspenseQuery({
     queryKey: ["public-position", id],
     queryFn: () => getPublicPosition({ data: { id } }),
   });
+  if (loaderData.closed) {
+    return (
+      <ClosedRole closure={loaderData.closed} alternatives={loaderData.alternatives ?? []} />
+    );
+  }
+  const pos = fetched;
   if (!pos) return null;
 
   const blocks = parseJobDescription(pos.description);

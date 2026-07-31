@@ -59,6 +59,8 @@ export function FormShell({
               <div
                 className="h-1.5 w-40 overflow-hidden rounded-full bg-[color:var(--brand-navy)]/10"
                 role="progressbar"
+                aria-label={progress.label ?? `Step ${progress.step} of ${progress.total}`}
+                aria-valuetext={progress.label ?? `Step ${progress.step} of ${progress.total}`}
                 aria-valuenow={progress.step}
                 aria-valuemin={0}
                 aria-valuemax={progress.total}
@@ -81,6 +83,8 @@ export function FormShell({
           <div
             className="h-0.5 w-full bg-[color:var(--brand-navy)]/10 sm:hidden"
             role="progressbar"
+            aria-label={progress.label ?? `Step ${progress.step} of ${progress.total}`}
+            aria-valuetext={progress.label ?? `Step ${progress.step} of ${progress.total}`}
             aria-valuenow={progress.step}
             aria-valuemin={0}
             aria-valuemax={progress.total}

@@ -102,6 +102,28 @@ export const listPublicPositions = createServerFn({ method: "GET" }).handler(
   },
 );
 
+/**
+ * Minimal, safe lookup for a role that is no longer open (paused, filled,
+ * closed, archived) so the public page can say so instead of 404-ing.
+ */
+export const getPositionClosure = createServerFn({ method: "GET" })
+  .inputValidator((input: unknown) => z.object({ id: z.string().uuid() }).parse(input))
+  .handler(async ({ data }) => {
+    const supabase = publicClient();
+    const { data: row, error } = await (
+      supabase.rpc as unknown as (
+        fn: string,
+        args: Record<string, unknown>,
+      ) => Promise<{ data: unknown; error: { message: string } | null }>
+    )("public_position_closure", {
+      _id: data.id,
+    });
+    if (error) return null;
+    if (!row) return null;
+    const r = row as { id: string; title: string; status: string; organization_name: string };
+    return r;
+  });
+
 export const getPublicPosition = createServerFn({ method: "GET" })
   .inputValidator((input: unknown) =>
     z.object({ id: z.string().uuid() }).parse(input),
@@ -111,7 +133,7 @@ export const getPublicPosition = createServerFn({ method: "GET" })
     const { data: pos, error } = await supabase
       .from("positions")
       .select(
-        "id,title,department,location,work_model,employment_type,seniority,description,requirements,preferred_requirements,compensation,intake_context,published_at,openings,status,organizations(name)",
+        "id,title,department,location,work_model,employment_type,seniority,description,requirements,preferred_requirements,compensation,intake_context,published_at,openings,status,organizations(name,logo_url)",
       )
       .eq("id", data.id)
       .in("status", ["active", "paused"])
@@ -136,6 +158,14 @@ export const getPublicPosition = createServerFn({ method: "GET" })
       .select("city,region,country,work_model,headcount,is_primary,display_order")
       .eq("position_id", data.id)
       .order("display_order", { ascending: true });
+
+    const { data: employerRow } = await (
+      supabase.rpc as unknown as (
+        fn: string,
+        args: Record<string, unknown>,
+      ) => Promise<{ data: unknown; error: unknown }>
+    )("public_position_employer", { _id: data.id });
+    const employer = (employerRow ?? null) as { name?: string; logo_url?: string | null } | null;
 
     const comp = (pos.compensation ?? {}) as { approved?: boolean; display?: string };
     const ctx = (pos as { intake_context?: Record<string, unknown> }).intake_context ?? {};
@@ -180,9 +210,19 @@ export const getPublicPosition = createServerFn({ method: "GET" })
         headcount: l.headcount,
         is_primary: l.is_primary,
       })),
+      organization_logo_url: (() => {
+        if (confidential) return null;
+        const raw =
+          employer?.logo_url ??
+          (pos.organizations as unknown as { logo_url?: string | null } | null)?.logo_url;
+        const trimmed = typeof raw === "string" ? raw.trim() : "";
+        return /^https:\/\//i.test(trimmed) ? trimmed : null;
+      })(),
       organization_name: confidential
         ? "Confidential employer"
-        : ((pos.organizations as unknown as { name?: string } | null)?.name ?? "TaaSFlow client"),
+        : (employer?.name ??
+          (pos.organizations as unknown as { name?: string } | null)?.name ??
+          "TaaSFlow client"),
       questions: (questions ?? []).map((q) => ({
         id: q.id,
         question: q.question,
