@@ -1,5 +1,4 @@
 import {
-  Receipt,
   makeRouteErrorComponent,
   makeRouteNotFoundComponent,
 } from "@/components/workspace/route-states";
@@ -23,6 +22,7 @@ import {
   Scale,
   ShieldCheck,
   UserCog,
+  Receipt,
 } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
