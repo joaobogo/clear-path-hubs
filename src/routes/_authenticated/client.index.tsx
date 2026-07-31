@@ -468,7 +468,15 @@ function DecisionQueue({ queue, loading }: { queue: QueueItem[]; loading: boolea
  * Plain-language stage per role, with the date it entered that stage, how long
  * it has been there, and an "at risk" line derived only from real timing data.
  */
-function RoleStatusList({ roles, loading }: { roles: Any[]; loading: boolean }) {
+function RoleStatusList({
+  roles,
+  loading,
+  compact,
+}: {
+  roles: Any[];
+  loading: boolean;
+  compact?: boolean;
+}) {
   if (loading) {
     return (
       <div className="space-y-2">
@@ -482,7 +490,7 @@ function RoleStatusList({ roles, loading }: { roles: Any[]; loading: boolean }) 
     return <EmptyBlock text="No live roles right now. Submit a role and its progress shows up here." />;
   }
   return (
-    <ul className="grid gap-2">
+    <ul className={compact ? "grid gap-1.5" : "grid gap-2"}>
       {roles.map((r) => {
         const since = formatStageDate(r.stage_entered_at);
         const days = r.days_in_stage as number | null;
@@ -490,6 +498,7 @@ function RoleStatusList({ roles, loading }: { roles: Any[]; loading: boolean }) 
           promisedShortlistBy: r.promised_shortlist_by,
           shortlistDeliveredAt: r.shortlist_delivered_at,
         });
+        const next = roleNextStep(r);
         return (
           <li key={r.position_id}>
             <div
