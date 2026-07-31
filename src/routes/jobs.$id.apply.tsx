@@ -438,7 +438,13 @@ function ApplyPage() {
             <AlertTitle>Something went wrong</AlertTitle>
             <AlertDescription>
               {serverError.message}
+              <span className="block mt-1">
+                Nothing was lost — your answers are still here. Press submit again when you're
+                ready.
+              </span>
               {serverError.trace_id && (
+                <span className="block mt-1 text-xs opacity-70">
+
                 <span className="block mt-1 text-xs opacity-70">
                   Reference: {serverError.trace_id}
                 </span>
