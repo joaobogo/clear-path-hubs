@@ -32,6 +32,8 @@ export const TEMPLATES: Record<string, TemplateEntry> = {
   'role-blueprint-ready': roleBlueprintReadyTemplate,
   'blueprint-delayed': blueprintDelayedTemplate,
   'search-live': searchLiveTemplate,
+  'intake-confirmation': intakeConfirmationTemplate,
+  'payment-receipt': paymentReceiptTemplate,
 }
 
 
