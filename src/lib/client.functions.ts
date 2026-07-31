@@ -1920,7 +1920,7 @@ const notifPrefsShape = {
   offer_update: true,
   hire_update: true,
   email_enabled: true,
-  digest: "immediate" as "immediate" | "daily" | "off",
+  digest: "immediate" as "immediate" | "daily" | "weekly" | "off",
 };
 
 const companyProfileZ = z.object({
@@ -1964,7 +1964,7 @@ const notifPrefsZ = z.object({
   offer_update: z.boolean(),
   hire_update: z.boolean(),
   email_enabled: z.boolean(),
-  digest: z.enum(["immediate", "daily", "off"]),
+  digest: z.enum(["immediate", "daily", "weekly", "off"]),
 });
 
 const timezoneZ = z.object({

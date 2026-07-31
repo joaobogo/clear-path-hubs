@@ -19,6 +19,7 @@ import { useClientOrgSearch } from "@/lib/use-client-org";
 import { useSupportView } from "@/lib/support-view";
 import { formatStageDate } from "@/lib/client-role-progress";
 import { EmptyState, PermissionDenied, SkeletonRows, SkeletonStats } from "@/components/client/states";
+import { TeamActivityPanel } from "@/components/client/team-activity-panel";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -375,6 +376,9 @@ function AccountPage() {
           </ul>
         </section>
       )}
+
+      {/* Who is doing what */}
+      {isAdmin && <TeamActivityPanel orgId={orgId ?? null} />}
 
       {/* Team */}
       <section className="rounded-xl border bg-card">

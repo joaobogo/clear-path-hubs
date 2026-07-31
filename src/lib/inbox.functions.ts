@@ -97,7 +97,7 @@ const updatePrefsSchema = z.object({
   offer_update: z.boolean().optional(),
   hire_update: z.boolean().optional(),
   email_enabled: z.boolean().optional(),
-  digest: z.enum(["immediate", "daily", "off"]).optional(),
+  digest: z.enum(["immediate", "daily", "weekly", "off"]).optional(),
 });
 
 export const updateMyPreferences = createServerFn({ method: "POST" })

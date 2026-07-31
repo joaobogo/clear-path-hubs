@@ -463,7 +463,7 @@ type Notifications = {
  offer_update: boolean;
  hire_update: boolean;
  email_enabled: boolean;
- digest: "immediate" | "daily" | "off";
+ digest: "immediate" | "daily" | "weekly" | "off";
 };
 
 function useNotifSave(orgId: string) {
@@ -609,6 +609,7 @@ function CommunicationSection({
  <SelectContent>
  <SelectItem value="immediate">Immediate — send each event as it happens</SelectItem>
  <SelectItem value="daily">Daily digest — one summary each morning</SelectItem>
+ <SelectItem value="weekly">Weekly digest — one summary each Monday</SelectItem>
  <SelectItem value="off">Off — no emails (in-app only)</SelectItem>
  </SelectContent>
  </Select>
