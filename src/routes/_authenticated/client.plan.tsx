@@ -133,7 +133,7 @@ function PlanPage() {
         <CardContent className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
           <span>Talk it through with us before you commit — 30 minutes, no obligation.</span>
           <Button asChild size="sm" variant="outline">
-            <Link to="/book-call">Book a call</Link>
+            <Link to="/book-call" search={{ position: undefined }}>Book a call</Link>
           </Button>
         </CardContent>
       </Card>
