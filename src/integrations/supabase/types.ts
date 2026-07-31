@@ -6111,6 +6111,120 @@ export type Database = {
           },
         ]
       }
+      payments: {
+        Row: {
+          amount_cents: number
+          created_at: string
+          currency: string
+          id: string
+          organization_id: string
+          paid_at: string | null
+          position_id: string | null
+          price_id: string | null
+          provider: string
+          provider_customer_id: string | null
+          provider_environment: string
+          provider_reference: string | null
+          raw_event: Json | null
+          status: Database["public"]["Enums"]["payment_status"]
+          updated_at: string
+          webhook_event_id: string | null
+        }
+        Insert: {
+          amount_cents: number
+          created_at?: string
+          currency?: string
+          id?: string
+          organization_id: string
+          paid_at?: string | null
+          position_id?: string | null
+          price_id?: string | null
+          provider?: string
+          provider_customer_id?: string | null
+          provider_environment?: string
+          provider_reference?: string | null
+          raw_event?: Json | null
+          status?: Database["public"]["Enums"]["payment_status"]
+          updated_at?: string
+          webhook_event_id?: string | null
+        }
+        Update: {
+          amount_cents?: number
+          created_at?: string
+          currency?: string
+          id?: string
+          organization_id?: string
+          paid_at?: string | null
+          position_id?: string | null
+          price_id?: string | null
+          provider?: string
+          provider_customer_id?: string | null
+          provider_environment?: string
+          provider_reference?: string | null
+          raw_event?: Json | null
+          status?: Database["public"]["Enums"]["payment_status"]
+          updated_at?: string
+          webhook_event_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payments_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "admin_clients_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payments_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payments_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_portfolio_rollup"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "payments_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "admin_pipeline_health"
+            referencedColumns: ["position_id"]
+          },
+          {
+            foreignKeyName: "payments_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "admin_positions_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payments_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_my_applications"
+            referencedColumns: ["position_id"]
+          },
+          {
+            foreignKeyName: "payments_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "client_positions_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payments_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "positions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       position_commitments: {
         Row: {
           baseline_at: string
@@ -6588,6 +6702,7 @@ export type Database = {
           openings: number
           organization_id: string
           owner_user_id: string | null
+          payment_status: Database["public"]["Enums"]["payment_status"]
           preferred_requirements: Json
           primary_timezone: string | null
           published_at: string | null
@@ -6661,6 +6776,7 @@ export type Database = {
           openings?: number
           organization_id: string
           owner_user_id?: string | null
+          payment_status?: Database["public"]["Enums"]["payment_status"]
           preferred_requirements?: Json
           primary_timezone?: string | null
           published_at?: string | null
@@ -6734,6 +6850,7 @@ export type Database = {
           openings?: number
           organization_id?: string
           owner_user_id?: string | null
+          payment_status?: Database["public"]["Enums"]["payment_status"]
           preferred_requirements?: Json
           primary_timezone?: string | null
           published_at?: string | null
@@ -11429,6 +11546,7 @@ export type Database = {
         | "replied"
         | "opted_out"
         | "failed"
+      payment_status: "unpaid" | "pending" | "paid" | "refunded" | "exempt"
       position_status:
         | "draft"
         | "submitted"
@@ -11868,6 +11986,7 @@ export const Constants = {
         "opted_out",
         "failed",
       ],
+      payment_status: ["unpaid", "pending", "paid", "refunded", "exempt"],
       position_status: [
         "draft",
         "submitted",
