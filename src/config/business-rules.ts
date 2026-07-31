@@ -283,11 +283,14 @@ export const BUSINESS_RULES_DEFAULTS = {
     privacyEmail: "privacy@taasflow.com",
   },
   legal: {
-    privacyPolicyPath: "/legal/privacy",
-    termsPath: "/legal/terms",
-    dpaPath: "/legal/dpa",
+    // These must match real routes in src/routes. There is no standalone DPA
+    // page yet — data-processing terms live inside the privacy notice.
+    privacyPolicyPath: "/privacy",
+    termsPath: "/terms",
+    dpaPath: "/privacy",
     companyLegalName: "TaaSFlow",
   },
+
 } as const;
 
 export type BusinessRules = typeof BUSINESS_RULES_DEFAULTS;

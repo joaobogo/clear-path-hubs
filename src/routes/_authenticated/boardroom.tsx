@@ -48,19 +48,10 @@ export const Route = createFileRoute("/_authenticated/boardroom")({
   component: BoardroomPage,
 });
 
-/* ─── Safe demo data (used when workspace has none) ─────────────────────── */
+/* Boardroom shows live workspace records only. When a workspace has no
+   records yet, every slide says so plainly — never invented roles or
+   candidates in front of a client. */
 
-const DEMO_POSITIONS = [
-  { title: "Head of Growth", status: "active", pending: 3 },
-  { title: "Senior Backend Engineer", status: "active", pending: 5 },
-  { title: "VP People", status: "active", pending: 2 },
-];
-
-const DEMO_CANDIDATES = [
-  { rank: 1, name: "Candidate A", score: 92, note: "Scaled B2B SaaS growth at two Series B firms." },
-  { rank: 2, name: "Candidate B", score: 88, note: "Ran EMEA GTM, hire-to-signal <30d twice." },
-  { rank: 3, name: "Candidate C", score: 81, note: "Head of growth at bootstrapped $10M ARR co." },
-];
 
 /* ─── Page ─────────────────────────────────────────────────────────────── */
 
