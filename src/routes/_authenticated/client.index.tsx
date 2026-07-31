@@ -4,6 +4,8 @@ import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useMemo, useState } from "react";
 import { getClientContext, getClientOverview } from "@/lib/client.functions";
 import { countBlockingTasks } from "@/lib/tasks.functions";
+import { listPendingPaymentRoles } from "@/lib/booking.functions";
+import { PaymentGateBanner } from "@/components/client/payment-gate-banner";
 import { useClientOrgSearch } from "@/lib/use-client-org";
 import { CandidateCard } from "@/components/client/candidate-card";
 import { VisibilityNote } from "@/components/client/visibility-note";
