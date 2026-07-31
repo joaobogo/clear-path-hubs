@@ -205,7 +205,7 @@ export const getCheckoutSessionStatus = createServerFn({ method: "POST" })
           _amount_cents: session.amount_total ?? 0,
           _currency: session.currency ?? "usd",
           _customer_id:
-            typeof session.customer === "string" ? session.customer : (session.customer?.id ?? null),
+            typeof session.customer === "string" ? session.customer : (session.customer?.id ?? ""),
           _outcome: "paid",
           _raw: { source: "return_page", session_id: reference },
         });
