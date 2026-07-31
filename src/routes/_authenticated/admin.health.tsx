@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { OperationalHealthPanel } from "@/components/admin/OperationalHealthPanel";
+import { TeamsDeliveryPanel } from "@/components/admin/TeamsDeliveryPanel";
 
 export const Route = createFileRoute("/_authenticated/admin/health")({
   loader: ({ context }) =>
@@ -74,6 +75,8 @@ function HealthPage() {
       {feedback && <Alert><AlertDescription>{feedback}</AlertDescription></Alert>}
 
       <OperationalHealthPanel />
+
+      <TeamsDeliveryPanel />
 
       <section>
         <h2 className="font-semibold mb-2">Backlog by state</h2>
