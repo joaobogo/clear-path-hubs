@@ -86,7 +86,7 @@ const searchSchema = z.object({
  minExp: fallback(z.string(), "").default(""),
  location: fallback(z.string(), "").default(""),
  sort: fallback(z.string(), "recent").default("recent"),
- view: fallback(z.enum(["cards", "list"]), "cards").default("cards"),
+ view: fallback(z.enum(["cards", "list", "compare"]), "cards").default("cards"),
  org: fallback(z.string().uuid().optional(), undefined),
  // Canonical KPI drill-through key. Mirrors client-kpi.server predicates:
  // "top" → isTopMatch (fit_label ∈ excellent|strong)
@@ -305,16 +305,27 @@ function CandidatesPage() {
  const [shareOpen, setShareOpen] = useState(false);
  const seededDefault = useRef(false);
  useEffect(() => {
-  // Comparison is the default posture: pre-select the shortlist for the
-  // busiest role so the grid is one click away, never a hidden feature.
+  // Side-by-side is the default way to review a shortlist: pre-select the
+  // shortlist (scoped to the filtered role when there is one) and open the
+  // grid straight away when arriving with ?view=compare or a role filter.
   if (seededDefault.current) return;
   const rows = rowsRaw as ClientCandidateDTO[];
   if (rows.length === 0) return;
   seededDefault.current = true;
-  if (initialCompare.length > 0) return;
-  const preset = defaultCompareSelection(rows);
-  if (preset.length > 0) setCompareIds(preset);
- }, [rowsRaw, initialCompare]);
+  if (initialCompare.length > 0) {
+   setCompareOpen(true);
+   return;
+  }
+  const scoped = search.position
+   ? rows.filter((r) => r.position?.id === search.position)
+   : rows;
+  const preset = defaultCompareSelection(scoped);
+  if (preset.length > 0) {
+   setCompareIds(preset);
+   if (search.view === "compare" || !!search.position) setCompareOpen(true);
+  }
+ }, [rowsRaw, initialCompare, search.position, search.view]);
+
 
  useEffect(() => {
   // Drop any selection that is no longer client-visible (tenant switch, filter change to hidden rows).
@@ -627,7 +638,17 @@ function CandidatesPage() {
  >
  List
  </button>
+ <button
+ onClick={() => { setF({ view: "compare" }); setCompareOpen(true); }}
+ disabled={!compareCheck.ok}
+ title={compareCheck.reason ?? undefined}
+ className={`px-2 py-1 text-xs rounded disabled:opacity-40 ${search.view === "compare" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
+ aria-pressed={search.view === "compare"}
+ >
+ Side by side
+ </button>
  </div>
+
  </div>
   </div>
 
