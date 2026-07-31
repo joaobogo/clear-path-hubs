@@ -11,10 +11,12 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { Printer } from "lucide-react";
 
-import { getIndustryEntry } from "@/content/industries-v2";
+import { getIndustryEntry, type IndustryEntry } from "@/content/industries-v2";
+
+const CANONICAL_ORIGIN = "https://taasflow.com";
 import { toInternalSlug } from "@/lib/marketing/industry-slug-aliases";
 import { Button } from "@/components/ui/button";
-import { CANONICAL_ORIGIN } from "@/lib/marketing/head";
+
 
 export const Route = createFileRoute("/industries/$slug/briefing")({
   loader: ({ params }) => {
@@ -78,7 +80,7 @@ function Chips({ items }: { items: string[] }) {
 }
 
 function BriefingPage() {
-  const { entry } = Route.useLoaderData();
+  const { entry } = Route.useLoaderData() as { entry: IndustryEntry };
   const { slug } = Route.useParams();
 
   return (
