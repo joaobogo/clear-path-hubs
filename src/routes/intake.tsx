@@ -24,7 +24,7 @@ import {
 } from "@/lib/express-intake-schema";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
-import { saveIntakeDraft, loadIntakeDraft } from "@/lib/intake-draft.functions";
+import { saveIntakeDraft, loadIntakeDraft, clearIntakeDraft } from "@/lib/intake-draft.functions";
 import { submitToCrm } from "@/lib/crm/submit-form";
 import { trackEvent } from "@/lib/tracking/pixels";
 import { FGV_EVENTS, trackConfirmedConversion, trackFgv } from "@/lib/tracking/fgv-events";
@@ -130,7 +130,7 @@ function ExpressIntakePage() {
   >({ kind: "idle" });
   const [accountBusy, setAccountBusy] = useState(false);
   const [signInMode, setSignInMode] = useState(false);
-  const [reviewing, setReviewing] = useState(false);
+  const [reviewing, setReviewing] = useState(true);
   const hydratedRef = useRef(false);
 
   // Restore a draft so a refresh never costs the client their typing. Passwords
@@ -541,6 +541,7 @@ function ExpressIntakePage() {
         }).catch(() => undefined);
       }
 
+      if (signedIn) void clearIntakeDraft().catch(() => undefined);
       try {
         localStorage.removeItem(EXPRESS_DRAFT_KEY);
         localStorage.removeItem(EXPRESS_IDEMPOTENCY_KEY);
