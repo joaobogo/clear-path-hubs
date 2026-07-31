@@ -56,6 +56,7 @@ import { Route as IndustriesSlugRouteImport } from './routes/industries.$slug'
 import { Route as DevIndustryCoverageRouteImport } from './routes/dev.industry-coverage'
 import { Route as DevCatalogueRouteImport } from './routes/dev.catalogue'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
+import { Route as ApplyStatusRouteImport } from './routes/apply.status'
 import { Route as AuthenticatedMeRouteImport } from './routes/_authenticated/me'
 import { Route as AuthenticatedClientRouteImport } from './routes/_authenticated/client'
 import { Route as AuthenticatedCheckoutRouteImport } from './routes/_authenticated/checkout'
@@ -382,6 +383,11 @@ const DevCatalogueRoute = DevCatalogueRouteImport.update({
 const BlogSlugRoute = BlogSlugRouteImport.update({
   id: '/blog/$slug',
   path: '/blog/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApplyStatusRoute = ApplyStatusRouteImport.update({
+  id: '/apply/status',
+  path: '/apply/status',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedMeRoute = AuthenticatedMeRouteImport.update({
@@ -952,6 +958,7 @@ export interface FileRoutesByFullPath {
   '/checkout': typeof AuthenticatedCheckoutRoute
   '/client': typeof AuthenticatedClientRouteWithChildren
   '/me': typeof AuthenticatedMeRouteWithChildren
+  '/apply/status': typeof ApplyStatusRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/dev/catalogue': typeof DevCatalogueRoute
   '/dev/industry-coverage': typeof DevIndustryCoverageRoute
@@ -1090,6 +1097,7 @@ export interface FileRoutesByTo {
   '/unauthorized': typeof UnauthorizedRoute
   '/boardroom': typeof AuthenticatedBoardroomRoute
   '/checkout': typeof AuthenticatedCheckoutRoute
+  '/apply/status': typeof ApplyStatusRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/dev/catalogue': typeof DevCatalogueRoute
   '/dev/industry-coverage': typeof DevIndustryCoverageRoute
@@ -1226,6 +1234,7 @@ export interface FileRoutesById {
   '/_authenticated/checkout': typeof AuthenticatedCheckoutRoute
   '/_authenticated/client': typeof AuthenticatedClientRouteWithChildren
   '/_authenticated/me': typeof AuthenticatedMeRouteWithChildren
+  '/apply/status': typeof ApplyStatusRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/dev/catalogue': typeof DevCatalogueRoute
   '/dev/industry-coverage': typeof DevIndustryCoverageRoute
@@ -1369,6 +1378,7 @@ export interface FileRouteTypes {
     | '/checkout'
     | '/client'
     | '/me'
+    | '/apply/status'
     | '/blog/$slug'
     | '/dev/catalogue'
     | '/dev/industry-coverage'
@@ -1507,6 +1517,7 @@ export interface FileRouteTypes {
     | '/unauthorized'
     | '/boardroom'
     | '/checkout'
+    | '/apply/status'
     | '/blog/$slug'
     | '/dev/catalogue'
     | '/dev/industry-coverage'
@@ -1642,6 +1653,7 @@ export interface FileRouteTypes {
     | '/_authenticated/checkout'
     | '/_authenticated/client'
     | '/_authenticated/me'
+    | '/apply/status'
     | '/blog/$slug'
     | '/dev/catalogue'
     | '/dev/industry-coverage'
@@ -1780,6 +1792,7 @@ export interface RootRouteChildren {
   TermsRoute: typeof TermsRoute
   TrustRoute: typeof TrustRoute
   UnauthorizedRoute: typeof UnauthorizedRoute
+  ApplyStatusRoute: typeof ApplyStatusRoute
   BlogSlugRoute: typeof BlogSlugRoute
   DevCatalogueRoute: typeof DevCatalogueRoute
   DevIndustryCoverageRoute: typeof DevIndustryCoverageRoute
@@ -2144,6 +2157,13 @@ declare module '@tanstack/react-router' {
       path: '/blog/$slug'
       fullPath: '/blog/$slug'
       preLoaderRoute: typeof BlogSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/apply/status': {
+      id: '/apply/status'
+      path: '/apply/status'
+      fullPath: '/apply/status'
+      preLoaderRoute: typeof ApplyStatusRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/me': {
@@ -3118,6 +3138,7 @@ const rootRouteChildren: RootRouteChildren = {
   TermsRoute: TermsRoute,
   TrustRoute: TrustRoute,
   UnauthorizedRoute: UnauthorizedRoute,
+  ApplyStatusRoute: ApplyStatusRoute,
   BlogSlugRoute: BlogSlugRoute,
   DevCatalogueRoute: DevCatalogueRoute,
   DevIndustryCoverageRoute: DevIndustryCoverageRoute,

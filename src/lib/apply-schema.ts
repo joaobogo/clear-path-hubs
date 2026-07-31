@@ -28,7 +28,9 @@ export const applySchema = z.object({
   email: z.string().trim().toLowerCase().email("Enter a valid email").max(255),
   phone: z.string().trim().min(6, "Enter a phone number we can reach you on").max(40),
   country: z.string().trim().min(2, "Select or enter your country").max(80),
-  region: z.string().trim().min(1, "Enter your state or region").max(120),
+  // Optional on purpose: mobile applicants should not be blocked by a
+  // region field that many countries do not use.
+  region: z.string().trim().max(120).optional().default(""),
   city: z.string().trim().min(1, "Enter your city").max(120),
   cv: z.object({
     filename: z.string().min(1).max(255),

@@ -97,10 +97,13 @@ function ApplyPage() {
   });
   // Account creation for applicants who are not signed in.
   const [signedIn, setSignedIn] = useState<boolean | null>(null);
+  const [wantsAccount, setWantsAccount] = useState(false);
   const [password, setPassword] = useState("");
   const [password2, setPassword2] = useState("");
   const [cvFile, setCvFile] = useState<File | null>(null);
   const [cvError, setCvError] = useState<string | null>(null);
+  const [cvChecking, setCvChecking] = useState(false);
+  const [phase, setPhase] = useState<"idle" | "reading" | "sending">("idle");
   const [answers, setAnswers] = useState<Record<string, AnswerValue>>({});
   const [consent, setConsent] = useState(false);
   const [network, setNetwork] = useState(false);
@@ -177,6 +180,7 @@ function ApplyPage() {
     }
     // Same signature/structure checks the server runs — catch renamed Word docs,
     // images and corrupt PDFs before the applicant waits on an upload.
+    setCvChecking(true);
     try {
       const bytes = new Uint8Array(await f.arrayBuffer());
       const { validateCv } = await import("@/lib/cv-validation");
@@ -188,9 +192,12 @@ function ApplyPage() {
     } catch {
       setCvError(CV_MESSAGES.corrupt);
       return;
+    } finally {
+      setCvChecking(false);
     }
     setCvFile(f);
   };
+
 
 
   const setAnswer = (qid: string, v: AnswerValue) =>
@@ -219,9 +226,8 @@ function ApplyPage() {
         errs.email = "Enter a valid email";
       if (form.phone.trim().length < 6) errs.phone = "Enter a phone number we can reach you on";
       if (form.country.trim().length < 2) errs.country = "Enter your country";
-      if (!form.region.trim()) errs.region = "Enter your state or region";
       if (!form.city.trim()) errs.city = "Enter your city";
-      if (signedIn === false) {
+      if (signedIn === false && wantsAccount) {
         if (password.length < MIN_PASSWORD_LENGTH)
           errs.password = `Use at least ${MIN_PASSWORD_LENGTH} characters`;
         else if (password !== password2) errs.password2 = "Passwords do not match";
@@ -294,8 +300,10 @@ function ApplyPage() {
 
     submittingRef.current = true;
     setSubmitting(true);
+    setPhase("reading");
     try {
       const base64 = await readFileAsBase64(cvFile);
+      setPhase("sending");
       const payload = {
         position_id: id,
         full_name: form.full_name,
@@ -332,7 +340,8 @@ function ApplyPage() {
           fe[i.path.join(".") || "form"] = i.message;
         });
         setFieldErrors(fe);
-        setSubmitting(false);
+        setPhase("idle");
+      setSubmitting(false);
         submittingRef.current = false;
         return;
       }
@@ -340,7 +349,8 @@ function ApplyPage() {
       const result = await submitApplication({ data: parsed.data });
       if (!result.ok) {
         setServerError({ message: result.message, trace_id: result.trace_id });
-        setSubmitting(false);
+        setPhase("idle");
+      setSubmitting(false);
         submittingRef.current = false;
         return;
       }
@@ -368,6 +378,7 @@ function ApplyPage() {
     } catch (err) {
       console.error(err);
       setServerError({ message: "Network error — please try again." });
+      setPhase("idle");
       setSubmitting(false);
       submittingRef.current = false;
     }
@@ -383,7 +394,7 @@ function ApplyPage() {
       width="md"
     >
       <div className="text-sm text-[color:var(--brand-navy)]/80">{pos.organization_name}</div>
-        <div className="text-sm text-muted-foreground">{pos.organization_name}</div>
+
         <h1 className="mt-1 text-2xl md:text-3xl font-semibold tracking-tight">
           Apply — {pos.title}
         </h1>
@@ -427,6 +438,10 @@ function ApplyPage() {
             <AlertTitle>Something went wrong</AlertTitle>
             <AlertDescription>
               {serverError.message}
+              <span className="block mt-1">
+                Nothing was lost — your answers are still here. Press submit again when you're
+                ready.
+              </span>
               {serverError.trace_id && (
                 <span className="block mt-1 text-xs opacity-70">
                   Reference: {serverError.trace_id}
@@ -503,12 +518,12 @@ function ApplyPage() {
                   )}
                 </div>
                 <div>
-                  <Label htmlFor="region">State / region *</Label>
+                  <Label htmlFor="region">State / region</Label>
                   <Input
                     id="region"
                     autoComplete="address-level1"
                     data-field="region"
-                    placeholder="e.g. Lisbon District"
+                    placeholder="Optional"
                     value={form.region}
                     onChange={(e) => setForm({ ...form, region: e.target.value })}
                   />
@@ -534,15 +549,26 @@ function ApplyPage() {
 
               {signedIn === false && (
                 <div className="rounded-lg border bg-muted/30 p-4 space-y-4">
-                  <div>
-                    <h3 className="text-base font-semibold">Create your candidate account</h3>
-                    <p className="text-sm text-muted-foreground">
-                      Set a password so you can sign in and follow the status of this
-                      application. We use the email above as your username.
-                    </p>
-                  </div>
+                  <label className="flex items-start gap-3">
+                    <Checkbox
+                      checked={wantsAccount}
+                      onCheckedChange={(v) => setWantsAccount(v === true)}
+                      className="mt-0.5"
+                    />
+                    <span>
+                      <span className="block text-sm font-semibold">
+                        Create a candidate account (optional)
+                      </span>
+                      <span className="block text-sm text-muted-foreground">
+                        You don't need one to apply — you can always check your status with the
+                        reference we email you. An account lets you sign in and reuse your details.
+                      </span>
+                    </span>
+                  </label>
+                  {wantsAccount && (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
+
                       <Label htmlFor="password">Password *</Label>
                       <Input
                         id="password"
@@ -572,6 +598,7 @@ function ApplyPage() {
                       )}
                     </div>
                   </div>
+                  )}
                   <p className="text-xs text-muted-foreground">
                     Already have an account?{" "}
                     <Link to="/login" className="underline">
@@ -582,6 +609,7 @@ function ApplyPage() {
                 </div>
               )}
             </div>
+
 
           )}
 
@@ -594,27 +622,42 @@ function ApplyPage() {
                 </p>
               </div>
               <div>
-                <Label htmlFor="cv">CV file (PDF) *</Label>
+                <Label htmlFor="cv">CV file (PDF, max 10 MB) *</Label>
                 <Input
                   id="cv"
                   type="file"
                   data-field="cv"
                   accept=".pdf,application/pdf"
+                  className="h-auto py-2 file:mr-3 file:rounded-md file:border-0 file:bg-primary file:px-3 file:py-1.5 file:text-primary-foreground"
+                  disabled={cvChecking}
                   onChange={(e) => onFile(e.target.files?.[0] ?? null)}
                 />
+                {cvChecking && (
+                  <div className="mt-2" aria-live="polite">
+                    <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
+                      <div className="h-full w-1/2 animate-pulse rounded-full bg-primary" />
+                    </div>
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      Checking your file — this takes a moment.
+                    </p>
+                  </div>
+                )}
                 {cvError ? (
-                  <p className="mt-1 text-xs text-destructive">{cvError}</p>
+                  <p className="mt-1 text-xs text-destructive" aria-live="polite">
+                    {cvError} Your answers are saved — just pick another file.
+                  </p>
                 ) : fieldErrors.cv ? (
                   <p className="mt-1 text-xs text-destructive">{fieldErrors.cv}</p>
                 ) : null}
-                {cvFile && !cvError && (
-                  <p className="mt-2 text-sm text-foreground/80">
+                {cvFile && !cvError && !cvChecking && (
+                  <p className="mt-2 text-sm text-foreground/80" aria-live="polite">
                     ✓ Attached: <span className="font-medium">{cvFile.name}</span>{" "}
                     <span className="text-muted-foreground">
                       ({Math.ceil(cvFile.size / 1024)} KB)
                     </span>
                   </p>
                 )}
+
                 <ul className="mt-3 text-xs text-muted-foreground list-disc pl-4 space-y-0.5">
                   <li>Accepted format: .pdf only</li>
                   <li>Max size: 10 MB</li>
@@ -883,17 +926,24 @@ function ApplyPage() {
             </div>
           )}
 
-          <div className="mt-8 flex flex-wrap items-center justify-between gap-3">
+          <div className="mt-8 flex flex-col-reverse gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
             <Button
               type="button"
               variant="ghost"
               onClick={goBack}
               disabled={step === 1 || submitting}
+              className="w-full sm:w-auto"
             >
               ← Back
             </Button>
             {step < 5 ? (
-              <Button type="button" onClick={goNext} data-testid="apply-continue">
+              <Button
+                type="button"
+                onClick={goNext}
+                data-testid="apply-continue"
+                className="w-full sm:w-auto"
+                disabled={cvChecking}
+              >
                 Continue →
               </Button>
             ) : (
@@ -903,12 +953,18 @@ function ApplyPage() {
                 onClick={onSubmit}
                 disabled={submitting}
                 data-testid="apply-submit"
+                className="w-full sm:w-auto"
               >
-                {submitting ? "Submitting…" : "Submit application"}
+                {phase === "reading"
+                  ? "Preparing your CV…"
+                  : phase === "sending"
+                    ? "Sending your application…"
+                    : "Submit application"}
               </Button>
             )}
           </div>
         </div>
+
 
         <div className="mt-4 text-center">
           <Link
