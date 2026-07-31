@@ -211,6 +211,25 @@ function LoginPage() {
     }
   };
 
+  const onResendConfirmation = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      await supabase.auth.resend({
+        type: "signup",
+        email,
+        options: { emailRedirectTo: `${window.location.origin}/login` },
+      });
+    } catch {
+      /* swallow — always return generic message */
+    } finally {
+      toast.success(GENERIC_CONFIRM_MESSAGE);
+      setMode("signin");
+      setLoading(false);
+    }
+  };
+
+
   const onPersona = async (
     key: "platform_admin" | "operations" | "client_admin" | "client_editor" | "client_viewer",
   ) => {
