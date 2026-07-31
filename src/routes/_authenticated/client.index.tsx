@@ -25,6 +25,10 @@ import {
   Users,
 } from "lucide-react";
 import { SlaScorecard } from "@/components/client/sla-scorecard";
+import { DensityToggle } from "@/components/client/density-toggle";
+import { useDensity } from "@/lib/use-density";
+import { roleNextStep } from "@/lib/client-role-next-step";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/_authenticated/client/")({
   head: () => ({
