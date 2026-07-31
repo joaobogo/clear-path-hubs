@@ -1,7 +1,8 @@
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { createFileRoute, Link, notFound, redirect } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { getPublicPosition } from "@/lib/jobs.functions";
+import { getPositionClosure, getPublicPosition, listPublicPositions } from "@/lib/jobs.functions";
+import { buildJobPostingJsonLd } from "@/lib/marketing/job-posting-schema";
 import { buildJobSlug, extractJobUuid } from "@/lib/marketing/job-slug";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -75,6 +76,7 @@ export const Route = createFileRoute("/jobs/$id/")({
       };
     }
     const pos = loaderData.position;
+    if (!pos) return { meta: [{ title: "TaaSFlow job board" }] };
     const title = `${pos.title} — ${pos.organization_name} · TaaSFlow`;
     const desc = pos.description.replace(/\s+/g, " ").trim().slice(0, 155);
     const canonical = `https://taasflow.com/jobs/${buildJobSlug(pos)}`;
@@ -232,12 +234,20 @@ function BulletList({ items }: { items: string[] }) {
 }
 
 function JobDetail() {
+  const loaderData = Route.useLoaderData();
   const { id: rawId } = Route.useParams();
   const id = extractJobUuid(rawId);
-  const { data: pos } = useSuspenseQuery({
+  const { data: fetched } = useSuspenseQuery({
     queryKey: ["public-position", id],
     queryFn: () => getPublicPosition({ data: { id } }),
+    enabled: !loaderData.closed,
   });
+  if (loaderData.closed) {
+    return (
+      <ClosedRole closure={loaderData.closed} alternatives={loaderData.alternatives ?? []} />
+    );
+  }
+  const pos = fetched ?? loaderData.position;
   if (!pos) return null;
 
   const blocks = parseJobDescription(pos.description);
