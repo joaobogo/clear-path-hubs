@@ -102,13 +102,6 @@ export const listPublicPositions = createServerFn({ method: "GET" }).handler(
   },
 );
 
-// Only absolute https URLs are usable as a social/share image.
-function absoluteImage(url: string | null): string | null {
-  if (!url) return null;
-  const trimmed = url.trim();
-  return /^https:\/\//i.test(trimmed) ? trimmed : null;
-}
-
 /**
  * Minimal, safe lookup for a role that is no longer open (paused, filled,
  * closed, archived) so the public page can say so instead of 404-ing.
@@ -117,7 +110,12 @@ export const getPositionClosure = createServerFn({ method: "GET" })
   .inputValidator((input: unknown) => z.object({ id: z.string().uuid() }).parse(input))
   .handler(async ({ data }) => {
     const supabase = publicClient();
-    const { data: row, error } = await supabase.rpc("public_position_closure", {
+    const { data: row, error } = await (
+      supabase.rpc as unknown as (
+        fn: string,
+        args: Record<string, unknown>,
+      ) => Promise<{ data: unknown; error: { message: string } | null }>
+    )("public_position_closure", {
       _id: data.id,
     });
     if (error) return null;
@@ -204,11 +202,14 @@ export const getPublicPosition = createServerFn({ method: "GET" })
         headcount: l.headcount,
         is_primary: l.is_primary,
       })),
-      organization_logo_url: confidential
-        ? null
-        : absoluteImage(
-            (pos.organizations as unknown as { logo_url?: string | null } | null)?.logo_url ?? null,
-          ),
+      organization_logo_url: (() => {
+        if (confidential) return null;
+        const raw = (
+          pos.organizations as unknown as { logo_url?: string | null } | null
+        )?.logo_url;
+        const trimmed = typeof raw === "string" ? raw.trim() : "";
+        return /^https:\/\//i.test(trimmed) ? trimmed : null;
+      })(),
       organization_name: confidential
         ? "Confidential employer"
         : ((pos.organizations as unknown as { name?: string } | null)?.name ?? "TaaSFlow client"),
