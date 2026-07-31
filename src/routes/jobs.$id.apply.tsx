@@ -583,6 +583,7 @@ function ApplyPage() {
                       )}
                     </div>
                   </div>
+                  )}
                   <p className="text-xs text-muted-foreground">
                     Already have an account?{" "}
                     <Link to="/login" className="underline">
@@ -593,6 +594,7 @@ function ApplyPage() {
                 </div>
               )}
             </div>
+
 
           )}
 
