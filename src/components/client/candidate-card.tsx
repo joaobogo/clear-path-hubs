@@ -95,12 +95,12 @@ export function CandidateCard({
         </label>
       )}
 
-      {/* Identity — qualitative outcome only, never a score */}
+      {/* Identity — counts against requirements only, never adjectives or scores */}
       <div className="min-w-0 pr-24">
         <div className="flex items-center gap-2 flex-wrap">
           <h3 className="font-semibold text-base truncate">{c.candidate.display_name}</h3>
           <span className={`text-[11px] font-medium rounded-full px-2 py-0.5 border ${accent.chip}`}>
-            {c.fit.headline}
+            {rationale.summary}
           </span>
         </div>
         {c.candidate.headline && (
