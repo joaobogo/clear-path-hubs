@@ -29,6 +29,9 @@ import { DensityToggle } from "@/components/client/density-toggle";
 import { useDensity } from "@/lib/use-density";
 import { roleNextStep } from "@/lib/client-role-next-step";
 import { supabase } from "@/integrations/supabase/client";
+import { SystemStatusStrip } from "@/components/client/control-room/system-status-strip";
+import { LiveTicker } from "@/components/client/control-room/live-ticker";
+import { IntensityDial } from "@/components/client/control-room/intensity-dial";
 
 export const Route = createFileRoute("/_authenticated/client/")({
   head: () => ({
@@ -268,6 +271,17 @@ function OverviewPage() {
         <>
           {/* 1 · WHAT NEEDS ME TODAY — the only thing on the first screen */}
           <DecisionQueue queue={queue} loading={!data && isFetching} />
+
+          {/* CONTROL ROOM — what is running, what moved, how hard we work */}
+          {orgId && (
+            <div className="space-y-4">
+              <SystemStatusStrip orgId={orgId} />
+              <div className="grid gap-4 lg:grid-cols-2">
+                <LiveTicker orgId={orgId} />
+                <IntensityDial orgId={orgId} canEdit={role === "client_admin"} />
+              </div>
+            </div>
+          )}
 
           {/* ── Context below the fold ── */}
           <div className="flex items-center gap-3 pt-2">
