@@ -37,6 +37,7 @@ import {
  Info,
  LogOut,
  Mail,
+ MessagesSquare,
  ShieldCheck,
  User,
 } from "lucide-react";
