@@ -71,7 +71,10 @@ function AdminPaymentsPage() {
         </p>
       </div>
 
+      <OpsPanel />
+
       <Tabs value={filter} onValueChange={(v) => setFilter(v as Filter)}>
+
         <TabsList>
           <TabsTrigger value="all">All</TabsTrigger>
           <TabsTrigger value="paid">Paid</TabsTrigger>
