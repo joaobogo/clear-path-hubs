@@ -118,3 +118,33 @@ export async function verifyWebhook(
 
   return JSON.parse(body);
 }
+
+/**
+ * Creates a Checkout Session with automatic tax, and transparently retries
+ * without it when the connected account's country cannot use Stripe Tax.
+ *
+ * Rationale: a tax-configuration limitation must never stop a customer paying.
+ * When tax cannot be calculated we still take the payment; tax handling is
+ * reconciled by the operator.
+ */
+export async function createCheckoutSessionWithTax(
+  stripe: Stripe,
+  params: Stripe.Checkout.SessionCreateParams,
+): Promise<Stripe.Checkout.Session> {
+  try {
+    return await stripe.checkout.sessions.create({
+      ...params,
+      automatic_tax: { enabled: true },
+    });
+  } catch (error) {
+    const code = (error as { code?: string })?.code;
+    const message = error instanceof Error ? error.message : "";
+    const taxUnavailable =
+      code === "stripe_tax_inactive" ||
+      code === "tax_calculation_failed" ||
+      /stripe tax/i.test(message);
+    if (!taxUnavailable) throw error;
+    const { automatic_tax: _omit, ...rest } = params;
+    return await stripe.checkout.sessions.create(rest);
+  }
+}
