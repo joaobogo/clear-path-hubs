@@ -5452,52 +5452,97 @@ export type Database = {
       }
       marketing_inquiries: {
         Row: {
+          assigned_to: string | null
           company: string | null
           created_at: string
+          details: Json
           email: string
+          first_responded_at: string | null
+          first_response_due_at: string | null
           id: string
           industry_slug: string | null
           kind: string
+          lead_score: number | null
           message: string | null
           name: string
+          owner_desk: string | null
           preferred_slot: string | null
+          prefill_token: string
+          prefill_used_at: string | null
+          priority: string | null
+          responded_by: string | null
           role_count: string | null
           role_title: string | null
+          seniority: string | null
           source_path: string | null
           status: string
+          suggested_first_message: string | null
+          urgency: string | null
           user_agent: string | null
+          vertical_slug: string | null
+          volume: string | null
         }
         Insert: {
+          assigned_to?: string | null
           company?: string | null
           created_at?: string
+          details?: Json
           email: string
+          first_responded_at?: string | null
+          first_response_due_at?: string | null
           id?: string
           industry_slug?: string | null
           kind: string
+          lead_score?: number | null
           message?: string | null
           name: string
+          owner_desk?: string | null
           preferred_slot?: string | null
+          prefill_token?: string
+          prefill_used_at?: string | null
+          priority?: string | null
+          responded_by?: string | null
           role_count?: string | null
           role_title?: string | null
+          seniority?: string | null
           source_path?: string | null
           status?: string
+          suggested_first_message?: string | null
+          urgency?: string | null
           user_agent?: string | null
+          vertical_slug?: string | null
+          volume?: string | null
         }
         Update: {
+          assigned_to?: string | null
           company?: string | null
           created_at?: string
+          details?: Json
           email?: string
+          first_responded_at?: string | null
+          first_response_due_at?: string | null
           id?: string
           industry_slug?: string | null
           kind?: string
+          lead_score?: number | null
           message?: string | null
           name?: string
+          owner_desk?: string | null
           preferred_slot?: string | null
+          prefill_token?: string
+          prefill_used_at?: string | null
+          priority?: string | null
+          responded_by?: string | null
           role_count?: string | null
           role_title?: string | null
+          seniority?: string | null
           source_path?: string | null
           status?: string
+          suggested_first_message?: string | null
+          urgency?: string | null
           user_agent?: string | null
+          vertical_slug?: string | null
+          volume?: string | null
         }
         Relationships: []
       }
