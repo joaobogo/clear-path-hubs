@@ -618,27 +618,42 @@ function ApplyPage() {
                 </p>
               </div>
               <div>
-                <Label htmlFor="cv">CV file (PDF) *</Label>
+                <Label htmlFor="cv">CV file (PDF, max 10 MB) *</Label>
                 <Input
                   id="cv"
                   type="file"
                   data-field="cv"
                   accept=".pdf,application/pdf"
+                  className="h-auto py-2 file:mr-3 file:rounded-md file:border-0 file:bg-primary file:px-3 file:py-1.5 file:text-primary-foreground"
+                  disabled={cvChecking}
                   onChange={(e) => onFile(e.target.files?.[0] ?? null)}
                 />
+                {cvChecking && (
+                  <div className="mt-2" aria-live="polite">
+                    <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
+                      <div className="h-full w-1/2 animate-pulse rounded-full bg-primary" />
+                    </div>
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      Checking your file — this takes a moment.
+                    </p>
+                  </div>
+                )}
                 {cvError ? (
-                  <p className="mt-1 text-xs text-destructive">{cvError}</p>
+                  <p className="mt-1 text-xs text-destructive" aria-live="polite">
+                    {cvError} Your answers are saved — just pick another file.
+                  </p>
                 ) : fieldErrors.cv ? (
                   <p className="mt-1 text-xs text-destructive">{fieldErrors.cv}</p>
                 ) : null}
-                {cvFile && !cvError && (
-                  <p className="mt-2 text-sm text-foreground/80">
+                {cvFile && !cvError && !cvChecking && (
+                  <p className="mt-2 text-sm text-foreground/80" aria-live="polite">
                     ✓ Attached: <span className="font-medium">{cvFile.name}</span>{" "}
                     <span className="text-muted-foreground">
                       ({Math.ceil(cvFile.size / 1024)} KB)
                     </span>
                   </p>
                 )}
+
                 <ul className="mt-3 text-xs text-muted-foreground list-disc pl-4 space-y-0.5">
                   <li>Accepted format: .pdf only</li>
                   <li>Max size: 10 MB</li>
