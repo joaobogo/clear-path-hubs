@@ -24,6 +24,7 @@ import {
   type PipelineStatusInput,
 } from "@/lib/client-pipeline-language";
 import { computeRoleProgress } from "@/lib/client-role-progress";
+import { computeRoleRisk } from "@/lib/client-role-risk";
 
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -243,8 +244,10 @@ export const getClientOverview = createServerFn({ method: "GET" })
 
     const { data: positions } = await context.supabase
       .from("positions")
-      .select("id, title, status, updated_at")
+      .select("id, title, status, updated_at, created_at")
       .eq("organization_id", data.orgId)
+      .in("status", ["active", "paused", "approved"])
+
       .in("status", ["active", "paused", "approved"])
       .order("updated_at", { ascending: false });
     const activePositionsList = (positions as AnyRow[]) ?? [];
@@ -303,6 +306,30 @@ export const getClientOverview = createServerFn({ method: "GET" })
       if (!rowsByPosition.has(r.position_id)) rowsByPosition.set(r.position_id, []);
       rowsByPosition.get(r.position_id)!.push(r);
     }
+
+    // Real stage dates + our own promises — the only inputs to plain-language
+    // status and the "at risk" signal. Nothing is inferred or projected.
+    const overviewPositionIds = activePositionsList.slice(0, 6).map((p) => p.id as string);
+    const overviewStageDates = overviewPositionIds.length
+      ? await loadRoleStageDates(context.supabase, data.orgId, overviewPositionIds)
+      : new Map();
+
+    const { data: commitmentRows } = overviewPositionIds.length
+      ? await context.supabase
+          .from("position_commitments")
+          .select("position_id, first_shortlist_days, baseline_at")
+          .eq("organization_id", data.orgId)
+          .in("position_id", overviewPositionIds)
+      : { data: [] as AnyRow[] };
+    const commitmentByPosition = new Map<string, AnyRow>(
+      ((commitmentRows as AnyRow[]) ?? []).map((c) => [c.position_id as string, c]),
+    );
+
+    const maxIso = (values: Array<string | null | undefined>) =>
+      values.filter((v): v is string => Boolean(v)).sort().at(-1) ?? null;
+    const minIso = (values: Array<string | null | undefined>) =>
+      values.filter((v): v is string => Boolean(v)).sort()[0] ?? null;
+
     const whats_next = activePositionsList.slice(0, 6).map((p) => {
       const posRows = rowsByPosition.get(p.id) ?? [];
       let next = "Awaiting first candidates";
@@ -311,14 +338,153 @@ export const getClientOverview = createServerFn({ method: "GET" })
         next = "Interview outcome";
       else if (posRows.some((r) => r.stage === "shortlisted")) next = "Send interview requests";
       else if (posRows.some((r) => r.stage === "delivered")) next = "Review new candidates";
+
+      const dates = overviewStageDates.get(p.id as string) ?? {
+        sourcing: null,
+        screening: null,
+        shortlist: null,
+        offer: null,
+      };
+      const progress = computeRoleProgress({
+        status: p.status as string,
+        briefedAt: (p.created_at as string | null) ?? null,
+        sourcingStartedAt: dates.sourcing,
+        screeningStartedAt: dates.screening,
+        shortlistStartedAt: dates.shortlist,
+        offerStartedAt: dates.offer,
+      });
+
+      const awaiting = posRows.filter((r) => r.stage === "delivered");
+      const toConfirm = posRows.filter((r) => r.interview_needs_confirmation);
+      const commitment = commitmentByPosition.get(p.id as string);
+      const promisedShortlistBy =
+        commitment?.baseline_at && commitment?.first_shortlist_days != null
+          ? new Date(
+              new Date(commitment.baseline_at as string).getTime() +
+                Number(commitment.first_shortlist_days) * 86_400_000,
+            ).toISOString()
+          : null;
+
+      const lastMovementAt = maxIso([
+        p.updated_at as string | null,
+        ...posRows.map((r) => r.stage_entered_at),
+        ...posRows.map((r) => r.delivered_at),
+        dates.offer,
+        dates.shortlist,
+        dates.screening,
+        dates.sourcing,
+      ]);
+
+      const risk = computeRoleRisk({
+        status: p.status as string,
+        lastMovementAt,
+        awaitingDecision: awaiting.length,
+        oldestAwaitingDecisionAt: minIso(awaiting.map((r) => r.delivered_at ?? r.stage_entered_at)),
+        interviewsToConfirm: toConfirm.length,
+        oldestInterviewToConfirmAt: minIso(
+          toConfirm.map((r) => r.interview_requested_at ?? r.stage_entered_at),
+        ),
+        promisedShortlistBy,
+        shortlistDeliveredAt: dates.shortlist,
+      });
+
       return {
         position_id: p.id as string,
         title: p.title as string,
         status: p.status as string,
         next,
-        delivered_pending: posRows.filter((r) => r.stage === "delivered").length,
+        delivered_pending: awaiting.length,
+        // Plain-language stage, when it started, and how long it has been there.
+        stage_label: progress.currentLabel,
+        stage_hint: progress.steps[progress.currentIndex]?.hint ?? "",
+        stage_entered_at: progress.currentEnteredAt,
+        days_in_stage: progress.daysInCurrentStage,
+        stage_caption: progress.caption,
+        last_movement_at: lastMovementAt,
+        promised_shortlist_by: promisedShortlistBy,
+        at_risk: risk.atRisk,
+        risk_reason: risk.reason,
+        risk_cause: risk.cause,
       };
     });
+
+    // ── Decision queue ──────────────────────────────────────────────────────
+    // One prioritised list of decisions: the role, the person, how long it has
+    // been waiting, and a single primary action. Built from real rows only.
+    const queueRows = rows.filter(
+      (r) => r.stage === "delivered" || r.interview_needs_confirmation || r.stage === "offer",
+    );
+    const queueNames = new Map<string, string>();
+    if (queueRows.length > 0) {
+      const { data: queueMatches } = await context.supabase
+        .from("candidate_matches")
+        .select("id, candidate_profiles(full_name)")
+        .in(
+          "id",
+          queueRows.map((r) => r.id),
+        );
+      for (const m of ((queueMatches as AnyRow[]) ?? [])) {
+        queueNames.set(m.id as string, (m.candidate_profiles?.full_name as string) ?? "Candidate");
+      }
+    }
+    const titleByPosition = new Map<string, string>(
+      activePositionsList.map((p) => [p.id as string, p.title as string]),
+    );
+    const decision_queue = queueRows
+      .map((r) => {
+        const person = queueNames.get(r.id) ?? "Candidate";
+        const role_title = titleByPosition.get(r.position_id) ?? "Your role";
+        if (r.interview_needs_confirmation) {
+          return {
+            key: `interview:${r.id}`,
+            kind: "interview" as const,
+            priority: 1,
+            person,
+            role_title,
+            position_id: r.position_id,
+            match_id: r.id,
+            what: "Interview time needs confirming",
+            action: "Confirm a time",
+            to: "/client/interviews",
+            waiting_since: r.interview_requested_at ?? r.stage_entered_at,
+          };
+        }
+        if (r.stage === "offer") {
+          return {
+            key: `offer:${r.id}`,
+            kind: "offer" as const,
+            priority: 2,
+            person,
+            role_title,
+            position_id: r.position_id,
+            match_id: r.id,
+            what: "Offer out, awaiting a response",
+            action: "Follow up",
+            to: "/client/offers",
+            waiting_since: r.stage_entered_at,
+          };
+        }
+        return {
+          key: `decision:${r.id}`,
+          kind: "decision" as const,
+          priority: 0,
+          person,
+          role_title,
+          position_id: r.position_id,
+          match_id: r.id,
+          what: "Waiting on your decision",
+          action: "Review candidate",
+          to: "/client/candidates",
+          waiting_since: r.delivered_at ?? r.stage_entered_at,
+        };
+      })
+      .sort((a, b) => {
+        const at = a.waiting_since ?? "";
+        const bt = b.waiting_since ?? "";
+        if (a.priority !== b.priority) return a.priority - b.priority;
+        return at < bt ? -1 : at > bt ? 1 : 0;
+      });
+
 
     // Latest delivered candidates (top 4 — kept concise).
     const { data: latestMatches } = await context.supabase
@@ -375,6 +541,7 @@ export const getClientOverview = createServerFn({ method: "GET" })
       new_this_week,
       action_required,
       whats_next,
+      decision_queue,
       latest_candidates,
       recent_messages: (recentMessages as AnyRow[]) ?? [],
       recent_activity: (events as AnyRow[]) ?? [],
