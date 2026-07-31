@@ -1369,7 +1369,7 @@ export const listReversibleDecisions = createServerFn({ method: "GET" })
     z.object({ orgId: z.string().uuid() }).parse(input),
   )
   .handler(async ({ context, data }) => {
-    await assertMember(context.supabase, context.userId, data.orgId);
+    await assertEditor(context.supabase, context.userId, data.orgId);
     const cutoff = new Date(Date.now() - UNDO_WINDOW_MS).toISOString();
     const { data: rows, error } = await context.supabase
       .from("client_decisions")
