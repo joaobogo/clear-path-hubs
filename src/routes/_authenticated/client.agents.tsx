@@ -83,7 +83,7 @@ function AgentCardView({
 }: {
   agent: AgentCard;
   canManage: boolean;
-  onToggle: (enabled: boolean) => void;
+  onToggle: (enabled: boolean) => Promise<unknown>;
   onPause: (paused: boolean) => void;
   busy: boolean;
 }) {
