@@ -10,6 +10,8 @@ import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { OperationalHealthPanel } from "@/components/admin/OperationalHealthPanel";
 import { TeamsDeliveryPanel } from "@/components/admin/TeamsDeliveryPanel";
+import { EmailDeliveryPanel } from "@/components/admin/EmailDeliveryPanel";
+
 
 export const Route = createFileRoute("/_authenticated/admin/health")({
   loader: ({ context }) =>
