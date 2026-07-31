@@ -64,6 +64,8 @@ export const Route = createFileRoute("/_authenticated/admin")({
   component: AdminLayout,
 });
 
+// Part 9 subtraction: eleven entries instead of twenty-five. Sibling desks are
+// tabs inside these sections (see src/config/workspace-sections.ts).
 const NAV: WorkspaceNavItem[] = [
   {
     to: "/admin",
@@ -82,49 +84,30 @@ const NAV: WorkspaceNavItem[] = [
 
   {
     to: "/admin/scoring/review",
-    label: "Scoring Review",
+    label: "Quality",
     icon: ClipboardCheck,
     group: "Quality",
-    hint: "Evidence QC and approval decisions",
+    hint: "Scoring review, orphans, business rules, QA",
   },
+
+  { to: "/admin/messages", label: "Comms", icon: MessageSquare, group: "Comms", hint: "Messages, notifications, copilot" },
+
   {
-    to: "/admin/scoring/orphans",
-    label: "Scoring Orphans",
-    icon: ClipboardCheck,
-    group: "Quality",
-    hint: "Unmatched and unresolved score runs",
+    to: "/admin/operations",
+    label: "Operations",
+    icon: Activity,
+    group: "Insight",
+    hint: "Pipeline health, SLA clock, weekly review, system and data health",
   },
-  { to: "/admin/business-rules", label: "Business Rules", icon: Scale, group: "Quality", hint: "Thresholds and overrides" },
-  { to: "/admin/qa-report", label: "QA Report", icon: ShieldCheck, group: "Quality", hint: "Release checks" },
 
-  { to: "/admin/messages", label: "Messages", icon: MessageSquare, group: "Comms" },
-  { to: "/admin/notifications", label: "Notifications", icon: Bell, group: "Comms" },
-  { to: "/admin/copilot", label: "Copilot", icon: Bot, group: "Comms", hint: "Admin AI assistant" },
-
-  { to: "/admin/wbr", label: "Weekly Review", icon: CalendarRange, group: "Insight" },
-  { to: "/admin/operations", label: "Operations", icon: Activity, group: "Insight", hint: "Pipeline and job health" },
-  { to: "/admin/health", label: "System Health", icon: HeartPulse, group: "Insight" },
-  { to: "/admin/data-health", label: "Data Health", icon: Database, group: "Insight", hint: "Coverage, duplicates, orphans" },
-  { to: "/admin/sla", label: "SLA Clock", icon: Timer, group: "Insight", hint: "Promises approaching or missed" },
-  { to: "/admin/support", label: "Support View", icon: LifeBuoy, group: "Platform", hint: "Read-only client workspace" },
-
-  { to: "/admin/payments", label: "Payments", icon: Receipt, group: "Platform", hint: "Read-only payment ledger" },
   {
-    to: "/admin/pending-leads",
-    label: "Pending Leads",
+    to: "/admin/payments",
+    label: "Platform",
     icon: Receipt,
     group: "Platform",
-    hint: "Calls booked and roles awaiting payment",
+    hint: "Payments, pending leads, dashboard requests, support view",
   },
-  {
-    to: "/admin/dashboard-requests",
-    label: "Dashboards Desk",
-    icon: Gauge,
-    group: "Platform",
-    hint: "Custom dashboard quotes and access grants",
-  },
-  { to: "/admin/team", label: "Team & Access", icon: UserCog, group: "Platform" },
-  { to: "/admin/settings", label: "Settings", icon: Settings, group: "Platform" },
+  { to: "/admin/team", label: "Team & Access", icon: UserCog, group: "Platform", hint: "Staff access and settings" },
 ];
 
 
