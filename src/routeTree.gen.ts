@@ -135,6 +135,7 @@ import { Route as ApiPublicPipelineRunRouteImport } from './routes/api/public/pi
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 import { Route as ApiPublicIntakeStatusIdRouteImport } from './routes/api/public/intake-status.$id'
 import { Route as ApiPublicDigestWeeklyRouteImport } from './routes/api/public/digest/weekly'
+import { Route as ApiPublicCandidateClosureNoticesRouteImport } from './routes/api/public/candidate/closure-notices'
 import { Route as ApiPublicBlueprintStatusIntakeIdRouteImport } from './routes/api/public/blueprint-status.$intakeId'
 import { Route as AuthenticatedMeApplicationsIdRouteImport } from './routes/_authenticated/me.applications.$id'
 import { Route as AuthenticatedClientPositionsIdRouteImport } from './routes/_authenticated/client.positions.$id'
@@ -827,6 +828,12 @@ const ApiPublicDigestWeeklyRoute = ApiPublicDigestWeeklyRouteImport.update({
   path: '/api/public/digest/weekly',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicCandidateClosureNoticesRoute =
+  ApiPublicCandidateClosureNoticesRouteImport.update({
+    id: '/api/public/candidate/closure-notices',
+    path: '/api/public/candidate/closure-notices',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicBlueprintStatusIntakeIdRoute =
   ApiPublicBlueprintStatusIntakeIdRouteImport.update({
     id: '/api/public/blueprint-status/$intakeId',
@@ -1038,6 +1045,7 @@ export interface FileRoutesByFullPath {
   '/client/positions/$id': typeof AuthenticatedClientPositionsIdRoute
   '/me/applications/$id': typeof AuthenticatedMeApplicationsIdRoute
   '/api/public/blueprint-status/$intakeId': typeof ApiPublicBlueprintStatusIntakeIdRoute
+  '/api/public/candidate/closure-notices': typeof ApiPublicCandidateClosureNoticesRoute
   '/api/public/digest/weekly': typeof ApiPublicDigestWeeklyRoute
   '/api/public/intake-status/$id': typeof ApiPublicIntakeStatusIdRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
@@ -1170,6 +1178,7 @@ export interface FileRoutesByTo {
   '/client/positions/$id': typeof AuthenticatedClientPositionsIdRoute
   '/me/applications/$id': typeof AuthenticatedMeApplicationsIdRoute
   '/api/public/blueprint-status/$intakeId': typeof ApiPublicBlueprintStatusIntakeIdRoute
+  '/api/public/candidate/closure-notices': typeof ApiPublicCandidateClosureNoticesRoute
   '/api/public/digest/weekly': typeof ApiPublicDigestWeeklyRoute
   '/api/public/intake-status/$id': typeof ApiPublicIntakeStatusIdRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
@@ -1314,6 +1323,7 @@ export interface FileRoutesById {
   '/_authenticated/client/positions/$id': typeof AuthenticatedClientPositionsIdRoute
   '/_authenticated/me/applications/$id': typeof AuthenticatedMeApplicationsIdRoute
   '/api/public/blueprint-status/$intakeId': typeof ApiPublicBlueprintStatusIntakeIdRoute
+  '/api/public/candidate/closure-notices': typeof ApiPublicCandidateClosureNoticesRoute
   '/api/public/digest/weekly': typeof ApiPublicDigestWeeklyRoute
   '/api/public/intake-status/$id': typeof ApiPublicIntakeStatusIdRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
@@ -1458,6 +1468,7 @@ export interface FileRouteTypes {
     | '/client/positions/$id'
     | '/me/applications/$id'
     | '/api/public/blueprint-status/$intakeId'
+    | '/api/public/candidate/closure-notices'
     | '/api/public/digest/weekly'
     | '/api/public/intake-status/$id'
     | '/api/public/payments/webhook'
@@ -1590,6 +1601,7 @@ export interface FileRouteTypes {
     | '/client/positions/$id'
     | '/me/applications/$id'
     | '/api/public/blueprint-status/$intakeId'
+    | '/api/public/candidate/closure-notices'
     | '/api/public/digest/weekly'
     | '/api/public/intake-status/$id'
     | '/api/public/payments/webhook'
@@ -1733,6 +1745,7 @@ export interface FileRouteTypes {
     | '/_authenticated/client/positions/$id'
     | '/_authenticated/me/applications/$id'
     | '/api/public/blueprint-status/$intakeId'
+    | '/api/public/candidate/closure-notices'
     | '/api/public/digest/weekly'
     | '/api/public/intake-status/$id'
     | '/api/public/payments/webhook'
@@ -1819,6 +1832,7 @@ export interface RootRouteChildren {
   JobsIdApplyRoute: typeof JobsIdApplyRoute
   JobsIdIndexRoute: typeof JobsIdIndexRoute
   ApiPublicBlueprintStatusIntakeIdRoute: typeof ApiPublicBlueprintStatusIntakeIdRoute
+  ApiPublicCandidateClosureNoticesRoute: typeof ApiPublicCandidateClosureNoticesRoute
   ApiPublicDigestWeeklyRoute: typeof ApiPublicDigestWeeklyRoute
   ApiPublicIntakeStatusIdRoute: typeof ApiPublicIntakeStatusIdRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
@@ -2712,6 +2726,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicDigestWeeklyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/candidate/closure-notices': {
+      id: '/api/public/candidate/closure-notices'
+      path: '/api/public/candidate/closure-notices'
+      fullPath: '/api/public/candidate/closure-notices'
+      preLoaderRoute: typeof ApiPublicCandidateClosureNoticesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/blueprint-status/$intakeId': {
       id: '/api/public/blueprint-status/$intakeId'
       path: '/api/public/blueprint-status/$intakeId'
@@ -3165,6 +3186,7 @@ const rootRouteChildren: RootRouteChildren = {
   JobsIdApplyRoute: JobsIdApplyRoute,
   JobsIdIndexRoute: JobsIdIndexRoute,
   ApiPublicBlueprintStatusIntakeIdRoute: ApiPublicBlueprintStatusIntakeIdRoute,
+  ApiPublicCandidateClosureNoticesRoute: ApiPublicCandidateClosureNoticesRoute,
   ApiPublicDigestWeeklyRoute: ApiPublicDigestWeeklyRoute,
   ApiPublicIntakeStatusIdRoute: ApiPublicIntakeStatusIdRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
