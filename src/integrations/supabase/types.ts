@@ -8593,6 +8593,141 @@ export type Database = {
           },
         ]
       }
+      search_signals: {
+        Row: {
+          candidate_profile_id: string | null
+          created_at: string
+          currency: string | null
+          id: string
+          numeric_value: number | null
+          observed_at: string
+          organization_id: string | null
+          payload: Json
+          person_id: string | null
+          position_id: string | null
+          region: string | null
+          role_family: string | null
+          seniority: string | null
+          signal_key: string
+          signal_kind: string
+          text_value: string | null
+        }
+        Insert: {
+          candidate_profile_id?: string | null
+          created_at?: string
+          currency?: string | null
+          id?: string
+          numeric_value?: number | null
+          observed_at?: string
+          organization_id?: string | null
+          payload?: Json
+          person_id?: string | null
+          position_id?: string | null
+          region?: string | null
+          role_family?: string | null
+          seniority?: string | null
+          signal_key: string
+          signal_kind: string
+          text_value?: string | null
+        }
+        Update: {
+          candidate_profile_id?: string | null
+          created_at?: string
+          currency?: string | null
+          id?: string
+          numeric_value?: number | null
+          observed_at?: string
+          organization_id?: string | null
+          payload?: Json
+          person_id?: string | null
+          position_id?: string | null
+          region?: string | null
+          role_family?: string | null
+          seniority?: string | null
+          signal_key?: string
+          signal_kind?: string
+          text_value?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "search_signals_candidate_profile_id_fkey"
+            columns: ["candidate_profile_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_profile_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "search_signals_candidate_profile_id_fkey"
+            columns: ["candidate_profile_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "search_signals_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "admin_clients_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "search_signals_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "search_signals_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_portfolio_rollup"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "search_signals_person_id_fkey"
+            columns: ["person_id"]
+            isOneToOne: false
+            referencedRelation: "talent_persons"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "search_signals_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "admin_pipeline_health"
+            referencedColumns: ["position_id"]
+          },
+          {
+            foreignKeyName: "search_signals_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "admin_positions_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "search_signals_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_my_applications"
+            referencedColumns: ["position_id"]
+          },
+          {
+            foreignKeyName: "search_signals_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "client_positions_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "search_signals_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "positions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       shortlist_share_comments: {
         Row: {
           author_email: string | null
@@ -9001,6 +9136,192 @@ export type Database = {
           },
         ]
       }
+      talent_graph_edges: {
+        Row: {
+          candidate_match_id: string | null
+          candidate_profile_id: string | null
+          created_at: string
+          edge_kind: string
+          id: string
+          occurred_at: string
+          organization_id: string | null
+          payload: Json
+          person_id: string
+          position_id: string | null
+          source_id: string | null
+          source_table: string
+        }
+        Insert: {
+          candidate_match_id?: string | null
+          candidate_profile_id?: string | null
+          created_at?: string
+          edge_kind: string
+          id?: string
+          occurred_at?: string
+          organization_id?: string | null
+          payload?: Json
+          person_id: string
+          position_id?: string | null
+          source_id?: string | null
+          source_table: string
+        }
+        Update: {
+          candidate_match_id?: string | null
+          candidate_profile_id?: string | null
+          created_at?: string
+          edge_kind?: string
+          id?: string
+          occurred_at?: string
+          organization_id?: string | null
+          payload?: Json
+          person_id?: string
+          position_id?: string | null
+          source_id?: string | null
+          source_table?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "talent_graph_edges_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "admin_candidate_matches_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "talent_graph_edges_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "admin_work_inbox"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "talent_graph_edges_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_matches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "talent_graph_edges_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "client_candidate_matches_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "talent_graph_edges_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "client_kanban_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "talent_graph_edges_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "client_visible_candidates"
+            referencedColumns: ["candidate_match_id"]
+          },
+          {
+            foreignKeyName: "talent_graph_edges_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "v_admin_candidate_index"
+            referencedColumns: ["match_id"]
+          },
+          {
+            foreignKeyName: "talent_graph_edges_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "v_scoring_review_queue"
+            referencedColumns: ["match_id"]
+          },
+          {
+            foreignKeyName: "talent_graph_edges_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "v_source_attribution"
+            referencedColumns: ["match_id"]
+          },
+          {
+            foreignKeyName: "talent_graph_edges_candidate_profile_id_fkey"
+            columns: ["candidate_profile_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_profile_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "talent_graph_edges_candidate_profile_id_fkey"
+            columns: ["candidate_profile_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "talent_graph_edges_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "admin_clients_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "talent_graph_edges_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "talent_graph_edges_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_portfolio_rollup"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "talent_graph_edges_person_id_fkey"
+            columns: ["person_id"]
+            isOneToOne: false
+            referencedRelation: "talent_persons"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "talent_graph_edges_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "admin_pipeline_health"
+            referencedColumns: ["position_id"]
+          },
+          {
+            foreignKeyName: "talent_graph_edges_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "admin_positions_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "talent_graph_edges_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_my_applications"
+            referencedColumns: ["position_id"]
+          },
+          {
+            foreignKeyName: "talent_graph_edges_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "client_positions_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "talent_graph_edges_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "positions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       talent_memory: {
         Row: {
           candidate_profile_id: string
@@ -9309,6 +9630,88 @@ export type Database = {
             columns: ["talent_memory_id"]
             isOneToOne: false
             referencedRelation: "talent_memory"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      talent_person_identifiers: {
+        Row: {
+          created_at: string
+          first_seen_at: string
+          id: string
+          kind: string
+          last_seen_at: string
+          person_id: string
+          updated_at: string
+          value: string
+        }
+        Insert: {
+          created_at?: string
+          first_seen_at?: string
+          id?: string
+          kind: string
+          last_seen_at?: string
+          person_id: string
+          updated_at?: string
+          value: string
+        }
+        Update: {
+          created_at?: string
+          first_seen_at?: string
+          id?: string
+          kind?: string
+          last_seen_at?: string
+          person_id?: string
+          updated_at?: string
+          value?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "talent_person_identifiers_person_id_fkey"
+            columns: ["person_id"]
+            isOneToOne: false
+            referencedRelation: "talent_persons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      talent_persons: {
+        Row: {
+          created_at: string
+          display_name: string | null
+          first_seen_at: string
+          id: string
+          last_seen_at: string
+          merged_into_id: string | null
+          primary_email: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          display_name?: string | null
+          first_seen_at?: string
+          id?: string
+          last_seen_at?: string
+          merged_into_id?: string | null
+          primary_email?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          display_name?: string | null
+          first_seen_at?: string
+          id?: string
+          last_seen_at?: string
+          merged_into_id?: string | null
+          primary_email?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "talent_persons_merged_into_id_fkey"
+            columns: ["merged_into_id"]
+            isOneToOne: false
+            referencedRelation: "talent_persons"
             referencedColumns: ["id"]
           },
         ]
@@ -10730,6 +11133,22 @@ export type Database = {
           },
         ]
       }
+      market_intelligence: {
+        Row: {
+          avg_value: number | null
+          closed_searches: number | null
+          currency: string | null
+          median_value: number | null
+          record_count: number | null
+          region: string | null
+          role_family: string | null
+          signal_key: string | null
+          signal_kind: string | null
+          window_end: string | null
+          window_start: string | null
+        }
+        Relationships: []
+      }
       v_activity_feed: {
         Row: {
           actor_name: string | null
@@ -11702,8 +12121,21 @@ export type Database = {
         }
         Returns: undefined
       }
+      person_for_candidate_profile: { Args: { _cp: string }; Returns: string }
       public_position_closure: { Args: { _id: string }; Returns: Json }
       public_position_employer: { Args: { _id: string }; Returns: Json }
+      resolve_talent_person: {
+        Args: {
+          _auth_user_id?: string
+          _candidate_profile_id?: string
+          _display_name?: string
+          _email?: string
+          _linkedin?: string
+          _phone?: string
+        }
+        Returns: string
+      }
+      role_family_of: { Args: { _title: string }; Returns: string }
       run_authz_tests: { Args: never; Returns: string[] }
       score_band: {
         Args: { _score: number }
@@ -11712,6 +12144,10 @@ export type Database = {
       scoring_readiness: { Args: { _match_id: string }; Returns: Json }
       show_limit: { Args: never; Returns: number }
       show_trgm: { Args: { "": string }; Returns: string[] }
+      write_back_closed_search: {
+        Args: { _position_id: string }
+        Returns: Json
+      }
     }
     Enums: {
       admin_review_status: "pending" | "approved" | "rejected" | "on_hold"
