@@ -108,6 +108,13 @@ const NAV: WorkspaceNavItem[] = [
   { to: "/admin/support", label: "Support View", icon: LifeBuoy, group: "Platform", hint: "Read-only client workspace" },
 
   { to: "/admin/payments", label: "Payments", icon: Receipt, group: "Platform", hint: "Read-only payment ledger" },
+  {
+    to: "/admin/pending-leads",
+    label: "Pending Leads",
+    icon: Receipt,
+    group: "Platform",
+    hint: "Calls booked and roles awaiting payment",
+  },
   { to: "/admin/team", label: "Team & Access", icon: UserCog, group: "Platform" },
   { to: "/admin/settings", label: "Settings", icon: Settings, group: "Platform" },
 ];

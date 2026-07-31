@@ -4,6 +4,8 @@ import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useMemo, useState } from "react";
 import { getClientContext, getClientOverview } from "@/lib/client.functions";
 import { countBlockingTasks } from "@/lib/tasks.functions";
+import { listPendingPaymentRoles } from "@/lib/booking.functions";
+import { PaymentGateBanner } from "@/components/client/payment-gate-banner";
 import { useClientOrgSearch } from "@/lib/use-client-org";
 import { CandidateCard } from "@/components/client/candidate-card";
 import { VisibilityNote } from "@/components/client/visibility-note";
@@ -129,6 +131,15 @@ function OverviewPage() {
     queryFn: () => blockingFn({ data: { organization_id: orgId! } }),
     enabled: !!orgId,
   });
+
+  const pendingRolesFn = useServerFn(listPendingPaymentRoles);
+  const { data: pendingRolesData } = useQuery({
+    queryKey: ["client", "pending-payment-roles", orgId],
+    queryFn: () => pendingRolesFn({ data: { orgId } }),
+    enabled: !!orgId,
+  });
+  const pendingRoles = pendingRolesData?.roles ?? [];
+
 
   useEffect(() => {
     const onRefresh = () => refetch();
@@ -269,6 +280,21 @@ function OverviewPage() {
         <EmptyWelcome canSubmit={canSubmit} />
       ) : (
         <>
+          {/* 0 · Roles that can't publish yet — stated plainly, never nagging */}
+          {pendingRoles.length > 0 && (
+            <div className="space-y-3">
+              {pendingRoles.map((r) => (
+                <PaymentGateBanner
+                  key={r.positionId}
+                  positionId={r.positionId}
+                  positionTitle={r.title}
+                  paymentStatus={r.paymentStatus}
+                  callStart={r.callStart}
+                />
+              ))}
+            </div>
+          )}
+
           {/* 1 · WHAT NEEDS ME TODAY — the only thing on the first screen */}
           <DecisionQueue queue={queue} loading={!data && isFetching} />
 

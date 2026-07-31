@@ -405,7 +405,7 @@ function ExpressIntakePage() {
     }
   };
 
-  const submit = async () => {
+  const submit = async (intent: "pay" | "call" = "pay") => {
     const payload = {
       idempotencyKey: idem.current || newIdempotencyKey(),
       companyName: state.companyName,
@@ -550,8 +550,13 @@ function ExpressIntakePage() {
       }
 
       if (signedIn && body.positionId) {
-        // Role stays a draft — payment is the next step before it can go live.
-        navigate({ to: "/checkout", search: { position: body.positionId } });
+        // Role stays a draft either way — payment (or a conversation) comes next.
+        trackEvent("intake_path_chosen", { flow: "express_onboarding", path: intent });
+        if (intent === "call") {
+          navigate({ to: "/book-call", search: { position: body.positionId } });
+        } else {
+          navigate({ to: "/checkout", search: { position: body.positionId } });
+        }
         return;
       }
       navigate({ to: "/intake/confirmation", search: { intake_id: body.intakeId } });
@@ -1052,16 +1057,43 @@ function ExpressIntakePage() {
               />
             </div>
 
-            <Button type="button" onClick={submit} disabled={submitting} className="min-h-12 w-full sm:w-auto">
-              {submitting ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden />
-                  Creating your workspace…
-                </>
-              ) : (
-                "Create my workspace and analyze my role"
-              )}
-            </Button>
+            <div className="rounded-xl border border-[color:var(--brand-navy)]/12 p-4">
+              <p className="text-sm font-semibold">Choose how you'd like to start</p>
+              <p className="mt-1 text-sm text-[color:var(--brand-navy)]/70">
+                Both create your workspace and analyse the role. One publishes today; the other
+                keeps it saved until we've spoken.
+              </p>
+              <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                <Button
+                  type="button"
+                  onClick={() => void submit("pay")}
+                  disabled={submitting}
+                  className="min-h-12 w-full"
+                >
+                  {submitting ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden />
+                      Creating your workspace…
+                    </>
+                  ) : (
+                    "Start now — pay and publish"
+                  )}
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => void submit("call")}
+                  disabled={submitting}
+                  className="min-h-12 w-full"
+                >
+                  Book a call first
+                </Button>
+              </div>
+              <p className="mt-3 text-sm text-[color:var(--brand-navy)]/70">
+                Booking a call still opens your workspace straight away. The role stays saved with
+                payment pending until we agree the plan.
+              </p>
+            </div>
             <ul className="grid gap-2 pt-1 text-sm text-[color:var(--brand-navy)]/70 sm:grid-cols-3">
               {["Role live in your workspace", "Blueprint built for you", "Every answer editable"].map((t) => (
                 <li key={t} className="flex items-center gap-2">

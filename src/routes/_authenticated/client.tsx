@@ -40,6 +40,7 @@ import {
  	CheckSquare,
  	Plus,
  	Send,
+ 	CreditCard,
 } from "lucide-react";
 import {
  WorkspaceShell,
@@ -108,6 +109,7 @@ const TABS: NavDef[] = [
  { to: "/client/agents", label: "Agents", icon: Bot, everyone: true },
  { to: "/client/outreach", label: "Outreach", icon: Send, everyone: true },
  { to: "/client/conversations", label: "Conversations", icon: MessageSquare, everyone: true },
+ { to: "/client/plan", label: "Plan & pricing", icon: CreditCard, everyone: false },
  { to: "/client/account", label: "Account", icon: Building2, everyone: false },
  { to: "/client/team", label: "Team", icon: UserCog, everyone: false },
  { to: "/client/settings", label: "Settings", icon: Settings, everyone: false },
