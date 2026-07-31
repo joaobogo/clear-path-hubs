@@ -300,8 +300,10 @@ function ApplyPage() {
 
     submittingRef.current = true;
     setSubmitting(true);
+    setPhase("reading");
     try {
       const base64 = await readFileAsBase64(cvFile);
+      setPhase("sending");
       const payload = {
         position_id: id,
         full_name: form.full_name,
