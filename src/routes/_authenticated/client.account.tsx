@@ -401,8 +401,12 @@ function AccountPage() {
         </section>
       )}
 
+      {/* Your sign-in email */}
+      <EmailChangeCard />
+
       {/* Who is doing what */}
       {isAdmin && <TeamActivityPanel orgId={orgId ?? null} />}
+
 
       {/* Team */}
       <section className="rounded-xl border bg-card">
