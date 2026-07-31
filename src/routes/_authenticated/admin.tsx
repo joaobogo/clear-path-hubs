@@ -115,6 +115,13 @@ const NAV: WorkspaceNavItem[] = [
     group: "Platform",
     hint: "Calls booked and roles awaiting payment",
   },
+  {
+    to: "/admin/dashboard-requests",
+    label: "Dashboards Desk",
+    icon: Gauge,
+    group: "Platform",
+    hint: "Custom dashboard quotes and access grants",
+  },
   { to: "/admin/team", label: "Team & Access", icon: UserCog, group: "Platform" },
   { to: "/admin/settings", label: "Settings", icon: Settings, group: "Platform" },
 ];
