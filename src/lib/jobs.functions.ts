@@ -159,6 +159,14 @@ export const getPublicPosition = createServerFn({ method: "GET" })
       .eq("position_id", data.id)
       .order("display_order", { ascending: true });
 
+    const { data: employerRow } = await (
+      supabase.rpc as unknown as (
+        fn: string,
+        args: Record<string, unknown>,
+      ) => Promise<{ data: unknown; error: unknown }>
+    )("public_position_employer", { _id: data.id });
+    const employer = (employerRow ?? null) as { name?: string; logo_url?: string | null } | null;
+
     const comp = (pos.compensation ?? {}) as { approved?: boolean; display?: string };
     const ctx = (pos as { intake_context?: Record<string, unknown> }).intake_context ?? {};
     const posting = (ctx.posting ?? {}) as Record<string, string>;
@@ -204,15 +212,17 @@ export const getPublicPosition = createServerFn({ method: "GET" })
       })),
       organization_logo_url: (() => {
         if (confidential) return null;
-        const raw = (
-          pos.organizations as unknown as { logo_url?: string | null } | null
-        )?.logo_url;
+        const raw =
+          employer?.logo_url ??
+          (pos.organizations as unknown as { logo_url?: string | null } | null)?.logo_url;
         const trimmed = typeof raw === "string" ? raw.trim() : "";
         return /^https:\/\//i.test(trimmed) ? trimmed : null;
       })(),
       organization_name: confidential
         ? "Confidential employer"
-        : ((pos.organizations as unknown as { name?: string } | null)?.name ?? "TaaSFlow client"),
+        : (employer?.name ??
+          (pos.organizations as unknown as { name?: string } | null)?.name ??
+          "TaaSFlow client"),
       questions: (questions ?? []).map((q) => ({
         id: q.id,
         question: q.question,
