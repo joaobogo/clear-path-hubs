@@ -79,7 +79,7 @@ export const getVerticalProof = createServerFn({ method: "POST" })
     ]);
 
     // 1) Roles filled.
-    const filled = (hires ?? []).filter((h) => h.status === "hired" || h.accepted_at);
+    const filled = (hires ?? []).filter((h) => h.status === "hire_confirmed" || h.status === "offer_accepted" || h.accepted_at);
     if (filled.length >= MIN_SAMPLE) {
       metrics.push({
         label: "Roles filled in this sector",
