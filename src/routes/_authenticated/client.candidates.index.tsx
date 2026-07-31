@@ -305,16 +305,27 @@ function CandidatesPage() {
  const [shareOpen, setShareOpen] = useState(false);
  const seededDefault = useRef(false);
  useEffect(() => {
-  // Comparison is the default posture: pre-select the shortlist for the
-  // busiest role so the grid is one click away, never a hidden feature.
+  // Side-by-side is the default way to review a shortlist: pre-select the
+  // shortlist (scoped to the filtered role when there is one) and open the
+  // grid straight away when arriving with ?view=compare or a role filter.
   if (seededDefault.current) return;
   const rows = rowsRaw as ClientCandidateDTO[];
   if (rows.length === 0) return;
   seededDefault.current = true;
-  if (initialCompare.length > 0) return;
-  const preset = defaultCompareSelection(rows);
-  if (preset.length > 0) setCompareIds(preset);
- }, [rowsRaw, initialCompare]);
+  if (initialCompare.length > 0) {
+   setCompareOpen(true);
+   return;
+  }
+  const scoped = search.position
+   ? rows.filter((r) => r.position?.id === search.position)
+   : rows;
+  const preset = defaultCompareSelection(scoped);
+  if (preset.length > 0) {
+   setCompareIds(preset);
+   if (search.view === "compare" || !!search.position) setCompareOpen(true);
+  }
+ }, [rowsRaw, initialCompare, search.position, search.view]);
+
 
  useEffect(() => {
   // Drop any selection that is no longer client-visible (tenant switch, filter change to hidden rows).
