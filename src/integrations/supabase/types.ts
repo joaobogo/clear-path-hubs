@@ -11388,6 +11388,7 @@ export type Database = {
       is_platform_admin: { Args: { _user: string }; Returns: boolean }
       is_platform_staff: { Args: { _user: string }; Returns: boolean }
       public_position_closure: { Args: { _id: string }; Returns: Json }
+      public_position_employer: { Args: { _id: string }; Returns: Json }
       run_authz_tests: { Args: never; Returns: string[] }
       score_band: {
         Args: { _score: number }
