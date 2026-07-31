@@ -220,9 +220,8 @@ function ApplyPage() {
         errs.email = "Enter a valid email";
       if (form.phone.trim().length < 6) errs.phone = "Enter a phone number we can reach you on";
       if (form.country.trim().length < 2) errs.country = "Enter your country";
-      if (!form.region.trim()) errs.region = "Enter your state or region";
       if (!form.city.trim()) errs.city = "Enter your city";
-      if (signedIn === false) {
+      if (signedIn === false && wantsAccount) {
         if (password.length < MIN_PASSWORD_LENGTH)
           errs.password = `Use at least ${MIN_PASSWORD_LENGTH} characters`;
         else if (password !== password2) errs.password2 = "Passwords do not match";
