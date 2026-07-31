@@ -251,7 +251,7 @@ function SlideIntro({ orgName }: { orgName: string }) {
   );
 }
 
-function SlideNote({ children }: { children: React.ReactNode }) {
+function SlideNote({ children }: { children: ReactNode }) {
   return (
     <div className="mt-10 rounded-xl border border-white/15 bg-white/5 px-6 py-8 text-white/70">
       {children}
