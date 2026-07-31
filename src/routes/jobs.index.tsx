@@ -108,10 +108,14 @@ function JobsPage() {
   // Every filter change rewrites the URL (replace, so Back leaves the board
   // rather than walking every keystroke).
   const setParam = (patch: Record<string, string | number>) =>
-    navigate({ search: (prev) => ({ ...prev, ...patch }), replace: true });
+    navigate({
+      search: (prev: Record<string, unknown>) => ({ ...prev, ...patch }) as never,
+      replace: true,
+    });
   const setPage = (v: number | ((p: number) => number)) =>
     navigate({
-      search: (prev) => ({ ...prev, page: typeof v === "function" ? v(prev.page) : v }),
+      search: (prev: { page: number }) =>
+        ({ ...prev, page: typeof v === "function" ? v(prev.page) : v }) as never,
       replace: true,
     });
 

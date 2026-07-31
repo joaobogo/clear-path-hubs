@@ -283,6 +283,7 @@ export const requestMyDataDeletion = createServerFn({ method: "POST" })
 
       const { error } = await supabaseAdmin.from("data_subject_requests").insert({
         request_type: "deletion",
+        reference_code: `DSR-${data.reference}`,
         subject_email: app.email,
         candidate_profile_id: app.candidate_profile_id,
         status: "received",
