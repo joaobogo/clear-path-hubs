@@ -93,6 +93,11 @@ const KIND_ICON: Record<QueueItem["kind"], React.ReactNode> = {
 };
 
 function OverviewPage() {
+  const [selfId, setSelfId] = useState<string | null>(null);
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => setSelfId(data.user?.id ?? null));
+  }, []);
+  const { density, compact, setDensity } = useDensity(selfId);
   const ctxFn = useServerFn(getClientContext);
   const overviewFn = useServerFn(getClientOverview);
   const orgSearch = useClientOrgSearch();
