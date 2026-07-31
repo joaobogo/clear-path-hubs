@@ -23,11 +23,13 @@ import {
   jdFileExt,
 } from "@/lib/express-intake-schema";
 import { supabase } from "@/integrations/supabase/client";
+import { lovable } from "@/integrations/lovable/index";
+import { saveIntakeDraft, loadIntakeDraft } from "@/lib/intake-draft.functions";
 import { submitToCrm } from "@/lib/crm/submit-form";
 import { trackEvent } from "@/lib/tracking/pixels";
 import { FGV_EVENTS, trackConfirmedConversion, trackFgv } from "@/lib/tracking/fgv-events";
 import { PRICE_PILOT_USD } from "@/config/pricing-core";
-import { CheckCircle2, Eye, EyeOff, FileText, Loader2, Upload, X } from "lucide-react";
+import { Check, CheckCircle2, Eye, EyeOff, FileText, Loader2, Pencil, Upload, X } from "lucide-react";
 
 export const Route = createFileRoute("/intake")({
   head: () => ({
