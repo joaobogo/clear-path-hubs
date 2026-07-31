@@ -89,6 +89,9 @@ function LoginFallback() {
 const GENERIC_SIGNIN_ERROR = "Email or password is incorrect.";
 const GENERIC_RESET_MESSAGE =
   "If an account exists for that email, we've sent a password reset link.";
+const GENERIC_CONFIRM_MESSAGE =
+  "If that email needs confirming, we've sent a new confirmation link. It's valid for 24 hours.";
+
 
 function LoginPage() {
   const navigate = useNavigate();
