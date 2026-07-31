@@ -252,14 +252,21 @@ function LoginPage() {
         <Card className="p-6 space-y-4">
           <div>
             <h1 className="text-xl font-semibold">
-              {mode === "signin" ? "Sign in to TaaSFlow" : "Reset your password"}
+              {mode === "signin"
+                ? "Sign in to TaaSFlow"
+                : mode === "forgot"
+                  ? "Reset your password"
+                  : "Resend your confirmation email"}
             </h1>
             <p className="text-sm text-muted-foreground">
               {mode === "signin"
                 ? "Sign in with the email your team invited or your candidate account."
-                : "We'll email you a secure reset link."}
+                : mode === "forgot"
+                  ? "We'll email you a secure reset link."
+                  : "We'll send a new link to confirm your email address."}
             </p>
           </div>
+
 
           {pickerFor ? (
             <div className="space-y-2">
