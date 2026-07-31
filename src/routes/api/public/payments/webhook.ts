@@ -42,6 +42,56 @@ async function applyEvent(args: {
 
   if (error) throw error;
   console.log("payments webhook applied", eventType, eventId, data);
+
+  // Receipt — only on a real payment, deduped on the Stripe event id.
+  if (outcome === "paid") {
+    try {
+      const recipient =
+        session.customer_details?.email ?? session.customer_email ?? null;
+      if (recipient) {
+        const { sendTemplateEmail } = await import("@/lib/email-templates/send-email");
+        const { absoluteUrl } = await import("@/lib/blueprint-pipeline.server");
+        let roleTitle: string | null = null;
+        if (positionId) {
+          const { data: pos } = await supabaseAdmin
+            .from("positions")
+            .select("title")
+            .eq("id", positionId)
+            .maybeSingle();
+          roleTitle = pos?.title ?? null;
+        }
+        const amountCents = session.amount_total ?? 0;
+        const currency = String(session.currency ?? "usd").toUpperCase();
+        const paidOn = new Date().toLocaleDateString("en-GB", {
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+        });
+        const due = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toLocaleDateString("en-GB", {
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+        });
+        await sendTemplateEmail("payment-receipt", recipient, {
+          idempotencyKey: `payment-receipt-${eventId}`,
+          templateData: {
+            contactName: session.customer_details?.name ?? undefined,
+            roleTitle: roleTitle ?? "your role",
+            amount: `${currency} ${(amountCents / 100).toFixed(2)}`,
+            paidOn,
+            reference: session.id,
+            nextStep: "We confirm the search plan and begin sourcing candidates.",
+            dueDate: due,
+            workspaceUrl: positionId
+              ? absoluteUrl(`/client/positions/${positionId}`)
+              : absoluteUrl("/client"),
+          },
+        });
+      }
+    } catch (err) {
+      console.error("payments webhook: receipt email failed (non-critical)", err);
+    }
+  }
 }
 
 /** Refund and dispute events arrive on the charge, not the session. */
