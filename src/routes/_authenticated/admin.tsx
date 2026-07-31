@@ -1,4 +1,5 @@
 import {
+  Receipt,
   makeRouteErrorComponent,
   makeRouteNotFoundComponent,
 } from "@/components/workspace/route-states";
@@ -100,6 +101,7 @@ const NAV: WorkspaceNavItem[] = [
   { to: "/admin/operations", label: "Operations", icon: Activity, group: "Insight", hint: "Pipeline and job health" },
   { to: "/admin/health", label: "System Health", icon: HeartPulse, group: "Insight" },
 
+  { to: "/admin/payments", label: "Payments", icon: Receipt, group: "Platform", hint: "Read-only payment ledger" },
   { to: "/admin/team", label: "Team & Access", icon: UserCog, group: "Platform" },
   { to: "/admin/settings", label: "Settings", icon: Settings, group: "Platform" },
 ];
