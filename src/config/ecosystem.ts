@@ -13,7 +13,12 @@ export const FGV = {
   endorsement: "Part of the FGV growth system",
 } as const;
 
-export type SiblingBrandId = "flowplaced" | "omniflow" | "fgv";
+export type SiblingBrandId =
+  | "flowplaced"
+  | "omniflow"
+  | "atlasflow"
+  | "neuronflow"
+  | "fgv";
 
 export type SiblingBrand = {
   id: SiblingBrandId;
@@ -28,24 +33,48 @@ export const SIBLING_BRANDS: Record<SiblingBrandId, SiblingBrand> = {
     id: "flowplaced",
     name: "FlowPlaced",
     url: "https://flowplaced.com",
-    owns: "Fixed-fee direct placement for a single, clearly defined role",
+    owns: "Direct-hire and one-time placement on a fixed fee",
   },
   omniflow: {
     id: "omniflow",
     name: "OmniFlow",
     url: "https://omniflowco.com",
-    owns: "Marketing, demand generation, and employer-brand visibility",
+    owns: "Marketing, outbound, websites, SEO, content, and advertising",
+  },
+  atlasflow: {
+    id: "atlasflow",
+    name: "AtlasFlow",
+    url: "https://atlasflow.co",
+    owns: "International market expansion and entry",
+  },
+  neuronflow: {
+    id: "neuronflow",
+    name: "NeuronFlow",
+    url: "https://neuronflow.ai",
+    owns: "AI agents and workflow automation",
   },
   fgv: {
     id: "fgv",
     name: FGV.name,
     url: FGV.url,
-    owns: "International market entry and integrated growth strategy",
+    owns: "Integrated growth strategy across the group",
   },
 };
 
+/** Sibling brands shown in the footer ecosystem row (TaaSFlow itself excluded). */
+export const ECOSYSTEM_FOOTER_BRANDS: SiblingBrand[] = [
+  SIBLING_BRANDS.flowplaced,
+  SIBLING_BRANDS.omniflow,
+  SIBLING_BRANDS.atlasflow,
+  SIBLING_BRANDS.neuronflow,
+];
+
 /** Contextual cross-sell triggers permitted for TaaSFlow. */
-export type CrossSellTrigger = "single-role" | "employer-brand" | "market-entry";
+export type CrossSellTrigger =
+  | "single-role"
+  | "employer-brand"
+  | "market-entry"
+  | "ai-automation";
 
 export type CrossSellCopy = {
   brand: SiblingBrand;
@@ -68,10 +97,16 @@ export const CROSS_SELLS: Record<CrossSellTrigger, CrossSellCopy> = {
     cta: "See OmniFlow growth systems",
   },
   "market-entry": {
-    brand: SIBLING_BRANDS.fgv,
+    brand: SIBLING_BRANDS.atlasflow,
     question: "Entering a new market, not just hiring in one?",
-    body: "Hiring abroad is one part of market entry. FGV covers the strategy, entity, and go-to-market work around it — we handle the hiring inside it.",
-    cta: "Explore FGV market entry",
+    body: "Hiring abroad is one part of market entry. AtlasFlow covers the strategy, entity, and go-to-market work around it — we handle the hiring inside it.",
+    cta: "Explore AtlasFlow market entry",
+  },
+  "ai-automation": {
+    brand: SIBLING_BRANDS.neuronflow,
+    question: "Want the work after the hire automated too?",
+    body: "We automate hiring. When the bottleneck sits in the operations around it, NeuronFlow builds the AI agents and workflow automation for that side.",
+    cta: "See NeuronFlow automation",
   },
 };
 
