@@ -1314,7 +1314,7 @@ function ActionArea({
           Add to comparison
         </Link>
         <Link
-          to="/client/messages"
+          to="/client/conversations"
           className="inline-flex items-center gap-1.5 font-medium text-primary hover:underline"
         >
           <MessageSquare className="h-3.5 w-3.5" />

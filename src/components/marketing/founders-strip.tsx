@@ -76,8 +76,11 @@ export function FoundersStrip() {
                 <img
                   src={f.photoUrl}
                   alt={`${f.name}, ${f.title}`}
+                  width={56}
+                  height={56}
                   className="h-14 w-14 rounded-full object-cover"
                   loading="lazy"
+                  decoding="async"
                 />
               ) : (
                 <Initials name={f.name} />

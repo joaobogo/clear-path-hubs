@@ -22,7 +22,7 @@ export function EmailSignatureBuilder() {
     () => `<table cellpadding="0" cellspacing="0" style="font-family:Inter,Helvetica,Arial,sans-serif;color:${C.ink};font-size:14px;line-height:1.5">
   <tr>
     <td style="padding-right:16px;border-right:2px solid ${C.ocean}">
-      <img src="https://taasflow.com/og-image.png" alt="TaaSFlow" width="120" style="display:block;width:120px;height:auto" />
+      <img src="https://taasflow.com/og-image.png" alt="TaaSFlow" width="120" style="display:block;width:120px;height:auto" loading="lazy" decoding="async" />
     </td>
     <td style="padding-left:16px">
       <div style="font-weight:600;color:${C.navy};font-size:15px">${fields.name}</div>

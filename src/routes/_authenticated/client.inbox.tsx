@@ -9,6 +9,7 @@ export const Route = createFileRoute("/_authenticated/client/inbox")({
     throw redirect({
       to: "/client/conversations",
       search: search as Record<string, unknown>,
+      statusCode: 301,
     });
   },
 });

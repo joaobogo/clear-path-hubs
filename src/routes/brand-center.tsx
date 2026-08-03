@@ -132,8 +132,8 @@ function BrandCenter() {
       {/* Header */}
       <header className="pt-14">
         <div className="flex flex-wrap items-center gap-3">
-          <img src={LOGO.light} alt="TaaSFlow" className="h-9 w-auto dark:hidden" />
-          <img src={LOGO.dark} alt="TaaSFlow" className="hidden h-9 w-auto dark:block" />
+          <img src={LOGO.light} alt="TaaSFlow" width={149} height={36} className="h-9 w-auto dark:hidden" />
+          <img src={LOGO.dark} alt="TaaSFlow" width={149} height={36} loading="lazy" decoding="async" className="hidden h-9 w-auto dark:block" />
           <span className="rounded-full border border-border px-3 py-1 text-xs font-medium text-muted-foreground">
             Brand Center v{GOVERNANCE.version}
           </span>
@@ -336,15 +336,15 @@ function BrandCenter() {
                 { label: "Full lockup — comfortable", w: 180 },
               ].map((s) => (
                 <div key={s.label}>
-                  <img src={LOGO.light} alt={`TaaSFlow wordmark at ${s.w}px wide`} style={{ width: s.w }} className="dark:hidden" />
-                  <img src={LOGO.dark} alt="" aria-hidden style={{ width: s.w }} className="hidden dark:block" />
+                  <img src={LOGO.light} alt={`TaaSFlow wordmark at ${s.w}px wide`} width={s.w} height={Math.round(s.w / 4.15)} loading="lazy" decoding="async" style={{ width: s.w }} className="dark:hidden" />
+                  <img src={LOGO.dark} alt="" aria-hidden width={s.w} height={Math.round(s.w / 4.15)} loading="lazy" decoding="async" style={{ width: s.w }} className="hidden dark:block" />
                   <p className="mt-2 text-xs text-muted-foreground">{s.label} — {s.w}px</p>
                 </div>
               ))}
               <div>
                 <div className="flex items-center gap-3">
                   {[16, 24, 32].map((s) => (
-                    <img key={s} src={LOGO.icon} alt={`TaaSFlow symbol at ${s}px`} style={{ width: s }} className="rounded bg-[color:var(--brand-navy-dark)] p-0.5" />
+                    <img key={s} src={LOGO.icon} alt={`TaaSFlow symbol at ${s}px`} width={s} height={s} loading="lazy" decoding="async" style={{ width: s }} className="rounded bg-[color:var(--brand-navy-dark)] p-0.5" />
                   ))}
                 </div>
                 <p className="mt-2 text-xs text-muted-foreground">Symbol — 16px absolute minimum</p>
@@ -371,7 +371,7 @@ function BrandCenter() {
                     className="flex h-20 items-center overflow-hidden rounded-lg p-3"
                     style={bad.busy ? { background: `repeating-linear-gradient(45deg, ${C.slate}, ${C.slate} 10px, ${C.navyLight} 10px, ${C.navyLight} 20px)` } : { background: C.paper }}
                   >
-                    <img src={LOGO.light} alt={bad.alt} className="h-6 w-auto" style={bad.style} />
+                    <img src={LOGO.light} alt={bad.alt} loading="lazy" decoding="async" className="h-6 w-auto" style={bad.style} />
                   </div>
                   <p className="mt-2 text-sm font-medium text-destructive">✕ {bad.label}</p>
                 </li>
