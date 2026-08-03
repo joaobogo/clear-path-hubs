@@ -5,6 +5,7 @@
  * time, so a route added here can never be advertised in one file and missing
  * from the other.
  */
+import { CANONICAL_ORIGIN } from "@/lib/canonical-origin";
 import { listIndustrySlugs } from "@/lib/marketing/content";
 import { listAllBlogRows } from "@/lib/marketing/blog-catalog";
 import { toPublicSlug } from "@/lib/marketing/industry-slug-aliases";
