@@ -400,10 +400,16 @@ function ContactForm({ intent }: { intent: IntentSpec }) {
             Role: roleExtra,
             Link: urlExtra,
             Message: rawMessage,
+            // The visitor's actual choices, recorded verbatim.
+            "Privacy acknowledged": privacyAcknowledged,
+            "Marketing consent": marketingConsent,
           },
+          // The real value the visitor selected — not a synthesised
+          // "form was submitted" marker.
           consentStatus: marketingConsent
-            ? "explicit_opt_in_contact_form"
-            : "no_marketing_consent",
+            ? "marketing_opt_in"
+            : "reply_only_no_marketing_consent",
+
           honeypot: payload.website,
         }).then((result) => {
           // Conversion fires only on a server-confirmed submission id.
