@@ -299,7 +299,10 @@ function ContactForm({ intent }: { intent: IntentSpec }) {
   const [marketingConsent, setMarketingConsent] = useState(false);
   /** Required privacy-notice acknowledgement. Never defaulted to true. */
   const [privacyAcknowledged, setPrivacyAcknowledged] = useState(false);
+  /** Inline, control-scoped error for the required consent checkbox. */
+  const [consentError, setConsentError] = useState<string | null>(null);
   const submittedRef = useRef(false);
+
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
