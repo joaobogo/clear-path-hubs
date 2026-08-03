@@ -76,6 +76,14 @@ export function ConsentBanner() {
     if (open) firstControl.current?.focus({ preventScroll: true });
   }, [open, details]);
 
+  // Keep the floating scheduling badge from covering the choice controls.
+  useEffect(() => {
+    const root = document.documentElement;
+    if (open) root.setAttribute("data-consent-open", "true");
+    else root.removeAttribute("data-consent-open");
+    return () => root.removeAttribute("data-consent-open");
+  }, [open]);
+
   if (!open) return null;
 
   const close = () => {

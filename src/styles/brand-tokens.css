@@ -431,3 +431,10 @@
    */
   --brand-on-dark: oklch(1 0 0);
 }
+
+/* Consent surface owns the bottom of the viewport while it is open: the
+   floating scheduling badge would otherwise cover the choice controls on
+   small screens. */
+html[data-consent-open="true"] .calendly-badge-widget {
+  display: none !important;
+}
