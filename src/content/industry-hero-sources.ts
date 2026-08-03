@@ -12,19 +12,19 @@ type SrcSetMap = Record<string, string>;
 const WIDTHS = "640;1024;1600";
 
 const avifGlob = import.meta.glob("/src/assets/industry-*-hero.jpg", {
-  query: { w: WIDTHS, format: "avif", as: "srcset" },
+  query: `?w=${WIDTHS}&format=avif&as=srcset`,
   import: "default",
   eager: true,
 }) as SrcSetMap;
 
 const webpGlob = import.meta.glob("/src/assets/industry-*-hero.jpg", {
-  query: { w: WIDTHS, format: "webp", as: "srcset" },
+  query: `?w=${WIDTHS}&format=webp&as=srcset`,
   import: "default",
   eager: true,
 }) as SrcSetMap;
 
 const jpegGlob = import.meta.glob("/src/assets/industry-*-hero.jpg", {
-  query: { w: WIDTHS, format: "jpg", as: "srcset" },
+  query: `?w=${WIDTHS}&format=jpg&as=srcset`,
   import: "default",
   eager: true,
 }) as SrcSetMap;
