@@ -11325,6 +11325,30 @@ export type Database = {
           },
         ]
       }
+      tracking_policy: {
+        Row: {
+          essential_trackers: string[]
+          id: boolean
+          require_prior_opt_in_everywhere: boolean
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          essential_trackers?: string[]
+          id?: boolean
+          require_prior_opt_in_everywhere?: boolean
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          essential_trackers?: string[]
+          id?: boolean
+          require_prior_opt_in_everywhere?: boolean
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string

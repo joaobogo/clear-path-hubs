@@ -7,6 +7,7 @@ import {
   readConsent,
   writeConsent,
   onConsentChange,
+  onTrackingPolicyChange,
 } from "@/lib/tracking/consent";
 
 /**
@@ -63,11 +64,18 @@ export function ConsentBanner() {
       setOpen(true);
     };
     window.addEventListener("taasflow:open-consent", reopen);
+    // The admin policy can flip the region rule; re-evaluate when it arrives.
+    const offPolicy = onTrackingPolicyChange(() => {
+      const priorOptInNow = requiresPriorOptIn();
+      setOptIn(priorOptInNow);
+      if (priorOptInNow && !readConsent()) setOpen(true);
+    });
     const unsubscribe = onConsentChange((d) => {
       if (d === null && requiresPriorOptIn()) setOpen(true);
     });
     return () => {
       window.removeEventListener("taasflow:open-consent", reopen);
+      offPolicy();
       unsubscribe();
     };
   }, []);

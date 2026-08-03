@@ -110,6 +110,7 @@ import { Route as AuthenticatedClientAgentsRouteImport } from './routes/_authent
 import { Route as AuthenticatedClientAccountRouteImport } from './routes/_authenticated/client.account'
 import { Route as AuthenticatedCheckoutReturnRouteImport } from './routes/_authenticated/checkout_.return'
 import { Route as AuthenticatedAdminWbrRouteImport } from './routes/_authenticated/admin.wbr'
+import { Route as AuthenticatedAdminTrackingRouteImport } from './routes/_authenticated/admin.tracking'
 import { Route as AuthenticatedAdminTeamRouteImport } from './routes/_authenticated/admin.team'
 import { Route as AuthenticatedAdminSupportRouteImport } from './routes/_authenticated/admin.support'
 import { Route as AuthenticatedAdminSlaRouteImport } from './routes/_authenticated/admin.sla'
@@ -696,6 +697,12 @@ const AuthenticatedAdminWbrRoute = AuthenticatedAdminWbrRouteImport.update({
   path: '/wbr',
   getParentRoute: () => AuthenticatedAdminRoute,
 } as any)
+const AuthenticatedAdminTrackingRoute =
+  AuthenticatedAdminTrackingRouteImport.update({
+    id: '/tracking',
+    path: '/tracking',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminTeamRoute = AuthenticatedAdminTeamRouteImport.update({
   id: '/team',
   path: '/team',
@@ -1116,6 +1123,7 @@ export interface FileRoutesByFullPath {
   '/admin/sla': typeof AuthenticatedAdminSlaRoute
   '/admin/support': typeof AuthenticatedAdminSupportRoute
   '/admin/team': typeof AuthenticatedAdminTeamRoute
+  '/admin/tracking': typeof AuthenticatedAdminTrackingRoute
   '/admin/wbr': typeof AuthenticatedAdminWbrRoute
   '/checkout/return': typeof AuthenticatedCheckoutReturnRoute
   '/client/account': typeof AuthenticatedClientAccountRoute
@@ -1269,6 +1277,7 @@ export interface FileRoutesByTo {
   '/admin/sla': typeof AuthenticatedAdminSlaRoute
   '/admin/support': typeof AuthenticatedAdminSupportRoute
   '/admin/team': typeof AuthenticatedAdminTeamRoute
+  '/admin/tracking': typeof AuthenticatedAdminTrackingRoute
   '/admin/wbr': typeof AuthenticatedAdminWbrRoute
   '/checkout/return': typeof AuthenticatedCheckoutReturnRoute
   '/client/account': typeof AuthenticatedClientAccountRoute
@@ -1428,6 +1437,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/sla': typeof AuthenticatedAdminSlaRoute
   '/_authenticated/admin/support': typeof AuthenticatedAdminSupportRoute
   '/_authenticated/admin/team': typeof AuthenticatedAdminTeamRoute
+  '/_authenticated/admin/tracking': typeof AuthenticatedAdminTrackingRoute
   '/_authenticated/admin/wbr': typeof AuthenticatedAdminWbrRoute
   '/_authenticated/checkout_/return': typeof AuthenticatedCheckoutReturnRoute
   '/_authenticated/client/account': typeof AuthenticatedClientAccountRoute
@@ -1590,6 +1600,7 @@ export interface FileRouteTypes {
     | '/admin/sla'
     | '/admin/support'
     | '/admin/team'
+    | '/admin/tracking'
     | '/admin/wbr'
     | '/checkout/return'
     | '/client/account'
@@ -1743,6 +1754,7 @@ export interface FileRouteTypes {
     | '/admin/sla'
     | '/admin/support'
     | '/admin/team'
+    | '/admin/tracking'
     | '/admin/wbr'
     | '/checkout/return'
     | '/client/account'
@@ -1901,6 +1913,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/sla'
     | '/_authenticated/admin/support'
     | '/_authenticated/admin/team'
+    | '/_authenticated/admin/tracking'
     | '/_authenticated/admin/wbr'
     | '/_authenticated/checkout_/return'
     | '/_authenticated/client/account'
@@ -2767,6 +2780,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminWbrRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/tracking': {
+      id: '/_authenticated/admin/tracking'
+      path: '/tracking'
+      fullPath: '/admin/tracking'
+      preLoaderRoute: typeof AuthenticatedAdminTrackingRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/team': {
       id: '/_authenticated/admin/team'
       path: '/team'
@@ -3273,6 +3293,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminSlaRoute: typeof AuthenticatedAdminSlaRoute
   AuthenticatedAdminSupportRoute: typeof AuthenticatedAdminSupportRoute
   AuthenticatedAdminTeamRoute: typeof AuthenticatedAdminTeamRoute
+  AuthenticatedAdminTrackingRoute: typeof AuthenticatedAdminTrackingRoute
   AuthenticatedAdminWbrRoute: typeof AuthenticatedAdminWbrRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
   AuthenticatedAdminReviewMatchIdRoute: typeof AuthenticatedAdminReviewMatchIdRoute
@@ -3309,6 +3330,7 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminSlaRoute: AuthenticatedAdminSlaRoute,
   AuthenticatedAdminSupportRoute: AuthenticatedAdminSupportRoute,
   AuthenticatedAdminTeamRoute: AuthenticatedAdminTeamRoute,
+  AuthenticatedAdminTrackingRoute: AuthenticatedAdminTrackingRoute,
   AuthenticatedAdminWbrRoute: AuthenticatedAdminWbrRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
   AuthenticatedAdminReviewMatchIdRoute: AuthenticatedAdminReviewMatchIdRoute,

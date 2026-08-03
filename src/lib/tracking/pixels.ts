@@ -1,11 +1,13 @@
 /**
  * TaaSFlow tracking pixels.
  *
- * CONSENT: regional gate. Outside the EU/EEA/UK/CH every tracker is permitted
- * by default and the banner offers withdrawal. Inside those regions only the
- * strictly necessary set runs before an affirmative choice: GA4 in cookieless
- * Consent Mode "denied" state, plus the Apollo and RB2B business trackers.
- * Meta, LinkedIn, Clarity and Hotjar never load before consent.
+ * CONSENT: region-based gate driven by the admin policy in
+ * `public.tracking_policy` (edited at /admin/tracking). Only trackers the admin
+ * marks strictly necessary may initialise before an affirmative choice — and an
+ * essential GA4 runs cookieless (Consent Mode "denied") until consent. When
+ * prior opt-in is required everywhere, no region is exempt; otherwise the gate
+ * applies to the EU/EEA/UK/CH and other regions default to permitted.
+ * Nothing initialises at all until the policy has been read.
  *
  * Single source of truth for every third-party tag. All injection happens on
  * the client after hydration. Every function is wrapped so a blocked or
@@ -15,7 +17,14 @@
  * Dormant until their env var is set: Meta, LinkedIn, Clarity, Hotjar.
  */
 
-import { ESSENTIAL_TRACKERS, isAllowed, type ConsentCategory } from "./consent";
+import {
+  isAllowed,
+  isTrackerAllowed,
+  isTrackingPolicyLoaded,
+  type ConsentCategory,
+} from "./consent";
+
+
 
 const GA_ID = import.meta.env.VITE_GA_MEASUREMENT_ID || "G-HJ2ECKCNK4";
 const APOLLO_ID = import.meta.env.VITE_APOLLO_APP_ID || "6981f9ca9255870019505836";
@@ -256,13 +265,18 @@ export function initializeTrackers() {
     });
   }
 
+  // Nothing initialises until the admin-configured policy is known: on a first
+  // visit that means one tick after hydration, on a repeat visit the cached
+  // policy answers immediately.
+  if (!isTrackingPolicyLoaded()) return;
+
   for (const key of Object.keys(INITIALISERS) as TrackerKey[]) {
-    // GA4 always boots: cookieless before consent, full measurement after.
-    // Apollo and RB2B are treated as strictly necessary for the business.
-    const essential = key === "ga4" || (ESSENTIAL_TRACKERS as readonly string[]).includes(key);
-    if (!essential && !isAllowed(TRACKER_CATEGORY[key])) continue;
+    // Only trackers on the admin's strictly-necessary list may run before an
+    // affirmative choice. Essential GA4 runs cookieless until consent.
+    if (!isTrackerAllowed(key, TRACKER_CATEGORY[key])) continue;
     safe(INITIALISERS[key]);
   }
+
 
   // Reflect the current choice onto an already-loaded GA4 instance.
   safe(syncGA4Consent);
