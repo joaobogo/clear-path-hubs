@@ -15,7 +15,14 @@
  * Dormant until their env var is set: Meta, LinkedIn, Clarity, Hotjar.
  */
 
-import { ESSENTIAL_TRACKERS, isAllowed, type ConsentCategory } from "./consent";
+import {
+  isAllowed,
+  isTrackerAllowed,
+  isTrackerEssential,
+  isTrackingPolicyLoaded,
+  type ConsentCategory,
+} from "./consent";
+
 
 const GA_ID = import.meta.env.VITE_GA_MEASUREMENT_ID || "G-HJ2ECKCNK4";
 const APOLLO_ID = import.meta.env.VITE_APOLLO_APP_ID || "6981f9ca9255870019505836";
