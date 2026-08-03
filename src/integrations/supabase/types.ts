@@ -4280,6 +4280,48 @@ export type Database = {
           },
         ]
       }
+      integration_health_checks: {
+        Row: {
+          checked_by: string | null
+          created_at: string
+          details: Json
+          error_code: string | null
+          error_detail: string | null
+          id: string
+          integration: string
+          latency_ms: number | null
+          remediation: string | null
+          status: string
+          summary: string
+        }
+        Insert: {
+          checked_by?: string | null
+          created_at?: string
+          details?: Json
+          error_code?: string | null
+          error_detail?: string | null
+          id?: string
+          integration: string
+          latency_ms?: number | null
+          remediation?: string | null
+          status: string
+          summary: string
+        }
+        Update: {
+          checked_by?: string | null
+          created_at?: string
+          details?: Json
+          error_code?: string | null
+          error_detail?: string | null
+          id?: string
+          integration?: string
+          latency_ms?: number | null
+          remediation?: string | null
+          status?: string
+          summary?: string
+        }
+        Relationships: []
+      }
       integration_sync_status: {
         Row: {
           display_name: string
