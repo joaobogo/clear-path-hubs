@@ -263,13 +263,18 @@ export function initializeTrackers() {
     });
   }
 
+  // Nothing initialises until the admin-configured policy is known: on a first
+  // visit that means one tick after hydration, on a repeat visit the cached
+  // policy answers immediately.
+  if (!isTrackingPolicyLoaded()) return;
+
   for (const key of Object.keys(INITIALISERS) as TrackerKey[]) {
-    // GA4 always boots: cookieless before consent, full measurement after.
-    // Apollo and RB2B are treated as strictly necessary for the business.
-    const essential = key === "ga4" || (ESSENTIAL_TRACKERS as readonly string[]).includes(key);
-    if (!essential && !isAllowed(TRACKER_CATEGORY[key])) continue;
+    // Only trackers on the admin's strictly-necessary list may run before an
+    // affirmative choice. Essential GA4 runs cookieless until consent.
+    if (!isTrackerAllowed(key, TRACKER_CATEGORY[key])) continue;
     safe(INITIALISERS[key]);
   }
+
 
   // Reflect the current choice onto an already-loaded GA4 instance.
   safe(syncGA4Consent);
