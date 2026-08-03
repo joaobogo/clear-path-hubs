@@ -1340,8 +1340,8 @@ function Home() {
                 <span className="text-[color:var(--brand-ocean-text)]">in one subscription.</span>
               </h1>
               <p className="max-w-xl text-base text-[color:var(--brand-navy)]/80 sm:text-lg">
-                For companies hiring 1–20 roles a year. Flat monthly fee, never
-                a share of salary.
+                For companies hiring 1 to 100+ roles a month. Flat monthly fee,
+                never a share of salary.
               </p>
               <ul className="grid gap-2 pt-1 sm:grid-cols-3">
                 {[
