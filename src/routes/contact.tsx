@@ -299,12 +299,17 @@ function ContactForm({ intent }: { intent: IntentSpec }) {
   const [marketingConsent, setMarketingConsent] = useState(false);
   /** Required privacy-notice acknowledgement. Never defaulted to true. */
   const [privacyAcknowledged, setPrivacyAcknowledged] = useState(false);
+  /** Inline, control-scoped error for the required consent checkbox. */
+  const [consentError, setConsentError] = useState<string | null>(null);
   const submittedRef = useRef(false);
+
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (submittedRef.current || submitting) return;
     setError(null);
+    setConsentError(null);
+
     const form = e.currentTarget;
     const fd = new FormData(form);
     const roleExtra = fields.includes("role") ? String(fd.get("role") ?? "").trim() : "";
@@ -352,9 +357,13 @@ function ContactForm({ intent }: { intent: IntentSpec }) {
       return;
     }
     if (!privacyAcknowledged) {
-      setError("Please confirm you've read the privacy policy so we can reply.");
+      setConsentError(
+        "Please tick this box so we can use your details to reply and store them in our CRM.",
+      );
+      document.getElementById(`privacy-${topic}`)?.focus();
       return;
     }
+
 
     setSubmitting(true);
     submittedRef.current = true;
@@ -391,10 +400,16 @@ function ContactForm({ intent }: { intent: IntentSpec }) {
             Role: roleExtra,
             Link: urlExtra,
             Message: rawMessage,
+            // The visitor's actual choices, recorded verbatim.
+            "Privacy acknowledged": privacyAcknowledged,
+            "Marketing consent": marketingConsent,
           },
+          // The real value the visitor selected — not a synthesised
+          // "form was submitted" marker.
           consentStatus: marketingConsent
-            ? "explicit_opt_in_contact_form"
-            : "no_marketing_consent",
+            ? "marketing_opt_in"
+            : "reply_only_no_marketing_consent",
+
           honeypot: payload.website,
         }).then((result) => {
           // Conversion fires only on a server-confirmed submission id.
@@ -536,19 +551,35 @@ function ContactForm({ intent }: { intent: IntentSpec }) {
         <Checkbox
           id={`privacy-${topic}`}
           checked={privacyAcknowledged}
-          onCheckedChange={(v) => setPrivacyAcknowledged(v === true)}
+          onCheckedChange={(v) => {
+            setPrivacyAcknowledged(v === true);
+            if (v === true) setConsentError(null);
+          }}
           className="mt-0.5"
           aria-required="true"
+          aria-invalid={Boolean(consentError)}
+          aria-describedby={consentError ? `privacy-error-${topic}` : undefined}
         />
         <label htmlFor={`privacy-${topic}`} className="text-sm leading-relaxed">
-          I've read the{" "}
+          I agree that TaaSFlow may use the details I provide to respond to this enquiry and
+          store them in its customer relationship management system, as described in the{" "}
           <Link to="/privacy" className="underline" target="_blank" rel="noreferrer">
             privacy policy
-          </Link>{" "}
-          and agree to TaaSFlow handling my details to answer this enquiry.{" "}
-          <span aria-hidden="true">*</span>
+          </Link>
+          . <span aria-hidden="true">*</span>
         </label>
       </div>
+
+      {consentError && (
+        <p
+          id={`privacy-error-${topic}`}
+          data-field-error="true"
+          className="text-sm text-[color:var(--brand-danger)]"
+        >
+          {consentError}
+        </p>
+      )}
+
 
       <div className="flex items-start gap-3">
         <Checkbox
@@ -576,7 +607,8 @@ function ContactForm({ intent }: { intent: IntentSpec }) {
       <div className="flex items-center gap-3">
         <Button
           type="submit"
-          disabled={submitting || !privacyAcknowledged}
+          disabled={submitting}
+
           className="min-h-11 bg-[color:var(--brand-navy)] text-white hover:opacity-90"
         >
           {submitting ? "Sending…" : "Send message"}
