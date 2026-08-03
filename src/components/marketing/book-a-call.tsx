@@ -3,23 +3,24 @@
  *
  *  <BookACallDialog trigger={<Button>Book a call</Button>} />
  *      Opens a modal with two tabs:
- *        • Book a call — Calendly-style date/time picker (mock — real
- *          Calendly gets wired up later; submissions land in
- *          public.marketing_inquiries).
+ *        • Book a call — captures the brief, then opens our real Calendly
+ *          scheduler so the slot the prospect picks is a slot we actually
+ *          hold. The brief lands in public.marketing_inquiries.
  *        • Send us a message — plain contact form.
  *
  *  <BookACallSection industrySlug="tech" industryName="Technology" />
  *      Inline landing-page section with the same tabbed UI.
  *
- * Both variants submit through the `submitInquiry` server function so no
- * lead is lost while the real Calendly account is being connected.
+ * Both variants submit through the `submitInquiry` server function so the
+ * lead is captured even if the prospect abandons the scheduler.
  */
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 import { CalendarDays, MessageSquare, Phone, Loader2, Check, Clock, Mail } from "lucide-react";
 import { useServerFn } from "@tanstack/react-start";
 
 import { submitInquiry } from "@/lib/inquiry.functions";
+import { openCalendlyPopup } from "@/lib/calendly";
 import { submitToCrm } from "@/lib/crm/submit-form";
 import { FGV_EVENTS, trackConfirmedConversion, trackFgv } from "@/lib/tracking/fgv-events";
 import {
@@ -190,25 +191,8 @@ function BookACallTabs({
 }
 
 /* -------------------------------------------------------------------------- */
-/*                              Call form (mock)                              */
+/*                                 Call form                                 */
 /* -------------------------------------------------------------------------- */
-
-function useNextBusinessDays(count = 5) {
-  return useMemo(() => {
-    const out: Date[] = [];
-    const d = new Date();
-    d.setHours(0, 0, 0, 0);
-    d.setDate(d.getDate() + 1);
-    while (out.length < count) {
-      const day = d.getDay();
-      if (day !== 0 && day !== 6) out.push(new Date(d));
-      d.setDate(d.getDate() + 1);
-    }
-    return out;
-  }, [count]);
-}
-
-const CALL_SLOTS = ["09:00", "10:30", "13:00", "14:30", "16:00"];
 
 function CallForm({
   industrySlug,
@@ -216,27 +200,13 @@ function CallForm({
   roleTitle,
   onSuccess,
 }: CommonProps & { onSuccess?: () => void }) {
-  const days = useNextBusinessDays(5);
-  const [dayIdx, setDayIdx] = useState(0);
-  const [slot, setSlot] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
   const submit = useServerFn(submitInquiry);
 
-  const chosenIso = useMemo(() => {
-    if (!slot) return "";
-    const [h, m] = slot.split(":").map(Number);
-    const dt = new Date(days[dayIdx]);
-    dt.setHours(h, m, 0, 0);
-    return dt.toISOString();
-  }, [days, dayIdx, slot]);
-
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (!slot) {
-      toast.error("Pick a time slot first.");
-      return;
-    }
     const form = new FormData(e.currentTarget);
+    const formEl = e.currentTarget;
     setPending(true);
     try {
       await submit({
@@ -248,7 +218,7 @@ function CallForm({
           role_title: roleTitle ?? String(form.get("role_title") ?? ""),
           role_count: String(form.get("role_count") ?? ""),
           message: String(form.get("message") ?? ""),
-          preferred_slot: chosenIso,
+          preferred_slot: "",
           industry_slug: industrySlug ?? "",
           source_path: typeof window !== "undefined" ? window.location.pathname : "",
           website: String(form.get("website") ?? ""),
@@ -264,7 +234,6 @@ function CallForm({
         answers: {
           "Roles to hire": String(form.get("role_count") ?? ""),
           Industry: industrySlug ?? "",
-          "Preferred slot": chosenIso ?? "",
           Message: String(form.get("message") ?? ""),
         },
         consentStatus: "requested_call",
@@ -284,9 +253,11 @@ function CallForm({
           });
         }
       });
-      toast.success("Call requested — we'll confirm within one business day.");
-      (e.currentTarget as HTMLFormElement).reset();
-      setSlot(null);
+      // One booking mechanism only: the prospect picks a real slot in our
+      // calendar. Nothing here invents availability.
+      await openCalendlyPopup();
+      toast.success("Brief received — pick a time that suits you.");
+      formEl.reset();
       onSuccess?.();
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Something went wrong.");
@@ -295,58 +266,16 @@ function CallForm({
     }
   }
 
-  const dayFmt = new Intl.DateTimeFormat(undefined, {
-    weekday: "short",
-    month: "short",
-    day: "numeric",
-  });
-
   return (
     <form onSubmit={onSubmit} className="space-y-5">
-      <div>
-        <Label className="text-xs font-semibold uppercase tracking-[0.12em] text-[color:var(--brand-navy)]/80">
-          Pick a day
-        </Label>
-        <div className="mt-2 grid grid-cols-5 gap-1.5">
-          {days.map((d, i) => (
-            <button
-              type="button"
-              key={d.toISOString()}
-              onClick={() => setDayIdx(i)}
-              className={`rounded-lg border px-2 py-2 text-center text-xs font-medium transition-all ${
-                i === dayIdx
-                  ? "border-[color:var(--brand-ocean)] bg-[color:var(--brand-ocean)]/10 text-[color:var(--brand-navy)]"
-                  : "border-[color:var(--brand-navy)]/15 text-[color:var(--brand-navy)]/80 hover:border-[color:var(--brand-navy)]/40"
-              }`}
-            >
-              {dayFmt.format(d)}
-            </button>
-          ))}
-        </div>
-      </div>
-      <div>
-        <Label className="text-xs font-semibold uppercase tracking-[0.12em] text-[color:var(--brand-navy)]/80">
-          Available time
-          <span className="ml-2 inline-flex items-center gap-1 rounded-full bg-[color:var(--brand-navy)]/5 px-2 py-0.5 text-[10px] font-medium text-[color:var(--brand-navy)]/80">
-            <Clock className="h-3 w-3" /> 20 min
-          </span>
-        </Label>
-        <div className="mt-2 grid grid-cols-3 gap-1.5 sm:grid-cols-5">
-          {CALL_SLOTS.map((s) => (
-            <button
-              type="button"
-              key={s}
-              onClick={() => setSlot(s)}
-              className={`rounded-lg border py-2 text-sm font-medium transition-all ${
-                slot === s
-                  ? "border-[color:var(--brand-navy)] bg-[color:var(--brand-navy)] text-white"
-                  : "border-[color:var(--brand-navy)]/15 text-[color:var(--brand-navy)]/85 hover:border-[color:var(--brand-navy)]/40"
-              }`}
-            >
-              {s}
-            </button>
-          ))}
-        </div>
+      <div className="rounded-xl border border-[color:var(--brand-navy)]/12 bg-[color:var(--brand-mist)]/50 px-4 py-3">
+        <p className="flex items-center gap-2 text-sm font-medium text-[color:var(--brand-navy)]">
+          <Clock className="h-4 w-4" /> 20-minute discovery call
+        </p>
+        <p className="mt-1 text-[13px] text-[color:var(--brand-navy)]/80">
+          Tell us about the role, then choose a live slot in our calendar. You get the
+          calendar invite immediately.
+        </p>
       </div>
       <div className="grid gap-3 sm:grid-cols-2">
         <Field name="name" label="Full name" required autoComplete="name" />
@@ -403,23 +332,22 @@ function CallForm({
       <Button
         type="submit"
         disabled={pending}
+        data-no-calendly
         className="w-full bg-[color:var(--brand-navy)] text-white hover:opacity-90"
       >
         {pending ? (
           <>
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Requesting…
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Opening calendar…
           </>
         ) : (
           <>
             <Phone className="mr-2 h-4 w-4" />
-            {slot
-              ? `Confirm ${dayFmt.format(days[dayIdx])} · ${slot}`
-              : "Pick a time to continue"}
+            Choose a time
           </>
         )}
       </Button>
       <p className="text-center text-[11px] text-[color:var(--brand-navy)]/80">
-        We reply within one business day. You'll get a calendar invite once confirmed.
+        Times shown are real openings in our calendar, in your local timezone.
       </p>
     </form>
   );
