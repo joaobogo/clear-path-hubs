@@ -308,6 +308,8 @@ function ContactForm({ intent }: { intent: IntentSpec }) {
     e.preventDefault();
     if (submittedRef.current || submitting) return;
     setError(null);
+    setConsentError(null);
+
     const form = e.currentTarget;
     const fd = new FormData(form);
     const roleExtra = fields.includes("role") ? String(fd.get("role") ?? "").trim() : "";
