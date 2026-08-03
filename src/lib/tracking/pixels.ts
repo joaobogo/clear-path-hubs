@@ -1,11 +1,13 @@
 /**
  * TaaSFlow tracking pixels.
  *
- * CONSENT: regional gate. Outside the EU/EEA/UK/CH every tracker is permitted
- * by default and the banner offers withdrawal. Inside those regions only the
- * strictly necessary set runs before an affirmative choice: GA4 in cookieless
- * Consent Mode "denied" state, plus the Apollo and RB2B business trackers.
- * Meta, LinkedIn, Clarity and Hotjar never load before consent.
+ * CONSENT: region-based gate driven by the admin policy in
+ * `public.tracking_policy` (edited at /admin/tracking). Only trackers the admin
+ * marks strictly necessary may initialise before an affirmative choice — and an
+ * essential GA4 runs cookieless (Consent Mode "denied") until consent. When
+ * prior opt-in is required everywhere, no region is exempt; otherwise the gate
+ * applies to the EU/EEA/UK/CH and other regions default to permitted.
+ * Nothing initialises at all until the policy has been read.
  *
  * Single source of truth for every third-party tag. All injection happens on
  * the client after hydration. Every function is wrapped so a blocked or
