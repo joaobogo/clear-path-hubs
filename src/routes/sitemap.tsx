@@ -1,3 +1,4 @@
+import { canonicalUrl } from "@/lib/canonical-origin";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { SiteShell } from "@/components/marketing/site-shell";
 
@@ -86,10 +87,10 @@ export const Route = createFileRoute("/sitemap")({
         property: "og:description",
         content: "Every public page on TaaSFlow, grouped by section.",
       },
-      { property: "og:url", content: "https://taasflow.com/sitemap" },
+      { property: "og:url", content: canonicalUrl("/sitemap") },
     ],
     links: [
-      { rel: "canonical", href: "https://taasflow.com/sitemap" },
+      { rel: "canonical", href: canonicalUrl("/sitemap") },
     ],
   }),
   component: SitemapPage,

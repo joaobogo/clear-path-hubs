@@ -8,12 +8,12 @@
  * video, no invented statistics. "Save as PDF" is the browser's print
  * dialog, so the document is always current.
  */
+import { CANONICAL_ORIGIN } from "@/lib/canonical-origin";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { Printer } from "lucide-react";
 
 import { getIndustryEntry, type IndustryEntry } from "@/content/industries-v2";
 
-const CANONICAL_ORIGIN = "https://taasflow.com";
 import { toInternalSlug } from "@/lib/marketing/industry-slug-aliases";
 import { Button } from "@/components/ui/button";
 

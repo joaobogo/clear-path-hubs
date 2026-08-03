@@ -1,3 +1,4 @@
+import { canonicalUrl } from "@/lib/canonical-origin";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Printer, FileDown, AlertTriangle, CheckCircle2, CircleSlash } from "lucide-react";
@@ -30,7 +31,7 @@ import { VISUAL_SYSTEMS, clearSpaceDiagram, gridDiagram, LOGO } from "@/lib/bran
 import { brand } from "@/config/brand";
 import { triggerDownload } from "@/lib/brand-center/scene";
 
-const CANONICAL = "https://www.taasflow.com/brand-center";
+const CANONICAL = canonicalUrl("/brand-center");
 const TITLE = "TaaSFlow Brand Center — logos, messaging, assets";
 const DESCRIPTION =
   "Official TaaSFlow brand center: approved positioning and messaging, logo rules, colour and type tokens, and exact-dimension social, presentation and document assets ready to download.";

@@ -1,3 +1,4 @@
+import { canonicalUrl } from "@/lib/canonical-origin";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   SiteShell,
