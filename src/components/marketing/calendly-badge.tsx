@@ -5,8 +5,18 @@ import { trackCtaClick } from "@/lib/tracking/pixels";
 /** Text that should always open the Calendly popup, wherever it appears. */
 const BOOKING_LABEL = /^book (a|your) (call|consultation)\b/i;
 
+/** Signed-in workspace paths own the real in-app scheduler at /book-call. */
+const WORKSPACE_PATHS = ["/client", "/admin", "/me", "/boardroom", "/book-call"];
+
+function inWorkspace(): boolean {
+  if (typeof window === "undefined") return false;
+  const path = window.location.pathname;
+  return WORKSPACE_PATHS.some((p) => path === p || path.startsWith(`${p}/`));
+}
+
 function shouldIntercept(el: HTMLElement): boolean {
   if (el.closest("[data-no-calendly]")) return false;
+  if (inWorkspace()) return false;
   if (el.closest("[data-calendly]")) return true;
 
   const control = el.closest<HTMLElement>("a[href], button");

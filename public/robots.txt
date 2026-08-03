@@ -13,5 +13,9 @@ Disallow: /api/
 Disallow: /_authenticated/
 Disallow: /reset-password
 Disallow: /access-denied
+Disallow: /brand-center
+Disallow: /dev/
+Disallow: /dev.catalogue
+Disallow: /dev.industry-coverage
 
 Sitemap: https://www.taasflow.com/sitemap.xml
