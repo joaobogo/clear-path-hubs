@@ -6,7 +6,7 @@
  */
 
 export const CRM_SOURCE_BRAND = "TaaSFlow" as const;
-export const CRM_SOURCE_WEBSITE = "https://www.taasflow.com" as const;
+export const CRM_SOURCE_WEBSITE = "https://taasflow.com" as const;
 export const CRM_PRODUCTION_DOMAIN = "taasflow.com" as const;
 
 /** Origins allowed to POST to the CRM endpoint. */
