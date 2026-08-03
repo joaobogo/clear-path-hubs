@@ -1329,25 +1329,25 @@ function Home() {
             <div className="flex min-w-0 flex-col justify-center gap-6">
               <span className="inline-flex w-fit items-center gap-2 rounded-full border border-[color:var(--brand-navy)]/12 bg-white/70 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/80 backdrop-blur">
                 <Sparkles className="h-3.5 w-3.5 text-[color:var(--brand-ocean-text)]" aria-hidden />
-                ATS + recruiting + outreach
+                For companies hiring 1–20 roles a year
               </span>
               <h1
                 id="home-hero-heading"
                 className="font-[family-name:var(--brand-font-display)] text-4xl font-semibold leading-[1.05] tracking-tight text-[color:var(--brand-navy)] sm:text-5xl lg:text-[3.5rem]"
               >
-                Your whole hiring stack,
+                Hiring software with the
                 <br className="hidden sm:block" />{" "}
-                <span className="text-[color:var(--brand-ocean-text)]">all in one.</span>
+                <span className="text-[color:var(--brand-ocean-text)]">recruiters included.</span>
               </h1>
               <p className="max-w-xl text-base text-[color:var(--brand-navy)]/80 sm:text-lg">
-                ATS, recruiting team, and candidate outreach in a single
-                subscription — one dashboard, one flat fee.
+                You get an ATS you keep. Our recruiters run the search inside
+                it. One flat monthly fee — not an agency, not a tool alone.
               </p>
               <ul className="grid gap-2 pt-1 sm:grid-cols-3">
                 {[
-                  { t: "Your own ATS", d: "Roles, pipeline, and candidate records you keep." },
-                  { t: "Recruiting", d: "Sourced, screened, ranked shortlists every week." },
-                  { t: "Outreach", d: "Campaigns and follow-ups run for you, tracked live." },
+                  { t: "The software", d: "Your ATS: roles, pipeline, candidate records you own." },
+                  { t: "The people", d: "Named recruiters source, screen and rank every week." },
+                  { t: "The outreach", d: "Campaigns and follow-ups run for you, tracked live." },
                 ].map((p) => (
                   <li
                     key={p.t}
@@ -1358,6 +1358,7 @@ function Home() {
                   </li>
                 ))}
               </ul>
+
 
               <ul className="flex flex-wrap gap-2 pt-1">
                 {[

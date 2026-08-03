@@ -379,19 +379,7 @@ export async function syncSubmissionToAttio(s: CrmSubmission): Promise<SyncIds> 
 
   // List routing — reuse existing lists only.
   const routes: { listId: string | null; object: "people" | "deals"; id: string | null }[] = [];
-  if (form.type === "newsletter") {
-    routes.push({
-      listId: pickListId(lists, [/newsletter/i, /marketing/i, /subscrib/i]),
-      object: "people",
-      id: personId,
-    });
-  } else if (form.type === "partnership") {
-    routes.push({
-      listId: pickListId(lists, [/partner/i]),
-      object: "people",
-      id: personId,
-    });
-  } else {
+  {
     routes.push({
       listId: pickListId(lists, [/inbound/i, /website/i, /lead/i]),
       object: "people",
