@@ -123,6 +123,7 @@ import { Route as AuthenticatedAdminPaymentsRouteImport } from './routes/_authen
 import { Route as AuthenticatedAdminOperationsRouteImport } from './routes/_authenticated/admin.operations'
 import { Route as AuthenticatedAdminNotificationsRouteImport } from './routes/_authenticated/admin.notifications'
 import { Route as AuthenticatedAdminMessagesRouteImport } from './routes/_authenticated/admin.messages'
+import { Route as AuthenticatedAdminIntegrationsRouteImport } from './routes/_authenticated/admin.integrations'
 import { Route as AuthenticatedAdminIntakeRouteImport } from './routes/_authenticated/admin.intake'
 import { Route as AuthenticatedAdminHealthRouteImport } from './routes/_authenticated/admin.health'
 import { Route as AuthenticatedAdminDesignSystemRouteImport } from './routes/_authenticated/admin.design-system'
@@ -770,6 +771,12 @@ const AuthenticatedAdminMessagesRoute =
     path: '/messages',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminIntegrationsRoute =
+  AuthenticatedAdminIntegrationsRouteImport.update({
+    id: '/integrations',
+    path: '/integrations',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminIntakeRoute =
   AuthenticatedAdminIntakeRouteImport.update({
     id: '/intake',
@@ -1095,6 +1102,7 @@ export interface FileRoutesByFullPath {
   '/admin/design-system': typeof AuthenticatedAdminDesignSystemRoute
   '/admin/health': typeof AuthenticatedAdminHealthRoute
   '/admin/intake': typeof AuthenticatedAdminIntakeRouteWithChildren
+  '/admin/integrations': typeof AuthenticatedAdminIntegrationsRoute
   '/admin/messages': typeof AuthenticatedAdminMessagesRoute
   '/admin/notifications': typeof AuthenticatedAdminNotificationsRoute
   '/admin/operations': typeof AuthenticatedAdminOperationsRoute
@@ -1248,6 +1256,7 @@ export interface FileRoutesByTo {
   '/admin/data-health': typeof AuthenticatedAdminDataHealthRoute
   '/admin/design-system': typeof AuthenticatedAdminDesignSystemRoute
   '/admin/health': typeof AuthenticatedAdminHealthRoute
+  '/admin/integrations': typeof AuthenticatedAdminIntegrationsRoute
   '/admin/messages': typeof AuthenticatedAdminMessagesRoute
   '/admin/notifications': typeof AuthenticatedAdminNotificationsRoute
   '/admin/operations': typeof AuthenticatedAdminOperationsRoute
@@ -1405,6 +1414,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/design-system': typeof AuthenticatedAdminDesignSystemRoute
   '/_authenticated/admin/health': typeof AuthenticatedAdminHealthRoute
   '/_authenticated/admin/intake': typeof AuthenticatedAdminIntakeRouteWithChildren
+  '/_authenticated/admin/integrations': typeof AuthenticatedAdminIntegrationsRoute
   '/_authenticated/admin/messages': typeof AuthenticatedAdminMessagesRoute
   '/_authenticated/admin/notifications': typeof AuthenticatedAdminNotificationsRoute
   '/_authenticated/admin/operations': typeof AuthenticatedAdminOperationsRoute
@@ -1566,6 +1576,7 @@ export interface FileRouteTypes {
     | '/admin/design-system'
     | '/admin/health'
     | '/admin/intake'
+    | '/admin/integrations'
     | '/admin/messages'
     | '/admin/notifications'
     | '/admin/operations'
@@ -1719,6 +1730,7 @@ export interface FileRouteTypes {
     | '/admin/data-health'
     | '/admin/design-system'
     | '/admin/health'
+    | '/admin/integrations'
     | '/admin/messages'
     | '/admin/notifications'
     | '/admin/operations'
@@ -1875,6 +1887,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/design-system'
     | '/_authenticated/admin/health'
     | '/_authenticated/admin/intake'
+    | '/_authenticated/admin/integrations'
     | '/_authenticated/admin/messages'
     | '/_authenticated/admin/notifications'
     | '/_authenticated/admin/operations'
@@ -2845,6 +2858,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminMessagesRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/integrations': {
+      id: '/_authenticated/admin/integrations'
+      path: '/integrations'
+      fullPath: '/admin/integrations'
+      preLoaderRoute: typeof AuthenticatedAdminIntegrationsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/intake': {
       id: '/_authenticated/admin/intake'
       path: '/intake'
@@ -3239,6 +3259,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminDesignSystemRoute: typeof AuthenticatedAdminDesignSystemRoute
   AuthenticatedAdminHealthRoute: typeof AuthenticatedAdminHealthRoute
   AuthenticatedAdminIntakeRoute: typeof AuthenticatedAdminIntakeRouteWithChildren
+  AuthenticatedAdminIntegrationsRoute: typeof AuthenticatedAdminIntegrationsRoute
   AuthenticatedAdminMessagesRoute: typeof AuthenticatedAdminMessagesRoute
   AuthenticatedAdminNotificationsRoute: typeof AuthenticatedAdminNotificationsRoute
   AuthenticatedAdminOperationsRoute: typeof AuthenticatedAdminOperationsRoute
@@ -3273,6 +3294,7 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminDesignSystemRoute: AuthenticatedAdminDesignSystemRoute,
   AuthenticatedAdminHealthRoute: AuthenticatedAdminHealthRoute,
   AuthenticatedAdminIntakeRoute: AuthenticatedAdminIntakeRouteWithChildren,
+  AuthenticatedAdminIntegrationsRoute: AuthenticatedAdminIntegrationsRoute,
   AuthenticatedAdminMessagesRoute: AuthenticatedAdminMessagesRoute,
   AuthenticatedAdminNotificationsRoute: AuthenticatedAdminNotificationsRoute,
   AuthenticatedAdminOperationsRoute: AuthenticatedAdminOperationsRoute,
