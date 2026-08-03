@@ -676,9 +676,9 @@ function HeroWorkspacePreview() {
       <div className="flex items-center justify-between gap-3 border-b border-[color:var(--brand-navy)]/8 pb-3">
         <div className="flex min-w-0 items-center gap-2">
           <div className="flex gap-1.5" aria-hidden>
-            <span className="h-2.5 w-2.5 rounded-full bg-[#ff5f57]" />
-            <span className="h-2.5 w-2.5 rounded-full bg-[#febc2e]" />
-            <span className="h-2.5 w-2.5 rounded-full bg-[#28c840]" />
+            <span className="h-2.5 w-2.5 rounded-full bg-[color:var(--chrome-dot-close)]" />
+            <span className="h-2.5 w-2.5 rounded-full bg-[color:var(--chrome-dot-minimise)]" />
+            <span className="h-2.5 w-2.5 rounded-full bg-[color:var(--chrome-dot-expand)]" />
           </div>
           <span className="truncate text-xs font-medium text-[color:var(--brand-navy)]/80">
             client workspace · Senior Product Designer · Sample data

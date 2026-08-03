@@ -1,6 +1,11 @@
 /**
  * TaaSFlow tracking pixels.
  *
+ * CONSENT (TF-014): nothing in this module runs until the visitor has made an
+ * affirmative choice. `initializeTrackers()` only boots the categories the
+ * stored decision permits, and events raised before consent are dropped
+ * rather than queued, so no personal data reaches a third party.
+ *
  * Single source of truth for every third-party tag. All injection happens on
  * the client after hydration. Every function is wrapped so a blocked or
  * failing tag can never break the app.
@@ -8,6 +13,8 @@
  * Live: GA4, Apollo website tracker, RB2B (Retention.com).
  * Dormant until their env var is set: Meta, LinkedIn, Clarity, Hotjar.
  */
+
+import { isAllowed, type ConsentCategory } from "./consent";
 
 const GA_ID = import.meta.env.VITE_GA_MEASUREMENT_ID || "G-HJ2ECKCNK4";
 const APOLLO_ID = import.meta.env.VITE_APOLLO_APP_ID || "6981f9ca9255870019505836";
@@ -121,12 +128,13 @@ function initApollo() {
 /* --------------------------------------------------------------- RB2B --- */
 
 function initRB2B() {
-  // RB2B now boots from the document head in src/routes/__root.tsx so it fires
-  // on the first byte of every page, before hydration. Nothing to inject here —
-  // re-running the snippet after the vendor bundle drained the queue would
-  // clobber its API. Kept for diagnostics parity.
-  if (!RB2B_ID) return;
+  // Injected here rather than from the document head: RB2B performs visitor
+  // identification, which requires marketing consent before it may run.
+  if (loaded.has("rb2b") || !RB2B_ID) return;
   loaded.add("rb2b");
+  injectScript("rb2b", {
+    text: `!function(){var reb2b=window.reb2b=window.reb2b||[];if(reb2b.invoked)return;reb2b.invoked=true;reb2b.methods=["identify","collect"];reb2b.factory=function(method){return function(){var args=Array.prototype.slice.call(arguments);args.unshift(method);reb2b.push(args);return reb2b;};};for(var i=0;i<reb2b.methods.length;i++){var key=reb2b.methods[i];reb2b[key]=reb2b.factory(key);}reb2b.load=function(key){var script=document.createElement("script");script.type="text/javascript";script.async=true;script.setAttribute("data-tracker","rb2b");script.src="https://b2bjsstore.s3.us-west-2.amazonaws.com/b/"+key+"/"+key+".js.gz";var first=document.getElementsByTagName("script")[0];first.parentNode.insertBefore(script,first);};reb2b.SNIPPET_VERSION="1.0.1";reb2b.load("${RB2B_ID}");}();`,
+  });
 }
 
 
@@ -170,33 +178,57 @@ function initHotjar() {
 
 /* ---------------------------------------------------------- lifecycle --- */
 
+/** Which consent category each tracker belongs to. */
+export const TRACKER_CATEGORY: Record<TrackerKey, ConsentCategory> = {
+  ga4: "analytics",
+  clarity: "analytics",
+  hotjar: "analytics",
+  apollo: "marketing",
+  rb2b: "marketing",
+  meta: "marketing",
+  linkedin: "marketing",
+};
+
+const INITIALISERS: Record<TrackerKey, () => void> = {
+  ga4: initGA4,
+  apollo: initApollo,
+  rb2b: initRB2B,
+  meta: initMeta,
+  linkedin: initLinkedIn,
+  clarity: initClarity,
+  hotjar: initHotjar,
+};
+
+/**
+ * Boots every tracker whose consent category is permitted. Safe to call again
+ * after the visitor changes their choice — already-loaded tags are skipped and
+ * newly permitted ones start.
+ */
 export function initializeTrackers() {
   if (typeof window === "undefined") return;
-  if (window._taasflow_tracking?.initialized) return;
 
-  const diagnostics: Array<{ tracker: string; uri: string; at: string }> = [];
-  window._taasflow_tracking = {
-    initialized: true,
-    diagnostics,
-    verify: verifyTrackers,
-  };
+  if (!window._taasflow_tracking?.initialized) {
+    const diagnostics: Array<{ tracker: string; uri: string; at: string }> = [];
+    window._taasflow_tracking = {
+      initialized: true,
+      diagnostics,
+      verify: verifyTrackers,
+    };
 
-  // Attribute CSP blocks to the owning tracker for debugging.
-  window.addEventListener("securitypolicyviolation", (e) => {
-    diagnostics.push({
-      tracker: trackerForUri(e.blockedURI),
-      uri: e.blockedURI,
-      at: new Date().toISOString(),
+    // Attribute CSP blocks to the owning tracker for debugging.
+    window.addEventListener("securitypolicyviolation", (e) => {
+      diagnostics.push({
+        tracker: trackerForUri(e.blockedURI),
+        uri: e.blockedURI,
+        at: new Date().toISOString(),
+      });
     });
-  });
+  }
 
-  safe(initGA4);
-  safe(initApollo);
-  safe(initRB2B);
-  safe(initMeta);
-  safe(initLinkedIn);
-  safe(initClarity);
-  safe(initHotjar);
+  for (const key of Object.keys(INITIALISERS) as TrackerKey[]) {
+    if (!isAllowed(TRACKER_CATEGORY[key])) continue;
+    safe(INITIALISERS[key]);
+  }
 }
 
 function trackerForUri(uri: string): string {
@@ -248,6 +280,9 @@ const recent = new Map<string, number>();
 
 export function trackEvent(name: string, params: Record<string, unknown> = {}) {
   if (typeof window === "undefined") return;
+  // No consent, no dispatch. Events are dropped rather than buffered so a
+  // later "reject" can never retroactively leak the visitor's session.
+  if (!isAllowed("analytics") && !isAllowed("marketing")) return;
   safe(() => {
     const payload = clean(params);
     const key = `${name}|${String(payload.page_path ?? payload.cta ?? "")}`;
@@ -257,13 +292,18 @@ export function trackEvent(name: string, params: Record<string, unknown> = {}) {
     recent.set(key, now);
     if (recent.size > 200) recent.clear();
 
-    window.gtag?.("event", name, payload);
-    window.dataLayer?.push({ event: name, ...payload });
-    const metaName = META_EVENT_MAP[name];
-    if (metaName) window.fbq?.("track", metaName, payload);
-    window.lintrk?.("track", { conversion_id: name });
-    window.clarity?.("event", name);
-    window.hj?.("event", name);
+    if (isAllowed("analytics")) {
+      window.gtag?.("event", name, payload);
+      window.dataLayer?.push({ event: name, ...payload });
+      window.clarity?.("event", name);
+      window.hj?.("event", name);
+    }
+
+    if (isAllowed("marketing")) {
+      const metaName = META_EVENT_MAP[name];
+      if (metaName) window.fbq?.("track", metaName, payload);
+      window.lintrk?.("track", { conversion_id: name });
+    }
   });
 }
 
