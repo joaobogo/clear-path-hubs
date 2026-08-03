@@ -10,9 +10,14 @@
  * the tokens so light/dark switching works.
  */
 
-import logoOnWhite from "@/assets/brand/logo-on-white.png";
-import logoOnBlue from "@/assets/brand/logo-on-blue.png";
-import iconWhite from "@/assets/brand/icon-white.png";
+// UI-sized renders of the approved masters. The wordmark never displays wider
+// than ~160 CSS px and the symbol never wider than ~64, so shipping the 1695px
+// and 1920px masters to every page was pure waste. Brand Center still serves
+// the untouched masters for download (see src/lib/brand-center/templates.ts).
+import logoOnWhite from "@/assets/brand/logo-on-white.png?w=480&format=webp";
+import logoOnBlue from "@/assets/brand/logo-on-blue.png?w=480&format=webp";
+import iconWhite from "@/assets/brand/icon-white.png?w=192&format=webp";
+
 
 export const brand = {
   name: "TaaSFlow",
