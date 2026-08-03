@@ -36,6 +36,14 @@ const STATIC_PATHS = [
   "/industries",
   "/blog",
   "/jobs",
+  "/platform",
+  "/system",
+  "/trust",
+  "/intake",
+  "/talent-marketplace",
+  "/candidate-join",
+  "/candidate-success",
+  "/pitch",
 ] as const;
 
 export const Route = createFileRoute("/sitemap.xml")({
