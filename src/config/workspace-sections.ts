@@ -100,6 +100,7 @@ export const ADMIN_SECTION_GROUPS: SectionGroup[] = [
       { to: "/admin/pending-leads", label: "Pending leads" },
       { to: "/admin/dashboard-requests", label: "Dashboard requests" },
       { to: "/admin/support", label: "Support view" },
+      { to: "/admin/seo", label: "Search visibility" },
     ],
   },
   {
