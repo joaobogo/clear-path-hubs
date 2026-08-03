@@ -108,7 +108,7 @@ function BlogIndex() {
               setCat("");
               setPage(1);
             }}
-            className={`rounded-full border px-3 py-1.5 text-xs font-medium transition ${
+            className={`inline-flex min-h-11 items-center rounded-full border px-3 py-1.5 text-xs font-medium sm:min-h-9 transition ${
               cat === ""
                 ? "border-primary bg-primary text-primary-foreground"
                 : "border-border/60 bg-background text-muted-foreground hover:text-foreground"
@@ -127,7 +127,7 @@ function BlogIndex() {
                   setCat(active ? "" : c);
                   setPage(1);
                 }}
-                className={`rounded-full border px-3 py-1.5 text-xs font-medium transition ${
+                className={`inline-flex min-h-11 items-center rounded-full border px-3 py-1.5 text-xs font-medium sm:min-h-9 transition ${
                   active
                     ? "border-primary bg-primary text-primary-foreground"
                     : "border-border/60 bg-background text-muted-foreground hover:text-foreground"

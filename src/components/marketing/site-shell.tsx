@@ -114,7 +114,7 @@ function Announcement() {
           window.sessionStorage.setItem(ANNOUNCEMENT_KEY, "1");
           setDismissed(true);
         }}
-        className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-1 text-white/70 hover:bg-white/10 hover:text-white focus:outline-none focus:ring-2 focus:ring-white/40"
+        className="absolute right-1 top-1/2 flex min-h-11 min-w-11 -translate-y-1/2 items-center justify-center rounded text-white/70 hover:bg-white/10 hover:text-white focus:outline-none focus:ring-2 focus:ring-white/40"
       >
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden><path d="M18 6 6 18M6 6l12 12" /></svg>
       </button>
@@ -198,7 +198,7 @@ function Header() {
 
           <NavigationMenuPrimitive.Root
             aria-label="Primary"
-            className="relative hidden flex-1 items-center justify-center lg:flex"
+            className="relative hidden flex-1 items-center justify-center xl:flex"
           >
             <NavigationMenuPrimitive.List className="flex items-center gap-1">
               {PRIMARY_ITEMS.map((item) =>
@@ -221,7 +221,7 @@ function Header() {
             </div>
           </NavigationMenuPrimitive.Root>
 
-          <div className="ml-auto hidden items-center gap-1 lg:flex">
+          <div className="ml-auto hidden items-center gap-1 xl:flex">
             <Link
               to={candidateMode ? "/" : browseJobs.to}
               className="whitespace-nowrap rounded-md px-2.5 py-1.5 text-sm font-medium text-[color:var(--brand-navy)]/80 hover:text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
@@ -255,7 +255,7 @@ function Header() {
                 variant="outline"
                 size="icon"
                 aria-label="Open navigation menu"
-                className="ml-auto h-11 w-11 lg:hidden"
+                className="ml-auto h-11 w-11 xl:hidden"
               >
                 <Menu className="h-5 w-5" aria-hidden />
               </Button>

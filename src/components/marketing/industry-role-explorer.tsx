@@ -86,7 +86,7 @@ export function IndustryRoleExplorer({ entry }: { entry: IndustryEntry }) {
                 aria-selected={selected}
                 onClick={() => setRoleIdx(idx)}
                 className={[
-                  "rounded-full border px-3 py-1.5 text-xs font-medium transition-colors",
+                  "inline-flex min-h-11 items-center rounded-full border px-3 py-1.5 text-xs font-medium sm:min-h-9 transition-colors",
                   selected
                     ? "border-[color:var(--brand-navy)] bg-[color:var(--brand-navy)] text-white"
                     : "border-[color:var(--brand-navy)]/15 bg-white text-[color:var(--brand-navy)]/80 hover:border-[color:var(--brand-navy)]/40",

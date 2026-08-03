@@ -84,7 +84,7 @@ function PricingPage() {
               aria-selected={mode === "oneoff"}
               onClick={() => setMode("oneoff")}
               className={
-                "flex-1 rounded-full px-4 py-2 text-sm font-semibold transition-colors " +
+                "flex-1 rounded-full px-4 py-2.5 text-sm font-semibold transition-colors min-h-11 sm:min-h-0 sm:py-2 " +
                 (mode === "oneoff"
                   ? "bg-[color:var(--brand-navy)] text-white shadow-sm"
                   : "text-[color:var(--brand-navy)]/80 hover:text-[color:var(--brand-navy)]")
@@ -98,7 +98,7 @@ function PricingPage() {
               aria-selected={mode === "subscription"}
               onClick={() => setMode("subscription")}
               className={
-                "flex-1 rounded-full px-4 py-2 text-sm font-semibold transition-colors " +
+                "flex-1 rounded-full px-4 py-2.5 text-sm font-semibold transition-colors min-h-11 sm:min-h-0 sm:py-2 " +
                 (mode === "subscription"
                   ? "bg-[color:var(--brand-navy)] text-white shadow-sm"
                   : "text-[color:var(--brand-navy)]/80 hover:text-[color:var(--brand-navy)]")

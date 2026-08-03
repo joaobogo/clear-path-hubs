@@ -301,7 +301,7 @@ function KnowledgeBasePage() {
           <div className="flex flex-wrap gap-2">
             <button
               onClick={() => setCat("")}
-              className={`rounded-full border px-3 py-1.5 text-xs font-medium ${
+              className={`inline-flex min-h-11 items-center rounded-full border px-3 py-1.5 text-xs font-medium sm:min-h-9 ${
                 cat === ""
                   ? "border-primary bg-primary text-primary-foreground"
                   : "border-border/60 bg-background text-muted-foreground"
@@ -316,7 +316,7 @@ function KnowledgeBasePage() {
                 <button
                   key={c.slug}
                   onClick={() => setCat(active ? "" : c.slug)}
-                  className={`rounded-full border px-3 py-1.5 text-xs font-medium ${
+                  className={`inline-flex min-h-11 items-center rounded-full border px-3 py-1.5 text-xs font-medium sm:min-h-9 ${
                     active
                       ? "border-primary bg-primary text-primary-foreground"
                       : "border-border/60 bg-background text-muted-foreground"
