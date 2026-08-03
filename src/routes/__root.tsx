@@ -17,6 +17,7 @@ import { PublicNotFound, PublicErrorState } from "@/components/marketing/site-sh
 import { captureFirstTouch } from "@/lib/crm/attribution";
 import { OfflineBanner } from "@/components/offline-banner";
 import { TrackingRouteObserver } from "@/components/analytics/tracking-route-observer";
+import { ConsentBanner } from "@/components/analytics/consent-banner";
 import { CalendlyBadge } from "@/components/marketing/calendly-badge";
 
 function NotFoundComponent() {
@@ -169,6 +170,7 @@ function RootComponent() {
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <Outlet />
       <TrackingRouteObserver />
+      <ConsentBanner />
       <CalendlyBadge />
       <OfflineBanner />
       <Toaster />

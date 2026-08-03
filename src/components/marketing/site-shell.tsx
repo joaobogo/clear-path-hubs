@@ -10,6 +10,7 @@ import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTr
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { EcosystemFooterRow } from "@/components/marketing/ecosystem-footer-row";
+import { ConsentPreferencesLink } from "@/components/analytics/consent-banner";
 import { cn } from "@/lib/utils";
 import {
   NAV_GROUPS,
@@ -436,6 +437,7 @@ function Footer() {
                   </Link>
                 ),
               )}
+              <ConsentPreferencesLink className="inline-flex min-h-11 items-center underline-offset-4 hover:underline hover:text-[color:var(--brand-navy)]" />
               <a href="mailto:hello@taasflow.com" className="inline-flex min-h-11 items-center hover:text-[color:var(--brand-navy)]">
                 hello@taasflow.com
               </a>
