@@ -537,12 +537,12 @@ function IndustryCard({ tile }: { tile: Tile }) {
 
 /* Family palette bands — subdued, editorial. Never a random stock photo. */
 const FAMILY_BAND_BG: Record<IndustryFamily, string> = {
-  "systems-capability": "bg-gradient-to-br from-[#0F1B3D] to-[#3B6FA0] text-white",
-  "trust-compliance": "bg-gradient-to-br from-[#E8F0F8] to-[#87A878] text-[#0c2340]",
-  "risk-judgment": "bg-gradient-to-br from-[#f5f3ee] to-[#1a4a6e] text-[#0d0d0d]",
-  "operations-delivery": "bg-gradient-to-br from-[#2d3748] to-[#d4842a] text-white",
-  "service-experience": "bg-gradient-to-br from-[#c4654a] to-[#e8a87c] text-white",
-  "expertise-growth": "bg-gradient-to-br from-[#f5f0e8] to-[#0d7a5f] text-[#0d0d0d]",
+  "systems-capability": "bg-gradient-to-br from-[color:var(--category-systems-1)] to-[color:var(--category-systems-2)] text-white",
+  "trust-compliance": "bg-gradient-to-br from-[color:var(--category-trust-1)] to-[color:var(--category-trust-2)] text-[color:var(--category-trust-fg)]",
+  "risk-judgment": "bg-gradient-to-br from-[color:var(--category-risk-1)] to-[color:var(--category-risk-2)] text-[color:var(--category-risk-fg)]",
+  "operations-delivery": "bg-gradient-to-br from-[color:var(--category-operations-1)] to-[color:var(--category-operations-2)] text-white",
+  "service-experience": "bg-gradient-to-br from-[color:var(--category-service-1)] to-[color:var(--category-service-2)] text-white",
+  "expertise-growth": "bg-gradient-to-br from-[color:var(--category-expertise-1)] to-[color:var(--category-expertise-2)] text-[color:var(--category-expertise-fg)]",
 };
 
 function FamilyMotif({

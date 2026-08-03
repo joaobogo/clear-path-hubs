@@ -343,3 +343,74 @@
 .taas-chip-danger  { background: var(--taas-status-danger-soft);  color: var(--taas-status-danger); }
 .taas-chip-info    { background: var(--taas-status-info-soft);    color: var(--taas-status-info); }
 .taas-chip-neutral { background: var(--taas-status-neutral-soft); color: var(--taas-status-neutral); }
+
+/* ==========================================================================
+   Sector palettes (TF-012)
+   Editorial gradients for case studies and industry categories. Components
+   must reference these tokens — never raw hex — so the whole site themes and
+   ages together.
+   ========================================================================== */
+:root {
+  /* Hospitality — warm brass */
+  --sector-hospitality-1: oklch(0.459 0.089 58.8);
+  --sector-hospitality-2: oklch(0.578 0.098 57.7);
+  --sector-hospitality-3: oklch(0.742 0.107 74.0);
+  --sector-hospitality-accent: oklch(0.742 0.107 74.0);
+
+  /* Finance — deep ocean */
+  --sector-finance-1: oklch(0.266 0.058 248.7);
+  --sector-finance-2: oklch(0.384 0.089 248.2);
+  --sector-finance-3: oklch(0.573 0.118 242.9);
+  --sector-finance-accent: oklch(0.792 0.094 235.3);
+
+  /* Healthcare — clinical teal */
+  --sector-health-1: oklch(0.329 0.049 188.8);
+  --sector-health-2: oklch(0.519 0.095 172.7);
+  --sector-health-3: oklch(0.732 0.112 172.6);
+  --sector-health-accent: oklch(0.839 0.101 173.1);
+
+  /* Technology — violet */
+  --sector-tech-1: oklch(0.229 0.080 284.3);
+  --sector-tech-2: oklch(0.377 0.149 282.9);
+  --sector-tech-3: oklch(0.599 0.230 286.2);
+  --sector-tech-accent: oklch(0.774 0.126 292.5);
+
+  /* Consumer — plum */
+  --sector-consumer-1: oklch(0.337 0.099 354.8);
+  --sector-consumer-2: oklch(0.487 0.156 359.3);
+  --sector-consumer-3: oklch(0.715 0.143 354.7);
+  --sector-consumer-accent: oklch(0.868 0.067 350.7);
+
+  /* Industrial — bronze */
+  --sector-industrial-1: oklch(0.220 0.016 84.4);
+  --sector-industrial-2: oklch(0.359 0.047 79.5);
+  --sector-industrial-3: oklch(0.698 0.122 77.0);
+  --sector-industrial-accent: oklch(0.869 0.113 86.0);
+
+  /* Case-study closing panel */
+  --sector-panel-1: oklch(0.214 0.049 251.6);
+  --sector-panel-2: oklch(0.266 0.058 248.7);
+  --sector-panel-3: oklch(0.352 0.081 249.1);
+
+  /* Industry capability categories */
+  --category-systems-1: oklch(0.233 0.067 266.6);
+  --category-systems-2: oklch(0.528 0.096 248.8);
+  --category-trust-1: oklch(0.951 0.014 248.0);
+  --category-trust-2: oklch(0.694 0.077 136.1);
+  --category-trust-fg: oklch(0.255 0.062 255.5);
+  --category-risk-1: oklch(0.964 0.007 88.6);
+  --category-risk-2: oklch(0.395 0.080 244.7);
+  --category-risk-fg: oklch(0.159 0 90);
+  --category-operations-1: oklch(0.335 0.033 260.9);
+  --category-operations-2: oklch(0.683 0.139 63.8);
+  --category-service-1: oklch(0.613 0.128 36.7);
+  --category-service-2: oklch(0.782 0.096 55.3);
+  --category-expertise-1: oklch(0.957 0.012 79.8);
+  --category-expertise-2: oklch(0.517 0.099 169.8);
+  --category-expertise-fg: oklch(0.159 0 90);
+
+  /* Product-window chrome dots */
+  --chrome-dot-close: oklch(0.694 0.196 26.4);
+  --chrome-dot-minimise: oklch(0.835 0.161 80.9);
+  --chrome-dot-expand: oklch(0.728 0.217 144.7);
+}

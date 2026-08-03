@@ -125,38 +125,38 @@ type VisualMeta = {
 const VISUALS: Record<string, VisualMeta> = {
   "hospitality-luxury-group": {
     icon: Hotel,
-    gradient: "from-[#7c4a1e] via-[#a56a3b] to-[#d4a15a]",
-    accent: "text-[#d4a15a]",
+    gradient: "from-[color:var(--sector-hospitality-1)] via-[color:var(--sector-hospitality-2)] to-[color:var(--sector-hospitality-3)]",
+    accent: "text-[color:var(--sector-hospitality-accent)]",
     pattern: HotelPattern,
   },
   "finance-mid-market-pe": {
     icon: Landmark,
-    gradient: "from-[#0b2740] via-[#144670] to-[#2b7fb8]",
-    accent: "text-[#7dc5ef]",
+    gradient: "from-[color:var(--sector-finance-1)] via-[color:var(--sector-finance-2)] to-[color:var(--sector-finance-3)]",
+    accent: "text-[color:var(--sector-finance-accent)]",
     pattern: FinancePattern,
   },
   "healthcare-clinical-network": {
     icon: HeartPulse,
-    gradient: "from-[#0f3d3a] via-[#137a63] to-[#4fbfa1]",
-    accent: "text-[#7fe0c4]",
+    gradient: "from-[color:var(--sector-health-1)] via-[color:var(--sector-health-2)] to-[color:var(--sector-health-3)]",
+    accent: "text-[color:var(--sector-health-accent)]",
     pattern: HealthPattern,
   },
   "tech-series-c-platform": {
     icon: Cpu,
-    gradient: "from-[#1a1440] via-[#3b2e8c] to-[#7c5cff]",
-    accent: "text-[#b8a6ff]",
+    gradient: "from-[color:var(--sector-tech-1)] via-[color:var(--sector-tech-2)] to-[color:var(--sector-tech-3)]",
+    accent: "text-[color:var(--sector-tech-accent)]",
     pattern: TechPattern,
   },
   "consumer-dtc-scaleup": {
     icon: ShoppingBag,
-    gradient: "from-[#5c1c3a] via-[#a02d5d] to-[#e77aa8]",
-    accent: "text-[#f7c2d9]",
+    gradient: "from-[color:var(--sector-consumer-1)] via-[color:var(--sector-consumer-2)] to-[color:var(--sector-consumer-3)]",
+    accent: "text-[color:var(--sector-consumer-accent)]",
     pattern: RetailPattern,
   },
   "industrial-energy-transition": {
     icon: Factory,
-    gradient: "from-[#1e1a12] via-[#4a3a1f] to-[#c8933a]",
-    accent: "text-[#f5cf7a]",
+    gradient: "from-[color:var(--sector-industrial-1)] via-[color:var(--sector-industrial-2)] to-[color:var(--sector-industrial-3)]",
+    accent: "text-[color:var(--sector-industrial-accent)]",
     pattern: IndustrialPattern,
   },
 };
@@ -379,7 +379,7 @@ function StudyCard({ study }: { study: Study }) {
 
 function GlobalReach() {
   return (
-    <section className="mt-20 overflow-hidden rounded-3xl border border-border/60 bg-gradient-to-br from-[#061a2f] via-[#0b2740] to-[#123d63] p-8 text-white md:p-12">
+    <section className="mt-20 overflow-hidden rounded-3xl border border-border/60 bg-gradient-to-br from-[color:var(--sector-panel-1)] via-[color:var(--sector-panel-2)] to-[color:var(--sector-panel-3)] p-8 text-white md:p-12">
       <div className="grid gap-10 lg:grid-cols-[1fr_1.4fr] lg:items-center">
         <div>
           <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-widest backdrop-blur">
@@ -388,7 +388,7 @@ function GlobalReach() {
           <h2 className="mt-4 font-display text-3xl font-semibold tracking-tight sm:text-4xl">
             Three regions, eighteen cities,
             <br />
-            <span className="text-[#7dc5ef]">one shortlist standard.</span>
+            <span className="text-[color:var(--sector-finance-accent)]">one shortlist standard.</span>
           </h2>
           <p className="mt-4 max-w-md text-sm leading-relaxed text-white/75">
             One workspace, one evidence model — applied consistently whether
@@ -425,11 +425,11 @@ function GlobalReach() {
             </g>
             {GLOBAL_CITIES.map((c) => (
               <g key={c.city}>
-                <circle cx={c.x} cy={c.y} r="1.6" fill="#7dc5ef" opacity="0.25">
+                <circle cx={c.x} cy={c.y} r="1.6" fill="var(--sector-finance-accent)" opacity="0.25">
                   <animate attributeName="r" values="1.6;3.4;1.6" dur="3s" begin={`${(c.x * 0.03).toFixed(2)}s`} repeatCount="indefinite" />
                   <animate attributeName="opacity" values="0.4;0;0.4" dur="3s" begin={`${(c.x * 0.03).toFixed(2)}s`} repeatCount="indefinite" />
                 </circle>
-                <circle cx={c.x} cy={c.y} r="0.7" fill="#7dc5ef" />
+                <circle cx={c.x} cy={c.y} r="0.7" fill="var(--sector-finance-accent)" />
               </g>
             ))}
           </svg>
@@ -439,7 +439,7 @@ function GlobalReach() {
       <ul className="mt-8 flex flex-wrap gap-2">
         {GLOBAL_CITIES.map((c) => (
           <li key={c.city} className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-medium text-white/85">
-            <span className="h-1.5 w-1.5 rounded-full bg-[#7dc5ef]" /> {c.city}
+            <span className="h-1.5 w-1.5 rounded-full bg-[color:var(--sector-finance-accent)]" /> {c.city}
             <span className="text-white/40">·</span>
             <span className="text-white/55">{c.region}</span>
           </li>
