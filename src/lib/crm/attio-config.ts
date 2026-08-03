@@ -21,8 +21,6 @@ export type CrmFormType =
   | "sales_contact"
   | "consultation"
   | "quote_request"
-  | "newsletter"
-  | "partnership"
   | "client_intake";
 
 export type CrmFormDefinition = {
@@ -100,8 +98,6 @@ export const FORM_SERVICE_INTEREST: Record<CrmFormId, ServiceInterest> = {
   "book-a-call": "recruiting_subscription",
   "website-message": "recruiting_subscription",
   "employer-intake": "recruiting_subscription",
-  "partner-inquiry": "recruiting_subscription",
-  "newsletter-signup": "recruiting_subscription",
 };
 
 export const LIFECYCLE_STAGES = [
@@ -137,7 +133,7 @@ export type CrossSellStatus = (typeof CROSS_SELL_STATUSES)[number];
 
 /** Lead type derived from the form + the service the visitor asked about. */
 export function deriveLeadType(formId: CrmFormId, interest: ServiceInterest): LeadType {
-  if (CRM_FORMS[formId].type === "partnership") return "Partner";
+  void formId;
   switch (interest) {
     case "one_critical_role":
       return "Direct-Placement Prospect";
