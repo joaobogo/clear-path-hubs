@@ -35,21 +35,32 @@ const STORAGE_KEY = "taasflow_consent_v1";
 const EVENT = "taasflow:consent-change";
 
 /**
- * Regions where prior opt-in is legally required. Detected from the browser
- * time zone, which needs no network call and no IP handling. Detection only
- * affects copy and whether a "reject" path must be equally prominent — the
- * gate itself is opt-in everywhere.
+ * Regions where prior opt-in is legally required: EU/EEA, UK and Switzerland.
+ * Detected from the browser time zone, which needs no network call and no IP
+ * handling. Outside these regions the default is "permitted" until the visitor
+ * saves a restrictive choice, which preserves measurement continuity.
+ *
+ * Istanbul and Moscow sit in the `Europe/` tree but outside EU/EEA/UK/CH, so
+ * they are excluded explicitly.
  */
-const OPT_IN_ZONES = /^(Europe|Atlantic\/(Azores|Madeira|Canary|Faroe|Reykjavik))/;
+const OPT_IN_ZONES = /^(Europe\/|Atlantic\/(Azores|Madeira|Canary|Faroe|Reykjavik))/;
+const OPT_IN_EXCLUSIONS =
+  /^Europe\/(Istanbul|Moscow|Kirov|Volgograd|Saratov|Astrakhan|Samara|Ulyanovsk|Minsk|Kyiv|Kiev|Simferopol)$/;
 
-export function isOptInRegion(): boolean {
+export function requiresPriorOptIn(): boolean {
   try {
     const tz = Intl.DateTimeFormat().resolvedOptions().timeZone ?? "";
+    if (!tz) return true; // fail closed
+    if (OPT_IN_EXCLUSIONS.test(tz)) return false;
     return OPT_IN_ZONES.test(tz);
   } catch {
     return true; // fail closed
   }
 }
+
+/** Back-compat alias used by the banner. */
+export const isOptInRegion = requiresPriorOptIn;
+
 
 export function readConsent(): ConsentDecision | null {
   if (typeof window === "undefined") return null;
@@ -107,13 +118,28 @@ export function hasDecided(): boolean {
   return readConsent() !== null;
 }
 
-/** True only when the category is explicitly permitted. */
+/**
+ * Whether a category may run right now.
+ *
+ * An explicit stored decision always wins. Without one, opt-in regions deny
+ * and every other region permits — this is the regional gate agreed for
+ * launch, and it keeps measurement intact outside the EU/EEA/UK/CH.
+ */
 export function isAllowed(category: ConsentCategory): boolean {
   if (category === "essential") return true;
   const decision = readConsent();
-  if (!decision) return false;
+  if (!decision) return !requiresPriorOptIn();
   return category === "analytics" ? decision.analytics : decision.marketing;
 }
+
+/**
+ * Trackers treated as strictly necessary for the business and therefore loaded
+ * before an affirmative choice, per the launch decision: the Apollo website
+ * tracker and RB2B company-level identification. GA4 also loads pre-consent
+ * but only in cookieless / consent-denied mode (see `pixels.ts`).
+ */
+export const ESSENTIAL_TRACKERS = ["apollo", "rb2b"] as const;
+
 
 export function onConsentChange(handler: (d: ConsentDecision | null) => void): () => void {
   const listener = (e: Event) => handler((e as CustomEvent<ConsentDecision | null>).detail);
