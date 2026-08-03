@@ -6,6 +6,7 @@
 // You can pass additional config via defineConfig({ vite: { ... }, etc... }) if needed.
 import path from "node:path";
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
+import { imagetools } from "vite-imagetools";
 
 export default defineConfig({
   tanstackStart: {
@@ -14,6 +15,7 @@ export default defineConfig({
     server: { entry: "server" },
   },
   vite: {
+    plugins: [imagetools()],
     resolve: {
       alias: {
         "entities/lib/decode.js": path.resolve(

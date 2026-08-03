@@ -1,3 +1,4 @@
+import { HeroPicture } from "@/components/marketing/hero-picture";
 import { Link } from "@tanstack/react-router";
 import {
   PublicPage,
@@ -119,14 +120,12 @@ export function IndustryTemplate({ entry }: { entry: IndustryEntry }) {
                 data-industry-motif={entry.slug}
                 className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl border border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-mist)]/40 shadow-[0_30px_80px_-30px_rgba(10,20,50,0.55)] motion-safe:animate-[taas-reveal-up_520ms_var(--taas-ease-emphasized)_both] sm:aspect-[16/10] lg:aspect-[16/11]"
               >
-                <img
+                <HeroPicture
                   src={heroImage.src}
                   alt={heroImage.alt}
                   width={heroImage.width}
                   height={heroImage.height}
-                  loading="eager"
-                  fetchPriority="high"
-                  decoding="async"
+                  priority
                   style={{ objectPosition: heroImage.focal ?? "50% 40%" }}
                   className="relative z-0 h-full w-full object-cover"
                 />
