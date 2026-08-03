@@ -28,9 +28,12 @@ import {
  * Copy is production-approved; no draft language.
  */
 
+// No `.default()` here: defaulting an absent search param makes the router
+// rewrite /pitch to /pitch?share=false&print=false with a 307, which wastes
+// crawl budget on a canonical content path.
 const search = z.object({
-  share: z.coerce.boolean().optional().default(false),
-  print: z.coerce.boolean().optional().default(false),
+  share: z.coerce.boolean().optional(),
+  print: z.coerce.boolean().optional(),
 });
 
 export const Route = createFileRoute("/pitch")({
@@ -145,7 +148,7 @@ const ECONOMICS: Array<{
 
 function PitchPage() {
   const { share, print } = Route.useSearch();
-  const focus = share || print;
+  const focus = share === true || print === true;
 
   const body = (
     <div className={print ? "bg-white" : undefined}>
