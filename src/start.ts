@@ -23,16 +23,20 @@ const errorMiddleware = createMiddleware().server(async ({ next, request }) => {
 });
 
 /**
- * TF-006: one canonical host. taasflow.com is the canonical origin used by
- * robots.txt, the sitemap, canonical tags and og:url — so the www host
- * permanently redirects to it instead of serving a duplicate copy.
+ * TF-006: one canonical host. `taasflow.com` (apex) is the canonical origin
+ * used by robots.txt, the sitemap, canonical tags and og:url, so any `www.`
+ * host permanently redirects to it instead of serving a duplicate copy.
+ * Path, query and hash are preserved; non-GET methods get 308 so the method
+ * and body survive the redirect.
  */
 const canonicalHostMiddleware = createMiddleware().server(async ({ next, request }) => {
   const url = new URL(request.url);
-  if (url.hostname.toLowerCase() === "www.taasflow.com") {
-    url.hostname = "taasflow.com";
+  const host = url.hostname.toLowerCase();
+  if (host.startsWith("www.") && host.endsWith("taasflow.com")) {
+    url.hostname = host.slice(4);
+    const status = request.method === "GET" || request.method === "HEAD" ? 301 : 308;
     return new Response(null, {
-      status: 301,
+      status,
       headers: { location: url.toString(), "cache-control": "public, max-age=3600" },
     });
   }
