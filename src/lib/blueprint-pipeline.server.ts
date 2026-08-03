@@ -346,6 +346,6 @@ async function notifyReady(admin: Admin, input: BlueprintRunInput, bp: RoleBluep
 }
 
 export function absoluteUrl(path: string): string {
-  const base = (process.env.PUBLIC_SITE_URL || "https://www.taasflow.com").replace(/\/$/, "");
+  const base = (process.env.PUBLIC_SITE_URL || "https://taasflow.com").replace(/\/$/, "");
   return `${base}${path.startsWith("/") ? path : `/${path}`}`;
 }

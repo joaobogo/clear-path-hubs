@@ -16,7 +16,7 @@ export const Route = createFileRoute("/terms")({
       entry={entry}
       fallbackTitle="Terms of Service"
       fallbackDescription="Terms of Service governing the use of TaaSFlow."
-      extraNote="References to legacy hosting or backend providers in the text below are pending update. The current TaaSFlow application runs on the platforms listed above."
+      extraNote="TaaSFlow runs on a managed Postgres database, authentication and file storage operated by Supabase, with application hosting, CDN and WAF services on Cloudflare's edge network. Payments are processed by Stripe. The full sub-processor register is published in section 6 of our Privacy Notice. This wording is pending review by TaaSFlow's legal counsel."
     />
   ),
 });
