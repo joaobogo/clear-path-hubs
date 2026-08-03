@@ -281,20 +281,20 @@ function StudyCard({ study }: { study: Study }) {
   return (
     <article className="group relative overflow-hidden rounded-3xl border border-border/60 bg-card shadow-sm transition-shadow hover:shadow-xl">
       {/* Visual header */}
-      <div className={`relative overflow-hidden bg-gradient-to-br ${study.gradient} p-8 text-white`}>
+      <div className={`relative overflow-hidden bg-gradient-to-br ${study.gradient} p-8 text-[color:var(--brand-on-dark)]`}>
         <div className={study.accent}>{study.pattern}</div>
         <div className="relative flex items-start justify-between">
           <div>
-            <div className="inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-xs font-semibold uppercase tracking-widest backdrop-blur">
+            <div className="inline-flex items-center gap-2 rounded-full bg-[color:var(--brand-on-dark)]/15 px-3 py-1 text-xs font-semibold uppercase tracking-widest backdrop-blur">
               <Icon className="h-3.5 w-3.5" aria-hidden />
               {study.industry}
             </div>
-            <p className="mt-2 text-xs font-medium text-white/90">{study.companyType}</p>
-            <p className="mt-3 inline-flex items-center gap-1.5 text-xs font-medium text-white/80">
+            <p className="mt-2 text-xs font-medium text-[color:var(--brand-on-dark)]/90">{study.companyType}</p>
+            <p className="mt-3 inline-flex items-center gap-1.5 text-xs font-medium text-[color:var(--brand-on-dark)]/80">
               <MapPin className="h-3.5 w-3.5" aria-hidden /> {study.region}
             </p>
           </div>
-          <ArrowUpRight className="h-6 w-6 text-white/70 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" aria-hidden />
+          <ArrowUpRight className="h-6 w-6 text-[color:var(--brand-on-dark)]/70 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" aria-hidden />
         </div>
         <h3 className="relative mt-8 font-display text-2xl font-semibold leading-tight tracking-tight sm:text-3xl">
           {study.headline}
@@ -379,10 +379,10 @@ function StudyCard({ study }: { study: Study }) {
 
 function GlobalReach() {
   return (
-    <section className="mt-20 overflow-hidden rounded-3xl border border-border/60 bg-gradient-to-br from-[color:var(--sector-panel-1)] via-[color:var(--sector-panel-2)] to-[color:var(--sector-panel-3)] p-8 text-white md:p-12">
+    <section className="mt-20 overflow-hidden rounded-3xl border border-border/60 bg-gradient-to-br from-[color:var(--sector-panel-1)] via-[color:var(--sector-panel-2)] to-[color:var(--sector-panel-3)] p-8 text-[color:var(--brand-on-dark)] md:p-12">
       <div className="grid gap-10 lg:grid-cols-[1fr_1.4fr] lg:items-center">
         <div>
-          <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-widest backdrop-blur">
+          <div className="inline-flex items-center gap-2 rounded-full bg-[color:var(--brand-on-dark)]/10 px-3 py-1 text-xs font-semibold uppercase tracking-widest backdrop-blur">
             <Globe2 className="h-3.5 w-3.5" aria-hidden /> Global reach
           </div>
           <h2 className="mt-4 font-display text-3xl font-semibold tracking-tight sm:text-4xl">
@@ -390,7 +390,7 @@ function GlobalReach() {
             <br />
             <span className="text-[color:var(--sector-finance-accent)]">one shortlist standard.</span>
           </h2>
-          <p className="mt-4 max-w-md text-sm leading-relaxed text-white/75">
+          <p className="mt-4 max-w-md text-sm leading-relaxed text-[color:var(--brand-on-dark)]/75">
             One workspace, one evidence model — applied consistently whether
             the role sits in Zurich, São Paulo, or Tokyo.
           </p>
@@ -398,9 +398,9 @@ function GlobalReach() {
             {["EMEA", "AMER", "APAC"].map((r) => {
               const n = GLOBAL_CITIES.filter((c) => c.region === r).length;
               return (
-                <div key={r} className="rounded-xl border border-white/15 bg-white/5 p-3">
+                <div key={r} className="rounded-xl border border-[color:var(--brand-on-dark)]/15 bg-[color:var(--brand-on-dark)]/5 p-3">
                   <p className="font-display text-2xl font-semibold">{n}</p>
-                  <p className="text-[10px] font-semibold uppercase tracking-widest text-white/70">{r}</p>
+                  <p className="text-[10px] font-semibold uppercase tracking-widest text-[color:var(--brand-on-dark)]/70">{r}</p>
                 </div>
               );
             })}
@@ -438,10 +438,10 @@ function GlobalReach() {
 
       <ul className="mt-8 flex flex-wrap gap-2">
         {GLOBAL_CITIES.map((c) => (
-          <li key={c.city} className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-medium text-white/85">
+          <li key={c.city} className="inline-flex items-center gap-1.5 rounded-full border border-[color:var(--brand-on-dark)]/15 bg-[color:var(--brand-on-dark)]/5 px-3 py-1 text-xs font-medium text-[color:var(--brand-on-dark)]/85">
             <span className="h-1.5 w-1.5 rounded-full bg-[color:var(--sector-finance-accent)]" /> {c.city}
-            <span className="text-white/40">·</span>
-            <span className="text-white/55">{c.region}</span>
+            <span className="text-[color:var(--brand-on-dark)]/40">·</span>
+            <span className="text-[color:var(--brand-on-dark)]/55">{c.region}</span>
           </li>
         ))}
       </ul>
