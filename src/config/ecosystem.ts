@@ -111,7 +111,10 @@ export const CROSS_SELLS: Record<CrossSellTrigger, CrossSellCopy> = {
 };
 
 /** Attribution appended to every outbound ecosystem link. */
-export function ecosystemHref(url: string, trigger: CrossSellTrigger): string {
+export function ecosystemHref(
+  url: string,
+  trigger: CrossSellTrigger | "footer_ecosystem",
+): string {
   const u = new URL(url);
   u.searchParams.set("utm_source", "taasflow");
   u.searchParams.set("utm_medium", "ecosystem_referral");

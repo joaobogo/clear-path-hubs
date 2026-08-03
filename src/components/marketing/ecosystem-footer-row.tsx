@@ -22,7 +22,7 @@ export function EcosystemFooterRow() {
         {ECOSYSTEM_FOOTER_BRANDS.map((b) => (
           <li key={b.id}>
             <a
-              href={ecosystemHref(b.url, "single-role")}
+              href={ecosystemHref(b.url, "footer_ecosystem")}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex min-h-11 items-center text-sm text-[color:var(--brand-navy)]/70 hover:text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)] rounded"

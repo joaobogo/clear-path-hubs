@@ -9,6 +9,7 @@ import { brand } from "@/config/brand";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
+import { EcosystemFooterRow } from "@/components/marketing/ecosystem-footer-row";
 import { FgvEndorsement } from "@/components/marketing/fgv-endorsement";
 import { cn } from "@/lib/utils";
 import {
@@ -419,6 +420,8 @@ function Footer() {
             <FooterCol key={group.label} title={group.label} links={group.links} />
           ))}
         </div>
+
+        <EcosystemFooterRow />
 
         <div className="mt-12 flex flex-col gap-4 border-t border-[color:var(--brand-navy)]/10 pt-6 text-sm text-[color:var(--brand-navy)]/80 sm:flex-row sm:items-center sm:justify-between">
           <p>© {new Date().getFullYear()} TaaSFlow. All rights reserved.</p>
