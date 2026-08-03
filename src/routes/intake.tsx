@@ -598,7 +598,7 @@ function ExpressIntakePage() {
           </p>
         </div>
 
-        <div className="flex items-center gap-2 text-xs text-[color:var(--brand-navy)]/60" aria-live="polite">
+        <div className="flex items-center gap-2 text-xs text-[color:var(--brand-navy)]/75" aria-live="polite">
           {savingDraft ? (
             <>
               <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden />
@@ -759,7 +759,7 @@ function ExpressIntakePage() {
                   type="button"
                   onClick={() => setShowPassword((v) => !v)}
                   aria-label={showPassword ? "Hide password" : "Show password"}
-                  className="absolute right-1 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-md text-[color:var(--brand-navy)]/60 hover:text-[color:var(--brand-navy)]"
+                  className="absolute right-1 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-md text-[color:var(--brand-navy)]/75 hover:text-[color:var(--brand-navy)]"
                 >
                   {showPassword ? (
                     <EyeOff className="h-4 w-4" aria-hidden />
@@ -832,10 +832,10 @@ function ExpressIntakePage() {
             {jdFile ? (
               <div className="flex items-center justify-between gap-3 rounded-lg border border-[color:var(--brand-navy)]/15 bg-white p-3">
                 <div className="flex min-w-0 items-center gap-3">
-                  <FileText className="h-5 w-5 shrink-0 text-[color:var(--brand-navy)]/60" aria-hidden />
+                  <FileText className="h-5 w-5 shrink-0 text-[color:var(--brand-navy)]/75" aria-hidden />
                   <div className="min-w-0">
                     <p className="truncate text-sm font-medium">{jdFile.filename}</p>
-                    <p className="text-xs text-[color:var(--brand-navy)]/60">
+                    <p className="text-xs text-[color:var(--brand-navy)]/75">
                       {(jdFile.size / 1024).toFixed(0)} KB
                     </p>
                   </div>
@@ -882,9 +882,9 @@ function ExpressIntakePage() {
                     : "border-[color:var(--brand-navy)]/25 hover:border-[color:var(--brand-navy)]/50"
                 }`}
               >
-                <Upload className="h-5 w-5 text-[color:var(--brand-navy)]/60" aria-hidden />
+                <Upload className="h-5 w-5 text-[color:var(--brand-navy)]/75" aria-hidden />
                 <span className="text-sm font-medium">Drop the job description here, or browse</span>
-                <span className="text-xs text-[color:var(--brand-navy)]/60">
+                <span className="text-xs text-[color:var(--brand-navy)]/75">
                   {JD_ACCEPT_LABEL}
                 </span>
               </button>
@@ -912,7 +912,7 @@ function ExpressIntakePage() {
                 aria-invalid={Boolean(errors.jobDescriptionText)}
               />
               {!jdFile && (
-                <p className="mt-1 text-xs text-[color:var(--brand-navy)]/60">
+                <p className="mt-1 text-xs text-[color:var(--brand-navy)]/75">
                   {jdChars}/{MIN_JD_TEXT} characters minimum when you don't upload a file.
                 </p>
               )}
@@ -1231,7 +1231,7 @@ function ReviewBlock({
       <dl className="mt-3 space-y-2">
         {rows.map(([label, value]) => (
           <div key={label} className="grid gap-1 sm:grid-cols-[160px_1fr]">
-            <dt className="text-xs uppercase tracking-wide text-[color:var(--brand-navy)]/55">
+            <dt className="text-xs uppercase tracking-wide text-[color:var(--brand-navy)]/75">
               {label}
             </dt>
             <dd className="text-sm whitespace-pre-wrap">

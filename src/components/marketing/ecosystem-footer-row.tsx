@@ -43,7 +43,7 @@ export function EcosystemFooterRow() {
 
   return (
     <div className="mt-10 border-t border-[color:var(--brand-navy)]/10 pt-6">
-      <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/55">
+      <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/75">
         Part of{" "}
         {conversion ? (
           <span>{FGV.name}</span>
@@ -83,7 +83,7 @@ export function EcosystemFooterRow() {
                 className="inline-flex min-h-11 items-center text-sm text-[color:var(--brand-navy)]/70 hover:text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)] rounded"
               >
                 <span className="font-medium">{b.name}</span>
-                <span className="ml-2 hidden text-xs text-[color:var(--brand-navy)]/55 sm:inline">
+                <span className="ml-2 hidden text-xs text-[color:var(--brand-navy)]/75 sm:inline">
                   {b.owns}
                 </span>
               </a>
