@@ -18,4 +18,4 @@ Disallow: /dev/
 Disallow: /dev.catalogue
 Disallow: /dev.industry-coverage
 
-Sitemap: https://www.taasflow.com/sitemap.xml
+Sitemap: https://taasflow.com/sitemap.xml

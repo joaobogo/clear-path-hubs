@@ -23,20 +23,20 @@ const DESTINATION_ARCHITECTURE = [
     purpose: "Serverless edge runtime for the TaaSFlow web application.",
   },
   {
-    role: "Backend, database, auth, storage, edge functions",
-    provider: "Supabase (delivered via Lovable Cloud)",
+    role: "Backend, database, auth, storage, server functions",
+    provider: "Supabase (managed Postgres platform)",
     purpose:
       "Postgres database, authentication, private storage buckets, realtime, and server-side functions.",
   },
   {
     role: "CV parsing and evidence scoring",
-    provider: "Lovable AI Gateway (Google Gemini models)",
+    provider: "Google (Gemini models, via TaaSFlow's managed AI gateway)",
     purpose:
       "Structured extraction of CV data and role-specific scoring signals used inside the workspace.",
   },
   {
     role: "Transactional and system email",
-    provider: "Lovable Cloud email service",
+    provider: "TaaSFlow transactional email infrastructure",
     purpose: "Auth flows and application lifecycle notifications.",
   },
 ];
