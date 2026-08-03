@@ -1,7 +1,13 @@
 import { useEffect, useRef } from "react";
 import { useRouterState } from "@tanstack/react-router";
 import { initializeTrackers, trackEvent, trackPageView } from "@/lib/tracking/pixels";
-import { onConsentChange } from "@/lib/tracking/consent";
+import {
+  onConsentChange,
+  onTrackingPolicyChange,
+  setTrackingPolicy,
+} from "@/lib/tracking/consent";
+import { fetchTrackingPolicy } from "@/lib/tracking/policy.functions";
+
 
 /** Maps a pathname to the extra route-level event fired alongside page_view. */
 function routeEvent(path: string): string | null {
