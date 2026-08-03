@@ -17,6 +17,7 @@
  *  - Sections whose backing data is empty return `null` (never a placeholder).
  */
 
+import { HeroPicture } from "@/components/marketing/hero-picture";
 import { Link } from "@tanstack/react-router";
 import { ArrowRight, CalendarDays } from "lucide-react";
 import type { IndustryEntry } from "@/content/industries-v2";
@@ -393,14 +394,12 @@ function HeroTrustCompliance({ ctx }: { ctx: Ctx }) {
           >
             {heroImage ? (
               <div className="mb-4 aspect-[16/9] overflow-hidden rounded-2xl">
-                <img
+                <HeroPicture
                   src={heroImage.src}
                   alt={heroImage.alt}
                   width={heroImage.width}
                   height={heroImage.height}
-                  loading="eager"
-                  fetchPriority="high"
-                  decoding="async"
+                  priority
                   style={{ objectPosition: heroImage.focal ?? "50% 40%" }}
                   className="h-full w-full object-cover"
                 />
@@ -586,14 +585,12 @@ function HeroServiceExperience({ ctx }: { ctx: Ctx }) {
         <figure className="relative overflow-hidden rounded-3xl border border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-mist)]/40 shadow-[0_40px_120px_-40px_rgba(10,20,50,0.55)]">
           <div className="relative aspect-[16/11] w-full sm:aspect-[21/9]">
             {heroImage ? (
-              <img
+              <HeroPicture
                 src={heroImage.src}
                 alt={heroImage.alt}
                 width={heroImage.width}
                 height={heroImage.height}
-                loading="eager"
-                fetchPriority="high"
-                decoding="async"
+                priority
                 style={{ objectPosition: heroImage.focal ?? "50% 40%" }}
                 className="absolute inset-0 h-full w-full object-cover"
               />
