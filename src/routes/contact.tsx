@@ -601,7 +601,8 @@ function ContactForm({ intent }: { intent: IntentSpec }) {
       <div className="flex items-center gap-3">
         <Button
           type="submit"
-          disabled={submitting || !privacyAcknowledged}
+          disabled={submitting}
+
           className="min-h-11 bg-[color:var(--brand-navy)] text-white hover:opacity-90"
         >
           {submitting ? "Sending…" : "Send message"}
