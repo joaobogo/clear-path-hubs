@@ -545,19 +545,35 @@ function ContactForm({ intent }: { intent: IntentSpec }) {
         <Checkbox
           id={`privacy-${topic}`}
           checked={privacyAcknowledged}
-          onCheckedChange={(v) => setPrivacyAcknowledged(v === true)}
+          onCheckedChange={(v) => {
+            setPrivacyAcknowledged(v === true);
+            if (v === true) setConsentError(null);
+          }}
           className="mt-0.5"
           aria-required="true"
+          aria-invalid={Boolean(consentError)}
+          aria-describedby={consentError ? `privacy-error-${topic}` : undefined}
         />
         <label htmlFor={`privacy-${topic}`} className="text-sm leading-relaxed">
-          I've read the{" "}
+          I agree that TaaSFlow may use the details I provide to respond to this enquiry and
+          store them in its customer relationship management system, as described in the{" "}
           <Link to="/privacy" className="underline" target="_blank" rel="noreferrer">
             privacy policy
-          </Link>{" "}
-          and agree to TaaSFlow handling my details to answer this enquiry.{" "}
-          <span aria-hidden="true">*</span>
+          </Link>
+          . <span aria-hidden="true">*</span>
         </label>
       </div>
+
+      {consentError && (
+        <p
+          id={`privacy-error-${topic}`}
+          data-field-error="true"
+          className="text-sm text-[color:var(--brand-danger)]"
+        >
+          {consentError}
+        </p>
+      )}
+
 
       <div className="flex items-start gap-3">
         <Checkbox
