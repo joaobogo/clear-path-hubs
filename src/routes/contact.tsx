@@ -320,6 +320,11 @@ function ContactForm({ intent }: { intent: IntentSpec }) {
       source: "public_contact_form",
       website: String(fd.get("website") ?? ""),
       elapsedMs: Date.now() - mountedAt,
+      marketingConsent,
+      // Attribution is captured here so EVERY topic carries it — support and
+      // candidate enquiries never reach the CRM adapter.
+      attribution: getAttribution() as unknown as Record<string, unknown>,
+      pageContext: getPageContext() as unknown as Record<string, unknown>,
     };
 
     if (payload.name.length < 1 || payload.name.length > 120) {
