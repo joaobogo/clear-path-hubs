@@ -61,12 +61,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
     ],
     scripts: [
-      {
-        // RB2B visitor identification. Lives in the document head so it fires
-        // on the very first byte of any page, before hydration.
-        children:
-          '!function(){var reb2b=window.reb2b=window.reb2b||[];if(reb2b.invoked)return;reb2b.invoked=true;reb2b.methods=["identify","collect"];reb2b.factory=function(method){return function(){var args=Array.prototype.slice.call(arguments);args.unshift(method);reb2b.push(args);return reb2b;};};for(var i=0;i<reb2b.methods.length;i++){var key=reb2b.methods[i];reb2b[key]=reb2b.factory(key);}reb2b.load=function(key){var script=document.createElement("script");script.type="text/javascript";script.async=true;script.setAttribute("data-tracker","rb2b");script.src="https://b2bjsstore.s3.us-west-2.amazonaws.com/b/"+key+"/"+key+".js.gz";var first=document.getElementsByTagName("script")[0];first.parentNode.insertBefore(script,first);};reb2b.SNIPPET_VERSION="1.0.1";reb2b.load("1N5W0H7RVEO5");}();',
-      },
+      // RB2B visitor identification used to boot from here. It now loads from
+      // src/lib/tracking/pixels.ts so it only runs once the visitor has given
+      // marketing consent.
+
       {
         type: "application/ld+json",
         children: JSON.stringify({
