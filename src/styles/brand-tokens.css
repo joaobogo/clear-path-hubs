@@ -422,4 +422,12 @@
   --chrome-dot-close: oklch(0.694 0.196 26.4);
   --chrome-dot-minimise: oklch(0.835 0.161 80.9);
   --chrome-dot-expand: oklch(0.728 0.217 144.7);
+
+  /*
+   * Foreground + overlay fills used on top of dark sector gradients,
+   * navy fills and photography. Identical in value to pure white, so
+   * migrating literal `text-white` / `bg-white` utilities to this token
+   * is a zero-difference change while making the intent explicit.
+   */
+  --brand-on-dark: oklch(1 0 0);
 }
