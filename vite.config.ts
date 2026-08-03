@@ -15,6 +15,7 @@ export default defineConfig({
     server: { entry: "server" },
   },
   vite: {
+    plugins: [imagetools()],
     resolve: {
       alias: {
         "entities/lib/decode.js": path.resolve(
