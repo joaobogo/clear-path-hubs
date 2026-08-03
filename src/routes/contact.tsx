@@ -357,9 +357,13 @@ function ContactForm({ intent }: { intent: IntentSpec }) {
       return;
     }
     if (!privacyAcknowledged) {
-      setError("Please confirm you've read the privacy policy so we can reply.");
+      setConsentError(
+        "Please tick this box so we can use your details to reply and store them in our CRM.",
+      );
+      document.getElementById(`privacy-${topic}`)?.focus();
       return;
     }
+
 
     setSubmitting(true);
     submittedRef.current = true;
