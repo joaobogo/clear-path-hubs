@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { useRouterState } from "@tanstack/react-router";
 import { initializeTrackers, trackEvent, trackPageView } from "@/lib/tracking/pixels";
+import { onConsentChange } from "@/lib/tracking/consent";
 
 /** Maps a pathname to the extra route-level event fired alongside page_view. */
 function routeEvent(path: string): string | null {
@@ -33,7 +34,10 @@ export function TrackingRouteObserver() {
   const lastPath = useRef<string | null>(null);
 
   useEffect(() => {
+    // Boots only the categories the stored consent decision permits, and runs
+    // again whenever the visitor changes that decision.
     initializeTrackers();
+    return onConsentChange(() => initializeTrackers());
   }, []);
 
   useEffect(() => {
