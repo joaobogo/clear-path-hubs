@@ -18,7 +18,7 @@ import { toInternalSlug } from "@/lib/marketing/industry-slug-aliases";
 import { Button } from "@/components/ui/button";
 
 
-export const Route = createFileRoute("/industries/$slug/briefing")({
+export const Route = createFileRoute("/industries_/$slug/briefing")({
   loader: ({ params }) => {
     const entry = getIndustryEntry(toInternalSlug(params.slug));
     if (!entry) throw notFound();

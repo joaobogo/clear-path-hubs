@@ -294,6 +294,8 @@ function ContactForm({ intent }: { intent: IntentSpec }) {
   const [error, setError] = useState<string | null>(null);
   /** Affirmative marketing consent. Never defaulted to true. */
   const [marketingConsent, setMarketingConsent] = useState(false);
+  /** Required privacy-notice acknowledgement. Never defaulted to true. */
+  const [privacyAcknowledged, setPrivacyAcknowledged] = useState(false);
   const submittedRef = useRef(false);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -323,6 +325,7 @@ function ContactForm({ intent }: { intent: IntentSpec }) {
       website: String(fd.get("website") ?? ""),
       elapsedMs: Date.now() - mountedAt,
       marketingConsent,
+      privacyAcknowledged,
       // Attribution is captured here so EVERY topic carries it — support and
       // candidate enquiries never reach the CRM adapter.
       attribution: getAttribution() as unknown as Record<string, unknown>,
@@ -343,6 +346,10 @@ function ContactForm({ intent }: { intent: IntentSpec }) {
     }
     if (payload.message.length > 4000) {
       setError("Message is too long (4000 character limit).");
+      return;
+    }
+    if (!privacyAcknowledged) {
+      setError("Please confirm you've read the privacy policy so we can reply.");
       return;
     }
 
@@ -524,6 +531,24 @@ function ContactForm({ intent }: { intent: IntentSpec }) {
 
       <div className="flex items-start gap-3">
         <Checkbox
+          id={`privacy-${topic}`}
+          checked={privacyAcknowledged}
+          onCheckedChange={(v) => setPrivacyAcknowledged(v === true)}
+          className="mt-0.5"
+          aria-required="true"
+        />
+        <label htmlFor={`privacy-${topic}`} className="text-sm leading-relaxed">
+          I've read the{" "}
+          <Link to="/privacy" className="underline" target="_blank" rel="noreferrer">
+            privacy policy
+          </Link>{" "}
+          and agree to TaaSFlow handling my details to answer this enquiry.{" "}
+          <span aria-hidden="true">*</span>
+        </label>
+      </div>
+
+      <div className="flex items-start gap-3">
+        <Checkbox
           id={`consent-${topic}`}
           checked={marketingConsent}
           onCheckedChange={(v) => setMarketingConsent(v === true)}
@@ -531,7 +556,11 @@ function ContactForm({ intent }: { intent: IntentSpec }) {
         />
         <label htmlFor={`consent-${topic}`} className="text-sm leading-relaxed">
           Keep me updated with TaaSFlow hiring insights and product news. Optional — we will
-          reply to your message either way, and you can unsubscribe at any time.
+          reply to your message either way, and you can unsubscribe at any time. See the{" "}
+          <Link to="/privacy" className="underline" target="_blank" rel="noreferrer">
+            privacy policy
+          </Link>
+          .
         </label>
       </div>
 
@@ -544,7 +573,7 @@ function ContactForm({ intent }: { intent: IntentSpec }) {
       <div className="flex items-center gap-3">
         <Button
           type="submit"
-          disabled={submitting}
+          disabled={submitting || !privacyAcknowledged}
           className="min-h-11 bg-[color:var(--brand-navy)] text-white hover:opacity-90"
         >
           {submitting ? "Sending…" : "Send message"}
