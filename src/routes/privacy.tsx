@@ -17,7 +17,7 @@ export const Route = createFileRoute("/privacy")({
       entry={entry}
       fallbackTitle="Privacy Notice"
       fallbackDescription="How TaaSFlow collects, uses, and protects personal information."
-      extraNote="Personal data collected through the intake, application, and workspace flows is stored in TaaSFlow's managed Postgres database (Supabase infrastructure). CV files are held in a private storage bucket with row-level access policies."
+      extraNote="Personal data collected through the intake, application, and workspace flows is stored in a managed Postgres database, with the application served from an edge hosting network. CV files are held in private object storage with row-level access policies. The named providers behind this infrastructure are listed in the sub-processor register in section 6 below."
     />
   ),
 });
