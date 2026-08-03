@@ -271,7 +271,7 @@ async function checkCalendly(): Promise<CheckResult> {
     status: "ok",
     summary: "Public Calendly booking page loads (no API connection linked).",
     latency_ms: run.ms,
-    details: { ...base.details, mode: "public_page", http_status: run.value },
+    details: { ...base.details, mode: "public_page", http_status: run.value ?? null },
   };
 }
 
