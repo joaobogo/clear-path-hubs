@@ -114,6 +114,7 @@ import { Route as AuthenticatedAdminTeamRouteImport } from './routes/_authentica
 import { Route as AuthenticatedAdminSupportRouteImport } from './routes/_authenticated/admin.support'
 import { Route as AuthenticatedAdminSlaRouteImport } from './routes/_authenticated/admin.sla'
 import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin.settings'
+import { Route as AuthenticatedAdminSeoRouteImport } from './routes/_authenticated/admin.seo'
 import { Route as AuthenticatedAdminQaReportRouteImport } from './routes/_authenticated/admin.qa-report'
 import { Route as AuthenticatedAdminPublishRouteImport } from './routes/_authenticated/admin.publish'
 import { Route as AuthenticatedAdminPositionsRouteImport } from './routes/_authenticated/admin.positions'
@@ -716,6 +717,11 @@ const AuthenticatedAdminSettingsRoute =
     path: '/settings',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminSeoRoute = AuthenticatedAdminSeoRouteImport.update({
+  id: '/seo',
+  path: '/seo',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
 const AuthenticatedAdminQaReportRoute =
   AuthenticatedAdminQaReportRouteImport.update({
     id: '/qa-report',
@@ -1097,6 +1103,7 @@ export interface FileRoutesByFullPath {
   '/admin/positions': typeof AuthenticatedAdminPositionsRouteWithChildren
   '/admin/publish': typeof AuthenticatedAdminPublishRoute
   '/admin/qa-report': typeof AuthenticatedAdminQaReportRoute
+  '/admin/seo': typeof AuthenticatedAdminSeoRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/sla': typeof AuthenticatedAdminSlaRoute
   '/admin/support': typeof AuthenticatedAdminSupportRoute
@@ -1248,6 +1255,7 @@ export interface FileRoutesByTo {
   '/admin/pending-leads': typeof AuthenticatedAdminPendingLeadsRoute
   '/admin/publish': typeof AuthenticatedAdminPublishRoute
   '/admin/qa-report': typeof AuthenticatedAdminQaReportRoute
+  '/admin/seo': typeof AuthenticatedAdminSeoRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/sla': typeof AuthenticatedAdminSlaRoute
   '/admin/support': typeof AuthenticatedAdminSupportRoute
@@ -1405,6 +1413,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/positions': typeof AuthenticatedAdminPositionsRouteWithChildren
   '/_authenticated/admin/publish': typeof AuthenticatedAdminPublishRoute
   '/_authenticated/admin/qa-report': typeof AuthenticatedAdminQaReportRoute
+  '/_authenticated/admin/seo': typeof AuthenticatedAdminSeoRoute
   '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/_authenticated/admin/sla': typeof AuthenticatedAdminSlaRoute
   '/_authenticated/admin/support': typeof AuthenticatedAdminSupportRoute
@@ -1565,6 +1574,7 @@ export interface FileRouteTypes {
     | '/admin/positions'
     | '/admin/publish'
     | '/admin/qa-report'
+    | '/admin/seo'
     | '/admin/settings'
     | '/admin/sla'
     | '/admin/support'
@@ -1716,6 +1726,7 @@ export interface FileRouteTypes {
     | '/admin/pending-leads'
     | '/admin/publish'
     | '/admin/qa-report'
+    | '/admin/seo'
     | '/admin/settings'
     | '/admin/sla'
     | '/admin/support'
@@ -1872,6 +1883,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/positions'
     | '/_authenticated/admin/publish'
     | '/_authenticated/admin/qa-report'
+    | '/_authenticated/admin/seo'
     | '/_authenticated/admin/settings'
     | '/_authenticated/admin/sla'
     | '/_authenticated/admin/support'
@@ -2770,6 +2782,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminSettingsRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/seo': {
+      id: '/_authenticated/admin/seo'
+      path: '/seo'
+      fullPath: '/admin/seo'
+      preLoaderRoute: typeof AuthenticatedAdminSeoRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/qa-report': {
       id: '/_authenticated/admin/qa-report'
       path: '/qa-report'
@@ -3228,6 +3247,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminPositionsRoute: typeof AuthenticatedAdminPositionsRouteWithChildren
   AuthenticatedAdminPublishRoute: typeof AuthenticatedAdminPublishRoute
   AuthenticatedAdminQaReportRoute: typeof AuthenticatedAdminQaReportRoute
+  AuthenticatedAdminSeoRoute: typeof AuthenticatedAdminSeoRoute
   AuthenticatedAdminSettingsRoute: typeof AuthenticatedAdminSettingsRoute
   AuthenticatedAdminSlaRoute: typeof AuthenticatedAdminSlaRoute
   AuthenticatedAdminSupportRoute: typeof AuthenticatedAdminSupportRoute
@@ -3262,6 +3282,7 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
     AuthenticatedAdminPositionsRouteWithChildren,
   AuthenticatedAdminPublishRoute: AuthenticatedAdminPublishRoute,
   AuthenticatedAdminQaReportRoute: AuthenticatedAdminQaReportRoute,
+  AuthenticatedAdminSeoRoute: AuthenticatedAdminSeoRoute,
   AuthenticatedAdminSettingsRoute: AuthenticatedAdminSettingsRoute,
   AuthenticatedAdminSlaRoute: AuthenticatedAdminSlaRoute,
   AuthenticatedAdminSupportRoute: AuthenticatedAdminSupportRoute,
@@ -3523,3 +3544,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
