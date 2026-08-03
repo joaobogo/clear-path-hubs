@@ -17,7 +17,7 @@ export const Route = createFileRoute("/privacy")({
       entry={entry}
       fallbackTitle="Privacy Notice"
       fallbackDescription="How TaaSFlow collects, uses, and protects personal information."
-      extraNote="Personal data collected through the intake, application, and workspace flows is stored inside the Supabase project managed via Lovable Cloud. CV files are held in a private storage bucket with row-level access policies."
+      extraNote="Personal data collected through the intake, application, and workspace flows is stored in TaaSFlow's managed Postgres database (Supabase infrastructure). CV files are held in a private storage bucket with row-level access policies."
     />
   ),
 });

@@ -17,7 +17,7 @@ import iconWhite from "@/assets/brand/icon-white.png";
 export const brand = {
   name: "TaaSFlow",
   tagline: "ATS + recruiting + outreach, all in one",
-  productDomain: "www.taasflow.com",
+  productDomain: "taasflow.com",
 
   logos: {
     /** Full wordmark for use on white / light backgrounds */
