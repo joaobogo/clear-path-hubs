@@ -238,7 +238,7 @@ function JobsPage() {
             <button
               type="button"
               onClick={() => { setParam({ level: "any", page: 1 }); }}
-              className={`text-xs px-3 py-1 rounded-full border ${
+              className={`inline-flex min-h-11 items-center text-xs px-3 py-1 rounded-full border sm:min-h-8 ${
                 seniority === "any" ? "bg-primary text-primary-foreground" : "bg-background"
               }`}
             >
@@ -249,7 +249,7 @@ function JobsPage() {
                 type="button"
                 key={s}
                 onClick={() => setParam({ level: s, page: 1 })}
-                className={`text-xs px-3 py-1 rounded-full border ${
+                className={`inline-flex min-h-11 items-center text-xs px-3 py-1 rounded-full border sm:min-h-8 ${
                   seniority === s ? "bg-primary text-primary-foreground" : "bg-background"
                 }`}
               >

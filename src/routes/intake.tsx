@@ -761,7 +761,7 @@ function ExpressIntakePage() {
                   type="button"
                   onClick={() => setShowPassword((v) => !v)}
                   aria-label={showPassword ? "Hide password" : "Show password"}
-                  className="absolute right-1 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-md text-[color:var(--brand-navy)]/75 hover:text-[color:var(--brand-navy)]"
+                  className="absolute right-1 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-md text-[color:var(--brand-navy)]/75 sm:h-9 sm:w-9 hover:text-[color:var(--brand-navy)]"
                 >
                   {showPassword ? (
                     <EyeOff className="h-4 w-4" aria-hidden />

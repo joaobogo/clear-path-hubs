@@ -463,7 +463,7 @@ function FamilyChip({
       role="tab"
       aria-selected={active}
       onClick={onClick}
-      className={`whitespace-nowrap rounded-full border px-3.5 py-1.5 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)] ${
+      className={`inline-flex min-h-11 items-center whitespace-nowrap rounded-full border px-3.5 py-1.5 text-xs font-semibold sm:min-h-9 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)] ${
         active
           ? "border-[color:var(--brand-navy)] bg-[color:var(--brand-navy)] text-white"
           : "border-[color:var(--brand-navy)]/15 bg-white text-[color:var(--brand-navy)]/80 hover:border-[color:var(--brand-navy)]/40 hover:text-[color:var(--brand-navy)]"

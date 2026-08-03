@@ -125,7 +125,7 @@ export function ConsentBanner() {
           )}
         </div>
 
-        <div className="flex flex-wrap items-center gap-2 md:justify-end">
+        <div className="flex flex-wrap items-center gap-2 md:justify-end [&>button]:min-h-11 md:[&>button]:min-h-8">
           {!details && (
             <Button variant="ghost" size="sm" onClick={() => setDetails(true)}>
               Manage
@@ -144,6 +144,7 @@ export function ConsentBanner() {
             </Button>
           )}
         </div>
+
       </div>
       {!optIn && null}
     </div>

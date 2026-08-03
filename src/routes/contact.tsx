@@ -245,29 +245,32 @@ function ContactPage() {
                   ) : null}
                 </div>
 
+                {/* dl children must be div/dt/dd only, and a wrapping div may
+                    contain nothing but dt/dd — so the icon lives inside the dt. */}
                 <dl className="mt-8 space-y-4 border-t border-[color:var(--brand-navy)]/10 pt-6 text-sm">
-                  <div className="flex items-start gap-3">
-                    <Clock className="mt-0.5 h-4 w-4 text-[color:var(--brand-navy)]/80" />
-                    <div>
-                      <dt className="font-semibold text-[color:var(--brand-navy)]">Expected response</dt>
-                      <dd className="text-[color:var(--brand-navy)]/80">{intent.responseSla}</dd>
-                    </div>
+                  <div>
+                    <dt className="flex items-center gap-3 font-semibold text-[color:var(--brand-navy)]">
+                      <Clock className="h-4 w-4 shrink-0 text-[color:var(--brand-navy)]/80" aria-hidden />
+                      Expected response
+                    </dt>
+                    <dd className="mt-0.5 pl-7 text-[color:var(--brand-navy)]/80">{intent.responseSla}</dd>
                   </div>
-                  <div className="flex items-start gap-3">
-                    <CheckCircle2 className="mt-0.5 h-4 w-4 text-[color:var(--brand-navy)]/80" />
-                    <div>
-                      <dt className="font-semibold text-[color:var(--brand-navy)]">Responded to by</dt>
-                      <dd className="text-[color:var(--brand-navy)]/80">{intent.respondsFrom}</dd>
-                    </div>
+                  <div>
+                    <dt className="flex items-center gap-3 font-semibold text-[color:var(--brand-navy)]">
+                      <CheckCircle2 className="h-4 w-4 shrink-0 text-[color:var(--brand-navy)]/80" aria-hidden />
+                      Responded to by
+                    </dt>
+                    <dd className="mt-0.5 pl-7 text-[color:var(--brand-navy)]/80">{intent.respondsFrom}</dd>
                   </div>
-                  <div className="flex items-start gap-3">
-                    <Mail className="mt-0.5 h-4 w-4 text-[color:var(--brand-navy)]/80" />
-                    <div>
-                      <dt className="font-semibold text-[color:var(--brand-navy)]">Backup channel</dt>
-                      <dd className="text-[color:var(--brand-navy)]/80">{intent.backup}</dd>
-                    </div>
+                  <div>
+                    <dt className="flex items-center gap-3 font-semibold text-[color:var(--brand-navy)]">
+                      <Mail className="h-4 w-4 shrink-0 text-[color:var(--brand-navy)]/80" aria-hidden />
+                      Backup channel
+                    </dt>
+                    <dd className="mt-0.5 pl-7 text-[color:var(--brand-navy)]/80">{intent.backup}</dd>
                   </div>
                 </dl>
+
               </div>
             </aside>
 
