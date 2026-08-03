@@ -1329,19 +1329,19 @@ function Home() {
             <div className="flex min-w-0 flex-col justify-center gap-6">
               <span className="inline-flex w-fit items-center gap-2 rounded-full border border-[color:var(--brand-navy)]/12 bg-white/70 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/80 backdrop-blur">
                 <Sparkles className="h-3.5 w-3.5 text-[color:var(--brand-ocean-text)]" aria-hidden />
-                ATS + recruiters + outreach — for companies hiring 1–20 roles a year
+                Talent as a Service — ATS + recruiters + outreach
               </span>
               <h1
                 id="home-hero-heading"
                 className="font-[family-name:var(--brand-font-display)] text-4xl font-semibold leading-[1.05] tracking-tight text-[color:var(--brand-navy)] sm:text-5xl lg:text-[3.5rem]"
               >
-                Recruiting software with the
+                Your ATS, recruiters and outreach
                 <br className="hidden sm:block" />{" "}
-                <span className="text-[color:var(--brand-ocean-text)]">recruiters included.</span>
+                <span className="text-[color:var(--brand-ocean-text)]">in one subscription.</span>
               </h1>
               <p className="max-w-xl text-base text-[color:var(--brand-navy)]/80 sm:text-lg">
-                The software is yours to keep. Our recruiters do the searching
-                inside it. One monthly fee, no percentage of salary.
+                For companies hiring 1–20 roles a year. Flat monthly fee, never
+                a share of salary.
               </p>
               <ul className="grid gap-2 pt-1 sm:grid-cols-3">
                 {[
