@@ -290,6 +290,8 @@ function ContactForm({ intent }: { intent: IntentSpec }) {
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState<null | { traceId: string }>(null);
   const [error, setError] = useState<string | null>(null);
+  /** Affirmative marketing consent. Never defaulted to true. */
+  const [marketingConsent, setMarketingConsent] = useState(false);
   const submittedRef = useRef(false);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
