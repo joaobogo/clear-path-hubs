@@ -40,11 +40,32 @@ export function TrackingRouteObserver() {
   const lastPath = useRef<string | null>(null);
 
   useEffect(() => {
-    // Boots only the categories the stored consent decision permits, and runs
-    // again whenever the visitor changes that decision.
-    initializeTrackers();
-    return onConsentChange(() => initializeTrackers());
+    let cancelled = false;
+
+    // The admin-configured policy decides which trackers count as strictly
+    // necessary. Until it lands, no script initialises at all.
+    void fetchTrackingPolicy()
+      .then((p) => {
+        if (cancelled) return;
+        setTrackingPolicy({
+          essentialTrackers: p.essentialTrackers,
+          requirePriorOptInEverywhere: p.requirePriorOptInEverywhere,
+        });
+      })
+      .catch(() => {
+        /* fail closed — nothing boots */
+      });
+
+    // Re-run on both consent and policy changes; loaded tags are skipped.
+    const offConsent = onConsentChange(() => initializeTrackers());
+    const offPolicy = onTrackingPolicyChange(() => initializeTrackers());
+    return () => {
+      cancelled = true;
+      offConsent();
+      offPolicy();
+    };
   }, []);
+
 
   useEffect(() => {
     if (typeof window === "undefined") return;
