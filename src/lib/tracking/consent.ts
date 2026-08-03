@@ -33,6 +33,98 @@ export const CONSENT_VERSION = 1;
 
 const STORAGE_KEY = "taasflow_consent_v1";
 const EVENT = "taasflow:consent-change";
+const POLICY_EVENT = "taasflow:tracking-policy";
+const POLICY_CACHE_KEY = "taasflow_tracking_policy_v1";
+
+/* ------------------------------------------------------- tracking policy -- */
+
+export type TrackingPolicy = {
+  /** Tracker keys the admin has declared strictly necessary. */
+  essentialTrackers: string[];
+  /** When true, prior opt-in is required in every region, not just the EU/UK/CH. */
+  requirePriorOptInEverywhere: boolean;
+};
+
+/**
+ * Fail-closed default: nothing is essential and prior opt-in is required
+ * everywhere, so no non-essential script can initialise before the policy is
+ * known and the visitor has made a choice.
+ */
+export const DEFAULT_TRACKING_POLICY: TrackingPolicy = {
+  essentialTrackers: [],
+  requirePriorOptInEverywhere: true,
+};
+
+let policy: TrackingPolicy | null = null;
+let policyLoaded = false;
+
+function readCachedPolicy(): TrackingPolicy | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = window.localStorage.getItem(POLICY_CACHE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as Partial<TrackingPolicy>;
+    if (!Array.isArray(parsed.essentialTrackers)) return null;
+    return {
+      essentialTrackers: parsed.essentialTrackers.filter((v) => typeof v === "string"),
+      requirePriorOptInEverywhere: parsed.requirePriorOptInEverywhere !== false,
+    };
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * The policy in force right now. Uses the last cached copy on a fresh page
+ * load so the decision survives reloads without waiting on the network, and
+ * falls back to the locked-down default when nothing is known.
+ */
+export function getTrackingPolicy(): TrackingPolicy {
+  if (policy) return policy;
+  const cached = readCachedPolicy();
+  if (cached) policy = cached;
+  return policy ?? DEFAULT_TRACKING_POLICY;
+}
+
+/** True once the authoritative policy has been fetched this page life. */
+export function isTrackingPolicyLoaded(): boolean {
+  return policyLoaded;
+}
+
+export function setTrackingPolicy(next: TrackingPolicy) {
+  policy = {
+    essentialTrackers: next.essentialTrackers.filter((v) => typeof v === "string"),
+    requirePriorOptInEverywhere: next.requirePriorOptInEverywhere !== false,
+  };
+  policyLoaded = true;
+  try {
+    window.localStorage.setItem(POLICY_CACHE_KEY, JSON.stringify(policy));
+  } catch {
+    /* private mode — applies for this page life only */
+  }
+  window.dispatchEvent(new CustomEvent<TrackingPolicy>(POLICY_EVENT, { detail: policy }));
+}
+
+export function onTrackingPolicyChange(handler: (p: TrackingPolicy) => void): () => void {
+  const listener = (e: Event) => handler((e as CustomEvent<TrackingPolicy>).detail);
+  window.addEventListener(POLICY_EVENT, listener);
+  return () => window.removeEventListener(POLICY_EVENT, listener);
+}
+
+/** Whether a specific tracker is on the admin's strictly-necessary list. */
+export function isTrackerEssential(key: string): boolean {
+  return getTrackingPolicy().essentialTrackers.includes(key);
+}
+
+/**
+ * The single gate every tracker passes through. Essential trackers run always;
+ * everything else needs its consent category permitted.
+ */
+export function isTrackerAllowed(key: string, category: ConsentCategory): boolean {
+  if (isTrackerEssential(key)) return true;
+  return isAllowed(category);
+}
+
 
 /**
  * Regions where prior opt-in is legally required: EU/EEA, UK and Switzerland.
