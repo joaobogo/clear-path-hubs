@@ -93,8 +93,8 @@ export const Route = createFileRoute("/api/public/contact")({
             user_agent: userAgent,
             marketing_consent: data.marketingConsent,
             consent_status: data.marketingConsent
-              ? "explicit_opt_in_contact_form"
-              : "no_marketing_consent",
+              ? "marketing_opt_in"
+              : "reply_only_no_marketing_consent",
             attribution: (data.attribution ?? null) as never,
             page_context: (data.pageContext ?? null) as never,
             privacy_acknowledged: data.privacyAcknowledged,
