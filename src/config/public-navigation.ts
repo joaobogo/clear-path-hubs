@@ -99,7 +99,7 @@ export const PRIMARY_ITEMS: PrimaryItem[] = [
     kind: "group",
     label: "Industries",
     links: [
-      { to: "/industries/tech",             label: "Technology",        description: "Product, engineering, platform" },
+      { to: "/industries/technology",             label: "Technology",        description: "Product, engineering, platform" },
       { to: "/industries/ai-ml",            label: "AI & Machine Learning", description: "Research, applied ML, MLOps, LLM" },
       { to: "/industries/fintech",          label: "FinTech",           description: "Payments, banking, embedded finance" },
       { to: "/industries/saas",             label: "SaaS",              description: "Growth, RevOps, customer teams" },
@@ -158,7 +158,7 @@ export const FOOTER_GROUPS: NavGroup[] = [
   {
     label: "Industries",
     links: [
-      { to: "/industries/tech",       label: "Technology" },
+      { to: "/industries/technology",       label: "Technology" },
       { to: "/industries/saas",       label: "SaaS" },
       { to: "/industries/finance",    label: "Finance" },
       { to: "/industries/healthcare", label: "Healthcare" },

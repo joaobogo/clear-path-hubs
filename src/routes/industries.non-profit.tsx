@@ -1,8 +1,13 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 
-// Source route used "non-profit" slug; destination canonical is "nonprofit".
+// Legacy path kept alive for inbound links only. Nothing in the app links
+// here; the canonical content path is /industries/nonprofit.
 export const Route = createFileRoute("/industries/non-profit")({
   beforeLoad: () => {
-    throw redirect({ to: "/industries/$slug", params: { slug: "nonprofit" } });
+    throw redirect({
+      to: "/industries/$slug",
+      params: { slug: "nonprofit" },
+      statusCode: 301,
+    });
   },
 });
