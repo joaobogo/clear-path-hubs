@@ -18,6 +18,12 @@ const contactSchema = z.object({
   website: z.string().max(0).optional().or(z.literal("")),
   // Simple time-based check — form must be visible for at least 2s
   elapsedMs: z.number().int().min(0).max(3_600_000).optional(),
+  // Affirmative marketing consent — only true when the visitor ticked the box.
+  marketingConsent: z.boolean().default(false),
+  // Campaign + page attribution, captured for EVERY topic (including support
+  // and candidate, which never reach the CRM adapter).
+  attribution: z.record(z.string(), z.unknown()).nullable().optional(),
+  pageContext: z.record(z.string(), z.unknown()).nullable().optional(),
 });
 
 export const Route = createFileRoute("/api/public/contact")({
