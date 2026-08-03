@@ -18,10 +18,10 @@
 import {
   isAllowed,
   isTrackerAllowed,
-  isTrackerEssential,
   isTrackingPolicyLoaded,
   type ConsentCategory,
 } from "./consent";
+
 
 
 const GA_ID = import.meta.env.VITE_GA_MEASUREMENT_ID || "G-HJ2ECKCNK4";
