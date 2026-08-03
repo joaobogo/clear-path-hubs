@@ -47,8 +47,10 @@ export const Route = createFileRoute("/intake")({
           "Company details, your account, the job description. TaaSFlow builds the rest and shows you every step.",
       },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://taasflow.com/intake" },
       { name: "twitter:card", content: "summary" },
     ],
+    links: [{ rel: "canonical", href: "https://taasflow.com/intake" }],
   }),
   component: ExpressIntakePage,
 });
