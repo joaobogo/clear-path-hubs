@@ -3,15 +3,26 @@ import type {} from "@tanstack/react-start";
 import { listIndustrySlugs } from "@/lib/marketing/content";
 import { listAllBlogRows } from "@/lib/marketing/blog-catalog";
 import { toPublicSlug } from "@/lib/marketing/industry-slug-aliases";
+import { BLOG_CATEGORY_BY_SLUG } from "@/lib/marketing/blog-manifest";
 
 // Canonical production origin. Keep in sync with `src/lib/marketing/head.ts`.
 const BASE_URL = "https://taasflow.com";
 
-// Intentional exclusions:
-// - /login, /reset-password, /access-denied, /unauthorized, /admin/*, /_authenticated/*
-//   are gated or private and carry `noindex,follow`.
-// - /auth 308 → /login (no need to advertise the redirect target twice).
-// - /jobs/$id/apply is per-role and `noindex`.
+// Intentional exclusions — nothing that emits `noindex` may appear below.
+// - /login, /reset-password, /access-denied, /unauthorized: auth plumbing,
+//   `noindex,follow`.
+// - /admin/*, /client/*, /me/*, /boardroom, /checkout, /checkout/return,
+//   /book-call: behind the authenticated route gate, `noindex` on the whole
+//   subtree; a crawler can never reach them.
+// - /brand-center, /dev/catalogue, /dev/industry-coverage: internal tooling,
+//   `noindex` + disallowed in robots.txt.
+// - /jobs/$id and /jobs/$id/apply: per-role pages carry `noindex` (roles open
+//   and close constantly; /jobs is the indexable entry point).
+// - /apply/status, /apply/received/$id, /intake/confirmation, /share/$token:
+//   post-submission and tokenised pages, `noindex`.
+// - /auth → /login (308), /pilot/intake → /intake (301),
+//   /industries/non-profit → /industries/nonprofit (301), legacy short
+//   industry slugs (301): redirects, so only the destination is listed.
 const STATIC_PATHS = [
   "/",
   "/solutions",
@@ -62,6 +73,15 @@ export const Route = createFileRoute("/sitemap.xml")({
           if (seenIndustry.has(publicSlug)) continue;
           seenIndustry.add(publicSlug);
           urls.push(entry(`/industries/${publicSlug}`, "0.7"));
+        }
+        // Briefing pages are public, indexable content hanging off each
+        // canonical industry, with their own self-referencing canonical.
+        for (const publicSlug of seenIndustry) {
+          urls.push(entry(`/industries/${publicSlug}/briefing`, "0.6"));
+        }
+        // Blog category hubs are linked from /blog and indexable.
+        for (const categorySlug of Object.keys(BLOG_CATEGORY_BY_SLUG)) {
+          urls.push(entry(`/blog/category/${categorySlug}`, "0.5"));
         }
         // Only posts the blog actually publishes. A JSON file on disk is not
         // enough: /blog/$slug 404s for unpublished slugs, so listing them here

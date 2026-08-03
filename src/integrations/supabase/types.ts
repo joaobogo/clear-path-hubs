@@ -2362,13 +2362,19 @@ export type Database = {
           created_at: string
           email: string
           id: string
+          landing_page: string | null
           marketing_consent: boolean
           message: string
           name: string
           page_context: Json | null
+          privacy_acknowledged: boolean
+          referrer: string | null
           source: string | null
           topic: string
           user_agent: string | null
+          utm_campaign: string | null
+          utm_medium: string | null
+          utm_source: string | null
         }
         Insert: {
           attribution?: Json | null
@@ -2377,13 +2383,19 @@ export type Database = {
           created_at?: string
           email: string
           id?: string
+          landing_page?: string | null
           marketing_consent?: boolean
           message: string
           name: string
           page_context?: Json | null
+          privacy_acknowledged?: boolean
+          referrer?: string | null
           source?: string | null
           topic: string
           user_agent?: string | null
+          utm_campaign?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
         }
         Update: {
           attribution?: Json | null
@@ -2392,13 +2404,19 @@ export type Database = {
           created_at?: string
           email?: string
           id?: string
+          landing_page?: string | null
           marketing_consent?: boolean
           message?: string
           name?: string
           page_context?: Json | null
+          privacy_acknowledged?: boolean
+          referrer?: string | null
           source?: string | null
           topic?: string
           user_agent?: string | null
+          utm_campaign?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
         }
         Relationships: []
       }
