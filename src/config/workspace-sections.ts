@@ -102,6 +102,8 @@ export const ADMIN_SECTION_GROUPS: SectionGroup[] = [
       { to: "/admin/support", label: "Support view" },
       { to: "/admin/seo", label: "Search visibility" },
       { to: "/admin/integrations", label: "Integration health" },
+      { to: "/admin/tracking", label: "Consent & tracking" },
+
     ],
   },
   {
